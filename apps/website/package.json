@@ -17,8 +17,7 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "format": "npx prettier --write . --ignore-path .gitignore",
-    "prepare": "husky"
+    "format": "npx prettier --write . --ignore-path .gitignore"
   },
   "lint-staged": {
     "*.{js,ts,vue}": [

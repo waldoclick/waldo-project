@@ -18,8 +18,7 @@
     "production": "NODE_OPTIONS='--max-old-space-size=1536' strapi build && strapi start",
     "start": "strapi start",
     "strapi": "strapi",
-    "test": "jest",
-    "prepare": "husky"
+    "test": "jest"
   },
   "dependencies": {
     "@logtail/node": "^0.5.4",

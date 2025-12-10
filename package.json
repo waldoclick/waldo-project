@@ -15,6 +15,7 @@
     "lint": "turbo run lint",
     "format": "turbo run format",
     "test": "turbo run test",
+    "codacy": "turbo run codacy",
     "prepare": "husky"
   },
   "devDependencies": {

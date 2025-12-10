@@ -9,7 +9,6 @@
     "lint": "next lint",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "prepare": "husky",
     "electron": "electron .",
     "electron:dev": "NODE_ENV=development electron .",
     "electron:build": "cp next.config.electron.ts next.config.ts && next build && electron-builder && git checkout next.config.ts",

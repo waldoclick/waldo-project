@@ -34,6 +34,7 @@
 
     "lint": { "outputs": [] },
     "format": { "outputs": [] },
-    "test": { "outputs": [] }
+    "test": { "outputs": [] },
+    "codacy": { "outputs": [] }
   }
 }

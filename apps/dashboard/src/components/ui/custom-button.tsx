@@ -1,8 +1,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 
-interface CustomButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface CustomButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'ghost' | 'outline';
   children: React.ReactNode;
 }
