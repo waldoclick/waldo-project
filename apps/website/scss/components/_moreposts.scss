@@ -1,0 +1,37 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.moreposts {
+  h3.title {
+    font-style: normal;
+    font-weight: bold;
+    font-size: 24px;
+    line-height: 32px;
+    letter-spacing: -0.25px;
+    color: $charcoal;
+  }
+
+  &--default {
+    padding-top: 0px;
+
+    &__title {
+      margin-bottom: 40px;
+    }
+
+    &__list {
+      display: grid;
+      grid-template-columns: 100%;
+      gap: 30px;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+
+      @include screen-large {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      @include screen-small {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+}

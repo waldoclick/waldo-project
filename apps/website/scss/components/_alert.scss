@@ -1,0 +1,35 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.alert {
+  &--default {
+    // margin-bottom: 20px;
+    padding: 50px 30px;
+    text-align: center;
+    background: linear-gradient(180deg, $platinum 0%, $ghost_white 75.52%);
+    border-radius: 4px;
+    border: 2px solid $charcoal;
+
+    &__title {
+      color: $charcoal;
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+
+    &__text {
+      color: $charcoal;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: 0.5px;
+      margin-bottom: 40px;
+    }
+
+    &__button {
+      display: flex;
+      justify-content: center;
+    }
+  }
+}

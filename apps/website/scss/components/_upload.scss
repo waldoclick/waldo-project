@@ -1,0 +1,371 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.upload {
+  &--images {
+    margin-bottom: 30px;
+
+    &__error {
+      margin-bottom: 15px;
+      font-size: 16px;
+      text-align: center;
+      color: $red_salsa;
+    }
+
+    &__grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+      gap: 20px;
+
+      @include screen-medium {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+      }
+
+      @include screen-small {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      &--disabled {
+        filter: grayscale(100%);
+        pointer-events: none;
+        cursor: not-allowed;
+      }
+
+      &--is-free {
+        grid-template-columns: 108.33px 108.33px 108.33px 108.33px;
+        justify-content: center;
+      }
+    }
+
+    &__information {
+      display: flex;
+      gap: 8px;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      margin-top: 24px;
+      padding: 16px 14px;
+      border-radius: 4px;
+
+      font-size: 12px;
+      font-weight: 400;
+      line-height: normal;
+      letter-spacing: 0.5px;
+      color: $charcoal;
+      background-color: $ghost_white;
+
+      p {
+        margin-bottom: 0;
+      }
+    }
+
+    &__input {
+      height: 100px;
+      border: 2px dashed rgba($charcoal, 0.2);
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      cursor: pointer;
+      transition: 0.3s;
+      position: relative;
+      // background-color: $light_peach;
+
+      &__icon {
+        transition: 0.3s;
+        color: $charcoal;
+        fill: $light_peach;
+      }
+
+      &.is-active {
+        background-color: $light_peach;
+        border: 2px solid $light_peach;
+      }
+
+      &:hover {
+        background-color: $light_peach;
+      }
+
+      &__image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+      }
+
+      &__button {
+        background-color: white;
+        appearance: none;
+        padding: 0;
+        margin: 0;
+        border: 2px solid white;
+        width: 30px;
+        height: 30px;
+        position: absolute;
+        right: -15px;
+        top: -15px;
+        border-radius: 100%;
+        transition: 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        svg {
+          color: $charcoal;
+          stroke: $charcoal;
+          width: 16px;
+          height: 16px;
+        }
+
+        &:hover {
+          background-color: $light_peach;
+
+          svg {
+            color: $charcoal;
+            stroke: $charcoal;
+          }
+        }
+      }
+    }
+
+    input[type="file"] {
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+  }
+
+  &--avatar {
+    margin-bottom: 30px;
+    // display: flex;
+    // justify-content: center;
+    // align-items: center;
+
+    &__error {
+      margin-bottom: 15px;
+      font-size: 16px;
+      text-align: center;
+      color: $red_salsa;
+    }
+
+    &__grid {
+      display: flex;
+      max-width: 300px;
+
+      &--disabled {
+        filter: grayscale(100%);
+        pointer-events: none;
+        cursor: not-allowed;
+      }
+
+      &--is-free {
+        grid-template-columns: 108.33px 108.33px 108.33px 108.33px;
+        justify-content: center;
+      }
+    }
+
+    &__information {
+      display: flex;
+      gap: 8px;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      margin-top: 24px;
+      padding: 16px 14px;
+      border-radius: 4px;
+
+      font-size: 12px;
+      font-weight: 400;
+      line-height: normal;
+      letter-spacing: 0.5px;
+      color: $charcoal;
+      background-color: $ghost_white;
+
+      p {
+        margin-bottom: 0;
+      }
+    }
+
+    &__input {
+      width: 100%;
+      aspect-ratio: 1/1;
+      border: 2px dashed rgba($charcoal, 0.2);
+      // border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      cursor: pointer;
+      transition: 0.3s;
+      position: relative;
+      // background-size: cover;
+      border-radius: 100%;
+
+      img {
+        transition: 0.3s;
+      }
+
+      &.is-active {
+        background-color: $light_peach;
+        border: 2px solid $light_peach;
+      }
+
+      &:hover {
+        background-color: $light_peach;
+      }
+
+      &__button {
+        background-color: white;
+        appearance: none;
+        padding: 0;
+        margin: 0;
+        border: 2px solid white;
+        width: 32px;
+        height: 32px;
+        position: absolute;
+        right: -16px;
+        top: -16px;
+        border-radius: 100%;
+        transition: 0.3s;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+          background-color: $light_peach;
+        }
+      }
+    }
+
+    input[type="file"] {
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+  }
+
+  &--cover {
+    margin-bottom: 30px;
+    // display: flex;
+    // justify-content: center;
+    // align-items: center;
+
+    &__error {
+      margin-bottom: 15px;
+      font-size: 16px;
+      text-align: center;
+      color: $red_salsa;
+    }
+
+    &__grid {
+      display: flex;
+      // max-width: 300px;
+
+      &--disabled {
+        filter: grayscale(100%);
+        pointer-events: none;
+        cursor: not-allowed;
+      }
+
+      &--is-free {
+        grid-template-columns: 108.33px 108.33px 108.33px 108.33px;
+        justify-content: center;
+      }
+    }
+
+    &__information {
+      display: flex;
+      gap: 8px;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      margin-top: 24px;
+      padding: 16px 14px;
+      border-radius: 4px;
+
+      font-size: 12px;
+      font-weight: 400;
+      line-height: normal;
+      letter-spacing: 0.5px;
+      color: $charcoal;
+      background-color: $ghost_white;
+
+      p {
+        margin-bottom: 0;
+      }
+    }
+
+    &__input {
+      width: 100%;
+      aspect-ratio: 16/5;
+      border: 2px dashed rgba($charcoal, 0.2);
+      // border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      cursor: pointer;
+      transition: 0.3s;
+      position: relative;
+      // background-size: cover;
+      // border-radius: 100%;
+
+      img {
+        transition: 0.3s;
+      }
+
+      &.is-active {
+        background-color: $light_peach;
+        border: 2px solid $light_peach;
+      }
+
+      &:hover {
+        background-color: $light_peach;
+      }
+
+      &__button {
+        background-color: white;
+        appearance: none;
+        padding: 0;
+        margin: 0;
+        border: 2px solid white;
+        width: 32px;
+        height: 32px;
+        position: absolute;
+        right: -16px;
+        top: -16px;
+        transform: rotate(45deg);
+        border-radius: 100%;
+        transition: 0.3s;
+
+        &:hover {
+          background-color: $light_peach;
+        }
+      }
+    }
+
+    input[type="file"] {
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+  }
+}
+
+// Clase para inputs de archivo ocultos (compatible con CSP)
+.upload--hidden {
+  visibility: hidden;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}

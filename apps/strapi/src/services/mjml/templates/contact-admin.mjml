@@ -1,0 +1,16 @@
+{% extends "layouts/base.mjml" %} {% block content %}
+<mj-text font-size="16px"> Hola, </mj-text>
+<mj-text> Has recibido un nuevo mensaje en <b>Waldo.click®</b>. </mj-text>
+<mj-text>
+  <b>Detalles del mensaje:</b>
+</mj-text>
+<mj-text> <b>Nombre:</b> {{ name }} </mj-text>
+<mj-text> <b>Email:</b> {{ email }} </mj-text>
+{% if phone %}
+<mj-text> <b>Teléfono:</b> {{ phone }} </mj-text>
+{% endif %} {% if company %}
+<mj-text> <b>Empresa:</b> {{ company }} </mj-text>
+{% endif %}
+<mj-text> <b>Mensaje:</b> {{ message }} </mj-text>
+<mj-text> Saludos,<br />El equipo de <b>Waldo.click®</b> </mj-text>
+{% endblock %}

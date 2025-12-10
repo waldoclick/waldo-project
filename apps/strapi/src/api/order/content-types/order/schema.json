@@ -1,0 +1,54 @@
+{
+  "kind": "collectionType",
+  "collectionName": "orders",
+  "info": {
+    "singularName": "order",
+    "pluralName": "orders",
+    "displayName": "Order",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "amount": {
+      "type": "biginteger"
+    },
+    "buy_order": {
+      "type": "string"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "orders"
+    },
+    "is_invoice": {
+      "type": "boolean",
+      "default": false
+    },
+    "payment_method": {
+      "type": "enumeration",
+      "enum": ["webpay"]
+    },
+    "payment_response": {
+      "type": "json"
+    },
+    "document_details": {
+      "type": "json"
+    },
+    "ad": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::ad.ad",
+      "inversedBy": "order"
+    },
+    "document_response": {
+      "type": "json"
+    },
+    "items": {
+      "type": "json"
+    }
+  }
+}

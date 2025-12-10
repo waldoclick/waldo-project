@@ -1,0 +1,14 @@
+{% extends "layouts/base.mjml" %} {% block content %}
+<mj-text font-size="16px"> Hola {{ name }}, </mj-text>
+<mj-text>
+  Tu anuncio ha sido creado exitosamente en <b>Waldo.click®</b>.
+</mj-text>
+<mj-text>
+  Puedes ver tu anuncio en: <a href="{{ adUrl }}">{{ adUrl }}</a>
+</mj-text>
+<mj-text>
+  Ten en cuenta que el anuncio aún no está activo. Te notificaremos cuando esté
+  listo para ser publicado.
+</mj-text>
+<mj-text> Saludos,<br />El equipo de <b>Waldo.click®</b> </mj-text>
+{% endblock %}

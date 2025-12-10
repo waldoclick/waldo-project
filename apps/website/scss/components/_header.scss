@@ -1,0 +1,144 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.header {
+  &--default {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    transition: all 0.3s ease-in-out;
+    will-change: transform;
+    width: 100%;
+
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+
+    border-bottom: 1px solid rgba(black, 0.1);
+
+    &--hidden {
+      transform: translateY(-100%);
+    }
+
+    &--scrolled {
+      transition: all 0.3s ease-in-out;
+    }
+
+    &--scrolled-dark {
+      background-color: rgba(33, 33, 33, 0.9);
+      backdrop-filter: blur(8px);
+      // box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+
+      // Asegurar que los botones de auth sean visibles en fondo oscuro
+      .btn--login.is-black {
+        color: white !important;
+        border-color: white !important;
+      }
+    }
+
+    &--scrolled-light {
+      background-color: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(8px);
+      // box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+
+      // Asegurar que los botones de auth sean visibles en fondo claro
+      .btn--login.is-black {
+        color: $charcoal !important;
+        border-color: $charcoal !important;
+      }
+    }
+
+    &--white {
+      background-color: white;
+      // border-bottom: 1px solid $platinum;
+      // background-color: rgba(255, 255, 255, 0.8);
+      // backdrop-filter: blur(8px);
+    }
+
+    &__left,
+    &__right {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    // Left
+
+    &__lateral {
+      margin-right: 30px;
+      position: relative;
+      // top: -2px;
+    }
+
+    &__logo {
+      margin-right: 30px;
+
+      img {
+        min-width: 152px;
+      }
+    }
+
+    &__form {
+      min-width: 640px;
+
+      @include screen-huge {
+        display: none;
+      }
+    }
+
+    &__menu {
+      @include screen-large {
+        display: none;
+      }
+    }
+
+    // Right
+
+    &__search {
+      display: none;
+
+      @include screen-huge {
+        display: block;
+      }
+    }
+
+    &__announcement {
+      margin-left: 20px;
+
+      @include screen-medium {
+        display: none;
+      }
+    }
+
+    &__auth {
+      // margin-left: 20px;
+
+      @include screen-medium {
+        display: none;
+      }
+    }
+
+    &__user {
+      margin-left: 20px;
+
+      @include screen-medium {
+        display: none;
+      }
+    }
+
+    &__avatar {
+      margin-left: 20px;
+      display: none;
+
+      @include screen-medium {
+        display: block;
+      }
+    }
+  }
+}

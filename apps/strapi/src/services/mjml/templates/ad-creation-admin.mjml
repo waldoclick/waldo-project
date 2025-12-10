@@ -1,0 +1,9 @@
+{% extends "layouts/base.mjml" %} {% block content %}
+<mj-text font-size="16px">
+  Se ha creado un nuevo anuncio que requiere validación.
+</mj-text>
+<mj-text> <b>Usuario:</b> {{ name }} </mj-text>
+<mj-text> <b>Email:</b> {{ email }} </mj-text>
+<mj-text> <b>Slug:</b> {{ slug }} </mj-text>
+<mj-text> <b>Ver anuncio:</b> <a href="{{ adUrl }}">{{ adUrl }}</a> </mj-text>
+{% endblock %}

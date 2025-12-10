@@ -1,0 +1,107 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.footer {
+  &--default {
+    margin-top: auto;
+    border-top: 1px solid $gainsboro;
+    background-color: white;
+
+    &__top {
+      &__container {
+        @extend .container;
+      }
+
+      &__indicators {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 30px;
+        padding: 20px 0;
+
+        @include screen-small {
+          gap: 15px 20px;
+        }
+
+        &__item {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          color: $charcoal;
+          line-height: 1;
+
+          .icon {
+            color: $dodger_blue;
+          }
+
+          &__info {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+          }
+
+          &__name {
+            font-size: 0.75rem;
+            opacity: 0.8;
+          }
+
+          &__value {
+            font-weight: 600;
+          }
+        }
+      }
+    }
+
+    &__middle {
+      padding: 40px 0;
+      background: $charcoal;
+
+      &__container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        @extend .container;
+        // flex-direction: column;
+
+        @include screen-large {
+          flex-direction: column;
+        }
+      }
+
+      &__logo {
+        img {
+          width: 152px;
+        }
+
+        @include screen-large {
+          margin-bottom: 20px;
+        }
+      }
+
+      &__menu {
+        @include screen-large {
+          margin-bottom: 20px;
+        }
+      }
+
+      &__trademark {
+        font-style: normal;
+        font-weight: normal;
+        font-size: 12px;
+        letter-spacing: 1.25px;
+        color: $platinum;
+        text-align: left;
+
+        p {
+          margin: 0;
+        }
+
+        @include screen-large {
+          text-align: center;
+        }
+      }
+    }
+  }
+}

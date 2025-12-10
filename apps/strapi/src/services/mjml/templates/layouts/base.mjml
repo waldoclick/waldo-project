@@ -1,0 +1,38 @@
+<mjml>
+  <mj-head>
+    <mj-attributes>
+      <mj-text
+        font-family="Arial, sans-serif"
+        line-height="1.2"
+        padding="5px 0"
+      />
+    </mj-attributes>
+    <mj-style>
+      @media (prefers-color-scheme: dark) { .email-container { background-color:
+      #ffd699 !important; } .email-content { background-color: #ffffff
+      !important; } }
+    </mj-style>
+  </mj-head>
+  <mj-body background-color="#ffd699" css-class="email-container">
+    <mj-wrapper
+      background-color="#ffd699"
+      padding="20px"
+      css-class="email-container"
+    >
+      <mj-section
+        background-color="#ffffff"
+        border-radius="8px"
+        padding="20px"
+        css-class="email-content"
+      >
+        <mj-column>
+          {% include "partials/header.mjml" %}
+          <mj-section>
+            <mj-column> {% block content %}{% endblock %} </mj-column>
+          </mj-section>
+          {% include "partials/footer.mjml" %}
+        </mj-column>
+      </mj-section>
+    </mj-wrapper>
+  </mj-body>
+</mjml>

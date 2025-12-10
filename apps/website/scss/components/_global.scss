@@ -1,0 +1,43 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background: $charcoal;
+}
+
+.sp {
+  padding-bottom: 50px;
+
+  @include screen-large {
+    padding-bottom: 15px;
+  }
+}
+
+.currency {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  &__input {
+    width: 100%;
+  }
+
+  &__error {
+    position: absolute;
+  }
+
+  &__select {
+    position: absolute;
+    right: 10px;
+    border: 0;
+    top: 3px;
+  }
+}

@@ -1,0 +1,25 @@
+@use "../abstracts/variables" as *;
+
+.web-notification {
+  background-color: $light_peach;
+  color: $eerie_black;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 12px;
+
+  &.success {
+    border-left: 4px solid $magic_mint;
+  }
+
+  &.error {
+    border-left: 4px solid $red_salsa;
+  }
+
+  &.info {
+    border-left: 4px solid $dodger_blue;
+  }
+
+  &.warning {
+    border-left: 4px solid $light_peach;
+  }
+}

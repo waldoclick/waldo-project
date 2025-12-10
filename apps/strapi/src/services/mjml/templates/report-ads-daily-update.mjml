@@ -1,0 +1,22 @@
+{% extends "layouts/base.mjml" %} {% block content %}
+<mj-text font-size="16px">
+  Los siguientes anuncios han tenido sus días restantes decrementados hoy:
+</mj-text>
+
+<mj-table>
+  <tr style="border-bottom: 1px solid #cccccc">
+    <td style="padding: 8px; font-weight: bold">ID</td>
+    <td style="padding: 8px; font-weight: bold">Nombre</td>
+    <td style="padding: 8px; font-weight: bold">Días de Duración</td>
+    <td style="padding: 8px; font-weight: bold">Días Restantes</td>
+  </tr>
+  {% for ad in ads %}
+  <tr style="border-bottom: 1px solid #cccccc">
+    <td style="padding: 8px">{{ ad.id }}</td>
+    <td style="padding: 8px">{{ ad.name }}</td>
+    <td style="padding: 8px">{{ ad.duration_days }}</td>
+    <td style="padding: 8px">{{ ad.remaining_days }}</td>
+  </tr>
+  {% endfor %}
+</mj-table>
+{% endblock %}

@@ -1,0 +1,19 @@
+{
+  "data": [
+    {
+      "title": "1. Regístrate",
+      "description": "Registrarte en waldo.click y obten 3 anuncios gratuitos para publicar tu equipo y si tienes más solo compra un pack de anuncios.",
+      "text_button": "Anuncia ahora"
+    },
+    {
+      "title": "2. Crea tu anuncio",
+      "description": "Ten a mano las especificaciones y fotos de tu equipo para que te sea más fácil y rápido publicar.",
+      "text_button": "Anuncia ahora"
+    },
+    {
+      "title": "3. Publica y vende",
+      "description": "Publica tu anuncio, cuando sea revisado y publicado por nosotros, solo debes esperar los llamados de los compradores y ¡vende!",
+      "text_button": "Anuncia ahora"
+    }
+  ]
+}

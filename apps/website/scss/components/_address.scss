@@ -1,0 +1,93 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.address {
+  &--default {
+    border: 1px solid $gainsboro;
+    box-sizing: border-box;
+    border-radius: 4px;
+    // margin-top: 40px;
+    transition: 0.3s;
+
+    &:hover {
+      box-shadow: 0 0 30px rgba($charcoal, 0.1);
+    }
+
+    &__wrapper {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 30px;
+
+      @include screen-small {
+        flex-direction: column;
+        padding: 20px;
+      }
+    }
+
+    &__email {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 0px;
+
+      a {
+        color: $dodger_blue;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: underline;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      @include screen-large {
+        margin-bottom: 15px;
+      }
+    }
+
+    &__rrss {
+      display: flex;
+      flex-direction: column;
+
+      &__links {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+
+        a {
+          font-style: normal;
+          font-weight: 600;
+          text-decoration: underline;
+          font-size: 14px;
+          line-height: 1;
+          letter-spacing: 0.25px;
+          color: $dodger_blue;
+
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 2px;
+
+          svg {
+            margin-right: 3px;
+          }
+        }
+      }
+    }
+
+    &__label {
+      font-style: normal;
+      font-weight: normal;
+      font-size: 13px;
+      line-height: 1;
+      letter-spacing: 0.25px;
+      color: $charcoal;
+      margin-bottom: 7px;
+
+      &.email {
+        font-weight: bold;
+      }
+    }
+  }
+}

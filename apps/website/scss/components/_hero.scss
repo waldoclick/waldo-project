@@ -1,0 +1,357 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.hero {
+  padding-top: 130px;
+
+  &--fake {
+    padding-top: 40px;
+  }
+
+  &--profile {
+    position: relative;
+    padding: 0;
+    background-color: rgba($light_peach, 0.3);
+    min-height: 230px;
+
+    &__image {
+      min-height: inherit;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    &__overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      // background-color: white;
+    }
+  }
+
+  &--home {
+    position: relative;
+    padding: 130px 0 80px;
+    background-color: $charcoal !important;
+    height: 375px;
+
+    @include screen-large {
+      height: 360px;
+    }
+
+    @include screen-medium {
+      padding: 90px 0 50px;
+      height: 275px;
+    }
+
+    @include screen-small {
+      height: 445px;
+    }
+
+    &__bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      overflow: hidden;
+
+      picture img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    &__container {
+      @extend .container;
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    &__title {
+      font-style: normal;
+      font-weight: bold;
+      text-align: center;
+      letter-spacing: -0.25px;
+      color: $white_smoke;
+      font-size: 48px;
+
+      @include screen-large {
+        font-size: 32px;
+      }
+
+      a {
+        color: $white_smoke;
+        text-decoration: underline;
+
+        &.publish {
+          color: $light_peach;
+        }
+      }
+    }
+
+    &__text {
+      font-style: normal;
+      font-weight: normal;
+      font-size: 16px;
+      text-align: center;
+      letter-spacing: 0.25px;
+      color: $white_smoke;
+    }
+
+    &__search {
+      &__default {
+        // position: absolute;
+        // bottom: -35px;
+        max-width: 1140px;
+        padding: 0px 15px;
+        margin: 0 auto;
+        left: 0;
+        right: 0;
+        z-index: 9;
+
+        @include screen-large {
+          display: none;
+        }
+      }
+
+      &__small {
+        // position: absolute;
+        bottom: -23px;
+        padding: 0px 15px;
+        margin: 0 auto;
+        left: 0;
+        right: 0;
+        z-index: 9;
+        display: none;
+
+        @include screen-large {
+          display: block;
+          bottom: auto;
+        }
+      }
+    }
+  }
+
+  &--results {
+    background-color: var(--hero-bg-color, #ffffff);
+
+    &__container {
+      @extend .container;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    &__title {
+      // margin-top: 20px !important;
+    }
+  }
+
+  &--announcement {
+    &__container {
+      @extend .container;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      justify-content: space-between;
+
+      @include screen-large {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    &__content {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    &__breadcrumbs {
+      // margin-bottom: 30px;
+      display: flex;
+    }
+
+    &__title {
+      margin-bottom: 0;
+    }
+
+    &__tags {
+      // margin-top: 20px;
+
+      span {
+        font-size: 14px;
+        line-height: 24px;
+        letter-spacing: 0.25px;
+        color: $charcoal;
+        padding-right: 10px;
+        margin-right: 10px;
+        position: relative;
+
+        &:last-child {
+          margin-right: 0px;
+        }
+
+        a {
+          text-decoration: underline !important;
+          color: $charcoal;
+        }
+
+        &:after {
+          content: "";
+          display: block;
+          width: 1px;
+          height: 100%;
+          background-color: $charcoal;
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          right: 0;
+        }
+
+        &:last-child {
+          &:after {
+            display: none;
+          }
+        }
+      }
+    }
+
+    &__qr {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+      border: 2px solid $charcoal;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      border-radius: 4px;
+      padding: 2px;
+      background-color: white;
+
+      @include screen-large {
+        display: none;
+      }
+
+      svg {
+        float: left;
+      }
+
+      &:hover {
+        border-color: $light_peach;
+      }
+    }
+  }
+
+  &--default {
+    position: relative;
+    background-color: $charcoal;
+
+    @include screen-medium {
+      padding: 100px 0 50px;
+    }
+
+    // &:after {
+    //   content: "";
+    //   display: block;
+    //   position: absolute;
+    //   width: 100%;
+    //   height: 100%;
+    //   top: 0;
+    //   left: 0;
+    //   background-color: rgba($charcoal, 0.7);
+    //   z-index: 1;
+    // }
+
+    &__container {
+      @extend .container;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    &__title {
+      color: $white_smoke;
+      letter-spacing: 0.25px;
+    }
+
+    &__text {
+      font-size: 16px;
+      letter-spacing: 0.25px;
+      color: $white_smoke;
+      margin-top: 20px;
+    }
+
+    &__bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      overflow: hidden;
+
+      picture img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+  }
+
+  &--categories {
+    position: relative;
+    // padding: 80px 0 15px;
+
+    @include screen-large {
+      padding: 50px 0 15px;
+    }
+
+    &__text {
+      font-style: normal;
+      font-weight: normal;
+      font-size: 16px;
+      text-align: center;
+      letter-spacing: 0.25px;
+      color: $white_smoke;
+      margin-top: 20px;
+    }
+  }
+
+  &--ad {
+    &__condition {
+      margin-top: 32px;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 24px;
+      letter-spacing: 0.25px;
+      color: $charcoal;
+    }
+
+    &__title {
+      margin-top: 5px;
+      margin-bottom: 10px;
+    }
+  }
+}

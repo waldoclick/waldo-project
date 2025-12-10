@@ -1,0 +1,33 @@
+@use "../abstracts/variables" as *;
+
+.share {
+  &--default {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+
+    span,
+    a,
+    button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+    }
+
+    a,
+    button {
+      svg {
+        color: $dodger_blue;
+      }
+    }
+
+    button {
+      appearance: none;
+      border: none;
+      background: transparent;
+    }
+  }
+}

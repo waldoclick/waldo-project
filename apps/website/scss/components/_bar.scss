@@ -1,0 +1,81 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.bar {
+  &--create {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    border-top: 4px solid rgba($silver, 0.4);
+    background-color: white;
+    z-index: 3;
+    // position: relative;
+
+    &__percent {
+      position: absolute;
+      height: 4px;
+      width: var(--progress-width, 0%);
+      background-color: var(--progress-color, $light_peach);
+      transition: width 0.3s ease;
+      z-index: 1;
+      top: -4px;
+      left: 0;
+    }
+
+    &__container {
+      @extend .container;
+      padding: 15px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    &__steps {
+      @include screen-small {
+        display: none;
+      }
+    }
+
+    a,
+    button {
+      max-width: 200px;
+    }
+  }
+
+  &--resume {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    border-top: 4px solid rgba($silver, 0.4);
+    background-color: white;
+    z-index: 3;
+
+    &__percent {
+      position: absolute;
+      height: 4px;
+      transition: 0.3s;
+      width: 100%;
+      background-color: $light_peach;
+      z-index: 1;
+      top: -4px;
+      left: 0;
+    }
+
+    &__container {
+      @extend .container;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    button,
+    a {
+      max-width: 200px;
+    }
+  }
+}

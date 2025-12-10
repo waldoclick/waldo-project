@@ -1,0 +1,37 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.highlights {
+  &--default {
+    &__container {
+      @extend .container;
+      // @include screen-large {
+      //   padding: 0;
+      // }
+    }
+
+    &__list {
+      margin-top: 50px;
+      display: flex;
+      gap: 50px;
+
+      @include screen-large {
+        gap: 15px;
+        margin-top: 0;
+      }
+
+      @include screen-small {
+        flex-direction: column;
+      }
+
+      // article {
+      //   margin: 0 15px;
+
+      //   @include screen-large {
+      //     margin: 0 8px;
+      //   }
+      // }
+    }
+  }
+}

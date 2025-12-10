@@ -1,0 +1,33 @@
+// Estilos para Google One Tap Widget
+#g_id_onload {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+
+  // Asegurar que el widget sea visible
+  .g_id_signin {
+    display: block !important;
+  }
+}
+
+// Estilos para el botón de Google One Tap
+.g_id_signin {
+  border: none !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  transition: all 0.3s ease !important;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+    transform: translateY(-1px) !important;
+  }
+}
+
+// Responsive - ocultar en móviles pequeños
+@media (max-width: 480px) {
+  #g_id_onload {
+    top: 10px;
+    right: 10px;
+  }
+}

@@ -1,0 +1,14 @@
+<mjml>
+  <mj-head>
+    <mj-attributes>
+      <mj-text font-family="Arial, sans-serif" />
+    </mj-attributes>
+  </mj-head>
+  <mj-body>
+    {% include "partials/header.mjml" %}
+    <mj-section>
+      <mj-column> {{ content | safe }} </mj-column>
+    </mj-section>
+    {% include "partials/footer.mjml" %}
+  </mj-body>
+</mjml>

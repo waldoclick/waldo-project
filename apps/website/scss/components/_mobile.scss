@@ -1,0 +1,217 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.mobile {
+  &--bar {
+    &__trigger {
+      display: flex;
+      position: relative;
+      cursor: pointer;
+      background-color: transparent;
+      border: none;
+      top: -3px;
+
+      svg {
+        color: $light_peach;
+      }
+    }
+
+    &__mobile {
+      background: white;
+      width: 100%;
+      left: 0;
+      min-height: 100dvh;
+      min-height: 100vh;
+      position: fixed;
+      top: 0;
+      z-index: 21;
+      max-width: 450px;
+      box-shadow: 0 0 30px rgba($charcoal, 0.1);
+      transform: translateX(-100%);
+      transition: transform 0.2s ease;
+
+      &.open {
+        transform: translateX(0);
+        flex-direction: row-reverse;
+      }
+
+      &__wrapper {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+
+      &__header {
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid $gainsboro;
+
+        &__left,
+        &__right {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        &__close {
+          width: 30px;
+          height: 30px;
+          cursor: pointer;
+          border: none;
+          background-color: transparent;
+          padding: 0;
+          margin: 0;
+          appearance: none;
+          margin-right: 20px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        &__logo img {
+          min-width: 120px;
+        }
+
+        &__avatar {
+          margin-left: 20px;
+        }
+      }
+
+      &__login {
+        padding: 20px;
+        display: flex;
+        gap: 20px;
+        border-bottom: 1px solid $gainsboro;
+
+        a {
+          flex: 1 1 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .login {
+          font-style: normal;
+          font-weight: 600;
+          font-size: 16px;
+          line-height: 24px;
+          text-align: center;
+          background: white;
+          letter-spacing: 0.5px;
+          color: $charcoal;
+          border: 1px solid $charcoal;
+          border-radius: 4px;
+          height: 48px;
+          width: 100%;
+          margin-right: 20px;
+        }
+
+        .register {
+          font-style: normal;
+          font-weight: 600;
+          font-size: 16px;
+          line-height: 24px;
+          text-align: center;
+          letter-spacing: 0.5px;
+          background: $charcoal;
+          color: $white_smoke;
+          border: 1px solid $charcoal;
+          border-radius: 4px;
+          width: 100%;
+          height: 48px;
+        }
+      }
+
+      &__links {
+        padding: 20px 20px;
+        display: flex;
+        flex-direction: column;
+        border-bottom: 1px solid $gainsboro;
+
+        a {
+          font-style: normal;
+          font-weight: 600;
+          font-size: 15px;
+          line-height: 1;
+          letter-spacing: 0.25px;
+          color: $charcoal;
+          padding: 11px 0px;
+          display: flex;
+          align-items: center;
+          text-decoration: none;
+          transition: text-decoration 0.2s;
+
+          &:hover,
+          &.router-link-active,
+          &.router-link-exact-active {
+            text-decoration: underline;
+            text-underline-offset: 3px;
+          }
+
+          img {
+            margin-right: 20px;
+            max-width: 20px;
+          }
+        }
+
+        &--user {
+          border-bottom: none;
+
+          a {
+            padding: 10px 0px;
+            opacity: 0.9;
+            font-weight: 400;
+            display: flex;
+            gap: 7px;
+
+            b {
+              background-color: black;
+              color: #ffd699;
+              padding: 4px 6px;
+              border-radius: 4px;
+              font-size: 10px;
+              line-height: 1;
+              letter-spacing: 0.25px;
+              font-weight: normal;
+            }
+          }
+        }
+      }
+
+      &__ad {
+        padding: 20px;
+        margin-top: auto;
+        border-top: 1px solid $gainsboro;
+
+        a {
+          justify-content: center;
+        }
+      }
+    }
+
+    &__backdrop {
+      background-color: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(2px);
+      width: 100%;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 20;
+      opacity: 0;
+      visibility: hidden;
+      cursor: pointer;
+      transition:
+        opacity 0.2s ease,
+        visibility 0.2s ease;
+
+      &.open {
+        opacity: 1;
+        visibility: visible;
+      }
+    }
+  }
+}

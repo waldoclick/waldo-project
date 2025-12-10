@@ -1,0 +1,14 @@
+image: node:20
+
+pipelines:
+  branches:
+    master:
+      - step:
+          name: Install dependencies & Build Test
+          caches:
+            - node
+          script:
+            - yarn config set registry https://registry.npmjs.org/
+            - yarn install
+            - yarn fetch
+            - yarn build

@@ -1,0 +1,67 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.message {
+  &--default {
+    margin: 0 20px;
+    // background-color: rgba($light_peach, 0.3);
+
+    &__container {
+      margin: 0 auto;
+      max-width: 700px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      text-align: center;
+    }
+
+    &__icon {
+      text-align: center;
+      // margin-bottom: 20px;
+
+      svg {
+        color: $charcoal;
+        fill: $light_peach;
+      }
+    }
+
+    &__title {
+      justify-content: center;
+      // margin-bottom: 20px;
+    }
+
+    &__description {
+      text-align: center;
+      margin: auto;
+      // max-width: 400px;
+      // margin-bottom: 30px;
+    }
+
+    &__box {
+      padding: 30px 30px 0;
+      border: 1px solid $gainsboro;
+      border-radius: 4px;
+      // margin-bottom: 30px;
+
+      &__title {
+        font-style: normal;
+        font-weight: bold;
+        font-size: 20px;
+        line-height: 1;
+        letter-spacing: 0.25px;
+        color: $charcoal;
+        margin-bottom: 20px;
+      }
+    }
+
+    &__button {
+      display: flex;
+      justify-content: center;
+
+      a {
+        display: inline-flex;
+      }
+    }
+  }
+}

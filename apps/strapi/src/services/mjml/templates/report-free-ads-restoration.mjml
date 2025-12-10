@@ -1,0 +1,28 @@
+{% extends "layouts/base.mjml" %} {% block content %}
+<mj-text font-size="16px">
+  Los siguientes usuarios han tenido sus anuncios gratuitos restaurados:
+</mj-text>
+
+<mj-table>
+  <tr style="border-bottom: 1px solid #cccccc">
+    <td style="padding: 8px; font-weight: bold">ID</td>
+    <td style="padding: 8px; font-weight: bold">Usuario</td>
+    <td style="padding: 8px; font-weight: bold">Email</td>
+    <td style="padding: 8px; font-weight: bold">Nuevos Anuncios</td>
+    <td style="padding: 8px; font-weight: bold">En Uso</td>
+    <td style="padding: 8px; font-weight: bold">Disponibles</td>
+    <td style="padding: 8px; font-weight: bold">Total</td>
+  </tr>
+  {% for user in users %}
+  <tr style="border-bottom: 1px solid #cccccc">
+    <td style="padding: 8px">{{ user.id }}</td>
+    <td style="padding: 8px">{{ user.username }}</td>
+    <td style="padding: 8px">{{ user.email }}</td>
+    <td style="padding: 8px">{{ user.neededReservations }}</td>
+    <td style="padding: 8px">{{ user.activeReservations }}</td>
+    <td style="padding: 8px">{{ user.availableReservations }}</td>
+    <td style="padding: 8px">{{ user.totalAds }}</td>
+  </tr>
+  {% endfor %}
+</mj-table>
+{% endblock %}

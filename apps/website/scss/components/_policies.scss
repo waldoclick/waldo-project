@@ -1,0 +1,19 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.policies {
+  &--default {
+    &__container {
+      @extend .container;
+
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    &__title {
+      // margin-bottom: 30px;
+    }
+  }
+}

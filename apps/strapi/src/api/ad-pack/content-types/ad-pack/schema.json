@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "ad_packs",
+  "info": {
+    "singularName": "ad-pack",
+    "pluralName": "ad-packs",
+    "displayName": "AdPack",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "text": {
+      "type": "string"
+    },
+    "total_days": {
+      "type": "biginteger"
+    },
+    "total_ads": {
+      "type": "biginteger"
+    },
+    "total_features": {
+      "type": "biginteger"
+    },
+    "price": {
+      "type": "biginteger"
+    },
+    "description": {
+      "type": "text"
+    }
+  }
+}

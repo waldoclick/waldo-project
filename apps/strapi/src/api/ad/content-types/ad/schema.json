@@ -1,0 +1,157 @@
+{
+  "kind": "collectionType",
+  "collectionName": "ads",
+  "info": {
+    "singularName": "ad",
+    "pluralName": "ads",
+    "displayName": "Ad",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "address": {
+      "type": "string"
+    },
+    "address_number": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "email": {
+      "type": "email"
+    },
+    "year": {
+      "type": "biginteger"
+    },
+    "manufacturer": {
+      "type": "string"
+    },
+    "model": {
+      "type": "string"
+    },
+    "serial_number": {
+      "type": "string"
+    },
+    "weight": {
+      "type": "biginteger"
+    },
+    "width": {
+      "type": "biginteger"
+    },
+    "height": {
+      "type": "biginteger"
+    },
+    "depth": {
+      "type": "biginteger"
+    },
+    "commune": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::commune.commune"
+    },
+    "condition": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::condition.condition"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "ads"
+    },
+    "gallery": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "category": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::category.category"
+    },
+    "price": {
+      "type": "biginteger",
+      "required": true
+    },
+    "active": {
+      "type": "boolean",
+      "required": true,
+      "default": false
+    },
+    "rejected": {
+      "type": "boolean",
+      "required": true,
+      "default": false
+    },
+    "reason_for_rejection": {
+      "type": "text"
+    },
+    "currency": {
+      "type": "enumeration",
+      "required": true,
+      "enum": ["CLP", "USD"]
+    },
+    "duration_days": {
+      "type": "integer",
+      "required": true,
+      "default": 0
+    },
+    "remaining_days": {
+      "type": "integer",
+      "required": true,
+      "default": 0
+    },
+    "details": {
+      "type": "json"
+    },
+    "ad_reservation": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::ad-reservation.ad-reservation",
+      "mappedBy": "ad"
+    },
+    "ad_featured_reservation": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::ad-featured-reservation.ad-featured-reservation",
+      "mappedBy": "ad"
+    },
+    "order": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::order.order",
+      "mappedBy": "ad"
+    },
+    "is_paid": {
+      "type": "boolean",
+      "required": false,
+      "default": false
+    },
+    "reviewed": {
+      "type": "boolean"
+    },
+    "reviewed_by": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}

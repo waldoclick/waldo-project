@@ -1,0 +1,48 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.howto {
+  &--default {
+    &__container {
+      @extend .container;
+
+      @include screen-large {
+        padding: 0;
+      }
+    }
+
+    &__head {
+      margin-bottom: 50px;
+
+      &__title {
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      &__subtitle {
+        font-style: normal;
+        font-weight: normal;
+        font-size: 16px;
+        line-height: 24px;
+        text-align: center;
+        letter-spacing: 0.25px;
+        color: $charcoal;
+      }
+    }
+
+    &__steps {
+      // @extend .container;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 40px;
+
+      @include screen-large {
+        padding: 0 20px;
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+}

@@ -1,0 +1,7 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.fake {
+  min-height: 100vh;
+}

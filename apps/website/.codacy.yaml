@@ -1,0 +1,44 @@
+engines:
+  eslint:
+    enabled: true
+  stylelint:
+    enabled: true
+  duplication:
+    enabled: true
+    config:
+      languages:
+        - javascript
+        - typescript
+        - vue
+  complexity:
+    enabled: true
+    config:
+      languages:
+        - javascript
+        - typescript
+        - vue
+
+exclude_paths:
+  - .nuxt/
+  - .output/
+  - build/
+  - dist/
+  - node_modules/
+  - .cache/
+  - .git/
+  - .vscode/
+  - public/
+  - database/
+  - exports/
+  - .data/
+
+ignore:
+  - "**/*.test.js"
+  - "**/*.spec.js"
+  - "**/*.test.ts"
+  - "**/*.spec.ts"
+  - "**/*.test.vue"
+  - "**/*.spec.vue"
+  - "**/tests/**"
+  - "**/__tests__/**"
+  - "**/__snapshots__/**"

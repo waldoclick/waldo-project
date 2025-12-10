@@ -1,0 +1,188 @@
+{
+  "kind": "collectionType",
+  "collectionName": "up_users",
+  "info": {
+    "name": "user",
+    "description": "",
+    "singularName": "user",
+    "pluralName": "users",
+    "displayName": "User"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "username": {
+      "type": "string",
+      "minLength": 3,
+      "unique": true,
+      "configurable": false,
+      "required": true
+    },
+    "email": {
+      "type": "email",
+      "minLength": 6,
+      "configurable": false,
+      "required": true
+    },
+    "provider": {
+      "type": "string",
+      "configurable": false
+    },
+    "password": {
+      "type": "password",
+      "minLength": 6,
+      "configurable": false,
+      "private": true,
+      "searchable": false
+    },
+    "resetPasswordToken": {
+      "type": "string",
+      "configurable": false,
+      "private": true,
+      "searchable": false
+    },
+    "confirmationToken": {
+      "type": "string",
+      "configurable": false,
+      "private": true,
+      "searchable": false
+    },
+    "confirmed": {
+      "type": "boolean",
+      "default": false,
+      "configurable": false
+    },
+    "blocked": {
+      "type": "boolean",
+      "default": false,
+      "configurable": false
+    },
+    "role": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.role",
+      "inversedBy": "users",
+      "configurable": false
+    },
+    "last_username_change": {
+      "type": "date",
+      "configurable": false,
+      "private": true
+    },
+    "firstname": {
+      "type": "string",
+      "required": true
+    },
+    "lastname": {
+      "type": "string",
+      "required": true
+    },
+    "rut": {
+      "type": "string",
+      "required": true
+    },
+    "region": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::region.region"
+    },
+    "commune": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::commune.commune"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "is_company": {
+      "type": "boolean",
+      "default": false
+    },
+    "address": {
+      "type": "string"
+    },
+    "address_number": {
+      "type": "integer"
+    },
+    "birthdate": {
+      "type": "date"
+    },
+    "avatar": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "cover": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "pro": {
+      "type": "boolean",
+      "default": false
+    },
+    "postal_code": {
+      "type": "string"
+    },
+    "business_name": {
+      "type": "string"
+    },
+    "business_type": {
+      "type": "string"
+    },
+    "business_rut": {
+      "type": "string"
+    },
+    "business_address": {
+      "type": "string"
+    },
+    "business_address_number": {
+      "type": "integer"
+    },
+    "business_postal_code": {
+      "type": "string"
+    },
+    "business_region": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::region.region"
+    },
+    "business_commune": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::commune.commune"
+    },
+    "flow_customer_data": {
+      "type": "json",
+      "private": true
+    },
+    "ad_reservations": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::ad-reservation.ad-reservation",
+      "mappedBy": "user"
+    },
+    "ad_featured_reservations": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::ad-featured-reservation.ad-featured-reservation",
+      "mappedBy": "user"
+    },
+    "orders": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::order.order",
+      "mappedBy": "user"
+    },
+    "ads": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::ad.ad",
+      "mappedBy": "user"
+    }
+  }
+}

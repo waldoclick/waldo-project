@@ -1,0 +1,32 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 100%;
+  padding: 100px 0;
+  opacity: 0.75;
+
+  @include screen-large {
+    padding: 50px 0;
+  }
+
+  &__loader {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 9px solid;
+    border-color: $light_peach;
+    border-right-color: $charcoal;
+    animation: spinner 1s infinite linear;
+  }
+}
+
+@keyframes spinner {
+  to {
+    transform: rotate(1turn);
+  }
+}

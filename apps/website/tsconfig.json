@@ -1,0 +1,11 @@
+{
+  // https://nuxt.com/docs/guide/concepts/typescript
+  "extends": "./.nuxt/tsconfig.json",
+  "compilerOptions": {
+    "types": ["@nuxt/types", "@nuxtjs/strapi"],
+    "typeRoots": ["./node_modules/@types", "./types"]
+  },
+  "strapi": {
+    "version": "5"
+  }
+}

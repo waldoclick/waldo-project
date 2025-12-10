@@ -1,0 +1,82 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.title {
+  font-style: normal;
+  font-weight: bold;
+  font-size: 32px;
+  display: flex;
+  color: $charcoal;
+  margin: 0;
+  line-height: 1.2;
+
+  @include screen-medium {
+    font-size: 28px;
+
+    br {
+      display: none;
+    }
+  }
+
+  @include screen-small {
+    font-size: 25px;
+
+    br {
+      display: none;
+    }
+  }
+
+  &--600 {
+    font-weight: 600;
+    font-size: 24px;
+  }
+
+  &--big {
+    font-size: 48px;
+
+    @include screen-large {
+      font-size: 32px;
+    }
+  }
+
+  &--center {
+    justify-content: center;
+  }
+
+  &--category {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    text-decoration: none !important;
+
+    &__icon {
+      display: flex;
+      margin-right: 20px;
+      align-items: center;
+      justify-content: center;
+      background: var(--category-icon-bg-color, $magic_mint);
+      border: 1px solid $charcoal;
+      box-sizing: border-box;
+      box-shadow: inset 4px 0px 0px $charcoal;
+      border-radius: 4px;
+      height: 48px;
+      width: 70px;
+
+      img {
+        width: 20px;
+        // height: 21px;
+      }
+    }
+  }
+}
+
+.subtitle {
+  font-style: normal;
+  font-weight: bold;
+  font-size: 24px;
+  display: flex;
+  color: $charcoal;
+  margin: 0;
+  line-height: 1.2;
+}

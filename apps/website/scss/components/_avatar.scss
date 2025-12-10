@@ -1,0 +1,44 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid $charcoal;
+  border-radius: 100%;
+  overflow: hidden;
+
+  font-style: normal;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: $charcoal;
+  background-color: $light_peach;
+  text-decoration: none;
+  line-height: 1;
+
+  &--mb {
+    margin-bottom: 16px;
+  }
+
+  &--small {
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
+  }
+
+  &--medium {
+    width: 50px;
+    height: 50px;
+    font-size: 16px;
+  }
+
+  &--large {
+    width: 100px;
+    height: 100px;
+    font-size: 40px;
+  }
+}

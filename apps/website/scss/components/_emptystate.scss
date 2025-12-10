@@ -1,0 +1,38 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.emptystate {
+  &--default {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 20px;
+
+    &__image {
+      img {
+        width: 50px;
+      }
+
+      @include screen-medium {
+        margin-bottom: 20px;
+      }
+    }
+
+    &__text {
+      font-style: normal;
+      font-weight: bold;
+      font-size: 24px;
+      line-height: 1.2;
+      letter-spacing: 0.25px;
+      text-align: center;
+      color: $charcoal;
+      // margin-bottom: 25px;
+
+      @include screen-medium {
+        font-size: 18px;
+        line-height: 1.3;
+      }
+    }
+  }
+}

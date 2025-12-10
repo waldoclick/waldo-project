@@ -1,0 +1,65 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.gallery {
+  &--default {
+    &__main {
+      margin-bottom: 10px;
+
+      img {
+        height: 376px;
+        max-height: 376px;
+      }
+    }
+
+    &__thumbnails {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-gap: 10px;
+      position: relative;
+
+      img {
+        height: 150px;
+        max-height: 150px;
+      }
+    }
+
+    &__image {
+      overflow: hidden;
+      border: 3px solid $gainsboro;
+      cursor: pointer;
+      border-radius: 4px;
+      position: relative;
+
+      img {
+        width: 100%;
+        object-fit: cover;
+        float: left;
+      }
+
+      &__label {
+        position: absolute;
+        background-color: white;
+        font-size: 13px;
+        padding: 7px 14px;
+        border-radius: 4px;
+        right: 15px;
+        bottom: 15px;
+        text-align: center;
+      }
+
+      &--count {
+        background-color: white;
+        border-radius: 8px;
+        color: black;
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        padding: 5px 10px;
+        font-size: 14px;
+        font-weight: 600;
+      }
+    }
+  }
+}

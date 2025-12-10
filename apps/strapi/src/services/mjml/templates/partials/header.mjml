@@ -1,0 +1,11 @@
+<mj-section>
+  <mj-column>
+    <mj-image
+      src="https://www.waldo.click/emails/logo.png"
+      alt="Waldo.click®"
+      width="150px"
+      align="center"
+      padding="10px 0"
+    />
+  </mj-column>
+</mj-section>

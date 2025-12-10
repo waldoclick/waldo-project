@@ -1,0 +1,224 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.announcement {
+  &--archive {
+    &__filter {
+      margin-bottom: 30px;
+    }
+
+    &__list {
+      display: grid;
+      width: 100%;
+      grid-template-columns: 100%;
+      gap: 20px;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      // margin-bottom: 50px;
+
+      @include screen-large {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+
+      @include screen-medium {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      @include screen-small {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    &__paginate {
+      margin-top: 40px;
+    }
+  }
+
+  &--showcase {
+    width: 100%;
+
+    &__filter {
+      margin-bottom: 30px;
+    }
+
+    &__list {
+      display: grid;
+      width: 100%;
+      grid-template-columns: 100%;
+      gap: 30px;
+      grid-template-columns: 1fr 1fr 1fr;
+
+      @include screen-medium {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      @include screen-small {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    &__paginate {
+      margin-top: 40px;
+    }
+  }
+
+  &--single {
+    // min-height: 400px;
+
+    &__container {
+      @extend .container;
+      display: flex;
+      gap: 30px;
+
+      @include screen-large {
+        flex-direction: column-reverse;
+      }
+    }
+
+    &__body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 30px;
+
+      &__description {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        &__text {
+          font-style: normal;
+          font-weight: normal;
+          font-size: 16px;
+          line-height: 26px;
+          letter-spacing: 0.25px;
+          color: $charcoal;
+        }
+      }
+
+      &__specs {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+
+        &__table {
+          display: grid;
+          width: 100%;
+          grid-template-columns: 1fr 1fr;
+          gap: 20px;
+
+          @include screen-small {
+            grid-template-columns: 1fr;
+          }
+
+          &__item {
+            .title {
+              font-style: normal;
+              font-weight: 600;
+              font-size: 14px;
+              line-height: 24px;
+              letter-spacing: 0.25px;
+              color: $charcoal;
+            }
+
+            .spec {
+              font-style: normal;
+              font-weight: 400;
+              font-size: 14px;
+              line-height: 24px;
+              letter-spacing: 0.25px;
+              color: $charcoal;
+            }
+          }
+        }
+      }
+    }
+
+    &__sidebar {
+      width: 350px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+
+      @include screen-large {
+        flex-direction: column;
+        width: auto;
+      }
+
+      &__info {
+        padding: 20px;
+        border-radius: 4px;
+        border: 1px solid $gainsboro;
+        transition: 0.3s;
+
+        &:hover {
+          box-shadow: 0 0 30px rgba($charcoal, 0.1);
+        }
+
+        &__top {
+          border-bottom: 1px solid $gainsboro;
+          padding-bottom: 20px;
+          margin-bottom: 20px;
+          display: flex;
+          flex-direction: column;
+
+          &__title {
+            font-weight: 600;
+            font-size: 14px;
+          }
+
+          &__price {
+            font-size: 32px;
+            font-weight: 600;
+            // margin-bottom: 10px;
+            display: flex;
+            line-height: 1;
+            gap: 5px;
+            display: flex;
+            flex-direction: column;
+
+            &__converted {
+              font-size: 14px;
+              font-weight: 600;
+              margin-bottom: 3px;
+              text-transform: uppercase;
+              color: $davys_grey;
+              display: flex;
+              align-items: center;
+              gap: 5px;
+
+              svg {
+                color: $dodger_blue;
+                cursor: pointer;
+              }
+            }
+          }
+
+          &__text {
+            font-size: 14px;
+            font-weight: 400;
+          }
+        }
+
+        &__seller {
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+        }
+      }
+
+      &__share {
+        padding: 20px;
+        border-radius: 4px;
+        border: 1px solid $gainsboro;
+        transition: 0.3s;
+
+        &:hover {
+          box-shadow: 0 0 30px rgba($charcoal, 0.1);
+        }
+      }
+    }
+  }
+}

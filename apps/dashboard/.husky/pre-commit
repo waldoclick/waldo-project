@@ -1,0 +1,11 @@
+# Ejecutar verificación de tipos TypeScript
+yarn tsc --noEmit
+
+# Ejecutar linting (con --fix para arreglar errores automáticamente)
+yarn lint --fix
+
+# Ejecutar formateo
+yarn format
+
+# Agregar archivos formateados al staging
+git add .

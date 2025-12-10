@@ -1,0 +1,38 @@
+{
+  "kind": "collectionType",
+  "collectionName": "ad_featured_reservations",
+  "info": {
+    "singularName": "ad-featured-reservation",
+    "pluralName": "ad-featured-reservations",
+    "displayName": "AdFeaturedReservation",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "price": {
+      "type": "biginteger",
+      "required": true
+    },
+    "total_days": {
+      "type": "integer"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "ad_featured_reservations"
+    },
+    "description": {
+      "type": "text"
+    },
+    "ad": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::ad.ad",
+      "inversedBy": "ad_featured_reservation"
+    }
+  }
+}

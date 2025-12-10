@@ -1,0 +1,29 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.contact {
+  &--default {
+    max-width: 750px;
+
+    &__container {
+      @extend .container;
+
+      display: flex;
+      flex-direction: column;
+      gap: 50px;
+    }
+
+    &__header {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    &__title {
+    }
+
+    &__form {
+    }
+  }
+}

@@ -1,0 +1,382 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.search {
+  &--default {
+    display: flex;
+    background-color: white;
+    border: 1px solid $charcoal;
+    border-radius: 4px;
+    position: relative;
+    max-width: 800px;
+    margin: auto;
+    transition: 0.3s;
+
+    &:hover {
+      box-shadow: 0 0 30px rgba($charcoal, 0.1);
+    }
+
+    &__field {
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+      margin: 5px;
+
+      &--category {
+        &::before {
+          content: "";
+          height: 44px;
+          width: 1px;
+          background: $gainsboro;
+        }
+      }
+
+      &__icon {
+        flex-grow: 1;
+        max-width: 55px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        svg {
+          width: 20px;
+          height: 20px;
+          color: $charcoal;
+        }
+      }
+
+      &__query,
+      &__category {
+        flex-grow: 1;
+
+        label {
+          display: block;
+          font-style: normal;
+          font-weight: 600;
+          font-size: 12px;
+          letter-spacing: 0.25px;
+          color: $charcoal;
+          margin: 0;
+
+          @include screen-large {
+            display: none;
+          }
+        }
+
+        input,
+        select {
+          width: 100%;
+          appearance: none;
+          border: none;
+          font-style: normal;
+          font-weight: normal;
+          font-size: 14px;
+          letter-spacing: 0.25px;
+          color: $charcoal;
+          padding: 4px;
+        }
+
+        select {
+          background-image: url("/images/chevron-down.svg");
+          background-position: center right 20px;
+          background-repeat: no-repeat;
+          cursor: pointer;
+        }
+      }
+
+      &__button {
+        width: 100%;
+        background: $charcoal;
+        border-radius: 4px;
+        height: 56px;
+
+        font-style: normal;
+        font-weight: 600;
+        font-size: 16px;
+        text-align: center;
+        letter-spacing: 0.5px;
+        color: $light_peach;
+        appearance: none;
+        border: none;
+        transition: 0.3s;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        img {
+          margin-left: 5px;
+        }
+
+        &:hover {
+          background-color: $light_peach;
+          color: $charcoal;
+        }
+      }
+    }
+  }
+
+  &--header {
+    display: flex;
+    background-color: white;
+    border: 1px solid $silver;
+    border-radius: 4px;
+    position: relative;
+    max-width: 800px;
+    margin: auto;
+    transition: 0.3s;
+
+    &:hover {
+      box-shadow: 0 0 15px rgba($charcoal, 0.1);
+    }
+
+    &__field {
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+
+      &--category {
+        &::before {
+          content: "";
+          height: 44px;
+          width: 1px;
+          background: $gainsboro;
+        }
+      }
+
+      &__icon {
+        flex-grow: 1;
+        max-width: 55px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        svg {
+          width: 18px;
+          height: 18px;
+          color: $charcoal;
+        }
+      }
+
+      &__query,
+      &__category {
+        flex-grow: 1;
+
+        label {
+          display: none;
+        }
+
+        input,
+        select {
+          width: 100%;
+          appearance: none;
+          border: none;
+          font-style: normal;
+          font-weight: normal;
+          font-size: 14px;
+          letter-spacing: 0.25px;
+          color: $charcoal;
+          padding: 6px;
+          // background-color: yellow;
+        }
+
+        select {
+          background-image: url("/images/chevron-down.svg");
+          background-position: center right 20px;
+          background-repeat: no-repeat;
+          cursor: pointer;
+        }
+      }
+
+      &__button {
+        width: 100%;
+        background: $charcoal;
+        border-radius: 0 4px 4px 0;
+        height: 45px;
+
+        font-style: normal;
+        font-weight: 600;
+        font-size: 16px;
+        text-align: center;
+        letter-spacing: 0.5px;
+        color: $light_peach;
+        appearance: none;
+        border: none;
+        transition: 0.3s;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        img {
+          margin-left: 5px;
+        }
+
+        &:hover {
+          background-color: $light_peach;
+          color: $charcoal;
+        }
+      }
+    }
+  }
+
+  &--small {
+    display: flex;
+    background-color: white;
+    border: 1px solid $charcoal;
+    border-radius: 4px;
+    position: relative;
+    max-width: 800px;
+    margin: auto;
+
+    &__field {
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+      margin: 5px;
+
+      &--category {
+        display: none;
+      }
+
+      &--button {
+        display: none;
+      }
+
+      &__icon {
+        flex-grow: 1;
+        max-width: 55px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      &__query,
+      &__category {
+        flex-grow: 1;
+
+        label {
+          display: none;
+        }
+
+        input {
+          width: 100%;
+          appearance: none;
+          border: none;
+          font-style: normal;
+          font-weight: normal;
+          font-size: 14px;
+          letter-spacing: 0.25px;
+          color: $charcoal;
+          padding: 7px;
+        }
+      }
+    }
+  }
+
+  &--mobile {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+
+    &__field {
+      // flex-grow: 1;
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      border: 2px solid $gainsboro;
+      padding: 10px 5px;
+
+      &--button {
+        border: unset;
+        padding: unset;
+      }
+
+      &__icon {
+        flex-grow: 1;
+        max-width: 55px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        svg {
+          width: 20px;
+          height: 20px;
+          color: $charcoal;
+        }
+      }
+
+      &__query,
+      &__category {
+        flex-grow: 1;
+
+        label {
+          display: none;
+        }
+
+        input,
+        select {
+          width: 100%;
+          appearance: none;
+          border: none;
+          font-style: normal;
+          font-weight: normal;
+          font-size: 14px;
+          letter-spacing: 0.25px;
+          color: $charcoal;
+          padding: 0;
+        }
+
+        select {
+          background-image: url("/images/chevron-down.svg");
+          background-position: center right 20px;
+          background-repeat: no-repeat;
+        }
+      }
+
+      &__button {
+        width: 100%;
+        background: $charcoal;
+        border-radius: 4px;
+        height: 56px;
+
+        font-style: normal;
+        font-weight: 600;
+        font-size: 16px;
+        text-align: center;
+        letter-spacing: 0.5px;
+        color: $light_peach;
+        appearance: none;
+        border: none;
+        transition: 0.3s;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        img {
+          margin-left: 5px;
+        }
+
+        &:hover {
+          background-color: $light_peach;
+          color: $charcoal;
+        }
+      }
+    }
+  }
+
+  &--icon {
+    button {
+      display: block;
+      min-width: 30px;
+      min-height: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: unset;
+      background: unset;
+    }
+  }
+}

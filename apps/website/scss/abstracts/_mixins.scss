@@ -1,0 +1,34 @@
+// Small devices (máximo 576px)
+@mixin screen-small {
+  @media (max-width: 530px) {
+    @content;
+  }
+}
+
+// Medium devices (máximo 768px)
+@mixin screen-medium {
+  @media (max-width: 768px) {
+    @content;
+  }
+}
+
+// Large devices (máximo 992px)
+@mixin screen-large {
+  @media (max-width: 1024px) {
+    @content;
+  }
+}
+
+// Extra large devices (máximo 1200px)
+@mixin screen-huge {
+  @media (max-width: 1400px) {
+    @content;
+  }
+}
+
+// Extra Extra large devices (máximo 1400px)
+@mixin screen-max {
+  @media (max-width: 1920px) {
+    @content;
+  }
+}

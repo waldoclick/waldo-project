@@ -1,0 +1,109 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.accordion {
+  &--item {
+    border-bottom: 1px solid $gainsboro;
+
+    &:last-child {
+      margin-bottom: 0;
+      border-bottom: none;
+    }
+
+    &__head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      background: none;
+      border: none;
+      width: 100%;
+      text-align: left;
+      padding: 20px;
+
+      h2,
+      h3 {
+        margin: 0;
+        font-style: normal;
+        font-weight: bold;
+        font-size: 18px;
+        line-height: 24px;
+        letter-spacing: 0.25px;
+        color: $charcoal;
+      }
+
+      /* Estilos de accesibilidad para el foco - más sutiles */
+      &:focus,
+      &:hover {
+        outline: none;
+        background-color: rgba($charcoal, 0.05);
+      }
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      /* Actualizado para soportar svg de Lucide en lugar de img */
+      .rotated {
+        transform: rotate(180deg);
+        transition: transform 0.3s ease;
+      }
+    }
+
+    &__body {
+      padding: 20px;
+      line-height: 1.7;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 15px;
+      letter-spacing: 0.25px;
+      color: $charcoal;
+      max-width: 800px;
+      overflow: hidden;
+      will-change: height, opacity;
+      transition:
+        height 0.3s ease,
+        opacity 0.2s ease,
+        margin-top 0.3s ease;
+
+      &.v-collapse-content-end {
+        padding-top: 20px;
+        display: block;
+      }
+
+      p {
+        margin-bottom: 15px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+}
+
+// Estilos para la animación del acordeón
+.accordion-enter-active,
+.accordion-leave-active {
+  transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+  opacity: 1;
+  overflow: hidden;
+}
+
+.accordion-enter-from,
+.accordion-leave-to {
+  max-height: 0px !important;
+  opacity: 0;
+  margin-top: 0;
+  overflow: hidden;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.accordion-enter-to,
+.accordion-leave-from {
+  max-height: 1000px;
+  opacity: 1;
+  overflow: hidden;
+}

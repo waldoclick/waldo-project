@@ -1,0 +1,21 @@
+{
+  "kind": "collectionType",
+  "collectionName": "remainings",
+  "info": {
+    "singularName": "remaining",
+    "pluralName": "remainings",
+    "displayName": "Remaining",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "ad": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::ad.ad"
+    }
+  }
+}

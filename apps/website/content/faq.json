@@ -1,0 +1,84 @@
+{
+  "data": [
+    {
+      "id": 6,
+      "title": "¿Qué es Waldo.click®?",
+      "description": "<div>Waldo.click® es un portal de anuncios enfocado en Activos Industriales (Equipos, Vehículos Industriales, Repuestos, Insumos, Nuevos y/o Usados). Buscamos conectar a través de nuestra comunidad problemas y soluciones, para la Industria de la: Agricultura, Alimentos, Construcción, Energía, Ganadería, Manufactura, Minería, Pesca, Salud, Silvicultura, Telecomunicaciones y Transporte.</div>",
+      "important": true,
+      "order": 1,
+      "enabled": 1
+    },
+    {
+      "id": 7,
+      "title": "¿Cómo funciona Waldo.click®?",
+      "description": "<div>Solo debes registrarte gratuitamente, podrás publicar y también ver los datos de contacto de los vendedores. La compra/venta se realiza de mutuo acuerdo entre las partes, de manera independiente y ajena a Waldo.click®.</div><div><br></div>",
+      "important": true,
+      "order": 2,
+      "enabled": 1
+    },
+    {
+      "id": 8,
+      "title": "¿Tiene costo Publicar Waldo.click®?",
+      "description": "<div>Waldo.click® te regala 3 publicaciones gratuitas de por vida, con una duración de 15 días renovables. Solo debes registrarte sin ningún costo. Si necesitas más publicaciones, puedes comprar paquetes que se ajusten a tus necesidades.</div>",
+      "important": false,
+      "order": 3,
+      "enabled": 1
+    },
+    {
+      "id": 9,
+      "title": "¿Tiene algún costo Vender Waldo.click®?",
+      "description": "<div>El proceso de Venta es completamente gratuito, independiente y ajeno a Waldo.click®, no se cobran comisiones ni servicios adicionales. El comprador y vendedor tendrán un contacto directo y fácil a través de e-mail o teléfono. Solo debes registrarte, gratuitamente, para acceder a ellos.</div>",
+      "important": false,
+      "order": 4,
+      "enabled": 1
+    },
+    {
+      "id": 10,
+      "title": "¿Tiene costo Buscar y Contactar en Waldo.click®?",
+      "description": "<div>El proceso de Búsqueda/Contacto es completamente gratuito, y el proceso de compra es independiente y ajeno a Waldo.click®, no se cobran comisiones ni servicios adicionales. El comprador y vendedor tendrán un contacto directo y fácil a través de e-mail y/o teléfono. Solo debes registrarte, gratuitamente, para acceder a ellos.</div><div><br></div>",
+      "important": false,
+      "order": 5,
+      "enabled": 0
+    },
+    {
+      "id": 11,
+      "title": "¿La información publicada en los anuncios es 100% correcta?",
+      "description": "<div>Sin bien, Waldo.click® revisa los anuncios antes de ser publicados, la información brindada es de responsabilidad directa de quien publica, por lo que hay que certificar cada uno de los puntos publicados directamente con el vendedor.&nbsp; Recomendamos hacer una revisión presencial con un profesional certificado.</div>",
+      "important": false,
+      "order": 6,
+      "enabled": 0
+    },
+    {
+      "id": 12,
+      "title": "¿Se involucra Waldo.click® en el proceso de compra/venta?",
+      "description": "<div>Waldo.click® es solo un servicio online que permite conectar personas que quieren comprar, con otras que quieren vender. Por lo que no participa en ninguna de las transacciones llevadas a cabo. Waldo.click® no cobra comisiones por venta.</div>",
+      "important": false,
+      "order": 7,
+      "enabled": 0
+    },
+    {
+      "id": 13,
+      "title": "¿Qué son los paquetes de anuncios de Waldo.click®?",
+      "description": "<div>Si los 3 anuncios gratuitos no son suficientes, puedes comprar paquetes de anuncios. Hay de diferentes cantidades y precios. Cada anuncio del paquete será publicado una única vez por 45 días (a diferencia de los gratuitos que solo duran 15 días). Los anuncios que no utilices quedan guardados en tu cuenta por un tiempo ilimitado y podrás utilizarlos cuando gustes. Los paquetes incluyen “Destacados”, que puedes asignar una vez al anuncio que tú elijas. Al “Destacar” un anuncio, este tendrá preferencias de visualización en el buscador de nuestro portal.</div>",
+      "important": false,
+      "order": 8,
+      "enabled": 0
+    },
+    {
+      "id": 14,
+      "title": "¿Qué medios de pago acepta Waldo.click®?",
+      "description": "<div>Waldo.click® utiliza WebPay como sistema de pago, el servicio le permitirá pagar con sus tarjetas de RED COMPRA (Debito) o TARJETAS DE CRÉDITO (Visa, Mastercard, Diners Club, American Express, Magna) para que usted tenga el control sobre las opciones que más le acomoden, de forma fácil, segura y confiable.</div>",
+      "important": false,
+      "order": 9,
+      "enabled": 0
+    },
+    {
+      "id": 15,
+      "title": "¿Tienes más preguntas?",
+      "description": "<div>Escríbenos y las resolveremos.</div>",
+      "important": false,
+      "order": 10,
+      "enabled": 0
+    }
+  ]
+}

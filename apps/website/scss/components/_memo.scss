@@ -1,0 +1,26 @@
+@use "../abstracts/variables" as *;
+
+.memo {
+  &--default,
+  &--pro {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background-color: rgba($light_peach, 0.2);
+    padding: 15px;
+    border-radius: 8px;
+    border: 2px dashed $light_peach;
+    font-size: 15px;
+    font-weight: 500;
+
+    &__icon {
+      color: $light_peach;
+      min-width: 35px;
+      min-height: 35px;
+    }
+
+    &__text {
+      line-height: 1.5;
+    }
+  }
+}

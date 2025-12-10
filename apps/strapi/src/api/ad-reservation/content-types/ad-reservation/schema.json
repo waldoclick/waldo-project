@@ -1,0 +1,38 @@
+{
+  "kind": "collectionType",
+  "collectionName": "ad_reservations",
+  "info": {
+    "singularName": "ad-reservation",
+    "pluralName": "ad-reservations",
+    "displayName": "AdReservation",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "price": {
+      "type": "biginteger",
+      "required": true
+    },
+    "total_days": {
+      "type": "integer"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "ad_reservations"
+    },
+    "description": {
+      "type": "text"
+    },
+    "ad": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::ad.ad",
+      "inversedBy": "ad_reservation"
+    }
+  }
+}

@@ -1,0 +1,509 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.account {
+  &--main {
+    font-style: normal;
+    line-height: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+
+    &__title {
+      font-weight: bold;
+      font-size: 32px;
+      line-height: 1.2;
+      letter-spacing: 0.25px;
+      color: $charcoal;
+      // margin-bottom: 20px;
+    }
+
+    &__profile {
+      font-weight: normal;
+      font-size: 16px;
+      letter-spacing: 0.25px;
+      color: $charcoal;
+      // margin-bottom: 35px;
+      display: flex;
+      flex-direction: row;
+
+      span {
+        display: block;
+        margin-right: 15px;
+
+        a {
+          color: $charcoal;
+          text-decoration: underline;
+        }
+      }
+
+      &__edit {
+        font-weight: 600;
+        font-size: 14px;
+        letter-spacing: 0.25px;
+        text-decoration-line: underline;
+        color: $dodger_blue;
+      }
+    }
+
+    &__pro {
+      margin-bottom: 20px;
+    }
+
+    &__announcements {
+      display: flex;
+      padding: 25px;
+      border: 1px solid $gainsboro;
+      border-radius: 4px;
+      align-items: center;
+      transition: 0.3s;
+      gap: 20px;
+
+      @include screen-medium {
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 30px;
+      }
+
+      &:hover {
+        box-shadow: 0 0 30px rgba($charcoal, 0.1);
+      }
+
+      &__own {
+        font-weight: normal;
+        font-size: 18px;
+        letter-spacing: 0.25px;
+        color: $charcoal;
+        display: flex;
+        flex-direction: column;
+        max-width: 300px;
+
+        @include screen-medium {
+          margin-bottom: 20px;
+        }
+
+        span {
+          letter-spacing: 0.25px;
+          color: $charcoal;
+          line-height: 1.3;
+        }
+      }
+
+      &__pack {
+        display: flex;
+        align-items: flex-start;
+        line-height: 1.5;
+
+        @include screen-medium {
+          margin: 0;
+          padding: 0;
+          margin-bottom: 20px;
+          border: none;
+        }
+
+        &__info {
+          display: flex;
+          flex-direction: column;
+          font-weight: normal;
+          font-size: 14px;
+          letter-spacing: 0.25px;
+          color: $charcoal;
+
+          span {
+            font-weight: bold;
+            margin-bottom: 10px;
+          }
+        }
+
+        img {
+          margin-right: 10px;
+        }
+      }
+
+      .btn--buy {
+        margin-left: auto;
+
+        @include screen-medium {
+          margin-left: 0;
+        }
+      }
+    }
+
+    &__shortcuts {
+      &__title {
+        font-weight: bold;
+        font-size: 20px;
+        line-height: 1;
+        letter-spacing: 0.25px;
+        color: $charcoal;
+        margin-bottom: 25px;
+        display: block;
+
+        @include screen-large {
+          display: none;
+        }
+      }
+
+      &__links {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+
+        @include screen-medium {
+          grid-template-columns: 1fr;
+        }
+      }
+    }
+  }
+
+  &--announcements {
+    font-style: normal;
+    line-height: 1;
+    min-height: 500px;
+    // background-color: red;
+
+    &__title {
+      font-weight: bold;
+      line-height: 1;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: flex-end;
+
+      a {
+        font-weight: 600;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+        text-decoration-line: underline;
+        color: $dodger_blue;
+        margin-left: 20px;
+      }
+    }
+
+    &__subtitle {
+      font-weight: normal;
+      font-size: 16px;
+      letter-spacing: 0.25px;
+      color: $charcoal;
+      margin-bottom: 45px;
+      display: block;
+      line-height: 1.5;
+      max-width: 770px;
+
+      @include screen-large {
+        display: none;
+      }
+    }
+
+    &__list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-bottom: 45px;
+
+      &__menu {
+        display: block;
+        white-space: unset;
+        flex-wrap: unset;
+        overflow-x: unset;
+        width: 100%;
+
+        @include screen-large {
+          display: flex;
+          white-space: nowrap;
+          flex-wrap: nowrap;
+          overflow-x: scroll;
+          width: calc(100% + 15px);
+        }
+
+        button {
+          padding: 15px;
+          display: inline-flex;
+          gap: 8px;
+          align-items: center;
+          border: none;
+          margin: 0;
+          background: transparent;
+          font-weight: bold;
+          font-size: 15px;
+          line-height: 24px;
+          letter-spacing: 0.25px;
+          color: $davys_grey;
+
+          span {
+            font-weight: normal;
+          }
+
+          svg {
+            color: $dodger_blue;
+          }
+
+          &.active {
+            color: black;
+            text-decoration: underline;
+          }
+        }
+      }
+
+      &__items {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+
+        &__wrapper {
+          display: grid;
+          grid-template-columns: 1fr;
+          grid-gap: 20px;
+        }
+
+        &__emptystate {
+          padding: 20px 0;
+        }
+      }
+
+      &__paginate {
+        // margin-bot: 20px;
+      }
+    }
+
+    &__firstad {
+      margin-bottom: 20px;
+    }
+  }
+
+  &--orders {
+    font-style: normal;
+    line-height: 1;
+    min-height: 500px;
+
+    &__title {
+      font-weight: bold;
+      line-height: 1;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: flex-end;
+    }
+
+    &__subtitle {
+      font-weight: normal;
+      font-size: 16px;
+      letter-spacing: 0.25px;
+      color: $charcoal;
+      margin-bottom: 45px;
+      display: block;
+      line-height: 1.5;
+      max-width: 770px;
+
+      @include screen-large {
+        display: none;
+      }
+    }
+
+    &__list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-bottom: 45px;
+
+      &__menu {
+        display: block;
+        white-space: unset;
+        flex-wrap: unset;
+        overflow-x: unset;
+        width: 100%;
+
+        @include screen-large {
+          display: flex;
+          white-space: nowrap;
+          flex-wrap: nowrap;
+          overflow-x: scroll;
+          width: calc(100% + 15px);
+        }
+
+        button {
+          padding: 15px;
+          display: inline-flex;
+          gap: 8px;
+          align-items: center;
+          border: none;
+          margin: 0;
+          background: transparent;
+          font-weight: bold;
+          font-size: 15px;
+          line-height: 24px;
+          letter-spacing: 0.25px;
+          color: $davys_grey;
+
+          span {
+            font-weight: normal;
+          }
+
+          svg {
+            color: $dodger_blue;
+          }
+
+          &.active {
+            color: black;
+            text-decoration: underline;
+          }
+        }
+      }
+
+      &__items {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+
+        &__wrapper {
+          display: grid;
+          grid-template-columns: 1fr;
+          grid-gap: 20px;
+        }
+
+        &__emptystate {
+          padding: 20px 0;
+        }
+      }
+
+      &__paginate {
+        // margin-bot: 20px;
+      }
+    }
+  }
+
+  &--packs {
+    font-style: normal;
+    line-height: 1;
+    padding-top: 60px;
+    padding: 60px 0px;
+
+    @include screen-medium {
+      padding: 0;
+      padding-top: 20px;
+    }
+
+    &__title {
+      font-weight: bold;
+      font-size: 32px;
+      line-height: 1.2;
+      letter-spacing: 0.25px;
+      color: $charcoal;
+      margin-bottom: 20px;
+    }
+
+    &__subtitle {
+      font-weight: normal;
+      font-size: 16px;
+      letter-spacing: 0.25px;
+      color: $charcoal;
+      margin-bottom: 35px;
+
+      @include screen-large {
+        margin-bottom: 55px;
+      }
+    }
+
+    &__list {
+      // border-bottom: 1px solid $gainsboro;
+      margin-bottom: 30px;
+
+      .packs {
+        padding-top: 0px;
+      }
+    }
+  }
+
+  &--profile {
+    font-style: normal;
+    letter-spacing: 0.25px;
+    color: $charcoal;
+    width: 100%;
+
+    &__box {
+      margin-top: 30px;
+      padding-top: 30px;
+      border-top: 1px solid $gainsboro;
+    }
+
+    &__heading {
+      font-weight: bold;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      margin-bottom: 30px;
+      gap: 30px;
+
+      &:first-child {
+        border-top: 0px solid $gainsboro;
+        padding-top: 0px;
+      }
+
+      a {
+        font-weight: 600;
+        font-size: 12px;
+        color: $dodger_blue;
+        display: flex;
+        align-self: center;
+        text-decoration: underline;
+        gap: 5px;
+
+        img {
+          margin-right: 5px;
+        }
+      }
+    }
+
+    &__grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      max-width: 770px;
+      grid-gap: 30px;
+
+      @include screen-small {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+
+  &--default {
+    display: flex;
+
+    &__menu {
+      background: $ghost_white;
+      width: 25%;
+      padding: 50px;
+      display: flex;
+      justify-content: center;
+    }
+
+    &__profile {
+      width: 75%;
+    }
+  }
+
+  &--edit {
+    &__header {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid $gainsboro;
+      display: flex;
+      flex-direction: column;
+      max-width: 700px;
+      gap: 10px;
+    }
+
+    &__title {
+      font-weight: bold;
+    }
+
+    &__form {
+      max-width: 700px;
+    }
+  }
+
+  &--password {
+    &__form {
+      max-width: 500px;
+    }
+  }
+}

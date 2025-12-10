@@ -1,0 +1,48 @@
+/**
+ * region router
+ */
+
+export default {
+  routes: [
+    {
+      method: "GET",
+      path: "/regions",
+      handler: "region.find",
+      config: {
+        policies: [],
+      },
+    },
+    {
+      method: "GET",
+      path: "/regions/:id",
+      handler: "region.findOne",
+      config: {
+        policies: [],
+      },
+    },
+    {
+      method: "POST",
+      path: "/regions",
+      handler: "region.create",
+      config: {
+        policies: [],
+      },
+    },
+    {
+      method: "PUT",
+      path: "/regions/:id",
+      handler: "region.update",
+      config: {
+        policies: [],
+      },
+    },
+    {
+      method: "DELETE",
+      path: "/regions/:id",
+      handler: "region.delete",
+      config: {
+        policies: [],
+      },
+    },
+  ],
+};

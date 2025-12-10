@@ -1,0 +1,251 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+input,
+textarea,
+select {
+  padding: 10px;
+  font-size: 15px;
+  outline: none !important;
+}
+
+textarea {
+  resize: none;
+}
+
+input:-webkit-autofill {
+  box-shadow: 0 0 0px 1000px white inset;
+  background-color: transparent;
+}
+
+.form {
+  &__title {
+    font-style: normal;
+    font-weight: bold;
+    font-size: 32px;
+    text-align: center;
+    letter-spacing: 0.25px;
+    color: $charcoal;
+    margin-bottom: 15px;
+    line-height: 1.1;
+  }
+
+  &__subtitle {
+    font-style: normal;
+    font-weight: bold;
+    font-size: 20px;
+    color: $charcoal;
+    margin-bottom: 30px;
+  }
+
+  &__description {
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    text-align: center;
+    color: rgba($charcoal, 0.7);
+    max-width: 600px;
+    // background-color: red;
+    margin: 0 auto;
+    margin-bottom: 50px;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 0 30px;
+
+    @include screen-small {
+      grid-template-columns: 1fr;
+    }
+
+    &--3 {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    &--4 {
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+  }
+
+  &__send {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    button {
+      // width: max-content;
+      padding: 10px 30px;
+    }
+  }
+
+  &-group {
+    font-style: normal;
+    font-weight: 600;
+    font-size: 12px;
+    color: $charcoal;
+    position: relative;
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+
+    &.contact-textarea {
+      margin-bottom: 0px;
+    }
+
+    &--checkboxes {
+      flex-direction: row;
+    }
+
+    span {
+      margin-top: 5px;
+      color: red;
+      display: block;
+    }
+
+    &--password {
+      position: relative;
+
+      &__show-password {
+        border: unset;
+        background: unset;
+        position: absolute;
+        right: 10px;
+        top: 15px;
+
+        color: $dodger_blue;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.25px;
+      }
+    }
+  }
+
+  &-label {
+    font-style: normal;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 1;
+    letter-spacing: 0.25px;
+    color: $charcoal;
+    background-color: white;
+    position: absolute;
+    left: 10px;
+    top: -6px;
+    display: block;
+    padding: 0 5px;
+    z-index: 1;
+  }
+
+  &-control {
+    border: 2px solid $platinum;
+    box-sizing: border-box;
+    border-radius: 4px;
+    background: white;
+    width: 100%;
+    transition: 0.3s;
+
+    &::placeholder {
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 1;
+      letter-spacing: 0.0025em;
+      color: $platinum;
+    }
+
+    &:active,
+    &:focus,
+    &:hover {
+      box-shadow: none;
+      border: 2px solid $charcoal;
+    }
+
+    &:disabled {
+      background-color: gainsboro;
+      color: $charcoal;
+
+      &:active,
+      &:focus,
+      &:hover {
+        box-shadow: none;
+        border: 1px solid $platinum;
+      }
+    }
+  }
+
+  &-msg {
+    display: flex;
+    margin-bottom: 30px;
+  }
+
+  textarea.form-control {
+    padding: 10px;
+    resize: none;
+    min-height: 120px;
+  }
+
+  // Textarea auto-height utility (CSP-safe)
+  .textarea-auto-height {
+    height: auto !important;
+    min-height: 80px;
+    resize: none;
+    overflow: hidden;
+  }
+
+  select.form-control {
+    padding: 10px;
+    appearance: none;
+    height: 45px;
+    background-image: url("/images/chevron-down.svg");
+    background-position: center right 30px;
+    background-repeat: no-repeat;
+  }
+
+  input.form-control {
+    height: 48px;
+  }
+
+  .form-control:disabled {
+    cursor: not-allowed;
+  }
+
+  &-check {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+
+    // background-color: red;
+    &-input {
+      margin-top: 0px;
+      height: 20px;
+      width: 20px;
+      border: 2px solid $charcoal;
+      border-radius: 100%;
+      -webkit-appearance: none;
+      transition: 0.3s;
+      cursor: pointer;
+
+      &:checked {
+        background: $light_peach;
+        // border: 4.5px solid $charcoal;
+      }
+    }
+
+    &-label {
+      font-style: normal;
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 24px;
+      letter-spacing: 0.25px;
+      color: $charcoal;
+      padding-left: 10px;
+    }
+  }
+}
+
+// Estilos para textarea con altura dinámica (compatible con CSP)
+.form-control[style*="--textarea-height"] {
+  height: var(--textarea-height);
+}

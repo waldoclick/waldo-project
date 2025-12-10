@@ -1,0 +1,74 @@
+{
+  "name": "waldo-strapi",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A Strapi application",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "author": {
+    "name": "A Strapi developer"
+  },
+  "scripts": {
+    "build": "strapi build",
+    "deploy": "strapi deploy",
+    "dev": "strapi develop",
+    "format": "npx prettier --write . --ignore-path .gitignore",
+    "production": "NODE_OPTIONS='--max-old-space-size=1536' strapi build && strapi start",
+    "start": "strapi start",
+    "strapi": "strapi",
+    "test": "jest",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "@logtail/node": "^0.5.4",
+    "@logtail/winston": "^0.5.4",
+    "@sentry/node": "^9.26.0",
+    "@sentry/profiling-node": "^9.26.0",
+    "@strapi/cloud-cli": "^5.21.0",
+    "@strapi/plugin-sentry": "^5.15.0",
+    "@strapi/plugin-users-permissions": "5.23.4",
+    "@strapi/provider-email-mailgun": "5.23.4",
+    "@strapi/provider-upload-cloudinary": "^5.20.0",
+    "@strapi/sdk-plugin": "^5.2.7",
+    "@strapi/strapi": "5.23.4",
+    "@types/mjml": "^4.7.4",
+    "@types/nunjucks": "^3.2.6",
+    "@types/soap": "^0.21.0",
+    "better-sqlite3": "^12.2.0",
+    "date-fns": "^4.1.0",
+    "googleapis": "^148.0.0",
+    "ioredis": "^5.6.0",
+    "mjml": "^4.16.1",
+    "mysql": "2.18.1",
+    "mysql2": "^3.12.0",
+    "nunjucks": "^3.2.4",
+    "pg": "^8.16.3",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-router-dom": "^6.0.0",
+    "sharp": "0.33.5",
+    "slugify": "^1.6.6",
+    "soap": "^1.1.10",
+    "styled-components": "^6.0.0",
+    "transbank-sdk": "^5.0.0",
+    "winston": "^3.17.0",
+    "winston-daily-rotate-file": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "@types/node-cache": "^4.2.5",
+    "@types/pg": "^8.15.5",
+    "husky": "^9.0.11",
+    "jest": "^29.7.0",
+    "lint-staged": "^15.5.1",
+    "ts-jest": "^29.2.5"
+  },
+  "strapi": {
+    "uuid": "7337a685-a87a-481e-8811-21c8cde77d9b"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,md,yaml,yml}": "yarn format"
+  }
+}

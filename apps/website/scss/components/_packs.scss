@@ -1,0 +1,38 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.packs {
+  &--default {
+    &__container {
+      @extend .container;
+      max-width: 1000px;
+
+      @include screen-large {
+        // padding: 0;
+      }
+    }
+
+    &__title {
+      justify-content: center;
+      margin: 0 auto;
+      text-align: center;
+      margin-bottom: 40px;
+      max-width: 770px;
+    }
+
+    &__list {
+      display: flex;
+      flex-direction: column;
+
+      @include screen-large {
+        gap: 20px;
+        flex-direction: row;
+      }
+
+      @include screen-small {
+        flex-direction: column;
+      }
+    }
+  }
+}

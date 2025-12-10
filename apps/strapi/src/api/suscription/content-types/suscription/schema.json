@@ -1,0 +1,43 @@
+{
+  "kind": "collectionType",
+  "collectionName": "suscriptions",
+  "info": {
+    "singularName": "suscription",
+    "pluralName": "suscriptions",
+    "displayName": "Suscription",
+    "description": "Generic subscription management"
+  },
+  "options": {
+    "draftAndPublish": false,
+    "timestamps": true
+  },
+  "attributes": {
+    "status": {
+      "type": "enumeration",
+      "enum": ["active", "cancelled", "failed", "pending"],
+      "default": "pending",
+      "required": true
+    },
+    "amount": {
+      "type": "decimal",
+      "required": true,
+      "min": 0
+    },
+    "nextPaymentDate": {
+      "type": "datetime",
+      "required": true
+    },
+    "lastPaymentDate": {
+      "type": "datetime"
+    },
+    "providerData": {
+      "type": "json",
+      "required": true
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}

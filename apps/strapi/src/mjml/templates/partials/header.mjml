@@ -1,0 +1,7 @@
+<mj-section background-color="#f5f5f5">
+  <mj-column>
+    <mj-text align="center" font-size="20px" font-weight="bold">
+      Waldo.click
+    </mj-text>
+  </mj-column>
+</mj-section>
