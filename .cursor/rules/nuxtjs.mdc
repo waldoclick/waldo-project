@@ -1,0 +1,44 @@
+---
+description: Nuxt.js 4 rules and conventions
+globs: ["apps/website/**"]
+---
+
+# Nuxt.js 4
+
+- The project uses Nuxt.js 4.1.3 with compatibility version 4 enabled in `nuxt.config.ts`
+- Always use TypeScript for all Nuxt.js code
+- Use the Composition API with `<script setup>` syntax for all components
+- Use composables for reusable logic (place them in the `composables/` directory)
+- State management should use Pinia stores (located in `stores/` directory)
+- Use `useRuntimeConfig()` to access environment variables and configuration
+- Use `useHead()` for managing page metadata and SEO
+- Use `defineNuxtConfig()` for configuration in `nuxt.config.ts`
+- Pages should be placed in the `pages/` directory following Nuxt's file-based routing
+- Components should be placed in the `components/` directory and auto-imported
+- Use `@nuxtjs/strapi` module for Strapi integration
+- Use `@nuxt/image` for optimized image handling
+- Use `@nuxtjs/seo` for SEO configuration
+- Use `nuxt-security` for security headers and CSP configuration
+- Use `@sentry/nuxt` for error tracking and monitoring
+- Use `@pinia/nuxt` and `@pinia-plugin-persistedstate/nuxt` for state management
+- Server-side code should be placed in the `server/` directory
+- Use Nitro for server configuration and API routes
+- Always use `useRuntimeConfig().public` for client-accessible configuration
+- Use `useRuntimeConfig()` without `.public` for server-only configuration
+- Follow Nuxt 4 conventions: use auto-imports, composables, and the new module system
+- Use `definePageMeta()` for page-specific configuration
+- Use `navigateTo()` for programmatic navigation
+- Use `useFetch()` or `$fetch` for API calls
+- Use `useAsyncData()` for data fetching with caching
+- Always use TypeScript types from `@nuxt/types` when available
+- Use Vite 6 for build tooling (configured in Nuxt 4)
+- Use `compatibilityDate` in nuxt.config.ts to control feature availability
+- Use `future.compatibilityVersion: 4` to enable Nuxt 4 features
+- Follow the project's security configuration with CSP and nonce support
+- Use `@nuxt/eslint` for linting (configured in the project)
+- Use Vitest for testing (configured with `@nuxt/test-utils`)
+- Use Sass for styling (configured with sass-loader)
+- Always use English for code, comments, and documentation
+- Use camelCase for variables and functions
+- Use PascalCase for components and composables
+- Use kebab-case for file names in pages and components

@@ -1,0 +1,15 @@
+---
+alwaysApply: true
+---
+
+# Codacy
+
+- Codacy is configured at the root level (`.codacy.yaml`) and analyzes all apps (dashboard, website, strapi) from a single configuration
+- The Codacy configuration supports JavaScript, TypeScript, and Vue across all apps
+- Enabled engines: eslint, stylelint, duplication detection, and complexity analysis
+- To run Codacy analysis, use: `yarn codacy` from the root directory
+- Codacy runs through Turbo, which executes the codacy task across all apps
+- Build outputs, dependencies, and test files are automatically excluded from analysis
+- Do not create individual `.codacy.yaml` files in apps - use only the root configuration
+- When making changes that affect code quality, ensure they pass Codacy's analysis before committing
+- Codacy analyzes code duplication, complexity, and follows ESLint and Stylelint rules configured in the project

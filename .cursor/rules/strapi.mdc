@@ -1,7 +1,6 @@
 ---
-description: 
-globs: 
-alwaysApply: true
+description: Strapi v5 rules and conventions
+globs: ["apps/strapi/**"]
 ---
 # Strapi
 
