@@ -1,0 +1,39 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["**/.env.*local"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build", "waldo-strapi#build"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**", ".nuxt/**", ".output/**", "build/**"]
+    },
+
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+
+    "waldo-strapi#dev": {
+      "cache": false,
+      "persistent": true
+    },
+
+    "waldo-website#dev": {
+      "cache": false,
+      "persistent": true
+    },
+
+    "waldo-dashboard#dev": {
+      "cache": false,
+      "persistent": true
+    },
+
+    "start": {
+      "cache": false,
+      "persistent": true
+    },
+
+    "lint": { "outputs": [] },
+    "format": { "outputs": [] },
+    "test": { "outputs": [] }
+  }
+}

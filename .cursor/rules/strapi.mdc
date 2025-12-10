@@ -1,0 +1,39 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Strapi
+
+- Always request explicit approval before making any code changes
+- Provide a clear explanation of proposed changes
+- Wait for user confirmation before proceeding with implementation
+- Use exclusively Strapi v5 examples and patterns, Documentation reference: https://docs.strapi.io/dev-docs/
+- All code, comments, documentation, and commits MUST be written in English
+- Always use Yarn for package management, never npm
+- Follow SOLID principles when designing and implementing services
+- Use meaningful and descriptive names that reveal intent
+- Avoid abbreviations unless they are widely known (e.g., HTTP, URL)
+- Variables must use camelCase and be descriptive nouns
+- Functions must use camelCase and follow verb + noun pattern
+- Classes/Services must use PascalCase and be nouns
+- Interfaces must use PascalCase with 'I' prefix
+- Constants must use UPPER_SNAKE_CASE
+- Each service must follow the Single Responsibility Principle (SRP)
+- Dependencies must be injected instead of instantiated inside services
+- Open/Closed Principle (OCP) must be followed: extend functionality without modifying existing code
+- Liskov Substitution Principle (LSP) must be followed: subclasses must be interchangeable with their base classes
+- Interface Segregation Principle (ISP) must be followed: avoid large, monolithic interfaces
+- Dependency Inversion Principle (DIP) must be followed: depend on abstractions, not concretions
+- Service folder structure must follow: /config, /services, /types, /factories, /tests
+- Each file in these folders must be prefixed with the service name (e.g., indicator.config.ts, indicator.service.ts, indicator.types.ts, indicator.factory.ts, indicator.test.ts)
+- Each service directory must contain an index.ts file to centralize imports
+- The index.ts file must re-export all files within its service module (e.g., export * from './indicator.service')
+- Other modules must import only from the index.ts file instead of individual files (e.g., import { IndicatorService } from '@/services/indicator')
+- Each service file must be prefixed with the service name (e.g., weather.service.ts)
+- Each interface file must be prefixed with the service name (e.g., weather.interfaces.ts)
+- Each factory file must be prefixed with the service name (e.g., weather.factory.ts)
+- Each test file must be prefixed with the service name (e.g., weather.test.ts)
+- Use Jest for testing and follow AAA pattern (Arrange, Act, Assert)
+- Mock external dependencies in tests
+- Test names should be descriptive and in English
