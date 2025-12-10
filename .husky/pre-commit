@@ -1,0 +1,36 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Detectar qué apps tienen cambios
+CHANGED_FILES=$(git diff --cached --name-only --diff-filter=ACM)
+
+# Dashboard: tsc, lint --fix, format
+if echo "$CHANGED_FILES" | grep -q "^apps/dashboard/"; then
+  echo "🔍 Ejecutando checks de dashboard..."
+  cd apps/dashboard
+  yarn tsc --noEmit
+  yarn lint --fix
+  yarn format
+  git add .
+  cd ../..
+fi
+
+# Website: format, lint-staged
+if echo "$CHANGED_FILES" | grep -q "^apps/website/"; then
+  echo "🔍 Ejecutando checks de website..."
+  cd apps/website
+  yarn format
+  yarn lint-staged
+  if ! git diff --cached --quiet; then
+    git add .
+  fi
+  cd ../..
+fi
+
+# Strapi: lint-staged
+if echo "$CHANGED_FILES" | grep -q "^apps/strapi/"; then
+  echo "🔍 Ejecutando checks de strapi..."
+  cd apps/strapi
+  yarn lint-staged
+  cd ../..
+fi
