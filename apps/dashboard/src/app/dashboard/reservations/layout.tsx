@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Reservas - Waldo.click®',
+  title: 'Reservas',
   description: 'Gestiona las reservas de anuncios',
 };
 

@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Dashboard - Waldo.click®',
+  title: 'Dashboard',
   description: 'Panel de control principal de Waldo.click®',
 };
 

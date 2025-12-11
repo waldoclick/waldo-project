@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Condiciones - Waldo.click®',
+  title: 'Condiciones',
   description: 'Gestiona las condiciones de los anuncios',
 };
 

@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Órdenes - Waldo.click®',
+  title: 'Órdenes',
   description: 'Gestiona las ventas y órdenes del sistema',
 };
 

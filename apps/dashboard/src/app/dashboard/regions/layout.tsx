@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Regiones - Waldo.click®',
+  title: 'Regiones',
   description: 'Gestiona las regiones del sistema',
 };
 

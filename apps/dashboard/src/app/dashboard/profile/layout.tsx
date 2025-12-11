@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Perfil - Waldo.click®',
+  title: 'Perfil',
   description: 'Gestiona tu perfil de usuario',
 };
 

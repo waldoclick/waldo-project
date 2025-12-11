@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Destacados - Waldo.click®',
+  title: 'Destacados',
   description: 'Gestiona los anuncios destacados',
 };
 

@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Anuncios - Waldo.click®',
+  title: 'Anuncios',
   description: 'Gestiona todos los anuncios del sistema',
 };
 

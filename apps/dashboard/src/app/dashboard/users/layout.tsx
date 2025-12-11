@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Usuarios - Waldo.click®',
+  title: 'Usuarios',
   description: 'Gestiona todos los usuarios del sistema',
 };
 

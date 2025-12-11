@@ -9,7 +9,10 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: 'Dashboard - Waldo.click®',
+  title: {
+    template: '%s - Waldo.click® Admin',
+    default: 'Dashboard - Waldo.click® Admin',
+  },
   description: 'Panel de administración de Waldo.click®',
   authors: [{ name: 'Waldo.click®' }],
   publisher: 'Waldo.click®',

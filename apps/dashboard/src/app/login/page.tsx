@@ -4,7 +4,7 @@ import FormLogin from '@/components/form-login';
 import { MessageCircle } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Inicio de sesión | Dashboard Waldo.click®',
+  title: 'Inicio de sesión',
   description: 'Accede a tu cuenta del dashboard de Waldo.click®',
 };
 
