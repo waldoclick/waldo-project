@@ -27,6 +27,7 @@ import { getAd, approveAd, rejectAd, getAdOrders } from '@/lib/strapi';
 import { StrapiAd, StrapiOrder } from '@/lib/strapi';
 import { RejectDialog } from '@/components/ui/reject-dialog';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
+import { GalleryDefault } from '@/components/ui/gallery-default';
 
 // Extend the user type to include additional fields
 interface ExtendedUser {
@@ -561,6 +562,11 @@ export default function AdDetailPage() {
               )}
             </CardContent>
           </Card>
+
+          {/* Galería de Imágenes */}
+          {ad.gallery && ad.gallery.length > 0 && (
+            <GalleryDefault images={ad.gallery} />
+          )}
 
           {/* Información de rechazo */}
           {ad.rejected && (
