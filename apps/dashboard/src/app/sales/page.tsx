@@ -24,6 +24,14 @@ import {
 } from 'lucide-react';
 import { getOrders, StrapiOrder } from '@/lib/strapi';
 import { useRouter } from 'next/navigation';
+import { DataTablePagination } from '@/components/ui/data-table-pagination';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { ChevronDown } from 'lucide-react';
 
 export default function SalesPage() {
   const [orders, setOrders] = useState<StrapiOrder[]>([]);
@@ -31,6 +39,8 @@ export default function SalesPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+  const [sortBy, setSortBy] = useState('createdAt:desc');
   const router = useRouter();
 
   const fetchOrders = useCallback(async () => {
@@ -38,8 +48,8 @@ export default function SalesPage() {
       setLoading(true);
       const response = await getOrders({
         page: currentPage,
-        pageSize: 25,
-        sort: 'createdAt:desc',
+        pageSize: pageSize,
+        sort: sortBy,
         search: searchTerm || undefined,
       });
 
@@ -51,16 +61,16 @@ export default function SalesPage() {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, searchTerm]);
+  }, [currentPage, searchTerm, pageSize, sortBy]);
 
   useEffect(() => {
     fetchOrders();
   }, [fetchOrders]);
 
-  // Reset to page 1 when search term changes
+  // Reset to page 1 when search term, page size, or sort changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm]);
+  }, [searchTerm, pageSize, sortBy]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('es-CL');
@@ -98,23 +108,73 @@ export default function SalesPage() {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Órdenes</h1>
-            <p className="text-gray-600 mt-2">
-              Gestiona las órdenes de compra y ventas
-            </p>
           </div>
         </div>
 
         <Card className="shadow-none">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>Lista de Órdenes</CardTitle>
+              <Input
+                placeholder="Buscar órdenes..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-64"
+              />
               <div className="flex items-center space-x-2">
-                <Input
-                  placeholder="Buscar órdenes..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-64"
-                />
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="gap-2">
+                      {sortBy === 'createdAt:desc' && 'Más recientes'}
+                      {sortBy === 'createdAt:asc' && 'Más antiguos'}
+                      {sortBy === 'ad.name:asc' && 'Título A-Z'}
+                      {sortBy === 'ad.name:desc' && 'Título Z-A'}
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem
+                      onClick={() => setSortBy('createdAt:desc')}
+                    >
+                      Más recientes
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setSortBy('createdAt:asc')}
+                    >
+                      Más antiguos
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setSortBy('ad.name:asc')}>
+                      Título A-Z
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setSortBy('ad.name:desc')}>
+                      Título Z-A
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="gap-2">
+                      {pageSize} por página
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => setPageSize(5)}>
+                      5
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setPageSize(10)}>
+                      10
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setPageSize(25)}>
+                      25
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setPageSize(50)}>
+                      50
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setPageSize(100)}>
+                      100
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </div>
           </CardHeader>
@@ -231,33 +291,11 @@ export default function SalesPage() {
         </Card>
 
         {/* Paginación */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between">
-            <div className="text-sm text-gray-700">
-              Página {currentPage} de {totalPages}
-            </div>
-            <div className="flex space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
-              >
-                Anterior
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() =>
-                  setCurrentPage(Math.min(totalPages, currentPage + 1))
-                }
-                disabled={currentPage === totalPages}
-              >
-                Siguiente
-              </Button>
-            </div>
-          </div>
-        )}
+        <DataTablePagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
       </div>
     </div>
   );
