@@ -16,7 +16,6 @@ import {
 } from '@/components/ui/table';
 import {
   ArrowLeft,
-  Edit,
   User,
   Shield,
   ExternalLink,
@@ -234,10 +233,6 @@ export default function UserDetailPage() {
     return <Badge variant="secondary">Pendiente</Badge>;
   };
 
-  const handleEdit = () => {
-    router.push(`/users/${userId}/edit`);
-  };
-
   const handleAdsPageChange = (newPage: number) => {
     setAdsCurrentPage(newPage);
   };
@@ -317,10 +312,6 @@ export default function UserDetailPage() {
             <Button variant="ghost" onClick={() => router.back()}>
               <ArrowLeft className="h-4 w-4 mr-2" />
               Volver
-            </Button>
-            <Button onClick={handleEdit}>
-              <Edit className="h-4 w-4 mr-2" />
-              Editar
             </Button>
             <JsonViewerButton
               data={user}
