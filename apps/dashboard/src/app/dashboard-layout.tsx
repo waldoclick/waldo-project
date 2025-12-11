@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -24,6 +24,7 @@ import {
   ChevronDown,
   ChevronRight,
   LayoutDashboard,
+  Settings,
 } from 'lucide-react';
 
 export default function DashboardLayout({
@@ -35,7 +36,47 @@ export default function DashboardLayout({
   const [adsMenuOpen, setAdsMenuOpen] = useState(false);
   const [featuresMenuOpen, setFeaturesMenuOpen] = useState(false);
   const [reservationsMenuOpen, setReservationsMenuOpen] = useState(false);
+  const [maintainersMenuOpen, setMaintainersMenuOpen] = useState(false);
   const pathname = usePathname();
+
+  const isMaintainersActive =
+    pathname.startsWith('/categories') ||
+    pathname.startsWith('/conditions') ||
+    pathname.startsWith('/faqs') ||
+    pathname.startsWith('/packs') ||
+    pathname.startsWith('/regions') ||
+    pathname.startsWith('/communes');
+
+  // Abrir automáticamente los menús cuando la ruta coincide
+  useEffect(() => {
+    if (pathname.startsWith('/ads')) {
+      setAdsMenuOpen(true);
+      setFeaturesMenuOpen(false);
+      setReservationsMenuOpen(false);
+      setMaintainersMenuOpen(false);
+    } else if (pathname.startsWith('/features')) {
+      setFeaturesMenuOpen(true);
+      setAdsMenuOpen(false);
+      setReservationsMenuOpen(false);
+      setMaintainersMenuOpen(false);
+    } else if (pathname.startsWith('/reservations')) {
+      setReservationsMenuOpen(true);
+      setAdsMenuOpen(false);
+      setFeaturesMenuOpen(false);
+      setMaintainersMenuOpen(false);
+    } else if (isMaintainersActive) {
+      setMaintainersMenuOpen(true);
+      setAdsMenuOpen(false);
+      setFeaturesMenuOpen(false);
+      setReservationsMenuOpen(false);
+    } else {
+      // Si no coincide con ningún menú, cerrar todos
+      setAdsMenuOpen(false);
+      setFeaturesMenuOpen(false);
+      setReservationsMenuOpen(false);
+      setMaintainersMenuOpen(false);
+    }
+  }, [pathname, isMaintainersActive]);
 
   const menuItems = [
     {
@@ -59,39 +100,36 @@ export default function DashboardLayout({
       href: '/features',
     },
     {
+      name: 'Usuarios',
+      icon: Users,
+      href: '/users',
+    },
+  ];
+
+  const maintainersSubMenuItems = [
+    {
       name: 'Categorías',
-      icon: Tag,
       href: '/categories',
     },
     {
       name: 'Condiciones',
-      icon: Package,
       href: '/conditions',
     },
     {
       name: 'FAQ',
-      icon: HelpCircle,
       href: '/faqs',
     },
     {
       name: 'Packs',
-      icon: Box,
       href: '/packs',
     },
     {
       name: 'Regiones',
-      icon: MapPin,
       href: '/regions',
     },
     {
       name: 'Comunas',
-      icon: Building,
       href: '/communes',
-    },
-    {
-      name: 'Usuarios',
-      icon: Users,
-      href: '/users',
     },
   ];
 
@@ -189,7 +227,7 @@ export default function DashboardLayout({
               {/* Dashboard */}
               <Link
                 href="/"
-                className={`flex items-center space-x-5 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors text-gray-700 hover:bg-gray-100`}
+                className={`flex items-center space-x-5 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${pathname === '/' ? 'text-gray-900' : 'text-gray-500'} hover:bg-gray-100`}
                 onClick={() => setSidebarOpen(false)}
               >
                 <LayoutDashboard
@@ -201,7 +239,7 @@ export default function DashboardLayout({
               {/* Órdenes */}
               <Link
                 href="/sales"
-                className={`flex items-center space-x-5 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors text-gray-700 hover:bg-gray-100`}
+                className={`flex items-center space-x-5 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${pathname === '/sales' ? 'text-gray-900' : 'text-gray-500'} hover:bg-gray-100`}
                 onClick={() => setSidebarOpen(false)}
               >
                 <ShoppingCart
@@ -217,8 +255,9 @@ export default function DashboardLayout({
                     setAdsMenuOpen(!adsMenuOpen);
                     setFeaturesMenuOpen(false);
                     setReservationsMenuOpen(false);
+                    setMaintainersMenuOpen(false);
                   }}
-                  className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-[13px] font-medium transition-colors text-gray-700 hover:bg-gray-100`}
+                  className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${pathname.startsWith('/ads') ? 'text-gray-900' : 'text-gray-500'} hover:bg-gray-100`}
                 >
                   <div className="flex items-center space-x-5">
                     <FileText
@@ -245,7 +284,7 @@ export default function DashboardLayout({
                         <Link
                           key={subItem.name}
                           href={subItem.href}
-                          className={`block px-3 py-2 rounded-lg text-[13px] transition-colors text-gray-600 hover:bg-gray-100`}
+                          className={`block px-3 py-2 rounded-lg text-[13px] transition-colors ${isActive ? 'text-gray-900' : 'text-gray-500'} hover:bg-gray-100`}
                           onClick={() => setSidebarOpen(false)}
                         >
                           {subItem.name}
@@ -264,50 +303,99 @@ export default function DashboardLayout({
                 // Destacados con dropdown
                 if (item.name === 'Destacados') {
                   return (
-                    <div key={item.name}>
-                      <button
-                        onClick={() => {
-                          setFeaturesMenuOpen(!featuresMenuOpen);
-                          setAdsMenuOpen(false);
-                          setReservationsMenuOpen(false);
-                        }}
-                        className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-[13px] font-medium transition-colors text-gray-700 hover:bg-gray-100`}
-                      >
-                        <div className="flex items-center space-x-5">
-                          <Icon
-                            className={`h-5 w-5 transition-opacity ${pathname.startsWith('/features') ? 'opacity-100' : 'opacity-50'}`}
-                          />
-                          <span>{item.name}</span>
-                        </div>
-                        {featuresMenuOpen ? (
-                          <ChevronDown
-                            className={`h-4 w-4 transition-opacity ${pathname.startsWith('/features') ? 'opacity-100' : 'opacity-50'}`}
-                          />
-                        ) : (
-                          <ChevronRight
-                            className={`h-4 w-4 transition-opacity ${pathname.startsWith('/features') ? 'opacity-100' : 'opacity-50'}`}
-                          />
-                        )}
-                      </button>
+                    <>
+                      <div key={item.name}>
+                        <button
+                          onClick={() => {
+                            setFeaturesMenuOpen(!featuresMenuOpen);
+                            setAdsMenuOpen(false);
+                            setReservationsMenuOpen(false);
+                            setMaintainersMenuOpen(false);
+                          }}
+                          className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${pathname.startsWith('/features') ? 'text-gray-900' : 'text-gray-500'} hover:bg-gray-100`}
+                        >
+                          <div className="flex items-center space-x-5">
+                            <Icon
+                              className={`h-5 w-5 transition-opacity ${pathname.startsWith('/features') ? 'opacity-100' : 'opacity-50'}`}
+                            />
+                            <span>{item.name}</span>
+                          </div>
+                          {featuresMenuOpen ? (
+                            <ChevronDown
+                              className={`h-4 w-4 transition-opacity ${pathname.startsWith('/features') ? 'opacity-100' : 'opacity-50'}`}
+                            />
+                          ) : (
+                            <ChevronRight
+                              className={`h-4 w-4 transition-opacity ${pathname.startsWith('/features') ? 'opacity-100' : 'opacity-50'}`}
+                            />
+                          )}
+                        </button>
 
-                      {featuresMenuOpen && (
-                        <div className="ml-6 mt-2 space-y-0.5">
-                          {featuresSubMenuItems.map((subItem) => {
-                            const isActive = pathname === subItem.href;
-                            return (
-                              <Link
-                                key={subItem.name}
-                                href={subItem.href}
-                                className={`block px-3 py-2 rounded-lg text-[13px] transition-colors text-gray-600 hover:bg-gray-100`}
-                                onClick={() => setSidebarOpen(false)}
-                              >
-                                {subItem.name}
-                              </Link>
-                            );
-                          })}
-                        </div>
-                      )}
-                    </div>
+                        {featuresMenuOpen && (
+                          <div className="ml-6 mt-2 space-y-0.5">
+                            {featuresSubMenuItems.map((subItem) => {
+                              const isActive = pathname === subItem.href;
+                              return (
+                                <Link
+                                  key={subItem.name}
+                                  href={subItem.href}
+                                  className={`block px-3 py-2 rounded-lg text-[13px] transition-colors ${isActive ? 'text-gray-900' : 'text-gray-500'} hover:bg-gray-100`}
+                                  onClick={() => setSidebarOpen(false)}
+                                >
+                                  {subItem.name}
+                                </Link>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                      {/* Mantenedores Dropdown */}
+                      <div>
+                        <button
+                          onClick={() => {
+                            setMaintainersMenuOpen(!maintainersMenuOpen);
+                            setAdsMenuOpen(false);
+                            setFeaturesMenuOpen(false);
+                            setReservationsMenuOpen(false);
+                          }}
+                          className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${isMaintainersActive ? 'text-gray-900' : 'text-gray-500'} hover:bg-gray-100`}
+                        >
+                          <div className="flex items-center space-x-5">
+                            <Settings
+                              className={`h-5 w-5 transition-opacity ${isMaintainersActive ? 'opacity-100' : 'opacity-50'}`}
+                            />
+                            <span>Mantenedores</span>
+                          </div>
+                          {maintainersMenuOpen ? (
+                            <ChevronDown
+                              className={`h-4 w-4 transition-opacity ${isMaintainersActive ? 'opacity-100' : 'opacity-50'}`}
+                            />
+                          ) : (
+                            <ChevronRight
+                              className={`h-4 w-4 transition-opacity ${isMaintainersActive ? 'opacity-100' : 'opacity-50'}`}
+                            />
+                          )}
+                        </button>
+
+                        {maintainersMenuOpen && (
+                          <div className="ml-6 mt-2 space-y-0.5">
+                            {maintainersSubMenuItems.map((subItem) => {
+                              const isActive = pathname === subItem.href;
+                              return (
+                                <Link
+                                  key={subItem.name}
+                                  href={subItem.href}
+                                  className={`block px-3 py-2 rounded-lg text-[13px] transition-colors ${isActive ? 'text-gray-900' : 'text-gray-500'} hover:bg-gray-100`}
+                                  onClick={() => setSidebarOpen(false)}
+                                >
+                                  {subItem.name}
+                                </Link>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    </>
                   );
                 }
 
@@ -320,8 +408,9 @@ export default function DashboardLayout({
                           setReservationsMenuOpen(!reservationsMenuOpen);
                           setAdsMenuOpen(false);
                           setFeaturesMenuOpen(false);
+                          setMaintainersMenuOpen(false);
                         }}
-                        className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-[13px] font-medium transition-colors text-gray-700 hover:bg-gray-100`}
+                        className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${pathname.startsWith('/reservations') ? 'text-gray-900' : 'text-gray-500'} hover:bg-gray-100`}
                       >
                         <div className="flex items-center space-x-5">
                           <Icon
@@ -348,7 +437,7 @@ export default function DashboardLayout({
                               <Link
                                 key={subItem.name}
                                 href={subItem.href}
-                                className={`block px-3 py-2 rounded-lg text-[13px] transition-colors text-gray-600 hover:bg-gray-100`}
+                                className={`block px-3 py-2 rounded-lg text-[13px] transition-colors ${isActive ? 'text-black' : 'text-gray-600'} hover:bg-gray-100`}
                                 onClick={() => setSidebarOpen(false)}
                               >
                                 {subItem.name}
@@ -366,7 +455,7 @@ export default function DashboardLayout({
                   <Link
                     key={item.name}
                     href={item.href}
-                    className={`flex items-center space-x-5 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors text-gray-700 hover:bg-gray-100`}
+                    className={`flex items-center space-x-5 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${isActive ? 'text-gray-900' : 'text-gray-500'} hover:bg-gray-100`}
                     onClick={() => setSidebarOpen(false)}
                   >
                     <Icon
