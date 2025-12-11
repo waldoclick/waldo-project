@@ -7,26 +7,37 @@ export function middleware(request: NextRequest) {
   )?.value;
   const { pathname } = request.nextUrl;
 
-  console.log('🔥 Middleware ejecutado en:', pathname);
-  console.log('🔥 strapi_token existe:', !!token);
-  console.log('🔥 Todas las cookies:', request.cookies.getAll());
+  // Rutas públicas que no requieren autenticación
+  const publicPaths = ['/login', '/auth'];
+  const isPublicPath = publicPaths.some((path) => pathname.startsWith(path));
 
-  // Guest: si está logueado y va a login → dashboard
-  if (pathname.startsWith('/login') && token) {
-    console.log('🔥 Guest redirect: login → dashboard');
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+  // Si está en una ruta pública, permitir acceso
+  if (isPublicPath) {
+    // Si está logueado y va a login, redirigir a la raíz
+    if (pathname.startsWith('/login') && token) {
+      return NextResponse.redirect(new URL('/', request.url));
+    }
+    return NextResponse.next();
   }
 
-  // Auth: si no está logueado y va a dashboard → login
-  if (pathname.startsWith('/dashboard') && !token) {
-    console.log('🔥 Auth redirect: dashboard → login');
+  // Si no está logueado y va a una ruta protegida, redirigir a login
+  if (!token) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  console.log('🔥 Continuando...');
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/login'],
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public files (images, etc.)
+     */
+    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
 };

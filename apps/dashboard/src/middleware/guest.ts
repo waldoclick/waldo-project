@@ -11,7 +11,7 @@ export function guestMiddleware(request: NextRequest) {
   // Si hay token, redirigir al dashboard
   if (token) {
     console.log('GuestMiddleware - User logged in, redirecting to dashboard');
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+    return NextResponse.redirect(new URL('/', request.url));
   }
 
   console.log('GuestMiddleware - User not logged in, continuing');

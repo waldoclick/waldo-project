@@ -1,33 +1,44 @@
-'use client';
+import { Metadata } from 'next';
 
-import Image from 'next/image';
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+export const metadata: Metadata = {
+  title: 'Dashboard',
+  description: 'Panel de control principal de Waldo.click®',
+};
 
-export default function Home() {
-  const router = useRouter();
-
-  useEffect(() => {
-    // Check if running in Electron
-    const isElectron =
-      typeof window !== 'undefined' &&
-      window.navigator.userAgent.includes('Electron');
-
-    if (isElectron) {
-      // In Electron, redirect to login automatically
-      router.push('/login');
-    }
-  }, [router]);
-
+export default function DashboardPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-slate-900 flex items-center justify-center">
-      <Image
-        src="/logo-black.svg"
-        alt="Waldo"
-        width={300}
-        height={120}
-        priority
-      />
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+          <p className="text-gray-600 mt-2">Bienvenido a tu panel de control</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="bg-white p-6 rounded-lg border">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              Resumen
+            </h3>
+            <p className="text-gray-600">
+              Aquí puedes ver un resumen de tu actividad
+            </p>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg border">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              Actividad Reciente
+            </h3>
+            <p className="text-gray-600">Últimas acciones en tu cuenta</p>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg border">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              Configuración
+            </h3>
+            <p className="text-gray-600">Gestiona tu perfil y preferencias</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

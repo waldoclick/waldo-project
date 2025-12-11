@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Poppins } from 'next/font/google';
 import './globals.css';
-import DashboardLayoutWrapper from './dashboard-layout-wrapper';
 
 const poppins = Poppins({
   variable: '--font-poppins',
@@ -64,7 +63,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
       </head>
       <body className={`${poppins.variable} font-sans antialiased`}>
-        <DashboardLayoutWrapper>{children}</DashboardLayoutWrapper>
+        {children}
       </body>
     </html>
   );

@@ -58,7 +58,7 @@ export default function FormLogin() {
       }
 
       // Redirigir al dashboard
-      router.push('/dashboard');
+      router.push('/');
     } catch (error) {
       await Swal.fire({
         icon: 'error',
