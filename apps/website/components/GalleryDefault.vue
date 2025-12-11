@@ -5,6 +5,7 @@
         :visible="visible"
         :imgs="imgs"
         :index="index"
+        :move-disabled="true"
         @hide="visible = false"
       />
     </client-only>
