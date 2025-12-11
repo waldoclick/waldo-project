@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { InputSearch } from '@/components/ui/input-search';
@@ -23,8 +22,6 @@ import {
   FileText,
   ChevronDown,
 } from 'lucide-react';
-import { getFaqs } from '@/lib/strapi/faqs';
-import { StrapiFaq } from '@/lib/strapi/types';
 import { DataTablePagination } from '@/components/ui/data-table-pagination';
 import {
   DropdownMenu,
@@ -32,93 +29,23 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { usePreferencesStore } from '@/stores/preferences';
+import { useFaqs } from '@/hooks/api';
 
 export default function FaqsPage() {
-  const { faqs: faqsPrefs, setFaqsPreferences } = usePreferencesStore();
-  const [faqs, setFaqs] = useState<StrapiFaq[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [pageSize, setPageSize] = useState(25);
-  const [sortBy, setSortBy] = useState('createdAt:desc');
-  const [isInitialized, setIsInitialized] = useState(false);
+  const {
+    data: faqs,
+    loading,
+    searchTerm,
+    setSearchTerm,
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    pageSize,
+    setPageSize,
+    sortBy,
+    setSortBy,
+  } = useFaqs();
   const router = useRouter();
-
-  // Cargar preferencias al montar el componente
-  useEffect(() => {
-    if (!isInitialized) {
-      setSearchTerm(faqsPrefs.searchTerm);
-      setPageSize(faqsPrefs.pageSize);
-      setSortBy(faqsPrefs.sortBy);
-      setIsInitialized(true);
-    }
-  }, [faqsPrefs, isInitialized]);
-
-  // Guardar preferencias cuando cambien (solo después de la inicialización)
-  useEffect(() => {
-    if (isInitialized) {
-      setFaqsPreferences({
-        searchTerm,
-        pageSize,
-        sortBy,
-      });
-    }
-  }, [searchTerm, pageSize, sortBy, setFaqsPreferences, isInitialized]);
-
-  // Reset to page 1 when search term, page size, or sort changes, then fetch
-  useEffect(() => {
-    if (!isInitialized) return;
-
-    setCurrentPage(1);
-  }, [searchTerm, pageSize, sortBy, isInitialized]);
-
-  // Fetch faqs when any relevant value changes
-  useEffect(() => {
-    // No hacer fetch hasta que las preferencias estén inicializadas
-    if (!isInitialized) return;
-
-    const fetchFaqs = async () => {
-      try {
-        setLoading(true);
-        // Si sortBy es 'featured:desc', no enviar sort al backend y ordenar en el frontend
-        const backendSort = sortBy === 'featured:desc' ? undefined : sortBy;
-
-        const response = await getFaqs({
-          page: currentPage,
-          pageSize: pageSize,
-          sort: backendSort,
-          search: searchTerm || undefined,
-        });
-
-        let sortedFaqs = response.data;
-
-        // Si se seleccionó "Destacadas primero", ordenar en el frontend
-        if (sortBy === 'featured:desc') {
-          sortedFaqs = [...response.data].sort((a, b) => {
-            // Primero ordenar por destacada (true primero)
-            if (a.featured !== b.featured) {
-              return a.featured ? -1 : 1;
-            }
-            // Si ambas tienen el mismo estado de destacada, mantener el orden por fecha (más recientes primero)
-            return (
-              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-            );
-          });
-        }
-
-        setFaqs(sortedFaqs);
-        setTotalPages(response.meta.pagination.pageCount);
-      } catch (error) {
-        console.error('Error fetching faqs:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchFaqs();
-  }, [currentPage, searchTerm, pageSize, sortBy, isInitialized]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('es-CL');
@@ -146,12 +73,17 @@ export default function FaqsPage() {
                 placeholder="Buscar FAQ..."
                 value={searchTerm}
                 onChange={setSearchTerm}
+                onClear={() => setSearchTerm('')}
                 className="w-64"
               />
               <div className="flex items-center space-x-2">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="gap-2">
+                    <Button
+                      variant="outline"
+                      className="flex items-center gap-2"
+                    >
+                      Ordenar por:{' '}
                       {sortBy === 'featured:desc' && 'Destacadas primero'}
                       {sortBy === 'title:asc' && 'Título A-Z'}
                       {sortBy === 'title:desc' && 'Título Z-A'}
@@ -163,22 +95,37 @@ export default function FaqsPage() {
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem
                       onClick={() => setSortBy('featured:desc')}
+                      className={
+                        sortBy === 'featured:desc' ? 'bg-gray-100' : ''
+                      }
                     >
                       Destacadas primero
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setSortBy('title:asc')}>
+                    <DropdownMenuItem
+                      onClick={() => setSortBy('title:asc')}
+                      className={sortBy === 'title:asc' ? 'bg-gray-100' : ''}
+                    >
                       Título A-Z
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setSortBy('title:desc')}>
+                    <DropdownMenuItem
+                      onClick={() => setSortBy('title:desc')}
+                      className={sortBy === 'title:desc' ? 'bg-gray-100' : ''}
+                    >
                       Título Z-A
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={() => setSortBy('createdAt:desc')}
+                      className={
+                        sortBy === 'createdAt:desc' ? 'bg-gray-100' : ''
+                      }
                     >
                       Más recientes
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={() => setSortBy('createdAt:asc')}
+                      className={
+                        sortBy === 'createdAt:asc' ? 'bg-gray-100' : ''
+                      }
                     >
                       Más antiguos
                     </DropdownMenuItem>
@@ -186,27 +133,23 @@ export default function FaqsPage() {
                 </DropdownMenu>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="gap-2">
-                      {pageSize} por página
-                      <ChevronDown className="h-4 w-4" />
+                    <Button
+                      variant="outline"
+                      className="flex items-center gap-2"
+                    >
+                      {pageSize} por página <ChevronDown className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => setPageSize(5)}>
-                      5 por página
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setPageSize(10)}>
-                      10 por página
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setPageSize(25)}>
-                      25 por página
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setPageSize(50)}>
-                      50 por página
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setPageSize(100)}>
-                      100 por página
-                    </DropdownMenuItem>
+                    {[5, 10, 25, 50, 100].map((size) => (
+                      <DropdownMenuItem
+                        key={size}
+                        onClick={() => setPageSize(size)}
+                        className={pageSize === size ? 'bg-gray-100' : ''}
+                      >
+                        {size} por página
+                      </DropdownMenuItem>
+                    ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>

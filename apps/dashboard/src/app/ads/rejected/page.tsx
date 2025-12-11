@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { InputSearch } from '@/components/ui/input-search';
 import {
@@ -21,7 +20,7 @@ import {
   Calendar,
   ChevronDown,
 } from 'lucide-react';
-import { getRejectedAds, StrapiAd } from '@/lib/strapi';
+import { StrapiAd } from '@/lib/strapi';
 import { useRouter } from 'next/navigation';
 import { DataTablePagination } from '@/components/ui/data-table-pagination';
 import {
@@ -30,74 +29,23 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { usePreferencesStore } from '@/stores/preferences';
+import { useAds } from '@/hooks/api';
 
 export default function RejectedAdsPage() {
-  const { rejectedAds: rejectedAdsPrefs, setRejectedAdsPreferences } =
-    usePreferencesStore();
-  const [ads, setAds] = useState<StrapiAd[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [pageSize, setPageSize] = useState(25);
-  const [sortBy, setSortBy] = useState('createdAt:desc');
-  const [isInitialized, setIsInitialized] = useState(false);
+  const {
+    data: ads,
+    loading,
+    searchTerm,
+    setSearchTerm,
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    pageSize,
+    setPageSize,
+    sortBy,
+    setSortBy,
+  } = useAds({ type: 'rejected' });
   const router = useRouter();
-
-  // Cargar preferencias al montar el componente
-  useEffect(() => {
-    if (!isInitialized) {
-      setSearchTerm(rejectedAdsPrefs.searchTerm);
-      setPageSize(rejectedAdsPrefs.pageSize);
-      setSortBy(rejectedAdsPrefs.sortBy);
-      setIsInitialized(true);
-    }
-  }, [rejectedAdsPrefs, isInitialized]);
-
-  // Guardar preferencias cuando cambien (solo después de la inicialización)
-  useEffect(() => {
-    if (isInitialized) {
-      setRejectedAdsPreferences({
-        searchTerm,
-        pageSize,
-        sortBy,
-      });
-    }
-  }, [searchTerm, pageSize, sortBy, setRejectedAdsPreferences, isInitialized]);
-
-  // Reset to page 1 when search term, page size, or sort changes, then fetch
-  useEffect(() => {
-    if (!isInitialized) return;
-
-    setCurrentPage(1);
-  }, [searchTerm, pageSize, sortBy, isInitialized]);
-
-  // Fetch ads when any relevant value changes
-  useEffect(() => {
-    // No hacer fetch hasta que las preferencias estén inicializadas
-    if (!isInitialized) return;
-
-    const fetchAds = async () => {
-      try {
-        setLoading(true);
-        const response = await getRejectedAds({
-          page: currentPage,
-          pageSize: pageSize,
-          sort: sortBy,
-          search: searchTerm || undefined,
-        });
-        setAds(response.data);
-        setTotalPages(response.meta.pagination.pageCount);
-      } catch (error) {
-        console.error('Error fetching rejected ads:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAds();
-  }, [currentPage, searchTerm, pageSize, sortBy, isInitialized]);
 
   const getStatusBadge = (ad: StrapiAd) => {
     if (ad.rejected) {
@@ -142,12 +90,17 @@ export default function RejectedAdsPage() {
                 placeholder="Buscar anuncios..."
                 value={searchTerm}
                 onChange={setSearchTerm}
+                onClear={() => setSearchTerm('')}
                 className="w-64"
               />
               <div className="flex items-center space-x-2">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="gap-2">
+                    <Button
+                      variant="outline"
+                      className="flex items-center gap-2"
+                    >
+                      Ordenar por:{' '}
                       {sortBy === 'createdAt:desc' && 'Más recientes'}
                       {sortBy === 'createdAt:asc' && 'Más antiguos'}
                       {sortBy === 'name:asc' && 'Título A-Z'}
@@ -158,45 +111,53 @@ export default function RejectedAdsPage() {
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem
                       onClick={() => setSortBy('createdAt:desc')}
+                      className={
+                        sortBy === 'createdAt:desc' ? 'bg-gray-100' : ''
+                      }
                     >
                       Más recientes
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={() => setSortBy('createdAt:asc')}
+                      className={
+                        sortBy === 'createdAt:asc' ? 'bg-gray-100' : ''
+                      }
                     >
                       Más antiguos
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setSortBy('name:asc')}>
+                    <DropdownMenuItem
+                      onClick={() => setSortBy('name:asc')}
+                      className={sortBy === 'name:asc' ? 'bg-gray-100' : ''}
+                    >
                       Título A-Z
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setSortBy('name:desc')}>
+                    <DropdownMenuItem
+                      onClick={() => setSortBy('name:desc')}
+                      className={sortBy === 'name:desc' ? 'bg-gray-100' : ''}
+                    >
                       Título Z-A
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="gap-2">
-                      {pageSize} por página
-                      <ChevronDown className="h-4 w-4" />
+                    <Button
+                      variant="outline"
+                      className="flex items-center gap-2"
+                    >
+                      {pageSize} por página <ChevronDown className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => setPageSize(5)}>
-                      5 por página
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setPageSize(10)}>
-                      10 por página
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setPageSize(25)}>
-                      25 por página
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setPageSize(50)}>
-                      50 por página
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setPageSize(100)}>
-                      100 por página
-                    </DropdownMenuItem>
+                    {[5, 10, 25, 50, 100].map((size) => (
+                      <DropdownMenuItem
+                        key={size}
+                        onClick={() => setPageSize(size)}
+                        className={pageSize === size ? 'bg-gray-100' : ''}
+                      >
+                        {size} por página
+                      </DropdownMenuItem>
+                    ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>

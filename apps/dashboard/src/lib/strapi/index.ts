@@ -91,6 +91,27 @@ export {
   getUserFeaturedReservations,
 } from './ad-featured-reservations';
 
+// Exportar funciones de categorías
+export {
+  getCategories,
+  getCategory,
+  createCategory,
+  updateCategory,
+  deleteCategory,
+} from './categories';
+
+// Exportar funciones de condiciones
+export {
+  getConditions,
+  getCondition,
+  createCondition,
+  updateCondition,
+  deleteCondition,
+} from './conditions';
+
+// Exportar funciones de FAQs
+export { getFaqs, getFaq, createFaq, updateFaq, deleteFaq } from './faqs';
+
 // Exportar tipos
 export type {
   StrapiAuthResponse,
@@ -119,4 +140,8 @@ export type {
   StrapiAdReservationsResponse,
   StrapiAdFeaturedReservation,
   StrapiAdFeaturedReservationsResponse,
+  StrapiCategoriesResponse,
+  StrapiConditionsResponse,
+  StrapiFaq,
+  StrapiFaqsResponse,
 } from './types';

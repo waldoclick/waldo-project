@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { InputSearch } from '@/components/ui/input-search';
@@ -22,8 +21,6 @@ import {
   Package,
   ChevronDown,
 } from 'lucide-react';
-import { getConditions } from '@/lib/strapi/conditions';
-import { StrapiCondition } from '@/lib/strapi/types';
 import { DataTablePagination } from '@/components/ui/data-table-pagination';
 import {
   DropdownMenu,
@@ -31,75 +28,23 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { usePreferencesStore } from '@/stores/preferences';
+import { useConditions } from '@/hooks/api';
 
 export default function ConditionsPage() {
-  const { conditions: conditionsPrefs, setConditionsPreferences } =
-    usePreferencesStore();
-  const [conditions, setConditions] = useState<StrapiCondition[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [pageSize, setPageSize] = useState(25);
-  const [sortBy, setSortBy] = useState('name:asc');
-  const [isInitialized, setIsInitialized] = useState(false);
+  const {
+    data: conditions,
+    loading,
+    searchTerm,
+    setSearchTerm,
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    pageSize,
+    setPageSize,
+    sortBy,
+    setSortBy,
+  } = useConditions();
   const router = useRouter();
-
-  // Cargar preferencias al montar el componente
-  useEffect(() => {
-    if (!isInitialized) {
-      setSearchTerm(conditionsPrefs.searchTerm);
-      setPageSize(conditionsPrefs.pageSize);
-      setSortBy(conditionsPrefs.sortBy);
-      setIsInitialized(true);
-    }
-  }, [conditionsPrefs, isInitialized]);
-
-  // Guardar preferencias cuando cambien (solo después de la inicialización)
-  useEffect(() => {
-    if (isInitialized) {
-      setConditionsPreferences({
-        searchTerm,
-        pageSize,
-        sortBy,
-      });
-    }
-  }, [searchTerm, pageSize, sortBy, setConditionsPreferences, isInitialized]);
-
-  // Reset to page 1 when search term, page size, or sort changes, then fetch
-  useEffect(() => {
-    if (!isInitialized) return;
-
-    setCurrentPage(1);
-  }, [searchTerm, pageSize, sortBy, isInitialized]);
-
-  // Fetch conditions when any relevant value changes
-  useEffect(() => {
-    // No hacer fetch hasta que las preferencias estén inicializadas
-    if (!isInitialized) return;
-
-    const fetchConditions = async () => {
-      try {
-        setLoading(true);
-        const response = await getConditions({
-          page: currentPage,
-          pageSize: pageSize,
-          sort: sortBy,
-          search: searchTerm || undefined,
-        });
-
-        setConditions(response.data);
-        setTotalPages(response.meta.pagination.pageCount);
-      } catch (error) {
-        console.error('Error fetching conditions:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchConditions();
-  }, [currentPage, searchTerm, pageSize, sortBy, isInitialized]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('es-CL');
@@ -127,13 +72,17 @@ export default function ConditionsPage() {
                 placeholder="Buscar condiciones..."
                 value={searchTerm}
                 onChange={setSearchTerm}
+                onClear={() => setSearchTerm('')}
                 className="w-64"
               />
               <div className="flex items-center space-x-2">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="gap-2">
-                      {sortBy === 'name:asc' && 'Nombre A-Z'}
+                    <Button
+                      variant="outline"
+                      className="flex items-center gap-2"
+                    >
+                      Ordenar por: {sortBy === 'name:asc' && 'Nombre A-Z'}
                       {sortBy === 'name:desc' && 'Nombre Z-A'}
                       {sortBy === 'createdAt:desc' && 'Más recientes'}
                       {sortBy === 'createdAt:asc' && 'Más antiguos'}
@@ -141,19 +90,31 @@ export default function ConditionsPage() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => setSortBy('name:asc')}>
+                    <DropdownMenuItem
+                      onClick={() => setSortBy('name:asc')}
+                      className={sortBy === 'name:asc' ? 'bg-gray-100' : ''}
+                    >
                       Nombre A-Z
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setSortBy('name:desc')}>
+                    <DropdownMenuItem
+                      onClick={() => setSortBy('name:desc')}
+                      className={sortBy === 'name:desc' ? 'bg-gray-100' : ''}
+                    >
                       Nombre Z-A
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={() => setSortBy('createdAt:desc')}
+                      className={
+                        sortBy === 'createdAt:desc' ? 'bg-gray-100' : ''
+                      }
                     >
                       Más recientes
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={() => setSortBy('createdAt:asc')}
+                      className={
+                        sortBy === 'createdAt:asc' ? 'bg-gray-100' : ''
+                      }
                     >
                       Más antiguos
                     </DropdownMenuItem>
@@ -161,27 +122,23 @@ export default function ConditionsPage() {
                 </DropdownMenu>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="gap-2">
-                      {pageSize} por página
-                      <ChevronDown className="h-4 w-4" />
+                    <Button
+                      variant="outline"
+                      className="flex items-center gap-2"
+                    >
+                      {pageSize} por página <ChevronDown className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => setPageSize(5)}>
-                      5 por página
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setPageSize(10)}>
-                      10 por página
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setPageSize(25)}>
-                      25 por página
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setPageSize(50)}>
-                      50 por página
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setPageSize(100)}>
-                      100 por página
-                    </DropdownMenuItem>
+                    {[5, 10, 25, 50, 100].map((size) => (
+                      <DropdownMenuItem
+                        key={size}
+                        onClick={() => setPageSize(size)}
+                        className={pageSize === size ? 'bg-gray-100' : ''}
+                      >
+                        {size} por página
+                      </DropdownMenuItem>
+                    ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
