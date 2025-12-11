@@ -63,137 +63,159 @@ export default function CommuneDetailPage() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => router.push('/communes')}
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Volver
-          </Button>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold">{commune.name}</h1>
-            <p className="text-gray-500">Detalles de la comuna</p>
+            <h1 className="text-3xl font-bold text-gray-900">{commune.name}</h1>
+            <p className="text-gray-600">Detalles de la comuna</p>
+          </div>
+          <div className="flex space-x-2">
+            <Button variant="ghost" onClick={() => router.back()}>
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Volver
+            </Button>
+            <Button onClick={() => router.push(`/communes/${commune.id}/edit`)}>
+              <Edit className="h-4 w-4 mr-2" />
+              Editar
+            </Button>
           </div>
         </div>
-        <Button onClick={() => router.push(`/communes/${commune.id}/edit`)}>
-          <Edit className="h-4 w-4 mr-2" />
-          Editar
-        </Button>
-      </div>
 
-      {/* Información principal */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <MapPin className="h-5 w-5" />
-            <span>Información de la Comuna</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium text-gray-500">ID</label>
-                <p className="text-lg font-semibold">{commune.id}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Nombre
-                </label>
-                <p className="text-lg font-semibold">{commune.name}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Slug
-                </label>
-                <div className="flex items-center space-x-2">
-                  <Hash className="h-4 w-4 text-gray-500" />
-                  <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded">
-                    {commune.slug}
-                  </span>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Información principal */}
+          <div className="lg:col-span-2 space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <MapPin className="h-5 w-5 mr-2" />
+                  Información de la Comuna
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">
+                      ID
+                    </label>
+                    <p className="text-lg font-semibold">{commune.id}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">
+                      Nombre
+                    </label>
+                    <p className="text-lg font-semibold">{commune.name}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">
+                      Slug
+                    </label>
+                    <div className="flex items-center space-x-2">
+                      <Hash className="h-4 w-4 text-gray-500" />
+                      <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded">
+                        {commune.slug}
+                      </span>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">
+                      Región
+                    </label>
+                    <div className="flex items-center space-x-2">
+                      <Building className="h-4 w-4 text-gray-500" />
+                      <span>
+                        {commune.region?.name || 'Sin región asignada'}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Región
-                </label>
-                <div className="flex items-center space-x-2">
-                  <Building className="h-4 w-4 text-gray-500" />
-                  <span>{commune.region?.name || 'Sin región asignada'}</span>
-                </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Fecha de Creación
-                </label>
-                <div className="flex items-center space-x-2">
-                  <Calendar className="h-4 w-4 text-gray-500" />
-                  <span>{formatDate(commune.createdAt)}</span>
-                </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Última Actualización
-                </label>
-                <div className="flex items-center space-x-2">
-                  <Calendar className="h-4 w-4 text-gray-500" />
-                  <span>{formatDate(commune.updatedAt)}</span>
-                </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
+
+            {/* Información de la región */}
+            {commune.region && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Building className="h-5 w-5 mr-2" />
+                    Región Asociada
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center">
+                        <Building className="h-6 w-6 text-blue-600" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold">
+                          {commune.region.name}
+                        </h3>
+                        <p className="text-gray-500">
+                          ID: {commune.region.id} • Slug: {commune.region.slug}
+                        </p>
+                      </div>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        router.push(`/regions/${commune.region?.id}`)
+                      }
+                    >
+                      Ver Región
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {!commune.region && (
+              <Card>
+                <CardContent className="text-center py-8">
+                  <Building className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                  <p className="text-gray-500">
+                    Esta comuna no tiene una región asignada
+                  </p>
+                </CardContent>
+              </Card>
+            )}
           </div>
-        </CardContent>
-      </Card>
 
-      {/* Información de la región */}
-      {commune.region && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Building className="h-5 w-5" />
-              <span>Región Asociada</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center space-x-4">
-              <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center">
-                <Building className="h-6 w-6 text-blue-600" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold">{commune.region.name}</h3>
-                <p className="text-gray-500">
-                  ID: {commune.region.id} • Slug: {commune.region.slug}
-                </p>
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => router.push(`/regions/${commune.region?.id}`)}
-              >
-                Ver Región
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {!commune.region && (
-        <Card>
-          <CardContent className="text-center py-8">
-            <Building className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500">
-              Esta comuna no tiene una región asignada
-            </p>
-          </CardContent>
-        </Card>
-      )}
+          {/* Sidebar */}
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Calendar className="h-5 w-5 mr-2" />
+                  Información de Fechas
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium text-gray-500">
+                    Fecha de Creación
+                  </label>
+                  <div className="flex items-center space-x-2 mt-1">
+                    <Calendar className="h-4 w-4 text-gray-500" />
+                    <span>{formatDate(commune.createdAt)}</span>
+                  </div>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-500">
+                    Última Actualización
+                  </label>
+                  <div className="flex items-center space-x-2 mt-1">
+                    <Calendar className="h-4 w-4 text-gray-500" />
+                    <span>{formatDate(commune.updatedAt)}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
