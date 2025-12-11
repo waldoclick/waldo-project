@@ -76,6 +76,12 @@ export interface PacksPreferences {
   searchTerm: string;
 }
 
+export interface RegionsPreferences {
+  pageSize: number;
+  sortBy: string;
+  searchTerm: string;
+}
+
 export interface PreferencesState {
   orders: OrdersPreferences;
   pendingAds: PendingAdsPreferences;
@@ -90,6 +96,7 @@ export interface PreferencesState {
   conditions: ConditionsPreferences;
   faqs: FaqsPreferences;
   packs: PacksPreferences;
+  regions: RegionsPreferences;
   setOrdersPreferences: (preferences: Partial<OrdersPreferences>) => void;
   setPendingAdsPreferences: (
     preferences: Partial<PendingAdsPreferences>
@@ -121,4 +128,5 @@ export interface PreferencesState {
   ) => void;
   setFaqsPreferences: (preferences: Partial<FaqsPreferences>) => void;
   setPacksPreferences: (preferences: Partial<PacksPreferences>) => void;
+  setRegionsPreferences: (preferences: Partial<RegionsPreferences>) => void;
 }

@@ -14,4 +14,5 @@ export type {
   ConditionsPreferences,
   FaqsPreferences,
   PacksPreferences,
+  RegionsPreferences,
 } from './types';

@@ -15,6 +15,7 @@ import {
   ConditionsPreferences,
   FaqsPreferences,
   PacksPreferences,
+  RegionsPreferences,
 } from './types';
 
 const defaultOrdersPreferences: OrdersPreferences = {
@@ -95,6 +96,12 @@ const defaultPacksPreferences: PacksPreferences = {
   searchTerm: '',
 };
 
+const defaultRegionsPreferences: RegionsPreferences = {
+  pageSize: 25,
+  sortBy: 'name:asc',
+  searchTerm: '',
+};
+
 export const usePreferencesStore = create<PreferencesState>()(
   persist(
     (set) => ({
@@ -112,6 +119,7 @@ export const usePreferencesStore = create<PreferencesState>()(
       conditions: defaultConditionsPreferences,
       faqs: defaultFaqsPreferences,
       packs: defaultPacksPreferences,
+      regions: defaultRegionsPreferences,
 
       // Acciones
       setOrdersPreferences: (preferences: Partial<OrdersPreferences>) => {
@@ -236,6 +244,14 @@ export const usePreferencesStore = create<PreferencesState>()(
           },
         }));
       },
+      setRegionsPreferences: (preferences: Partial<RegionsPreferences>) => {
+        set((state) => ({
+          regions: {
+            ...state.regions,
+            ...preferences,
+          },
+        }));
+      },
     }),
     {
       name: 'preferences-storage', // nombre para localStorage
@@ -253,6 +269,7 @@ export const usePreferencesStore = create<PreferencesState>()(
         conditions: state.conditions,
         faqs: state.faqs,
         packs: state.packs,
+        regions: state.regions,
       }),
     }
   )
