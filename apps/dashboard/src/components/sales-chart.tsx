@@ -67,12 +67,12 @@ export function SalesChart({ data }: SalesChartProps) {
         <YAxis tickFormatter={formatCurrency} />
         <ReferenceLine
           y={average}
-          stroke="#666"
+          stroke="#000"
           strokeDasharray="5 5"
           label={{
-            value: `Promedio: ${formatCurrency(average)}`,
+            value: 'x̄',
             position: 'right',
-            fill: '#666',
+            fill: '#000',
             fontSize: 12,
           }}
         />
