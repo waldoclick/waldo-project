@@ -98,7 +98,7 @@ export default function EditFaqPage() {
             <h1 className="text-2xl font-bold">Editar FAQ</h1>
             <p className="text-gray-500">Modificar información de la FAQ</p>
           </div>
-          <Button variant="outline" size="sm" onClick={handleCancel}>
+          <Button variant="ghost" onClick={() => router.back()}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Volver
           </Button>
@@ -159,25 +159,6 @@ export default function EditFaqPage() {
                   }
                 />
                 <Label htmlFor="featured">Marcar como destacada</Label>
-              </div>
-
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <h3 className="text-sm font-medium text-gray-700 mb-2">
-                  Información Actual
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="font-medium">ID:</span> {faq.id}
-                  </div>
-                  <div>
-                    <span className="font-medium">Creado:</span>{' '}
-                    {new Date(faq.createdAt).toLocaleDateString('es-CL')}
-                  </div>
-                  <div>
-                    <span className="font-medium">Actualizado:</span>{' '}
-                    {new Date(faq.updatedAt).toLocaleDateString('es-CL')}
-                  </div>
-                </div>
               </div>
 
               <div className="flex space-x-2 pt-4">

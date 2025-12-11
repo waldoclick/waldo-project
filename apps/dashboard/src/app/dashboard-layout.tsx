@@ -23,6 +23,7 @@ import {
   Star,
   ChevronDown,
   ChevronRight,
+  LayoutDashboard,
 } from 'lucide-react';
 
 export default function DashboardLayout({
@@ -39,18 +40,13 @@ export default function DashboardLayout({
   const menuItems = [
     {
       name: 'Dashboard',
-      icon: FileText,
+      icon: LayoutDashboard,
       href: '/',
     },
     {
       name: 'Categorías',
       icon: Tag,
       href: '/categories',
-    },
-    {
-      name: 'Comunas',
-      icon: Building,
-      href: '/communes',
     },
     {
       name: 'Condiciones',
@@ -76,6 +72,11 @@ export default function DashboardLayout({
       name: 'Regiones',
       icon: MapPin,
       href: '/regions',
+    },
+    {
+      name: 'Comunas',
+      icon: Building,
+      href: '/communes',
     },
     {
       name: 'Reservas',
@@ -184,55 +185,55 @@ export default function DashboardLayout({
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+            <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
               {/* Dashboard */}
               <Link
                 href="/"
-                className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  pathname === '/'
-                    ? 'bg-amber-50 text-amber-800 border border-amber-200'
-                    : 'text-gray-700 hover:bg-gray-100'
-                }`}
+                className={`flex items-center space-x-5 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors text-gray-700 hover:bg-gray-100`}
                 onClick={() => setSidebarOpen(false)}
               >
-                <FileText className="h-5 w-5" />
+                <LayoutDashboard
+                  className={`h-5 w-5 transition-opacity ${pathname === '/' ? 'opacity-100' : 'opacity-80'}`}
+                />
                 <span>Dashboard</span>
               </Link>
 
               {/* Anuncios Dropdown */}
               <div>
                 <button
-                  onClick={() => setAdsMenuOpen(!adsMenuOpen)}
-                  className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    pathname.startsWith('/ads')
-                      ? 'bg-amber-50 text-amber-800 border border-amber-200'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
+                  onClick={() => {
+                    setAdsMenuOpen(!adsMenuOpen);
+                    setFeaturesMenuOpen(false);
+                    setReservationsMenuOpen(false);
+                  }}
+                  className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-[13px] font-medium transition-colors text-gray-700 hover:bg-gray-100`}
                 >
-                  <div className="flex items-center space-x-3">
-                    <FileText className="h-5 w-5" />
+                  <div className="flex items-center space-x-5">
+                    <FileText
+                      className={`h-5 w-5 transition-opacity ${pathname.startsWith('/ads') ? 'opacity-100' : 'opacity-80'}`}
+                    />
                     <span>Anuncios</span>
                   </div>
                   {adsMenuOpen ? (
-                    <ChevronDown className="h-4 w-4" />
+                    <ChevronDown
+                      className={`h-4 w-4 transition-opacity ${pathname.startsWith('/ads') ? 'opacity-100' : 'opacity-80'}`}
+                    />
                   ) : (
-                    <ChevronRight className="h-4 w-4" />
+                    <ChevronRight
+                      className={`h-4 w-4 transition-opacity ${pathname.startsWith('/ads') ? 'opacity-100' : 'opacity-80'}`}
+                    />
                   )}
                 </button>
 
                 {adsMenuOpen && (
-                  <div className="ml-6 mt-2 space-y-1">
+                  <div className="ml-6 mt-2 space-y-0.5">
                     {adsSubMenuItems.map((subItem) => {
                       const isActive = pathname === subItem.href;
                       return (
                         <Link
                           key={subItem.name}
                           href={subItem.href}
-                          className={`block px-3 py-2 rounded-lg text-sm transition-colors ${
-                            isActive
-                              ? 'bg-amber-50 text-amber-800 border border-amber-200'
-                              : 'text-gray-600 hover:bg-gray-100'
-                          }`}
+                          className={`block px-3 py-2 rounded-lg text-[13px] transition-colors text-gray-600 hover:bg-gray-100`}
                           onClick={() => setSidebarOpen(false)}
                         >
                           {subItem.name}
@@ -253,37 +254,39 @@ export default function DashboardLayout({
                   return (
                     <div key={item.name}>
                       <button
-                        onClick={() => setFeaturesMenuOpen(!featuresMenuOpen)}
-                        className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                          pathname.startsWith('/features')
-                            ? 'bg-amber-50 text-amber-800 border border-amber-200'
-                            : 'text-gray-700 hover:bg-gray-100'
-                        }`}
+                        onClick={() => {
+                          setFeaturesMenuOpen(!featuresMenuOpen);
+                          setAdsMenuOpen(false);
+                          setReservationsMenuOpen(false);
+                        }}
+                        className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-[13px] font-medium transition-colors text-gray-700 hover:bg-gray-100`}
                       >
-                        <div className="flex items-center space-x-3">
-                          <Icon className="h-5 w-5" />
+                        <div className="flex items-center space-x-5">
+                          <Icon
+                            className={`h-5 w-5 transition-opacity ${pathname.startsWith('/features') ? 'opacity-100' : 'opacity-80'}`}
+                          />
                           <span>{item.name}</span>
                         </div>
                         {featuresMenuOpen ? (
-                          <ChevronDown className="h-4 w-4" />
+                          <ChevronDown
+                            className={`h-4 w-4 transition-opacity ${pathname.startsWith('/features') ? 'opacity-100' : 'opacity-80'}`}
+                          />
                         ) : (
-                          <ChevronRight className="h-4 w-4" />
+                          <ChevronRight
+                            className={`h-4 w-4 transition-opacity ${pathname.startsWith('/features') ? 'opacity-100' : 'opacity-80'}`}
+                          />
                         )}
                       </button>
 
                       {featuresMenuOpen && (
-                        <div className="ml-6 mt-2 space-y-1">
+                        <div className="ml-6 mt-2 space-y-0.5">
                           {featuresSubMenuItems.map((subItem) => {
                             const isActive = pathname === subItem.href;
                             return (
                               <Link
                                 key={subItem.name}
                                 href={subItem.href}
-                                className={`block px-3 py-2 rounded-lg text-sm transition-colors ${
-                                  isActive
-                                    ? 'bg-amber-50 text-amber-800 border border-amber-200'
-                                    : 'text-gray-600 hover:bg-gray-100'
-                                }`}
+                                className={`block px-3 py-2 rounded-lg text-[13px] transition-colors text-gray-600 hover:bg-gray-100`}
                                 onClick={() => setSidebarOpen(false)}
                               >
                                 {subItem.name}
@@ -301,39 +304,39 @@ export default function DashboardLayout({
                   return (
                     <div key={item.name}>
                       <button
-                        onClick={() =>
-                          setReservationsMenuOpen(!reservationsMenuOpen)
-                        }
-                        className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                          pathname.startsWith('/reservations')
-                            ? 'bg-amber-50 text-amber-800 border border-amber-200'
-                            : 'text-gray-700 hover:bg-gray-100'
-                        }`}
+                        onClick={() => {
+                          setReservationsMenuOpen(!reservationsMenuOpen);
+                          setAdsMenuOpen(false);
+                          setFeaturesMenuOpen(false);
+                        }}
+                        className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-[13px] font-medium transition-colors text-gray-700 hover:bg-gray-100`}
                       >
-                        <div className="flex items-center space-x-3">
-                          <Icon className="h-5 w-5" />
+                        <div className="flex items-center space-x-5">
+                          <Icon
+                            className={`h-5 w-5 transition-opacity ${pathname.startsWith('/reservations') ? 'opacity-100' : 'opacity-80'}`}
+                          />
                           <span>{item.name}</span>
                         </div>
                         {reservationsMenuOpen ? (
-                          <ChevronDown className="h-4 w-4" />
+                          <ChevronDown
+                            className={`h-4 w-4 transition-opacity ${pathname.startsWith('/reservations') ? 'opacity-100' : 'opacity-80'}`}
+                          />
                         ) : (
-                          <ChevronRight className="h-4 w-4" />
+                          <ChevronRight
+                            className={`h-4 w-4 transition-opacity ${pathname.startsWith('/reservations') ? 'opacity-100' : 'opacity-80'}`}
+                          />
                         )}
                       </button>
 
                       {reservationsMenuOpen && (
-                        <div className="ml-6 mt-2 space-y-1">
+                        <div className="ml-6 mt-2 space-y-0.5">
                           {reservationsSubMenuItems.map((subItem) => {
                             const isActive = pathname === subItem.href;
                             return (
                               <Link
                                 key={subItem.name}
                                 href={subItem.href}
-                                className={`block px-3 py-2 rounded-lg text-sm transition-colors ${
-                                  isActive
-                                    ? 'bg-amber-50 text-amber-800 border border-amber-200'
-                                    : 'text-gray-600 hover:bg-gray-100'
-                                }`}
+                                className={`block px-3 py-2 rounded-lg text-[13px] transition-colors text-gray-600 hover:bg-gray-100`}
                                 onClick={() => setSidebarOpen(false)}
                               >
                                 {subItem.name}
@@ -351,14 +354,12 @@ export default function DashboardLayout({
                   <Link
                     key={item.name}
                     href={item.href}
-                    className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      isActive
-                        ? 'bg-amber-50 text-amber-800 border border-amber-200'
-                        : 'text-gray-700 hover:bg-gray-100'
-                    }`}
+                    className={`flex items-center space-x-5 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors text-gray-700 hover:bg-gray-100`}
                     onClick={() => setSidebarOpen(false)}
                   >
-                    <Icon className="h-5 w-5" />
+                    <Icon
+                      className={`h-5 w-5 transition-opacity ${isActive ? 'opacity-100' : 'opacity-80'}`}
+                    />
                     <span>{item.name}</span>
                   </Link>
                 );
