@@ -15,6 +15,14 @@ export const metadata: Metadata = {
     default: 'Dashboard - Waldo.click® Admin',
   },
   description: 'Panel de administración de Waldo.click®',
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: {
+      index: false,
+      follow: false,
+    },
+  },
   authors: [{ name: 'Waldo.click®' }],
   publisher: 'Waldo.click®',
   icons: {
