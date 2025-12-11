@@ -25,6 +25,12 @@ import {
   ChevronRight,
   LayoutDashboard,
   Settings,
+  Clock,
+  CheckCircle,
+  Archive,
+  XCircle,
+  Circle,
+  FileCheck,
 } from 'lucide-react';
 
 export default function DashboardLayout({
@@ -46,6 +52,16 @@ export default function DashboardLayout({
     pathname.startsWith('/packs') ||
     pathname.startsWith('/regions') ||
     pathname.startsWith('/communes');
+
+  const getOpacityClass = (
+    isActive: boolean,
+    isParentActive: boolean = false
+  ) => {
+    if (isActive || isParentActive) {
+      return 'opacity-100';
+    }
+    return 'opacity-50';
+  };
 
   // Abrir automáticamente los menús cuando la ruta coincide
   useEffect(() => {
@@ -109,26 +125,32 @@ export default function DashboardLayout({
   const maintainersSubMenuItems = [
     {
       name: 'Categorías',
+      icon: Tag,
       href: '/categories',
     },
     {
       name: 'Condiciones',
+      icon: FileCheck,
       href: '/conditions',
     },
     {
       name: 'FAQ',
+      icon: HelpCircle,
       href: '/faqs',
     },
     {
       name: 'Packs',
+      icon: Box,
       href: '/packs',
     },
     {
       name: 'Regiones',
+      icon: MapPin,
       href: '/regions',
     },
     {
       name: 'Comunas',
+      icon: Building,
       href: '/communes',
     },
   ];
@@ -136,18 +158,22 @@ export default function DashboardLayout({
   const adsSubMenuItems = [
     {
       name: 'Pendientes',
+      icon: Clock,
       href: '/ads/pending',
     },
     {
       name: 'Activos',
+      icon: CheckCircle,
       href: '/ads/active',
     },
     {
       name: 'Archivados',
+      icon: Archive,
       href: '/ads/archived',
     },
     {
       name: 'Rechazados',
+      icon: XCircle,
       href: '/ads/rejected',
     },
   ];
@@ -155,10 +181,12 @@ export default function DashboardLayout({
   const featuresSubMenuItems = [
     {
       name: 'Usados',
+      icon: CheckCircle,
       href: '/features/used',
     },
     {
       name: 'Libres',
+      icon: Circle,
       href: '/features/free',
     },
   ];
@@ -166,10 +194,12 @@ export default function DashboardLayout({
   const reservationsSubMenuItems = [
     {
       name: 'Usadas',
+      icon: CheckCircle,
       href: '/reservations/used',
     },
     {
       name: 'Libres',
+      icon: Circle,
       href: '/reservations/free',
     },
   ];
@@ -280,14 +310,20 @@ export default function DashboardLayout({
                   <div className="ml-6 mt-2 space-y-0.5">
                     {adsSubMenuItems.map((subItem) => {
                       const isActive = pathname === subItem.href;
+                      const Icon = subItem.icon;
                       return (
                         <Link
                           key={subItem.name}
                           href={subItem.href}
-                          className={`block px-3 py-2 rounded-lg text-[13px] transition-colors ${isActive ? 'text-gray-900' : 'text-gray-500'} hover:bg-gray-100`}
+                          className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-[13px] transition-colors ${isActive ? 'text-gray-900' : 'text-gray-500'} hover:bg-gray-100`}
                           onClick={() => setSidebarOpen(false)}
                         >
-                          {subItem.name}
+                          {Icon && (
+                            <Icon
+                              className={`h-4 w-4 transition-opacity ${getOpacityClass(isActive)}`}
+                            />
+                          )}
+                          <span>{subItem.name}</span>
                         </Link>
                       );
                     })}
@@ -303,99 +339,57 @@ export default function DashboardLayout({
                 // Destacados con dropdown
                 if (item.name === 'Destacados') {
                   return (
-                    <>
-                      <div key={item.name}>
-                        <button
-                          onClick={() => {
-                            setFeaturesMenuOpen(!featuresMenuOpen);
-                            setAdsMenuOpen(false);
-                            setReservationsMenuOpen(false);
-                            setMaintainersMenuOpen(false);
-                          }}
-                          className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${pathname.startsWith('/features') ? 'text-gray-900' : 'text-gray-500'} hover:bg-gray-100`}
-                        >
-                          <div className="flex items-center space-x-5">
-                            <Icon
-                              className={`h-5 w-5 transition-opacity ${pathname.startsWith('/features') ? 'opacity-100' : 'opacity-50'}`}
-                            />
-                            <span>{item.name}</span>
-                          </div>
-                          {featuresMenuOpen ? (
-                            <ChevronDown
-                              className={`h-4 w-4 transition-opacity ${pathname.startsWith('/features') ? 'opacity-100' : 'opacity-50'}`}
-                            />
-                          ) : (
-                            <ChevronRight
-                              className={`h-4 w-4 transition-opacity ${pathname.startsWith('/features') ? 'opacity-100' : 'opacity-50'}`}
-                            />
-                          )}
-                        </button>
-
-                        {featuresMenuOpen && (
-                          <div className="ml-6 mt-2 space-y-0.5">
-                            {featuresSubMenuItems.map((subItem) => {
-                              const isActive = pathname === subItem.href;
-                              return (
-                                <Link
-                                  key={subItem.name}
-                                  href={subItem.href}
-                                  className={`block px-3 py-2 rounded-lg text-[13px] transition-colors ${isActive ? 'text-gray-900' : 'text-gray-500'} hover:bg-gray-100`}
-                                  onClick={() => setSidebarOpen(false)}
-                                >
-                                  {subItem.name}
-                                </Link>
-                              );
-                            })}
-                          </div>
+                    <div key={item.name}>
+                      <button
+                        onClick={() => {
+                          setFeaturesMenuOpen(!featuresMenuOpen);
+                          setAdsMenuOpen(false);
+                          setReservationsMenuOpen(false);
+                          setMaintainersMenuOpen(false);
+                        }}
+                        className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${pathname.startsWith('/features') ? 'text-gray-900' : 'text-gray-500'} hover:bg-gray-100`}
+                      >
+                        <div className="flex items-center space-x-5">
+                          <Icon
+                            className={`h-5 w-5 transition-opacity ${pathname.startsWith('/features') ? 'opacity-100' : 'opacity-50'}`}
+                          />
+                          <span>{item.name}</span>
+                        </div>
+                        {featuresMenuOpen ? (
+                          <ChevronDown
+                            className={`h-4 w-4 transition-opacity ${pathname.startsWith('/features') ? 'opacity-100' : 'opacity-50'}`}
+                          />
+                        ) : (
+                          <ChevronRight
+                            className={`h-4 w-4 transition-opacity ${pathname.startsWith('/features') ? 'opacity-100' : 'opacity-50'}`}
+                          />
                         )}
-                      </div>
-                      {/* Mantenedores Dropdown */}
-                      <div>
-                        <button
-                          onClick={() => {
-                            setMaintainersMenuOpen(!maintainersMenuOpen);
-                            setAdsMenuOpen(false);
-                            setFeaturesMenuOpen(false);
-                            setReservationsMenuOpen(false);
-                          }}
-                          className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${isMaintainersActive ? 'text-gray-900' : 'text-gray-500'} hover:bg-gray-100`}
-                        >
-                          <div className="flex items-center space-x-5">
-                            <Settings
-                              className={`h-5 w-5 transition-opacity ${isMaintainersActive ? 'opacity-100' : 'opacity-50'}`}
-                            />
-                            <span>Mantenedores</span>
-                          </div>
-                          {maintainersMenuOpen ? (
-                            <ChevronDown
-                              className={`h-4 w-4 transition-opacity ${isMaintainersActive ? 'opacity-100' : 'opacity-50'}`}
-                            />
-                          ) : (
-                            <ChevronRight
-                              className={`h-4 w-4 transition-opacity ${isMaintainersActive ? 'opacity-100' : 'opacity-50'}`}
-                            />
-                          )}
-                        </button>
+                      </button>
 
-                        {maintainersMenuOpen && (
-                          <div className="ml-6 mt-2 space-y-0.5">
-                            {maintainersSubMenuItems.map((subItem) => {
-                              const isActive = pathname === subItem.href;
-                              return (
-                                <Link
-                                  key={subItem.name}
-                                  href={subItem.href}
-                                  className={`block px-3 py-2 rounded-lg text-[13px] transition-colors ${isActive ? 'text-gray-900' : 'text-gray-500'} hover:bg-gray-100`}
-                                  onClick={() => setSidebarOpen(false)}
-                                >
-                                  {subItem.name}
-                                </Link>
-                              );
-                            })}
-                          </div>
-                        )}
-                      </div>
-                    </>
+                      {featuresMenuOpen && (
+                        <div className="ml-6 mt-2 space-y-0.5">
+                          {featuresSubMenuItems.map((subItem) => {
+                            const isActive = pathname === subItem.href;
+                            const Icon = subItem.icon;
+                            return (
+                              <Link
+                                key={subItem.name}
+                                href={subItem.href}
+                                className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-[13px] transition-colors ${isActive ? 'text-gray-900' : 'text-gray-500'} hover:bg-gray-100`}
+                                onClick={() => setSidebarOpen(false)}
+                              >
+                                {Icon && (
+                                  <Icon
+                                    className={`h-4 w-4 transition-opacity ${getOpacityClass(isActive)}`}
+                                  />
+                                )}
+                                <span>{subItem.name}</span>
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
                   );
                 }
 
@@ -433,14 +427,20 @@ export default function DashboardLayout({
                         <div className="ml-6 mt-2 space-y-0.5">
                           {reservationsSubMenuItems.map((subItem) => {
                             const isActive = pathname === subItem.href;
+                            const Icon = subItem.icon;
                             return (
                               <Link
                                 key={subItem.name}
                                 href={subItem.href}
-                                className={`block px-3 py-2 rounded-lg text-[13px] transition-colors ${isActive ? 'text-black' : 'text-gray-600'} hover:bg-gray-100`}
+                                className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-[13px] transition-colors ${isActive ? 'text-gray-900' : 'text-gray-500'} hover:bg-gray-100`}
                                 onClick={() => setSidebarOpen(false)}
                               >
-                                {subItem.name}
+                                {Icon && (
+                                  <Icon
+                                    className={`h-4 w-4 transition-opacity ${getOpacityClass(isActive)}`}
+                                  />
+                                )}
+                                <span>{subItem.name}</span>
                               </Link>
                             );
                           })}
@@ -465,6 +465,59 @@ export default function DashboardLayout({
                   </Link>
                 );
               })}
+
+              {/* Mantenedores Dropdown */}
+              <div>
+                <button
+                  onClick={() => {
+                    setMaintainersMenuOpen(!maintainersMenuOpen);
+                    setAdsMenuOpen(false);
+                    setFeaturesMenuOpen(false);
+                    setReservationsMenuOpen(false);
+                  }}
+                  className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${isMaintainersActive ? 'text-gray-900' : 'text-gray-500'} hover:bg-gray-100`}
+                >
+                  <div className="flex items-center space-x-5">
+                    <Settings
+                      className={`h-5 w-5 transition-opacity ${isMaintainersActive ? 'opacity-100' : 'opacity-50'}`}
+                    />
+                    <span>Mantenedores</span>
+                  </div>
+                  {maintainersMenuOpen ? (
+                    <ChevronDown
+                      className={`h-4 w-4 transition-opacity ${isMaintainersActive ? 'opacity-100' : 'opacity-50'}`}
+                    />
+                  ) : (
+                    <ChevronRight
+                      className={`h-4 w-4 transition-opacity ${isMaintainersActive ? 'opacity-100' : 'opacity-50'}`}
+                    />
+                  )}
+                </button>
+
+                {maintainersMenuOpen && (
+                  <div className="ml-6 mt-2 space-y-0.5">
+                    {maintainersSubMenuItems.map((subItem) => {
+                      const isActive = pathname.startsWith(subItem.href);
+                      const Icon = subItem.icon;
+                      return (
+                        <Link
+                          key={subItem.name}
+                          href={subItem.href}
+                          className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-[13px] transition-colors ${isActive ? 'text-gray-900' : 'text-gray-500'} hover:bg-gray-100`}
+                          onClick={() => setSidebarOpen(false)}
+                        >
+                          {Icon && (
+                            <Icon
+                              className={`h-4 w-4 transition-opacity ${getOpacityClass(isActive)}`}
+                            />
+                          )}
+                          <span>{subItem.name}</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             </nav>
           </div>
         </div>
