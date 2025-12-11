@@ -32,8 +32,10 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { ChevronDown } from 'lucide-react';
+import { usePreferencesStore } from '@/stores/preferences';
 
 export default function SalesPage() {
+  const { orders: ordersPrefs, setOrdersPreferences } = usePreferencesStore();
   const [orders, setOrders] = useState<StrapiOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -41,7 +43,29 @@ export default function SalesPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [pageSize, setPageSize] = useState(25);
   const [sortBy, setSortBy] = useState('createdAt:desc');
+  const [isInitialized, setIsInitialized] = useState(false);
   const router = useRouter();
+
+  // Cargar preferencias al montar el componente
+  useEffect(() => {
+    if (!isInitialized) {
+      setSearchTerm(ordersPrefs.searchTerm);
+      setPageSize(ordersPrefs.pageSize);
+      setSortBy(ordersPrefs.sortBy);
+      setIsInitialized(true);
+    }
+  }, [ordersPrefs, isInitialized]);
+
+  // Guardar preferencias cuando cambien (solo después de la inicialización)
+  useEffect(() => {
+    if (isInitialized) {
+      setOrdersPreferences({
+        searchTerm,
+        pageSize,
+        sortBy,
+      });
+    }
+  }, [searchTerm, pageSize, sortBy, setOrdersPreferences, isInitialized]);
 
   const fetchOrders = useCallback(async () => {
     try {
