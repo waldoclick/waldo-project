@@ -163,20 +163,20 @@ export async function getAdOrders(
   return strapiClient.get<StrapiOrdersResponse>(endpoint);
 }
 
-// Nombres de meses en español
+// Abreviaturas de meses en español
 const monthNames = [
-  'Enero',
-  'Febrero',
-  'Marzo',
-  'Abril',
-  'Mayo',
-  'Junio',
-  'Julio',
-  'Agosto',
-  'Septiembre',
-  'Octubre',
-  'Noviembre',
-  'Diciembre',
+  'Ene',
+  'Feb',
+  'Mar',
+  'Abr',
+  'May',
+  'Jun',
+  'Jul',
+  'Ago',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dic',
 ];
 
 // Agrupar ventas por mes
@@ -200,7 +200,12 @@ export function groupSalesByMonth(
   filteredOrders.forEach((order) => {
     const orderDate = new Date(order.createdAt);
     const month = orderDate.getMonth();
-    monthlyData[month] += order.amount;
+    // Convertir amount a número si viene como string
+    const amount =
+      typeof order.amount === 'string'
+        ? parseFloat(order.amount)
+        : order.amount;
+    monthlyData[month] += amount || 0;
   });
 
   // Convertir a array formateado

@@ -8,6 +8,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  ReferenceLine,
 } from 'recharts';
 import { SalesByMonthData } from '@/lib/strapi';
 
@@ -17,6 +18,15 @@ interface SalesChartProps {
 
 export function SalesChart({ data }: SalesChartProps) {
   const formatCurrency = (value: number) => {
+    if (value >= 1000000) {
+      return `$${(value / 1000000).toFixed(1)}M`;
+    } else if (value >= 1000) {
+      return `$${(value / 1000).toFixed(0)}K`;
+    }
+    return `$${value}`;
+  };
+
+  const formatCurrencyTooltip = (value: number) => {
     return new Intl.NumberFormat('es-CL', {
       style: 'currency',
       currency: 'CLP',
@@ -24,6 +34,27 @@ export function SalesChart({ data }: SalesChartProps) {
       maximumFractionDigits: 0,
     }).format(value);
   };
+
+  const getFullMonthName = (abbrev: string): string => {
+    const monthMap: Record<string, string> = {
+      Ene: 'Enero',
+      Feb: 'Febrero',
+      Mar: 'Marzo',
+      Abr: 'Abril',
+      May: 'Mayo',
+      Jun: 'Junio',
+      Jul: 'Julio',
+      Ago: 'Agosto',
+      Sep: 'Septiembre',
+      Oct: 'Octubre',
+      Nov: 'Noviembre',
+      Dic: 'Diciembre',
+    };
+    return monthMap[abbrev] || abbrev;
+  };
+
+  // Calcular el promedio de ventas
+  const average = data.reduce((sum, item) => sum + item.monto, 0) / data.length;
 
   return (
     <ResponsiveContainer width="100%" height={400}>
@@ -34,11 +65,30 @@ export function SalesChart({ data }: SalesChartProps) {
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="mes" />
         <YAxis tickFormatter={formatCurrency} />
-        <Tooltip
-          formatter={(value: number) => formatCurrency(value)}
-          labelStyle={{ color: '#000' }}
+        <ReferenceLine
+          y={average}
+          stroke="#666"
+          strokeDasharray="5 5"
+          label={{
+            value: `Promedio: ${formatCurrency(average)}`,
+            position: 'right',
+            fill: '#666',
+            fontSize: 12,
+          }}
         />
-        <Bar dataKey="monto" fill="#3b82f6" />
+        <Tooltip
+          formatter={(value: number) => [formatCurrencyTooltip(value), 'Monto']}
+          labelFormatter={(label: string) => getFullMonthName(label)}
+          labelStyle={{ color: '#000', fontSize: '12px' }}
+          contentStyle={{
+            backgroundColor: '#fff',
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+            fontSize: '12px',
+          }}
+          itemStyle={{ color: '#000', fontSize: '12px' }}
+        />
+        <Bar dataKey="monto" fill="#ffd699" />
       </BarChart>
     </ResponsiveContainer>
   );
