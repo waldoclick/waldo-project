@@ -63,8 +63,8 @@ export function SalesChart({ data }: SalesChartProps) {
         margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="mes" />
-        <YAxis tickFormatter={formatCurrency} />
+        <XAxis dataKey="mes" tick={{ fontSize: 11 }} />
+        <YAxis tickFormatter={formatCurrency} tick={{ fontSize: 11 }} />
         <ReferenceLine
           y={average}
           stroke="#000"
@@ -73,20 +73,20 @@ export function SalesChart({ data }: SalesChartProps) {
             value: 'x̄',
             position: 'right',
             fill: '#000',
-            fontSize: 12,
+            fontSize: 11,
           }}
         />
         <Tooltip
           formatter={(value: number) => [formatCurrencyTooltip(value), 'Monto']}
           labelFormatter={(label: string) => getFullMonthName(label)}
-          labelStyle={{ color: '#000', fontSize: '12px' }}
+          labelStyle={{ color: '#000', fontSize: '11px' }}
           contentStyle={{
             backgroundColor: '#fff',
             border: '1px solid #ccc',
             borderRadius: '4px',
-            fontSize: '12px',
+            fontSize: '11px',
           }}
-          itemStyle={{ color: '#000', fontSize: '12px' }}
+          itemStyle={{ color: '#000', fontSize: '11px' }}
         />
         <Bar dataKey="monto" fill="#ffd699" />
       </BarChart>
