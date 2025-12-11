@@ -10,4 +10,5 @@ export type {
   FreeReservationsPreferences,
   UsedFeaturesPreferences,
   FreeFeaturesPreferences,
+  CategoriesPreferences,
 } from './types';

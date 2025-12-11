@@ -52,6 +52,12 @@ export interface FreeFeaturesPreferences {
   searchTerm: string;
 }
 
+export interface CategoriesPreferences {
+  pageSize: number;
+  sortBy: string;
+  searchTerm: string;
+}
+
 export interface PreferencesState {
   orders: OrdersPreferences;
   pendingAds: PendingAdsPreferences;
@@ -62,6 +68,7 @@ export interface PreferencesState {
   freeReservations: FreeReservationsPreferences;
   usedFeatures: UsedFeaturesPreferences;
   freeFeatures: FreeFeaturesPreferences;
+  categories: CategoriesPreferences;
   setOrdersPreferences: (preferences: Partial<OrdersPreferences>) => void;
   setPendingAdsPreferences: (
     preferences: Partial<PendingAdsPreferences>
@@ -84,5 +91,8 @@ export interface PreferencesState {
   ) => void;
   setFreeFeaturesPreferences: (
     preferences: Partial<FreeFeaturesPreferences>
+  ) => void;
+  setCategoriesPreferences: (
+    preferences: Partial<CategoriesPreferences>
   ) => void;
 }

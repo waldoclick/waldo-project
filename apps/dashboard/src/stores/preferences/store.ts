@@ -11,6 +11,7 @@ import {
   FreeReservationsPreferences,
   UsedFeaturesPreferences,
   FreeFeaturesPreferences,
+  CategoriesPreferences,
 } from './types';
 
 const defaultOrdersPreferences: OrdersPreferences = {
@@ -67,6 +68,12 @@ const defaultFreeFeaturesPreferences: FreeFeaturesPreferences = {
   searchTerm: '',
 };
 
+const defaultCategoriesPreferences: CategoriesPreferences = {
+  pageSize: 25,
+  sortBy: 'name:asc',
+  searchTerm: '',
+};
+
 export const usePreferencesStore = create<PreferencesState>()(
   persist(
     (set) => ({
@@ -80,6 +87,7 @@ export const usePreferencesStore = create<PreferencesState>()(
       freeReservations: defaultFreeReservationsPreferences,
       usedFeatures: defaultUsedFeaturesPreferences,
       freeFeatures: defaultFreeFeaturesPreferences,
+      categories: defaultCategoriesPreferences,
 
       // Acciones
       setOrdersPreferences: (preferences: Partial<OrdersPreferences>) => {
@@ -168,6 +176,16 @@ export const usePreferencesStore = create<PreferencesState>()(
           },
         }));
       },
+      setCategoriesPreferences: (
+        preferences: Partial<CategoriesPreferences>
+      ) => {
+        set((state) => ({
+          categories: {
+            ...state.categories,
+            ...preferences,
+          },
+        }));
+      },
     }),
     {
       name: 'preferences-storage', // nombre para localStorage
@@ -181,6 +199,7 @@ export const usePreferencesStore = create<PreferencesState>()(
         freeReservations: state.freeReservations,
         usedFeatures: state.usedFeatures,
         freeFeatures: state.freeFeatures,
+        categories: state.categories,
       }),
     }
   )

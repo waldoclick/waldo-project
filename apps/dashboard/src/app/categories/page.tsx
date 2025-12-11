@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { InputSearch } from '@/components/ui/input-search';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -13,46 +13,94 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Plus, Eye, Edit, Calendar, Hash, Tag, Palette } from 'lucide-react';
+import {
+  Plus,
+  Eye,
+  Edit,
+  Calendar,
+  Hash,
+  Tag,
+  Palette,
+  ChevronDown,
+} from 'lucide-react';
 import { getCategories } from '@/lib/strapi/categories';
 import { StrapiCategory } from '@/lib/strapi/types';
+import { DataTablePagination } from '@/components/ui/data-table-pagination';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { usePreferencesStore } from '@/stores/preferences';
 
 export default function CategoriesPage() {
+  const { categories: categoriesPrefs, setCategoriesPreferences } =
+    usePreferencesStore();
   const [categories, setCategories] = useState<StrapiCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+  const [sortBy, setSortBy] = useState('name:asc');
+  const [isInitialized, setIsInitialized] = useState(false);
   const router = useRouter();
 
-  const fetchCategories = useCallback(async () => {
-    try {
-      setLoading(true);
-      const response = await getCategories({
-        page: currentPage,
-        pageSize: 25,
-        sort: 'name:asc',
-        search: searchTerm || undefined,
-      });
-
-      console.log('Categories response:', response);
-      setCategories(response.data);
-      setTotalPages(response.meta.pagination.pageCount);
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-    } finally {
-      setLoading(false);
+  // Cargar preferencias al montar el componente
+  useEffect(() => {
+    if (!isInitialized) {
+      setSearchTerm(categoriesPrefs.searchTerm);
+      setPageSize(categoriesPrefs.pageSize);
+      setSortBy(categoriesPrefs.sortBy);
+      setIsInitialized(true);
     }
-  }, [currentPage, searchTerm]);
+  }, [categoriesPrefs, isInitialized]);
 
+  // Guardar preferencias cuando cambien (solo después de la inicialización)
   useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
+    if (isInitialized) {
+      setCategoriesPreferences({
+        searchTerm,
+        pageSize,
+        sortBy,
+      });
+    }
+  }, [searchTerm, pageSize, sortBy, setCategoriesPreferences, isInitialized]);
 
-  // Reset to page 1 when search term changes
+  // Reset to page 1 when search term, page size, or sort changes, then fetch
   useEffect(() => {
+    if (!isInitialized) return;
+
     setCurrentPage(1);
-  }, [searchTerm]);
+  }, [searchTerm, pageSize, sortBy, isInitialized]);
+
+  // Fetch categories when any relevant value changes
+  useEffect(() => {
+    // No hacer fetch hasta que las preferencias estén inicializadas
+    if (!isInitialized) return;
+
+    const fetchCategories = async () => {
+      try {
+        setLoading(true);
+        const response = await getCategories({
+          page: currentPage,
+          pageSize: pageSize,
+          sort: sortBy,
+          search: searchTerm || undefined,
+        });
+
+        setCategories(response.data);
+        setTotalPages(response.meta.pagination.pageCount);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, [currentPage, searchTerm, pageSize, sortBy, isInitialized]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('es-CL');
@@ -64,8 +112,7 @@ export default function CategoriesPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold">Categorías</h1>
-            <p className="text-gray-500">Gestiona las categorías del sistema</p>
+            <h1 className="text-3xl font-bold text-gray-900">Categorías</h1>
           </div>
           <Button onClick={() => router.push('/categories/new')}>
             <Plus className="h-4 w-4 mr-2" />
@@ -77,14 +124,67 @@ export default function CategoriesPage() {
         <Card className="shadow-none">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>Categorías</CardTitle>
+              <InputSearch
+                placeholder="Buscar categorías..."
+                value={searchTerm}
+                onChange={setSearchTerm}
+                className="w-64"
+              />
               <div className="flex items-center space-x-2">
-                <Input
-                  placeholder="Buscar categorías..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-64"
-                />
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="gap-2">
+                      {sortBy === 'name:asc' && 'Nombre A-Z'}
+                      {sortBy === 'name:desc' && 'Nombre Z-A'}
+                      {sortBy === 'createdAt:desc' && 'Más recientes'}
+                      {sortBy === 'createdAt:asc' && 'Más antiguos'}
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => setSortBy('name:asc')}>
+                      Nombre A-Z
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setSortBy('name:desc')}>
+                      Nombre Z-A
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setSortBy('createdAt:desc')}
+                    >
+                      Más recientes
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setSortBy('createdAt:asc')}
+                    >
+                      Más antiguos
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="gap-2">
+                      {pageSize} por página
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => setPageSize(5)}>
+                      5 por página
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setPageSize(10)}>
+                      10 por página
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setPageSize(25)}>
+                      25 por página
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setPageSize(50)}>
+                      50 por página
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setPageSize(100)}>
+                      100 por página
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </div>
           </CardHeader>
@@ -199,33 +299,11 @@ export default function CategoriesPage() {
         </Card>
 
         {/* Paginación */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between">
-            <div className="text-sm text-gray-700">
-              Página {currentPage} de {totalPages}
-            </div>
-            <div className="flex space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
-              >
-                Anterior
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() =>
-                  setCurrentPage(Math.min(totalPages, currentPage + 1))
-                }
-                disabled={currentPage === totalPages}
-              >
-                Siguiente
-              </Button>
-            </div>
-          </div>
-        )}
+        <DataTablePagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
       </div>
     </div>
   );
