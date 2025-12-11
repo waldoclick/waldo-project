@@ -49,7 +49,24 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
   async actives(ctx: any) {
     try {
       const { query } = ctx;
-      const activeAds = await strapi.service("api::ad.ad").activeAds(query);
+
+      // Extract pagination parameters from query.pagination
+      const options: any = {
+        ...query,
+        page: query.pagination?.page
+          ? parseInt(query.pagination.page, 10)
+          : query.page || 1,
+        pageSize: query.pagination?.pageSize
+          ? parseInt(query.pagination.pageSize, 10)
+          : query.pageSize || 25,
+      };
+
+      // Remove pagination object if it exists to avoid conflicts
+      if (options.pagination) {
+        delete options.pagination;
+      }
+
+      const activeAds = await strapi.service("api::ad.ad").activeAds(options);
       return activeAds;
     } catch (error) {
       ctx.throw(500, error);
@@ -67,7 +84,24 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
   async pendings(ctx: any) {
     try {
       const { query } = ctx;
-      const pendingAds = await strapi.service("api::ad.ad").pendingAds(query);
+
+      // Extract pagination parameters from query.pagination
+      const options: any = {
+        ...query,
+        page: query.pagination?.page
+          ? parseInt(query.pagination.page, 10)
+          : query.page || 1,
+        pageSize: query.pagination?.pageSize
+          ? parseInt(query.pagination.pageSize, 10)
+          : query.pageSize || 25,
+      };
+
+      // Remove pagination object if it exists to avoid conflicts
+      if (options.pagination) {
+        delete options.pagination;
+      }
+
+      const pendingAds = await strapi.service("api::ad.ad").pendingAds(options);
       return pendingAds;
     } catch (error) {
       ctx.throw(500, error);
@@ -85,7 +119,26 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
   async archiveds(ctx: any) {
     try {
       const { query } = ctx;
-      const archivedAds = await strapi.service("api::ad.ad").archivedAds(query);
+
+      // Extract pagination parameters from query.pagination
+      const options: any = {
+        ...query,
+        page: query.pagination?.page
+          ? parseInt(query.pagination.page, 10)
+          : query.page || 1,
+        pageSize: query.pagination?.pageSize
+          ? parseInt(query.pagination.pageSize, 10)
+          : query.pageSize || 25,
+      };
+
+      // Remove pagination object if it exists to avoid conflicts
+      if (options.pagination) {
+        delete options.pagination;
+      }
+
+      const archivedAds = await strapi
+        .service("api::ad.ad")
+        .archivedAds(options);
       return archivedAds;
     } catch (error) {
       ctx.throw(500, error);
@@ -103,7 +156,26 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
   async rejecteds(ctx: any) {
     try {
       const { query } = ctx;
-      const rejectedAds = await strapi.service("api::ad.ad").rejectedAds(query);
+
+      // Extract pagination parameters from query.pagination
+      const options: any = {
+        ...query,
+        page: query.pagination?.page
+          ? parseInt(query.pagination.page, 10)
+          : query.page || 1,
+        pageSize: query.pagination?.pageSize
+          ? parseInt(query.pagination.pageSize, 10)
+          : query.pageSize || 25,
+      };
+
+      // Remove pagination object if it exists to avoid conflicts
+      if (options.pagination) {
+        delete options.pagination;
+      }
+
+      const rejectedAds = await strapi
+        .service("api::ad.ad")
+        .rejectedAds(options);
       return rejectedAds;
     } catch (error) {
       ctx.throw(500, error);

@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { InputSearch } from '@/components/ui/input-search';
 import {
   Table,
   TableBody,
@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import {
   Eye,
   Calendar,
@@ -21,14 +21,25 @@ import {
   Package,
   Star,
   Edit,
+  ChevronDown,
 } from 'lucide-react';
 import {
   getFreeFeaturedReservations,
   StrapiAdFeaturedReservation,
 } from '@/lib/strapi';
 import { useRouter } from 'next/navigation';
+import { DataTablePagination } from '@/components/ui/data-table-pagination';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { usePreferencesStore } from '@/stores/preferences';
 
 export default function FreeFeaturedPage() {
+  const { freeFeatures: freeFeaturesPrefs, setFreeFeaturesPreferences } =
+    usePreferencesStore();
   const [freeFeatured, setFreeFeatured] = useState<
     StrapiAdFeaturedReservation[]
   >([]);
@@ -36,34 +47,64 @@ export default function FreeFeaturedPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+  const [sortBy, setSortBy] = useState('createdAt:desc');
+  const [isInitialized, setIsInitialized] = useState(false);
   const router = useRouter();
 
-  const fetchFreeFeatured = useCallback(async () => {
-    try {
-      setLoading(true);
-      const response = await getFreeFeaturedReservations({
-        page: currentPage,
-        pageSize: 25,
-        sort: 'createdAt:desc',
-        search: searchTerm || undefined,
-      });
-      setFreeFeatured(response.data);
-      setTotalPages(response.meta.pagination.pageCount);
-    } catch (error) {
-      console.error('Error fetching free featured:', error);
-    } finally {
-      setLoading(false);
-    }
-  }, [currentPage, searchTerm]);
-
+  // Cargar preferencias al montar el componente
   useEffect(() => {
-    fetchFreeFeatured();
-  }, [fetchFreeFeatured]);
+    if (!isInitialized) {
+      setSearchTerm(freeFeaturesPrefs.searchTerm);
+      setPageSize(freeFeaturesPrefs.pageSize);
+      setSortBy(freeFeaturesPrefs.sortBy);
+      setIsInitialized(true);
+    }
+  }, [freeFeaturesPrefs, isInitialized]);
 
-  const handleSearch = (value: string) => {
-    setSearchTerm(value);
+  // Guardar preferencias cuando cambien (solo después de la inicialización)
+  useEffect(() => {
+    if (isInitialized) {
+      setFreeFeaturesPreferences({
+        searchTerm,
+        pageSize,
+        sortBy,
+      });
+    }
+  }, [searchTerm, pageSize, sortBy, setFreeFeaturesPreferences, isInitialized]);
+
+  // Reset to page 1 when search term, page size, or sort changes, then fetch
+  useEffect(() => {
+    if (!isInitialized) return;
+
     setCurrentPage(1);
-  };
+  }, [searchTerm, pageSize, sortBy, isInitialized]);
+
+  // Fetch featured when any relevant value changes
+  useEffect(() => {
+    // No hacer fetch hasta que las preferencias estén inicializadas
+    if (!isInitialized) return;
+
+    const fetchFreeFeatured = async () => {
+      try {
+        setLoading(true);
+        const response = await getFreeFeaturedReservations({
+          page: currentPage,
+          pageSize: pageSize,
+          sort: sortBy,
+          search: searchTerm || undefined,
+        });
+        setFreeFeatured(response.data);
+        setTotalPages(response.meta.pagination.pageCount);
+      } catch (error) {
+        console.error('Error fetching free featured:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFreeFeatured();
+  }, [currentPage, searchTerm, pageSize, sortBy, isInitialized]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('es-CL', {
@@ -88,12 +129,9 @@ export default function FreeFeaturedPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-3xl font-bold text-gray-900">
               Destacados Libres
             </h1>
-            <p className="text-gray-500">
-              Gestiona las reservas de destacados disponibles
-            </p>
           </div>
           <Button onClick={() => router.push('/features/new')}>
             <Star className="h-4 w-4 mr-2" />
@@ -102,16 +140,71 @@ export default function FreeFeaturedPage() {
         </div>
 
         {/* Table */}
-        <Card>
+        <Card className="shadow-none">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>Lista de Destacados Libres</CardTitle>
-              <Input
+              <InputSearch
                 placeholder="Buscar destacados..."
                 value={searchTerm}
-                onChange={(e) => handleSearch(e.target.value)}
-                className="max-w-sm"
+                onChange={setSearchTerm}
+                className="w-64"
               />
+              <div className="flex items-center space-x-2">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="gap-2">
+                      {sortBy === 'createdAt:desc' && 'Más recientes'}
+                      {sortBy === 'createdAt:asc' && 'Más antiguos'}
+                      {sortBy === 'price:asc' && 'Precio ascendente'}
+                      {sortBy === 'price:desc' && 'Precio descendente'}
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem
+                      onClick={() => setSortBy('createdAt:desc')}
+                    >
+                      Más recientes
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setSortBy('createdAt:asc')}
+                    >
+                      Más antiguos
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setSortBy('price:asc')}>
+                      Precio ascendente
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setSortBy('price:desc')}>
+                      Precio descendente
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="gap-2">
+                      {pageSize} por página
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => setPageSize(5)}>
+                      5 por página
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setPageSize(10)}>
+                      10 por página
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setPageSize(25)}>
+                      25 por página
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setPageSize(50)}>
+                      50 por página
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setPageSize(100)}>
+                      100 por página
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             </div>
           </CardHeader>
           <CardContent>
@@ -229,31 +322,11 @@ export default function FreeFeaturedPage() {
         </Card>
 
         {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between">
-            <div className="text-sm text-gray-500">
-              Página {currentPage} de {totalPages}
-            </div>
-            <div className="flex space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(currentPage - 1)}
-                disabled={currentPage === 1}
-              >
-                Anterior
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(currentPage + 1)}
-                disabled={currentPage === totalPages}
-              >
-                Siguiente
-              </Button>
-            </div>
-          </div>
-        )}
+        <DataTablePagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
       </div>
     </div>
   );

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { InputSearch } from '@/components/ui/input-search';
 import {
   Table,
   TableBody,
@@ -138,10 +138,10 @@ export default function SalesPage() {
         <Card className="shadow-none">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <Input
+              <InputSearch
                 placeholder="Buscar órdenes..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={setSearchTerm}
                 className="w-64"
               />
               <div className="flex items-center space-x-2">
