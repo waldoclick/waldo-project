@@ -70,6 +70,12 @@ export interface FaqsPreferences {
   searchTerm: string;
 }
 
+export interface PacksPreferences {
+  pageSize: number;
+  sortBy: string;
+  searchTerm: string;
+}
+
 export interface PreferencesState {
   orders: OrdersPreferences;
   pendingAds: PendingAdsPreferences;
@@ -83,6 +89,7 @@ export interface PreferencesState {
   categories: CategoriesPreferences;
   conditions: ConditionsPreferences;
   faqs: FaqsPreferences;
+  packs: PacksPreferences;
   setOrdersPreferences: (preferences: Partial<OrdersPreferences>) => void;
   setPendingAdsPreferences: (
     preferences: Partial<PendingAdsPreferences>
@@ -113,4 +120,5 @@ export interface PreferencesState {
     preferences: Partial<ConditionsPreferences>
   ) => void;
   setFaqsPreferences: (preferences: Partial<FaqsPreferences>) => void;
+  setPacksPreferences: (preferences: Partial<PacksPreferences>) => void;
 }

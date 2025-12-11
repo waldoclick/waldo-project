@@ -13,4 +13,5 @@ export type {
   CategoriesPreferences,
   ConditionsPreferences,
   FaqsPreferences,
+  PacksPreferences,
 } from './types';

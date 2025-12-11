@@ -82,14 +82,33 @@ export default function FaqsPage() {
     const fetchFaqs = async () => {
       try {
         setLoading(true);
+        // Si sortBy es 'featured:desc', no enviar sort al backend y ordenar en el frontend
+        const backendSort = sortBy === 'featured:desc' ? undefined : sortBy;
+
         const response = await getFaqs({
           page: currentPage,
           pageSize: pageSize,
-          sort: sortBy,
+          sort: backendSort,
           search: searchTerm || undefined,
         });
 
-        setFaqs(response.data);
+        let sortedFaqs = response.data;
+
+        // Si se seleccionó "Destacadas primero", ordenar en el frontend
+        if (sortBy === 'featured:desc') {
+          sortedFaqs = [...response.data].sort((a, b) => {
+            // Primero ordenar por destacada (true primero)
+            if (a.featured !== b.featured) {
+              return a.featured ? -1 : 1;
+            }
+            // Si ambas tienen el mismo estado de destacada, mantener el orden por fecha (más recientes primero)
+            return (
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            );
+          });
+        }
+
+        setFaqs(sortedFaqs);
         setTotalPages(response.meta.pagination.pageCount);
       } catch (error) {
         console.error('Error fetching faqs:', error);
@@ -133,6 +152,7 @@ export default function FaqsPage() {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" className="gap-2">
+                      {sortBy === 'featured:desc' && 'Destacadas primero'}
                       {sortBy === 'title:asc' && 'Título A-Z'}
                       {sortBy === 'title:desc' && 'Título Z-A'}
                       {sortBy === 'createdAt:desc' && 'Más recientes'}
@@ -141,6 +161,11 @@ export default function FaqsPage() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
+                    <DropdownMenuItem
+                      onClick={() => setSortBy('featured:desc')}
+                    >
+                      Destacadas primero
+                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => setSortBy('title:asc')}>
                       Título A-Z
                     </DropdownMenuItem>
