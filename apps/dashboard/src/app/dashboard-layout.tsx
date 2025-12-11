@@ -170,7 +170,7 @@ export default function DashboardLayout({
                     alt="Waldo"
                     width={32}
                     height={32}
-                    className="h-8 w-auto hover:opacity-80 transition-opacity"
+                    className="h-8 w-auto hover:opacity-50 transition-opacity"
                   />
                 </Link>
               </div>
@@ -193,7 +193,7 @@ export default function DashboardLayout({
                 onClick={() => setSidebarOpen(false)}
               >
                 <LayoutDashboard
-                  className={`h-5 w-5 transition-opacity ${pathname === '/' ? 'opacity-100' : 'opacity-80'}`}
+                  className={`h-5 w-5 transition-opacity ${pathname === '/' ? 'opacity-100' : 'opacity-50'}`}
                 />
                 <span>Dashboard</span>
               </Link>
@@ -210,17 +210,17 @@ export default function DashboardLayout({
                 >
                   <div className="flex items-center space-x-5">
                     <FileText
-                      className={`h-5 w-5 transition-opacity ${pathname.startsWith('/ads') ? 'opacity-100' : 'opacity-80'}`}
+                      className={`h-5 w-5 transition-opacity ${pathname.startsWith('/ads') ? 'opacity-100' : 'opacity-50'}`}
                     />
                     <span>Anuncios</span>
                   </div>
                   {adsMenuOpen ? (
                     <ChevronDown
-                      className={`h-4 w-4 transition-opacity ${pathname.startsWith('/ads') ? 'opacity-100' : 'opacity-80'}`}
+                      className={`h-4 w-4 transition-opacity ${pathname.startsWith('/ads') ? 'opacity-100' : 'opacity-50'}`}
                     />
                   ) : (
                     <ChevronRight
-                      className={`h-4 w-4 transition-opacity ${pathname.startsWith('/ads') ? 'opacity-100' : 'opacity-80'}`}
+                      className={`h-4 w-4 transition-opacity ${pathname.startsWith('/ads') ? 'opacity-100' : 'opacity-50'}`}
                     />
                   )}
                 </button>
@@ -263,17 +263,17 @@ export default function DashboardLayout({
                       >
                         <div className="flex items-center space-x-5">
                           <Icon
-                            className={`h-5 w-5 transition-opacity ${pathname.startsWith('/features') ? 'opacity-100' : 'opacity-80'}`}
+                            className={`h-5 w-5 transition-opacity ${pathname.startsWith('/features') ? 'opacity-100' : 'opacity-50'}`}
                           />
                           <span>{item.name}</span>
                         </div>
                         {featuresMenuOpen ? (
                           <ChevronDown
-                            className={`h-4 w-4 transition-opacity ${pathname.startsWith('/features') ? 'opacity-100' : 'opacity-80'}`}
+                            className={`h-4 w-4 transition-opacity ${pathname.startsWith('/features') ? 'opacity-100' : 'opacity-50'}`}
                           />
                         ) : (
                           <ChevronRight
-                            className={`h-4 w-4 transition-opacity ${pathname.startsWith('/features') ? 'opacity-100' : 'opacity-80'}`}
+                            className={`h-4 w-4 transition-opacity ${pathname.startsWith('/features') ? 'opacity-100' : 'opacity-50'}`}
                           />
                         )}
                       </button>
@@ -313,17 +313,17 @@ export default function DashboardLayout({
                       >
                         <div className="flex items-center space-x-5">
                           <Icon
-                            className={`h-5 w-5 transition-opacity ${pathname.startsWith('/reservations') ? 'opacity-100' : 'opacity-80'}`}
+                            className={`h-5 w-5 transition-opacity ${pathname.startsWith('/reservations') ? 'opacity-100' : 'opacity-50'}`}
                           />
                           <span>{item.name}</span>
                         </div>
                         {reservationsMenuOpen ? (
                           <ChevronDown
-                            className={`h-4 w-4 transition-opacity ${pathname.startsWith('/reservations') ? 'opacity-100' : 'opacity-80'}`}
+                            className={`h-4 w-4 transition-opacity ${pathname.startsWith('/reservations') ? 'opacity-100' : 'opacity-50'}`}
                           />
                         ) : (
                           <ChevronRight
-                            className={`h-4 w-4 transition-opacity ${pathname.startsWith('/reservations') ? 'opacity-100' : 'opacity-80'}`}
+                            className={`h-4 w-4 transition-opacity ${pathname.startsWith('/reservations') ? 'opacity-100' : 'opacity-50'}`}
                           />
                         )}
                       </button>
@@ -358,7 +358,7 @@ export default function DashboardLayout({
                     onClick={() => setSidebarOpen(false)}
                   >
                     <Icon
-                      className={`h-5 w-5 transition-opacity ${isActive ? 'opacity-100' : 'opacity-80'}`}
+                      className={`h-5 w-5 transition-opacity ${isActive ? 'opacity-100' : 'opacity-50'}`}
                     />
                     <span>{item.name}</span>
                   </Link>
@@ -389,7 +389,7 @@ export default function DashboardLayout({
                   alt="Waldo"
                   width={24}
                   height={24}
-                  className="h-6 w-auto hover:opacity-80 transition-opacity"
+                  className="h-6 w-auto hover:opacity-50 transition-opacity"
                 />
               </Link>
               <div className="w-10" /> {/* Spacer for centering */}
