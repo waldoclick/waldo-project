@@ -269,6 +269,12 @@ export interface StrapiOrdersResponse {
   };
 }
 
+// Tipos para datos agrupados por mes
+export interface SalesByMonthData {
+  mes: string;
+  monto: number;
+}
+
 // Tipos para regiones
 export interface StrapiRegion {
   id: number;

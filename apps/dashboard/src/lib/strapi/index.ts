@@ -43,6 +43,8 @@ export {
   deleteOrder,
   getUserOrders,
   getAdOrders,
+  groupSalesByMonth,
+  getUniqueYears,
 } from './orders';
 
 // Exportar funciones de regiones
@@ -144,4 +146,5 @@ export type {
   StrapiConditionsResponse,
   StrapiFaq,
   StrapiFaqsResponse,
+  SalesByMonthData,
 } from './types';

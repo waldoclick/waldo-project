@@ -1,5 +1,10 @@
 import { strapiClient } from './client';
-import { StrapiOrder, StrapiOrdersResponse, StrapiFilters } from './types';
+import {
+  StrapiOrder,
+  StrapiOrdersResponse,
+  StrapiFilters,
+  SalesByMonthData,
+} from './types';
 
 // Obtener todas las órdenes
 export async function getOrders(params?: {
@@ -156,4 +161,61 @@ export async function getAdOrders(
   const endpoint = `/orders${queryString ? `?${queryString}` : ''}`;
 
   return strapiClient.get<StrapiOrdersResponse>(endpoint);
+}
+
+// Nombres de meses en español
+const monthNames = [
+  'Enero',
+  'Febrero',
+  'Marzo',
+  'Abril',
+  'Mayo',
+  'Junio',
+  'Julio',
+  'Agosto',
+  'Septiembre',
+  'Octubre',
+  'Noviembre',
+  'Diciembre',
+];
+
+// Agrupar ventas por mes
+export function groupSalesByMonth(
+  orders: StrapiOrder[],
+  year: number
+): SalesByMonthData[] {
+  // Filtrar órdenes por año
+  const filteredOrders = orders.filter((order) => {
+    const orderDate = new Date(order.createdAt);
+    return orderDate.getFullYear() === year;
+  });
+
+  // Inicializar objeto para agrupar por mes
+  const monthlyData: Record<number, number> = {};
+  for (let i = 0; i < 12; i++) {
+    monthlyData[i] = 0;
+  }
+
+  // Agrupar y sumar montos por mes
+  filteredOrders.forEach((order) => {
+    const orderDate = new Date(order.createdAt);
+    const month = orderDate.getMonth();
+    monthlyData[month] += order.amount;
+  });
+
+  // Convertir a array formateado
+  return Object.entries(monthlyData).map(([monthIndex, monto]) => ({
+    mes: monthNames[parseInt(monthIndex)],
+    monto,
+  }));
+}
+
+// Obtener años únicos de las órdenes
+export function getUniqueYears(orders: StrapiOrder[]): number[] {
+  const years = new Set<number>();
+  orders.forEach((order) => {
+    const orderDate = new Date(order.createdAt);
+    years.add(orderDate.getFullYear());
+  });
+  return Array.from(years).sort((a, b) => b - a); // Ordenar descendente
 }
