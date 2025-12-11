@@ -8,6 +8,12 @@ import Head from 'next/head';
 import { Header } from '@/components/ui/header';
 import { Button } from '@/components/ui/button';
 import {
+  getPendingAdsCount,
+  getActiveAdsCount,
+  getArchivedAdsCount,
+  getRejectedAdsCount,
+} from '@/lib/strapi';
+import {
   FileText,
   ShoppingCart,
   MapPin,
@@ -43,6 +49,12 @@ export default function DashboardLayout({
   const [featuresMenuOpen, setFeaturesMenuOpen] = useState(false);
   const [reservationsMenuOpen, setReservationsMenuOpen] = useState(false);
   const [maintainersMenuOpen, setMaintainersMenuOpen] = useState(false);
+  const [adsCounts, setAdsCounts] = useState({
+    pending: 0,
+    active: 0,
+    archived: 0,
+    rejected: 0,
+  });
   const pathname = usePathname();
 
   const isMaintainersActive =
@@ -62,6 +74,24 @@ export default function DashboardLayout({
     }
     return 'opacity-50';
   };
+
+  // Obtener contadores de anuncios
+  useEffect(() => {
+    const fetchAdsCounts = async () => {
+      try {
+        const [pending, active, archived, rejected] = await Promise.all([
+          getPendingAdsCount(),
+          getActiveAdsCount(),
+          getArchivedAdsCount(),
+          getRejectedAdsCount(),
+        ]);
+        setAdsCounts({ pending, active, archived, rejected });
+      } catch (error) {
+        console.error('Error fetching ads counts:', error);
+      }
+    };
+    fetchAdsCounts();
+  }, []);
 
   // Abrir automáticamente los menús cuando la ruta coincide
   useEffect(() => {
@@ -160,21 +190,25 @@ export default function DashboardLayout({
       name: 'Pendientes',
       icon: Clock,
       href: '/ads/pending',
+      countKey: 'pending' as const,
     },
     {
       name: 'Activos',
       icon: CheckCircle,
       href: '/ads/active',
+      countKey: 'active' as const,
     },
     {
       name: 'Archivados',
       icon: Archive,
       href: '/ads/archived',
+      countKey: 'archived' as const,
     },
     {
       name: 'Rechazados',
       icon: XCircle,
       href: '/ads/rejected',
+      countKey: 'rejected' as const,
     },
   ];
 
@@ -311,6 +345,7 @@ export default function DashboardLayout({
                     {adsSubMenuItems.map((subItem) => {
                       const isActive = pathname === subItem.href;
                       const Icon = subItem.icon;
+                      const count = adsCounts[subItem.countKey];
                       return (
                         <Link
                           key={subItem.name}
@@ -323,7 +358,9 @@ export default function DashboardLayout({
                               className={`h-4 w-4 transition-opacity ${getOpacityClass(isActive)}`}
                             />
                           )}
-                          <span>{subItem.name}</span>
+                          <span>
+                            {subItem.name} ({count})
+                          </span>
                         </Link>
                       );
                     })}

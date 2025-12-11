@@ -29,6 +29,10 @@ export {
   getPendingAds,
   getArchivedAds,
   getRejectedAds,
+  getPendingAdsCount,
+  getActiveAdsCount,
+  getArchivedAdsCount,
+  getRejectedAdsCount,
 } from './ads';
 
 // Exportar funciones de usuarios

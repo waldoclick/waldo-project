@@ -339,3 +339,27 @@ export async function getRejectedAds(params?: {
 
   return strapiClient.get<StrapiAdsResponse>(endpoint);
 }
+
+// Obtener solo el contador de anuncios pendientes
+export async function getPendingAdsCount(): Promise<number> {
+  const response = await getPendingAds({ page: 1, pageSize: 1 });
+  return response.meta.pagination.total;
+}
+
+// Obtener solo el contador de anuncios activos
+export async function getActiveAdsCount(): Promise<number> {
+  const response = await getActiveAds({ page: 1, pageSize: 1 });
+  return response.meta.pagination.total;
+}
+
+// Obtener solo el contador de anuncios archivados
+export async function getArchivedAdsCount(): Promise<number> {
+  const response = await getArchivedAds({ page: 1, pageSize: 1 });
+  return response.meta.pagination.total;
+}
+
+// Obtener solo el contador de anuncios rechazados
+export async function getRejectedAdsCount(): Promise<number> {
+  const response = await getRejectedAds({ page: 1, pageSize: 1 });
+  return response.meta.pagination.total;
+}
