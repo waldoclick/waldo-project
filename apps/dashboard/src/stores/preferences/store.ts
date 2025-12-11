@@ -12,6 +12,8 @@ import {
   UsedFeaturesPreferences,
   FreeFeaturesPreferences,
   CategoriesPreferences,
+  ConditionsPreferences,
+  FaqsPreferences,
 } from './types';
 
 const defaultOrdersPreferences: OrdersPreferences = {
@@ -74,6 +76,18 @@ const defaultCategoriesPreferences: CategoriesPreferences = {
   searchTerm: '',
 };
 
+const defaultConditionsPreferences: ConditionsPreferences = {
+  pageSize: 25,
+  sortBy: 'name:asc',
+  searchTerm: '',
+};
+
+const defaultFaqsPreferences: FaqsPreferences = {
+  pageSize: 25,
+  sortBy: 'createdAt:desc',
+  searchTerm: '',
+};
+
 export const usePreferencesStore = create<PreferencesState>()(
   persist(
     (set) => ({
@@ -88,6 +102,8 @@ export const usePreferencesStore = create<PreferencesState>()(
       usedFeatures: defaultUsedFeaturesPreferences,
       freeFeatures: defaultFreeFeaturesPreferences,
       categories: defaultCategoriesPreferences,
+      conditions: defaultConditionsPreferences,
+      faqs: defaultFaqsPreferences,
 
       // Acciones
       setOrdersPreferences: (preferences: Partial<OrdersPreferences>) => {
@@ -186,6 +202,24 @@ export const usePreferencesStore = create<PreferencesState>()(
           },
         }));
       },
+      setConditionsPreferences: (
+        preferences: Partial<ConditionsPreferences>
+      ) => {
+        set((state) => ({
+          conditions: {
+            ...state.conditions,
+            ...preferences,
+          },
+        }));
+      },
+      setFaqsPreferences: (preferences: Partial<FaqsPreferences>) => {
+        set((state) => ({
+          faqs: {
+            ...state.faqs,
+            ...preferences,
+          },
+        }));
+      },
     }),
     {
       name: 'preferences-storage', // nombre para localStorage
@@ -200,6 +234,8 @@ export const usePreferencesStore = create<PreferencesState>()(
         usedFeatures: state.usedFeatures,
         freeFeatures: state.freeFeatures,
         categories: state.categories,
+        conditions: state.conditions,
+        faqs: state.faqs,
       }),
     }
   )

@@ -58,6 +58,18 @@ export interface CategoriesPreferences {
   searchTerm: string;
 }
 
+export interface ConditionsPreferences {
+  pageSize: number;
+  sortBy: string;
+  searchTerm: string;
+}
+
+export interface FaqsPreferences {
+  pageSize: number;
+  sortBy: string;
+  searchTerm: string;
+}
+
 export interface PreferencesState {
   orders: OrdersPreferences;
   pendingAds: PendingAdsPreferences;
@@ -69,6 +81,8 @@ export interface PreferencesState {
   usedFeatures: UsedFeaturesPreferences;
   freeFeatures: FreeFeaturesPreferences;
   categories: CategoriesPreferences;
+  conditions: ConditionsPreferences;
+  faqs: FaqsPreferences;
   setOrdersPreferences: (preferences: Partial<OrdersPreferences>) => void;
   setPendingAdsPreferences: (
     preferences: Partial<PendingAdsPreferences>
@@ -95,4 +109,8 @@ export interface PreferencesState {
   setCategoriesPreferences: (
     preferences: Partial<CategoriesPreferences>
   ) => void;
+  setConditionsPreferences: (
+    preferences: Partial<ConditionsPreferences>
+  ) => void;
+  setFaqsPreferences: (preferences: Partial<FaqsPreferences>) => void;
 }

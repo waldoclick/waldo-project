@@ -1,11 +1,10 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-// import { Badge } from "@/components/ui/badge";
+import { InputSearch } from '@/components/ui/input-search';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -14,46 +13,93 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Plus, Eye, Edit, Calendar, Hash, Package } from 'lucide-react';
+import {
+  Plus,
+  Eye,
+  Edit,
+  Calendar,
+  Hash,
+  Package,
+  ChevronDown,
+} from 'lucide-react';
 import { getConditions } from '@/lib/strapi/conditions';
 import { StrapiCondition } from '@/lib/strapi/types';
+import { DataTablePagination } from '@/components/ui/data-table-pagination';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { usePreferencesStore } from '@/stores/preferences';
 
 export default function ConditionsPage() {
+  const { conditions: conditionsPrefs, setConditionsPreferences } =
+    usePreferencesStore();
   const [conditions, setConditions] = useState<StrapiCondition[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+  const [sortBy, setSortBy] = useState('name:asc');
+  const [isInitialized, setIsInitialized] = useState(false);
   const router = useRouter();
 
-  const fetchConditions = useCallback(async () => {
-    try {
-      setLoading(true);
-      const response = await getConditions({
-        page: currentPage,
-        pageSize: 25,
-        sort: 'name:asc',
-        search: searchTerm || undefined,
-      });
-
-      console.log('Conditions response:', response);
-      setConditions(response.data);
-      setTotalPages(response.meta.pagination.pageCount);
-    } catch (error) {
-      console.error('Error fetching conditions:', error);
-    } finally {
-      setLoading(false);
+  // Cargar preferencias al montar el componente
+  useEffect(() => {
+    if (!isInitialized) {
+      setSearchTerm(conditionsPrefs.searchTerm);
+      setPageSize(conditionsPrefs.pageSize);
+      setSortBy(conditionsPrefs.sortBy);
+      setIsInitialized(true);
     }
-  }, [currentPage, searchTerm]);
+  }, [conditionsPrefs, isInitialized]);
 
+  // Guardar preferencias cuando cambien (solo después de la inicialización)
   useEffect(() => {
-    fetchConditions();
-  }, [fetchConditions]);
+    if (isInitialized) {
+      setConditionsPreferences({
+        searchTerm,
+        pageSize,
+        sortBy,
+      });
+    }
+  }, [searchTerm, pageSize, sortBy, setConditionsPreferences, isInitialized]);
 
-  // Reset to page 1 when search term changes
+  // Reset to page 1 when search term, page size, or sort changes, then fetch
   useEffect(() => {
+    if (!isInitialized) return;
+
     setCurrentPage(1);
-  }, [searchTerm]);
+  }, [searchTerm, pageSize, sortBy, isInitialized]);
+
+  // Fetch conditions when any relevant value changes
+  useEffect(() => {
+    // No hacer fetch hasta que las preferencias estén inicializadas
+    if (!isInitialized) return;
+
+    const fetchConditions = async () => {
+      try {
+        setLoading(true);
+        const response = await getConditions({
+          page: currentPage,
+          pageSize: pageSize,
+          sort: sortBy,
+          search: searchTerm || undefined,
+        });
+
+        setConditions(response.data);
+        setTotalPages(response.meta.pagination.pageCount);
+      } catch (error) {
+        console.error('Error fetching conditions:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchConditions();
+  }, [currentPage, searchTerm, pageSize, sortBy, isInitialized]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('es-CL');
@@ -65,10 +111,7 @@ export default function ConditionsPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold">Condiciones</h1>
-            <p className="text-gray-500">
-              Gestiona las condiciones de los productos
-            </p>
+            <h1 className="text-3xl font-bold text-gray-900">Condiciones</h1>
           </div>
           <Button onClick={() => router.push('/conditions/new')}>
             <Plus className="h-4 w-4 mr-2" />
@@ -80,14 +123,67 @@ export default function ConditionsPage() {
         <Card className="shadow-none">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>Condiciones</CardTitle>
+              <InputSearch
+                placeholder="Buscar condiciones..."
+                value={searchTerm}
+                onChange={setSearchTerm}
+                className="w-64"
+              />
               <div className="flex items-center space-x-2">
-                <Input
-                  placeholder="Buscar condiciones..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-64"
-                />
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="gap-2">
+                      {sortBy === 'name:asc' && 'Nombre A-Z'}
+                      {sortBy === 'name:desc' && 'Nombre Z-A'}
+                      {sortBy === 'createdAt:desc' && 'Más recientes'}
+                      {sortBy === 'createdAt:asc' && 'Más antiguos'}
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => setSortBy('name:asc')}>
+                      Nombre A-Z
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setSortBy('name:desc')}>
+                      Nombre Z-A
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setSortBy('createdAt:desc')}
+                    >
+                      Más recientes
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setSortBy('createdAt:asc')}
+                    >
+                      Más antiguos
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="gap-2">
+                      {pageSize} por página
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => setPageSize(5)}>
+                      5 por página
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setPageSize(10)}>
+                      10 por página
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setPageSize(25)}>
+                      25 por página
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setPageSize(50)}>
+                      50 por página
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setPageSize(100)}>
+                      100 por página
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </div>
           </CardHeader>
@@ -183,33 +279,11 @@ export default function ConditionsPage() {
         </Card>
 
         {/* Paginación */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between">
-            <div className="text-sm text-gray-700">
-              Página {currentPage} de {totalPages}
-            </div>
-            <div className="flex space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
-              >
-                Anterior
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() =>
-                  setCurrentPage(Math.min(totalPages, currentPage + 1))
-                }
-                disabled={currentPage === totalPages}
-              >
-                Siguiente
-              </Button>
-            </div>
-          </div>
-        )}
+        <DataTablePagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
       </div>
     </div>
   );

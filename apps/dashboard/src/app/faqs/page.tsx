@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { InputSearch } from '@/components/ui/input-search';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
   Table,
@@ -14,46 +14,92 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Plus, Eye, Edit, Calendar, Star, FileText } from 'lucide-react';
+import {
+  Plus,
+  Eye,
+  Edit,
+  Calendar,
+  Star,
+  FileText,
+  ChevronDown,
+} from 'lucide-react';
 import { getFaqs } from '@/lib/strapi/faqs';
 import { StrapiFaq } from '@/lib/strapi/types';
+import { DataTablePagination } from '@/components/ui/data-table-pagination';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { usePreferencesStore } from '@/stores/preferences';
 
 export default function FaqsPage() {
+  const { faqs: faqsPrefs, setFaqsPreferences } = usePreferencesStore();
   const [faqs, setFaqs] = useState<StrapiFaq[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+  const [sortBy, setSortBy] = useState('createdAt:desc');
+  const [isInitialized, setIsInitialized] = useState(false);
   const router = useRouter();
 
-  const fetchFaqs = useCallback(async () => {
-    try {
-      setLoading(true);
-      const response = await getFaqs({
-        page: currentPage,
-        pageSize: 25,
-        sort: 'createdAt:desc',
-        search: searchTerm || undefined,
-      });
-
-      console.log('Faqs response:', response);
-      setFaqs(response.data);
-      setTotalPages(response.meta.pagination.pageCount);
-    } catch (error) {
-      console.error('Error fetching faqs:', error);
-    } finally {
-      setLoading(false);
+  // Cargar preferencias al montar el componente
+  useEffect(() => {
+    if (!isInitialized) {
+      setSearchTerm(faqsPrefs.searchTerm);
+      setPageSize(faqsPrefs.pageSize);
+      setSortBy(faqsPrefs.sortBy);
+      setIsInitialized(true);
     }
-  }, [currentPage, searchTerm]);
+  }, [faqsPrefs, isInitialized]);
 
+  // Guardar preferencias cuando cambien (solo después de la inicialización)
   useEffect(() => {
-    fetchFaqs();
-  }, [fetchFaqs]);
+    if (isInitialized) {
+      setFaqsPreferences({
+        searchTerm,
+        pageSize,
+        sortBy,
+      });
+    }
+  }, [searchTerm, pageSize, sortBy, setFaqsPreferences, isInitialized]);
 
-  // Reset to page 1 when search term changes
+  // Reset to page 1 when search term, page size, or sort changes, then fetch
   useEffect(() => {
+    if (!isInitialized) return;
+
     setCurrentPage(1);
-  }, [searchTerm]);
+  }, [searchTerm, pageSize, sortBy, isInitialized]);
+
+  // Fetch faqs when any relevant value changes
+  useEffect(() => {
+    // No hacer fetch hasta que las preferencias estén inicializadas
+    if (!isInitialized) return;
+
+    const fetchFaqs = async () => {
+      try {
+        setLoading(true);
+        const response = await getFaqs({
+          page: currentPage,
+          pageSize: pageSize,
+          sort: sortBy,
+          search: searchTerm || undefined,
+        });
+
+        setFaqs(response.data);
+        setTotalPages(response.meta.pagination.pageCount);
+      } catch (error) {
+        console.error('Error fetching faqs:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFaqs();
+  }, [currentPage, searchTerm, pageSize, sortBy, isInitialized]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('es-CL');
@@ -65,8 +111,7 @@ export default function FaqsPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold">FAQ</h1>
-            <p className="text-gray-500">Gestiona las preguntas frecuentes</p>
+            <h1 className="text-3xl font-bold text-gray-900">FAQ</h1>
           </div>
           <Button onClick={() => router.push('/faqs/new')}>
             <Plus className="h-4 w-4 mr-2" />
@@ -78,14 +123,67 @@ export default function FaqsPage() {
         <Card className="shadow-none">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>Preguntas Frecuentes</CardTitle>
+              <InputSearch
+                placeholder="Buscar FAQ..."
+                value={searchTerm}
+                onChange={setSearchTerm}
+                className="w-64"
+              />
               <div className="flex items-center space-x-2">
-                <Input
-                  placeholder="Buscar FAQ..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-64"
-                />
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="gap-2">
+                      {sortBy === 'title:asc' && 'Título A-Z'}
+                      {sortBy === 'title:desc' && 'Título Z-A'}
+                      {sortBy === 'createdAt:desc' && 'Más recientes'}
+                      {sortBy === 'createdAt:asc' && 'Más antiguos'}
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => setSortBy('title:asc')}>
+                      Título A-Z
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setSortBy('title:desc')}>
+                      Título Z-A
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setSortBy('createdAt:desc')}
+                    >
+                      Más recientes
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setSortBy('createdAt:asc')}
+                    >
+                      Más antiguos
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="gap-2">
+                      {pageSize} por página
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => setPageSize(5)}>
+                      5 por página
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setPageSize(10)}>
+                      10 por página
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setPageSize(25)}>
+                      25 por página
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setPageSize(50)}>
+                      50 por página
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setPageSize(100)}>
+                      100 por página
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </div>
           </CardHeader>
@@ -198,33 +296,11 @@ export default function FaqsPage() {
         </Card>
 
         {/* Paginación */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between">
-            <div className="text-sm text-gray-700">
-              Página {currentPage} de {totalPages}
-            </div>
-            <div className="flex space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
-              >
-                Anterior
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() =>
-                  setCurrentPage(Math.min(totalPages, currentPage + 1))
-                }
-                disabled={currentPage === totalPages}
-              >
-                Siguiente
-              </Button>
-            </div>
-          </div>
-        )}
+        <DataTablePagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
       </div>
     </div>
   );

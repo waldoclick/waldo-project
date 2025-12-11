@@ -11,4 +11,6 @@ export type {
   UsedFeaturesPreferences,
   FreeFeaturesPreferences,
   CategoriesPreferences,
+  ConditionsPreferences,
+  FaqsPreferences,
 } from './types';
