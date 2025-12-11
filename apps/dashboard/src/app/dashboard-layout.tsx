@@ -44,6 +44,21 @@ export default function DashboardLayout({
       href: '/',
     },
     {
+      name: 'Órdenes',
+      icon: ShoppingCart,
+      href: '/sales',
+    },
+    {
+      name: 'Reservas',
+      icon: Calendar,
+      href: '/reservations',
+    },
+    {
+      name: 'Destacados',
+      icon: Star,
+      href: '/features',
+    },
+    {
       name: 'Categorías',
       icon: Tag,
       href: '/categories',
@@ -52,11 +67,6 @@ export default function DashboardLayout({
       name: 'Condiciones',
       icon: Package,
       href: '/conditions',
-    },
-    {
-      name: 'Destacados',
-      icon: Star,
-      href: '/features',
     },
     {
       name: 'FAQ',
@@ -79,19 +89,9 @@ export default function DashboardLayout({
       href: '/communes',
     },
     {
-      name: 'Reservas',
-      icon: Calendar,
-      href: '/reservations',
-    },
-    {
       name: 'Usuarios',
       icon: Users,
       href: '/users',
-    },
-    {
-      name: 'Órdenes',
-      icon: ShoppingCart,
-      href: '/sales',
     },
   ];
 
@@ -198,6 +198,18 @@ export default function DashboardLayout({
                 <span>Dashboard</span>
               </Link>
 
+              {/* Órdenes */}
+              <Link
+                href="/sales"
+                className={`flex items-center space-x-5 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors text-gray-700 hover:bg-gray-100`}
+                onClick={() => setSidebarOpen(false)}
+              >
+                <ShoppingCart
+                  className={`h-5 w-5 transition-opacity ${pathname === '/sales' ? 'opacity-100' : 'opacity-50'}`}
+                />
+                <span>Órdenes</span>
+              </Link>
+
               {/* Anuncios Dropdown */}
               <div>
                 <button
@@ -245,7 +257,7 @@ export default function DashboardLayout({
               </div>
 
               {/* Other Menu Items */}
-              {menuItems.slice(1).map((item) => {
+              {menuItems.slice(2).map((item) => {
                 const Icon = item.icon;
                 const isActive = pathname === item.href;
 
