@@ -214,20 +214,10 @@ export default function AdDetailPage() {
     if (!ad) return;
 
     try {
+      setApproveDialogOpen(false);
       await approveAd(ad.id);
-      // Recargar los datos del anuncio después de aprobar
-      await fetchAd();
-      // Mostrar notificación de éxito
-      setNotification({
-        show: true,
-        message: 'Anuncio aprobado exitosamente',
-        type: 'success',
-      });
-      // Ocultar notificación después de 3 segundos
-      setTimeout(
-        () => setNotification({ show: false, message: '', type: 'success' }),
-        3000
-      );
+      // Redirigir a la lista de anuncios activos después de aprobar
+      router.push('/ads/active');
     } catch (error) {
       console.error('Error al aprobar el anuncio:', error);
       setNotification({
