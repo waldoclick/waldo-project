@@ -82,6 +82,12 @@ export interface RegionsPreferences {
   searchTerm: string;
 }
 
+export interface CommunesPreferences {
+  pageSize: number;
+  sortBy: string;
+  searchTerm: string;
+}
+
 export interface PreferencesState {
   orders: OrdersPreferences;
   pendingAds: PendingAdsPreferences;
@@ -97,6 +103,7 @@ export interface PreferencesState {
   faqs: FaqsPreferences;
   packs: PacksPreferences;
   regions: RegionsPreferences;
+  communes: CommunesPreferences;
   setOrdersPreferences: (preferences: Partial<OrdersPreferences>) => void;
   setPendingAdsPreferences: (
     preferences: Partial<PendingAdsPreferences>
@@ -129,4 +136,5 @@ export interface PreferencesState {
   setFaqsPreferences: (preferences: Partial<FaqsPreferences>) => void;
   setPacksPreferences: (preferences: Partial<PacksPreferences>) => void;
   setRegionsPreferences: (preferences: Partial<RegionsPreferences>) => void;
+  setCommunesPreferences: (preferences: Partial<CommunesPreferences>) => void;
 }

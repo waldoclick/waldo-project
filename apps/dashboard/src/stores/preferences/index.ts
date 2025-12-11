@@ -15,4 +15,5 @@ export type {
   FaqsPreferences,
   PacksPreferences,
   RegionsPreferences,
+  CommunesPreferences,
 } from './types';
