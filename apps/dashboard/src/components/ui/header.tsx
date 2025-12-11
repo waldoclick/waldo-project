@@ -1,7 +1,7 @@
 import { Avatar } from '@/components/ui/avatar';
 import { useUserStore } from '@/stores/users';
 import { Button } from '@/components/ui/button';
-import { LogOut, User, Settings, ChevronDown } from 'lucide-react';
+import { LogOut, User, Settings, ChevronDown, Calendar } from 'lucide-react';
 import { useState } from 'react';
 import Link from 'next/link';
 import { config } from '@/lib/config';
@@ -53,7 +53,8 @@ export function Header() {
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
-        <div>
+        <div className="flex items-center space-x-2">
+          <Calendar className="h-4 w-4 text-gray-500" />
           <p className="text-sm text-gray-500 capitalize">
             {new Date().toLocaleDateString('es-CL', {
               weekday: 'long',
