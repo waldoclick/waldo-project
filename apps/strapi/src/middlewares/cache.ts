@@ -57,8 +57,6 @@ const CACHE_CONFIG = {
   "/api/payments": 1,
   "/api/user": 1,
   "/api/indicators": 3600,
-  "/api/ads": 10,
-  "/api/orders": 10,
   "/api/filter": 60,
   "/api/related": 60,
   "/api/regions": 86400,
@@ -86,6 +84,8 @@ const shouldNotCache = (url: string): boolean => {
     url.startsWith("/content-manager") ||
     url.startsWith("/api/connect") || // No cachear rutas de autenticación
     url.startsWith("/api/auth") || // No cachear rutas de auth
+    url.startsWith("/api/orders") || // No cachear órdenes
+    url.startsWith("/api/ads") || // No cachear anuncios
     url.includes("/callback") || // No cachear callbacks de auth
     url.includes("/uploads")
   )
