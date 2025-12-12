@@ -1,5 +1,5 @@
 <template>
-  <div if="adsData" class="page">
+  <div v-if="adsData && adsData.user" class="page">
     <!-- <pre>{{ adsData }}</pre> -->
     <HeaderDefault :show-search="true" />
     <HeroProfile :user="adsData.user" />
@@ -48,9 +48,17 @@ const {
       // Primero intentamos cargar el usuario
       await userStore.loadUser(username);
 
-      // Si no existe el usuario, retornamos null para manejar el 404
-      if (!userStore.user) {
-        return null;
+      // Si no existe el usuario, lanzar error 404 directamente
+      if (
+        !userStore.user ||
+        typeof userStore.user !== "object" ||
+        !userStore.user.id
+      ) {
+        throw createError({
+          statusCode: 404,
+          message: "Página no encontrada",
+          description: "Lo sentimos, la página que buscas no existe.",
+        });
       }
 
       const paginationParams = { pageSize: 12, page: currentPage.value };
@@ -68,9 +76,18 @@ const {
         ads: adsStore.ads,
         pagination: adsStore.pagination,
       };
-    } catch (error) {
-      console.error("Error loading user data:", error);
-      return null;
+    } catch (err) {
+      // Si el error ya es un createError, lo relanzamos
+      if (err?.statusCode) {
+        throw err;
+      }
+      // Si es otro tipo de error, lanzamos un 404 genérico
+      console.error("Error loading user data:", err);
+      throw createError({
+        statusCode: 404,
+        message: "Página no encontrada",
+        description: "Lo sentimos, la página que buscas no existe.",
+      });
     }
   },
   {
@@ -80,62 +97,59 @@ const {
   },
 );
 
-// Configurar SEO cuando los datos estén disponibles
-watch(
-  () => adsData.value,
-  (newData) => {
-    if (newData && newData.user) {
-      const totalAds = newData.ads.length;
-      const location = newData.user.commune?.name
-        ? `en ${newData.user.commune.name}`
-        : "en Chile";
-      const categories = [
-        ...new Set(newData.ads.map((ad) => ad.category?.name)),
-      ]
-        .slice(0, 3)
-        .join(", ");
-
-      $setSEO({
-        title: `Perfil de ${newData.user?.username}`,
-        description: `Explora los ${totalAds} anuncios de publicados por ${newData.user?.username} ${location}. Encuentra los mejores precios en equipamiento industrial en Waldo.click`,
-        imageUrl: newData.user?.avatar?.url || "https://waldo.click/share.jpg",
-        url: `https://waldo.click/${route.params.slug}`,
-      });
-
-      $setStructuredData({
-        "@context": "https://schema.org",
-        "@type": "ProfilePage",
-        name: newData.user?.username,
-        description: `Perfil comercial de ${newData.user?.username} - Vendedor especializado en ${categories || "equipo industrial"} ${location}`,
-        url: `https://waldo.click/${route.params.slug}`,
-        mainEntity: {
-          "@type": "Person",
-          name: newData.user?.username,
-          image: newData.user?.avatar?.url || "https://waldo.click/share.jpg",
-          description: `Vendedor con ${totalAds} anuncios activos en Waldo.click`,
-          url: `https://waldo.click/${route.params.slug}`,
-          memberOf: {
-            "@type": "Organization",
-            name: "Waldo.click",
-            url: "https://waldo.click",
-          },
-        },
-      });
-    }
-  },
-  { immediate: true },
-);
-
-// Observar los datos y redirigir al 404 solo cuando la carga haya terminado
-watchEffect(() => {
-  if (!pending.value && !adsData.value && !error.value) {
+// Observar los datos para cambios dinámicos (solo en cliente)
+if (import.meta.client) {
+  watchEffect(() => {
+    if (pending.value) return;
+    if (adsData.value && adsData.value.user) return;
     showError({
       statusCode: 404,
       message: "Página no encontrada",
       description: "Lo sentimos, la página que buscas no existe.",
     });
-  }
-});
+  });
+}
+
+// Configurar SEO solo cuando hay datos válidos (EJECUTAR DESPUÉS)
+// Deshabilitado temporalmente para evitar errores 500
+// watch(
+//   () => adsData.value,
+//   (newData) => {
+//     if (pending.value || !newData || !newData.user || !newData.ads || !Array.isArray(newData.ads) || !newData.user.username) return;
+//     try {
+//       const totalAds = newData.ads.length || 0;
+//       const location = newData.user.commune?.name ? `en ${newData.user.commune.name}` : "en Chile";
+//       const categories = [...new Set(newData.ads.map((ad) => ad?.category?.name).filter(Boolean))].slice(0, 3).join(", ");
+//       $setSEO({
+//         title: `Perfil de ${newData.user.username}`,
+//         description: `Explora los ${totalAds} anuncios de publicados por ${newData.user.username} ${location}. Encuentra los mejores precios en equipamiento industrial en Waldo.click`,
+//         imageUrl: newData.user.avatar?.url || "https://waldo.click/share.jpg",
+//         url: `https://waldo.click/${route.params.slug}`,
+//       });
+//       $setStructuredData({
+//         "@context": "https://schema.org",
+//         "@type": "ProfilePage",
+//         name: newData.user.username,
+//         description: `Perfil comercial de ${newData.user.username} - Vendedor especializado en ${categories || "equipo industrial"} ${location}`,
+//         url: `https://waldo.click/${route.params.slug}`,
+//         mainEntity: {
+//           "@type": "Person",
+//           name: newData.user.username,
+//           image: newData.user.avatar?.url || "https://waldo.click/share.jpg",
+//           description: `Vendedor con ${totalAds} anuncios activos en Waldo.click`,
+//           url: `https://waldo.click/${route.params.slug}`,
+//           memberOf: {
+//             "@type": "Organization",
+//             name: "Waldo.click",
+//             url: "https://waldo.click",
+//           },
+//         },
+//       });
+//     } catch (err) {
+//       console.error("Error setting SEO:", err);
+//     }
+//   },
+// );
 
 // Observar cambios en la URL y actualizar la página actual
 watch(
