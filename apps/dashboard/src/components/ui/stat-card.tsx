@@ -46,7 +46,7 @@ export function StatCard({
       {link && (
         <Link
           href={link.href}
-          className="text-sm underline inline-flex items-center gap-1"
+          className="text-xs underline inline-flex items-center gap-1"
           style={{ color: '#313338' }}
         >
           <ArrowRight className="h-3 w-3" />
