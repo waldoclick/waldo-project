@@ -84,13 +84,27 @@ const { data, pending, error } = await useAsyncData(
       return { error: "NOT_FOUND" };
     }
 
+    // Verificar si el anuncio está expirado (remaining_days === 0)
+    // Esto debe hacerse ANTES de procesar los datos para evitar errores de serialización en Pinia
+    if (response.remaining_days === 0) {
+      throw createError({
+        statusCode: 403,
+        message: "Resumen expirado",
+        description: "El tiempo para ver el resumen de tu anuncio ha expirado",
+      });
+    }
+
     // Verificar el tiempo transcurrido basado en la última actualización
     const updatedAt = new Date(response.updatedAt);
     const now = new Date();
     const diffInMinutes = Math.floor((now - updatedAt) / (1000 * 60));
 
     if (diffInMinutes > 10) {
-      return { error: "EXPIRED", updatedAt };
+      throw createError({
+        statusCode: 403,
+        message: "Resumen expirado",
+        description: "El tiempo para ver el resumen de tu anuncio ha expirado",
+      });
     }
 
     return response;
@@ -103,9 +117,23 @@ const { data, pending, error } = await useAsyncData(
 
 // Manejar errores y limpiar store cuando los datos estén disponibles
 watchEffect(() => {
+  // Si hay un error de useAsyncData (lanzado con createError)
+  if (error.value) {
+    showError({
+      statusCode: error.value.statusCode || 500,
+      message: error.value.message || "Error inesperado",
+      description:
+        error.value.description ||
+        error.value.message ||
+        "Lo sentimos, ha ocurrido un error.",
+    });
+    return;
+  }
+
   if (data.value?.error) {
     handleError(data.value.error, data.value.updatedAt);
-  } else if (data.value && !pending.value) {
+    return; // Salir temprano para evitar procesar datos con error
+  } else if (data.value && !pending.value && !data.value.error) {
     // Limpiar el store solo cuando los datos se hayan cargado exitosamente
     adStore.clearAll();
 

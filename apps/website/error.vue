@@ -44,8 +44,17 @@ const props = defineProps({
 
 // Función para obtener el título del error
 const getErrorTitle = () => {
+  // Si hay un mensaje personalizado, usarlo primero
+  if (props.error?.message) {
+    if (props.error?.statusCode === 404) {
+      return `404 - ${props.error.message}`;
+    }
+    return props.error.message;
+  }
+
+  // Mensajes por defecto según el statusCode
   if (props.error?.statusCode === 404) {
-    return `404 - ${props.error.message}`;
+    return "404 - Página no encontrada";
   } else if (props.error?.statusCode === 429) {
     return "Demasiadas solicitudes";
   } else if (props.error?.statusCode === 500) {
@@ -53,16 +62,19 @@ const getErrorTitle = () => {
   } else if (props.error?.statusCode === 403) {
     return "Acceso denegado";
   }
-  return props.error?.message || "Error inesperado";
+  return "Error inesperado";
 };
 
 // Función para obtener la descripción del error
 const getErrorDescription = () => {
+  // Si hay una descripción personalizada, usarla primero
+  if (props.error?.description) {
+    return props.error.description;
+  }
+
+  // Descripciones por defecto según el statusCode
   if (props.error?.statusCode === 404) {
-    return (
-      props.error?.description ||
-      "La página que buscas no existe o ha sido movida."
-    );
+    return "La página que buscas no existe o ha sido movida.";
   } else if (props.error?.statusCode === 429) {
     return "Has realizado demasiadas solicitudes muy rápido. Por favor, espera unos momentos antes de intentar nuevamente.";
   } else if (props.error?.statusCode === 500) {
@@ -70,7 +82,7 @@ const getErrorDescription = () => {
   } else if (props.error?.statusCode === 403) {
     return "No tienes permisos para acceder a esta página.";
   }
-  return props.error?.description || "Lo sentimos, ha ocurrido un error.";
+  return "Lo sentimos, ha ocurrido un error.";
 };
 
 const {

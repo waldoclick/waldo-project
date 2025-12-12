@@ -53,6 +53,18 @@ const { data: adData, refresh } = await useAsyncData(
         return null;
       }
 
+      // Verificar si el anuncio está expirado (remaining_days === 0)
+      // Esto debe hacerse ANTES de procesar los datos para evitar errores de serialización en Pinia
+      if (ad.remaining_days === 0) {
+        showError({
+          statusCode: 403,
+          message: "Anuncio expirado",
+          description:
+            "Lo sentimos, este anuncio ha expirado y ya no está disponible.",
+        });
+        return null; // Retornar null para evitar procesar datos expirados
+      }
+
       let isAvailable = true;
 
       if (!ad.active) {
@@ -70,6 +82,7 @@ const { data: adData, refresh } = await useAsyncData(
           description:
             "Lo sentimos, este anuncio no está disponible en este momento.",
         });
+        return null; // Retornar null para evitar procesar datos no disponibles
       }
 
       // Formatear precio original y convertir
