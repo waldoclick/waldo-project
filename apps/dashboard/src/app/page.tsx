@@ -183,7 +183,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Cuadro de Estadísticas de Ventas */}
-        <Card className="w-full">
+        <Card className="w-full !bg-white !rounded-md !shadow-sm !border-0">
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle>Estadísticas de Ventas</CardTitle>
@@ -207,7 +207,7 @@ export default function DashboardPage() {
               </DropdownMenu>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pl-0">
             {loading ? (
               <div className="flex items-center justify-center py-8">
                 <div className="text-gray-500">Cargando datos...</div>
@@ -217,31 +217,6 @@ export default function DashboardPage() {
             )}
           </CardContent>
         </Card>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-lg border">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              Resumen
-            </h3>
-            <p className="text-gray-600">
-              Aquí puedes ver un resumen de tu actividad
-            </p>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg border">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              Actividad Reciente
-            </h3>
-            <p className="text-gray-600">Últimas acciones en tu cuenta</p>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg border">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              Configuración
-            </h3>
-            <p className="text-gray-600">Gestiona tu perfil y preferencias</p>
-          </div>
-        </div>
       </div>
     </div>
   );

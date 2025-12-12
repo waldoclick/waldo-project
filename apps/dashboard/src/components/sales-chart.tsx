@@ -60,11 +60,15 @@ export function SalesChart({ data }: SalesChartProps) {
     <ResponsiveContainer width="100%" height={400}>
       <BarChart
         data={data}
-        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+        margin={{ top: 20, right: 30, left: 10, bottom: 5 }}
       >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="mes" tick={{ fontSize: 11 }} />
-        <YAxis tickFormatter={formatCurrency} tick={{ fontSize: 11 }} />
+        <YAxis
+          tickFormatter={formatCurrency}
+          tick={{ fontSize: 11 }}
+          width={60}
+        />
         <ReferenceLine
           y={average}
           stroke="#000"
