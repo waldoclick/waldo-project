@@ -1,7 +1,9 @@
+'use client';
+
 import { Avatar } from '@/components/ui/avatar';
 import { useUserStore } from '@/stores/users';
 import { Button } from '@/components/ui/button';
-import { LogOut, User, Settings, ChevronDown, Calendar } from 'lucide-react';
+import { LogOut, User, Settings, ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 import Link from 'next/link';
 import { config } from '@/lib/config';
@@ -14,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { GlobalSearch } from '@/components/ui/global-search';
+import { HeaderIcons } from '@/components/ui/header-icons';
 
 export function Header() {
   const { user } = useUserStore();
@@ -54,65 +57,56 @@ export function Header() {
   return (
     <header className="fixed top-0 left-0 lg:left-72 right-0 z-50 bg-white border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <Calendar className="h-4 w-4 text-gray-500" />
-          <p className="text-sm text-gray-500 capitalize">
-            {new Date().toLocaleDateString('es-CL', {
-              weekday: 'long',
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-            })}
-          </p>
-        </div>
-
         <GlobalSearch />
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              className="flex items-center space-x-2 px-3 py-2 hover:bg-gray-50"
-            >
-              <Avatar name={userName} size="sm" />
-              <span className="text-sm font-medium text-gray-700">
-                {userName}
-              </span>
-              <ChevronDown className="h-4 w-4 text-gray-400" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel className="font-normal">
-              <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium leading-none">{userName}</p>
-                <p className="text-xs leading-none text-muted-foreground">
-                  {user?.email || 'admin@waldo.com'}
-                </p>
-              </div>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link href="/profile" className="flex items-center">
-                <User className="mr-2 h-4 w-4" />
-                <span>Mi Perfil</span>
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href="/settings" className="flex items-center">
-                <Settings className="mr-2 h-4 w-4" />
-                <span>Configuración</span>
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={handleLogout}
-              className="text-red-600 focus:text-red-600 focus:bg-red-50"
-            >
-              <LogOut className="mr-2 h-4 w-4" />
-              <span>Cerrar Sesión</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex items-center gap-4">
+          <HeaderIcons />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className="flex items-center space-x-2 px-3 py-2 hover:bg-gray-50"
+              >
+                <Avatar name={userName} size="sm" />
+                <span className="text-sm font-medium text-gray-700">
+                  {userName}
+                </span>
+                <ChevronDown className="h-4 w-4 text-gray-400" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel className="font-normal">
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-medium leading-none">{userName}</p>
+                  <p className="text-xs leading-none text-muted-foreground">
+                    {user?.email || 'admin@waldo.com'}
+                  </p>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href="/profile" className="flex items-center">
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Mi Perfil</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/settings" className="flex items-center">
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Configuración</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={handleLogout}
+                className="text-red-600 focus:text-red-600 focus:bg-red-50"
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Cerrar Sesión</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
       {/* Modal de confirmación */}
