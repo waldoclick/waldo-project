@@ -1,14 +1,14 @@
-import { Globe } from 'lucide-react';
+import { Globe, Search } from 'lucide-react';
 import {
   SiGoogletagmanager,
   SiGoogleanalytics,
-  SiGooglesearchconsole,
   SiRocket,
   SiZoho,
   SiSentry,
   SiHotjar,
   SiSlack,
   SiCodacy,
+  SiBetterstack,
 } from 'react-icons/si';
 
 export interface Service {
@@ -30,13 +30,13 @@ export function useServices(): Service[] {
       url: 'https://tagmanager.google.com/#/container/accounts/6223279087/containers/180879945/workspaces/3',
     },
     {
-      name: 'Analytics',
+      name: 'GA4',
       icon: SiGoogleanalytics,
       url: 'https://analytics.google.com/analytics/web/#/a307524661p433494628/reports/intelligenthome?params=_u..nav%3Dmaui',
     },
     {
-      name: 'Search Console',
-      icon: SiGooglesearchconsole,
+      name: 'GSC',
+      icon: Search,
       url: 'https://search.google.com/search-console?resource_id=sc-domain:waldo.click',
     },
     {
@@ -68,6 +68,11 @@ export function useServices(): Service[] {
       name: 'Codacy',
       icon: SiCodacy,
       url: 'https://app.codacy.com/organizations/gh/waldoclick',
+    },
+    {
+      name: 'Better Stack',
+      icon: SiBetterstack,
+      url: 'https://uptime.betterstack.com/team/t324583/incidents',
     },
   ];
 }

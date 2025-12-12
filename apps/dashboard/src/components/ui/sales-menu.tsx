@@ -73,9 +73,11 @@ export function SalesMenu() {
           <Link
             href="/sales"
             onClick={() => setOpen(false)}
-            className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1 cursor-pointer"
+            className="text-xs underline flex items-center gap-1 cursor-pointer"
+            style={{ color: '#313338' }}
           >
-            Ver todas <ExternalLink className="h-3 w-3" />
+            Ver todas{' '}
+            <ExternalLink className="h-3 w-3" style={{ color: '#313338' }} />
           </Link>
         </div>
         <div>
