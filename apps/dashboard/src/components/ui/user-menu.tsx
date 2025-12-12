@@ -70,7 +70,7 @@ export function UserMenu() {
           <DropdownMenuLabel className="font-normal px-2 py-1.5">
             <div className="flex items-center space-x-2">
               <Mail className="h-4 w-4 text-gray-500" />
-              <p className="text-xs leading-none text-muted-foreground">
+              <p className="text-sm leading-none text-muted-foreground">
                 {user?.email || 'admin@waldo.com'}
               </p>
             </div>
