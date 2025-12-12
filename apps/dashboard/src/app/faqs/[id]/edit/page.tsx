@@ -67,6 +67,7 @@ export default function EditFaqPage() {
       });
 
       router.push('/faqs');
+      router.refresh();
     } catch (error) {
       console.error('Error updating faq:', error);
       alert('Error al actualizar la FAQ');

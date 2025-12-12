@@ -84,13 +84,21 @@ export async function updateFaq(
     text?: string;
   }
 ): Promise<{ data: StrapiFaq }> {
-  const payload = {
-    data: {
-      ...(data.title && { title: data.title }),
-      ...(data.featured !== undefined && { featured: data.featured }),
-      ...(data.text && { text: data.text }),
-    },
+  const payload: { data: Record<string, unknown> } = {
+    data: {},
   };
+
+  // Incluir campos solo si están definidos
+  if (data.title !== undefined) {
+    payload.data.title = data.title;
+  }
+  // Asegurar que featured siempre se incluya cuando está definido (incluso si es false)
+  if (data.featured !== undefined) {
+    payload.data.featured = data.featured;
+  }
+  if (data.text !== undefined) {
+    payload.data.text = data.text;
+  }
 
   return strapiClient.put<{ data: StrapiFaq }>(
     `/faqs/${id}`,

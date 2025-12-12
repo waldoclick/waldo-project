@@ -92,7 +92,7 @@ export function SalesChart({ data }: SalesChartProps) {
           }}
           itemStyle={{ color: '#000', fontSize: '11px' }}
         />
-        <Bar dataKey="monto" fill="#ffd699" />
+        <Bar dataKey="monto" fill="#d3d3d3" />
       </BarChart>
     </ResponsiveContainer>
   );
