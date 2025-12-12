@@ -916,7 +916,7 @@ export default function AdDetailPage() {
                       <label className="text-sm font-medium text-gray-500">
                         Número de Orden de Compra
                       </label>
-                      <p className="font-mono text-sm bg-gray-100 p-2 rounded">
+                      <p className="font-mono text-sm bg-gray-100 p-2 rounded-sm">
                         {order.buy_order}
                       </p>
                     </div>
@@ -1022,7 +1022,7 @@ export default function AdDetailPage() {
                 <CardTitle>Detalles Adicionales</CardTitle>
               </CardHeader>
               <CardContent>
-                <pre className="bg-gray-50 p-4 rounded-lg overflow-auto text-sm max-h-64">
+                <pre className="bg-gray-50 p-3 rounded-sm overflow-auto text-sm max-h-64">
                   {JSON.stringify(ad.details, null, 2)}
                 </pre>
               </CardContent>

@@ -172,7 +172,7 @@ export default function EditCommunePage() {
                 </select>
               </div>
 
-              <div className="bg-gray-50 p-4 rounded-lg">
+              <div className="bg-gray-50 p-3 rounded-sm">
                 <h3 className="text-sm font-medium text-gray-700 mb-2">
                   Información Actual
                 </h3>

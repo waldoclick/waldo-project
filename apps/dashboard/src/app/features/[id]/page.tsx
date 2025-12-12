@@ -211,7 +211,7 @@ export default function DestacadoDetailPage() {
               <label className="text-sm font-medium text-gray-500">
                 Descripción
               </label>
-              <div className="mt-2 p-4 bg-gray-50 rounded-lg">
+              <div className="mt-2 p-3 bg-gray-50 rounded-sm">
                 <p className="text-gray-700 whitespace-pre-wrap">
                   {featured.description}
                 </p>
@@ -367,7 +367,7 @@ export default function DestacadoDetailPage() {
                 <label className="text-sm font-medium text-gray-500">
                   Descripción del Anuncio
                 </label>
-                <div className="mt-2 p-4 bg-gray-50 rounded-lg">
+                <div className="mt-2 p-3 bg-gray-50 rounded-sm">
                   <p className="text-gray-700">{featured.ad.description}</p>
                 </div>
               </div>
@@ -386,14 +386,14 @@ export default function DestacadoDetailPage() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="text-center p-4 bg-green-50 rounded-lg">
+            <div className="text-center p-3 bg-green-50 rounded-sm">
               <DollarSign className="h-8 w-8 text-green-600 mx-auto mb-2" />
               <p className="text-2xl font-bold text-green-600">
                 {formatPrice(featured.price)}
               </p>
               <p className="text-sm text-gray-600">Precio</p>
             </div>
-            <div className="text-center p-4 bg-blue-50 rounded-lg">
+            <div className="text-center p-3 bg-blue-50 rounded-sm">
               <Clock className="h-8 w-8 text-blue-600 mx-auto mb-2" />
               <p className="text-2xl font-bold text-blue-600">
                 {featured.total_days || 0}
@@ -401,7 +401,7 @@ export default function DestacadoDetailPage() {
               <p className="text-sm text-gray-600">Días</p>
             </div>
             <div
-              className={`text-center p-4 rounded-lg ${
+              className={`text-center p-3 rounded-sm ${
                 isUsed ? 'bg-yellow-50' : 'bg-gray-50'
               }`}
             >
@@ -417,7 +417,7 @@ export default function DestacadoDetailPage() {
               </p>
               <p className="text-sm text-gray-600">Estado</p>
             </div>
-            <div className="text-center p-4 bg-purple-50 rounded-lg">
+            <div className="text-center p-3 bg-purple-50 rounded-sm">
               <Hash className="h-8 w-8 text-purple-600 mx-auto mb-2" />
               <p className="text-2xl font-bold text-purple-600">
                 #{featured.id}

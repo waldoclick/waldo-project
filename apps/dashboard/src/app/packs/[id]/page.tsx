@@ -205,28 +205,28 @@ export default function PackDetailPage() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="text-center p-4 bg-green-50 rounded-lg">
+                  <div className="text-center p-3 bg-green-50 rounded-sm">
                     <DollarSign className="h-8 w-8 text-green-600 mx-auto mb-2" />
                     <p className="text-2xl font-bold text-green-600">
                       {formatPrice(pack.price)}
                     </p>
                     <p className="text-sm text-gray-600">Precio</p>
                   </div>
-                  <div className="text-center p-4 bg-blue-50 rounded-lg">
+                  <div className="text-center p-3 bg-blue-50 rounded-sm">
                     <Clock className="h-8 w-8 text-blue-600 mx-auto mb-2" />
                     <p className="text-2xl font-bold text-blue-600">
                       {pack.total_days}
                     </p>
                     <p className="text-sm text-gray-600">Días</p>
                   </div>
-                  <div className="text-center p-4 bg-purple-50 rounded-lg">
+                  <div className="text-center p-3 bg-purple-50 rounded-sm">
                     <Package className="h-8 w-8 text-purple-600 mx-auto mb-2" />
                     <p className="text-2xl font-bold text-purple-600">
                       {pack.total_ads}
                     </p>
                     <p className="text-sm text-gray-600">Anuncios</p>
                   </div>
-                  <div className="text-center p-4 bg-yellow-50 rounded-lg">
+                  <div className="text-center p-3 bg-yellow-50 rounded-sm">
                     <Star className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
                     <p className="text-2xl font-bold text-yellow-600">
                       {pack.total_features}

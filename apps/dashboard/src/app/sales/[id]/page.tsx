@@ -275,7 +275,7 @@ export default function OrderDetailPage() {
                     <label className="text-sm font-medium text-gray-500">
                       Detalles del Documento
                     </label>
-                    <pre className="mt-1 text-xs bg-gray-100 p-2 rounded overflow-auto">
+                    <pre className="mt-1 text-xs bg-gray-100 p-2 rounded-sm overflow-auto">
                       {JSON.stringify(order.document_details, null, 2)}
                     </pre>
                   </div>
@@ -286,7 +286,7 @@ export default function OrderDetailPage() {
                     <label className="text-sm font-medium text-gray-500">
                       Respuesta de Pago
                     </label>
-                    <pre className="mt-1 text-xs bg-gray-100 p-2 rounded overflow-auto">
+                    <pre className="mt-1 text-xs bg-gray-100 p-2 rounded-sm overflow-auto">
                       {JSON.stringify(order.payment_response, null, 2)}
                     </pre>
                   </div>
@@ -297,7 +297,7 @@ export default function OrderDetailPage() {
                     <label className="text-sm font-medium text-gray-500">
                       Respuesta de Documento
                     </label>
-                    <pre className="mt-1 text-xs bg-gray-100 p-2 rounded overflow-auto">
+                    <pre className="mt-1 text-xs bg-gray-100 p-2 rounded-sm overflow-auto">
                       {JSON.stringify(order.document_response, null, 2)}
                     </pre>
                   </div>
@@ -308,7 +308,7 @@ export default function OrderDetailPage() {
                     <label className="text-sm font-medium text-gray-500">
                       Items
                     </label>
-                    <pre className="mt-1 text-xs bg-gray-100 p-2 rounded overflow-auto">
+                    <pre className="mt-1 text-xs bg-gray-100 p-2 rounded-sm overflow-auto">
                       {JSON.stringify(order.items, null, 2)}
                     </pre>
                   </div>

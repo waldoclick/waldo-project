@@ -140,7 +140,7 @@ export default function RegionDetailPage() {
                     {region.communes.map((commune) => (
                       <div
                         key={commune.id}
-                        className="p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                        className="p-3 border rounded-sm hover:bg-gray-50 transition-colors"
                       >
                         <div className="flex items-center justify-between">
                           <div>

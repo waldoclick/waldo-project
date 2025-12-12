@@ -31,7 +31,7 @@ export function StatCard({
   };
 
   return (
-    <div className="bg-white rounded-sm shadow-sm p-6 relative">
+    <div className="bg-white rounded-sm shadow-sm p-5 relative">
       {/* Title */}
       <div className="text-xs text-gray-500 uppercase tracking-wide mb-3">
         {title}
