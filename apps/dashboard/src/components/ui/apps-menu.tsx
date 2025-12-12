@@ -20,7 +20,10 @@ export function AppsMenu() {
           <Grid3x3 className="h-5 w-5" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-80 p-4">
+      <DropdownMenuContent
+        align="end"
+        className="w-96 p-4 max-h-none overflow-visible"
+      >
         <div className="mb-4">
           <h3 className="text-sm font-semibold text-gray-900">Servicios</h3>
         </div>
@@ -35,12 +38,12 @@ export function AppsMenu() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setOpen(false)}
-                className="flex flex-col items-center gap-1 p-3 rounded-sm transition-colors cursor-pointer"
+                className="flex flex-col items-center justify-center gap-1 p-2 rounded-sm transition-colors cursor-pointer hover:bg-gray-50 h-full"
               >
-                <div className="w-12 h-12 rounded-sm flex items-center justify-center">
+                <div className="w-12 h-12 rounded-sm flex items-center justify-center flex-shrink-0">
                   <Icon className="h-8 w-8 text-gray-700" />
                 </div>
-                <span className="text-[10px] text-center text-gray-700">
+                <span className="text-[10px] text-center text-gray-700 leading-tight">
                   {service.name}
                 </span>
               </a>
