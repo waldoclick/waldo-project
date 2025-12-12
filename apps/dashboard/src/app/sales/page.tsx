@@ -121,46 +121,25 @@ export default function SalesPage() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <FileText className="h-4 w-4" />
-                          <span>Orden</span>
-                        </div>
+                        <span>Orden</span>
                       </TableHead>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <User className="h-4 w-4" />
-                          <span>Cliente</span>
-                        </div>
+                        <span>Cliente</span>
                       </TableHead>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <Package className="h-4 w-4" />
-                          <span>Anuncio</span>
-                        </div>
+                        <span>Anuncio</span>
                       </TableHead>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <DollarSign className="h-4 w-4" />
-                          <span>Monto</span>
-                        </div>
+                        <span>Monto</span>
                       </TableHead>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <CreditCard className="h-4 w-4" />
-                          <span>Método de Pago</span>
-                        </div>
+                        <span>Método de Pago</span>
                       </TableHead>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <FileText className="h-4 w-4" />
-                          <span>Tipo</span>
-                        </div>
+                        <span>Tipo</span>
                       </TableHead>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <Calendar className="h-4 w-4" />
-                          <span>Fecha</span>
-                        </div>
+                        <span>Fecha</span>
                       </TableHead>
                       <TableHead className="text-right">Acciones</TableHead>
                     </TableRow>

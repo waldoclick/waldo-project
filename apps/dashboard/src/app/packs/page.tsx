@@ -114,40 +114,22 @@ export default function PacksPage() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <Package className="h-4 w-4" />
-                          <span>Pack</span>
-                        </div>
+                        <span>Pack</span>
                       </TableHead>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <DollarSign className="h-4 w-4" />
-                          <span>Precio</span>
-                        </div>
+                        <span>Precio</span>
                       </TableHead>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <Clock className="h-4 w-4" />
-                          <span>Duración</span>
-                        </div>
+                        <span>Duración</span>
                       </TableHead>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <FileText className="h-4 w-4" />
-                          <span>Anuncios</span>
-                        </div>
+                        <span>Anuncios</span>
                       </TableHead>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <Star className="h-4 w-4" />
-                          <span>Features</span>
-                        </div>
+                        <span>Features</span>
                       </TableHead>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <Calendar className="h-4 w-4" />
-                          <span>Fecha de Creación</span>
-                        </div>
+                        <span>Fecha de Creación</span>
                       </TableHead>
                       <TableHead className="text-right">Acciones</TableHead>
                     </TableRow>

@@ -94,28 +94,16 @@ export default function FaqsPage() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <FileText className="h-4 w-4" />
-                          <span>Pregunta</span>
-                        </div>
+                        <span>Pregunta</span>
                       </TableHead>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <Star className="h-4 w-4" />
-                          <span>Destacada</span>
-                        </div>
+                        <span>Destacada</span>
                       </TableHead>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <FileText className="h-4 w-4" />
-                          <span>Texto</span>
-                        </div>
+                        <span>Texto</span>
                       </TableHead>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <Calendar className="h-4 w-4" />
-                          <span>Fecha de Creación</span>
-                        </div>
+                        <span>Fecha de Creación</span>
                       </TableHead>
                       <TableHead className="text-right">Acciones</TableHead>
                     </TableRow>

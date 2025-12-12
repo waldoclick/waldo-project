@@ -92,28 +92,16 @@ export default function CategoriesPage() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <Tag className="h-4 w-4" />
-                          <span>Categoría</span>
-                        </div>
+                        <span>Categoría</span>
                       </TableHead>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <Hash className="h-4 w-4" />
-                          <span>Slug</span>
-                        </div>
+                        <span>Slug</span>
                       </TableHead>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <Palette className="h-4 w-4" />
-                          <span>Color</span>
-                        </div>
+                        <span>Color</span>
                       </TableHead>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <Calendar className="h-4 w-4" />
-                          <span>Fecha de Creación</span>
-                        </div>
+                        <span>Fecha de Creación</span>
                       </TableHead>
                       <TableHead className="text-right">Acciones</TableHead>
                     </TableRow>

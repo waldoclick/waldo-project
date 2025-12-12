@@ -114,28 +114,16 @@ export default function PendingAdsPage() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <Link2 className="h-4 w-4" />
-                          <span>Anuncio</span>
-                        </div>
+                        <span>Anuncio</span>
                       </TableHead>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <User className="h-4 w-4" />
-                          <span>Usuario</span>
-                        </div>
+                        <span>Usuario</span>
                       </TableHead>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <CheckCircle className="h-4 w-4" />
-                          <span>Estado de Pago</span>
-                        </div>
+                        <span>Estado de Pago</span>
                       </TableHead>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <Calendar className="h-4 w-4" />
-                          <span>Fecha</span>
-                        </div>
+                        <span>Fecha</span>
                       </TableHead>
                       <TableHead className="text-right">Acciones</TableHead>
                     </TableRow>

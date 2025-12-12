@@ -113,34 +113,19 @@ export default function UsedReservationsPage() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <User className="h-4 w-4" />
-                          <span>Usuario</span>
-                        </div>
+                        <span>Usuario</span>
                       </TableHead>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <Package className="h-4 w-4" />
-                          <span>Anuncio</span>
-                        </div>
+                        <span>Anuncio</span>
                       </TableHead>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <DollarSign className="h-4 w-4" />
-                          <span>Precio</span>
-                        </div>
+                        <span>Precio</span>
                       </TableHead>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <Clock className="h-4 w-4" />
-                          <span>Días</span>
-                        </div>
+                        <span>Días</span>
                       </TableHead>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <Calendar className="h-4 w-4" />
-                          <span>Fecha</span>
-                        </div>
+                        <span>Fecha</span>
                       </TableHead>
                       <TableHead className="text-right">Acciones</TableHead>
                     </TableRow>

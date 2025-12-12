@@ -124,40 +124,22 @@ export default function UsersPage() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <Hash className="h-4 w-4" />
-                          <span>ID</span>
-                        </div>
+                        <span>ID</span>
                       </TableHead>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <User className="h-4 w-4" />
-                          <span>Usuario</span>
-                        </div>
+                        <span>Usuario</span>
                       </TableHead>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <Mail className="h-4 w-4" />
-                          <span>Email</span>
-                        </div>
+                        <span>Email</span>
                       </TableHead>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <CheckCircle className="h-4 w-4" />
-                          <span>Estado</span>
-                        </div>
+                        <span>Estado</span>
                       </TableHead>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <Shield className="h-4 w-4" />
-                          <span>Rol</span>
-                        </div>
+                        <span>Rol</span>
                       </TableHead>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <Calendar className="h-4 w-4" />
-                          <span>Fecha de Registro</span>
-                        </div>
+                        <span>Fecha de Registro</span>
                       </TableHead>
                       <TableHead className="text-right">Acciones</TableHead>
                     </TableRow>

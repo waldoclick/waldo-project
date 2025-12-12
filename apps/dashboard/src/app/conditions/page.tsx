@@ -92,22 +92,13 @@ export default function ConditionsPage() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <Package className="h-4 w-4" />
-                          <span>Condición</span>
-                        </div>
+                        <span>Condición</span>
                       </TableHead>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <Hash className="h-4 w-4" />
-                          <span>Slug</span>
-                        </div>
+                        <span>Slug</span>
                       </TableHead>
                       <TableHead>
-                        <div className="flex items-center space-x-2">
-                          <Calendar className="h-4 w-4" />
-                          <span>Fecha de Creación</span>
-                        </div>
+                        <span>Fecha de Creación</span>
                       </TableHead>
                       <TableHead className="text-right">Acciones</TableHead>
                     </TableRow>
