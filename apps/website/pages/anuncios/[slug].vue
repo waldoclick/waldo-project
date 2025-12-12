@@ -40,7 +40,12 @@ const historyStore = useHistoryStore();
 const relatedStore = useRelatedStore();
 const indicatorStore = useIndicatorStore();
 
-const { data: adData, refresh } = await useAsyncData(
+const {
+  data: adData,
+  refresh,
+  pending,
+  error: adError,
+} = await useAsyncData(
   "adData",
   async () => {
     const adsStore = useAdsStore();
@@ -56,13 +61,7 @@ const { data: adData, refresh } = await useAsyncData(
       // Verificar si el anuncio está expirado (remaining_days === 0)
       // Esto debe hacerse ANTES de procesar los datos para evitar errores de serialización en Pinia
       if (ad.remaining_days === 0) {
-        showError({
-          statusCode: 403,
-          message: "Anuncio expirado",
-          description:
-            "Lo sentimos, este anuncio ha expirado y ya no está disponible.",
-        });
-        return null; // Retornar null para evitar procesar datos expirados
+        return null;
       }
 
       let isAvailable = true;
@@ -76,13 +75,7 @@ const { data: adData, refresh } = await useAsyncData(
       }
 
       if (!isAvailable) {
-        showError({
-          statusCode: 403,
-          message: "Anuncio no disponible",
-          description:
-            "Lo sentimos, este anuncio no está disponible en este momento.",
-        });
-        return null; // Retornar null para evitar procesar datos no disponibles
+        return null;
       }
 
       // Formatear precio original y convertir
@@ -145,6 +138,31 @@ const { data: adData, refresh } = await useAsyncData(
     watch: [() => route.params.slug], // ✅ Observar cambios en el slug
   },
 );
+
+// Determinar el mensaje de error apropiado
+const getErrorMessage = () => {
+  if (adError.value) {
+    return {
+      statusCode: 404,
+      message: "Página no encontrada",
+      description:
+        "Lo sentimos, no pudimos cargar el anuncio. Por favor, intenta nuevamente.",
+    };
+  }
+  return {
+    statusCode: 404,
+    message: "Página no encontrada",
+    description:
+      "Lo sentimos, el anuncio que buscas no existe o no está disponible.",
+  };
+};
+
+// Observar los datos y mostrar error 404 cuando no hay datos
+watchEffect(() => {
+  if (!pending.value && !adData.value) {
+    showError(getErrorMessage());
+  }
+});
 
 // Configurar SEO cuando los datos estén disponibles
 watch(
@@ -239,17 +257,6 @@ watch(
   },
   { immediate: true },
 );
-
-// Si no hay datos, redirigimos a 404
-watchEffect(() => {
-  if (adData.value === null) {
-    showError({
-      statusCode: 404,
-      message: "Página no encontrada",
-      description: "Lo sentimos, la página que buscas no existe.",
-    });
-  }
-});
 
 const {
   relatedAds,
