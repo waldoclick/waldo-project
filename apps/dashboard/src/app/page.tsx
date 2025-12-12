@@ -17,6 +17,17 @@ import {
   CheckCircle,
   Archive,
   XCircle,
+  ShoppingCart,
+  Users,
+  Tag,
+  FileCheck,
+  HelpCircle,
+  MapPin,
+  Building,
+  Box,
+  Calendar,
+  Star,
+  Circle,
 } from 'lucide-react';
 import {
   getOrders,
@@ -27,6 +38,17 @@ import {
   getActiveAdsCount,
   getArchivedAdsCount,
   getRejectedAdsCount,
+  getUsers,
+  getCategories,
+  getConditions,
+  getFaqs,
+  getAdPacks,
+  getRegions,
+  getCommunes,
+  getUsedReservations,
+  getFreeReservations,
+  getUsedFeaturedReservations,
+  getFreeFeaturedReservations,
 } from '@/lib/strapi';
 
 export default function DashboardPage() {
@@ -43,6 +65,21 @@ export default function DashboardPage() {
     rejected: 0,
   });
   const [adsLoading, setAdsLoading] = useState(true);
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [stats, setStats] = useState({
+    orders: 0,
+    users: 0,
+    categories: 0,
+    conditions: 0,
+    faqs: 0,
+    packs: 0,
+    regions: 0,
+    communes: 0,
+    usedReservations: 0,
+    freeReservations: 0,
+    usedFeatured: 0,
+    freeFeatured: 0,
+  });
 
   // Obtener todas las órdenes
   const fetchAllOrders = useCallback(async () => {
@@ -118,10 +155,64 @@ export default function DashboardPage() {
     }
   }, []);
 
+  // Obtener estadísticas generales
+  const fetchStats = useCallback(async () => {
+    try {
+      setStatsLoading(true);
+      const [
+        ordersResponse,
+        usersResponse,
+        categoriesResponse,
+        conditionsResponse,
+        faqsResponse,
+        packsResponse,
+        regionsResponse,
+        communesResponse,
+        usedReservationsResponse,
+        freeReservationsResponse,
+        usedFeaturedResponse,
+        freeFeaturedResponse,
+      ] = await Promise.all([
+        getOrders({ pageSize: 1 }),
+        getUsers({ pageSize: 1 }),
+        getCategories({ pageSize: 1 }),
+        getConditions({ pageSize: 1 }),
+        getFaqs({ pageSize: 1 }),
+        getAdPacks({ pageSize: 1 }),
+        getRegions({ pageSize: 1 }),
+        getCommunes({ pageSize: 1 }),
+        getUsedReservations({ pageSize: 1 }),
+        getFreeReservations({ pageSize: 1 }),
+        getUsedFeaturedReservations({ pageSize: 1 }),
+        getFreeFeaturedReservations({ pageSize: 1 }),
+      ]);
+
+      setStats({
+        orders: ordersResponse.meta.pagination.total,
+        users: usersResponse.meta.pagination.total,
+        categories: categoriesResponse.meta.pagination.total,
+        conditions: conditionsResponse.meta.pagination.total,
+        faqs: faqsResponse.meta.pagination.total,
+        packs: packsResponse.meta.pagination.total,
+        regions: regionsResponse.meta.pagination.total,
+        communes: communesResponse.meta.pagination.total,
+        usedReservations: usedReservationsResponse.meta.pagination.total,
+        freeReservations: freeReservationsResponse.meta.pagination.total,
+        usedFeatured: usedFeaturedResponse.meta.pagination.total,
+        freeFeatured: freeFeaturedResponse.meta.pagination.total,
+      });
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+    } finally {
+      setStatsLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     fetchAllOrders();
     fetchAdsStats();
-  }, [fetchAllOrders, fetchAdsStats]);
+    fetchStats();
+  }, [fetchAllOrders, fetchAdsStats, fetchStats]);
 
   // Datos agrupados por mes para el año seleccionado
   const salesData = groupSalesByMonth(allOrders, selectedYear);
@@ -220,6 +311,149 @@ export default function DashboardPage() {
             )}
           </CardContent>
         </Card>
+
+        {/* Tarjetas de Reservas y Destacados */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <StatCard
+            title="Reservas Usadas"
+            value={statsLoading ? '...' : stats.usedReservations}
+            link={{
+              text: 'Ver reservas usadas',
+              href: '/reservations/used',
+            }}
+            icon={CheckCircle}
+            iconColor="text-sky-500"
+            iconBgColor="bg-sky-500/20"
+          />
+          <StatCard
+            title="Reservas Libres"
+            value={statsLoading ? '...' : stats.freeReservations}
+            link={{
+              text: 'Ver reservas libres',
+              href: '/reservations/free',
+            }}
+            icon={Circle}
+            iconColor="text-sky-500"
+            iconBgColor="bg-sky-500/20"
+          />
+          <StatCard
+            title="Destacados Usados"
+            value={statsLoading ? '...' : stats.usedFeatured}
+            link={{
+              text: 'Ver destacados usados',
+              href: '/features/used',
+            }}
+            icon={CheckCircle}
+            iconColor="text-amber-500"
+            iconBgColor="bg-amber-500/20"
+          />
+          <StatCard
+            title="Destacados Libres"
+            value={statsLoading ? '...' : stats.freeFeatured}
+            link={{
+              text: 'Ver destacados libres',
+              href: '/features/free',
+            }}
+            icon={Circle}
+            iconColor="text-amber-500"
+            iconBgColor="bg-amber-500/20"
+          />
+        </div>
+
+        {/* Tarjetas de Estadísticas */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <StatCard
+            title="Órdenes"
+            value={statsLoading ? '...' : stats.orders}
+            link={{
+              text: 'Ver órdenes',
+              href: '/sales',
+            }}
+            icon={ShoppingCart}
+            iconColor="text-sky-500"
+            iconBgColor="bg-sky-500/20"
+          />
+          <StatCard
+            title="Usuarios"
+            value={statsLoading ? '...' : stats.users}
+            link={{
+              text: 'Ver usuarios',
+              href: '/users',
+            }}
+            icon={Users}
+            iconColor="text-violet-500"
+            iconBgColor="bg-violet-500/20"
+          />
+          <StatCard
+            title="Categorías"
+            value={statsLoading ? '...' : stats.categories}
+            link={{
+              text: 'Ver categorías',
+              href: '/categories',
+            }}
+            icon={Tag}
+            iconColor="text-rose-500"
+            iconBgColor="bg-rose-500/20"
+          />
+          <StatCard
+            title="Condiciones"
+            value={statsLoading ? '...' : stats.conditions}
+            link={{
+              text: 'Ver condiciones',
+              href: '/conditions',
+            }}
+            icon={FileCheck}
+            iconColor="text-amber-500"
+            iconBgColor="bg-amber-500/20"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <StatCard
+            title="FAQ"
+            value={statsLoading ? '...' : stats.faqs}
+            link={{
+              text: 'Ver FAQs',
+              href: '/faqs',
+            }}
+            icon={HelpCircle}
+            iconColor="text-indigo-500"
+            iconBgColor="bg-indigo-500/20"
+          />
+          <StatCard
+            title="Packs"
+            value={statsLoading ? '...' : stats.packs}
+            link={{
+              text: 'Ver packs',
+              href: '/packs',
+            }}
+            icon={Box}
+            iconColor="text-pink-500"
+            iconBgColor="bg-pink-500/20"
+          />
+          <StatCard
+            title="Regiones"
+            value={statsLoading ? '...' : stats.regions}
+            link={{
+              text: 'Ver regiones',
+              href: '/regions',
+            }}
+            icon={MapPin}
+            iconColor="text-teal-500"
+            iconBgColor="bg-teal-500/20"
+          />
+          <StatCard
+            title="Comunas"
+            value={statsLoading ? '...' : stats.communes}
+            link={{
+              text: 'Ver comunas',
+              href: '/communes',
+            }}
+            icon={Building}
+            iconColor="text-cyan-500"
+            iconBgColor="bg-cyan-500/20"
+          />
+        </div>
       </div>
     </div>
   );
