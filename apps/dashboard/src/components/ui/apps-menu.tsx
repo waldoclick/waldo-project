@@ -62,7 +62,7 @@ export function AppsMenu() {
           <Grid3x3 className="h-5 w-5" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-80 p-4">
+      <DropdownMenuContent align="end" className="w-80 p-4">
         <div className="mb-4">
           <h3 className="text-sm font-semibold text-gray-900">Shortcuts</h3>
         </div>
