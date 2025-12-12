@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Head from 'next/head';
 import { Header } from '@/components/ui/header';
+import { Footer } from '@/components/ui/footer';
 import { Button } from '@/components/ui/button';
 import {
   getPendingAdsCount,
@@ -588,7 +589,10 @@ export default function DashboardLayout({
           </div>
 
           {/* Page content - Sin scroll interno */}
-          <main className="flex-1 p-6 bg-gray-50 pt-20">{children}</main>
+          <main className="flex-1 p-6 bg-gray-50 pt-24">{children}</main>
+
+          {/* Footer */}
+          <Footer />
         </div>
       </div>
     </>

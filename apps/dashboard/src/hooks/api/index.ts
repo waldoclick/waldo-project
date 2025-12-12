@@ -8,4 +8,5 @@ export * from './useFaqs';
 export * from './useConditions';
 export * from './useReservations';
 export * from './useFeatures';
+export * from './useIndicators';
 export * from './usePaginatedData';

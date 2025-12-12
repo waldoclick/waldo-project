@@ -73,10 +73,25 @@ export async function updateAdPack(
   id: number,
   data: Partial<StrapiAdPack>
 ): Promise<{ data: StrapiAdPack }> {
-  // En Strapi v4, para actualizar usamos el ID directamente en la URL
-  return strapiClient.put<{ data: StrapiAdPack }>(`/ad-packs/${id}`, {
-    data,
-  } as unknown as Record<string, unknown>);
+  // Filtrar solo los campos válidos y no undefined
+  const payload: { data: Record<string, unknown> } = {
+    data: {},
+  };
+
+  if (data.name !== undefined) payload.data.name = data.name;
+  if (data.text !== undefined) payload.data.text = data.text;
+  if (data.total_days !== undefined) payload.data.total_days = data.total_days;
+  if (data.total_ads !== undefined) payload.data.total_ads = data.total_ads;
+  if (data.total_features !== undefined)
+    payload.data.total_features = data.total_features;
+  if (data.price !== undefined) payload.data.price = data.price;
+  if (data.description !== undefined)
+    payload.data.description = data.description;
+
+  return strapiClient.put<{ data: StrapiAdPack }>(
+    `/ad-packs/${id}`,
+    payload as unknown as Record<string, unknown>
+  );
 }
 
 // Eliminar un ad pack

@@ -106,7 +106,13 @@ export default function EditPackPage() {
       router.push('/packs');
     } catch (error) {
       console.error('Error updating pack:', error);
-      alert('Error al actualizar el pack');
+      const errorMessage =
+        error instanceof Error
+          ? error.message.includes('403')
+            ? 'No tienes permisos para actualizar este pack. Verifica tus permisos en Strapi.'
+            : error.message
+          : 'Error al actualizar el pack';
+      alert(errorMessage);
     } finally {
       setLoading(false);
     }

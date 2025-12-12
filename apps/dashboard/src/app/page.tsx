@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useUserStore } from '@/stores/users';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { SalesChart } from '@/components/sales-chart';
 import { StatCard } from '@/components/ui/stat-card';
+import { Indicators } from '@/components/ui/indicators';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -52,6 +54,7 @@ import {
 } from '@/lib/strapi';
 
 export default function DashboardPage() {
+  const { user } = useUserStore();
   const [selectedYear, setSelectedYear] = useState<number>(
     new Date().getFullYear()
   );
@@ -217,12 +220,36 @@ export default function DashboardPage() {
   // Datos agrupados por mes para el año seleccionado
   const salesData = groupSalesByMonth(allOrders, selectedYear);
 
+  // Obtener saludo según la hora del día
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Buenos días';
+    if (hour < 18) return 'Buenas tardes';
+    return 'Buenas noches';
+  };
+
+  // Obtener nombre del usuario
+  const getUserName = () => {
+    if (user?.username) {
+      // Capitalizar primera letra del username
+      return user.username.charAt(0).toUpperCase() + user.username.slice(1);
+    }
+    return 'Usuario';
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600 mt-2">Bienvenido a tu panel de control</p>
+      <div className="space-y-8">
+        <div className="flex items-end justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">
+              {getGreeting()}, {getUserName()}!
+            </h1>
+            <p className="text-gray-500 text-sm mt-1">
+              Aquí está lo que está pasando con tus anuncios hoy
+            </p>
+          </div>
+          <Indicators className="hidden lg:flex" />
         </div>
 
         {/* Cards de Estadísticas de Anuncios */}

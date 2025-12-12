@@ -118,6 +118,10 @@ export {
 // Exportar funciones de FAQs
 export { getFaqs, getFaq, createFaq, updateFaq, deleteFaq } from './faqs';
 
+// Exportar funciones de indicadores
+export { getIndicators } from './indicators';
+export type { Indicator, IndicatorsResponse } from './indicators';
+
 // Exportar tipos
 export type {
   StrapiAuthResponse,
