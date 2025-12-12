@@ -18,17 +18,12 @@ import {
   Clock,
   User,
   Package,
-  ChevronDown,
   Edit,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { DataTablePagination } from '@/components/ui/data-table-pagination';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { SortByData } from '@/components/ui/sort-by-data';
+import { SortPerPageSize } from '@/components/ui/sort-per-page-size';
 import { useReservations } from '@/hooks/api';
 
 export default function UsedReservationsPage() {
@@ -64,6 +59,13 @@ export default function UsedReservationsPage() {
     }).format(price);
   };
 
+  const sortOptions = [
+    { value: 'createdAt:desc', label: 'Más recientes' },
+    { value: 'createdAt:asc', label: 'Más antiguos' },
+    { value: 'price:asc', label: 'Precio ascendente' },
+    { value: 'price:desc', label: 'Precio descendente' },
+  ];
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="space-y-6">
@@ -92,72 +94,15 @@ export default function UsedReservationsPage() {
                 className="w-64"
               />
               <div className="flex items-center space-x-2">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="flex items-center gap-2"
-                    >
-                      Ordenar por:{' '}
-                      {sortBy === 'createdAt:desc' && 'Más recientes'}
-                      {sortBy === 'createdAt:asc' && 'Más antiguos'}
-                      {sortBy === 'price:asc' && 'Precio ascendente'}
-                      {sortBy === 'price:desc' && 'Precio descendente'}
-                      <ChevronDown className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem
-                      onClick={() => setSortBy('createdAt:desc')}
-                      className={
-                        sortBy === 'createdAt:desc' ? 'bg-gray-100' : ''
-                      }
-                    >
-                      Más recientes
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => setSortBy('createdAt:asc')}
-                      className={
-                        sortBy === 'createdAt:asc' ? 'bg-gray-100' : ''
-                      }
-                    >
-                      Más antiguos
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => setSortBy('price:asc')}
-                      className={sortBy === 'price:asc' ? 'bg-gray-100' : ''}
-                    >
-                      Precio ascendente
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => setSortBy('price:desc')}
-                      className={sortBy === 'price:desc' ? 'bg-gray-100' : ''}
-                    >
-                      Precio descendente
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="flex items-center gap-2"
-                    >
-                      {pageSize} por página <ChevronDown className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    {[5, 10, 25, 50, 100].map((size) => (
-                      <DropdownMenuItem
-                        key={size}
-                        onClick={() => setPageSize(size)}
-                        className={pageSize === size ? 'bg-gray-100' : ''}
-                      >
-                        {size} por página
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <SortByData
+                  sortBy={sortBy}
+                  setSortBy={setSortBy}
+                  options={sortOptions}
+                />
+                <SortPerPageSize
+                  pageSize={pageSize}
+                  setPageSize={setPageSize}
+                />
               </div>
             </div>
           </CardHeader>
