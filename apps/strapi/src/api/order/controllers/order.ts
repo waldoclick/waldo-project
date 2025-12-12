@@ -41,10 +41,21 @@ export default factories.createCoreController(
           }
         }
 
+        // Manejar populate: si viene como objeto (populate[user]=true), convertirlo a formato correcto
+        let populate: any = "*";
+        if (query.populate) {
+          if (typeof query.populate === "string") {
+            populate = query.populate;
+          } else if (typeof query.populate === "object") {
+            // Si viene como objeto, usar "*" para evitar filtros implícitos
+            populate = "*";
+          }
+        }
+
         // Obtener órdenes con paginación
         const orders = await strapi.entityService.findMany("api::order.order", {
           filters,
-          populate: query.populate || "*",
+          populate,
           start: (page - 1) * pageSize,
           limit: pageSize,
           sort,

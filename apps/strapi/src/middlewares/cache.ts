@@ -58,6 +58,7 @@ const CACHE_CONFIG = {
   "/api/user": 1,
   "/api/indicators": 3600,
   "/api/ads": 10,
+  "/api/orders": 10,
   "/api/filter": 60,
   "/api/related": 60,
   "/api/regions": 86400,

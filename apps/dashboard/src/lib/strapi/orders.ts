@@ -45,9 +45,8 @@ export async function getOrders(params?: {
     });
   }
 
-  // Populate user y ad
-  searchParams.append('populate[user]', 'true');
-  searchParams.append('populate[ad]', 'true');
+  // Populate user y ad - usar "*" para evitar filtros implícitos
+  searchParams.append('populate', '*');
 
   const queryString = searchParams.toString();
   const endpoint = `/orders${queryString ? `?${queryString}` : ''}`;
@@ -62,9 +61,8 @@ export async function getOrder(id: number): Promise<{ data: StrapiOrder }> {
   // Filtrar por ID
   searchParams.append('filters[id][$eq]', id.toString());
 
-  // Populate user y ad
-  searchParams.append('populate[user]', 'true');
-  searchParams.append('populate[ad]', 'true');
+  // Populate user y ad - usar "*" para evitar filtros implícitos
+  searchParams.append('populate', '*');
 
   const queryString = searchParams.toString();
   const endpoint = `/orders${queryString ? `?${queryString}` : ''}`;
@@ -123,9 +121,8 @@ export async function getUserOrders(
   // Filtrar por usuario
   searchParams.append('filters[user][id][$eq]', userId.toString());
 
-  // Populate user y ad
-  searchParams.append('populate[user]', 'true');
-  searchParams.append('populate[ad]', 'true');
+  // Populate user y ad - usar "*" para evitar filtros implícitos
+  searchParams.append('populate', '*');
 
   const queryString = searchParams.toString();
   const endpoint = `/orders${queryString ? `?${queryString}` : ''}`;
@@ -153,9 +150,8 @@ export async function getAdOrders(
   // Filtrar por anuncio
   searchParams.append('filters[ad][id][$eq]', adId.toString());
 
-  // Populate user y ad
-  searchParams.append('populate[user]', 'true');
-  searchParams.append('populate[ad]', 'true');
+  // Populate user y ad - usar "*" para evitar filtros implícitos
+  searchParams.append('populate', '*');
 
   const queryString = searchParams.toString();
   const endpoint = `/orders${queryString ? `?${queryString}` : ''}`;
