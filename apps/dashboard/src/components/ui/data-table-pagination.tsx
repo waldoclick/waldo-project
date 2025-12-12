@@ -73,7 +73,7 @@ export function DataTablePagination({
             size="sm"
             onClick={() => onPageChange(Math.max(1, currentPage - 1))}
             disabled={currentPage === 1}
-            className="gap-1"
+            className="gap-1 cursor-pointer"
           >
             <ChevronLeft className="h-4 w-4" />
             <span className="hidden sm:inline">Anterior</span>
@@ -97,7 +97,7 @@ export function DataTablePagination({
                 variant={currentPage === page ? 'outline' : 'ghost'}
                 size="sm"
                 onClick={() => onPageChange(page)}
-                className="min-w-[40px]"
+                className="min-w-[40px] cursor-pointer"
               >
                 {page}
               </Button>
@@ -109,7 +109,7 @@ export function DataTablePagination({
             size="sm"
             onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
             disabled={currentPage === totalPages}
-            className="gap-1"
+            className="gap-1 cursor-pointer"
           >
             <span className="hidden sm:inline">Siguiente</span>
             <ChevronRight className="h-4 w-4" />
