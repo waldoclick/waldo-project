@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { ExternalLink } from 'lucide-react';
 
 export function SalesMenu() {
+  const [open, setOpen] = useState(false);
   const [orders, setOrders] = useState<StrapiOrder[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -58,33 +59,26 @@ export function SalesMenu() {
   };
 
   return (
-    <DropdownMenu modal={false}>
+    <DropdownMenu modal={false} open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <button className="relative p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-sm transition-colors">
           <ShoppingBag className="h-5 w-5" />
-          {orders.length > 0 && (
-            <span className="absolute top-0.5 right-0.5 bg-blue-500 text-white text-[10px] rounded-full h-4 w-4 flex items-center justify-center font-medium">
-              {orders.length > 10 ? (
-                <Circle className="h-2 w-2 fill-current" />
-              ) : (
-                orders.length
-              )}
-            </span>
-          )}
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-96 p-4">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-semibold text-gray-900">Órdenes</h3>
+      <DropdownMenuContent align="end" className="w-96 p-0">
+        <div className="flex items-center justify-between p-4 border-b border-dashed border-gray-200">
+          <h3 className="text-sm font-semibold text-gray-900">
+            Últimas órdenes
+          </h3>
           <Link
             href="/sales"
-            className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1"
+            onClick={() => setOpen(false)}
+            className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1 cursor-pointer"
           >
             Ver todas <ExternalLink className="h-3 w-3" />
           </Link>
         </div>
-        <div className="border-b border-dashed border-gray-200 -mx-4"></div>
-        <div className="max-h-96 overflow-y-auto -mx-4 -my-4">
+        <div>
           {loading ? (
             <div className="text-sm text-gray-500 text-center py-4">
               Cargando...
@@ -94,12 +88,13 @@ export function SalesMenu() {
               No hay órdenes
             </div>
           ) : (
-            <div className="space-y-0">
+            <div>
               {orders.map((order, index) => (
                 <Link
                   key={order.id}
                   href={`/sales/${order.id}`}
-                  className={`flex items-center justify-between px-2 py-3 hover:bg-gray-50 transition-colors ${
+                  onClick={() => setOpen(false)}
+                  className={`flex items-center justify-between p-3 hover:bg-gray-50 transition-colors cursor-pointer ${
                     index !== orders.length - 1
                       ? 'border-b border-gray-100'
                       : ''
