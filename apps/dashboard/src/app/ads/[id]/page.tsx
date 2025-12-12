@@ -884,7 +884,12 @@ export default function AdDetailPage() {
                         Monto Total
                       </label>
                       <p className="text-xl font-bold text-green-600">
-                        {formatCurrency(order.amount, 'CLP')}
+                        {formatCurrency(
+                          typeof order.amount === 'string'
+                            ? parseFloat(order.amount)
+                            : order.amount,
+                          'CLP'
+                        )}
                       </p>
                     </div>
                     <div>

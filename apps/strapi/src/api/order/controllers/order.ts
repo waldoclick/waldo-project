@@ -8,6 +8,72 @@ import { QueryParams } from "../types";
 export default factories.createCoreController(
   "api::order.order",
   ({ strapi }) => ({
+    async find(ctx) {
+      try {
+        const { query } = ctx;
+
+        // Extraer parámetros de paginación
+        const pagination = query.pagination as any;
+        const page = parseInt(pagination?.page || "1", 10);
+        const pageSize = parseInt(pagination?.pageSize || "25", 10);
+
+        // Construir filtros
+        const filters = query.filters || {};
+
+        // Transformar sort de string a objeto (formato compatible con Strapi v5)
+        let sort: any = { createdAt: "desc" };
+        if (query.sort) {
+          if (typeof query.sort === "string") {
+            const [field, direction] = query.sort.split(":");
+            const sortDirection = direction ? direction.toLowerCase() : "desc";
+            sort = { [field]: sortDirection };
+          } else if (
+            typeof query.sort === "object" &&
+            !Array.isArray(query.sort)
+          ) {
+            sort = query.sort;
+          } else if (Array.isArray(query.sort) && query.sort.length > 0) {
+            // Si viene como array, tomar el primer elemento
+            const firstSort = query.sort[0];
+            if (typeof firstSort === "object") {
+              sort = firstSort;
+            }
+          }
+        }
+
+        // Obtener órdenes con paginación
+        const orders = await strapi.entityService.findMany("api::order.order", {
+          filters,
+          populate: query.populate || "*",
+          start: (page - 1) * pageSize,
+          limit: pageSize,
+          sort,
+        });
+
+        // Obtener el total de registros
+        const total = await strapi.entityService.count("api::order.order", {
+          filters,
+        });
+
+        // Calcular paginación
+        const pageCount = Math.ceil(total / pageSize);
+
+        return ctx.send({
+          data: orders,
+          meta: {
+            pagination: {
+              page,
+              pageSize,
+              pageCount,
+              total,
+            },
+          },
+        });
+      } catch (error) {
+        ctx.throw(500, error);
+      }
+    },
+
     async me(ctx) {
       try {
         // Validar que el usuario esté autenticado

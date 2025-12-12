@@ -43,9 +43,14 @@ export default function DashboardPage() {
 
         allOrdersData = [...allOrdersData, ...response.data];
 
+        // Verificar si hay más páginas basándose en el total y los datos obtenidos
+        const totalPages = response.meta.pagination.pageCount;
+        const totalItems = response.meta.pagination.total;
+
         if (
-          response.data.length < 100 ||
-          page >= response.meta.pagination.pageCount
+          response.data.length === 0 ||
+          page >= totalPages ||
+          allOrdersData.length >= totalItems
         ) {
           hasMore = false;
         } else {

@@ -225,7 +225,7 @@ export interface StrapiUsersResponse {
 // Tipos para órdenes/ventas
 export interface StrapiOrder {
   id: number;
-  amount: number;
+  amount: number | string;
   buy_order: string;
   is_invoice: boolean;
   payment_method: 'webpay';

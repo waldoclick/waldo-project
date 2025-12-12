@@ -240,7 +240,12 @@ export default function SalesPage() {
                         </TableCell>
                         <TableCell>
                           <span className="font-medium">
-                            {formatCurrency(order.amount, order.ad?.currency)}
+                            {formatCurrency(
+                              typeof order.amount === 'string'
+                                ? parseFloat(order.amount)
+                                : order.amount,
+                              'CLP'
+                            )}
                           </span>
                         </TableCell>
                         <TableCell>

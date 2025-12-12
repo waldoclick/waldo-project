@@ -147,7 +147,12 @@ export default function OrderDetailPage() {
                       Monto
                     </label>
                     <p className="text-lg font-semibold text-green-600">
-                      {formatCurrency(order.amount, order.ad?.currency)}
+                      {formatCurrency(
+                        typeof order.amount === 'string'
+                          ? parseFloat(order.amount)
+                          : order.amount,
+                        'CLP'
+                      )}
                     </p>
                   </div>
                   <div>
@@ -337,7 +342,12 @@ export default function OrderDetailPage() {
                     Monto Total
                   </label>
                   <p className="text-lg font-semibold text-green-600">
-                    {formatCurrency(order.amount, order.ad?.currency)}
+                    {formatCurrency(
+                      typeof order.amount === 'string'
+                        ? parseFloat(order.amount)
+                        : order.amount,
+                      'CLP'
+                    )}
                   </p>
                 </div>
               </CardContent>
