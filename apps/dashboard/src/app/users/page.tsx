@@ -27,6 +27,7 @@ import {
 import { getUsers, StrapiUser } from '@/lib/strapi';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useFormatDate } from '@/hooks/useFormatDate';
 
 export default function UsersPage() {
   const [users, setUsers] = useState<StrapiUser[]>([]);
@@ -36,6 +37,7 @@ export default function UsersPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [, setTotalUsers] = useState(0);
   const router = useRouter();
+  const { formatDate } = useFormatDate();
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -65,10 +67,6 @@ export default function UsersPage() {
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm]);
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-CL');
-  };
 
   const getStatusBadge = (user: StrapiUser) => {
     if (user.blocked) {

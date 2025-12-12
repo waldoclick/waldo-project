@@ -18,6 +18,7 @@ import { DataTablePagination } from '@/components/ui/data-table-pagination';
 import { SortByData } from '@/components/ui/sort-by-data';
 import { SortPerPageSize } from '@/components/ui/sort-per-page-size';
 import { useFaqs } from '@/hooks/api';
+import { useFormatDate } from '@/hooks/useFormatDate';
 
 export default function FaqsPage() {
   const {
@@ -34,10 +35,7 @@ export default function FaqsPage() {
     setSortBy,
   } = useFaqs();
   const router = useRouter();
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-CL');
-  };
+  const { formatDate } = useFormatDate();
 
   const sortOptions = [
     { value: 'featured:desc', label: 'Destacadas primero' },

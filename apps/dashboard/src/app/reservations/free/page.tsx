@@ -25,6 +25,7 @@ import { DataTablePagination } from '@/components/ui/data-table-pagination';
 import { SortByData } from '@/components/ui/sort-by-data';
 import { SortPerPageSize } from '@/components/ui/sort-per-page-size';
 import { useReservations } from '@/hooks/api';
+import { useFormatDate } from '@/hooks/useFormatDate';
 
 export default function FreeReservationsPage() {
   const {
@@ -41,16 +42,7 @@ export default function FreeReservationsPage() {
     setSortBy,
   } = useReservations({ type: 'free' });
   const router = useRouter();
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-CL', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
+  const { formatDate } = useFormatDate();
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('es-CL', {

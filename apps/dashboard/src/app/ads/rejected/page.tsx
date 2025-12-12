@@ -19,6 +19,7 @@ import { DataTablePagination } from '@/components/ui/data-table-pagination';
 import { SortByData } from '@/components/ui/sort-by-data';
 import { SortPerPageSize } from '@/components/ui/sort-per-page-size';
 import { useAds } from '@/hooks/api';
+import { useFormatDate } from '@/hooks/useFormatDate';
 
 export default function RejectedAdsPage() {
   const {
@@ -35,6 +36,7 @@ export default function RejectedAdsPage() {
     setSortBy,
   } = useAds({ type: 'rejected' });
   const router = useRouter();
+  const { formatDate } = useFormatDate();
 
   const getStatusBadge = (ad: StrapiAd) => {
     if (ad.rejected) {
@@ -47,16 +49,6 @@ export default function RejectedAdsPage() {
       return <Badge variant="secondary">Pendiente</Badge>;
     }
     return <Badge variant="outline">Archivado</Badge>;
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-CL', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
   };
 
   const sortOptions = [

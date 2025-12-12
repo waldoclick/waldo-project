@@ -41,6 +41,7 @@ import {
   getUserFeaturedReservations,
   StrapiAdFeaturedReservation,
 } from '@/lib/strapi';
+import { useFormatDate } from '@/hooks/useFormatDate';
 
 // Interfaz extendida para el usuario con campos adicionales
 interface ExtendedStrapiUser extends StrapiUser {
@@ -74,6 +75,7 @@ interface ExtendedStrapiUser extends StrapiUser {
 export default function UserDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const { formatDate } = useFormatDate();
   const [user, setUser] = useState<ExtendedStrapiUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -218,10 +220,6 @@ export default function UserDetailPage() {
       fetchUserFeatured();
     }
   }, [user, fetchUserFeatured]);
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-CL');
-  };
 
   const getStatusBadge = (user: ExtendedStrapiUser) => {
     if (user.blocked) {

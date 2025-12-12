@@ -28,6 +28,7 @@ import { DataTablePagination } from '@/components/ui/data-table-pagination';
 import { SortByData } from '@/components/ui/sort-by-data';
 import { SortPerPageSize } from '@/components/ui/sort-per-page-size';
 import { usePacks } from '@/hooks/api';
+import { useFormatDate } from '@/hooks/useFormatDate';
 
 export default function PacksPage() {
   const {
@@ -44,10 +45,7 @@ export default function PacksPage() {
     setSortBy,
   } = usePacks();
   const router = useRouter();
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-CL');
-  };
+  const { formatDate } = useFormatDate();
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('es-CL', {

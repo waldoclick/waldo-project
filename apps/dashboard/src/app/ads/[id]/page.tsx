@@ -28,6 +28,7 @@ import { StrapiAd, StrapiOrder } from '@/lib/strapi';
 import { RejectDialog } from '@/components/ui/reject-dialog';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { GalleryDefault } from '@/components/ui/gallery-default';
+import { useFormatDate } from '@/hooks/useFormatDate';
 
 // Extend the user type to include additional fields
 interface ExtendedUser {
@@ -62,6 +63,7 @@ interface ExtendedUser {
 export default function AdDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const { formatDate } = useFormatDate();
   const [ad, setAd] = useState<StrapiAd | null>(null);
   const [order, setOrder] = useState<StrapiOrder | null>(null);
   const [loading, setLoading] = useState(true);
@@ -135,10 +137,6 @@ export default function AdDetailPage() {
       style: 'currency',
       currency: currency,
     }).format(price);
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-CL');
   };
 
   const formatCurrency = (amount: number, currency: string = 'CLP') => {

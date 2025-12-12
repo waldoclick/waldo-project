@@ -20,10 +20,12 @@ import {
 } from 'lucide-react';
 import { getAdFeaturedReservation } from '@/lib/strapi';
 import { StrapiAdFeaturedReservation } from '@/lib/strapi/types';
+import { useFormatDate } from '@/hooks/useFormatDate';
 
 export default function DestacadoDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const { formatDate } = useFormatDate();
   const [featured, setFeatured] = useState<StrapiAdFeaturedReservation | null>(
     null
   );
@@ -48,10 +50,6 @@ export default function DestacadoDetailPage() {
   useEffect(() => {
     fetchFeatured();
   }, [fetchFeatured]);
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-CL');
-  };
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('es-CL', {

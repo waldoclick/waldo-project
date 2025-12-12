@@ -26,6 +26,7 @@ import { DataTablePagination } from '@/components/ui/data-table-pagination';
 import { SortByData } from '@/components/ui/sort-by-data';
 import { SortPerPageSize } from '@/components/ui/sort-per-page-size';
 import { useRegions } from '@/hooks/api';
+import { useFormatDate } from '@/hooks/useFormatDate';
 
 export default function RegionsPage() {
   const {
@@ -42,10 +43,7 @@ export default function RegionsPage() {
     setSortBy,
   } = useRegions();
   const router = useRouter();
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-CL');
-  };
+  const { formatDate } = useFormatDate();
 
   const sortOptions = [
     { value: 'name:asc', label: 'Nombre A-Z' },

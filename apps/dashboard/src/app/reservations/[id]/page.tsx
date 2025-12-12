@@ -21,10 +21,12 @@ import {
 } from 'lucide-react';
 import { getAdReservation } from '@/lib/strapi';
 import { StrapiAdReservation } from '@/lib/strapi/types';
+import { useFormatDate } from '@/hooks/useFormatDate';
 
 export default function ReservationDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const { formatDate } = useFormatDate();
   const [reservation, setReservation] = useState<StrapiAdReservation | null>(
     null
   );
@@ -49,10 +51,6 @@ export default function ReservationDetailPage() {
   useEffect(() => {
     fetchReservation();
   }, [fetchReservation]);
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-CL');
-  };
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('es-CL', {
