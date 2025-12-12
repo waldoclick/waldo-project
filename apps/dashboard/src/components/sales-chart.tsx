@@ -71,16 +71,17 @@ export function SalesChart({ data }: SalesChartProps) {
         />
         <ReferenceLine
           y={average}
-          stroke="#000"
+          stroke="#ef4444"
           strokeDasharray="5 5"
           label={{
             value: 'x̄',
             position: 'right',
-            fill: '#000',
+            fill: '#ef4444',
             fontSize: 11,
           }}
         />
         <Tooltip
+          cursor={{ stroke: '#fafafa', strokeWidth: 1, opacity: 0.3 }}
           formatter={(value: number) => [formatCurrencyTooltip(value), 'Monto']}
           labelFormatter={(label: string) => getFullMonthName(label)}
           labelStyle={{ color: '#000', fontSize: '11px' }}
@@ -92,7 +93,7 @@ export function SalesChart({ data }: SalesChartProps) {
           }}
           itemStyle={{ color: '#000', fontSize: '11px' }}
         />
-        <Bar dataKey="monto" fill="#d3d3d3" />
+        <Bar dataKey="monto" fill="#ffd699" />
       </BarChart>
     </ResponsiveContainer>
   );

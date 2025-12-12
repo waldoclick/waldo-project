@@ -35,7 +35,7 @@ export function InputSearch({
         {...props}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="pl-9 pr-9"
+        className="pl-9 pr-9 rounded-sm"
       />
       {value && (
         <Button

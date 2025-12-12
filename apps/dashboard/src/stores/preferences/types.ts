@@ -88,6 +88,10 @@ export interface CommunesPreferences {
   searchTerm: string;
 }
 
+export interface GlobalSearchPreferences {
+  searchTerm: string;
+}
+
 export interface PreferencesState {
   orders: OrdersPreferences;
   pendingAds: PendingAdsPreferences;
@@ -104,6 +108,7 @@ export interface PreferencesState {
   packs: PacksPreferences;
   regions: RegionsPreferences;
   communes: CommunesPreferences;
+  globalSearch: GlobalSearchPreferences;
   setOrdersPreferences: (preferences: Partial<OrdersPreferences>) => void;
   setPendingAdsPreferences: (
     preferences: Partial<PendingAdsPreferences>
@@ -137,4 +142,7 @@ export interface PreferencesState {
   setPacksPreferences: (preferences: Partial<PacksPreferences>) => void;
   setRegionsPreferences: (preferences: Partial<RegionsPreferences>) => void;
   setCommunesPreferences: (preferences: Partial<CommunesPreferences>) => void;
+  setGlobalSearchPreferences: (
+    preferences: Partial<GlobalSearchPreferences>
+  ) => void;
 }

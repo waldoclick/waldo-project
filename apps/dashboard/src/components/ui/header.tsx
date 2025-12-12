@@ -13,6 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { GlobalSearch } from '@/components/ui/global-search';
 
 export function Header() {
   const { user } = useUserStore();
@@ -64,6 +65,8 @@ export function Header() {
             })}
           </p>
         </div>
+
+        <GlobalSearch />
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

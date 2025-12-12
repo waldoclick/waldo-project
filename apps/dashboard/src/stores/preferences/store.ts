@@ -17,6 +17,7 @@ import {
   PacksPreferences,
   RegionsPreferences,
   CommunesPreferences,
+  GlobalSearchPreferences,
 } from './types';
 
 const defaultOrdersPreferences: OrdersPreferences = {
@@ -109,6 +110,10 @@ const defaultCommunesPreferences: CommunesPreferences = {
   searchTerm: '',
 };
 
+const defaultGlobalSearchPreferences: GlobalSearchPreferences = {
+  searchTerm: '',
+};
+
 export const usePreferencesStore = create<PreferencesState>()(
   persist(
     (set) => ({
@@ -128,6 +133,7 @@ export const usePreferencesStore = create<PreferencesState>()(
       packs: defaultPacksPreferences,
       regions: defaultRegionsPreferences,
       communes: defaultCommunesPreferences,
+      globalSearch: defaultGlobalSearchPreferences,
 
       // Acciones
       setOrdersPreferences: (preferences: Partial<OrdersPreferences>) => {
@@ -268,6 +274,16 @@ export const usePreferencesStore = create<PreferencesState>()(
           },
         }));
       },
+      setGlobalSearchPreferences: (
+        preferences: Partial<GlobalSearchPreferences>
+      ) => {
+        set((state) => ({
+          globalSearch: {
+            ...state.globalSearch,
+            ...preferences,
+          },
+        }));
+      },
     }),
     {
       name: 'preferences-storage', // nombre para localStorage
@@ -287,6 +303,7 @@ export const usePreferencesStore = create<PreferencesState>()(
         packs: state.packs,
         regions: state.regions,
         communes: state.communes,
+        globalSearch: state.globalSearch,
       }),
     }
   )
