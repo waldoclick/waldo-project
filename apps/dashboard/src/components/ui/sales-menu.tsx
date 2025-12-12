@@ -99,7 +99,7 @@ export function SalesMenu() {
                 <Link
                   key={order.id}
                   href={`/sales/${order.id}`}
-                  className={`flex items-center justify-between p-2 hover:bg-gray-50 transition-colors ${
+                  className={`flex items-center justify-between px-2 py-3 hover:bg-gray-50 transition-colors ${
                     index !== orders.length - 1
                       ? 'border-b border-gray-100'
                       : ''
@@ -115,7 +115,12 @@ export function SalesMenu() {
                     </div>
                   </div>
                   <div className="text-sm font-semibold text-gray-900 ml-4">
-                    {formatCurrency(order.amount, order.ad?.currency || 'CLP')}
+                    {formatCurrency(
+                      typeof order.amount === 'string'
+                        ? parseFloat(order.amount)
+                        : order.amount,
+                      'CLP'
+                    )}
                   </div>
                 </Link>
               ))}
