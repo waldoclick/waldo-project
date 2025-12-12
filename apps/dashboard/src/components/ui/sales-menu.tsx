@@ -79,8 +79,8 @@ export function SalesMenu() {
             Ver todas <ExternalLink className="h-3 w-3" />
           </Link>
         </div>
-        <div className="border-b border-dashed border-gray-200 -mx-4 mb-4"></div>
-        <div className="max-h-96 overflow-y-auto">
+        <div className="border-b border-dashed border-gray-200 -mx-4"></div>
+        <div className="max-h-96 overflow-y-auto -mx-4 -my-4">
           {loading ? (
             <div className="text-sm text-gray-500 text-center py-4">
               Cargando...
@@ -90,12 +90,16 @@ export function SalesMenu() {
               No hay órdenes
             </div>
           ) : (
-            <div className="space-y-2">
-              {orders.map((order) => (
+            <div className="space-y-0">
+              {orders.map((order, index) => (
                 <Link
                   key={order.id}
                   href={`/sales/${order.id}`}
-                  className="flex items-center justify-between p-2 rounded-sm hover:bg-gray-50 transition-colors"
+                  className={`flex items-center justify-between p-2 hover:bg-gray-50 transition-colors ${
+                    index !== orders.length - 1
+                      ? 'border-b border-gray-100'
+                      : ''
+                  }`}
                 >
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-medium text-gray-900 truncate">
