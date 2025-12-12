@@ -25,7 +25,7 @@ export function SortPerPageSize({
       <DropdownMenuTrigger asChild>
         <Button variant="outline" className="flex items-center gap-2">
           <List className="h-4 w-4" />
-          {pageSize} por página <ChevronDown className="h-4 w-4" />
+          {pageSize} pag. <ChevronDown className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
@@ -35,7 +35,7 @@ export function SortPerPageSize({
             onClick={() => setPageSize(size)}
             className={pageSize === size ? 'bg-gray-100' : ''}
           >
-            {size} por página
+            {size} pag.
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>
