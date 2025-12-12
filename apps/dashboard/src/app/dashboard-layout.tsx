@@ -565,7 +565,7 @@ export default function DashboardLayout({
           <Header />
 
           {/* Mobile header */}
-          <div className="lg:hidden bg-white border-b px-4 py-3">
+          <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-white border-b px-4 py-3">
             <div className="flex items-center justify-between">
               <Button
                 variant="ghost"
@@ -588,7 +588,7 @@ export default function DashboardLayout({
           </div>
 
           {/* Page content - Sin scroll interno */}
-          <main className="flex-1 p-6 bg-gray-50">{children}</main>
+          <main className="flex-1 p-6 bg-gray-50 pt-20">{children}</main>
         </div>
       </div>
     </>
