@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 interface PaginatedDataPreferences {
   pageSize: number;
@@ -47,20 +47,46 @@ export function usePaginatedData<T>({
   const [pageSize, setPageSize] = useState(25);
   const [sortBy, setSortBy] = useState(defaultSortBy);
   const [isInitialized, setIsInitialized] = useState(false);
+  const hasInitializedRef = useRef(false);
+  const lastSavedRef = useRef({
+    searchTerm: '',
+    pageSize: 25,
+    sortBy: defaultSortBy,
+  });
 
-  // Cargar preferencias al montar el componente
+  // Cargar preferencias al montar el componente (solo una vez)
   useEffect(() => {
-    if (!isInitialized) {
+    if (!hasInitializedRef.current) {
       setSearchTerm(preferences.searchTerm);
       setPageSize(preferences.pageSize);
       setSortBy(preferences.sortBy || defaultSortBy);
+      lastSavedRef.current = {
+        searchTerm: preferences.searchTerm,
+        pageSize: preferences.pageSize,
+        sortBy: preferences.sortBy || defaultSortBy,
+      };
       setIsInitialized(true);
+      hasInitializedRef.current = true;
     }
-  }, [preferences, isInitialized, defaultSortBy]);
+  }, [
+    preferences.searchTerm,
+    preferences.pageSize,
+    preferences.sortBy,
+    defaultSortBy,
+  ]);
 
   // Guardar preferencias cuando cambien (solo después de la inicialización)
   useEffect(() => {
-    if (isInitialized) {
+    if (!isInitialized) return;
+
+    // Solo actualizar si los valores realmente cambiaron desde la última vez que guardamos
+    const hasChanged =
+      lastSavedRef.current.searchTerm !== searchTerm ||
+      lastSavedRef.current.pageSize !== pageSize ||
+      lastSavedRef.current.sortBy !== sortBy;
+
+    if (hasChanged) {
+      lastSavedRef.current = { searchTerm, pageSize, sortBy };
       setPreferences({
         searchTerm,
         pageSize,
