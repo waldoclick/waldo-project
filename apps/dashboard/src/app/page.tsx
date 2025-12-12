@@ -183,13 +183,16 @@ export default function DashboardPage() {
         </div>
 
         {/* Cuadro de Estadísticas de Ventas */}
-        <Card className="w-full !bg-white !rounded-md !shadow-sm !border-0">
+        <Card className="w-full !bg-white !rounded-sm !shadow-sm !border-0">
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle>Estadísticas de Ventas</CardTitle>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    className="flex items-center gap-2 !rounded-sm"
+                  >
                     {selectedYear} <ChevronDown className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>

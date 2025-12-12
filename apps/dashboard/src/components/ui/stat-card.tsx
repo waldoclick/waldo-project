@@ -31,7 +31,7 @@ export function StatCard({
   };
 
   return (
-    <div className="bg-white rounded-md shadow-sm p-6 relative">
+    <div className="bg-white rounded-sm shadow-sm p-6 relative">
       {/* Title */}
       <div className="text-xs text-gray-500 uppercase tracking-wide mb-3">
         {title}
@@ -56,7 +56,7 @@ export function StatCard({
 
       {/* Icon */}
       <div
-        className={`absolute bottom-5 right-5 w-12 h-12 rounded-md flex items-center justify-center ${iconBgColor}`}
+        className={`absolute bottom-5 right-5 w-12 h-12 rounded-sm flex items-center justify-center ${iconBgColor}`}
       >
         <Icon className={`h-6 w-6 ${iconColor}`} />
       </div>
