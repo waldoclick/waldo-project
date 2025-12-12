@@ -1,61 +1,17 @@
 'use client';
 
 import { useState } from 'react';
-import { Globe } from 'lucide-react';
 import { Grid3x3 } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  SiGoogletagmanager,
-  SiGoogleanalytics,
-  SiGooglesearchconsole,
-  SiRocket,
-  SiZoho,
-} from 'react-icons/si';
-
-interface App {
-  name: string;
-  icon: React.ComponentType<{ className?: string }>;
-  url: string;
-}
+import { useServices } from '@/hooks/useServices';
 
 export function AppsMenu() {
   const [open, setOpen] = useState(false);
-  const apps: App[] = [
-    {
-      name: 'Waldo.click',
-      icon: Globe,
-      url: process.env.NEXT_PUBLIC_SITE_URL || 'https://waldo.click',
-    },
-    {
-      name: 'GTM',
-      icon: SiGoogletagmanager,
-      url: 'https://tagmanager.google.com',
-    },
-    {
-      name: 'Analytics',
-      icon: SiGoogleanalytics,
-      url: 'https://analytics.google.com',
-    },
-    {
-      name: 'Search Console',
-      icon: SiGooglesearchconsole,
-      url: 'https://search.google.com/search-console',
-    },
-    {
-      name: 'LogRocket',
-      icon: SiRocket,
-      url: 'https://logrocket.com',
-    },
-    {
-      name: 'Zoho CRM',
-      icon: SiZoho,
-      url: 'https://crm.zoho.com',
-    },
-  ];
+  const services = useServices();
 
   return (
     <DropdownMenu modal={false} open={open} onOpenChange={setOpen}>
@@ -69,13 +25,13 @@ export function AppsMenu() {
           <h3 className="text-sm font-semibold text-gray-900">Servicios</h3>
         </div>
         <div className="border-b border-dashed border-gray-200 -mx-4 mb-4"></div>
-        <div className="grid grid-cols-3 gap-3">
-          {apps.map((app) => {
-            const Icon = app.icon;
+        <div className="grid grid-cols-4 gap-2">
+          {services.map((service) => {
+            const Icon = service.icon;
             return (
               <a
-                key={app.name}
-                href={app.url}
+                key={service.name}
+                href={service.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setOpen(false)}
@@ -85,7 +41,7 @@ export function AppsMenu() {
                   <Icon className="h-8 w-8 text-gray-700" />
                 </div>
                 <span className="text-[10px] text-center text-gray-700">
-                  {app.name}
+                  {service.name}
                 </span>
               </a>
             );
