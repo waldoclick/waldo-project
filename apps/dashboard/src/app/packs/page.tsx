@@ -82,7 +82,7 @@ export default function PacksPage() {
           </Button>
         </div>
 
-        <Card className="shadow-none">
+        <Card className="shadow-sm">
           <CardHeader>
             <div className="flex items-center justify-between">
               <InputSearch

@@ -183,7 +183,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Cuadro de Estadísticas de Ventas */}
-        <Card className="w-full !bg-white !rounded-sm !shadow-sm !border-0">
+        <Card className="w-full !bg-white !rounded-sm !shadow-sm">
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle>Estadísticas de Ventas</CardTitle>

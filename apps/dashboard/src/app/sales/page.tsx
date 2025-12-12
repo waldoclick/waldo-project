@@ -89,7 +89,7 @@ export default function SalesPage() {
           </div>
         </div>
 
-        <Card className="shadow-none">
+        <Card className="shadow-sm">
           <CardHeader>
             <div className="flex items-center justify-between">
               <InputSearch
