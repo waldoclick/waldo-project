@@ -68,6 +68,6 @@ export default ({ env }) => [
   // "global::image-converter",
   "global::upload",
   "global::recaptcha",
-  "global::cache",
+  ...(env("ENABLE_CACHE", "false") === "true" ? ["global::cache"] : []),
   "global::user-registration",
 ];
