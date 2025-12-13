@@ -172,7 +172,7 @@ export default function UsedReservationsPage() {
                               onClick={() =>
                                 router.push(`/reservations/${reservation.id}`)
                               }
-                              className="h-8 w-8 p-0"
+                              className="h-10 w-10 p-0 cursor-pointer hover:bg-[#ffd699]"
                             >
                               <Eye className="h-4 w-4" />
                             </Button>
@@ -184,7 +184,7 @@ export default function UsedReservationsPage() {
                                   `/reservations/${reservation.id}/edit`
                                 )
                               }
-                              className="h-8 w-8 p-0"
+                              className="h-10 w-10 p-0 cursor-pointer hover:bg-[#ffd699]"
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
