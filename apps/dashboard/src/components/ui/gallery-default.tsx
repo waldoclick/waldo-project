@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Image as ImageIcon } from 'lucide-react';
 import Lightbox from 'yet-another-react-lightbox';
@@ -118,13 +117,11 @@ export function GalleryDefault({ images = [] }: GalleryDefaultProps) {
                   onClick={() => setIndex(imageIndex)}
                   className="relative aspect-square overflow-hidden border border-gray-200 hover:border-gray-300 hover:shadow-md cursor-pointer bg-gray-100"
                 >
-                  <Image
+                  <img
                     src={thumbnailUrl}
                     alt={image.alternativeText || image.name}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
-                    quality={90}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
                   />
                 </button>
               );

@@ -15,7 +15,6 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Eye, CheckCircle } from 'lucide-react';
 import { StrapiAd } from '@/lib/strapi';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import { DataTablePagination } from '@/components/ui/data-table-pagination';
 import { SortByData } from '@/components/ui/sort-by-data';
 import { SortPerPageSize } from '@/components/ui/sort-per-page-size';
@@ -178,17 +177,15 @@ export default function ActiveAdsPage() {
                                         zIndex: galleryImages.length - idx,
                                       }}
                                     >
-                                      <Image
+                                      <img
                                         src={imageUrl}
                                         alt={
                                           image.alternativeText ||
                                           image.name ||
                                           'Gallery image'
                                         }
-                                        fill
-                                        className="object-cover"
-                                        sizes="200px"
-                                        quality={90}
+                                        className="w-full h-full object-cover"
+                                        loading="lazy"
                                       />
                                     </div>
                                   );
