@@ -28,6 +28,7 @@ import { StrapiAd, StrapiOrder } from '@/lib/strapi';
 import { RejectDialog } from '@/components/ui/reject-dialog';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { GalleryDefault } from '@/components/ui/gallery-default';
+import { InfoField } from '@/components/ui/info-field';
 import { useFormatDate } from '@/hooks/useFormatDate';
 
 // Extend the user type to include additional fields
@@ -402,154 +403,49 @@ export default function AdDetailPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Nombre
-                  </label>
-                  <p className="text-lg font-semibold">{ad.name}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Precio
-                  </label>
-                  <p className="text-lg font-semibold text-green-600">
-                    {formatPrice(ad.price, ad.currency)}
-                  </p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Categoría
-                  </label>
-                  <p>{ad.category?.name || '-'}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Condición
-                  </label>
-                  <p>{ad.condition?.name || '-'}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Dirección
-                  </label>
-                  <p>
-                    {ad.address && ad.address_number && ad.commune?.name ? (
-                      <a
-                        href={`https://www.google.com/maps/search/${encodeURIComponent(`${ad.address} ${ad.address_number}, ${ad.commune.name}, Chile`)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:text-blue-800 hover:underline flex items-center"
-                      >
-                        {ad.address} {ad.address_number}, {ad.commune.name}
-                        <ExternalLink className="h-4 w-4 ml-1" />
-                      </a>
-                    ) : ad.address && ad.commune?.name ? (
-                      <a
-                        href={`https://www.google.com/maps/search/${encodeURIComponent(`${ad.address}, ${ad.commune.name}, Chile`)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:text-blue-800 hover:underline flex items-center"
-                      >
-                        {ad.address}, {ad.commune.name}
-                        <ExternalLink className="h-4 w-4 ml-1" />
-                      </a>
-                    ) : (
-                      `${ad.address || ''}${ad.address && ad.address_number ? ' ' : ''}${ad.address_number || ''}${(ad.address || ad.address_number) && ad.commune?.name ? ', ' : ''}${ad.commune?.name || ''}` ||
-                      '-'
-                    )}
-                  </p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Teléfono
-                  </label>
-                  <p>
-                    {ad.phone ? (
-                      <a
-                        href={`tel:${ad.phone}`}
-                        className="text-blue-600 hover:text-blue-800 hover:underline"
-                      >
-                        {ad.phone}
-                      </a>
-                    ) : (
-                      '-'
-                    )}
-                  </p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Email
-                  </label>
-                  <p>
-                    {ad.email ? (
-                      <a
-                        href={`mailto:${ad.email}`}
-                        className="text-blue-600 hover:text-blue-800 hover:underline"
-                      >
-                        {ad.email}
-                      </a>
-                    ) : (
-                      '-'
-                    )}
-                  </p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Fabricante
-                  </label>
-                  <p>{ad.manufacturer || '-'}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Modelo
-                  </label>
-                  <p>{ad.model || '-'}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Año
-                  </label>
-                  <p>{ad.year || '-'}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Número de Serie
-                  </label>
-                  <p>{ad.serial_number || '-'}</p>
-                </div>
+                <InfoField label="Nombre" value={ad.name} />
+                <InfoField
+                  label="Precio"
+                  value={formatPrice(ad.price, ad.currency)}
+                />
+                <InfoField label="Categoría" value={ad.category?.name} />
+                <InfoField label="Condición" value={ad.condition?.name} />
+                <InfoField
+                  label="Dirección"
+                  value={
+                    ad.address && ad.address_number && ad.commune?.name
+                      ? `${ad.address} ${ad.address_number}, ${ad.commune.name}`
+                      : ad.address && ad.commune?.name
+                        ? `${ad.address}, ${ad.commune.name}`
+                        : `${ad.address || ''}${ad.address && ad.address_number ? ' ' : ''}${ad.address_number || ''}${(ad.address || ad.address_number) && ad.commune?.name ? ', ' : ''}${ad.commune?.name || ''}` ||
+                          null
+                  }
+                />
+                <InfoField label="Teléfono" value={ad.phone} type="phone" />
+                <InfoField label="Email" value={ad.email} type="email" />
+                <InfoField label="Fabricante" value={ad.manufacturer} />
+                <InfoField label="Modelo" value={ad.model} />
+                <InfoField label="Año" value={ad.year} />
+                <InfoField label="Número de Serie" value={ad.serial_number} />
                 {ad.weight && (
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Peso
-                    </label>
-                    <p>{ad.weight} kg</p>
-                  </div>
+                  <InfoField label="Peso" value={`${ad.weight} kg`} />
                 )}
                 {(ad.width || ad.height || ad.depth) && (
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Dimensiones
-                    </label>
-                    <p>
-                      {[
-                        ad.width && `${ad.width} cm`,
-                        ad.height && `${ad.height} cm`,
-                        ad.depth && `${ad.depth} cm`,
-                      ]
-                        .filter(Boolean)
-                        .join(' × ')}
-                    </p>
-                  </div>
+                  <InfoField
+                    label="Dimensiones"
+                    value={[
+                      ad.width && `${ad.width} cm`,
+                      ad.height && `${ad.height} cm`,
+                      ad.depth && `${ad.depth} cm`,
+                    ]
+                      .filter(Boolean)
+                      .join(' × ')}
+                  />
                 )}
               </div>
 
               {ad.description && (
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Descripción
-                  </label>
-                  <p className="text-gray-700">{ad.description}</p>
-                </div>
+                <InfoField label="Descripción" value={ad.description} />
               )}
             </CardContent>
           </Card>
@@ -570,33 +466,16 @@ export default function AdDetailPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Estado
-                    </label>
-                    <p className="text-white font-semibold">Rechazado</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Fecha de Rechazo
-                    </label>
-                    <p>{formatDate(ad.updatedAt)}</p>
-                  </div>
+                  <InfoField label="Estado" value="Rechazado" />
+                  <InfoField
+                    label="Fecha de Rechazo"
+                    value={formatDate(ad.updatedAt)}
+                  />
                 </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Motivo del Rechazo
-                  </label>
-                  {ad.reason_for_rejection ? (
-                    <p className="text-red-600 bg-red-50 p-3 rounded-lg border border-red-200">
-                      {ad.reason_for_rejection}
-                    </p>
-                  ) : (
-                    <p className="text-gray-500 italic">
-                      No se especificó motivo
-                    </p>
-                  )}
-                </div>
+                <InfoField
+                  label="Motivo del Rechazo"
+                  value={ad.reason_for_rejection || 'No se especificó motivo'}
+                />
               </CardContent>
             </Card>
           )}
@@ -623,143 +502,59 @@ export default function AdDetailPage() {
               <CardContent className="space-y-6">
                 {/* Información personal */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      ID
-                    </label>
-                    <p>{extendedUser.id}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Username
-                    </label>
-                    <p>{extendedUser.username}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Email
-                    </label>
-                    <p>
-                      {extendedUser.email ? (
-                        <a
-                          href={`mailto:${extendedUser.email}`}
-                          className="text-blue-600 hover:text-blue-800 hover:underline"
-                        >
-                          {extendedUser.email}
-                        </a>
-                      ) : (
-                        '-'
-                      )}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Proveedor
-                    </label>
-                    <p>{extendedUser.provider}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Confirmado
-                    </label>
-                    <p>{extendedUser.confirmed ? 'Sí' : 'No'}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Bloqueado
-                    </label>
-                    <p>{extendedUser.blocked ? 'Sí' : 'No'}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Nombre
-                    </label>
-                    <p>{extendedUser.firstname || '-'}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Apellido
-                    </label>
-                    <p>{extendedUser.lastname || '-'}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      RUT
-                    </label>
-                    <p>{extendedUser.rut || '-'}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Teléfono
-                    </label>
-                    <p>
-                      {extendedUser.phone ? (
-                        <a
-                          href={`tel:${extendedUser.phone}`}
-                          className="text-blue-600 hover:text-blue-800 hover:underline"
-                        >
-                          {extendedUser.phone}
-                        </a>
-                      ) : (
-                        '-'
-                      )}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Es Empresa
-                    </label>
-                    <p>{extendedUser.is_company ? 'Sí' : 'No'}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Pro
-                    </label>
-                    <p>{extendedUser.pro ? 'Sí' : 'No'}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Código Postal
-                    </label>
-                    <p>{extendedUser.postal_code || '-'}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Dirección
-                    </label>
-                    <p>
-                      {extendedUser.address && extendedUser.address_number ? (
-                        <a
-                          href={`https://www.google.com/maps/search/${encodeURIComponent(`${extendedUser.address} ${extendedUser.address_number}, Chile`)}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:text-blue-800 hover:underline flex items-center"
-                        >
-                          {extendedUser.address} {extendedUser.address_number}
-                          <ExternalLink className="h-4 w-4 ml-1" />
-                        </a>
-                      ) : extendedUser.address ? (
-                        <a
-                          href={`https://www.google.com/maps/search/${encodeURIComponent(`${extendedUser.address}, Chile`)}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:text-blue-800 hover:underline flex items-center"
-                        >
-                          {extendedUser.address}
-                          <ExternalLink className="h-4 w-4 ml-1" />
-                        </a>
-                      ) : (
-                        `${extendedUser.address || ''}${extendedUser.address && extendedUser.address_number ? ' ' : ''}${extendedUser.address_number || ''}` ||
-                        '-'
-                      )}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Fecha de Nacimiento
-                    </label>
-                    <p>{extendedUser.birthdate || '-'}</p>
-                  </div>
+                  <InfoField label="ID" value={extendedUser.id} />
+                  <InfoField
+                    label="Username"
+                    value={extendedUser.username}
+                    type="link"
+                    href={`/users/${extendedUser.id}`}
+                  />
+                  <InfoField
+                    label="Email"
+                    value={extendedUser.email}
+                    type="email"
+                  />
+                  <InfoField label="Proveedor" value={extendedUser.provider} />
+                  <InfoField
+                    label="Confirmado"
+                    value={extendedUser.confirmed ? 'Sí' : 'No'}
+                  />
+                  <InfoField
+                    label="Bloqueado"
+                    value={extendedUser.blocked ? 'Sí' : 'No'}
+                  />
+                  <InfoField label="Nombre" value={extendedUser.firstname} />
+                  <InfoField label="Apellido" value={extendedUser.lastname} />
+                  <InfoField label="RUT" value={extendedUser.rut} />
+                  <InfoField
+                    label="Teléfono"
+                    value={extendedUser.phone}
+                    type="phone"
+                  />
+                  <InfoField
+                    label="Es Empresa"
+                    value={extendedUser.is_company ? 'Sí' : 'No'}
+                  />
+                  <InfoField
+                    label="Pro"
+                    value={extendedUser.pro ? 'Sí' : 'No'}
+                  />
+                  <InfoField
+                    label="Código Postal"
+                    value={extendedUser.postal_code}
+                  />
+                  <InfoField
+                    label="Dirección"
+                    value={
+                      extendedUser.address && extendedUser.address_number
+                        ? `${extendedUser.address} ${extendedUser.address_number}`
+                        : extendedUser.address || null
+                    }
+                  />
+                  <InfoField
+                    label="Fecha de Nacimiento"
+                    value={extendedUser.birthdate}
+                  />
                 </div>
 
                 {/* Información de empresa - solo si es empresa */}
@@ -771,63 +566,31 @@ export default function AdDetailPage() {
                         Información de Empresa
                       </h4>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="text-sm font-medium text-gray-500">
-                            Nombre de Empresa
-                          </label>
-                          <p>{extendedUser.business_name || '-'}</p>
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium text-gray-500">
-                            Tipo de Negocio
-                          </label>
-                          <p>{extendedUser.business_type || '-'}</p>
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium text-gray-500">
-                            RUT de Empresa
-                          </label>
-                          <p>{extendedUser.business_rut || '-'}</p>
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium text-gray-500">
-                            Dirección de Empresa
-                          </label>
-                          <p>
-                            {extendedUser.business_address &&
-                            extendedUser.business_address_number ? (
-                              <a
-                                href={`https://www.google.com/maps/search/${encodeURIComponent(`${extendedUser.business_address} ${extendedUser.business_address_number}, Chile`)}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-blue-600 hover:text-blue-800 hover:underline flex items-center"
-                              >
-                                {extendedUser.business_address}{' '}
-                                {extendedUser.business_address_number}
-                                <ExternalLink className="h-4 w-4 ml-1" />
-                              </a>
-                            ) : extendedUser.business_address ? (
-                              <a
-                                href={`https://www.google.com/maps/search/${encodeURIComponent(`${extendedUser.business_address}, Chile`)}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-blue-600 hover:text-blue-800 hover:underline flex items-center"
-                              >
-                                {extendedUser.business_address}
-                                <ExternalLink className="h-4 w-4 ml-1" />
-                              </a>
-                            ) : (
-                              `${extendedUser.business_address || ''}${extendedUser.business_address && extendedUser.business_address_number ? ' ' : ''}${extendedUser.business_address_number || ''}` ||
-                              '-'
-                            )}
-                          </p>
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium text-gray-500">
-                            Código Postal de Empresa
-                          </label>
-                          <p>{extendedUser.business_postal_code || '-'}</p>
-                        </div>
+                        <InfoField
+                          label="Nombre de Empresa"
+                          value={extendedUser.business_name}
+                        />
+                        <InfoField
+                          label="Tipo de Negocio"
+                          value={extendedUser.business_type}
+                        />
+                        <InfoField
+                          label="RUT de Empresa"
+                          value={extendedUser.business_rut}
+                        />
+                        <InfoField
+                          label="Dirección de Empresa"
+                          value={
+                            extendedUser.business_address &&
+                            extendedUser.business_address_number
+                              ? `${extendedUser.business_address} ${extendedUser.business_address_number}`
+                              : extendedUser.business_address || null
+                          }
+                        />
+                        <InfoField
+                          label="Código Postal de Empresa"
+                          value={extendedUser.business_postal_code}
+                        />
                       </div>
                     </div>
                   </>
@@ -865,34 +628,20 @@ export default function AdDetailPage() {
                 <div className="space-y-6">
                   {/* Información principal de la orden */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="text-sm font-medium text-gray-500">
-                        ID de Orden
-                      </label>
-                      <p className="text-lg font-semibold">#{order.id}</p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-gray-500">
-                        Fecha de Compra
-                      </label>
-                      <p className="flex items-center">
-                        <Calendar className="h-4 w-4 mr-1" />
-                        {formatDate(order.createdAt)}
-                      </p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-gray-500">
-                        Monto Total
-                      </label>
-                      <p className="text-xl font-bold text-green-600">
-                        {formatCurrency(
-                          typeof order.amount === 'string'
-                            ? parseFloat(order.amount)
-                            : order.amount,
-                          'CLP'
-                        )}
-                      </p>
-                    </div>
+                    <InfoField label="ID de Orden" value={`#${order.id}`} />
+                    <InfoField
+                      label="Fecha de Compra"
+                      value={formatDate(order.createdAt)}
+                    />
+                    <InfoField
+                      label="Monto Total"
+                      value={formatCurrency(
+                        typeof order.amount === 'string'
+                          ? parseFloat(order.amount)
+                          : order.amount,
+                        'CLP'
+                      )}
+                    />
                     <div>
                       <label className="text-sm font-medium text-gray-500">
                         Método de Pago
@@ -913,14 +662,10 @@ export default function AdDetailPage() {
 
                   {/* Información adicional */}
                   {order.buy_order && (
-                    <div>
-                      <label className="text-sm font-medium text-gray-500">
-                        Número de Orden de Compra
-                      </label>
-                      <p className="font-mono text-sm bg-gray-100 p-2 rounded-sm">
-                        {order.buy_order}
-                      </p>
-                    </div>
+                    <InfoField
+                      label="Número de Orden de Compra"
+                      value={order.buy_order}
+                    />
                   )}
                 </div>
               ) : (
@@ -963,55 +708,27 @@ export default function AdDetailPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Duración
-                  </label>
-                  <p className="flex items-center">
-                    <Clock className="h-4 w-4 mr-1" />
-                    {ad.duration_days} días
-                  </p>
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Días Restantes
-                  </label>
-                  <p className="flex items-center">
-                    <Eye className="h-4 w-4 mr-1" />
-                    {ad.remaining_days} días
-                  </p>
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Creado
-                  </label>
-                  <p className="flex items-center">
-                    <Calendar className="h-4 w-4 mr-1" />
-                    {formatDate(ad.createdAt)}
-                  </p>
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Actualizado
-                  </label>
-                  <p className="flex items-center">
-                    <Calendar className="h-4 w-4 mr-1" />
-                    {formatDate(ad.updatedAt)}
-                  </p>
-                </div>
+              <div className="grid grid-cols-1 gap-4">
+                <InfoField
+                  label="Duración"
+                  value={`${ad.duration_days} días`}
+                />
+                <InfoField
+                  label="Días Restantes"
+                  value={`${ad.remaining_days} días`}
+                />
+                <InfoField label="Creado" value={formatDate(ad.createdAt)} />
+                <InfoField
+                  label="Actualizado"
+                  value={formatDate(ad.updatedAt)}
+                />
               </div>
 
               {ad.reason_for_rejection && (
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Motivo de Rechazo
-                  </label>
-                  <p className="text-red-600">{ad.reason_for_rejection}</p>
-                </div>
+                <InfoField
+                  label="Motivo de Rechazo"
+                  value={ad.reason_for_rejection}
+                />
               )}
             </CardContent>
           </Card>
@@ -1023,9 +740,31 @@ export default function AdDetailPage() {
                 <CardTitle>Detalles Adicionales</CardTitle>
               </CardHeader>
               <CardContent>
-                <pre className="bg-gray-50 p-3 rounded-sm overflow-auto text-sm max-h-64">
-                  {JSON.stringify(ad.details, null, 2)}
-                </pre>
+                <div className="grid grid-cols-1 gap-4">
+                  {ad.details.pack !== undefined && (
+                    <InfoField
+                      label="Pack"
+                      value={
+                        typeof ad.details.pack === 'string' ||
+                        typeof ad.details.pack === 'number'
+                          ? ad.details.pack
+                          : null
+                      }
+                    />
+                  )}
+                  {ad.details.featured !== undefined && (
+                    <InfoField
+                      label="Destacado"
+                      value={ad.details.featured ? 'Sí' : 'No'}
+                    />
+                  )}
+                  {ad.details.is_invoice !== undefined && (
+                    <InfoField
+                      label="Facturación"
+                      value={ad.details.is_invoice ? 'Sí' : 'No'}
+                    />
+                  )}
+                </div>
               </CardContent>
             </Card>
           )}

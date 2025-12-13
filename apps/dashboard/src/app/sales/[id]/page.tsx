@@ -13,12 +13,18 @@ import {
   FileText,
   Package,
   CreditCard,
+  Link,
+  Info,
 } from 'lucide-react';
 import { getOrder, StrapiOrder } from '@/lib/strapi';
+import { InfoField } from '@/components/ui/info-field';
+import { CustomButton } from '@/components/ui/custom-button';
+import { useFormatDate } from '@/hooks/useFormatDate';
 
 export default function OrderDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const { formatDate } = useFormatDate();
   const [order, setOrder] = useState<StrapiOrder | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -43,16 +49,6 @@ export default function OrderDetailPage() {
   useEffect(() => {
     fetchOrder();
   }, [fetchOrder]);
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-CL', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
 
   const formatCurrency = (amount: number, currency: string = 'CLP') => {
     return new Intl.NumberFormat('es-CL', {
@@ -110,7 +106,6 @@ export default function OrderDetailPage() {
             <h1 className="text-[28px] font-bold" style={{ color: '#313338' }}>
               Orden #{order.id}
             </h1>
-            <p className="text-gray-600">Detalles de la orden de compra</p>
           </div>
           <Button variant="ghost" onClick={() => router.back()}>
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -131,39 +126,29 @@ export default function OrderDetailPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Número de Orden
-                    </label>
-                    <p className="text-lg font-semibold">{order.buy_order}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      ID
-                    </label>
-                    <p className="font-mono">{order.id}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Monto
-                    </label>
-                    <p className="text-lg font-semibold text-green-600">
-                      {formatCurrency(
-                        typeof order.amount === 'string'
-                          ? parseFloat(order.amount)
-                          : order.amount,
-                        'CLP'
-                      )}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Tipo de Documento
-                    </label>
-                    <div className="mt-1">
-                      {getInvoiceBadge(order.is_invoice)}
-                    </div>
-                  </div>
+                  <InfoField label="Número de Orden" value={order.buy_order} />
+                  <InfoField label="ID" value={order.id} />
+                  <InfoField
+                    label="Monto"
+                    value={formatCurrency(
+                      typeof order.amount === 'string'
+                        ? parseFloat(order.amount)
+                        : order.amount,
+                      'CLP'
+                    )}
+                  />
+                  <InfoField
+                    label="Tipo de Documento"
+                    value={order.is_invoice ? 'Factura' : 'Boleta'}
+                  />
+                  <InfoField
+                    label="Método de Pago"
+                    value={
+                      order.payment_method === 'webpay'
+                        ? 'WebPay'
+                        : order.payment_method
+                    }
+                  />
                 </div>
               </CardContent>
             </Card>
@@ -172,43 +157,41 @@ export default function OrderDetailPage() {
             {order.user && (
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <User className="h-5 w-5 mr-2" />
-                    Información del Cliente
+                  <CardTitle className="flex items-center justify-between">
+                    <span className="flex items-center">
+                      <User className="h-5 w-5 mr-2" />
+                      Información del Cliente
+                    </span>
+                    <CustomButton
+                      variant="outline"
+                      onClick={() =>
+                        order.user && router.push(`/users/${order.user.id}`)
+                      }
+                      className="flex items-center"
+                    >
+                      <Link className="h-4 w-4 mr-2" />
+                      Ver Usuario
+                    </CustomButton>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-sm font-medium text-gray-500">
-                        Usuario
-                      </label>
-                      <p className="font-medium">{order.user.username}</p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-gray-500">
-                        Email
-                      </label>
-                      <p>{order.user.email}</p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-gray-500">
-                        ID del Cliente
-                      </label>
-                      <p className="font-mono text-sm">{order.user.id}</p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-gray-500">
-                        Estado
-                      </label>
-                      <div className="mt-1">
-                        {order.user.confirmed ? (
-                          <Badge variant="default">Confirmado</Badge>
-                        ) : (
-                          <Badge variant="secondary">Pendiente</Badge>
-                        )}
-                      </div>
-                    </div>
+                    <InfoField
+                      label="Usuario"
+                      value={order.user.username}
+                      type="link"
+                      href={`/users/${order.user.id}`}
+                    />
+                    <InfoField
+                      label="Email"
+                      value={order.user.email}
+                      type="email"
+                    />
+                    <InfoField label="ID del Cliente" value={order.user.id} />
+                    <InfoField
+                      label="Estado"
+                      value={order.user.confirmed ? 'Confirmado' : 'Pendiente'}
+                    />
                   </div>
                 </CardContent>
               </Card>
@@ -218,45 +201,40 @@ export default function OrderDetailPage() {
             {order.ad && (
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Package className="h-5 w-5 mr-2" />
-                    Información del Anuncio
+                  <CardTitle className="flex items-center justify-between">
+                    <span className="flex items-center">
+                      <Package className="h-5 w-5 mr-2" />
+                      Información del Anuncio
+                    </span>
+                    <CustomButton
+                      variant="outline"
+                      onClick={() =>
+                        order.ad && router.push(`/ads/${order.ad.id}`)
+                      }
+                      className="flex items-center"
+                    >
+                      <Link className="h-4 w-4 mr-2" />
+                      Ver Anuncio
+                    </CustomButton>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-sm font-medium text-gray-500">
-                        Nombre
-                      </label>
-                      <p className="font-medium">{order.ad.name}</p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-gray-500">
-                        Precio
-                      </label>
-                      <p className="font-medium text-green-600">
-                        {formatCurrency(order.ad.price, order.ad.currency)}
-                      </p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-gray-500">
-                        ID del Anuncio
-                      </label>
-                      <p className="font-mono text-sm">{order.ad.id}</p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-gray-500">
-                        Estado
-                      </label>
-                      <div className="mt-1">
-                        {order.ad.active ? (
-                          <Badge variant="default">Activo</Badge>
-                        ) : (
-                          <Badge variant="secondary">Inactivo</Badge>
-                        )}
-                      </div>
-                    </div>
+                    <InfoField label="Nombre" value={order.ad.name} />
+                    <InfoField
+                      label="Precio"
+                      value={formatCurrency(order.ad.price, order.ad.currency)}
+                    />
+                    <InfoField
+                      label="ID del Anuncio"
+                      value={order.ad.id}
+                      type="link"
+                      href={`/ads/${order.ad.id}`}
+                    />
+                    <InfoField
+                      label="Estado"
+                      value={order.ad.active ? 'Activo' : 'Inactivo'}
+                    />
                   </div>
                 </CardContent>
               </Card>
@@ -320,61 +298,20 @@ export default function OrderDetailPage() {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Información de pago */}
+            {/* Detalles */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <CreditCard className="h-5 w-5 mr-2" />
-                  Información de Pago
+                  <Info className="h-5 w-5 mr-2" />
+                  Detalles
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Método de Pago
-                  </label>
-                  <div className="mt-1">
-                    {getPaymentMethodBadge(order.payment_method)}
-                  </div>
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Monto Total
-                  </label>
-                  <p className="text-lg font-semibold text-green-600">
-                    {formatCurrency(
-                      typeof order.amount === 'string'
-                        ? parseFloat(order.amount)
-                        : order.amount,
-                      'CLP'
-                    )}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Fechas */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Calendar className="h-5 w-5 mr-2" />
-                  Fechas
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Creado
-                  </label>
-                  <p className="text-sm">{formatDate(order.createdAt)}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Actualizado
-                  </label>
-                  <p className="text-sm">{formatDate(order.updatedAt)}</p>
-                </div>
+                <InfoField label="Creado" value={formatDate(order.createdAt)} />
+                <InfoField
+                  label="Actualizado"
+                  value={formatDate(order.updatedAt)}
+                />
               </CardContent>
             </Card>
           </div>

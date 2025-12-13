@@ -10,7 +10,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Eye, Clock } from 'lucide-react';
 import { StrapiAd } from '@/lib/strapi';
@@ -38,24 +37,6 @@ export default function PendingAdsPage() {
   } = useAds({ type: 'pending' });
   const router = useRouter();
   const { formatDate } = useFormatDate();
-
-  const getStatusBadge = (ad: StrapiAd) => {
-    if (ad.rejected) {
-      return <Badge variant="destructive">Rechazado</Badge>;
-    }
-    if (ad.active) {
-      return <Badge variant="default">Activo</Badge>;
-    }
-    if (!ad.reviewed) {
-      // Mostrar estado de pago
-      if (ad.needs_payment) {
-        return <Badge variant="secondary">Pendiente de Pago</Badge>;
-      } else {
-        return <Badge variant="default">Pagado</Badge>;
-      }
-    }
-    return <Badge variant="outline">Archivado</Badge>;
-  };
 
   const sortOptions = [
     { value: 'createdAt:desc', label: 'Más recientes' },
@@ -125,9 +106,6 @@ export default function PendingAdsPage() {
                         <span>Usuario</span>
                       </TableHead>
                       <TableHead>
-                        <span>Estado de Pago</span>
-                      </TableHead>
-                      <TableHead>
                         <span>Fecha</span>
                       </TableHead>
                       <TableHead className="text-right">Acciones</TableHead>
@@ -150,7 +128,6 @@ export default function PendingAdsPage() {
                         <TableCell>
                           <div className="font-medium">{ad.user?.username}</div>
                         </TableCell>
-                        <TableCell>{getStatusBadge(ad)}</TableCell>
                         <TableCell>{formatDate(ad.createdAt)}</TableCell>
                         <TableCell className="text-right">
                           <Button
