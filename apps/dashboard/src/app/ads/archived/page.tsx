@@ -41,10 +41,11 @@ export default function ArchivedAdsPage() {
 
   const getImageUrl = (image: any) => {
     if (!image) return null;
-    // Usar small o medium para mejor calidad, fallback a thumbnail o url original
+    // Usar large o medium para mejor calidad, fallback a small, thumbnail o url original
     const url =
-      image.formats?.small?.url ||
+      image.formats?.large?.url ||
       image.formats?.medium?.url ||
+      image.formats?.small?.url ||
       image.formats?.thumbnail?.url ||
       image.url;
     if (url.startsWith('http://') || url.startsWith('https://')) {
@@ -151,7 +152,7 @@ export default function ArchivedAdsPage() {
                         <TableRow key={ad.id}>
                           <TableCell>
                             {galleryImages.length > 0 ? (
-                              <div className="flex items-center -space-x-2">
+                              <div className="flex items-center -space-x-4">
                                 {galleryImages.map((image, idx) => {
                                   const imageUrl = getImageUrl(image);
                                   if (!imageUrl) return null;
@@ -172,7 +173,8 @@ export default function ArchivedAdsPage() {
                                         }
                                         fill
                                         className="object-cover"
-                                        sizes="45px"
+                                        sizes="200px"
+                                        quality={90}
                                       />
                                     </div>
                                   );
