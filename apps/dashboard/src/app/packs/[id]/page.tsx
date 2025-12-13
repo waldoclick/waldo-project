@@ -145,9 +145,7 @@ export default function PackDetailPage() {
                     </label>
                     <div className="flex items-center space-x-2">
                       <Clock className="h-4 w-4 text-blue-500" />
-                      <Badge variant="outline" className="text-lg px-3 py-1">
-                        {pack.total_days} días
-                      </Badge>
+                      <Badge variant="outline">{pack.total_days} días</Badge>
                     </div>
                   </div>
                   <div>
@@ -156,9 +154,7 @@ export default function PackDetailPage() {
                     </label>
                     <div className="flex items-center space-x-2">
                       <Package className="h-4 w-4 text-purple-500" />
-                      <Badge variant="outline" className="text-lg px-3 py-1">
-                        {pack.total_ads} anuncios
-                      </Badge>
+                      <Badge variant="outline">{pack.total_ads} anuncios</Badge>
                     </div>
                   </div>
                   <div>
@@ -167,7 +163,7 @@ export default function PackDetailPage() {
                     </label>
                     <div className="flex items-center space-x-2">
                       <Star className="h-4 w-4 text-yellow-500" />
-                      <Badge variant="outline" className="text-lg px-3 py-1">
+                      <Badge variant="outline">
                         {pack.total_features} features
                       </Badge>
                     </div>

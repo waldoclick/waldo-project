@@ -151,7 +151,7 @@ export default function DestacadoDetailPage() {
                 </label>
                 <div className="flex items-center space-x-2">
                   <Clock className="h-4 w-4 text-blue-500" />
-                  <Badge variant="outline" className="text-lg px-3 py-1">
+                  <Badge variant="outline">
                     {featured.total_days || 0} días
                   </Badge>
                 </div>
