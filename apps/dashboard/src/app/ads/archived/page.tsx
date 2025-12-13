@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Eye, Link2, User, CheckCircle, Calendar, Archive } from 'lucide-react';
+import { Eye, Archive } from 'lucide-react';
 import { StrapiAd } from '@/lib/strapi';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -39,7 +39,21 @@ export default function ArchivedAdsPage() {
   const router = useRouter();
   const { formatDate } = useFormatDate();
 
-  const getImageUrl = (image: any) => {
+  interface GalleryImage {
+    id?: number;
+    name?: string;
+    url: string;
+    formats?: {
+      thumbnail?: { url: string };
+      small?: { url: string };
+      medium?: { url: string };
+      large?: { url: string };
+    };
+  }
+
+  const getImageUrl = (
+    image: GalleryImage | null | undefined
+  ): string | null => {
     if (!image) return null;
     // Usar large o medium para mejor calidad, fallback a small, thumbnail o url original
     const url =

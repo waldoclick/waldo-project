@@ -73,21 +73,6 @@ export function GalleryDefault({ images = [] }: GalleryDefaultProps) {
     return `${baseURL}${relativeUrl}`;
   };
 
-  // Función para obtener URL a través del proxy de Next.js
-  const getNextImageUrl = (url: string, width?: number): string => {
-    const absoluteUrl = getAbsoluteUrl(url);
-    // Codificar la URL para pasarla como parámetro
-    const encodedUrl = encodeURIComponent(absoluteUrl);
-    // Construir la URL del proxy de Next.js
-    const params = new URLSearchParams();
-    params.set('url', absoluteUrl);
-    if (width) {
-      params.set('w', width.toString());
-    }
-    params.set('q', '90');
-    return `/_next/image?${params.toString()}`;
-  };
-
   const getThumbnailUrl = (image: GalleryImage): string => {
     // Usar small o medium para mejor calidad, fallback a thumbnail o url original
     const url =
@@ -98,16 +83,15 @@ export function GalleryDefault({ images = [] }: GalleryDefaultProps) {
     return getAbsoluteUrl(url);
   };
 
-  // Preparar imágenes para el lightbox (usar URL a través del proxy de Next.js)
+  // Preparar imágenes para el lightbox (usar URL absoluta directa)
+  // El lightbox usa <img> tags, no el componente Image de Next.js, por lo que necesita URLs directas
   const lightboxImages = images.map((image) => {
     // Usar large o medium para el lightbox, fallback a url original
     const imageUrl =
       image.formats?.large?.url || image.formats?.medium?.url || image.url;
-    // Usar el ancho original o un máximo razonable para el lightbox
-    const maxWidth = Math.min(image.width || 1920, 1920);
 
     return {
-      src: getNextImageUrl(imageUrl, maxWidth),
+      src: getAbsoluteUrl(imageUrl),
       alt: image.alternativeText || image.name,
       width: image.width,
       height: image.height,
