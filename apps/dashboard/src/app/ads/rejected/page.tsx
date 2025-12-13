@@ -15,6 +15,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Eye, Link2, User, CheckCircle, Calendar, XCircle } from 'lucide-react';
 import { StrapiAd } from '@/lib/strapi';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { DataTablePagination } from '@/components/ui/data-table-pagination';
 import { SortByData } from '@/components/ui/sort-by-data';
 import { SortPerPageSize } from '@/components/ui/sort-per-page-size';
@@ -37,6 +38,22 @@ export default function RejectedAdsPage() {
   } = useAds({ type: 'rejected' });
   const router = useRouter();
   const { formatDate } = useFormatDate();
+
+  const getImageUrl = (image: any) => {
+    if (!image) return null;
+    // Usar small o medium para mejor calidad, fallback a thumbnail o url original
+    const url =
+      image.formats?.small?.url ||
+      image.formats?.medium?.url ||
+      image.formats?.thumbnail?.url ||
+      image.url;
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    const baseURL =
+      process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
+    return `${baseURL}${url.startsWith('/') ? url : `/${url}`}`;
+  };
 
   const getStatusBadge = (ad: StrapiAd) => {
     if (ad.rejected) {
@@ -110,6 +127,9 @@ export default function RejectedAdsPage() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>
+                        <span>Galería</span>
+                      </TableHead>
+                      <TableHead>
                         <span>Anuncio</span>
                       </TableHead>
                       <TableHead>
@@ -125,28 +145,75 @@ export default function RejectedAdsPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {ads.map((ad) => (
-                      <TableRow key={ad.id}>
-                        <TableCell>
-                          <div className="font-medium">{ad.name}</div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="font-medium">{ad.user?.username}</div>
-                        </TableCell>
-                        <TableCell>{getStatusBadge(ad)}</TableCell>
-                        <TableCell>{formatDate(ad.createdAt)}</TableCell>
-                        <TableCell className="text-right">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => router.push(`/ads/${ad.id}`)}
-                            className="h-10 w-10 p-0 cursor-pointer hover:bg-[#ffd699]"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                    {ads.map((ad) => {
+                      const galleryImages = ad.gallery?.slice(0, 3) || [];
+                      return (
+                        <TableRow key={ad.id}>
+                          <TableCell>
+                            {galleryImages.length > 0 ? (
+                              <div className="flex items-center -space-x-2">
+                                {galleryImages.map((image, idx) => {
+                                  const imageUrl = getImageUrl(image);
+                                  if (!imageUrl) return null;
+                                  return (
+                                    <div
+                                      key={image.id || idx}
+                                      className="relative w-[45px] h-[45px] rounded-full border-2 border-white overflow-hidden bg-gray-100"
+                                      style={{
+                                        zIndex: galleryImages.length - idx,
+                                      }}
+                                    >
+                                      <Image
+                                        src={imageUrl}
+                                        alt={
+                                          image.alternativeText ||
+                                          image.name ||
+                                          'Gallery image'
+                                        }
+                                        fill
+                                        className="object-cover"
+                                        sizes="45px"
+                                      />
+                                    </div>
+                                  );
+                                })}
+                                {ad.gallery && ad.gallery.length > 3 && (
+                                  <div className="relative w-[45px] h-[45px] rounded-full border-2 border-white bg-gray-200 flex items-center justify-center text-xs font-medium text-gray-600 z-0">
+                                    +{ad.gallery.length - 3}
+                                  </div>
+                                )}
+                              </div>
+                            ) : (
+                              <div className="w-[45px] h-[45px] rounded-full bg-gray-100 flex items-center justify-center">
+                                <span className="text-xs text-gray-400">
+                                  Sin imágenes
+                                </span>
+                              </div>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <div className="font-medium">{ad.name}</div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="font-medium">
+                              {ad.user?.username}
+                            </div>
+                          </TableCell>
+                          <TableCell>{getStatusBadge(ad)}</TableCell>
+                          <TableCell>{formatDate(ad.createdAt)}</TableCell>
+                          <TableCell className="text-right">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => router.push(`/ads/${ad.id}`)}
+                              className="h-10 w-10 p-0 cursor-pointer hover:bg-[#ffd699]"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
                   </TableBody>
                 </Table>
               </div>
