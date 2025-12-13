@@ -55,13 +55,11 @@ export function GalleryThumbnails({
     );
   }
 
-  // Calcular el margin negativo para el solapamiento
-  const overlapStyle = {
-    marginLeft: `-${overlap * 4}px`, // 4px por unidad de Tailwind (space-x-6 = 24px = 6*4px)
-  };
+  // Calcular el margin negativo para el solapamiento (en píxeles)
+  const overlapPx = overlap * 4; // 4px por unidad de Tailwind (space-x-6 = 24px = 6*4px)
 
   return (
-    <div className="flex items-center" style={overlapStyle}>
+    <div className="flex items-center">
       {visibleImages.map((image, idx) => {
         const imageUrl = getImageUrl(image);
         if (!imageUrl) return null;
@@ -73,6 +71,7 @@ export function GalleryThumbnails({
               width: size,
               height: size,
               zIndex: visibleImages.length - idx,
+              marginLeft: idx > 0 ? `-${overlapPx}px` : '0',
             }}
           >
             <img
@@ -87,7 +86,11 @@ export function GalleryThumbnails({
       {remainingCount > 0 && (
         <div
           className="relative rounded-full border-2 border-white bg-gray-200 flex items-center justify-center text-xs font-medium text-gray-600 z-0"
-          style={{ width: size, height: size }}
+          style={{
+            width: size,
+            height: size,
+            marginLeft: visibleImages.length > 0 ? `-${overlapPx}px` : '0',
+          }}
         >
           +{remainingCount}
         </div>
