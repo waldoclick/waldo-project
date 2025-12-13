@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Image as ImageIcon } from 'lucide-react';
 import Lightbox from 'yet-another-react-lightbox';
@@ -72,18 +73,46 @@ export function GalleryDefault({ images = [] }: GalleryDefaultProps) {
     return `${baseURL}${relativeUrl}`;
   };
 
+  // Función para obtener URL a través del proxy de Next.js
+  const getNextImageUrl = (url: string, width?: number): string => {
+    const absoluteUrl = getAbsoluteUrl(url);
+    // Codificar la URL para pasarla como parámetro
+    const encodedUrl = encodeURIComponent(absoluteUrl);
+    // Construir la URL del proxy de Next.js
+    const params = new URLSearchParams();
+    params.set('url', absoluteUrl);
+    if (width) {
+      params.set('w', width.toString());
+    }
+    params.set('q', '90');
+    return `/_next/image?${params.toString()}`;
+  };
+
   const getThumbnailUrl = (image: GalleryImage): string => {
-    const url = image.formats?.thumbnail?.url || image.url;
+    // Usar small o medium para mejor calidad, fallback a thumbnail o url original
+    const url =
+      image.formats?.small?.url ||
+      image.formats?.medium?.url ||
+      image.formats?.thumbnail?.url ||
+      image.url;
     return getAbsoluteUrl(url);
   };
 
-  // Preparar imágenes para el lightbox (usar URL original)
-  const lightboxImages = images.map((image) => ({
-    src: getAbsoluteUrl(image.url),
-    alt: image.alternativeText || image.name,
-    width: image.width,
-    height: image.height,
-  }));
+  // Preparar imágenes para el lightbox (usar URL a través del proxy de Next.js)
+  const lightboxImages = images.map((image) => {
+    // Usar large o medium para el lightbox, fallback a url original
+    const imageUrl =
+      image.formats?.large?.url || image.formats?.medium?.url || image.url;
+    // Usar el ancho original o un máximo razonable para el lightbox
+    const maxWidth = Math.min(image.width || 1920, 1920);
+
+    return {
+      src: getNextImageUrl(imageUrl, maxWidth),
+      alt: image.alternativeText || image.name,
+      width: image.width,
+      height: image.height,
+    };
+  });
 
   return (
     <>
@@ -105,15 +134,13 @@ export function GalleryDefault({ images = [] }: GalleryDefaultProps) {
                   onClick={() => setIndex(imageIndex)}
                   className="relative aspect-square overflow-hidden border border-gray-200 hover:border-gray-300 hover:shadow-md cursor-pointer bg-gray-100"
                 >
-                  <img
+                  <Image
                     src={thumbnailUrl}
                     alt={image.alternativeText || image.name}
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                    onError={(e) => {
-                      console.error('Error loading image:', thumbnailUrl);
-                      e.currentTarget.style.display = 'none';
-                    }}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
+                    quality={90}
                   />
                 </button>
               );
