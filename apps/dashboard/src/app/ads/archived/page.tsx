@@ -20,6 +20,7 @@ import { SortByData } from '@/components/ui/sort-by-data';
 import { SortPerPageSize } from '@/components/ui/sort-per-page-size';
 import { useAds } from '@/hooks/api';
 import { useFormatDate } from '@/hooks/useFormatDate';
+import { GalleryThumbnails } from '@/components/ui/gallery-thumbnails';
 
 export default function ArchivedAdsPage() {
   const {
@@ -37,37 +38,6 @@ export default function ArchivedAdsPage() {
   } = useAds({ type: 'archived' });
   const router = useRouter();
   const { formatDate } = useFormatDate();
-
-  interface GalleryImage {
-    id?: number;
-    name?: string;
-    url: string;
-    formats?: {
-      thumbnail?: { url: string };
-      small?: { url: string };
-      medium?: { url: string };
-      large?: { url: string };
-    };
-  }
-
-  const getImageUrl = (
-    image: GalleryImage | null | undefined
-  ): string | null => {
-    if (!image) return null;
-    // Usar large o medium para mejor calidad, fallback a small, thumbnail o url original
-    const url =
-      image.formats?.large?.url ||
-      image.formats?.medium?.url ||
-      image.formats?.small?.url ||
-      image.formats?.thumbnail?.url ||
-      image.url;
-    if (url.startsWith('http://') || url.startsWith('https://')) {
-      return url;
-    }
-    const baseURL =
-      process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
-    return `${baseURL}${url.startsWith('/') ? url : `/${url}`}`;
-  };
 
   const getStatusBadge = (ad: StrapiAd) => {
     if (ad.rejected) {
@@ -159,74 +129,36 @@ export default function ArchivedAdsPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {ads.map((ad) => {
-                      const galleryImages = ad.gallery?.slice(0, 3) || [];
-                      return (
-                        <TableRow key={ad.id}>
-                          <TableCell>
-                            {galleryImages.length > 0 ? (
-                              <div className="flex items-center -space-x-4">
-                                {galleryImages.map((image, idx) => {
-                                  const imageUrl = getImageUrl(image);
-                                  if (!imageUrl) return null;
-                                  return (
-                                    <div
-                                      key={image.id || idx}
-                                      className="relative w-[45px] h-[45px] rounded-full border-2 border-white overflow-hidden bg-gray-100"
-                                      style={{
-                                        zIndex: galleryImages.length - idx,
-                                      }}
-                                    >
-                                      <img
-                                        src={imageUrl}
-                                        alt={
-                                          image.alternativeText ||
-                                          image.name ||
-                                          'Gallery image'
-                                        }
-                                        className="w-full h-full object-cover"
-                                        loading="lazy"
-                                      />
-                                    </div>
-                                  );
-                                })}
-                                {ad.gallery && ad.gallery.length > 3 && (
-                                  <div className="relative w-[45px] h-[45px] rounded-full border-2 border-white bg-gray-200 flex items-center justify-center text-xs font-medium text-gray-600 z-0">
-                                    +{ad.gallery.length - 3}
-                                  </div>
-                                )}
-                              </div>
-                            ) : (
-                              <div className="w-[45px] h-[45px] rounded-full bg-gray-100 flex items-center justify-center">
-                                <span className="text-xs text-gray-400">
-                                  Sin imágenes
-                                </span>
-                              </div>
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            <div className="font-medium">{ad.name}</div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="font-medium">
-                              {ad.user?.username}
-                            </div>
-                          </TableCell>
-                          <TableCell>{getStatusBadge(ad)}</TableCell>
-                          <TableCell>{formatDate(ad.createdAt)}</TableCell>
-                          <TableCell className="text-right">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => router.push(`/ads/${ad.id}`)}
-                              className="h-10 w-10 p-0 cursor-pointer hover:bg-[#ffd699]"
-                            >
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
+                    {ads.map((ad) => (
+                      <TableRow key={ad.id}>
+                        <TableCell>
+                          <GalleryThumbnails
+                            images={ad.gallery}
+                            maxVisible={3}
+                            size={45}
+                            overlap={6}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <div className="font-medium">{ad.name}</div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="font-medium">{ad.user?.username}</div>
+                        </TableCell>
+                        <TableCell>{getStatusBadge(ad)}</TableCell>
+                        <TableCell>{formatDate(ad.createdAt)}</TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => router.push(`/ads/${ad.id}`)}
+                            className="h-10 w-10 p-0 cursor-pointer hover:bg-[#ffd699]"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
                   </TableBody>
                 </Table>
               </div>
