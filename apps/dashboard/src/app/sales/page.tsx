@@ -20,6 +20,7 @@ import {
   FileText,
   Package,
   CreditCard,
+  ShoppingCart,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { DataTablePagination } from '@/components/ui/data-table-pagination';
@@ -82,8 +83,11 @@ export default function SalesPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="space-y-6">
         <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Órdenes</h1>
+          <div className="flex items-center gap-2">
+            <ShoppingCart className="h-7 w-7" style={{ color: '#313338' }} />
+            <h1 className="text-[28px] font-bold" style={{ color: '#313338' }}>
+              Órdenes
+            </h1>
           </div>
         </div>
 

@@ -48,8 +48,11 @@ export default function CategoriesPage() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Categorías</h1>
+          <div className="flex items-center gap-2">
+            <Tag className="h-7 w-7" style={{ color: '#313338' }} />
+            <h1 className="text-[28px] font-bold" style={{ color: '#313338' }}>
+              Categorías
+            </h1>
           </div>
           <Button onClick={() => router.push('/categories/new')}>
             <Plus className="h-4 w-4 mr-2" />

@@ -87,8 +87,11 @@ export default function UsersPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="space-y-6">
         <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Usuarios</h1>
+          <div className="flex items-center gap-2">
+            <User className="h-7 w-7" style={{ color: '#313338' }} />
+            <h1 className="text-[28px] font-bold" style={{ color: '#313338' }}>
+              Usuarios
+            </h1>
             <p className="text-gray-600 mt-2">
               Gestiona los usuarios del sistema
             </p>

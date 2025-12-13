@@ -19,6 +19,7 @@ import {
   User,
   Package,
   Edit,
+  Circle,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { DataTablePagination } from '@/components/ui/data-table-pagination';
@@ -63,8 +64,9 @@ export default function FreeReservationsPage() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">
+          <div className="flex items-center gap-2">
+            <Circle className="h-7 w-7" style={{ color: '#313338' }} />
+            <h1 className="text-[28px] font-bold" style={{ color: '#313338' }}>
               Reservas Libres
             </h1>
           </div>

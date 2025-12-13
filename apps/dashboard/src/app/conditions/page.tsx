@@ -12,7 +12,15 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Plus, Eye, Edit, Calendar, Hash, Package } from 'lucide-react';
+import {
+  Plus,
+  Eye,
+  Edit,
+  Calendar,
+  Hash,
+  Package,
+  FileCheck,
+} from 'lucide-react';
 import { DataTablePagination } from '@/components/ui/data-table-pagination';
 import { SortByData } from '@/components/ui/sort-by-data';
 import { SortPerPageSize } from '@/components/ui/sort-per-page-size';
@@ -48,8 +56,11 @@ export default function ConditionsPage() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Condiciones</h1>
+          <div className="flex items-center gap-2">
+            <FileCheck className="h-7 w-7" style={{ color: '#313338' }} />
+            <h1 className="text-[28px] font-bold" style={{ color: '#313338' }}>
+              Condiciones
+            </h1>
           </div>
           <Button onClick={() => router.push('/conditions/new')}>
             <Plus className="h-4 w-4 mr-2" />

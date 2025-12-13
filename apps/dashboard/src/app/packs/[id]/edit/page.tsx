@@ -14,6 +14,7 @@ import {
   DollarSign,
   Clock,
   Star,
+  Box,
 } from 'lucide-react';
 import { getAdPack, updateAdPack, StrapiAdPack } from '@/lib/strapi';
 
@@ -153,7 +154,15 @@ export default function EditPackPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Editar Pack</h1>
+            <div className="flex items-center gap-2">
+              <Box className="h-7 w-7" style={{ color: '#313338' }} />
+              <h1
+                className="text-[28px] font-bold"
+                style={{ color: '#313338' }}
+              >
+                Editar Pack
+              </h1>
+            </div>
             <p className="text-gray-600">Modificar información del pack</p>
           </div>
           <Button variant="ghost" onClick={handleCancel}>

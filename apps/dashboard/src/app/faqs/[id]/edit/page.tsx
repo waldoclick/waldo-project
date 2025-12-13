@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Save, X } from 'lucide-react';
+import { ArrowLeft, Save, X, HelpCircle } from 'lucide-react';
 import { getFaq, updateFaq } from '@/lib/strapi/faqs';
 import { StrapiFaq } from '@/lib/strapi/types';
 
@@ -96,7 +96,15 @@ export default function EditFaqPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold">Editar FAQ</h1>
+            <div className="flex items-center gap-2">
+              <HelpCircle className="h-6 w-6" style={{ color: '#313338' }} />
+              <h1
+                className="text-[22px] font-bold"
+                style={{ color: '#313338' }}
+              >
+                Editar FAQ
+              </h1>
+            </div>
             <p className="text-gray-500">Modificar información de la FAQ</p>
           </div>
           <Button variant="ghost" onClick={() => router.back()}>

@@ -15,6 +15,7 @@ import {
   Star,
   FileText,
   Hash,
+  Box,
 } from 'lucide-react';
 import { getAdPack } from '@/lib/strapi';
 import { StrapiAdPack } from '@/lib/strapi/types';
@@ -79,8 +80,11 @@ export default function PackDetailPage() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">{pack.name}</h1>
+          <div className="flex items-center gap-2">
+            <Box className="h-7 w-7" style={{ color: '#313338' }} />
+            <h1 className="text-[28px] font-bold" style={{ color: '#313338' }}>
+              {pack.name}
+            </h1>
             <p className="text-gray-600">{pack.text}</p>
           </div>
           <div className="flex space-x-2">

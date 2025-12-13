@@ -326,8 +326,11 @@ export default function AdDetailPage() {
 
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">{ad.name}</h1>
+        <div className="flex items-center gap-2">
+          <CheckCircle className="h-7 w-7" style={{ color: '#313338' }} />
+          <h1 className="text-[28px] font-bold" style={{ color: '#313338' }}>
+            {ad.name}
+          </h1>
           <p className="text-gray-600">Detalles del anuncio</p>
         </div>
         <div className="flex space-x-2">
