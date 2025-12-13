@@ -123,12 +123,7 @@ export default function FaqsPage() {
                     {faqs.map((faq) => (
                       <TableRow key={faq.id}>
                         <TableCell>
-                          <div>
-                            <div className="font-medium">{faq.title}</div>
-                            <div className="text-sm text-gray-500">
-                              ID: {faq.id}
-                            </div>
-                          </div>
+                          <div className="font-medium">{faq.title}</div>
                         </TableCell>
                         <TableCell>
                           {faq.featured ? (

@@ -136,23 +136,13 @@ export default function FreeReservationsPage() {
                     {freeReservations.map((reservation) => (
                       <TableRow key={reservation.id}>
                         <TableCell>
-                          <div>
-                            <div className="font-medium">
-                              {reservation.user?.username || 'N/A'}
-                            </div>
-                            <div className="text-sm text-gray-500">
-                              {reservation.user?.email || 'N/A'}
-                            </div>
+                          <div className="font-medium">
+                            {reservation.user?.username || 'N/A'}
                           </div>
                         </TableCell>
                         <TableCell>
-                          <div>
-                            <div className="font-medium">
-                              {reservation.ad?.name || 'N/A'}
-                            </div>
-                            <div className="text-sm text-gray-500">
-                              {reservation.ad?.description?.substring(0, 30)}...
-                            </div>
+                          <div className="font-medium">
+                            {reservation.ad?.name || 'N/A'}
                           </div>
                         </TableCell>
                         <TableCell>

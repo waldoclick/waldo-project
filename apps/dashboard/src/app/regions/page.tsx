@@ -120,12 +120,7 @@ export default function RegionsPage() {
                     {regions.map((region) => (
                       <TableRow key={region.id}>
                         <TableCell>
-                          <div>
-                            <div className="font-medium">{region.name}</div>
-                            <div className="text-sm text-gray-500">
-                              ID: {region.id}
-                            </div>
-                          </div>
+                          <div className="font-medium">{region.name}</div>
                         </TableCell>
                         <TableCell>
                           <span className="font-mono text-sm">

@@ -140,12 +140,7 @@ export default function PacksPage() {
                     {packs.map((pack) => (
                       <TableRow key={pack.id}>
                         <TableCell>
-                          <div>
-                            <div className="font-medium">{pack.name}</div>
-                            <div className="text-sm text-gray-500">
-                              {pack.text}
-                            </div>
-                          </div>
+                          <div className="font-medium">{pack.name}</div>
                         </TableCell>
                         <TableCell>
                           <span className="font-semibold text-green-600">

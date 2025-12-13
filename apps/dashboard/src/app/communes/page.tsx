@@ -119,12 +119,7 @@ export default function CommunesPage() {
                     {communes.map((commune) => (
                       <TableRow key={commune.id}>
                         <TableCell>
-                          <div>
-                            <div className="font-medium">{commune.name}</div>
-                            <div className="text-sm text-gray-500">
-                              ID: {commune.id}
-                            </div>
-                          </div>
+                          <div className="font-medium">{commune.name}</div>
                         </TableCell>
                         <TableCell>
                           <span className="font-mono text-sm">

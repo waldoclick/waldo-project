@@ -118,12 +118,7 @@ export default function ConditionsPage() {
                     {conditions.map((condition) => (
                       <TableRow key={condition.id}>
                         <TableCell>
-                          <div>
-                            <div className="font-medium">{condition.name}</div>
-                            <div className="text-sm text-gray-500">
-                              ID: {condition.id}
-                            </div>
-                          </div>
+                          <div className="font-medium">{condition.name}</div>
                         </TableCell>
                         <TableCell>
                           <span className="font-mono text-sm">

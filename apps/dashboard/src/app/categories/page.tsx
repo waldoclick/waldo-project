@@ -113,12 +113,7 @@ export default function CategoriesPage() {
                     {categories.map((category) => (
                       <TableRow key={category.id}>
                         <TableCell>
-                          <div>
-                            <div className="font-medium">{category.name}</div>
-                            <div className="text-sm text-gray-500">
-                              ID: {category.id}
-                            </div>
-                          </div>
+                          <div className="font-medium">{category.name}</div>
                         </TableCell>
                         <TableCell>
                           <span className="font-mono text-sm">

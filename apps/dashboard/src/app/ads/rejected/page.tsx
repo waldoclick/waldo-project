@@ -128,22 +128,10 @@ export default function RejectedAdsPage() {
                     {ads.map((ad) => (
                       <TableRow key={ad.id}>
                         <TableCell>
-                          <div>
-                            <div className="font-medium">{ad.name}</div>
-                            <div className="text-sm text-gray-500">
-                              {ad.description?.substring(0, 50)}...
-                            </div>
-                          </div>
+                          <div className="font-medium">{ad.name}</div>
                         </TableCell>
                         <TableCell>
-                          <div>
-                            <div className="font-medium">
-                              {ad.user?.username}
-                            </div>
-                            <div className="text-sm text-gray-500">
-                              {ad.user?.email}
-                            </div>
-                          </div>
+                          <div className="font-medium">{ad.user?.username}</div>
                         </TableCell>
                         <TableCell>{getStatusBadge(ad)}</TableCell>
                         <TableCell>{formatDate(ad.createdAt)}</TableCell>
