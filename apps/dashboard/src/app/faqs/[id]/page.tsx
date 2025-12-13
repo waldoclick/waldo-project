@@ -5,9 +5,11 @@ import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Edit, Calendar, Star, FileText, Hash } from 'lucide-react';
+import { InfoField } from '@/components/ui/info-field';
+import { ArrowLeft, Edit, Info, Star, FileText } from 'lucide-react';
 import { getFaq } from '@/lib/strapi/faqs';
 import { StrapiFaq } from '@/lib/strapi/types';
+import { useFormatDate } from '@/hooks/useFormatDate';
 
 export default function FaqDetailPage() {
   const params = useParams();
@@ -35,9 +37,7 @@ export default function FaqDetailPage() {
     fetchFaq();
   }, [fetchFaq]);
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-CL');
-  };
+  const { formatDate } = useFormatDate();
 
   if (loading) {
     return (
@@ -60,9 +60,11 @@ export default function FaqDetailPage() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">{faq.title}</h1>
-            <p className="text-gray-600">Detalles de la FAQ</p>
+          <div className="flex items-center gap-2">
+            <FileText className="h-7 w-7" style={{ color: '#313338' }} />
+            <h1 className="text-[28px] font-bold" style={{ color: '#313338' }}>
+              {faq.title}
+            </h1>
           </div>
           <div className="flex space-x-2">
             <Button variant="ghost" onClick={() => router.back()}>
@@ -87,56 +89,44 @@ export default function FaqDetailPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <InfoField label="ID" value={faq.id} />
+                  <InfoField label="Título" value={faq.title} />
                   <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      ID
-                    </label>
-                    <div className="flex items-center space-x-2">
-                      <Hash className="h-4 w-4 text-gray-500" />
-                      <span className="text-lg font-semibold">{faq.id}</span>
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Título
-                    </label>
-                    <p className="text-lg font-semibold">{faq.title}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
+                    <label
+                      className="text-xs font-bold uppercase"
+                      style={{ color: '#313338' }}
+                    >
                       Estado
                     </label>
-                    <div className="flex items-center space-x-2">
+                    <div className="mt-1">
                       {faq.featured ? (
                         <Badge
                           variant="default"
-                          className="flex items-center space-x-1"
+                          className="flex items-center space-x-1 w-fit"
                         >
                           <Star className="h-3 w-3" />
                           <span>Destacada</span>
                         </Badge>
                       ) : (
-                        <Badge variant="secondary">Normal</Badge>
+                        <Badge variant="secondary" className="w-fit">
+                          Normal
+                        </Badge>
                       )}
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* Respuesta completa */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <FileText className="h-5 w-5 mr-2" />
-                  Respuesta Completa
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="prose max-w-none">
-                  <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">
-                    {faq.text}
+                <div>
+                  <label
+                    className="text-xs font-bold uppercase"
+                    style={{ color: '#313338' }}
+                  >
+                    Respuesta Completa
+                  </label>
+                  <div className="mt-1 prose max-w-none">
+                    <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">
+                      {faq.text}
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -148,29 +138,16 @@ export default function FaqDetailPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <Calendar className="h-5 w-5 mr-2" />
-                  Información de Fechas
+                  <Info className="h-5 w-5 mr-2" />
+                  Detalles
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Fecha de Creación
-                  </label>
-                  <div className="flex items-center space-x-2 mt-1">
-                    <Calendar className="h-4 w-4 text-gray-500" />
-                    <span>{formatDate(faq.createdAt)}</span>
-                  </div>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Última Actualización
-                  </label>
-                  <div className="flex items-center space-x-2 mt-1">
-                    <Calendar className="h-4 w-4 text-gray-500" />
-                    <span>{formatDate(faq.updatedAt)}</span>
-                  </div>
-                </div>
+                <InfoField label="Creado" value={formatDate(faq.createdAt)} />
+                <InfoField
+                  label="Actualizado"
+                  value={formatDate(faq.updatedAt)}
+                />
               </CardContent>
             </Card>
           </div>

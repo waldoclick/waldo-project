@@ -17,10 +17,14 @@ import {
   XCircle,
   ExternalLink,
   Mail,
+  Info,
+  CheckCircle,
 } from 'lucide-react';
 import { getAdFeaturedReservation } from '@/lib/strapi';
 import { StrapiAdFeaturedReservation } from '@/lib/strapi/types';
 import { useFormatDate } from '@/hooks/useFormatDate';
+import { InfoField } from '@/components/ui/info-field';
+import { CustomButton } from '@/components/ui/custom-button';
 
 export default function DestacadoDetailPage() {
   const params = useParams();
@@ -79,355 +83,209 @@ export default function DestacadoDetailPage() {
   const isUsed = !!featured.ad;
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => router.push('/features')}
-          >
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Star className="h-7 w-7" style={{ color: '#313338' }} />
+            <h1 className="text-[28px] font-bold" style={{ color: '#313338' }}>
+              Destacado #{featured.id}
+            </h1>
+          </div>
+          <Button variant="ghost" onClick={() => router.back()}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Volver
           </Button>
-          <div className="flex items-center gap-2">
-            <Star className="h-6 w-6" style={{ color: '#313338' }} />
-            <h1 className="text-[22px] font-bold" style={{ color: '#313338' }}>
-              Destacado #{featured.id}
-            </h1>
-            <div className="flex items-center space-x-2 mt-1">
-              {isUsed ? (
-                <Badge
-                  variant="default"
-                  className="bg-yellow-100 text-yellow-800"
-                >
-                  <Star className="h-3 w-3 mr-1" />
-                  Usado
-                </Badge>
-              ) : (
-                <Badge
-                  variant="secondary"
-                  className="bg-gray-100 text-gray-800"
-                >
-                  <XCircle className="h-3 w-3 mr-1" />
-                  Libre
-                </Badge>
-              )}
-            </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Información principal */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Información principal del destacado */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Star className="h-5 w-5 mr-2" />
+                  Información del Destacado
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <InfoField label="ID" value={featured.id} />
+                  <InfoField
+                    label="Precio"
+                    value={formatPrice(featured.price)}
+                  />
+                  <InfoField
+                    label="Duración"
+                    value={`${featured.total_days || 0} días`}
+                  />
+                  <div>
+                    <label
+                      className="text-xs font-bold uppercase"
+                      style={{ color: '#313338' }}
+                    >
+                      Estado
+                    </label>
+                    <div className="mt-1">
+                      {isUsed ? (
+                        <Badge
+                          variant="default"
+                          className="bg-yellow-100 text-yellow-800"
+                        >
+                          <Star className="h-3 w-3 mr-1" />
+                          Usado
+                        </Badge>
+                      ) : (
+                        <Badge
+                          variant="secondary"
+                          className="bg-gray-100 text-gray-800"
+                        >
+                          <XCircle className="h-3 w-3 mr-1" />
+                          Libre
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Descripción */}
+                {featured.description && (
+                  <InfoField label="Descripción" value={featured.description} />
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Información del usuario */}
+            {featured.user && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <span className="flex items-center">
+                      <User className="h-5 w-5 mr-2" />
+                      Usuario
+                    </span>
+                    <CustomButton
+                      variant="outline"
+                      onClick={() =>
+                        featured.user &&
+                        router.push(`/users/${featured.user.id}`)
+                      }
+                      className="flex items-center"
+                    >
+                      <ExternalLink className="h-4 w-4 mr-2" />
+                      Ver Usuario
+                    </CustomButton>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <InfoField
+                      label="Nombre de Usuario"
+                      value={featured.user.username}
+                      type="link"
+                      href={`/users/${featured.user.id}`}
+                    />
+                    <InfoField
+                      label="Email"
+                      value={featured.user.email}
+                      type="email"
+                    />
+                    <InfoField
+                      label="Estado"
+                      value={`${featured.user.confirmed ? 'Confirmado' : 'No Confirmado'}, ${featured.user.blocked ? 'Bloqueado' : 'Activo'}`}
+                    />
+                    <InfoField
+                      label="Proveedor"
+                      value={featured.user.provider}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Información del anuncio (solo si está usado) */}
+            {featured.ad && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <span className="flex items-center">
+                      <Package className="h-5 w-5 mr-2" />
+                      Anuncio Destacado
+                    </span>
+                    <CustomButton
+                      variant="outline"
+                      onClick={() =>
+                        featured.ad && router.push(`/ads/${featured.ad.id}`)
+                      }
+                      className="flex items-center"
+                    >
+                      <ExternalLink className="h-4 w-4 mr-2" />
+                      Ver Anuncio
+                    </CustomButton>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <InfoField label="Nombre" value={featured.ad.name} />
+                    <InfoField
+                      label="Precio del Anuncio"
+                      value={formatPrice(featured.ad.price)}
+                    />
+                    <InfoField
+                      label="Categoría"
+                      value={featured.ad.category?.name}
+                    />
+                    <InfoField
+                      label="Comuna"
+                      value={featured.ad.commune?.name}
+                    />
+                    <InfoField
+                      label="Estado"
+                      value={`${featured.ad.active ? 'Activo' : 'Inactivo'}${featured.ad.rejected ? ', Rechazado' : ''}`}
+                    />
+                    <InfoField
+                      label="Propietario del Anuncio"
+                      value={featured.ad.user?.username}
+                    />
+                  </div>
+
+                  {featured.ad.description && (
+                    <InfoField
+                      label="Descripción del Anuncio"
+                      value={featured.ad.description}
+                    />
+                  )}
+                </CardContent>
+              </Card>
+            )}
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Detalles */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Info className="h-5 w-5 mr-2" />
+                  Detalles
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <InfoField
+                  label="Creado"
+                  value={formatDate(featured.createdAt)}
+                />
+                <InfoField
+                  label="Actualizado"
+                  value={formatDate(featured.updatedAt)}
+                />
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
-
-      {/* Información principal del destacado */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Star className="h-5 w-5" />
-            <span>Información del Destacado</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium text-gray-500">ID</label>
-                <div className="flex items-center space-x-2">
-                  <Hash className="h-4 w-4 text-gray-500" />
-                  <span className="text-lg font-semibold">{featured.id}</span>
-                </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Precio
-                </label>
-                <div className="flex items-center space-x-2">
-                  <DollarSign className="h-5 w-5 text-green-600" />
-                  <span className="text-2xl font-bold text-green-600">
-                    {formatPrice(featured.price)}
-                  </span>
-                </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Duración
-                </label>
-                <div className="flex items-center space-x-2">
-                  <Clock className="h-4 w-4 text-blue-500" />
-                  <Badge variant="outline">
-                    {featured.total_days || 0} días
-                  </Badge>
-                </div>
-              </div>
-            </div>
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Estado
-                </label>
-                <div className="mt-1">
-                  {isUsed ? (
-                    <Badge
-                      variant="default"
-                      className="bg-yellow-100 text-yellow-800"
-                    >
-                      <Star className="h-4 w-4 mr-2" />
-                      Destacado Usado
-                    </Badge>
-                  ) : (
-                    <Badge
-                      variant="secondary"
-                      className="bg-gray-100 text-gray-800"
-                    >
-                      <XCircle className="h-4 w-4 mr-2" />
-                      Destacado Libre
-                    </Badge>
-                  )}
-                </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Fecha de Creación
-                </label>
-                <div className="flex items-center space-x-2">
-                  <Calendar className="h-4 w-4 text-gray-500" />
-                  <span>{formatDate(featured.createdAt)}</span>
-                </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Última Actualización
-                </label>
-                <div className="flex items-center space-x-2">
-                  <Calendar className="h-4 w-4 text-gray-500" />
-                  <span>{formatDate(featured.updatedAt)}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Descripción */}
-          {featured.description && (
-            <div>
-              <label className="text-sm font-medium text-gray-500">
-                Descripción
-              </label>
-              <div className="mt-2 p-3 bg-gray-50 rounded-sm">
-                <p className="text-gray-700 whitespace-pre-wrap">
-                  {featured.description}
-                </p>
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Información del usuario */}
-      {featured.user && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <span className="flex items-center space-x-2">
-                <User className="h-5 w-5" />
-                <span>Usuario</span>
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => router.push(`/users/${featured.user?.id}`)}
-                className="flex items-center"
-              >
-                <ExternalLink className="h-4 w-4 mr-2" />
-                Ver Usuario
-              </Button>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Nombre de Usuario
-                </label>
-                <p className="text-lg font-semibold">
-                  {featured.user.username}
-                </p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Email
-                </label>
-                <div className="flex items-center space-x-2">
-                  <Mail className="h-4 w-4 text-gray-500" />
-                  <span>{featured.user.email}</span>
-                </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Estado
-                </label>
-                <div className="flex space-x-2">
-                  <Badge
-                    variant={
-                      featured.user.confirmed ? 'default' : 'destructive'
-                    }
-                  >
-                    {featured.user.confirmed ? 'Confirmado' : 'No Confirmado'}
-                  </Badge>
-                  <Badge
-                    variant={featured.user.blocked ? 'destructive' : 'default'}
-                  >
-                    {featured.user.blocked ? 'Bloqueado' : 'Activo'}
-                  </Badge>
-                </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Proveedor
-                </label>
-                <p>{featured.user.provider}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Información del anuncio (solo si está usado) */}
-      {featured.ad && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <span className="flex items-center space-x-2">
-                <Package className="h-5 w-5" />
-                <span>Anuncio Destacado</span>
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => router.push(`/ads/${featured.ad?.id}`)}
-                className="flex items-center"
-              >
-                <ExternalLink className="h-4 w-4 mr-2" />
-                Ver Anuncio
-              </Button>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Nombre
-                </label>
-                <p className="text-lg font-semibold">{featured.ad.name}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Precio del Anuncio
-                </label>
-                <div className="flex items-center space-x-2">
-                  <DollarSign className="h-4 w-4 text-green-600" />
-                  <span className="font-semibold text-green-600">
-                    {formatPrice(featured.ad.price)}
-                  </span>
-                </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Categoría
-                </label>
-                <p>{featured.ad.category?.name || 'N/A'}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Comuna
-                </label>
-                <p>{featured.ad.commune?.name || 'N/A'}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Estado
-                </label>
-                <div className="flex space-x-2">
-                  <Badge variant={featured.ad.active ? 'default' : 'secondary'}>
-                    {featured.ad.active ? 'Activo' : 'Inactivo'}
-                  </Badge>
-                  {featured.ad.rejected && (
-                    <Badge variant="destructive">Rechazado</Badge>
-                  )}
-                </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Propietario del Anuncio
-                </label>
-                <p>{featured.ad.user?.username || 'N/A'}</p>
-              </div>
-            </div>
-
-            {featured.ad.description && (
-              <div className="mt-4">
-                <label className="text-sm font-medium text-gray-500">
-                  Descripción del Anuncio
-                </label>
-                <div className="mt-2 p-3 bg-gray-50 rounded-sm">
-                  <p className="text-gray-700">{featured.ad.description}</p>
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Resumen del destacado */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Star className="h-5 w-5" />
-            <span>Resumen del Destacado</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="text-center p-3 bg-green-50 rounded-sm">
-              <DollarSign className="h-8 w-8 text-green-600 mx-auto mb-2" />
-              <p className="text-2xl font-bold text-green-600">
-                {formatPrice(featured.price)}
-              </p>
-              <p className="text-sm text-gray-600">Precio</p>
-            </div>
-            <div className="text-center p-3 bg-blue-50 rounded-sm">
-              <Clock className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-              <p className="text-2xl font-bold text-blue-600">
-                {featured.total_days || 0}
-              </p>
-              <p className="text-sm text-gray-600">Días</p>
-            </div>
-            <div
-              className={`text-center p-3 rounded-sm ${
-                isUsed ? 'bg-yellow-50' : 'bg-gray-50'
-              }`}
-            >
-              {isUsed ? (
-                <Star className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
-              ) : (
-                <XCircle className="h-8 w-8 text-gray-600 mx-auto mb-2" />
-              )}
-              <p
-                className={`text-2xl font-bold ${isUsed ? 'text-yellow-600' : 'text-gray-600'}`}
-              >
-                {isUsed ? 'Usado' : 'Libre'}
-              </p>
-              <p className="text-sm text-gray-600">Estado</p>
-            </div>
-            <div className="text-center p-3 bg-purple-50 rounded-sm">
-              <Hash className="h-8 w-8 text-purple-600 mx-auto mb-2" />
-              <p className="text-2xl font-bold text-purple-600">
-                #{featured.id}
-              </p>
-              <p className="text-sm text-gray-600">ID</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }

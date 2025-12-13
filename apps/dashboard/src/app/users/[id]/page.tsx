@@ -30,6 +30,7 @@ import {
   CheckCircle,
   Hash,
   Clock,
+  Info,
 } from 'lucide-react';
 import {
   getUser,
@@ -42,6 +43,8 @@ import {
   StrapiAdFeaturedReservation,
 } from '@/lib/strapi';
 import { useFormatDate } from '@/hooks/useFormatDate';
+import { InfoField } from '@/components/ui/info-field';
+import { CustomButton } from '@/components/ui/custom-button';
 
 // Interfaz extendida para el usuario con campos adicionales
 interface ExtendedStrapiUser extends StrapiUser {
@@ -305,7 +308,6 @@ export default function UserDetailPage() {
             <h1 className="text-[28px] font-bold" style={{ color: '#313338' }}>
               {user.username}
             </h1>
-            <p className="text-gray-600">Detalles del usuario</p>
           </div>
           <div className="flex space-x-2">
             <Button variant="ghost" onClick={() => router.back()}>
@@ -333,219 +335,134 @@ export default function UserDetailPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                {/* Información personal */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Nombre de Usuario
-                    </label>
-                    <p className="text-lg font-semibold">{user.username}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Email
-                    </label>
-                    <p className="text-lg font-semibold">{user.email}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Nombre
-                    </label>
-                    <p>{user.firstname || '-'}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Apellido
-                    </label>
-                    <p>{user.lastname || '-'}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      RUT
-                    </label>
-                    <p>{user.rut || '-'}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Teléfono
-                    </label>
-                    <p>{user.phone || '-'}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Fecha de Nacimiento
-                    </label>
-                    <p>{user.birthdate ? formatDate(user.birthdate) : '-'}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Usuario PRO
-                    </label>
-                    <p>{user.pro ? 'Sí' : 'No'}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Dirección
-                    </label>
-                    <p>
-                      {user.address &&
-                      user.address_number &&
-                      user.commune?.name ? (
-                        <a
-                          href={`https://www.google.com/maps/search/${encodeURIComponent(`${user.address} ${user.address_number}, ${user.commune.name}, Chile`)}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:text-blue-800 hover:underline flex items-center"
-                        >
-                          {user.address} {user.address_number},{' '}
-                          {user.commune.name}
-                          <ExternalLink className="h-4 w-4 ml-1" />
-                        </a>
-                      ) : user.address && user.commune?.name ? (
-                        <a
-                          href={`https://www.google.com/maps/search/${encodeURIComponent(`${user.address}, ${user.commune.name}, Chile`)}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:text-blue-800 hover:underline flex items-center"
-                        >
-                          {user.address}, {user.commune.name}
-                          <ExternalLink className="h-4 w-4 ml-1" />
-                        </a>
-                      ) : (
-                        `${user.address || ''}${user.address && user.address_number ? ' ' : ''}${user.address_number || ''}${(user.address || user.address_number) && user.commune?.name ? ', ' : ''}${user.commune?.name || ''}` ||
-                        '-'
-                      )}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Código Postal
-                    </label>
-                    <p>{user.postal_code || '-'}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Comuna
-                    </label>
-                    <p>{user.commune?.name || '-'}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Región
-                    </label>
-                    <p>{user.commune?.region?.name || '-'}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Proveedor
-                    </label>
-                    <p>{user.provider}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      ID
-                    </label>
-                    <p>{user.id}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Último cambio de usuario
-                    </label>
-                    <p>
-                      {user.last_username_change
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <InfoField label="Nombre de Usuario" value={user.username} />
+                  <InfoField label="Email" value={user.email} type="email" />
+                  <InfoField label="Nombre" value={user.firstname} />
+                  <InfoField label="Apellido" value={user.lastname} />
+                  <InfoField label="RUT" value={user.rut} />
+                  <InfoField label="Teléfono" value={user.phone} type="phone" />
+                  <InfoField
+                    label="Fecha de Nacimiento"
+                    value={user.birthdate ? formatDate(user.birthdate) : null}
+                  />
+                  <InfoField
+                    label="Usuario PRO"
+                    value={user.pro ? 'Sí' : 'No'}
+                  />
+                  <InfoField
+                    label="Dirección"
+                    value={
+                      user.address && user.address_number && user.commune?.name
+                        ? `${user.address} ${user.address_number}, ${user.commune.name}`
+                        : user.address && user.commune?.name
+                          ? `${user.address}, ${user.commune.name}`
+                          : `${user.address || ''}${user.address && user.address_number ? ' ' : ''}${user.address_number || ''}${(user.address || user.address_number) && user.commune?.name ? ', ' : ''}${user.commune?.name || ''}` ||
+                            null
+                    }
+                  />
+                  <InfoField label="Código Postal" value={user.postal_code} />
+                  <InfoField label="Comuna" value={user.commune?.name} />
+                  <InfoField
+                    label="Región"
+                    value={user.commune?.region?.name}
+                  />
+                  <InfoField label="Proveedor" value={user.provider} />
+                  <InfoField label="ID" value={user.id} />
+                  <InfoField
+                    label="Último cambio de usuario"
+                    value={
+                      user.last_username_change
                         ? formatDate(user.last_username_change)
-                        : '-'}
-                    </p>
+                        : null
+                    }
+                  />
+                  <div>
+                    <label
+                      className="text-xs font-bold uppercase"
+                      style={{ color: '#313338' }}
+                    >
+                      Estado
+                    </label>
+                    <div className="mt-1">{getStatusBadge(user)}</div>
                   </div>
+                  <InfoField
+                    label="Confirmado"
+                    value={user.confirmed ? 'Sí' : 'No'}
+                  />
+                  <InfoField
+                    label="Bloqueado"
+                    value={user.blocked ? 'Sí' : 'No'}
+                  />
+                  {user.is_company && (
+                    <>
+                      <InfoField
+                        label="Nombre de la Empresa"
+                        value={user.business_name}
+                      />
+                      <InfoField
+                        label="RUT de la Empresa"
+                        value={user.business_rut}
+                      />
+                      <InfoField
+                        label="Tipo de Empresa"
+                        value={user.business_type}
+                      />
+                      <InfoField
+                        label="Dirección de la Empresa"
+                        value={
+                          user.business_address && user.business_address_number
+                            ? `${user.business_address} ${user.business_address_number}`
+                            : user.business_address || null
+                        }
+                      />
+                      <InfoField
+                        label="Código Postal de la Empresa"
+                        value={user.business_postal_code}
+                      />
+                    </>
+                  )}
                 </div>
-
-                {/* Información de empresa - solo si es empresa */}
-                {user.is_company && (
-                  <>
-                    <div className="border-t pt-6">
-                      <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                        <Building2 className="h-5 w-5 mr-2" />
-                        Información de Empresa
-                      </h4>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                          <label className="text-sm font-medium text-gray-500">
-                            Nombre de la Empresa
-                          </label>
-                          <p className="text-lg font-semibold">
-                            {user.business_name || '-'}
-                          </p>
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium text-gray-500">
-                            RUT de la Empresa
-                          </label>
-                          <p>{user.business_rut || '-'}</p>
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium text-gray-500">
-                            Tipo de Empresa
-                          </label>
-                          <p>{user.business_type || '-'}</p>
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium text-gray-500">
-                            Dirección de la Empresa
-                          </label>
-                          <p>
-                            {user.business_address &&
-                            user.business_address_number ? (
-                              <a
-                                href={`https://www.google.com/maps/search/${encodeURIComponent(`${user.business_address} ${user.business_address_number}, Chile`)}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-blue-600 hover:text-blue-800 hover:underline flex items-center"
-                              >
-                                {user.business_address}{' '}
-                                {user.business_address_number}
-                                <ExternalLink className="h-4 w-4 ml-1" />
-                              </a>
-                            ) : user.business_address ? (
-                              <a
-                                href={`https://www.google.com/maps/search/${encodeURIComponent(`${user.business_address}, Chile`)}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-blue-600 hover:text-blue-800 hover:underline flex items-center"
-                              >
-                                {user.business_address}
-                                <ExternalLink className="h-4 w-4 ml-1" />
-                              </a>
-                            ) : (
-                              `${user.business_address || ''}${user.business_address && user.business_address_number ? ' ' : ''}${user.business_address_number || ''}` ||
-                              '-'
-                            )}
-                          </p>
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium text-gray-500">
-                            Código Postal de la Empresa
-                          </label>
-                          <p>{user.business_postal_code || '-'}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </>
-                )}
               </CardContent>
             </Card>
+          </div>
 
-            {/* Anuncios del usuario */}
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Detalles */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <FileText className="h-5 w-5 mr-2" />
-                  Anuncios del Usuario ({adsTotalCount})
+                  <Info className="h-5 w-5 mr-2" />
+                  Detalles
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                {userAds.length > 0 ? (
-                  <>
-                    <Table>
+              <CardContent className="space-y-4">
+                <InfoField label="Creado" value={formatDate(user.createdAt)} />
+                <InfoField
+                  label="Actualizado"
+                  value={formatDate(user.updatedAt)}
+                />
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Tablas - Ancho completo */}
+        <div className="space-y-6">
+          {/* Anuncios del usuario */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <FileText className="h-5 w-5 mr-2" />
+                Anuncios del Usuario ({adsTotalCount})
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="px-0">
+              {userAds.length > 0 ? (
+                <>
+                  <div className="overflow-x-auto">
+                    <Table className="w-full">
                       <TableHeader>
                         <TableRow>
                           <TableHead>
@@ -619,73 +536,73 @@ export default function UserDetailPage() {
                         ))}
                       </TableBody>
                     </Table>
-
-                    {/* Paginación */}
-                    {adsTotalPages > 1 && (
-                      <div className="flex items-center justify-between mt-4">
-                        <div className="text-sm text-gray-700">
-                          Mostrando {userAds.length} de {adsTotalCount} anuncios
-                          - Página {adsCurrentPage} de {adsTotalPages}
-                        </div>
-                        <div className="flex space-x-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() =>
-                              handleAdsPageChange(
-                                Math.max(1, adsCurrentPage - 1)
-                              )
-                            }
-                            disabled={adsCurrentPage === 1 || adsLoading}
-                          >
-                            {adsLoading ? (
-                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600 mr-2"></div>
-                            ) : null}
-                            Anterior
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() =>
-                              handleAdsPageChange(
-                                Math.min(adsTotalPages, adsCurrentPage + 1)
-                              )
-                            }
-                            disabled={
-                              adsCurrentPage === adsTotalPages || adsLoading
-                            }
-                          >
-                            {adsLoading ? (
-                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600 mr-2"></div>
-                            ) : null}
-                            Siguiente
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <div className="text-center py-8">
-                    <p className="text-gray-500">
-                      Este usuario no tiene anuncios publicados
-                    </p>
                   </div>
-                )}
-              </CardContent>
-            </Card>
 
-            {/* Reservas del usuario */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Calendar className="h-5 w-5 mr-2" />
-                  Reservas del Usuario ({reservationsTotalCount})
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {userReservations.length > 0 ? (
-                  <>
-                    <Table>
+                  {/* Paginación */}
+                  {adsTotalPages > 1 && (
+                    <div className="flex items-center justify-between mt-4 px-5">
+                      <div className="text-sm text-gray-700">
+                        Mostrando {userAds.length} de {adsTotalCount} anuncios -
+                        Página {adsCurrentPage} de {adsTotalPages}
+                      </div>
+                      <div className="flex space-x-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            handleAdsPageChange(Math.max(1, adsCurrentPage - 1))
+                          }
+                          disabled={adsCurrentPage === 1 || adsLoading}
+                        >
+                          {adsLoading ? (
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600 mr-2"></div>
+                          ) : null}
+                          Anterior
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            handleAdsPageChange(
+                              Math.min(adsTotalPages, adsCurrentPage + 1)
+                            )
+                          }
+                          disabled={
+                            adsCurrentPage === adsTotalPages || adsLoading
+                          }
+                        >
+                          {adsLoading ? (
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600 mr-2"></div>
+                          ) : null}
+                          Siguiente
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="text-center py-8 px-5">
+                  <p className="text-gray-500">
+                    Este usuario no tiene anuncios publicados
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Reservas del usuario */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Calendar className="h-5 w-5 mr-2" />
+                Reservas del Usuario ({reservationsTotalCount})
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="px-0">
+              {userReservations.length > 0 ? (
+                <>
+                  <div className="overflow-x-auto">
+                    <Table className="w-full">
                       <TableHeader>
                         <TableRow>
                           <TableHead>
@@ -801,81 +718,82 @@ export default function UserDetailPage() {
                         ))}
                       </TableBody>
                     </Table>
-
-                    {/* Paginación */}
-                    {reservationsTotalPages > 1 && (
-                      <div className="flex items-center justify-between mt-4">
-                        <div className="text-sm text-gray-700">
-                          Mostrando {userReservations.length} de{' '}
-                          {reservationsTotalCount} reservas - Página{' '}
-                          {reservationsCurrentPage} de {reservationsTotalPages}
-                        </div>
-                        <div className="flex space-x-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() =>
-                              handleReservationsPageChange(
-                                Math.max(1, reservationsCurrentPage - 1)
-                              )
-                            }
-                            disabled={
-                              reservationsCurrentPage === 1 ||
-                              reservationsLoading
-                            }
-                          >
-                            {reservationsLoading ? (
-                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600 mr-2"></div>
-                            ) : null}
-                            Anterior
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() =>
-                              handleReservationsPageChange(
-                                Math.min(
-                                  reservationsTotalPages,
-                                  reservationsCurrentPage + 1
-                                )
-                              )
-                            }
-                            disabled={
-                              reservationsCurrentPage ===
-                                reservationsTotalPages || reservationsLoading
-                            }
-                          >
-                            {reservationsLoading ? (
-                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600 mr-2"></div>
-                            ) : null}
-                            Siguiente
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <div className="text-center py-8">
-                    <p className="text-gray-500">
-                      Este usuario no tiene reservas
-                    </p>
                   </div>
-                )}
-              </CardContent>
-            </Card>
 
-            {/* Destacados del usuario */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Star className="h-5 w-5 mr-2" />
-                  Destacados del Usuario ({featuredTotalCount})
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {userFeatured.length > 0 ? (
-                  <>
-                    <Table>
+                  {/* Paginación */}
+                  {reservationsTotalPages > 1 && (
+                    <div className="flex items-center justify-between mt-4 px-5">
+                      <div className="text-sm text-gray-700">
+                        Mostrando {userReservations.length} de{' '}
+                        {reservationsTotalCount} reservas - Página{' '}
+                        {reservationsCurrentPage} de {reservationsTotalPages}
+                      </div>
+                      <div className="flex space-x-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            handleReservationsPageChange(
+                              Math.max(1, reservationsCurrentPage - 1)
+                            )
+                          }
+                          disabled={
+                            reservationsCurrentPage === 1 || reservationsLoading
+                          }
+                        >
+                          {reservationsLoading ? (
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600 mr-2"></div>
+                          ) : null}
+                          Anterior
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            handleReservationsPageChange(
+                              Math.min(
+                                reservationsTotalPages,
+                                reservationsCurrentPage + 1
+                              )
+                            )
+                          }
+                          disabled={
+                            reservationsCurrentPage ===
+                              reservationsTotalPages || reservationsLoading
+                          }
+                        >
+                          {reservationsLoading ? (
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600 mr-2"></div>
+                          ) : null}
+                          Siguiente
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="text-center py-8 px-5">
+                  <p className="text-gray-500">
+                    Este usuario no tiene reservas
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Destacados del usuario */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Star className="h-5 w-5 mr-2" />
+                Destacados del Usuario ({featuredTotalCount})
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="px-0">
+              {userFeatured.length > 0 ? (
+                <>
+                  <div className="overflow-x-auto">
+                    <Table className="w-full">
                       <TableHeader>
                         <TableRow>
                           <TableHead>ID</TableHead>
@@ -951,134 +869,68 @@ export default function UserDetailPage() {
                         ))}
                       </TableBody>
                     </Table>
+                  </div>
 
-                    {/* Paginación */}
-                    {featuredTotalPages > 1 && (
-                      <div className="flex items-center justify-between mt-4">
-                        <div className="text-sm text-gray-700">
-                          Mostrando {userFeatured.length} de{' '}
-                          {featuredTotalCount} destacados - Página{' '}
-                          {featuredCurrentPage} de {featuredTotalPages}
-                        </div>
-                        <div className="flex space-x-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() =>
-                              handleFeaturedPageChange(
-                                Math.max(1, featuredCurrentPage - 1)
-                              )
-                            }
-                            disabled={
-                              featuredCurrentPage === 1 || featuredLoading
-                            }
-                          >
-                            {featuredLoading ? (
-                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600 mr-2"></div>
-                            ) : null}
-                            Anterior
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() =>
-                              handleFeaturedPageChange(
-                                Math.min(
-                                  featuredTotalPages,
-                                  featuredCurrentPage + 1
-                                )
-                              )
-                            }
-                            disabled={
-                              featuredCurrentPage === featuredTotalPages ||
-                              featuredLoading
-                            }
-                          >
-                            {featuredLoading ? (
-                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600 mr-2"></div>
-                            ) : null}
-                            Siguiente
-                          </Button>
-                        </div>
+                  {/* Paginación */}
+                  {featuredTotalPages > 1 && (
+                    <div className="flex items-center justify-between mt-4 px-5">
+                      <div className="text-sm text-gray-700">
+                        Mostrando {userFeatured.length} de {featuredTotalCount}{' '}
+                        destacados - Página {featuredCurrentPage} de{' '}
+                        {featuredTotalPages}
                       </div>
-                    )}
-                  </>
-                ) : (
-                  <div className="text-center py-8">
-                    <p className="text-gray-500">
-                      Este usuario no tiene destacados
-                    </p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Estado del usuario */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Estado del Usuario</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Estado
-                  </label>
-                  <p>{getStatusBadge(user)}</p>
+                      <div className="flex space-x-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            handleFeaturedPageChange(
+                              Math.max(1, featuredCurrentPage - 1)
+                            )
+                          }
+                          disabled={
+                            featuredCurrentPage === 1 || featuredLoading
+                          }
+                        >
+                          {featuredLoading ? (
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600 mr-2"></div>
+                          ) : null}
+                          Anterior
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            handleFeaturedPageChange(
+                              Math.min(
+                                featuredTotalPages,
+                                featuredCurrentPage + 1
+                              )
+                            )
+                          }
+                          disabled={
+                            featuredCurrentPage === featuredTotalPages ||
+                            featuredLoading
+                          }
+                        >
+                          {featuredLoading ? (
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600 mr-2"></div>
+                          ) : null}
+                          Siguiente
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="text-center py-8 px-5">
+                  <p className="text-gray-500">
+                    Este usuario no tiene destacados
+                  </p>
                 </div>
-
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Confirmado
-                  </label>
-                  <p>{user.confirmed ? 'Sí' : 'No'}</p>
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Bloqueado
-                  </label>
-                  <p>{user.blocked ? 'Sí' : 'No'}</p>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Información de roles */}
-            {user.role && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Shield className="h-5 w-5 mr-2" />
-                    Información de Roles
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Rol
-                    </label>
-                    <p className="font-medium">{user.role.name}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Descripción
-                    </label>
-                    <p className="text-sm text-gray-600">
-                      {user.role.description}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Tipo
-                    </label>
-                    <p className="text-sm text-gray-600">{user.role.type}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

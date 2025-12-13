@@ -18,10 +18,13 @@ import {
   XCircle,
   ExternalLink,
   Mail,
+  Info,
 } from 'lucide-react';
 import { getAdReservation } from '@/lib/strapi';
 import { StrapiAdReservation } from '@/lib/strapi/types';
 import { useFormatDate } from '@/hooks/useFormatDate';
+import { InfoField } from '@/components/ui/info-field';
+import { CustomButton } from '@/components/ui/custom-button';
 
 export default function ReservationDetailPage() {
   const params = useParams();
@@ -80,363 +83,213 @@ export default function ReservationDetailPage() {
   const isUsed = !!reservation.ad;
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => router.push('/reservations')}
-          >
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Calendar className="h-7 w-7" style={{ color: '#313338' }} />
+            <h1 className="text-[28px] font-bold" style={{ color: '#313338' }}>
+              Reserva #{reservation.id}
+            </h1>
+          </div>
+          <Button variant="ghost" onClick={() => router.back()}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Volver
           </Button>
-          <div className="flex items-center gap-2">
-            <Calendar className="h-6 w-6" style={{ color: '#313338' }} />
-            <h1 className="text-[22px] font-bold" style={{ color: '#313338' }}>
-              Reserva #{reservation.id}
-            </h1>
-            <div className="flex items-center space-x-2 mt-1">
-              {isUsed ? (
-                <Badge
-                  variant="default"
-                  className="bg-green-100 text-green-800"
-                >
-                  <CheckCircle className="h-3 w-3 mr-1" />
-                  Usada
-                </Badge>
-              ) : (
-                <Badge
-                  variant="secondary"
-                  className="bg-gray-100 text-gray-800"
-                >
-                  <XCircle className="h-3 w-3 mr-1" />
-                  Libre
-                </Badge>
-              )}
-            </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Información principal */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Información principal de la reserva */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <FileText className="h-5 w-5" />
+                  <span>Información de la Reserva</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <InfoField label="ID" value={reservation.id} />
+                  <InfoField
+                    label="Precio"
+                    value={formatPrice(reservation.price)}
+                  />
+                  <InfoField
+                    label="Duración"
+                    value={`${reservation.total_days || 0} días`}
+                  />
+                  <div>
+                    <label
+                      className="text-xs font-bold uppercase"
+                      style={{ color: '#313338' }}
+                    >
+                      Estado
+                    </label>
+                    <div className="mt-1">
+                      {isUsed ? (
+                        <Badge
+                          variant="default"
+                          className="bg-green-100 text-green-800"
+                        >
+                          <CheckCircle className="h-3 w-3 mr-1" />
+                          Usada
+                        </Badge>
+                      ) : (
+                        <Badge
+                          variant="secondary"
+                          className="bg-gray-100 text-gray-800"
+                        >
+                          <XCircle className="h-3 w-3 mr-1" />
+                          Libre
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Descripción */}
+                {reservation.description && (
+                  <InfoField
+                    label="Descripción"
+                    value={reservation.description}
+                  />
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Información del usuario */}
+            {reservation.user && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <span className="flex items-center">
+                      <User className="h-5 w-5 mr-2" />
+                      Usuario
+                    </span>
+                    <CustomButton
+                      variant="outline"
+                      onClick={() =>
+                        reservation.user &&
+                        router.push(`/users/${reservation.user.id}`)
+                      }
+                      className="flex items-center"
+                    >
+                      <ExternalLink className="h-4 w-4 mr-2" />
+                      Ver Usuario
+                    </CustomButton>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <InfoField
+                      label="Nombre de Usuario"
+                      value={reservation.user.username}
+                      type="link"
+                      href={`/users/${reservation.user.id}`}
+                    />
+                    <InfoField
+                      label="Email"
+                      value={reservation.user.email}
+                      type="email"
+                    />
+                    <InfoField
+                      label="Estado"
+                      value={`${reservation.user.confirmed ? 'Confirmado' : 'No Confirmado'}, ${reservation.user.blocked ? 'Bloqueado' : 'Activo'}`}
+                    />
+                    <InfoField
+                      label="Proveedor"
+                      value={reservation.user.provider}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Información del anuncio (solo si está usada) */}
+            {reservation.ad && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <span className="flex items-center">
+                      <Package className="h-5 w-5 mr-2" />
+                      Anuncio Asociado
+                    </span>
+                    <CustomButton
+                      variant="outline"
+                      onClick={() =>
+                        reservation.ad &&
+                        router.push(`/ads/${reservation.ad.id}`)
+                      }
+                      className="flex items-center"
+                    >
+                      <ExternalLink className="h-4 w-4 mr-2" />
+                      Ver Anuncio
+                    </CustomButton>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <InfoField label="Nombre" value={reservation.ad.name} />
+                    <InfoField
+                      label="Precio del Anuncio"
+                      value={formatPrice(reservation.ad.price)}
+                    />
+                    <InfoField
+                      label="Categoría"
+                      value={reservation.ad.category?.name}
+                    />
+                    <InfoField
+                      label="Comuna"
+                      value={reservation.ad.commune?.name}
+                    />
+                    <InfoField
+                      label="Estado"
+                      value={`${reservation.ad.active ? 'Activo' : 'Inactivo'}${reservation.ad.rejected ? ', Rechazado' : ''}`}
+                    />
+                    <InfoField
+                      label="Propietario del Anuncio"
+                      value={reservation.ad.user?.username}
+                    />
+                  </div>
+
+                  {reservation.ad.description && (
+                    <InfoField
+                      label="Descripción del Anuncio"
+                      value={reservation.ad.description}
+                    />
+                  )}
+                </CardContent>
+              </Card>
+            )}
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Detalles */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Info className="h-5 w-5 mr-2" />
+                  Detalles
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <InfoField
+                  label="Creado"
+                  value={formatDate(reservation.createdAt)}
+                />
+                <InfoField
+                  label="Actualizado"
+                  value={formatDate(reservation.updatedAt)}
+                />
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
-
-      {/* Información principal de la reserva */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <FileText className="h-5 w-5" />
-            <span>Información de la Reserva</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium text-gray-500">ID</label>
-                <div className="flex items-center space-x-2">
-                  <Hash className="h-4 w-4 text-gray-500" />
-                  <span className="text-lg font-semibold">
-                    {reservation.id}
-                  </span>
-                </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Precio
-                </label>
-                <div className="flex items-center space-x-2">
-                  <DollarSign className="h-5 w-5 text-green-600" />
-                  <span className="text-2xl font-bold text-green-600">
-                    {formatPrice(reservation.price)}
-                  </span>
-                </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Duración
-                </label>
-                <div className="flex items-center space-x-2">
-                  <Clock className="h-4 w-4 text-blue-500" />
-                  <Badge variant="outline">
-                    {reservation.total_days || 0} días
-                  </Badge>
-                </div>
-              </div>
-            </div>
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Estado
-                </label>
-                <div className="mt-1">
-                  {isUsed ? (
-                    <Badge
-                      variant="default"
-                      className="bg-green-100 text-green-800"
-                    >
-                      <CheckCircle className="h-4 w-4 mr-2" />
-                      Reserva Usada
-                    </Badge>
-                  ) : (
-                    <Badge
-                      variant="secondary"
-                      className="bg-gray-100 text-gray-800"
-                    >
-                      <XCircle className="h-4 w-4 mr-2" />
-                      Reserva Libre
-                    </Badge>
-                  )}
-                </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Fecha de Creación
-                </label>
-                <div className="flex items-center space-x-2">
-                  <Calendar className="h-4 w-4 text-gray-500" />
-                  <span>{formatDate(reservation.createdAt)}</span>
-                </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Última Actualización
-                </label>
-                <div className="flex items-center space-x-2">
-                  <Calendar className="h-4 w-4 text-gray-500" />
-                  <span>{formatDate(reservation.updatedAt)}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Descripción */}
-          {reservation.description && (
-            <div>
-              <label className="text-sm font-medium text-gray-500">
-                Descripción
-              </label>
-              <div className="mt-2 p-3 bg-gray-50 rounded-sm">
-                <p className="text-gray-700 whitespace-pre-wrap">
-                  {reservation.description}
-                </p>
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Información del usuario */}
-      {reservation.user && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <span className="flex items-center space-x-2">
-                <User className="h-5 w-5" />
-                <span>Usuario</span>
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => router.push(`/users/${reservation.user?.id}`)}
-                className="flex items-center"
-              >
-                <ExternalLink className="h-4 w-4 mr-2" />
-                Ver Usuario
-              </Button>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Nombre de Usuario
-                </label>
-                <p className="text-lg font-semibold">
-                  {reservation.user.username}
-                </p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Email
-                </label>
-                <div className="flex items-center space-x-2">
-                  <Mail className="h-4 w-4 text-gray-500" />
-                  <span>{reservation.user.email}</span>
-                </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Estado
-                </label>
-                <div className="flex space-x-2">
-                  <Badge
-                    variant={
-                      reservation.user.confirmed ? 'default' : 'destructive'
-                    }
-                  >
-                    {reservation.user.confirmed
-                      ? 'Confirmado'
-                      : 'No Confirmado'}
-                  </Badge>
-                  <Badge
-                    variant={
-                      reservation.user.blocked ? 'destructive' : 'default'
-                    }
-                  >
-                    {reservation.user.blocked ? 'Bloqueado' : 'Activo'}
-                  </Badge>
-                </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Proveedor
-                </label>
-                <p>{reservation.user.provider}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Información del anuncio (solo si está usada) */}
-      {reservation.ad && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <span className="flex items-center space-x-2">
-                <Package className="h-5 w-5" />
-                <span>Anuncio Asociado</span>
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => router.push(`/ads/${reservation.ad?.id}`)}
-                className="flex items-center"
-              >
-                <ExternalLink className="h-4 w-4 mr-2" />
-                Ver Anuncio
-              </Button>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Nombre
-                </label>
-                <p className="text-lg font-semibold">{reservation.ad.name}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Precio del Anuncio
-                </label>
-                <div className="flex items-center space-x-2">
-                  <DollarSign className="h-4 w-4 text-green-600" />
-                  <span className="font-semibold text-green-600">
-                    {formatPrice(reservation.ad.price)}
-                  </span>
-                </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Categoría
-                </label>
-                <p>{reservation.ad.category?.name || 'N/A'}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Comuna
-                </label>
-                <p>{reservation.ad.commune?.name || 'N/A'}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Estado
-                </label>
-                <div className="flex space-x-2">
-                  <Badge
-                    variant={reservation.ad.active ? 'default' : 'secondary'}
-                  >
-                    {reservation.ad.active ? 'Activo' : 'Inactivo'}
-                  </Badge>
-                  {reservation.ad.rejected && (
-                    <Badge variant="destructive">Rechazado</Badge>
-                  )}
-                </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">
-                  Propietario del Anuncio
-                </label>
-                <p>{reservation.ad.user?.username || 'N/A'}</p>
-              </div>
-            </div>
-
-            {reservation.ad.description && (
-              <div className="mt-4">
-                <label className="text-sm font-medium text-gray-500">
-                  Descripción del Anuncio
-                </label>
-                <div className="mt-2 p-3 bg-gray-50 rounded-sm">
-                  <p className="text-gray-700">{reservation.ad.description}</p>
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Resumen de la reserva */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <FileText className="h-5 w-5" />
-            <span>Resumen de la Reserva</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="text-center p-3 bg-green-50 rounded-sm">
-              <DollarSign className="h-8 w-8 text-green-600 mx-auto mb-2" />
-              <p className="text-2xl font-bold text-green-600">
-                {formatPrice(reservation.price)}
-              </p>
-              <p className="text-sm text-gray-600">Precio</p>
-            </div>
-            <div className="text-center p-3 bg-blue-50 rounded-sm">
-              <Clock className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-              <p className="text-2xl font-bold text-blue-600">
-                {reservation.total_days || 0}
-              </p>
-              <p className="text-sm text-gray-600">Días</p>
-            </div>
-            <div
-              className={`text-center p-3 rounded-sm ${
-                isUsed ? 'bg-green-50' : 'bg-gray-50'
-              }`}
-            >
-              {isUsed ? (
-                <CheckCircle className="h-8 w-8 text-green-600 mx-auto mb-2" />
-              ) : (
-                <XCircle className="h-8 w-8 text-gray-600 mx-auto mb-2" />
-              )}
-              <p
-                className={`text-2xl font-bold ${isUsed ? 'text-green-600' : 'text-gray-600'}`}
-              >
-                {isUsed ? 'Usada' : 'Libre'}
-              </p>
-              <p className="text-sm text-gray-600">Estado</p>
-            </div>
-            <div className="text-center p-3 bg-purple-50 rounded-sm">
-              <Hash className="h-8 w-8 text-purple-600 mx-auto mb-2" />
-              <p className="text-2xl font-bold text-purple-600">
-                #{reservation.id}
-              </p>
-              <p className="text-sm text-gray-600">ID</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }

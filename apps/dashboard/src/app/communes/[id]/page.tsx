@@ -4,17 +4,11 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-// import { Badge } from "@/components/ui/badge";
-import {
-  ArrowLeft,
-  Edit,
-  MapPin,
-  Calendar,
-  Hash,
-  Building,
-} from 'lucide-react';
+import { InfoField } from '@/components/ui/info-field';
+import { ArrowLeft, Edit, MapPin, Info } from 'lucide-react';
 import { getCommune } from '@/lib/strapi/communes';
 import { StrapiCommune } from '@/lib/strapi/types';
+import { useFormatDate } from '@/hooks/useFormatDate';
 
 export default function CommuneDetailPage() {
   const params = useParams();
@@ -42,9 +36,7 @@ export default function CommuneDetailPage() {
     fetchCommune();
   }, [fetchCommune]);
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-CL');
-  };
+  const { formatDate } = useFormatDate();
 
   if (loading) {
     return (
@@ -67,9 +59,11 @@ export default function CommuneDetailPage() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">{commune.name}</h1>
-            <p className="text-gray-600">Detalles de la comuna</p>
+          <div className="flex items-center gap-2">
+            <MapPin className="h-7 w-7" style={{ color: '#313338' }} />
+            <h1 className="text-[28px] font-bold" style={{ color: '#313338' }}>
+              {commune.name}
+            </h1>
           </div>
           <div className="flex space-x-2">
             <Button variant="ghost" onClick={() => router.back()}>
@@ -94,93 +88,26 @@ export default function CommuneDetailPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      ID
-                    </label>
-                    <p className="text-lg font-semibold">{commune.id}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Nombre
-                    </label>
-                    <p className="text-lg font-semibold">{commune.name}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Slug
-                    </label>
-                    <div className="flex items-center space-x-2">
-                      <Hash className="h-4 w-4 text-gray-500" />
-                      <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded">
-                        {commune.slug}
-                      </span>
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Región
-                    </label>
-                    <div className="flex items-center space-x-2">
-                      <Building className="h-4 w-4 text-gray-500" />
-                      <span>
-                        {commune.region?.name || 'Sin región asignada'}
-                      </span>
-                    </div>
-                  </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <InfoField label="ID" value={commune.id} />
+                  <InfoField label="Nombre" value={commune.name} />
+                  <InfoField label="Slug" value={commune.slug} />
+                  {commune.region ? (
+                    <InfoField
+                      label="Región Asociada"
+                      value={commune.region.name}
+                      type="link"
+                      href={`/regions/${commune.region.id}`}
+                    />
+                  ) : (
+                    <InfoField
+                      label="Región Asociada"
+                      value="Sin región asignada"
+                    />
+                  )}
                 </div>
               </CardContent>
             </Card>
-
-            {/* Información de la región */}
-            {commune.region && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Building className="h-5 w-5 mr-2" />
-                    Región Asociada
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center">
-                        <Building className="h-6 w-6 text-blue-600" />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-semibold">
-                          {commune.region.name}
-                        </h3>
-                        <p className="text-gray-500">
-                          ID: {commune.region.id} • Slug: {commune.region.slug}
-                        </p>
-                      </div>
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() =>
-                        router.push(`/regions/${commune.region?.id}`)
-                      }
-                    >
-                      Ver Región
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {!commune.region && (
-              <Card>
-                <CardContent className="text-center py-8">
-                  <Building className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-500">
-                    Esta comuna no tiene una región asignada
-                  </p>
-                </CardContent>
-              </Card>
-            )}
           </div>
 
           {/* Sidebar */}
@@ -188,29 +115,19 @@ export default function CommuneDetailPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <Calendar className="h-5 w-5 mr-2" />
-                  Información de Fechas
+                  <Info className="h-5 w-5 mr-2" />
+                  Detalles
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Fecha de Creación
-                  </label>
-                  <div className="flex items-center space-x-2 mt-1">
-                    <Calendar className="h-4 w-4 text-gray-500" />
-                    <span>{formatDate(commune.createdAt)}</span>
-                  </div>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Última Actualización
-                  </label>
-                  <div className="flex items-center space-x-2 mt-1">
-                    <Calendar className="h-4 w-4 text-gray-500" />
-                    <span>{formatDate(commune.updatedAt)}</span>
-                  </div>
-                </div>
+                <InfoField
+                  label="Creado"
+                  value={formatDate(commune.createdAt)}
+                />
+                <InfoField
+                  label="Actualizado"
+                  value={formatDate(commune.updatedAt)}
+                />
               </CardContent>
             </Card>
           </div>

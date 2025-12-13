@@ -4,10 +4,11 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-// import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Edit, Calendar, Hash, Tag } from 'lucide-react';
+import { InfoField } from '@/components/ui/info-field';
+import { ArrowLeft, Edit, Info, Tag } from 'lucide-react';
 import { getCategory } from '@/lib/strapi/categories';
 import { StrapiCategory } from '@/lib/strapi/types';
+import { useFormatDate } from '@/hooks/useFormatDate';
 
 export default function CategoryDetailPage() {
   const params = useParams();
@@ -35,9 +36,7 @@ export default function CategoryDetailPage() {
     fetchCategory();
   }, [fetchCategory]);
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-CL');
-  };
+  const { formatDate } = useFormatDate();
 
   if (loading) {
     return (
@@ -60,11 +59,11 @@ export default function CategoryDetailPage() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">
+          <div className="flex items-center gap-2">
+            <Tag className="h-7 w-7" style={{ color: '#313338' }} />
+            <h1 className="text-[28px] font-bold" style={{ color: '#313338' }}>
               {category.name}
             </h1>
-            <p className="text-gray-600">Detalles de la categoría</p>
           </div>
           <div className="flex space-x-2">
             <Button variant="ghost" onClick={() => router.back()}>
@@ -91,36 +90,19 @@ export default function CategoryDetailPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <InfoField label="ID" value={category.id} />
+                  <InfoField label="Nombre" value={category.name} />
+                  <InfoField label="Slug" value={category.slug} />
                   <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      ID
-                    </label>
-                    <p className="text-lg font-semibold">{category.id}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Nombre
-                    </label>
-                    <p className="text-lg font-semibold">{category.name}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Slug
-                    </label>
-                    <div className="flex items-center space-x-2">
-                      <Hash className="h-4 w-4 text-gray-500" />
-                      <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded">
-                        {category.slug}
-                      </span>
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
+                    <label
+                      className="text-xs font-bold uppercase"
+                      style={{ color: '#313338' }}
+                    >
                       Color
                     </label>
                     {category.color ? (
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-2 mt-1">
                         <div
                           className="h-6 w-6 rounded-full border border-gray-300"
                           style={{ backgroundColor: category.color }}
@@ -128,7 +110,7 @@ export default function CategoryDetailPage() {
                         <span className="text-sm">{category.color}</span>
                       </div>
                     ) : (
-                      <span className="text-gray-400">Sin color asignado</span>
+                      <p className="mt-1">-</p>
                     )}
                   </div>
                 </div>
@@ -141,29 +123,19 @@ export default function CategoryDetailPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <Calendar className="h-5 w-5 mr-2" />
-                  Información de Fechas
+                  <Info className="h-5 w-5 mr-2" />
+                  Detalles
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Fecha de Creación
-                  </label>
-                  <div className="flex items-center space-x-2 mt-1">
-                    <Calendar className="h-4 w-4 text-gray-500" />
-                    <span>{formatDate(category.createdAt)}</span>
-                  </div>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Última Actualización
-                  </label>
-                  <div className="flex items-center space-x-2 mt-1">
-                    <Calendar className="h-4 w-4 text-gray-500" />
-                    <span>{formatDate(category.updatedAt)}</span>
-                  </div>
-                </div>
+                <InfoField
+                  label="Creado"
+                  value={formatDate(category.createdAt)}
+                />
+                <InfoField
+                  label="Actualizado"
+                  value={formatDate(category.updatedAt)}
+                />
               </CardContent>
             </Card>
           </div>

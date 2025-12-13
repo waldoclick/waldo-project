@@ -5,9 +5,19 @@ import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Edit, MapPin, Calendar, Hash, Users } from 'lucide-react';
+import { InfoField } from '@/components/ui/info-field';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { ArrowLeft, Edit, MapPin, Info, Eye } from 'lucide-react';
 import { getRegion } from '@/lib/strapi/regions';
 import { StrapiRegion } from '@/lib/strapi/types';
+import { useFormatDate } from '@/hooks/useFormatDate';
 
 export default function RegionDetailPage() {
   const params = useParams();
@@ -35,9 +45,7 @@ export default function RegionDetailPage() {
     fetchRegion();
   }, [fetchRegion]);
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-CL');
-  };
+  const { formatDate } = useFormatDate();
 
   if (loading) {
     return (
@@ -60,9 +68,11 @@ export default function RegionDetailPage() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">{region.name}</h1>
-            <p className="text-gray-600">Detalles de la región</p>
+          <div className="flex items-center gap-2">
+            <MapPin className="h-7 w-7" style={{ color: '#313338' }} />
+            <h1 className="text-[28px] font-bold" style={{ color: '#313338' }}>
+              {region.name}
+            </h1>
           </div>
           <div className="flex space-x-2">
             <Button variant="ghost" onClick={() => router.back()}>
@@ -87,87 +97,17 @@ export default function RegionDetailPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      ID
-                    </label>
-                    <p className="text-lg font-semibold">{region.id}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Nombre
-                    </label>
-                    <p className="text-lg font-semibold">{region.name}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Slug
-                    </label>
-                    <div className="flex items-center space-x-2">
-                      <Hash className="h-4 w-4 text-gray-500" />
-                      <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded">
-                        {region.slug}
-                      </span>
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Comunas
-                    </label>
-                    <div className="flex items-center space-x-2">
-                      <Users className="h-4 w-4 text-gray-500" />
-                      <Badge variant="outline">
-                        {region.communes?.length || 0} comunas
-                      </Badge>
-                    </div>
-                  </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <InfoField label="ID" value={region.id} />
+                  <InfoField label="Nombre" value={region.name} />
+                  <InfoField label="Slug" value={region.slug} />
+                  <InfoField
+                    label="Comunas"
+                    value={`${region.communes?.length || 0} comunas`}
+                  />
                 </div>
               </CardContent>
             </Card>
-
-            {/* Lista de comunas */}
-            {region.communes && region.communes.length > 0 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <MapPin className="h-5 w-5 mr-2" />
-                    Comunas de {region.name}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {region.communes.map((commune) => (
-                      <div
-                        key={commune.id}
-                        className="p-3 border rounded-sm hover:bg-gray-50 transition-colors"
-                      >
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h3 className="font-medium">{commune.name}</h3>
-                            <p className="text-sm text-gray-500">
-                              ID: {commune.id}
-                            </p>
-                          </div>
-                          <Badge variant="secondary">{commune.slug}</Badge>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {(!region.communes || region.communes.length === 0) && (
-              <Card>
-                <CardContent className="text-center py-8">
-                  <MapPin className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-500">
-                    No hay comunas asociadas a esta región
-                  </p>
-                </CardContent>
-              </Card>
-            )}
           </div>
 
           {/* Sidebar */}
@@ -175,33 +115,114 @@ export default function RegionDetailPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <Calendar className="h-5 w-5 mr-2" />
-                  Información de Fechas
+                  <Info className="h-5 w-5 mr-2" />
+                  Detalles
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Fecha de Creación
-                  </label>
-                  <div className="flex items-center space-x-2 mt-1">
-                    <Calendar className="h-4 w-4 text-gray-500" />
-                    <span>{formatDate(region.createdAt)}</span>
-                  </div>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Última Actualización
-                  </label>
-                  <div className="flex items-center space-x-2 mt-1">
-                    <Calendar className="h-4 w-4 text-gray-500" />
-                    <span>{formatDate(region.updatedAt)}</span>
-                  </div>
-                </div>
+                <InfoField
+                  label="Creado"
+                  value={formatDate(region.createdAt)}
+                />
+                <InfoField
+                  label="Actualizado"
+                  value={formatDate(region.updatedAt)}
+                />
               </CardContent>
             </Card>
           </div>
         </div>
+
+        {/* Lista de comunas - Ancho completo */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <MapPin className="h-5 w-5 mr-2" />
+              Comunas de {region.name} ({region.communes?.length || 0})
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="px-0">
+            {region.communes && region.communes.length > 0 ? (
+              <>
+                <div className="overflow-x-auto">
+                  <Table className="w-full">
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>
+                          <span>Comuna</span>
+                        </TableHead>
+                        <TableHead>
+                          <span>Slug</span>
+                        </TableHead>
+                        <TableHead>
+                          <span>Región</span>
+                        </TableHead>
+                        <TableHead>
+                          <span>Fecha de Creación</span>
+                        </TableHead>
+                        <TableHead className="text-right">Acciones</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {region.communes.map((commune) => (
+                        <TableRow key={commune.id}>
+                          <TableCell>
+                            <div className="font-medium">{commune.name}</div>
+                          </TableCell>
+                          <TableCell>
+                            <span className="font-mono text-sm">
+                              {commune.slug}
+                            </span>
+                          </TableCell>
+                          <TableCell>
+                            <span className="text-sm">
+                              {commune.region?.name || region.name}
+                            </span>
+                          </TableCell>
+                          <TableCell>
+                            <span className="text-sm">
+                              {formatDate(commune.createdAt)}
+                            </span>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex items-center justify-end space-x-2">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() =>
+                                  router.push(`/communes/${commune.id}`)
+                                }
+                                className="h-10 w-10 p-0 cursor-pointer hover:bg-[#ffd699]"
+                              >
+                                <Eye className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() =>
+                                  router.push(`/communes/${commune.id}/edit`)
+                                }
+                                className="h-10 w-10 p-0 cursor-pointer hover:bg-[#ffd699]"
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-8 px-5">
+                <p className="text-gray-500">
+                  No hay comunas asociadas a esta región
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
