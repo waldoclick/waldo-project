@@ -15,7 +15,7 @@
     "deploy": "strapi deploy",
     "dev": "strapi develop",
     "format": "npx prettier --write . --ignore-path .gitignore",
-    "production": "NODE_OPTIONS='--max-old-space-size=1536' strapi build && strapi start",
+    "production": "NODE_OPTIONS='--max-old-space-size=3072' strapi build && strapi start",
     "start": "strapi start",
     "strapi": "strapi",
     "test": "jest"
