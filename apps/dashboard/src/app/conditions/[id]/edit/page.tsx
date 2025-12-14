@@ -5,13 +5,16 @@ import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Save, X, FileCheck } from 'lucide-react';
+import { ArrowLeft, Save, X, FileCheck, Info } from 'lucide-react';
 import { getCondition, updateCondition } from '@/lib/strapi/conditions';
 import { StrapiCondition } from '@/lib/strapi/types';
+import { InfoField } from '@/components/ui/info-field';
+import { useFormatDate } from '@/hooks/useFormatDate';
 
 export default function EditConditionPage() {
   const params = useParams();
   const router = useRouter();
+  const { formatDate } = useFormatDate();
   const [loading, setLoading] = useState(false);
   const [condition, setCondition] = useState<StrapiCondition | null>(null);
   const [formData, setFormData] = useState({
@@ -52,7 +55,7 @@ export default function EditConditionPage() {
         name: formData.name.trim(),
       });
 
-      router.push('/conditions');
+      router.push(`/conditions/${conditionId}`);
     } catch (error) {
       console.error('Error updating condition:', error);
       alert('Error al actualizar la condición');
@@ -92,68 +95,78 @@ export default function EditConditionPage() {
           </Button>
         </div>
 
-        {/* Formulario */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Información de la Condición</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Nombre *
-                </label>
-                <Input
-                  id="name"
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                  placeholder="Ingresa el nombre de la condición"
-                  required
-                  className="w-full"
-                />
-              </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Formulario principal */}
+          <div className="lg:col-span-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Información de la Condición</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div>
+                    <label
+                      htmlFor="name"
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
+                      Nombre *
+                    </label>
+                    <Input
+                      id="name"
+                      type="text"
+                      value={formData.name}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
+                      placeholder="Ingresa el nombre de la condición"
+                      required
+                      className="w-full"
+                    />
+                  </div>
 
-              <div className="bg-gray-50 p-3 rounded-sm">
-                <h3 className="text-sm font-medium text-gray-700 mb-2">
+                  <div className="flex space-x-2 pt-4">
+                    <Button type="submit" disabled={loading}>
+                      <Save className="h-4 w-4 mr-2" />
+                      {loading ? 'Guardando...' : 'Guardar Cambios'}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleCancel}
+                    >
+                      <X className="h-4 w-4 mr-2" />
+                      Cancelar
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Sidebar */}
+          <div className="lg:col-span-1">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Info className="h-5 w-5 mr-2" />
                   Información Actual
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="font-medium">ID:</span> {condition.id}
-                  </div>
-                  <div>
-                    <span className="font-medium">Slug:</span> {condition.slug}
-                  </div>
-                  <div>
-                    <span className="font-medium">Creado:</span>{' '}
-                    {new Date(condition.createdAt).toLocaleDateString('es-CL')}
-                  </div>
-                  <div>
-                    <span className="font-medium">Actualizado:</span>{' '}
-                    {new Date(condition.updatedAt).toLocaleDateString('es-CL')}
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex space-x-2 pt-4">
-                <Button type="submit" disabled={loading}>
-                  <Save className="h-4 w-4 mr-2" />
-                  {loading ? 'Guardando...' : 'Guardar Cambios'}
-                </Button>
-                <Button type="button" variant="outline" onClick={handleCancel}>
-                  <X className="h-4 w-4 mr-2" />
-                  Cancelar
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <InfoField label="ID" value={condition.id} />
+                <InfoField label="Slug" value={condition.slug} />
+                <InfoField
+                  label="Creado"
+                  value={formatDate(condition.createdAt)}
+                />
+                <InfoField
+                  label="Actualizado"
+                  value={formatDate(condition.updatedAt)}
+                />
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
     </div>
   );
