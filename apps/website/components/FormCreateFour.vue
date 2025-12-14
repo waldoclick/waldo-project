@@ -115,6 +115,7 @@
             name="weight"
             type="number"
             class="form-control"
+            min="0"
             maxlength="7"
           />
           <ErrorMessage name="weight" />
@@ -130,6 +131,7 @@
             name="width"
             type="number"
             class="form-control"
+            min="0"
             maxlength="4"
           />
           <ErrorMessage name="width" />
@@ -145,6 +147,7 @@
             name="height"
             type="number"
             class="form-control"
+            min="0"
             maxlength="4"
           />
           <ErrorMessage name="height" />
@@ -160,6 +163,7 @@
             name="depth"
             type="number"
             class="form-control"
+            min="0"
             maxlength="4"
           />
           <ErrorMessage name="depth" />
@@ -227,6 +231,7 @@ const schema = yup.object({
   weight: yup
     .number()
     .nullable()
+    .min(0, "El peso no puede ser negativo")
     .transform((value, originalValue) => (originalValue === "" ? null : value))
     .test("len", "El peso no puede exceder los 7 caracteres", (value) => {
       if (value === null || value === undefined) return true;
@@ -235,6 +240,7 @@ const schema = yup.object({
   width: yup
     .number()
     .nullable()
+    .min(0, "El ancho no puede ser negativo")
     .transform((value, originalValue) => (originalValue === "" ? null : value))
     .test("len", "El ancho no puede exceder los 4 caracteres", (value) => {
       if (value === null || value === undefined) return true;
@@ -243,6 +249,7 @@ const schema = yup.object({
   height: yup
     .number()
     .nullable()
+    .min(0, "La altura no puede ser negativa")
     .transform((value, originalValue) => (originalValue === "" ? null : value))
     .test("len", "La altura no puede exceder los 4 caracteres", (value) => {
       if (value === null || value === undefined) return true;
@@ -251,6 +258,7 @@ const schema = yup.object({
   depth: yup
     .number()
     .nullable()
+    .min(0, "La profundidad no puede ser negativa")
     .transform((value, originalValue) => (originalValue === "" ? null : value))
     .test(
       "len",
