@@ -92,7 +92,7 @@ export default function EditCategoryPage() {
               Modificar información de la categoría
             </p>
           </div>
-          <Button variant="outline" size="sm" onClick={handleCancel}>
+          <Button variant="ghost" onClick={() => router.back()}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Volver
           </Button>
