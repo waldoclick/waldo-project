@@ -14,16 +14,7 @@ import {
 
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Plus,
-  Eye,
-  User,
-  Mail,
-  Calendar,
-  CheckCircle,
-  Shield,
-  Hash,
-} from 'lucide-react';
+import { Plus, Eye, User } from 'lucide-react';
 import { getUsers, StrapiUser } from '@/lib/strapi';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -139,9 +130,6 @@ export default function UsersPage() {
                         <span>Estado</span>
                       </TableHead>
                       <TableHead>
-                        <span>Rol</span>
-                      </TableHead>
-                      <TableHead>
                         <span>Fecha de Registro</span>
                       </TableHead>
                       <TableHead className="text-right">Acciones</TableHead>
@@ -167,7 +155,6 @@ export default function UsersPage() {
                           <span>{user.email}</span>
                         </TableCell>
                         <TableCell>{getStatusBadge(user)}</TableCell>
-                        <TableCell>{user.role?.name || '-'}</TableCell>
                         <TableCell>
                           <span>{formatDate(user.createdAt)}</span>
                         </TableCell>

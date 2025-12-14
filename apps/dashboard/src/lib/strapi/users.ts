@@ -30,13 +30,23 @@ export async function getUsers(params?: {
     searchParams.append('pagination[pageSize]', params.pageSize.toString());
   if (params?.sort) searchParams.append('sort', params.sort);
 
-  // Popular toda la data del usuario
+  // Popular toda la data del usuario incluyendo el rol
   searchParams.append('populate', '*');
 
-  // Búsqueda por texto
+  // Filtrar solo usuarios con rol Authenticated
+  // Si hay búsqueda, combinamos con $and
   if (params?.search) {
-    searchParams.append('filters[$or][0][username][$containsi]', params.search);
-    searchParams.append('filters[$or][1][email][$containsi]', params.search);
+    searchParams.append('filters[$and][0][role][name][$eq]', 'Authenticated');
+    searchParams.append(
+      'filters[$and][1][$or][0][username][$containsi]',
+      params.search
+    );
+    searchParams.append(
+      'filters[$and][1][$or][1][email][$containsi]',
+      params.search
+    );
+  } else {
+    searchParams.append('filters[role][name][$eq]', 'Authenticated');
   }
 
   if (params?.filters) {
