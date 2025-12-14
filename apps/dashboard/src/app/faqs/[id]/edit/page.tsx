@@ -95,17 +95,11 @@ export default function EditFaqPage() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-2">
-              <HelpCircle className="h-6 w-6" style={{ color: '#313338' }} />
-              <h1
-                className="text-[22px] font-bold"
-                style={{ color: '#313338' }}
-              >
-                Editar FAQ
-              </h1>
-            </div>
-            <p className="text-gray-500">Modificar información de la FAQ</p>
+          <div className="flex items-center gap-2">
+            <HelpCircle className="h-7 w-7" style={{ color: '#313338' }} />
+            <h1 className="text-[28px] font-bold" style={{ color: '#313338' }}>
+              Editar FAQ
+            </h1>
           </div>
           <Button variant="ghost" onClick={() => router.back()}>
             <ArrowLeft className="h-4 w-4 mr-2" />

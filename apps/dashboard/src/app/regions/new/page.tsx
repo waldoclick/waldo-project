@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Save, X } from 'lucide-react';
+import { ArrowLeft, Save, X, MapPin } from 'lucide-react';
 import { createRegion } from '@/lib/strapi';
 
 export default function NewRegionPage() {
@@ -47,11 +47,13 @@ export default function NewRegionPage() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Nueva Región</h1>
-            <p className="text-gray-600">Crear una nueva región</p>
+          <div className="flex items-center gap-2">
+            <MapPin className="h-7 w-7" style={{ color: '#313338' }} />
+            <h1 className="text-[28px] font-bold" style={{ color: '#313338' }}>
+              Nueva Región
+            </h1>
           </div>
-          <Button variant="ghost" onClick={handleCancel}>
+          <Button variant="ghost" onClick={() => router.back()}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Volver
           </Button>

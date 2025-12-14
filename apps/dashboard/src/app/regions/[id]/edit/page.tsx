@@ -5,8 +5,10 @@ import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Save, X } from 'lucide-react';
+import { InfoField } from '@/components/ui/info-field';
+import { ArrowLeft, Save, X, MapPin, Info } from 'lucide-react';
 import { getRegion, updateRegion, StrapiRegion } from '@/lib/strapi';
+import { useFormatDate } from '@/hooks/useFormatDate';
 
 export default function EditRegionPage() {
   const params = useParams();
@@ -18,6 +20,7 @@ export default function EditRegionPage() {
   });
 
   const regionId = params.id as string;
+  const { formatDate } = useFormatDate();
 
   const fetchRegion = useCallback(async () => {
     try {
@@ -51,7 +54,7 @@ export default function EditRegionPage() {
         name: formData.name.trim(),
       });
 
-      router.push('/regions');
+      router.push(`/regions/${regionId}`);
     } catch (error) {
       console.error('Error updating region:', error);
       alert('Error al actualizar la región');
@@ -79,80 +82,97 @@ export default function EditRegionPage() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Editar Región</h1>
-            <p className="text-gray-600">Modificar información de la región</p>
+          <div className="flex items-center gap-2">
+            <MapPin className="h-7 w-7" style={{ color: '#313338' }} />
+            <h1 className="text-[28px] font-bold" style={{ color: '#313338' }}>
+              Editar Región
+            </h1>
           </div>
-          <Button variant="ghost" onClick={handleCancel}>
+          <Button variant="ghost" onClick={() => router.back()}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Volver
           </Button>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Información de la Región</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Nombre de la Región *
-                </label>
-                <Input
-                  id="name"
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                  placeholder="Ej: Región Metropolitana"
-                  required
-                  className="w-full"
-                />
-                <p className="text-sm text-gray-500 mt-1">
-                  El slug se actualizará automáticamente basado en el nombre
-                </p>
-              </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Formulario principal */}
+          <div className="lg:col-span-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Información de la Región</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div>
+                    <label
+                      htmlFor="name"
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
+                      Nombre de la Región *
+                    </label>
+                    <Input
+                      id="name"
+                      type="text"
+                      value={formData.name}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
+                      placeholder="Ej: Región Metropolitana"
+                      required
+                      className="w-full"
+                    />
+                    <p className="text-sm text-gray-500 mt-1">
+                      El slug se actualizará automáticamente basado en el nombre
+                    </p>
+                  </div>
 
-              <div className="bg-gray-50 p-3 rounded-sm">
-                <h3 className="text-sm font-medium text-gray-700 mb-2">
+                  <div className="flex space-x-2 pt-4">
+                    <Button type="submit" disabled={loading}>
+                      <Save className="h-4 w-4 mr-2" />
+                      {loading ? 'Guardando...' : 'Guardar Cambios'}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleCancel}
+                    >
+                      <X className="h-4 w-4 mr-2" />
+                      Cancelar
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Info className="h-5 w-5 mr-2" />
                   Información Actual
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="font-medium">ID:</span> {region.id}
-                  </div>
-                  <div>
-                    <span className="font-medium">Slug:</span> {region.slug}
-                  </div>
-                  <div>
-                    <span className="font-medium">Comunas:</span>{' '}
-                    {region.communes?.length || 0}
-                  </div>
-                  <div>
-                    <span className="font-medium">Creado:</span>{' '}
-                    {new Date(region.createdAt).toLocaleDateString('es-CL')}
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex space-x-2 pt-4">
-                <Button type="submit" disabled={loading}>
-                  <Save className="h-4 w-4 mr-2" />
-                  {loading ? 'Guardando...' : 'Guardar Cambios'}
-                </Button>
-                <Button type="button" variant="outline" onClick={handleCancel}>
-                  <X className="h-4 w-4 mr-2" />
-                  Cancelar
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <InfoField label="ID" value={region.id} />
+                <InfoField label="Slug" value={region.slug} />
+                <InfoField
+                  label="Comunas"
+                  value={region.communes?.length || 0}
+                />
+                <InfoField
+                  label="Creado"
+                  value={formatDate(region.createdAt)}
+                />
+                <InfoField
+                  label="Actualizado"
+                  value={formatDate(region.updatedAt)}
+                />
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
     </div>
   );

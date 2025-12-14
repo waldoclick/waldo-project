@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Save, X } from 'lucide-react';
+import { ArrowLeft, Save, X, Tag } from 'lucide-react';
 import { createCategory } from '@/lib/strapi/categories';
 
 export default function NewCategoryPage() {
@@ -49,11 +49,13 @@ export default function NewCategoryPage() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">Nueva Categoría</h1>
-            <p className="text-gray-500">Crear una nueva categoría</p>
+          <div className="flex items-center gap-2">
+            <Tag className="h-7 w-7" style={{ color: '#313338' }} />
+            <h1 className="text-[28px] font-bold" style={{ color: '#313338' }}>
+              Nueva Categoría
+            </h1>
           </div>
-          <Button variant="outline" size="sm" onClick={handleCancel}>
+          <Button variant="ghost" onClick={() => router.back()}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Volver
           </Button>

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { InfoField } from '@/components/ui/info-field';
-import { ArrowLeft, Save, X, Info } from 'lucide-react';
+import { ArrowLeft, Save, X, Info, Tag } from 'lucide-react';
 import { getCategory, updateCategory } from '@/lib/strapi/categories';
 import { StrapiCategory } from '@/lib/strapi/types';
 import { useFormatDate } from '@/hooks/useFormatDate';
@@ -86,11 +86,11 @@ export default function EditCategoryPage() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">Editar Categoría</h1>
-            <p className="text-gray-500">
-              Modificar información de la categoría
-            </p>
+          <div className="flex items-center gap-2">
+            <Tag className="h-7 w-7" style={{ color: '#313338' }} />
+            <h1 className="text-[28px] font-bold" style={{ color: '#313338' }}>
+              Editar Categoría
+            </h1>
           </div>
           <Button variant="ghost" onClick={() => router.back()}>
             <ArrowLeft className="h-4 w-4 mr-2" />

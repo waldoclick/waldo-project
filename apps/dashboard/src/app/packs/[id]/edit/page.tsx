@@ -153,19 +153,13 @@ export default function EditPackPage() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-2">
-              <Box className="h-7 w-7" style={{ color: '#313338' }} />
-              <h1
-                className="text-[28px] font-bold"
-                style={{ color: '#313338' }}
-              >
-                Editar Pack
-              </h1>
-            </div>
-            <p className="text-gray-600">Modificar información del pack</p>
+          <div className="flex items-center gap-2">
+            <Box className="h-7 w-7" style={{ color: '#313338' }} />
+            <h1 className="text-[28px] font-bold" style={{ color: '#313338' }}>
+              Editar Pack
+            </h1>
           </div>
-          <Button variant="ghost" onClick={handleCancel}>
+          <Button variant="ghost" onClick={() => router.back()}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Volver
           </Button>

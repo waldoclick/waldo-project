@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { InfoField } from '@/components/ui/info-field';
-import { ArrowLeft, Edit, Info, Star, FileText } from 'lucide-react';
+import { ArrowLeft, Edit, Info, Star, HelpCircle } from 'lucide-react';
 import { getFaq } from '@/lib/strapi/faqs';
 import { StrapiFaq } from '@/lib/strapi/types';
 import { useFormatDate } from '@/hooks/useFormatDate';
@@ -61,7 +61,7 @@ export default function FaqDetailPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <FileText className="h-7 w-7" style={{ color: '#313338' }} />
+            <HelpCircle className="h-7 w-7" style={{ color: '#313338' }} />
             <h1 className="text-[28px] font-bold" style={{ color: '#313338' }}>
               {faq.title}
             </h1>
@@ -84,7 +84,7 @@ export default function FaqDetailPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <FileText className="h-5 w-5 mr-2" />
+                  <HelpCircle className="h-5 w-5 mr-2" />
                   Información de la FAQ
                 </CardTitle>
               </CardHeader>

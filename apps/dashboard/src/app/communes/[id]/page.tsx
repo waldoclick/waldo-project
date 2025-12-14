@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { InfoField } from '@/components/ui/info-field';
-import { ArrowLeft, Edit, MapPin, Info } from 'lucide-react';
+import { ArrowLeft, Edit, Building, Info } from 'lucide-react';
 import { getCommune } from '@/lib/strapi/communes';
 import { StrapiCommune } from '@/lib/strapi/types';
 import { useFormatDate } from '@/hooks/useFormatDate';
@@ -60,7 +60,7 @@ export default function CommuneDetailPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <MapPin className="h-7 w-7" style={{ color: '#313338' }} />
+            <Building className="h-7 w-7" style={{ color: '#313338' }} />
             <h1 className="text-[28px] font-bold" style={{ color: '#313338' }}>
               {commune.name}
             </h1>
@@ -83,7 +83,7 @@ export default function CommuneDetailPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <MapPin className="h-5 w-5 mr-2" />
+                  <Building className="h-5 w-5 mr-2" />
                   Información de la Comuna
                 </CardTitle>
               </CardHeader>

@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Save, X } from 'lucide-react';
+import { ArrowLeft, Save, X, HelpCircle } from 'lucide-react';
 import { createFaq } from '@/lib/strapi/faqs';
 
 export default function NewFaqPage() {
@@ -59,11 +59,13 @@ export default function NewFaqPage() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">Nueva FAQ</h1>
-            <p className="text-gray-500">Crear una nueva pregunta frecuente</p>
+          <div className="flex items-center gap-2">
+            <HelpCircle className="h-7 w-7" style={{ color: '#313338' }} />
+            <h1 className="text-[28px] font-bold" style={{ color: '#313338' }}>
+              Nueva FAQ
+            </h1>
           </div>
-          <Button variant="outline" size="sm" onClick={handleCancel}>
+          <Button variant="ghost" onClick={() => router.back()}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Volver
           </Button>

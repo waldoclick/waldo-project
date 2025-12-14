@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { InfoField } from '@/components/ui/info-field';
-import { ArrowLeft, Edit, Info, Package } from 'lucide-react';
+import { ArrowLeft, Edit, Info, FileCheck } from 'lucide-react';
 import { getCondition } from '@/lib/strapi/conditions';
 import { StrapiCondition } from '@/lib/strapi/types';
 import { useFormatDate } from '@/hooks/useFormatDate';
@@ -60,7 +60,7 @@ export default function ConditionDetailPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Package className="h-7 w-7" style={{ color: '#313338' }} />
+            <FileCheck className="h-7 w-7" style={{ color: '#313338' }} />
             <h1 className="text-[28px] font-bold" style={{ color: '#313338' }}>
               {condition.name}
             </h1>
@@ -85,7 +85,7 @@ export default function ConditionDetailPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <Package className="h-5 w-5 mr-2" />
+                  <FileCheck className="h-5 w-5 mr-2" />
                   Información de la Condición
                 </CardTitle>
               </CardHeader>

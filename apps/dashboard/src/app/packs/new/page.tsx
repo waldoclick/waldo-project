@@ -6,15 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  ArrowLeft,
-  Save,
-  X,
-  Package,
-  DollarSign,
-  Clock,
-  Star,
-} from 'lucide-react';
+import { ArrowLeft, Save, X, Box, DollarSign, Clock, Star } from 'lucide-react';
 import { createAdPack } from '@/lib/strapi';
 
 export default function NewPackPage() {
@@ -99,11 +91,13 @@ export default function NewPackPage() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Nuevo Pack</h1>
-            <p className="text-gray-600">Crear un nuevo pack de anuncios</p>
+          <div className="flex items-center gap-2">
+            <Box className="h-7 w-7" style={{ color: '#313338' }} />
+            <h1 className="text-[28px] font-bold" style={{ color: '#313338' }}>
+              Nuevo Pack
+            </h1>
           </div>
-          <Button variant="ghost" onClick={handleCancel}>
+          <Button variant="ghost" onClick={() => router.back()}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Volver
           </Button>
@@ -112,7 +106,7 @@ export default function NewPackPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <Package className="h-5 w-5" />
+              <Box className="h-5 w-5" />
               <span>Información del Pack</span>
             </CardTitle>
           </CardHeader>
@@ -188,7 +182,7 @@ export default function NewPackPage() {
                     htmlFor="total_ads"
                     className="block text-sm font-medium text-gray-700 mb-2"
                   >
-                    <Package className="h-4 w-4 inline mr-1" />
+                    <Box className="h-4 w-4 inline mr-1" />
                     Total Anuncios *
                   </label>
                   <Input

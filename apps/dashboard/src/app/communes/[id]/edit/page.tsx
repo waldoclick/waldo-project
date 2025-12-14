@@ -5,7 +5,9 @@ import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Save, X } from 'lucide-react';
+import { InfoField } from '@/components/ui/info-field';
+import { ArrowLeft, Save, X, Building, Info } from 'lucide-react';
+import { useFormatDate } from '@/hooks/useFormatDate';
 import {
   getCommune,
   updateCommune,
@@ -26,6 +28,7 @@ export default function EditCommunePage() {
   });
 
   const communeId = params.id as string;
+  const { formatDate } = useFormatDate();
 
   const fetchCommune = useCallback(async () => {
     try {
@@ -80,7 +83,7 @@ export default function EditCommunePage() {
         region: parseInt(formData.region),
       });
 
-      router.push('/communes');
+      router.push(`/communes/${communeId}`);
     } catch (error) {
       console.error('Error updating commune:', error);
       alert('Error al actualizar la comuna');
@@ -108,105 +111,119 @@ export default function EditCommunePage() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Editar Comuna</h1>
-            <p className="text-gray-600">Modificar información de la comuna</p>
+          <div className="flex items-center gap-2">
+            <Building className="h-7 w-7" style={{ color: '#313338' }} />
+            <h1 className="text-[28px] font-bold" style={{ color: '#313338' }}>
+              Editar Comuna
+            </h1>
           </div>
-          <Button variant="ghost" onClick={handleCancel}>
+          <Button variant="ghost" onClick={() => router.back()}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Volver
           </Button>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Información de la Comuna</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Nombre de la Comuna *
-                </label>
-                <Input
-                  id="name"
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                  placeholder="Ej: Santiago"
-                  required
-                  className="w-full"
-                />
-                <p className="text-sm text-gray-500 mt-1">
-                  El slug se actualizará automáticamente basado en el nombre
-                </p>
-              </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Formulario principal */}
+          <div className="lg:col-span-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Información de la Comuna</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div>
+                    <label
+                      htmlFor="name"
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
+                      Nombre de la Comuna *
+                    </label>
+                    <Input
+                      id="name"
+                      type="text"
+                      value={formData.name}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
+                      placeholder="Ej: Santiago"
+                      required
+                      className="w-full"
+                    />
+                    <p className="text-sm text-gray-500 mt-1">
+                      El slug se actualizará automáticamente basado en el nombre
+                    </p>
+                  </div>
 
-              <div>
-                <label
-                  htmlFor="region"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Región *
-                </label>
-                <select
-                  id="region"
-                  value={formData.region}
-                  onChange={(e) =>
-                    setFormData({ ...formData, region: e.target.value })
-                  }
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                >
-                  <option value="">Seleccionar región</option>
-                  {regions.map((region) => (
-                    <option key={region.id} value={region.id}>
-                      {region.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+                  <div>
+                    <label
+                      htmlFor="region"
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
+                      Región *
+                    </label>
+                    <select
+                      id="region"
+                      value={formData.region}
+                      onChange={(e) =>
+                        setFormData({ ...formData, region: e.target.value })
+                      }
+                      required
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="">Seleccionar región</option>
+                      {regions.map((region) => (
+                        <option key={region.id} value={region.id}>
+                          {region.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
 
-              <div className="bg-gray-50 p-3 rounded-sm">
-                <h3 className="text-sm font-medium text-gray-700 mb-2">
+                  <div className="flex space-x-2 pt-4">
+                    <Button type="submit" disabled={loading}>
+                      <Save className="h-4 w-4 mr-2" />
+                      {loading ? 'Guardando...' : 'Guardar Cambios'}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleCancel}
+                    >
+                      <X className="h-4 w-4 mr-2" />
+                      Cancelar
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Info className="h-5 w-5 mr-2" />
                   Información Actual
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="font-medium">ID:</span> {commune.id}
-                  </div>
-                  <div>
-                    <span className="font-medium">Slug:</span> {commune.slug}
-                  </div>
-                  <div>
-                    <span className="font-medium">Región:</span>{' '}
-                    {commune.region?.name || '-'}
-                  </div>
-                  <div>
-                    <span className="font-medium">Creado:</span>{' '}
-                    {new Date(commune.createdAt).toLocaleDateString('es-CL')}
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex space-x-2 pt-4">
-                <Button type="submit" disabled={loading}>
-                  <Save className="h-4 w-4 mr-2" />
-                  {loading ? 'Guardando...' : 'Guardar Cambios'}
-                </Button>
-                <Button type="button" variant="outline" onClick={handleCancel}>
-                  <X className="h-4 w-4 mr-2" />
-                  Cancelar
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <InfoField label="ID" value={commune.id} />
+                <InfoField label="Slug" value={commune.slug} />
+                <InfoField label="Región" value={commune.region?.name || '-'} />
+                <InfoField
+                  label="Creado"
+                  value={formatDate(commune.createdAt)}
+                />
+                <InfoField
+                  label="Actualizado"
+                  value={formatDate(commune.updatedAt)}
+                />
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
     </div>
   );
