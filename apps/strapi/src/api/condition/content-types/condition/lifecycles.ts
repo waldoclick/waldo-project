@@ -2,20 +2,22 @@
  * Condition lifecycles
  */
 
-function generateSlug(text: string): string {
-  return text
-    .toString()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "") // Remove diacritics
-    .replace(/[^a-z0-9\s-]/g, "") // Remove special characters
-    .replace(/\s+/g, "-") // Replace spaces with hyphens
-    .replace(/-+/g, "-") // Replace multiple hyphens with single hyphen
-    .replace(/^-+/, "") // Remove leading hyphens
-    .replace(/-+$/, ""); // Remove trailing hyphens
-}
+import slugify from "slugify";
 
 export default {
+  /**
+   * Triggered before creating a condition
+   * Generates the slug from the name
+   */
+  async beforeCreate(event: any) {
+    const { data } = event.params;
+
+    // Si el nombre está presente, generar el slug siempre
+    if (data.name) {
+      data.slug = slugify(data.name, { lower: true, strict: true });
+    }
+  },
+
   /**
    * Triggered before updating a condition
    * Updates the slug if the name has changed
@@ -35,7 +37,7 @@ export default {
       // Solo actualizar el slug si el nombre cambió
       if (existingCondition && existingCondition.name !== data.name) {
         // Generar slug desde el nuevo nombre
-        data.slug = generateSlug(data.name);
+        data.slug = slugify(data.name, { lower: true, strict: true });
       }
     }
   },
