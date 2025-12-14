@@ -104,7 +104,7 @@ export default function EditPackPage() {
         description: formData.description.trim() || undefined,
       });
 
-      router.push('/packs');
+      router.push(`/packs/${packId}`);
     } catch (error) {
       console.error('Error updating pack:', error);
       const errorMessage =

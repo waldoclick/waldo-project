@@ -57,7 +57,7 @@ export default function NewPackPage() {
 
     try {
       setLoading(true);
-      await createAdPack({
+      const response = await createAdPack({
         name: formData.name.trim(),
         text: formData.text.trim(),
         total_days: parseInt(formData.total_days),
@@ -67,7 +67,7 @@ export default function NewPackPage() {
         description: formData.description.trim() || undefined,
       });
 
-      router.push('/packs');
+      router.push(`/packs/${response.data.id}`);
     } catch (error) {
       console.error('Error creating pack:', error);
       alert('Error al crear el pack');
