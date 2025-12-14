@@ -69,6 +69,22 @@ export default function UsersPage() {
     return <Badge variant="secondary">Pendiente</Badge>;
   };
 
+  const getAdsCount = (user: StrapiUser): number => {
+    return user.ads?.length || 0;
+  };
+
+  const getFreeReservationsCount = (user: StrapiUser): number => {
+    if (!user.ad_reservations) return 0;
+    return user.ad_reservations.filter((reservation) => !reservation.ad).length;
+  };
+
+  const getFreeFeaturedReservationsCount = (user: StrapiUser): number => {
+    if (!user.ad_featured_reservations) return 0;
+    return user.ad_featured_reservations.filter(
+      (reservation) => !reservation.ad
+    ).length;
+  };
+
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
     setCurrentPage(1);
@@ -130,7 +146,16 @@ export default function UsersPage() {
                         <span>Estado</span>
                       </TableHead>
                       <TableHead>
-                        <span>Fecha de Registro</span>
+                        <span>Anuncios</span>
+                      </TableHead>
+                      <TableHead>
+                        <span>Reservas</span>
+                      </TableHead>
+                      <TableHead>
+                        <span>Destacados</span>
+                      </TableHead>
+                      <TableHead>
+                        <span>Registro</span>
                       </TableHead>
                       <TableHead className="text-right">Acciones</TableHead>
                     </TableRow>
@@ -155,6 +180,21 @@ export default function UsersPage() {
                           <span>{user.email}</span>
                         </TableCell>
                         <TableCell>{getStatusBadge(user)}</TableCell>
+                        <TableCell>
+                          <span className="font-medium">
+                            {getAdsCount(user)}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          <span className="font-medium">
+                            {getFreeReservationsCount(user)}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          <span className="font-medium">
+                            {getFreeFeaturedReservationsCount(user)}
+                          </span>
+                        </TableCell>
                         <TableCell>
                           <span>{formatDate(user.createdAt)}</span>
                         </TableCell>

@@ -30,8 +30,14 @@ export async function getUsers(params?: {
     searchParams.append('pagination[pageSize]', params.pageSize.toString());
   if (params?.sort) searchParams.append('sort', params.sort);
 
-  // Popular toda la data del usuario incluyendo el rol
-  searchParams.append('populate', '*');
+  // Popular las relaciones necesarias para contar
+  searchParams.append('populate[role]', 'true');
+  searchParams.append('populate[ads]', 'true');
+  searchParams.append('populate[ad_reservations][populate][ad]', 'true');
+  searchParams.append(
+    'populate[ad_featured_reservations][populate][ad]',
+    'true'
+  );
 
   // Filtrar solo usuarios con rol Authenticated
   // Si hay búsqueda, combinamos con $and

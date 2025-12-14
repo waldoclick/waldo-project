@@ -14,6 +14,9 @@ export interface StrapiUser {
   createdAt: string;
   updatedAt: string;
   role?: StrapiRole; // Hacer opcional el role
+  ads?: StrapiAd[]; // Relación con anuncios
+  ad_reservations?: StrapiAdReservation[]; // Relación con reservas
+  ad_featured_reservations?: StrapiAdFeaturedReservation[]; // Relación con destacados
 }
 
 export interface StrapiRole {
