@@ -219,8 +219,8 @@ watch(
             value: newData.depth,
             unitCode: "CMT",
           },
-          category: newData.category.name,
-          itemCondition: newData.condition.name,
+          category: newData.category?.name,
+          itemCondition: newData.condition?.name,
           productionDate: newData.year,
           seller: {
             "@type": newData.user?.is_company ? "Organization" : "Person",

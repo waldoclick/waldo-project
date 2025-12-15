@@ -118,7 +118,8 @@ const getCategoryIcon = (category: Category) => {
 
 // Usar useAsyncData para cargar anuncios y categorías
 const { data: adsData, refresh } = await useAsyncData<AdsData>(
-  "adsData", // Un identificador único
+  () =>
+    `adsData-${route.query.category || "all"}-${route.query.page || "1"}-${route.query.order || "default"}-${route.query.commune || "all"}-${route.query.s || ""}`, // Clave dinámica basada en query params
   async () => {
     const category = route.query.category?.toString() || null;
     const page = Number.parseInt(route.query.page?.toString() || "1", 10);
@@ -143,8 +144,13 @@ const { data: adsData, refresh } = await useAsyncData<AdsData>(
 
     let categoryData: Category;
     if (category) {
-      await categoriesStore.loadCategory(category);
-      categoryData = categoriesStore.category || defaultCategory.value;
+      try {
+        await categoriesStore.loadCategory(category);
+        categoryData = categoriesStore.category || defaultCategory.value;
+      } catch (error) {
+        console.error("Error loading category:", error);
+        categoryData = defaultCategory.value;
+      }
     } else {
       categoryData = defaultCategory.value;
     }
@@ -190,6 +196,15 @@ const { data: adsData, refresh } = await useAsyncData<AdsData>(
       () => route.query.commune,
       () => route.query.s,
     ],
+    server: true,
+    default: () => ({
+      ads: [],
+      pagination: { page: 1, pageSize: 20, pageCount: 0, total: 0 },
+      category: defaultCategory.value,
+      relatedAds: [],
+      relatedLoading: false,
+      relatedError: null,
+    }),
   },
 );
 
