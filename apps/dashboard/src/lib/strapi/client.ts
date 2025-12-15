@@ -134,7 +134,7 @@ class StrapiClient {
 
     if (!response.ok) {
       let errorMessage = `Error HTTP! estado: ${response.status}`;
-      let errorData: StrapiError | any = null;
+      let errorData: StrapiError | Record<string, unknown> | null = null;
       try {
         const jsonResponse = await response.json();
         errorData = jsonResponse;
@@ -158,10 +158,13 @@ class StrapiClient {
       } catch {
         // Si no se puede parsear el JSON, usar el mensaje por defecto
       }
-      const error = new Error(errorMessage);
-      (error as any).status = response.status;
+      const error = new Error(errorMessage) as Error & {
+        status?: number;
+        errorData?: StrapiError | Record<string, unknown>;
+      };
+      error.status = response.status;
       if (errorData) {
-        (error as any).errorData = errorData;
+        error.errorData = errorData;
       }
       throw error;
     }

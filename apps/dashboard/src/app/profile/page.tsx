@@ -4,15 +4,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import {
-  User,
-  Calendar,
-  Shield,
-  CheckCircle,
-  XCircle,
-  Edit,
-  Lock,
-} from 'lucide-react';
+import { User, Calendar, Shield, Edit, Lock } from 'lucide-react';
 import { useUserStore } from '@/stores/users';
 import { StrapiUser } from '@/lib/strapi';
 import { InfoField } from '@/components/ui/info-field';
@@ -43,16 +35,6 @@ export default function ProfilePage() {
       </div>
     );
   }
-
-  const getStatusBadge = (user: StrapiUser) => {
-    if (user.blocked) {
-      return <Badge variant="destructive">Bloqueado</Badge>;
-    }
-    if (user.confirmed) {
-      return <Badge variant="default">Confirmado</Badge>;
-    }
-    return <Badge variant="secondary">Pendiente</Badge>;
-  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
