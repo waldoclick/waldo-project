@@ -19,7 +19,8 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "turbo": "^2.3.0"
+    "turbo": "^2.3.0",
+    "next": "15.4.6"
   }
 }
 
