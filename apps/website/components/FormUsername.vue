@@ -94,7 +94,7 @@ const schema = yup.object({
     .required("El nombre de usuario es requerido")
     .matches(
       /^[\w.]+$/,
-      "Solo se permiten letras, números, puntos y guiones bajos",
+      "Solo se permiten letras, números, puntos y guiones bajos"
     ),
 });
 
@@ -115,7 +115,7 @@ const handleSubmit = async (values) => {
     Swal.fire(
       "Error",
       `Debes esperar ${daysRemaining.value} días para poder cambiar tu nombre de usuario`,
-      "error",
+      "error"
     );
     return;
   }

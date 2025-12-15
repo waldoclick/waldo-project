@@ -74,7 +74,7 @@ watch(
       value.value = false;
       adStore.updateFeatured(false);
     }
-  },
+  }
 );
 
 // Función para actualizar el estado de featured en el store

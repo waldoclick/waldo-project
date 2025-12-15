@@ -96,7 +96,7 @@ const heroElement = ref(null);
 const updateBackgroundColor = () => {
   if (heroElement.value) {
     const color = bgColorWithTransparency(
-      getCategory.value?.color || "#f0f0f0",
+      getCategory.value?.color || "#f0f0f0"
     );
     heroElement.value.style.setProperty("background-color", color);
   }

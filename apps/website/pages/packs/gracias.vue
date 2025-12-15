@@ -7,7 +7,13 @@
       v-if="data"
       type="success"
       title="¡Gracias por tu compra!"
-      :description="`Has comprado el pack <strong>${data.name}</strong> por <strong>${formatPrice(data.price)}</strong>. Este pack incluye <strong>${data.total_ads}</strong> anuncios.`"
+      :description="`Has comprado el pack <strong>${
+        data.name
+      }</strong> por <strong>${formatPrice(
+        data.price
+      )}</strong>. Este pack incluye <strong>${
+        data.total_ads
+      }</strong> anuncios.`"
       button_label="Crear un anuncio"
       button_link="/anunciar"
       :button_show="true"
@@ -76,7 +82,7 @@ const { data, pending, error } = await useAsyncData(
   {
     server: true,
     lazy: false,
-  },
+  }
 );
 
 // Manejar errores con watchEffect
@@ -90,7 +96,9 @@ watch(data, (newData) => {
   if (newData) {
     $setSEO({
       title: `Gracias por tu Compra - ${newData.name}`,
-      description: `Has comprado el pack ${newData.name} por ${formatPrice(newData.price)}. Este pack incluye ${newData.ads_count} anuncios.`,
+      description: `Has comprado el pack ${newData.name} por ${formatPrice(
+        newData.price
+      )}. Este pack incluye ${newData.ads_count} anuncios.`,
       imageUrl: "https://waldo.click/share.jpg",
       url: `https://waldo.click/packs/gracias?pack=${newData.id}`,
     });
@@ -100,7 +108,9 @@ watch(data, (newData) => {
       "@type": "WebPage",
       name: `Gracias por tu Compra - ${newData.name} - Waldo.click®`,
       url: `https://waldo.click/packs/gracias?pack=${newData.id}`,
-      description: `Has comprado el pack ${newData.name} por ${formatPrice(newData.price)}. Este pack incluye ${newData.ads_count} anuncios.`,
+      description: `Has comprado el pack ${newData.name} por ${formatPrice(
+        newData.price
+      )}. Este pack incluye ${newData.ads_count} anuncios.`,
     });
   }
 });

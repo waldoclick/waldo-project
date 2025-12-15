@@ -27,7 +27,7 @@ const props = defineProps<{
 const separator = props.separator ?? false;
 const { sanitizeText } = useSanitize();
 const title = sanitizeText(
-  "Ahorra desde un 40% comprando uno <br>de nuestros packs",
+  "Ahorra desde un 40% comprando uno <br>de nuestros packs"
 );
 
 const isSeparator = computed(() => {

@@ -121,14 +121,14 @@ const handleFileChange = (event) => {
   const maxImages = isFree.value ? 4 : 12;
   if (images.value.length >= maxImages) {
     toast.warning(
-      `Ups, ya tienes ${maxImages} imágenes. No puedes agregar más.`,
+      `Ups, ya tienes ${maxImages} imágenes. No puedes agregar más.`
     );
     return;
   }
 
   if (!validTypes.includes(file.type)) {
     toast.error(
-      "Solo aceptamos imágenes en JPG, PNG o WebP. ¿Podrías intentar con otro formato?",
+      "Solo aceptamos imágenes en JPG, PNG o WebP. ¿Podrías intentar con otro formato?"
     );
     return;
   }
@@ -138,7 +138,7 @@ const handleFileChange = (event) => {
   img.addEventListener("load", () => {
     if (img.width < 750 || img.height < 420) {
       toast.error(
-        "Esta imagen es muy pequeña. Necesitamos una de al menos 750x420 píxeles para que se vea bien.",
+        "Esta imagen es muy pequeña. Necesitamos una de al menos 750x420 píxeles para que se vea bien."
       );
       return;
     }
@@ -159,13 +159,13 @@ const handleUpload = async () => {
     const uploadedImage = await uploadFile(
       form.value.file,
       "gallery",
-      recaptchaToken,
+      recaptchaToken
     );
     handlePushImage(uploadedImage);
   } catch (error) {
     console.error("Upload error:", error);
     toast.error(
-      "¡Ups! No pudimos subir tu imagen. ¿Podrías intentarlo de nuevo?",
+      "¡Ups! No pudimos subir tu imagen. ¿Podrías intentarlo de nuevo?"
     );
   } finally {
     isProcessing.value = false;
@@ -211,7 +211,7 @@ const removeImage = async (image) => {
     toast.success("¡Listo! La imagen fue eliminada");
   } catch {
     toast.error(
-      "¡Ups! No pudimos eliminar la imagen. ¿Podrías intentarlo de nuevo?",
+      "¡Ups! No pudimos eliminar la imagen. ¿Podrías intentarlo de nuevo?"
     );
   } finally {
     isProcessing.value = false;

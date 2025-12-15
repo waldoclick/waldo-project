@@ -26,7 +26,7 @@ export const useHistoryStore = defineStore("history", {
     getRecentlyViewed: (state) => {
       return [...state.viewedAds].sort(
         (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       );
     },
   },
@@ -35,7 +35,7 @@ export const useHistoryStore = defineStore("history", {
     addToHistory(ad: Omit<HistoryAd, "createdAt">) {
       // Verificar si el anuncio ya existe
       const existingIndex = this.viewedAds.findIndex(
-        (item) => item.id === ad.id,
+        (item) => item.id === ad.id
       );
 
       if (existingIndex !== -1) {
@@ -57,7 +57,7 @@ export const useHistoryStore = defineStore("history", {
             .sort(
               (a, b) =>
                 new Date(b.createdAt).getTime() -
-                new Date(a.createdAt).getTime(),
+                new Date(a.createdAt).getTime()
             )
             .slice(0, this.maxHistory);
         }

@@ -52,7 +52,7 @@ const updateProgress = () => {
   if (progressElement.value) {
     progressElement.value.style.setProperty(
       "--progress-width",
-      props.percentage + "%",
+      props.percentage + "%"
     );
   }
 };

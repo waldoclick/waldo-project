@@ -94,7 +94,9 @@
               >
                 <span
                   v-tooltip="{
-                    content: `Valor del dólar al ${formatDate(all?.priceData.convertedTimestamp)}`,
+                    content: `Valor del dólar al ${formatDate(
+                      all?.priceData.convertedTimestamp
+                    )}`,
                     placement: 'top',
                   }"
                 >
@@ -207,6 +209,8 @@ const getUserFullName = computed(() => {
 
 const googleMapsUrl = computed(() => {
   if (!fullAddress.value) return "";
-  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress.value + ", " + communeName.value + ", " + regionName.value)}`;
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+    fullAddress.value + ", " + communeName.value + ", " + regionName.value
+  )}`;
 });
 </script>

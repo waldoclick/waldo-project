@@ -250,7 +250,7 @@ const handleRepublish = async () => {
       (img: { id: number; url: string }) => ({
         id: String(img.id),
         url: img.url, // No necesitamos transformar aquí, se hará en el componente
-      }),
+      })
     );
     adStore.updateGallery(updatedGallery);
 

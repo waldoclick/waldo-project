@@ -42,8 +42,8 @@ export function useRut() {
       calculatedDv === 11
         ? "0"
         : calculatedDv === 10
-          ? "K"
-          : calculatedDv.toString();
+        ? "K"
+        : calculatedDv.toString();
 
     return dv === validDv;
   };

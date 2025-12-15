@@ -56,7 +56,7 @@ export const useIndicatorStore = defineStore(
       error.value = null;
       try {
         const response = await strapi.findOne<StrapiData<Indicator>>(
-          `indicators/${code}`,
+          `indicators/${code}`
         );
         return response;
       } catch (err) {
@@ -82,7 +82,7 @@ export const useIndicatorStore = defineStore(
             amount,
             from,
             to,
-          } as Strapi4RequestParams,
+          } as Strapi4RequestParams
         );
         return response;
       } catch (err) {
@@ -106,5 +106,5 @@ export const useIndicatorStore = defineStore(
   },
   {
     persist: true,
-  },
+  }
 );

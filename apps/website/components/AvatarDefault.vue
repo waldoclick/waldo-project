@@ -51,7 +51,9 @@ const getInitials = computed(() => {
     const email = (user as any)?.email || "";
     return email ? email.slice(0, 2).toUpperCase() : "WA";
   }
-  return `${firstname.charAt(0).toUpperCase()}${lastname.charAt(0).toUpperCase()}`;
+  return `${firstname.charAt(0).toUpperCase()}${lastname
+    .charAt(0)
+    .toUpperCase()}`;
 });
 
 // Computed para obtener el usuario actual
@@ -67,10 +69,10 @@ const getAvatarUrl = computed(() => {
     size === "small"
       ? "small"
       : size === "medium"
-        ? "medium"
-        : size === "large"
-          ? "large"
-          : "thumbnail";
+      ? "medium"
+      : size === "large"
+      ? "large"
+      : "thumbnail";
 
   return transformUrl(avatar.formats[format]?.url || avatar.url);
 });

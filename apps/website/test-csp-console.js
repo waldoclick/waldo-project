@@ -181,7 +181,7 @@ function checkCSP() {
 
   // Obtener CSP del meta tag
   const metaCSP = document.querySelector(
-    'meta[http-equiv="Content-Security-Policy"]',
+    'meta[http-equiv="Content-Security-Policy"]'
   );
   if (metaCSP) {
     console.log("CSP Meta Tag:", metaCSP.content);

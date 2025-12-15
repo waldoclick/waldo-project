@@ -14,8 +14,9 @@ export default defineNuxtPlugin(() => {
   // Función para identificar usuario en LogRocket
   const identifyUser = (userData) => {
     if (userData) {
-      const userName =
-        `${userData.firstname || ""} ${userData.lastname || ""}`.trim();
+      const userName = `${userData.firstname || ""} ${
+        userData.lastname || ""
+      }`.trim();
       const userEmail = userData.email;
 
       const userInfo = {

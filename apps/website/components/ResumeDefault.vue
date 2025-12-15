@@ -274,7 +274,7 @@ onMounted(async () => {
     if (props.summary?.category) {
       categoryName.value = "Cargando categoría...";
       const categoryData = await adCategory.getCategoryById(
-        props.summary.category,
+        props.summary.category
       );
       categoryName.value = categoryData?.name || "Categoría no encontrada";
     }
@@ -282,7 +282,7 @@ onMounted(async () => {
     if (props.summary?.commune) {
       communeInfo.value = "Cargando ubicación...";
       const communeData = await communesStore.getCommuneById(
-        props.summary.commune,
+        props.summary.commune
       );
       const regionData = communeData?.region;
       communeInfo.value = regionData
@@ -293,7 +293,7 @@ onMounted(async () => {
     if (props.summary?.condition) {
       conditionName.value = "Cargando condición...";
       const conditionData = await conditionsStore.getConditionById(
-        props.summary.condition,
+        props.summary.condition
       );
       conditionName.value = conditionData?.name || "Condición no encontrada";
     }

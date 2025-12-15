@@ -47,7 +47,7 @@ const loadAds = async () => {
     const response = await userStore.loadUserAds(
       { status: currentFilter.value },
       { page: currentPage.value, pageSize: pagination.value.pageSize },
-      ["createdAt:desc"] as unknown as never[], // Pasar el sort como un parámetro separado
+      ["createdAt:desc"] as unknown as never[] // Pasar el sort como un parámetro separado
     );
 
     if (response) {
@@ -57,7 +57,7 @@ const loadAds = async () => {
 
       // Actualizar el count del tab correspondiente
       const tabToUpdate = tabs.value.find(
-        (tab) => tab.value === currentFilter.value,
+        (tab) => tab.value === currentFilter.value
       );
       if (tabToUpdate) {
         tabToUpdate.count = total;
@@ -78,7 +78,7 @@ const loadTabCounts = async () => {
       const response = await userStore.loadUserAds(
         { status: tab.value },
         { page: 1, pageSize: 10 }, // Asegurar paginación básica
-        ["createdAt:desc"] as never[], // Pasar el sort como un parámetro separado
+        ["createdAt:desc"] as never[] // Pasar el sort como un parámetro separado
       );
       if (response) {
         tab.count = response.meta.pagination.total; // Actualizar el count del tab

@@ -40,12 +40,12 @@ const { data: faqs } = await useAsyncData(
     // Opciones para priorizar la carga
     immediate: true,
     server: true,
-  },
+  }
 );
 
 // Combinamos ambos conjuntos de datos para asegurarnos tener todos
 const allFaqs = [...(faqsData || []), ...(faqs.value || [])].filter(
-  (faq, index, self) => index === self.findIndex((f) => f.id === faq.id),
+  (faq, index, self) => index === self.findIndex((f) => f.id === faq.id)
 );
 
 // Datos para SEO - usamos todos los datos disponibles

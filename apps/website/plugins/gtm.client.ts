@@ -37,7 +37,7 @@ export default defineNuxtPlugin({
       script.async = true;
       script.src = `https://www.googletagmanager.com/gtm.js?id=${gtmId}`;
       script.addEventListener("error", () =>
-        console.warn("Failed to load GTM script"),
+        console.warn("Failed to load GTM script")
       );
       document.head.appendChild(script);
 

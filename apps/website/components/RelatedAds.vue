@@ -48,6 +48,6 @@ withDefaults(
     title: "Anuncios relacionados",
     text: "",
     centerHead: false,
-  },
+  }
 );
 </script>

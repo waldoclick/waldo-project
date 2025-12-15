@@ -49,7 +49,7 @@ export function useImageProxy() {
   const uploadFile = async (
     file: File,
     type: string,
-    recaptchaToken?: string,
+    recaptchaToken?: string
   ) => {
     const token = useStrapiToken();
     const formData = new FormData();

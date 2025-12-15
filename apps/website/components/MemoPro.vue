@@ -51,7 +51,7 @@ const handleProSubscription = async () => {
       Swal.fire(
         "Error",
         "La respuesta de la API no contiene la información necesaria para el pago.",
-        "error",
+        "error"
       );
     }
   } catch (error) {
@@ -59,7 +59,7 @@ const handleProSubscription = async () => {
     Swal.fire(
       "Error",
       "Hubo un error al procesar la suscripción. Por favor, inténtalo de nuevo.",
-      "error",
+      "error"
     );
   }
 };

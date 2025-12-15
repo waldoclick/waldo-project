@@ -119,7 +119,9 @@ const getCategoryIcon = (category: Category) => {
 // Usar useAsyncData para cargar anuncios y categorías
 const { data: adsData, refresh } = await useAsyncData<AdsData>(
   () =>
-    `adsData-${route.query.category || "all"}-${route.query.page || "1"}-${route.query.order || "default"}-${route.query.commune || "all"}-${route.query.s || ""}`, // Clave dinámica basada en query params
+    `adsData-${route.query.category || "all"}-${route.query.page || "1"}-${
+      route.query.order || "default"
+    }-${route.query.commune || "all"}-${route.query.s || ""}`, // Clave dinámica basada en query params
   async () => {
     const category = route.query.category?.toString() || null;
     const page = Number.parseInt(route.query.page?.toString() || "1", 10);
@@ -170,7 +172,7 @@ const { data: adsData, refresh } = await useAsyncData<AdsData>(
         await adsStore.loadAds(
           { active: { $eq: true }, remaining_days: { $gt: 0 } },
           { page: 1, pageSize: 12 },
-          ["ad_featured_reservation.id:desc", "createdAt:desc"],
+          ["ad_featured_reservation.id:desc", "createdAt:desc"]
         );
         relatedAds = adsStore.ads;
       } catch (error) {
@@ -205,7 +207,7 @@ const { data: adsData, refresh } = await useAsyncData<AdsData>(
       relatedLoading: false,
       relatedError: null,
     }),
-  },
+  }
 );
 
 // Observar cambios en la URL y refrescar
@@ -217,7 +219,7 @@ watch(
     () => route.query.commune,
     () => route.query.s,
   ],
-  () => refresh(), // Refrescar los datos cuando cambian las query params
+  () => refresh() // Refrescar los datos cuando cambian las query params
 );
 
 // Función para generar el título SEO según los parámetros de búsqueda
@@ -227,7 +229,7 @@ const generateSEOTitle = () => {
   const communeId = route.query.commune?.toString();
   // Buscar la comuna en los anuncios para obtener su nombre
   const communeName = adsData.value?.ads.find(
-    (ad) => ad.commune?.id?.toString() === communeId,
+    (ad) => ad.commune?.id?.toString() === communeId
   )?.commune?.name;
 
   if (searchQuery) {
@@ -266,7 +268,7 @@ const generateSEODescription = () => {
   const communeId = route.query.commune?.toString();
   // Buscar la comuna en los anuncios para obtener su nombre
   const communeName = adsData.value?.ads.find(
-    (ad) => ad.commune?.id?.toString() === communeId,
+    (ad) => ad.commune?.id?.toString() === communeId
   )?.commune?.name;
   const totalAds = adsData.value?.pagination?.total || 0;
 
@@ -306,6 +308,6 @@ watch(
       });
     }
   },
-  { immediate: true },
+  { immediate: true }
 );
 </script>

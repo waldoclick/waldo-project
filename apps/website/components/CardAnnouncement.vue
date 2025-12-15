@@ -201,7 +201,7 @@ onMounted(() => {
   if (cardElement.value && cardElement.value.style) {
     cardElement.value.style.setProperty(
       "--announcement-category-color",
-      getCategory.value.color,
+      getCategory.value.color
     );
   }
 });

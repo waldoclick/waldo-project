@@ -18,7 +18,7 @@ const authenticate = async () => {
     // Autenticar al usuario con facebook utilizando el token de acceso de la URL
     const response = await authenticateProvider(
       "facebook",
-      route.query.access_token,
+      route.query.access_token
     );
     // Redirigir a /anuncios si la autenticación es exitosa
     if (response) {

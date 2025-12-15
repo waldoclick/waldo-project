@@ -84,12 +84,18 @@ const user = useStrapiUser();
 
 const getAddress = computed(() => {
   if (!user.value.address) return "";
-  return `${user.value.address}${user.value.address_number ? `, ${user.value.address_number}` : ""}`.trim();
+  return `${user.value.address}${
+    user.value.address_number ? `, ${user.value.address_number}` : ""
+  }`.trim();
 });
 
 const getBusinessAddress = computed(() => {
   if (!user.value.business_address) return "";
-  return `${user.value.business_address}${user.value.business_address_number ? `, ${user.value.business_address_number}` : ""}`.trim();
+  return `${user.value.business_address}${
+    user.value.business_address_number
+      ? `, ${user.value.business_address_number}`
+      : ""
+  }`.trim();
 });
 
 const formattedBirthdate = computed(() => {

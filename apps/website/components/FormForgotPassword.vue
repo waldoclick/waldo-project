@@ -67,14 +67,14 @@ const onSubmit = async (values: any) => {
     Swal.fire(
       "Éxito",
       "Código de restablecimiento enviado con éxito.",
-      "success",
+      "success"
     );
     router.push("/");
   } catch {
     Swal.fire(
       "Error",
       "Hubo un error. Por favor, inténtalo de nuevo.",
-      "error",
+      "error"
     );
   } finally {
     loading.value = false;

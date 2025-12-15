@@ -177,28 +177,28 @@ const getSchema = () => {
           .required(() =>
             form.value.is_company
               ? "La Razón Social es requerida"
-              : "El Nombre es requerido",
+              : "El Nombre es requerido"
           )
           .matches(
             /^[\d\s.A-Za-zÁÉÍÑÓÚáéíñóú]+$/,
-            "Solo se permiten letras, números, espacios, puntos",
+            "Solo se permiten letras, números, espacios, puntos"
           ),
         lastname: yup
           .string()
           .required(() =>
             form.value.is_company
               ? "El Giro es requerida"
-              : "El Appelido es requerido",
+              : "El Appelido es requerido"
           )
           .matches(
             /^[\d\s.A-Za-zÁÉÍÑÓÚáéíñóú]+$/,
-            "Solo se permiten letras, números, espacios, puntos",
+            "Solo se permiten letras, números, espacios, puntos"
           ),
         rut: yup
           .string()
           .required("RUT es requerido")
           .test("is-valid-rut", "RUT no es válido", (value) =>
-            validateRut(value || ""),
+            validateRut(value || "")
           ),
       })
     : yup.object({
@@ -215,7 +215,7 @@ const getSchema = () => {
           .string()
           .oneOf(
             [yup.ref("password"), undefined],
-            "Las contraseñas deben coincidir",
+            "Las contraseñas deben coincidir"
           ),
       });
 };
@@ -231,7 +231,7 @@ watch(
   () => form.value.rut,
   (newRut) => {
     form.value.rut = formatRut(newRut);
-  },
+  }
 );
 
 const handleShowPassword = () => {
@@ -248,7 +248,7 @@ const handleSubmit = async () => {
     return Swal.fire(
       "Error",
       "Por favor, completa los campos requeridos.",
-      "error",
+      "error"
     );
   }
 
@@ -275,7 +275,7 @@ const handleSubmit = async () => {
       Swal.fire(
         "Cuenta creada",
         "Te enviado un correo para confirmar tu dirección de correo electrónico.",
-        "success",
+        "success"
       );
       router.push("/login");
     } catch (error) {

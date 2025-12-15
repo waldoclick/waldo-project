@@ -5,7 +5,9 @@
     </span>
     <a
       v-tooltip="'Compartir en Facebook'"
-      :href="`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`"
+      :href="`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+        shareUrl
+      )}`"
       target="_blank"
       rel="noopener noreferrer"
     >
@@ -13,7 +15,9 @@
     </a>
     <a
       v-tooltip="'Compartir en X (Twitter)'"
-      :href="`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareTitle)}`"
+      :href="`https://twitter.com/intent/tweet?url=${encodeURIComponent(
+        shareUrl
+      )}&text=${encodeURIComponent(shareTitle)}`"
       target="_blank"
       rel="noopener noreferrer"
     >
@@ -21,7 +25,9 @@
     </a>
     <a
       v-tooltip="'Compartir en WhatsApp'"
-      :href="`https://wa.me/?text=${encodeURIComponent(shareTitle + ' ' + shareUrl)}`"
+      :href="`https://wa.me/?text=${encodeURIComponent(
+        shareTitle + ' ' + shareUrl
+      )}`"
       target="_blank"
       rel="noopener noreferrer"
     >
@@ -29,7 +35,9 @@
     </a>
     <a
       v-tooltip="'Compartir en LinkedIn'"
-      :href="`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`"
+      :href="`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+        shareUrl
+      )}`"
       target="_blank"
       rel="noopener noreferrer"
     >

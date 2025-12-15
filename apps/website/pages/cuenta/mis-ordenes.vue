@@ -39,7 +39,7 @@ const loadOrders = async () => {
     const response = await userStore.loadUserOrders(
       {}, // Sin filtros específicos por estatus
       { page: currentPage.value, pageSize: pagination.value.pageSize },
-      ["createdAt:desc"] as never[],
+      ["createdAt:desc"] as never[]
     );
 
     if (response) {

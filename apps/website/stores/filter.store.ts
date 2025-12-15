@@ -126,5 +126,5 @@ export const useFilterStore = defineStore(
     persist: {
       storage: typeof window !== "undefined" ? localStorage : undefined,
     },
-  },
+  }
 );

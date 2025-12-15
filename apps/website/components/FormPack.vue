@@ -85,7 +85,7 @@ const handleSubmit = async (values) => {
     Swal.fire(
       "Error",
       "Hubo un error al procesar el pago. Por favor, inténtalo de nuevo.",
-      "error",
+      "error"
     );
   }
 };

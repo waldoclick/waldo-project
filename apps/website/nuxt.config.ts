@@ -416,7 +416,9 @@ export default defineNuxtConfig({
             "/packs/**",
             "/contacto/**",
           ],
-          sitemap: `${process.env.BASE_URL || "http://localhost:3000"}/sitemap.xml`,
+          sitemap: `${
+            process.env.BASE_URL || "http://localhost:3000"
+          }/sitemap.xml`,
         },
 
   // 6. Development Configuration

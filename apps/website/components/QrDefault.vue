@@ -46,7 +46,7 @@ const props = withDefaults(
     margin: 0,
     level: "L",
     businessCard: undefined,
-  },
+  }
 );
 
 // Asegurarse de que size sea un número
@@ -62,7 +62,11 @@ const qrData = computed(() => {
 VERSION:3.0
 N:${props.businessCard.lastname};${props.businessCard.firstname};;;
 FN:${props.businessCard.firstname} ${props.businessCard.lastname}
-${props.businessCard.is_company && props.businessCard.business_name ? `ORG:${props.businessCard.business_name}\n` : ""}TEL:${props.businessCard.phone}
+${
+  props.businessCard.is_company && props.businessCard.business_name
+    ? `ORG:${props.businessCard.business_name}\n`
+    : ""
+}TEL:${props.businessCard.phone}
 EMAIL:${props.businessCard.email}
 END:VCARD`;
   }

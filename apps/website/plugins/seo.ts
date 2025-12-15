@@ -14,7 +14,7 @@ export default defineNuxtPlugin((nuxtApp) => {
         description: params.description,
         ogImage: params.imageUrl || DEFAULT_IMAGE,
       });
-    },
+    }
   );
 });
 

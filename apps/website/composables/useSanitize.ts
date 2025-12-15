@@ -3,7 +3,7 @@ export const useSanitize = () => {
   const sanitizeHTML = (
     html: string,
     allowedTags: string[] = [],
-    allowedAttrs: string[] = [],
+    allowedAttrs: string[] = []
   ): string => {
     if (!html) return "";
 
@@ -17,7 +17,7 @@ export const useSanitize = () => {
       // Remover todos los scripts y eventos
       sanitized = sanitized.replace(
         /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
-        "",
+        ""
       );
       sanitized = sanitized.replace(/on\w+\s*=\s*["'][^"']*["']/gi, "");
       sanitized = sanitized.replace(/javascript:/gi, "");
@@ -30,7 +30,7 @@ export const useSanitize = () => {
       // Permitir solo etiquetas específicas
       const tagPattern = new RegExp(
         `<(?!/?(?:${allowedTags.join("|")})\\b)[^>]*>`,
-        "gi",
+        "gi"
       );
       sanitized = sanitized.replace(tagPattern, "");
 
@@ -87,7 +87,7 @@ export const useSanitize = () => {
         "blockquote",
         "a",
       ],
-      ["href", "target", "rel"],
+      ["href", "target", "rel"]
     );
   };
 

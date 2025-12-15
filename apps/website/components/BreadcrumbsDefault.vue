@@ -34,7 +34,7 @@ defineProps({
         (item) =>
           typeof item === "object" &&
           "label" in item &&
-          (!("to" in item) || typeof item.to === "string"),
+          (!("to" in item) || typeof item.to === "string")
       );
     },
   },
