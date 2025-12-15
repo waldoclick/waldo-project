@@ -162,7 +162,11 @@ export async function changePassword(data: {
       '/auth/change-password',
       data as unknown as Record<string, unknown>
     );
-  } catch {
+  } catch (error) {
+    // Preservar el mensaje de error original si está disponible
+    if (error instanceof Error) {
+      throw error;
+    }
     throw new Error('No se pudo cambiar la contraseña');
   }
 }

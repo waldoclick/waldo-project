@@ -1,6 +1,42 @@
 import { StrapiError, StrapiConfig } from './types';
 import { config } from '@/lib/config';
 
+// Función para traducir mensajes de error comunes al español
+function translateErrorMessage(message: string): string {
+  if (!message) return '';
+
+  const translations: Record<string, string> = {
+    'Your new password must be different than your current password':
+      'Tu nueva contraseña debe ser diferente a tu contraseña actual',
+    'Invalid identifier or password': 'Identificador o contraseña inválidos',
+    'Invalid credentials': 'Credenciales inválidas',
+    'User not found': 'Usuario no encontrado',
+    'Email already taken': 'El correo electrónico ya está en uso',
+    'Username already taken': 'El nombre de usuario ya está en uso',
+    'Password is too short': 'La contraseña es demasiado corta',
+    'Passwords do not match': 'Las contraseñas no coinciden',
+    'Current password is incorrect': 'La contraseña actual es incorrecta',
+    'Password confirmation does not match':
+      'La confirmación de contraseña no coincide',
+  };
+
+  // Buscar traducción exacta
+  if (translations[message]) {
+    return translations[message];
+  }
+
+  // Buscar traducción parcial (case insensitive)
+  const lowerMessage = message.toLowerCase();
+  for (const [key, value] of Object.entries(translations)) {
+    if (key.toLowerCase() === lowerMessage) {
+      return value;
+    }
+  }
+
+  // Si no hay traducción, devolver el mensaje original
+  return message;
+}
+
 // Configuración por defecto
 const defaultConfig: StrapiConfig = {
   baseURL: process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337',
@@ -75,8 +111,19 @@ class StrapiClient {
       ...(options.headers as Record<string, string>),
     };
 
-    // Solo agregar Authorization si hay token Y no es un endpoint de auth
-    if (token && !endpoint.includes('/auth/')) {
+    // Agregar Authorization si hay token
+    // Excluir solo endpoints públicos de auth que no requieren autenticación
+    const publicAuthEndpoints = [
+      '/auth/local',
+      '/auth/forgot-password',
+      '/auth/reset-password',
+      '/auth/local/register',
+    ];
+    const isPublicAuthEndpoint = publicAuthEndpoints.some((publicEndpoint) =>
+      endpoint.includes(publicEndpoint)
+    );
+
+    if (token && !isPublicAuthEndpoint) {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
@@ -86,10 +133,37 @@ class StrapiClient {
     });
 
     if (!response.ok) {
-      const errorData: StrapiError = await response.json();
-      throw new Error(
-        errorData.message || `HTTP error! status: ${response.status}`
-      );
+      let errorMessage = `Error HTTP! estado: ${response.status}`;
+      let errorData: StrapiError | any = null;
+      try {
+        const jsonResponse = await response.json();
+        errorData = jsonResponse;
+
+        // Strapi puede devolver el error en diferentes estructuras:
+        // 1. { error: { message: "...", status: 400, name: "..." } }
+        // 2. { message: "...", status: 400, name: "..." }
+        // 3. { data: null, error: { message: "...", status: 400 } }
+
+        let rawMessage = '';
+        if (jsonResponse.error) {
+          rawMessage = jsonResponse.error.message || '';
+        } else if (jsonResponse.message) {
+          rawMessage = jsonResponse.message;
+        } else if (jsonResponse.data?.error?.message) {
+          rawMessage = jsonResponse.data.error.message;
+        }
+
+        // Traducir mensajes comunes de error al español
+        errorMessage = translateErrorMessage(rawMessage) || errorMessage;
+      } catch {
+        // Si no se puede parsear el JSON, usar el mensaje por defecto
+      }
+      const error = new Error(errorMessage);
+      (error as any).status = response.status;
+      if (errorData) {
+        (error as any).errorData = errorData;
+      }
+      throw error;
     }
 
     return response.json();

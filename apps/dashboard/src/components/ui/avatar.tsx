@@ -17,7 +17,11 @@ export function Avatar({ name, size = 'md', className = '' }: AvatarProps) {
 
   return (
     <div
-      className={`${sizeClasses[size]} bg-gray-200 rounded-full flex items-center justify-center ${className}`}
+      className={`${sizeClasses[size]} flex items-center justify-center rounded-full ${className}`}
+      style={{
+        backgroundColor: '#ffd699',
+        border: '2px solid #313338',
+      }}
     >
       <span className="text-gray-700 font-medium">{initial}</span>
     </div>

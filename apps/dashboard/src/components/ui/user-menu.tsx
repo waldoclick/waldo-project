@@ -5,7 +5,15 @@ import Link from 'next/link';
 import { useUserStore } from '@/stores/users';
 import { Button } from '@/components/ui/button';
 import { Avatar } from '@/components/ui/avatar';
-import { LogOut, User, Settings, ChevronDown, Mail } from 'lucide-react';
+import {
+  LogOut,
+  User,
+  Settings,
+  ChevronDown,
+  Mail,
+  Edit,
+  Lock,
+} from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -68,11 +76,11 @@ export function UserMenu() {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
           <DropdownMenuLabel className="font-normal px-2 py-1.5">
-            <div className="flex items-center space-x-2">
-              <Mail className="h-4 w-4 text-gray-500" />
-              <p className="text-sm leading-none text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <Mail className="h-4 w-4 text-gray-500 shrink-0" />
+              <span className="text-sm leading-none text-muted-foreground">
                 {user?.email || 'admin@waldo.com'}
-              </p>
+              </span>
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
@@ -80,6 +88,18 @@ export function UserMenu() {
             <Link href="/profile" className="flex items-center">
               <User className="mr-2 h-4 w-4" />
               <span>Mi Perfil</span>
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/profile/edit" className="flex items-center">
+              <Edit className="mr-2 h-4 w-4" />
+              <span>Editar Perfil</span>
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/profile/change-password" className="flex items-center">
+              <Lock className="mr-2 h-4 w-4" />
+              <span>Cambiar Contraseña</span>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>

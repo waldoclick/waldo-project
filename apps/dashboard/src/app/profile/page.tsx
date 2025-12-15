@@ -1,13 +1,27 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { User, Calendar, Shield, CheckCircle, XCircle } from 'lucide-react';
+import {
+  User,
+  Calendar,
+  Shield,
+  CheckCircle,
+  XCircle,
+  Edit,
+  Lock,
+} from 'lucide-react';
 import { useUserStore } from '@/stores/users';
 import { StrapiUser } from '@/lib/strapi';
+import { InfoField } from '@/components/ui/info-field';
+import { useFormatDate } from '@/hooks/useFormatDate';
 
 export default function ProfilePage() {
+  const router = useRouter();
   const { user } = useUserStore();
+  const { formatDate } = useFormatDate();
 
   // Si no hay usuario, mostrar mensaje
   if (!user) {
@@ -30,16 +44,6 @@ export default function ProfilePage() {
     );
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-CL', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
-
   const getStatusBadge = (user: StrapiUser) => {
     if (user.blocked) {
       return <Badge variant="destructive">Bloqueado</Badge>;
@@ -58,6 +62,19 @@ export default function ProfilePage() {
             <h1 className="text-3xl font-bold text-gray-900">Mi Perfil</h1>
             <p className="text-gray-600 mt-2">Información de tu cuenta</p>
           </div>
+          <div className="flex gap-2">
+            <Button onClick={() => router.push('/profile/edit')}>
+              <Edit className="h-4 w-4 mr-2" />
+              Editar
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => router.push('/profile/change-password')}
+            >
+              <Lock className="h-4 w-4 mr-2" />
+              Cambiar Contraseña
+            </Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -73,30 +90,18 @@ export default function ProfilePage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Nombre de Usuario
-                    </label>
-                    <p className="text-lg font-semibold">{user.username}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Email
-                    </label>
-                    <p className="text-lg font-semibold">{user.email}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      ID de Usuario
-                    </label>
-                    <p className="font-mono text-sm">{user.id}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">
-                      Proveedor
-                    </label>
-                    <p>{user.provider}</p>
-                  </div>
+                  <InfoField label="Nombre de Usuario" value={user.username} />
+                  <InfoField label="Email" value={user.email} type="email" />
+                  <InfoField label="ID de Usuario" value={user.id} />
+                  <InfoField label="Proveedor" value={user.provider} />
+                  <InfoField
+                    label="Confirmado"
+                    value={user.confirmed ? 'Sí' : 'No'}
+                  />
+                  <InfoField
+                    label="Bloqueado"
+                    value={user.blocked ? 'Sí' : 'No'}
+                  />
                 </div>
               </CardContent>
             </Card>
@@ -112,24 +117,12 @@ export default function ProfilePage() {
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-sm font-medium text-gray-500">
-                        Rol
-                      </label>
-                      <p className="font-medium">{user.role.name}</p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-gray-500">
-                        Descripción
-                      </label>
-                      <p>{user.role.description}</p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-gray-500">
-                        Tipo
-                      </label>
-                      <p>{user.role.type}</p>
-                    </div>
+                    <InfoField label="Rol" value={user.role.name} />
+                    <InfoField
+                      label="Descripción"
+                      value={user.role.description}
+                    />
+                    <InfoField label="Tipo" value={user.role.type} />
                   </div>
                 </CardContent>
               </Card>
@@ -138,49 +131,6 @@ export default function ProfilePage() {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Estado del usuario */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Estado de la Cuenta</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Estado
-                  </label>
-                  <div className="mt-1">{getStatusBadge(user)}</div>
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  {user.confirmed ? (
-                    <CheckCircle className="h-4 w-4 text-green-500" />
-                  ) : (
-                    <XCircle className="h-4 w-4 text-red-500" />
-                  )}
-                  <div>
-                    <p className="font-medium">Confirmado</p>
-                    <p className="text-sm text-gray-600">
-                      {user.confirmed ? 'Sí' : 'No'}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  {user.blocked ? (
-                    <XCircle className="h-4 w-4 text-red-500" />
-                  ) : (
-                    <CheckCircle className="h-4 w-4 text-green-500" />
-                  )}
-                  <div>
-                    <p className="font-medium">Bloqueado</p>
-                    <p className="text-sm text-gray-600">
-                      {user.blocked ? 'Sí' : 'No'}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
             {/* Fechas */}
             <Card>
               <CardHeader>
@@ -189,19 +139,12 @@ export default function ProfilePage() {
                   Fechas
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2">
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Creado
-                  </label>
-                  <p className="text-sm">{formatDate(user.createdAt)}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">
-                    Actualizado
-                  </label>
-                  <p className="text-sm">{formatDate(user.updatedAt)}</p>
-                </div>
+              <CardContent className="space-y-4">
+                <InfoField label="Creado" value={formatDate(user.createdAt)} />
+                <InfoField
+                  label="Actualizado"
+                  value={formatDate(user.updatedAt)}
+                />
               </CardContent>
             </Card>
           </div>
