@@ -75,14 +75,12 @@ export function UserMenu() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuLabel className="font-normal px-2 py-1.5">
-            <div className="flex items-center gap-2">
-              <Mail className="h-4 w-4 text-gray-500 shrink-0" />
-              <span className="text-sm leading-none text-muted-foreground">
-                {user?.email || 'admin@waldo.com'}
-              </span>
-            </div>
-          </DropdownMenuLabel>
+          <div className="relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none">
+            <Mail className="h-4 w-4 text-gray-500 mr-2 shrink-0" />
+            <span className="text-sm text-muted-foreground">
+              {user?.email || 'admin@waldo.com'}
+            </span>
+          </div>
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
             <Link href="/profile" className="flex items-center">
