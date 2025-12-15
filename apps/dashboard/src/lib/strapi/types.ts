@@ -82,6 +82,7 @@ export interface StrapiAd {
   rejected: boolean;
   reason_for_rejection?: string;
   currency: 'CLP' | 'USD';
+  status?: 'active' | 'rejected' | 'pending' | 'archived' | 'unknown';
   duration_days: number;
   remaining_days: number;
   details?: Record<string, unknown>;

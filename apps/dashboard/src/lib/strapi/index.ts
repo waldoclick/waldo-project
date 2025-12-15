@@ -36,7 +36,14 @@ export {
 } from './ads';
 
 // Exportar funciones de usuarios
-export { getUsers, getUser, createUser, updateUser, deleteUser } from './users';
+export {
+  getUsers,
+  getUser,
+  getUserUsername,
+  createUser,
+  updateUser,
+  deleteUser,
+} from './users';
 
 // Exportar funciones de órdenes
 export {

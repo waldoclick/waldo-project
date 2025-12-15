@@ -87,8 +87,9 @@ export async function getUser(id: number): Promise<{ data: StrapiUser }> {
   // Filtrar por ID
   searchParams.append('filters[id][$eq]', id.toString());
 
-  // Popular toda la data del usuario
-  searchParams.append('populate', '*');
+  // Solo popular los campos necesarios para la información del usuario
+  // commune con region (para mostrar comuna y región)
+  searchParams.append('populate[commune][populate][region]', 'true');
 
   const queryString = searchParams.toString();
   const endpoint = `/users${queryString ? `?${queryString}` : ''}`;
@@ -125,4 +126,20 @@ export async function updateUser(
 // Eliminar un usuario
 export async function deleteUser(id: number): Promise<void> {
   return strapiClient.delete<void>(`/users/${id}`);
+}
+
+// Obtener solo el username de un usuario (más ligero)
+export async function getUserUsername(id: number): Promise<string> {
+  const searchParams = new URLSearchParams();
+  searchParams.append('filters[id][$eq]', id.toString());
+  // No popular nada, solo traer el campo username
+  const queryString = searchParams.toString();
+  const endpoint = `/users${queryString ? `?${queryString}` : ''}`;
+  const response = await strapiClient.get<StrapiUser[]>(endpoint);
+
+  if (response && response.length > 0) {
+    return response[0].username || `Usuario ${id}`;
+  } else {
+    throw new Error('Usuario no encontrado');
+  }
 }

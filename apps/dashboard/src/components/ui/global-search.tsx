@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, ShoppingCart, FileText, User, X } from 'lucide-react';
+import { Search, ShoppingCart, FileText, Users, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { getOrders } from '@/lib/strapi/orders';
@@ -123,20 +123,20 @@ export function GlobalSearch() {
     switch (type) {
       case 'order':
         return (
-          <div className="w-8 h-8 rounded-sm flex items-center justify-center bg-sky-100/50">
+          <div className="w-8 h-8 rounded-sm flex items-center justify-center bg-sky-500/20">
             <ShoppingCart className="h-4 w-4 text-sky-500" />
           </div>
         );
       case 'ad':
         return (
-          <div className="w-8 h-8 rounded-sm flex items-center justify-center bg-rose-100/50">
+          <div className="w-8 h-8 rounded-sm flex items-center justify-center bg-rose-500/20">
             <FileText className="h-4 w-4 text-rose-500" />
           </div>
         );
       case 'user':
         return (
-          <div className="w-8 h-8 rounded-sm flex items-center justify-center bg-violet-100/50">
-            <User className="h-4 w-4 text-violet-500" />
+          <div className="w-8 h-8 rounded-sm flex items-center justify-center bg-violet-500/20">
+            <Users className="h-4 w-4 text-violet-500" />
           </div>
         );
     }
