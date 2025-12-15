@@ -170,7 +170,7 @@
               name="commune"
               class="form-control"
             >
-              <!-- <option value="">Seleccione una comuna</option> -->
+              <option value="">Seleccione una comuna</option>
               <option
                 v-for="item in filteredCommunes"
                 :key="item.id"
@@ -354,7 +354,7 @@ const selectedRegionId = ref(null);
 
 const filteredCommunes = computed(() => {
   return listCommunes.value.filter(
-    (commune) => commune.region.id === selectedRegionId.value
+    (commune) => commune.region.id === selectedRegionId.value,
   );
 });
 
@@ -366,7 +366,7 @@ const selectedBusinessRegionId = ref(null);
 
 const filteredBusinessCommunes = computed(() => {
   return listCommunes.value.filter(
-    (commune) => commune.region.id === selectedBusinessRegionId.value
+    (commune) => commune.region.id === selectedBusinessRegionId.value,
   );
 });
 
@@ -433,7 +433,7 @@ watch(
   () => form.value.rut,
   (newRut) => {
     form.value.rut = formatRut(newRut);
-  }
+  },
 );
 
 // Watch para formatear el RUT de empresa al ir ingresándolo
@@ -441,7 +441,7 @@ watch(
   () => form.value.business_rut,
   (newRut) => {
     form.value.business_rut = formatRut(newRut);
-  }
+  },
 );
 
 const schema = yup.object({
@@ -450,20 +450,20 @@ const schema = yup.object({
     .required("El Nombre es requerido")
     .max(25, "El Nombre no puede tener más de 25 caracteres")
     .test("is-valid-name", "Nombre no válido", (value) =>
-      isValidName(value || "")
+      isValidName(value || ""),
     ),
   lastname: yup
     .string()
     .required("El Apellido es requerido")
     .max(25, "El Apellido no puede tener más de 25 caracteres")
     .test("is-valid-name", "Apellido no válido", (value) =>
-      isValidName(value || "")
+      isValidName(value || ""),
     ),
   rut: yup
     .string()
     .required("Rut es requerido")
     .test("is-valid-rut", "RUT no es válido", (value) =>
-      validateRut(value || "")
+      validateRut(value || ""),
     )
     .test(
       "different-from-business-rut",
@@ -477,7 +477,7 @@ const schema = yup.object({
           return cleanRut !== cleanBusinessRut;
         }
         return true;
-      }
+      },
     ),
   phone: yup
     .string()
@@ -486,13 +486,13 @@ const schema = yup.object({
     .max(20, "El teléfono no puede exceder los 20 caracteres")
     .matches(
       /^[\d\s()+-]+$/,
-      "El teléfono solo puede contener números, +, espacios, paréntesis y guiones"
+      "El teléfono solo puede contener números, +, espacios, paréntesis y guiones",
     ),
   address: yup
     .string()
     .required("Dirección es requerida")
     .test("is-valid-address", "Dirección no válida", (value) =>
-      isValidAddress(value || "")
+      isValidAddress(value || ""),
     ),
   address_number: yup.string().required("Número de Dirección es requerido"),
   postal_code: yup
@@ -509,7 +509,7 @@ const schema = yup.object({
     .required("Fecha de Nacimiento es requerida")
     .max(
       new Date(new Date().setFullYear(new Date().getFullYear() - 18)),
-      "Debes ser mayor de 18 años"
+      "Debes ser mayor de 18 años",
     ),
   // Validaciones de empresa
   business_name: yup.string().when("is_company", {
@@ -519,7 +519,7 @@ const schema = yup.object({
         .required("Razón Social es requerida")
         .max(25, "Razón Social no puede tener más de 25 caracteres")
         .test("is-valid-name", "Razón Social no válida", (value) =>
-          isValidName(value || "")
+          isValidName(value || ""),
         ),
     otherwise: (schema) => schema.nullable().optional(),
   }),
@@ -529,7 +529,7 @@ const schema = yup.object({
       schema
         .required("Giro es requerido")
         .test("is-valid-name", "Giro no válido", (value) =>
-          isValidName(value || "")
+          isValidName(value || ""),
         ),
     otherwise: (schema) => schema.nullable().optional(),
   }),
@@ -539,7 +539,7 @@ const schema = yup.object({
       schema
         .required("Rut Empresa es requerido")
         .test("is-valid-rut", "RUT no es válido", (value) =>
-          validateRut(value || "")
+          validateRut(value || ""),
         )
         .test(
           "different-from-personal-rut",
@@ -553,7 +553,7 @@ const schema = yup.object({
               return cleanRut !== cleanBusinessRut;
             }
             return true;
-          }
+          },
         ),
     otherwise: (schema) => schema.nullable().optional(),
   }),
@@ -563,7 +563,7 @@ const schema = yup.object({
       schema
         .required("Dirección Empresa es requerida")
         .test("is-valid-address", "Dirección Empresa no válida", (value) =>
-          isValidAddress(value || "")
+          isValidAddress(value || ""),
         ),
     otherwise: (schema) => schema.nullable().optional(),
   }),

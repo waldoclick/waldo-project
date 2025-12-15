@@ -47,6 +47,6 @@ const props = withDefaults(
     description: "",
     image: "",
     textButton: "",
-  }
+  },
 );
 </script>

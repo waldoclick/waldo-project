@@ -63,11 +63,11 @@ onMounted(() => {
   if (heroElement.value && heroElement.value.style) {
     heroElement.value.style.setProperty(
       "--hero-bg-color",
-      bgColorWithTransparency(props.bgColor || "#f0f0f0")
+      bgColorWithTransparency(props.bgColor || "#f0f0f0"),
     );
     heroElement.value.style.setProperty(
       "--category-icon-bg-color",
-      props.color || "transparent"
+      props.color || "transparent",
     );
   }
 });
@@ -93,16 +93,16 @@ watch(
         if (heroElement.value) {
           heroElement.value.style.setProperty(
             "--hero-bg-color",
-            bgColorWithTransparency(newColor)
+            bgColorWithTransparency(newColor),
           );
           heroElement.value.style.setProperty(
             "--category-icon-bg-color",
-            newColor
+            newColor,
           );
         }
       });
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>

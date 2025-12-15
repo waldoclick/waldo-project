@@ -13,7 +13,7 @@ export const useGoogleOneTap = () => {
 
     if (!clientId) {
       console.warn(
-        "Google Client ID no configurado en las variables de entorno"
+        "Google Client ID no configurado en las variables de entorno",
       );
       return;
     }
@@ -54,17 +54,17 @@ export const useGoogleOneTap = () => {
             if (notification.isNotDisplayed()) {
               console.log(
                 "Google One Tap no se puede mostrar:",
-                notification.getNotDisplayedReason()
+                notification.getNotDisplayedReason(),
               );
             } else if (notification.isSkippedMoment()) {
               console.log(
                 "Google One Tap fue omitido:",
-                notification.getSkippedReason()
+                notification.getSkippedReason(),
               );
             } else if (notification.isDismissedMoment()) {
               console.log(
                 "Google One Tap fue descartado:",
-                notification.getDismissedReason()
+                notification.getDismissedReason(),
               );
             }
           });

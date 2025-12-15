@@ -131,7 +131,7 @@ const schema = yup.object({
     .min(5, "El título debe tener al menos 5 caracteres")
     .max(25, "El título debe tener como máximo 25 caracteres")
     .test("is-valid-title", "Título no válido", (value) =>
-      isValidText(value || "")
+      isValidText(value || ""),
     ),
   category: yup.string().required("La categoría es requerida"),
   price: yup
@@ -148,7 +148,7 @@ const schema = yup.object({
     .string()
     .required("La descripción es requerida")
     .test("is-valid-description", "Descripción no válida", (value) =>
-      isValidText(value || "")
+      isValidText(value || ""),
     ),
 });
 
@@ -215,7 +215,7 @@ watch(
     form.value.name = newAd.name || "";
     form.value.category = newAd.category || "";
     form.value.description = newAd.description || "";
-  }
+  },
 );
 
 const emit = defineEmits(["formSubmitted", "formBack"]);

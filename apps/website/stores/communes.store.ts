@@ -33,17 +33,17 @@ export const useCommunesStore = defineStore("communes", {
       (state) =>
       (regionId: number): Commune[] => {
         return state.communes.data.filter(
-          (commune) => commune.region.id === regionId
+          (commune) => commune.region.id === regionId,
         );
       },
 
     getCommuneInfo:
       (state) =>
       (
-        communeId: number
+        communeId: number,
       ): { communeName: string; regionName: string } | null => {
         const commune = state.communes.data.find(
-          (commune) => commune.id === communeId
+          (commune) => commune.id === communeId,
         );
         if (!commune) return null;
 

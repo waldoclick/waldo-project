@@ -75,9 +75,9 @@ const { data: categories } = await useAsyncData(
   async () => {
     const cats = await filterStore.loadFilterCategories();
     return (cats as (FilterCategory & { count?: number })[]).sort(
-      (a, b) => (b.count || 0) - (a.count || 0)
+      (a, b) => (b.count || 0) - (a.count || 0),
     );
-  }
+  },
 );
 
 const getTypeClass = computed(() => `search--${props.type || "default"}`);
@@ -86,7 +86,7 @@ watch(
   () => route.query.category,
   (newCategory: LocationQueryValue | LocationQueryValue[]) => {
     form.value.category = String(newCategory || "");
-  }
+  },
 );
 
 // Limpiar query si no está presente en la URL
@@ -96,7 +96,7 @@ watch(
     if (!newQuery) {
       form.value.query = "";
     }
-  }
+  },
 );
 
 const handleSubmit = () => {
@@ -110,7 +110,7 @@ const handleSubmit = () => {
     path: "/anuncios",
     query: {
       ...Object.fromEntries(
-        Object.entries(queries).filter(([_, v]) => v != null)
+        Object.entries(queries).filter(([_, v]) => v != null),
       ),
     },
   });

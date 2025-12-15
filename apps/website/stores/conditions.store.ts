@@ -27,7 +27,7 @@ export const useConditionsStore = defineStore("conditions", {
       (state) =>
       (slug: string): Condition | undefined => {
         return state.conditions.find(
-          (condition) => condition.attributes.slug === slug
+          (condition) => condition.attributes.slug === slug,
         );
       },
   },

@@ -58,7 +58,7 @@ export const useUserStore = defineStore("user", () => {
   const loadUserAds = async (
     filters = {},
     pagination = DEFAULT_PAGINATION,
-    sort = []
+    sort = [],
   ) => {
     try {
       const response = await strapi.find("ads/me", {
@@ -78,7 +78,7 @@ export const useUserStore = defineStore("user", () => {
   const loadUserOrders = async (
     filters = {},
     pagination = DEFAULT_ORDER_PAGINATION,
-    sort = []
+    sort = [],
   ) => {
     try {
       const response = await strapi.find("orders/me", {

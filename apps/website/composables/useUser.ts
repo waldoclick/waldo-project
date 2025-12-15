@@ -21,19 +21,19 @@ export const useUser = () => {
     const reservations = user.value?.ad_reservations || [];
 
     const usedReservations = reservations.filter(
-      (reservation: AdReservation) => reservation.ad !== null
+      (reservation: AdReservation) => reservation.ad !== null,
     );
 
     const unusedReservations = reservations.filter(
-      (reservation: AdReservation) => reservation.ad === null
+      (reservation: AdReservation) => reservation.ad === null,
     );
 
     const unusedFreeReservations = unusedReservations.filter(
-      (reservation: AdReservation) => Number(reservation.price) === 0
+      (reservation: AdReservation) => Number(reservation.price) === 0,
     );
 
     const unusedPaidReservations = unusedReservations.filter(
-      (reservation: AdReservation) => Number(reservation.price) > 0
+      (reservation: AdReservation) => Number(reservation.price) > 0,
     );
 
     return {
@@ -77,11 +77,11 @@ export const useUser = () => {
     const reservations = user.value?.ad_featured_reservations || [];
 
     const usedReservations = reservations.filter(
-      (reservation: AdFeaturedReservation) => reservation.ad !== null
+      (reservation: AdFeaturedReservation) => reservation.ad !== null,
     );
 
     const unusedReservations = reservations.filter(
-      (reservation: AdFeaturedReservation) => reservation.ad === null
+      (reservation: AdFeaturedReservation) => reservation.ad === null,
     );
 
     return {

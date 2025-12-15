@@ -69,10 +69,10 @@ const getAvatarUrl = computed(() => {
     size === "small"
       ? "small"
       : size === "medium"
-      ? "medium"
-      : size === "large"
-      ? "large"
-      : "thumbnail";
+        ? "medium"
+        : size === "large"
+          ? "large"
+          : "thumbnail";
 
   return transformUrl(avatar.formats[format]?.url || avatar.url);
 });

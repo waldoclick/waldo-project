@@ -68,7 +68,7 @@ onMounted(async () => {
 
 watch(
   () => props.color,
-  (newColor) => applyColor(newColor)
+  (newColor) => applyColor(newColor),
 );
 </script>
 

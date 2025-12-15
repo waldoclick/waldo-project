@@ -43,7 +43,7 @@ export default defineEventHandler(async (event) => {
     }
 
     const queryString = new URLSearchParams(
-      query as Record<string, string>
+      query as Record<string, string>,
     ).toString();
     const finalUrl = queryString ? `${targetUrl}?${queryString}` : targetUrl;
 

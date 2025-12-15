@@ -51,7 +51,7 @@ const adAnalytics = useAdAnalytics();
 onMounted(() => {
   adAnalytics.sendErrorEvent(
     "ad_creation_error",
-    "Ocurrió un problema al procesar tu solicitud"
+    "Ocurrió un problema al procesar tu solicitud",
   );
 });
 </script>

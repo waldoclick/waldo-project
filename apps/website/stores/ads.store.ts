@@ -27,7 +27,7 @@ export const useAdsStore = defineStore(
     const loadAds = async (
       filtersParams: Record<string, any> = {},
       paginationParams: { page: number; pageSize: number } = DEFAULT_PAGINATION,
-      sortParams: string[] = []
+      sortParams: string[] = [],
     ) => {
       loading.value = true;
       error.value = null;
@@ -147,5 +147,5 @@ export const useAdsStore = defineStore(
     persist: {
       storage: typeof window !== "undefined" ? localStorage : undefined,
     },
-  }
+  },
 );

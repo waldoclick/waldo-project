@@ -44,7 +44,7 @@ export const useFaqsStore = defineStore(
           // Ordenar por fecha de creación (más antigua primero)
           faqs.value = typedResponse.data.sort(
             (a, b) =>
-              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
           );
           lastFetchTimestamp.value = now;
         } catch (err) {
@@ -74,5 +74,5 @@ export const useFaqsStore = defineStore(
     persist: {
       storage: typeof window !== "undefined" ? localStorage : undefined,
     },
-  }
+  },
 );

@@ -98,5 +98,5 @@ export default withNuxt(
       "import/first": "off", // allow imports after code
       "no-empty": "off", // allow empty blocks
     },
-  }
+  },
 );

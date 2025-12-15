@@ -123,7 +123,7 @@ const schema = yup.object({
     .max(20, "Teléfono no puede exceder 20 caracteres")
     .matches(
       /^\+?[\d\s-()]+$/,
-      "El teléfono solo puede contener números, espacios, guiones, paréntesis y el signo +"
+      "El teléfono solo puede contener números, espacios, guiones, paréntesis y el signo +",
     ),
   message: yup.string().required("Mensaje es requerido"),
 });
@@ -214,7 +214,7 @@ const submitToStrapi = async (values: any, token: string) => {
     Swal.fire(
       "Error",
       "Hubo un problema al enviar el formulario. Por favor, inténtalo de nuevo.",
-      "error"
+      "error",
     );
   }
 };
@@ -232,7 +232,7 @@ const onSubmit = handleSubmit(async (values) => {
     Swal.fire(
       "Error",
       "Hubo un problema al enviar el formulario. Por favor, inténtalo de nuevo.",
-      "error"
+      "error",
     );
   }
 });

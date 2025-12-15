@@ -21,7 +21,7 @@ export const useValidation = () => {
     "malparido",
     "huevon",
     "cono",
-    "joder"
+    "joder",
   );
 
   const loremWords = [
@@ -154,7 +154,7 @@ export const useValidation = () => {
   // Devuelve true si el texto contiene alguna palabra de lorem ipsum
   const containsLoremWords = (text: string): boolean => {
     return loremWords.some((word) =>
-      new RegExp(`\\b${word}\\b`, "i").test(text)
+      new RegExp(`\\b${word}\\b`, "i").test(text),
     );
   };
 

@@ -122,7 +122,7 @@ const onSubmit = async (values: any) => {
     Swal.fire(
       "Error",
       "Hubo un error. Por favor, inténtalo de nuevo.",
-      "error"
+      "error",
     );
   } finally {
     loading.value = false;

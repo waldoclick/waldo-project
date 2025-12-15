@@ -60,7 +60,7 @@ const formattedQuestions = computed(() => {
   return props.questions.map((question) => ({
     ...question,
     text: sanitizeRich(
-      question.text.replace(/Waldo\.click®/g, "<strong>Waldo.click®</strong>")
+      question.text.replace(/Waldo\.click®/g, "<strong>Waldo.click®</strong>"),
     ),
   }));
 });

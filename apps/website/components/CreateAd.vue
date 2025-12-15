@@ -46,7 +46,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router"; // Importar useRouter y useRoute
 // Importa los componentes
 import FormCreateOne from "@/components/FormCreateOne.vue";
@@ -66,12 +66,18 @@ const router = useRouter(); // Inicializar useRouter
 const route = useRoute(); // Inicializar useRoute
 
 const meStore = useMeStore();
-const isProfileComplete = await meStore.isProfileComplete();
+const isProfileComplete = ref(false);
 
 const maxStep = 5;
 
 // Leer el parámetro step de la URL cuando se monte el componente
-onMounted(() => {
+onMounted(async () => {
+  // Cargar datos del usuario actualizados
+  await meStore.loadMe();
+  // Verificar si el perfil está completo
+  isProfileComplete.value = await meStore.isProfileComplete();
+
+  // Leer el parámetro step de la URL
   const stepFromUrl = Number.parseInt(route.query.step, 10);
   if (
     !Number.isNaN(stepFromUrl) &&

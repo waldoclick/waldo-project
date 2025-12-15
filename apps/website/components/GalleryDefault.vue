@@ -67,10 +67,10 @@ const visible = ref(false);
 
 const mainImage = computed(() => props.media[0] || null);
 const thumbnailImages = computed(() =>
-  Array.isArray(props.media) ? props.media.slice(1, 4) : []
+  Array.isArray(props.media) ? props.media.slice(1, 4) : [],
 );
 const hasMainImage = computed(
-  () => Array.isArray(props.media) && props.media.length > 0
+  () => Array.isArray(props.media) && props.media.length > 0,
 );
 const hasThumbnailImages = computed(() => thumbnailImages.value.length > 0);
 
@@ -93,11 +93,11 @@ const imgs = computed(() =>
         const originalUrl = image.formats.large?.url || image.url;
         return transformUrl(originalUrl);
       })
-    : []
+    : [],
 );
 
 const remainingImages = computed(() =>
-  props.media.length > 4 ? props.media.length - 4 : 0
+  props.media.length > 4 ? props.media.length - 4 : 0,
 );
 
 const isLastThumbnail = (index) => {

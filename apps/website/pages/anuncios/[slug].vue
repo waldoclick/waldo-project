@@ -109,7 +109,7 @@ const {
               currency: ad.priceData.convertedCurrency,
               minimumFractionDigits: 0,
               maximumFractionDigits: 0,
-            }
+            },
           ).format(ad.priceData.convertedPrice);
         }
       }
@@ -136,7 +136,7 @@ const {
     server: true,
     lazy: false,
     watch: [() => route.params.slug], // ✅ Observar cambios en el slug
-  }
+  },
 );
 
 // Determinar el mensaje de error apropiado
@@ -271,7 +271,7 @@ watch(
       $setStructuredData(structuredData);
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const {

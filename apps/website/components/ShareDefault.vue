@@ -6,7 +6,7 @@
     <a
       v-tooltip="'Compartir en Facebook'"
       :href="`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-        shareUrl
+        shareUrl,
       )}`"
       target="_blank"
       rel="noopener noreferrer"
@@ -16,7 +16,7 @@
     <a
       v-tooltip="'Compartir en X (Twitter)'"
       :href="`https://twitter.com/intent/tweet?url=${encodeURIComponent(
-        shareUrl
+        shareUrl,
       )}&text=${encodeURIComponent(shareTitle)}`"
       target="_blank"
       rel="noopener noreferrer"
@@ -26,7 +26,7 @@
     <a
       v-tooltip="'Compartir en WhatsApp'"
       :href="`https://wa.me/?text=${encodeURIComponent(
-        shareTitle + ' ' + shareUrl
+        shareTitle + ' ' + shareUrl,
       )}`"
       target="_blank"
       rel="noopener noreferrer"
@@ -36,7 +36,7 @@
     <a
       v-tooltip="'Compartir en LinkedIn'"
       :href="`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
-        shareUrl
+        shareUrl,
       )}`"
       target="_blank"
       rel="noopener noreferrer"

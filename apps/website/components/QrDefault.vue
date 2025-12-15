@@ -46,7 +46,7 @@ const props = withDefaults(
     margin: 0,
     level: "L",
     businessCard: undefined,
-  }
+  },
 );
 
 // Asegurarse de que size sea un número

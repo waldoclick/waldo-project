@@ -46,5 +46,5 @@ export const useRelatedStore = defineStore(
     persist: {
       storage: typeof window !== "undefined" ? localStorage : undefined,
     },
-  }
+  },
 );

@@ -62,7 +62,10 @@
       max-width: 800px;
       overflow: hidden;
       will-change: height, opacity;
-      transition: height 0.3s ease, opacity 0.2s ease, margin-top 0.3s ease;
+      transition:
+        height 0.3s ease,
+        opacity 0.2s ease,
+        margin-top 0.3s ease;
 
       &.v-collapse-content-end {
         padding-top: 20px;

@@ -175,7 +175,7 @@ export const useCategoriesStore = defineStore(
       loadCategoryById,
       clearError,
     };
-  }
+  },
   // {
   //   persist: {
   //     storage: typeof window !== "undefined" ? localStorage : undefined,

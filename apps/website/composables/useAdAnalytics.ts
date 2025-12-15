@@ -40,7 +40,7 @@ export const useAdAnalytics = () => {
   const pushEvent = (
     eventName: string,
     items: AnalyticsItem[],
-    extraData = {}
+    extraData = {},
   ) => {
     if (typeof window === "undefined") return;
 

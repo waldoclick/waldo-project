@@ -100,7 +100,7 @@ const { data: providers, pending: providersPending } = useLazyAsyncData(
       google: true,
       // facebook: false,
     }),
-  }
+  },
 );
 
 const title = "Accede y gestiona tus anuncios en waldo.click®";

@@ -35,7 +35,7 @@ export function InputSearch({
         {...props}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="pl-9 pr-9 rounded-sm"
+        className="pl-9 pr-9 rounded-sm hover:border-[#ffd699]/50 focus-visible:border-[#ffd699]/50 focus-visible:ring-[#ffd699]/30"
       />
       {value && (
         <Button

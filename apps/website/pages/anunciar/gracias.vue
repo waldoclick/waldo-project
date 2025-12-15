@@ -112,7 +112,7 @@ const { data, pending, error } = await useAsyncData(
   {
     server: true,
     lazy: false,
-  }
+  },
 );
 
 // Manejar errores y limpiar store cuando los datos estén disponibles

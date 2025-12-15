@@ -203,7 +203,7 @@ const schema = yup.object({
     .nullable()
     .max(20, "El fabricante no puede exceder los 20 caracteres")
     .test("is-valid-manufacturer", "Fabricante no válido", (value) =>
-      isValidText(value || "")
+      isValidText(value || ""),
     ),
   model: yup
     .string()
@@ -218,7 +218,7 @@ const schema = yup.object({
     .nullable()
     .max(
       new Date().getFullYear(),
-      `El año no puede ser mayor a ${new Date().getFullYear()}`
+      `El año no puede ser mayor a ${new Date().getFullYear()}`,
     )
     .test("len", "El año debe tener como máximo 4 dígitos", (value) => {
       if (value === null || value === undefined) return true;
@@ -266,7 +266,7 @@ const schema = yup.object({
       (value) => {
         if (value === null || value === undefined) return true;
         return String(value).length <= 4;
-      }
+      },
     ),
 });
 

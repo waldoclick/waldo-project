@@ -162,7 +162,7 @@ const schema = yup.object({
     .max(20, "El teléfono no puede exceder los 20 caracteres")
     .matches(
       /^[\d\s()+-]+$/,
-      "El teléfono solo puede contener números, +, espacios, paréntesis y guiones"
+      "El teléfono solo puede contener números, +, espacios, paréntesis y guiones",
     ),
   region: yup.number().nullable(),
   commune: yup.number().nullable(),
@@ -176,7 +176,7 @@ const schema = yup.object({
 const adStore = useAdStore();
 
 const selectedRegionId = ref(
-  adStore.ad.region || user.value?.region?.id || null
+  adStore.ad.region || user.value?.region?.id || null,
 );
 
 const form = ref({
@@ -200,7 +200,7 @@ const listCommunes = computed(() => communesStore.communes.data || []);
 const filteredCommunes = computed(() => {
   if (!selectedRegionId.value) return [];
   return listCommunes.value.filter(
-    (commune) => commune.region.id === selectedRegionId.value
+    (commune) => commune.region.id === selectedRegionId.value,
   );
 });
 

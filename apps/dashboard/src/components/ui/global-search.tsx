@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, ShoppingCart, FileText, User } from 'lucide-react';
+import { Search, ShoppingCart, FileText, User, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { getOrders } from '@/lib/strapi/orders';
 import { getAds } from '@/lib/strapi/ads';
 import { getUsers } from '@/lib/strapi/users';
@@ -141,6 +142,11 @@ export function GlobalSearch() {
     }
   };
 
+  const handleClear = () => {
+    setSearchQuery('');
+    setIsSearchOpen(false);
+  };
+
   return (
     <div ref={searchRef} className="relative flex-1 max-w-md">
       <div className="relative">
@@ -153,8 +159,20 @@ export function GlobalSearch() {
           onFocus={() => {
             if (searchResults.length > 0) setIsSearchOpen(true);
           }}
-          className="pl-9 pr-3 rounded-sm"
+          className="pl-9 pr-9 rounded-sm hover:border-[#ffd699]/50 focus-visible:border-[#ffd699]/50 focus-visible:ring-[#ffd699]/30"
         />
+        {searchQuery && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7"
+            onClick={handleClear}
+            aria-label="Limpiar búsqueda"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        )}
       </div>
 
       {/* Dropdown de resultados */}
@@ -172,9 +190,7 @@ export function GlobalSearch() {
                     onClick={() => handleResultClick(result.url)}
                     className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center space-x-3 transition-colors"
                   >
-                    <div className="flex-shrink-0">
-                      {getResultIcon(result.type)}
-                    </div>
+                    <div className="shrink-0">{getResultIcon(result.type)}</div>
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium text-gray-900 truncate">
                         {result.title}

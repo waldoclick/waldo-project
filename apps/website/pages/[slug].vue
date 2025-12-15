@@ -30,7 +30,7 @@ const route = useRoute();
 
 // Crear una ref para la página actual
 const currentPage = ref(
-  Number.parseInt(route.query.page?.toString() || "1", 10)
+  Number.parseInt(route.query.page?.toString() || "1", 10),
 );
 
 const {
@@ -94,7 +94,7 @@ const {
     watch: [() => route.params.slug, currentPage],
     server: true,
     lazy: false,
-  }
+  },
 );
 
 // Observar los datos para cambios dinámicos (solo en cliente)
@@ -158,6 +158,6 @@ watch(
     if (newPage) {
       currentPage.value = Number.parseInt(newPage.toString(), 10);
     }
-  }
+  },
 );
 </script>

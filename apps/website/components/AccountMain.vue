@@ -90,6 +90,6 @@ const { sanitizeText } = useSanitize();
 
 // Computed property para el texto de reservas
 const adReservationsText = computed(() =>
-  sanitizeText(getAdReservationsText())
+  sanitizeText(getAdReservationsText()),
 );
 </script>

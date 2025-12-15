@@ -97,7 +97,7 @@ const {
       await adsStore.loadAds(
         { active: { $eq: true }, remaining_days: { $gt: 0 } },
         { page: 1, pageSize: 8 },
-        ["createdAt:desc"]
+        ["createdAt:desc"],
       );
       return {
         ads: adsStore.ads,
@@ -114,7 +114,7 @@ const {
   {
     server: true,
     lazy: false,
-  }
+  },
 );
 
 // Define SEO

@@ -91,7 +91,7 @@ onMounted(async () => {
       item_category: "Destacado",
       price: 0,
       currency: "CLP",
-    }
+    },
   );
 
   // Enviar el evento view_item
@@ -129,7 +129,7 @@ watch(
     // Enviar evento
     adAnalytics.addToCartPack(analyticsData);
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 // Observar cambios en el featured seleccionado
@@ -162,7 +162,7 @@ watch(
     // Enviar evento
     adAnalytics.addToCartFeatured(analyticsData);
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 // Observar cambios en el step
@@ -179,7 +179,7 @@ watch(
 
     adAnalytics.stepView(newStep, stepNames[newStep]);
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 $setSEO({

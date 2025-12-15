@@ -38,7 +38,7 @@ const computedLinkClass = computed(() => {
         ? cls
         : Object.keys(cls)
             .filter((key) => cls[key])
-            .join(" ")
+            .join(" "),
     )
     .join(" ");
 });
