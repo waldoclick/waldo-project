@@ -48,25 +48,30 @@ export default function NewCategoryPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="space-y-6">
-        <Breadcrumbs
-          items={[
-            { label: 'Waldo', href: '/' },
-            { label: 'Categorías', href: '/categories' },
-            { label: 'Nueva Categoría' },
-          ]}
-        />
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Tag className="h-7 w-7" style={{ color: '#313338' }} />
-            <h1 className="text-[28px] font-bold" style={{ color: '#313338' }}>
-              Nueva Categoría
-            </h1>
+        <div className="pt-4 pb-4 space-y-2">
+          <Breadcrumbs
+            items={[
+              { label: 'Waldo', href: '/' },
+              { label: 'Categorías', href: '/categories' },
+              { label: 'Nueva Categoría' },
+            ]}
+          />
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Tag className="h-7 w-7" style={{ color: '#313338' }} />
+              <h1
+                className="text-[28px] font-bold"
+                style={{ color: '#313338' }}
+              >
+                Nueva Categoría
+              </h1>
+            </div>
+            <Button variant="ghost" onClick={() => router.back()}>
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Volver
+            </Button>
           </div>
-          <Button variant="ghost" onClick={() => router.back()}>
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Volver
-          </Button>
         </div>
 
         {/* Formulario */}

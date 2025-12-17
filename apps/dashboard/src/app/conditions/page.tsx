@@ -55,21 +55,29 @@ export default function ConditionsPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="space-y-6">
-        <Breadcrumbs
-          items={[{ label: 'Waldo', href: '/' }, { label: 'Condiciones' }]}
-        />
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <FileCheck className="h-7 w-7" style={{ color: '#313338' }} />
-            <h1 className="text-[28px] font-bold" style={{ color: '#313338' }}>
-              Condiciones
-            </h1>
+        <div className="pt-4 pb-4 space-y-2">
+          <Breadcrumbs
+            items={[{ label: 'Waldo', href: '/' }, { label: 'Condiciones' }]}
+          />
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <FileCheck className="h-7 w-7" style={{ color: '#313338' }} />
+              <h1
+                className="text-[28px] font-bold"
+                style={{ color: '#313338' }}
+              >
+                Condiciones
+              </h1>
+            </div>
+            <Button
+              size="header"
+              onClick={() => router.push('/conditions/new')}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Nueva Condición
+            </Button>
           </div>
-          <Button size="header" onClick={() => router.push('/conditions/new')}>
-            <Plus className="h-4 w-4 mr-2" />
-            Nueva Condición
-          </Button>
         </div>
 
         {/* Tabla */}

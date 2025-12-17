@@ -94,23 +94,28 @@ export default function UsersPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="space-y-6">
-        <Breadcrumbs
-          items={[{ label: 'Waldo', href: '/' }, { label: 'Usuarios' }]}
-        />
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <User className="h-7 w-7" style={{ color: '#313338' }} />
-            <h1 className="text-[28px] font-bold" style={{ color: '#313338' }}>
-              Usuarios
-            </h1>
-            <p className="text-gray-600 mt-2">
-              Gestiona los usuarios del sistema
-            </p>
+        <div className="pt-4 pb-4 space-y-2">
+          <Breadcrumbs
+            items={[{ label: 'Waldo', href: '/' }, { label: 'Usuarios' }]}
+          />
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <User className="h-7 w-7" style={{ color: '#313338' }} />
+              <h1
+                className="text-[28px] font-bold"
+                style={{ color: '#313338' }}
+              >
+                Usuarios
+              </h1>
+              <p className="text-gray-600 mt-2">
+                Gestiona los usuarios del sistema
+              </p>
+            </div>
+            <Button className="hidden">
+              <Plus className="h-4 w-4 mr-2" />
+              Nuevo Usuario
+            </Button>
           </div>
-          <Button className="hidden">
-            <Plus className="h-4 w-4 mr-2" />
-            Nuevo Usuario
-          </Button>
         </div>
 
         <Card className="shadow-sm">

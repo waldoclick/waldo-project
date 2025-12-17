@@ -332,77 +332,79 @@ export default function AdDetailPage() {
         onConfirm={handleReject}
       />
 
-      <Breadcrumbs items={breadcrumbItems} />
+      <div className="pt-4 pb-4 space-y-2">
+        <Breadcrumbs items={breadcrumbItems} />
 
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <CheckCircle className="h-7 w-7" style={{ color: '#313338' }} />
-          <h1 className="text-[28px] font-bold" style={{ color: '#313338' }}>
-            {ad.name}
-          </h1>
-          <p className="text-gray-600">Detalles del anuncio</p>
-        </div>
-        <div className="flex space-x-2">
-          {!ad.active &&
-            ad.remaining_days > 0 &&
-            ad.remaining_days === ad.duration_days &&
-            !ad.rejected && (
-              <>
-                <Button
-                  variant="brand"
-                  size="brand"
-                  onClick={openApproveDialog}
-                  disabled={ad.needs_payment}
-                  title={
-                    ad.needs_payment
-                      ? 'No se puede aprobar: pendiente de pago'
-                      : ''
-                  }
-                >
-                  <CheckCircle className="h-4 w-4 mr-2" />
-                  Aprobar
-                </Button>
-                <Button
-                  variant="brandSecondary"
-                  size="brand"
-                  onClick={openRejectDialog}
-                  disabled={ad.needs_payment}
-                  title={
-                    ad.needs_payment
-                      ? 'No se puede rechazar: pendiente de pago'
-                      : ''
-                  }
-                >
-                  <XCircle className="h-4 w-4 mr-2" />
-                  Rechazar
-                </Button>
-              </>
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <CheckCircle className="h-7 w-7" style={{ color: '#313338' }} />
+            <h1 className="text-[28px] font-bold" style={{ color: '#313338' }}>
+              {ad.name}
+            </h1>
+            <p className="text-gray-600">Detalles del anuncio</p>
+          </div>
+          <div className="flex space-x-2">
+            {!ad.active &&
+              ad.remaining_days > 0 &&
+              ad.remaining_days === ad.duration_days &&
+              !ad.rejected && (
+                <>
+                  <Button
+                    variant="brand"
+                    size="brand"
+                    onClick={openApproveDialog}
+                    disabled={ad.needs_payment}
+                    title={
+                      ad.needs_payment
+                        ? 'No se puede aprobar: pendiente de pago'
+                        : ''
+                    }
+                  >
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                    Aprobar
+                  </Button>
+                  <Button
+                    variant="brandSecondary"
+                    size="brand"
+                    onClick={openRejectDialog}
+                    disabled={ad.needs_payment}
+                    title={
+                      ad.needs_payment
+                        ? 'No se puede rechazar: pendiente de pago'
+                        : ''
+                    }
+                  >
+                    <XCircle className="h-4 w-4 mr-2" />
+                    Rechazar
+                  </Button>
+                </>
+              )}
+            {ad.active && ad.remaining_days > 0 && (
+              <Button
+                variant="brandOutline"
+                size="brand"
+                onClick={() => window.open(getPublicAdUrl(ad), '_blank')}
+              >
+                <ExternalLink className="h-4 w-4 mr-2" />
+                Ver Anuncio
+              </Button>
             )}
-          {ad.active && ad.remaining_days > 0 && (
+            <JsonViewerButton
+              data={ad}
+              title={`JSON del Anuncio: ${ad.name}`}
+              buttonText="Ver JSON"
+              buttonVariant="outline"
+            />
             <Button
-              variant="brandOutline"
+              variant="brandGhost"
               size="brand"
-              onClick={() => window.open(getPublicAdUrl(ad), '_blank')}
+              onClick={() => router.back()}
             >
-              <ExternalLink className="h-4 w-4 mr-2" />
-              Ver Anuncio
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Volver
             </Button>
-          )}
-          <JsonViewerButton
-            data={ad}
-            title={`JSON del Anuncio: ${ad.name}`}
-            buttonText="Ver JSON"
-            buttonVariant="outline"
-          />
-          <Button
-            variant="brandGhost"
-            size="brand"
-            onClick={() => router.back()}
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Volver
-          </Button>
+          </div>
         </div>
       </div>
 

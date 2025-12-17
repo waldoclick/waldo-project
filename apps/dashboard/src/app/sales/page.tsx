@@ -83,15 +83,20 @@ export default function SalesPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="space-y-6">
-        <Breadcrumbs
-          items={[{ label: 'Waldo', href: '/' }, { label: 'Órdenes' }]}
-        />
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <ShoppingCart className="h-7 w-7" style={{ color: '#313338' }} />
-            <h1 className="text-[28px] font-bold" style={{ color: '#313338' }}>
-              Órdenes
-            </h1>
+        <div className="pt-4 pb-4 space-y-2">
+          <Breadcrumbs
+            items={[{ label: 'Waldo', href: '/' }, { label: 'Órdenes' }]}
+          />
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <ShoppingCart className="h-7 w-7" style={{ color: '#313338' }} />
+              <h1
+                className="text-[28px] font-bold"
+                style={{ color: '#313338' }}
+              >
+                Órdenes
+              </h1>
+            </div>
           </div>
         </div>
 
