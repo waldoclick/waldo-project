@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 import { InputSearch } from '@/components/ui/input-search';
 import {
   Table,
@@ -82,6 +83,9 @@ export default function SalesPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="space-y-6">
+        <Breadcrumbs
+          items={[{ label: 'Waldo', href: '/' }, { label: 'Órdenes' }]}
+        />
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
             <ShoppingCart className="h-7 w-7" style={{ color: '#313338' }} />

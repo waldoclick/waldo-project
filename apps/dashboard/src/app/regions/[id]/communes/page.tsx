@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -108,8 +109,16 @@ export default function RegionCommunesPage() {
     );
   }
 
+  const breadcrumbsItems = [
+    { label: 'Waldo', href: '/' },
+    { label: 'Regiones', href: '/regions' },
+    { label: region.name, href: `/regions/${region.id}` },
+    { label: 'Comunas' },
+  ];
+
   return (
     <div className="space-y-6">
+      <Breadcrumbs items={breadcrumbsItems} />
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">

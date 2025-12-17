@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Save, X, Lock, Info, Eye, EyeOff } from 'lucide-react';
@@ -118,6 +119,13 @@ export default function ChangePasswordPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="space-y-6">
+        <Breadcrumbs
+          items={[
+            { label: 'Waldo', href: '/' },
+            { label: 'Perfil', href: '/profile' },
+            { label: 'Cambiar Contraseña' },
+          ]}
+        />
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">

@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 import { InputSearch } from '@/components/ui/input-search';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import {
@@ -46,6 +47,9 @@ export default function CategoriesPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="space-y-6">
+        <Breadcrumbs
+          items={[{ label: 'Waldo', href: '/' }, { label: 'Categorías' }]}
+        />
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">

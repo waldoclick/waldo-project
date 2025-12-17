@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 import { CustomTag } from '@/components/ui/custom-tag';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -290,6 +291,15 @@ export default function AdDetailPage() {
   // Cast user to extended type for additional fields
   const extendedUser = ad.user as ExtendedUser;
 
+  const breadcrumbItems = [
+    { label: 'Waldo', href: '/' },
+    { label: 'Anuncios', href: '/ads/pending' },
+    ...(ad.category?.name
+      ? [{ label: ad.category.name, href: '/ads/pending' }]
+      : []),
+    { label: ad.name },
+  ];
+
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       {/* Notification banner */}
@@ -322,6 +332,8 @@ export default function AdDetailPage() {
         onConfirm={handleReject}
       />
 
+      <Breadcrumbs items={breadcrumbItems} />
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -338,8 +350,8 @@ export default function AdDetailPage() {
             !ad.rejected && (
               <>
                 <Button
-                  variant={'brand' as any}
-                  size={'brand' as any}
+                  variant="brand"
+                  size="brand"
                   onClick={openApproveDialog}
                   disabled={ad.needs_payment}
                   title={
@@ -352,8 +364,8 @@ export default function AdDetailPage() {
                   Aprobar
                 </Button>
                 <Button
-                  variant={'brandSecondary' as any}
-                  size={'brand' as any}
+                  variant="brandSecondary"
+                  size="brand"
                   onClick={openRejectDialog}
                   disabled={ad.needs_payment}
                   title={
@@ -369,8 +381,8 @@ export default function AdDetailPage() {
             )}
           {ad.active && ad.remaining_days > 0 && (
             <Button
-              variant={'brandOutline' as any}
-              size={'brand' as any}
+              variant="brandOutline"
+              size="brand"
               onClick={() => window.open(getPublicAdUrl(ad), '_blank')}
             >
               <ExternalLink className="h-4 w-4 mr-2" />
@@ -384,8 +396,8 @@ export default function AdDetailPage() {
             buttonVariant="outline"
           />
           <Button
-            variant={'brandGhost' as any}
-            size={'brand' as any}
+            variant="brandGhost"
+            size="brand"
             onClick={() => router.back()}
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -494,8 +506,8 @@ export default function AdDetailPage() {
                     Información del Usuario
                   </span>
                   <Button
-                    variant={'brandOutline' as any}
-                    size={'brand' as any}
+                    variant="brandOutline"
+                    size="brand"
                     onClick={() => router.push(`/users/${extendedUser.id}`)}
                     className="flex items-center"
                   >
@@ -614,8 +626,8 @@ export default function AdDetailPage() {
                 </span>
                 {order && (
                   <Button
-                    variant={'brandOutline' as any}
-                    size={'brand' as any}
+                    variant="brandOutline"
+                    size="brand"
                     onClick={() => router.push(`/sales/${order.id}`)}
                     className="flex items-center"
                   >

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -57,6 +58,13 @@ export default function NewFaqPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="space-y-6">
+        <Breadcrumbs
+          items={[
+            { label: 'Waldo', href: '/' },
+            { label: 'FAQ', href: '/faqs' },
+            { label: 'Nueva FAQ' },
+          ]}
+        />
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">

@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter, usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { JsonViewerButton } from '@/components/ui/json-viewer-button';
@@ -106,6 +107,13 @@ export default function UserDetailPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="space-y-6">
+        <Breadcrumbs
+          items={[
+            { label: 'Waldo', href: '/' },
+            { label: 'Usuarios', href: '/users' },
+            { label: user.username },
+          ]}
+        />
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
