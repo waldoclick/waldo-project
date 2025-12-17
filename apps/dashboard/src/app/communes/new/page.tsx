@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Save, X, Building } from 'lucide-react';
+import { Save, X, Building } from 'lucide-react';
 import { createCommune, getRegions, StrapiRegion } from '@/lib/strapi';
 
 export default function NewCommunePage() {
@@ -86,10 +86,6 @@ export default function NewCommunePage() {
               Nueva Comuna
             </h1>
           </div>
-          <Button variant="ghost" onClick={() => router.back()}>
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Volver
-          </Button>
         </div>
 
         <Card>

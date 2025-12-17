@@ -15,7 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { ArrowLeft, Edit, MapPin, Info, Eye } from 'lucide-react';
+import { Edit, MapPin, Info, Eye } from 'lucide-react';
 import { getRegion } from '@/lib/strapi/regions';
 import { StrapiRegion } from '@/lib/strapi/types';
 import { useFormatDate } from '@/hooks/useFormatDate';
@@ -87,10 +87,6 @@ export default function RegionDetailPage() {
               </h1>
             </div>
             <div className="flex space-x-2">
-              <Button variant="ghost" onClick={() => router.back()}>
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Volver
-              </Button>
               <Button onClick={() => router.push(`/regions/${region.id}/edit`)}>
                 <Edit className="h-4 w-4 mr-2" />
                 Editar

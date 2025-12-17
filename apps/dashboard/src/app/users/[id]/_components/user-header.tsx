@@ -1,22 +1,18 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 import { JsonViewerButton } from '@/components/ui/json-viewer-button';
-import { ArrowLeft, User } from 'lucide-react';
+import { User } from 'lucide-react';
 import { getUserUsername } from '@/lib/strapi';
 
 interface UserHeaderProps {
   userId: string;
   showJsonButton?: boolean;
-  showBackButton?: boolean;
 }
 
 export function UserHeader({
   userId,
   showJsonButton = false,
-  showBackButton = true,
 }: UserHeaderProps) {
   const [username, setUsername] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -47,14 +43,6 @@ export function UserHeader({
         </h1>
       </div>
       <div className="flex space-x-2">
-        {showBackButton && (
-          <Link href="/users">
-            <Button variant="ghost">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Volver
-            </Button>
-          </Link>
-        )}
         {showJsonButton && username && (
           <JsonViewerButton
             data={{ id: userId, username }}

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Save, X, MapPin } from 'lucide-react';
+import { Save, X, MapPin } from 'lucide-react';
 import { createRegion } from '@/lib/strapi';
 
 export default function NewRegionPage() {
@@ -61,10 +61,6 @@ export default function NewRegionPage() {
               Nueva Región
             </h1>
           </div>
-          <Button variant="ghost" onClick={() => router.back()}>
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Volver
-          </Button>
         </div>
 
         <Card>

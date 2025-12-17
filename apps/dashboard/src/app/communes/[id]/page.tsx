@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { InfoField } from '@/components/ui/info-field';
-import { ArrowLeft, Edit, Building, Info } from 'lucide-react';
+import { Edit, Building, Info } from 'lucide-react';
 import { getCommune } from '@/lib/strapi/communes';
 import { StrapiCommune } from '@/lib/strapi/types';
 import { useFormatDate } from '@/hooks/useFormatDate';
@@ -78,10 +78,6 @@ export default function CommuneDetailPage() {
               </h1>
             </div>
             <div className="flex space-x-2">
-              <Button variant="ghost" onClick={() => router.back()}>
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Volver
-              </Button>
               <Button
                 onClick={() => router.push(`/communes/${commune.id}/edit`)}
               >

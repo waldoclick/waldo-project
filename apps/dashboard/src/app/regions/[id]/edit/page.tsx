@@ -7,7 +7,7 @@ import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { InfoField } from '@/components/ui/info-field';
-import { ArrowLeft, Save, X, MapPin, Info } from 'lucide-react';
+import { Save, X, MapPin, Info } from 'lucide-react';
 import { getRegion, updateRegion, StrapiRegion } from '@/lib/strapi';
 import { useFormatDate } from '@/hooks/useFormatDate';
 
@@ -100,10 +100,6 @@ export default function EditRegionPage() {
                 Editar Región
               </h1>
             </div>
-            <Button variant="ghost" onClick={() => router.back()}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Volver
-            </Button>
           </div>
         </div>
 

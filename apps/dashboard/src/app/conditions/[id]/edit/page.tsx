@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Save, X, FileCheck, Info } from 'lucide-react';
+import { Save, X, FileCheck, Info } from 'lucide-react';
 import { getCondition, updateCondition } from '@/lib/strapi/conditions';
 import { StrapiCondition } from '@/lib/strapi/types';
 import { InfoField } from '@/components/ui/info-field';
@@ -101,10 +101,6 @@ export default function EditConditionPage() {
                 Editar Condición
               </h1>
             </div>
-            <Button variant="ghost" onClick={() => router.back()}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Volver
-            </Button>
           </div>
         </div>
 

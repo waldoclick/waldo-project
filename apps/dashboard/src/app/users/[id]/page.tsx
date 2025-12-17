@@ -7,13 +7,12 @@ import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { JsonViewerButton } from '@/components/ui/json-viewer-button';
-import { ArrowLeft, User, Info } from 'lucide-react';
+import { User, Info } from 'lucide-react';
 import { getUser, StrapiUser } from '@/lib/strapi';
 import { useFormatDate } from '@/hooks/useFormatDate';
 import { InfoField } from '@/components/ui/info-field';
 import { Tabs } from '@/components/ui/tabs';
 import { UserTabs } from './_components/user-tabs';
-import Link from 'next/link';
 
 // Interfaz extendida para el usuario con campos adicionales
 interface ExtendedStrapiUser extends StrapiUser {
@@ -96,10 +95,6 @@ export default function UserDetailPage() {
     return (
       <div className="text-center py-8">
         <p className="text-red-500">{error || 'Usuario no encontrado'}</p>
-        <Button onClick={() => router.back()} className="mt-4">
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Volver
-        </Button>
       </div>
     );
   }
@@ -127,12 +122,6 @@ export default function UserDetailPage() {
               </h1>
             </div>
             <div className="flex space-x-2">
-              <Link href="/users">
-                <Button variant="ghost">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Volver
-                </Button>
-              </Link>
               <JsonViewerButton
                 data={user}
                 title={`JSON del Usuario: ${user.username}`}

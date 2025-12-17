@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Save, X, HelpCircle } from 'lucide-react';
+import { Save, X, HelpCircle } from 'lucide-react';
 import { getFaq, updateFaq } from '@/lib/strapi/faqs';
 import { StrapiFaq } from '@/lib/strapi/types';
 
@@ -113,10 +113,6 @@ export default function EditFaqPage() {
                 Editar FAQ
               </h1>
             </div>
-            <Button variant="ghost" onClick={() => router.back()}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Volver
-            </Button>
           </div>
         </div>
 

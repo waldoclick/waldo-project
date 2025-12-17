@@ -7,7 +7,6 @@ import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
-  ArrowLeft,
   Calendar,
   DollarSign,
   Clock,
@@ -105,10 +104,6 @@ export default function DestacadoDetailPage() {
                 Destacado #{featured.id}
               </h1>
             </div>
-            <Button variant="ghost" onClick={() => router.back()}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Volver
-            </Button>
           </div>
         </div>
 

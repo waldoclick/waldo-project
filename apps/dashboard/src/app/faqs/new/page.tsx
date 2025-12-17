@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Save, X, HelpCircle } from 'lucide-react';
+import { Save, X, HelpCircle } from 'lucide-react';
 import { createFaq } from '@/lib/strapi/faqs';
 
 export default function NewFaqPage() {
@@ -77,10 +77,6 @@ export default function NewFaqPage() {
                 Nueva FAQ
               </h1>
             </div>
-            <Button variant="ghost" onClick={() => router.back()}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Volver
-            </Button>
           </div>
         </div>
 

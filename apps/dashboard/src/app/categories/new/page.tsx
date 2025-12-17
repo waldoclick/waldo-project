@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Save, X, Tag } from 'lucide-react';
+import { Save, X, Tag } from 'lucide-react';
 import { createCategory } from '@/lib/strapi/categories';
 
 export default function NewCategoryPage() {
@@ -67,10 +67,6 @@ export default function NewCategoryPage() {
                 Nueva Categoría
               </h1>
             </div>
-            <Button variant="ghost" onClick={() => router.back()}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Volver
-            </Button>
           </div>
         </div>
 

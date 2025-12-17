@@ -9,7 +9,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { JsonViewerButton } from '@/components/ui/json-viewer-button';
 import {
-  ArrowLeft,
   Package,
   User,
   Eye,
@@ -280,10 +279,6 @@ export default function AdDetailPage() {
     return (
       <div className="text-center py-8">
         <p className="text-red-500">{error || 'Anuncio no encontrado'}</p>
-        <Button onClick={() => router.back()} className="mt-4">
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Volver
-        </Button>
       </div>
     );
   }
@@ -407,14 +402,6 @@ export default function AdDetailPage() {
               buttonText="Ver JSON"
               buttonVariant="outline"
             />
-            <Button
-              variant="brandGhost"
-              size="brand"
-              onClick={() => router.back()}
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Volver
-            </Button>
           </div>
         </div>
       </div>

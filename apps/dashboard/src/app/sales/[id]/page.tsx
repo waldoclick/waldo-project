@@ -7,7 +7,6 @@ import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
-  ArrowLeft,
   ShoppingCart,
   User,
   Calendar,
@@ -88,10 +87,6 @@ export default function OrderDetailPage() {
     return (
       <div className="text-center py-8">
         <p className="text-red-500">{error || 'Orden no encontrada'}</p>
-        <Button onClick={() => router.back()} className="mt-4">
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Volver
-        </Button>
       </div>
     );
   }
@@ -118,10 +113,6 @@ export default function OrderDetailPage() {
                 Orden #{order.id}
               </h1>
             </div>
-            <Button variant="ghost" onClick={() => router.back()}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Volver
-            </Button>
           </div>
         </div>
 

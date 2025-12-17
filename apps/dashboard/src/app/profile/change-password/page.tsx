@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Save, X, Lock, Info, Eye, EyeOff } from 'lucide-react';
+import { Save, X, Lock, Info, Eye, EyeOff } from 'lucide-react';
 import { changePassword } from '@/lib/strapi';
 import { useUserStore } from '@/stores/users';
 import Swal from 'sweetalert2';
@@ -134,10 +134,6 @@ export default function ChangePasswordPage() {
               Cambiar Contraseña
             </h1>
           </div>
-          <Button variant="ghost" onClick={() => router.push('/profile')}>
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Volver
-          </Button>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

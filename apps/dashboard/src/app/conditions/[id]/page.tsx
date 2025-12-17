@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { InfoField } from '@/components/ui/info-field';
-import { ArrowLeft, Edit, Info, FileCheck } from 'lucide-react';
+import { Edit, Info, FileCheck } from 'lucide-react';
 import { getCondition } from '@/lib/strapi/conditions';
 import { StrapiCondition } from '@/lib/strapi/types';
 import { useFormatDate } from '@/hooks/useFormatDate';
@@ -78,10 +78,6 @@ export default function ConditionDetailPage() {
               </h1>
             </div>
             <div className="flex space-x-2">
-              <Button variant="ghost" onClick={() => router.back()}>
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Volver
-              </Button>
               <Button
                 onClick={() => router.push(`/conditions/${condition.id}/edit`)}
               >

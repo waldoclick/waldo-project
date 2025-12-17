@@ -7,7 +7,7 @@ import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { InfoField } from '@/components/ui/info-field';
-import { ArrowLeft, Save, X, Info, Tag } from 'lucide-react';
+import { Save, X, Info, Tag } from 'lucide-react';
 import { getCategory, updateCategory } from '@/lib/strapi/categories';
 import { StrapiCategory } from '@/lib/strapi/types';
 import { useFormatDate } from '@/hooks/useFormatDate';
@@ -104,10 +104,6 @@ export default function EditCategoryPage() {
                 Editar Categoría
               </h1>
             </div>
-            <Button variant="ghost" onClick={() => router.back()}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Volver
-            </Button>
           </div>
         </div>
 

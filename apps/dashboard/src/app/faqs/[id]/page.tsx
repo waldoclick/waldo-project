@@ -7,7 +7,7 @@ import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { InfoField } from '@/components/ui/info-field';
-import { ArrowLeft, Edit, Info, Star, HelpCircle } from 'lucide-react';
+import { Edit, Info, Star, HelpCircle } from 'lucide-react';
 import { getFaq } from '@/lib/strapi/faqs';
 import { StrapiFaq } from '@/lib/strapi/types';
 import { useFormatDate } from '@/hooks/useFormatDate';
@@ -79,10 +79,6 @@ export default function FaqDetailPage() {
               </h1>
             </div>
             <div className="flex space-x-2">
-              <Button variant="ghost" onClick={() => router.back()}>
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Volver
-              </Button>
               <Button onClick={() => router.push(`/faqs/${faq.id}/edit`)}>
                 <Edit className="h-4 w-4 mr-2" />
                 Editar
