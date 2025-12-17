@@ -3,8 +3,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Search, ShoppingCart, FileText, Users, X } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { getOrders } from '@/lib/strapi/orders';
 import { getAds } from '@/lib/strapi/ads';
 import { getUsers } from '@/lib/strapi/users';
@@ -149,35 +147,44 @@ export function GlobalSearch() {
 
   return (
     <div ref={searchRef} className="relative flex-1 max-w-md">
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-        <Input
-          type="text"
-          placeholder="Buscar órdenes, anuncios, usuarios..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onFocus={() => {
-            if (searchResults.length > 0) setIsSearchOpen(true);
-          }}
-          className="pl-9 pr-9 rounded-sm hover:border-[#ffd699]/50 focus-visible:border-[#ffd699]/50 focus-visible:ring-[#ffd699]/30"
-        />
+      <div
+        className={[
+          'flex items-center bg-white border border-[#dcdcdc] h-[45px] transition hover:shadow-[0_0_15px_rgba(49,51,56,0.1)]',
+          isSearchOpen ? 'rounded-t-[4px] rounded-b-none' : 'rounded-[4px]',
+        ].join(' ')}
+      >
+        <div className="w-[55px] flex items-center justify-center">
+          <Search className="h-[18px] w-[18px] text-[#313338]" />
+        </div>
+
+        <div className="flex-1">
+          <input
+            type="text"
+            placeholder="Buscar órdenes, anuncios, usuarios..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onFocus={() => {
+              if (searchResults.length > 0) setIsSearchOpen(true);
+            }}
+            className="w-full appearance-none border-0 outline-none bg-transparent text-[14px] tracking-[0.25px] text-[#313338] px-[6px] py-[6px] placeholder:text-[#9ca3af]"
+          />
+        </div>
+
         {searchQuery && (
-          <Button
+          <button
             type="button"
-            variant="ghost"
-            size="icon"
-            className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7"
             onClick={handleClear}
             aria-label="Limpiar búsqueda"
+            className="w-10 h-full flex items-center justify-center text-[#9ca3af] hover:text-[#313338] transition"
           >
-            <X className="h-4 w-4" />
-          </Button>
+            <X className="h-[18px] w-[18px]" />
+          </button>
         )}
       </div>
 
       {/* Dropdown de resultados */}
       {isSearchOpen && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-sm shadow-lg max-h-96 overflow-y-auto z-50">
+        <div className="absolute top-full left-0 right-0 bg-white border border-[#dcdcdc] border-t-0 rounded-t-none rounded-b-[4px] shadow-lg max-h-96 overflow-y-auto z-50">
           {isSearching ? (
             <div className="p-4 text-center text-sm text-gray-500">
               Buscando...
@@ -203,7 +210,7 @@ export function GlobalSearch() {
                     </div>
                   </button>
                   {index < searchResults.length - 1 && (
-                    <div className="border-b border-gray-100 mx-4" />
+                    <div className="w-full border-b border-[#dcdcdc]" />
                   )}
                 </div>
               ))}

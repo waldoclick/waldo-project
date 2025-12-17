@@ -8,6 +8,8 @@ export interface StrapiUser {
   id: number;
   username: string;
   email: string;
+  firstname?: string;
+  lastname?: string;
   provider: string;
   confirmed: boolean;
   blocked: boolean;

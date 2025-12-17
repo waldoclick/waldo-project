@@ -29,8 +29,8 @@ export function UserMenu() {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [open, setOpen] = useState(false);
 
-  const firstName = (user as any)?.firstname as string | undefined;
-  const lastName = (user as any)?.lastname as string | undefined;
+  const firstName = user?.firstname;
+  const lastName = user?.lastname;
 
   // Match website trigger content: "Hola" + firstname (fallback to username/email)
   const displayName =
@@ -106,14 +106,14 @@ export function UserMenu() {
             </div>
           </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuContent align="end" className="w-56 border-[#dcdcdc]">
           <div className="relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none">
             <Mail className="h-4 w-4 text-gray-500 mr-2 shrink-0" />
             <span className="text-sm text-muted-foreground">
               {user?.email || 'admin@waldo.com'}
             </span>
           </div>
-          <DropdownMenuSeparator />
+          <DropdownMenuSeparator className="my-0 bg-[#dcdcdc]" />
           <DropdownMenuItem asChild>
             <Link href="/profile" className="flex items-center">
               <User className="mr-2 h-4 w-4" />
@@ -138,7 +138,7 @@ export function UserMenu() {
               <span>Configuración</span>
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuSeparator />
+          <DropdownMenuSeparator className="my-0 bg-[#dcdcdc]" />
           <DropdownMenuItem
             onClick={handleLogout}
             className="text-red-600 focus:text-red-600 focus:bg-red-50"
