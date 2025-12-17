@@ -14,7 +14,13 @@ import {
 } from '@/components/ui/table';
 
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from '@/components/ui/card';
 import { Plus, Eye, User } from 'lucide-react';
 import { getUsers, StrapiUser } from '@/lib/strapi';
 import { useRouter } from 'next/navigation';
@@ -132,9 +138,9 @@ export default function UsersPage() {
               </div>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-0">
             {loading ? (
-              <div className="flex items-center justify-center py-8">
+              <div className="flex items-center justify-center py-8 px-5">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
               </div>
             ) : (
@@ -142,7 +148,7 @@ export default function UsersPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>
+                      <TableHead className="pl-6">
                         <span>ID</span>
                       </TableHead>
                       <TableHead>
@@ -166,13 +172,15 @@ export default function UsersPage() {
                       <TableHead>
                         <span>Registro</span>
                       </TableHead>
-                      <TableHead className="text-right">Acciones</TableHead>
+                      <TableHead className="text-right pr-6">
+                        Acciones
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {users.map((user) => (
                       <TableRow key={user.id}>
-                        <TableCell>
+                        <TableCell className="pl-6">
                           <div className="font-medium">{user.id}</div>
                         </TableCell>
                         <TableCell>
@@ -207,7 +215,7 @@ export default function UsersPage() {
                         <TableCell>
                           <span>{formatDate(user.createdAt)}</span>
                         </TableCell>
-                        <TableCell className="text-right">
+                        <TableCell className="text-right pr-6">
                           <div className="flex items-center justify-end space-x-2">
                             <Button
                               variant="ghost"
@@ -225,43 +233,43 @@ export default function UsersPage() {
                 </Table>
 
                 {users.length === 0 && !loading && (
-                  <div className="text-center py-8">
+                  <div className="text-center py-8 px-5">
                     <p className="text-gray-500">No se encontraron usuarios</p>
                   </div>
                 )}
               </>
             )}
           </CardContent>
+          {totalPages > 1 && (
+            <CardFooter className="border-t px-6 py-4">
+              <div className="flex items-center justify-between w-full">
+                <div className="text-sm text-gray-700">
+                  Página {currentPage} de {totalPages}
+                </div>
+                <div className="flex space-x-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                    disabled={currentPage === 1}
+                  >
+                    Anterior
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      setCurrentPage(Math.min(totalPages, currentPage + 1))
+                    }
+                    disabled={currentPage === totalPages}
+                  >
+                    Siguiente
+                  </Button>
+                </div>
+              </div>
+            </CardFooter>
+          )}
         </Card>
-
-        {/* Paginación */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between">
-            <div className="text-sm text-gray-700">
-              Página {currentPage} de {totalPages}
-            </div>
-            <div className="flex space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
-              >
-                Anterior
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() =>
-                  setCurrentPage(Math.min(totalPages, currentPage + 1))
-                }
-                disabled={currentPage === totalPages}
-              >
-                Siguiente
-              </Button>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

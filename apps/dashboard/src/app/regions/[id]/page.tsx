@@ -161,7 +161,7 @@ export default function RegionDetailPage() {
                   <Table className="w-full">
                     <TableHeader>
                       <TableRow>
-                        <TableHead>
+                        <TableHead className="pl-6">
                           <span>Comuna</span>
                         </TableHead>
                         <TableHead>
@@ -173,13 +173,15 @@ export default function RegionDetailPage() {
                         <TableHead>
                           <span>Fecha de Creación</span>
                         </TableHead>
-                        <TableHead className="text-right">Acciones</TableHead>
+                        <TableHead className="text-right pr-6">
+                          Acciones
+                        </TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {region.communes.map((commune) => (
                         <TableRow key={commune.id}>
-                          <TableCell>
+                          <TableCell className="pl-6">
                             <div className="font-medium">{commune.name}</div>
                           </TableCell>
                           <TableCell>
@@ -197,7 +199,7 @@ export default function RegionDetailPage() {
                               {formatDate(commune.createdAt)}
                             </span>
                           </TableCell>
-                          <TableCell className="text-right">
+                          <TableCell className="text-right pr-6">
                             <div className="flex items-center justify-end space-x-2">
                               <Button
                                 variant="ghost"

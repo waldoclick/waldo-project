@@ -12,7 +12,12 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardFooter,
+} from '@/components/ui/card';
 import {
   Plus,
   Edit,
@@ -100,9 +105,9 @@ export default function RegionsPage() {
               </div>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-0">
             {loading ? (
-              <div className="flex items-center justify-center py-8">
+              <div className="flex items-center justify-center py-8 px-5">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
               </div>
             ) : (
@@ -110,7 +115,7 @@ export default function RegionsPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>
+                      <TableHead className="pl-6">
                         <span>Región</span>
                       </TableHead>
                       <TableHead>
@@ -122,13 +127,15 @@ export default function RegionsPage() {
                       <TableHead>
                         <span>Fecha de Creación</span>
                       </TableHead>
-                      <TableHead className="text-right">Acciones</TableHead>
+                      <TableHead className="text-right pr-6">
+                        Acciones
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {regions.map((region) => (
                       <TableRow key={region.id}>
-                        <TableCell>
+                        <TableCell className="pl-6">
                           <div className="font-medium">{region.name}</div>
                         </TableCell>
                         <TableCell>
@@ -146,7 +153,7 @@ export default function RegionsPage() {
                         <TableCell>
                           <span>{formatDate(region.createdAt)}</span>
                         </TableCell>
-                        <TableCell className="text-right">
+                        <TableCell className="text-right pr-6">
                           <div className="flex items-center justify-end space-x-2">
                             <Button
                               variant="ghost"
@@ -176,21 +183,23 @@ export default function RegionsPage() {
                 </Table>
 
                 {regions.length === 0 && !loading && (
-                  <div className="text-center py-8">
+                  <div className="text-center py-8 px-5">
                     <p className="text-gray-500">No se encontraron regiones</p>
                   </div>
                 )}
               </>
             )}
           </CardContent>
+          {totalPages > 1 && (
+            <CardFooter className="border-t px-6 py-4">
+              <DataTablePagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            </CardFooter>
+          )}
         </Card>
-
-        {/* Paginación */}
-        <DataTablePagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setCurrentPage}
-        />
       </div>
     </div>
   );

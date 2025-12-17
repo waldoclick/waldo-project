@@ -11,7 +11,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardFooter,
+} from '@/components/ui/card';
 import { Eye, Clock } from 'lucide-react';
 import { StrapiAd } from '@/lib/strapi';
 import { useRouter } from 'next/navigation';
@@ -94,13 +99,13 @@ export default function PendingAdsPage() {
               </div>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-0">
             {loading ? (
-              <div className="flex items-center justify-center py-8">
+              <div className="flex items-center justify-center py-8 px-5">
                 <div className="text-gray-500">Cargando anuncios...</div>
               </div>
             ) : ads.length === 0 ? (
-              <div className="text-center py-8">
+              <div className="text-center py-8 px-5">
                 <div className="text-gray-500">No hay anuncios pendientes</div>
               </div>
             ) : (
@@ -108,7 +113,7 @@ export default function PendingAdsPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>
+                      <TableHead className="pl-6">
                         <span>Galería</span>
                       </TableHead>
                       <TableHead>
@@ -120,13 +125,15 @@ export default function PendingAdsPage() {
                       <TableHead>
                         <span>Fecha</span>
                       </TableHead>
-                      <TableHead className="text-right">Acciones</TableHead>
+                      <TableHead className="text-right pr-6">
+                        Acciones
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {ads.map((ad) => (
                       <TableRow key={ad.id}>
-                        <TableCell>
+                        <TableCell className="pl-6">
                           <GalleryThumbnails
                             images={ad.gallery}
                             maxVisible={3}
@@ -141,7 +148,7 @@ export default function PendingAdsPage() {
                           <div className="font-medium">{ad.user?.username}</div>
                         </TableCell>
                         <TableCell>{formatDate(ad.createdAt)}</TableCell>
-                        <TableCell className="text-right">
+                        <TableCell className="text-right pr-6">
                           <Button
                             variant="ghost"
                             size="sm"
@@ -158,14 +165,16 @@ export default function PendingAdsPage() {
               </div>
             )}
           </CardContent>
+          {totalPages > 1 && (
+            <CardFooter className="border-t px-6 py-4">
+              <DataTablePagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            </CardFooter>
+          )}
         </Card>
-
-        {/* Pagination */}
-        <DataTablePagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setCurrentPage}
-        />
       </div>
     </div>
   );

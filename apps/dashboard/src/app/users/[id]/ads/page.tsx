@@ -4,7 +4,13 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
   Table,
@@ -279,7 +285,7 @@ export default function UserAnunciosPage() {
                     <Table className="w-full">
                       <TableHeader>
                         <TableRow>
-                          <TableHead>
+                          <TableHead className="pl-6">
                             <span>ID</span>
                           </TableHead>
                           <TableHead>
@@ -297,13 +303,15 @@ export default function UserAnunciosPage() {
                           <TableHead>
                             <span>Fecha</span>
                           </TableHead>
-                          <TableHead className="text-right">Acciones</TableHead>
+                          <TableHead className="text-right pr-6">
+                            Acciones
+                          </TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {paginatedAds.map((ad) => (
                           <TableRow key={ad.id}>
-                            <TableCell>
+                            <TableCell className="pl-6">
                               <div className="font-medium">#{ad.id}</div>
                             </TableCell>
                             <TableCell>
@@ -325,7 +333,7 @@ export default function UserAnunciosPage() {
                                 {formatDate(ad.createdAt)}
                               </span>
                             </TableCell>
-                            <TableCell className="text-right">
+                            <TableCell className="text-right pr-6">
                               <div className="flex items-center justify-end space-x-2">
                                 <Link href={`/ads/${ad.id}`}>
                                   <Button
@@ -346,13 +354,13 @@ export default function UserAnunciosPage() {
 
                   {/* Paginación */}
                   {totalFilteredPages > 1 && (
-                    <div className="mt-4 px-5">
+                    <CardFooter className="border-t px-6 py-4">
                       <DataTablePagination
                         currentPage={adsCurrentPage}
                         totalPages={totalFilteredPages}
                         onPageChange={handleAdsPageChange}
                       />
-                    </div>
+                    </CardFooter>
                   )}
                 </>
               ) : userAds.length === 0 ? (

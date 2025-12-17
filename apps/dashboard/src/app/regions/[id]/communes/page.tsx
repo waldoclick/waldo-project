@@ -4,7 +4,13 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/ui/breadcrumbs';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import {
@@ -184,9 +190,9 @@ export default function RegionCommunesPage() {
             </div>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-0">
           {loading ? (
-            <div className="flex items-center justify-center py-8">
+            <div className="flex items-center justify-center py-8 px-5">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
             </div>
           ) : (
@@ -194,7 +200,7 @@ export default function RegionCommunesPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>
+                    <TableHead className="pl-6">
                       <div className="flex items-center space-x-2">
                         <MapPin className="h-4 w-4" />
                         <span>Comuna</span>
@@ -218,13 +224,13 @@ export default function RegionCommunesPage() {
                         <span>Fecha de Creación</span>
                       </div>
                     </TableHead>
-                    <TableHead className="text-right">Acciones</TableHead>
+                    <TableHead className="text-right pr-6">Acciones</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredCommunes.map((commune) => (
                     <TableRow key={commune.id}>
-                      <TableCell>
+                      <TableCell className="pl-6">
                         <div>
                           <div className="font-medium">{commune.name}</div>
                           <div className="text-sm text-gray-500">
@@ -243,7 +249,7 @@ export default function RegionCommunesPage() {
                       <TableCell>
                         <span>{formatDate(commune.createdAt)}</span>
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right pr-6">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button
@@ -289,39 +295,39 @@ export default function RegionCommunesPage() {
               </Table>
 
               {filteredCommunes.length === 0 && !loading && (
-                <div className="text-center py-8">
+                <div className="text-center py-8 px-5">
                   <p className="text-gray-500">No se encontraron comunas</p>
                 </div>
               )}
             </>
           )}
         </CardContent>
+        {totalPages > 1 && (
+          <CardFooter className="border-t px-6 py-4">
+            <div className="flex items-center justify-center space-x-2 w-full">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                Anterior
+              </Button>
+              <span className="text-sm text-gray-600">
+                Página {currentPage} de {totalPages}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+              >
+                Siguiente
+              </Button>
+            </div>
+          </CardFooter>
+        )}
       </Card>
-
-      {/* Paginación */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-center space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setCurrentPage(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            Anterior
-          </Button>
-          <span className="text-sm text-gray-600">
-            Página {currentPage} de {totalPages}
-          </span>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setCurrentPage(currentPage + 1)}
-            disabled={currentPage === totalPages}
-          >
-            Siguiente
-          </Button>
-        </div>
-      )}
     </div>
   );
 }

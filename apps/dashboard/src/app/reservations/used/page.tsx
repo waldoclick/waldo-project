@@ -11,7 +11,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardFooter,
+} from '@/components/ui/card';
 import {
   Eye,
   Calendar,
@@ -115,13 +120,13 @@ export default function UsedReservationsPage() {
               </div>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-0">
             {loading ? (
-              <div className="flex items-center justify-center py-8">
+              <div className="flex items-center justify-center py-8 px-5">
                 <div className="text-gray-500">Cargando reservas...</div>
               </div>
             ) : usedReservations.length === 0 ? (
-              <div className="text-center py-8">
+              <div className="text-center py-8 px-5">
                 <div className="text-gray-500">No hay reservas usadas</div>
               </div>
             ) : (
@@ -129,7 +134,7 @@ export default function UsedReservationsPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>
+                      <TableHead className="pl-6">
                         <span>Usuario</span>
                       </TableHead>
                       <TableHead>
@@ -144,13 +149,15 @@ export default function UsedReservationsPage() {
                       <TableHead>
                         <span>Fecha</span>
                       </TableHead>
-                      <TableHead className="text-right">Acciones</TableHead>
+                      <TableHead className="text-right pr-6">
+                        Acciones
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {usedReservations.map((reservation) => (
                       <TableRow key={reservation.id}>
-                        <TableCell>
+                        <TableCell className="pl-6">
                           <div className="font-medium">
                             {reservation.user?.username || 'N/A'}
                           </div>
@@ -171,7 +178,7 @@ export default function UsedReservationsPage() {
                         <TableCell>
                           <span>{formatDate(reservation.createdAt)}</span>
                         </TableCell>
-                        <TableCell className="text-right">
+                        <TableCell className="text-right pr-6">
                           <div className="flex items-center justify-end space-x-2">
                             <Button
                               variant="ghost"
@@ -204,14 +211,16 @@ export default function UsedReservationsPage() {
               </div>
             )}
           </CardContent>
+          {totalPages > 1 && (
+            <CardFooter className="border-t px-6 py-4">
+              <DataTablePagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            </CardFooter>
+          )}
         </Card>
-
-        {/* Pagination */}
-        <DataTablePagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setCurrentPage}
-        />
       </div>
     </div>
   );
