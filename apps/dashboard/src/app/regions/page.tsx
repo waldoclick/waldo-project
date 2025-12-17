@@ -117,6 +117,9 @@ export default function RegionsPage() {
                   <TableHeader>
                     <TableRow>
                       <TableHead className="pl-6">
+                        <span>ID</span>
+                      </TableHead>
+                      <TableHead>
                         <span>Región</span>
                       </TableHead>
                       <TableHead>
@@ -137,6 +140,9 @@ export default function RegionsPage() {
                     {regions.map((region) => (
                       <TableRow key={region.id}>
                         <TableCell className="pl-6">
+                          <div className="font-medium">#{region.id}</div>
+                        </TableCell>
+                        <TableCell>
                           <div className="font-medium">{region.name}</div>
                         </TableCell>
                         <TableCell>

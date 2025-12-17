@@ -114,6 +114,9 @@ export default function ArchivedAdsPage() {
                   <TableHeader>
                     <TableRow>
                       <TableHead className="pl-6">
+                        <span>ID</span>
+                      </TableHead>
+                      <TableHead>
                         <span>Galería</span>
                       </TableHead>
                       <TableHead>
@@ -134,6 +137,9 @@ export default function ArchivedAdsPage() {
                     {ads.map((ad) => (
                       <TableRow key={ad.id}>
                         <TableCell className="pl-6">
+                          <div className="font-medium">#{ad.id}</div>
+                        </TableCell>
+                        <TableCell>
                           <GalleryThumbnails
                             images={ad.gallery}
                             maxVisible={3}

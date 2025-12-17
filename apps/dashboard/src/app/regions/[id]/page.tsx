@@ -162,6 +162,9 @@ export default function RegionDetailPage() {
                     <TableHeader>
                       <TableRow>
                         <TableHead className="pl-6">
+                          <span>ID</span>
+                        </TableHead>
+                        <TableHead>
                           <span>Comuna</span>
                         </TableHead>
                         <TableHead>
@@ -182,6 +185,9 @@ export default function RegionDetailPage() {
                       {region.communes.map((commune) => (
                         <TableRow key={commune.id}>
                           <TableCell className="pl-6">
+                            <div className="font-medium">#{commune.id}</div>
+                          </TableCell>
+                          <TableCell>
                             <div className="font-medium">{commune.name}</div>
                           </TableCell>
                           <TableCell>

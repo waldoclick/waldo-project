@@ -120,6 +120,9 @@ export default function FaqsPage() {
                   <TableHeader>
                     <TableRow>
                       <TableHead className="pl-6">
+                        <span>ID</span>
+                      </TableHead>
+                      <TableHead>
                         <span>Pregunta</span>
                       </TableHead>
                       <TableHead>
@@ -140,6 +143,9 @@ export default function FaqsPage() {
                     {faqs.map((faq) => (
                       <TableRow key={faq.id}>
                         <TableCell className="pl-6">
+                          <div className="font-medium">#{faq.id}</div>
+                        </TableCell>
+                        <TableCell>
                           <div className="font-medium">{faq.title}</div>
                         </TableCell>
                         <TableCell>

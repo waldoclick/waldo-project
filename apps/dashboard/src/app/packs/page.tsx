@@ -131,6 +131,9 @@ export default function PacksPage() {
                   <TableHeader>
                     <TableRow>
                       <TableHead className="pl-6">
+                        <span>ID</span>
+                      </TableHead>
+                      <TableHead>
                         <span>Pack</span>
                       </TableHead>
                       <TableHead>
@@ -157,6 +160,9 @@ export default function PacksPage() {
                     {packs.map((pack) => (
                       <TableRow key={pack.id}>
                         <TableCell className="pl-6">
+                          <div className="font-medium">#{pack.id}</div>
+                        </TableCell>
+                        <TableCell>
                           <div className="font-medium">{pack.name}</div>
                         </TableCell>
                         <TableCell>

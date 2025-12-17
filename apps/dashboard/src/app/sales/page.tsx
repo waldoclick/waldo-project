@@ -140,7 +140,7 @@ export default function SalesPage() {
                   <TableHeader>
                     <TableRow>
                       <TableHead className="pl-6">
-                        <span>Orden</span>
+                        <span>ID</span>
                       </TableHead>
                       <TableHead>
                         <span>Cliente</span>
@@ -169,7 +169,7 @@ export default function SalesPage() {
                     {orders.map((order) => (
                       <TableRow key={order.id}>
                         <TableCell className="pl-6">
-                          <div className="font-medium">{order.id}</div>
+                          <div className="font-medium">#{order.id}</div>
                         </TableCell>
                         <TableCell>
                           <div className="font-medium">

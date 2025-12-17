@@ -205,6 +205,12 @@ export default function RegionCommunesPage() {
                   <TableRow>
                     <TableHead className="pl-6">
                       <div className="flex items-center space-x-2">
+                        <Hash className="h-4 w-4" />
+                        <span>ID</span>
+                      </div>
+                    </TableHead>
+                    <TableHead>
+                      <div className="flex items-center space-x-2">
                         <MapPin className="h-4 w-4" />
                         <span>Comuna</span>
                       </div>
@@ -234,12 +240,10 @@ export default function RegionCommunesPage() {
                   {filteredCommunes.map((commune) => (
                     <TableRow key={commune.id}>
                       <TableCell className="pl-6">
-                        <div>
-                          <div className="font-medium">{commune.name}</div>
-                          <div className="text-sm text-gray-500">
-                            ID: {commune.id}
-                          </div>
-                        </div>
+                        <div className="font-medium">#{commune.id}</div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="font-medium">{commune.name}</div>
                       </TableCell>
                       <TableCell>
                         <span className="font-mono text-sm">

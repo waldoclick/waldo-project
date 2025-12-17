@@ -121,6 +121,9 @@ export default function ConditionsPage() {
                   <TableHeader>
                     <TableRow>
                       <TableHead className="pl-6">
+                        <span>ID</span>
+                      </TableHead>
+                      <TableHead>
                         <span>Condición</span>
                       </TableHead>
                       <TableHead>
@@ -138,6 +141,9 @@ export default function ConditionsPage() {
                     {conditions.map((condition) => (
                       <TableRow key={condition.id}>
                         <TableCell className="pl-6">
+                          <div className="font-medium">#{condition.id}</div>
+                        </TableCell>
+                        <TableCell>
                           <div className="font-medium">{condition.name}</div>
                         </TableCell>
                         <TableCell>

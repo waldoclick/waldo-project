@@ -134,6 +134,9 @@ export default function FreeFeaturedPage() {
                   <TableHeader>
                     <TableRow>
                       <TableHead className="pl-6">
+                        <span>ID</span>
+                      </TableHead>
+                      <TableHead>
                         <span>Usuario</span>
                       </TableHead>
                       <TableHead>
@@ -157,6 +160,9 @@ export default function FreeFeaturedPage() {
                     {freeFeatured.map((reservation) => (
                       <TableRow key={reservation.id}>
                         <TableCell className="pl-6">
+                          <div className="font-medium">#{reservation.id}</div>
+                        </TableCell>
+                        <TableCell>
                           <div className="font-medium">
                             {reservation.user?.username || 'N/A'}
                           </div>

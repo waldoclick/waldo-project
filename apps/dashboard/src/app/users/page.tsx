@@ -182,7 +182,7 @@ export default function UsersPage() {
                     {users.map((user) => (
                       <TableRow key={user.id}>
                         <TableCell className="pl-6">
-                          <div className="font-medium">{user.id}</div>
+                          <div className="font-medium">#{user.id}</div>
                         </TableCell>
                         <TableCell>
                           <div className="font-medium">

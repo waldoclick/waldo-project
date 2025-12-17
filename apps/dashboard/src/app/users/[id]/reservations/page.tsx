@@ -175,7 +175,7 @@ export default function UserReservasPage() {
                     <TableHeader>
                       <TableRow>
                         <TableHead className="pl-6">
-                          <span># ID</span>
+                          <span>ID</span>
                         </TableHead>
                         <TableHead>
                           <span>$ Precio</span>
