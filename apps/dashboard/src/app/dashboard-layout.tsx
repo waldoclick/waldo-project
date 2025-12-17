@@ -137,6 +137,11 @@ export default function DashboardLayout({
       href: '/sales',
     },
     {
+      name: 'Usuarios',
+      icon: Users,
+      href: '/users',
+    },
+    {
       name: 'Reservas',
       icon: Calendar,
       href: '/reservations',
@@ -145,11 +150,6 @@ export default function DashboardLayout({
       name: 'Destacados',
       icon: Star,
       href: '/features',
-    },
-    {
-      name: 'Usuarios',
-      icon: Users,
-      href: '/users',
     },
   ];
 
@@ -313,6 +313,18 @@ export default function DashboardLayout({
                 <span>Órdenes</span>
               </Link>
 
+              {/* Usuarios */}
+              <Link
+                href="/users"
+                className={`flex items-center space-x-5 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${pathname === '/users' ? 'text-gray-900' : 'text-gray-500'} hover:bg-gray-100`}
+                onClick={() => setSidebarOpen(false)}
+              >
+                <Users
+                  className={`h-5 w-5 transition-opacity ${pathname === '/users' ? 'opacity-100' : 'opacity-50'}`}
+                />
+                <span>Usuarios</span>
+              </Link>
+
               {/* Anuncios Dropdown */}
               <div>
                 <button
@@ -370,7 +382,7 @@ export default function DashboardLayout({
               </div>
 
               {/* Other Menu Items */}
-              {menuItems.slice(2).map((item) => {
+              {menuItems.slice(3).map((item) => {
                 const Icon = item.icon;
                 const isActive = pathname === item.href;
 
