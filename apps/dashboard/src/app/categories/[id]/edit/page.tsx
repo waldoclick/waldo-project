@@ -90,10 +90,6 @@ export default function EditCategoryPage() {
             items={[
               { label: 'Waldo', href: '/' },
               { label: 'Categorías', href: '/categories' },
-              {
-                label: category?.name ?? 'Editar Categoría',
-                href: `/categories/${categoryId}`,
-              },
               { label: 'Editar' },
             ]}
           />

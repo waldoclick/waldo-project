@@ -75,7 +75,7 @@ export default function NewCommunePage() {
           items={[
             { label: 'Waldo', href: '/' },
             { label: 'Comunas', href: '/communes' },
-            { label: 'Nueva Comuna' },
+            { label: 'Nuevo' },
           ]}
         />
         {/* Header */}

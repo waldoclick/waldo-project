@@ -50,7 +50,7 @@ export default function NewRegionPage() {
           items={[
             { label: 'Waldo', href: '/' },
             { label: 'Regiones', href: '/regions' },
-            { label: 'Nueva Región' },
+            { label: 'Nuevo' },
           ]}
         />
         {/* Header */}

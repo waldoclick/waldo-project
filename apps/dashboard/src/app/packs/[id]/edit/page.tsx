@@ -157,7 +157,6 @@ export default function EditPackPage() {
             items={[
               { label: 'Waldo', href: '/' },
               { label: 'Packs', href: '/packs' },
-              { label: pack?.name ?? 'Editar Pack', href: `/packs/${packId}` },
               { label: 'Editar' },
             ]}
           />

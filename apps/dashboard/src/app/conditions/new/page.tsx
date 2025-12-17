@@ -51,7 +51,7 @@ export default function NewConditionPage() {
             items={[
               { label: 'Waldo', href: '/' },
               { label: 'Condiciones', href: '/conditions' },
-              { label: 'Nueva Condición' },
+              { label: 'Nuevo' },
             ]}
           />
           {/* Header */}

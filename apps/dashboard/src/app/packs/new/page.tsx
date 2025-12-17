@@ -95,7 +95,7 @@ export default function NewPackPage() {
             items={[
               { label: 'Waldo', href: '/' },
               { label: 'Packs', href: '/packs' },
-              { label: 'Nuevo Pack' },
+              { label: 'Nuevo' },
             ]}
           />
           {/* Header */}

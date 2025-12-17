@@ -53,7 +53,7 @@ export default function NewCategoryPage() {
             items={[
               { label: 'Waldo', href: '/' },
               { label: 'Categorías', href: '/categories' },
-              { label: 'Nueva Categoría' },
+              { label: 'Nuevo' },
             ]}
           />
           {/* Header */}

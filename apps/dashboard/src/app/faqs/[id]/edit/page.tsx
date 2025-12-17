@@ -99,7 +99,6 @@ export default function EditFaqPage() {
             items={[
               { label: 'Waldo', href: '/' },
               { label: 'FAQ', href: '/faqs' },
-              { label: faq?.title ?? 'Editar FAQ', href: `/faqs/${faqId}` },
               { label: 'Editar' },
             ]}
           />

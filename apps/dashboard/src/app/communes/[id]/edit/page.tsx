@@ -115,10 +115,6 @@ export default function EditCommunePage() {
             items={[
               { label: 'Waldo', href: '/' },
               { label: 'Comunas', href: '/communes' },
-              {
-                label: commune?.name ?? 'Editar Comuna',
-                href: `/communes/${communeId}`,
-              },
               { label: 'Editar' },
             ]}
           />

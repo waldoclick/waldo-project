@@ -63,7 +63,7 @@ export default function NewFaqPage() {
             items={[
               { label: 'Waldo', href: '/' },
               { label: 'FAQ', href: '/faqs' },
-              { label: 'Nueva FAQ' },
+              { label: 'Nuevo' },
             ]}
           />
           {/* Header */}

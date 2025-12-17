@@ -86,10 +86,6 @@ export default function EditRegionPage() {
             items={[
               { label: 'Waldo', href: '/' },
               { label: 'Regiones', href: '/regions' },
-              {
-                label: region?.name ?? 'Editar Región',
-                href: `/regions/${regionId}`,
-              },
               { label: 'Editar' },
             ]}
           />

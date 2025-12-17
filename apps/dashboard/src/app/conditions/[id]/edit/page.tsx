@@ -87,10 +87,6 @@ export default function EditConditionPage() {
             items={[
               { label: 'Waldo', href: '/' },
               { label: 'Condiciones', href: '/conditions' },
-              {
-                label: condition?.name ?? 'Editar Condición',
-                href: `/conditions/${conditionId}`,
-              },
               { label: 'Editar' },
             ]}
           />
