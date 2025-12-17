@@ -115,7 +115,7 @@ export function UserMenu() {
             <DropdownMenuItem asChild className="px-0">
               <Link
                 href="/profile"
-                className={`text-sm text-[#313338] py-[5px] hover:underline focus:bg-transparent focus:text-[#313338] focus:underline outline-none cursor-pointer h-auto ${pathname === '/profile' ? 'underline font-semibold' : ''}`}
+                className={`text-sm text-[#313338] py-[5px] hover:underline hover:underline-offset-[2px] focus:bg-transparent focus:text-[#313338] focus:underline focus:underline-offset-[2px] outline-none cursor-pointer h-auto ${pathname === '/profile' ? 'underline underline-offset-[2px] font-semibold' : ''}`}
               >
                 Mi perfil
               </Link>
@@ -123,7 +123,7 @@ export function UserMenu() {
             <DropdownMenuItem asChild className="px-0">
               <Link
                 href="/profile/change-password"
-                className={`text-sm text-[#313338] py-[5px] hover:underline focus:bg-transparent focus:text-[#313338] focus:underline outline-none cursor-pointer h-auto ${pathname === '/profile/change-password' ? 'underline font-semibold' : ''}`}
+                className={`text-sm text-[#313338] py-[5px] hover:underline hover:underline-offset-[2px] focus:bg-transparent focus:text-[#313338] focus:underline focus:underline-offset-[2px] outline-none cursor-pointer h-auto ${pathname === '/profile/change-password' ? 'underline underline-offset-[2px] font-semibold' : ''}`}
               >
                 Cambiar contraseña
               </Link>
@@ -135,7 +135,7 @@ export function UserMenu() {
           <div className="px-5 py-[10px] flex flex-col">
             <DropdownMenuItem
               onClick={handleLogout}
-              className="text-sm text-[#313338] py-[5px] hover:underline focus:bg-transparent focus:text-[#313338] focus:underline cursor-pointer h-auto outline-none px-0"
+              className="text-sm text-[#313338] py-[5px] hover:underline hover:underline-offset-[2px] focus:bg-transparent focus:text-[#313338] focus:underline focus:underline-offset-[2px] cursor-pointer h-auto outline-none px-0"
             >
               Cerrar sesión
             </DropdownMenuItem>

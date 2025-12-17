@@ -61,7 +61,7 @@ export function SalesMenu() {
   return (
     <DropdownMenu modal={false} open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
-        <button className="relative p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-sm transition-colors">
+        <button className="relative p-2 text-gray-500 hover:text-gray-700 transition-colors">
           <ShoppingBag className="h-5 w-5" />
         </button>
       </DropdownMenuTrigger>
@@ -96,7 +96,7 @@ export function SalesMenu() {
                   key={order.id}
                   href={`/sales/${order.id}`}
                   onClick={() => setOpen(false)}
-                  className={`flex items-center justify-between p-3 hover:bg-gray-50 transition-colors cursor-pointer ${
+                  className={`flex items-center justify-between p-3 hover:underline transition-colors cursor-pointer ${
                     index !== orders.length - 1
                       ? 'border-b border-gray-100'
                       : ''

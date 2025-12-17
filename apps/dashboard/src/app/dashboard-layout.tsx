@@ -21,7 +21,6 @@ import {
   Building,
   Tag,
   HelpCircle,
-  Package,
   Users,
   Menu,
   X,
@@ -289,10 +288,9 @@ export default function DashboardLayout({
 
             {/* Navigation */}
             <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
-              {/* Dashboard */}
               <Link
                 href="/"
-                className={`flex items-center space-x-5 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${pathname === '/' ? 'text-gray-900 underline font-semibold' : 'text-gray-500'} hover:bg-gray-100`}
+                className={`flex items-center space-x-5 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors hover:underline hover:underline-offset-[2px] focus:underline focus:underline-offset-[2px] focus:bg-transparent ${pathname === '/' ? 'text-gray-900 underline underline-offset-[2px] font-semibold' : 'text-gray-500'}`}
                 onClick={() => setSidebarOpen(false)}
               >
                 <LayoutDashboard
@@ -304,7 +302,7 @@ export default function DashboardLayout({
               {/* Órdenes */}
               <Link
                 href="/sales"
-                className={`flex items-center space-x-5 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${pathname === '/sales' ? 'text-gray-900 underline font-semibold' : 'text-gray-500'} hover:bg-gray-100`}
+                className={`flex items-center space-x-5 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors hover:underline hover:underline-offset-[2px] focus:underline focus:underline-offset-[2px] focus:bg-transparent ${pathname === '/sales' ? 'text-gray-900 underline underline-offset-[2px] font-semibold' : 'text-gray-500'}`}
                 onClick={() => setSidebarOpen(false)}
               >
                 <ShoppingCart
@@ -316,7 +314,7 @@ export default function DashboardLayout({
               {/* Usuarios */}
               <Link
                 href="/users"
-                className={`flex items-center space-x-5 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${pathname === '/users' ? 'text-gray-900 underline font-semibold' : 'text-gray-500'} hover:bg-gray-100`}
+                className={`flex items-center space-x-5 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors hover:underline hover:underline-offset-[2px] focus:underline focus:underline-offset-[2px] focus:bg-transparent ${pathname === '/users' ? 'text-gray-900 underline underline-offset-[2px] font-semibold' : 'text-gray-500'}`}
                 onClick={() => setSidebarOpen(false)}
               >
                 <Users
@@ -334,7 +332,7 @@ export default function DashboardLayout({
                     setReservationsMenuOpen(false);
                     setMaintainersMenuOpen(false);
                   }}
-                  className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${pathname.startsWith('/ads') ? 'text-gray-900 underline font-semibold' : 'text-gray-500'} hover:bg-gray-100`}
+                  className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-[13px] font-medium transition-colors cursor-pointer hover:underline hover:underline-offset-[2px] focus:underline focus:underline-offset-[2px] focus:bg-transparent ${pathname.startsWith('/ads') ? 'text-gray-900 underline underline-offset-[2px] font-semibold' : 'text-gray-500'}`}
                 >
                   <div className="flex items-center space-x-5">
                     <FileText
@@ -363,7 +361,7 @@ export default function DashboardLayout({
                         <Link
                           key={subItem.name}
                           href={subItem.href}
-                          className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-[13px] transition-colors ${isActive ? 'text-gray-900 underline font-semibold' : 'text-gray-500'} hover:bg-gray-100`}
+                          className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-[13px] transition-colors hover:underline hover:underline-offset-[2px] focus:underline focus:underline-offset-[2px] focus:bg-transparent ${isActive ? 'text-gray-900 underline underline-offset-[2px] font-semibold' : 'text-gray-500'}`}
                           onClick={() => setSidebarOpen(false)}
                         >
                           {Icon && (
@@ -397,7 +395,7 @@ export default function DashboardLayout({
                           setReservationsMenuOpen(false);
                           setMaintainersMenuOpen(false);
                         }}
-                        className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${pathname.startsWith('/features') ? 'text-gray-900 underline font-semibold' : 'text-gray-500'} hover:bg-gray-100`}
+                        className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-[13px] font-medium transition-colors cursor-pointer hover:underline hover:underline-offset-[2px] focus:underline focus:underline-offset-[2px] focus:bg-transparent ${pathname.startsWith('/features') ? 'text-gray-900 underline underline-offset-[2px] font-semibold' : 'text-gray-500'}`}
                       >
                         <div className="flex items-center space-x-5">
                           <Icon
@@ -425,7 +423,7 @@ export default function DashboardLayout({
                               <Link
                                 key={subItem.name}
                                 href={subItem.href}
-                                className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-[13px] transition-colors ${isActive ? 'text-gray-900 underline font-semibold' : 'text-gray-500'} hover:bg-gray-100`}
+                                className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-[13px] transition-colors hover:underline hover:underline-offset-[2px] focus:underline focus:underline-offset-[2px] focus:bg-transparent ${isActive ? 'text-gray-900 underline underline-offset-[2px] font-semibold' : 'text-gray-500'}`}
                                 onClick={() => setSidebarOpen(false)}
                               >
                                 {Icon && (
@@ -454,7 +452,7 @@ export default function DashboardLayout({
                           setFeaturesMenuOpen(false);
                           setMaintainersMenuOpen(false);
                         }}
-                        className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${pathname.startsWith('/reservations') ? 'text-gray-900 underline font-semibold' : 'text-gray-500'} hover:bg-gray-100`}
+                        className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-[13px] font-medium transition-colors cursor-pointer hover:underline hover:underline-offset-[2px] focus:underline focus:underline-offset-[2px] focus:bg-transparent ${pathname.startsWith('/reservations') ? 'text-gray-900 underline underline-offset-[2px] font-semibold' : 'text-gray-500'}`}
                       >
                         <div className="flex items-center space-x-5">
                           <Icon
@@ -482,7 +480,7 @@ export default function DashboardLayout({
                               <Link
                                 key={subItem.name}
                                 href={subItem.href}
-                                className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-[13px] transition-colors ${isActive ? 'text-gray-900 underline font-semibold' : 'text-gray-500'} hover:bg-gray-100`}
+                                className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-[13px] transition-colors hover:underline hover:underline-offset-[2px] focus:underline focus:underline-offset-[2px] focus:bg-transparent ${isActive ? 'text-gray-900 underline underline-offset-[2px] font-semibold' : 'text-gray-500'}`}
                                 onClick={() => setSidebarOpen(false)}
                               >
                                 {Icon && (
@@ -505,7 +503,7 @@ export default function DashboardLayout({
                   <Link
                     key={item.name}
                     href={item.href}
-                    className={`flex items-center space-x-5 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${isActive ? 'text-gray-900 underline font-semibold' : 'text-gray-500'} hover:bg-gray-100`}
+                    className={`flex items-center space-x-5 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors hover:underline hover:underline-offset-[2px] focus:underline focus:underline-offset-[2px] focus:bg-transparent ${isActive ? 'text-gray-900 underline underline-offset-[2px] font-semibold' : 'text-gray-500'}`}
                     onClick={() => setSidebarOpen(false)}
                   >
                     <Icon
@@ -525,7 +523,7 @@ export default function DashboardLayout({
                     setFeaturesMenuOpen(false);
                     setReservationsMenuOpen(false);
                   }}
-                  className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${isMaintainersActive ? 'text-gray-900 underline font-semibold' : 'text-gray-500'} hover:bg-gray-100`}
+                  className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-[13px] font-medium transition-colors cursor-pointer hover:underline hover:underline-offset-[2px] focus:underline focus:underline-offset-[2px] focus:bg-transparent ${isMaintainersActive ? 'text-gray-900 underline underline-offset-[2px] font-semibold' : 'text-gray-500'}`}
                 >
                   <div className="flex items-center space-x-5">
                     <Settings
@@ -553,7 +551,7 @@ export default function DashboardLayout({
                         <Link
                           key={subItem.name}
                           href={subItem.href}
-                          className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-[13px] transition-colors ${isActive ? 'text-gray-900 underline font-semibold' : 'text-gray-500'} hover:bg-gray-100`}
+                          className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-[13px] transition-colors hover:underline hover:underline-offset-[2px] focus:underline focus:underline-offset-[2px] focus:bg-transparent ${isActive ? 'text-gray-900 underline underline-offset-[2px] font-semibold' : 'text-gray-500'}`}
                           onClick={() => setSidebarOpen(false)}
                         >
                           {Icon && (

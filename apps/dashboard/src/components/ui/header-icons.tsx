@@ -39,7 +39,7 @@ export function HeaderIcons() {
       <PendingAdsMenu />
       <button
         onClick={toggleFullscreen}
-        className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-sm transition-colors"
+        className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
       >
         {isFullscreen ? (
           <Minimize2 className="h-5 w-5" />

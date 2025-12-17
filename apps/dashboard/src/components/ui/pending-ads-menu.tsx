@@ -26,7 +26,7 @@ export function PendingAdsMenu() {
   return (
     <DropdownMenu modal={false} open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
-        <button className="relative p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-sm transition-colors">
+        <button className="relative p-2 text-gray-500 hover:text-gray-700 transition-colors">
           <Bell className="h-5 w-5" />
           {allAds.length > 0 && (
             <span className="absolute top-0.5 right-0.5 bg-orange-500 text-white text-[10px] rounded-full h-4 w-4 flex items-center justify-center font-medium">
@@ -78,7 +78,7 @@ export function PendingAdsMenu() {
                   key={ad.id}
                   href={`/ads/${ad.id}`}
                   onClick={() => setOpen(false)}
-                  className={`flex items-center justify-between p-3 hover:bg-gray-50 transition-colors cursor-pointer ${
+                  className={`flex items-center justify-between p-3 hover:underline transition-colors cursor-pointer ${
                     index !== ads.length - 1 ? 'border-b border-gray-100' : ''
                   }`}
                 >

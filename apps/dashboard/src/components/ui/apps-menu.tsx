@@ -16,7 +16,7 @@ export function AppsMenu() {
   return (
     <DropdownMenu modal={false} open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
-        <button className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-sm transition-colors">
+        <button className="p-2 text-gray-500 hover:text-gray-700 transition-colors">
           <Grid3x3 className="h-5 w-5" />
         </button>
       </DropdownMenuTrigger>
@@ -38,7 +38,7 @@ export function AppsMenu() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setOpen(false)}
-                className="flex flex-col items-center justify-center gap-1 p-2 rounded-sm transition-colors cursor-pointer hover:bg-gray-50 h-full"
+                className="flex flex-col items-center justify-center gap-1 p-2 transition-colors cursor-pointer hover:underline h-full"
               >
                 <div className="w-12 h-12 rounded-sm flex items-center justify-center flex-shrink-0">
                   <Icon className="h-8 w-8 text-gray-700" />
