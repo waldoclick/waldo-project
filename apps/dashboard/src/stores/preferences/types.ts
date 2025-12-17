@@ -88,6 +88,30 @@ export interface CommunesPreferences {
   searchTerm: string;
 }
 
+export interface RegionCommunesPreferences {
+  pageSize: number;
+  sortBy: string;
+  searchTerm: string;
+}
+
+export interface AdsPreferences {
+  pageSize: number;
+  sortBy: string;
+  searchTerm: string;
+}
+
+export interface AdReservationsPreferences {
+  pageSize: number;
+  sortBy: string;
+  searchTerm: string;
+}
+
+export interface AdFeaturedReservationsPreferences {
+  pageSize: number;
+  sortBy: string;
+  searchTerm: string;
+}
+
 export interface GlobalSearchPreferences {
   searchTerm: string;
 }
@@ -108,6 +132,10 @@ export interface PreferencesState {
   packs: PacksPreferences;
   regions: RegionsPreferences;
   communes: CommunesPreferences;
+  regionCommunes: RegionCommunesPreferences;
+  ads: AdsPreferences;
+  adReservations: AdReservationsPreferences;
+  adFeaturedReservations: AdFeaturedReservationsPreferences;
   globalSearch: GlobalSearchPreferences;
   setOrdersPreferences: (preferences: Partial<OrdersPreferences>) => void;
   setPendingAdsPreferences: (
@@ -142,6 +170,16 @@ export interface PreferencesState {
   setPacksPreferences: (preferences: Partial<PacksPreferences>) => void;
   setRegionsPreferences: (preferences: Partial<RegionsPreferences>) => void;
   setCommunesPreferences: (preferences: Partial<CommunesPreferences>) => void;
+  setRegionCommunesPreferences: (
+    preferences: Partial<RegionCommunesPreferences>
+  ) => void;
+  setAdsPreferences: (preferences: Partial<AdsPreferences>) => void;
+  setAdReservationsPreferences: (
+    preferences: Partial<AdReservationsPreferences>
+  ) => void;
+  setAdFeaturedReservationsPreferences: (
+    preferences: Partial<AdFeaturedReservationsPreferences>
+  ) => void;
   setGlobalSearchPreferences: (
     preferences: Partial<GlobalSearchPreferences>
   ) => void;

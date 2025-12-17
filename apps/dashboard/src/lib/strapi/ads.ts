@@ -112,6 +112,7 @@ export async function getUserAds(
     page?: number;
     pageSize?: number;
     sort?: string;
+    search?: string;
   }
 ): Promise<StrapiAdsResponse> {
   const searchParams = new URLSearchParams();
@@ -123,8 +124,21 @@ export async function getUserAds(
     searchParams.append('pagination[pageSize]', params.pageSize.toString());
   if (params?.sort) searchParams.append('sort', params.sort);
 
-  // Filtros para el usuario específico
-  searchParams.append('filters[user][id][$eq]', userId.toString());
+  // Búsqueda por texto
+  if (params?.search) {
+    searchParams.append(
+      'filters[$and][0][$or][0][name][$containsi]',
+      params.search
+    );
+    searchParams.append(
+      'filters[$and][0][$or][1][description][$containsi]',
+      params.search
+    );
+    searchParams.append('filters[$and][1][user][id][$eq]', userId.toString());
+  } else {
+    // Filtros para el usuario específico
+    searchParams.append('filters[user][id][$eq]', userId.toString());
+  }
 
   // Populate correcto para Strapi v4
   searchParams.append('populate[category]', 'true');

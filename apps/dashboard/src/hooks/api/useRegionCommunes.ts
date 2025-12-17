@@ -4,7 +4,7 @@ import { getRegionCommunes, StrapiCommune } from '@/lib/strapi';
 import { usePreferencesStore } from '@/stores/preferences';
 
 export function useRegionCommunes(regionId: number) {
-  const { communes: communesPrefs, setCommunesPreferences } =
+  const { regionCommunes: communesPrefs, setRegionCommunesPreferences } =
     usePreferencesStore();
 
   const fetchFn = useCallback(
@@ -20,7 +20,7 @@ export function useRegionCommunes(regionId: number) {
   return usePaginatedData<StrapiCommune>({
     fetchFn,
     preferences: communesPrefs,
-    setPreferences: setCommunesPreferences,
+    setPreferences: setRegionCommunesPreferences,
     defaultSortBy: 'name:asc',
   });
 }

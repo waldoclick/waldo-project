@@ -16,4 +16,9 @@ export type {
   PacksPreferences,
   RegionsPreferences,
   CommunesPreferences,
+  RegionCommunesPreferences,
+  AdsPreferences,
+  AdReservationsPreferences,
+  AdFeaturedReservationsPreferences,
+  GlobalSearchPreferences,
 } from './types';

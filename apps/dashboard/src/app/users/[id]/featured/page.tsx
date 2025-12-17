@@ -1,8 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -20,78 +18,45 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Eye, FileText, Star, CheckCircle, Circle } from 'lucide-react';
-import {
-  getUserFeaturedReservations,
-  StrapiAdFeaturedReservation,
-} from '@/lib/strapi';
+import { Eye, FileText, Star } from 'lucide-react';
+import { StrapiAdFeaturedReservation } from '@/lib/strapi';
 import { useFormatDate } from '@/hooks/useFormatDate';
 import { DataTablePagination } from '@/components/ui/data-table-pagination';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { ChevronDown } from 'lucide-react';
 import { Tabs } from '@/components/ui/tabs';
 import { UserTabs } from '../_components/user-tabs';
 import { UserHeader } from '../_components/user-header';
+import { useUserFeaturedReservations } from '@/hooks/api';
+import { InputSearch } from '@/components/ui/input-search';
+import { SortByData } from '@/components/ui/sort-by-data';
+import { SortPerPageSize } from '@/components/ui/sort-per-page-size';
 
 export default function UserDestacadosPage() {
   const params = useParams();
   const router = useRouter();
   const { formatDate } = useFormatDate();
-  const [userFeatured, setUserFeatured] = useState<
-    StrapiAdFeaturedReservation[]
-  >([]);
-  const [featuredLoading, setFeaturedLoading] = useState(false);
-  const [featuredCurrentPage, setFeaturedCurrentPage] = useState(1);
-  const [totalFilteredItems, setTotalFilteredItems] = useState(0);
-  const [featuredFilter, setFeaturedFilter] = useState<'used' | 'free'>('used');
-
   const userId = params.id as string;
 
-  const fetchUserFeatured = useCallback(async () => {
-    if (!userId) return;
+  const {
+    data: featuredItems,
+    loading,
+    searchTerm,
+    setSearchTerm,
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    totalItems,
+    pageSize,
+    setPageSize,
+    sortBy,
+    setSortBy,
+  } = useUserFeaturedReservations(parseInt(userId));
 
-    try {
-      setFeaturedLoading(true);
-      const params = {
-        page: 1,
-        pageSize: 1000,
-        sort: 'createdAt:desc',
-      };
-      const response = await getUserFeaturedReservations(
-        parseInt(userId),
-        params
-      );
-
-      setUserFeatured(response.data);
-      setFeaturedLoading(false);
-    } catch (error) {
-      console.error('Error fetching user featured reservations:', error);
-      if (error instanceof Error && error.message.includes('403')) {
-        console.warn(
-          'Endpoint ad-featured-reservations no configurado o sin permisos'
-        );
-      }
-      setUserFeatured([]);
-      setFeaturedLoading(false);
-    }
-  }, [userId]);
-
-  useEffect(() => {
-    fetchUserFeatured();
-  }, [fetchUserFeatured]);
-
-  useEffect(() => {
-    setFeaturedCurrentPage(1);
-  }, [featuredFilter]);
-
-  const handleFeaturedPageChange = (newPage: number) => {
-    setFeaturedCurrentPage(newPage);
-  };
+  const sortOptions = [
+    { value: 'createdAt:desc', label: 'Más recientes' },
+    { value: 'createdAt:asc', label: 'Más antiguos' },
+    { value: 'price:desc', label: 'Precio mayor' },
+    { value: 'price:asc', label: 'Precio menor' },
+  ];
 
   const getFeaturedStatusBadge = (featured: StrapiAdFeaturedReservation) => {
     if (featured.ad) {
@@ -108,21 +73,6 @@ export default function UserDestacadosPage() {
     return formatter.format(price);
   };
 
-  const filteredFeatured = userFeatured.filter((f) =>
-    featuredFilter === 'used' ? f.ad : !f.ad
-  );
-  const pageSize = 10;
-  const totalFilteredPages = Math.ceil(filteredFeatured.length / pageSize);
-  const startIndex = (featuredCurrentPage - 1) * pageSize;
-  const endIndex = startIndex + pageSize;
-
-  // Actualizar totalFilteredItems si cambió
-  useEffect(() => {
-    setTotalFilteredItems(filteredFeatured.length);
-  }, [filteredFeatured.length]);
-
-  const paginatedFeatured = filteredFeatured.slice(startIndex, endIndex);
-
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="space-y-6">
@@ -135,43 +85,41 @@ export default function UserDestacadosPage() {
         </Tabs>
 
         {/* Tabla de Destacados */}
-        <Card>
+        <Card className="shadow-sm">
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center">
                 <Star className="h-5 w-5 mr-2" />
-                Destacados del Usuario ({filteredFeatured.length})
+                Destacados del Usuario ({totalItems})
               </CardTitle>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="cursor-pointer">
-                    {featuredFilter === 'used'
-                      ? 'Destacados Usados'
-                      : 'Destacados Libres'}
-                    <ChevronDown className="h-4 w-4 ml-2" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem
-                    onClick={() => setFeaturedFilter('used')}
-                    className={featuredFilter === 'used' ? 'bg-gray-100' : ''}
-                  >
-                    <CheckCircle className="h-4 w-4 mr-2" />
-                    Destacados Usados
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => setFeaturedFilter('free')}
-                    className={featuredFilter === 'free' ? 'bg-gray-100' : ''}
-                  >
-                    <Circle className="h-4 w-4 mr-2" />
-                    Destacados Libres
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+            </div>
+            <div className="flex items-center justify-between mt-4">
+              <InputSearch
+                value={searchTerm}
+                onChange={setSearchTerm}
+                onClear={() => setSearchTerm('')}
+                placeholder="Buscar en destacados..."
+                className="w-64"
+              />
+              <div className="flex items-center space-x-2">
+                <SortByData
+                  sortBy={sortBy}
+                  setSortBy={setSortBy}
+                  options={sortOptions}
+                />
+                <SortPerPageSize
+                  pageSize={pageSize}
+                  setPageSize={setPageSize}
+                />
+              </div>
             </div>
           </CardHeader>
           <CardContent className="px-0">
-            {filteredFeatured.length > 0 ? (
+            {loading ? (
+              <div className="flex items-center justify-center py-8 px-5">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              </div>
+            ) : (
               <>
                 <div className="overflow-x-auto">
                   <Table className="w-full">
@@ -188,7 +136,7 @@ export default function UserDestacadosPage() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {paginatedFeatured.map((featured) => (
+                      {featuredItems.map((featured) => (
                         <TableRow key={featured.id}>
                           <TableCell className="pl-6">
                             <div className="font-medium">#{featured.id}</div>
@@ -222,26 +170,28 @@ export default function UserDestacadosPage() {
                           </TableCell>
                           <TableCell className="text-right pr-6">
                             <div className="flex items-center justify-end space-x-2">
-                              <Link href={`/features/${featured.id}`}>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() =>
+                                  router.push(`/features/${featured.id}`)
+                                }
+                                className="h-10 w-10 p-0 cursor-pointer hover:bg-[#ffd699]!"
+                              >
+                                <Eye className="h-4 w-4" />
+                              </Button>
+                              {featured.ad && (
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  className="h-10 w-10 p-0 cursor-pointer hover:bg-[#ffd699] hover:!bg-[#ffd699] [&:hover]:bg-[#ffd699]"
+                                  title="Ver anuncio asociado"
+                                  onClick={() =>
+                                    router.push(`/ads/${featured.ad?.id}`)
+                                  }
+                                  className="h-10 w-10 p-0 cursor-pointer hover:bg-[#ffd699]!"
                                 >
-                                  <Eye className="h-4 w-4" />
+                                  <FileText className="h-4 w-4" />
                                 </Button>
-                              </Link>
-                              {featured.ad && (
-                                <Link href={`/ads/${featured.ad.id}`}>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    title="Ver anuncio asociado"
-                                    className="h-10 w-10 p-0 cursor-pointer hover:bg-[#ffd699] hover:!bg-[#ffd699] [&:hover]:bg-[#ffd699]"
-                                  >
-                                    <FileText className="h-4 w-4" />
-                                  </Button>
-                                </Link>
                               )}
                             </div>
                           </TableCell>
@@ -251,27 +201,25 @@ export default function UserDestacadosPage() {
                   </Table>
                 </div>
 
-                {/* Paginación */}
-                <CardFooter className="px-6 py-2">
-                  <DataTablePagination
-                    currentPage={featuredCurrentPage}
-                    totalPages={totalFilteredPages}
-                    totalItems={totalFilteredItems}
-                    onPageChange={handleFeaturedPageChange}
-                  />
-                </CardFooter>
+                {featuredItems.length === 0 && !loading && (
+                  <div className="text-center py-8 px-5">
+                    <p className="text-gray-500">
+                      Este usuario no tiene destacados
+                      {searchTerm && ` que coincidan con "${searchTerm}"`}
+                    </p>
+                  </div>
+                )}
               </>
-            ) : (
-              <div className="text-center py-8 px-5">
-                <p className="text-gray-500">
-                  Este usuario no tiene{' '}
-                  {featuredFilter === 'used'
-                    ? 'destacados usados'
-                    : 'destacados libres'}
-                </p>
-              </div>
             )}
           </CardContent>
+          <CardFooter className="px-6 py-2">
+            <DataTablePagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalItems={totalItems}
+              onPageChange={setCurrentPage}
+            />
+          </CardFooter>
         </Card>
       </div>
     </div>

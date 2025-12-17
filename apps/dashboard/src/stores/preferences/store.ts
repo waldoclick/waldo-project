@@ -17,6 +17,10 @@ import {
   PacksPreferences,
   RegionsPreferences,
   CommunesPreferences,
+  RegionCommunesPreferences,
+  AdsPreferences,
+  AdReservationsPreferences,
+  AdFeaturedReservationsPreferences,
   GlobalSearchPreferences,
 } from './types';
 
@@ -110,6 +114,31 @@ const defaultCommunesPreferences: CommunesPreferences = {
   searchTerm: '',
 };
 
+const defaultRegionCommunesPreferences: CommunesPreferences = {
+  pageSize: 25,
+  sortBy: 'name:asc',
+  searchTerm: '',
+};
+
+const defaultAdsPreferences: AdsPreferences = {
+  pageSize: 25,
+  sortBy: 'createdAt:desc',
+  searchTerm: '',
+};
+
+const defaultAdReservationsPreferences: AdReservationsPreferences = {
+  pageSize: 25,
+  sortBy: 'createdAt:desc',
+  searchTerm: '',
+};
+
+const defaultAdFeaturedReservationsPreferences: AdFeaturedReservationsPreferences =
+  {
+    pageSize: 25,
+    sortBy: 'createdAt:desc',
+    searchTerm: '',
+  };
+
 const defaultGlobalSearchPreferences: GlobalSearchPreferences = {
   searchTerm: '',
 };
@@ -133,6 +162,10 @@ export const usePreferencesStore = create<PreferencesState>()(
       packs: defaultPacksPreferences,
       regions: defaultRegionsPreferences,
       communes: defaultCommunesPreferences,
+      regionCommunes: defaultRegionCommunesPreferences,
+      ads: defaultAdsPreferences,
+      adReservations: defaultAdReservationsPreferences,
+      adFeaturedReservations: defaultAdFeaturedReservationsPreferences,
       globalSearch: defaultGlobalSearchPreferences,
 
       // Acciones
@@ -274,6 +307,44 @@ export const usePreferencesStore = create<PreferencesState>()(
           },
         }));
       },
+      setRegionCommunesPreferences: (
+        preferences: Partial<RegionCommunesPreferences>
+      ) => {
+        set((state) => ({
+          regionCommunes: {
+            ...state.regionCommunes,
+            ...preferences,
+          },
+        }));
+      },
+      setAdsPreferences: (preferences: Partial<AdsPreferences>) => {
+        set((state) => ({
+          ads: {
+            ...state.ads,
+            ...preferences,
+          },
+        }));
+      },
+      setAdReservationsPreferences: (
+        preferences: Partial<AdReservationsPreferences>
+      ) => {
+        set((state) => ({
+          adReservations: {
+            ...state.adReservations,
+            ...preferences,
+          },
+        }));
+      },
+      setAdFeaturedReservationsPreferences: (
+        preferences: Partial<AdFeaturedReservationsPreferences>
+      ) => {
+        set((state) => ({
+          adFeaturedReservations: {
+            ...state.adFeaturedReservations,
+            ...preferences,
+          },
+        }));
+      },
       setGlobalSearchPreferences: (
         preferences: Partial<GlobalSearchPreferences>
       ) => {
@@ -303,6 +374,10 @@ export const usePreferencesStore = create<PreferencesState>()(
         packs: state.packs,
         regions: state.regions,
         communes: state.communes,
+        regionCommunes: state.regionCommunes,
+        ads: state.ads,
+        adReservations: state.adReservations,
+        adFeaturedReservations: state.adFeaturedReservations,
         globalSearch: state.globalSearch,
       }),
     }

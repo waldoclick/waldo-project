@@ -57,22 +57,22 @@ export function usePaginatedData<T>({
 
   // Cargar preferencias al montar el componente (solo una vez)
   useEffect(() => {
-    if (!hasInitializedRef.current) {
-      setSearchTerm(preferences.searchTerm);
-      setPageSize(preferences.pageSize);
+    if (!hasInitializedRef.current && preferences) {
+      setSearchTerm(preferences.searchTerm || '');
+      setPageSize(preferences.pageSize || 25);
       setSortBy(preferences.sortBy || defaultSortBy);
       lastSavedRef.current = {
-        searchTerm: preferences.searchTerm,
-        pageSize: preferences.pageSize,
+        searchTerm: preferences.searchTerm || '',
+        pageSize: preferences.pageSize || 25,
         sortBy: preferences.sortBy || defaultSortBy,
       };
       setIsInitialized(true);
       hasInitializedRef.current = true;
     }
   }, [
-    preferences.searchTerm,
-    preferences.pageSize,
-    preferences.sortBy,
+    preferences?.searchTerm,
+    preferences?.pageSize,
+    preferences?.sortBy,
     defaultSortBy,
   ]);
 
