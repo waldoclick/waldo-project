@@ -171,6 +171,7 @@ export async function getUserFeaturedReservations(
     pageSize?: number;
     sort?: string;
     search?: string;
+    filters?: StrapiFilters;
   }
 ): Promise<StrapiAdFeaturedReservationsResponse> {
   const searchParams = new URLSearchParams();
@@ -182,7 +183,7 @@ export async function getUserFeaturedReservations(
     searchParams.append('pagination[pageSize]', params.pageSize.toString());
   if (params?.sort) searchParams.append('sort', params.sort);
 
-  // Búsqueda por texto
+  // Filtros base: usuario específico
   if (params?.search) {
     searchParams.append(
       'filters[$and][0][$or][0][ad][name][$containsi]',
@@ -190,8 +191,23 @@ export async function getUserFeaturedReservations(
     );
     searchParams.append('filters[$and][1][user][id][$eq]', userId.toString());
   } else {
-    // Filtros para el usuario específico
     searchParams.append('filters[user][id][$eq]', userId.toString());
+  }
+
+  // Filtros adicionales (como used/free)
+  if (params?.filters) {
+    Object.entries(params.filters).forEach(([key, value]) => {
+      if (typeof value === 'object' && value !== null) {
+        Object.entries(value).forEach(([operator, operatorValue]) => {
+          searchParams.append(
+            `filters[${key}][${operator}]`,
+            operatorValue.toString()
+          );
+        });
+      } else {
+        searchParams.append(`filters[${key}]`, value.toString());
+      }
+    });
   }
 
   // Populate user and ad with their related data

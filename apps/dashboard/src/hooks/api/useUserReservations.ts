@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { usePaginatedData } from './usePaginatedData';
 import { getUserReservations, StrapiAdReservation } from '@/lib/strapi';
 import { usePreferencesStore } from '@/stores/preferences';
@@ -6,6 +6,7 @@ import { usePreferencesStore } from '@/stores/preferences';
 export function useUserReservations(userId: number) {
   const { adReservations: resPrefs, setAdReservationsPreferences } =
     usePreferencesStore();
+  const [filter, setFilter] = useState<'used' | 'free'>('used');
 
   const fetchFn = useCallback(
     (params: {
@@ -13,14 +14,26 @@ export function useUserReservations(userId: number) {
       pageSize: number;
       sort: string;
       search?: string;
-    }) => getUserReservations(userId, params),
-    [userId]
+    }) => {
+      const filters =
+        filter === 'used'
+          ? { ad: { $notNull: true } }
+          : { ad: { $null: true } };
+      return getUserReservations(userId, { ...params, filters });
+    },
+    [userId, filter]
   );
 
-  return usePaginatedData<StrapiAdReservation>({
+  const paginatedData = usePaginatedData<StrapiAdReservation>({
     fetchFn,
     preferences: resPrefs,
     setPreferences: setAdReservationsPreferences,
     defaultSortBy: 'createdAt:desc',
   });
+
+  return {
+    ...paginatedData,
+    filter,
+    setFilter,
+  };
 }

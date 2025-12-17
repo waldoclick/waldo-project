@@ -18,7 +18,20 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Eye, FileText, Calendar } from 'lucide-react';
+import {
+  Eye,
+  FileText,
+  Calendar,
+  ChevronDown,
+  CheckCircle,
+  Circle,
+} from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { StrapiAdReservation } from '@/lib/strapi';
 import { useFormatDate } from '@/hooks/useFormatDate';
 import { DataTablePagination } from '@/components/ui/data-table-pagination';
@@ -49,6 +62,8 @@ export default function UserReservasPage() {
     setPageSize,
     sortBy,
     setSortBy,
+    filter,
+    setFilter,
   } = useUserReservations(parseInt(userId));
 
   const sortOptions = [
@@ -102,6 +117,35 @@ export default function UserReservasPage() {
                 className="w-64"
               />
               <div className="flex items-center space-x-2">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="h-[45px] rounded-[4px] border-[#dcdcdc] bg-white text-[#313338] hover:bg-white hover:shadow-[0_0_15px_rgba(49,51,56,0.1)] flex items-center gap-2 px-4"
+                    >
+                      {filter === 'used'
+                        ? 'Reservas Usadas'
+                        : 'Reservas Libres'}
+                      <ChevronDown className="h-[18px] w-[18px]" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem
+                      onClick={() => setFilter('used')}
+                      className={filter === 'used' ? 'bg-gray-100' : ''}
+                    >
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      Reservas Usadas
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setFilter('free')}
+                      className={filter === 'free' ? 'bg-gray-100' : ''}
+                    >
+                      <Circle className="h-4 w-4 mr-2" />
+                      Reservas Libres
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
                 <SortByData
                   sortBy={sortBy}
                   setSortBy={setSortBy}
