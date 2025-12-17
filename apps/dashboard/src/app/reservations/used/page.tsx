@@ -67,8 +67,7 @@ export default function UsedReservationsPage() {
           <Breadcrumbs
             items={[
               { label: 'Waldo', href: '/' },
-              { label: 'Reservas', href: '/reservations/used' },
-              { label: 'Usadas' },
+              { label: 'Reservas Usadas' },
             ]}
           />
           {/* Header */}

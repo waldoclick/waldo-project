@@ -53,8 +53,7 @@ export default function ActiveAdsPage() {
           <Breadcrumbs
             items={[
               { label: 'Waldo', href: '/' },
-              { label: 'Anuncios', href: '/ads/pending' },
-              { label: 'Activos' },
+              { label: 'Anuncios Activos' },
             ]}
           />
           {/* Header */}

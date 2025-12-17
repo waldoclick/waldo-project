@@ -53,8 +53,7 @@ export default function PendingAdsPage() {
           <Breadcrumbs
             items={[
               { label: 'Waldo', href: '/' },
-              { label: 'Anuncios', href: '/ads/pending' },
-              { label: 'Pendientes' },
+              { label: 'Anuncios Pendientes' },
             ]}
           />
           {/* Header */}

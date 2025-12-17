@@ -52,8 +52,7 @@ export default function ArchivedAdsPage() {
           <Breadcrumbs
             items={[
               { label: 'Waldo', href: '/' },
-              { label: 'Anuncios', href: '/ads/pending' },
-              { label: 'Archivados' },
+              { label: 'Anuncios Archivados' },
             ]}
           />
           {/* Header */}

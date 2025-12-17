@@ -81,13 +81,11 @@ export default function DestacadoDetailPage() {
   }
 
   const isUsed = !!featured.ad;
-  const featuredHref = '/features/used';
-  const featuredSectionHref = isUsed ? '/features/used' : '/features/free';
-  const featuredSectionLabel = isUsed ? 'Usados' : 'Libres';
+  const featuredViewLabel = isUsed ? 'Destacados Usados' : 'Destacados Libres';
+  const featuredViewHref = isUsed ? '/features/used' : '/features/free';
   const breadcrumbsItems = [
     { label: 'Waldo', href: '/' },
-    { label: 'Destacados', href: featuredHref },
-    { label: featuredSectionLabel, href: featuredSectionHref },
+    { label: featuredViewLabel, href: featuredViewHref },
     { label: `Destacado #${featured.id}` },
   ];
 

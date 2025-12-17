@@ -291,12 +291,23 @@ export default function AdDetailPage() {
   // Cast user to extended type for additional fields
   const extendedUser = ad.user as ExtendedUser;
 
+  // Determine which ads view this ad belongs to
+  let adsViewLabel = 'Anuncios Pendientes';
+  let adsViewHref = '/ads/pending';
+  if (ad.rejected) {
+    adsViewLabel = 'Anuncios Rechazados';
+    adsViewHref = '/ads/rejected';
+  } else if (ad.active && ad.remaining_days > 0) {
+    adsViewLabel = 'Anuncios Activos';
+    adsViewHref = '/ads/active';
+  } else if (!ad.active && ad.remaining_days === 0) {
+    adsViewLabel = 'Anuncios Archivados';
+    adsViewHref = '/ads/archived';
+  }
+
   const breadcrumbItems = [
     { label: 'Waldo', href: '/' },
-    { label: 'Anuncios', href: '/ads/pending' },
-    ...(ad.category?.name
-      ? [{ label: ad.category.name, href: '/ads/pending' }]
-      : []),
+    { label: adsViewLabel, href: adsViewHref },
     { label: ad.name },
   ];
 

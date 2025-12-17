@@ -81,15 +81,13 @@ export default function ReservationDetailPage() {
   }
 
   const isUsed = !!reservation.ad;
-  const reservationsHref = '/reservations/used';
-  const reservationsSectionHref = isUsed
+  const reservationsViewLabel = isUsed ? 'Reservas Usadas' : 'Reservas Libres';
+  const reservationsViewHref = isUsed
     ? '/reservations/used'
     : '/reservations/free';
-  const reservationsSectionLabel = isUsed ? 'Usadas' : 'Libres';
   const breadcrumbsItems = [
     { label: 'Waldo', href: '/' },
-    { label: 'Reservas', href: reservationsHref },
-    { label: reservationsSectionLabel, href: reservationsSectionHref },
+    { label: reservationsViewLabel, href: reservationsViewHref },
     { label: `Reserva #${reservation.id}` },
   ];
 

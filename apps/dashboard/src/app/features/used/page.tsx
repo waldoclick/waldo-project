@@ -58,8 +58,7 @@ export default function UsedFeaturedPage() {
           <Breadcrumbs
             items={[
               { label: 'Waldo', href: '/' },
-              { label: 'Destacados', href: '/features/used' },
-              { label: 'Usados' },
+              { label: 'Destacados Usados' },
             ]}
           />
           {/* Header */}

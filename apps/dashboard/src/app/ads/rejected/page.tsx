@@ -53,8 +53,7 @@ export default function RejectedAdsPage() {
           <Breadcrumbs
             items={[
               { label: 'Waldo', href: '/' },
-              { label: 'Anuncios', href: '/ads/pending' },
-              { label: 'Rechazados' },
+              { label: 'Anuncios Rechazados' },
             ]}
           />
           {/* Header */}
