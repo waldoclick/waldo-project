@@ -106,7 +106,11 @@ export function UserMenu() {
             </div>
           </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-56 border-[#dcdcdc]">
+        <DropdownMenuContent
+          align="end"
+          sideOffset={0}
+          className="w-[220px] min-w-[220px] !py-2 border-[#dcdcdc] border-t-0 rounded-tl-none rounded-tr-none rounded-bl-[4px] rounded-br-[4px]"
+        >
           <div className="relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none">
             <Mail className="h-4 w-4 text-gray-500 mr-2 shrink-0" />
             <span className="text-sm text-muted-foreground">
