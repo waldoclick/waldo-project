@@ -16,7 +16,8 @@
     "format": "turbo run format",
     "test": "turbo run test",
     "codacy": "turbo run codacy",
-    "prepare": "husky"
+    "prepare": "husky",
+    "strapi:upgrade": "cd apps/strapi && NPM_REGISTRY_URL=https://registry.npmjs.org/ npx @strapi/upgrade latest"
   },
   "devDependencies": {
     "turbo": "^2.3.0",
