@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useUserStore } from '@/stores/users';
 import { Button } from '@/components/ui/button';
 import { Avatar } from '@/components/ui/avatar';
@@ -26,6 +27,7 @@ import { config } from '@/lib/config';
 
 export function UserMenu() {
   const { user } = useUserStore();
+  const pathname = usePathname();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -83,9 +85,7 @@ export function UserMenu() {
               'px-[10px] py-[7px] min-w-[220px]',
               'flex items-center justify-between',
               'outline-none focus-visible:outline-none',
-              open
-                ? 'rounded-t-[4px] rounded-b-none border-b border-b-[#dcdcdc]'
-                : 'rounded-[4px]',
+              open ? 'rounded-t-[4px] rounded-b-none' : 'rounded-[4px]',
             ].join(' ')}
           >
             <div className="flex items-center">
@@ -109,47 +109,53 @@ export function UserMenu() {
         <DropdownMenuContent
           align="end"
           sideOffset={0}
-          className="w-[220px] min-w-[220px] !py-2 border-[#dcdcdc] border-t-0 rounded-tl-none rounded-tr-none rounded-bl-[4px] rounded-br-[4px]"
+          className="w-[220px] min-w-[220px] p-0 border-none rounded-tl-none rounded-tr-none rounded-bl-[4px] rounded-br-[4px] bg-white shadow-[0_10px_20px_rgba(49,51,56,0.1)]"
         >
-          <div className="relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none">
-            <Mail className="h-4 w-4 text-gray-500 mr-2 shrink-0" />
-            <span className="text-sm text-muted-foreground">
-              {user?.email || 'admin@waldo.com'}
-            </span>
+          <div className="px-5 py-[10px] flex flex-col">
+            <DropdownMenuItem asChild className="px-0">
+              <Link
+                href="/profile"
+                className={`text-sm text-[#313338] py-[5px] hover:underline focus:bg-transparent focus:text-[#313338] focus:underline outline-none cursor-pointer h-auto ${pathname === '/profile' ? 'underline font-semibold' : ''}`}
+              >
+                Mi cuenta
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild className="px-0">
+              <Link
+                href="/ads/pending"
+                className={`text-sm text-[#313338] py-[5px] hover:underline focus:bg-transparent focus:text-[#313338] focus:underline outline-none cursor-pointer h-auto ${pathname.startsWith('/ads') ? 'underline font-semibold' : ''}`}
+              >
+                Mis anuncios
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild className="px-0">
+              <Link
+                href="/profile/edit"
+                className={`text-sm text-[#313338] py-[5px] hover:underline focus:bg-transparent focus:text-[#313338] focus:underline outline-none cursor-pointer h-auto ${pathname === '/profile/edit' ? 'underline font-semibold' : ''}`}
+              >
+                Mi perfil
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild className="px-0">
+              <Link
+                href="/profile/change-password"
+                className={`text-sm text-[#313338] py-[5px] hover:underline focus:bg-transparent focus:text-[#313338] focus:underline outline-none cursor-pointer h-auto ${pathname === '/profile/change-password' ? 'underline font-semibold' : ''}`}
+              >
+                Cambiar contraseña
+              </Link>
+            </DropdownMenuItem>
           </div>
-          <DropdownMenuSeparator className="my-0 bg-[#dcdcdc]" />
-          <DropdownMenuItem asChild>
-            <Link href="/profile" className="flex items-center">
-              <User className="mr-2 h-4 w-4" />
-              <span>Mi Perfil</span>
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link href="/profile/edit" className="flex items-center">
-              <Edit className="mr-2 h-4 w-4" />
-              <span>Editar Perfil</span>
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link href="/profile/change-password" className="flex items-center">
-              <Lock className="mr-2 h-4 w-4" />
-              <span>Cambiar Contraseña</span>
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link href="/settings" className="flex items-center">
-              <Settings className="mr-2 h-4 w-4" />
-              <span>Configuración</span>
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuSeparator className="my-0 bg-[#dcdcdc]" />
-          <DropdownMenuItem
-            onClick={handleLogout}
-            className="text-red-600 focus:text-red-600 focus:bg-red-50"
-          >
-            <LogOut className="mr-2 h-4 w-4" />
-            <span>Cerrar Sesión</span>
-          </DropdownMenuItem>
+
+          <div className="h-[1px] bg-[#eaebeb] w-full" />
+
+          <div className="px-5 py-[10px] flex flex-col">
+            <DropdownMenuItem
+              onClick={handleLogout}
+              className="text-sm text-[#313338] py-[5px] hover:underline focus:bg-transparent focus:text-[#313338] focus:underline cursor-pointer h-auto outline-none px-0"
+            >
+              Cerrar sesión
+            </DropdownMenuItem>
+          </div>
         </DropdownMenuContent>
       </DropdownMenu>
 
