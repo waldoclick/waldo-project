@@ -9,10 +9,11 @@ import {
   LogOut,
   User,
   Settings,
-  ChevronDown,
   Mail,
   Edit,
   Lock,
+  Menu,
+  X,
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -26,9 +27,20 @@ import { config } from '@/lib/config';
 export function UserMenu() {
   const { user } = useUserStore();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [open, setOpen] = useState(false);
 
-  // Obtener nombre del usuario
-  const userName = user?.username || user?.email?.split('@')[0] || 'Usuario';
+  const firstName = (user as any)?.firstname as string | undefined;
+  const lastName = (user as any)?.lastname as string | undefined;
+
+  // Match website trigger content: "Hola" + firstname (fallback to username/email)
+  const displayName =
+    firstName || user?.username || user?.email?.split('@')[0] || 'Usuario';
+
+  // Match website avatar fallback: firstname+lastname -> initials, else email -> 2 chars
+  const avatarSeed =
+    firstName || lastName
+      ? `${firstName ?? ''} ${lastName ?? ''}`.trim()
+      : user?.email || user?.username || 'WA';
 
   const handleLogout = async () => {
     console.log('🔴 Botón de logout presionado');
@@ -60,18 +72,39 @@ export function UserMenu() {
 
   return (
     <>
-      <DropdownMenu modal={false}>
+      <DropdownMenu modal={false} open={open} onOpenChange={setOpen}>
         <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            className="flex items-center space-x-2 px-3 py-2 hover:bg-gray-50"
+          <button
+            type="button"
+            title="Menú de usuario"
+            className={[
+              'appearance-none border bg-[#f5f5f5] border-white',
+              'shadow-[0_0_20px_rgba(49,51,56,0.1)]',
+              'px-[10px] py-[7px] min-w-[220px]',
+              'flex items-center justify-between',
+              'outline-none focus-visible:outline-none',
+              open
+                ? 'rounded-t-[4px] rounded-b-none border-b border-b-[#dcdcdc]'
+                : 'rounded-[4px]',
+            ].join(' ')}
           >
-            <Avatar name={userName} size="md" />
-            <span className="text-sm font-medium text-gray-700">
-              {userName}
-            </span>
-            <ChevronDown className="h-4 w-4 text-gray-400" />
-          </Button>
+            <div className="flex items-center">
+              <div className="max-w-[30px] mr-[10px]">
+                <Avatar name={avatarSeed} size="sm" />
+              </div>
+
+              <div className="text-left text-[10px] leading-none text-[#313338] font-normal">
+                Hola
+                <div className="font-semibold text-[14px] leading-[1.3] text-[#313338] w-[130px] truncate">
+                  {displayName}
+                </div>
+              </div>
+            </div>
+
+            <div className="w-5 h-5 ml-[10px] text-[#313338]">
+              {open ? <X size={24} /> : <Menu size={24} />}
+            </div>
+          </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
           <div className="relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none">
