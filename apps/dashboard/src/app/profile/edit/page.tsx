@@ -21,6 +21,8 @@ export default function EditProfilePage() {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
+    firstname: '',
+    lastname: '',
   });
 
   const fetchUser = useCallback(async () => {
@@ -31,6 +33,8 @@ export default function EditProfilePage() {
       setFormData({
         username: currentUser.username || '',
         email: currentUser.email || '',
+        firstname: currentUser.firstname || '',
+        lastname: currentUser.lastname || '',
       });
     } catch (error) {
       console.error('Error fetching user:', error);
@@ -46,6 +50,8 @@ export default function EditProfilePage() {
       setFormData({
         username: userFromStore.username || '',
         email: userFromStore.email || '',
+        firstname: userFromStore.firstname || '',
+        lastname: userFromStore.lastname || '',
       });
     }
     // Luego obtener datos actualizados del servidor
@@ -72,24 +78,52 @@ export default function EditProfilePage() {
 
     try {
       setLoading(true);
-      const response = await updateUser(user.id, {
-        username: formData.username.trim(),
-        email: formData.email.trim(),
-      });
+
+      const payload: any = {};
+
+      if (formData.username.trim() !== user.username) {
+        payload.username = formData.username.trim();
+      }
+      if (formData.email.trim() !== user.email) {
+        payload.email = formData.email.trim();
+      }
+      if (formData.firstname.trim() !== (user.firstname || '')) {
+        payload.firstname = formData.firstname.trim();
+      }
+      if (formData.lastname.trim() !== (user.lastname || '')) {
+        payload.lastname = formData.lastname.trim();
+      }
+
+      console.log('Enviando campos modificados:', payload);
+
+      if (Object.keys(payload).length === 0) {
+        console.log('No hay cambios para enviar');
+        router.push('/profile');
+        return;
+      }
+
+      const response = await updateUser(user.id, payload);
+
+      console.log('Respuesta de actualización recibida:', response);
 
       // Actualizar el store con el usuario actualizado
-      // La respuesta puede venir como { data: StrapiUser } o directamente como StrapiUser
-      const updatedUserData = response.data || response;
-      setUser(updatedUserData);
+      setUser(response);
 
       router.push('/profile');
     } catch (error) {
-      console.error('Error updating user:', error);
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : 'Error al actualizar el usuario';
-      alert(errorMessage);
+      console.error('Error detallado al actualizar usuario:', error);
+      let errorMessage = 'Error al actualizar el usuario';
+
+      if (error instanceof Error) {
+        errorMessage = error.message;
+        // Si hay datos de error adicionales de Strapi
+        const errorWithData = error as any;
+        if (errorWithData.errorData?.error?.message) {
+          errorMessage = errorWithData.errorData.error.message;
+        }
+      }
+
+      alert(`Error: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
@@ -143,44 +177,87 @@ export default function EditProfilePage() {
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  <div>
-                    <label
-                      htmlFor="username"
-                      className="block text-sm font-medium text-gray-700 mb-2"
-                    >
-                      Nombre de Usuario *
-                    </label>
-                    <Input
-                      id="username"
-                      type="text"
-                      value={formData.username}
-                      onChange={(e) =>
-                        setFormData({ ...formData, username: e.target.value })
-                      }
-                      placeholder="Ingresa el nombre de usuario"
-                      required
-                      className="w-full"
-                    />
-                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-6">
+                    <div>
+                      <label
+                        htmlFor="firstname"
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                      >
+                        Nombres
+                      </label>
+                      <Input
+                        id="firstname"
+                        type="text"
+                        value={formData.firstname}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            firstname: e.target.value,
+                          })
+                        }
+                        placeholder="Ingresa tus nombres"
+                        className="w-full"
+                      />
+                    </div>
 
-                  <div>
-                    <label
-                      htmlFor="email"
-                      className="block text-sm font-medium text-gray-700 mb-2"
-                    >
-                      Email *
-                    </label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) =>
-                        setFormData({ ...formData, email: e.target.value })
-                      }
-                      placeholder="Ingresa el email"
-                      required
-                      className="w-full"
-                    />
+                    <div>
+                      <label
+                        htmlFor="lastname"
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                      >
+                        Apellidos
+                      </label>
+                      <Input
+                        id="lastname"
+                        type="text"
+                        value={formData.lastname}
+                        onChange={(e) =>
+                          setFormData({ ...formData, lastname: e.target.value })
+                        }
+                        placeholder="Ingresa tus apellidos"
+                        className="w-full"
+                      />
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="username"
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                      >
+                        Username *
+                      </label>
+                      <Input
+                        id="username"
+                        type="text"
+                        value={formData.username}
+                        onChange={(e) =>
+                          setFormData({ ...formData, username: e.target.value })
+                        }
+                        placeholder="Ingresa el username"
+                        required
+                        className="w-full"
+                      />
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="email"
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                      >
+                        Email *
+                      </label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) =>
+                          setFormData({ ...formData, email: e.target.value })
+                        }
+                        placeholder="Ingresa el email"
+                        required
+                        className="w-full"
+                      />
+                    </div>
                   </div>
 
                   <div className="flex space-x-2 pt-4">

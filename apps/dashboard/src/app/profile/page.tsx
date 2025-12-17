@@ -51,6 +51,7 @@ export default function ProfilePage() {
             </Button>
             <Button
               variant="outline"
+              size="header"
               onClick={() => router.push('/profile/change-password')}
             >
               <Lock className="h-4 w-4 mr-2" />
@@ -72,7 +73,9 @@ export default function ProfilePage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <InfoField label="Nombre de Usuario" value={user.username} />
+                  <InfoField label="Nombres" value={user.firstname} />
+                  <InfoField label="Apellidos" value={user.lastname} />
+                  <InfoField label="Username" value={user.username} />
                   <InfoField label="Email" value={user.email} type="email" />
                   <InfoField label="ID de Usuario" value={user.id} />
                   <InfoField label="Proveedor" value={user.provider} />

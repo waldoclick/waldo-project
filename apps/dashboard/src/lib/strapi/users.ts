@@ -107,20 +107,33 @@ export async function getUser(id: number): Promise<{ data: StrapiUser }> {
 // Crear un nuevo usuario
 export async function createUser(
   data: Partial<StrapiUser>
-): Promise<{ data: StrapiUser }> {
-  return strapiClient.post<{ data: StrapiUser }>('/users', {
-    data,
-  } as unknown as Record<string, unknown>);
+): Promise<StrapiUser> {
+  return strapiClient.post<StrapiUser>(
+    '/users',
+    data as unknown as Record<string, unknown>
+  );
 }
 
 // Actualizar un usuario
 export async function updateUser(
   id: number,
   data: Partial<StrapiUser>
-): Promise<{ data: StrapiUser }> {
-  return strapiClient.put<{ data: StrapiUser }>(`/users/${id}`, {
-    data,
-  } as unknown as Record<string, unknown>);
+): Promise<StrapiUser> {
+  console.log(`[Strapi API] PUT /users/${id}`, JSON.stringify(data));
+  try {
+    // Intentar enviar los datos directamente (estándar para el plugin Users-Permissions)
+    // Pero también prepararse por si el backend espera el formato estándar de Strapi v4/v5 con { data: ... }
+    const response = await strapiClient.put<any>(
+      `/users/${id}`,
+      data as unknown as Record<string, unknown>
+    );
+    console.log(`[Strapi API] Response from /users/${id}:`, response);
+    // Devolver el usuario actualizado (Strapi puede devolverlo directamente o envuelto en data)
+    return response.data || response;
+  } catch (error) {
+    console.error(`[Strapi API] Error updating user ${id}:`, error);
+    throw error;
+  }
 }
 
 // Eliminar un usuario

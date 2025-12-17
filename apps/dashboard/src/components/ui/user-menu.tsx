@@ -117,22 +117,6 @@ export function UserMenu() {
                 href="/profile"
                 className={`text-sm text-[#313338] py-[5px] hover:underline focus:bg-transparent focus:text-[#313338] focus:underline outline-none cursor-pointer h-auto ${pathname === '/profile' ? 'underline font-semibold' : ''}`}
               >
-                Mi cuenta
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild className="px-0">
-              <Link
-                href="/ads/pending"
-                className={`text-sm text-[#313338] py-[5px] hover:underline focus:bg-transparent focus:text-[#313338] focus:underline outline-none cursor-pointer h-auto ${pathname.startsWith('/ads') ? 'underline font-semibold' : ''}`}
-              >
-                Mis anuncios
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild className="px-0">
-              <Link
-                href="/profile/edit"
-                className={`text-sm text-[#313338] py-[5px] hover:underline focus:bg-transparent focus:text-[#313338] focus:underline outline-none cursor-pointer h-auto ${pathname === '/profile/edit' ? 'underline font-semibold' : ''}`}
-              >
                 Mi perfil
               </Link>
             </DropdownMenuItem>
