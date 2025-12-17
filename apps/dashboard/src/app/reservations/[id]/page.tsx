@@ -81,10 +81,15 @@ export default function ReservationDetailPage() {
   }
 
   const isUsed = !!reservation.ad;
-  const reservationsHref = isUsed ? '/reservations/used' : '/reservations/free';
+  const reservationsHref = '/reservations/used';
+  const reservationsSectionHref = isUsed
+    ? '/reservations/used'
+    : '/reservations/free';
+  const reservationsSectionLabel = isUsed ? 'Usadas' : 'Libres';
   const breadcrumbsItems = [
     { label: 'Waldo', href: '/' },
     { label: 'Reservas', href: reservationsHref },
+    { label: reservationsSectionLabel, href: reservationsSectionHref },
     { label: `Reserva #${reservation.id}` },
   ];
 

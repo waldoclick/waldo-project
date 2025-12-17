@@ -66,7 +66,7 @@ export default function FreeReservationsPage() {
         <Breadcrumbs
           items={[
             { label: 'Waldo', href: '/' },
-            { label: 'Reservas', href: '/reservations/free' },
+            { label: 'Reservas', href: '/reservations/used' },
             { label: 'Libres' },
           ]}
         />

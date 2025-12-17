@@ -67,7 +67,7 @@ export default function FreeFeaturedPage() {
         <Breadcrumbs
           items={[
             { label: 'Waldo', href: '/' },
-            { label: 'Destacados', href: '/features/free' },
+            { label: 'Destacados', href: '/features/used' },
             { label: 'Libres' },
           ]}
         />

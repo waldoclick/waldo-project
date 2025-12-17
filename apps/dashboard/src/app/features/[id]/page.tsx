@@ -81,10 +81,13 @@ export default function DestacadoDetailPage() {
   }
 
   const isUsed = !!featured.ad;
-  const featuredHref = isUsed ? '/features/used' : '/features/free';
+  const featuredHref = '/features/used';
+  const featuredSectionHref = isUsed ? '/features/used' : '/features/free';
+  const featuredSectionLabel = isUsed ? 'Usados' : 'Libres';
   const breadcrumbsItems = [
     { label: 'Waldo', href: '/' },
     { label: 'Destacados', href: featuredHref },
+    { label: featuredSectionLabel, href: featuredSectionHref },
     { label: `Destacado #${featured.id}` },
   ];
 

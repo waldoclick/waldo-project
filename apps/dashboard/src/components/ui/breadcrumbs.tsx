@@ -27,7 +27,7 @@ export function Breadcrumbs({ items, className }: BreadcrumbsProps) {
               {isLink ? (
                 <Link
                   href={item.href!}
-                  className="underline underline-offset-4 text-[#313338] hover:opacity-70 transition-opacity"
+                  className="underline decoration-1 text-[#313338] hover:opacity-70 transition-opacity"
                 >
                   {item.label}
                 </Link>
