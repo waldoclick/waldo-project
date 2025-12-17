@@ -2,8 +2,6 @@
 
 import * as React from 'react';
 import { X, Search } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 interface InputSearchProps extends Omit<
@@ -29,25 +27,35 @@ export function InputSearch({
   };
 
   return (
-    <div className={cn('relative', className)}>
-      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-      <Input
-        {...props}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="pl-9 pr-9 rounded-sm hover:border-[#ffd699]/50 focus-visible:border-[#ffd699]/50 focus-visible:ring-[#ffd699]/30"
-      />
+    <div
+      className={cn(
+        'flex items-center bg-white border border-[#dcdcdc] rounded-[4px] h-[45px] transition hover:shadow-[0_0_15px_rgba(49,51,56,0.1)]',
+        className
+      )}
+    >
+      <div className="w-[55px] flex items-center justify-center">
+        <Search className="h-[18px] w-[18px] text-[#313338]" />
+      </div>
+
+      <div className="flex-1">
+        <input
+          {...props}
+          type={props.type ?? 'text'}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-full appearance-none border-0 outline-none bg-transparent text-[14px] tracking-[0.25px] text-[#313338] px-[6px] py-[6px] placeholder:text-[#9ca3af]"
+        />
+      </div>
+
       {value && (
-        <Button
+        <button
           type="button"
-          variant="ghost"
-          size="icon"
-          className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7"
           onClick={handleClear}
           aria-label="Limpiar búsqueda"
+          className="w-10 h-full flex items-center justify-center text-[#9ca3af] hover:text-[#313338] transition"
         >
-          <X className="h-4 w-4" />
-        </Button>
+          <X className="h-[18px] w-[18px]" />
+        </button>
       )}
     </div>
   );

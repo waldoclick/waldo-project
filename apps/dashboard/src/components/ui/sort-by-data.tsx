@@ -26,10 +26,13 @@ export function SortByData({ sortBy, setSortBy, options }: SortByDataProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="flex items-center gap-2">
-          <ArrowUpDown className="h-4 w-4" />
+        <Button
+          variant="outline"
+          className="h-[45px] rounded-[4px] border-[#dcdcdc] bg-white text-[#313338] hover:bg-white hover:shadow-[0_0_15px_rgba(49,51,56,0.1)] flex items-center gap-2 px-4"
+        >
+          <ArrowUpDown className="h-[18px] w-[18px]" />
           {currentOption?.label || sortBy}
-          <ChevronDown className="h-4 w-4" />
+          <ChevronDown className="h-[18px] w-[18px]" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

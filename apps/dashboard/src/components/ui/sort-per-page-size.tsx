@@ -23,9 +23,12 @@ export function SortPerPageSize({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="flex items-center gap-2">
-          <List className="h-4 w-4" />
-          {pageSize} pag. <ChevronDown className="h-4 w-4" />
+        <Button
+          variant="outline"
+          className="h-[45px] rounded-[4px] border-[#dcdcdc] bg-white text-[#313338] hover:bg-white hover:shadow-[0_0_15px_rgba(49,51,56,0.1)] flex items-center gap-2 px-4"
+        >
+          <List className="h-[18px] w-[18px]" />
+          {pageSize} pag. <ChevronDown className="h-[18px] w-[18px]" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
