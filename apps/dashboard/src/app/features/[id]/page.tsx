@@ -176,7 +176,7 @@ export default function DestacadoDetailPage() {
                     </span>
                     <Button
                       variant="brandOutline"
-                      size="brand"
+                      size="header"
                       onClick={() =>
                         featured.user &&
                         router.push(`/users/${featured.user.id}`)

@@ -45,7 +45,7 @@ export default function ProfilePage() {
             <p className="text-gray-600 mt-2">Información de tu cuenta</p>
           </div>
           <div className="flex gap-2">
-            <Button onClick={() => router.push('/profile/edit')}>
+            <Button size="header" onClick={() => router.push('/profile/edit')}>
               <Edit className="h-4 w-4 mr-2" />
               Editar
             </Button>

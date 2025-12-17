@@ -107,6 +107,7 @@ export async function getRegionCommunes(
     page?: number;
     pageSize?: number;
     sort?: string;
+    search?: string;
   }
 ): Promise<StrapiCommunesResponse> {
   const searchParams = new URLSearchParams();
@@ -117,8 +118,24 @@ export async function getRegionCommunes(
     searchParams.append('pagination[pageSize]', params.pageSize.toString());
   if (params?.sort) searchParams.append('sort', params.sort);
 
-  // Filtrar por región
-  searchParams.append('filters[region][id][$eq]', regionId.toString());
+  // Búsqueda por texto
+  if (params?.search) {
+    searchParams.append(
+      'filters[$and][0][$or][0][name][$containsi]',
+      params.search
+    );
+    searchParams.append(
+      'filters[$and][0][$or][1][slug][$containsi]',
+      params.search
+    );
+    searchParams.append(
+      'filters[$and][1][region][id][$eq]',
+      regionId.toString()
+    );
+  } else {
+    // Filtrar por región
+    searchParams.append('filters[region][id][$eq]', regionId.toString());
+  }
 
   // Populate región
   searchParams.append('populate[region]', 'true');

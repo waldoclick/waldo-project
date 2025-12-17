@@ -79,6 +79,7 @@ export default function ConditionDetailPage() {
             </div>
             <div className="flex space-x-2">
               <Button
+                size="header"
                 onClick={() => router.push(`/conditions/${condition.id}/edit`)}
               >
                 <Edit className="h-4 w-4 mr-2" />

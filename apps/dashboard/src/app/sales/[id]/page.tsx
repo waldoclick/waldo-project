@@ -167,7 +167,7 @@ export default function OrderDetailPage() {
                     </span>
                     <Button
                       variant="brandOutline"
-                      size="brand"
+                      size="header"
                       onClick={() =>
                         order.user && router.push(`/users/${order.user.id}`)
                       }

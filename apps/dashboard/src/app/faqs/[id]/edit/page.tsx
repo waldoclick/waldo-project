@@ -174,11 +174,16 @@ export default function EditFaqPage() {
               </div>
 
               <div className="flex space-x-2 pt-4">
-                <Button type="submit" disabled={loading}>
+                <Button type="submit" size="header" disabled={loading}>
                   <Save className="h-4 w-4 mr-2" />
                   {loading ? 'Guardando...' : 'Guardar Cambios'}
                 </Button>
-                <Button type="button" variant="outline" onClick={handleCancel}>
+                <Button
+                  type="button"
+                  size="header"
+                  variant="outline"
+                  onClick={handleCancel}
+                >
                   <X className="h-4 w-4 mr-2" />
                   Cancelar
                 </Button>

@@ -2,6 +2,7 @@ export * from './useCategories';
 export * from './useOrders';
 export * from './useAds';
 export * from './useRegions';
+export * from './useRegionCommunes';
 export * from './useCommunes';
 export * from './usePacks';
 export * from './useFaqs';

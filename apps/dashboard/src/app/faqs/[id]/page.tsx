@@ -79,7 +79,10 @@ export default function FaqDetailPage() {
               </h1>
             </div>
             <div className="flex space-x-2">
-              <Button onClick={() => router.push(`/faqs/${faq.id}/edit`)}>
+              <Button
+                size="header"
+                onClick={() => router.push(`/faqs/${faq.id}/edit`)}
+              >
                 <Edit className="h-4 w-4 mr-2" />
                 Editar
               </Button>

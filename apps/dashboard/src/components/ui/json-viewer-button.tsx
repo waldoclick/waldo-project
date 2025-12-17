@@ -17,6 +17,7 @@ interface JsonViewerButtonProps {
   title?: string;
   buttonText?: string;
   buttonVariant?: 'primary' | 'secondary' | 'ghost' | 'outline';
+  size?: 'default' | 'sm' | 'lg' | 'icon' | 'header' | 'brand';
   className?: string;
 }
 
@@ -25,6 +26,7 @@ export function JsonViewerButton({
   title = 'Datos JSON',
   buttonText = 'Ver JSON',
   buttonVariant = 'outline',
+  size = 'header',
   className = '',
 }: JsonViewerButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -40,7 +42,7 @@ export function JsonViewerButton({
     <>
       <Button
         variant={mappedVariant}
-        size="brand"
+        size={size}
         onClick={() => setIsOpen(true)}
         className={className}
       >

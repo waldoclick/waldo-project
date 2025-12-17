@@ -348,7 +348,6 @@ export default function AdDetailPage() {
             <h1 className="text-[28px] font-bold" style={{ color: '#313338' }}>
               {ad.name}
             </h1>
-            <p className="text-gray-600">Detalles del anuncio</p>
           </div>
           <div className="flex space-x-2">
             {!ad.active &&
@@ -358,7 +357,7 @@ export default function AdDetailPage() {
                 <>
                   <Button
                     variant="brand"
-                    size="brand"
+                    size="header"
                     onClick={openApproveDialog}
                     disabled={ad.needs_payment}
                     title={
@@ -372,7 +371,7 @@ export default function AdDetailPage() {
                   </Button>
                   <Button
                     variant="brandSecondary"
-                    size="brand"
+                    size="header"
                     onClick={openRejectDialog}
                     disabled={ad.needs_payment}
                     title={
@@ -389,7 +388,7 @@ export default function AdDetailPage() {
             {ad.active && ad.remaining_days > 0 && (
               <Button
                 variant="brandOutline"
-                size="brand"
+                size="header"
                 onClick={() => window.open(getPublicAdUrl(ad), '_blank')}
               >
                 <ExternalLink className="h-4 w-4 mr-2" />

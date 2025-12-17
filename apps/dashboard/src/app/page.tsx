@@ -249,9 +249,6 @@ export default function DashboardPage() {
               >
                 {getGreeting()}, {getUserName()}!
               </h1>
-              <p className="text-gray-500 mt-2">
-                Aquí está lo que está pasando con tus anuncios hoy
-              </p>
             </div>
             <Indicators className="hidden lg:flex" />
           </div>

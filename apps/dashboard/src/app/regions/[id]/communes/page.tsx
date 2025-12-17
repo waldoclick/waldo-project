@@ -135,7 +135,6 @@ export default function RegionCommunesPage() {
             <h1 className="text-[22px] font-bold" style={{ color: '#313338' }}>
               Comunas de {region.name}
             </h1>
-            <p className="text-gray-500">Gestión de comunas de la región</p>
           </div>
           <Button size="header" onClick={() => router.push('/communes/new')}>
             <Plus className="h-4 w-4 mr-2" />

@@ -114,9 +114,6 @@ export default function UsersPage() {
               >
                 Usuarios
               </h1>
-              <p className="text-gray-600 mt-2">
-                Gestiona los usuarios del sistema
-              </p>
             </div>
             <Button className="hidden">
               <Plus className="h-4 w-4 mr-2" />

@@ -4,9 +4,16 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/ui/breadcrumbs';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { InfoField } from '@/components/ui/info-field';
+import { InputSearch } from '@/components/ui/input-search';
 import {
   Table,
   TableBody,
@@ -15,10 +22,23 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Edit, MapPin, Info, Eye } from 'lucide-react';
+import {
+  Edit,
+  MapPin,
+  Info,
+  Eye,
+  Calendar,
+  Hash,
+  Building,
+  Plus,
+} from 'lucide-react';
 import { getRegion } from '@/lib/strapi/regions';
 import { StrapiRegion } from '@/lib/strapi/types';
 import { useFormatDate } from '@/hooks/useFormatDate';
+import { DataTablePagination } from '@/components/ui/data-table-pagination';
+import { SortByData } from '@/components/ui/sort-by-data';
+import { SortPerPageSize } from '@/components/ui/sort-per-page-size';
+import { useRegionCommunes } from '@/hooks/api';
 
 export default function RegionDetailPage() {
   const params = useParams();
@@ -27,6 +47,28 @@ export default function RegionDetailPage() {
   const [loading, setLoading] = useState(true);
 
   const regionId = params.id as string;
+
+  const {
+    data: communes,
+    loading: communesLoading,
+    searchTerm,
+    setSearchTerm,
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    totalItems,
+    pageSize,
+    setPageSize,
+    sortBy,
+    setSortBy,
+  } = useRegionCommunes(parseInt(regionId));
+
+  const sortOptions = [
+    { value: 'name:asc', label: 'Nombre A-Z' },
+    { value: 'name:desc', label: 'Nombre Z-A' },
+    { value: 'createdAt:desc', label: 'Más recientes' },
+    { value: 'createdAt:asc', label: 'Más antiguos' },
+  ];
 
   const fetchRegion = useCallback(async () => {
     try {
@@ -87,7 +129,10 @@ export default function RegionDetailPage() {
               </h1>
             </div>
             <div className="flex space-x-2">
-              <Button onClick={() => router.push(`/regions/${region.id}/edit`)}>
+              <Button
+                size="header"
+                onClick={() => router.push(`/regions/${region.id}/edit`)}
+              >
                 <Edit className="h-4 w-4 mr-2" />
                 Editar
               </Button>
@@ -143,15 +188,41 @@ export default function RegionDetailPage() {
         </div>
 
         {/* Lista de comunas - Ancho completo */}
-        <Card>
+        <Card className="shadow-sm">
           <CardHeader>
-            <CardTitle className="flex items-center">
-              <MapPin className="h-5 w-5 mr-2" />
-              Comunas de {region.name} ({region.communes?.length || 0})
-            </CardTitle>
+            <div className="flex items-center gap-2">
+              <Building className="h-5 w-5 mr-2" />
+              <CardTitle>
+                Comunas de {region.name} ({totalItems})
+              </CardTitle>
+            </div>
+            <div className="flex items-center justify-between mt-4">
+              <InputSearch
+                placeholder="Buscar comunas..."
+                value={searchTerm}
+                onChange={setSearchTerm}
+                onClear={() => setSearchTerm('')}
+                className="w-64"
+              />
+              <div className="flex items-center space-x-2">
+                <SortByData
+                  sortBy={sortBy}
+                  setSortBy={setSortBy}
+                  options={sortOptions}
+                />
+                <SortPerPageSize
+                  pageSize={pageSize}
+                  setPageSize={setPageSize}
+                />
+              </div>
+            </div>
           </CardHeader>
           <CardContent className="px-0">
-            {region.communes && region.communes.length > 0 ? (
+            {communesLoading ? (
+              <div className="flex items-center justify-center py-8 px-5">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              </div>
+            ) : (
               <>
                 <div className="overflow-x-auto">
                   <Table className="w-full">
@@ -178,7 +249,7 @@ export default function RegionDetailPage() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {region.communes.map((commune) => (
+                      {communes.map((commune) => (
                         <TableRow key={commune.id}>
                           <TableCell className="pl-6">
                             <div className="font-medium">#{commune.id}</div>
@@ -230,15 +301,23 @@ export default function RegionDetailPage() {
                     </TableBody>
                   </Table>
                 </div>
+
+                {communes.length === 0 && !communesLoading && (
+                  <div className="text-center py-8 px-5">
+                    <p className="text-gray-500">No se encontraron comunas</p>
+                  </div>
+                )}
               </>
-            ) : (
-              <div className="text-center py-8 px-5">
-                <p className="text-gray-500">
-                  No hay comunas asociadas a esta región
-                </p>
-              </div>
             )}
           </CardContent>
+          <CardFooter className="px-6 py-2">
+            <DataTablePagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalItems={totalItems}
+              onPageChange={setCurrentPage}
+            />
+          </CardFooter>
         </Card>
       </div>
     </div>
