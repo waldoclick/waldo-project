@@ -44,6 +44,7 @@ export function usePaginatedData<T>({
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
   const [pageSize, setPageSize] = useState(25);
   const [sortBy, setSortBy] = useState(defaultSortBy);
   const [isInitialized, setIsInitialized] = useState(false);
@@ -120,6 +121,7 @@ export function usePaginatedData<T>({
 
       setData(processedData);
       setTotalPages(response.meta.pagination.pageCount);
+      setTotalItems(response.meta.pagination.total);
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Unknown error'));
       console.error('Error fetching data:', err);
@@ -143,6 +145,7 @@ export function usePaginatedData<T>({
     currentPage,
     setCurrentPage,
     totalPages,
+    totalItems,
     pageSize,
     setPageSize,
     sortBy,

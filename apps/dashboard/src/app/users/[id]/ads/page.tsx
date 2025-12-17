@@ -50,6 +50,7 @@ export default function UserAnunciosPage() {
   const [userAds, setUserAds] = useState<StrapiAd[]>([]);
   const [adsLoading, setAdsLoading] = useState(false);
   const [adsCurrentPage, setAdsCurrentPage] = useState(1);
+  const [totalFilteredItems, setTotalFilteredItems] = useState(0);
   const [adsStatusFilter, setAdsStatusFilter] = useState<
     'all' | 'active' | 'rejected' | 'pending'
   >('all');
@@ -275,6 +276,10 @@ export default function UserAnunciosPage() {
               const totalFilteredPages = Math.ceil(
                 filteredAds.length / pageSize
               );
+              // Actualizar totalFilteredItems si cambió
+              if (totalFilteredItems !== filteredAds.length) {
+                setTotalFilteredItems(filteredAds.length);
+              }
               const startIndex = (adsCurrentPage - 1) * pageSize;
               const endIndex = startIndex + pageSize;
               const paginatedAds = filteredAds.slice(startIndex, endIndex);
@@ -353,10 +358,11 @@ export default function UserAnunciosPage() {
                   </div>
 
                   {/* Paginación */}
-                  <CardFooter className="px-6 py-4">
+                  <CardFooter className="px-6 py-2">
                     <DataTablePagination
                       currentPage={adsCurrentPage}
                       totalPages={totalFilteredPages}
+                      totalItems={totalFilteredItems}
                       onPageChange={handleAdsPageChange}
                     />
                   </CardFooter>

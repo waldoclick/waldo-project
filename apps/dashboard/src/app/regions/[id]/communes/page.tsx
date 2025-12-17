@@ -43,6 +43,7 @@ import {
 import { getRegion } from '@/lib/strapi/regions';
 import { getRegionCommunes } from '@/lib/strapi/communes';
 import { StrapiRegion, StrapiCommune } from '@/lib/strapi/types';
+import { DataTablePagination } from '@/components/ui/data-table-pagination';
 
 export default function RegionCommunesPage() {
   const params = useParams();
@@ -53,6 +54,7 @@ export default function RegionCommunesPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
 
   const regionId = params.id as string;
 
@@ -78,6 +80,7 @@ export default function RegionCommunesPage() {
 
       setCommunes(response.data);
       setTotalPages(response.meta.pagination.pageCount);
+      setTotalItems(response.meta.pagination.total);
     } catch (error) {
       console.error('Error fetching communes:', error);
     } finally {
@@ -302,32 +305,13 @@ export default function RegionCommunesPage() {
             </>
           )}
         </CardContent>
-        <CardFooter className="px-6 py-4">
-          <div className="flex items-center justify-between w-full">
-            <div className="text-sm text-gray-700">
-              Página {currentPage} de {totalPages}
-            </div>
-            {totalPages > 1 && (
-              <div className="flex items-center justify-center space-x-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCurrentPage(currentPage - 1)}
-                  disabled={currentPage === 1}
-                >
-                  Anterior
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCurrentPage(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                >
-                  Siguiente
-                </Button>
-              </div>
-            )}
-          </div>
+        <CardFooter className="px-6 py-2">
+          <DataTablePagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={totalItems}
+            onPageChange={setCurrentPage}
+          />
         </CardFooter>
       </Card>
     </div>

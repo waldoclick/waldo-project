@@ -47,6 +47,7 @@ export default function UserDestacadosPage() {
   >([]);
   const [featuredLoading, setFeaturedLoading] = useState(false);
   const [featuredCurrentPage, setFeaturedCurrentPage] = useState(1);
+  const [totalFilteredItems, setTotalFilteredItems] = useState(0);
   const [featuredFilter, setFeaturedFilter] = useState<'used' | 'free'>('used');
 
   const userId = params.id as string;
@@ -114,6 +115,12 @@ export default function UserDestacadosPage() {
   const totalFilteredPages = Math.ceil(filteredFeatured.length / pageSize);
   const startIndex = (featuredCurrentPage - 1) * pageSize;
   const endIndex = startIndex + pageSize;
+
+  // Actualizar totalFilteredItems si cambió
+  useEffect(() => {
+    setTotalFilteredItems(filteredFeatured.length);
+  }, [filteredFeatured.length]);
+
   const paginatedFeatured = filteredFeatured.slice(startIndex, endIndex);
 
   return (
@@ -245,10 +252,11 @@ export default function UserDestacadosPage() {
                 </div>
 
                 {/* Paginación */}
-                <CardFooter className="px-6 py-4">
+                <CardFooter className="px-6 py-2">
                   <DataTablePagination
                     currentPage={featuredCurrentPage}
                     totalPages={totalFilteredPages}
+                    totalItems={totalFilteredItems}
                     onPageChange={handleFeaturedPageChange}
                   />
                 </CardFooter>

@@ -44,6 +44,7 @@ export default function UserReservasPage() {
   >([]);
   const [reservationsLoading, setReservationsLoading] = useState(false);
   const [reservationsCurrentPage, setReservationsCurrentPage] = useState(1);
+  const [totalFilteredItems, setTotalFilteredItems] = useState(0);
   const [reservationFilter, setReservationFilter] = useState<'used' | 'free'>(
     'used'
   );
@@ -104,6 +105,12 @@ export default function UserReservasPage() {
   const totalFilteredPages = Math.ceil(filteredReservations.length / pageSize);
   const startIndex = (reservationsCurrentPage - 1) * pageSize;
   const endIndex = startIndex + pageSize;
+
+  // Actualizar totalFilteredItems si cambió
+  useEffect(() => {
+    setTotalFilteredItems(filteredReservations.length);
+  }, [filteredReservations.length]);
+
   const paginatedReservations = filteredReservations.slice(
     startIndex,
     endIndex
@@ -260,10 +267,11 @@ export default function UserReservasPage() {
                 </div>
 
                 {/* Paginación */}
-                <CardFooter className="px-6 py-4">
+                <CardFooter className="px-6 py-2">
                   <DataTablePagination
                     currentPage={reservationsCurrentPage}
                     totalPages={totalFilteredPages}
+                    totalItems={totalFilteredItems}
                     onPageChange={handleReservationsPageChange}
                   />
                 </CardFooter>

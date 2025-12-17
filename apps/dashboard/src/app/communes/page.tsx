@@ -42,6 +42,7 @@ export default function CommunesPage() {
     currentPage,
     setCurrentPage,
     totalPages,
+    totalItems,
     pageSize,
     setPageSize,
     sortBy,
@@ -189,10 +190,11 @@ export default function CommunesPage() {
               </>
             )}
           </CardContent>
-          <CardFooter className="px-6 py-4">
+          <CardFooter className="px-6 py-2">
             <DataTablePagination
               currentPage={currentPage}
               totalPages={totalPages}
+              totalItems={totalItems}
               onPageChange={setCurrentPage}
             />
           </CardFooter>

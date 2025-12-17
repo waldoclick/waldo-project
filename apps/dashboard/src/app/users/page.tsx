@@ -32,6 +32,7 @@ export default function UsersPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [, setTotalUsers] = useState(0);
   const router = useRouter();
@@ -49,7 +50,7 @@ export default function UsersPage() {
 
       setUsers(response.data);
       setTotalPages(response.meta.pagination.pageCount);
-      setTotalUsers(response.meta.pagination.total);
+      setTotalItems(response.meta.pagination.total);
     } catch (error) {
       console.error('Error fetching users:', error);
     } finally {
@@ -240,10 +241,15 @@ export default function UsersPage() {
               </>
             )}
           </CardContent>
-          <CardFooter className="px-6 py-4">
+          <CardFooter className="px-6 py-2">
             <div className="flex items-center justify-between w-full">
               <div className="text-sm text-gray-700">
                 Página {currentPage} de {totalPages}
+                {totalItems > 0 && (
+                  <span className="ml-1 text-gray-500">
+                    ({totalItems} {totalItems === 1 ? 'usuario' : 'usuarios'})
+                  </span>
+                )}
               </div>
               {totalPages > 1 && (
                 <div className="flex space-x-2">

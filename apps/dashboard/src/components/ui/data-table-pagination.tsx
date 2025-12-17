@@ -7,12 +7,14 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 interface DataTablePaginationProps {
   currentPage: number;
   totalPages: number;
+  totalItems?: number;
   onPageChange: (page: number) => void;
 }
 
 export function DataTablePagination({
   currentPage,
   totalPages,
+  totalItems,
   onPageChange,
 }: DataTablePaginationProps) {
   // Calcular qué páginas mostrar
@@ -65,6 +67,11 @@ export function DataTablePagination({
     <div className="flex items-center justify-between w-full">
       <div className="text-sm text-gray-700">
         Página {currentPage} de {totalPages}
+        {totalItems !== undefined && (
+          <span className="ml-1 text-gray-500">
+            ({totalItems} {totalItems === 1 ? 'registro' : 'registros'})
+          </span>
+        )}
       </div>
       {totalPages > 1 && (
         <div className="flex items-center gap-1">

@@ -44,6 +44,7 @@ export default function SalesPage() {
     currentPage,
     setCurrentPage,
     totalPages,
+    totalItems,
     pageSize,
     setPageSize,
     sortBy,
@@ -224,10 +225,11 @@ export default function SalesPage() {
               </>
             )}
           </CardContent>
-          <CardFooter className="px-6 py-4">
+          <CardFooter className="px-6 py-2">
             <DataTablePagination
               currentPage={currentPage}
               totalPages={totalPages}
+              totalItems={totalItems}
               onPageChange={setCurrentPage}
             />
           </CardFooter>

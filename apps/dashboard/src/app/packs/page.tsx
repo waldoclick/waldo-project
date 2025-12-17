@@ -46,6 +46,7 @@ export default function PacksPage() {
     currentPage,
     setCurrentPage,
     totalPages,
+    totalItems,
     pageSize,
     setPageSize,
     sortBy,
@@ -159,7 +160,7 @@ export default function PacksPage() {
                           <div className="font-medium">{pack.name}</div>
                         </TableCell>
                         <TableCell>
-                          <span className="font-semibold text-green-600">
+                          <span className="font-semibold">
                             {formatPrice(pack.price)}
                           </span>
                         </TableCell>
@@ -212,10 +213,11 @@ export default function PacksPage() {
               </>
             )}
           </CardContent>
-          <CardFooter className="px-6 py-4">
+          <CardFooter className="px-6 py-2">
             <DataTablePagination
               currentPage={currentPage}
               totalPages={totalPages}
+              totalItems={totalItems}
               onPageChange={setCurrentPage}
             />
           </CardFooter>
