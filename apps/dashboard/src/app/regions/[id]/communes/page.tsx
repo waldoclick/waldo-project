@@ -302,31 +302,33 @@ export default function RegionCommunesPage() {
             </>
           )}
         </CardContent>
-        {totalPages > 1 && (
-          <CardFooter className="border-t px-6 py-4">
-            <div className="flex items-center justify-center space-x-2 w-full">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(currentPage - 1)}
-                disabled={currentPage === 1}
-              >
-                Anterior
-              </Button>
-              <span className="text-sm text-gray-600">
-                Página {currentPage} de {totalPages}
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(currentPage + 1)}
-                disabled={currentPage === totalPages}
-              >
-                Siguiente
-              </Button>
+        <CardFooter className="px-6 py-4">
+          <div className="flex items-center justify-between w-full">
+            <div className="text-sm text-gray-700">
+              Página {currentPage} de {totalPages}
             </div>
-          </CardFooter>
-        )}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                  disabled={currentPage === 1}
+                >
+                  Anterior
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                >
+                  Siguiente
+                </Button>
+              </div>
+            )}
+          </div>
+        </CardFooter>
       </Card>
     </div>
   );

@@ -353,15 +353,13 @@ export default function UserAnunciosPage() {
                   </div>
 
                   {/* Paginación */}
-                  {totalFilteredPages > 1 && (
-                    <CardFooter className="border-t px-6 py-4">
-                      <DataTablePagination
-                        currentPage={adsCurrentPage}
-                        totalPages={totalFilteredPages}
-                        onPageChange={handleAdsPageChange}
-                      />
-                    </CardFooter>
-                  )}
+                  <CardFooter className="px-6 py-4">
+                    <DataTablePagination
+                      currentPage={adsCurrentPage}
+                      totalPages={totalFilteredPages}
+                      onPageChange={handleAdsPageChange}
+                    />
+                  </CardFooter>
                 </>
               ) : userAds.length === 0 ? (
                 <div className="text-center py-8 px-5">

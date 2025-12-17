@@ -260,15 +260,13 @@ export default function UserReservasPage() {
                 </div>
 
                 {/* Paginación */}
-                {totalFilteredPages > 1 && (
-                  <CardFooter className="border-t px-6 py-4">
-                    <DataTablePagination
-                      currentPage={reservationsCurrentPage}
-                      totalPages={totalFilteredPages}
-                      onPageChange={handleReservationsPageChange}
-                    />
-                  </CardFooter>
-                )}
+                <CardFooter className="px-6 py-4">
+                  <DataTablePagination
+                    currentPage={reservationsCurrentPage}
+                    totalPages={totalFilteredPages}
+                    onPageChange={handleReservationsPageChange}
+                  />
+                </CardFooter>
               </>
             ) : (
               <div className="text-center py-8 px-5">

@@ -245,15 +245,13 @@ export default function UserDestacadosPage() {
                 </div>
 
                 {/* Paginación */}
-                {totalFilteredPages > 1 && (
-                  <CardFooter className="border-t px-6 py-4">
-                    <DataTablePagination
-                      currentPage={featuredCurrentPage}
-                      totalPages={totalFilteredPages}
-                      onPageChange={handleFeaturedPageChange}
-                    />
-                  </CardFooter>
-                )}
+                <CardFooter className="px-6 py-4">
+                  <DataTablePagination
+                    currentPage={featuredCurrentPage}
+                    totalPages={totalFilteredPages}
+                    onPageChange={handleFeaturedPageChange}
+                  />
+                </CardFooter>
               </>
             ) : (
               <div className="text-center py-8 px-5">

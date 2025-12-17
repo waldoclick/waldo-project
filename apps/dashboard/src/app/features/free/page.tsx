@@ -207,15 +207,13 @@ export default function FreeFeaturedPage() {
               </div>
             )}
           </CardContent>
-          {totalPages > 1 && (
-            <CardFooter className="border-t px-6 py-4">
-              <DataTablePagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={setCurrentPage}
-              />
-            </CardFooter>
-          )}
+          <CardFooter className="px-6 py-4">
+            <DataTablePagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
+          </CardFooter>
         </Card>
       </div>
     </div>

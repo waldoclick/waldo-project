@@ -18,7 +18,6 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { Eye, Clock } from 'lucide-react';
-import { StrapiAd } from '@/lib/strapi';
 import { useRouter } from 'next/navigation';
 import { DataTablePagination } from '@/components/ui/data-table-pagination';
 import { SortByData } from '@/components/ui/sort-by-data';
@@ -165,15 +164,13 @@ export default function PendingAdsPage() {
               </div>
             )}
           </CardContent>
-          {totalPages > 1 && (
-            <CardFooter className="border-t px-6 py-4">
-              <DataTablePagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={setCurrentPage}
-              />
-            </CardFooter>
-          )}
+          <CardFooter className="px-6 py-4">
+            <DataTablePagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
+          </CardFooter>
         </Card>
       </div>
     </div>

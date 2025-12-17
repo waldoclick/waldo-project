@@ -240,12 +240,12 @@ export default function UsersPage() {
               </>
             )}
           </CardContent>
-          {totalPages > 1 && (
-            <CardFooter className="border-t px-6 py-4">
-              <div className="flex items-center justify-between w-full">
-                <div className="text-sm text-gray-700">
-                  Página {currentPage} de {totalPages}
-                </div>
+          <CardFooter className="px-6 py-4">
+            <div className="flex items-center justify-between w-full">
+              <div className="text-sm text-gray-700">
+                Página {currentPage} de {totalPages}
+              </div>
+              {totalPages > 1 && (
                 <div className="flex space-x-2">
                   <Button
                     variant="outline"
@@ -266,9 +266,9 @@ export default function UsersPage() {
                     Siguiente
                   </Button>
                 </div>
-              </div>
-            </CardFooter>
-          )}
+              )}
+            </div>
+          </CardFooter>
         </Card>
       </div>
     </div>
