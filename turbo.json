@@ -35,6 +35,11 @@
     "lint": { "outputs": [] },
     "format": { "outputs": [] },
     "test": { "outputs": [] },
-    "codacy": { "outputs": [] }
+    "codacy": { "outputs": [] },
+
+    "strapi:upgrade": {
+      "cache": false,
+      "outputs": []
+    }
   }
 }
