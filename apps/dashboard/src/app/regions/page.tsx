@@ -62,7 +62,7 @@ export default function RegionsPage() {
               Regiones
             </h1>
           </div>
-          <Button onClick={() => router.push('/regions/new')}>
+          <Button size="header" onClick={() => router.push('/regions/new')}>
             <Plus className="h-4 w-4 mr-2" />
             Nueva Región
           </Button>

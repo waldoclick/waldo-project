@@ -24,7 +24,6 @@ import { getAdFeaturedReservation } from '@/lib/strapi';
 import { StrapiAdFeaturedReservation } from '@/lib/strapi/types';
 import { useFormatDate } from '@/hooks/useFormatDate';
 import { InfoField } from '@/components/ui/info-field';
-import { CustomButton } from '@/components/ui/custom-button';
 
 export default function DestacadoDetailPage() {
   const params = useParams();
@@ -166,8 +165,9 @@ export default function DestacadoDetailPage() {
                       <User className="h-5 w-5 mr-2" />
                       Usuario
                     </span>
-                    <CustomButton
-                      variant="outline"
+                    <Button
+                      variant="brandOutline"
+                      size="brand"
                       onClick={() =>
                         featured.user &&
                         router.push(`/users/${featured.user.id}`)
@@ -176,7 +176,7 @@ export default function DestacadoDetailPage() {
                     >
                       <ExternalLink className="h-4 w-4 mr-2" />
                       Ver Usuario
-                    </CustomButton>
+                    </Button>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -214,8 +214,9 @@ export default function DestacadoDetailPage() {
                       <Package className="h-5 w-5 mr-2" />
                       Anuncio Destacado
                     </span>
-                    <CustomButton
-                      variant="outline"
+                    <Button
+                      variant="brandOutline"
+                      size="brand"
                       onClick={() =>
                         featured.ad && router.push(`/ads/${featured.ad.id}`)
                       }
@@ -223,7 +224,7 @@ export default function DestacadoDetailPage() {
                     >
                       <ExternalLink className="h-4 w-4 mr-2" />
                       Ver Anuncio
-                    </CustomButton>
+                    </Button>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>

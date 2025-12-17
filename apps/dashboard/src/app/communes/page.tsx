@@ -61,7 +61,7 @@ export default function CommunesPage() {
               Comunas
             </h1>
           </div>
-          <Button onClick={() => router.push('/communes/new')}>
+          <Button size="header" onClick={() => router.push('/communes/new')}>
             <Plus className="h-4 w-4 mr-2" />
             Nueva Comuna
           </Button>

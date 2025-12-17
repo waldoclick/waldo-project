@@ -62,7 +62,7 @@ export default function ConditionsPage() {
               Condiciones
             </h1>
           </div>
-          <Button onClick={() => router.push('/conditions/new')}>
+          <Button size="header" onClick={() => router.push('/conditions/new')}>
             <Plus className="h-4 w-4 mr-2" />
             Nueva Condición
           </Button>

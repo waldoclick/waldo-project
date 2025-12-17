@@ -64,7 +64,7 @@ export default function FaqsPage() {
               FAQ
             </h1>
           </div>
-          <Button onClick={() => router.push('/faqs/new')}>
+          <Button size="header" onClick={() => router.push('/faqs/new')}>
             <Plus className="h-4 w-4 mr-2" />
             Nueva FAQ
           </Button>

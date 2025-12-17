@@ -129,7 +129,7 @@ export default function RegionCommunesPage() {
             <p className="text-gray-500">Gestión de comunas de la región</p>
           </div>
         </div>
-        <Button onClick={() => router.push('/communes/new')}>
+        <Button size="header" onClick={() => router.push('/communes/new')}>
           <Plus className="h-4 w-4 mr-2" />
           Nueva Comuna
         </Button>

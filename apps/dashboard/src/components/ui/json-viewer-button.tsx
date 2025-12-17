@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { CustomButton } from '@/components/ui/custom-button';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -28,17 +28,25 @@ export function JsonViewerButton({
   className = '',
 }: JsonViewerButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const variantMap = {
+    primary: 'brand',
+    secondary: 'brandSecondary',
+    ghost: 'brandGhost',
+    outline: 'brandOutline',
+  } as const;
+  const mappedVariant = variantMap[buttonVariant];
 
   return (
     <>
-      <CustomButton
-        variant={buttonVariant}
+      <Button
+        variant={mappedVariant}
+        size="brand"
         onClick={() => setIsOpen(true)}
         className={className}
       >
         <Link className="h-4 w-4 mr-2" />
         {buttonText}
-      </CustomButton>
+      </Button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent

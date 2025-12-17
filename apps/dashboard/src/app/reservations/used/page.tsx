@@ -70,7 +70,10 @@ export default function UsedReservationsPage() {
               Reservas Usadas
             </h1>
           </div>
-          <Button onClick={() => router.push('/reservations/new')}>
+          <Button
+            size="header"
+            onClick={() => router.push('/reservations/new')}
+          >
             <Calendar className="h-4 w-4 mr-2" />
             Nueva Reserva
           </Button>

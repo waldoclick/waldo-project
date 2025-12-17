@@ -3,18 +3,15 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { CustomButton } from '@/components/ui/custom-button';
 import { CustomTag } from '@/components/ui/custom-tag';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { JsonViewerButton } from '@/components/ui/json-viewer-button';
 import {
   ArrowLeft,
-  Calendar,
   Package,
   User,
   Eye,
-  Clock,
   CheckCircle,
   XCircle,
   Info,
@@ -340,8 +337,9 @@ export default function AdDetailPage() {
             ad.remaining_days === ad.duration_days &&
             !ad.rejected && (
               <>
-                <CustomButton
-                  variant="primary"
+                <Button
+                  variant={'brand' as any}
+                  size={'brand' as any}
                   onClick={openApproveDialog}
                   disabled={ad.needs_payment}
                   title={
@@ -352,9 +350,10 @@ export default function AdDetailPage() {
                 >
                   <CheckCircle className="h-4 w-4 mr-2" />
                   Aprobar
-                </CustomButton>
-                <CustomButton
-                  variant="secondary"
+                </Button>
+                <Button
+                  variant={'brandSecondary' as any}
+                  size={'brand' as any}
                   onClick={openRejectDialog}
                   disabled={ad.needs_payment}
                   title={
@@ -365,17 +364,18 @@ export default function AdDetailPage() {
                 >
                   <XCircle className="h-4 w-4 mr-2" />
                   Rechazar
-                </CustomButton>
+                </Button>
               </>
             )}
           {ad.active && ad.remaining_days > 0 && (
-            <CustomButton
-              variant="outline"
+            <Button
+              variant={'brandOutline' as any}
+              size={'brand' as any}
               onClick={() => window.open(getPublicAdUrl(ad), '_blank')}
             >
               <ExternalLink className="h-4 w-4 mr-2" />
               Ver Anuncio
-            </CustomButton>
+            </Button>
           )}
           <JsonViewerButton
             data={ad}
@@ -383,10 +383,14 @@ export default function AdDetailPage() {
             buttonText="Ver JSON"
             buttonVariant="outline"
           />
-          <CustomButton variant="ghost" onClick={() => router.back()}>
+          <Button
+            variant={'brandGhost' as any}
+            size={'brand' as any}
+            onClick={() => router.back()}
+          >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Volver
-          </CustomButton>
+          </Button>
         </div>
       </div>
 
@@ -489,14 +493,15 @@ export default function AdDetailPage() {
                     <User className="h-5 w-5 mr-2" />
                     Información del Usuario
                   </span>
-                  <CustomButton
-                    variant="outline"
+                  <Button
+                    variant={'brandOutline' as any}
+                    size={'brand' as any}
                     onClick={() => router.push(`/users/${extendedUser.id}`)}
                     className="flex items-center"
                   >
                     <Link className="h-4 w-4 mr-2" />
                     Ver Usuario
-                  </CustomButton>
+                  </Button>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -608,14 +613,15 @@ export default function AdDetailPage() {
                   Orden de Compra
                 </span>
                 {order && (
-                  <CustomButton
-                    variant="outline"
+                  <Button
+                    variant={'brandOutline' as any}
+                    size={'brand' as any}
                     onClick={() => router.push(`/sales/${order.id}`)}
                     className="flex items-center"
                   >
                     <Eye className="h-4 w-4 mr-2" />
                     Ver Detalle Completo
-                  </CustomButton>
+                  </Button>
                 )}
               </CardTitle>
             </CardHeader>

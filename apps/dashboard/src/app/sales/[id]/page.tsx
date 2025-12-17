@@ -18,7 +18,6 @@ import {
 } from 'lucide-react';
 import { getOrder, StrapiOrder } from '@/lib/strapi';
 import { InfoField } from '@/components/ui/info-field';
-import { CustomButton } from '@/components/ui/custom-button';
 import { useFormatDate } from '@/hooks/useFormatDate';
 
 export default function OrderDetailPage() {
@@ -162,8 +161,9 @@ export default function OrderDetailPage() {
                       <User className="h-5 w-5 mr-2" />
                       Información del Cliente
                     </span>
-                    <CustomButton
-                      variant="outline"
+                    <Button
+                      variant="brandOutline"
+                      size="brand"
                       onClick={() =>
                         order.user && router.push(`/users/${order.user.id}`)
                       }
@@ -171,7 +171,7 @@ export default function OrderDetailPage() {
                     >
                       <Link className="h-4 w-4 mr-2" />
                       Ver Usuario
-                    </CustomButton>
+                    </Button>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -206,8 +206,9 @@ export default function OrderDetailPage() {
                       <Package className="h-5 w-5 mr-2" />
                       Información del Anuncio
                     </span>
-                    <CustomButton
-                      variant="outline"
+                    <Button
+                      variant="brandOutline"
+                      size="brand"
                       onClick={() =>
                         order.ad && router.push(`/ads/${order.ad.id}`)
                       }
@@ -215,7 +216,7 @@ export default function OrderDetailPage() {
                     >
                       <Link className="h-4 w-4 mr-2" />
                       Ver Anuncio
-                    </CustomButton>
+                    </Button>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>

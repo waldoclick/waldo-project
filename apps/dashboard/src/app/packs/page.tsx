@@ -76,7 +76,7 @@ export default function PacksPage() {
               Packs de Anuncios
             </h1>
           </div>
-          <Button onClick={() => router.push('/packs/new')}>
+          <Button size="header" onClick={() => router.push('/packs/new')}>
             <Plus className="h-4 w-4 mr-2" />
             Nuevo Pack
           </Button>

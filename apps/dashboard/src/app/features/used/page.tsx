@@ -71,7 +71,7 @@ export default function UsedFeaturedPage() {
               Destacados Usados
             </h1>
           </div>
-          <Button onClick={() => router.push('/features/new')}>
+          <Button size="header" onClick={() => router.push('/features/new')}>
             <Star className="h-4 w-4 mr-2" />
             Nuevo Destacado
           </Button>

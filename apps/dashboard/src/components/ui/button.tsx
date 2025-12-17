@@ -20,12 +20,22 @@ const buttonVariants = cva(
         ghost:
           'hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50',
         link: 'text-primary underline-offset-4 hover:underline',
+        brand:
+          'rounded-[3px] border-2 border-[#313338] bg-[#ffd699] text-black shadow-none hover:bg-black hover:text-[#ffd699] focus-visible:ring-[#ffd699] disabled:opacity-100 disabled:bg-gray-400 disabled:text-gray-600 disabled:cursor-not-allowed',
+        brandSecondary:
+          'rounded-[3px] border-2 border-[#313338] bg-black text-[#ffd699] shadow-none hover:bg-[#ffd699] hover:text-black focus-visible:ring-black disabled:opacity-100 disabled:bg-gray-400 disabled:text-gray-600 disabled:cursor-not-allowed',
+        brandGhost:
+          'rounded-[3px] border-0 bg-white text-gray-700 shadow-none hover:bg-gray-50 focus-visible:ring-gray-300 disabled:opacity-100 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed',
+        brandOutline:
+          'rounded-[3px] border-2 border-[#313338] bg-white text-gray-700 shadow-none hover:bg-gray-50 focus-visible:ring-gray-300 disabled:opacity-100 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed',
       },
       size: {
         default: 'h-9 px-4 py-2 has-[>svg]:px-3',
         sm: 'h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5',
         lg: 'h-10 rounded-md px-6 has-[>svg]:px-4',
         icon: 'size-9',
+        header: 'h-[45px] px-4 py-2 has-[>svg]:px-3',
+        brand: 'h-10 min-h-[40px] max-h-[40px] overflow-hidden px-4 py-2',
       },
     },
     defaultVariants: {
@@ -35,25 +45,24 @@ const buttonVariants = cva(
   }
 );
 
-function Button({
-  className,
-  variant,
-  size,
-  asChild = false,
-  ...props
-}: React.ComponentProps<'button'> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean;
-  }) {
+const Button = React.forwardRef<
+  HTMLButtonElement,
+  React.ComponentProps<'button'> &
+    VariantProps<typeof buttonVariants> & {
+      asChild?: boolean;
+    }
+>(({ className, variant, size, asChild = false, ...props }, ref) => {
   const Comp = asChild ? Slot : 'button';
 
   return (
     <Comp
+      ref={ref}
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     />
   );
-}
+});
+Button.displayName = 'Button';
 
 export { Button, buttonVariants };
