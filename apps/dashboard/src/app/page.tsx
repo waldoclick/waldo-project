@@ -240,16 +240,21 @@ export default function DashboardPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="space-y-8">
-        <div className="flex items-end justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">
-              {getGreeting()}, {getUserName()}!
-            </h1>
-            <p className="text-gray-500 text-sm mt-1">
-              Aquí está lo que está pasando con tus anuncios hoy
-            </p>
+        <div className="pt-4 pb-4 space-y-2">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1
+                className="text-[28px] font-bold"
+                style={{ color: '#313338' }}
+              >
+                {getGreeting()}, {getUserName()}!
+              </h1>
+              <p className="text-gray-500 mt-2">
+                Aquí está lo que está pasando con tus anuncios hoy
+              </p>
+            </div>
+            <Indicators className="hidden lg:flex" />
           </div>
-          <Indicators className="hidden lg:flex" />
         </div>
 
         {/* Cards de Estadísticas de Anuncios */}
