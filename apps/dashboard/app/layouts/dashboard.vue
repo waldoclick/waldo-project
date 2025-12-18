@@ -1,12 +1,20 @@
 <template>
   <div class="layout layout--dashboard">
-    <div class="layout--dashboard__menu">Menu</div>
+    <div class="layout--dashboard__menu">
+      <MenuDefault />
+    </div>
     <div class="layout--dashboard__content">
-      <slot />
+      <HeaderDefault />
+      <main class="layout--dashboard__main">
+        <slot />
+      </main>
+      <FooterDefault />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-// Dashboard layout
+import MenuDefault from "@/components/MenuDefault.vue";
+import HeaderDefault from "@/components/HeaderDefault.vue";
+import FooterDefault from "@/components/FooterDefault.vue";
 </script>
