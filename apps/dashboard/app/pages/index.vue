@@ -1,8 +1,4 @@
-<template>
-  <div>
-    <!-- Dashboard index page -->
-  </div>
-</template>
+<template></template>
 
 <script setup lang="ts">
 definePageMeta({
