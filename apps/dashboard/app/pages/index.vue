@@ -5,6 +5,10 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  layout: "dashboard",
+});
+
 // Esta página está protegida por el middleware global
 // Si no estás autenticado, serás redirigido a /auth/login
 </script>

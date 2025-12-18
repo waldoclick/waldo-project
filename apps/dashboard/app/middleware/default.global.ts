@@ -25,10 +25,15 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
 
   // Verificar que el usuario tenga el role "manager"
   const userRole = user.value?.role;
+  // El role puede venir como objeto { name: "Manager" } o como string "manager"
+  // También verificar el campo type del usuario directamente
   const roleName =
     typeof userRole === "string"
-      ? userRole
-      : userRole?.name || userRole?.type || null;
+      ? userRole.toLowerCase()
+      : userRole?.name?.toLowerCase() ||
+        userRole?.type?.toLowerCase() ||
+        user.value?.type?.toLowerCase() ||
+        null;
 
   if (roleName !== "manager") {
     // Si no es manager, cerrar sesión y redirigir al login
