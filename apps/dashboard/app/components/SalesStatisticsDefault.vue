@@ -69,60 +69,73 @@ ChartJS.register(
   PointElement,
 );
 
-// Plugin personalizado para el hover con línea gris transparente (como en recharts)
-const hoverBackgroundPlugin = {
-  id: "hoverBackground",
-  afterDraw: (chart: any) => {
+// Plugin para replicar exactamente CartesianGrid y Tooltip cursor de recharts
+const gridAndHoverPlugin = {
+  id: "gridAndHover",
+  afterDatasetsDraw: (chart: any) => {
+    // 1. Dibujar grid punteado (como CartesianGrid strokeDasharray="3 3")
     const ctx = chart.ctx;
     const chartArea = chart.chartArea;
-    const activeElements = chart.getActiveElements();
+    const scales = chart.scales;
 
-    if (activeElements.length > 0) {
-      // Dibujar línea vertical gris transparente en la posición del hover
-      const element = activeElements[0];
-      const meta = chart.getDatasetMeta(element.datasetIndex);
-      const bar = meta.data[element.index];
+    ctx.save();
+    ctx.strokeStyle = "rgba(0, 0, 0, 0.1)";
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]); // strokeDasharray="3 3"
 
-      if (bar && element.datasetIndex === 0) {
-        // Solo para las barras, no para la línea de promedio
-        const x = bar.x;
-
-        ctx.save();
-        ctx.strokeStyle = "rgba(250, 250, 250, 0.3)"; // Gris transparente como en el original (#fafafa con 0.3 opacity)
-        ctx.lineWidth = 1;
-        ctx.setLineDash([]);
+    // Líneas verticales punteadas
+    if (scales.x && scales.x.ticks) {
+      scales.x.ticks.forEach((tick: any) => {
         ctx.beginPath();
-        ctx.moveTo(x, chartArea.top);
-        ctx.lineTo(x, chartArea.bottom);
+        ctx.moveTo(tick.x, chartArea.top);
+        ctx.lineTo(tick.x, chartArea.bottom);
         ctx.stroke();
-        ctx.restore();
-      }
+      });
     }
-  },
-  afterEvent: (chart: any, args: any) => {
-    const { event, inChartArea } = args;
-    if (inChartArea && event.type === "mousemove") {
-      const elements = chart.getElementsAtEventForMode(
-        event,
-        "index",
-        { intersect: false },
-        true,
+
+    // Líneas horizontales punteadas
+    if (scales.y && scales.y.ticks) {
+      scales.y.ticks.forEach((tick: any) => {
+        ctx.beginPath();
+        ctx.moveTo(chartArea.left, tick.y);
+        ctx.lineTo(chartArea.right, tick.y);
+        ctx.stroke();
+      });
+    }
+
+    ctx.restore();
+
+    // 2. Dibujar línea vertical gris cuando tooltip está activo (como Tooltip cursor)
+    const tooltip = chart.tooltip;
+    if (
+      tooltip &&
+      tooltip.opacity > 0 &&
+      tooltip.dataPoints &&
+      tooltip.dataPoints.length > 0
+    ) {
+      const barPoint = tooltip.dataPoints.find(
+        (dp: any) => dp.datasetIndex === 0,
       );
-      if (elements.length > 0) {
-        chart.canvas.style.cursor = "pointer";
-        chart.draw(); // Redibujar para mostrar la línea gris
-      } else {
-        chart.canvas.style.cursor = "default";
-        chart.draw(); // Redibujar para quitar la línea gris cuando no hay hover
+      if (barPoint) {
+        const meta = chart.getDatasetMeta(0);
+        const bar = meta.data[barPoint.dataIndex];
+        if (bar) {
+          ctx.save();
+          ctx.strokeStyle = "rgba(250, 250, 250, 0.3)"; // cursor={{ stroke: '#fafafa', strokeWidth: 1, opacity: 0.3 }}
+          ctx.lineWidth = 1;
+          ctx.setLineDash([]);
+          ctx.beginPath();
+          ctx.moveTo(bar.x, chartArea.top);
+          ctx.lineTo(bar.x, chartArea.bottom);
+          ctx.stroke();
+          ctx.restore();
+        }
       }
-    } else if (event.type === "mouseout") {
-      chart.canvas.style.cursor = "default";
-      chart.draw(); // Redibujar para quitar la línea gris al salir
     }
   },
 };
 
-ChartJS.register(hoverBackgroundPlugin);
+ChartJS.register(gridAndHoverPlugin);
 
 interface SalesByMonthData {
   mes: string;
@@ -413,11 +426,8 @@ const chartOptions = computed(() => {
     scales: {
       x: {
         grid: {
-          display: true,
+          display: false, // Desactivar grid por defecto, lo dibujamos manualmente con líneas punteadas
           drawBorder: false,
-          color: "rgba(0, 0, 0, 0.1)",
-          lineWidth: 1,
-          borderDash: [3, 3], // Líneas punteadas como en el original
         },
         ticks: {
           font: {
@@ -428,11 +438,8 @@ const chartOptions = computed(() => {
       y: {
         beginAtZero: true,
         grid: {
-          display: true,
+          display: false, // Desactivar grid por defecto, lo dibujamos manualmente con líneas punteadas
           drawBorder: false,
-          color: "rgba(0, 0, 0, 0.1)",
-          lineWidth: 1,
-          borderDash: [3, 3], // Líneas punteadas como en el original
         },
         ticks: {
           font: {
