@@ -193,10 +193,10 @@ export default function UserAnunciosPage() {
                 />
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="cursor-pointer">
+                    <button className="flex items-center gap-2 h-[42px] px-4 bg-white border border-[#EAEBEB] rounded-[4px] text-[14px] text-[#313338] transition-all hover:shadow-[0_0_30px_rgba(49,51,56,0.1)] outline-none">
                       {getStatusLabel(adsStatusFilter)}
-                      <ChevronDown className="h-4 w-4 ml-2" />
-                    </Button>
+                      <ChevronDown className="h-4 w-4 opacity-50" />
+                    </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem

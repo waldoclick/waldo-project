@@ -307,12 +307,10 @@ export default function DashboardPage() {
               <CardTitle>Estadísticas de Ventas</CardTitle>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="flex items-center gap-2 !rounded-sm"
-                  >
-                    {selectedYear} <ChevronDown className="h-4 w-4" />
-                  </Button>
+                  <button className="flex items-center gap-2 h-[42px] px-4 bg-white border border-[#EAEBEB] rounded-[4px] text-[14px] text-[#313338] transition-all hover:shadow-[0_0_30px_rgba(49,51,56,0.1)] outline-none">
+                    {selectedYear}{' '}
+                    <ChevronDown className="h-4 w-4 opacity-50" />
+                  </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   {availableYears.map((year) => (
