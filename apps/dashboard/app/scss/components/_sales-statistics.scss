@@ -98,6 +98,40 @@
     &__chart {
       height: 400px;
       position: relative;
+
+      // Estilos para el tooltip de Chart.js
+      :deep(.chartjs-tooltip) {
+        background-color: #fff !important;
+        border: 1px solid #ccc !important;
+        border-radius: 4px !important;
+        padding: 8px !important;
+        box-shadow: none !important;
+
+        .chartjs-tooltip-title {
+          color: #000 !important;
+          font-size: 11px !important;
+          margin-bottom: 4px !important;
+        }
+
+        .chartjs-tooltip-body {
+          color: #000 !important;
+          font-size: 11px !important;
+        }
+
+        // Ocultar el indicador de color
+        .chartjs-tooltip-color {
+          display: none !important;
+        }
+      }
+
+      // Cursor hover con fondo gris transparente
+      canvas {
+        cursor: default;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
     }
 
     &__loading {

@@ -69,6 +69,59 @@ ChartJS.register(
   PointElement,
 );
 
+// Plugin personalizado para el hover con fondo gris transparente (como en recharts)
+const hoverBackgroundPlugin = {
+  id: "hoverBackground",
+  beforeDatasetsDraw: (chart: any) => {
+    const ctx = chart.ctx;
+    const chartArea = chart.chartArea;
+    const activeElements = chart.getActiveElements();
+
+    if (activeElements.length > 0) {
+      // Dibujar línea vertical gris transparente en la posición del hover
+      const element = activeElements[0];
+      const meta = chart.getDatasetMeta(element.datasetIndex);
+      const bar = meta.data[element.index];
+
+      if (bar) {
+        const x = bar.x;
+
+        ctx.save();
+        ctx.strokeStyle = "rgba(250, 250, 250, 0.3)"; // Gris transparente como en el original
+        ctx.lineWidth = chartArea.right - chartArea.left; // Ancho completo del área del gráfico
+        ctx.setLineDash([]);
+        ctx.beginPath();
+        ctx.moveTo(x, chartArea.top);
+        ctx.lineTo(x, chartArea.bottom);
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+  },
+  afterEvent: (chart: any, args: any) => {
+    const { event, inChartArea } = args;
+    if (inChartArea && (event.type === "mousemove" || event.type === "mouseout")) {
+      const elements = chart.getElementsAtEventForMode(
+        event,
+        "index",
+        { intersect: false },
+        true
+      );
+      if (elements.length > 0 && event.type === "mousemove") {
+        chart.canvas.style.cursor = "pointer";
+        chart.draw(); // Redibujar para mostrar la línea gris
+      } else {
+        chart.canvas.style.cursor = "default";
+        if (event.type === "mouseout") {
+          chart.draw(); // Redibujar para quitar la línea gris
+        }
+      }
+    }
+  },
+};
+
+ChartJS.register(hoverBackgroundPlugin);
+
 interface SalesByMonthData {
   mes: string;
   monto: number;
@@ -109,10 +162,15 @@ const groupSalesByMonth = (
   orders: Order[],
   year: number,
 ): SalesByMonthData[] => {
-  // Filtrar órdenes por año
+  // Filtrar órdenes por año usando UTC para evitar problemas de zona horaria
   const filteredOrders = orders.filter((order) => {
-    const orderDate = new Date(order.createdAt);
-    return orderDate.getFullYear() === year;
+    // Parsear la fecha correctamente - si viene sin Z, agregarla para forzar UTC
+    const dateString = order.createdAt.endsWith("Z")
+      ? order.createdAt
+      : order.createdAt + "Z";
+    const orderDate = new Date(dateString);
+    const orderYear = orderDate.getUTCFullYear();
+    return orderYear === year;
   });
 
   // Inicializar objeto para agrupar por mes
@@ -121,10 +179,20 @@ const groupSalesByMonth = (
     monthlyData[i] = 0;
   }
 
-  // Agrupar y sumar montos por mes
+  // Agrupar y sumar montos por mes usando UTC
   for (const order of filteredOrders) {
-    const orderDate = new Date(order.createdAt);
-    const month = orderDate.getMonth();
+    // Parsear la fecha correctamente - si viene sin Z, agregarla para forzar UTC
+    const dateString = order.createdAt.endsWith("Z")
+      ? order.createdAt
+      : order.createdAt + "Z";
+    const orderDate = new Date(dateString);
+    const month = orderDate.getUTCMonth(); // Usar getUTCMonth para evitar problemas de zona horaria
+
+    // Debug: log para verificar las fechas
+    if (process.env.NODE_ENV === "development") {
+      console.log(`Order ${order.id}: createdAt=${order.createdAt}, parsed month=${month} (${monthNames[month]}), year=${orderDate.getUTCFullYear()}`);
+    }
+
     const amount =
       typeof order.amount === "string"
         ? Number.parseFloat(order.amount)
@@ -139,12 +207,12 @@ const groupSalesByMonth = (
   }));
 };
 
-// Obtener años únicos de las órdenes
+// Obtener años únicos de las órdenes usando UTC
 const getUniqueYears = (orders: Order[]): number[] => {
   const years = new Set<number>();
   for (const order of orders) {
     const orderDate = new Date(order.createdAt);
-    years.add(orderDate.getFullYear());
+    years.add(orderDate.getUTCFullYear());
   }
   return [...years].sort((a, b) => b - a); // Ordenar descendente
 };
@@ -209,7 +277,8 @@ const salesData = computed(() => {
 const average = computed(() => {
   if (salesData.value.length === 0) return 0;
   const sum = salesData.value.reduce((acc, item) => acc + item.monto, 0);
-  return sum / salesData.value.length;
+  // Calcular promedio dividiendo por 12 meses (como en el original)
+  return sum / 12;
 });
 
 const formatCurrency = (value: number) => {
@@ -280,33 +349,61 @@ const chartOptions = computed(() => {
   return {
     responsive: true,
     maintainAspectRatio: false,
+    interaction: {
+      intersect: false,
+      mode: "index" as const,
+    },
     plugins: {
       legend: {
         display: false,
       },
       tooltip: {
-        callbacks: {
-          label: (context: any) => {
-            if (context.datasetIndex === 0) {
-              return formatCurrencyTooltip(context.parsed.y);
-            }
-            return `Promedio: ${formatCurrencyTooltip(context.parsed.y)}`;
-          },
-          title: (context: any) => {
-            return getFullMonthName(context[0].label);
-          },
-        },
+        enabled: true,
+        displayColors: false, // IMPORTANTE: quitar el cuadro de color amarillo
         backgroundColor: "#fff",
         borderColor: "#ccc",
         borderWidth: 1,
         borderRadius: 4,
         padding: 8,
+        titleColor: "#000",
+        bodyColor: "#000",
         titleFont: {
           size: 11,
+          weight: "normal" as const,
         },
         bodyFont: {
           size: 11,
+          weight: "normal" as const,
         },
+        callbacks: {
+          title: (context: any[]) => {
+            // Mostrar el mes completo como título
+            if (context && context.length > 0) {
+              return getFullMonthName(context[0].label);
+            }
+            return "";
+          },
+          label: (context: any) => {
+            // Solo mostrar el monto para las barras (datasetIndex 0)
+            if (context.datasetIndex === 0) {
+              return `Monto: ${formatCurrencyTooltip(context.parsed.y)}`;
+            }
+            // No mostrar nada para la línea de promedio
+            return "";
+          },
+          labelTextColor: () => {
+            return "#000";
+          },
+        },
+        filter: (tooltipItem: any) => {
+          // Solo mostrar tooltip para las barras, no para la línea de promedio
+          return tooltipItem.datasetIndex === 0;
+        },
+        // Cursor hover con fondo gris transparente
+        caretSize: 0,
+        caretPadding: 0,
+        cornerRadius: 4,
+        multiKeyBackground: "#fff",
       },
     },
     scales: {
@@ -315,6 +412,8 @@ const chartOptions = computed(() => {
           display: true,
           drawBorder: false,
           color: "rgba(0, 0, 0, 0.1)",
+          lineWidth: 1,
+          borderDash: [3, 3], // Líneas punteadas como en el original
         },
         ticks: {
           font: {
@@ -328,6 +427,8 @@ const chartOptions = computed(() => {
           display: true,
           drawBorder: false,
           color: "rgba(0, 0, 0, 0.1)",
+          lineWidth: 1,
+          borderDash: [3, 3], // Líneas punteadas como en el original
         },
         ticks: {
           font: {
@@ -337,7 +438,22 @@ const chartOptions = computed(() => {
             return formatCurrency(value);
           },
         },
+        width: 60,
       },
+    },
+    elements: {
+      bar: {
+        backgroundColor: "#ffd699",
+        borderColor: "#ffd699",
+        borderWidth: 0,
+      },
+    },
+    hover: {
+      animationDuration: 0,
+    },
+    animation: {
+      duration: 0,
+    },
     },
   };
 });
