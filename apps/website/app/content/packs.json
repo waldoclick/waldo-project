@@ -1,0 +1,105 @@
+{
+  "data": [
+    {
+      "id": 2,
+      "name": "15 Avisos",
+      "quantity_ad": 15,
+      "quantity_featured": 1,
+      "price": 69900,
+      "created_at": "2021-01-08T04:56:48.000000Z",
+      "updated_at": "2024-01-29T17:43:04.000000Z",
+      "days_ad": 45,
+      "description": [
+        {
+          "text": "15 Avisos para usarlos cuando quieras."
+        },
+        {
+          "text": "Cada Aviso será publicado por 45 días."
+        },
+        {
+          "text": "Incluye 1 Destacado que puedes utilizar en el Aviso que prefieras."
+        },
+        {
+          "text": "Ahorras un 27%"
+        }
+      ],
+      "order": 1,
+      "offer": "Ahorras un 27%"
+    },
+    {
+      "id": 3,
+      "name": "30 Avisos",
+      "quantity_ad": 30,
+      "quantity_featured": 2,
+      "price": 119900,
+      "created_at": "2021-01-08T04:56:48.000000Z",
+      "updated_at": "2024-01-29T17:42:46.000000Z",
+      "days_ad": 45,
+      "description": [
+        {
+          "text": "15 Avisos para usarlos cuando quieras."
+        },
+        {
+          "text": "Cada Aviso será publicado por 45 días."
+        },
+        {
+          "text": "Incluye 2 Destacados que puedes utilizar en los avisos que prefieras."
+        },
+        {
+          "text": "Ahorras un 37%."
+        },
+        {
+          "text": null
+        }
+      ],
+      "order": 2,
+      "offer": "Ahorras un 37%"
+    },
+    {
+      "id": 5,
+      "name": "60 Avisos",
+      "quantity_ad": 60,
+      "quantity_featured": 3,
+      "price": 199900,
+      "created_at": "2021-01-28T03:27:39.000000Z",
+      "updated_at": "2024-01-29T17:43:31.000000Z",
+      "days_ad": 45,
+      "description": [
+        {
+          "text": "60 Avisos para usarlos cuando quieras."
+        },
+        {
+          "text": "Cada Aviso será publicado por 45 días."
+        },
+        {
+          "text": "Incluye 4 Destacados que puedes utilizar en los Avisos que prefieras."
+        },
+        {
+          "text": "Ahorras un 48%"
+        }
+      ],
+      "order": 3,
+      "offer": "Ahorras un 48%"
+    },
+    {
+      "id": 6,
+      "name": "1 Aviso",
+      "quantity_ad": 1,
+      "quantity_featured": 0,
+      "price": 5990,
+      "created_at": "2021-02-23T19:10:00.000000Z",
+      "updated_at": "2024-01-29T17:40:52.000000Z",
+      "days_ad": 45,
+      "description": [
+        {
+          "text": "1 Aviso, puedes usarlo cuando quieras."
+        },
+        {
+          "text": "45 días publicado."
+        }
+      ],
+      "order": 4,
+      "offer": null
+    }
+  ]
+}

@@ -1,0 +1,250 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.btn {
+  appearance: none;
+  background-color: transparent;
+  text-decoration: none;
+  transition: 0.3s;
+  padding: 10px 20px;
+  white-space: nowrap;
+  border: none;
+  box-sizing: border-box;
+  min-height: 50px;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+
+  @include screen-large {
+    transition: none;
+  }
+
+  &:disabled {
+    background-color: $silver;
+    border-color: $silver;
+    color: $charcoal;
+    cursor: not-allowed;
+
+    &:hover {
+      background-color: $silver;
+      border-color: $silver;
+      color: $charcoal;
+    }
+  }
+
+  &--block {
+    width: 100%;
+  }
+
+  &--default {
+    color: $white_smoke;
+
+    &:hover {
+      color: $light_peach;
+      text-decoration: underline;
+      mix-blend-mode: unset;
+    }
+
+    &.is-black {
+      color: $charcoal;
+    }
+  }
+
+  &--primary {
+    background: $charcoal;
+    color: $light_peach;
+
+    &:not(:disabled):not(.disabled):active,
+    &:active {
+      color: $light_peach;
+      background: $charcoal;
+      border: none;
+    }
+
+    &:active,
+    &:hover,
+    &:focus {
+      color: $charcoal;
+      background: $light_peach;
+      outline: none;
+      border: none;
+      box-shadow: none;
+    }
+
+    &.is-black {
+      color: $charcoal;
+    }
+  }
+
+  &--secondary {
+    background: $white_smoke;
+    color: $charcoal;
+    text-decoration: underline;
+
+    &:not(:disabled):not(.disabled):active,
+    &:active {
+      color: $light_peach;
+      background: $charcoal;
+      border: none;
+    }
+
+    &:active,
+    &:hover,
+    &:focus {
+      color: $charcoal;
+      background: $light_peach;
+      outline: none;
+      border: none;
+      box-shadow: none;
+    }
+  }
+
+  &--register {
+    background: $white_smoke;
+    border: 2px solid $charcoal;
+    color: $charcoal;
+
+    &:hover {
+      color: $light_peach;
+      background: $charcoal;
+    }
+  }
+
+  &--announcement {
+    background: $light_peach;
+    border: 2px solid $charcoal;
+    color: $charcoal;
+    display: flex;
+    gap: 5px;
+
+    &:hover {
+      color: $light_peach;
+      background: $charcoal;
+      border: 2px solid $charcoal;
+    }
+  }
+
+  &--buy {
+    color: $light_peach;
+    background: $charcoal;
+    border: 2px solid $charcoal;
+
+    &:hover {
+      background: $light_peach;
+      color: $charcoal;
+    }
+  }
+
+  &--google {
+    position: relative;
+    background: $ghost_white;
+    color: $charcoal;
+
+    img {
+      position: absolute;
+      left: 30px;
+      width: 20px;
+    }
+  }
+
+  &--facebook {
+    position: relative;
+    background: $independence;
+    color: white;
+
+    img {
+      position: absolute;
+      left: 30px;
+      width: 20px;
+    }
+  }
+
+  &--create {
+    position: relative;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    font-weight: 600;
+    font-size: 14px;
+    text-align: center;
+    letter-spacing: 0.5px;
+    color: $charcoal;
+    border: 2px dashed $platinum;
+    border-radius: 8px;
+    padding: 40px 20px;
+    text-decoration: none;
+    transition: 0.3s ease;
+
+    &:hover {
+      border-color: $light_peach; // Resultado de oscurecer $platinum en 2.5%
+      color: $jet; // Resultado de oscurecer $charcoal en 2.5%
+      background-color: rgba(
+        $light_peach,
+        0.1
+      ); // Resultado de oscurecer white en 2.5%
+      text-decoration: none;
+    }
+  }
+
+  &--edit {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    font-size: 12px;
+    color: $dodger_blue;
+    display: flex;
+    align-self: center;
+    text-decoration: underline;
+    border: 0;
+    background-color: rgba(0, 0, 0, 0);
+
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 0;
+  }
+
+  &--icon {
+    width: auto;
+    min-width: auto;
+    min-height: auto;
+    padding: 8px;
+    border-radius: 4px;
+    background: transparent;
+    color: $charcoal;
+    border: 1px solid $platinum;
+    transition: 0.2s ease;
+
+    &:hover,
+    &:focus {
+      background: $charcoal;
+      color: $light_peach;
+      border-color: $charcoal;
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    svg {
+      display: block;
+    }
+  }
+
+  // &.btn--login {
+  //   &--desktop {
+  //     display: flex;
+  //   }
+
+  //   &--mobile {
+  //     display: none;
+  //   }
+  // }
+}
