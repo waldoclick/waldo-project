@@ -12,6 +12,7 @@ interface SettingsState {
   orders: SectionSettings;
   ads: SectionSettings;
   users: SectionSettings;
+  reservations: SectionSettings;
   // Agregar más secciones según se necesiten
 }
 
@@ -29,6 +30,7 @@ export const useSettingsStore = defineStore(
     const orders = ref<SectionSettings>({ ...defaultSectionSettings });
     const ads = ref<SectionSettings>({ ...defaultSectionSettings });
     const users = ref<SectionSettings>({ ...defaultSectionSettings });
+    const reservations = ref<SectionSettings>({ ...defaultSectionSettings });
 
     // Getters para cada sección
     const getOrdersFilters = computed(() => ({
@@ -44,6 +46,11 @@ export const useSettingsStore = defineStore(
     const getUsersFilters = computed(() => ({
       sortBy: users.value.sortBy,
       pageSize: users.value.pageSize,
+    }));
+
+    const getReservationsFilters = computed(() => ({
+      sortBy: reservations.value.sortBy,
+      pageSize: reservations.value.pageSize,
     }));
 
     // Actions genéricas para cualquier sección
@@ -94,6 +101,8 @@ export const useSettingsStore = defineStore(
           return ads;
         case "users":
           return users;
+        case "reservations":
+          return reservations;
         default:
           throw new Error(`Unknown section: ${section}`);
       }
@@ -104,10 +113,12 @@ export const useSettingsStore = defineStore(
       orders,
       ads,
       users,
+      reservations,
       // Getters
       getOrdersFilters,
       getAdsFilters,
       getUsersFilters,
+      getReservationsFilters,
       // Actions
       setSearchTerm,
       setSortBy,
