@@ -535,7 +535,7 @@ export default function DashboardLayout({
                 {maintainersMenuOpen && (
                   <div className="ml-6 mt-2 space-y-0.5">
                     {maintainersSubMenuItems.map((subItem) => {
-                      const isActive = pathname.startsWith(subItem.href);
+                      const isActive = pathname?.startsWith(subItem.href);
                       const Icon = subItem.icon;
                       return (
                         <Link

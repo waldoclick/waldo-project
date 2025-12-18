@@ -23,19 +23,22 @@ export function Breadcrumbs({ items = [], className }: BreadcrumbsProps) {
           const isLink = !!item.href && !isLast;
 
           return (
-            <li key={`${idx}-${item.label}`} className="flex items-center">
+            <li
+              key={`${idx}-${String(item.label)}`}
+              className="flex items-center"
+            >
               {isLink ? (
                 <Link
                   href={item.href!}
                   className="underline decoration-1 text-[#313338] hover:opacity-70 transition-opacity"
                 >
-                  {item.label}
+                  {String(item.label)}
                 </Link>
               ) : (
                 <span
                   className={cn(isLast ? 'text-[#313338]' : 'text-gray-600')}
                 >
-                  {item.label}
+                  {String(item.label)}
                 </span>
               )}
 
