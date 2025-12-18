@@ -1,0 +1,83 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+
+.pagination {
+  &--default {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+
+    &__info {
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    &__controls {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    &__button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid #e5e5e5;
+      border-radius: 4px;
+      background-color: #ffffff;
+      font-size: 14px;
+      color: #1a1a1a;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-width: 40px;
+      justify-content: center;
+
+      &:hover:not(&--disabled) {
+        border-color: #ffd699;
+        background-color: #f9fafb;
+      }
+
+      &--active {
+        background-color: #f3f4f6;
+        border-color: #1a1a1a;
+        font-weight: 600;
+      }
+
+      &--disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      &__icon {
+        width: 16px;
+        height: 16px;
+      }
+
+      &__text {
+        @include screen-small {
+          display: none;
+        }
+      }
+
+      &--page {
+        min-width: 40px;
+      }
+    }
+
+    &__ellipsis {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 36px;
+
+      &__icon {
+        width: 16px;
+        height: 16px;
+        color: #9ca3af;
+      }
+    }
+  }
+}
