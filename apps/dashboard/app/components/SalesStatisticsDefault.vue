@@ -69,10 +69,10 @@ ChartJS.register(
   PointElement,
 );
 
-// Plugin personalizado para el hover con fondo gris transparente (como en recharts)
+// Plugin personalizado para el hover con línea gris transparente (como en recharts)
 const hoverBackgroundPlugin = {
   id: "hoverBackground",
-  beforeDatasetsDraw: (chart: any) => {
+  afterDraw: (chart: any) => {
     const ctx = chart.ctx;
     const chartArea = chart.chartArea;
     const activeElements = chart.getActiveElements();
@@ -83,12 +83,13 @@ const hoverBackgroundPlugin = {
       const meta = chart.getDatasetMeta(element.datasetIndex);
       const bar = meta.data[element.index];
 
-      if (bar) {
+      if (bar && element.datasetIndex === 0) {
+        // Solo para las barras, no para la línea de promedio
         const x = bar.x;
 
         ctx.save();
-        ctx.strokeStyle = "rgba(250, 250, 250, 0.3)"; // Gris transparente como en el original
-        ctx.lineWidth = chartArea.right - chartArea.left; // Ancho completo del área del gráfico
+        ctx.strokeStyle = "rgba(250, 250, 250, 0.3)"; // Gris transparente como en el original (#fafafa con 0.3 opacity)
+        ctx.lineWidth = 1;
         ctx.setLineDash([]);
         ctx.beginPath();
         ctx.moveTo(x, chartArea.top);
@@ -100,22 +101,23 @@ const hoverBackgroundPlugin = {
   },
   afterEvent: (chart: any, args: any) => {
     const { event, inChartArea } = args;
-    if (inChartArea && (event.type === "mousemove" || event.type === "mouseout")) {
+    if (inChartArea && event.type === "mousemove") {
       const elements = chart.getElementsAtEventForMode(
         event,
         "index",
         { intersect: false },
-        true
+        true,
       );
-      if (elements.length > 0 && event.type === "mousemove") {
+      if (elements.length > 0) {
         chart.canvas.style.cursor = "pointer";
         chart.draw(); // Redibujar para mostrar la línea gris
       } else {
         chart.canvas.style.cursor = "default";
-        if (event.type === "mouseout") {
-          chart.draw(); // Redibujar para quitar la línea gris
-        }
+        chart.draw(); // Redibujar para quitar la línea gris cuando no hay hover
       }
+    } else if (event.type === "mouseout") {
+      chart.canvas.style.cursor = "default";
+      chart.draw(); // Redibujar para quitar la línea gris al salir
     }
   },
 };
@@ -190,7 +192,9 @@ const groupSalesByMonth = (
 
     // Debug: log para verificar las fechas
     if (process.env.NODE_ENV === "development") {
-      console.log(`Order ${order.id}: createdAt=${order.createdAt}, parsed month=${month} (${monthNames[month]}), year=${orderDate.getUTCFullYear()}`);
+      console.log(
+        `Order ${order.id}: createdAt=${order.createdAt}, parsed month=${month} (${monthNames[month]}), year=${orderDate.getUTCFullYear()}`,
+      );
     }
 
     const amount =
@@ -453,7 +457,6 @@ const chartOptions = computed(() => {
     },
     animation: {
       duration: 0,
-    },
     },
   };
 });
