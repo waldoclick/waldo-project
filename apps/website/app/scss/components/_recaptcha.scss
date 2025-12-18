@@ -1,0 +1,8 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.grecaptcha-badge {
+  visibility: hidden;
+  // bottom: 130px !important;
+}

@@ -3,8 +3,19 @@
   "globalDependencies": ["**/.env.*local"],
   "tasks": {
     "build": {
-      "dependsOn": ["^build", "waldo-strapi#build"],
+      "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**", ".nuxt/**", ".output/**", "build/**"]
+    },
+    "waldo-strapi#build": {
+      "outputs": ["dist/**", "build/**"]
+    },
+    "waldo-website#build": {
+      "dependsOn": ["waldo-strapi#build"],
+      "outputs": [".nuxt/**", ".output/**"]
+    },
+    "waldo-dashboard#build": {
+      "dependsOn": ["waldo-website#build"],
+      "outputs": [".next/**", "!.next/cache/**"]
     },
 
     "dev": {
