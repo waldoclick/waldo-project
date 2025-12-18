@@ -7,16 +7,6 @@
       </div>
       <div class="auth__form">
         <div class="auth__form__inner">
-          <NuxtLink to="/" class="auth__form__back" title="Ir al inicio">
-            <img
-              loading="lazy"
-              decoding="async"
-              :src="mobileMenuClose"
-              alt="mobile menu close"
-              title="mobile menu close"
-            />
-            <span>Ir al inicio</span>
-          </NuxtLink>
           <h1 class="auth__form__title title">Recupera tu contraseña</h1>
           <div class="auth__form__fields">
             <FormForgotPassword />
@@ -47,9 +37,6 @@
 // Components
 import IntroduceAuth from "@/components/IntroduceAuth.vue";
 import FormForgotPassword from "@/components/FormForgotPassword.vue";
-
-// Import the image
-import mobileMenuClose from "/images/mobile-menu-close.svg";
 
 const title = "Recupera el acceso a tu cuenta en waldo.click®";
 const subtitle =

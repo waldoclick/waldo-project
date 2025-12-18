@@ -1,0 +1,32 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+
+.header {
+  &--default {
+    position: fixed;
+    top: 0;
+    left: 350px; // Ancho del menú lateral
+    right: 0;
+    z-index: 10;
+    transition: transform 0.3s ease-in-out;
+    will-change: transform;
+    width: calc(100% - 350px);
+    height: 64px; // Coincide con la altura del contenedor del logo (16px + 32px + 16px)
+    background-color: #ffffff;
+    border-bottom: 1px solid #e5e5e5;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 24px;
+
+    &--hidden {
+      transform: translateY(-100%);
+    }
+
+    &__right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+  }
+}

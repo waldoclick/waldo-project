@@ -6,16 +6,6 @@
       </div>
       <div class="auth__form">
         <div class="auth__form__inner">
-          <NuxtLink to="/" class="auth__form__back" title="Ir al inicio">
-            <img
-              loading="lazy"
-              decoding="async"
-              :src="mobileMenuCloseSrc"
-              alt="Cerrar menú móvil"
-              title="Cerrar menú móvil"
-            />
-            <span>Ir al inicio</span>
-          </NuxtLink>
           <h2 class="auth__form__title title">Restablece tu contraseña</h2>
           <div class="auth__form__fields">
             <FormResetPassword />
@@ -39,9 +29,6 @@
 import IntroduceAuth from "@/components/IntroduceAuth.vue";
 import FormResetPassword from "@/components/FormResetPassword.vue";
 
-// Importar la imagen
-import mobileMenuClose from "/images/mobile-menu-close.svg";
-
 // Página de datos
 const page = {
   data: {
@@ -53,9 +40,6 @@ const page = {
     ],
   },
 };
-
-// Ruta de la imagen
-const mobileMenuCloseSrc = mobileMenuClose;
 
 definePageMeta({
   layout: "auth",

@@ -1,0 +1,17 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+
+.footer {
+  &--default {
+    padding: 16px 24px;
+    text-align: center;
+    background-color: #ffffff;
+    border-top: 1px solid #e5e5e5;
+
+    p {
+      margin: 0;
+      color: #6b7280;
+      font-size: 14px;
+    }
+  }
+}
