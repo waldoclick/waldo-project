@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useParams, useRouter, usePathname } from 'next/navigation';
-import { Button } from '@/components/ui/button';
+import { useParams } from 'next/navigation';
 import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -45,8 +44,6 @@ interface ExtendedStrapiUser extends StrapiUser {
 
 export default function UserDetailPage() {
   const params = useParams();
-  const router = useRouter();
-  const pathname = usePathname();
   const { formatDate } = useFormatDate();
   const [user, setUser] = useState<ExtendedStrapiUser | null>(null);
   const [loading, setLoading] = useState(true);

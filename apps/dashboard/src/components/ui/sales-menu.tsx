@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ShoppingBag, Circle } from 'lucide-react';
+import { ShoppingBag } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,

@@ -123,13 +123,13 @@ export async function updateUser(
   try {
     // Intentar enviar los datos directamente (estándar para el plugin Users-Permissions)
     // Pero también prepararse por si el backend espera el formato estándar de Strapi v4/v5 con { data: ... }
-    const response = await strapiClient.put<any>(
+    const response = await strapiClient.put<StrapiUser | { data: StrapiUser }>(
       `/users/${id}`,
       data as unknown as Record<string, unknown>
     );
     console.log(`[Strapi API] Response from /users/${id}:`, response);
     // Devolver el usuario actualizado (Strapi puede devolverlo directamente o envuelto en data)
-    return response.data || response;
+    return 'data' in response ? (response.data as StrapiUser) : response;
   } catch (error) {
     console.error(`[Strapi API] Error updating user ${id}:`, error);
     throw error;

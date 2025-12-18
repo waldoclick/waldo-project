@@ -79,7 +79,7 @@ export default function EditProfilePage() {
     try {
       setLoading(true);
 
-      const payload: any = {};
+      const payload: Partial<StrapiUser> = {};
 
       if (formData.username.trim() !== user.username) {
         payload.username = formData.username.trim();
@@ -117,7 +117,9 @@ export default function EditProfilePage() {
       if (error instanceof Error) {
         errorMessage = error.message;
         // Si hay datos de error adicionales de Strapi
-        const errorWithData = error as any;
+        const errorWithData = error as Error & {
+          errorData?: { error?: { message?: string } };
+        };
         if (errorWithData.errorData?.error?.message) {
           errorMessage = errorWithData.errorData.error.message;
         }

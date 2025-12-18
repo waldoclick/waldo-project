@@ -6,21 +6,11 @@ import { usePathname } from 'next/navigation';
 import { useUserStore } from '@/stores/users';
 import { Button } from '@/components/ui/button';
 import { Avatar } from '@/components/ui/avatar';
-import {
-  LogOut,
-  User,
-  Settings,
-  Mail,
-  Edit,
-  Lock,
-  Menu,
-  X,
-} from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { config } from '@/lib/config';

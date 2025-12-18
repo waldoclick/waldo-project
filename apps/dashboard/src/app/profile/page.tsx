@@ -3,10 +3,8 @@
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { User, Calendar, Shield, Edit, Lock } from 'lucide-react';
 import { useUserStore } from '@/stores/users';
-import { StrapiUser } from '@/lib/strapi';
 import { InfoField } from '@/components/ui/info-field';
 import { useFormatDate } from '@/hooks/useFormatDate';
 

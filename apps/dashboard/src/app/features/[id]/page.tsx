@@ -6,20 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import {
-  Calendar,
-  DollarSign,
-  Clock,
-  User,
-  Package,
-  Hash,
-  Star,
-  XCircle,
-  ExternalLink,
-  Mail,
-  Info,
-  CheckCircle,
-} from 'lucide-react';
+import { User, Package, Star, XCircle, ExternalLink, Info } from 'lucide-react';
 import { getAdFeaturedReservation } from '@/lib/strapi';
 import { StrapiAdFeaturedReservation } from '@/lib/strapi/types';
 import { useFormatDate } from '@/hooks/useFormatDate';

@@ -8,16 +8,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
   Calendar,
-  DollarSign,
-  Clock,
   User,
   Package,
   FileText,
-  Hash,
   CheckCircle,
   XCircle,
   ExternalLink,
-  Mail,
   Info,
 } from 'lucide-react';
 import { getAdReservation } from '@/lib/strapi';

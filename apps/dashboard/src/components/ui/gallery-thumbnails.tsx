@@ -1,5 +1,7 @@
 'use client';
 
+import Image from 'next/image';
+
 interface GalleryImage {
   id?: number;
   name?: string;
@@ -74,11 +76,12 @@ export function GalleryThumbnails({
               marginLeft: idx > 0 ? `-${overlapPx}px` : '0',
             }}
           >
-            <img
+            <Image
               src={imageUrl}
               alt={image.alternativeText || image.name || 'Gallery image'}
-              className="w-full h-full object-cover"
-              loading="lazy"
+              fill
+              className="object-cover"
+              sizes={`${size}px`}
             />
           </div>
         );

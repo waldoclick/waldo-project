@@ -17,16 +17,7 @@ import {
   CardHeader,
   CardFooter,
 } from '@/components/ui/card';
-import {
-  Eye,
-  Calendar,
-  DollarSign,
-  Clock,
-  User,
-  Package,
-  Edit,
-  CheckCircle,
-} from 'lucide-react';
+import { Eye, Calendar, Edit, CheckCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { DataTablePagination } from '@/components/ui/data-table-pagination';
 import { SortByData } from '@/components/ui/sort-by-data';

@@ -5,17 +5,8 @@ import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { InfoField } from '@/components/ui/info-field';
-import {
-  Edit,
-  Package,
-  Info,
-  DollarSign,
-  Clock,
-  Star,
-  Box,
-} from 'lucide-react';
+import { Edit, Package, Info, Box } from 'lucide-react';
 import { getAdPack } from '@/lib/strapi';
 import { StrapiAdPack } from '@/lib/strapi/types';
 import { useFormatDate } from '@/hooks/useFormatDate';

@@ -34,7 +34,6 @@ export default function UsersPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-  const [, setTotalUsers] = useState(0);
   const router = useRouter();
   const { formatDate } = useFormatDate();
 

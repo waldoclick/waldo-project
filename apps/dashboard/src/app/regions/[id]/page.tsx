@@ -11,7 +11,6 @@ import {
   CardTitle,
   CardFooter,
 } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { InfoField } from '@/components/ui/info-field';
 import { InputSearch } from '@/components/ui/input-search';
 import {
@@ -22,16 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  Edit,
-  MapPin,
-  Info,
-  Eye,
-  Calendar,
-  Hash,
-  Building,
-  Plus,
-} from 'lucide-react';
+import { Edit, MapPin, Info, Eye, Building } from 'lucide-react';
 import { getRegion } from '@/lib/strapi/regions';
 import { StrapiRegion } from '@/lib/strapi/types';
 import { useFormatDate } from '@/hooks/useFormatDate';

@@ -17,15 +17,7 @@ import {
   CardHeader,
   CardFooter,
 } from '@/components/ui/card';
-import {
-  Plus,
-  Edit,
-  Eye,
-  MapPin,
-  Calendar,
-  Hash,
-  Building,
-} from 'lucide-react';
+import { Plus, Edit, Eye, Building } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { DataTablePagination } from '@/components/ui/data-table-pagination';
 import { SortByData } from '@/components/ui/sort-by-data';

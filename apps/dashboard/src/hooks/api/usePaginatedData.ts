@@ -74,6 +74,7 @@ export function usePaginatedData<T>({
     preferences?.pageSize,
     preferences?.sortBy,
     defaultSortBy,
+    preferences,
   ]);
 
   // Guardar preferencias cuando cambien (solo después de la inicialización)

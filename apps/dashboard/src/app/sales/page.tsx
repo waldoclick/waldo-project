@@ -18,16 +18,7 @@ import {
   CardHeader,
   CardFooter,
 } from '@/components/ui/card';
-import {
-  Eye,
-  DollarSign,
-  User,
-  Calendar,
-  FileText,
-  Package,
-  CreditCard,
-  ShoppingCart,
-} from 'lucide-react';
+import { Eye, ShoppingCart } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { DataTablePagination } from '@/components/ui/data-table-pagination';
 import { SortByData } from '@/components/ui/sort-by-data';

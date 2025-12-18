@@ -5,14 +5,11 @@ import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import {
   ShoppingCart,
   User,
-  Calendar,
   FileText,
   Package,
-  CreditCard,
   Link,
   Info,
 } from 'lucide-react';
@@ -56,23 +53,6 @@ export default function OrderDetailPage() {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount);
-  };
-
-  const getPaymentMethodBadge = (method: string) => {
-    switch (method) {
-      case 'webpay':
-        return <Badge variant="default">WebPay</Badge>;
-      default:
-        return <Badge variant="secondary">{method}</Badge>;
-    }
-  };
-
-  const getInvoiceBadge = (isInvoice: boolean) => {
-    return isInvoice ? (
-      <Badge variant="default">Factura</Badge>
-    ) : (
-      <Badge variant="outline">Boleta</Badge>
-    );
   };
 
   if (loading) {

@@ -27,8 +27,6 @@ import {
   MapPin,
   Building,
   Box,
-  Calendar,
-  Star,
   Circle,
 } from 'lucide-react';
 import {
