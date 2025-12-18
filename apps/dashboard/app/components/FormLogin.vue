@@ -148,12 +148,11 @@ const handleSubmit = async (values) => {
       return;
     }
 
-    // Obtener el referer del store o usar /anuncios como fallback
-    const redirectTo = appStore.getReferer || "/anuncios";
-    // Limpiar el referer después de usarlo
+    // Limpiar el referer si existe
     appStore.clearReferer();
 
-    router.push(redirectTo);
+    // Redirigir siempre al home después del login
+    router.push("/");
   } catch (error) {
     let swalMessage = "Hubo un error. Por favor, inténtalo de nuevo.";
     const errorMessage = error.error?.message;
