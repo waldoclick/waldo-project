@@ -54,9 +54,7 @@ export default function ConditionsPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="space-y-6">
         <div className="pt-4 pb-4 space-y-2">
-          <Breadcrumbs
-            items={[{ label: 'Waldo', href: '/' }, { label: 'Condiciones' }]}
-          />
+          <Breadcrumbs items={[{ label: 'Condiciones' }]} />
           {/* Header */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">

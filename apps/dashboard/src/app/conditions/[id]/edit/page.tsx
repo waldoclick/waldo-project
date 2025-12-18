@@ -85,7 +85,6 @@ export default function EditConditionPage() {
         <div className="pt-4 pb-4 space-y-2">
           <Breadcrumbs
             items={[
-              { label: 'Waldo', href: '/' },
               { label: 'Condiciones', href: '/conditions' },
               { label: 'Editar' },
             ]}

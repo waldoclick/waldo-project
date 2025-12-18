@@ -81,7 +81,6 @@ export default function ReservationDetailPage() {
     ? '/reservations/used'
     : '/reservations/free';
   const breadcrumbsItems = [
-    { label: 'Waldo', href: '/' },
     { label: reservationsViewLabel, href: reservationsViewHref },
     { label: `Reserva #${reservation.id}` },
   ];

@@ -301,7 +301,6 @@ export default function AdDetailPage() {
   }
 
   const breadcrumbItems = [
-    { label: 'Waldo', href: '/' },
     { label: adsViewLabel, href: adsViewHref },
     { label: ad.name },
   ];

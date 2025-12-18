@@ -84,7 +84,6 @@ export default function EditRegionPage() {
         <div className="space-y-2">
           <Breadcrumbs
             items={[
-              { label: 'Waldo', href: '/' },
               { label: 'Regiones', href: '/regions' },
               { label: 'Editar' },
             ]}

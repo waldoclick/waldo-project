@@ -92,11 +92,7 @@ export default function NewPackPage() {
       <div className="space-y-6">
         <div className="pt-4 pb-4 space-y-2">
           <Breadcrumbs
-            items={[
-              { label: 'Waldo', href: '/' },
-              { label: 'Packs', href: '/packs' },
-              { label: 'Nuevo' },
-            ]}
+            items={[{ label: 'Packs', href: '/packs' }, { label: 'Nuevo' }]}
           />
           {/* Header */}
           <div className="flex items-center justify-between">

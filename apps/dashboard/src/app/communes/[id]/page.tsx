@@ -61,7 +61,6 @@ export default function CommuneDetailPage() {
         <div className="space-y-2">
           <Breadcrumbs
             items={[
-              { label: 'Waldo', href: '/' },
               { label: 'Comunas', href: '/communes' },
               { label: commune.name },
             ]}

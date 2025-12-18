@@ -121,7 +121,6 @@ export default function ChangePasswordPage() {
       <div className="space-y-6">
         <Breadcrumbs
           items={[
-            { label: 'Waldo', href: '/' },
             { label: 'Perfil', href: '/profile' },
             { label: 'Cambiar Contraseña' },
           ]}

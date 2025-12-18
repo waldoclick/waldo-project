@@ -145,11 +145,7 @@ export default function EditPackPage() {
       <div className="space-y-6">
         <div className="pt-4 pb-4 space-y-2">
           <Breadcrumbs
-            items={[
-              { label: 'Waldo', href: '/' },
-              { label: 'Packs', href: '/packs' },
-              { label: 'Editar' },
-            ]}
+            items={[{ label: 'Packs', href: '/packs' }, { label: 'Editar' }]}
           />
           {/* Header */}
           <div className="flex items-center justify-between">

@@ -77,7 +77,6 @@ export default function OrderDetailPage() {
         <div className="pt-4 pb-4 space-y-2">
           <Breadcrumbs
             items={[
-              { label: 'Waldo', href: '/' },
               { label: 'Órdenes', href: '/sales' },
               { label: `Orden #${order.id}` },
             ]}

@@ -118,7 +118,6 @@ export default function RegionCommunesPage() {
   }
 
   const breadcrumbsItems = [
-    { label: 'Waldo', href: '/' },
     { label: 'Regiones', href: '/regions' },
     { label: region.name, href: `/regions/${region.id}` },
     { label: 'Comunas' },

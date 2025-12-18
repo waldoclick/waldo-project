@@ -72,11 +72,7 @@ export default function NewCommunePage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="space-y-6">
         <Breadcrumbs
-          items={[
-            { label: 'Waldo', href: '/' },
-            { label: 'Comunas', href: '/communes' },
-            { label: 'Nuevo' },
-          ]}
+          items={[{ label: 'Comunas', href: '/communes' }, { label: 'Nuevo' }]}
         />
         {/* Header */}
         <div className="flex items-center justify-between">

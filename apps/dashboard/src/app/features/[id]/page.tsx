@@ -70,7 +70,6 @@ export default function DestacadoDetailPage() {
   const featuredViewLabel = isUsed ? 'Destacados Usados' : 'Destacados Libres';
   const featuredViewHref = isUsed ? '/features/used' : '/features/free';
   const breadcrumbsItems = [
-    { label: 'Waldo', href: '/' },
     { label: featuredViewLabel, href: featuredViewHref },
     { label: `Destacado #${featured.id}` },
   ];

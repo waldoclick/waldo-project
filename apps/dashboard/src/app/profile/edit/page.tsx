@@ -151,7 +151,6 @@ export default function EditProfilePage() {
         <div className="space-y-2">
           <Breadcrumbs
             items={[
-              { label: 'Waldo', href: '/' },
               { label: 'Perfil', href: '/profile' },
               { label: 'Editar Perfil' },
             ]}

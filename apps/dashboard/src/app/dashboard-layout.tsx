@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import Head from 'next/head';
 import { Header } from '@/components/ui/header';
 import { Footer } from '@/components/ui/footer';
 import { Button } from '@/components/ui/button';
@@ -58,12 +57,12 @@ export default function DashboardLayout({
   const pathname = usePathname();
 
   const isMaintainersActive =
-    pathname.startsWith('/categories') ||
-    pathname.startsWith('/conditions') ||
-    pathname.startsWith('/faqs') ||
-    pathname.startsWith('/packs') ||
-    pathname.startsWith('/regions') ||
-    pathname.startsWith('/communes');
+    pathname?.startsWith('/categories') ||
+    pathname?.startsWith('/conditions') ||
+    pathname?.startsWith('/faqs') ||
+    pathname?.startsWith('/packs') ||
+    pathname?.startsWith('/regions') ||
+    pathname?.startsWith('/communes');
 
   const getOpacityClass = (
     isActive: boolean,
@@ -95,17 +94,17 @@ export default function DashboardLayout({
 
   // Abrir automáticamente los menús cuando la ruta coincide
   useEffect(() => {
-    if (pathname.startsWith('/ads')) {
+    if (pathname?.startsWith('/ads')) {
       setAdsMenuOpen(true);
       setFeaturesMenuOpen(false);
       setReservationsMenuOpen(false);
       setMaintainersMenuOpen(false);
-    } else if (pathname.startsWith('/features')) {
+    } else if (pathname?.startsWith('/features')) {
       setFeaturesMenuOpen(true);
       setAdsMenuOpen(false);
       setReservationsMenuOpen(false);
       setMaintainersMenuOpen(false);
-    } else if (pathname.startsWith('/reservations')) {
+    } else if (pathname?.startsWith('/reservations')) {
       setReservationsMenuOpen(true);
       setAdsMenuOpen(false);
       setFeaturesMenuOpen(false);
@@ -240,15 +239,6 @@ export default function DashboardLayout({
 
   return (
     <>
-      <Head>
-        <meta name="robots" content="noindex, nofollow" />
-        <meta name="googlebot" content="noindex, nofollow" />
-        <meta name="bingbot" content="noindex, nofollow" />
-        <meta name="slurp" content="noindex, nofollow" />
-        <meta name="duckduckbot" content="noindex, nofollow" />
-        <meta name="baiduspider" content="noindex, nofollow" />
-        <meta name="yandex" content="noindex, nofollow" />
-      </Head>
       <div className="min-h-screen flex bg-gray-50">
         {/* Mobile sidebar overlay */}
         {sidebarOpen && (
@@ -332,21 +322,21 @@ export default function DashboardLayout({
                     setReservationsMenuOpen(false);
                     setMaintainersMenuOpen(false);
                   }}
-                  className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-[13px] font-medium transition-colors cursor-pointer hover:underline hover:underline-offset-[2px] focus:underline focus:underline-offset-[2px] focus:bg-transparent ${pathname.startsWith('/ads') ? 'text-gray-900 underline underline-offset-[2px] font-semibold' : 'text-gray-500'}`}
+                  className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-[13px] font-medium transition-colors cursor-pointer hover:underline hover:underline-offset-[2px] focus:underline focus:underline-offset-[2px] focus:bg-transparent ${pathname?.startsWith('/ads') ? 'text-gray-900 underline underline-offset-[2px] font-semibold' : 'text-gray-500'}`}
                 >
                   <div className="flex items-center space-x-5">
                     <FileText
-                      className={`h-5 w-5 transition-opacity ${pathname.startsWith('/ads') ? 'opacity-100' : 'opacity-50'}`}
+                      className={`h-5 w-5 transition-opacity ${pathname?.startsWith('/ads') ? 'opacity-100' : 'opacity-50'}`}
                     />
                     <span>Anuncios</span>
                   </div>
                   {adsMenuOpen ? (
                     <ChevronDown
-                      className={`h-4 w-4 transition-opacity ${pathname.startsWith('/ads') ? 'opacity-100' : 'opacity-50'}`}
+                      className={`h-4 w-4 transition-opacity ${pathname?.startsWith('/ads') ? 'opacity-100' : 'opacity-50'}`}
                     />
                   ) : (
                     <ChevronRight
-                      className={`h-4 w-4 transition-opacity ${pathname.startsWith('/ads') ? 'opacity-100' : 'opacity-50'}`}
+                      className={`h-4 w-4 transition-opacity ${pathname?.startsWith('/ads') ? 'opacity-100' : 'opacity-50'}`}
                     />
                   )}
                 </button>
@@ -395,21 +385,21 @@ export default function DashboardLayout({
                           setReservationsMenuOpen(false);
                           setMaintainersMenuOpen(false);
                         }}
-                        className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-[13px] font-medium transition-colors cursor-pointer hover:underline hover:underline-offset-[2px] focus:underline focus:underline-offset-[2px] focus:bg-transparent ${pathname.startsWith('/features') ? 'text-gray-900 underline underline-offset-[2px] font-semibold' : 'text-gray-500'}`}
+                        className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-[13px] font-medium transition-colors cursor-pointer hover:underline hover:underline-offset-[2px] focus:underline focus:underline-offset-[2px] focus:bg-transparent ${pathname?.startsWith('/features') ? 'text-gray-900 underline underline-offset-[2px] font-semibold' : 'text-gray-500'}`}
                       >
                         <div className="flex items-center space-x-5">
                           <Icon
-                            className={`h-5 w-5 transition-opacity ${pathname.startsWith('/features') ? 'opacity-100' : 'opacity-50'}`}
+                            className={`h-5 w-5 transition-opacity ${pathname?.startsWith('/features') ? 'opacity-100' : 'opacity-50'}`}
                           />
                           <span>{item.name}</span>
                         </div>
                         {featuresMenuOpen ? (
                           <ChevronDown
-                            className={`h-4 w-4 transition-opacity ${pathname.startsWith('/features') ? 'opacity-100' : 'opacity-50'}`}
+                            className={`h-4 w-4 transition-opacity ${pathname?.startsWith('/features') ? 'opacity-100' : 'opacity-50'}`}
                           />
                         ) : (
                           <ChevronRight
-                            className={`h-4 w-4 transition-opacity ${pathname.startsWith('/features') ? 'opacity-100' : 'opacity-50'}`}
+                            className={`h-4 w-4 transition-opacity ${pathname?.startsWith('/features') ? 'opacity-100' : 'opacity-50'}`}
                           />
                         )}
                       </button>
@@ -452,21 +442,21 @@ export default function DashboardLayout({
                           setFeaturesMenuOpen(false);
                           setMaintainersMenuOpen(false);
                         }}
-                        className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-[13px] font-medium transition-colors cursor-pointer hover:underline hover:underline-offset-[2px] focus:underline focus:underline-offset-[2px] focus:bg-transparent ${pathname.startsWith('/reservations') ? 'text-gray-900 underline underline-offset-[2px] font-semibold' : 'text-gray-500'}`}
+                        className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-[13px] font-medium transition-colors cursor-pointer hover:underline hover:underline-offset-[2px] focus:underline focus:underline-offset-[2px] focus:bg-transparent ${pathname?.startsWith('/reservations') ? 'text-gray-900 underline underline-offset-[2px] font-semibold' : 'text-gray-500'}`}
                       >
                         <div className="flex items-center space-x-5">
                           <Icon
-                            className={`h-5 w-5 transition-opacity ${pathname.startsWith('/reservations') ? 'opacity-100' : 'opacity-50'}`}
+                            className={`h-5 w-5 transition-opacity ${pathname?.startsWith('/reservations') ? 'opacity-100' : 'opacity-50'}`}
                           />
                           <span>{item.name}</span>
                         </div>
                         {reservationsMenuOpen ? (
                           <ChevronDown
-                            className={`h-4 w-4 transition-opacity ${pathname.startsWith('/reservations') ? 'opacity-100' : 'opacity-50'}`}
+                            className={`h-4 w-4 transition-opacity ${pathname?.startsWith('/reservations') ? 'opacity-100' : 'opacity-50'}`}
                           />
                         ) : (
                           <ChevronRight
-                            className={`h-4 w-4 transition-opacity ${pathname.startsWith('/reservations') ? 'opacity-100' : 'opacity-50'}`}
+                            className={`h-4 w-4 transition-opacity ${pathname?.startsWith('/reservations') ? 'opacity-100' : 'opacity-50'}`}
                           />
                         )}
                       </button>

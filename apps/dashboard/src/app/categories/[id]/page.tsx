@@ -61,7 +61,6 @@ export default function CategoryDetailPage() {
         <div className="pt-4 pb-4 space-y-2">
           <Breadcrumbs
             items={[
-              { label: 'Waldo', href: '/' },
               { label: 'Categorías', href: '/categories' },
               { label: category.name },
             ]}

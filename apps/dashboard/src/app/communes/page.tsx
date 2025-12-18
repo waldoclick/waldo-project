@@ -54,9 +54,7 @@ export default function CommunesPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="space-y-6">
         <div className="pt-4 pb-4 space-y-2">
-          <Breadcrumbs
-            items={[{ label: 'Waldo', href: '/' }, { label: 'Comunas' }]}
-          />
+          <Breadcrumbs items={[{ label: 'Comunas' }]} />
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
               <Building className="h-7 w-7" style={{ color: '#313338' }} />

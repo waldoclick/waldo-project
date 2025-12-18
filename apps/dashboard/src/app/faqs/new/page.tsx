@@ -60,11 +60,7 @@ export default function NewFaqPage() {
       <div className="space-y-6">
         <div className="pt-4 pb-4 space-y-2">
           <Breadcrumbs
-            items={[
-              { label: 'Waldo', href: '/' },
-              { label: 'FAQ', href: '/faqs' },
-              { label: 'Nuevo' },
-            ]}
+            items={[{ label: 'FAQ', href: '/faqs' }, { label: 'Nuevo' }]}
           />
           {/* Header */}
           <div className="flex items-center justify-between">

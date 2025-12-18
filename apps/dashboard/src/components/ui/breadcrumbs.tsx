@@ -8,18 +8,18 @@ export type BreadcrumbItem = {
 };
 
 export interface BreadcrumbsProps {
-  items: BreadcrumbItem[];
+  items?: BreadcrumbItem[];
   className?: string;
 }
 
-export function Breadcrumbs({ items, className }: BreadcrumbsProps) {
-  if (!items || items.length === 0) return null;
+export function Breadcrumbs({ items = [], className }: BreadcrumbsProps) {
+  const allItems: BreadcrumbItem[] = [{ label: 'Waldo', href: '/' }, ...items];
 
   return (
     <nav aria-label="breadcrumb" className={cn('text-sm', className)}>
       <ol className="flex flex-wrap items-center">
-        {items.map((item, idx) => {
-          const isLast = idx === items.length - 1;
+        {allItems.map((item, idx) => {
+          const isLast = idx === allItems.length - 1;
           const isLink = !!item.href && !isLast;
 
           return (
