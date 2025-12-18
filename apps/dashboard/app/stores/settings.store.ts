@@ -13,7 +13,13 @@ interface SettingsState {
   ads: SectionSettings;
   users: SectionSettings;
   reservations: SectionSettings;
-  // Agregar más secciones según se necesiten
+  featured: SectionSettings;
+  categories: SectionSettings;
+  conditions: SectionSettings;
+  faqs: SectionSettings;
+  packs: SectionSettings;
+  regions: SectionSettings;
+  communes: SectionSettings;
 }
 
 const defaultSectionSettings: SectionSettings = {
@@ -31,6 +37,13 @@ export const useSettingsStore = defineStore(
     const ads = ref<SectionSettings>({ ...defaultSectionSettings });
     const users = ref<SectionSettings>({ ...defaultSectionSettings });
     const reservations = ref<SectionSettings>({ ...defaultSectionSettings });
+    const featured = ref<SectionSettings>({ ...defaultSectionSettings });
+    const categories = ref<SectionSettings>({ ...defaultSectionSettings });
+    const conditions = ref<SectionSettings>({ ...defaultSectionSettings });
+    const faqs = ref<SectionSettings>({ ...defaultSectionSettings });
+    const packs = ref<SectionSettings>({ ...defaultSectionSettings });
+    const regions = ref<SectionSettings>({ ...defaultSectionSettings });
+    const communes = ref<SectionSettings>({ ...defaultSectionSettings });
 
     // Getters para cada sección
     const getOrdersFilters = computed(() => ({
@@ -51,6 +64,41 @@ export const useSettingsStore = defineStore(
     const getReservationsFilters = computed(() => ({
       sortBy: reservations.value.sortBy,
       pageSize: reservations.value.pageSize,
+    }));
+
+    const getFeaturedFilters = computed(() => ({
+      sortBy: featured.value.sortBy,
+      pageSize: featured.value.pageSize,
+    }));
+
+    const getCategoriesFilters = computed(() => ({
+      sortBy: categories.value.sortBy,
+      pageSize: categories.value.pageSize,
+    }));
+
+    const getConditionsFilters = computed(() => ({
+      sortBy: conditions.value.sortBy,
+      pageSize: conditions.value.pageSize,
+    }));
+
+    const getFaqsFilters = computed(() => ({
+      sortBy: faqs.value.sortBy,
+      pageSize: faqs.value.pageSize,
+    }));
+
+    const getPacksFilters = computed(() => ({
+      sortBy: packs.value.sortBy,
+      pageSize: packs.value.pageSize,
+    }));
+
+    const getRegionsFilters = computed(() => ({
+      sortBy: regions.value.sortBy,
+      pageSize: regions.value.pageSize,
+    }));
+
+    const getCommunesFilters = computed(() => ({
+      sortBy: communes.value.sortBy,
+      pageSize: communes.value.pageSize,
     }));
 
     // Actions genéricas para cualquier sección
@@ -103,6 +151,20 @@ export const useSettingsStore = defineStore(
           return users;
         case "reservations":
           return reservations;
+        case "featured":
+          return featured;
+        case "categories":
+          return categories;
+        case "conditions":
+          return conditions;
+        case "faqs":
+          return faqs;
+        case "packs":
+          return packs;
+        case "regions":
+          return regions;
+        case "communes":
+          return communes;
         default:
           throw new Error(`Unknown section: ${section}`);
       }
@@ -114,11 +176,25 @@ export const useSettingsStore = defineStore(
       ads,
       users,
       reservations,
+      featured,
+      categories,
+      conditions,
+      faqs,
+      packs,
+      regions,
+      communes,
       // Getters
       getOrdersFilters,
       getAdsFilters,
       getUsersFilters,
       getReservationsFilters,
+      getFeaturedFilters,
+      getCategoriesFilters,
+      getConditionsFilters,
+      getFaqsFilters,
+      getPacksFilters,
+      getRegionsFilters,
+      getCommunesFilters,
       // Actions
       setSearchTerm,
       setSortBy,

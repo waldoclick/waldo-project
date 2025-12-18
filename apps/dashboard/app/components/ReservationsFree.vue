@@ -45,7 +45,7 @@
         </TableDefault>
 
         <div
-          v-if="filteredReservations.length === 0 && !loading"
+          v-if="paginatedReservations.length === 0 && !loading"
           class="reservations--free__empty"
         >
           <p>No se encontraron reservas libres</p>
@@ -59,6 +59,8 @@
       <PaginationDefault
         :current-page="settingsStore.reservations.currentPage"
         :total-pages="totalPages"
+        :total-records="totalRecords"
+        :page-size="settingsStore.reservations.pageSize"
         class="reservations--free__pagination"
         @page-change="
           (page: number) => settingsStore.setCurrentPage(section, page)
@@ -105,6 +107,12 @@ const handleFiltersChange = (newFilters: {
 // Estado
 const allReservations = ref<Reservation[]>([]);
 const loading = ref(false);
+const paginationMeta = ref<{
+  page: number;
+  pageSize: number;
+  pageCount: number;
+  total: number;
+} | null>(null);
 
 // Fetch de reservas libres desde Strapi
 const fetchFreeReservations = async () => {
@@ -144,6 +152,11 @@ const fetchFreeReservations = async () => {
 
     const response = await strapi.find("ad-reservations", searchParams);
     allReservations.value = Array.isArray(response.data) ? response.data : [];
+
+    // Guardar información de paginación de Strapi
+    paginationMeta.value = response.meta?.pagination
+      ? response.meta.pagination
+      : null;
   } catch (error) {
     console.error("Error fetching free reservations:", error);
     allReservations.value = [];
@@ -152,61 +165,16 @@ const fetchFreeReservations = async () => {
   }
 };
 
-// Filtrar reservas por búsqueda (cliente)
-const filteredReservations = computed(() => {
-  if (!settingsStore.reservations.searchTerm) {
-    return allReservations.value;
-  }
+// Usar los datos directamente de Strapi (ya vienen paginados y ordenados)
+const paginatedReservations = computed(() => allReservations.value);
 
-  const search = settingsStore.reservations.searchTerm.toLowerCase();
-  return allReservations.value.filter((reservation) => {
-    const username = reservation.user?.username?.toLowerCase() || "";
-
-    return username.includes(search);
-  });
-});
-
-// Ordenar reservas
-const sortedReservations = computed(() => {
-  const reservations = [...filteredReservations.value];
-  const [field, direction] = settingsStore.reservations.sortBy.split(":");
-
-  return reservations.sort((a, b) => {
-    let aValue: any;
-    let bValue: any;
-
-    if (field === "createdAt") {
-      aValue = new Date(a.createdAt).getTime();
-      bValue = new Date(b.createdAt).getTime();
-    } else if (field === "user.username") {
-      aValue = a.user?.username || "";
-      bValue = b.user?.username || "";
-    } else {
-      aValue = a[field as keyof Reservation];
-      bValue = b[field as keyof Reservation];
-    }
-
-    if (direction === "asc") {
-      return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
-    } else {
-      return aValue < bValue ? 1 : aValue > bValue ? -1 : 0;
-    }
-  });
-});
-
-// Paginar reservas
+// Calcular totalPages desde meta.pagination de Strapi
 const totalPages = computed(() => {
-  return Math.ceil(
-    sortedReservations.value.length / settingsStore.reservations.pageSize,
-  );
+  return paginationMeta.value?.pageCount || 1;
 });
 
-const paginatedReservations = computed(() => {
-  const start =
-    (settingsStore.reservations.currentPage - 1) *
-    settingsStore.reservations.pageSize;
-  const end = start + settingsStore.reservations.pageSize;
-  return sortedReservations.value.slice(start, end);
+const totalRecords = computed(() => {
+  return paginationMeta.value?.total || 0;
 });
 
 // Columnas de la tabla

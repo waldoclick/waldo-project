@@ -58,6 +58,11 @@
       width: 350px;
       background-color: #ffffff;
       flex-shrink: 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      z-index: 20;
     }
 
     &__content {
@@ -66,6 +71,7 @@
       display: flex;
       flex-direction: column;
       min-height: 100vh;
+      margin-left: 350px; // Espacio para el menú fijo
     }
 
     &__main {

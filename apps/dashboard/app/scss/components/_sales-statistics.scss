@@ -1,0 +1,112 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.sales-statistics {
+  &--default {
+    padding: 50px 0;
+
+    &__container {
+      @extend .container;
+      background-color: #ffffff;
+      border: 1px solid #e5e5e5;
+      border-radius: 4px;
+      padding: 24px;
+    }
+
+    &__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    &__title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin: 0;
+    }
+
+    &__year-selector {
+      position: relative;
+    }
+
+    &__year-button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid #e5e5e5;
+      background-color: #ffffff;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      color: #1a1a1a;
+      transition: border-color 0.2s ease;
+
+      &:hover {
+        border-color: #d1d5db;
+      }
+
+      &__icon {
+        width: 16px;
+        height: 16px;
+        transition: transform 0.2s ease;
+
+        &.is-open {
+          transform: rotate(180deg);
+        }
+      }
+    }
+
+    &__year-menu {
+      position: absolute;
+      top: calc(100% + 4px);
+      right: 0;
+      background-color: #ffffff;
+      border: 1px solid #e5e5e5;
+      border-radius: 4px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      min-width: 120px;
+      z-index: 10;
+      overflow: hidden;
+
+      &__item {
+        display: block;
+        width: 100%;
+        padding: 8px 12px;
+        text-align: left;
+        border: none;
+        background-color: transparent;
+        cursor: pointer;
+        font-size: 14px;
+        color: #1a1a1a;
+        transition: background-color 0.2s ease;
+
+        &:hover {
+          background-color: #f9fafb;
+        }
+
+        &.is-active {
+          background-color: #f3f4f6;
+          font-weight: 600;
+        }
+      }
+    }
+
+    &__chart {
+      height: 400px;
+      position: relative;
+    }
+
+    &__loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 400px;
+      color: #6b7280;
+      font-size: 14px;
+    }
+  }
+}

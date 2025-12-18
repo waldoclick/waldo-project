@@ -14,6 +14,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import BreadcrumbsDefault from "@/components/BreadcrumbsDefault.vue";
 
 const props = defineProps<{
@@ -24,5 +25,9 @@ const props = defineProps<{
   }>;
 }>();
 
-const breadcrumbs = computed(() => props.breadcrumbs || []);
+const breadcrumbs = computed(() => {
+  const waldoBreadcrumb = { label: "Waldo", to: "/" };
+  const additionalBreadcrumbs = props.breadcrumbs || [];
+  return [waldoBreadcrumb, ...additionalBreadcrumbs];
+});
 </script>

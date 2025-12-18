@@ -55,7 +55,7 @@
         </TableDefault>
 
         <div
-          v-if="filteredAds.length === 0 && !loading"
+          v-if="paginatedAds.length === 0 && !loading"
           class="ads--actives__empty"
         >
           <p>No se encontraron anuncios activos</p>
@@ -69,6 +69,8 @@
       <PaginationDefault
         :current-page="settingsStore.ads.currentPage"
         :total-pages="totalPages"
+        :total-records="totalRecords"
+        :page-size="settingsStore.ads.pageSize"
         class="ads--actives__pagination"
         @page-change="
           (page: number) => settingsStore.setCurrentPage(section, page)
@@ -116,6 +118,12 @@ const handleFiltersChange = (newFilters: {
 // Estado
 const allAds = ref<Ad[]>([]);
 const loading = ref(false);
+const paginationMeta = ref<{
+  page: number;
+  pageSize: number;
+  pageCount: number;
+  total: number;
+} | null>(null);
 
 // Fetch de anuncios activos desde Strapi
 const fetchActiveAds = async () => {
@@ -153,6 +161,11 @@ const fetchActiveAds = async () => {
 
     const response = await strapi.find("ads/actives", searchParams);
     allAds.value = Array.isArray(response.data) ? response.data : [];
+
+    // Guardar información de paginación de Strapi
+    paginationMeta.value = response.meta?.pagination
+      ? response.meta.pagination
+      : null;
   } catch (error) {
     console.error("Error fetching active ads:", error);
     allAds.value = [];
@@ -161,59 +174,16 @@ const fetchActiveAds = async () => {
   }
 };
 
-// Filtrar anuncios por búsqueda (cliente)
-const filteredAds = computed(() => {
-  if (!settingsStore.ads.searchTerm) {
-    return allAds.value;
-  }
+// Usar los datos directamente de Strapi (ya vienen paginados y ordenados)
+const paginatedAds = computed(() => allAds.value);
 
-  const search = settingsStore.ads.searchTerm.toLowerCase();
-  return allAds.value.filter((ad) => {
-    const name = ad.name?.toLowerCase() || "";
-    const username = ad.user?.username?.toLowerCase() || "";
-
-    return name.includes(search) || username.includes(search);
-  });
-});
-
-// Ordenar anuncios
-const sortedAds = computed(() => {
-  const ads = [...filteredAds.value];
-  const [field, direction] = settingsStore.ads.sortBy.split(":");
-
-  return ads.sort((a, b) => {
-    let aValue: any;
-    let bValue: any;
-
-    if (field === "createdAt") {
-      aValue = new Date(a.createdAt).getTime();
-      bValue = new Date(b.createdAt).getTime();
-    } else if (field === "name") {
-      aValue = a.name || "";
-      bValue = b.name || "";
-    } else {
-      aValue = a[field as keyof Ad];
-      bValue = b[field as keyof Ad];
-    }
-
-    if (direction === "asc") {
-      return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
-    } else {
-      return aValue < bValue ? 1 : aValue > bValue ? -1 : 0;
-    }
-  });
-});
-
-// Paginar anuncios
+// Calcular totalPages desde meta.pagination de Strapi
 const totalPages = computed(() => {
-  return Math.ceil(sortedAds.value.length / settingsStore.ads.pageSize);
+  return paginationMeta.value?.pageCount || 1;
 });
 
-const paginatedAds = computed(() => {
-  const start =
-    (settingsStore.ads.currentPage - 1) * settingsStore.ads.pageSize;
-  const end = start + settingsStore.ads.pageSize;
-  return sortedAds.value.slice(start, end);
+const totalRecords = computed(() => {
+  return paginationMeta.value?.total || 0;
 });
 
 // Columnas de la tabla

@@ -57,6 +57,8 @@
       <PaginationDefault
         :current-page="settingsStore.orders.currentPage"
         :total-pages="totalPages"
+        :total-records="totalRecords"
+        :page-size="settingsStore.orders.pageSize"
         class="orders--default__pagination"
         @page-change="
           (page: number) => settingsStore.setCurrentPage(section, page)
@@ -207,6 +209,10 @@ const totalPages = computed(() => {
   return Math.ceil(sortedOrders.value.length / settingsStore.orders.pageSize);
 });
 
+const totalRecords = computed(() => {
+  return sortedOrders.value.length;
+});
+
 const paginatedOrders = computed(() => {
   const start =
     (settingsStore.orders.currentPage - 1) * settingsStore.orders.pageSize;
@@ -259,7 +265,6 @@ const getPaymentMethod = (method: string) => {
 };
 
 const handleViewOrder = (orderId: number) => {
-  // Navegar a la página de detalle de la orden
-  console.log("View order:", orderId);
+  router.push(`/ordenes/${orderId}`);
 };
 </script>

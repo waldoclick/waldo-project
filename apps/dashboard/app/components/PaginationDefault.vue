@@ -1,7 +1,11 @@
 <template>
   <div class="pagination pagination--default">
     <div class="pagination--default__info">
-      Página {{ currentPage }} de {{ totalPages }}
+      <span v-if="totalRecords !== undefined">
+        Mostrando {{ startRecord }} - {{ endRecord }} de
+        {{ totalRecords }} registros
+      </span>
+      <span v-else> Página {{ currentPage }} de {{ totalPages }} </span>
     </div>
     <div v-if="totalPages > 1" class="pagination--default__controls">
       <button
@@ -52,7 +56,20 @@ import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-vue-next";
 const props = defineProps<{
   currentPage: number;
   totalPages: number;
+  totalRecords?: number;
+  pageSize?: number;
 }>();
+
+const startRecord = computed(() => {
+  if (!props.totalRecords || !props.pageSize) return 0;
+  return (props.currentPage - 1) * props.pageSize + 1;
+});
+
+const endRecord = computed(() => {
+  if (!props.totalRecords || !props.pageSize) return 0;
+  const end = props.currentPage * props.pageSize;
+  return end > props.totalRecords ? props.totalRecords : end;
+});
 
 defineEmits<{
   pageChange: [page: number];

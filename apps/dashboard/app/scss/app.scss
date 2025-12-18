@@ -26,6 +26,14 @@
 @use "components/orders";
 @use "components/ads";
 @use "components/reservations";
+@use "components/featured";
+@use "components/users";
+@use "components/categories";
+@use "components/conditions";
+@use "components/faqs";
+@use "components/packs";
+@use "components/regions";
+@use "components/communes";
 @use "components/search";
 @use "components/filter";
 @use "components/table";
@@ -33,6 +41,8 @@
 @use "components/pagination";
 @use "components/header";
 @use "components/footer";
+@use "components/stats";
+@use "components/sales-statistics";
 @use "components/swal";
 @use "components/recaptcha";
 @use "components/body";

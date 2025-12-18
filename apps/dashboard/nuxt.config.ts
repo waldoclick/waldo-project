@@ -345,56 +345,6 @@ export default defineNuxtConfig({
   // 6. Performance Optimizations
   // (Nitro config moved above to avoid duplication)
 
-  // Sitemap Configuration - Basic setup
-  sitemap: {
-    sources: [
-      "/",
-      "/anuncios",
-      "/preguntas-frecuentes",
-      "/politicas-de-privacidad",
-      "/auth/forgot-password",
-      "/contacto",
-      "/auth/login",
-      "/anunciar",
-      "/packs",
-    ],
-    exclude: [
-      "/404",
-      "/500",
-      "/auth/reset-password",
-      "/dev/",
-      "/cuenta/**",
-      "/anunciar/**",
-      "/packs/**",
-      "/contacto/**",
-    ],
-    // Dynamic URLs for ads
-    urls: async () => {
-      try {
-        const apiUrl = process.env.API_URL || "http://localhost:1337";
-        const response = await fetch(`${apiUrl}/api/ads/actives`);
-
-        if (!response.ok) {
-          console.warn("Error fetching ads for sitemap:", response.status);
-          return [];
-        }
-
-        const data = await response.json();
-        const ads = data.data || [];
-
-        return ads.map((ad: any) => ({
-          loc: `/anuncios/${ad.slug}`,
-          lastmod: new Date(ad.updatedAt || ad.createdAt).toISOString(),
-          changefreq: "weekly",
-          priority: ad.details?.featured ? 0.8 : 0.6,
-        }));
-      } catch (error) {
-        console.warn("Error generating dynamic sitemap URLs:", error);
-        return [];
-      }
-    },
-  },
-
   // Robots Configuration
   robots:
     process.env.BLOCK_SEARCH_ENGINES === "true"
@@ -413,9 +363,6 @@ export default defineNuxtConfig({
             "/packs/**",
             "/contacto/**",
           ],
-          sitemap: `${
-            process.env.BASE_URL || "http://localhost:3001"
-          }/sitemap.xml`,
         },
 
   // 6. Development Configuration
