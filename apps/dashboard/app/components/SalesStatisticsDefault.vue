@@ -56,6 +56,7 @@ import {
   LineElement,
   PointElement,
 } from "chart.js";
+import annotationPlugin from "chartjs-plugin-annotation";
 import { ChevronDown } from "lucide-vue-next";
 
 ChartJS.register(
@@ -67,39 +68,53 @@ ChartJS.register(
   Legend,
   LineElement,
   PointElement,
+  annotationPlugin,
 );
 
-// Plugin para replicar exactamente CartesianGrid y Tooltip cursor de recharts
+// Plugin para hacer el grid punteado y el hover cursor
 const gridAndHoverPlugin = {
   id: "gridAndHover",
-  afterDatasetsDraw: (chart: any) => {
-    // 1. Dibujar grid punteado (como CartesianGrid strokeDasharray="3 3")
+  afterDraw: (chart: any) => {
     const ctx = chart.ctx;
     const chartArea = chart.chartArea;
     const scales = chart.scales;
 
+    if (!chartArea || !scales.x || !scales.y) return;
+
+    // 1. Dibujar grid punteado DESPUÉS de que Chart.js dibuje el grid sólido
+    // Esto sobrescribe el grid sólido con líneas punteadas
     ctx.save();
     ctx.strokeStyle = "rgba(0, 0, 0, 0.1)";
     ctx.lineWidth = 1;
     ctx.setLineDash([3, 3]); // strokeDasharray="3 3"
 
-    // Líneas verticales punteadas
-    if (scales.x && scales.x.ticks) {
-      scales.x.ticks.forEach((tick: any) => {
-        ctx.beginPath();
-        ctx.moveTo(tick.x, chartArea.top);
-        ctx.lineTo(tick.x, chartArea.bottom);
-        ctx.stroke();
+    // Dibujar líneas verticales punteadas en cada tick del eje X
+    const xScale = scales.x;
+    if (xScale) {
+      const xTicks = xScale.ticks || [];
+      xTicks.forEach((tick: any) => {
+        const x = xScale.getPixelForValue(tick.value);
+        if (!isNaN(x) && x >= chartArea.left && x <= chartArea.right) {
+          ctx.beginPath();
+          ctx.moveTo(Math.round(x), chartArea.top);
+          ctx.lineTo(Math.round(x), chartArea.bottom);
+          ctx.stroke();
+        }
       });
     }
 
-    // Líneas horizontales punteadas
-    if (scales.y && scales.y.ticks) {
-      scales.y.ticks.forEach((tick: any) => {
-        ctx.beginPath();
-        ctx.moveTo(chartArea.left, tick.y);
-        ctx.lineTo(chartArea.right, tick.y);
-        ctx.stroke();
+    // Dibujar líneas horizontales punteadas en cada tick del eje Y
+    const yScale = scales.y;
+    if (yScale) {
+      const yTicks = yScale.ticks || [];
+      yTicks.forEach((tick: any) => {
+        const y = yScale.getPixelForValue(tick.value);
+        if (!isNaN(y) && y >= chartArea.top && y <= chartArea.bottom) {
+          ctx.beginPath();
+          ctx.moveTo(chartArea.left, Math.round(y));
+          ctx.lineTo(chartArea.right, Math.round(y));
+          ctx.stroke();
+        }
       });
     }
 
@@ -107,6 +122,7 @@ const gridAndHoverPlugin = {
 
     // 2. Dibujar línea vertical gris cuando tooltip está activo (como Tooltip cursor)
     const tooltip = chart.tooltip;
+
     if (
       tooltip &&
       tooltip.opacity > 0 &&
@@ -116,19 +132,27 @@ const gridAndHoverPlugin = {
       const barPoint = tooltip.dataPoints.find(
         (dp: any) => dp.datasetIndex === 0,
       );
-      if (barPoint) {
+
+      if (barPoint && barPoint.dataIndex !== undefined) {
         const meta = chart.getDatasetMeta(0);
-        const bar = meta.data[barPoint.dataIndex];
-        if (bar) {
-          ctx.save();
-          ctx.strokeStyle = "rgba(250, 250, 250, 0.3)"; // cursor={{ stroke: '#fafafa', strokeWidth: 1, opacity: 0.3 }}
-          ctx.lineWidth = 1;
-          ctx.setLineDash([]);
-          ctx.beginPath();
-          ctx.moveTo(bar.x, chartArea.top);
-          ctx.lineTo(bar.x, chartArea.bottom);
-          ctx.stroke();
-          ctx.restore();
+
+        if (meta && meta.data && meta.data[barPoint.dataIndex]) {
+          const bar = meta.data[barPoint.dataIndex];
+          const barX = bar.x;
+
+          if (typeof barX === "number" && !isNaN(barX)) {
+            ctx.save();
+            // Color igual a recharts: #fafafa con opacity 0.3
+            // Hacerlo más visible temporalmente para verificar que funciona
+            ctx.strokeStyle = "rgba(200, 200, 200, 0.6)";
+            ctx.lineWidth = 2;
+            ctx.setLineDash([]);
+            ctx.beginPath();
+            ctx.moveTo(Math.round(barX), chartArea.top);
+            ctx.lineTo(Math.round(barX), chartArea.bottom);
+            ctx.stroke();
+            ctx.restore();
+          }
         }
       }
     }
@@ -214,13 +238,13 @@ const groupSalesByMonth = (
       typeof order.amount === "string"
         ? Number.parseFloat(order.amount)
         : order.amount;
-    monthlyData[month] += amount || 0;
+    monthlyData[month] = (monthlyData[month] || 0) + (amount || 0);
   }
 
   // Convertir a array formateado
   return Object.entries(monthlyData).map(([monthIndex, monto]) => ({
-    mes: monthNames[Number.parseInt(monthIndex)],
-    monto,
+    mes: monthNames[Number.parseInt(monthIndex)] || "",
+    monto: monto || 0,
   }));
 };
 
@@ -274,7 +298,7 @@ const fetchAllOrders = async () => {
     availableYears.value = years;
 
     // Si el año actual no está en los años disponibles, usar el más reciente
-    if (years.length > 0) {
+    if (years.length > 0 && years[0] !== undefined) {
       const currentYear = new Date().getFullYear();
       if (!years.includes(currentYear)) {
         selectedYear.value = years[0];
@@ -294,8 +318,8 @@ const salesData = computed(() => {
 const average = computed(() => {
   if (salesData.value.length === 0) return 0;
   const sum = salesData.value.reduce((acc, item) => acc + item.monto, 0);
-  // Calcular promedio dividiendo por 12 meses (como en el original)
-  return sum / 12;
+  // Calcular promedio dividiendo por la cantidad de meses (como en dashboard-old)
+  return sum / salesData.value.length;
 });
 
 const formatCurrency = (value: number) => {
@@ -345,19 +369,6 @@ const chartData = computed(() => {
         borderColor: "#ffd699",
         borderWidth: 0,
       },
-      {
-        label: "Promedio",
-        data: salesData.value.map(() => average.value),
-        type: "line" as const,
-        borderColor: "#ef4444",
-        borderWidth: 2,
-        borderDash: [5, 5],
-        pointRadius: 0,
-        pointHoverRadius: 0,
-        fill: false,
-        tension: 0,
-        yAxisID: "y",
-      },
     ],
   };
 });
@@ -366,6 +377,14 @@ const chartOptions = computed(() => {
   return {
     responsive: true,
     maintainAspectRatio: false,
+    layout: {
+      padding: {
+        top: 20,
+        right: 30,
+        left: 10,
+        bottom: 5,
+      },
+    },
     interaction: {
       intersect: false,
       mode: "index" as const,
@@ -373,6 +392,34 @@ const chartOptions = computed(() => {
     plugins: {
       legend: {
         display: false,
+      },
+      annotation: {
+        annotations: {
+          averageLine: {
+            type: "line" as const,
+            yMin: average.value,
+            yMax: average.value,
+            borderColor: "#ef4444",
+            borderWidth: 2,
+            borderDash: [5, 5],
+            label: {
+              display: true,
+              content: "x̄",
+              position: "end" as const,
+              backgroundColor: "transparent",
+              color: "#ef4444",
+              font: {
+                size: 11,
+                family: "inherit",
+              },
+              xAdjust: 10,
+              yAdjust: 0,
+              textAlign: "start" as const,
+            },
+            xMin: undefined,
+            xMax: undefined,
+          },
+        },
       },
       tooltip: {
         enabled: true,
@@ -401,11 +448,20 @@ const chartOptions = computed(() => {
             return "";
           },
           label: (context: any) => {
-            // Solo mostrar el monto para las barras (datasetIndex 0)
+            // Formato igual a dashboard-old: mostrar valor formateado
+            // En recharts el formatter retorna [valor, 'Monto'], pero Chart.js muestra
+            // el label del dataset automáticamente, así que solo retornamos el valor
             if (context.datasetIndex === 0) {
-              return `Monto: ${formatCurrencyTooltip(context.parsed.y)}`;
+              return formatCurrencyTooltip(context.parsed.y);
             }
             // No mostrar nada para la línea de promedio
+            return "";
+          },
+          afterLabel: (context: any) => {
+            // Agregar "Monto" como segunda línea para coincidir con dashboard-old
+            if (context.datasetIndex === 0) {
+              return "Monto";
+            }
             return "";
           },
           labelTextColor: () => {
@@ -426,8 +482,10 @@ const chartOptions = computed(() => {
     scales: {
       x: {
         grid: {
-          display: false, // Desactivar grid por defecto, lo dibujamos manualmente con líneas punteadas
+          display: true, // Habilitar grid nativo para que se vea
           drawBorder: false,
+          color: "rgba(0, 0, 0, 0.1)",
+          lineWidth: 1,
         },
         ticks: {
           font: {
@@ -438,8 +496,10 @@ const chartOptions = computed(() => {
       y: {
         beginAtZero: true,
         grid: {
-          display: false, // Desactivar grid por defecto, lo dibujamos manualmente con líneas punteadas
+          display: true, // Habilitar grid nativo para que se vea
           drawBorder: false,
+          color: "rgba(0, 0, 0, 0.1)",
+          lineWidth: 1,
         },
         ticks: {
           font: {
@@ -458,9 +518,6 @@ const chartOptions = computed(() => {
         borderColor: "#ffd699",
         borderWidth: 0,
       },
-    },
-    hover: {
-      animationDuration: 0,
     },
     animation: {
       duration: 0,
