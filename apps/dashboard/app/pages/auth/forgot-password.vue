@@ -26,13 +26,13 @@
               ¿Tienes una cuenta en
               <strong>Waldo.click®</strong>
               ?
-              <NuxtLink to="/login" title="Inicia sesión">
+              <NuxtLink to="/auth/login" title="Inicia sesión">
                 Inicia sesión
               </NuxtLink>
             </p>
             <!-- <p>
               ¿Olvidaste tu contraseña?
-              <NuxtLink to="/recuperar-contrasena" title="Recupérala aquí">
+              <NuxtLink to="/auth/forgot-password" title="Recupérala aquí">
                 Recupérala aquí
               </NuxtLink>
             </p> -->
@@ -47,8 +47,6 @@
 // Components
 import IntroduceAuth from "@/components/IntroduceAuth.vue";
 import FormForgotPassword from "@/components/FormForgotPassword.vue";
-import LoginWithGoogle from "@/components/LoginWithGoogle.vue";
-import LoginWithFacebook from "@/components/LoginWithFacebook.vue";
 
 // Import the image
 import mobileMenuClose from "/images/mobile-menu-close.svg";
@@ -63,6 +61,7 @@ const list = [
 ];
 
 definePageMeta({
+  layout: "auth",
   middleware: ["guest"],
 });
 </script>

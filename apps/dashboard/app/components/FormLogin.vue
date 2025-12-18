@@ -108,6 +108,34 @@ const handleSubmit = async (values) => {
       recaptchaToken: token,
     });
 
+    // Obtener el usuario después del login
+    const user = useStrapiUser();
+
+    // Verificar que el usuario tenga el role "manager"
+    const userRole = user.value?.role;
+    // El role puede venir como objeto { name: "Manager" } o como string "manager"
+    // También verificar el campo type del usuario directamente
+    const roleName =
+      typeof userRole === "string"
+        ? userRole.toLowerCase()
+        : userRole?.name?.toLowerCase() ||
+          userRole?.type?.toLowerCase() ||
+          user.value?.type?.toLowerCase() ||
+          null;
+
+    if (roleName !== "manager") {
+      // Si no es manager, cerrar sesión y mostrar error
+      const { logout } = useStrapiAuth();
+      await logout();
+
+      Swal.fire(
+        "Acceso denegado",
+        "Solo los usuarios con rol de manager pueden acceder al dashboard.",
+        "error",
+      );
+      return;
+    }
+
     // Log successful login
     logInfo(`User '${values.email}' logged in successfully.`);
 

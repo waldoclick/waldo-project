@@ -4,19 +4,18 @@ export default defineNuxtPlugin(() => {
 
   // Rutas que no queremos guardar como referer
   const excludedRoutes = new Set([
-    "/registro",
     "/404",
-    "/recuperar-contrasena",
-    "/restablecer-contrasena",
+    "/auth/forgot-password",
+    "/auth/reset-password",
   ]);
 
   router.beforeEach((to, from) => {
     // Solo guardamos el referer si la ruta anterior no está en la lista de excluidas
-    // y no es una ruta de /cuenta
+    // y no es una ruta de /cuenta o /auth
     if (
       !excludedRoutes.has(from.fullPath) &&
       !from.fullPath.startsWith("/cuenta") &&
-      !from.fullPath.startsWith("/login")
+      !from.fullPath.startsWith("/auth")
     ) {
       appStore.setReferer(from.fullPath);
     }

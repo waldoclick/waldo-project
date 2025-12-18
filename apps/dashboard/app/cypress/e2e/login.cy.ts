@@ -1,6 +1,6 @@
 describe("Login Test", () => {
   it("should login successfully", () => {
-    cy.visit("/login");
+    cy.visit("/auth/login");
     cy.wait(1000);
     const email = Cypress.env("CYPRESS_EMAIL") || "zodis@gabrielburgos.cl";
     const password = Cypress.env("CYPRESS_PASSWORD") || "Pa$$w0rd!";

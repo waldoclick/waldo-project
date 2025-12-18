@@ -23,7 +23,7 @@
           <div class="auth__form__help">
             <p>
               ¿Ya tienes una cuenta?
-              <NuxtLink to="/login" title="Iniciar sesión">
+              <NuxtLink to="/auth/login" title="Iniciar sesión">
                 Inicia sesión
               </NuxtLink>
             </p>
@@ -58,6 +58,7 @@ const page = {
 const mobileMenuCloseSrc = mobileMenuClose;
 
 definePageMeta({
+  layout: "auth",
   middleware: ["guest"],
 });
 </script>

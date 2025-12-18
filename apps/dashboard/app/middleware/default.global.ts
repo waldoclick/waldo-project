@@ -1,10 +1,9 @@
-export default defineNuxtRouteMiddleware((to, _from) => {
+export default defineNuxtRouteMiddleware(async (to, _from) => {
   // Rutas públicas que no requieren autenticación
   const publicRoutes = [
-    "/login",
-    "/registro",
-    "/recuperar-contrasena",
-    "/restablecer-contrasena",
+    "/auth/login",
+    "/auth/forgot-password",
+    "/auth/reset-password",
   ];
 
   // Verificar si la ruta actual es pública
@@ -21,6 +20,20 @@ export default defineNuxtRouteMiddleware((to, _from) => {
     // Guardar la ruta a la que intentaba acceder
     useCookie("redirect", { path: "/" }).value = to.fullPath;
     // Redirigir al login
-    return navigateTo("/login");
+    return navigateTo("/auth/login");
+  }
+
+  // Verificar que el usuario tenga el role "manager"
+  const userRole = user.value?.role;
+  const roleName =
+    typeof userRole === "string"
+      ? userRole
+      : userRole?.name || userRole?.type || null;
+
+  if (roleName !== "manager") {
+    // Si no es manager, cerrar sesión y redirigir al login
+    const { logout } = useStrapiAuth();
+    await logout();
+    return navigateTo("/auth/login");
   }
 });
