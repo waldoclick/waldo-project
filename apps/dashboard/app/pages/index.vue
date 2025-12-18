@@ -6,5 +6,5 @@
 
 <script setup lang="ts">
 // Esta página está protegida por el middleware global
-// Si no estás autenticado, serás redirigido a /login
+// Si no estás autenticado, serás redirigido a /auth/login
 </script>
