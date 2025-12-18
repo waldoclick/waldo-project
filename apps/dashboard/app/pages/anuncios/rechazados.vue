@@ -1,8 +1,10 @@
 <template>
-  <div></div>
+  <AdsRejected />
 </template>
 
 <script setup lang="ts">
+import AdsRejected from "@/components/AdsRejected.vue";
+
 definePageMeta({
   layout: "dashboard",
 });
