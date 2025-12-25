@@ -28,6 +28,32 @@ import FooterDefault from "@/components/FooterDefault";
 
 const route = useRoute();
 
+// Excluir rutas que no son perfiles de usuario
+// Estas rutas deben ser manejadas por sus propias páginas específicas
+const excludedRoutes = [
+  "anuncios",
+  "cuenta",
+  "anunciar",
+  "packs",
+  "contacto",
+  "login",
+  "registro",
+  "preguntas-frecuentes",
+  "politicas-de-privacidad",
+  "recuperar-contrasena",
+];
+
+// Si la ruta está excluida, mostrar error 404
+// Esto previene que [slug].vue intercepte rutas que deben ser manejadas por otras páginas
+const slug = String(route.params.slug || "");
+if (excludedRoutes.includes(slug)) {
+  throw createError({
+    statusCode: 404,
+    message: "Página no encontrada",
+    description: "Lo sentimos, la página que buscas no existe.",
+  });
+}
+
 // Crear una ref para la página actual
 const currentPage = ref(
   Number.parseInt(route.query.page?.toString() || "1", 10),

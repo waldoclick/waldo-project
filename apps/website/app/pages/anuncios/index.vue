@@ -33,7 +33,7 @@
       "
       :ads="adsData.relatedAds"
       :loading="adsData.relatedLoading"
-      :error="adsData.relatedError"
+      :error="adsData.relatedError || null"
       title="Equipos destacados"
       text="Los mejores activos industriales del momento"
       :center-head="true"
@@ -43,6 +43,10 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  alias: ["/anuncios"],
+});
+
 const { $setSEO, $setStructuredData } = useNuxtApp() as unknown as {
   $setSEO: (data: {
     title: string;
@@ -86,7 +90,7 @@ interface AdsData {
   category: Category;
   relatedAds: Ad[];
   relatedLoading: boolean;
-  relatedError: Error | null;
+  relatedError: string | null;
 }
 
 interface Commune {
@@ -176,7 +180,7 @@ const { data: adsData, refresh } = await useAsyncData<AdsData>(
         );
         relatedAds = adsStore.ads;
       } catch (error) {
-        relatedError = error;
+        relatedError = error instanceof Error ? error.message : String(error);
       }
       relatedLoading = false;
     }
