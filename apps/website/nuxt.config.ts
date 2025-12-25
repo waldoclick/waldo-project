@@ -33,13 +33,12 @@ export default defineNuxtConfig({
   // Solo aplicar configuración de seguridad si no estamos en modo local
   ...(process.env.NODE_ENV !== "local" && {
     security: {
-      nonce: true,
+      nonce: false,
       headers: {
         contentSecurityPolicy: {
           "default-src": ["'self'"],
           "script-src": [
             "'self'",
-            "'nonce-{{nonce}}'",
             "'unsafe-inline'",
             process.env.BASE_URL || "http://localhost:3000",
             process.env.API_URL || "http://localhost:1337",
@@ -59,7 +58,6 @@ export default defineNuxtConfig({
           ],
           "style-src": [
             "'self'",
-            "'nonce-{{nonce}}'",
             "'unsafe-inline'",
             // Removed external Google Fonts since we serve locally
           ],
