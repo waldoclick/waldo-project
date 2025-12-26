@@ -215,16 +215,18 @@ const { data: adsData, refresh } = await useAsyncData<AdsData>(
 );
 
 // Observar cambios en la URL y refrescar
-watch(
-  [
-    () => route.query.category,
-    () => route.query.page,
-    () => route.query.order,
-    () => route.query.commune,
-    () => route.query.s,
-  ],
-  () => refresh(), // Refrescar los datos cuando cambian las query params
-);
+// COMENTADO: Este watch es redundante porque useAsyncData ya tiene watch en sus opciones (líneas 198-204)
+// que automáticamente refresca cuando cambian los query params. Esto causaba llamadas duplicadas.
+// watch(
+//   [
+//     () => route.query.category,
+//     () => route.query.page,
+//     () => route.query.order,
+//     () => route.query.commune,
+//     () => route.query.s,
+//   ],
+//   () => refresh(), // Refrescar los datos cuando cambian las query params
+// );
 
 // Función para generar el título SEO según los parámetros de búsqueda
 const generateSEOTitle = () => {

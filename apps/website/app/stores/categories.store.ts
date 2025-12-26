@@ -77,6 +77,25 @@ export const useCategoriesStore = defineStore(
     }
 
     async function loadCategory(slug: string) {
+      // PRIMERO: Intentar cargar todas las categorías si no están cargadas
+      // Esto usa el cache de 30 min y localStorage (con persist)
+      if (categories.value.length === 0) {
+        await loadCategories();
+      }
+
+      // SEGUNDO: Buscar en memoria (viene de localStorage o cache)
+      const existingCategory = getCategoryBySlug(slug);
+      if (existingCategory) {
+        category.value = existingCategory;
+        return;
+      }
+
+      // TERCERO: Si no está en memoria, verificar si category.value ya tiene esa categoría
+      if (category.value && category.value.slug === slug) {
+        return; // Ya está cargada
+      }
+
+      // ÚLTIMO RECURSO: Solo entonces llamar a la API
       try {
         loading.value = true;
         error.value = null;
@@ -176,9 +195,9 @@ export const useCategoriesStore = defineStore(
       clearError,
     };
   },
-  // {
-  //   persist: {
-  //     storage: typeof window !== "undefined" ? localStorage : undefined,
-  //   },
-  // },
+  {
+    persist: {
+      storage: typeof window !== "undefined" ? localStorage : undefined,
+    },
+  },
 );
