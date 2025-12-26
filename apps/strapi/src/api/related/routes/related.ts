@@ -12,6 +12,14 @@ type RouteConfig = {
 const routes: RouteConfig[] = [
   {
     method: "GET",
+    path: "/related/ads/:id",
+    handler: "related.ads",
+    config: {
+      policies: [],
+    },
+  },
+  {
+    method: "GET",
     path: "/related/ads",
     handler: "related.ads",
     config: {
