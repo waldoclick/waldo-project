@@ -127,6 +127,9 @@ const { data: adsData, refresh } = await useAsyncData<AdsData>(
       route.query.order || "default"
     }-${route.query.commune || "all"}-${route.query.s || ""}`, // Clave dinámica basada en query params
   async () => {
+    // Limpiar el store antes de cargar nuevos datos para evitar datos obsoletos de navegaciones anteriores
+    adsStore.clearAll();
+
     const category = route.query.category?.toString() || null;
     const page = Number.parseInt(route.query.page?.toString() || "1", 10);
     const order = route.query.order?.toString() || undefined;
@@ -166,11 +169,12 @@ const { data: adsData, refresh } = await useAsyncData<AdsData>(
     const mainPagination = adsStore.pagination;
 
     // Si no hay resultados, cargar anuncios relacionados
+    // Verificar tanto el array como el total para evitar ejecutar related ads cuando hay resultados
     let relatedAds = [];
     let relatedLoading = false;
     let relatedError = null;
 
-    if (mainAds.length === 0) {
+    if (mainAds.length === 0 && mainPagination.total === 0) {
       relatedLoading = true;
       try {
         await adsStore.loadAds(

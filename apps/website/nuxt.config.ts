@@ -34,6 +34,12 @@ export default defineNuxtConfig({
   ...(process.env.NODE_ENV !== "local" && {
     security: {
       nonce: false,
+      rateLimiter: {
+        tokensPerInterval: 500, // Aumentado de 150 a 500 para evitar 429 con assets
+        interval: 300000, // 5 minutos (300000 ms)
+        headers: true,
+        throwError: true,
+      },
       headers: {
         contentSecurityPolicy: {
           "default-src": ["'self'"],

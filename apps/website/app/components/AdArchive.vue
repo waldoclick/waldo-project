@@ -8,7 +8,11 @@
         </template>
       </div>
       <div
-        v-if="pagination && pagination.pageCount > 1"
+        v-if="
+          pagination &&
+          pagination.pageCount > 1 &&
+          pagination.total > pagination.pageSize
+        "
         class="announcement--archive__paginate"
       >
         <client-only>
