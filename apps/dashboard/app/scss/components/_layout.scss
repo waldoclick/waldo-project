@@ -80,4 +80,22 @@
       min-height: calc(100vh - 64px);
     }
   }
+
+  &--content {
+    &__container {
+      @extend .container;
+      display: flex;
+      gap: 24px;
+    }
+
+    &__content {
+      flex: 1;
+      min-width: 0; // allow content to shrink properly
+    }
+
+    &__sidebar {
+      width: 320px;
+      flex-shrink: 0;
+    }
+  }
 }
