@@ -6,7 +6,9 @@ const relatedAdsService = new RelatedAdsService();
 
 const filterController = {
   async ads(ctx: Context) {
-    const { id, limit = 16 } = ctx.query as QueryParams;
+    // Leer el id del parámetro de ruta primero, luego del query como fallback (para compatibilidad)
+    const id = ctx.params.id || (ctx.query as QueryParams).id;
+    const limit = (ctx.query as QueryParams).limit || 16;
 
     if (!id) {
       ctx.throw(404, "Ad ID is missing");

@@ -16,7 +16,7 @@ export const useRelatedStore = defineStore(
         loading.value = true;
         error.value = null;
 
-        const response = await strapi.find(`related/ads?id=${id}`, {
+        const response = await strapi.find(`related/ads/${id}`, {
           populate: "*",
         });
 

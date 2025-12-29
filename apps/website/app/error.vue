@@ -16,7 +16,13 @@
         v-if="adsData?.ads && adsData.ads.length > 0"
         :ads="adsData.ads"
         :loading="pending"
-        :error="fetchError"
+        :error="
+          fetchError
+            ? fetchError instanceof Error
+              ? fetchError.message
+              : String(fetchError)
+            : null
+        "
         title="Tenemos avisos que podrían interesarte"
         text="Revisa nuestra selección de activos industriales disponibles"
         :center-head="true"
@@ -152,10 +158,5 @@ $setStructuredData({
   name: getSEOTitle(),
   description: getErrorDescription(),
   url: getSEOUrl(),
-});
-
-// Define el layout por defecto
-definePageMeta({
-  layout: "default",
 });
 </script>

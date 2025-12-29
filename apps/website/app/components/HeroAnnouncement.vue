@@ -19,7 +19,7 @@
             {{ getTitle }}
           </h1>
         </div>
-        <div class="hero--announcement__tags">
+        <div v-if="user" class="hero--announcement__tags">
           <span>
             Por
             <!-- <pre>{{ getUser }}</pre> -->
