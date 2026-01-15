@@ -60,20 +60,19 @@ import { ref } from "vue";
 import { Field, Form, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 const { Swal } = useSweetAlert2();
-import { useRouter, useRoute } from "vue-router";
+import { useRouter } from "vue-router";
 import { useAppStore } from "@/stores/app.store";
-import { useMeStore } from "@/stores/me.store";
 import { useNuxtApp } from "#app";
 import { useLogger } from "@/composables/useLogger";
 
 const sending = ref(false);
 const { login } = useStrapiAuth();
 const router = useRouter();
-const route = useRoute();
 const appStore = useAppStore();
-const meStore = useMeStore();
 const { $recaptcha } = useNuxtApp();
 const { logInfo } = useLogger();
+const config = useRuntimeConfig();
+const strapi = useStrapi();
 
 const schema = yup.object({
   email: yup
@@ -108,22 +107,18 @@ const handleSubmit = async (values) => {
       recaptchaToken: token,
     });
 
-    // Obtener el usuario después del login
-    const user = useStrapiUser();
+    // Obtener el usuario usando /users/me que ahora incluye role y commune
+    const user = await strapi.find("users/me", {
+      populate: {
+        role: true,
+        commune: {
+          populate: "region",
+        },
+      },
+    });
 
-    // Verificar que el usuario tenga el role "manager"
-    const userRole = user.value?.role;
-    // El role puede venir como objeto { name: "Manager" } o como string "manager"
-    // También verificar el campo type del usuario directamente
-    const roleName =
-      typeof userRole === "string"
-        ? userRole.toLowerCase()
-        : userRole?.name?.toLowerCase() ||
-          userRole?.type?.toLowerCase() ||
-          user.value?.type?.toLowerCase() ||
-          null;
-
-    if (roleName !== "manager") {
+    // Verificar que el usuario tenga el role "manager" por type
+    if (!user || user.role?.type !== "manager") {
       // Si no es manager, cerrar sesión y mostrar error
       const { logout } = useStrapiAuth();
       await logout();
@@ -138,15 +133,6 @@ const handleSubmit = async (values) => {
 
     // Log successful login
     logInfo(`User '${values.email}' logged in successfully.`);
-
-    // Verificar si el perfil del usuario está completo
-    const isProfileComplete = await meStore.isProfileComplete();
-
-    if (!isProfileComplete) {
-      // Si el perfil no está completo, redirigir a la página de edición de perfil
-      router.push("/cuenta/perfil/editar");
-      return;
-    }
 
     // Limpiar el referer si existe
     appStore.clearReferer();

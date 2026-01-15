@@ -47,6 +47,9 @@
     &__content {
       flex: 1;
       min-width: 0; // permitir que el contenido encoja correctamente
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
     }
 
     &__sidebar {

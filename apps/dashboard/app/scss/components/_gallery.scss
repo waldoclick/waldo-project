@@ -1,0 +1,43 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+
+.gallery {
+  // No estilos base: los estilos van por modificadores
+
+  &--default {
+    &__container {
+      display: grid;
+      gap: 12px;
+
+      &--cols-1 {
+        grid-template-columns: 1fr;
+      }
+
+      &--cols-2 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      &--cols-3 {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      &--cols-4 {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    &__image {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: 4px;
+      border: 1px solid #e5e5e5;
+      cursor: pointer;
+      transition: border-color 0.2s ease;
+
+      &:hover {
+        border-color: #ffd699;
+      }
+    }
+  }
+}

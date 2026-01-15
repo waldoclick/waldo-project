@@ -7,6 +7,7 @@ import * as Sentry from "@sentry/nuxt";
 export default defineNuxtConfig({
   // Compatibility date for Nuxt features
   compatibilityDate: "2024-04-03",
+  telemetry: false,
 
   // Enable Nuxt 4 compatibility mode
   future: {

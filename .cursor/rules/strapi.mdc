@@ -8,6 +8,13 @@ globs: ["apps/strapi/**"]
 - Provide a clear explanation of proposed changes
 - Wait for user confirmation before proceeding with implementation
 - Use exclusively Strapi v5 examples and patterns, Documentation reference: https://docs.strapi.io/dev-docs/
+- **Plugin Extension Architecture (Strapi v5):**
+  - Custom controllers in plugin extensions (`src/extensions/*/controllers/*.ts`) are NOT supported in Strapi v5
+  - The plugin extension API changed significantly in v5 - controller-based extensions from v4 are incompatible
+  - DO NOT uncomment, modify, or create custom controllers in `src/extensions/users-permissions/strapi-server.ts` or related controller files
+  - To extend plugin functionality, use middlewares to intercept and modify responses (e.g., adding `role` and `commune` to `/users/me` responses)
+  - Middlewares are the official and supported way to extend plugin behavior in Strapi v5
+  - Any attempt to use commented controllers will result in runtime errors and is strictly prohibited
 - All code, comments, documentation, and commits MUST be written in English
 - Always use Yarn for package management, never npm
 - Follow SOLID principles when designing and implementing services
