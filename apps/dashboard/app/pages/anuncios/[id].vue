@@ -41,6 +41,21 @@
           :description="item.phone || '--'"
         />
         <CardInfo v-if="item" title="Email" :description="item.email || '--'" />
+        <CardInfo
+          v-if="item"
+          title="Duración"
+          :description="`${item.duration_days} días`"
+        />
+        <CardInfo
+          v-if="item"
+          title="Días Restantes"
+          :description="`${item.remaining_days} días`"
+        />
+        <CardInfo
+          v-if="item"
+          title="Moneda"
+          :description="item.currency || '--'"
+        />
       </BoxInformation>
 
       <BoxInformation
@@ -61,21 +76,6 @@
           v-if="item"
           title="Estado"
           :description="getStatusText(item)"
-        />
-        <CardInfo
-          v-if="item"
-          title="Duración"
-          :description="`${item.duration_days} días`"
-        />
-        <CardInfo
-          v-if="item"
-          title="Días Restantes"
-          :description="`${item.remaining_days} días`"
-        />
-        <CardInfo
-          v-if="item"
-          title="Moneda"
-          :description="item.currency || '--'"
         />
         <CardInfo
           v-if="item"
