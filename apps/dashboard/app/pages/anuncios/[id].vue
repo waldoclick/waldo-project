@@ -72,7 +72,30 @@
     </template>
     <template #sidebar>
       <BoxInformation title="Acciones" :columns="1">
-        <button type="button" class="btn btn--buy btn--block">Acción</button>
+        <button
+          v-if="isPending"
+          type="button"
+          class="btn btn--buy btn--block"
+          @click="handleApprove"
+        >
+          Aprobar
+        </button>
+        <button
+          v-if="isPending"
+          type="button"
+          class="btn btn--secondary btn--block"
+          @click="handleReject"
+        >
+          Rechazar
+        </button>
+        <button
+          v-if="isActive"
+          type="button"
+          class="btn btn--primary btn--block"
+          @click="handleBan"
+        >
+          Banear
+        </button>
       </BoxInformation>
       <BoxInformation title="Detalles" :columns="1">
         <CardInfo
@@ -110,12 +133,21 @@ definePageMeta({
 
 const route = useRoute();
 const item = ref<any>(null);
+const strapi = useStrapi();
+const strapiClient = useStrapiClient();
 
 const title = computed(() => item.value?.name || "Anuncio");
 const breadcrumbs = computed(() => [
   { label: "Anuncios", to: "/anuncios" },
   ...(item.value?.name ? [{ label: item.value.name }] : []),
 ]);
+
+const statusLabels: Record<string, string> = {
+  pending: "Pendiente",
+  active: "Activo",
+  rejected: "Rechazado",
+  archived: "Archivado",
+};
 
 const formatDate = (dateString: string | undefined) => {
   if (!dateString) return "--";
@@ -142,37 +174,71 @@ const formatAddress = (address: string, addressNumber: string) => {
 };
 
 const getStatusText = (ad: any) => {
-  if (ad.rejected) return "Rechazado";
-  if (ad.active && ad.remaining_days > 0) return "Activo";
-  if (
-    !ad.active &&
-    ad.remaining_days > 0 &&
-    ad.remaining_days === ad.duration_days
-  )
-    return "Pendiente";
-  if (!ad.active && ad.remaining_days === 0) return "Archivado";
-  return "Inactivo";
+  if (!ad?.status) return "--";
+  return statusLabels[ad.status] || ad.status;
+};
+
+const isPending = computed(() => item.value?.status === "pending");
+const isActive = computed(() => item.value?.status === "active");
+
+const handleApprove = async () => {
+  if (!item.value?.id) return;
+  try {
+    await strapiClient(`/ads/${item.value.id}/approve`, {
+      method: "PUT",
+    });
+    await fetchAd();
+  } catch (error) {
+    console.error("Error approving ad:", error);
+  }
+};
+
+const handleReject = async () => {
+  if (!item.value?.id) return;
+  try {
+    await strapiClient(`/ads/${item.value.id}/reject`, {
+      method: "PUT",
+      body: { reason_rejected: "" },
+    });
+    await fetchAd();
+  } catch (error) {
+    console.error("Error rejecting ad:", error);
+  }
+};
+
+const handleBan = async () => {
+  if (!item.value?.id) return;
+  try {
+    await strapiClient(`/ads/${item.value.id}/deactivate`, {
+      method: "PUT",
+    });
+    await fetchAd();
+  } catch (error) {
+    console.error("Error deactivating ad:", error);
+  }
+};
+
+const fetchAd = async () => {
+  const id = route.params.id;
+  if (!id) return;
+  try {
+    const response = await strapi.findOne("ads", id as string, {
+      populate: {
+        category: true,
+        condition: true,
+        commune: true,
+        gallery: true,
+      },
+    });
+    if (response.data) {
+      item.value = response.data;
+    }
+  } catch (error) {
+    console.error("Error fetching ad:", error);
+  }
 };
 
 onMounted(async () => {
-  const id = route.params.id;
-  if (id) {
-    try {
-      const strapi = useStrapi();
-      const response = await strapi.findOne("ads", id as string, {
-        populate: {
-          category: true,
-          condition: true,
-          commune: true,
-          gallery: true,
-        },
-      });
-      if (response.data) {
-        item.value = response.data;
-      }
-    } catch (error) {
-      console.error("Error fetching ad:", error);
-    }
-  }
+  await fetchAd();
 });
 </script>
