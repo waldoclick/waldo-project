@@ -25,9 +25,5 @@ const props = defineProps<{
   }>;
 }>();
 
-const breadcrumbs = computed(() => {
-  const waldoBreadcrumb = { label: "Waldo", to: "/" };
-  const additionalBreadcrumbs = props.breadcrumbs || [];
-  return [waldoBreadcrumb, ...additionalBreadcrumbs];
-});
+const breadcrumbs = computed(() => props.breadcrumbs || []);
 </script>

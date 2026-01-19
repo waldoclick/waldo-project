@@ -71,6 +71,9 @@
       </BoxInformation>
     </template>
     <template #sidebar>
+      <BoxInformation title="Acciones" :columns="1">
+        <button type="button" class="btn btn--buy btn--block">Acción</button>
+      </BoxInformation>
       <BoxInformation title="Detalles" :columns="1">
         <CardInfo
           v-if="item"
