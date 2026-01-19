@@ -15,8 +15,8 @@
         <CardInfo :title="`Nombres`" :description="user.firstname || '--'" />
         <CardInfo :title="`Apellidos`" :description="user.lastname || '--'" />
         <CardInfo :title="`Rut`" :description="user.rut" />
-        <CardInfo :title="`Región`" :description="user.region?.name || ''" />
-        <CardInfo :title="`Comuna`" :description="user.commune?.name || ''" />
+        <CardInfo :title="`Región`" :description="regionName" />
+        <CardInfo :title="`Comuna`" :description="user.commune?.name || '--'" />
         <CardInfo :title="`Dirección`" :description="getAddress" />
         <CardInfo :title="`Teléfono`" :description="user.phone" />
         <CardInfo :title="`Correo electrónico`" :description="user.email" />
@@ -40,10 +40,7 @@
         <CardInfo :title="`Razón Social`" :description="user.business_name" />
         <CardInfo :title="`Giro`" :description="user.business_type" />
         <CardInfo :title="`RUT Empresa`" :description="user.business_rut" />
-        <CardInfo
-          :title="`Región`"
-          :description="user.business_region?.name || ''"
-        />
+        <CardInfo :title="`Región`" :description="businessRegionName" />
         <CardInfo
           :title="`Comuna`"
           :description="user.business_commune?.name || ''"
@@ -108,5 +105,17 @@ const formattedBirthdate = computed(() => {
   const year = date.getFullYear();
 
   return `${day}/${month}/${year}`;
+});
+
+const regionName = computed(() => {
+  return user.value.region?.name || user.value.commune?.region?.name || "--";
+});
+
+const businessRegionName = computed(() => {
+  return (
+    user.value.business_region?.name ||
+    user.value.business_commune?.region?.name ||
+    "--"
+  );
 });
 </script>

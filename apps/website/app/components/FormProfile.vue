@@ -352,10 +352,17 @@ const userStore = useUserStore();
 
 const selectedRegionId = ref(null);
 
+const normalizeId = (value) => {
+  if (value === null || value === undefined || value === "") return null;
+  const parsed = Number(value);
+  return Number.isNaN(parsed) ? null : parsed;
+};
+
 const filteredCommunes = computed(() => {
-  return listCommunes.value.filter(
-    (commune) => commune.region.id === selectedRegionId.value,
-  );
+  const regionId = normalizeId(selectedRegionId.value);
+  if (!regionId) return [];
+
+  return listCommunes.value.filter((commune) => commune.region.id === regionId);
 });
 
 const strapi = useStrapi();
@@ -365,9 +372,10 @@ const { fetchUser } = useStrapiAuth();
 const selectedBusinessRegionId = ref(null);
 
 const filteredBusinessCommunes = computed(() => {
-  return listCommunes.value.filter(
-    (commune) => commune.region.id === selectedBusinessRegionId.value,
-  );
+  const regionId = normalizeId(selectedBusinessRegionId.value);
+  if (!regionId) return [];
+
+  return listCommunes.value.filter((commune) => commune.region.id === regionId);
 });
 
 const { formatRut, validateRut } = useRut();
@@ -385,7 +393,9 @@ const initialFormValues = ref({
   postal_code: user.value.postal_code || "",
   is_company:
     user.value.is_company !== undefined ? user.value.is_company : null,
-  region: user.value.region?.id || null,
+  region:
+    normalizeId(user.value.region?.id) ||
+    normalizeId(user.value.commune?.region?.id),
   commune: user.value.commune?.id || null,
   birthdate: user.value.birthdate || "",
   business_name: user.value.business_name || "",
@@ -394,7 +404,9 @@ const initialFormValues = ref({
   business_address: user.value.business_address || "",
   business_address_number: user.value.business_address_number || "",
   business_postal_code: user.value.business_postal_code || "",
-  business_region: user.value.business_region?.id || null,
+  business_region:
+    normalizeId(user.value.business_region?.id) ||
+    normalizeId(user.value.business_commune?.region?.id),
   business_commune: user.value.business_commune?.id || null,
 });
 
@@ -414,7 +426,9 @@ const form = ref({
   postal_code: user.value.postal_code || "",
   is_company:
     user.value.is_company !== undefined ? user.value.is_company : null,
-  region: user.value.region?.id || null,
+  region:
+    normalizeId(user.value.region?.id) ||
+    normalizeId(user.value.commune?.region?.id),
   commune: user.value.commune?.id || null,
   birthdate: user.value.birthdate || "",
   // Campos de empresa
@@ -424,7 +438,9 @@ const form = ref({
   business_address: user.value.business_address || "",
   business_address_number: user.value.business_address_number || "",
   business_postal_code: user.value.business_postal_code || "",
-  business_region: user.value.business_region?.id || null,
+  business_region:
+    normalizeId(user.value.business_region?.id) ||
+    normalizeId(user.value.business_commune?.region?.id),
   business_commune: user.value.business_commune?.id || null,
 });
 
@@ -597,10 +613,47 @@ const schema = yup.object({
 selectedRegionId.value = form.value.region;
 selectedBusinessRegionId.value = form.value.business_region;
 
+watch(
+  selectedRegionId,
+  (value) => {
+    form.value.region = normalizeId(value);
+  },
+  { immediate: true },
+);
+
+watch(
+  selectedBusinessRegionId,
+  (value) => {
+    form.value.business_region = normalizeId(value);
+  },
+  { immediate: true },
+);
+
 // Cargar regiones y comunas al montar el componente
 onMounted(async () => {
   await regionsStore.loadRegions();
   await communesStore.loadCommunes();
+
+  if (!normalizeId(selectedRegionId.value) && form.value.commune) {
+    const commune = listCommunes.value.find(
+      (item) => item.id === normalizeId(form.value.commune),
+    );
+    if (commune?.region?.id) {
+      selectedRegionId.value = commune.region.id;
+    }
+  }
+
+  if (
+    !normalizeId(selectedBusinessRegionId.value) &&
+    form.value.business_commune
+  ) {
+    const businessCommune = listCommunes.value.find(
+      (item) => item.id === normalizeId(form.value.business_commune),
+    );
+    if (businessCommune?.region?.id) {
+      selectedBusinessRegionId.value = businessCommune.region.id;
+    }
+  }
 });
 
 const handleSubmit = async (values) => {
