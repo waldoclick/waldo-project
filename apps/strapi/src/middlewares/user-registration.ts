@@ -107,9 +107,9 @@ export default (
               where: { id: loginResponse.user.id },
               populate: {
                 role: true,
-                commune: {
-                  populate: ["region"],
-                },
+                commune: { populate: ["region"] },
+                ad_reservations: { populate: ["ad"] },
+                ad_featured_reservations: { populate: ["ad"] },
               },
             });
 
@@ -145,9 +145,9 @@ export default (
               where: { id: userResponse.id },
               populate: {
                 role: true,
-                commune: {
-                  populate: ["region"],
-                },
+                commune: { populate: ["region"] },
+                ad_reservations: { populate: ["ad"] },
+                ad_featured_reservations: { populate: ["ad"] },
               },
             });
 
