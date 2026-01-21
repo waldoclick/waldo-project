@@ -137,10 +137,27 @@ const strapi = useStrapi();
 const strapiClient = useStrapiClient();
 
 const title = computed(() => item.value?.name || "Anuncio");
-const breadcrumbs = computed(() => [
-  { label: "Anuncios", to: "/anuncios" },
-  ...(item.value?.name ? [{ label: item.value.name }] : []),
-]);
+type AdStatus = "pending" | "active" | "archived" | "rejected";
+
+const statusBreadcrumbMap: Record<AdStatus, { label: string; to: string }> = {
+  pending: { label: "Pendientes", to: "/anuncios/pendientes" },
+  active: { label: "Activos", to: "/anuncios/activos" },
+  archived: { label: "Archivados", to: "/anuncios/archivados" },
+  rejected: { label: "Rechazados", to: "/anuncios/rechazados" },
+};
+
+const breadcrumbs = computed(() => {
+  const status = item.value?.status as AdStatus | undefined;
+  const safeStatus: AdStatus =
+    status && status in statusBreadcrumbMap ? status : "pending";
+  const parent = statusBreadcrumbMap[safeStatus];
+
+  return [
+    { label: "Anuncios", to: parent.to },
+    { label: parent.label, to: parent.to },
+    ...(item.value?.name ? [{ label: item.value.name }] : []),
+  ];
+});
 
 const statusLabels: Record<string, string> = {
   pending: "Pendiente",

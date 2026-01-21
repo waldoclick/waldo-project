@@ -63,15 +63,12 @@
           "
           class="announcement--single__sidebar__expired"
         >
-          <!-- Mensaje de revisión -->
           <MemoDefault
             v-if="!all.active"
             :icon="Clock"
             text="Este anuncio está en revisión. Solo tú puedes verlo."
             link=""
           />
-
-          <!-- Mensaje de expiración -->
           <MemoDefault
             v-if="all.active && all.remaining_days <= DAYS_LEFT_WARNING"
             :icon="Clock"
@@ -81,7 +78,6 @@
         </div>
 
         <div class="announcement--single__sidebar__info">
-          <!-- price  -->
           <div class="announcement--single__sidebar__info__top">
             <span class="announcement--single__sidebar__info__top__title" sub>
               Precio
@@ -106,16 +102,19 @@
               </div>
             </span>
           </div>
-
-          <!-- seller contact -->
-          <div v-if="user" class="announcement--single__sidebar__info__seller">
+          <div
+            v-if="getUserFromAll"
+            class="announcement--single__sidebar__info__seller"
+          >
             <CardInfo title="Contacto" :description="getUserFullName" />
             <CardInfo
+              v-if="getUserFromAll?.email"
               title="Email"
               :description="getUserFromAll.email"
               show-copy-button
             />
             <CardInfo
+              v-if="getUserFromAll?.phone"
               title="Teléfono"
               :description="getUserFromAll.phone"
               show-copy-button
@@ -160,11 +159,11 @@ const { sanitizeRich } = useSanitize();
 
 // Computed property para obtener el nombre de la comuna
 const communeName = computed(() => {
-  return props.all.commune.name;
+  return props.all?.commune?.name || "--";
 });
 
 const regionName = computed(() => {
-  return props.all.commune.region.name;
+  return props.all?.commune?.region?.name || "--";
 });
 
 const getUserFromAll = computed(() => {
