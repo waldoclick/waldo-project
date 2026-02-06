@@ -37,14 +37,14 @@ const emit = defineEmits<{
   (e: "image-click", index: number): void;
 }>();
 
-const media = useStrapiMedia();
+const { transformUrl } = useImageProxy();
 
 const getImageUrl = (image: { url: string; formats?: any }) => {
   if (!image) return "";
   // Usar formato thumbnail si existe, sino la URL original
   const imageUrl = image.formats?.thumbnail?.url || image.url;
   if (!imageUrl) return "";
-  return media + imageUrl;
+  return transformUrl(imageUrl);
 };
 
 const handleImageClick = (index: number) => {

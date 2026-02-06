@@ -216,7 +216,7 @@ const formatDate = (dateString: string) => {
 };
 
 const router = useRouter();
-const media = useStrapiMedia("");
+const { transformUrl } = useImageProxy();
 
 const getImageUrl = (image: { url: string; formats?: any }) => {
   if (!image) return "";
@@ -224,8 +224,7 @@ const getImageUrl = (image: { url: string; formats?: any }) => {
   const imageUrl = image.formats?.thumbnail?.url || image.url;
   if (!imageUrl) return "";
 
-  // Usar useStrapiMedia del plugin de Nuxt Strapi para obtener la URL completa
-  return media + imageUrl;
+  return transformUrl(imageUrl);
 };
 
 const handleViewAd = (adId: number) => {
