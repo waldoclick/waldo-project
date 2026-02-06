@@ -67,6 +67,7 @@
           :images="item.gallery"
           :alt-prefix="item.name"
           :columns="4"
+          @image-delete="handleDeleteImage"
         />
       </BoxInformation>
     </template>
@@ -200,7 +201,7 @@ const isPending = computed(() => item.value?.status === "pending");
 const isActive = computed(() => item.value?.status === "active");
 
 const handleApprove = async () => {
-  if (!item.value?.id) return;
+  if (!item.value?.id && !item.value?.documentId && !route.params.id) return;
   try {
     await strapiClient(`/ads/${item.value.id}/approve`, {
       method: "PUT",
@@ -234,6 +235,60 @@ const handleBan = async () => {
     await fetchAd();
   } catch (error) {
     console.error("Error deactivating ad:", error);
+  }
+};
+
+const handleDeleteImage = async ({ image }: { image: { id?: number } }) => {
+  if (!item.value?.id) return;
+  if (!image?.id) {
+    await Swal.fire(
+      "Error",
+      "No se pudo identificar la imagen para eliminar.",
+      "error",
+    );
+    return;
+  }
+
+  const result = await Swal.fire({
+    title: "¿Está seguro de eliminar la imagen?",
+    text: "Esta acción eliminará la imagen del anuncio.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Eliminar",
+    cancelButtonText: "Cancelar",
+  });
+
+  if (!result.isConfirmed) return;
+
+  try {
+    const galleryIds =
+      item.value?.gallery?.map(
+        (galleryImage: { id: number }) => galleryImage.id,
+      ) || [];
+    const updatedGallery = galleryIds.filter((id: number) => id !== image.id);
+
+    const adDocumentId =
+      item.value?.documentId || route.params.id || item.value?.id;
+    if (!adDocumentId) {
+      await Swal.fire(
+        "Error",
+        "No se pudo identificar el anuncio para actualizar.",
+        "error",
+      );
+      return;
+    }
+
+    await strapi.update("ads", adDocumentId, {
+      gallery: updatedGallery,
+    });
+
+    await strapi.delete("upload/files", image.id);
+
+    await fetchAd();
+    await Swal.fire("Éxito", "Imagen eliminada correctamente.", "success");
+  } catch (error) {
+    console.error("Error deleting image:", error);
+    await Swal.fire("Error", "No se pudo eliminar la imagen.", "error");
   }
 };
 

@@ -13,14 +13,26 @@
       class="gallery--default__container"
       :class="`gallery--default__container--cols-${columns}`"
     >
-      <img
+      <div
         v-for="(image, index) in images"
-        :key="index"
-        :src="getImageUrl(image)"
-        :alt="`${altPrefix} - Imagen ${index + 1}`"
-        class="gallery--default__image"
-        @click="handleImageClick(index)"
-      />
+        :key="image.id ?? index"
+        class="gallery--default__item"
+      >
+        <button
+          type="button"
+          class="gallery--default__delete"
+          aria-label="Eliminar imagen"
+          @click.stop="handleImageDelete(image, index)"
+        >
+          <IconX stroke="2" :size="16" />
+        </button>
+        <img
+          :src="getImageUrl(image)"
+          :alt="`${altPrefix} - Imagen ${index + 1}`"
+          class="gallery--default__image"
+          @click="handleImageClick(index)"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -30,10 +42,11 @@ import { ref, computed } from "vue";
 // @ts-expect-error - VueEasyLightbox types are not available for the dist version
 import VueEasyLightbox from "vue-easy-lightbox/dist/external-css/vue-easy-lightbox.esm.min.js";
 import { useImageProxy } from "@/composables/useImage";
+import { X as IconX } from "lucide-vue-next";
 
 const props = defineProps({
   images: {
-    type: Array as () => Array<{ url: string; formats?: any }>,
+    type: Array as () => Array<{ id?: number; url: string; formats?: any }>,
     required: true,
     default: () => [],
   },
@@ -49,6 +62,13 @@ const props = defineProps({
 
 const emit = defineEmits<{
   (e: "image-click", index: number): void;
+  (
+    e: "image-delete",
+    payload: {
+      image: { id?: number; url: string; formats?: any };
+      index: number;
+    },
+  ): void;
 }>();
 
 const { transformUrl } = useImageProxy();
@@ -64,7 +84,7 @@ const imgs = computed(() =>
     : [],
 );
 
-const getImageUrl = (image: { url: string; formats?: any }) => {
+const getImageUrl = (image: { id?: number; url: string; formats?: any }) => {
   if (!image) return "";
   // Usar formato thumbnail si existe, sino la URL original
   const imageUrl = image.formats?.thumbnail?.url || image.url;
@@ -79,5 +99,12 @@ const handleImageClick = (imageIndex: number) => {
     imageIndex >= 0 && imageIndex < imgs.value.length ? imageIndex : 0;
   lightboxIndex.value = safeIndex;
   visible.value = true;
+};
+
+const handleImageDelete = (
+  image: { id?: number; url: string; formats?: any },
+  imageIndex: number,
+) => {
+  emit("image-delete", { image, index: imageIndex });
 };
 </script>
