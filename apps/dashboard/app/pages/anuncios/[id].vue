@@ -135,6 +135,7 @@ const route = useRoute();
 const item = ref<any>(null);
 const strapi = useStrapi();
 const strapiClient = useStrapiClient();
+const { Swal } = useSweetAlert2();
 
 const title = computed(() => item.value?.name || "Anuncio");
 type AdStatus = "pending" | "active" | "archived" | "rejected";
@@ -205,6 +206,7 @@ const handleApprove = async () => {
       method: "PUT",
     });
     await fetchAd();
+    Swal.fire("Éxito", "Anuncio aprobado correctamente.", "success");
   } catch (error) {
     console.error("Error approving ad:", error);
   }

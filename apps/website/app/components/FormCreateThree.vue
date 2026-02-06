@@ -176,13 +176,20 @@ const schema = yup.object({
 const adStore = useAdStore();
 
 const selectedRegionId = ref(
-  adStore.ad.region || user.value?.region?.id || null,
+  adStore.ad.region ||
+    user.value?.region?.id ||
+    user.value?.commune?.region?.id ||
+    null,
 );
 
 const form = ref({
   email: adStore.ad.email || user.value?.email || "",
   phone: adStore.ad.phone || user.value?.phone || "",
-  region: adStore.ad.region || user.value?.region?.id || null,
+  region:
+    adStore.ad.region ||
+    user.value?.region?.id ||
+    user.value?.commune?.region?.id ||
+    null,
   commune:
     adStore.ad.commune !== undefined && adStore.ad.commune !== null
       ? adStore.ad.commune

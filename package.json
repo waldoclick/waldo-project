@@ -6,7 +6,8 @@
   "workspaces": [
     "apps/strapi",
     "apps/website",
-    "apps/dashboard"
+    "apps/dashboard",
+    "apps/dashboard-old"
   ],
   "scripts": {
     "dev": "lsof -ti:24678,1337,3000,3001,3002 | xargs kill -9 2>/dev/null || true && turbo run dev",
