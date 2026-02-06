@@ -12,7 +12,7 @@ definePageMeta({
 });
 
 const breadcrumbs = [
-  { label: "Destacados", to: "/destacados" },
+  { label: "Destacados", to: "/destacados/libres" },
   { label: "Libres" },
 ];
 </script>

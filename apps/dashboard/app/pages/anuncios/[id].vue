@@ -155,7 +155,7 @@ const breadcrumbs = computed(() => {
   const parent = statusBreadcrumbMap[safeStatus];
 
   return [
-    { label: "Anuncios", to: parent.to },
+    { label: "Anuncios", to: "/anuncios/pendientes" },
     { label: parent.label, to: parent.to },
     ...(item.value?.name ? [{ label: item.value.name }] : []),
   ];

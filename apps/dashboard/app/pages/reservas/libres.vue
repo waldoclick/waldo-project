@@ -12,7 +12,7 @@ definePageMeta({
 });
 
 const breadcrumbs = [
-  { label: "Reservas", to: "/reservas" },
+  { label: "Reservas", to: "/reservas/libres" },
   { label: "Libres" },
 ];
 </script>
