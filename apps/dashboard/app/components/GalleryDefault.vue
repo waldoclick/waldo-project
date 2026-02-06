@@ -27,7 +27,9 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
+// @ts-expect-error - VueEasyLightbox types are not available for the dist version
 import VueEasyLightbox from "vue-easy-lightbox/dist/external-css/vue-easy-lightbox.esm.min.js";
+import { useImageProxy } from "@/composables/useImage";
 
 const props = defineProps({
   images: {
