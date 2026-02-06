@@ -1,5 +1,14 @@
 <template>
   <div class="gallery gallery--default">
+    <client-only>
+      <VueEasyLightbox
+        :visible="visible"
+        :imgs="imgs"
+        :index="lightboxIndex"
+        :move-disabled="true"
+        @hide="visible = false"
+      />
+    </client-only>
     <div
       class="gallery--default__container"
       :class="`gallery--default__container--cols-${columns}`"
@@ -17,6 +26,9 @@
 </template>
 
 <script setup lang="ts">
+import { ref, computed } from "vue";
+import VueEasyLightbox from "vue-easy-lightbox/dist/external-css/vue-easy-lightbox.esm.min.js";
+
 const props = defineProps({
   images: {
     type: Array as () => Array<{ url: string; formats?: any }>,
@@ -38,6 +50,17 @@ const emit = defineEmits<{
 }>();
 
 const { transformUrl } = useImageProxy();
+const lightboxIndex = ref(0);
+const visible = ref(false);
+
+const imgs = computed(() =>
+  Array.isArray(props.images)
+    ? props.images.map((image) => {
+        const imageUrl = image?.formats?.large?.url || image?.url || "";
+        return transformUrl(imageUrl);
+      })
+    : [],
+);
 
 const getImageUrl = (image: { url: string; formats?: any }) => {
   if (!image) return "";
@@ -47,7 +70,12 @@ const getImageUrl = (image: { url: string; formats?: any }) => {
   return transformUrl(imageUrl);
 };
 
-const handleImageClick = (index: number) => {
-  emit("image-click", index);
+const handleImageClick = (imageIndex: number) => {
+  emit("image-click", imageIndex);
+  if (imgs.value.length === 0) return;
+  const safeIndex =
+    imageIndex >= 0 && imageIndex < imgs.value.length ? imageIndex : 0;
+  lightboxIndex.value = safeIndex;
+  visible.value = true;
 };
 </script>
