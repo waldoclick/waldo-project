@@ -78,6 +78,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
+import { useStrapi } from "#imports";
 import { Eye } from "lucide-vue-next";
 import { useSettingsStore } from "@/stores/settings.store";
 import SearchDefault from "@/components/SearchDefault.vue";
@@ -87,10 +88,10 @@ import TableRow from "@/components/TableRow.vue";
 import TableCell from "@/components/TableCell.vue";
 import PaginationDefault from "@/components/PaginationDefault.vue";
 
-interface Reservation {
+interface ReservationRow {
   id: number;
   createdAt: string;
-  user?: { username: string };
+  user?: { username: string; email?: string };
   ad?: { name: string } | null;
 }
 
@@ -110,14 +111,8 @@ const handleFiltersChange = (newFilters: {
 };
 
 // Estado
-const allReservations = ref<Reservation[]>([]);
+const allReservations = ref<ReservationRow[]>([]);
 const loading = ref(false);
-const paginationMeta = ref<{
-  page: number;
-  pageSize: number;
-  pageCount: number;
-  total: number;
-} | null>(null);
 
 // Fetch de reservas usadas desde Strapi
 const fetchUsedReservations = async () => {
@@ -127,45 +122,46 @@ const fetchUsedReservations = async () => {
 
     const searchParams: any = {
       pagination: {
-        page: settingsStore.reservations.currentPage,
-        pageSize: settingsStore.reservations.pageSize,
+        page: 1,
+        pageSize: 1000,
       },
       sort: settingsStore.reservations.sortBy,
       populate: {
         user: {
-          fields: ["username"],
+          fields: ["username", "email"],
         },
         ad: {
           fields: ["name"],
-        },
-      },
-      filters: {
-        ad: {
-          $notNull: true,
         },
       },
     };
 
     // Agregar búsqueda si existe
     if (settingsStore.reservations.searchTerm) {
-      searchParams.filters.$or = [
-        {
-          "user.username": {
-            $containsi: settingsStore.reservations.searchTerm,
+      searchParams.filters = {
+        $or: [
+          {
+            "user.username": {
+              $containsi: settingsStore.reservations.searchTerm,
+            },
           },
-        },
-        { "user.email": { $containsi: settingsStore.reservations.searchTerm } },
-        { "ad.name": { $containsi: settingsStore.reservations.searchTerm } },
-      ];
+          {
+            "user.email": {
+              $containsi: settingsStore.reservations.searchTerm,
+            },
+          },
+          { "ad.name": { $containsi: settingsStore.reservations.searchTerm } },
+        ],
+      };
     }
 
     const response = await strapi.find("ad-reservations", searchParams);
-    allReservations.value = Array.isArray(response.data) ? response.data : [];
-
-    // Guardar información de paginación de Strapi
-    paginationMeta.value = response.meta?.pagination
-      ? response.meta.pagination
-      : null;
+    const reservations = Array.isArray(response.data)
+      ? (response.data as ReservationRow[])
+      : [];
+    allReservations.value = reservations.filter(
+      (reservation) => reservation.ad && reservation.ad.name,
+    );
   } catch (error) {
     console.error("Error fetching used reservations:", error);
     allReservations.value = [];
@@ -174,16 +170,35 @@ const fetchUsedReservations = async () => {
   }
 };
 
-// Usar los datos directamente de Strapi (ya vienen paginados y ordenados)
-const paginatedReservations = computed(() => allReservations.value);
-
-// Calcular totalPages desde meta.pagination de Strapi
-const totalPages = computed(() => {
-  return paginationMeta.value?.pageCount || 1;
+const filteredReservations = computed(() => {
+  const term = settingsStore.reservations.searchTerm?.trim();
+  if (!term) return allReservations.value;
+  const lower = term.toLowerCase();
+  return allReservations.value.filter((reservation) => {
+    const userName = reservation.user?.username?.toLowerCase() || "";
+    const userEmail = reservation.user?.email?.toLowerCase() || "";
+    const adName = reservation.ad?.name?.toLowerCase() || "";
+    return (
+      userName.includes(lower) ||
+      userEmail.includes(lower) ||
+      adName.includes(lower)
+    );
+  });
 });
 
-const totalRecords = computed(() => {
-  return paginationMeta.value?.total || 0;
+const paginatedReservations = computed(() => {
+  const pageSize = settingsStore.reservations.pageSize;
+  const currentPage = settingsStore.reservations.currentPage;
+  const start = (currentPage - 1) * pageSize;
+  return filteredReservations.value.slice(start, start + pageSize);
+});
+
+// Calcular totalPages desde meta.pagination de Strapi
+const totalRecords = computed(() => filteredReservations.value.length);
+
+const totalPages = computed(() => {
+  const pageSize = settingsStore.reservations.pageSize;
+  return Math.max(1, Math.ceil(totalRecords.value / pageSize));
 });
 
 // Columnas de la tabla
@@ -234,6 +249,15 @@ watch(
     fetchUsedReservations();
   },
   { immediate: true },
+);
+
+watch(
+  () => totalPages.value,
+  (value) => {
+    if (settingsStore.reservations.currentPage > value) {
+      settingsStore.setCurrentPage(section, value);
+    }
+  },
 );
 
 // Cargar datos al montar

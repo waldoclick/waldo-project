@@ -160,14 +160,7 @@ const fetchUserReservations = async () => {
     const strapi = useStrapi();
     const response = await strapi.find("ad-reservations", {
       filters: {
-        $and: [
-          { $or: buildUserFilters(userId, props.userName) },
-          {
-            ad: {
-              $null: true,
-            },
-          },
-        ],
+        $or: buildUserFilters(userId, props.userName),
       },
       pagination: {
         page: currentPage.value,
