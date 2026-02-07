@@ -33,15 +33,24 @@
                 {{ commune.region?.name || "-" }}
               </div>
             </TableCell>
-            <TableCell>{{ formatDate(commune.createdAt) }}</TableCell>
+            <TableCell>{{ formatDate(commune.updatedAt) }}</TableCell>
             <TableCell align="right">
-              <button
-                class="communes--default__action"
-                title="Ver comuna"
-                @click="handleViewCommune(commune.id)"
-              >
-                <Eye class="communes--default__action__icon" />
-              </button>
+              <div class="communes--default__actions">
+                <button
+                  class="communes--default__action"
+                  title="Ver comuna"
+                  @click="handleViewCommune(commune.id)"
+                >
+                  <Eye class="communes--default__action__icon" />
+                </button>
+                <button
+                  class="communes--default__action"
+                  title="Editar comuna"
+                  @click="handleEditCommune(commune.id)"
+                >
+                  <Pencil class="communes--default__action__icon" />
+                </button>
+              </div>
             </TableCell>
           </TableRow>
         </TableDefault>
@@ -75,7 +84,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
-import { Eye } from "lucide-vue-next";
+import { Eye, Pencil } from "lucide-vue-next";
 import { useSettingsStore } from "@/stores/settings.store";
 import SearchDefault from "@/components/SearchDefault.vue";
 import FilterDefault from "@/components/FilterDefault.vue";
@@ -87,7 +96,7 @@ import PaginationDefault from "@/components/PaginationDefault.vue";
 interface Commune {
   id: number;
   name: string;
-  createdAt: string;
+  updatedAt: string;
   region?: { name: string };
 }
 
@@ -186,6 +195,10 @@ const router = useRouter();
 
 const handleViewCommune = (communeId: number) => {
   router.push(`/comunas/${communeId}`);
+};
+
+const handleEditCommune = (communeId: number) => {
+  router.push(`/comunas/${communeId}/editar`);
 };
 
 watch(

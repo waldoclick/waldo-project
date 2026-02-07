@@ -2,14 +2,8 @@
   <HeroDefault :title="title" :breadcrumbs="breadcrumbs" />
   <BoxContent>
     <template #content>
-      <BoxInformation title="Información" :columns="2">
-        <CardInfo v-if="commune" title="Nombre" :description="commune.name" />
-        <CardInfo
-          v-if="commune"
-          title="Región"
-          :description="commune.region?.name || '--'"
-        />
-        <CardInfo v-if="commune" title="Slug" :description="commune.slug" />
+      <BoxInformation title="Editar comuna" :columns="1">
+        <FormCommune :commune="commune" @saved="handleCommuneSaved" />
       </BoxInformation>
     </template>
     <template #sidebar>
@@ -30,12 +24,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
 import HeroDefault from "@/components/HeroDefault.vue";
 import BoxContent from "@/components/BoxContent.vue";
 import BoxInformation from "@/components/BoxInformation.vue";
 import CardInfo from "@/components/CardInfo.vue";
+import FormCommune from "@/components/FormCommune.vue";
 
 definePageMeta({
   layout: "dashboard",
@@ -47,7 +42,10 @@ const commune = ref<any>(null);
 const title = computed(() => commune.value?.name || "Comuna");
 const breadcrumbs = computed(() => [
   { label: "Comunas", to: "/comunas" },
-  ...(commune.value?.name ? [{ label: commune.value.name }] : []),
+  ...(commune.value?.name
+    ? [{ label: commune.value.name, to: `/comunas/${route.params.id}` }]
+    : []),
+  { label: "Editar" },
 ]);
 
 const formatDate = (dateString: string | undefined) => {
@@ -61,20 +59,32 @@ const formatDate = (dateString: string | undefined) => {
   });
 };
 
-onMounted(async () => {
-  const id = route.params.id;
-  if (id) {
-    try {
-      const strapi = useStrapi();
-      const response = await strapi.findOne("communes", id as string, {
-        populate: "region",
-      });
-      if (response.data) {
-        commune.value = response.data;
-      }
-    } catch (error) {
-      console.error("Error fetching commune:", error);
-    }
+const handleCommuneSaved = (updatedCommune: any) => {
+  if (updatedCommune) {
+    commune.value = updatedCommune;
   }
-});
+};
+
+const { data: communeData } = await useAsyncData(
+  `commune-edit-${route.params.id}`,
+  async () => {
+    const id = route.params.id;
+    if (!id) return null;
+
+    const strapi = useStrapi();
+    const response = await strapi.find("communes", {
+      filters: { documentId: { $eq: id } },
+      populate: "region",
+    });
+    const data = Array.isArray(response.data) ? response.data[0] : null;
+    if (data) return data;
+
+    const fallbackResponse = await strapi.findOne("communes", id as string, {
+      populate: "region",
+    });
+    return fallbackResponse.data || null;
+  },
+);
+
+commune.value = communeData.value;
 </script>
