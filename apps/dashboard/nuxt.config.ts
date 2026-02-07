@@ -32,6 +32,10 @@ export default defineNuxtConfig({
   // Security configuration - using nuxt-security defaults with customizations
   security: {
     nonce: true,
+    rateLimiter: {
+      tokensPerInterval: 500,
+      interval: 300000,
+    },
     headers: {
       contentSecurityPolicy: {
         "default-src": ["'self'"],
