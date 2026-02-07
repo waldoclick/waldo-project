@@ -35,7 +35,7 @@
                 }}
               </BadgeDefault>
             </TableCell>
-            <TableCell>{{ formatDate(region.createdAt) }}</TableCell>
+            <TableCell>{{ formatDate(region.updatedAt) }}</TableCell>
             <TableCell align="right">
               <div class="regions--default__actions">
                 <button
@@ -99,7 +99,7 @@ import PaginationDefault from "@/components/PaginationDefault.vue";
 interface Region {
   id: number;
   name: string;
-  createdAt: string;
+  updatedAt: string;
   communes?: Array<{ id: number; name: string }>;
 }
 
