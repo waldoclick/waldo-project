@@ -136,8 +136,13 @@ export const getUserDataById = async (ctx) => {
     where: { id: userId },
     populate: {
       role: true,
+      region: true,
       commune: {
         populate: ["region"], // Ensure to include the 'region' relation within 'commune'
+      },
+      business_region: true,
+      business_commune: {
+        populate: ["region"],
       },
       avatar: true,
       cover: true,
