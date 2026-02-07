@@ -29,6 +29,16 @@
               </div>
             </TableCell>
             <TableCell>
+              <div class="categories--default__color">
+                <span
+                  v-if="isHexColor(category.color)"
+                  class="categories--default__color__dot"
+                  :style="{ backgroundColor: category.color }"
+                ></span>
+                <span>{{ category.color || "-" }}</span>
+              </div>
+            </TableCell>
+            <TableCell>
               <BadgeDefault variant="outline">
                 {{ getAdsCount(category.id) }} aviso{{
                   getAdsCount(category.id) !== 1 ? "s" : ""
@@ -99,6 +109,7 @@ import PaginationDefault from "@/components/PaginationDefault.vue";
 interface Category {
   id: number;
   name: string;
+  color?: string;
   updatedAt: string;
 }
 
@@ -224,6 +235,7 @@ const totalRecords = computed(() => {
 const tableColumns = [
   { label: "ID" },
   { label: "Nombre" },
+  { label: "Color" },
   { label: "Avisos" },
   { label: "Fecha" },
   { label: "Acciones", align: "right" as const },
@@ -255,6 +267,11 @@ const handleViewCategory = (categoryId: number) => {
 
 const handleEditCategory = (categoryId: number) => {
   router.push(`/categorias/${categoryId}/editar`);
+};
+
+const isHexColor = (value?: string) => {
+  if (!value) return false;
+  return /^#([\dA-Fa-f]{3}|[\dA-Fa-f]{6})$/.test(value.trim());
 };
 
 watch(

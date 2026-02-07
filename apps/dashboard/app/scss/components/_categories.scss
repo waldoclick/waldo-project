@@ -58,6 +58,19 @@
       color: #1a1a1a;
     }
 
+    &__color {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #1a1a1a;
+
+      &__dot {
+        width: 16px;
+        height: 16px;
+        border-radius: 999px;
+      }
+    }
+
     &__actions {
       display: inline-flex;
       align-items: center;
