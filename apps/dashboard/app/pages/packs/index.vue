@@ -1,5 +1,11 @@
 <template>
-  <HeroDefault title="Packs" :breadcrumbs="breadcrumbs" />
+  <HeroDefault title="Packs" :breadcrumbs="breadcrumbs">
+    <template #actions>
+      <NuxtLink class="btn btn--primary" to="/packs/new">
+        Agregar pack
+      </NuxtLink>
+    </template>
+  </HeroDefault>
   <PacksDefault />
 </template>
 

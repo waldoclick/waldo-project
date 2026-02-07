@@ -1,5 +1,14 @@
 <template>
-  <HeroDefault :title="title" :breadcrumbs="breadcrumbs" />
+  <HeroDefault :title="title" :breadcrumbs="breadcrumbs">
+    <template #actions>
+      <NuxtLink
+        class="btn btn--primary"
+        :to="`/packs/${route.params.id}/editar`"
+      >
+        Editar pack
+      </NuxtLink>
+    </template>
+  </HeroDefault>
   <BoxContent>
     <template #content>
       <BoxInformation title="Información" :columns="2">
@@ -50,7 +59,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
 import HeroDefault from "@/components/HeroDefault.vue";
 import BoxContent from "@/components/BoxContent.vue";
@@ -81,18 +90,23 @@ const formatDate = (dateString: string | undefined) => {
   });
 };
 
-onMounted(async () => {
-  const id = route.params.id;
-  if (id) {
-    try {
-      const strapi = useStrapi();
-      const response = await strapi.findOne("ad-packs", id as string);
-      if (response.data) {
-        item.value = response.data;
-      }
-    } catch (error) {
-      console.error("Error fetching pack:", error);
-    }
-  }
-});
+const { data: packData } = await useAsyncData(
+  `pack-${route.params.id}`,
+  async () => {
+    const id = route.params.id;
+    if (!id) return null;
+
+    const strapi = useStrapi();
+    const response = await strapi.find("ad-packs", {
+      filters: { documentId: { $eq: id } },
+    });
+    const data = Array.isArray(response.data) ? response.data[0] : null;
+    if (data) return data;
+
+    const fallbackResponse = await strapi.findOne("ad-packs", id as string);
+    return fallbackResponse.data || null;
+  },
+);
+
+item.value = packData.value;
 </script>

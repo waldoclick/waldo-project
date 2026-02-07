@@ -37,13 +37,22 @@
             <TableCell>{{ pack.total_features || 0 }} features</TableCell>
             <TableCell>{{ formatDate(pack.createdAt) }}</TableCell>
             <TableCell align="right">
-              <button
-                class="packs--default__action"
-                title="Ver pack"
-                @click="handleViewPack(pack.id)"
-              >
-                <Eye class="packs--default__action__icon" />
-              </button>
+              <div class="packs--default__actions">
+                <button
+                  class="packs--default__action"
+                  title="Ver pack"
+                  @click="handleViewPack(pack.id)"
+                >
+                  <Eye class="packs--default__action__icon" />
+                </button>
+                <button
+                  class="packs--default__action"
+                  title="Editar pack"
+                  @click="handleEditPack(pack.id)"
+                >
+                  <Pencil class="packs--default__action__icon" />
+                </button>
+              </div>
             </TableCell>
           </TableRow>
         </TableDefault>
@@ -77,7 +86,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
-import { Eye } from "lucide-vue-next";
+import { Eye, Pencil } from "lucide-vue-next";
 import { useSettingsStore } from "@/stores/settings.store";
 import SearchDefault from "@/components/SearchDefault.vue";
 import FilterDefault from "@/components/FilterDefault.vue";
@@ -209,6 +218,10 @@ const router = useRouter();
 
 const handleViewPack = (packId: number) => {
   router.push(`/packs/${packId}`);
+};
+
+const handleEditPack = (packId: number) => {
+  router.push(`/packs/${packId}/editar`);
 };
 
 watch(
