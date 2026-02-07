@@ -1,5 +1,9 @@
 <template>
-  <HeroDefault title="FAQs" :breadcrumbs="breadcrumbs" />
+  <HeroDefault title="FAQs" :breadcrumbs="breadcrumbs">
+    <template #actions>
+      <NuxtLink class="btn btn--primary" to="/faqs/new"> Agregar FAQ </NuxtLink>
+    </template>
+  </HeroDefault>
   <FaqsDefault />
 </template>
 

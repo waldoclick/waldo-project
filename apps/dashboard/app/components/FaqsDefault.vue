@@ -55,15 +55,24 @@
                 No destacado
               </BadgeDefault>
             </TableCell>
-            <TableCell>{{ formatDate(faq.createdAt) }}</TableCell>
+            <TableCell>{{ formatDate(faq.updatedAt) }}</TableCell>
             <TableCell align="right">
-              <button
-                class="faqs--default__action"
-                title="Ver FAQ"
-                @click="handleViewFaq(faq.id)"
-              >
-                <Eye class="faqs--default__action__icon" />
-              </button>
+              <div class="faqs--default__actions">
+                <button
+                  class="faqs--default__action"
+                  title="Ver FAQ"
+                  @click="handleViewFaq(faq.id)"
+                >
+                  <Eye class="faqs--default__action__icon" />
+                </button>
+                <button
+                  class="faqs--default__action"
+                  title="Editar FAQ"
+                  @click="handleEditFaq(faq.id)"
+                >
+                  <Pencil class="faqs--default__action__icon" />
+                </button>
+              </div>
             </TableCell>
           </TableRow>
         </TableDefault>
@@ -97,7 +106,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
-import { Eye } from "lucide-vue-next";
+import { Eye, Pencil } from "lucide-vue-next";
 import { useSettingsStore } from "@/stores/settings.store";
 import SearchDefault from "@/components/SearchDefault.vue";
 import FilterDefault from "@/components/FilterDefault.vue";
@@ -112,7 +121,7 @@ interface Faq {
   title: string;
   text: string;
   featured: boolean;
-  createdAt: string;
+  updatedAt: string;
 }
 
 const settingsStore = useSettingsStore();
@@ -230,6 +239,10 @@ const router = useRouter();
 
 const handleViewFaq = (faqId: number) => {
   router.push(`/faqs/${faqId}`);
+};
+
+const handleEditFaq = (faqId: number) => {
+  router.push(`/faqs/${faqId}/editar`);
 };
 
 watch(

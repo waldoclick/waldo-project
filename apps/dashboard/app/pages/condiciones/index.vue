@@ -1,5 +1,11 @@
 <template>
-  <HeroDefault title="Condiciones" :breadcrumbs="breadcrumbs" />
+  <HeroDefault title="Condiciones" :breadcrumbs="breadcrumbs">
+    <template #actions>
+      <NuxtLink class="btn btn--primary" to="/condiciones/new">
+        Agregar condición
+      </NuxtLink>
+    </template>
+  </HeroDefault>
   <ConditionsDefault />
 </template>
 

@@ -31,15 +31,24 @@
                 {{ condition.name || "-" }}
               </div>
             </TableCell>
-            <TableCell>{{ formatDate(condition.createdAt) }}</TableCell>
+            <TableCell>{{ formatDate(condition.updatedAt) }}</TableCell>
             <TableCell align="right">
-              <button
-                class="conditions--default__action"
-                title="Ver condición"
-                @click="handleViewCondition(condition.id)"
-              >
-                <Eye class="conditions--default__action__icon" />
-              </button>
+              <div class="conditions--default__actions">
+                <button
+                  class="conditions--default__action"
+                  title="Ver condición"
+                  @click="handleViewCondition(condition.id)"
+                >
+                  <Eye class="conditions--default__action__icon" />
+                </button>
+                <button
+                  class="conditions--default__action"
+                  title="Editar condición"
+                  @click="handleEditCondition(condition.id)"
+                >
+                  <Pencil class="conditions--default__action__icon" />
+                </button>
+              </div>
             </TableCell>
           </TableRow>
         </TableDefault>
@@ -73,7 +82,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
-import { Eye } from "lucide-vue-next";
+import { Eye, Pencil } from "lucide-vue-next";
 import { useSettingsStore } from "@/stores/settings.store";
 import SearchDefault from "@/components/SearchDefault.vue";
 import FilterDefault from "@/components/FilterDefault.vue";
@@ -85,7 +94,7 @@ import PaginationDefault from "@/components/PaginationDefault.vue";
 interface Condition {
   id: number;
   name: string;
-  createdAt: string;
+  updatedAt: string;
 }
 
 const settingsStore = useSettingsStore();
@@ -180,6 +189,10 @@ const router = useRouter();
 
 const handleViewCondition = (conditionId: number) => {
   router.push(`/condiciones/${conditionId}`);
+};
+
+const handleEditCondition = (conditionId: number) => {
+  router.push(`/condiciones/${conditionId}/editar`);
 };
 
 watch(

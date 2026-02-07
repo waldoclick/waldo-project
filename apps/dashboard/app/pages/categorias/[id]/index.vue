@@ -1,10 +1,20 @@
 <template>
-  <HeroDefault :title="title" :breadcrumbs="breadcrumbs" />
+  <HeroDefault :title="title" :breadcrumbs="breadcrumbs">
+    <template #actions>
+      <NuxtLink
+        class="btn btn--primary"
+        :to="`/categorias/${route.params.id}/editar`"
+      >
+        Editar categoría
+      </NuxtLink>
+    </template>
+  </HeroDefault>
   <BoxContent>
     <template #content>
       <BoxInformation title="Información" :columns="2">
         <CardInfo v-if="item" title="Nombre" :description="item.name" />
         <CardInfo v-if="item" title="Slug" :description="item.slug" />
+        <CardInfo v-if="item" title="Color" :description="item.color" />
       </BoxInformation>
     </template>
     <template #sidebar>
@@ -20,17 +30,21 @@
           :description="formatDate(item.updatedAt)"
         />
       </BoxInformation>
+      <BoxInformation v-if="item?.icon?.url" title="Icono" :columns="1">
+        <img :src="iconPreview" alt="Icono categoría" />
+      </BoxInformation>
     </template>
   </BoxContent>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
 import HeroDefault from "@/components/HeroDefault.vue";
 import BoxContent from "@/components/BoxContent.vue";
 import BoxInformation from "@/components/BoxInformation.vue";
 import CardInfo from "@/components/CardInfo.vue";
+import { useImageProxy } from "@/composables/useImage";
 
 definePageMeta({
   layout: "dashboard",
@@ -38,12 +52,17 @@ definePageMeta({
 
 const route = useRoute();
 const item = ref<any>(null);
+const { transformUrl } = useImageProxy();
 
 const title = computed(() => item.value?.name || "Categoría");
 const breadcrumbs = computed(() => [
   { label: "Categorías", to: "/categorias" },
   ...(item.value?.name ? [{ label: item.value.name }] : []),
 ]);
+
+const iconPreview = computed(() =>
+  item.value?.icon?.url ? transformUrl(item.value.icon.url) : "",
+);
 
 const formatDate = (dateString: string | undefined) => {
   if (!dateString) return "--";
@@ -56,18 +75,26 @@ const formatDate = (dateString: string | undefined) => {
   });
 };
 
-onMounted(async () => {
-  const id = route.params.id;
-  if (id) {
-    try {
-      const strapi = useStrapi();
-      const response = await strapi.findOne("categories", id as string);
-      if (response.data) {
-        item.value = response.data;
-      }
-    } catch (error) {
-      console.error("Error fetching category:", error);
-    }
-  }
-});
+const { data: categoryData } = await useAsyncData(
+  `category-${route.params.id}`,
+  async () => {
+    const id = route.params.id;
+    if (!id) return null;
+
+    const strapi = useStrapi();
+    const response = await strapi.find("categories", {
+      filters: { documentId: { $eq: id } },
+      populate: ["icon"],
+    });
+    const data = Array.isArray(response.data) ? response.data[0] : null;
+    if (data) return data;
+
+    const fallbackResponse = await strapi.findOne("categories", id as string, {
+      populate: ["icon"],
+    });
+    return fallbackResponse.data || null;
+  },
+);
+
+item.value = categoryData.value;
 </script>

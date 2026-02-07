@@ -20,6 +20,11 @@
           target="_blank"
           rel="noopener noreferrer"
         >
+          <span
+            v-if="isColorValue"
+            class="card--info__description__color"
+            :style="{ backgroundColor: String(description) }"
+          ></span>
           {{ description }}
         </a>
       </template>
@@ -31,6 +36,11 @@
           ]"
           :title="description"
         >
+          <span
+            v-if="isColorValue"
+            class="card--info__description__color"
+            :style="{ backgroundColor: String(description) }"
+          ></span>
           {{ description }}
         </div>
       </template>
@@ -49,7 +59,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import "floating-vue/dist/style.css";
 import { Copy as IconCopy, Info as IconInfo } from "lucide-vue-next";
 
@@ -78,6 +88,12 @@ const props = defineProps({
     type: String,
     default: "",
   },
+});
+
+const isColorValue = computed(() => {
+  if (typeof props.description !== "string") return false;
+  const value = props.description.trim();
+  return /^#([\dA-Fa-f]{3}|[\dA-Fa-f]{6})$/.test(value);
 });
 
 const copyToClipboard = () => {

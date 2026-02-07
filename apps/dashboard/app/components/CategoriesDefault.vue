@@ -35,15 +35,24 @@
                 }}
               </BadgeDefault>
             </TableCell>
-            <TableCell>{{ formatDate(category.createdAt) }}</TableCell>
+            <TableCell>{{ formatDate(category.updatedAt) }}</TableCell>
             <TableCell align="right">
-              <button
-                class="categories--default__action"
-                title="Ver categoría"
-                @click="handleViewCategory(category.id)"
-              >
-                <Eye class="categories--default__action__icon" />
-              </button>
+              <div class="categories--default__actions">
+                <button
+                  class="categories--default__action"
+                  title="Ver categoría"
+                  @click="handleViewCategory(category.id)"
+                >
+                  <Eye class="categories--default__action__icon" />
+                </button>
+                <button
+                  class="categories--default__action"
+                  title="Editar categoría"
+                  @click="handleEditCategory(category.id)"
+                >
+                  <Pencil class="categories--default__action__icon" />
+                </button>
+              </div>
             </TableCell>
           </TableRow>
         </TableDefault>
@@ -77,7 +86,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
-import { Eye } from "lucide-vue-next";
+import { Eye, Pencil } from "lucide-vue-next";
 import { useSettingsStore } from "@/stores/settings.store";
 import SearchDefault from "@/components/SearchDefault.vue";
 import FilterDefault from "@/components/FilterDefault.vue";
@@ -90,7 +99,7 @@ import PaginationDefault from "@/components/PaginationDefault.vue";
 interface Category {
   id: number;
   name: string;
-  createdAt: string;
+  updatedAt: string;
 }
 
 const settingsStore = useSettingsStore();
@@ -242,6 +251,10 @@ const router = useRouter();
 
 const handleViewCategory = (categoryId: number) => {
   router.push(`/categorias/${categoryId}`);
+};
+
+const handleEditCategory = (categoryId: number) => {
+  router.push(`/categorias/${categoryId}/editar`);
 };
 
 watch(

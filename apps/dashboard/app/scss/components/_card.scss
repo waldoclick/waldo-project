@@ -38,6 +38,15 @@
         }
       }
 
+      &__color {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        margin-right: 8px;
+        border-radius: 999px;
+        vertical-align: middle;
+      }
+
       a {
         color: inherit;
         text-decoration: underline;

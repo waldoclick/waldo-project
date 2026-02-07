@@ -1,5 +1,11 @@
 <template>
-  <HeroDefault title="Categorías" :breadcrumbs="breadcrumbs" />
+  <HeroDefault title="Categorías" :breadcrumbs="breadcrumbs">
+    <template #actions>
+      <NuxtLink class="btn btn--primary" to="/categorias/new">
+        Agregar categoría
+      </NuxtLink>
+    </template>
+  </HeroDefault>
   <CategoriesDefault />
 </template>
 

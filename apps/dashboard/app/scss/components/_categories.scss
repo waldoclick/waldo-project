@@ -58,6 +58,12 @@
       color: #1a1a1a;
     }
 
+    &__actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
     &__action {
       display: inline-flex;
       align-items: center;
