@@ -37,13 +37,22 @@
             </TableCell>
             <TableCell>{{ formatDate(region.createdAt) }}</TableCell>
             <TableCell align="right">
-              <button
-                class="regions--default__action"
-                title="Ver región"
-                @click="handleViewRegion(region.id)"
-              >
-                <Eye class="regions--default__action__icon" />
-              </button>
+              <div class="regions--default__actions">
+                <button
+                  class="regions--default__action"
+                  title="Ver región"
+                  @click="handleViewRegion(region.id)"
+                >
+                  <Eye class="regions--default__action__icon" />
+                </button>
+                <button
+                  class="regions--default__action"
+                  title="Editar región"
+                  @click="handleEditRegion(region.id)"
+                >
+                  <Pencil class="regions--default__action__icon" />
+                </button>
+              </div>
             </TableCell>
           </TableRow>
         </TableDefault>
@@ -77,7 +86,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
-import { Eye } from "lucide-vue-next";
+import { Eye, Pencil } from "lucide-vue-next";
 import { useSettingsStore } from "@/stores/settings.store";
 import SearchDefault from "@/components/SearchDefault.vue";
 import FilterDefault from "@/components/FilterDefault.vue";
@@ -192,6 +201,10 @@ const router = useRouter();
 
 const handleViewRegion = (regionId: number) => {
   router.push(`/regiones/${regionId}`);
+};
+
+const handleEditRegion = (regionId: number) => {
+  router.push(`/regiones/${regionId}/editar`);
 };
 
 watch(

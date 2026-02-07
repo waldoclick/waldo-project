@@ -1,5 +1,11 @@
 <template>
-  <HeroDefault title="Regiones" :breadcrumbs="breadcrumbs" />
+  <HeroDefault title="Regiones" :breadcrumbs="breadcrumbs">
+    <template #actions>
+      <NuxtLink class="btn btn--primary" to="/regiones/new">
+        Agregar región
+      </NuxtLink>
+    </template>
+  </HeroDefault>
   <RegionsDefault />
 </template>
 
