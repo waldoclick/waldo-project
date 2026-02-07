@@ -440,6 +440,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
   async deactivateAd(ctx: any) {
     try {
       const { id } = ctx.params;
+      const { reason_deactivated } = ctx.request.body;
       const userId = ctx.state.user.id;
 
       if (!userId) {
@@ -450,7 +451,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
 
       const result = await strapi
         .service("api::ad.ad")
-        .deactivateAd(id, userId);
+        .deactivateAd(id, userId, reason_deactivated);
       return result;
     } catch (error) {
       // Handle specific error cases with appropriate HTTP status codes

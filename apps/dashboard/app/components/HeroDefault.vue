@@ -7,7 +7,12 @@
             <BreadcrumbsDefault :items="breadcrumbs" />
           </div>
           <div class="hero--default__title">
-            <h1 class="title">{{ title }}</h1>
+            <h1 class="title">
+              <span v-if="$slots.titlePrefix" class="hero--default__title-icon">
+                <slot name="titlePrefix" />
+              </span>
+              <span>{{ title }}</span>
+            </h1>
           </div>
         </div>
         <div v-if="$slots.actions" class="hero--default__actions">
@@ -32,3 +37,23 @@ const props = defineProps<{
 
 const breadcrumbs = computed(() => props.breadcrumbs || []);
 </script>
+
+<style scoped>
+.hero--default__title .title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hero--default__title-icon {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.hero--default__title-icon :deep(svg) {
+  width: 24px;
+  height: 24px;
+}
+</style>

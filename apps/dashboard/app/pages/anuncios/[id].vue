@@ -1,7 +1,38 @@
 <template>
-  <HeroDefault :title="title" :breadcrumbs="breadcrumbs" />
+  <HeroDefault :title="title" :breadcrumbs="breadcrumbs">
+    <template v-if="statusIcon" #titlePrefix>
+      <component :is="statusIcon" aria-hidden="true" />
+    </template>
+  </HeroDefault>
   <BoxContent>
     <template #content>
+      <BoxInformation
+        v-if="item?.reason_for_deactivation"
+        title="Razón del baneo"
+        :columns="1"
+      >
+        <template #titlePrefix>
+          <AlertTriangle aria-hidden="true" />
+        </template>
+        <CardInfo
+          v-if="item?.deactivated_at"
+          title="Fecha"
+          :description="formatDate(item.deactivated_at)"
+        />
+        <CardInfo title="Detalle" :description="item.reason_for_deactivation" />
+      </BoxInformation>
+      <BoxInformation
+        v-if="item?.reason_for_rejection"
+        title="Razón del rechazo"
+        :columns="1"
+      >
+        <CardInfo
+          v-if="item?.rejected_at"
+          title="Fecha"
+          :description="formatDate(item.rejected_at)"
+        />
+        <CardInfo title="Detalle" :description="item.reason_for_rejection" />
+      </BoxInformation>
       <BoxInformation title="Información" :columns="2">
         <CardInfo v-if="item" title="Nombre" :description="item.name" />
         <CardInfo v-if="item" title="Slug" :description="item.slug" />
@@ -85,7 +116,7 @@
           v-if="isPending"
           type="button"
           class="btn btn--secondary btn--block"
-          @click="handleReject"
+          @click="openRejectLightbox"
         >
           Rechazar
         </button>
@@ -93,7 +124,7 @@
           v-if="isActive"
           type="button"
           class="btn btn--primary btn--block"
-          @click="handleBan"
+          @click="openBanLightbox"
         >
           Banear
         </button>
@@ -117,6 +148,24 @@
       </BoxInformation>
     </template>
   </BoxContent>
+  <LightboxRazon
+    :is-open="isRejectLightboxOpen"
+    title="Razón del rechazo"
+    description="Esta razón se enviará al usuario y quedará registrada en el anuncio."
+    :initial-reason="defaultRejectionReason"
+    :loading="isRejecting"
+    @close="closeRejectLightbox"
+    @submit="handleReject"
+  />
+  <LightboxRazon
+    :is-open="isBanLightboxOpen"
+    title="Razón del baneo"
+    description="Esta razón quedará registrada en el anuncio."
+    :initial-reason="defaultBanReason"
+    :loading="isBanning"
+    @close="closeBanLightbox"
+    @submit="handleBan"
+  />
 </template>
 
 <script setup lang="ts">
@@ -127,6 +176,14 @@ import BoxContent from "@/components/BoxContent.vue";
 import BoxInformation from "@/components/BoxInformation.vue";
 import CardInfo from "@/components/CardInfo.vue";
 import GalleryDefault from "@/components/GalleryDefault.vue";
+import LightboxRazon from "@/components/LightboxRazon.vue";
+import {
+  Clock,
+  CheckCircle,
+  Archive,
+  XCircle,
+  AlertTriangle,
+} from "lucide-vue-next";
 
 definePageMeta({
   layout: "dashboard",
@@ -140,6 +197,13 @@ const { Swal } = useSweetAlert2();
 
 const title = computed(() => item.value?.name || "Anuncio");
 type AdStatus = "pending" | "active" | "archived" | "rejected";
+
+const statusIconMap: Record<AdStatus, any> = {
+  pending: Clock,
+  active: CheckCircle,
+  archived: Archive,
+  rejected: XCircle,
+};
 
 const statusBreadcrumbMap: Record<AdStatus, { label: string; to: string }> = {
   pending: { label: "Pendientes", to: "/anuncios/pendientes" },
@@ -159,6 +223,11 @@ const breadcrumbs = computed(() => {
     { label: parent.label, to: parent.to },
     ...(item.value?.name ? [{ label: item.value.name }] : []),
   ];
+});
+
+const statusIcon = computed(() => {
+  const status = item.value?.status as AdStatus | undefined;
+  return status && status in statusIconMap ? statusIconMap[status] : null;
 });
 
 const statusLabels: Record<string, string> = {
@@ -199,6 +268,30 @@ const getStatusText = (ad: any) => {
 
 const isPending = computed(() => item.value?.status === "pending");
 const isActive = computed(() => item.value?.status === "active");
+const isRejectLightboxOpen = ref(false);
+const isBanLightboxOpen = ref(false);
+const isRejecting = ref(false);
+const isBanning = ref(false);
+const defaultRejectionReason =
+  "Su anuncio fue rechazado porque no cumple con las políticas y términos de uso de Waldo.click®.";
+const defaultBanReason =
+  "Su anuncio fue baneado porque no cumple con las políticas y términos de uso de Waldo.click®.";
+
+const openRejectLightbox = () => {
+  isRejectLightboxOpen.value = true;
+};
+
+const closeRejectLightbox = () => {
+  isRejectLightboxOpen.value = false;
+};
+
+const openBanLightbox = () => {
+  isBanLightboxOpen.value = true;
+};
+
+const closeBanLightbox = () => {
+  isBanLightboxOpen.value = false;
+};
 
 const handleApprove = async () => {
   if (!item.value?.id && !item.value?.documentId && !route.params.id) return;
@@ -213,28 +306,41 @@ const handleApprove = async () => {
   }
 };
 
-const handleReject = async () => {
+const handleReject = async (reason: string) => {
   if (!item.value?.id) return;
+  isRejecting.value = true;
   try {
     await strapiClient(`/ads/${item.value.id}/reject`, {
       method: "PUT",
-      body: { reason_rejected: "" },
+      body: { reason_rejected: reason },
     });
     await fetchAd();
+    closeRejectLightbox();
+    Swal.fire("Éxito", "Anuncio rechazado correctamente.", "success");
   } catch (error) {
     console.error("Error rejecting ad:", error);
+    Swal.fire("Error", "No se pudo rechazar el anuncio.", "error");
+  } finally {
+    isRejecting.value = false;
   }
 };
 
-const handleBan = async () => {
+const handleBan = async (reason: string) => {
   if (!item.value?.id) return;
+  isBanning.value = true;
   try {
     await strapiClient(`/ads/${item.value.id}/deactivate`, {
       method: "PUT",
+      body: { reason_deactivated: reason },
     });
     await fetchAd();
+    closeBanLightbox();
+    Swal.fire("Éxito", "Anuncio baneado correctamente.", "success");
   } catch (error) {
     console.error("Error deactivating ad:", error);
+    Swal.fire("Error", "No se pudo banear el anuncio.", "error");
+  } finally {
+    isBanning.value = false;
   }
 };
 

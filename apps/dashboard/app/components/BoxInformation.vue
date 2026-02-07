@@ -1,7 +1,10 @@
 <template>
   <section class="box box--information">
     <header class="box--information__title">
-      <h3>{{ title }}</h3>
+      <h3>
+        <slot v-if="$slots.titlePrefix" name="titlePrefix" />
+        <span>{{ title }}</span>
+      </h3>
     </header>
     <div
       class="box--information__description"

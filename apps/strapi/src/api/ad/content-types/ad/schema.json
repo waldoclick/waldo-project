@@ -101,7 +101,16 @@
       "required": true,
       "default": false
     },
+    "rejected_at": {
+      "type": "datetime"
+    },
     "reason_for_rejection": {
+      "type": "text"
+    },
+    "deactivated_at": {
+      "type": "datetime"
+    },
+    "reason_for_deactivation": {
       "type": "text"
     },
     "currency": {

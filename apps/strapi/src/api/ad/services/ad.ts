@@ -511,7 +511,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
         where: { id: adId },
         data: {
           rejected: true, // Mark as rejected
-          reason_rejected: rejectionReason, // Record rejection reason
+          reason_for_rejection: rejectionReason, // Record rejection reason
           rejected_by: userId, // Record who rejected it
           rejected_at: new Date(), // Record when it was rejected
         },
@@ -545,7 +545,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
         data: {
           id: adId,
           rejected_by: userId,
-          reason_rejected: rejectionReason,
+          reason_for_rejection: rejectionReason,
         },
       };
     } catch (error) {
@@ -570,7 +570,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
    * // Deactivate an advertisement
    * const result = await strapi.service("api::ad.ad").deactivateAd("123", "user456");
    */
-  async deactivateAd(adId: string, userId: string) {
+  async deactivateAd(adId: string, userId: string, reasonDeactivated?: string) {
     try {
       // Find the advertisement to deactivate
       const ad = await strapi.db.query("api::ad.ad").findOne({
@@ -595,7 +595,9 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
         .findOne({ where: { id: userId }, populate: ["role"] });
 
       const isAdmin =
-        user?.role?.name === "Administrator" || user?.role?.name === "Admin";
+        user?.role?.name === "Administrator" ||
+        user?.role?.name === "Admin" ||
+        user?.role?.name === "Manager";
 
       if (!isOwner && !isAdmin) {
         throw new Error(
@@ -609,6 +611,8 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
         data: {
           active: false,
           remaining_days: 0,
+          reason_for_deactivation: reasonDeactivated || null,
+          deactivated_at: new Date(),
         },
       });
 

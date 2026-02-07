@@ -575,6 +575,7 @@ export interface ApiAdAd extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     currency: Schema.Attribute.Enumeration<["CLP", "USD"]> &
       Schema.Attribute.Required;
+    deactivated_at: Schema.Attribute.DateTime;
     depth: Schema.Attribute.BigInteger;
     description: Schema.Attribute.Text;
     details: Schema.Attribute.JSON;
@@ -595,10 +596,12 @@ export interface ApiAdAd extends Struct.CollectionTypeSchema {
     phone: Schema.Attribute.String;
     price: Schema.Attribute.BigInteger & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
+    reason_for_deactivation: Schema.Attribute.Text;
     reason_for_rejection: Schema.Attribute.Text;
     rejected: Schema.Attribute.Boolean &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<false>;
+    rejected_at: Schema.Attribute.DateTime;
     remaining_days: Schema.Attribute.Integer &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<0>;
