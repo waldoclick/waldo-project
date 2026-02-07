@@ -47,13 +47,13 @@
         <CardInfo
           v-if="order?.items"
           title="Items"
-          :description="formatJson(order.items)"
+          :description="order.items"
           show-copy-button
         />
         <CardInfo
           v-if="order?.payment_response"
           title="Respuesta de pago"
-          :description="formatJson(order.payment_response)"
+          :description="order.payment_response"
           show-copy-button
         />
       </BoxInformation>
@@ -66,13 +66,13 @@
         <CardInfo
           v-if="order?.document_details"
           title="Detalle"
-          :description="formatJson(order.document_details)"
+          :description="order.document_details"
           show-copy-button
         />
         <CardInfo
           v-if="order?.document_response"
           title="Respuesta"
-          :description="formatJson(order.document_response)"
+          :description="order.document_response"
           show-copy-button
         />
       </BoxInformation>
@@ -151,11 +151,6 @@ const formatFullName = (user: any) => {
   if (!user) return "--";
   const name = [user.firstname, user.lastname].filter(Boolean).join(" ");
   return name || "--";
-};
-
-const formatJson = (value: unknown) => {
-  if (!value) return "--";
-  return JSON.stringify(value);
 };
 
 const normalizeOrder = (response: any) => {
