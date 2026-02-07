@@ -21,7 +21,10 @@
 
       <div class="orders--default__table-wrapper">
         <TableDefault :columns="tableColumns">
-          <TableRow v-for="order in paginatedOrders" :key="order.id">
+          <TableRow
+            v-for="order in paginatedOrders"
+            :key="order.documentId ?? order.id"
+          >
             <TableCell>{{ order.id }}</TableCell>
             <TableCell>{{ order.user?.username || "-" }}</TableCell>
             <TableCell>{{ order.ad?.name || "-" }}</TableCell>
@@ -38,13 +41,13 @@
             </TableCell>
             <TableCell>{{ formatDate(order.createdAt) }}</TableCell>
             <TableCell align="right">
-              <button
+              <NuxtLink
                 class="orders--default__action"
                 title="Ver orden"
-                @click="handleViewOrder(order.id)"
+                :to="`/ordenes/${order.id}`"
               >
                 <Eye class="orders--default__action__icon" />
-              </button>
+              </NuxtLink>
             </TableCell>
           </TableRow>
         </TableDefault>
@@ -69,7 +72,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { computed } from "vue";
+import { useAsyncData } from "nuxt/app";
+import { useStrapi } from "#imports";
 import { Eye } from "lucide-vue-next";
 import { useSettingsStore } from "@/stores/settings.store";
 import SearchDefault from "@/components/SearchDefault.vue";
@@ -82,7 +87,9 @@ import PaginationDefault from "@/components/PaginationDefault.vue";
 
 interface Order {
   id: number;
-  amount: number;
+  documentId?: string;
+  buy_order?: string;
+  amount: number | string;
   payment_method: string;
   is_invoice: boolean;
   createdAt: string;
@@ -90,14 +97,17 @@ interface Order {
   ad?: { name: string } | null;
 }
 
-// Store de settings
+interface OrdersListResponse {
+  data: Order[];
+  meta: { pagination: { page: number; pageCount: number; total: number } };
+}
+
 const settingsStore = useSettingsStore();
 const section = "orders" as const;
+const strapi = useStrapi();
 
-// Computed para los filtros de órdenes
 const filters = computed(() => settingsStore.getOrdersFilters);
 
-// Handler para cambios en filtros
 const handleFiltersChange = (newFilters: {
   sortBy: string;
   pageSize: number;
@@ -105,120 +115,89 @@ const handleFiltersChange = (newFilters: {
   settingsStore.setFilters(section, newFilters);
 };
 
-// Mock data - esto se reemplazará con datos reales de Strapi
-const allOrders = ref<Order[]>([
-  {
-    id: 5,
-    amount: 50,
-    payment_method: "webpay",
-    is_invoice: true,
-    createdAt: "2025-12-15T01:05:00.000Z",
-    user: { username: "contacto" },
-    ad: null,
-  },
-  {
-    id: 4,
-    amount: 50,
-    payment_method: "webpay",
-    is_invoice: true,
-    createdAt: "2025-10-30T02:14:00.000Z",
-    user: { username: "contacto" },
-    ad: null,
-  },
-  {
-    id: 3,
-    amount: 50,
-    payment_method: "webpay",
-    is_invoice: true,
-    createdAt: "2025-10-28T20:22:00.000Z",
-    user: { username: "waldo.development" },
-    ad: { name: "Tractor" },
-  },
-  {
-    id: 2,
-    amount: 50,
-    payment_method: "webpay",
-    is_invoice: false,
-    createdAt: "2025-10-14T20:39:00.000Z",
-    user: { username: "geokym" },
-    ad: { name: "Leandra Walters" },
-  },
-  {
-    id: 1,
-    amount: 50,
-    payment_method: "webpay",
-    is_invoice: false,
-    createdAt: "2025-10-14T20:27:00.000Z",
-    user: { username: "geokym" },
-    ad: { name: "Asher Mcintyre" },
-  },
-]);
+const sortParam = computed(() => {
+  const [field, direction] = settingsStore.orders.sortBy.split(":");
+  return `${field}:${direction}`;
+});
 
-// Filtrar órdenes por búsqueda
+const queryKey = computed(
+  () =>
+    `orders-${settingsStore.orders.currentPage}-${settingsStore.orders.pageSize}-${sortParam.value}`,
+);
+
+const { data: ordersResponse } = await useAsyncData(
+  queryKey,
+  async (): Promise<OrdersListResponse> => {
+    try {
+      const res = (await strapi.find("orders", {
+        pagination: {
+          page: settingsStore.orders.currentPage,
+          pageSize: settingsStore.orders.pageSize,
+        },
+
+        sort: sortParam.value as any,
+        populate: ["user", "ad"],
+      })) as unknown as {
+        data?: Order[];
+        meta?: {
+          pagination?: { page: number; pageCount?: number; total: number };
+        };
+      };
+      const pagination = res.meta?.pagination;
+      const total = pagination?.total ?? 0;
+      const pageSize = settingsStore.orders.pageSize;
+      const pageCount =
+        pagination?.pageCount ?? (Math.ceil(total / pageSize) || 1);
+      return {
+        data: Array.isArray(res.data) ? res.data : [],
+        meta: {
+          pagination: {
+            page: pagination?.page ?? 1,
+            pageCount,
+            total,
+          },
+        },
+      };
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      return {
+        data: [],
+        meta: { pagination: { page: 1, pageCount: 0, total: 0 } },
+      };
+    }
+  },
+);
+
+const orders = computed<Order[]>(() => {
+  const data = ordersResponse.value?.data;
+  return Array.isArray(data) ? data : [];
+});
+
+const totalPages = computed(
+  () => ordersResponse.value?.meta?.pagination?.pageCount ?? 0,
+);
+const totalRecords = computed(
+  () => ordersResponse.value?.meta?.pagination?.total ?? 0,
+);
+
 const filteredOrders = computed(() => {
-  if (!settingsStore.orders.searchTerm) {
-    return allOrders.value;
-  }
-
-  const search = settingsStore.orders.searchTerm.toLowerCase();
-  return allOrders.value.filter((order) => {
-    const orderId = order.id.toString();
+  const term = settingsStore.orders.searchTerm?.toLowerCase();
+  if (!term) return orders.value;
+  return orders.value.filter((order) => {
+    const id = String(order.id);
     const username = order.user?.username?.toLowerCase() || "";
     const adName = order.ad?.name?.toLowerCase() || "";
-    const buyOrder = orderId; // En un caso real, esto sería order.buy_order
-
+    const buyOrder = (order.buy_order ?? "").toLowerCase();
     return (
-      orderId.includes(search) ||
-      username.includes(search) ||
-      adName.includes(search) ||
-      buyOrder.includes(search)
+      id.includes(term) ||
+      username.includes(term) ||
+      adName.includes(term) ||
+      buyOrder.includes(term)
     );
   });
 });
 
-// Ordenar órdenes
-const sortedOrders = computed(() => {
-  const orders = [...filteredOrders.value];
-  const [field, direction] = settingsStore.orders.sortBy.split(":");
-
-  return orders.sort((a, b) => {
-    let aValue: any;
-    let bValue: any;
-
-    if (field === "createdAt") {
-      aValue = new Date(a.createdAt).getTime();
-      bValue = new Date(b.createdAt).getTime();
-    } else if (field === "ad.name") {
-      aValue = a.ad?.name || "";
-      bValue = b.ad?.name || "";
-    } else {
-      aValue = a[field as keyof Order];
-      bValue = b[field as keyof Order];
-    }
-
-    if (direction === "asc") {
-      return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
-    } else {
-      return aValue < bValue ? 1 : aValue > bValue ? -1 : 0;
-    }
-  });
-});
-
-// Paginar órdenes
-const totalPages = computed(() => {
-  return Math.ceil(sortedOrders.value.length / settingsStore.orders.pageSize);
-});
-
-const totalRecords = computed(() => {
-  return sortedOrders.value.length;
-});
-
-const paginatedOrders = computed(() => {
-  const start =
-    (settingsStore.orders.currentPage - 1) * settingsStore.orders.pageSize;
-  const end = start + settingsStore.orders.pageSize;
-  return sortedOrders.value.slice(start, end);
-});
+const paginatedOrders = computed(() => filteredOrders.value);
 
 const tableColumns = [
   { label: "Orden" },
@@ -262,9 +241,5 @@ const formatDate = (dateString: string) => {
 
 const getPaymentMethod = (method: string) => {
   return method === "webpay" ? "WebPay" : method;
-};
-
-const handleViewOrder = (orderId: number) => {
-  router.push(`/ordenes/${orderId}`);
 };
 </script>
