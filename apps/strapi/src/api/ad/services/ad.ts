@@ -415,8 +415,8 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
         where: { id: adId },
         data: {
           active: true, // Activate the ad
-          approved_by: userId, // Record who approved it
-          approved_at: new Date(), // Record when it was approved
+          reviewed: true,
+          reviewed_by: userId,
         },
       });
 
@@ -445,7 +445,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
       return {
         success: true,
         message: "Advertisement approved successfully",
-        data: { id: adId, approved_by: userId },
+        data: { id: adId, reviewed_by: userId },
       };
     } catch (error) {
       console.error("Error in approveAd:", error);
@@ -512,8 +512,9 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
         data: {
           rejected: true, // Mark as rejected
           reason_for_rejection: rejectionReason, // Record rejection reason
-          rejected_by: userId, // Record who rejected it
           rejected_at: new Date(), // Record when it was rejected
+          reviewed: true,
+          reviewed_by: userId,
         },
       });
 
@@ -544,7 +545,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
         message: "Advertisement rejected successfully",
         data: {
           id: adId,
-          rejected_by: userId,
+          reviewed_by: userId,
           reason_for_rejection: rejectionReason,
         },
       };
@@ -606,6 +607,8 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
           banned: true,
           banned_at: new Date(),
           reason_for_ban: reasonForBan ?? null,
+          reviewed: true,
+          reviewed_by: userId,
         },
       });
 

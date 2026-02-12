@@ -23,6 +23,8 @@ export interface Ad {
   banned?: boolean;
   banned_at?: string | null;
   rejected_at?: string | null;
+  reviewed?: boolean;
+  reviewed_by?: number | { id: number } | null;
   currency: string;
   duration_days: number;
   remaining_days: number;
