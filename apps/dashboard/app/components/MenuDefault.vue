@@ -96,6 +96,18 @@
           <li
             class="menu--default__subitem"
             :class="{
+              'menu--default__subitem--active':
+                isRouteActive('/anuncios/baneados'),
+            }"
+          >
+            <NuxtLink to="/anuncios/baneados" class="menu--default__sublink">
+              <Ban class="menu--default__subicon" />
+              <span>Baneados</span>
+            </NuxtLink>
+          </li>
+          <li
+            class="menu--default__subitem"
+            :class="{
               'menu--default__subitem--active': isRouteActive(
                 '/anuncios/rechazados',
               ),
@@ -325,6 +337,7 @@ import {
   Clock,
   CheckCircle,
   Archive,
+  Ban,
   XCircle,
   Circle,
   Tag,

@@ -181,6 +181,7 @@ import {
   Clock,
   CheckCircle,
   Archive,
+  Ban,
   XCircle,
   AlertTriangle,
 } from "lucide-vue-next";
@@ -196,12 +197,13 @@ const strapiClient = useStrapiClient();
 const { Swal } = useSweetAlert2();
 
 const title = computed(() => item.value?.name || "Anuncio");
-type AdStatus = "pending" | "active" | "archived" | "rejected";
+type AdStatus = "pending" | "active" | "archived" | "banned" | "rejected";
 
 const statusIconMap: Record<AdStatus, any> = {
   pending: Clock,
   active: CheckCircle,
   archived: Archive,
+  banned: Ban,
   rejected: XCircle,
 };
 
@@ -209,6 +211,7 @@ const statusBreadcrumbMap: Record<AdStatus, { label: string; to: string }> = {
   pending: { label: "Pendientes", to: "/anuncios/pendientes" },
   active: { label: "Activos", to: "/anuncios/activos" },
   archived: { label: "Archivados", to: "/anuncios/archivados" },
+  banned: { label: "Baneados", to: "/anuncios/baneados" },
   rejected: { label: "Rechazados", to: "/anuncios/rechazados" },
 };
 
@@ -233,8 +236,9 @@ const statusIcon = computed(() => {
 const statusLabels: Record<string, string> = {
   pending: "Pendiente",
   active: "Activo",
-  rejected: "Rechazado",
   archived: "Archivado",
+  banned: "Baneado",
+  rejected: "Rechazado",
 };
 
 const formatDate = (dateString: string | undefined) => {

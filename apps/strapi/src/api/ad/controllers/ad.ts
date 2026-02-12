@@ -146,6 +146,38 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
   },
 
   /**
+   * Get banned advertisements
+   *
+   * Retrieves a paginated list of banned advertisements.
+   *
+   * @route GET /api/ads/banneds
+   */
+  async banneds(ctx: any) {
+    try {
+      const { query } = ctx;
+
+      const options: any = {
+        ...query,
+        page: query.pagination?.page
+          ? parseInt(query.pagination.page, 10)
+          : query.page || 1,
+        pageSize: query.pagination?.pageSize
+          ? parseInt(query.pagination.pageSize, 10)
+          : query.pageSize || 25,
+      };
+
+      if (options.pagination) {
+        delete options.pagination;
+      }
+
+      const bannedAds = await strapi.service("api::ad.ad").bannedAds(options);
+      return bannedAds;
+    } catch (error) {
+      ctx.throw(500, error);
+    }
+  },
+
+  /**
    * Get rejected advertisements
    *
    * Retrieves a paginated list of rejected advertisements.

@@ -177,6 +177,8 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
 
     if (ad.rejected) {
       status = "rejected";
+    } else if (ad.banned) {
+      status = "banned";
     } else if (ad.active && ad.remaining_days > 0) {
       status = "active";
     } else if (!ad.active && ad.remaining_days === 0) {
@@ -217,6 +219,8 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
 
       if (ad.rejected) {
         status = "rejected";
+      } else if (ad.banned) {
+        status = "banned";
       } else if (ad.active && ad.remaining_days > 0) {
         status = "active";
       } else if (!ad.active && ad.remaining_days === 0) {
@@ -335,10 +339,27 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
         { active: { $eq: false } },
         { remaining_days: { $eq: 0 } },
         { rejected: { $eq: false } },
+        { banned: { $eq: false } },
       ],
     };
 
     return getAdvertisements(options, defaultFilters, "archived");
+  },
+
+  /**
+   * Retrieve banned advertisements
+   *
+   * Fetches advertisements that have been banned by owner or administrator.
+   *
+   * @param {Object} options - Query options for filtering and pagination
+   * @returns {Promise<Object>} Paginated list of banned advertisements
+   */
+  async bannedAds(options: any = {}) {
+    const defaultFilters = {
+      banned: { $eq: true },
+    };
+
+    return getAdvertisements(options, defaultFilters, "banned");
   },
 
   /**
