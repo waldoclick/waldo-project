@@ -440,7 +440,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
   async deactivateAd(ctx: any) {
     try {
       const { id } = ctx.params;
-      const { reason_deactivated } = ctx.request.body;
+      const reasonForBan = ctx.request.body?.reason_for_ban;
       const userId = ctx.state.user.id;
 
       if (!userId) {
@@ -451,14 +451,14 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
 
       const result = await strapi
         .service("api::ad.ad")
-        .deactivateAd(id, userId, reason_deactivated);
+        .deactivateAd(id, userId, reasonForBan);
       return result;
     } catch (error) {
       // Handle specific error cases with appropriate HTTP status codes
       if (error.message === "Advertisement not found") {
         return ctx.notFound(error.message);
       }
-      if (error.message === "Advertisement is already deactivated") {
+      if (error.message === "Advertisement is already banned") {
         return ctx.badRequest(error.message);
       }
       if (error.message.includes("permission")) {

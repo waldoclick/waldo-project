@@ -19,9 +19,10 @@ export interface Ad {
   active: boolean;
   rejected: boolean;
   reason_for_rejection: string | null;
-  reason_for_deactivation: string | null;
+  reason_for_ban: string | null;
+  banned?: boolean;
+  banned_at?: string | null;
   rejected_at?: string | null;
-  deactivated_at?: string | null;
   currency: string;
   duration_days: number;
   remaining_days: number;

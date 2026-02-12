@@ -7,7 +7,7 @@
   <BoxContent>
     <template #content>
       <BoxInformation
-        v-if="item?.reason_for_deactivation"
+        v-if="item?.reason_for_ban"
         title="Razón del baneo"
         :columns="1"
       >
@@ -15,11 +15,11 @@
           <AlertTriangle aria-hidden="true" />
         </template>
         <CardInfo
-          v-if="item?.deactivated_at"
+          v-if="item?.banned_at"
           title="Fecha"
-          :description="formatDate(item.deactivated_at)"
+          :description="formatDate(item.banned_at)"
         />
-        <CardInfo title="Detalle" :description="item.reason_for_deactivation" />
+        <CardInfo title="Detalle" :description="item.reason_for_ban" />
       </BoxInformation>
       <BoxInformation
         v-if="item?.reason_for_rejection"
@@ -331,7 +331,7 @@ const handleBan = async (reason: string) => {
   try {
     await strapiClient(`/ads/${item.value.id}/deactivate`, {
       method: "PUT",
-      body: { reason_deactivated: reason },
+      body: { reason_for_ban: reason },
     });
     await fetchAd();
     closeBanLightbox();

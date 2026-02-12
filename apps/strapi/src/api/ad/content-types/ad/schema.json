@@ -107,10 +107,15 @@
     "reason_for_rejection": {
       "type": "text"
     },
-    "deactivated_at": {
+    "banned": {
+      "type": "boolean",
+      "required": true,
+      "default": false
+    },
+    "banned_at": {
       "type": "datetime"
     },
-    "reason_for_deactivation": {
+    "reason_for_ban": {
       "type": "text"
     },
     "currency": {
