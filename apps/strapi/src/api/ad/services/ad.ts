@@ -632,6 +632,27 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
         },
       });
 
+      // Enviar email de baneo al usuario
+      try {
+        if (ad.user && ad.user.email) {
+          await sendMjmlEmail(
+            strapi,
+            "ad-banned",
+            ad.user.email,
+            "Tu anuncio ha sido baneado",
+            {
+              name: `${ad.user.firstname} ${ad.user.lastname}`,
+              adTitle: ad.name,
+              reason: reasonForBan ?? undefined,
+            }
+          );
+        } else {
+          console.error("User data not available for ban email");
+        }
+      } catch (emailError) {
+        console.error("Error sending ban email:", emailError);
+      }
+
       return {
         success: true,
         message: "Advertisement banned successfully",

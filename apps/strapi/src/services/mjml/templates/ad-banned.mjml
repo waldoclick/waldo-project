@@ -1,0 +1,27 @@
+{% extends "layouts/base.mjml" %} {% block content %}
+<mj-text font-size="16px"> Hola {{ name }}, </mj-text>
+<mj-text>
+  Te informamos que tu anuncio ha sido <b>baneado</b> en
+  <b>Waldo.click®</b>.
+</mj-text>
+<mj-text>
+  <b>Detalles del anuncio:</b>
+</mj-text>
+<mj-text> <b>Título:</b> {{ adTitle }} </mj-text>
+{% if reason %}
+<mj-text> <b>Motivo del baneo:</b> {{ reason }} </mj-text>
+{% endif %}
+<mj-text>
+  Puedes revisar las
+  <a
+    href="{{ frontendUrl }}/politicas-de-privacidad"
+    style="color: #666; text-decoration: underline"
+    >políticas de publicación</a
+  >
+  y contactarnos si tienes dudas sobre el motivo del baneo.
+</mj-text>
+<mj-text>
+  Si consideras que ha sido un error, no dudes en contactarnos.
+</mj-text>
+<mj-text> Saludos,<br />El equipo de <b>Waldo.click®</b> </mj-text>
+{% endblock %}
