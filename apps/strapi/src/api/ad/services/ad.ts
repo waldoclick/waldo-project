@@ -603,7 +603,6 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
         where: { id: adId },
         data: {
           active: false,
-          remaining_days: 0,
           banned: true,
           banned_at: new Date(),
           reason_for_ban: reasonForBan ?? null,
