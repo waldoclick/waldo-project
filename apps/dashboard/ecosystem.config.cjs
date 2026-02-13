@@ -5,7 +5,7 @@ module.exports = {
       script: "./.output/server/index.mjs",
       env: {
         NODE_ENV: "production",
-        NITRO_PORT: 3000,
+        NITRO_PORT: 3001,
       },
     },
   ],
