@@ -307,6 +307,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
         { remaining_days: { $gt: 0 } },
         { duration_days: { $gt: 0 } },
         { rejected: { $eq: false } },
+        { banned: { $eq: false } },
       ],
     };
 
