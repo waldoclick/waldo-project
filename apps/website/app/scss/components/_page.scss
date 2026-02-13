@@ -1,0 +1,29 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: white;
+
+  // @include screen-small {
+  //   min-height: auto;
+  // }
+
+  &--home {
+    section:nth-child(even) {
+      background-color: rgba($gainsboro, 0.3);
+    }
+  }
+
+  &--provider {
+    background-color: transparent;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+}

@@ -1,0 +1,38 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+
+.stats {
+  &--default {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    flex-wrap: wrap;
+
+    @include screen-small {
+      gap: 15px 20px;
+    }
+
+    &__item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #1a1a1a;
+      line-height: 1;
+
+      &__icon {
+        color: #1e40af;
+        flex-shrink: 0;
+      }
+
+      &__name {
+        font-size: 0.875rem;
+        opacity: 0.8;
+      }
+
+      &__value {
+        font-weight: 600;
+        font-size: 0.875rem;
+      }
+    }
+  }
+}

@@ -7,6 +7,7 @@ import * as Sentry from "@sentry/nuxt";
 export default defineNuxtConfig({
   // Compatibility date for Nuxt features
   compatibilityDate: "2024-04-03",
+  telemetry: false,
 
   // Enable Nuxt 4 compatibility mode
   future: {
@@ -15,7 +16,8 @@ export default defineNuxtConfig({
 
   // 1. Basic Configuration
   modules: [
-    "nuxt-security",
+    // Solo incluir nuxt-security si no estamos en modo local
+    ...(process.env.NODE_ENV !== "local" ? ["nuxt-security"] : []),
     "@nuxt/test-utils/module",
     "@nuxt/eslint",
     "@nuxtjs/strapi",
@@ -29,100 +31,85 @@ export default defineNuxtConfig({
   ],
 
   // Security configuration - using nuxt-security defaults with customizations
-  security: {
-    nonce: true,
-    headers: {
-      contentSecurityPolicy: {
-        "default-src": ["'self'"],
-        "script-src": [
-          "'self'",
-          "'nonce-{{nonce}}'",
-          process.env.BASE_URL || "http://localhost:3000",
-          process.env.API_URL || "http://localhost:1337",
-          "https://cdn.logrocket.io",
-          "https://cdn.lr-ingest.io",
-          "https://cdn.lgrckt-in.com",
-          "https://*.logrocket.io",
-          "https://*.lr-ingest.io",
-          "https://www.googletagmanager.com",
-          "https://www.google-analytics.com",
-          "https://pagead2.googlesyndication.com",
-          "https://accounts.google.com",
-          "https://www.google.com",
-          "https://www.gstatic.com",
-          "https://*.sentry.io",
-          "https://*.ingest.sentry.io",
-          // hashes
-          "'sha256-PVDkrbYwgpKzRcE6g9nu5SHocNTCDFtxbe+hRwabzys='",
-        ],
-        "style-src": [
-          "'self'",
-          "'nonce-{{nonce}}'",
-          "'sha256-5ssSGJqEaFnjD/jHzPCmwqXFpZ+IFnIiGuRUFDakNM8='",
-          "'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='",
-          "'sha256-KPHVp9hPl2hkJZxT36gXr66zkaK1xz4+LLAlcrFvioI='",
-          "'sha256-uoOBzR7UcESB5QPyfRE62GQ8GvXW2MSbUR/n9a3ljJY='",
-          "'sha256-u7AZxYcTnpV+TdOuwUByp81gKTf5gBppgt1GlD+d7vE='",
-          "'sha256-H7hdPABrNa5DkiKIRCvPefAmhWiZBcGl3qzhvkTCSh0='",
-          "'sha256-/Q0kYXz7Ioo69pKKZSOVu5RSgpxHkR+HbFvhSww2tdk='",
-          "'sha256-3k3MXafwX6V3SfDh1+PouyKyJSddUDA1SGQ0sSrkUtk='",
-          "'sha256-SzQWIP2ZbiirBppYnAl2EU/TI/QNc0AnjeAgUOA4vis='",
-          "'sha256-x+4vaqNIGt+yYALCj2hdiR1O9474jo2qbvvCEqFMiug='",
-          "'sha256-nv4qVbZV2ZrAF1qizDzlhCSWAi86sALIbB2CgBxjabw='",
-          "'sha256-s4xJtzdzZ9Uh0s9EWZLJN0BGoPU8Q37owT8ACGJHebk='",
-          "'sha256-FWgA3Iwd6dsWqswf1EuhCCmlnHR0JocQu93Ljx960Bc='",
-          "'sha256-B7wN54kDrd1Jsqev8GNH8GJMQVs8ySQGGFDDPivPyBc='",
-          "'sha256-0EZqoz+oBhx7gF4nvY2bSqoGyy4zLjNF+SDQXGp/ZrY='",
-          "'sha256-OD9WVNQJEovAiR/DJOt93obaRkfsvRKjjDXmxB2VR+w='",
-          "'sha256-hjGDJcPVcAJ9nnrccF3P2N4vd7YFIHUlP6dY2howRXU='",
-          "'sha256-Hy4IRuZS2+hsagtxrj0TSK6aloca0Qr7bpDAz/+ed+U='",
-          "'sha256-l7stDtNfZPRJ/tmikm53DbMe13BgG3uqLTZq+7CpLBs='",
-          "'sha256-9S4M8NRwtClHzB7MdjvaEaOTskGhDm7aps8PUOnQMuc='",
-          "'sha256-DGOz9Fsw2A+ThiRpUIiHUAc7nxHKxiz8SYbM/jOsdGg='",
-          "'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='",
-          // Removed external Google Fonts since we serve locally
-        ],
-        "img-src": [
-          "'self'",
-          "data:",
-          "blob:",
-          "https:",
-          process.env.BASE_URL || "http://localhost:3000",
-          process.env.API_URL || "http://localhost:1337",
-          "https://www.google-analytics.com",
-        ],
-        "font-src": ["'self'"],
-        "connect-src": [
-          "'self'",
-          "https:",
-          process.env.BASE_URL || "http://localhost:3000",
-          process.env.API_URL || "http://localhost:1337",
-          "https://*.logrocket.io",
-          "https://*.lr-ingest.io",
-          "https://*.sentry.io",
-          "https://*.ingest.sentry.io",
-          "https://www.google-analytics.com",
-        ],
-        "frame-src": [
-          "https://accounts.google.com",
-          "https://www.google.com",
-          "https://www.gstatic.com",
-          "https://www.googletagmanager.com",
-        ],
-        "child-src": ["'self'", "blob:"],
-        "worker-src": ["'self'", "blob:"],
-        "object-src": ["'none'"],
-        "base-uri": ["'self'"],
-        "form-action": [
-          "'self'",
-          "https://webpay3gint.transbank.cl",
-          "https://webpay3g.transbank.cl",
-        ],
-        "frame-ancestors": ["'none'"],
-        "upgrade-insecure-requests": true,
+  // Solo aplicar configuración de seguridad si no estamos en modo local
+  ...(process.env.NODE_ENV !== "local" && {
+    security: {
+      nonce: false,
+      rateLimiter: {
+        tokensPerInterval: 500, // Aumentado de 150 a 500 para evitar 429 con assets
+        interval: 300000, // 5 minutos (300000 ms)
+        headers: true,
+        throwError: true,
+      },
+      headers: {
+        contentSecurityPolicy: {
+          "default-src": ["'self'"],
+          "script-src": [
+            "'self'",
+            "'unsafe-inline'",
+            process.env.BASE_URL || "http://localhost:3000",
+            process.env.API_URL || "http://localhost:1337",
+            "https://cdn.logrocket.io",
+            "https://cdn.lr-ingest.io",
+            "https://cdn.lgrckt-in.com",
+            "https://*.logrocket.io",
+            "https://*.lr-ingest.io",
+            "https://www.googletagmanager.com",
+            "https://www.google-analytics.com",
+            "https://pagead2.googlesyndication.com",
+            "https://accounts.google.com",
+            "https://www.google.com",
+            "https://www.gstatic.com",
+            "https://*.sentry.io",
+            "https://*.ingest.sentry.io",
+          ],
+          "style-src": [
+            "'self'",
+            "'unsafe-inline'",
+            // Removed external Google Fonts since we serve locally
+          ],
+          "img-src": [
+            "'self'",
+            "data:",
+            "blob:",
+            "https:",
+            process.env.BASE_URL || "http://localhost:3000",
+            process.env.API_URL || "http://localhost:1337",
+            "https://www.google-analytics.com",
+          ],
+          "font-src": ["'self'"],
+          "connect-src": [
+            "'self'",
+            "https:",
+            process.env.BASE_URL || "http://localhost:3000",
+            process.env.API_URL || "http://localhost:1337",
+            "https://*.logrocket.io",
+            "https://*.lr-ingest.io",
+            "https://*.sentry.io",
+            "https://*.ingest.sentry.io",
+            "https://www.google-analytics.com",
+          ],
+          "frame-src": [
+            "https://accounts.google.com",
+            "https://www.google.com",
+            "https://www.gstatic.com",
+            "https://www.googletagmanager.com",
+          ],
+          "child-src": ["'self'", "blob:"],
+          "worker-src": ["'self'", "blob:"],
+          "object-src": ["'none'"],
+          "base-uri": ["'self'"],
+          "form-action": [
+            "'self'",
+            "https://webpay3gint.transbank.cl",
+            "https://webpay3g.transbank.cl",
+          ],
+          "frame-ancestors": ["'none'"],
+          "upgrade-insecure-requests": true,
+        },
       },
     },
-  },
+  }),
 
   // i18n: {
   //   defaultLocale: 'es',

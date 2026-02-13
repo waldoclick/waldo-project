@@ -1,0 +1,28 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+
+.badge {
+  &--default {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    background-color: #1a1a1a;
+    color: #ffffff;
+    border: 1px solid #1a1a1a;
+
+    &--outline {
+      background-color: #ffffff;
+      color: #1a1a1a;
+      border-color: #e5e5e5;
+    }
+
+    &--secondary {
+      background-color: #f3f4f6;
+      color: #1a1a1a;
+      border-color: #e5e5e5;
+    }
+  }
+}

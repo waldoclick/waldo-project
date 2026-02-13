@@ -21,6 +21,11 @@ export default {
     },
     {
       method: "GET",
+      path: "/ads/banneds",
+      handler: "ad.banneds",
+    },
+    {
+      method: "GET",
       path: "/ads/rejecteds",
       handler: "ad.rejecteds",
     },

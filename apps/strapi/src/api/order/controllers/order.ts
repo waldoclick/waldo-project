@@ -151,5 +151,38 @@ export default factories.createCoreController(
         return ctx.internalServerError("Internal server error");
       }
     },
+
+    async findOne(ctx: any) {
+      try {
+        const documentId = ctx.params.documentId ?? ctx.params.id;
+        if (!documentId) {
+          return ctx.badRequest("Missing order identifier");
+        }
+        const numericId = Number(documentId);
+        const isNumericId =
+          Number.isInteger(numericId) &&
+          numericId > 0 &&
+          String(numericId) === String(documentId);
+
+        let order;
+        if (isNumericId) {
+          order = await strapi.db.query("api::order.order").findOne({
+            where: { id: numericId },
+            populate: ["user", "ad"],
+          });
+        } else {
+          order = await strapi.documents("api::order.order").findOne({
+            documentId,
+            populate: ["user", "ad"],
+          });
+        }
+        if (!order) {
+          return ctx.notFound("Order not found");
+        }
+        return ctx.send({ data: order });
+      } catch (error) {
+        ctx.throw(500, error);
+      }
+    },
   })
 );

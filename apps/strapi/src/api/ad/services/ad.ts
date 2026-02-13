@@ -177,6 +177,8 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
 
     if (ad.rejected) {
       status = "rejected";
+    } else if (ad.banned) {
+      status = "banned";
     } else if (ad.active && ad.remaining_days > 0) {
       status = "active";
     } else if (!ad.active && ad.remaining_days === 0) {
@@ -217,6 +219,8 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
 
       if (ad.rejected) {
         status = "rejected";
+      } else if (ad.banned) {
+        status = "banned";
       } else if (ad.active && ad.remaining_days > 0) {
         status = "active";
       } else if (!ad.active && ad.remaining_days === 0) {
@@ -303,6 +307,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
         { remaining_days: { $gt: 0 } },
         { duration_days: { $gt: 0 } },
         { rejected: { $eq: false } },
+        { banned: { $eq: false } },
       ],
     };
 
@@ -335,10 +340,27 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
         { active: { $eq: false } },
         { remaining_days: { $eq: 0 } },
         { rejected: { $eq: false } },
+        { banned: { $eq: false } },
       ],
     };
 
     return getAdvertisements(options, defaultFilters, "archived");
+  },
+
+  /**
+   * Retrieve banned advertisements
+   *
+   * Fetches advertisements that have been banned by owner or administrator.
+   *
+   * @param {Object} options - Query options for filtering and pagination
+   * @returns {Promise<Object>} Paginated list of banned advertisements
+   */
+  async bannedAds(options: any = {}) {
+    const defaultFilters = {
+      banned: { $eq: true },
+    };
+
+    return getAdvertisements(options, defaultFilters, "banned");
   },
 
   /**
@@ -415,8 +437,8 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
         where: { id: adId },
         data: {
           active: true, // Activate the ad
-          approved_by: userId, // Record who approved it
-          approved_at: new Date(), // Record when it was approved
+          reviewed: true,
+          reviewed_by: userId,
         },
       });
 
@@ -445,7 +467,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
       return {
         success: true,
         message: "Advertisement approved successfully",
-        data: { id: adId, approved_by: userId },
+        data: { id: adId, reviewed_by: userId },
       };
     } catch (error) {
       console.error("Error in approveAd:", error);
@@ -511,9 +533,10 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
         where: { id: adId },
         data: {
           rejected: true, // Mark as rejected
-          reason_rejected: rejectionReason, // Record rejection reason
-          rejected_by: userId, // Record who rejected it
+          reason_for_rejection: rejectionReason, // Record rejection reason
           rejected_at: new Date(), // Record when it was rejected
+          reviewed: true,
+          reviewed_by: userId,
         },
       });
 
@@ -544,8 +567,8 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
         message: "Advertisement rejected successfully",
         data: {
           id: adId,
-          rejected_by: userId,
-          reason_rejected: rejectionReason,
+          reviewed_by: userId,
+          reason_for_rejection: rejectionReason,
         },
       };
     } catch (error) {
@@ -555,71 +578,89 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
   },
 
   /**
-   * Deactivate an advertisement (soft delete)
+   * Ban an advertisement (deactivate with reason).
    *
-   * Deactivates an advertisement by setting it as inactive and archived.
-   * This is a soft delete operation - the ad is archived but not physically removed.
-   * Only the owner of the ad or an administrator can deactivate it.
+   * Bans an advertisement by setting it inactive, remaining_days to 0, and recording
+   * the ban reason and date. Only the owner of the ad or an administrator can ban it.
    *
-   * @param {string} adId - The ID of the advertisement to deactivate
-   * @param {string} userId - The ID of the user performing the deactivation
-   * @returns {Promise<Object>} Result of the deactivation operation
-   * @throws {Error} When advertisement is not found or user doesn't have permission
+   * @param {string} adId - The ID of the advertisement to ban
+   * @param {string} userId - The ID of the user performing the ban
+   * @param {string} [reasonForBan] - Optional reason for the ban
+   * @returns {Promise<Object>} Result of the ban operation
+   * @throws {Error} When advertisement is not found, already banned, or user lacks permission
    *
    * @example
-   * // Deactivate an advertisement
-   * const result = await strapi.service("api::ad.ad").deactivateAd("123", "user456");
+   * const result = await strapi.service("api::ad.ad").deactivateAd("123", "user456", "Violation");
    */
-  async deactivateAd(adId: string, userId: string) {
+  async deactivateAd(adId: string, userId: string, reasonForBan?: string) {
     try {
-      // Find the advertisement to deactivate
       const ad = await strapi.db.query("api::ad.ad").findOne({
         where: { id: adId },
         populate: ["user"],
       });
 
-      // Validate that the advertisement exists
       if (!ad) {
         throw new Error("Advertisement not found");
       }
 
-      // Check if already archived/deactivated (remaining_days === 0 and active === false)
-      if (!ad.active && ad.remaining_days === 0 && !ad.rejected) {
-        throw new Error("Advertisement is already deactivated");
+      if (ad.banned === true) {
+        throw new Error("Advertisement is already banned");
       }
 
-      // Verify user has permission (owner or admin)
       const isOwner = ad.user?.id?.toString() === userId.toString();
       const user = await strapi.db
         .query("plugin::users-permissions.user")
         .findOne({ where: { id: userId }, populate: ["role"] });
 
       const isAdmin =
-        user?.role?.name === "Administrator" || user?.role?.name === "Admin";
+        user?.role?.name === "Administrator" ||
+        user?.role?.name === "Admin" ||
+        user?.role?.name === "Manager";
 
       if (!isOwner && !isAdmin) {
-        throw new Error(
-          "You don't have permission to deactivate this advertisement"
-        );
+        throw new Error("You don't have permission to ban this advertisement");
       }
 
-      // Deactivate the advertisement by setting active to false and remaining_days to 0
       await strapi.db.query("api::ad.ad").update({
         where: { id: adId },
         data: {
           active: false,
-          remaining_days: 0,
+          banned: true,
+          banned_at: new Date(),
+          reason_for_ban: reasonForBan ?? null,
+          reviewed: true,
+          reviewed_by: userId,
         },
       });
 
-      // Return success response
+      // Enviar email de baneo al usuario
+      try {
+        if (ad.user && ad.user.email) {
+          await sendMjmlEmail(
+            strapi,
+            "ad-banned",
+            ad.user.email,
+            "Tu anuncio ha sido baneado",
+            {
+              name: `${ad.user.firstname} ${ad.user.lastname}`,
+              adTitle: ad.name,
+              reason: reasonForBan ?? undefined,
+            }
+          );
+        } else {
+          console.error("User data not available for ban email");
+        }
+      } catch (emailError) {
+        console.error("Error sending ban email:", emailError);
+      }
+
       return {
         success: true,
-        message: "Advertisement deactivated successfully",
+        message: "Advertisement banned successfully",
         data: { id: adId },
       };
     } catch (error) {
-      console.error("Error in deactivateAd:", error);
+      console.error("Error in deactivateAd (ban):", error);
       throw error;
     }
   },

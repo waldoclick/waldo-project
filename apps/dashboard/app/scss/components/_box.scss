@@ -1,0 +1,74 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.box {
+  // No estilos base: los estilos van por modificadores
+
+  &--information {
+    // Todas las reglas del bloque información viven en el modificador
+    border: 1px solid #e5e5e5; // mismo color que otros bordes
+    border-radius: 8px;
+    background: transparent;
+
+    &__title {
+      padding: 12px 16px;
+      font-weight: 600;
+      border-bottom: 1px solid #e5e5e5; // mismo color que otros bordes
+
+      h3 {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      h3 svg {
+        width: 16px;
+        height: 16px;
+      }
+    }
+
+    &__description {
+      padding: 16px;
+      display: grid;
+      gap: 16px;
+
+      &--cols-1 {
+        grid-template-columns: 1fr;
+      }
+
+      &--cols-2 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      &--cols-3 {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+  }
+
+  &--content {
+    padding: 50px 0;
+    &__container {
+      @extend .container;
+      display: flex;
+      gap: 30px;
+    }
+
+    &__content {
+      flex: 1;
+      min-width: 0; // permitir que el contenido encoja correctamente
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    &__sidebar {
+      width: 320px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+  }
+}

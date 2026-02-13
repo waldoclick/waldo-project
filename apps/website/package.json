@@ -11,7 +11,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "build": "NODE_OPTIONS='--max-old-space-size=3072' nuxt build",
-    "dev": "nuxt dev",
+    "dev": "nuxt dev --port 3000",
     "start": "pm2 start ecosystem.config.cjs",
     "production": "yarn build && yarn start",
     "generate": "nuxt generate",

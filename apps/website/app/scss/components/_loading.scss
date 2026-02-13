@@ -1,0 +1,18 @@
+@use "../abstracts/animations";
+@use "../abstracts/variables" as *;
+
+.loading {
+  &--default {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+
+    &__icon {
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      color: $light_peach;
+    }
+  }
+}

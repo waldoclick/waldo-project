@@ -1,0 +1,11 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+
+.vel-modal {
+  background-color: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(6px);
+}
+
+.vel-img {
+  box-shadow: none;
+}

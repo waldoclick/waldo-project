@@ -38,6 +38,14 @@ globs: ["apps/website/**"]
 - Use `@nuxt/eslint` for linting (configured in the project)
 - Use Vitest for testing (configured with `@nuxt/test-utils`)
 - Use Sass for styling (configured with sass-loader)
+- **CSS and BEM Methodology:**
+  - Follow BEM (Block Element Modifier) naming convention for CSS classes
+  - CSS files are organized as one file per component (e.g., `HeaderDefault` uses `header.scss`, not `header-default.scss`)
+  - Component CSS files should be named after the base component class (e.g., `header.scss` for `.header`, `box.scss` for `.box`)
+  - Do NOT create new CSS files unless the component doesn't exist
+  - Do NOT add shadows (`box-shadow`) or zoom effects (`transform: scale`) to elements
+  - Keep transitions simple and avoid scale transforms on hover
+  - **SCSS nesting must reflect HTML hierarchy:** If an element is a child of another element in the HTML, it must be nested inside in SCSS. If elements are siblings in the HTML, they must be at the same nesting level in SCSS (e.g., `&__item` and `&__content` as siblings, but `&__item { &__content { } }` if content is inside item)
 - Always use English for code, comments, and documentation
 - Use camelCase for variables and functions
 - Use PascalCase for components and composables

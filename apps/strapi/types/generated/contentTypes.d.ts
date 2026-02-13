@@ -564,6 +564,10 @@ export interface ApiAdAd extends Struct.CollectionTypeSchema {
     >;
     address: Schema.Attribute.String;
     address_number: Schema.Attribute.String;
+    banned: Schema.Attribute.Boolean &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<false>;
+    banned_at: Schema.Attribute.DateTime;
     category: Schema.Attribute.Relation<"oneToOne", "api::category.category">;
     commune: Schema.Attribute.Relation<"oneToOne", "api::commune.commune">;
     condition: Schema.Attribute.Relation<
@@ -595,10 +599,12 @@ export interface ApiAdAd extends Struct.CollectionTypeSchema {
     phone: Schema.Attribute.String;
     price: Schema.Attribute.BigInteger & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
+    reason_for_ban: Schema.Attribute.Text;
     reason_for_rejection: Schema.Attribute.Text;
     rejected: Schema.Attribute.Boolean &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<false>;
+    rejected_at: Schema.Attribute.DateTime;
     remaining_days: Schema.Attribute.Integer &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<0>;

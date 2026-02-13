@@ -107,6 +107,9 @@ export default (
               where: { id: loginResponse.user.id },
               populate: {
                 role: true,
+                commune: { populate: ["region"] },
+                ad_reservations: { populate: ["ad"] },
+                ad_featured_reservations: { populate: ["ad"] },
               },
             });
 
@@ -126,6 +129,44 @@ export default (
             error: error.message,
           });
           // Don't throw error to prevent login failure
+        }
+      }
+    }
+
+    // Detect /users/me endpoint and add role to response
+    if (path === "/api/users/me" && response.status === 200 && ctx.state.user) {
+      const userResponse = response.body as User;
+      if (userResponse && userResponse.id) {
+        try {
+          // Fetch user with role populated
+          const userWithRole = await strapi
+            .query("plugin::users-permissions.user")
+            .findOne({
+              where: { id: userResponse.id },
+              populate: {
+                role: true,
+                commune: { populate: ["region"] },
+                ad_reservations: { populate: ["ad"] },
+                ad_featured_reservations: { populate: ["ad"] },
+              },
+            });
+
+          // Replace the response with the enhanced version
+          if (userWithRole) {
+            // Remove sensitive data
+            delete userWithRole.password;
+            delete userWithRole.resetPasswordToken;
+            delete userWithRole.confirmationToken;
+
+            // Update the response
+            response.body = userWithRole;
+          }
+        } catch (error) {
+          logger.error("Failed to add role to /users/me response", {
+            userId: userResponse.id,
+            error: error.message,
+          });
+          // Don't throw error to prevent request failure
         }
       }
     }

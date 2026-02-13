@@ -1,0 +1,101 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
+@use "../base/container";
+
+.layout {
+  &--about,
+  &--account {
+    background-color: white;
+    overflow: hidden;
+
+    &__container {
+      @extend .container;
+      display: flex;
+      gap: 40px;
+    }
+
+    &__sidebar {
+      width: 350px;
+      padding: 50px;
+      position: relative;
+
+      @include screen-large {
+        display: none;
+      }
+
+      > * {
+        position: relative;
+        z-index: 1;
+      }
+
+      &:before {
+        content: "";
+        display: block;
+        width: 200%;
+        height: 100%;
+        background-color: $ghost_white;
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 0;
+      }
+    }
+
+    &__content {
+      flex: 1;
+      position: relative;
+      z-index: 1;
+    }
+  }
+
+  &--dashboard {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+
+    &__menu {
+      width: 350px;
+      background-color: #ffffff;
+      flex-shrink: 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      z-index: 20;
+    }
+
+    &__content {
+      flex: 1;
+      background-color: #fcfcfc;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin-left: 350px; // Espacio para el menú fijo
+    }
+
+    &__main {
+      flex: 1;
+      padding-top: 64px; // Espacio para el header fijo (coincide con altura del logo)
+      min-height: calc(100vh - 64px);
+    }
+  }
+
+  &--content {
+    &__container {
+      @extend .container;
+      display: flex;
+      gap: 24px;
+    }
+
+    &__content {
+      flex: 1;
+      min-width: 0; // allow content to shrink properly
+    }
+
+    &__sidebar {
+      width: 320px;
+      flex-shrink: 0;
+    }
+  }
+}
