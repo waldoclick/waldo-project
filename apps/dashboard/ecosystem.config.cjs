@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "waldo-website",
+      name: "waldo-dashboard",
       script: "./.output/server/index.mjs",
       env: {
         NODE_ENV: "production",
