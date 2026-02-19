@@ -67,7 +67,7 @@ export default defineNuxtConfig({
           "data:",
           "blob:",
           "https:",
-          process.env.BASE_URL || "http://localhost:3000",
+          process.env.BASE_URL || "http://localhost:3001",
           process.env.API_URL || "http://localhost:1337",
           "https://www.google-analytics.com",
         ],
@@ -77,7 +77,7 @@ export default defineNuxtConfig({
         "connect-src": [
           "'self'",
           "https:",
-          process.env.BASE_URL || "http://localhost:3000",
+          process.env.BASE_URL || "http://localhost:3001",
           process.env.API_URL || "http://localhost:1337",
           "https://*.logrocket.io",
           "https://*.lr-ingest.io",
