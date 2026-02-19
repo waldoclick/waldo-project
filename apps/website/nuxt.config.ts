@@ -44,6 +44,7 @@ export default defineNuxtConfig({
       headers: {
         contentSecurityPolicy: {
           "default-src": ["'self'"],
+
           "script-src": [
             "'self'",
             "'unsafe-inline'",
@@ -63,11 +64,9 @@ export default defineNuxtConfig({
             "https://*.sentry.io",
             "https://*.ingest.sentry.io",
           ],
-          "style-src": [
-            "'self'",
-            "'unsafe-inline'",
-            // Removed external Google Fonts since we serve locally
-          ],
+
+          "style-src": ["'self'", "'unsafe-inline'"],
+
           "img-src": [
             "'self'",
             "data:",
@@ -77,7 +76,9 @@ export default defineNuxtConfig({
             process.env.API_URL || "http://localhost:1337",
             "https://www.google-analytics.com",
           ],
+
           "font-src": ["'self'"],
+
           "connect-src": [
             "'self'",
             "https:",
@@ -89,12 +90,14 @@ export default defineNuxtConfig({
             "https://*.ingest.sentry.io",
             "https://www.google-analytics.com",
           ],
+
           "frame-src": [
             "https://accounts.google.com",
             "https://www.google.com",
             "https://www.gstatic.com",
             "https://www.googletagmanager.com",
           ],
+
           "child-src": ["'self'", "blob:"],
           "worker-src": ["'self'", "blob:"],
           "object-src": ["'none'"],
