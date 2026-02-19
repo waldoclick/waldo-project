@@ -12,6 +12,14 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
     return;
   }
 
+  const config = useRuntimeConfig();
+  if (config.public.devMode) {
+    const devCookie = useCookie("devmode");
+    if (devCookie?.value && devCookie.value.length > 0) {
+      return;
+    }
+  }
+
   const user = useStrapiUser();
   if (!user.value) {
     useCookie("redirect", { path: "/" }).value = to.fullPath;
