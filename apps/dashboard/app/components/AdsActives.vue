@@ -43,13 +43,25 @@
             </TableCell>
             <TableCell>{{ formatDate(ad.createdAt) }}</TableCell>
             <TableCell align="right">
-              <button
-                class="ads--actives__action"
-                title="Ver anuncio"
-                @click="handleViewAd(ad.id)"
-              >
-                <Eye class="ads--actives__action__icon" />
-              </button>
+              <div class="ads--actives__actions">
+                <button
+                  class="ads--actives__action"
+                  title="Ver anuncio"
+                  @click="handleViewAd(ad.id)"
+                >
+                  <Eye class="ads--actives__action__icon" />
+                </button>
+                <a
+                  v-if="ad.slug"
+                  :href="`${websiteUrl}/anuncios/${ad.slug}`"
+                  class="ads--actives__action"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="Ver en web"
+                >
+                  <ExternalLink class="ads--actives__action__icon" />
+                </a>
+              </div>
             </TableCell>
           </TableRow>
         </TableDefault>
@@ -83,7 +95,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
-import { Eye } from "lucide-vue-next";
+import { Eye, ExternalLink } from "lucide-vue-next";
 import { useSettingsStore } from "@/stores/settings.store";
 import SearchDefault from "@/components/SearchDefault.vue";
 import FilterDefault from "@/components/FilterDefault.vue";
@@ -95,10 +107,14 @@ import PaginationDefault from "@/components/PaginationDefault.vue";
 interface Ad {
   id: number;
   name: string;
+  slug?: string;
   createdAt: string;
   user?: { username: string };
   gallery?: Array<{ url: string; formats?: any }>;
 }
+
+const { public: publicConfig } = useRuntimeConfig();
+const websiteUrl = publicConfig.websiteUrl as string;
 
 // Store de settings
 const settingsStore = useSettingsStore();
@@ -250,3 +266,12 @@ onMounted(() => {
   fetchActiveAds();
 });
 </script>
+
+<style scoped>
+.ads--actives__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+</style>

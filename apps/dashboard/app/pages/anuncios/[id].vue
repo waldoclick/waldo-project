@@ -120,10 +120,19 @@
         >
           Rechazar
         </button>
+        <a
+          v-if="isActive && item?.slug"
+          :href="`${websiteUrl}/anuncios/${item.slug}`"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn btn--primary btn--block"
+        >
+          Ver anuncio
+        </a>
         <button
           v-if="isActive"
           type="button"
-          class="btn btn--primary btn--block"
+          class="btn btn--secondary btn--block"
           @click="openBanLightbox"
         >
           Banear
@@ -192,6 +201,9 @@ definePageMeta({
 
 const route = useRoute();
 const item = ref<any>(null);
+const { public: publicConfig } = useRuntimeConfig();
+const websiteUrl =
+  (publicConfig.websiteUrl as string) || "http://localhost:3000";
 const strapi = useStrapi();
 const strapiClient = useStrapiClient();
 const { Swal } = useSweetAlert2();
