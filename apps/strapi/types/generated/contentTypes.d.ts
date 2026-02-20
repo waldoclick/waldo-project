@@ -554,6 +554,11 @@ export interface ApiAdAd extends Struct.CollectionTypeSchema {
     active: Schema.Attribute.Boolean &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<false>;
+    actived_at: Schema.Attribute.DateTime;
+    actived_by: Schema.Attribute.Relation<
+      "oneToOne",
+      "plugin::users-permissions.user"
+    >;
     ad_featured_reservation: Schema.Attribute.Relation<
       "oneToOne",
       "api::ad-featured-reservation.ad-featured-reservation"
@@ -608,11 +613,6 @@ export interface ApiAdAd extends Struct.CollectionTypeSchema {
     remaining_days: Schema.Attribute.Integer &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<0>;
-    reviewed: Schema.Attribute.Boolean;
-    reviewed_by: Schema.Attribute.Relation<
-      "oneToOne",
-      "plugin::users-permissions.user"
-    >;
     serial_number: Schema.Attribute.String;
     slug: Schema.Attribute.UID<"name"> & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;

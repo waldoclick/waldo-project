@@ -179,14 +179,25 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
       status = "rejected";
     } else if (ad.banned) {
       status = "banned";
-    } else if (ad.active && ad.remaining_days > 0) {
+    } else if (
+      ad.active &&
+      !ad.banned &&
+      !ad.rejected &&
+      ad.remaining_days > 0
+    ) {
       status = "active";
-    } else if (!ad.active && ad.remaining_days === 0) {
+    } else if (
+      !ad.active &&
+      !ad.banned &&
+      !ad.rejected &&
+      ad.remaining_days === 0
+    ) {
       status = "archived";
     } else if (
       !ad.active &&
-      ad.remaining_days > 0 &&
-      ad.remaining_days === ad.duration_days
+      !ad.banned &&
+      !ad.rejected &&
+      ad.remaining_days > 0
     ) {
       status = "pending";
     }
@@ -221,14 +232,25 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
         status = "rejected";
       } else if (ad.banned) {
         status = "banned";
-      } else if (ad.active && ad.remaining_days > 0) {
+      } else if (
+        ad.active &&
+        !ad.banned &&
+        !ad.rejected &&
+        ad.remaining_days > 0
+      ) {
         status = "active";
-      } else if (!ad.active && ad.remaining_days === 0) {
+      } else if (
+        !ad.active &&
+        !ad.banned &&
+        !ad.rejected &&
+        ad.remaining_days === 0
+      ) {
         status = "archived";
       } else if (
         !ad.active &&
-        ad.remaining_days > 0 &&
-        ad.remaining_days === ad.duration_days
+        !ad.banned &&
+        !ad.rejected &&
+        ad.remaining_days > 0
       ) {
         status = "pending";
       }
@@ -270,11 +292,10 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
    */
   async activeAds(options: any = {}) {
     const defaultFilters = {
-      $and: [
-        { active: { $eq: true } },
-        { remaining_days: { $gt: 0 } },
-        { rejected: { $eq: false } },
-      ],
+      active: { $eq: true },
+      banned: { $eq: false },
+      rejected: { $eq: false },
+      remaining_days: { $gt: 0 },
     };
 
     return getAdvertisements(options, defaultFilters, "active");
@@ -302,13 +323,10 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
    */
   async pendingAds(options: any = {}) {
     const defaultFilters = {
-      $and: [
-        { active: { $eq: false } },
-        { remaining_days: { $gt: 0 } },
-        { duration_days: { $gt: 0 } },
-        { rejected: { $eq: false } },
-        { banned: { $eq: false } },
-      ],
+      active: { $eq: false },
+      banned: { $eq: false },
+      rejected: { $eq: false },
+      remaining_days: { $gt: 0 },
     };
 
     return getAdvertisements(options, defaultFilters, "pending");
@@ -336,12 +354,10 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
    */
   async archivedAds(options: any = {}) {
     const defaultFilters = {
-      $and: [
-        { active: { $eq: false } },
-        { remaining_days: { $eq: 0 } },
-        { rejected: { $eq: false } },
-        { banned: { $eq: false } },
-      ],
+      active: { $eq: false },
+      banned: { $eq: false },
+      rejected: { $eq: false },
+      remaining_days: { $eq: 0 },
     };
 
     return getAdvertisements(options, defaultFilters, "archived");
@@ -420,13 +436,11 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
       }
 
       // Validate that the advertisement is pending approval
-      // A pending ad must meet all these criteria:
       const isPending =
-        ad.active === false && // Not yet active
-        ad.remaining_days === ad.duration_days && // Hasn't started running
-        ad.remaining_days > 0 && // Has remaining days
-        ad.duration_days > 0 && // Has duration days
-        ad.rejected === false; // Not rejected
+        ad.active === false &&
+        ad.banned === false &&
+        ad.rejected === false &&
+        ad.remaining_days > 0;
 
       if (!isPending) {
         throw new Error("Advertisement is not pending approval");
@@ -437,8 +451,8 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
         where: { id: adId },
         data: {
           active: true, // Activate the ad
-          reviewed: true,
-          reviewed_by: userId,
+          actived_at: new Date(),
+          actived_by: userId,
         },
       });
 
@@ -467,7 +481,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
       return {
         success: true,
         message: "Advertisement approved successfully",
-        data: { id: adId, reviewed_by: userId },
+        data: { id: adId, actived_by: userId },
       };
     } catch (error) {
       console.error("Error in approveAd:", error);
@@ -511,13 +525,11 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
       }
 
       // Validate that the advertisement is pending approval
-      // A pending ad must meet all these criteria:
       const isPending =
-        ad.active === false && // Not yet active
-        ad.remaining_days === ad.duration_days && // Hasn't started running
-        ad.remaining_days > 0 && // Has remaining days
-        ad.duration_days > 0 && // Has duration days
-        ad.rejected === false; // Not rejected
+        ad.active === false &&
+        ad.banned === false &&
+        ad.rejected === false &&
+        ad.remaining_days > 0;
 
       if (!isPending) {
         throw new Error("Advertisement is not pending approval");
@@ -535,8 +547,6 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
           rejected: true, // Mark as rejected
           reason_for_rejection: rejectionReason, // Record rejection reason
           rejected_at: new Date(), // Record when it was rejected
-          reviewed: true,
-          reviewed_by: userId,
         },
       });
 
@@ -567,7 +577,6 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
         message: "Advertisement rejected successfully",
         data: {
           id: adId,
-          reviewed_by: userId,
           reason_for_rejection: rejectionReason,
         },
       };
@@ -628,8 +637,6 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
           banned: true,
           banned_at: new Date(),
           reason_for_ban: reasonForBan ?? null,
-          reviewed: true,
-          reviewed_by: userId,
         },
       });
 

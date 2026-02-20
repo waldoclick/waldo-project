@@ -350,6 +350,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
       switch (status) {
         case "published":
           filterClause.active = true;
+          filterClause.banned = false;
           filterClause.rejected = false;
           filterClause.remaining_days = { $gt: 0 };
           break;
@@ -376,6 +377,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
           break;
         case "expired":
           filterClause.active = false;
+          filterClause.banned = false;
           filterClause.rejected = false;
           filterClause.remaining_days = 0;
           break;

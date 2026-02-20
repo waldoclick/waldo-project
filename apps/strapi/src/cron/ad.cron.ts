@@ -58,9 +58,12 @@ export class AdService {
           // Restar uno al valor de remaining_days del anuncio
           const updatedRemainingDays = ad.remaining_days - 1;
 
-          // Guardar los cambios en la base de datos
+          // Guardar los cambios en la base de datos (si llega a 0, desactivar el aviso)
           await strapi.entityService.update("api::ad.ad", ad.id, {
-            data: { remaining_days: updatedRemainingDays },
+            data: {
+              remaining_days: updatedRemainingDays,
+              ...(updatedRemainingDays === 0 && { active: false }),
+            },
           });
 
           // Registrar la operación en la colección remainings

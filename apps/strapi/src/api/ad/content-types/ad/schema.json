@@ -91,11 +91,6 @@
       "type": "biginteger",
       "required": true
     },
-    "active": {
-      "type": "boolean",
-      "required": true,
-      "default": false
-    },
     "rejected": {
       "type": "boolean",
       "required": true,
@@ -159,10 +154,15 @@
       "required": false,
       "default": false
     },
-    "reviewed": {
-      "type": "boolean"
+    "active": {
+      "type": "boolean",
+      "required": true,
+      "default": false
     },
-    "reviewed_by": {
+    "actived_at": {
+      "type": "datetime"
+    },
+    "actived_by": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "plugin::users-permissions.user"
