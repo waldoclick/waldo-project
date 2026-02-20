@@ -251,7 +251,7 @@ export default defineNuxtConfig({
         ? Number.parseInt(process.env.SESSION_MAX_AGE)
         : 604800, // Valor por defecto de 1 semana
     },
-    cookieName: "strapi_jwt",
+    cookieName: "waldo_jwt",
     auth: {
       populate: [
         "commune",

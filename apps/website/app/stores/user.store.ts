@@ -96,7 +96,7 @@ export const useUserStore = defineStore("user", () => {
   const updateUserProfile = async (userId: string, userData: any) => {
     try {
       // Obtener el token JWT
-      const token = useCookie("strapi_jwt").value;
+      const token = useCookie("waldo_jwt").value;
 
       // Verificar si los datos vienen envueltos en 'data' y extraerlos
       const dataToSend = userData.data ? userData.data : userData;
@@ -125,7 +125,7 @@ export const useUserStore = defineStore("user", () => {
   const deactivateAd = async (adId: number) => {
     try {
       // Obtener el token JWT
-      const token = useCookie("strapi_jwt").value;
+      const token = useCookie("waldo_jwt").value;
 
       // Usar la URL correcta según el entorno
       const apiUrl =
