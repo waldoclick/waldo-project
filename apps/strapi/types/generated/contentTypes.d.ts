@@ -573,6 +573,10 @@ export interface ApiAdAd extends Struct.CollectionTypeSchema {
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<false>;
     banned_at: Schema.Attribute.DateTime;
+    banned_by: Schema.Attribute.Relation<
+      "oneToOne",
+      "plugin::users-permissions.user"
+    >;
     category: Schema.Attribute.Relation<"oneToOne", "api::category.category">;
     commune: Schema.Attribute.Relation<"oneToOne", "api::commune.commune">;
     condition: Schema.Attribute.Relation<
@@ -610,6 +614,10 @@ export interface ApiAdAd extends Struct.CollectionTypeSchema {
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<false>;
     rejected_at: Schema.Attribute.DateTime;
+    rejected_by: Schema.Attribute.Relation<
+      "oneToOne",
+      "plugin::users-permissions.user"
+    >;
     remaining_days: Schema.Attribute.Integer &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<0>;

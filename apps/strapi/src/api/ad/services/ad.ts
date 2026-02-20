@@ -547,6 +547,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
           rejected: true, // Mark as rejected
           reason_for_rejection: rejectionReason, // Record rejection reason
           rejected_at: new Date(), // Record when it was rejected
+          rejected_by: userId,
         },
       });
 
@@ -637,6 +638,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
           banned: true,
           banned_at: new Date(),
           reason_for_ban: reasonForBan ?? null,
+          banned_by: userId,
         },
       });
 
