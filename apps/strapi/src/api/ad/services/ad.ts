@@ -327,6 +327,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
       banned: { $eq: false },
       rejected: { $eq: false },
       remaining_days: { $gt: 0 },
+      ad_reservation: { $ne: null },
     };
 
     return getAdvertisements(options, defaultFilters, "pending");
