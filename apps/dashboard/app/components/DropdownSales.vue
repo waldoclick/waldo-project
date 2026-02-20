@@ -1,35 +1,35 @@
 <template>
-  <div ref="menuRef" class="header-icons__dropdown-wrap">
+  <div ref="dropdownRef" class="dropdown dropdown--sales">
     <button
       ref="triggerRef"
       type="button"
-      class="header-icons__trigger"
+      class="dropdown--sales__trigger"
       title="Últimas órdenes"
       @click="open = !open"
     >
-      <ShoppingBag :size="20" class="header-icons__trigger-icon" />
+      <ShoppingBag :size="20" class="dropdown--sales__trigger__icon" />
     </button>
-    <div
-      v-if="open"
-      ref="panelRef"
-      class="header-icons__panel header-icons__panel--list"
-    >
-      <div class="header-icons__panel-head">
-        <h3 class="header-icons__panel-title">Últimas órdenes</h3>
+    <div v-if="open" ref="panelRef" class="dropdown--sales__panel">
+      <div class="dropdown--sales__panel__head">
+        <h3 class="dropdown--sales__panel__title">Últimas órdenes</h3>
         <NuxtLink
           to="/ordenes"
-          class="header-icons__panel-link"
+          class="dropdown--sales__panel__link"
           @click="open = false"
         >
           Ver todas
-          <ExternalLink :size="12" class="header-icons__panel-link-icon" />
+          <ExternalLink :size="12" class="dropdown--sales__panel__link__icon" />
         </NuxtLink>
       </div>
-      <div class="header-icons__panel-body">
-        <p v-if="loading" class="header-icons__panel-message">Cargando...</p>
+      <div
+        class="dropdown--sales__panel__body dropdown--sales__panel__body--no-scroll"
+      >
+        <p v-if="loading" class="dropdown--sales__panel__message">
+          Cargando...
+        </p>
         <p
           v-else-if="!loading && orders.length === 0"
-          class="header-icons__panel-message"
+          class="dropdown--sales__panel__message"
         >
           No hay órdenes
         </p>
@@ -37,22 +37,22 @@
           v-for="(order, index) in orders"
           :key="order.id"
           :to="`/ordenes/${order.id}`"
-          class="header-icons__list-item"
+          class="dropdown--sales__list__item"
           :class="{
-            'header-icons__list-item--border': index < orders.length - 1,
+            'dropdown--sales__list__item--border': index < orders.length - 1,
           }"
           @click="open = false"
         >
-          <div class="header-icons__list-item-main">
-            <span class="header-icons__list-item-title">
+          <div class="dropdown--sales__list__item__main">
+            <span class="dropdown--sales__list__item__title">
               {{ order.buy_order || `Orden #${order.id}` }}
             </span>
-            <span class="header-icons__list-item-meta">
+            <span class="dropdown--sales__list__item__meta">
               {{ order.user?.username || order.user?.email || "Usuario" }} •
               {{ formatTime(order.createdAt) }}
             </span>
           </div>
-          <span class="header-icons__list-item-amount">
+          <span class="dropdown--sales__list__item__amount">
             {{ formatCurrency(order.amount) }}
           </span>
         </NuxtLink>
@@ -78,7 +78,7 @@ const strapi = useStrapi();
 const open = ref(false);
 const loading = ref(true);
 const orders = ref<Order[]>([]);
-const menuRef = ref<HTMLElement | null>(null);
+const dropdownRef = ref<HTMLElement | null>(null);
 const triggerRef = ref<HTMLElement | null>(null);
 const panelRef = ref<HTMLElement | null>(null);
 
@@ -118,8 +118,8 @@ const formatTime = (dateString: string) => {
 
 const handleClickOutside = (event: MouseEvent) => {
   if (
-    menuRef.value &&
-    !menuRef.value.contains(event.target as Node) &&
+    dropdownRef.value &&
+    !dropdownRef.value.contains(event.target as Node) &&
     open.value
   ) {
     open.value = false;

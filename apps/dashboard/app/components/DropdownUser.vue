@@ -1,46 +1,46 @@
 <template>
-  <div ref="menuRef" class="menu menu--user">
+  <div ref="dropdownRef" class="dropdown dropdown--user">
     <button
       title="Menú de usuario"
       :class="{ 'is-open': isOpen }"
-      class="menu--user__button"
-      @click="menuOpen"
+      class="dropdown--user__button"
+      @click="toggleOpen"
     >
-      <div class="menu--user__button__avatar">
+      <div class="dropdown--user__button__avatar">
         <AvatarDefault />
       </div>
 
-      <div class="menu--user__button__greetings">
+      <div class="dropdown--user__button__greetings">
         Hola
-        <div class="menu--user__button__greetings__name">
+        <div class="dropdown--user__button__greetings__name">
           {{ user?.firstname }}
         </div>
       </div>
 
-      <div class="menu--user__button__icon" @click.stop="menuOpen">
+      <div class="dropdown--user__button__icon" @click.stop="toggleOpen">
         <IconMenu v-if="!isOpen" :size="24" class="menu-open" />
         <IconX v-else :size="24" class="menu-close" />
       </div>
     </button>
 
-    <nav class="menu--user__menu" :class="{ 'is-open': isOpen }">
-      <ul class="menu--user__menu__links">
-        <li @click="menuOpen">
+    <nav class="dropdown--user__menu" :class="{ 'is-open': isOpen }">
+      <ul class="dropdown--user__menu__links">
+        <li @click="toggleOpen">
           <NuxtLink to="/cuenta/perfil" title="Mi perfil">Mi perfil</NuxtLink>
         </li>
-        <li @click="menuOpen">
+        <li @click="toggleOpen">
           <NuxtLink to="/cuenta/perfil/editar" title="Editar perfil">
             <span>Editar perfil</span>
           </NuxtLink>
         </li>
-        <li @click="menuOpen">
+        <li @click="toggleOpen">
           <NuxtLink to="/cuenta/cambiar-contrasena" title="Cambiar contraseña">
             <span>Cambiar contraseña</span>
           </NuxtLink>
         </li>
       </ul>
-      <ul class="menu--user__menu__links">
-        <li @click="menuOpen">
+      <ul class="dropdown--user__menu__links">
+        <li @click="toggleOpen">
           <button
             title="Cerrar sesión"
             type="button"
@@ -63,30 +63,26 @@ import { Menu as IconMenu, X as IconX } from "lucide-vue-next";
 
 const { Swal } = useSweetAlert2();
 
-// Obtener el usuario de Strapi
 const user = useStrapiUser();
 const { logout } = useStrapiAuth();
 
-// Estado del menú y referencia
 const isOpen = ref(false);
-const menuRef = ref<HTMLElement | null>(null);
+const dropdownRef = ref<HTMLElement | null>(null);
 
-// Métodos del componente
-const menuOpen = () => {
+const toggleOpen = () => {
   isOpen.value = !isOpen.value;
 };
 
 const handleClickOutside = (event: MouseEvent) => {
   if (
-    menuRef.value &&
-    !menuRef.value.contains(event.target as Node) &&
+    dropdownRef.value &&
+    !dropdownRef.value.contains(event.target as Node) &&
     isOpen.value
   ) {
     isOpen.value = false;
   }
 };
 
-// Event listeners
 onMounted(() => {
   document.addEventListener("click", handleClickOutside);
 });

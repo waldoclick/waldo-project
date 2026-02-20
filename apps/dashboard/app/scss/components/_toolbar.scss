@@ -1,0 +1,35 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+
+.toolbar {
+  &--default {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    &__trigger {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      color: #6b7280;
+      background: transparent;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition:
+        color 0.15s,
+        background-color 0.15s;
+
+      &:hover {
+        color: #374151;
+        background-color: #f3f4f6;
+      }
+
+      &__icon {
+        flex-shrink: 0;
+      }
+    }
+  }
+}

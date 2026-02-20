@@ -7,8 +7,8 @@
     }"
   >
     <div class="header--default__right">
-      <HeaderIcons v-if="user" />
-      <MenuUser v-if="user" />
+      <ToolbarDefault v-if="user" />
+      <DropdownUser v-if="user" />
     </div>
   </header>
 </template>
@@ -16,8 +16,8 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import { useScroll } from "@vueuse/core";
-import HeaderIcons from "@/components/HeaderIcons.vue";
-import MenuUser from "@/components/MenuUser.vue";
+import ToolbarDefault from "@/components/ToolbarDefault.vue";
+import DropdownUser from "@/components/DropdownUser.vue";
 
 const header = ref<HTMLElement | null>(null);
 

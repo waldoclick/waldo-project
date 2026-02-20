@@ -1,51 +1,52 @@
 <template>
-  <div ref="menuRef" class="header-icons__dropdown-wrap">
+  <div ref="dropdownRef" class="dropdown dropdown--pendings">
     <button
       ref="triggerRef"
       type="button"
-      class="header-icons__trigger header-icons__trigger--badge"
+      class="dropdown--pendings__trigger dropdown--pendings__trigger--badge"
       title="Anuncios pendientes"
       @click="open = !open"
     >
-      <Bell :size="20" class="header-icons__trigger-icon" />
+      <Bell :size="20" class="dropdown--pendings__trigger__icon" />
       <span
         v-if="pendingCount > 0"
-        class="header-icons__badge"
+        class="dropdown--pendings__badge"
         :class="{
-          'header-icons__badge--dot': pendingCount > 10,
+          'dropdown--pendings__badge--dot': pendingCount > 10,
         }"
       >
         <template v-if="pendingCount <= 10">{{ pendingCount }}</template>
-        <Circle v-else :size="8" class="header-icons__badge-dot" />
+        <Circle v-else :size="8" class="dropdown--pendings__badge__dot" />
       </span>
     </button>
-    <div
-      v-if="open"
-      ref="panelRef"
-      class="header-icons__panel header-icons__panel--list"
-    >
-      <div class="header-icons__panel-head">
-        <h3 class="header-icons__panel-title">Anuncios Pendientes</h3>
+    <div v-if="open" ref="panelRef" class="dropdown--pendings__panel">
+      <div class="dropdown--pendings__panel__head">
+        <h3 class="dropdown--pendings__panel__title">Anuncios Pendientes</h3>
         <NuxtLink
           to="/anuncios/pendientes"
-          class="header-icons__panel-link"
+          class="dropdown--pendings__panel__link"
           @click="open = false"
         >
           Ver todas
-          <ExternalLink :size="12" class="header-icons__panel-link-icon" />
+          <ExternalLink
+            :size="12"
+            class="dropdown--pendings__panel__link__icon"
+          />
         </NuxtLink>
       </div>
-      <div class="header-icons__panel-body">
-        <p v-if="loading" class="header-icons__panel-message">Cargando...</p>
+      <div class="dropdown--pendings__panel__body">
+        <p v-if="loading" class="dropdown--pendings__panel__message">
+          Cargando...
+        </p>
         <div
           v-else-if="!loading && ads.length === 0"
-          class="header-icons__panel-empty"
+          class="dropdown--pendings__panel__empty"
         >
-          <span class="header-icons__panel-empty-icon">
+          <span class="dropdown--pendings__panel__empty__icon">
             <CheckCircle2 :size="24" />
           </span>
-          <p class="header-icons__panel-empty-title">Todo al día</p>
-          <p class="header-icons__panel-empty-text">
+          <p class="dropdown--pendings__panel__empty__title">Todo al día</p>
+          <p class="dropdown--pendings__panel__empty__text">
             No hay anuncios pendientes de revisión
           </p>
         </div>
@@ -53,15 +54,17 @@
           v-for="(ad, index) in ads"
           :key="ad.id"
           :to="`/anuncios/${ad.id}`"
-          class="header-icons__list-item"
+          class="dropdown--pendings__list__item"
           :class="{
-            'header-icons__list-item--border': index < ads.length - 1,
+            'dropdown--pendings__list__item--border': index < ads.length - 1,
           }"
           @click="open = false"
         >
-          <div class="header-icons__list-item-main">
-            <span class="header-icons__list-item-title">{{ ad.name }}</span>
-            <span class="header-icons__list-item-meta">
+          <div class="dropdown--pendings__list__item__main">
+            <span class="dropdown--pendings__list__item__title">{{
+              ad.name
+            }}</span>
+            <span class="dropdown--pendings__list__item__meta">
               {{ ad.user?.username || ad.user?.email || "Usuario" }} •
               {{ formatTime(ad.createdAt) }}
             </span>
@@ -89,11 +92,11 @@ const open = ref(false);
 const loading = ref(true);
 const ads = ref<Ad[]>([]);
 const pendingCount = ref(0);
-const menuRef = ref<HTMLElement | null>(null);
+const dropdownRef = ref<HTMLElement | null>(null);
 const triggerRef = ref<HTMLElement | null>(null);
 const panelRef = ref<HTMLElement | null>(null);
 
-const fetchPendingAds = async () => {
+const fetchPendings = async () => {
   try {
     loading.value = true;
     const res = (await strapi.find("ads/pendings", {
@@ -124,8 +127,8 @@ const formatTime = (dateString: string) => {
 
 const handleClickOutside = (event: MouseEvent) => {
   if (
-    menuRef.value &&
-    !menuRef.value.contains(event.target as Node) &&
+    dropdownRef.value &&
+    !dropdownRef.value.contains(event.target as Node) &&
     open.value
   ) {
     open.value = false;
@@ -133,7 +136,7 @@ const handleClickOutside = (event: MouseEvent) => {
 };
 
 onMounted(() => {
-  fetchPendingAds();
+  fetchPendings();
   document.addEventListener("click", handleClickOutside);
 });
 

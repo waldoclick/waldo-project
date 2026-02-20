@@ -1,39 +1,35 @@
 <template>
-  <div ref="menuRef" class="header-icons__dropdown-wrap">
+  <div ref="dropdownRef" class="dropdown dropdown--apps">
     <button
       ref="triggerRef"
       type="button"
-      class="header-icons__trigger"
+      class="dropdown--apps__trigger"
       title="Servicios"
       @click="open = !open"
     >
-      <Grid3X3 :size="20" class="header-icons__trigger-icon" />
+      <Grid3X3 :size="20" class="dropdown--apps__trigger__icon" />
     </button>
-    <div
-      v-if="open"
-      ref="panelRef"
-      class="header-icons__panel header-icons__panel--services"
-    >
-      <h3 class="header-icons__panel-title">Servicios</h3>
-      <div class="header-icons__panel-divider" />
-      <div class="header-icons__services-grid">
+    <div v-if="open" ref="panelRef" class="dropdown--apps__panel">
+      <h3 class="dropdown--apps__panel__title">Servicios</h3>
+      <div class="dropdown--apps__panel__divider" />
+      <div class="dropdown--apps__grid">
         <a
           v-for="service in services"
           :key="service.name"
           :href="service.url"
           target="_blank"
           rel="noopener noreferrer"
-          class="header-icons__service-item"
+          class="dropdown--apps__item"
           @click="open = false"
         >
-          <span class="header-icons__service-icon">
+          <span class="dropdown--apps__item__icon">
             <component
               :is="lucideIcons[service.icon]"
               :size="32"
-              class="header-icons__service-icon-lucide"
+              class="dropdown--apps__item__icon__svg"
             />
           </span>
-          <span class="header-icons__service-label">{{ service.name }}</span>
+          <span class="dropdown--apps__item__label">{{ service.name }}</span>
         </a>
       </div>
     </div>
@@ -74,14 +70,14 @@ const lucideIcons: Record<string, any> = {
 };
 
 const open = ref(false);
-const menuRef = ref<HTMLElement | null>(null);
+const dropdownRef = ref<HTMLElement | null>(null);
 const triggerRef = ref<HTMLElement | null>(null);
 const panelRef = ref<HTMLElement | null>(null);
 
 const handleClickOutside = (event: MouseEvent) => {
   if (
-    menuRef.value &&
-    !menuRef.value.contains(event.target as Node) &&
+    dropdownRef.value &&
+    !dropdownRef.value.contains(event.target as Node) &&
     open.value
   ) {
     open.value = false;
