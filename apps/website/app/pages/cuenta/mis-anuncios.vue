@@ -19,9 +19,9 @@ import { ref, onMounted, watch } from "vue";
 import AccountAnnouncements from "@/components/AccountAnnouncements.vue";
 import type { Ad } from "@/types/ad";
 import { useUserStore } from "@/stores/user.store";
-import { CheckCircle, Clock, AlertCircle, XCircle } from "lucide-vue-next";
+import { CheckCircle, Clock, AlertCircle, XCircle, Ban } from "lucide-vue-next";
 
-type FilterType = "published" | "review" | "expired" | "rejected";
+type FilterType = "published" | "review" | "expired" | "rejected" | "banned";
 
 const tabs = ref<
   { value: FilterType; label: string; count: number; icon: any }[]
@@ -30,6 +30,7 @@ const tabs = ref<
   { value: "review", label: "En revisión", count: 0, icon: Clock },
   { value: "expired", label: "Expirados", count: 0, icon: AlertCircle },
   { value: "rejected", label: "Rechazados", count: 0, icon: XCircle },
+  { value: "banned", label: "Baneados", count: 0, icon: Ban },
 ]);
 
 const ads = ref<Ad[]>([]); // Asegúrate de que esta línea esté correctamente escrita

@@ -95,6 +95,15 @@
           aria-label="Publicar nuevamente"
           @click="handleRepublish"
         />
+
+        <!-- Botón para baneados -->
+        <ButtonIcon
+          v-if="ad?.status === 'banned'"
+          :icon="IconInfo"
+          title="Ver razón"
+          aria-label="Ver razón"
+          @click="handleBannedClick"
+        />
       </div>
     </div>
   </article>
@@ -173,6 +182,10 @@ const statusMessage = computed(() => {
     case "rejected":
       if (daysDiff === 1) return "Rechazado hace 1 día";
       return `Rechazado hace ${daysDiff} días`;
+
+    case "banned":
+      if (daysDiff === 1) return "Baneado hace 1 día";
+      return daysDiff > 0 ? `Baneado hace ${daysDiff} días` : "Baneado";
 
     default:
       return "";
@@ -288,6 +301,15 @@ const handleRejectedClick = () => {
   Swal.fire({
     title: "Razón del rechazo",
     text: props.ad?.reason_for_rejection || "No se especificó una razón",
+    icon: "info",
+    confirmButtonText: "Entendido",
+  });
+};
+
+const handleBannedClick = () => {
+  Swal.fire({
+    title: "Razón del baneo",
+    text: props.ad?.reason_for_ban || "No se especificó una razón",
     icon: "info",
     confirmButtonText: "Entendido",
   });

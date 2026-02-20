@@ -323,6 +323,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
         "review",
         "expired",
         "rejected",
+        "banned",
         "pending_payment",
       ];
       if (status && !validStatuses.includes(status)) {
@@ -356,6 +357,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
           break;
         case "review":
           filterClause.active = false;
+          filterClause.banned = false;
           filterClause.rejected = false;
           filterClause.remaining_days = { $gt: 0 };
           filterClause.$or = [
@@ -370,6 +372,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
           break;
         case "pending_payment":
           filterClause.active = false;
+          filterClause.banned = false;
           filterClause.rejected = false;
           filterClause.remaining_days = { $gt: 0 };
           filterClause.is_paid = true;
@@ -383,6 +386,9 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
           break;
         case "rejected":
           filterClause.rejected = true;
+          break;
+        case "banned":
+          filterClause.banned = true;
           break;
         default:
           // No additional conditions for other statuses

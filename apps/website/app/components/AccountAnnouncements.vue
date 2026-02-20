@@ -115,7 +115,7 @@ interface Announcement {
   [key: string]: any; // Permitir cualquier propiedad adicional
 }
 
-type FilterType = "published" | "review" | "expired" | "rejected";
+type FilterType = "published" | "review" | "expired" | "rejected" | "banned";
 
 interface Pagination {
   total: number;
