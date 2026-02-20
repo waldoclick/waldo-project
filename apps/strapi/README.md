@@ -101,38 +101,55 @@ src/app/auth/
 
 ### Estados de Anuncios
 
-Los anuncios pueden tener los siguientes estados basados en reglas de negocio específicas:
+Los anuncios pueden tener los siguientes estados. Las condiciones coinciden con los filtros de los endpoints del servicio (`pendingAds`, `activeAds`, `archivedAds`, `bannedAds`, `rejectedAds`, `abandonedAds`) y con el `status` calculado en `findOne`/`findMany`.
 
 #### **Pendientes**
 
 - `active = false`
-- `remaining_days = duration_days` (días restantes iguales a días de duración)
-- `remaining_days > 0`
-- `duration_days > 0`
+- `banned = false`
 - `rejected = false`
+- `remaining_days > 0`
+- `ad_reservation != null` (tienen reserva de pago; se pueden aprobar o rechazar)
 
 #### **Activos**
 
 - `active = true`
-- `remaining_days > 0`
+- `banned = false`
 - `rejected = false`
+- `remaining_days > 0`
 
-#### **Archivados**
+#### **Archivados (expirados)**
 
 - `active = false`
-- `remaining_days = 0`
+- `banned = false`
 - `rejected = false`
+- `remaining_days = 0`
+
+#### **Baneados**
+
+- `banned = true`
 
 #### **Rechazados**
 
 - `rejected = true`
 
+#### **Abandonados**
+
+- `active = false`
+- `banned = false`
+- `rejected = false`
+- `ad_reservation = null` (sin reserva; no se pueden aprobar ni rechazar)
+
+En `findOne`/`findMany` el `status` **"abandoned"** se asigna además cuando `remaining_days > 0` e `is_paid = true` (anuncio marcado como pagado pero sin reserva asignada).
+
 ### Filtros por Tab
 
-- **Pendientes**: Muestra anuncios que están esperando aprobación
-- **Activos**: Muestra anuncios que están publicados y tienen días restantes
-- **Archivados**: Muestra anuncios que han agotado sus días de publicación
-- **Rechazados**: Muestra anuncios que han sido rechazados por moderación
+- **Pendientes**: Anuncios con reserva esperando aprobación
+- **Activos**: Anuncios publicados con días restantes
+- **Archivados**: Anuncios que agotaron sus días de publicación (expirados)
+- **Baneados**: Anuncios baneados por el propietario o administrador
+- **Rechazados**: Anuncios rechazados por moderación
+- **Abandonados**: Anuncios sin reserva (pagado pero no completaron la reserva)
 
 ### Ordenamiento
 

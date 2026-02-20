@@ -163,35 +163,6 @@ yarn start
 
 ## 📋 Reglas de Negocio
 
-### Estados de Anuncios
-
-Los anuncios pueden tener los siguientes estados:
-
-#### **Pendientes**
-- `active = false`
-- `remaining_days = duration_days`
-- `remaining_days > 0`
-- `duration_days > 0`
-- `rejected = false`
-
-#### **Activos**
-- `active = true`
-- `remaining_days > 0`
-- `rejected = false`
-
-#### **Archivados**
-- `active = false`
-- `remaining_days = 0`
-- `rejected = false`
-
-#### **Rechazados**
-- `rejected = true`
-
-### Filtros y Ordenamiento
-
-- **Pendientes**: Ordenados por fecha de creación (más antiguos primero) para priorizar los más retrasados
-- **Otros tabs**: Ordenados por fecha de creación (más nuevos primero)
-
 ### Sistema de Pagos
 
 #### PackType

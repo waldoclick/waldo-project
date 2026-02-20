@@ -41,6 +41,7 @@ export default ({ env }) => [
       origin: [
         env("FRONTEND_URL", "http://localhost:3000"),
         env("DASHBOARD_URL", "http://localhost:3001"),
+        ...(env("NODE_ENV") === "development" ? ["http://localhost:3002"] : []),
       ],
       methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"],
       headers: [
