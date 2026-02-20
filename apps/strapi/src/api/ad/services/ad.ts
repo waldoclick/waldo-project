@@ -197,6 +197,15 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
       !ad.active &&
       !ad.banned &&
       !ad.rejected &&
+      ad.remaining_days > 0 &&
+      (ad.ad_reservation == null || ad.ad_reservation === undefined) &&
+      ad.is_paid
+    ) {
+      status = "abandoned";
+    } else if (
+      !ad.active &&
+      !ad.banned &&
+      !ad.rejected &&
       ad.remaining_days > 0
     ) {
       status = "pending";
@@ -246,6 +255,15 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
         ad.remaining_days === 0
       ) {
         status = "archived";
+      } else if (
+        !ad.active &&
+        !ad.banned &&
+        !ad.rejected &&
+        ad.remaining_days > 0 &&
+        (ad.ad_reservation == null || ad.ad_reservation === undefined) &&
+        ad.is_paid
+      ) {
+        status = "abandoned";
       } else if (
         !ad.active &&
         !ad.banned &&
@@ -404,6 +422,22 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
     };
 
     return getAdvertisements(options, defaultFilters, "rejected");
+  },
+
+  /**
+   * Retrieve abandoned advertisements
+   *
+   * Ads that required payment but never completed it (no ad_reservation assigned).
+   */
+  async abandonedAds(options: any = {}) {
+    const defaultFilters = {
+      active: { $eq: false },
+      banned: { $eq: false },
+      rejected: { $eq: false },
+      ad_reservation: { $null: true },
+    };
+
+    return getAdvertisements(options, defaultFilters, "abandoned");
   },
 
   /**

@@ -30,6 +30,11 @@ export default {
       handler: "ad.rejecteds",
     },
     {
+      method: "GET",
+      path: "/ads/abandoneds",
+      handler: "ad.abandoneds",
+    },
+    {
       method: "PUT",
       path: "/ads/:id/approve",
       handler: "ad.approveAd",

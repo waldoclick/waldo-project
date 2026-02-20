@@ -118,6 +118,19 @@
               <span>Rechazados</span>
             </NuxtLink>
           </li>
+          <li
+            class="menu--default__subitem"
+            :class="{
+              'menu--default__subitem--active': isRouteActive(
+                '/anuncios/abandonados',
+              ),
+            }"
+          >
+            <NuxtLink to="/anuncios/abandonados" class="menu--default__sublink">
+              <XOctagon class="menu--default__subicon" />
+              <span>Abandonados</span>
+            </NuxtLink>
+          </li>
         </ul>
       </li>
 
@@ -339,6 +352,7 @@ import {
   AlertCircle,
   Ban,
   XCircle,
+  XOctagon,
   Circle,
   Tag,
   FileCheck,

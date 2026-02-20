@@ -192,6 +192,7 @@ import {
   AlertCircle,
   Ban,
   XCircle,
+  XOctagon,
   AlertTriangle,
 } from "lucide-vue-next";
 
@@ -209,7 +210,13 @@ const strapiClient = useStrapiClient();
 const { Swal } = useSweetAlert2();
 
 const title = computed(() => item.value?.name || "Anuncio");
-type AdStatus = "pending" | "active" | "archived" | "banned" | "rejected";
+type AdStatus =
+  | "pending"
+  | "active"
+  | "archived"
+  | "banned"
+  | "rejected"
+  | "abandoned";
 
 const statusIconMap: Record<AdStatus, any> = {
   pending: Clock,
@@ -217,6 +224,7 @@ const statusIconMap: Record<AdStatus, any> = {
   archived: AlertCircle,
   banned: Ban,
   rejected: XCircle,
+  abandoned: XOctagon,
 };
 
 const statusBreadcrumbMap: Record<AdStatus, { label: string; to: string }> = {
@@ -225,6 +233,7 @@ const statusBreadcrumbMap: Record<AdStatus, { label: string; to: string }> = {
   archived: { label: "Expirados", to: "/anuncios/expirados" },
   banned: { label: "Baneados", to: "/anuncios/baneados" },
   rejected: { label: "Rechazados", to: "/anuncios/rechazados" },
+  abandoned: { label: "Abandonados", to: "/anuncios/abandonados" },
 };
 
 const breadcrumbs = computed(() => {
@@ -251,6 +260,7 @@ const statusLabels: Record<string, string> = {
   archived: "Expirado",
   banned: "Baneado",
   rejected: "Rechazado",
+  abandoned: "Abandonado",
 };
 
 const formatDate = (dateString: string | undefined) => {

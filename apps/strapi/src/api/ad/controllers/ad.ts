@@ -215,6 +215,38 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
   },
 
   /**
+   * Get abandoned advertisements (created with paid option but payment never completed).
+   *
+   * @route GET /api/ads/abandoneds
+   */
+  async abandoneds(ctx: any) {
+    try {
+      const { query } = ctx;
+
+      const options: any = {
+        ...query,
+        page: query.pagination?.page
+          ? parseInt(query.pagination.page, 10)
+          : query.page || 1,
+        pageSize: query.pagination?.pageSize
+          ? parseInt(query.pagination.pageSize, 10)
+          : query.pageSize || 25,
+      };
+
+      if (options.pagination) {
+        delete options.pagination;
+      }
+
+      const abandonedAds = await strapi
+        .service("api::ad.ad")
+        .abandonedAds(options);
+      return abandonedAds;
+    } catch (error) {
+      ctx.throw(500, error);
+    }
+  },
+
+  /**
    * Approve an advertisement
    *
    * Approves a pending advertisement, making it active.
