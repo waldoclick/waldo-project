@@ -84,13 +84,13 @@
             class="menu--default__subitem"
             :class="{
               'menu--default__subitem--active': isRouteActive(
-                '/anuncios/archivados',
+                '/anuncios/expirados',
               ),
             }"
           >
-            <NuxtLink to="/anuncios/archivados" class="menu--default__sublink">
-              <Archive class="menu--default__subicon" />
-              <span>Archivados</span>
+            <NuxtLink to="/anuncios/expirados" class="menu--default__sublink">
+              <AlertCircle class="menu--default__subicon" />
+              <span>Expirados</span>
             </NuxtLink>
           </li>
           <li
@@ -336,7 +336,7 @@ import {
   ChevronDown,
   Clock,
   CheckCircle,
-  Archive,
+  AlertCircle,
   Ban,
   XCircle,
   Circle,

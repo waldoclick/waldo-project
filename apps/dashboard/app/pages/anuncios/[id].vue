@@ -189,7 +189,7 @@ import LightboxRazon from "@/components/LightboxRazon.vue";
 import {
   Clock,
   CheckCircle,
-  Archive,
+  AlertCircle,
   Ban,
   XCircle,
   AlertTriangle,
@@ -214,7 +214,7 @@ type AdStatus = "pending" | "active" | "archived" | "banned" | "rejected";
 const statusIconMap: Record<AdStatus, any> = {
   pending: Clock,
   active: CheckCircle,
-  archived: Archive,
+  archived: AlertCircle,
   banned: Ban,
   rejected: XCircle,
 };
@@ -222,7 +222,7 @@ const statusIconMap: Record<AdStatus, any> = {
 const statusBreadcrumbMap: Record<AdStatus, { label: string; to: string }> = {
   pending: { label: "Pendientes", to: "/anuncios/pendientes" },
   active: { label: "Activos", to: "/anuncios/activos" },
-  archived: { label: "Archivados", to: "/anuncios/archivados" },
+  archived: { label: "Expirados", to: "/anuncios/expirados" },
   banned: { label: "Baneados", to: "/anuncios/baneados" },
   rejected: { label: "Rechazados", to: "/anuncios/rechazados" },
 };
@@ -248,7 +248,7 @@ const statusIcon = computed(() => {
 const statusLabels: Record<string, string> = {
   pending: "Pendiente",
   active: "Activo",
-  archived: "Archivado",
+  archived: "Expirado",
   banned: "Baneado",
   rejected: "Rechazado",
 };

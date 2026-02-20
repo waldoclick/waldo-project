@@ -1,5 +1,5 @@
 <template>
-  <HeroDefault title="Archivados" :breadcrumbs="breadcrumbs" />
+  <HeroDefault title="Expirados" :breadcrumbs="breadcrumbs" />
   <AdsArchived />
 </template>
 
@@ -13,6 +13,6 @@ definePageMeta({
 
 const breadcrumbs = [
   { label: "Anuncios", to: "/anuncios/pendientes" },
-  { label: "Archivados" },
+  { label: "Expirados" },
 ];
 </script>

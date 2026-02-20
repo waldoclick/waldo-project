@@ -60,7 +60,7 @@
           v-if="paginatedAds.length === 0 && !loading"
           class="ads--archived__empty"
         >
-          <p>No se encontraron anuncios archivados</p>
+          <p>No se encontraron anuncios expirados</p>
         </div>
 
         <div v-if="loading" class="ads--archived__loading">
@@ -127,7 +127,7 @@ const paginationMeta = ref<{
   total: number;
 } | null>(null);
 
-// Fetch de anuncios archivados desde Strapi
+// Fetch de anuncios expirados desde Strapi
 const fetchArchivedAds = async () => {
   try {
     loading.value = true;

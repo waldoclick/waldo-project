@@ -26,7 +26,7 @@ type FilterType = "published" | "review" | "expired" | "rejected" | "banned";
 const tabs = ref<
   { value: FilterType; label: string; count: number; icon: any }[]
 >([
-  { value: "published", label: "Publicados", count: 0, icon: CheckCircle },
+  { value: "published", label: "Activos", count: 0, icon: CheckCircle },
   { value: "review", label: "En revisión", count: 0, icon: Clock },
   { value: "expired", label: "Expirados", count: 0, icon: AlertCircle },
   { value: "rejected", label: "Rechazados", count: 0, icon: XCircle },
