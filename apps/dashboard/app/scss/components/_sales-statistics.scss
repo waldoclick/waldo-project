@@ -2,8 +2,8 @@
 @use "../abstracts/variables" as *;
 @use "../base/container";
 
-.sales-statistics {
-  &--default {
+.statistics {
+  &--sales {
     padding: 50px 0;
 
     &__container {
@@ -54,7 +54,7 @@
         height: 16px;
         transition: transform 0.2s ease;
 
-        &.is-open {
+        &--open {
           transform: rotate(180deg);
         }
       }
@@ -88,7 +88,7 @@
           background-color: #f9fafb;
         }
 
-        &.is-active {
+        &--active {
           background-color: #f3f4f6;
           font-weight: 600;
         }

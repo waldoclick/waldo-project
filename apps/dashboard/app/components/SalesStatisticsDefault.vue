@@ -1,30 +1,35 @@
 <template>
-  <section class="sales-statistics sales-statistics--default">
-    <div class="sales-statistics--default__container">
-      <div class="sales-statistics--default__header">
-        <h2 class="sales-statistics--default__title">Estadísticas de Ventas</h2>
-        <div class="sales-statistics--default__year-selector">
+  <section class="statistics statistics--sales">
+    <div class="statistics--sales__container">
+      <div class="statistics--sales__header">
+        <h2 class="statistics--sales__title">Estadísticas de Ventas</h2>
+        <div class="statistics--sales__year-selector">
           <button
             ref="dropdownButton"
-            class="sales-statistics--default__year-button"
+            class="statistics--sales__year-button"
             @click="toggleDropdown"
           >
             {{ selectedYear }}
             <ChevronDown
-              class="sales-statistics--default__year-button__icon"
-              :class="{ 'is-open': isDropdownOpen }"
+              class="statistics--sales__year-button__icon"
+              :class="{
+                'statistics--sales__year-button__icon--open': isDropdownOpen,
+              }"
             />
           </button>
           <div
             v-if="isDropdownOpen"
             ref="dropdownMenu"
-            class="sales-statistics--default__year-menu"
+            class="statistics--sales__year-menu"
           >
             <button
               v-for="year in availableYears"
               :key="year"
-              class="sales-statistics--default__year-menu__item"
-              :class="{ 'is-active': year === selectedYear }"
+              class="statistics--sales__year-menu__item"
+              :class="{
+                'statistics--sales__year-menu__item--active':
+                  year === selectedYear,
+              }"
               @click="selectYear(year)"
             >
               {{ year }}
@@ -32,8 +37,8 @@
           </div>
         </div>
       </div>
-      <div class="sales-statistics--default__chart">
-        <div v-if="loading" class="sales-statistics--default__loading">
+      <div class="statistics--sales__chart">
+        <div v-if="loading" class="statistics--sales__loading">
           <p>Cargando datos...</p>
         </div>
         <Bar v-else :data="chartData" :options="chartOptions" />

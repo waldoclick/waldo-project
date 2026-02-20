@@ -80,7 +80,7 @@ input:-webkit-autofill {
     }
   }
 
-  &-group {
+  &__group {
     font-style: normal;
     font-weight: 600;
     font-size: 12px;
@@ -96,6 +96,12 @@ input:-webkit-autofill {
 
     &--checkboxes {
       flex-direction: row;
+    }
+
+    &--inline {
+      flex-direction: row;
+      align-items: center;
+      gap: 10px;
     }
 
     span {
@@ -122,7 +128,7 @@ input:-webkit-autofill {
     }
   }
 
-  &-label {
+  &__label {
     font-style: normal;
     font-weight: 600;
     font-size: 12px;
@@ -138,7 +144,7 @@ input:-webkit-autofill {
     z-index: 1;
   }
 
-  &-control {
+  &__control {
     border: 2px solid $platinum;
     box-sizing: border-box;
     border-radius: 4px;
@@ -175,12 +181,12 @@ input:-webkit-autofill {
     }
   }
 
-  &-msg {
+  &__msg {
     display: flex;
     margin-bottom: 30px;
   }
 
-  textarea.form-control {
+  textarea.form__control {
     padding: 10px;
     resize: none;
     min-height: 120px;
@@ -194,7 +200,7 @@ input:-webkit-autofill {
     overflow: hidden;
   }
 
-  select.form-control {
+  select.form__control {
     padding: 10px;
     appearance: none;
     height: 45px;
@@ -203,21 +209,27 @@ input:-webkit-autofill {
     background-repeat: no-repeat;
   }
 
-  input.form-control {
+  input.form__control {
     height: 48px;
   }
 
-  .form-control:disabled {
+  .form__control:disabled {
     cursor: not-allowed;
   }
 
-  &-check {
+  &__checkbox {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    cursor: pointer;
+  }
+
+  &__check {
     display: flex;
     align-items: center;
     margin-right: 20px;
 
-    // background-color: red;
-    &-input {
+    &__input {
       margin-top: 0px;
       height: 20px;
       width: 20px;
@@ -233,7 +245,7 @@ input:-webkit-autofill {
       }
     }
 
-    &-label {
+    &__label {
       font-style: normal;
       font-weight: 600;
       font-size: 14px;
@@ -246,6 +258,6 @@ input:-webkit-autofill {
 }
 
 // Estilos para textarea con altura dinámica (compatible con CSP)
-.form-control[style*="--textarea-height"] {
+.form__control[style*="--textarea-height"] {
   height: var(--textarea-height);
 }

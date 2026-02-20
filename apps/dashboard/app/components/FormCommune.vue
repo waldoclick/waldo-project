@@ -1,24 +1,24 @@
 <template>
   <Form v-slot="{ meta }" :validation-schema="schema" @submit="handleSubmit">
     <div class="form form--commune">
-      <div class="form-group">
-        <label class="form-label" for="name">Nombre</label>
+      <div class="form__group">
+        <label class="form__label" for="name">Nombre</label>
         <Field
           v-model="form.name"
           name="name"
           type="text"
-          class="form-control"
+          class="form__control"
         />
         <ErrorMessage name="name" />
       </div>
 
-      <div class="form-group">
-        <label class="form-label" for="region">Región</label>
+      <div class="form__group">
+        <label class="form__label" for="region">Región</label>
         <Field
           v-model="form.region"
           as="select"
           name="region"
-          class="form-control"
+          class="form__control"
         >
           <option value="">Seleccione una región</option>
           <option v-for="region in regions" :key="region.id" :value="region.id">

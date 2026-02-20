@@ -1,36 +1,36 @@
 <template>
   <Form v-slot="{ meta }" :validation-schema="schema" @submit="handleSubmit">
     <div class="form form--faq">
-      <div class="form-group">
-        <label class="form-label" for="title">Título</label>
+      <div class="form__group">
+        <label class="form__label" for="title">Título</label>
         <Field
           v-model="form.title"
           name="title"
           type="text"
-          class="form-control"
+          class="form__control"
         />
         <ErrorMessage name="title" />
       </div>
 
-      <div class="form-group">
-        <label class="form-label" for="text">Contenido</label>
+      <div class="form__group">
+        <label class="form__label" for="text">Contenido</label>
         <Field
           v-model="form.text"
           as="textarea"
           name="text"
-          class="form-control"
+          class="form__control"
           rows="5"
         />
         <ErrorMessage name="text" />
       </div>
 
-      <div class="form-group form-group--inline">
-        <label class="form-label" for="featured">Destacado</label>
+      <div class="form__group form__group--inline">
+        <label class="form__label" for="featured">Destacado</label>
         <Field
           v-model="form.featured"
           name="featured"
           type="checkbox"
-          class="form-checkbox"
+          class="form__checkbox"
         />
       </div>
 

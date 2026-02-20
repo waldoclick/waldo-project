@@ -1,13 +1,13 @@
 <template>
   <Form v-slot="{ meta }" :validation-schema="schema" @submit="handleSubmit">
     <div class="form form--condition">
-      <div class="form-group">
-        <label class="form-label" for="name">Nombre</label>
+      <div class="form__group">
+        <label class="form__label" for="name">Nombre</label>
         <Field
           v-model="form.name"
           name="name"
           type="text"
-          class="form-control"
+          class="form__control"
         />
         <ErrorMessage name="name" />
       </div>

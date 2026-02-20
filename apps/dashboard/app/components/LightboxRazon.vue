@@ -14,12 +14,12 @@
       <div v-if="description" class="lightbox--razon__text">
         {{ description }}
       </div>
-      <div class="form-group lightbox--razon__field">
-        <label class="form-label" :for="textareaId">Razón</label>
+      <div class="form__group lightbox--razon__field">
+        <label class="form__label" :for="textareaId">Razón</label>
         <textarea
           :id="textareaId"
           v-model="localReason"
-          class="form-control"
+          class="form__control"
           :placeholder="placeholder"
           rows="4"
         />

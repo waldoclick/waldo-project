@@ -4,13 +4,13 @@
     :validation-schema="schema"
     @submit="onSubmit"
   >
-    <div class="form-group">
-      <label class="form-label" for="email">Correo electrónico</label>
+    <div class="form__group">
+      <label class="form__label" for="email">Correo electrónico</label>
       <Field
         v-model="form.email"
         name="email"
         type="text"
-        class="form-control"
+        class="form__control"
         autocomplete="email"
       />
       <ErrorMessage name="email" />

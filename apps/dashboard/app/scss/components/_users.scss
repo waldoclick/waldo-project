@@ -124,16 +124,16 @@
       background-color: transparent;
     }
 
-    .table-cell {
+    .table--default__cell {
       padding-left: 6px;
       padding-right: 6px;
     }
 
-    .table-row:hover {
+    .table--default__row:hover {
       background-color: transparent;
     }
 
-    .table-row {
+    .table--default__row {
       border-bottom: 1px solid #e5e5e5;
 
       &:last-child {

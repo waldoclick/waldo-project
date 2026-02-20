@@ -18,8 +18,8 @@
       </div>
 
       <div class="dropdown--user__button__icon" @click.stop="toggleOpen">
-        <IconMenu v-if="!isOpen" :size="24" class="menu-open" />
-        <IconX v-else :size="24" class="menu-close" />
+        <IconMenu v-if="!isOpen" :size="24" />
+        <IconX v-else :size="24" />
       </div>
     </button>
 

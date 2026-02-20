@@ -7,30 +7,30 @@
     <div class="form form--login">
       <div>
         <!-- Email -->
-        <div class="form-group">
-          <label class="form-label" for="email">Correo Electrónico</label>
+        <div class="form__group">
+          <label class="form__label" for="email">Correo Electrónico</label>
           <Field
             v-model="form.email"
             name="email"
             type="email"
-            class="form-control"
+            class="form__control"
             autocomplete="email"
           />
           <ErrorMessage name="email" />
         </div>
 
         <!-- Password -->
-        <div class="form-group form-group--password">
-          <label class="form-label" for="password">Contraseña</label>
+        <div class="form__group form__group--password">
+          <label class="form__label" for="password">Contraseña</label>
           <Field
             v-model="form.password"
             name="password"
             :type="passwordType"
-            class="form-control"
+            class="form__control"
             autocomplete="current-password"
           />
           <button
-            class="form-group--password__show-password"
+            class="form__group--password__show-password"
             type="button"
             :title="`Mostrar/ocultar contraseña`"
             @click="handleShowPassword"

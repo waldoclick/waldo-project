@@ -1,5 +1,5 @@
 <template>
-  <tr class="table-row">
+  <tr class="table--default__row">
     <slot />
   </tr>
 </template>

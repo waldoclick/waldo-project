@@ -1,9 +1,9 @@
 <template>
   <td
-    class="table-cell"
+    class="table--default__cell"
     :class="{
-      'table-cell--right': align === 'right',
-      'table-cell--center': align === 'center',
+      'table--default__cell--right': align === 'right',
+      'table--default__cell--center': align === 'center',
     }"
   >
     <slot />

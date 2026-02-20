@@ -1,80 +1,80 @@
 <template>
   <Form v-slot="{ meta }" :validation-schema="schema" @submit="handleSubmit">
     <div class="form form--pack">
-      <div class="form-group">
-        <label class="form-label" for="name">Nombre</label>
+      <div class="form__group">
+        <label class="form__label" for="name">Nombre</label>
         <Field
           v-model="form.name"
           name="name"
           type="text"
-          class="form-control"
+          class="form__control"
         />
         <ErrorMessage name="name" />
       </div>
 
-      <div class="form-group">
-        <label class="form-label" for="text">Texto</label>
+      <div class="form__group">
+        <label class="form__label" for="text">Texto</label>
         <Field
           v-model="form.text"
           name="text"
           type="text"
-          class="form-control"
+          class="form__control"
         />
         <ErrorMessage name="text" />
       </div>
 
-      <div class="form-group">
-        <label class="form-label" for="description">Descripción</label>
+      <div class="form__group">
+        <label class="form__label" for="description">Descripción</label>
         <Field
           v-model="form.description"
           as="textarea"
           name="description"
-          class="form-control"
+          class="form__control"
           rows="4"
         />
         <ErrorMessage name="description" />
       </div>
 
-      <div class="form-group">
-        <label class="form-label" for="price">Precio</label>
+      <div class="form__group">
+        <label class="form__label" for="price">Precio</label>
         <Field
           v-model="form.price"
           name="price"
           type="number"
-          class="form-control"
+          class="form__control"
         />
         <ErrorMessage name="price" />
       </div>
 
-      <div class="form-group">
-        <label class="form-label" for="total_days">Duración (días)</label>
+      <div class="form__group">
+        <label class="form__label" for="total_days">Duración (días)</label>
         <Field
           v-model="form.total_days"
           name="total_days"
           type="number"
-          class="form-control"
+          class="form__control"
         />
         <ErrorMessage name="total_days" />
       </div>
 
-      <div class="form-group">
-        <label class="form-label" for="total_ads">Cantidad de anuncios</label>
+      <div class="form__group">
+        <label class="form__label" for="total_ads">Cantidad de anuncios</label>
         <Field
           v-model="form.total_ads"
           name="total_ads"
           type="number"
-          class="form-control"
+          class="form__control"
         />
         <ErrorMessage name="total_ads" />
       </div>
 
-      <div class="form-group">
-        <label class="form-label" for="total_features">Destacados</label>
+      <div class="form__group">
+        <label class="form__label" for="total_features">Destacados</label>
         <Field
           v-model="form.total_features"
           name="total_features"
           type="number"
-          class="form-control"
+          class="form__control"
         />
         <ErrorMessage name="total_features" />
       </div>

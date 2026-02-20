@@ -4,41 +4,41 @@
     :validation-schema="schema"
     @submit="onSubmit"
   >
-    <div class="form-group">
-      <label class="form-label" for="email">Correo electrónico</label>
+    <div class="form__group">
+      <label class="form__label" for="email">Correo electrónico</label>
       <Field
         v-model="form.email"
         name="email"
         type="text"
-        class="form-control"
+        class="form__control"
         autocomplete="email"
       />
       <ErrorMessage name="email" />
     </div>
 
-    <div class="form-group">
-      <label class="form-label" for="code">Código de restablecimiento</label>
+    <div class="form__group">
+      <label class="form__label" for="code">Código de restablecimiento</label>
       <Field
         v-model="form.code"
         name="code"
         type="hidden"
-        class="form-control"
+        class="form__control"
         readonly
       />
       <ErrorMessage name="code" />
     </div>
 
-    <div class="form-group form-group--password">
-      <label class="form-label" for="password">Nueva Contraseña</label>
+    <div class="form__group form__group--password">
+      <label class="form__label" for="password">Nueva Contraseña</label>
       <Field
         v-model="form.password"
         name="password"
         :type="passwordType"
-        class="form-control"
+        class="form__control"
         autocomplete="new-password"
       />
       <button
-        class="form-group--password__show-password"
+        class="form__group--password__show-password"
         type="button"
         :title="`Mostrar/ocultar contraseña`"
         @click="handleShowPassword"

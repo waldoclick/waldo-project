@@ -6,29 +6,29 @@
   >
     <div class="form form--login">
       <div>
-        <div class="form-group">
-          <label class="form-label" for="username">Usuario</label>
+        <div class="form__group">
+          <label class="form__label" for="username">Usuario</label>
           <Field
             name="username"
             type="text"
-            class="form-control"
+            class="form__control"
             autocomplete="username"
             placeholder="Ingresa tu usuario de desarrollo"
           />
           <ErrorMessage name="username" />
         </div>
 
-        <div class="form-group form-group--password">
-          <label class="form-label" for="password">Contraseña</label>
+        <div class="form__group form__group--password">
+          <label class="form__label" for="password">Contraseña</label>
           <Field
             name="password"
             :type="passwordType"
-            class="form-control"
+            class="form__control"
             autocomplete="current-password"
             placeholder="Ingresa tu contraseña de desarrollo"
           />
           <button
-            class="form-group--password__show-password"
+            class="form__group--password__show-password"
             type="button"
             :title="`Mostrar/ocultar contraseña`"
             @click="handleShowPassword"

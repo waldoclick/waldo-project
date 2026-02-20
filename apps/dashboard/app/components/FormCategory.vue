@@ -1,24 +1,24 @@
 <template>
   <Form v-slot="{ meta }" :validation-schema="schema" @submit="handleSubmit">
     <div class="form form--category">
-      <div class="form-group">
-        <label class="form-label" for="name">Nombre</label>
+      <div class="form__group">
+        <label class="form__label" for="name">Nombre</label>
         <Field
           v-model="form.name"
           name="name"
           type="text"
-          class="form-control"
+          class="form__control"
         />
         <ErrorMessage name="name" />
       </div>
 
-      <div class="form-group">
-        <label class="form-label" for="color">Color</label>
+      <div class="form__group">
+        <label class="form__label" for="color">Color</label>
         <Field
           v-model="form.color"
           name="color"
           type="text"
-          class="form-control"
+          class="form__control"
           placeholder="#FFFFFF"
         />
         <ErrorMessage name="color" />
