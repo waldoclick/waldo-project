@@ -37,6 +37,9 @@ export default defineNuxtConfig({
       interval: 300000,
     },
     headers: {
+      permissionsPolicy: {
+        fullscreen: ["self"],
+      },
       contentSecurityPolicy: {
         "default-src": ["'self'"],
 

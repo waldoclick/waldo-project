@@ -7,6 +7,7 @@
     }"
   >
     <div class="header--default__right">
+      <HeaderIcons v-if="user" />
       <MenuUser v-if="user" />
     </div>
   </header>
@@ -15,6 +16,7 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import { useScroll } from "@vueuse/core";
+import HeaderIcons from "@/components/HeaderIcons.vue";
 import MenuUser from "@/components/MenuUser.vue";
 
 const header = ref<HTMLElement | null>(null);
