@@ -1,0 +1,20 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.statistics {
+  &--default {
+    padding: 50px 0;
+
+    &__container {
+      @extend .container;
+    }
+
+    &__cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      margin-top: 24px;
+    }
+  }
+}

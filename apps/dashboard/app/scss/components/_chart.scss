@@ -1,18 +1,12 @@
 @use "../abstracts/mixins" as *;
 @use "../abstracts/variables" as *;
-@use "../base/container";
 
-.statistics {
+.chart {
   &--sales {
-    padding: 50px 0;
-
-    &__container {
-      @extend .container;
-      background-color: #ffffff;
-      border: 1px solid #e5e5e5;
-      border-radius: 4px;
-      padding: 24px;
-    }
+    background-color: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    padding: 24px;
 
     &__header {
       display: flex;
@@ -99,7 +93,6 @@
       height: 400px;
       position: relative;
 
-      // Estilos para el tooltip de Chart.js
       :deep(.chartjs-tooltip) {
         background-color: #fff !important;
         border: 1px solid #ccc !important;
@@ -118,13 +111,11 @@
           font-size: 11px !important;
         }
 
-        // Ocultar el indicador de color
         .chartjs-tooltip-color {
           display: none !important;
         }
       }
 
-      // Cursor hover con fondo gris transparente
       canvas {
         cursor: default;
 

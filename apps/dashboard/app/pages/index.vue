@@ -1,11 +1,11 @@
 <template>
   <HeroDashboard />
-  <SalesStatisticsDefault />
+  <StatisticsDefault />
 </template>
 
 <script setup lang="ts">
 import HeroDashboard from "@/components/HeroDashboard.vue";
-import SalesStatisticsDefault from "@/components/SalesStatisticsDefault.vue";
+import StatisticsDefault from "@/components/StatisticsDefault.vue";
 
 definePageMeta({
   layout: "dashboard",
