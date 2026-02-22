@@ -1,13 +1,13 @@
 # Waldo Project
 
-Monorepo que contiene las aplicaciones principales de Waldo: Dashboard (Next.js), Website (Nuxt.js) y API (Strapi).
+Monorepo que contiene las aplicaciones principales de Waldo: Dashboard (Nuxt.js), Website (Nuxt.js) y API (Strapi).
 
 ## 📁 Estructura del Proyecto
 
 ```
 waldo-project/
 ├── apps/
-│   ├── dashboard/     # Next.js 15 - Panel de administración
+│   ├── dashboard/     # Nuxt - Panel de administración
 │   ├── website/       # Nuxt.js 4 - Sitio web público
 │   └── strapi/        # Strapi v5 - API y CMS
 ├── package.json       # Configuración del monorepo
@@ -50,7 +50,7 @@ Esto iniciará:
 
 ### Dashboard (`apps/dashboard`)
 
-Panel de administración construido con Next.js 15, App Router y TypeScript.
+Panel de administración construido con Nuxt, Vue y TypeScript.
 
 #### Características
 
@@ -67,7 +67,7 @@ cd apps/dashboard
 # Desarrollo web
 yarn dev
 
-# Desarrollo Electron (requiere Next.js corriendo)
+# Desarrollo Electron (requiere dashboard corriendo)
 yarn electron:dev
 
 # Build producción web
@@ -266,7 +266,6 @@ Cada app se despliega independientemente en Forge usando `git sparse-checkout` p
 
 ## 📚 Recursos
 
-- [Next.js Documentation](https://nextjs.org/docs)
 - [Nuxt.js Documentation](https://nuxt.com/docs)
 - [Strapi Documentation](https://docs.strapi.io)
 - [Turbo Documentation](https://turbo.build/repo/docs)

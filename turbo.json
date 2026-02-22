@@ -4,7 +4,7 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**", ".nuxt/**", ".output/**", "build/**"]
+      "outputs": ["dist/**", ".nuxt/**", ".output/**", "build/**"]
     },
     "waldo-strapi#build": {
       "outputs": ["dist/**", "build/**"]
@@ -15,7 +15,7 @@
     },
     "waldo-dashboard#build": {
       "dependsOn": ["waldo-website#build"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "outputs": [".nuxt/**", ".output/**"]
     },
 
     "dev": {

@@ -6,11 +6,10 @@
   "workspaces": [
     "apps/strapi",
     "apps/website",
-    "apps/dashboard",
-    "apps/dashboard-old"
+    "apps/dashboard"
   ],
   "scripts": {
-    "dev": "lsof -ti:24678,1337,3000,3001,3002 | xargs kill -9 2>/dev/null || true && turbo run dev",
+    "dev": "lsof -ti:24678,1337,3000,3001 | xargs kill -9 2>/dev/null || true && turbo run dev",
     "build": "turbo run build",
     "start": "turbo run start",
     "lint": "turbo run lint",
@@ -21,7 +20,6 @@
     "strapi:upgrade": "cd apps/strapi && NPM_REGISTRY_URL=https://registry.npmjs.org/ npx @strapi/upgrade latest"
   },
   "devDependencies": {
-    "next": "15.4.6",
     "turbo": "2.7.3"
   }
 }

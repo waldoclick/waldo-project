@@ -46,9 +46,9 @@ exclude_paths:
   - apps/website/.nuxt/
   - apps/website/.output/
   - apps/website/.data/
-  # Dashboard specific
-  - apps/dashboard/.next/
-  - apps/dashboard/out/
+  # Dashboard specific (Nuxt)
+  - apps/dashboard/.nuxt/
+  - apps/dashboard/.output/
 
 ignore:
   - "**/*.test.js"
