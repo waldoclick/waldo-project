@@ -8,13 +8,14 @@
 
     &__container {
       @extend .container;
+      display: grid;
+      gap: 24px;
     }
 
     &__cards {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 24px;
-      margin-top: 24px;
     }
   }
 }

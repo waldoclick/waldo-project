@@ -1,7 +1,9 @@
 <template>
   <div class="statistics statistics--default">
     <div class="statistics--default__container">
-      <ChartSales />
+      <div class="statistics--default__chart">
+        <ChartSales />
+      </div>
       <div class="statistics--default__cards">
         <CardStat
           title="Anuncios Pendientes"
