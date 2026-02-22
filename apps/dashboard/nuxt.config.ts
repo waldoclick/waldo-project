@@ -299,7 +299,7 @@ export default defineNuxtConfig({
       apiUrl: process.env.API_URL || "http://localhost:1337",
       sessionMaxAge: process.env.SESSION_MAX_AGE || "86400", // Valor por defecto de 1 día
       baseUrl: process.env.BASE_URL || "http://localhost:3001",
-      websiteUrl: process.env.WEBSITE_URL || "http://localhost:3000",
+      websiteUrl: process.env.FRONTEND_URL || "http://localhost:3000",
       apiDisableProxy: process.env.API_DISABLE_PROXY === "true",
       blockSearchEngines: process.env.BLOCK_SEARCH_ENGINES === "true",
       recaptchaSiteKey: process.env.RECAPTCHA_SITE_KEY,
