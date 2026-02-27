@@ -538,4 +538,40 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
       ctx.throw(500, error);
     }
   },
+
+  /**
+   * Deactivate an advertisement (leave as expired).
+   * Only the owner can deactivate.
+   *
+   * @route PUT /api/ads/:id/deactivate
+   */
+  async deactivateAd(ctx: any) {
+    try {
+      const { id } = ctx.params;
+      const reasonForDeactivation = ctx.request.body?.reason_for_deactivation;
+      const userId = ctx.state.user?.id;
+
+      if (!userId) {
+        return ctx.unauthorized(
+          "You must be authenticated to deactivate an advertisement"
+        );
+      }
+
+      const result = await strapi
+        .service("api::ad.ad")
+        .deactivateAd(id, userId, reasonForDeactivation);
+      return result;
+    } catch (error) {
+      if (error.message === "Advertisement not found") {
+        return ctx.notFound(error.message);
+      }
+      if (error.message === "Advertisement is already deactivated") {
+        return ctx.badRequest(error.message);
+      }
+      if (error.message.includes("permission")) {
+        return ctx.forbidden(error.message);
+      }
+      ctx.throw(500, error);
+    }
+  },
 }));

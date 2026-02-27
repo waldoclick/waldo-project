@@ -609,6 +609,7 @@ export interface ApiAdAd extends Struct.CollectionTypeSchema {
     price: Schema.Attribute.BigInteger & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
     reason_for_ban: Schema.Attribute.Text;
+    reason_for_deactivation: Schema.Attribute.Text;
     reason_for_rejection: Schema.Attribute.Text;
     rejected: Schema.Attribute.Boolean &
       Schema.Attribute.Required &

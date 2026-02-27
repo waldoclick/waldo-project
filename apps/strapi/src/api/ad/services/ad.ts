@@ -708,4 +708,60 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
       throw error;
     }
   },
+
+  /**
+   * Deactivate an advertisement (leave as expired).
+   * Only the owner can deactivate. Sets active = false, remaining_days = 0.
+   *
+   * @param {string} adId - The advertisement id
+   * @param {string} userId - The user id (must be owner)
+   * @param {string} [reasonForDeactivation] - Optional reason
+   * @returns {Promise<Object>} Result with success and data
+   */
+  async deactivateAd(
+    adId: string,
+    userId: string,
+    reasonForDeactivation?: string
+  ) {
+    try {
+      const ad = await strapi.db.query("api::ad.ad").findOne({
+        where: { id: adId },
+        populate: ["user"],
+      });
+
+      if (!ad) {
+        throw new Error("Advertisement not found");
+      }
+
+      const isOwner = ad.user?.id?.toString() === userId.toString();
+      if (!isOwner) {
+        throw new Error(
+          "You don't have permission to deactivate this advertisement"
+        );
+      }
+
+      const alreadyExpired = ad.active === false && ad.remaining_days === 0;
+      if (alreadyExpired) {
+        throw new Error("Advertisement is already deactivated");
+      }
+
+      await strapi.db.query("api::ad.ad").update({
+        where: { id: adId },
+        data: {
+          active: false,
+          remaining_days: 0,
+          reason_for_deactivation: reasonForDeactivation ?? null,
+        },
+      });
+
+      return {
+        success: true,
+        message: "Advertisement deactivated successfully",
+        data: { id: adId },
+      };
+    } catch (error) {
+      console.error("Error in deactivateAd:", error);
+      throw error;
+    }
+  },
 }));

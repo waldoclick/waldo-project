@@ -64,6 +64,10 @@ export interface Ad {
   depth: number;
   createdAt: string;
   updatedAt: string;
+  status?: string;
+  reason_for_rejection?: string | null;
+  reason_for_ban?: string | null;
+  reason_for_deactivation?: string | null;
 }
 
 export interface AdResponse {

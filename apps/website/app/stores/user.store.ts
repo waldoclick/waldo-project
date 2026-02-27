@@ -122,23 +122,22 @@ export const useUserStore = defineStore("user", () => {
     }
   };
 
-  const deactivateAd = async (adId: number) => {
+  const deactivateAd = async (adId: number, reason?: string) => {
     try {
-      // Obtener el token JWT
       const token = useCookie("waldo_jwt").value;
 
-      // Usar la URL correcta según el entorno
       const apiUrl =
         process.env.API_DISABLE_PROXY === "true"
           ? config.public.apiUrl
           : config.public.baseUrl;
 
-      const response = await $fetch(`${apiUrl}/api/ads/${adId}/banned`, {
+      const response = await $fetch(`${apiUrl}/api/ads/${adId}/deactivate`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
+        body: { reason_for_deactivation: reason ?? null },
       });
 
       return response;

@@ -176,6 +176,9 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "plugin::users-permissions.user"
+    },
+    "reason_for_deactivation": {
+      "type": "text"
     }
   }
 }

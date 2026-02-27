@@ -20,6 +20,7 @@ export interface Ad {
   rejected: boolean;
   reason_for_rejection: string | null;
   reason_for_ban: string | null;
+  reason_for_deactivation?: string | null;
   banned?: boolean;
   banned_at?: string | null;
   rejected_at?: string | null;

@@ -107,10 +107,21 @@
       </div>
     </div>
   </article>
+  <LightboxRazon
+    :is-open="isDeactivateLightboxOpen"
+    title="Desactivar publicación"
+    description="Esta razón quedará registrada en el anuncio."
+    initial-reason="Ya vendí el producto."
+    :loading="isDeactivating"
+    submit-label="Desactivar"
+    cancel-label="Cancelar"
+    @close="closeDeactivateLightbox"
+    @submit="handleDeactivateSubmit"
+  />
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
 const { Swal } = useSweetAlert2();
 import { useAdStore } from "@/stores/ad.store";
 import { useCommunesStore } from "@/stores/communes.store";
@@ -315,31 +326,29 @@ const handleBannedClick = () => {
   });
 };
 
-const handleDeactivate = async () => {
-  const result: { isConfirmed: boolean } = await Swal.fire({
-    title: "¿Desactivar publicación?",
-    text: "¿Estás seguro de que deseas desactivar esta publicación? Esta acción no se puede revertir.",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonText: "Sí, desactivar",
-    cancelButtonText: "Cancelar",
-    confirmButtonColor: "#313338",
-    cancelButtonColor: "#d33",
-  });
+const isDeactivateLightboxOpen = ref(false);
+const isDeactivating = ref(false);
 
-  if (!result.isConfirmed) return;
+const handleDeactivate = () => {
+  isDeactivateLightboxOpen.value = true;
+};
 
+const closeDeactivateLightbox = () => {
+  isDeactivateLightboxOpen.value = false;
+};
+
+const handleDeactivateSubmit = async (reason: string) => {
+  if (!props.ad?.id) return;
+  isDeactivating.value = true;
   try {
-    await userStore.deactivateAd(props.ad?.id);
-
+    await userStore.deactivateAd(props.ad.id, reason);
+    closeDeactivateLightbox();
     await Swal.fire({
       title: "Publicación desactivada",
       text: "Tu publicación ha sido desactivada exitosamente.",
       icon: "success",
       confirmButtonText: "Aceptar",
     });
-
-    // Recargar la página para actualizar la lista
     window.location.reload();
   } catch (error) {
     console.error("Error al desactivar publicación:", error);
@@ -349,6 +358,8 @@ const handleDeactivate = async () => {
       icon: "error",
       confirmButtonText: "Aceptar",
     });
+  } finally {
+    isDeactivating.value = false;
   }
 };
 
