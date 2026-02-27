@@ -623,9 +623,9 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
   },
 
   /**
-   * Ban an advertisement (deactivate with reason).
+   * Ban an advertisement.
    *
-   * Bans an advertisement by setting it inactive, remaining_days to 0, and recording
+   * Bans an advertisement by setting it inactive and recording
    * the ban reason and date. Only the owner of the ad or an administrator can ban it.
    *
    * @param {string} adId - The ID of the advertisement to ban
@@ -635,9 +635,9 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
    * @throws {Error} When advertisement is not found, already banned, or user lacks permission
    *
    * @example
-   * const result = await strapi.service("api::ad.ad").deactivateAd("123", "user456", "Violation");
+   * const result = await strapi.service("api::ad.ad").bannedAd("123", "user456", "Violation");
    */
-  async deactivateAd(adId: string, userId: string, reasonForBan?: string) {
+  async bannedAd(adId: string, userId: string, reasonForBan?: string) {
     try {
       const ad = await strapi.db.query("api::ad.ad").findOne({
         where: { id: adId },
@@ -704,7 +704,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
         data: { id: adId },
       };
     } catch (error) {
-      console.error("Error in deactivateAd (ban):", error);
+      console.error("Error in bannedAd (ban):", error);
       throw error;
     }
   },

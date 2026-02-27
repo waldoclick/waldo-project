@@ -133,7 +133,7 @@ export const useUserStore = defineStore("user", () => {
           ? config.public.apiUrl
           : config.public.baseUrl;
 
-      const response = await $fetch(`${apiUrl}/api/ads/${adId}/deactivate`, {
+      const response = await $fetch(`${apiUrl}/api/ads/${adId}/banned`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,

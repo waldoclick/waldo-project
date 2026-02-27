@@ -173,7 +173,7 @@
     :initial-reason="defaultBanReason"
     :loading="isBanning"
     @close="closeBanLightbox"
-    @submit="handleBan"
+    @submit="handleBanned"
   />
 </template>
 
@@ -351,11 +351,11 @@ const handleReject = async (reason: string) => {
   }
 };
 
-const handleBan = async (reason: string) => {
+const handleBanned = async (reason: string) => {
   if (!item.value?.id) return;
   isBanning.value = true;
   try {
-    await strapiClient(`/ads/${item.value.id}/deactivate`, {
+    await strapiClient(`/ads/${item.value.id}/banned`, {
       method: "PUT",
       body: { reason_for_ban: reason },
     });
@@ -363,7 +363,7 @@ const handleBan = async (reason: string) => {
     closeBanLightbox();
     Swal.fire("Éxito", "Anuncio baneado correctamente.", "success");
   } catch (error) {
-    console.error("Error deactivating ad:", error);
+    console.error("Error banning ad:", error);
     Swal.fire("Error", "No se pudo banear el anuncio.", "error");
   } finally {
     isBanning.value = false;

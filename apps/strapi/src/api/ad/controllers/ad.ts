@@ -502,14 +502,13 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
   },
 
   /**
-   * Deactivate an advertisement (soft delete)
+   * Ban an advertisement
    *
-   * Deactivates an advertisement, marking it as archived.
-   * Only the owner of the ad or an administrator can deactivate it.
+   * Bans an advertisement. Only the owner of the ad or an administrator can ban it.
    *
-   * @route PUT /api/ads/:id/deactivate
+   * @route PUT /api/ads/:id/banned
    */
-  async deactivateAd(ctx: any) {
+  async bannedAd(ctx: any) {
     try {
       const { id } = ctx.params;
       const reasonForBan = ctx.request.body?.reason_for_ban;
@@ -523,7 +522,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
 
       const result = await strapi
         .service("api::ad.ad")
-        .deactivateAd(id, userId, reasonForBan);
+        .bannedAd(id, userId, reasonForBan);
       return result;
     } catch (error) {
       // Handle specific error cases with appropriate HTTP status codes

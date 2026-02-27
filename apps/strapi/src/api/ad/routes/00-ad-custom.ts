@@ -56,8 +56,8 @@ export default {
     },
     {
       method: "PUT",
-      path: "/ads/:id/deactivate",
-      handler: "ad.deactivateAd",
+      path: "/ads/:id/banned",
+      handler: "ad.bannedAd",
     },
   ],
 };
