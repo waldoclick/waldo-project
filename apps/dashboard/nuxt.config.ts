@@ -61,6 +61,7 @@ export default defineNuxtConfig({
           "https://www.gstatic.com",
           "https://*.sentry.io",
           "https://*.ingest.sentry.io",
+          "https://static.cloudflareinsights.com",
         ],
 
         "style-src": ["'self'", "'unsafe-inline'"],
@@ -87,6 +88,7 @@ export default defineNuxtConfig({
           "https://*.sentry.io",
           "https://*.ingest.sentry.io",
           "https://www.google-analytics.com",
+          "https://cloudflareinsights.com",
         ],
 
         "frame-src": [
