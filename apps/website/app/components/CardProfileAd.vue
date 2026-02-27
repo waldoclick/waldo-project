@@ -269,11 +269,11 @@ const handleRepublish = async () => {
     adStore.updateDepth(Number(ad.depth));
     adStore.updateCurrency(ad.currency);
 
-    // Actualizamos la galería con el formato esperado por el store
+    // Actualizamos la galería con URLs absolutas para que UploadImages las muestre bien
     const updatedGallery: GalleryItem[] = ad.gallery.map(
       (img: { id: number; url: string }) => ({
         id: String(img.id),
-        url: img.url, // No necesitamos transformar aquí, se hará en el componente
+        url: transformUrl(img.url),
       }),
     );
     adStore.updateGallery(updatedGallery);
