@@ -103,7 +103,7 @@
             </span>
           </div>
           <div
-            v-if="getUserFromAll"
+            v-if="getUserFromAll && isLoggedIn"
             class="announcement--single__sidebar__info__seller"
           >
             <CardInfo title="Contacto" :description="getUserFullName" />
@@ -152,7 +152,9 @@ const props = defineProps({
   },
 });
 
-const user = useStrapiUser();
+// Usuario autenticado
+const authUser = useStrapiUser();
+const isLoggedIn = computed(() => !!authUser.value);
 
 // Composable para sanitización
 const { sanitizeRich } = useSanitize();

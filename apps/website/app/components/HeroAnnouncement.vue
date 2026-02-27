@@ -19,21 +19,29 @@
             {{ getTitle }}
           </h1>
         </div>
-        <div v-if="user" class="hero--announcement__tags">
-          <span>
-            Por
-            <!-- <pre>{{ getUser }}</pre> -->
-            <nuxt-link
-              :to="`/${getUser?.username}`"
-              :title="getUser?.firstname"
-            >
-              {{ getUser?.firstname }}
-            </nuxt-link>
-          </span>
-          <span>
-            <!-- prettier-ignore -->
-            <nuxt-link to="/anunciar" title="Publicar aviso similar a este">Publicar aviso similar a este</nuxt-link>
-          </span>
+        <div v-if="getUser" class="hero--announcement__tags">
+          <template v-if="isLoggedIn">
+            <span>
+              Por
+              <!-- <pre>{{ getUser }}</pre> -->
+              <nuxt-link
+                :to="`/${getUser?.username}`"
+                :title="getUser?.firstname"
+              >
+                {{ getUser?.firstname }}
+              </nuxt-link>
+            </span>
+            <span>
+              <!-- prettier-ignore -->
+              <nuxt-link
+                to="/anunciar"
+                title="Publicar aviso similar a este"
+              >Publicar aviso similar a este</nuxt-link>
+            </span>
+          </template>
+          <template v-else>
+            <ReminderDefault />
+          </template>
         </div>
       </div>
       <div v-if="props.user" class="hero--announcement__qr">
@@ -57,6 +65,7 @@
 import { computed, ref, onMounted, watch } from "vue";
 import BreadcrumbsDefault from "@/components/BreadcrumbsDefault.vue";
 import QrDefault from "@/components/QrDefault.vue";
+import ReminderDefault from "@/components/ReminderDefault.vue";
 import { useColor } from "../composables/useColor";
 
 const props = defineProps({
@@ -74,8 +83,10 @@ const props = defineProps({
   },
 });
 
-const user = useStrapiUser();
 const { hexToRgba, bgColorWithTransparency } = useColor();
+
+const authUser = useStrapiUser();
+const isLoggedIn = computed(() => !!authUser.value);
 
 const getUser = computed(() => {
   return props.user;

@@ -49,7 +49,6 @@ const {
   "adData",
   async () => {
     const adsStore = useAdsStore();
-    const user = useStrapiUser();
 
     try {
       const ad = await adsStore.loadAdBySlug(route.params.slug);
@@ -58,25 +57,7 @@ const {
         return null;
       }
 
-      // Verificar si el anuncio está expirado (remaining_days === 0)
-      // Esto debe hacerse ANTES de procesar los datos para evitar errores de serialización en Pinia
-      if (ad.remaining_days === 0) {
-        return null;
-      }
-
-      let isAvailable = true;
-
-      if (!ad.active) {
-        isAvailable = false;
-      }
-
-      if (!isAvailable && user && user.value.id === ad.user.id) {
-        isAvailable = true;
-      }
-
-      if (!isAvailable) {
-        return null;
-      }
+      // Por ahora, siempre mostramos la información del anuncio
 
       // Formatear precio original y convertir
       if (ad.price) {
