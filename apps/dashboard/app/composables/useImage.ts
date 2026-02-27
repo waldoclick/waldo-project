@@ -1,11 +1,4 @@
-/**
- * Composable for transforming local image URLs to use the correct base URL
- * Handles both proxy and direct API access modes
- */
-export function useImage() {
-  const { getImage } = useNuxtImage();
-  return { getImage, ...useImageProxy() };
-}
+import { useRuntimeConfig, useStrapiToken } from "#imports";
 
 export function useImageProxy() {
   const config = useRuntimeConfig();
