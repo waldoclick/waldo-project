@@ -71,7 +71,10 @@ const { data: providers, pending: providersPending } = useLazyAsyncData(
   { default: () => ({ google: true }) },
 );
 
-const isLoginLightboxActive = computed(() => appStore.isLoginLightboxActive);
+const user = useStrapiUser();
+const isLoginLightboxActive = computed(
+  () => appStore.isLoginLightboxActive && !user.value,
+);
 
 const handleCloseLightbox = () => {
   appStore.closeLoginLightbox();
@@ -84,6 +87,9 @@ const handleKeydown = (event: KeyboardEvent) => {
 };
 
 onMounted(() => {
+  if (user.value) {
+    appStore.closeLoginLightbox();
+  }
   document.addEventListener("keydown", handleKeydown);
 });
 
