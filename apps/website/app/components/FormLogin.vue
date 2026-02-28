@@ -120,6 +120,9 @@ const handleSubmit = async (values) => {
       return;
     }
 
+    // Cerrar el lightbox de login si estaba abierto
+    appStore.closeLoginLightbox();
+
     // Obtener el referer del store o usar /anuncios como fallback
     const redirectTo = appStore.getReferer || "/anuncios";
     // Limpiar el referer después de usarlo
