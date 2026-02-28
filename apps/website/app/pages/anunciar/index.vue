@@ -1,7 +1,20 @@
 <template>
   <div class="page">
     <HeaderDefault />
+    <p class="page__wizard-trigger">
+      <button
+        type="button"
+        class="btn btn--secondary"
+        @click="isWizardCreationOpen = true"
+      >
+        ¿Cómo anunciar?
+      </button>
+    </p>
     <CreateAd />
+    <WizardCreation
+      :is-open="isWizardCreationOpen"
+      @close="isWizardCreationOpen = false"
+    />
   </div>
 </template>
 
@@ -12,10 +25,13 @@ const { $setSEO, $setStructuredData } = useNuxtApp();
 // components
 import HeaderDefault from "@/components/HeaderDefault.vue";
 import CreateAd from "@/components/CreateAd.vue";
-import { onMounted, watch } from "vue";
+import WizardCreation from "@/components/WizardCreation.vue";
+import { onMounted, watch, ref } from "vue";
 import { useAdAnalytics } from "~/composables/useAdAnalytics";
 import { usePacksStore } from "@/stores/packs.store";
 import { useAdStore } from "@/stores/ad.store";
+
+const isWizardCreationOpen = ref(false);
 
 // Analytics
 const adAnalytics = useAdAnalytics();
@@ -25,6 +41,9 @@ const adStore = useAdStore();
 
 // Inicializar analytics y enviar el primer evento view_item
 onMounted(async () => {
+  // Abrir el wizard de pasos al entrar a la página
+  isWizardCreationOpen.value = true;
+
   // Cargar packs si es necesario
   if (packsStore.packs.length === 0) {
     await packsStore.loadPacks();
