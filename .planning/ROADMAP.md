@@ -27,7 +27,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. `TransbankAdapter` implements `IPaymentGateway` and produces identical behavior to calling `TransbankService` directly — no call site changes required
   4. `getPaymentGateway()` returns the active adapter based on `PAYMENT_GATEWAY` env var, defaulting to `"transbank"` when unset
   5. Strapi startup fails with a clear error message if required env vars for the selected gateway are absent
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Write failing test suite (Wave 0: RED state for PAY-01 through PAY-05)
+- [ ] 01-02-PLAN.md — Implement types, adapter, registry, and barrel (Wave 1: GREEN state)
 
 ### Phase 2: Call Site Wiring and Bug Fixes
 **Goal**: All payment call sites use the abstraction layer; Transbank behavior is identical to pre-refactor; two existing bugs in the payment flow are corrected
@@ -47,5 +51,5 @@ Phases execute in numeric order: 1 → 2
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Interface and Adapter Layer | 0/TBD | Not started | - |
+| 1. Interface and Adapter Layer | 0/2 | Not started | - |
 | 2. Call Site Wiring and Bug Fixes | 0/TBD | Not started | - |
