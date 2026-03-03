@@ -55,5 +55,15 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 | Abstracción en Strapi, no en el frontend | Toda la lógica de negocio vive en Strapi; el frontend es stateless | — Pending |
 | Transbank como adaptador default | Mantiene compatibilidad hacia atrás, cero cambios en el flujo actual | — Pending |
 
+## Current Milestone: v1.0 Payment Gateway Abstraction
+
+**Goal:** Abstraer la capa de pagos en Strapi v5 para desacoplarla de Transbank, manteniendo el comportamiento actual y dejando la arquitectura lista para agregar otras pasarelas en el futuro.
+
+**Target features:**
+- Interfaz `IPaymentGateway` con contrato normalizado
+- `TransbankAdapter` que envuelve el servicio existente sin cambios de comportamiento
+- `PaymentGatewayRegistry` / factory que resuelve la pasarela activa vía env var
+- Wiring de `ad.service.ts` y `pack.service.ts` para usar la factory en lugar de importar Transbank directamente
+
 ---
-*Last updated: 2026-03-03 after initialization*
+*Last updated: 2026-03-03 after milestone v1.0 initialization*
