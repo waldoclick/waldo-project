@@ -2,13 +2,14 @@
   <div class="page">
     <HeaderDefault :show-search="true" />
     <HeroFake />
-    <!-- <pre>{{ prepareSummary(data) }}</pre> -->
+    <pre>{{ apiResponsePre }}</pre>
     <ResumeDefault
       v-if="data"
       title="¡Listo!, Creaste tu anuncio con éxito."
       description="Ahora debes esperar que tu anuncio pase por nuestra revisión, te avisaremos a tu correo electrónico cuando sea publicado."
       :show-icon="true"
       :summary="prepareSummary(data)"
+      :hide-payment-section="true"
     />
     <FooterDefault />
   </div>
@@ -168,6 +169,10 @@ watchEffect(() => {
     });
   }
 });
+
+const apiResponsePre = computed(() =>
+  data.value ? JSON.stringify(data.value, null, 2) : "(sin datos)",
+);
 
 const galleryData = computed(() => {
   if (!data.value?.gallery) return [];
