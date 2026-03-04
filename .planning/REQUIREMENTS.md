@@ -70,7 +70,7 @@
 | Feature | Reason |
 |---------|--------|
 | Tests unitarios exhaustivos | Alcance propio para un milestone dedicado posterior |
-| Cambios en Website o Strapi | Este milestone es exclusivamente `apps/dashboard` |
+| Cambios en Website o Strapi | Este milestone es exclusivamente `apps/dashboard` (ver nota PERF-01/PERF-02 en STATE.md) |
 | Nueva UI o features del dashboard | Foco en calidad interna, no funcionalidad nueva |
 | OAuth / mejoras de autenticación | No relacionado con deuda técnica identificada |
 | Internacionalización (i18n) | Módulo comentado — deferido conscientemente |
@@ -89,29 +89,29 @@
 | WIRE-02 | Phase 2 | Complete |
 | WIRE-03 | Phase 2 | Complete |
 | WIRE-04 | Phase 2 | Complete |
-| QUICK-01 | — | Pending |
-| QUICK-02 | — | Pending |
-| QUICK-03 | — | Pending |
-| QUICK-04 | — | Pending |
-| QUICK-05 | — | Pending |
-| QUICK-06 | — | Pending |
-| QUICK-07 | — | Pending |
-| COMP-01 | — | Pending |
-| COMP-02 | — | Pending |
-| COMP-03 | — | Pending |
-| COMP-04 | — | Pending |
-| TYPE-01 | — | Pending |
-| TYPE-02 | — | Pending |
-| TYPE-03 | — | Pending |
-| PERF-01 | — | Pending |
-| PERF-02 | — | Pending |
-| PERF-03 | — | Pending |
+| QUICK-01 | Phase 3 | Pending |
+| QUICK-02 | Phase 3 | Pending |
+| QUICK-03 | Phase 3 | Pending |
+| QUICK-04 | Phase 3 | Pending |
+| QUICK-05 | Phase 3 | Pending |
+| QUICK-06 | Phase 3 | Pending |
+| QUICK-07 | Phase 3 | Pending |
+| COMP-01 | Phase 4 | Pending |
+| COMP-02 | Phase 4 | Pending |
+| COMP-03 | Phase 4 | Pending |
+| COMP-04 | Phase 4 | Pending |
+| TYPE-01 | Phase 5 | Pending |
+| TYPE-02 | Phase 5 | Pending |
+| TYPE-03 | Phase 5 | Pending |
+| PERF-01 | Phase 6 | Pending |
+| PERF-02 | Phase 6 | Pending |
+| PERF-03 | Phase 6 | Pending |
 
 **Coverage:**
 - v1.1 requirements: 17 total
-- Mapped to phases: 0
-- Unmapped: 17 ⚠️
+- Mapped to phases: 17
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-04*
-*Last updated: 2026-03-04 after v1.1 initial definition*
+*Last updated: 2026-03-04 after v1.1 roadmap creation*
