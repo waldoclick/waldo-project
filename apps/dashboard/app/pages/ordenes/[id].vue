@@ -1,97 +1,102 @@
 <template>
-  <HeroDefault :title="title" :breadcrumbs="breadcrumbs" />
-  <BoxContent>
-    <template #content>
-      <BoxInformation title="Resumen" :columns="2">
-        <CardInfo v-if="order" title="ID" :description="String(order.id)" />
-        <CardInfo
-          v-if="order"
-          title="Monto"
-          :description="formatCurrency(order.amount)"
-        />
-        <CardInfo
-          v-if="order"
-          title="Método de pago"
-          :description="getPaymentMethod(order.payment_method)"
-        />
-        <CardInfo
-          v-if="order"
-          title="Documento"
-          :description="order.is_invoice ? 'Factura' : 'Boleta'"
-        />
-        <CardInfo
-          v-if="order"
-          title="Fecha"
-          :description="formatDate(order.createdAt)"
-        />
-      </BoxInformation>
+  <div>
+    <HeroDefault :title="title" :breadcrumbs="breadcrumbs" />
+    <BoxContent>
+      <template #content>
+        <BoxInformation title="Resumen" :columns="2">
+          <CardInfo v-if="order" title="ID" :description="String(order.id)" />
+          <CardInfo
+            v-if="order"
+            title="Monto"
+            :description="formatCurrency(order.amount)"
+          />
+          <CardInfo
+            v-if="order"
+            title="Método de pago"
+            :description="getPaymentMethod(order.payment_method)"
+          />
+          <CardInfo
+            v-if="order"
+            title="Documento"
+            :description="order.is_invoice ? 'Factura' : 'Boleta'"
+          />
+          <CardInfo
+            v-if="order"
+            title="Fecha"
+            :description="formatDate(order.createdAt)"
+          />
+        </BoxInformation>
 
-      <BoxInformation v-if="order?.user" title="Cliente" :columns="2">
-        <CardInfo title="Usuario" :description="order.user?.username || '--'" />
-        <CardInfo title="Email" :description="order.user?.email || '--'" />
-        <CardInfo title="Nombre" :description="formatFullName(order.user)" />
-        <CardInfo title="Teléfono" :description="order.user?.phone || '--'" />
-      </BoxInformation>
+        <BoxInformation v-if="order?.user" title="Cliente" :columns="2">
+          <CardInfo
+            title="Usuario"
+            :description="order.user?.username || '--'"
+          />
+          <CardInfo title="Email" :description="order.user?.email || '--'" />
+          <CardInfo title="Nombre" :description="formatFullName(order.user)" />
+          <CardInfo title="Teléfono" :description="order.user?.phone || '--'" />
+        </BoxInformation>
 
-      <BoxInformation v-if="order?.ad" title="Anuncio" :columns="2">
-        <CardInfo title="Nombre" :description="order.ad?.name || '--'" />
-        <CardInfo title="Slug" :description="order.ad?.slug || '--'" />
-        <CardInfo title="ID" :description="order.ad?.id || '--'" />
-      </BoxInformation>
+        <BoxInformation v-if="order?.ad" title="Anuncio" :columns="2">
+          <CardInfo title="Nombre" :description="order.ad?.name || '--'" />
+          <CardInfo title="Slug" :description="order.ad?.slug || '--'" />
+          <CardInfo title="ID" :description="order.ad?.id || '--'" />
+        </BoxInformation>
 
-      <BoxInformation
-        v-if="order?.items || order?.payment_response"
-        title="Detalle de pago"
-        :columns="1"
-      >
-        <CardInfo
-          v-if="order?.items"
-          title="Items"
-          :description="order.items"
-          show-copy-button
-        />
-        <CardInfo
-          v-if="order?.payment_response"
-          title="Respuesta de pago"
-          :description="order.payment_response"
-          show-copy-button
-        />
-      </BoxInformation>
+        <BoxInformation
+          v-if="order?.items || order?.payment_response"
+          title="Detalle de pago"
+          :columns="1"
+        >
+          <CardInfo
+            v-if="order?.items"
+            title="Items"
+            :description="order.items"
+            show-copy-button
+          />
+          <CardInfo
+            v-if="order?.payment_response"
+            title="Respuesta de pago"
+            :description="order.payment_response"
+            show-copy-button
+          />
+        </BoxInformation>
 
-      <BoxInformation
-        v-if="order?.document_details || order?.document_response"
-        title="Documento tributario"
-        :columns="1"
-      >
-        <CardInfo
-          v-if="order?.document_details"
-          title="Detalle"
-          :description="order.document_details"
-          show-copy-button
-        />
-        <CardInfo
-          v-if="order?.document_response"
-          title="Respuesta"
-          :description="order.document_response"
-          show-copy-button
-        />
-      </BoxInformation>
-    </template>
-    <template #sidebar>
-      <BoxInformation title="Detalles" :columns="1">
-        <CardInfo
-          v-if="order"
-          title="Fecha de creación"
-          :description="formatDate(order.createdAt)"
-        />
-        <CardInfo
-          v-if="order"
-          title="Última modificación"
-          :description="formatDate(order.updatedAt)"
-        />
-      </BoxInformation>
-    </template>
-  </BoxContent>
+        <BoxInformation
+          v-if="order?.document_details || order?.document_response"
+          title="Documento tributario"
+          :columns="1"
+        >
+          <CardInfo
+            v-if="order?.document_details"
+            title="Detalle"
+            :description="order.document_details"
+            show-copy-button
+          />
+          <CardInfo
+            v-if="order?.document_response"
+            title="Respuesta"
+            :description="order.document_response"
+            show-copy-button
+          />
+        </BoxInformation>
+      </template>
+      <template #sidebar>
+        <BoxInformation title="Detalles" :columns="1">
+          <CardInfo
+            v-if="order"
+            title="Fecha de creación"
+            :description="formatDate(order.createdAt)"
+          />
+          <CardInfo
+            v-if="order"
+            title="Última modificación"
+            :description="formatDate(order.updatedAt)"
+          />
+        </BoxInformation>
+      </template>
+    </BoxContent>
+  </div>
 </template>
 
 <script setup lang="ts">

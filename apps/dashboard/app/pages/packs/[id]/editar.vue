@@ -1,26 +1,28 @@
 <template>
-  <HeroDefault :title="title" :breadcrumbs="breadcrumbs" />
-  <BoxContent>
-    <template #content>
-      <BoxInformation title="Editar pack" :columns="1">
-        <FormPack :pack="pack" @saved="handlePackSaved" />
-      </BoxInformation>
-    </template>
-    <template #sidebar>
-      <BoxInformation title="Detalles" :columns="1">
-        <CardInfo
-          v-if="pack"
-          title="Fecha de creación"
-          :description="formatDate(pack.createdAt)"
-        />
-        <CardInfo
-          v-if="pack"
-          title="Última modificación"
-          :description="formatDate(pack.updatedAt)"
-        />
-      </BoxInformation>
-    </template>
-  </BoxContent>
+  <div>
+    <HeroDefault :title="title" :breadcrumbs="breadcrumbs" />
+    <BoxContent>
+      <template #content>
+        <BoxInformation title="Editar pack" :columns="1">
+          <FormPack :pack="pack" @saved="handlePackSaved" />
+        </BoxInformation>
+      </template>
+      <template #sidebar>
+        <BoxInformation title="Detalles" :columns="1">
+          <CardInfo
+            v-if="pack"
+            title="Fecha de creación"
+            :description="formatDate(pack.createdAt)"
+          />
+          <CardInfo
+            v-if="pack"
+            title="Última modificación"
+            :description="formatDate(pack.updatedAt)"
+          />
+        </BoxInformation>
+      </template>
+    </BoxContent>
+  </div>
 </template>
 
 <script setup lang="ts">

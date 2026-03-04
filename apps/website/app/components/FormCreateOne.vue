@@ -19,13 +19,15 @@
       <PaymentInvoice />
     </div>
 
-    <BarCreate
+    <BarAnnouncement
       :percentage="0"
       :current-step="1"
       :total-steps="5"
-      :is-valid="meta.valid"
-      :is-back-disabled="true"
-      @submit="handleSubmit"
+      :show-steps="true"
+      :summary-text="paymentSummaryText"
+      primary-label="Continuar"
+      :primary-disabled="!meta.valid"
+      :show-back="false"
       @back="handleformBack"
     />
   </Form>
@@ -33,12 +35,14 @@
 
 <script setup>
 import { Form } from "vee-validate";
+import { useAdPaymentSummary } from "@/composables/useAdPaymentSummary";
 import PaymentMethod from "@/components/PaymentMethod.vue";
 import PaymentFeatured from "@/components/PaymentFeatured.vue";
 import PaymentInvoice from "@/components/PaymentInvoice.vue";
-import BarCreate from "@/components/BarCreate.vue";
+import BarAnnouncement from "@/components/BarAnnouncement.vue";
 
-const emit = defineEmits(["formSubmitted"]);
+const emit = defineEmits(["formSubmitted", "formBack"]);
+const { paymentSummaryText } = useAdPaymentSummary();
 
 const handleSubmit = async (values) => {
   // Emitir el evento 'formSubmitted'

@@ -55,19 +55,19 @@ export const useUser = () => {
 
     // Casos con un solo anuncio
     if (unusedFreeCount === 1 && unusedPaidCount === 1) {
-      return "Tienes <strong>1</strong> aviso de pago y <strong>1</strong> aviso gratuito.";
+      return "Tienes <strong>1</strong> anuncio de pago y <strong>1</strong> anuncio gratuito.";
     } else if (unusedFreeCount === 1 && unusedPaidCount === 0) {
-      return "Tienes <strong>1</strong> aviso gratuito.";
+      return "Tienes <strong>1</strong> anuncio gratuito.";
     } else if (unusedPaidCount === 1 && unusedFreeCount === 0) {
-      return "Tienes <strong>1</strong> aviso de pago.";
+      return "Tienes <strong>1</strong> anuncio de pago.";
     }
     // Casos con múltiples anuncios
     else if (unusedFreeCount > 0 && unusedPaidCount > 0) {
-      return `Tienes <strong>${unusedPaidCount}</strong> avisos de pago y <strong>${unusedFreeCount}</strong> avisos gratuitos.`;
+      return `Tienes <strong>${unusedPaidCount}</strong> anuncios de pago y <strong>${unusedFreeCount}</strong> anuncios gratuitos.`;
     } else if (unusedPaidCount > 0) {
-      return `Tienes <strong>${unusedPaidCount}</strong> avisos de pago.`;
+      return `Tienes <strong>${unusedPaidCount}</strong> anuncios de pago.`;
     } else if (unusedFreeCount > 0) {
-      return `Tienes <strong>${unusedFreeCount}</strong> avisos gratuitos.`;
+      return `Tienes <strong>${unusedFreeCount}</strong> anuncios gratuitos.`;
     } else {
       return "No tienes anuncios disponibles";
     }

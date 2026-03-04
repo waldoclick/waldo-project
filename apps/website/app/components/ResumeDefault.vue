@@ -38,8 +38,8 @@
             <div class="resume--default__details">
               <div class="resume--default__grid">
                 <CardInfo
-                  title="Método de pago"
-                  :description="getPackDescription(summary.pack)"
+                  title="Tipo de anuncio"
+                  :description="getPaymentMethodDescription(summary)"
                 />
                 <CardInfo
                   title="Destacado"
@@ -48,6 +48,10 @@
                 <CardInfo
                   title="Factura"
                   :description="summary.isInvoice ? 'Sí' : 'No'"
+                />
+                <CardInfo
+                  title="Total"
+                  :description="getTotalDescription(summary)"
                 />
               </div>
             </div>
@@ -236,6 +240,12 @@ const getPackDescription = (pack) => {
   return "Comprando un pack de anuncios";
 };
 
+const getPaymentMethodDescription = (summary) => {
+  if (!summary) return "No especificado";
+  if (summary.paymentMethod) return summary.paymentMethod;
+  return getPackDescription(summary.pack);
+};
+
 const getFeaturedDescription = (featured) => {
   if (featured === undefined || featured === null) return "No especificado";
   if (featured === "free") return "Usar uno de mis destacados gratuitos";
@@ -250,6 +260,12 @@ const getFormattedPrice = (price, currency = "CLP") => {
     style: "currency",
     currency: currency,
   }).format(price || 0);
+};
+
+const getTotalDescription = (summary) => {
+  if (!summary) return "No especificado";
+  if (!summary.hasToPay || !summary.totalAmount) return "Sin pago";
+  return getFormattedPrice(summary.totalAmount, "CLP");
 };
 
 const getFullAddress = (address, number) => {

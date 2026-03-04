@@ -1,6 +1,6 @@
 import PaymentUtils from "../utils";
 import ad from "../../ad/services/ad";
-import TransbankServices from "../../../services/transbank";
+import { getPaymentGateway } from "../../../services/payment-gateway";
 import { AdData, PackType, FeaturedType, Details } from "../types/payment.type";
 import logger from "../../../utils/logtail";
 import { sendMjmlEmail } from "../../../services/mjml";
@@ -288,13 +288,12 @@ class AdService {
 
       const returnUrl = `${process.env.APP_URL}/api/payments/ad-response`;
 
-      const transbankResponse =
-        await TransbankServices.transbank.createTransaction(
-          paymentDetails.amount,
-          paymentDetails.buyOrder,
-          paymentDetails.sessionId,
-          returnUrl
-        );
+      const transbankResponse = await getPaymentGateway().createTransaction(
+        paymentDetails.amount,
+        paymentDetails.buyOrder,
+        paymentDetails.sessionId,
+        returnUrl
+      );
 
       // Verificar si la respuesta de Transbank fue exitosa
       if (!transbankResponse || !transbankResponse.success) {
@@ -318,8 +317,7 @@ class AdService {
 
   public async processPaidWebpay(token: string) {
     try {
-      const wepbayResponse =
-        await TransbankServices.transbank.commitTransaction(token);
+      const wepbayResponse = await getPaymentGateway().commitTransaction(token);
 
       if (!wepbayResponse.success) {
         return { success: false, error: wepbayResponse.error };

@@ -1,12 +1,14 @@
 <template>
-  <HeroDefault title="Nueva región" :breadcrumbs="breadcrumbs" />
-  <BoxContent>
-    <template #content>
-      <BoxInformation title="Nueva región" :columns="1">
-        <FormRegion />
-      </BoxInformation>
-    </template>
-  </BoxContent>
+  <div>
+    <HeroDefault title="Nueva región" :breadcrumbs="breadcrumbs" />
+    <BoxContent>
+      <template #content>
+        <BoxInformation title="Nueva región" :columns="1">
+          <FormRegion />
+        </BoxInformation>
+      </template>
+    </BoxContent>
+  </div>
 </template>
 
 <script setup lang="ts">

@@ -1,6 +1,8 @@
 <template>
-  <HeroDefault title="Abandonados" :breadcrumbs="breadcrumbs" />
-  <AdsAbandoned />
+  <div>
+    <HeroDefault title="Abandonados" :breadcrumbs="breadcrumbs" />
+    <AdsAbandoned />
+  </div>
 </template>
 
 <script setup lang="ts">

@@ -122,12 +122,14 @@
       </div>
     </div>
 
-    <BarCreate
+    <BarAnnouncement
       :percentage="50"
       :current-step="3"
       :total-steps="5"
-      :is-valid="meta.valid"
-      @submit="handleSubmit"
+      :show-steps="true"
+      :summary-text="paymentSummaryText"
+      primary-label="Continuar"
+      :primary-disabled="!meta.valid"
       @back="handleformBack"
     />
 
@@ -143,9 +145,11 @@ import * as yup from "yup";
 import { useAdStore } from "~/stores/ad.store";
 import { useRegionsStore } from "@/stores/regions.store";
 import { useCommunesStore } from "@/stores/communes.store";
-import BarCreate from "@/components/BarCreate.vue";
+import { useAdPaymentSummary } from "@/composables/useAdPaymentSummary";
+import BarAnnouncement from "@/components/BarAnnouncement.vue";
 
 const emit = defineEmits(["formSubmitted", "formBack"]);
+const { paymentSummaryText } = useAdPaymentSummary();
 
 const user = useStrapiUser();
 

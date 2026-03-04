@@ -1,5 +1,5 @@
 import PaymentUtils from "../utils";
-import TransbankServices from "../../../services/transbank";
+import { getPaymentGateway } from "../../../services/payment-gateway";
 import logger from "../../../utils/logtail";
 
 class PackService {
@@ -50,13 +50,12 @@ class PackService {
         },
       });
 
-      const transbankResponse =
-        await TransbankServices.transbank.createTransaction(
-          amount,
-          buyOrder,
-          sessionId,
-          returnUrl
-        );
+      const transbankResponse = await getPaymentGateway().createTransaction(
+        amount,
+        buyOrder,
+        sessionId,
+        returnUrl
+      );
 
       logger.info("Transacción Webpay creada exitosamente", {
         userId,
@@ -87,8 +86,7 @@ class PackService {
    */
   public async processPaidWebpay(token: string) {
     try {
-      const wepbayResponse =
-        await TransbankServices.transbank.commitTransaction(token);
+      const wepbayResponse = await getPaymentGateway().commitTransaction(token);
 
       if (!wepbayResponse.success) {
         logger.error("Error en respuesta de Webpay", {

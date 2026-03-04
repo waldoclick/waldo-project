@@ -818,7 +818,7 @@ export interface ApiOrderOrder extends Struct.CollectionTypeSchema {
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<"oneToMany", "api::order.order"> &
       Schema.Attribute.Private;
-    payment_method: Schema.Attribute.Enumeration<["webpay"]>;
+    payment_method: Schema.Attribute.Enumeration<["webpay", "transbank"]>;
     payment_response: Schema.Attribute.JSON;
     publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;

@@ -1,41 +1,43 @@
 <template>
-  <HeroDefault :title="title" :breadcrumbs="breadcrumbs">
-    <template #actions>
-      <NuxtLink
-        class="btn btn--primary"
-        :to="`/faqs/${route.params.id}/editar`"
-      >
-        Editar FAQ
-      </NuxtLink>
-    </template>
-  </HeroDefault>
-  <BoxContent>
-    <template #content>
-      <BoxInformation title="Información" :columns="1">
-        <CardInfo v-if="item" title="Título" :description="item.title" />
-        <CardInfo v-if="item" title="Contenido" :description="item.text" />
-        <CardInfo
-          v-if="item"
-          title="Destacado"
-          :description="item.featured ? 'Sí' : 'No'"
-        />
-      </BoxInformation>
-    </template>
-    <template #sidebar>
-      <BoxInformation title="Detalles" :columns="1">
-        <CardInfo
-          v-if="item"
-          title="Fecha de creación"
-          :description="formatDate(item.createdAt)"
-        />
-        <CardInfo
-          v-if="item"
-          title="Última modificación"
-          :description="formatDate(item.updatedAt)"
-        />
-      </BoxInformation>
-    </template>
-  </BoxContent>
+  <div>
+    <HeroDefault :title="title" :breadcrumbs="breadcrumbs">
+      <template #actions>
+        <NuxtLink
+          class="btn btn--primary"
+          :to="`/faqs/${route.params.id}/editar`"
+        >
+          Editar FAQ
+        </NuxtLink>
+      </template>
+    </HeroDefault>
+    <BoxContent>
+      <template #content>
+        <BoxInformation title="Información" :columns="1">
+          <CardInfo v-if="item" title="Título" :description="item.title" />
+          <CardInfo v-if="item" title="Contenido" :description="item.text" />
+          <CardInfo
+            v-if="item"
+            title="Destacado"
+            :description="item.featured ? 'Sí' : 'No'"
+          />
+        </BoxInformation>
+      </template>
+      <template #sidebar>
+        <BoxInformation title="Detalles" :columns="1">
+          <CardInfo
+            v-if="item"
+            title="Fecha de creación"
+            :description="formatDate(item.createdAt)"
+          />
+          <CardInfo
+            v-if="item"
+            title="Última modificación"
+            :description="formatDate(item.updatedAt)"
+          />
+        </BoxInformation>
+      </template>
+    </BoxContent>
+  </div>
 </template>
 
 <script setup lang="ts">

@@ -1,26 +1,28 @@
 <template>
-  <HeroDefault :title="title" :breadcrumbs="breadcrumbs" />
-  <BoxContent>
-    <template #content>
-      <BoxInformation title="Editar comuna" :columns="1">
-        <FormCommune :commune="commune" @saved="handleCommuneSaved" />
-      </BoxInformation>
-    </template>
-    <template #sidebar>
-      <BoxInformation title="Detalles" :columns="1">
-        <CardInfo
-          v-if="commune"
-          title="Fecha de creación"
-          :description="formatDate(commune.createdAt)"
-        />
-        <CardInfo
-          v-if="commune"
-          title="Última modificación"
-          :description="formatDate(commune.updatedAt)"
-        />
-      </BoxInformation>
-    </template>
-  </BoxContent>
+  <div>
+    <HeroDefault :title="title" :breadcrumbs="breadcrumbs" />
+    <BoxContent>
+      <template #content>
+        <BoxInformation title="Editar comuna" :columns="1">
+          <FormCommune :commune="commune" @saved="handleCommuneSaved" />
+        </BoxInformation>
+      </template>
+      <template #sidebar>
+        <BoxInformation title="Detalles" :columns="1">
+          <CardInfo
+            v-if="commune"
+            title="Fecha de creación"
+            :description="formatDate(commune.createdAt)"
+          />
+          <CardInfo
+            v-if="commune"
+            title="Última modificación"
+            :description="formatDate(commune.updatedAt)"
+          />
+        </BoxInformation>
+      </template>
+    </BoxContent>
+  </div>
 </template>
 
 <script setup lang="ts">

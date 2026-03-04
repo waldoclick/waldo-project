@@ -35,8 +35,8 @@
               <!-- prettier-ignore -->
               <nuxt-link
                 to="/anunciar"
-                title="Publicar aviso similar a este"
-              >Publicar aviso similar a este</nuxt-link>
+                title="Publicar anuncio similar a este"
+              >Publicar anuncio similar a este</nuxt-link>
             </span>
           </template>
           <template v-else>

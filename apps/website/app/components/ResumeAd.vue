@@ -9,7 +9,7 @@
         <div class="resume--ad__details">
           <div class="resume--ad__grid">
             <CardInfo
-              title="15 avisos por $ 90.000 "
+              title="15 anuncios por $ 90.000 "
               description="3 destacados de regalo + perfil vendedor"
             />
             <CardInfo

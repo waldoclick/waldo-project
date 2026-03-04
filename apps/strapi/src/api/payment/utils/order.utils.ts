@@ -5,7 +5,7 @@ interface CreateOrderParams {
   buy_order: string;
   userId: number;
   is_invoice: boolean;
-  payment_method: "webpay";
+  payment_method: string;
   payment_response?: any;
   document_details?: any;
   adId?: number;
@@ -37,7 +37,7 @@ class OrderUtils {
         buy_order,
         user: userId,
         is_invoice,
-        payment_method,
+        payment_method: payment_method as "webpay" | "transbank",
         payment_response,
         document_details,
         ad: adId,
