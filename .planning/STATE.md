@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: completed
-stopped_at: Completed 03-quick-wins-02-PLAN.md
-last_updated: "2026-03-04T20:16:59.703Z"
+stopped_at: Completed 03-quick-wins/03-01-PLAN.md
+last_updated: "2026-03-04T20:19:40.041Z"
 last_activity: 2026-03-04 — Roadmap created for v1.1
 progress:
   total_phases: 4
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 4
-  completed_plans: 3
+  completed_plans: 4
   percent: 0
 ---
 
@@ -58,6 +58,7 @@ Phases:
 | Phase 03-quick-wins P03 | 1 | 2 tasks | 2 files |
 | Phase 03-quick-wins P02 | 2 | 2 tasks | 3 files |
 | Phase 03-quick-wins P04 | 2min | 2 tasks | 3 files |
+| Phase 03-quick-wins P01 | 4 | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -79,6 +80,8 @@ Recent decisions affecting current work:
 - [Phase 03-quick-wins]: Delete auth.ts — guard.global.ts provides equivalent global auth protection with zero page references to named middleware
 - [Phase 03-quick-wins]: Remove vue-recaptcha and vue3-recaptcha-v2 — recaptcha.client.ts plugin loads Google SDK directly, no npm packages needed
 - [Phase 03-quick-wins]: Website-only state (isSearchLightboxActive, isLoginLightboxActive, contactFormSent) removed from AppStore — confirmed zero dashboard usage before removal
+- [Phase 03-quick-wins]: Six dedicated ads section keys replace shared 'ads' key in settings store — each ads status view has isolated pagination/filter state
+- [Phase 03-quick-wins]: watch with immediate:true is the sole data-loading trigger; onMounted fetch removed from all six Ads components to eliminate double API call on mount
 
 ### Pending Todos
 
@@ -90,6 +93,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-04T20:16:59.700Z
-Stopped at: Completed 03-quick-wins-02-PLAN.md
+Last session: 2026-03-04T20:19:40.038Z
+Stopped at: Completed 03-quick-wins/03-01-PLAN.md
 Resume file: None

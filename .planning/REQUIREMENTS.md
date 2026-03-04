@@ -24,8 +24,8 @@
 
 ### Quick Wins
 
-- [ ] **QUICK-01**: El double fetch al montar componentes de lista está eliminado (solo `watch({ immediate: true })`, sin `onMounted` duplicado)
-- [ ] **QUICK-02**: Cada sección de avisos (pendientes, activos, archivados, baneados, rechazados, abandonados) tiene su propia clave de paginación en el settings store
+- [x] **QUICK-01**: El double fetch al montar componentes de lista está eliminado (solo `watch({ immediate: true })`, sin `onMounted` duplicado)
+- [x] **QUICK-02**: Cada sección de avisos (pendientes, activos, archivados, baneados, rechazados, abandonados) tiene su propia clave de paginación en el settings store
 - [x] **QUICK-03**: Las versiones de `vue` y `vue-router` en `package.json` están pineadas a la versión actual instalada (no `"latest"`)
 - [x] **QUICK-04**: Los errores de producción son visibles: `useLogger` tiene Sentry activo y `console.error` no es suprimido en `console.client.ts`
 - [x] **QUICK-05**: El AppStore no contiene estado irrelevante al dashboard (`isSearchLightboxActive`, `isLoginLightboxActive`, `contactFormSent` eliminados)
@@ -89,8 +89,8 @@
 | WIRE-02 | Phase 2 | Complete |
 | WIRE-03 | Phase 2 | Complete |
 | WIRE-04 | Phase 2 | Complete |
-| QUICK-01 | Phase 3 | Pending |
-| QUICK-02 | Phase 3 | Pending |
+| QUICK-01 | Phase 3 | Complete |
+| QUICK-02 | Phase 3 | Complete |
 | QUICK-03 | Phase 3 | Complete |
 | QUICK-04 | Phase 3 | Complete |
 | QUICK-05 | Phase 3 | Complete |
