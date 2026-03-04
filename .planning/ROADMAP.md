@@ -1,59 +1,74 @@
-# Roadmap: Waldo — v1.0 Payment Gateway Abstraction
+# Roadmap: Waldo — v1.1 Dashboard Technical Debt Reduction
 
 ## Overview
 
-This milestone introduces a gateway-agnostic abstraction layer over Waldo's existing Transbank payment integration in Strapi v5. Phase 1 defines the interface contract and implements the TransbankAdapter and registry — no existing behavior changes. Phase 2 wires the two payment service call sites through the abstraction and fixes two known bugs in the payment flow. When complete, adding a second payment gateway requires one new adapter file and an env var change — zero modifications to existing services.
+This milestone eliminates critical technical debt in `apps/dashboard`: double fetch on mount, shared pagination state across unrelated views, silent error suppression in production, ~1,200 lines of duplicated Ads component code, 62+ untyped `any` references in domain-critical paths, and N+1 category queries. All work is confined to the dashboard app — no changes to Strapi or Website. When complete, the dashboard is maintainable, type-safe, and free of the performance anti-patterns that degrade operator experience at scale.
 
 ## Phases
 
 **Phase Numbering:**
 - Integer phases (1, 2, 3): Planned milestone work
-- Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
+- Decimal phases (3.1, 3.2): Urgent insertions (marked with INSERTED)
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [x] **Phase 1: Interface and Adapter Layer** - Define IPaymentGateway contract, implement TransbankAdapter, and build the PaymentGatewayRegistry (completed 2026-03-04)
-- [x] **Phase 2: Call Site Wiring and Bug Fixes** - Route AdService and PackService through the registry; fix hardcoded string and missing return bug (completed 2026-03-04)
+- [ ] **Phase 3: Quick Wins** - Eliminate double fetch, isolate pagination per section, pin dependency versions, restore error visibility, and remove dead code (completed -)
+- [ ] **Phase 4: Component Consolidation** - Replace 6 duplicated Ads components with a single generic AdsTable and verify behavioral parity
+- [ ] **Phase 5: Type Safety** - Define shared domain types for all major entities and enable typeCheck in build
+- [ ] **Phase 6: Performance** - Eliminate N+1 category queries, move ChartSales aggregation server-side, and consolidate StatisticsDefault calls
 
 ## Phase Details
 
-### Phase 1: Interface and Adapter Layer
-**Goal**: The payment gateway abstraction exists as a complete, self-contained module — interface, adapter, and registry — with no changes to existing payment behavior
-**Depends on**: Nothing (first phase)
-**Requirements**: PAY-01, PAY-02, PAY-03, PAY-04, PAY-05
+### Phase 3: Quick Wins
+**Goal**: The dashboard is free of the most impactful low-cost defects: components fetch once, each ads section has its own pagination, dependency versions are deterministic, errors are visible in production, and dead code is gone
+**Depends on**: Nothing (v1.1 starting phase)
+**Requirements**: QUICK-01, QUICK-02, QUICK-03, QUICK-04, QUICK-05, QUICK-06, QUICK-07
 **Success Criteria** (what must be TRUE):
-  1. `IPaymentGateway` interface exists with `createTransaction` and `commitTransaction` method signatures that use gateway-agnostic types (`gatewayRef`, not `token`)
-  2. `IGatewayInitResponse` and `IGatewayCommitResponse` normalized types exist and cover all data the current Transbank flow depends on
-  3. `TransbankAdapter` implements `IPaymentGateway` and produces identical behavior to calling `TransbankService` directly — no call site changes required
-  4. `getPaymentGateway()` returns the active adapter based on `PAYMENT_GATEWAY` env var, defaulting to `"transbank"` when unset
-  5. Strapi startup fails with a clear error message if required env vars for the selected gateway are absent
-**Plans**: 2 plans
+  1. Navigating to any ads list view triggers exactly one API call on mount — no duplicate request appears in the network tab
+  2. Advancing the page in "Pending Ads" does not affect the page number shown in "Active Ads" or any other ads section
+  3. `package.json` shows exact version strings for `vue` and `vue-router` (e.g., `"3.x.x"`) — `npm install` from scratch produces the same dependency tree every time
+  4. A thrown error in a dashboard page handler is visible in the Sentry dashboard and is not swallowed silently on the client
+  5. `AppStore` contains only state relevant to the dashboard; `nuxt.config.ts` contains no commented-out module blocks; no unused dependencies appear in `package.json`
+**Plans**: TBD
 
-Plans:
-- [ ] 01-01-PLAN.md — Write failing test suite (Wave 0: RED state for PAY-01 through PAY-05)
-- [ ] 01-02-PLAN.md — Implement types, adapter, registry, and barrel (Wave 1: GREEN state)
-
-### Phase 2: Call Site Wiring and Bug Fixes
-**Goal**: All payment call sites use the abstraction layer; Transbank behavior is identical to pre-refactor; two existing bugs in the payment flow are corrected
-**Depends on**: Phase 1
-**Requirements**: WIRE-01, WIRE-02, WIRE-03, WIRE-04
+### Phase 4: Component Consolidation
+**Goal**: A single `AdsTable.vue` component handles all ads list views; the six original components are deleted; every existing operator workflow (filter, paginate, ban, approve, reject) works identically
+**Depends on**: Phase 3
+**Requirements**: COMP-01, COMP-02, COMP-03, COMP-04
 **Success Criteria** (what must be TRUE):
-  1. `ad.service.ts` no longer imports `TransbankServices` directly — it calls `getPaymentGateway()` and the payment flow behaves identically
-  2. `pack.service.ts` no longer imports `TransbankServices` directly — it calls `getPaymentGateway()` and the payment flow behaves identically
-  3. The `payment_method` field stored in the order record reflects the value of `PAYMENT_GATEWAY` env var rather than the hardcoded string `"webpay"`
-  4. In the `packResponse` failure path, execution stops after `ctx.redirect` — downstream Facto and order creation logic does not run on payment failure
-**Plans**: 2 plans
+  1. `AdsTable.vue` exists and accepts `endpoint` and `status` props; the six `Ads*` component files are deleted from the codebase
+  2. Each ads list page (`/ads/pending`, `/ads/active`, `/ads/archived`, `/ads/banned`, `/ads/rejected`, `/ads/abandoned`) renders correctly using `<AdsTable>` with no regressions in filters, pagination, or row actions
+  3. If `Reservations*` or `Featured*` components show equivalent duplication on analysis, they are consolidated under the same pattern in this phase — or the decision to defer is documented
+**Plans**: TBD
 
-Plans:
-- [ ] 02-01-PLAN.md — Write failing test suite for WIRE-01 through WIRE-04 (Wave 0: RED state)
-- [ ] 02-02-PLAN.md — Rewire services and fix controller bugs (Wave 1: GREEN state)
+### Phase 5: Type Safety
+**Goal**: Domain entities have a single source of truth for their TypeScript types; the build enforces type correctness; no component uses `any` for `Ad`, `User`, `Order`, `Category`, or `Pack` data
+**Depends on**: Phase 4
+**Requirements**: TYPE-01, TYPE-02, TYPE-03
+**Success Criteria** (what must be TRUE):
+  1. `app/types/` contains interface definitions for `Ad`, `User`, `Order`, `Category`, and `Pack` — these are the only authoritative type declarations for those entities in the dashboard
+  2. `AdsTable.vue` and all ads pages import and use the shared types; no `any` appears in their props, emits, or data bindings for domain fields
+  3. `typeCheck: true` is set in `nuxt.config.ts` and `npm run build` completes without TypeScript errors
+**Plans**: TBD
+
+### Phase 6: Performance
+**Goal**: The dashboard makes the minimum number of Strapi calls required to render each view; category counts load in one round trip; sales chart data is aggregated on the server; statistics calls are as consolidated as layout allows
+**Depends on**: Phase 5
+**Requirements**: PERF-01, PERF-02, PERF-03
+**Success Criteria** (what must be TRUE):
+  1. `CategoriesDefault.vue` triggers one Strapi call that returns per-category ad counts — the network tab shows no parallel N calls for individual category counts (requires a Strapi endpoint that returns aggregated counts; creating this endpoint is in scope for this phase if it does not already exist)
+  2. `ChartSales.vue` fetches a single pre-aggregated monthly sales dataset from Strapi — it does not paginate through raw order records on the client (requires a Strapi aggregate endpoint; in scope to create if absent)
+  3. `StatisticsDefault.vue`'s parallel calls are audited; any that can be served by a single endpoint are consolidated, and the reduction in call count is documented — the statistics card layout is unchanged
+**Plans**: TBD
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2
+Phases execute in numeric order: 3 → 4 → 5 → 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Interface and Adapter Layer | 2/2 | Complete   | 2026-03-04 |
-| 2. Call Site Wiring and Bug Fixes | 2/2 | Complete   | 2026-03-04 |
+| 3. Quick Wins | 0/? | Not started | - |
+| 4. Component Consolidation | 0/? | Not started | - |
+| 5. Type Safety | 0/? | Not started | - |
+| 6. Performance | 0/? | Not started | - |
