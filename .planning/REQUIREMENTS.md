@@ -26,10 +26,10 @@
 
 - [ ] **QUICK-01**: El double fetch al montar componentes de lista está eliminado (solo `watch({ immediate: true })`, sin `onMounted` duplicado)
 - [ ] **QUICK-02**: Cada sección de avisos (pendientes, activos, archivados, baneados, rechazados, abandonados) tiene su propia clave de paginación en el settings store
-- [ ] **QUICK-03**: Las versiones de `vue` y `vue-router` en `package.json` están pineadas a la versión actual instalada (no `"latest"`)
+- [x] **QUICK-03**: Las versiones de `vue` y `vue-router` en `package.json` están pineadas a la versión actual instalada (no `"latest"`)
 - [x] **QUICK-04**: Los errores de producción son visibles: `useLogger` tiene Sentry activo y `console.error` no es suprimido en `console.client.ts`
 - [x] **QUICK-05**: El AppStore no contiene estado irrelevante al dashboard (`isSearchLightboxActive`, `isLoginLightboxActive`, `contactFormSent` eliminados)
-- [ ] **QUICK-06**: Dependencias muertas (`vue-recaptcha`, `vue3-recaptcha-v2`, `fs: "0.0.1-security"`) y middleware redundante (`auth.ts`) están eliminados
+- [x] **QUICK-06**: Dependencias muertas (`vue-recaptcha`, `vue3-recaptcha-v2`, `fs: "0.0.1-security"`) y middleware redundante (`auth.ts`) están eliminados
 - [x] **QUICK-07**: El código comentado en `nuxt.config.ts` (GTM module, i18n, image provider, manifest link) está limpio
 
 ### Component Consolidation
@@ -91,10 +91,10 @@
 | WIRE-04 | Phase 2 | Complete |
 | QUICK-01 | Phase 3 | Pending |
 | QUICK-02 | Phase 3 | Pending |
-| QUICK-03 | Phase 3 | Pending |
+| QUICK-03 | Phase 3 | Complete |
 | QUICK-04 | Phase 3 | Complete |
 | QUICK-05 | Phase 3 | Complete |
-| QUICK-06 | Phase 3 | Pending |
+| QUICK-06 | Phase 3 | Complete |
 | QUICK-07 | Phase 3 | Complete |
 | COMP-01 | Phase 4 | Pending |
 | COMP-02 | Phase 4 | Pending |
