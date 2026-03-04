@@ -16,6 +16,7 @@
     justify-content: space-between;
     align-items: center;
     gap: 40px;
+    min-width: 0;
 
     @include screen-medium {
       gap: 20px;
@@ -23,30 +24,69 @@
       align-items: flex-start;
     }
 
+    @include screen-small {
+      padding: 12px;
+      gap: 12px;
+      flex-direction: column;
+      align-items: stretch;
+    }
+
     &__left {
       display: flex;
       align-items: center;
       gap: 30px;
+      min-width: 0;
+      flex: 1 1 auto;
+
+      @include screen-small {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        width: 100%;
+      }
     }
 
     &__images {
       display: flex;
       align-items: center;
+      flex-shrink: 0;
+
+      @include screen-small {
+        width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        padding-bottom: 2px;
+
+        &::-webkit-scrollbar {
+          display: none;
+        }
+      }
 
       &__img,
       &__placeholder {
         background-color: $gainsboro;
-        // border: 1px solid #ccc;
         width: 60px;
         height: 60px;
         object-fit: cover;
         border-radius: 100%;
         border: 4px solid white;
         position: relative;
-        // background: white;
 
         &:not(:first-child) {
           margin-left: -40px;
+        }
+
+        @include screen-small {
+          width: 44px;
+          height: 44px;
+          border-width: 2px;
+          margin-left: 0;
+
+          &:not(:first-child) {
+            margin-left: -16px;
+          }
         }
       }
 
@@ -66,6 +106,12 @@
       flex-direction: column;
       gap: 8px;
       width: 200px;
+      min-width: 0;
+
+      @include screen-small {
+        width: 100%;
+        max-width: none;
+      }
 
       &__title {
         font-size: 12px;
@@ -77,6 +123,10 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+
+        @include screen-small {
+          font-size: 14px;
+        }
       }
     }
 
@@ -84,23 +134,34 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
+      min-width: 0;
 
       &__title {
-        // margin-bottom: 15px;
         font-weight: 600;
         font-size: 14px;
         display: flex;
         align-items: center;
+        flex-shrink: 0;
 
         svg {
           margin-right: 5px;
           color: $light_peach;
           fill: $light_peach;
         }
+
+        @include screen-small {
+          font-size: 13px;
+        }
       }
 
       &__text {
         font-size: 15px;
+        word-break: break-word;
+
+        @include screen-small {
+          font-size: 13px;
+          line-height: 1.35;
+        }
       }
     }
 
@@ -122,6 +183,22 @@
       flex-direction: row;
       gap: 8px;
       align-items: center;
+      flex-shrink: 0;
+
+      @include screen-small {
+        gap: 6px;
+      }
+    }
+
+    &__right {
+      @include screen-small {
+        display: flex;
+        width: 100%;
+        justify-content: flex-end;
+        margin-top: 6px;
+        padding-top: 8px;
+        border-top: 1px solid rgba($gainsboro, 0.8);
+      }
     }
   }
 
