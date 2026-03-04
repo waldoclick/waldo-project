@@ -22,7 +22,8 @@
                 @change="changePayment"
               />
               <strong>
-                {{ item.total_ads }} anuncios x
+                {{ item.total_ads }}
+                {{ item.total_ads === 1 ? "aviso" : "avisos" }} x
                 {{ formatPrice(item.price) }}
               </strong>
             </p>

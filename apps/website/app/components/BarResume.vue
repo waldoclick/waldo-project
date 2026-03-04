@@ -7,28 +7,31 @@
           <span>Volver</span>
         </NuxtLink>
 
-        <!-- <span>
-          Total a pagar: <strong>$10.000</strong>
-        </span> -->
+        <div class="bar--resume__actions">
+          <SummaryDefault :text="paymentSummaryText" />
 
-        <button
-          type="button"
-          class="btn btn--primary btn--block"
-          title="Ir a pagar"
-          @click="confirmPay"
-        >
-          <span>Ir a pagar</span>
-        </button>
+          <button
+            type="button"
+            class="btn btn--primary btn--block"
+            :title="primaryButtonLabel"
+            @click="confirmPay"
+          >
+            <span>{{ primaryButtonLabel }}</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import { computed } from "vue";
 import { useRouter } from "vue-router";
 const { Swal } = useSweetAlert2();
 import { useAdStore } from "@/stores/ad.store";
 import { useAdAnalytics } from "@/composables/useAdAnalytics";
+import { useAdPaymentSummary } from "@/composables/useAdPaymentSummary";
+import SummaryDefault from "@/components/SummaryDefault.vue";
 
 const { create } = useStrapi();
 const { fetchUser } = useStrapiAuth();
@@ -37,14 +40,36 @@ const router = useRouter();
 const adStore = useAdStore();
 const adAnalytics = useAdAnalytics();
 
+const { totalAmount, hasToPay, paymentSummaryText } = useAdPaymentSummary();
+
+const primaryButtonLabel = computed(() =>
+  hasToPay.value ? "Ir a pagar" : "Crear aviso",
+);
+
+const swalCopy = computed(() => {
+  if (hasToPay.value) {
+    return {
+      title: "¿Estás seguro?",
+      text: "Tras realizar el pago, no será posible modificar el aviso.",
+      confirm: "Sí, proceder al pago",
+    };
+  }
+
+  return {
+    title: "¿Quieres crear el aviso?",
+    text: "Una vez creado el aviso, no podrás modificarlo.",
+    confirm: "Sí, crear el aviso",
+  };
+});
+
 // Función intermedia para confirmar el pago
 const confirmPay = async () => {
   const result = await Swal.fire({
-    title: "¿Estás seguro?",
-    text: "Tras realizar el pago, no será posible modificar el aviso.",
+    title: swalCopy.value.title,
+    text: swalCopy.value.text,
     icon: "warning",
     showCancelButton: true,
-    confirmButtonText: "Sí, proceder al pago",
+    confirmButtonText: swalCopy.value.confirm,
     cancelButtonText: "Cancelar",
   });
 

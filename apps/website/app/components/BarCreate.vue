@@ -19,14 +19,18 @@
           </div>
         </div>
         <div class="bar--create__col bar--create__col--right">
-          <button
-            type="submit"
-            class="btn btn--primary btn--block"
-            :disabled="isSubmitDisabled || !isValid"
-            @click="$emit('submit')"
-          >
-            <span>Continuar</span>
-          </button>
+          <div class="bar--create__right-actions">
+            <SummaryDefault :text="paymentSummaryText" />
+
+            <button
+              type="submit"
+              class="btn btn--primary btn--block"
+              :disabled="isSubmitDisabled || !isValid"
+              @click="$emit('submit')"
+            >
+              <span>Continuar</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -35,6 +39,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue";
+import { useAdPaymentSummary } from "@/composables/useAdPaymentSummary";
+import SummaryDefault from "@/components/SummaryDefault.vue";
 
 const props = defineProps<{
   percentage: number;
@@ -45,13 +51,15 @@ const props = defineProps<{
   isSubmitDisabled?: boolean;
 }>();
 
+const { paymentSummaryText } = useAdPaymentSummary();
+
 defineEmits<{
   submit: [];
   back: [];
 }>();
 
 // Referencia al elemento de progreso
-const progressElement = ref(null);
+const progressElement = ref<HTMLElement | null>(null);
 
 // Función para actualizar el progreso
 const updateProgress = () => {

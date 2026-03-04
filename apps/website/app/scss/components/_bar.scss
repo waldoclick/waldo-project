@@ -52,6 +52,14 @@
       }
     }
 
+    &__right-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 16px;
+      width: 100%;
+    }
+
     &__steps {
       @include screen-small {
         display: none;
@@ -90,6 +98,12 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+    }
+
+    &__actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
     }
 
     button,

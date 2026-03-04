@@ -1,0 +1,104 @@
+import { computed } from "vue";
+import { useAdStore } from "@/stores/ad.store";
+import { usePacksStore } from "@/stores/packs.store";
+
+export const useAdPaymentSummary = () => {
+  const adStore = useAdStore();
+  const packsStore = usePacksStore();
+
+  const FEATURED_PRICE = 10000;
+
+  const formatPrice = (price: number) =>
+    new Intl.NumberFormat("es-CL", {
+      style: "currency",
+      currency: "CLP",
+      maximumFractionDigits: 0,
+    }).format(price);
+
+  const selectedPack = computed(() => {
+    if (typeof adStore.pack !== "number") return null;
+    return packsStore.packs.find((p) => p.id === adStore.pack) || null;
+  });
+
+  const packPart = computed(() => {
+    const pack = adStore.pack;
+
+    if (pack === "free") {
+      return {
+        label: "1 aviso gratuito",
+        amount: 0,
+      };
+    }
+
+    if (pack === "paid") {
+      return {
+        label: "1 aviso ya pagado",
+        amount: 0,
+      };
+    }
+
+    if (selectedPack.value) {
+      const p = selectedPack.value as any;
+      const unidad = p.total_ads === 1 ? "aviso" : "avisos";
+
+      return {
+        label: `${p.total_ads} ${unidad} x ${formatPrice(p.price)}`,
+        amount: p.price,
+      };
+    }
+
+    return null;
+  });
+
+  const featuredPart = computed(() => {
+    const featured = adStore.featured;
+
+    if (featured === "free") {
+      return {
+        label: " + destacado gratis",
+        amount: 0,
+      };
+    }
+
+    if (featured === true) {
+      return {
+        label: ` + destacado x ${formatPrice(FEATURED_PRICE)}`,
+        amount: FEATURED_PRICE,
+      };
+    }
+
+    return {
+      label: "",
+      amount: 0,
+    };
+  });
+
+  const totalAmount = computed(() => {
+    if (!packPart.value) return 0;
+    const packAmount = packPart.value.amount ?? 0;
+    const featuredAmount = featuredPart.value?.amount ?? 0;
+    return packAmount + featuredAmount;
+  });
+
+  const hasToPay = computed(() => totalAmount.value > 0);
+
+  const paymentSummaryText = computed(() => {
+    if (!packPart.value) return "";
+
+    let text = packPart.value.label;
+
+    if (featuredPart.value?.label) {
+      text += featuredPart.value.label;
+    }
+
+    return text;
+  });
+
+  return {
+    packPart,
+    featuredPart,
+    totalAmount,
+    hasToPay,
+    paymentSummaryText,
+  };
+};
