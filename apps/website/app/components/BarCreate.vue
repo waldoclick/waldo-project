@@ -3,25 +3,31 @@
     <div class="container container--fluid">
       <div ref="progressElement" class="bar--create__percent"></div>
       <div class="bar--create__container">
-        <button
-          type="button"
-          class="btn btn--secondary btn--block"
-          :disabled="isBackDisabled"
-          @click="$emit('back')"
-        >
-          <span>Volver</span>
-        </button>
-        <div class="bar--create__steps">
-          <b>{{ currentStep }}</b> de {{ totalSteps }}
+        <div class="bar--create__col bar--create__col--left">
+          <button
+            type="button"
+            class="btn btn--secondary btn--block"
+            :disabled="isBackDisabled"
+            @click="$emit('back')"
+          >
+            <span>Volver</span>
+          </button>
         </div>
-        <button
-          type="submit"
-          class="btn btn--primary btn--block"
-          :disabled="isSubmitDisabled || !isValid"
-          @click="$emit('submit')"
-        >
-          <span>Continuar</span>
-        </button>
+        <div class="bar--create__col bar--create__col--center">
+          <div class="bar--create__steps">
+            <b>{{ currentStep }}</b> de {{ totalSteps }}
+          </div>
+        </div>
+        <div class="bar--create__col bar--create__col--right">
+          <button
+            type="submit"
+            class="btn btn--primary btn--block"
+            :disabled="isSubmitDisabled || !isValid"
+            @click="$emit('submit')"
+          >
+            <span>Continuar</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
