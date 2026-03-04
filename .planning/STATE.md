@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 02-call-site-wiring-and-bug-fixes-02-01-PLAN.md
-last_updated: "2026-03-04T10:55:03.714Z"
+stopped_at: Completed 02-call-site-wiring-and-bug-fixes-02-02-PLAN.md
+last_updated: "2026-03-04T11:05:58.477Z"
 last_activity: 2026-03-03 — Roadmap created for milestone v1.0 Payment Gateway Abstraction
 progress:
   total_phases: 2
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 4
-  completed_plans: 3
+  completed_plans: 4
   percent: 50
 ---
 
@@ -53,6 +53,7 @@ Progress: [█████░░░░░] 50%
 | Phase 01-interface-and-adapter-layer P01 | 1 | 1 tasks | 1 files |
 | Phase 01-interface-and-adapter-layer P02 | 2 | 2 tasks | 4 files |
 | Phase 02-call-site-wiring-and-bug-fixes P01 | 4 | 3 tasks | 3 files |
+| Phase 02-call-site-wiring-and-bug-fixes P02 | 8 | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -72,6 +73,8 @@ Recent decisions affecting current work:
 - [Phase 02-call-site-wiring-and-bug-fixes]: Test import paths from __tests__/ are one level deeper than service files — use ../../../../services/payment-gateway not ../../../services/payment-gateway
 - [Phase 02-call-site-wiring-and-bug-fixes]: Wave 0 RED tests confirm WIRE-04: documentDetails called even on failure because packResponse missing return after ctx.redirect
 - [Phase 02-call-site-wiring-and-bug-fixes]: Wave 0 RED tests confirm WIRE-03: payment_method hardcoded as webpay, not reading PAYMENT_GATEWAY env var
+- [Phase 02-call-site-wiring-and-bug-fixes]: Order schema enum extended to include transbank; payment_method broadened to string in CreateOrderParams with union cast at entityService call
+- [Phase 02-call-site-wiring-and-bug-fixes]: process.env.PAYMENT_GATEWAY ?? transbank pattern used for dynamic payment_method in payment.ts — zero code changes needed to switch gateways
 
 ### Pending Todos
 
@@ -83,6 +86,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-04T10:55:03.713Z
-Stopped at: Completed 02-call-site-wiring-and-bug-fixes-02-01-PLAN.md
+Last session: 2026-03-04T11:05:58.476Z
+Stopped at: Completed 02-call-site-wiring-and-bug-fixes-02-02-PLAN.md
 Resume file: None
