@@ -336,25 +336,10 @@ export default defineNuxtConfig({
   // 6. Performance Optimizations
   // (Nitro config moved above to avoid duplication)
 
-  // Robots Configuration
-  robots:
-    process.env.BLOCK_SEARCH_ENGINES === "true"
-      ? {
-          disallow: "/",
-        }
-      : {
-          allow: "/",
-          disallow: [
-            "/404",
-            "/500",
-            "/auth/reset-password",
-            "/dev/",
-            "/cuenta/**",
-            "/anunciar/**",
-            "/packs/**",
-            "/contacto/**",
-          ],
-        },
+  // Robots: dashboard is always private, never indexable
+  robots: {
+    disallow: "/",
+  },
 
   // 6. Development Configuration
   typescript: {
