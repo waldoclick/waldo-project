@@ -1,51 +1,53 @@
 <template>
-  <HeroDefault :title="title" :breadcrumbs="breadcrumbs" />
-  <BoxContent>
-    <template #content>
-      <BoxInformation title="Información" :columns="2">
-        <CardInfo v-if="item" title="ID" :description="String(item.id)" />
-        <CardInfo
-          v-if="item"
-          title="Usuario"
-          :description="item.user?.username || '--'"
-        />
-        <CardInfo
-          v-if="item"
-          title="Anuncio"
-          :description="item.ad?.name || '--'"
-        />
-        <CardInfo
-          v-if="item"
-          title="Precio"
-          :description="formatCurrency(item.price)"
-        />
-        <CardInfo
-          v-if="item"
-          title="Días"
-          :description="formatDays(item.total_days)"
-        />
-        <CardInfo
-          v-if="item"
-          title="Descripción"
-          :description="item.description || '--'"
-        />
-      </BoxInformation>
-    </template>
-    <template #sidebar>
-      <BoxInformation title="Detalles" :columns="1">
-        <CardInfo
-          v-if="item"
-          title="Fecha de creación"
-          :description="formatDate(item.createdAt)"
-        />
-        <CardInfo
-          v-if="item"
-          title="Última modificación"
-          :description="formatDate(item.updatedAt)"
-        />
-      </BoxInformation>
-    </template>
-  </BoxContent>
+  <div>
+    <HeroDefault :title="title" :breadcrumbs="breadcrumbs" />
+    <BoxContent>
+      <template #content>
+        <BoxInformation title="Información" :columns="2">
+          <CardInfo v-if="item" title="ID" :description="String(item.id)" />
+          <CardInfo
+            v-if="item"
+            title="Usuario"
+            :description="item.user?.username || '--'"
+          />
+          <CardInfo
+            v-if="item"
+            title="Anuncio"
+            :description="item.ad?.name || '--'"
+          />
+          <CardInfo
+            v-if="item"
+            title="Precio"
+            :description="formatCurrency(item.price)"
+          />
+          <CardInfo
+            v-if="item"
+            title="Días"
+            :description="formatDays(item.total_days)"
+          />
+          <CardInfo
+            v-if="item"
+            title="Descripción"
+            :description="item.description || '--'"
+          />
+        </BoxInformation>
+      </template>
+      <template #sidebar>
+        <BoxInformation title="Detalles" :columns="1">
+          <CardInfo
+            v-if="item"
+            title="Fecha de creación"
+            :description="formatDate(item.createdAt)"
+          />
+          <CardInfo
+            v-if="item"
+            title="Última modificación"
+            :description="formatDate(item.updatedAt)"
+          />
+        </BoxInformation>
+      </template>
+    </BoxContent>
+  </div>
 </template>
 
 <script setup lang="ts">

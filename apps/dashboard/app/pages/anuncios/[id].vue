@@ -1,180 +1,186 @@
 <template>
-  <HeroDefault :title="title" :breadcrumbs="breadcrumbs">
-    <template v-if="statusIcon" #titlePrefix>
-      <component :is="statusIcon" aria-hidden="true" />
-    </template>
-  </HeroDefault>
-  <BoxContent>
-    <template #content>
-      <BoxInformation
-        v-if="item?.reason_for_ban"
-        title="Razón del baneo"
-        :columns="1"
-      >
-        <template #titlePrefix>
-          <AlertTriangle aria-hidden="true" />
-        </template>
-        <CardInfo
-          v-if="item?.banned_at"
-          title="Fecha"
-          :description="formatDate(item.banned_at)"
-        />
-        <CardInfo title="Detalle" :description="item.reason_for_ban" />
-      </BoxInformation>
-      <BoxInformation
-        v-if="item?.reason_for_rejection"
-        title="Razón del rechazo"
-        :columns="1"
-      >
-        <CardInfo
-          v-if="item?.rejected_at"
-          title="Fecha"
-          :description="formatDate(item.rejected_at)"
-        />
-        <CardInfo title="Detalle" :description="item.reason_for_rejection" />
-      </BoxInformation>
-      <BoxInformation title="Información" :columns="2">
-        <CardInfo v-if="item" title="Nombre" :description="item.name" />
-        <CardInfo v-if="item" title="Slug" :description="item.slug" />
-        <CardInfo
-          v-if="item"
-          title="Descripción"
-          :description="item.description || '--'"
-        />
-        <CardInfo
-          v-if="item"
-          title="Precio"
-          :description="formatPrice(item.price, item.currency)"
-        />
-        <CardInfo
-          v-if="item"
-          title="Categoría"
-          :description="item.category?.name || '--'"
-        />
-        <CardInfo
-          v-if="item"
-          title="Condición"
-          :description="item.condition?.name || '--'"
-        />
-        <CardInfo
-          v-if="item"
-          title="Comuna"
-          :description="item.commune?.name || '--'"
-        />
-        <CardInfo
-          v-if="item"
-          title="Dirección"
-          :description="formatAddress(item.address, item.address_number)"
-        />
-        <CardInfo
-          v-if="item"
-          title="Teléfono"
-          :description="item.phone || '--'"
-        />
-        <CardInfo v-if="item" title="Email" :description="item.email || '--'" />
-        <CardInfo
-          v-if="item"
-          title="Duración"
-          :description="`${item.duration_days} días`"
-        />
-        <CardInfo
-          v-if="item"
-          title="Días Restantes"
-          :description="`${item.remaining_days} días`"
-        />
-        <CardInfo
-          v-if="item"
-          title="Moneda"
-          :description="item.currency || '--'"
-        />
-      </BoxInformation>
+  <div>
+    <HeroDefault :title="title" :breadcrumbs="breadcrumbs">
+      <template v-if="statusIcon" #titlePrefix>
+        <component :is="statusIcon" aria-hidden="true" />
+      </template>
+    </HeroDefault>
+    <BoxContent>
+      <template #content>
+        <BoxInformation
+          v-if="item?.reason_for_ban"
+          title="Razón del baneo"
+          :columns="1"
+        >
+          <template #titlePrefix>
+            <AlertTriangle aria-hidden="true" />
+          </template>
+          <CardInfo
+            v-if="item?.banned_at"
+            title="Fecha"
+            :description="formatDate(item.banned_at)"
+          />
+          <CardInfo title="Detalle" :description="item.reason_for_ban" />
+        </BoxInformation>
+        <BoxInformation
+          v-if="item?.reason_for_rejection"
+          title="Razón del rechazo"
+          :columns="1"
+        >
+          <CardInfo
+            v-if="item?.rejected_at"
+            title="Fecha"
+            :description="formatDate(item.rejected_at)"
+          />
+          <CardInfo title="Detalle" :description="item.reason_for_rejection" />
+        </BoxInformation>
+        <BoxInformation title="Información" :columns="2">
+          <CardInfo v-if="item" title="Nombre" :description="item.name" />
+          <CardInfo v-if="item" title="Slug" :description="item.slug" />
+          <CardInfo
+            v-if="item"
+            title="Descripción"
+            :description="item.description || '--'"
+          />
+          <CardInfo
+            v-if="item"
+            title="Precio"
+            :description="formatPrice(item.price, item.currency)"
+          />
+          <CardInfo
+            v-if="item"
+            title="Categoría"
+            :description="item.category?.name || '--'"
+          />
+          <CardInfo
+            v-if="item"
+            title="Condición"
+            :description="item.condition?.name || '--'"
+          />
+          <CardInfo
+            v-if="item"
+            title="Comuna"
+            :description="item.commune?.name || '--'"
+          />
+          <CardInfo
+            v-if="item"
+            title="Dirección"
+            :description="formatAddress(item.address, item.address_number)"
+          />
+          <CardInfo
+            v-if="item"
+            title="Teléfono"
+            :description="item.phone || '--'"
+          />
+          <CardInfo
+            v-if="item"
+            title="Email"
+            :description="item.email || '--'"
+          />
+          <CardInfo
+            v-if="item"
+            title="Duración"
+            :description="`${item.duration_days} días`"
+          />
+          <CardInfo
+            v-if="item"
+            title="Días Restantes"
+            :description="`${item.remaining_days} días`"
+          />
+          <CardInfo
+            v-if="item"
+            title="Moneda"
+            :description="item.currency || '--'"
+          />
+        </BoxInformation>
 
-      <BoxInformation
-        v-if="item?.gallery && item.gallery.length > 0"
-        title="Galería de imágenes"
-        :columns="1"
-      >
-        <GalleryDefault
-          :images="item.gallery"
-          :alt-prefix="item.name"
-          :columns="4"
-          @image-delete="handleDeleteImage"
-        />
-      </BoxInformation>
-    </template>
-    <template #sidebar>
-      <BoxInformation title="Acciones" :columns="1">
-        <button
-          v-if="isPending"
-          type="button"
-          class="btn btn--buy btn--block"
-          @click="handleApprove"
+        <BoxInformation
+          v-if="item?.gallery && item.gallery.length > 0"
+          title="Galería de imágenes"
+          :columns="1"
         >
-          Aprobar
-        </button>
-        <button
-          v-if="isPending"
-          type="button"
-          class="btn btn--secondary btn--block"
-          @click="openRejectLightbox"
-        >
-          Rechazar
-        </button>
-        <a
-          v-if="isActive && item?.slug"
-          :href="`${websiteUrl}/anuncios/${item.slug}`"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="btn btn--primary btn--block"
-        >
-          Ver anuncio
-        </a>
-        <button
-          v-if="isActive"
-          type="button"
-          class="btn btn--secondary btn--block"
-          @click="openBanLightbox"
-        >
-          Banear
-        </button>
-      </BoxInformation>
-      <BoxInformation title="Detalles" :columns="1">
-        <CardInfo
-          v-if="item"
-          title="Estado"
-          :description="getStatusText(item)"
-        />
-        <CardInfo
-          v-if="item"
-          title="Fecha de creación"
-          :description="formatDate(item.createdAt)"
-        />
-        <CardInfo
-          v-if="item"
-          title="Última modificación"
-          :description="formatDate(item.updatedAt)"
-        />
-      </BoxInformation>
-    </template>
-  </BoxContent>
-  <LightboxRazon
-    :is-open="isRejectLightboxOpen"
-    title="Razón del rechazo"
-    description="Esta razón se enviará al usuario y quedará registrada en el anuncio."
-    :initial-reason="defaultRejectionReason"
-    :loading="isRejecting"
-    @close="closeRejectLightbox"
-    @submit="handleReject"
-  />
-  <LightboxRazon
-    :is-open="isBanLightboxOpen"
-    title="Razón del baneo"
-    description="Esta razón quedará registrada en el anuncio."
-    :initial-reason="defaultBanReason"
-    :loading="isBanning"
-    @close="closeBanLightbox"
-    @submit="handleBanned"
-  />
+          <GalleryDefault
+            :images="item.gallery"
+            :alt-prefix="item.name"
+            :columns="4"
+            @image-delete="handleDeleteImage"
+          />
+        </BoxInformation>
+      </template>
+      <template #sidebar>
+        <BoxInformation title="Acciones" :columns="1">
+          <button
+            v-if="isPending"
+            type="button"
+            class="btn btn--buy btn--block"
+            @click="handleApprove"
+          >
+            Aprobar
+          </button>
+          <button
+            v-if="isPending"
+            type="button"
+            class="btn btn--secondary btn--block"
+            @click="openRejectLightbox"
+          >
+            Rechazar
+          </button>
+          <a
+            v-if="isActive && item?.slug"
+            :href="`${websiteUrl}/anuncios/${item.slug}`"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn--primary btn--block"
+          >
+            Ver anuncio
+          </a>
+          <button
+            v-if="isActive"
+            type="button"
+            class="btn btn--secondary btn--block"
+            @click="openBanLightbox"
+          >
+            Banear
+          </button>
+        </BoxInformation>
+        <BoxInformation title="Detalles" :columns="1">
+          <CardInfo
+            v-if="item"
+            title="Estado"
+            :description="getStatusText(item)"
+          />
+          <CardInfo
+            v-if="item"
+            title="Fecha de creación"
+            :description="formatDate(item.createdAt)"
+          />
+          <CardInfo
+            v-if="item"
+            title="Última modificación"
+            :description="formatDate(item.updatedAt)"
+          />
+        </BoxInformation>
+      </template>
+    </BoxContent>
+    <LightboxRazon
+      :is-open="isRejectLightboxOpen"
+      title="Razón del rechazo"
+      description="Esta razón se enviará al usuario y quedará registrada en el anuncio."
+      :initial-reason="defaultRejectionReason"
+      :loading="isRejecting"
+      @close="closeRejectLightbox"
+      @submit="handleReject"
+    />
+    <LightboxRazon
+      :is-open="isBanLightboxOpen"
+      title="Razón del baneo"
+      description="Esta razón quedará registrada en el anuncio."
+      :initial-reason="defaultBanReason"
+      :loading="isBanning"
+      @close="closeBanLightbox"
+      @submit="handleBanned"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">

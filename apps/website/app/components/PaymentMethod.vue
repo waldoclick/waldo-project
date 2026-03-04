@@ -29,7 +29,7 @@
         </label>
       </li>
 
-      <!-- avisos pago -->
+      <!-- anuncios pago -->
       <li
         v-if="adReservations.unusedPaidCount > 0"
         :class="[
@@ -76,7 +76,8 @@
                 @change="changePayment"
               />
               <strong>
-                {{ item.total_ads }} anuncios x
+                {{ item.total_ads }}
+                {{ Number(item.total_ads) === 1 ? "anuncio" : "anuncios" }} x
                 {{ formatPrice(item.price) }}
               </strong>
             </p>
@@ -128,16 +129,16 @@ const adReservations = computed(() => getAdReservations());
 const freeAdText = computed(() => {
   const count = adReservations.value.unusedFreeCount;
   return count === 1
-    ? "Usar mi último aviso gratuito"
-    : `Usar 1 de mis ${count} avisos gratuitos`;
+    ? "Usar mi último anuncio gratuito"
+    : `Usar 1 de mis ${count} anuncios gratuitos`;
 });
 
 // Computed property for paid ad text
 const paidAdText = computed(() => {
   const count = adReservations.value.unusedPaidCount;
   return count === 1
-    ? "Usar mi último aviso de pago"
-    : `Usar 1 de mis ${count} avisos de pago`;
+    ? "Usar mi último anuncio de pago"
+    : `Usar 1 de mis ${count} anuncios de pago`;
 });
 
 // Function to format price to Chilean Pesos

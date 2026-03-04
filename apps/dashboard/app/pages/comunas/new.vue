@@ -1,12 +1,14 @@
 <template>
-  <HeroDefault title="Nueva comuna" :breadcrumbs="breadcrumbs" />
-  <BoxContent>
-    <template #content>
-      <BoxInformation title="Nueva comuna" :columns="1">
-        <FormCommune />
-      </BoxInformation>
-    </template>
-  </BoxContent>
+  <div>
+    <HeroDefault title="Nueva comuna" :breadcrumbs="breadcrumbs" />
+    <BoxContent>
+      <template #content>
+        <BoxInformation title="Nueva comuna" :columns="1">
+          <FormCommune />
+        </BoxInformation>
+      </template>
+    </BoxContent>
+  </div>
 </template>
 
 <script setup lang="ts">

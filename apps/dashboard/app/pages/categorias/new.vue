@@ -1,12 +1,14 @@
 <template>
-  <HeroDefault title="Nueva categoría" :breadcrumbs="breadcrumbs" />
-  <BoxContent>
-    <template #content>
-      <BoxInformation title="Nueva categoría" :columns="1">
-        <FormCategory />
-      </BoxInformation>
-    </template>
-  </BoxContent>
+  <div>
+    <HeroDefault title="Nueva categoría" :breadcrumbs="breadcrumbs" />
+    <BoxContent>
+      <template #content>
+        <BoxInformation title="Nueva categoría" :columns="1">
+          <FormCategory />
+        </BoxInformation>
+      </template>
+    </BoxContent>
+  </div>
 </template>
 
 <script setup lang="ts">

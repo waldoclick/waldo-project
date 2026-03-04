@@ -63,10 +63,18 @@ input:-webkit-autofill {
 
     &--3 {
       grid-template-columns: 1fr 1fr 1fr;
+
+      @include screen-small {
+        grid-template-columns: 1fr;
+      }
     }
 
     &--4 {
       grid-template-columns: 1fr 1fr 1fr 1fr;
+
+      @include screen-small {
+        grid-template-columns: 1fr;
+      }
     }
   }
 

@@ -171,12 +171,14 @@
       </div>
     </div>
 
-    <BarCreate
+    <BarAnnouncement
       :percentage="75"
       :current-step="4"
       :total-steps="5"
-      :is-valid="meta.valid"
-      @submit="handleSubmit"
+      :show-steps="true"
+      :summary-text="paymentSummaryText"
+      primary-label="Continuar"
+      :primary-disabled="!meta.valid"
       @back="handleformBack"
     />
   </Form>
@@ -189,9 +191,11 @@ import * as yup from "yup";
 import { useAdStore } from "@/stores/ad.store";
 import { useConditionsStore } from "~/stores/conditions.store";
 import { useValidation } from "@/composables/useValidation";
-import BarCreate from "@/components/BarCreate.vue";
+import { useAdPaymentSummary } from "@/composables/useAdPaymentSummary";
+import BarAnnouncement from "@/components/BarAnnouncement.vue";
 
 const emit = defineEmits(["formSubmitted", "formBack"]);
+const { paymentSummaryText } = useAdPaymentSummary();
 
 const { isValidText } = useValidation();
 

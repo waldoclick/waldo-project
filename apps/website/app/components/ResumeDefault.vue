@@ -22,7 +22,7 @@
       <client-only>
         <template v-if="summary">
           <!--1. Método de pago -->
-          <div class="resume--default__box">
+          <div v-if="!hidePaymentSection" class="resume--default__box">
             <div class="resume--default__subtitle">
               <h2 class="resume--default__subtitle__title">
                 1. Método de pago
@@ -38,8 +38,8 @@
             <div class="resume--default__details">
               <div class="resume--default__grid">
                 <CardInfo
-                  title="Método de pago"
-                  :description="getPackDescription(summary.pack)"
+                  title="Tipo de anuncio"
+                  :description="getPaymentMethodDescription(summary)"
                 />
                 <CardInfo
                   title="Destacado"
@@ -49,14 +49,20 @@
                   title="Factura"
                   :description="summary.isInvoice ? 'Sí' : 'No'"
                 />
+                <CardInfo
+                  title="Total"
+                  :description="getTotalDescription(summary)"
+                />
               </div>
             </div>
           </div>
 
-          <!--2. General -->
+          <!-- General (1 o 2 según hidePaymentSection) -->
           <div class="resume--default__box">
             <div class="resume--default__subtitle">
-              <h2 class="resume--default__subtitle__title">2. General</h2>
+              <h2 class="resume--default__subtitle__title">
+                {{ hidePaymentSection ? "1" : "2" }}. General
+              </h2>
               <ButtonEdit
                 v-if="summary.showEditLinks"
                 :show-edit-links="summary.showEditLinks"
@@ -83,11 +89,11 @@
             </div>
           </div>
 
-          <!--3. Información personal -->
+          <!-- Información personal -->
           <div class="resume--default__box">
             <div class="resume--default__subtitle">
               <h2 class="resume--default__subtitle__title">
-                3. Información personal
+                {{ hidePaymentSection ? "2" : "3" }}. Información personal
               </h2>
               <ButtonEdit
                 v-if="summary.showEditLinks"
@@ -115,11 +121,11 @@
             </div>
           </div>
 
-          <!--4. Ficha del producto -->
+          <!-- Ficha del producto -->
           <div class="resume--default__box">
             <div class="resume--default__subtitle">
               <h2 class="resume--default__subtitle__title">
-                4. Ficha del producto
+                {{ hidePaymentSection ? "3" : "4" }}. Ficha del producto
               </h2>
               <ButtonEdit
                 v-if="summary.showEditLinks"
@@ -154,11 +160,11 @@
             </div>
           </div>
 
-          <!--5. Galería de imágenes -->
+          <!-- Galería de imágenes -->
           <div v-if="summary.gallery?.length" class="resume--default__box">
             <div class="resume--default__subtitle">
               <h2 class="resume--default__subtitle__title">
-                5. Galería de imágenes
+                {{ hidePaymentSection ? "4" : "5" }}. Galería de imágenes
               </h2>
               <ButtonEdit
                 v-if="summary.showEditLinks"
@@ -216,6 +222,10 @@ const props = defineProps({
     type: Object,
     default: () => null,
   },
+  hidePaymentSection: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 // Inicializar stores
@@ -236,6 +246,12 @@ const getPackDescription = (pack) => {
   return "Comprando un pack de anuncios";
 };
 
+const getPaymentMethodDescription = (summary) => {
+  if (!summary) return "No especificado";
+  if (summary.paymentMethod) return summary.paymentMethod;
+  return getPackDescription(summary.pack);
+};
+
 const getFeaturedDescription = (featured) => {
   if (featured === undefined || featured === null) return "No especificado";
   if (featured === "free") return "Usar uno de mis destacados gratuitos";
@@ -250,6 +266,12 @@ const getFormattedPrice = (price, currency = "CLP") => {
     style: "currency",
     currency: currency,
   }).format(price || 0);
+};
+
+const getTotalDescription = (summary) => {
+  if (!summary) return "No especificado";
+  if (!summary.hasToPay || !summary.totalAmount) return "Sin pago";
+  return getFormattedPrice(summary.totalAmount, "CLP");
 };
 
 const getFullAddress = (address, number) => {

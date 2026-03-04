@@ -67,7 +67,7 @@ onMounted(async () => {
   if (user.value && user.value.freeAdReservationsCount > 0) {
     analyticsItems.push({
       item_id: "free",
-      item_name: "Aviso gratuito",
+      item_name: "Anuncio gratuito",
       item_category: "Pack",
       price: 0,
       currency: "CLP",
@@ -78,7 +78,7 @@ onMounted(async () => {
   if (user.value && user.value.paidAdReservationsCount > 0) {
     analyticsItems.push({
       item_id: "paid",
-      item_name: "Aviso de pago (reserva)",
+      item_name: "Anuncio de pago (reserva)",
       item_category: "Pack",
       price: 0,
       currency: "CLP",
@@ -133,9 +133,9 @@ watch(
     };
 
     if (newPack === "free") {
-      analyticsData.item_name = "Aviso gratuito";
+      analyticsData.item_name = "Anuncio gratuito";
     } else if (newPack === "paid") {
-      analyticsData.item_name = "Aviso de pago (reserva)";
+      analyticsData.item_name = "Anuncio de pago (reserva)";
     } else {
       // Es un pack de los que vienen del store
       const selectedPack = packsStore.packs.find((p) => p.id === newPack);
@@ -202,18 +202,18 @@ watch(
 );
 
 $setSEO({
-  title: "Crear Aviso",
+  title: "Crear Anuncio",
   description:
     "Publica tus activos industriales de manera rápida y sencilla en Waldo.click®. Aumenta tu visibilidad y encuentra compradores fácilmente.",
   imageUrl: "https://waldo.click/share.jpg",
-  url: "https://waldo.click/crear-aviso",
+  url: "https://waldo.click/crear-anuncio",
 });
 
 $setStructuredData({
   "@context": "https://schema.org",
   "@type": "WebPage",
-  name: "Crear Aviso - Waldo.click®",
-  url: "https://waldo.click/crear-aviso",
+  name: "Crear Anuncio - Waldo.click®",
+  url: "https://waldo.click/crear-anuncio",
   description:
     "Publica tus activos industriales de manera rápida y sencilla en Waldo.click®. Aumenta tu visibilidad y encuentra compradores fácilmente.",
 });

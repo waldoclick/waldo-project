@@ -1,6 +1,8 @@
 <template>
-  <HeroDefault title="Expirados" :breadcrumbs="breadcrumbs" />
-  <AdsArchived />
+  <div>
+    <HeroDefault title="Expirados" :breadcrumbs="breadcrumbs" />
+    <AdsArchived />
+  </div>
 </template>
 
 <script setup lang="ts">

@@ -39,6 +39,7 @@ export default defineNuxtConfig({
     headers: {
       permissionsPolicy: {
         fullscreen: ["self"],
+        "display-capture": [],
       },
       contentSecurityPolicy: {
         "default-src": ["'self'"],

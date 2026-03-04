@@ -1,12 +1,14 @@
 <template>
-  <HeroDefault title="Nuevo FAQ" :breadcrumbs="breadcrumbs" />
-  <BoxContent>
-    <template #content>
-      <BoxInformation title="Nuevo FAQ" :columns="1">
-        <FormFaq />
-      </BoxInformation>
-    </template>
-  </BoxContent>
+  <div>
+    <HeroDefault title="Nuevo FAQ" :breadcrumbs="breadcrumbs" />
+    <BoxContent>
+      <template #content>
+        <BoxInformation title="Nuevo FAQ" :columns="1">
+          <FormFaq />
+        </BoxInformation>
+      </template>
+    </BoxContent>
+  </div>
 </template>
 
 <script setup lang="ts">

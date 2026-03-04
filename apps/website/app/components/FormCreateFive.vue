@@ -19,13 +19,14 @@
       <UploadImages />
     </div>
 
-    <BarCreate
+    <BarAnnouncement
       :percentage="100"
       :current-step="5"
       :total-steps="5"
-      :is-valid="true"
-      :is-submit-disabled="isButtonDisabled"
-      @submit="handleSubmit"
+      :show-steps="true"
+      :summary-text="paymentSummaryText"
+      primary-label="Continuar"
+      :primary-disabled="isButtonDisabled"
       @back="handleformBack"
     />
   </Form>
@@ -38,7 +39,8 @@ import * as yup from "yup";
 const { Swal } = useSweetAlert2();
 
 import UploadImages from "@/components/UploadImages.vue";
-import BarCreate from "@/components/BarCreate.vue";
+import { useAdPaymentSummary } from "@/composables/useAdPaymentSummary";
+import BarAnnouncement from "@/components/BarAnnouncement.vue";
 
 import { useAdStore } from "@/stores/ad.store";
 
@@ -46,6 +48,7 @@ const emit = defineEmits(["formSubmitted", "formBack"]);
 
 // Importar useAdStore
 const adStore = useAdStore(); // Inicializar adStore
+const { paymentSummaryText } = useAdPaymentSummary();
 
 // Define las reglas de validación
 const schema = yup.object({});

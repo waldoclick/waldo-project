@@ -12,6 +12,64 @@
 import { factories } from "@strapi/strapi";
 import { sendMjmlEmail } from "../../../services/mjml";
 
+type AdStatus =
+  | "active"
+  | "pending"
+  | "archived"
+  | "banned"
+  | "rejected"
+  | "abandoned"
+  | "unknown";
+
+function computeAdStatus(ad: any): AdStatus {
+  if (!ad) return "unknown";
+
+  const hasReservationKey = Object.prototype.hasOwnProperty.call(
+    ad,
+    "ad_reservation"
+  );
+
+  if (ad.rejected) {
+    return "rejected";
+  }
+
+  if (ad.banned) {
+    return "banned";
+  }
+
+  if (ad.active && !ad.banned && !ad.rejected && ad.remaining_days > 0) {
+    return "active";
+  }
+
+  if (!ad.active && !ad.banned && !ad.rejected && ad.remaining_days === 0) {
+    return "archived";
+  }
+
+  if (
+    !ad.active &&
+    !ad.banned &&
+    !ad.rejected &&
+    ad.remaining_days > 0 &&
+    hasReservationKey &&
+    (ad.ad_reservation == null || ad.ad_reservation === undefined) &&
+    ad.is_paid
+  ) {
+    return "abandoned";
+  }
+
+  if (
+    !ad.active &&
+    !ad.banned &&
+    !ad.rejected &&
+    ad.remaining_days > 0 &&
+    (!hasReservationKey || ad.ad_reservation != null)
+  ) {
+    return "pending";
+  }
+
+  return "unknown";
+}
+
 /**
  * Helper function to transform sort parameter from string to object format
  * @param {string|object} sort - Sort parameter (e.g., "createdAt:asc" or {createdAt: "asc"})
@@ -99,8 +157,8 @@ async function getAdvertisements(
       strapi.db.query("api::ad.ad").count({ where: filters }),
     ]);
 
-    // Add needs_payment field to all ads
-    const adsWithPaymentStatus = ads.map((ad) => {
+    // Add needs_payment and status fields to all ads
+    const adsWithPaymentStatusAndState = ads.map((ad) => {
       const pack = ad.details?.pack;
       const featured = ad.details?.featured;
       const hasOrder = ad.order !== null;
@@ -113,7 +171,10 @@ async function getAdvertisements(
         needs_payment = !hasOrder;
       }
 
+      const status = computeAdStatus(ad);
+
       return {
+        status,
         ...ad,
         needs_payment,
       };
@@ -121,8 +182,8 @@ async function getAdvertisements(
 
     // Apply post-processing filter if provided
     const processedAds = postProcessFilter
-      ? postProcessFilter(adsWithPaymentStatus)
-      : adsWithPaymentStatus;
+      ? postProcessFilter(adsWithPaymentStatusAndState)
+      : adsWithPaymentStatusAndState;
 
     // Calculate pagination metadata
     const pageCount = Math.ceil(total / pageSize);
@@ -172,44 +233,8 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
 
     if (!ad) return null;
 
-    // Calculate and add status field
-    let status = "unknown";
-
-    if (ad.rejected) {
-      status = "rejected";
-    } else if (ad.banned) {
-      status = "banned";
-    } else if (
-      ad.active &&
-      !ad.banned &&
-      !ad.rejected &&
-      ad.remaining_days > 0
-    ) {
-      status = "active";
-    } else if (
-      !ad.active &&
-      !ad.banned &&
-      !ad.rejected &&
-      ad.remaining_days === 0
-    ) {
-      status = "archived";
-    } else if (
-      !ad.active &&
-      !ad.banned &&
-      !ad.rejected &&
-      ad.remaining_days > 0 &&
-      (ad.ad_reservation == null || ad.ad_reservation === undefined) &&
-      ad.is_paid
-    ) {
-      status = "abandoned";
-    } else if (
-      !ad.active &&
-      !ad.banned &&
-      !ad.rejected &&
-      ad.remaining_days > 0
-    ) {
-      status = "pending";
-    }
+    // Calculate and add status field using shared helper
+    const status = computeAdStatus(ad);
 
     // Return advertisement with status field
     return {
@@ -233,47 +258,10 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
     // Call the original findMany method with all options (including orderBy)
     const ads = await strapi.db.query("api::ad.ad").findMany(queryOptions);
 
-    // Add status field to each advertisement
+    // Add status field to each advertisement using shared helper
     const adsWithStatus = ads.map((ad) => {
-      let status = "unknown";
+      const status = computeAdStatus(ad);
 
-      if (ad.rejected) {
-        status = "rejected";
-      } else if (ad.banned) {
-        status = "banned";
-      } else if (
-        ad.active &&
-        !ad.banned &&
-        !ad.rejected &&
-        ad.remaining_days > 0
-      ) {
-        status = "active";
-      } else if (
-        !ad.active &&
-        !ad.banned &&
-        !ad.rejected &&
-        ad.remaining_days === 0
-      ) {
-        status = "archived";
-      } else if (
-        !ad.active &&
-        !ad.banned &&
-        !ad.rejected &&
-        ad.remaining_days > 0 &&
-        (ad.ad_reservation == null || ad.ad_reservation === undefined) &&
-        ad.is_paid
-      ) {
-        status = "abandoned";
-      } else if (
-        !ad.active &&
-        !ad.banned &&
-        !ad.rejected &&
-        ad.remaining_days > 0
-      ) {
-        status = "pending";
-      }
-
-      // Return with status field at the beginning
       return {
         status,
         ...ad,

@@ -101,12 +101,14 @@
       </div>
     </div>
 
-    <BarCreate
+    <BarAnnouncement
       :percentage="25"
       :current-step="step"
       :total-steps="5"
-      :is-valid="meta.valid"
-      @submit="handleSubmit"
+      :show-steps="true"
+      :summary-text="paymentSummaryText"
+      primary-label="Continuar"
+      :primary-disabled="!meta.valid"
       @back="handleformBack"
     />
   </Form>
@@ -119,9 +121,11 @@ import * as yup from "yup";
 import { useCategoriesStore } from "@/stores/categories.store";
 import { useAdStore } from "~/stores/ad.store";
 import { useValidation } from "@/composables/useValidation";
-import BarCreate from "@/components/BarCreate.vue";
+import { useAdPaymentSummary } from "@/composables/useAdPaymentSummary";
+import BarAnnouncement from "@/components/BarAnnouncement.vue";
 
 const { isValidText } = useValidation();
+const { paymentSummaryText } = useAdPaymentSummary();
 
 // Define las reglas de validación
 const schema = yup.object({

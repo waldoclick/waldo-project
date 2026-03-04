@@ -2,13 +2,13 @@
   <div class="page">
     <HeaderDefault :show-search="true" />
     <HeroFake />
-    <!-- <pre>{{ prepareSummary(data) }}</pre> -->
     <ResumeDefault
       v-if="data"
       title="¡Listo!, Creaste tu anuncio con éxito."
       description="Ahora debes esperar que tu anuncio pase por nuestra revisión, te avisaremos a tu correo electrónico cuando sea publicado."
       :show-icon="true"
       :summary="prepareSummary(data)"
+      :hide-payment-section="true"
     />
     <FooterDefault />
   </div>
@@ -213,7 +213,7 @@ const prepareSummary = (data) => {
 $setSEO({
   title: "Gracias por Publicar",
   description:
-    "Tu aviso ha sido publicado con éxito en Waldo.click®. Gracias por confiar en nosotros para conectar con compradores de activos industriales.",
+    "Tu anuncio ha sido publicado con éxito en Waldo.click®. Gracias por confiar en nosotros para conectar con compradores de activos industriales.",
   imageUrl: "https://waldo.click/share.jpg",
   url: "https://waldo.click/gracias",
 });
@@ -224,7 +224,7 @@ $setStructuredData({
   name: "Gracias por Publicar - Waldo.click®",
   url: "https://waldo.click/gracias",
   description:
-    "Tu aviso ha sido publicado con éxito en Waldo.click®. Gracias por confiar en nosotros para conectar con compradores de activos industriales.",
+    "Tu anuncio ha sido publicado con éxito en Waldo.click®. Gracias por confiar en nosotros para conectar con compradores de activos industriales.",
 });
 
 // Middleware

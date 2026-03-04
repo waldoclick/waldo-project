@@ -1,6 +1,8 @@
 <template>
-  <HeroDefault title="Órdenes" :breadcrumbs="breadcrumbs" />
-  <OrdersDefault />
+  <div>
+    <HeroDefault title="Órdenes" :breadcrumbs="breadcrumbs" />
+    <OrdersDefault />
+  </div>
 </template>
 
 <script setup lang="ts">

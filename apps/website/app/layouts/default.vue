@@ -6,6 +6,7 @@
     <LightboxCookies />
     <LightboxAdblock />
     <LightboxSearch />
+    <LightboxLogin />
   </div>
 </template>
 
@@ -15,6 +16,7 @@ import LightboxRegister from "@/components/LightboxRegister.vue";
 import LightboxCookies from "@/components/LightboxCookies.vue";
 import LightboxAdblock from "@/components/LightboxAdblock.vue";
 import LightboxSearch from "@/components/LightboxSearch.vue";
+import LightboxLogin from "@/components/LightboxLogin.vue";
 
 // Google One Tap - todo manejado en el composable
 // const { initializeGoogleOneTap } = useGoogleOneTap();

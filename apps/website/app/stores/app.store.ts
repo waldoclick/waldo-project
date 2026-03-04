@@ -78,5 +78,6 @@ export const useAppStore = defineStore("app", {
 
   persist: {
     storage: typeof window !== "undefined" ? localStorage : undefined,
+    pick: ["referer", "contactFormSent", "isMobileMenuOpen"],
   },
 });

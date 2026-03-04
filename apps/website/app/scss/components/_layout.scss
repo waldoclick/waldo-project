@@ -44,6 +44,8 @@
 
     &__content {
       flex: 1;
+      min-width: 0;
+      overflow-x: hidden;
       position: relative;
       z-index: 1;
     }

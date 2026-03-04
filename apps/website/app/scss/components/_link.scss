@@ -5,13 +5,11 @@
 .link {
   &--login {
     &--desktop {
-      // display: inline-flex;
-      display: none;
+      display: inline-flex;
     }
 
     &--mobile {
-      display: inline-flex;
-      // display: none;
+      display: none;
     }
   }
 }

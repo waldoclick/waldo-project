@@ -1,61 +1,63 @@
 <template>
-  <HeroDefault :title="title" :breadcrumbs="breadcrumbs">
-    <template #actions>
-      <NuxtLink
-        class="btn btn--primary"
-        :to="`/packs/${route.params.id}/editar`"
-      >
-        Editar pack
-      </NuxtLink>
-    </template>
-  </HeroDefault>
-  <BoxContent>
-    <template #content>
-      <BoxInformation title="Información" :columns="2">
-        <CardInfo v-if="item" title="Nombre" :description="item.name" />
-        <CardInfo
-          v-if="item"
-          title="Descripción"
-          :description="item.description"
-        />
-        <CardInfo v-if="item" title="Texto" :description="item.text" />
-        <CardInfo
-          v-if="item"
-          title="Precio"
-          :description="`$${item.price?.toLocaleString('es-CL') || '--'}`"
-        />
-        <CardInfo
-          v-if="item"
-          title="Duración (días)"
-          :description="item.total_days?.toString() || '--'"
-        />
-        <CardInfo
-          v-if="item"
-          title="Cantidad de anuncios"
-          :description="item.total_ads?.toString() || '--'"
-        />
-        <CardInfo
-          v-if="item"
-          title="Destacados"
-          :description="item.total_features?.toString() || '--'"
-        />
-      </BoxInformation>
-    </template>
-    <template #sidebar>
-      <BoxInformation title="Detalles" :columns="1">
-        <CardInfo
-          v-if="item"
-          title="Fecha de creación"
-          :description="formatDate(item.createdAt)"
-        />
-        <CardInfo
-          v-if="item"
-          title="Última modificación"
-          :description="formatDate(item.updatedAt)"
-        />
-      </BoxInformation>
-    </template>
-  </BoxContent>
+  <div>
+    <HeroDefault :title="title" :breadcrumbs="breadcrumbs">
+      <template #actions>
+        <NuxtLink
+          class="btn btn--primary"
+          :to="`/packs/${route.params.id}/editar`"
+        >
+          Editar pack
+        </NuxtLink>
+      </template>
+    </HeroDefault>
+    <BoxContent>
+      <template #content>
+        <BoxInformation title="Información" :columns="2">
+          <CardInfo v-if="item" title="Nombre" :description="item.name" />
+          <CardInfo
+            v-if="item"
+            title="Descripción"
+            :description="item.description"
+          />
+          <CardInfo v-if="item" title="Texto" :description="item.text" />
+          <CardInfo
+            v-if="item"
+            title="Precio"
+            :description="`$${item.price?.toLocaleString('es-CL') || '--'}`"
+          />
+          <CardInfo
+            v-if="item"
+            title="Duración (días)"
+            :description="item.total_days?.toString() || '--'"
+          />
+          <CardInfo
+            v-if="item"
+            title="Cantidad de anuncios"
+            :description="item.total_ads?.toString() || '--'"
+          />
+          <CardInfo
+            v-if="item"
+            title="Destacados"
+            :description="item.total_features?.toString() || '--'"
+          />
+        </BoxInformation>
+      </template>
+      <template #sidebar>
+        <BoxInformation title="Detalles" :columns="1">
+          <CardInfo
+            v-if="item"
+            title="Fecha de creación"
+            :description="formatDate(item.createdAt)"
+          />
+          <CardInfo
+            v-if="item"
+            title="Última modificación"
+            :description="formatDate(item.updatedAt)"
+          />
+        </BoxInformation>
+      </template>
+    </BoxContent>
+  </div>
 </template>
 
 <script setup lang="ts">

@@ -1,6 +1,8 @@
 <template>
-  <HeroDefault title="Baneados" :breadcrumbs="breadcrumbs" />
-  <AdsBanned />
+  <div>
+    <HeroDefault title="Baneados" :breadcrumbs="breadcrumbs" />
+    <AdsBanned />
+  </div>
 </template>
 
 <script setup lang="ts">

@@ -1,41 +1,43 @@
 <template>
-  <HeroDefault :title="title" :breadcrumbs="breadcrumbs">
-    <template #actions>
-      <NuxtLink
-        class="btn btn--primary"
-        :to="`/comunas/${route.params.id}/editar`"
-      >
-        Editar comuna
-      </NuxtLink>
-    </template>
-  </HeroDefault>
-  <BoxContent>
-    <template #content>
-      <BoxInformation title="Información" :columns="2">
-        <CardInfo v-if="commune" title="Nombre" :description="commune.name" />
-        <CardInfo
-          v-if="commune"
-          title="Región"
-          :description="commune.region?.name || '--'"
-        />
-        <CardInfo v-if="commune" title="Slug" :description="commune.slug" />
-      </BoxInformation>
-    </template>
-    <template #sidebar>
-      <BoxInformation title="Detalles" :columns="1">
-        <CardInfo
-          v-if="commune"
-          title="Fecha de creación"
-          :description="formatDate(commune.createdAt)"
-        />
-        <CardInfo
-          v-if="commune"
-          title="Última modificación"
-          :description="formatDate(commune.updatedAt)"
-        />
-      </BoxInformation>
-    </template>
-  </BoxContent>
+  <div>
+    <HeroDefault :title="title" :breadcrumbs="breadcrumbs">
+      <template #actions>
+        <NuxtLink
+          class="btn btn--primary"
+          :to="`/comunas/${route.params.id}/editar`"
+        >
+          Editar comuna
+        </NuxtLink>
+      </template>
+    </HeroDefault>
+    <BoxContent>
+      <template #content>
+        <BoxInformation title="Información" :columns="2">
+          <CardInfo v-if="commune" title="Nombre" :description="commune.name" />
+          <CardInfo
+            v-if="commune"
+            title="Región"
+            :description="commune.region?.name || '--'"
+          />
+          <CardInfo v-if="commune" title="Slug" :description="commune.slug" />
+        </BoxInformation>
+      </template>
+      <template #sidebar>
+        <BoxInformation title="Detalles" :columns="1">
+          <CardInfo
+            v-if="commune"
+            title="Fecha de creación"
+            :description="formatDate(commune.createdAt)"
+          />
+          <CardInfo
+            v-if="commune"
+            title="Última modificación"
+            :description="formatDate(commune.updatedAt)"
+          />
+        </BoxInformation>
+      </template>
+    </BoxContent>
+  </div>
 </template>
 
 <script setup lang="ts">
