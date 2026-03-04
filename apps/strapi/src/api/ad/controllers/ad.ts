@@ -39,6 +39,28 @@ interface QueryParams {
  */
 export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
   /**
+   * Find single advertisement
+   *
+   * Overrides the default findOne to hide sensitive contact information
+   * (phone and email) when the request is made by an unauthenticated user.
+   *
+   * @route GET /api/ads/:id
+   */
+  async findOne(ctx: any) {
+    // Delegate to the core controller to keep default behavior (sanitization, etc.)
+    const response = await super.findOne(ctx);
+
+    const isAuthenticated = !!ctx.state?.user;
+
+    if (!isAuthenticated && response?.data) {
+      // When unauthenticated, hide contact information from the public API
+      response.data.phone = null;
+      response.data.email = null;
+    }
+
+    return response;
+  },
+  /**
    * Get active advertisements
    *
    * Retrieves a paginated list of active advertisements.
