@@ -29,7 +29,13 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. `package.json` shows exact version strings for `vue` and `vue-router` (e.g., `"3.x.x"`) — `npm install` from scratch produces the same dependency tree every time
   4. A thrown error in a dashboard page handler is visible in the Sentry dashboard and is not swallowed silently on the client
   5. `AppStore` contains only state relevant to the dashboard; `nuxt.config.ts` contains no commented-out module blocks; no unused dependencies appear in `package.json`
-**Plans**: TBD
+**Plans**: 4 plans
+
+Plans:
+- [ ] 03-01-PLAN.md — Fix double-fetch and isolate pagination per ads section (QUICK-01, QUICK-02)
+- [ ] 03-02-PLAN.md — Pin vue/vue-router versions and remove dead dependencies + auth middleware (QUICK-03, QUICK-06)
+- [ ] 03-03-PLAN.md — Restore production error visibility via Sentry in useLogger (QUICK-04)
+- [ ] 03-04-PLAN.md — Prune AppStore dead state and clean nuxt.config.ts commented blocks (QUICK-05, QUICK-07)
 
 ### Phase 4: Component Consolidation
 **Goal**: A single `AdsTable.vue` component handles all ads list views; the six original components are deleted; every existing operator workflow (filter, paginate, ban, approve, reject) works identically
@@ -68,7 +74,7 @@ Phases execute in numeric order: 3 → 4 → 5 → 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 3. Quick Wins | 0/? | Not started | - |
+| 3. Quick Wins | 0/4 | Not started | - |
 | 4. Component Consolidation | 0/? | Not started | - |
 | 5. Type Safety | 0/? | Not started | - |
 | 6. Performance | 0/? | Not started | - |
