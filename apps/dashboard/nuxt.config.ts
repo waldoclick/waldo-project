@@ -1,7 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
 import sass from "sass";
-// import { feedbackIntegration } from "@sentry/integrations";
 import * as Sentry from "@sentry/nuxt";
 
 export default defineNuxtConfig({
@@ -26,7 +25,6 @@ export default defineNuxtConfig({
     "@nuxtjs/seo",
     "@nuxt/image",
     "@nuxtjs/google-fonts",
-    // "@nuxtjs/i18n",
   ],
 
   // Security configuration - using nuxt-security defaults with customizations
@@ -112,20 +110,6 @@ export default defineNuxtConfig({
       },
     },
   },
-
-  // i18n: {
-  //   defaultLocale: 'es',
-  //   locales: ['es'],
-  //   strategy: 'prefix_except_default',
-  //   detectBrowserLanguage: {
-  //     useCookie: true,
-  //     cookieKey: 'i18n_redirected',
-  //     redirectOn: 'root',
-  //   },
-  //   bundle: {
-  //     optimizeTranslationDirective: false
-  //   }
-  // },
 
   site: {
     name: "Admin Waldo.click®",
@@ -220,7 +204,6 @@ export default defineNuxtConfig({
           sizes: "16x16",
           href: "/favicons/favicon-16x16.png",
         },
-        // { rel: "manifest", href: "/favicons/manifest.json" },
       ],
       script: [
         {
@@ -270,13 +253,6 @@ export default defineNuxtConfig({
   pinia: {
     // Pinia Configuration
   },
-
-  // Google Tag Manager Configuration - Manual implementation for Nuxt 4
-  // gtm: {
-  //   id: process.env.GTM_ID || "GTM-N4B8LDKS",
-  //   enabled: true,
-  //   debug: false,
-  // },
 
   eslint: {
     config: {
@@ -396,15 +372,5 @@ export default defineNuxtConfig({
     },
   },
 
-  image: {
-    // Configuración para evitar event handlers inline
-    // onError: false, // Deshabilitar onerror inline
-    // quality: 80,
-    // format: ["webp"],
-    // provider: "ipx",
-    // ipx: {
-    //   maxAge: 60 * 60 * 24 * 7, // 7 días
-    //   dir: "public",
-    // },
-  },
+  image: {},
 });
