@@ -113,9 +113,7 @@
   }
 
   &--announcement {
-    position: fixed;
-    bottom: 0;
-    left: 0;
+    position: relative;
     width: 100%;
     border-top: 4px solid rgba($silver, 0.4);
     background-color: white;
