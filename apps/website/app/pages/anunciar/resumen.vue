@@ -44,7 +44,8 @@ const { $setSEO, $setStructuredData } = useNuxtApp();
 const adStore = useAdStore();
 const adAnalytics = useAdAnalytics();
 const router = useRouter();
-const { hasToPay, paymentSummaryText } = useAdPaymentSummary();
+const { packPart, hasToPay, totalAmount, paymentSummaryText } =
+  useAdPaymentSummary();
 
 // Función para preparar el summary
 const prepareSummary = (store) => {
@@ -53,6 +54,10 @@ const prepareSummary = (store) => {
     pack: store.pack,
     featured: store.featured,
     isInvoice: store.is_invoice,
+    paymentSummary: paymentSummaryText.value,
+    paymentMethod: packPart.value?.label || null,
+    totalAmount: totalAmount.value,
+    hasToPay: hasToPay.value,
     title: store.ad.name,
     category: store.ad.category,
     price: store.ad.price,

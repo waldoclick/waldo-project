@@ -79,9 +79,21 @@ export const useAdPaymentSummary = () => {
 
   const totalAmount = computed(() => {
     if (!packPart.value) return 0;
-    const packAmount = packPart.value.amount ?? 0;
-    const featuredAmount = featuredPart.value?.amount ?? 0;
-    return packAmount + featuredAmount;
+
+    const rawPackAmount = packPart.value.amount ?? 0;
+    const rawFeaturedAmount = featuredPart.value?.amount ?? 0;
+
+    const packAmount =
+      typeof rawPackAmount === "string"
+        ? Number.parseInt(rawPackAmount, 10)
+        : rawPackAmount;
+
+    const featuredAmount =
+      typeof rawFeaturedAmount === "string"
+        ? Number.parseInt(rawFeaturedAmount, 10)
+        : rawFeaturedAmount;
+
+    return (packAmount || 0) + (featuredAmount || 0);
   });
 
   const hasToPay = computed(() => totalAmount.value > 0);
