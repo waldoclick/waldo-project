@@ -45,7 +45,8 @@ globs: ["apps/website/**"]
   - Do NOT create new CSS files unless the component doesn't exist
   - Do NOT add shadows (`box-shadow`) or zoom effects (`transform: scale`) to elements
   - Keep transitions simple and avoid scale transforms on hover
-  - **SCSS nesting must reflect HTML hierarchy:** If an element is a child of another element in the HTML, it must be nested inside in SCSS. If elements are siblings in the HTML, they must be at the same nesting level in SCSS (e.g., `&__item` and `&__content` as siblings, but `&__item { &__content { } }` if content is inside item)
+  - **SCSS nesting must reflect HTML hierarchy:** If an element is a child of another element in the HTML, it must be nested inside in SCSS. If elements are siblings in the HTML, they must be at the same nesting level in SCSS (e.g., `&__item` and `&__content` as siblings, but `&__list { &__item { } }` if item is inside list)
+  - **No compound element names:** Do NOT use names like `__list-item`. Use single-word element names. If the parent is `__list`, the child is `__item` (not `__list-item`), because the child is not at the same level. In SCSS, nest the child under the parent: `&__list { &__item { } }`
 - Always use English for code, comments, and documentation
 - Use camelCase for variables and functions
 - Use PascalCase for components and composables
