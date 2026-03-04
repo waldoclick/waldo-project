@@ -3,7 +3,7 @@
     <div class="ads--rejected__container">
       <div class="ads--rejected__header">
         <SearchDefault
-          :model-value="settingsStore.ads.searchTerm"
+          :model-value="settingsStore.adsRejected.searchTerm"
           placeholder="Buscar anuncios..."
           class="ads--rejected__search"
           @update:model-value="
@@ -69,10 +69,10 @@
       </div>
 
       <PaginationDefault
-        :current-page="settingsStore.ads.currentPage"
+        :current-page="settingsStore.adsRejected.currentPage"
         :total-pages="totalPages"
         :total-records="totalRecords"
-        :page-size="settingsStore.ads.pageSize"
+        :page-size="settingsStore.adsRejected.pageSize"
         class="ads--rejected__pagination"
         @page-change="
           (page: number) => settingsStore.setCurrentPage(section, page)
@@ -83,7 +83,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Eye } from "lucide-vue-next";
 import { useSettingsStore } from "@/stores/settings.store";
@@ -104,10 +104,10 @@ interface Ad {
 
 // Store de settings
 const settingsStore = useSettingsStore();
-const section = "ads" as const;
+const section = "adsRejected" as const;
 
 // Computed para los filtros de anuncios
-const filters = computed(() => settingsStore.getAdsFilters);
+const filters = computed(() => settingsStore.getAdsRejectedFilters);
 
 // Handler para cambios en filtros
 const handleFiltersChange = (newFilters: {
@@ -135,10 +135,10 @@ const fetchRejectedAds = async () => {
 
     const searchParams: any = {
       pagination: {
-        page: settingsStore.ads.currentPage,
-        pageSize: settingsStore.ads.pageSize,
+        page: settingsStore.adsRejected.currentPage,
+        pageSize: settingsStore.adsRejected.pageSize,
       },
-      sort: settingsStore.ads.sortBy,
+      sort: settingsStore.adsRejected.sortBy,
       populate: {
         user: {
           fields: ["username"],
@@ -150,13 +150,19 @@ const fetchRejectedAds = async () => {
     };
 
     // Agregar búsqueda si existe
-    if (settingsStore.ads.searchTerm) {
+    if (settingsStore.adsRejected.searchTerm) {
       searchParams.filters = {
         $or: [
-          { name: { $containsi: settingsStore.ads.searchTerm } },
-          { description: { $containsi: settingsStore.ads.searchTerm } },
-          { "user.username": { $containsi: settingsStore.ads.searchTerm } },
-          { "user.email": { $containsi: settingsStore.ads.searchTerm } },
+          { name: { $containsi: settingsStore.adsRejected.searchTerm } },
+          { description: { $containsi: settingsStore.adsRejected.searchTerm } },
+          {
+            "user.username": {
+              $containsi: settingsStore.adsRejected.searchTerm,
+            },
+          },
+          {
+            "user.email": { $containsi: settingsStore.adsRejected.searchTerm },
+          },
         ],
       };
     }
@@ -236,19 +242,14 @@ const handleViewAd = (adId: number) => {
 // Watch para recargar cuando cambian los filtros o la búsqueda
 watch(
   [
-    () => settingsStore.ads.searchTerm,
-    () => settingsStore.ads.sortBy,
-    () => settingsStore.ads.pageSize,
-    () => settingsStore.ads.currentPage,
+    () => settingsStore.adsRejected.searchTerm,
+    () => settingsStore.adsRejected.sortBy,
+    () => settingsStore.adsRejected.pageSize,
+    () => settingsStore.adsRejected.currentPage,
   ],
   () => {
     fetchRejectedAds();
   },
   { immediate: true },
 );
-
-// Cargar datos al montar
-onMounted(() => {
-  fetchRejectedAds();
-});
 </script>
