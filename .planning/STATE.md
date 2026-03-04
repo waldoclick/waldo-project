@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: completed
-stopped_at: Completed 03-quick-wins 03-03-PLAN.md
-last_updated: "2026-03-04T20:15:44.016Z"
+stopped_at: Completed 03-quick-wins-02-PLAN.md
+last_updated: "2026-03-04T20:16:59.703Z"
 last_activity: 2026-03-04 — Roadmap created for v1.1
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 4
-  completed_plans: 1
+  completed_plans: 3
   percent: 0
 ---
 
@@ -56,6 +56,8 @@ Phases:
 
 *Updated after each plan completion*
 | Phase 03-quick-wins P03 | 1 | 2 tasks | 2 files |
+| Phase 03-quick-wins P02 | 2 | 2 tasks | 3 files |
+| Phase 03-quick-wins P04 | 2min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -73,6 +75,10 @@ Recent decisions affecting current work:
 - [Phase 03-quick-wins]: Pass error directly to Sentry.captureException without wrapping to preserve stack traces
 - [Phase 03-quick-wins]: No NODE_ENV guards in useLogger — Sentry SDK handles dev/prod distinction via its own init
 - [Phase 03-quick-wins]: console.error preserved in production so Sentry browser SDK can capture runtime errors
+- [Phase 03-quick-wins]: Pin vue to 3.5.25 and vue-router to 4.6.3 (exact installed versions) to ensure deterministic installs
+- [Phase 03-quick-wins]: Delete auth.ts — guard.global.ts provides equivalent global auth protection with zero page references to named middleware
+- [Phase 03-quick-wins]: Remove vue-recaptcha and vue3-recaptcha-v2 — recaptcha.client.ts plugin loads Google SDK directly, no npm packages needed
+- [Phase 03-quick-wins]: Website-only state (isSearchLightboxActive, isLoginLightboxActive, contactFormSent) removed from AppStore — confirmed zero dashboard usage before removal
 
 ### Pending Todos
 
@@ -84,6 +90,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-04T20:15:44.013Z
-Stopped at: Completed 03-quick-wins 03-03-PLAN.md
+Last session: 2026-03-04T20:16:59.700Z
+Stopped at: Completed 03-quick-wins-02-PLAN.md
 Resume file: None
