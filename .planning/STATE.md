@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 01-interface-and-adapter-layer-01-01-PLAN.md
-last_updated: "2026-03-04T10:12:22.223Z"
+stopped_at: Completed 01-interface-and-adapter-layer-01-02-PLAN.md
+last_updated: "2026-03-04T10:17:33.709Z"
 last_activity: 2026-03-03 — Roadmap created for milestone v1.0 Payment Gateway Abstraction
 progress:
   total_phases: 2
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 2
-  completed_plans: 1
+  completed_plans: 2
   percent: 50
 ---
 
@@ -51,6 +51,7 @@ Progress: [█████░░░░░] 50%
 
 *Updated after each plan completion*
 | Phase 01-interface-and-adapter-layer P01 | 1 | 1 tasks | 1 files |
+| Phase 01-interface-and-adapter-layer P02 | 2 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -64,6 +65,9 @@ Recent decisions affecting current work:
 - Coupling points: `ad.service.ts` and `pack.service.ts` import TransbankServices directly — these are the only two call sites to rewire
 - Known bug: missing `return` after `ctx.redirect` in pack failure path — addressed in Phase 2
 - [Phase 01-interface-and-adapter-layer]: Wave 0 tests use jest.spyOn(TransbankService.prototype) + savedEnv isolation pattern; WEBPAY_ENVIRONMENT excluded from required vars (has default)
+- [Phase 01-interface-and-adapter-layer]: TransbankAdapter imports TransbankService directly (not singleton) to allow jest.spyOn mocking in unit tests
+- [Phase 01-interface-and-adapter-layer]: Only WEBPAY_COMMERCE_CODE and WEBPAY_API_KEY are required env vars; WEBPAY_ENVIRONMENT has a default in transbank.config.ts
+- [Phase 01-interface-and-adapter-layer]: token-to-gatewayRef mapping happens exclusively in TransbankAdapter — callers never see provider-specific field names
 
 ### Pending Todos
 
@@ -75,6 +79,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-04T10:12:22.222Z
-Stopped at: Completed 01-interface-and-adapter-layer-01-01-PLAN.md
+Last session: 2026-03-04T10:17:33.707Z
+Stopped at: Completed 01-interface-and-adapter-layer-01-02-PLAN.md
 Resume file: None

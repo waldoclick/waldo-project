@@ -12,7 +12,7 @@ This milestone introduces a gateway-agnostic abstraction layer over Waldo's exis
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Interface and Adapter Layer** - Define IPaymentGateway contract, implement TransbankAdapter, and build the PaymentGatewayRegistry
+- [x] **Phase 1: Interface and Adapter Layer** - Define IPaymentGateway contract, implement TransbankAdapter, and build the PaymentGatewayRegistry (completed 2026-03-04)
 - [ ] **Phase 2: Call Site Wiring and Bug Fixes** - Route AdService and PackService through the registry; fix hardcoded string and missing return bug
 
 ## Phase Details
@@ -51,5 +51,5 @@ Phases execute in numeric order: 1 → 2
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Interface and Adapter Layer | 1/2 | In Progress|  |
+| 1. Interface and Adapter Layer | 2/2 | Complete   | 2026-03-04 |
 | 2. Call Site Wiring and Bug Fixes | 0/TBD | Not started | - |
