@@ -42,7 +42,11 @@ Plans:
   2. `pack.service.ts` no longer imports `TransbankServices` directly — it calls `getPaymentGateway()` and the payment flow behaves identically
   3. The `payment_method` field stored in the order record reflects the value of `PAYMENT_GATEWAY` env var rather than the hardcoded string `"webpay"`
   4. In the `packResponse` failure path, execution stops after `ctx.redirect` — downstream Facto and order creation logic does not run on payment failure
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — Write failing test suite for WIRE-01 through WIRE-04 (Wave 0: RED state)
+- [ ] 02-02-PLAN.md — Rewire services and fix controller bugs (Wave 1: GREEN state)
 
 ## Progress
 
@@ -52,4 +56,4 @@ Phases execute in numeric order: 1 → 2
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Interface and Adapter Layer | 2/2 | Complete   | 2026-03-04 |
-| 2. Call Site Wiring and Bug Fixes | 0/TBD | Not started | - |
+| 2. Call Site Wiring and Bug Fixes | 0/2 | Not started | - |
