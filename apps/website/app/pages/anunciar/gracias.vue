@@ -2,7 +2,6 @@
   <div class="page">
     <HeaderDefault :show-search="true" />
     <HeroFake />
-    <pre>{{ apiResponsePre }}</pre>
     <ResumeDefault
       v-if="data"
       title="¡Listo!, Creaste tu anuncio con éxito."
@@ -169,10 +168,6 @@ watchEffect(() => {
     });
   }
 });
-
-const apiResponsePre = computed(() =>
-  data.value ? JSON.stringify(data.value, null, 2) : "(sin datos)",
-);
 
 const galleryData = computed(() => {
   if (!data.value?.gallery) return [];
