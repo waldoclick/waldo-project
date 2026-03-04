@@ -15,7 +15,11 @@
 
         <div class="bar--packs__col bar--packs__col--right">
           <div class="bar--packs__actions">
-            <SummaryDefault v-if="summaryText" :text="summaryText" />
+            <SummaryDefault
+              v-if="summaryText"
+              title="Tipo de pack"
+              :text="summaryText"
+            />
 
             <button
               type="button"

@@ -25,7 +25,11 @@
 
         <div class="bar--announcement__col bar--announcement__col--right">
           <div class="bar--announcement__actions">
-            <SummaryDefault v-if="summaryText" :text="summaryText" />
+            <SummaryDefault
+              v-if="summaryText"
+              title="Tipo de anuncio"
+              :text="summaryText"
+            />
 
             <button
               type="submit"
