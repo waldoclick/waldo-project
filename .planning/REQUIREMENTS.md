@@ -17,10 +17,10 @@ Requirements for milestone v1.0: Payment Gateway Abstraction.
 
 ### Wiring y Correcciones
 
-- [ ] **WIRE-01**: `ad.service.ts` usa `getPaymentGateway()` de la factory en lugar de importar `TransbankServices` directamente
-- [ ] **WIRE-02**: `pack.service.ts` usa `getPaymentGateway()` de la factory en lugar de importar `TransbankServices` directamente
-- [ ] **WIRE-03**: El controller reemplaza el string hardcodeado `"webpay"` con `process.env.PAYMENT_GATEWAY ?? "transbank"` al crear el registro de orden
-- [ ] **WIRE-04**: Se agrega `return` después de `ctx.redirect` en el flujo fallido de `packResponse` para evitar ejecución continua
+- [x] **WIRE-01**: `ad.service.ts` usa `getPaymentGateway()` de la factory en lugar de importar `TransbankServices` directamente
+- [x] **WIRE-02**: `pack.service.ts` usa `getPaymentGateway()` de la factory en lugar de importar `TransbankServices` directamente
+- [x] **WIRE-03**: El controller reemplaza el string hardcodeado `"webpay"` con `process.env.PAYMENT_GATEWAY ?? "transbank"` al crear el registro de orden
+- [x] **WIRE-04**: Se agrega `return` después de `ctx.redirect` en el flujo fallido de `packResponse` para evitar ejecución continua
 
 ## Future Requirements
 
@@ -58,10 +58,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PAY-03 | Phase 1 | Complete |
 | PAY-04 | Phase 1 | Complete |
 | PAY-05 | Phase 1 | Complete |
-| WIRE-01 | Phase 2 | Pending |
-| WIRE-02 | Phase 2 | Pending |
-| WIRE-03 | Phase 2 | Pending |
-| WIRE-04 | Phase 2 | Pending |
+| WIRE-01 | Phase 2 | Complete |
+| WIRE-02 | Phase 2 | Complete |
+| WIRE-03 | Phase 2 | Complete |
+| WIRE-04 | Phase 2 | Complete |
 
 **Coverage:**
 - v1 requirements: 9 total
