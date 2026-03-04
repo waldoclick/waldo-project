@@ -100,7 +100,7 @@ const handleRedirect = (response) => {
   const tokenField = document.createElement("input");
   tokenField.type = "hidden";
   tokenField.name = "token_ws";
-  tokenField.value = response.token;
+  tokenField.value = response.gatewayRef;
   form.appendChild(tokenField);
 
   // Añadir el formulario al cuerpo del documento y enviarlo
