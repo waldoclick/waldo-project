@@ -73,6 +73,26 @@ beforeEach(() => {
     sessionId: "session-1",
     items: [],
   });
+
+  // Default mock for PaymentUtils.general.extractIdsFromMeta
+  (PaymentUtils.general.extractIdsFromMeta as jest.Mock).mockReturnValue({
+    userId: "user-1",
+    adId: "1",
+    isInvoice: false,
+  });
+
+  // Default mock for PaymentUtils.adReservation.getAdReservationAvailable
+  (
+    PaymentUtils.adReservation.getAdReservationAvailable as jest.Mock
+  ).mockResolvedValue({
+    success: true,
+    adReservation: { id: "res-1", total_days: 30 },
+  });
+
+  // Default mock for PaymentUtils.ad.updateAdReservation
+  (PaymentUtils.ad.updateAdReservation as jest.Mock).mockResolvedValue({
+    success: true,
+  });
 });
 
 // ─── WIRE-01: processPaidPayment ─────────────────────────────────────────────
