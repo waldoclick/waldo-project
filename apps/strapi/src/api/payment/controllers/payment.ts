@@ -210,7 +210,7 @@ class PaymentController {
       buy_order: result.webpay.buy_order,
       userId: result.ad.user.id,
       is_invoice: result.ad.details.is_invoice,
-      payment_method: "webpay",
+      payment_method: process.env.PAYMENT_GATEWAY ?? "transbank",
       payment_response: result.webpay,
       adId: result.ad.id,
       document_details: userDocumentDetails,
@@ -270,6 +270,7 @@ class PaymentController {
 
     if (!result.success) {
       ctx.redirect(`${process.env.FRONTEND_URL}/packs/error`);
+      return;
     }
 
     // Obtener los detalles de facturación del usuario
@@ -300,7 +301,7 @@ class PaymentController {
       buy_order: result.webpay.buy_order,
       userId: Number(result?.userId),
       is_invoice: result?.isInvoice,
-      payment_method: "webpay",
+      payment_method: process.env.PAYMENT_GATEWAY ?? "transbank",
       payment_response: result.webpay,
       document_details: userDocumentDetails,
       items,

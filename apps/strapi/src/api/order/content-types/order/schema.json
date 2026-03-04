@@ -30,7 +30,7 @@
     },
     "payment_method": {
       "type": "enumeration",
-      "enum": ["webpay"]
+      "enum": ["webpay", "transbank"]
     },
     "payment_response": {
       "type": "json"
