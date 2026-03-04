@@ -9,11 +9,11 @@ Requirements for milestone v1.0: Payment Gateway Abstraction.
 
 ### Payment Abstraction Layer
 
-- [ ] **PAY-01**: El sistema define una interfaz `IPaymentGateway` con métodos `createTransaction` y `commitTransaction` con firmas normalizadas
-- [ ] **PAY-02**: El sistema define tipos de respuesta normalizados `IGatewayInitResponse` e `IGatewayCommitResponse`
-- [ ] **PAY-03**: El sistema provee un `TransbankAdapter` que implementa `IPaymentGateway` delegando al `TransbankService` existente sin cambiar su comportamiento
-- [ ] **PAY-04**: El sistema provee un `PaymentGatewayRegistry` (factory) que retorna la pasarela activa según la variable de entorno `PAYMENT_GATEWAY` (default: `"transbank"`)
-- [ ] **PAY-05**: El registry valida que las env vars requeridas estén presentes al instanciar el adapter, lanzando un error claro al startup si faltan
+- [x] **PAY-01**: El sistema define una interfaz `IPaymentGateway` con métodos `createTransaction` y `commitTransaction` con firmas normalizadas
+- [x] **PAY-02**: El sistema define tipos de respuesta normalizados `IGatewayInitResponse` e `IGatewayCommitResponse`
+- [x] **PAY-03**: El sistema provee un `TransbankAdapter` que implementa `IPaymentGateway` delegando al `TransbankService` existente sin cambiar su comportamiento
+- [x] **PAY-04**: El sistema provee un `PaymentGatewayRegistry` (factory) que retorna la pasarela activa según la variable de entorno `PAYMENT_GATEWAY` (default: `"transbank"`)
+- [x] **PAY-05**: El registry valida que las env vars requeridas estén presentes al instanciar el adapter, lanzando un error claro al startup si faltan
 
 ### Wiring y Correcciones
 
@@ -53,11 +53,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PAY-01 | Phase 1 | Pending |
-| PAY-02 | Phase 1 | Pending |
-| PAY-03 | Phase 1 | Pending |
-| PAY-04 | Phase 1 | Pending |
-| PAY-05 | Phase 1 | Pending |
+| PAY-01 | Phase 1 | Complete |
+| PAY-02 | Phase 1 | Complete |
+| PAY-03 | Phase 1 | Complete |
+| PAY-04 | Phase 1 | Complete |
+| PAY-05 | Phase 1 | Complete |
 | WIRE-01 | Phase 2 | Pending |
 | WIRE-02 | Phase 2 | Pending |
 | WIRE-03 | Phase 2 | Pending |
