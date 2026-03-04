@@ -22,7 +22,7 @@
       <client-only>
         <template v-if="summary">
           <!--1. Método de pago -->
-          <div class="resume--default__box">
+          <div v-if="!hidePaymentSection" class="resume--default__box">
             <div class="resume--default__subtitle">
               <h2 class="resume--default__subtitle__title">
                 1. Método de pago
@@ -57,10 +57,12 @@
             </div>
           </div>
 
-          <!--2. General -->
+          <!-- General (1 o 2 según hidePaymentSection) -->
           <div class="resume--default__box">
             <div class="resume--default__subtitle">
-              <h2 class="resume--default__subtitle__title">2. General</h2>
+              <h2 class="resume--default__subtitle__title">
+                {{ hidePaymentSection ? "1" : "2" }}. General
+              </h2>
               <ButtonEdit
                 v-if="summary.showEditLinks"
                 :show-edit-links="summary.showEditLinks"
@@ -87,11 +89,11 @@
             </div>
           </div>
 
-          <!--3. Información personal -->
+          <!-- Información personal -->
           <div class="resume--default__box">
             <div class="resume--default__subtitle">
               <h2 class="resume--default__subtitle__title">
-                3. Información personal
+                {{ hidePaymentSection ? "2" : "3" }}. Información personal
               </h2>
               <ButtonEdit
                 v-if="summary.showEditLinks"
@@ -119,11 +121,11 @@
             </div>
           </div>
 
-          <!--4. Ficha del producto -->
+          <!-- Ficha del producto -->
           <div class="resume--default__box">
             <div class="resume--default__subtitle">
               <h2 class="resume--default__subtitle__title">
-                4. Ficha del producto
+                {{ hidePaymentSection ? "3" : "4" }}. Ficha del producto
               </h2>
               <ButtonEdit
                 v-if="summary.showEditLinks"
@@ -158,11 +160,11 @@
             </div>
           </div>
 
-          <!--5. Galería de imágenes -->
+          <!-- Galería de imágenes -->
           <div v-if="summary.gallery?.length" class="resume--default__box">
             <div class="resume--default__subtitle">
               <h2 class="resume--default__subtitle__title">
-                5. Galería de imágenes
+                {{ hidePaymentSection ? "4" : "5" }}. Galería de imágenes
               </h2>
               <ButtonEdit
                 v-if="summary.showEditLinks"
@@ -219,6 +221,10 @@ const props = defineProps({
   summary: {
     type: Object,
     default: () => null,
+  },
+  hidePaymentSection: {
+    type: Boolean,
+    default: false,
   },
 });
 
