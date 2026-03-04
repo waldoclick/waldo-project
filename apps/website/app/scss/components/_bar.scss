@@ -139,6 +139,12 @@
       align-items: center;
       justify-content: space-between;
       gap: 20px;
+
+      @include screen-small {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+      }
     }
 
     &__col {
@@ -146,23 +152,38 @@
       display: flex;
       align-items: center;
 
+      @include screen-small {
+        flex: 0 0 auto;
+        width: 100%;
+      }
+
       &--left {
         justify-content: flex-start;
+
+        @include screen-small {
+          order: 4;
+          justify-content: center;
+        }
       }
 
       &--center {
         justify-content: center;
         text-align: center;
+
+        @include screen-small {
+          order: 1;
+          justify-content: center;
+          text-align: center;
+        }
       }
 
       &--right {
         justify-content: flex-end;
-      }
-    }
 
-    &__steps {
-      @include screen-small {
-        display: none;
+        @include screen-small {
+          order: 2;
+          justify-content: center;
+        }
       }
     }
 
@@ -172,11 +193,42 @@
       justify-content: flex-end;
       gap: 16px;
       width: 100%;
+
+      .summary-default {
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+
+      .btn {
+        flex: 0 0 auto;
+      }
+
+      @include screen-small {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        width: 100%;
+
+        .summary-default {
+          text-align: center;
+          align-items: center;
+        }
+
+        .btn {
+          width: 100%;
+          max-width: none;
+        }
+      }
     }
 
     a,
     button {
       max-width: 200px;
+
+      @include screen-small {
+        width: 100%;
+        max-width: none;
+      }
     }
   }
 
@@ -196,6 +248,11 @@
       align-items: center;
       justify-content: space-between;
       gap: 20px;
+      @include screen-small {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+      }
     }
 
     &__col {
@@ -203,12 +260,27 @@
       display: flex;
       align-items: center;
 
+      @include screen-small {
+        flex: 0 0 auto;
+        width: 100%;
+      }
+
       &--left {
         justify-content: flex-start;
+
+        @include screen-small {
+          order: 4;
+          justify-content: center;
+        }
       }
 
       &--right {
         justify-content: flex-end;
+
+        @include screen-small {
+          order: 2;
+          justify-content: flex-start;
+        }
       }
     }
 
@@ -218,11 +290,42 @@
       justify-content: flex-end;
       gap: 16px;
       width: 100%;
+
+      .summary-default {
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+
+      .btn {
+        flex: 0 0 auto;
+      }
+
+      @include screen-small {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        width: 100%;
+
+        .summary-default {
+          text-align: center;
+          align-items: center;
+        }
+
+        .btn {
+          width: 100%;
+          max-width: none;
+        }
+      }
     }
 
     a,
     button {
       max-width: 200px;
+
+      @include screen-small {
+        width: 100%;
+        max-width: none;
+      }
     }
   }
 }

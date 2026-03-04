@@ -27,7 +27,7 @@
       :summary-text="paymentSummaryText"
       primary-label="Continuar"
       :primary-disabled="!meta.valid"
-      :back-disabled="true"
+      :show-back="false"
       @back="handleformBack"
     />
   </Form>

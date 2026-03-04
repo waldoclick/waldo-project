@@ -5,6 +5,7 @@
       <div class="bar--announcement__container">
         <div class="bar--announcement__col bar--announcement__col--left">
           <button
+            v-show="showBack"
             type="button"
             class="btn btn--secondary btn--block"
             :disabled="backDisabled"
@@ -61,6 +62,7 @@ const props = withDefaults(
     primaryLabel: string;
     primaryDisabled?: boolean;
     backDisabled?: boolean;
+    showBack?: boolean;
   }>(),
   {
     percentage: 0,
@@ -70,6 +72,7 @@ const props = withDefaults(
     summaryText: "",
     primaryDisabled: false,
     backDisabled: false,
+    showBack: true,
   },
 );
 
