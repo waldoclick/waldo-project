@@ -3,7 +3,7 @@
     <div class="ads--banned__container">
       <div class="ads--banned__header">
         <SearchDefault
-          :model-value="settingsStore.ads.searchTerm"
+          :model-value="settingsStore.adsBanned.searchTerm"
           placeholder="Buscar anuncios..."
           class="ads--banned__search"
           @update:model-value="
@@ -67,10 +67,10 @@
       </div>
 
       <PaginationDefault
-        :current-page="settingsStore.ads.currentPage"
+        :current-page="settingsStore.adsBanned.currentPage"
         :total-pages="totalPages"
         :total-records="totalRecords"
-        :page-size="settingsStore.ads.pageSize"
+        :page-size="settingsStore.adsBanned.pageSize"
         class="ads--banned__pagination"
         @page-change="
           (page: number) => settingsStore.setCurrentPage(section, page)
@@ -81,7 +81,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Eye } from "lucide-vue-next";
 import { useSettingsStore } from "@/stores/settings.store";
@@ -102,10 +102,10 @@ interface Ad {
 
 // Store de settings
 const settingsStore = useSettingsStore();
-const section = "ads" as const;
+const section = "adsBanned" as const;
 
 // Computed para los filtros de anuncios
-const filters = computed(() => settingsStore.getAdsFilters);
+const filters = computed(() => settingsStore.getAdsBannedFilters);
 
 // Handler para cambios en filtros
 const handleFiltersChange = (newFilters: {
@@ -133,10 +133,10 @@ const fetchBannedAds = async () => {
 
     const searchParams: any = {
       pagination: {
-        page: settingsStore.ads.currentPage,
-        pageSize: settingsStore.ads.pageSize,
+        page: settingsStore.adsBanned.currentPage,
+        pageSize: settingsStore.adsBanned.pageSize,
       },
-      sort: settingsStore.ads.sortBy,
+      sort: settingsStore.adsBanned.sortBy,
       populate: {
         user: {
           fields: ["username"],
@@ -148,13 +148,15 @@ const fetchBannedAds = async () => {
     };
 
     // Agregar búsqueda si existe
-    if (settingsStore.ads.searchTerm) {
+    if (settingsStore.adsBanned.searchTerm) {
       searchParams.filters = {
         $or: [
-          { name: { $containsi: settingsStore.ads.searchTerm } },
-          { description: { $containsi: settingsStore.ads.searchTerm } },
-          { "user.username": { $containsi: settingsStore.ads.searchTerm } },
-          { "user.email": { $containsi: settingsStore.ads.searchTerm } },
+          { name: { $containsi: settingsStore.adsBanned.searchTerm } },
+          { description: { $containsi: settingsStore.adsBanned.searchTerm } },
+          {
+            "user.username": { $containsi: settingsStore.adsBanned.searchTerm },
+          },
+          { "user.email": { $containsi: settingsStore.adsBanned.searchTerm } },
         ],
       };
     }
@@ -232,19 +234,14 @@ const handleViewAd = (adId: number) => {
 // Watch para recargar cuando cambian los filtros o la búsqueda
 watch(
   [
-    () => settingsStore.ads.searchTerm,
-    () => settingsStore.ads.sortBy,
-    () => settingsStore.ads.pageSize,
-    () => settingsStore.ads.currentPage,
+    () => settingsStore.adsBanned.searchTerm,
+    () => settingsStore.adsBanned.sortBy,
+    () => settingsStore.adsBanned.pageSize,
+    () => settingsStore.adsBanned.currentPage,
   ],
   () => {
     fetchBannedAds();
   },
   { immediate: true },
 );
-
-// Cargar datos al montar
-onMounted(() => {
-  fetchBannedAds();
-});
 </script>

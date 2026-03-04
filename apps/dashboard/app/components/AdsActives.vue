@@ -3,7 +3,7 @@
     <div class="ads--actives__container">
       <div class="ads--actives__header">
         <SearchDefault
-          :model-value="settingsStore.ads.searchTerm"
+          :model-value="settingsStore.adsActives.searchTerm"
           placeholder="Buscar anuncios..."
           class="ads--actives__search"
           @update:model-value="
@@ -79,10 +79,10 @@
       </div>
 
       <PaginationDefault
-        :current-page="settingsStore.ads.currentPage"
+        :current-page="settingsStore.adsActives.currentPage"
         :total-pages="totalPages"
         :total-records="totalRecords"
-        :page-size="settingsStore.ads.pageSize"
+        :page-size="settingsStore.adsActives.pageSize"
         class="ads--actives__pagination"
         @page-change="
           (page: number) => settingsStore.setCurrentPage(section, page)
@@ -93,7 +93,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Eye, ExternalLink } from "lucide-vue-next";
 import { useSettingsStore } from "@/stores/settings.store";
@@ -118,10 +118,10 @@ const websiteUrl = publicConfig.websiteUrl as string;
 
 // Store de settings
 const settingsStore = useSettingsStore();
-const section = "ads" as const;
+const section = "adsActives" as const;
 
 // Computed para los filtros de anuncios
-const filters = computed(() => settingsStore.getAdsFilters);
+const filters = computed(() => settingsStore.getAdsActivesFilters);
 
 // Handler para cambios en filtros
 const handleFiltersChange = (newFilters: {
@@ -149,10 +149,10 @@ const fetchActiveAds = async () => {
 
     const searchParams: any = {
       pagination: {
-        page: settingsStore.ads.currentPage,
-        pageSize: settingsStore.ads.pageSize,
+        page: settingsStore.adsActives.currentPage,
+        pageSize: settingsStore.adsActives.pageSize,
       },
-      sort: settingsStore.ads.sortBy,
+      sort: settingsStore.adsActives.sortBy,
       populate: {
         user: {
           fields: ["username"],
@@ -164,13 +164,17 @@ const fetchActiveAds = async () => {
     };
 
     // Agregar búsqueda si existe
-    if (settingsStore.ads.searchTerm) {
+    if (settingsStore.adsActives.searchTerm) {
       searchParams.filters = {
         $or: [
-          { name: { $containsi: settingsStore.ads.searchTerm } },
-          { description: { $containsi: settingsStore.ads.searchTerm } },
-          { "user.username": { $containsi: settingsStore.ads.searchTerm } },
-          { "user.email": { $containsi: settingsStore.ads.searchTerm } },
+          { name: { $containsi: settingsStore.adsActives.searchTerm } },
+          { description: { $containsi: settingsStore.adsActives.searchTerm } },
+          {
+            "user.username": {
+              $containsi: settingsStore.adsActives.searchTerm,
+            },
+          },
+          { "user.email": { $containsi: settingsStore.adsActives.searchTerm } },
         ],
       };
     }
@@ -250,21 +254,16 @@ const handleViewAd = (adId: number) => {
 // Watch para recargar cuando cambian los filtros o la búsqueda
 watch(
   [
-    () => settingsStore.ads.searchTerm,
-    () => settingsStore.ads.sortBy,
-    () => settingsStore.ads.pageSize,
-    () => settingsStore.ads.currentPage,
+    () => settingsStore.adsActives.searchTerm,
+    () => settingsStore.adsActives.sortBy,
+    () => settingsStore.adsActives.pageSize,
+    () => settingsStore.adsActives.currentPage,
   ],
   () => {
     fetchActiveAds();
   },
   { immediate: true },
 );
-
-// Cargar datos al montar
-onMounted(() => {
-  fetchActiveAds();
-});
 </script>
 
 <style scoped>
