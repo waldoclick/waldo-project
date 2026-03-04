@@ -112,11 +112,17 @@
   }
 
   &--announcement {
-    position: relative;
+    position: fixed;
+    bottom: 0;
+    left: 0;
     width: 100%;
     border-top: 4px solid rgba($silver, 0.4);
     background-color: white;
     z-index: 3;
+
+    @include screen-small {
+      position: relative;
+    }
 
     &__percent {
       position: absolute;
