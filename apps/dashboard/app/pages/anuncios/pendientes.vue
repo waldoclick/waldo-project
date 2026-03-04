@@ -1,6 +1,8 @@
 <template>
-  <HeroDefault title="Pendientes" :breadcrumbs="breadcrumbs" />
-  <AdsPendings />
+  <div>
+    <HeroDefault title="Pendientes" :breadcrumbs="breadcrumbs" />
+    <AdsPendings />
+  </div>
 </template>
 
 <script setup lang="ts">

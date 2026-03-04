@@ -1,26 +1,28 @@
 <template>
-  <HeroDefault :title="title" :breadcrumbs="breadcrumbs" />
-  <BoxContent>
-    <template #content>
-      <BoxInformation title="Editar región" :columns="1">
-        <FormRegion :region="region" @saved="handleRegionSaved" />
-      </BoxInformation>
-    </template>
-    <template #sidebar>
-      <BoxInformation title="Detalles" :columns="1">
-        <CardInfo
-          v-if="region"
-          title="Fecha de creación"
-          :description="formatDate(region.createdAt)"
-        />
-        <CardInfo
-          v-if="region"
-          title="Última modificación"
-          :description="formatDate(region.updatedAt)"
-        />
-      </BoxInformation>
-    </template>
-  </BoxContent>
+  <div>
+    <HeroDefault :title="title" :breadcrumbs="breadcrumbs" />
+    <BoxContent>
+      <template #content>
+        <BoxInformation title="Editar región" :columns="1">
+          <FormRegion :region="region" @saved="handleRegionSaved" />
+        </BoxInformation>
+      </template>
+      <template #sidebar>
+        <BoxInformation title="Detalles" :columns="1">
+          <CardInfo
+            v-if="region"
+            title="Fecha de creación"
+            :description="formatDate(region.createdAt)"
+          />
+          <CardInfo
+            v-if="region"
+            title="Última modificación"
+            :description="formatDate(region.updatedAt)"
+          />
+        </BoxInformation>
+      </template>
+    </BoxContent>
+  </div>
 </template>
 
 <script setup lang="ts">

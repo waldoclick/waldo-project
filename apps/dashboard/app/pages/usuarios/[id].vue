@@ -1,138 +1,144 @@
 <template>
-  <HeroDefault :title="title" :breadcrumbs="breadcrumbs" />
-  <BoxContent>
-    <template #content>
-      <BoxInformation title="Información de usuario" :columns="2">
-        <CardInfo v-if="item" title="Usuario" :description="item.username" />
-        <CardInfo v-if="item" title="Email" :description="item.email" />
-        <CardInfo
-          v-if="item"
-          title="Nombre completo"
-          :description="formatFullName(item.firstname, item.lastname)"
-        />
-        <CardInfo v-if="item" title="RUT" :description="formatRut(item.rut)" />
-        <CardInfo
-          v-if="item"
-          title="Teléfono"
-          :description="item.phone || '--'"
-        />
-        <CardInfo
-          v-if="item"
-          title="Fecha de nacimiento"
-          :description="formatDateShort(item.birthdate)"
-        />
-        <CardInfo
-          v-if="item"
-          title="Dirección"
-          :description="formatAddress(item.address, item.address_number)"
-        />
-        <CardInfo
-          v-if="item"
-          title="Región"
-          :description="getRelationName(item.region)"
-        />
-        <CardInfo
-          v-if="item"
-          title="Comuna"
-          :description="getRelationName(item.commune)"
-        />
-        <CardInfo
-          v-if="item"
-          title="Código postal"
-          :description="item.postal_code || '--'"
-        />
-        <CardInfo
-          v-if="item"
-          title="Rol"
-          :description="getRelationName(item.role)"
-        />
-        <CardInfo
-          v-if="item"
-          title="Pro"
-          :description="formatBoolean(item.pro)"
-        />
-        <CardInfo
-          v-if="item"
-          title="Confirmado"
-          :description="formatBoolean(item.confirmed)"
-        />
-        <CardInfo
-          v-if="item"
-          title="Bloqueado"
-          :description="formatBoolean(item.blocked)"
-        />
-      </BoxInformation>
-      <BoxInformation title="Anuncios" :columns="1">
-        <UserAnnouncements :user-id="route.params.id" />
-      </BoxInformation>
-      <BoxInformation title="Reservas libres" :columns="1">
-        <UserReservations
-          :user-id="route.params.id"
-          :user-name="item?.username"
-        />
-      </BoxInformation>
-      <BoxInformation title="Destacados libres" :columns="1">
-        <UserFeatured :user-id="route.params.id" />
-      </BoxInformation>
-      <BoxInformation
-        v-if="item?.is_company"
-        title="Información de empresa"
-        :columns="2"
-      >
-        <CardInfo
-          v-if="item"
-          title="Razón social"
-          :description="item.business_name || '--'"
-        />
-        <CardInfo
-          v-if="item"
-          title="Giro"
-          :description="item.business_type || '--'"
-        />
-        <CardInfo
-          v-if="item"
-          title="RUT empresa"
-          :description="formatRut(item.business_rut)"
-        />
-        <CardInfo
-          v-if="item"
-          title="Dirección empresa"
-          :description="
-            formatAddress(item.business_address, item.business_address_number)
-          "
-        />
-        <CardInfo
-          v-if="item"
-          title="Región empresa"
-          :description="getRelationName(item.business_region)"
-        />
-        <CardInfo
-          v-if="item"
-          title="Comuna empresa"
-          :description="getRelationName(item.business_commune)"
-        />
-        <CardInfo
-          v-if="item"
-          title="Código postal empresa"
-          :description="item.business_postal_code || '--'"
-        />
-      </BoxInformation>
-    </template>
-    <template #sidebar>
-      <BoxInformation title="Detalles" :columns="1">
-        <CardInfo
-          v-if="item"
-          title="Fecha de creación"
-          :description="formatDate(item.createdAt)"
-        />
-        <CardInfo
-          v-if="item"
-          title="Última modificación"
-          :description="formatDate(item.updatedAt)"
-        />
-      </BoxInformation>
-    </template>
-  </BoxContent>
+  <div>
+    <HeroDefault :title="title" :breadcrumbs="breadcrumbs" />
+    <BoxContent>
+      <template #content>
+        <BoxInformation title="Información de usuario" :columns="2">
+          <CardInfo v-if="item" title="Usuario" :description="item.username" />
+          <CardInfo v-if="item" title="Email" :description="item.email" />
+          <CardInfo
+            v-if="item"
+            title="Nombre completo"
+            :description="formatFullName(item.firstname, item.lastname)"
+          />
+          <CardInfo
+            v-if="item"
+            title="RUT"
+            :description="formatRut(item.rut)"
+          />
+          <CardInfo
+            v-if="item"
+            title="Teléfono"
+            :description="item.phone || '--'"
+          />
+          <CardInfo
+            v-if="item"
+            title="Fecha de nacimiento"
+            :description="formatDateShort(item.birthdate)"
+          />
+          <CardInfo
+            v-if="item"
+            title="Dirección"
+            :description="formatAddress(item.address, item.address_number)"
+          />
+          <CardInfo
+            v-if="item"
+            title="Región"
+            :description="getRelationName(item.region)"
+          />
+          <CardInfo
+            v-if="item"
+            title="Comuna"
+            :description="getRelationName(item.commune)"
+          />
+          <CardInfo
+            v-if="item"
+            title="Código postal"
+            :description="item.postal_code || '--'"
+          />
+          <CardInfo
+            v-if="item"
+            title="Rol"
+            :description="getRelationName(item.role)"
+          />
+          <CardInfo
+            v-if="item"
+            title="Pro"
+            :description="formatBoolean(item.pro)"
+          />
+          <CardInfo
+            v-if="item"
+            title="Confirmado"
+            :description="formatBoolean(item.confirmed)"
+          />
+          <CardInfo
+            v-if="item"
+            title="Bloqueado"
+            :description="formatBoolean(item.blocked)"
+          />
+        </BoxInformation>
+        <BoxInformation title="Anuncios" :columns="1">
+          <UserAnnouncements :user-id="route.params.id" />
+        </BoxInformation>
+        <BoxInformation title="Reservas libres" :columns="1">
+          <UserReservations
+            :user-id="route.params.id"
+            :user-name="item?.username"
+          />
+        </BoxInformation>
+        <BoxInformation title="Destacados libres" :columns="1">
+          <UserFeatured :user-id="route.params.id" />
+        </BoxInformation>
+        <BoxInformation
+          v-if="item?.is_company"
+          title="Información de empresa"
+          :columns="2"
+        >
+          <CardInfo
+            v-if="item"
+            title="Razón social"
+            :description="item.business_name || '--'"
+          />
+          <CardInfo
+            v-if="item"
+            title="Giro"
+            :description="item.business_type || '--'"
+          />
+          <CardInfo
+            v-if="item"
+            title="RUT empresa"
+            :description="formatRut(item.business_rut)"
+          />
+          <CardInfo
+            v-if="item"
+            title="Dirección empresa"
+            :description="
+              formatAddress(item.business_address, item.business_address_number)
+            "
+          />
+          <CardInfo
+            v-if="item"
+            title="Región empresa"
+            :description="getRelationName(item.business_region)"
+          />
+          <CardInfo
+            v-if="item"
+            title="Comuna empresa"
+            :description="getRelationName(item.business_commune)"
+          />
+          <CardInfo
+            v-if="item"
+            title="Código postal empresa"
+            :description="item.business_postal_code || '--'"
+          />
+        </BoxInformation>
+      </template>
+      <template #sidebar>
+        <BoxInformation title="Detalles" :columns="1">
+          <CardInfo
+            v-if="item"
+            title="Fecha de creación"
+            :description="formatDate(item.createdAt)"
+          />
+          <CardInfo
+            v-if="item"
+            title="Última modificación"
+            :description="formatDate(item.updatedAt)"
+          />
+        </BoxInformation>
+      </template>
+    </BoxContent>
+  </div>
 </template>
 
 <script setup lang="ts">

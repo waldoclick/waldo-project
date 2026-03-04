@@ -111,4 +111,118 @@
       max-width: 200px;
     }
   }
+
+  &--announcement {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    border-top: 4px solid rgba($silver, 0.4);
+    background-color: white;
+    z-index: 3;
+
+    &__percent {
+      position: absolute;
+      height: 4px;
+      width: var(--progress-width, 0%);
+      background-color: var(--progress-color, $light_peach);
+      transition: width 0.3s ease;
+      z-index: 1;
+      top: -4px;
+      left: 0;
+    }
+
+    &__container {
+      @extend .container;
+      padding: 15px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    &__col {
+      flex: 1;
+      display: flex;
+      align-items: center;
+
+      &--left {
+        justify-content: flex-start;
+      }
+
+      &--center {
+        justify-content: center;
+        text-align: center;
+      }
+
+      &--right {
+        justify-content: flex-end;
+      }
+    }
+
+    &__steps {
+      @include screen-small {
+        display: none;
+      }
+    }
+
+    &__actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 16px;
+      width: 100%;
+    }
+
+    a,
+    button {
+      max-width: 200px;
+    }
+  }
+
+  &--packs {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    border-top: 4px solid rgba($silver, 0.4);
+    background-color: white;
+    z-index: 3;
+
+    &__container {
+      @extend .container;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    &__col {
+      flex: 1;
+      display: flex;
+      align-items: center;
+
+      &--left {
+        justify-content: flex-start;
+      }
+
+      &--right {
+        justify-content: flex-end;
+      }
+    }
+
+    &__actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 16px;
+      width: 100%;
+    }
+
+    a,
+    button {
+      max-width: 200px;
+    }
+  }
 }

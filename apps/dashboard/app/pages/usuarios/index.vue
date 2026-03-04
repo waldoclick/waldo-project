@@ -1,6 +1,8 @@
 <template>
-  <HeroDefault title="Usuarios" :breadcrumbs="breadcrumbs" />
-  <UsersDefault />
+  <div>
+    <HeroDefault title="Usuarios" :breadcrumbs="breadcrumbs" />
+    <UsersDefault />
+  </div>
 </template>
 
 <script setup lang="ts">

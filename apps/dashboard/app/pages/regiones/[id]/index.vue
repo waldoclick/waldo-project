@@ -1,36 +1,38 @@
 <template>
-  <HeroDefault :title="title" :breadcrumbs="breadcrumbs">
-    <template #actions>
-      <NuxtLink
-        class="btn btn--primary"
-        :to="`/regiones/${route.params.id}/editar`"
-      >
-        Editar región
-      </NuxtLink>
-    </template>
-  </HeroDefault>
-  <BoxContent>
-    <template #content>
-      <BoxInformation title="Información" :columns="2">
-        <CardInfo v-if="item" title="Nombre" :description="item.name" />
-        <CardInfo v-if="item" title="Slug" :description="item.slug" />
-      </BoxInformation>
-    </template>
-    <template #sidebar>
-      <BoxInformation title="Detalles" :columns="1">
-        <CardInfo
-          v-if="item"
-          title="Fecha de creación"
-          :description="formatDate(item.createdAt)"
-        />
-        <CardInfo
-          v-if="item"
-          title="Última modificación"
-          :description="formatDate(item.updatedAt)"
-        />
-      </BoxInformation>
-    </template>
-  </BoxContent>
+  <div>
+    <HeroDefault :title="title" :breadcrumbs="breadcrumbs">
+      <template #actions>
+        <NuxtLink
+          class="btn btn--primary"
+          :to="`/regiones/${route.params.id}/editar`"
+        >
+          Editar región
+        </NuxtLink>
+      </template>
+    </HeroDefault>
+    <BoxContent>
+      <template #content>
+        <BoxInformation title="Información" :columns="2">
+          <CardInfo v-if="item" title="Nombre" :description="item.name" />
+          <CardInfo v-if="item" title="Slug" :description="item.slug" />
+        </BoxInformation>
+      </template>
+      <template #sidebar>
+        <BoxInformation title="Detalles" :columns="1">
+          <CardInfo
+            v-if="item"
+            title="Fecha de creación"
+            :description="formatDate(item.createdAt)"
+          />
+          <CardInfo
+            v-if="item"
+            title="Última modificación"
+            :description="formatDate(item.updatedAt)"
+          />
+        </BoxInformation>
+      </template>
+    </BoxContent>
+  </div>
 </template>
 
 <script setup lang="ts">

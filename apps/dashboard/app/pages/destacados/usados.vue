@@ -1,6 +1,8 @@
 <template>
-  <HeroDefault title="Usados" :breadcrumbs="breadcrumbs" />
-  <FeaturedUsed />
+  <div>
+    <HeroDefault title="Usados" :breadcrumbs="breadcrumbs" />
+    <FeaturedUsed />
+  </div>
 </template>
 
 <script setup lang="ts">

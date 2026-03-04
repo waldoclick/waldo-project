@@ -23,20 +23,20 @@ import { useAdAnalytics } from "~/composables/useAdAnalytics";
 import { onMounted } from "vue";
 
 $setSEO({
-  title: "Error al Crear Aviso",
+  title: "Error al Crear Anuncio",
   description:
-    "Hubo un problema al intentar crear tu aviso en Waldo.click®. Por favor, revisa los datos e inténtalo nuevamente.",
+    "Hubo un problema al intentar crear tu anuncio en Waldo.click®. Por favor, revisa los datos e inténtalo nuevamente.",
   imageUrl: "https://waldo.click/share.jpg",
-  url: "https://waldo.click/error-crear-aviso",
+  url: "https://waldo.click/error-crear-anuncio",
 });
 
 $setStructuredData({
   "@context": "https://schema.org",
   "@type": "WebPage",
-  name: "Error al Crear Aviso - Waldo.click®",
-  url: "https://waldo.click/error-crear-aviso",
+  name: "Error al Crear Anuncio - Waldo.click®",
+  url: "https://waldo.click/error-crear-anuncio",
   description:
-    "Hubo un problema al intentar crear tu aviso en Waldo.click®. Por favor, revisa los datos e inténtalo nuevamente.",
+    "Hubo un problema al intentar crear tu anuncio en Waldo.click®. Por favor, revisa los datos e inténtalo nuevamente.",
 });
 
 // Middleware

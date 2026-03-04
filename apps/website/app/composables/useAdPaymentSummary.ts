@@ -25,21 +25,21 @@ export const useAdPaymentSummary = () => {
 
     if (pack === "free") {
       return {
-        label: "1 aviso gratuito",
+        label: "1 anuncio gratuito",
         amount: 0,
       };
     }
 
     if (pack === "paid") {
       return {
-        label: "1 aviso ya pagado",
+        label: "1 anuncio ya pagado",
         amount: 0,
       };
     }
 
     if (selectedPack.value) {
       const p = selectedPack.value as any;
-      const unidad = p.total_ads === 1 ? "aviso" : "avisos";
+      const unidad = p.total_ads === 1 ? "anuncio" : "anuncios";
 
       return {
         label: `${p.total_ads} ${unidad} x ${formatPrice(p.price)}`,

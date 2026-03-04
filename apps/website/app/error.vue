@@ -23,7 +23,7 @@
               : String(fetchError)
             : null
         "
-        title="Tenemos avisos que podrían interesarte"
+        title="Tenemos anuncios que podrían interesarte"
         text="Revisa nuestra selección de activos industriales disponibles"
         :center-head="true"
       />

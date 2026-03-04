@@ -2,7 +2,7 @@
   "data": [
     {
       "id": 2,
-      "name": "15 Avisos",
+      "name": "15 Anuncios",
       "quantity_ad": 15,
       "quantity_featured": 1,
       "price": 69900,
@@ -11,13 +11,13 @@
       "days_ad": 45,
       "description": [
         {
-          "text": "15 Avisos para usarlos cuando quieras."
+          "text": "15 Anuncios para usarlos cuando quieras."
         },
         {
-          "text": "Cada Aviso será publicado por 45 días."
+          "text": "Cada Anuncio será publicado por 45 días."
         },
         {
-          "text": "Incluye 1 Destacado que puedes utilizar en el Aviso que prefieras."
+          "text": "Incluye 1 Destacado que puedes utilizar en el Anuncio que prefieras."
         },
         {
           "text": "Ahorras un 27%"
@@ -28,7 +28,7 @@
     },
     {
       "id": 3,
-      "name": "30 Avisos",
+      "name": "30 Anuncios",
       "quantity_ad": 30,
       "quantity_featured": 2,
       "price": 119900,
@@ -37,13 +37,13 @@
       "days_ad": 45,
       "description": [
         {
-          "text": "15 Avisos para usarlos cuando quieras."
+          "text": "15 Anuncios para usarlos cuando quieras."
         },
         {
-          "text": "Cada Aviso será publicado por 45 días."
+          "text": "Cada Anuncio será publicado por 45 días."
         },
         {
-          "text": "Incluye 2 Destacados que puedes utilizar en los avisos que prefieras."
+          "text": "Incluye 2 Destacados que puedes utilizar en los anuncios que prefieras."
         },
         {
           "text": "Ahorras un 37%."
@@ -57,7 +57,7 @@
     },
     {
       "id": 5,
-      "name": "60 Avisos",
+      "name": "60 Anuncios",
       "quantity_ad": 60,
       "quantity_featured": 3,
       "price": 199900,
@@ -66,13 +66,13 @@
       "days_ad": 45,
       "description": [
         {
-          "text": "60 Avisos para usarlos cuando quieras."
+          "text": "60 Anuncios para usarlos cuando quieras."
         },
         {
-          "text": "Cada Aviso será publicado por 45 días."
+          "text": "Cada Anuncio será publicado por 45 días."
         },
         {
-          "text": "Incluye 4 Destacados que puedes utilizar en los Avisos que prefieras."
+          "text": "Incluye 4 Destacados que puedes utilizar en los Anuncios que prefieras."
         },
         {
           "text": "Ahorras un 48%"
@@ -83,7 +83,7 @@
     },
     {
       "id": 6,
-      "name": "1 Aviso",
+      "name": "1 Anuncio",
       "quantity_ad": 1,
       "quantity_featured": 0,
       "price": 5990,
@@ -92,7 +92,7 @@
       "days_ad": 45,
       "description": [
         {
-          "text": "1 Aviso, puedes usarlo cuando quieras."
+          "text": "1 Anuncio, puedes usarlo cuando quieras."
         },
         {
           "text": "45 días publicado."

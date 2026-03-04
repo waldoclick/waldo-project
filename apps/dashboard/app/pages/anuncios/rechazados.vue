@@ -1,6 +1,8 @@
 <template>
-  <HeroDefault title="Rechazados" :breadcrumbs="breadcrumbs" />
-  <AdsRejected />
+  <div>
+    <HeroDefault title="Rechazados" :breadcrumbs="breadcrumbs" />
+    <AdsRejected />
+  </div>
 </template>
 
 <script setup lang="ts">

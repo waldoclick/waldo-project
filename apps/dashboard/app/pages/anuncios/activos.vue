@@ -1,6 +1,8 @@
 <template>
-  <HeroDefault title="Activos" :breadcrumbs="breadcrumbs" />
-  <AdsActives />
+  <div>
+    <HeroDefault title="Activos" :breadcrumbs="breadcrumbs" />
+    <AdsActives />
+  </div>
 </template>
 
 <script setup lang="ts">

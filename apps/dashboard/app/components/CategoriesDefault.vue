@@ -236,7 +236,7 @@ const tableColumns = [
   { label: "ID" },
   { label: "Nombre" },
   { label: "Color" },
-  { label: "Avisos" },
+  { label: "Anuncios" },
   { label: "Fecha" },
   { label: "Acciones", align: "right" as const },
 ];

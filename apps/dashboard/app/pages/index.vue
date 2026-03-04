@@ -1,6 +1,8 @@
 <template>
-  <HeroDashboard />
-  <StatisticsDefault />
+  <div>
+    <HeroDashboard />
+    <StatisticsDefault />
+  </div>
 </template>
 
 <script setup lang="ts">
