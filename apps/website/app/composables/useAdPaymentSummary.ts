@@ -39,7 +39,11 @@ export const useAdPaymentSummary = () => {
 
     if (selectedPack.value) {
       const p = selectedPack.value as any;
-      const unidad = p.total_ads === 1 ? "anuncio" : "anuncios";
+      const totalAds =
+        typeof p.total_ads === "string"
+          ? Number.parseInt(p.total_ads, 10)
+          : p.total_ads;
+      const unidad = totalAds === 1 ? "anuncio" : "anuncios";
 
       return {
         label: `${p.total_ads} ${unidad} x ${formatPrice(p.price)}`,

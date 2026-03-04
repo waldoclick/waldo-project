@@ -23,7 +23,7 @@
               />
               <strong>
                 {{ item.total_ads }}
-                {{ item.total_ads === 1 ? "anuncio" : "anuncios" }} x
+                {{ Number(item.total_ads) === 1 ? "anuncio" : "anuncios" }} x
                 {{ formatPrice(item.price) }}
               </strong>
             </p>

@@ -21,7 +21,11 @@ export const usePackPaymentSummary = () => {
     if (!selectedPack.value) return "";
 
     const pack = selectedPack.value as any;
-    const unidad = pack.total_ads === 1 ? "anuncio" : "anuncios";
+    const totalAds =
+      typeof pack.total_ads === "string"
+        ? Number.parseInt(pack.total_ads, 10)
+        : pack.total_ads;
+    const unidad = totalAds === 1 ? "anuncio" : "anuncios";
 
     return `${pack.total_ads} ${unidad} x ${formatPrice(pack.price)}`;
   });
