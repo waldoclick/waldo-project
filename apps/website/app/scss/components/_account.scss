@@ -161,7 +161,8 @@
     font-style: normal;
     line-height: 1;
     min-height: 500px;
-    // background-color: red;
+    min-width: 0;
+    overflow-x: hidden;
 
     &__title {
       font-weight: bold;
@@ -169,6 +170,13 @@
       margin-bottom: 20px;
       display: flex;
       align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 8px;
+
+      @include screen-small {
+        margin-bottom: 12px;
+        font-size: 24px;
+      }
 
       a {
         font-weight: 600;
@@ -177,6 +185,11 @@
         text-decoration-line: underline;
         color: $dodger_blue;
         margin-left: 20px;
+
+        @include screen-small {
+          margin-left: 0;
+          font-size: 13px;
+        }
       }
     }
 
@@ -193,6 +206,10 @@
       @include screen-large {
         display: none;
       }
+
+      @include screen-small {
+        margin-bottom: 16px;
+      }
     }
 
     &__list {
@@ -200,41 +217,63 @@
       flex-direction: column;
       gap: 20px;
       margin-bottom: 45px;
+      min-width: 0;
+      overflow-x: hidden;
+
+      @include screen-small {
+        gap: 12px;
+        margin-bottom: 24px;
+      }
 
       &__menu {
-        display: block;
-        white-space: unset;
-        flex-wrap: unset;
-        overflow-x: unset;
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
         width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        gap: 0;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 4px;
+        border-bottom: 1px solid $gainsboro;
+        touch-action: pan-x;
 
-        @include screen-large {
-          display: flex;
-          white-space: nowrap;
-          flex-wrap: nowrap;
-          overflow-x: scroll;
-          width: calc(100% + 15px);
+        /* Scroll horizontal con el dedo, sin mostrar scrollbar */
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+
+        &::-webkit-scrollbar {
+          display: none;
         }
 
         button {
-          padding: 15px;
+          padding: 12px 10px;
           display: inline-flex;
-          gap: 8px;
+          gap: 6px;
           align-items: center;
           border: none;
           margin: 0;
           background: transparent;
           font-weight: bold;
-          font-size: 15px;
-          line-height: 24px;
+          font-size: 14px;
+          line-height: 1.2;
           letter-spacing: 0.25px;
           color: $davys_grey;
+          white-space: nowrap;
+          flex-shrink: 0;
+
+          @include screen-small {
+            padding: 10px 8px;
+            font-size: 13px;
+          }
 
           span {
             font-weight: normal;
           }
 
           svg {
+            flex-shrink: 0;
             color: $dodger_blue;
           }
 
@@ -250,14 +289,26 @@
         flex-direction: column;
         gap: 20px;
 
+        @include screen-small {
+          gap: 12px;
+        }
+
         &__wrapper {
           display: grid;
           grid-template-columns: 1fr;
           grid-gap: 20px;
+
+          @include screen-small {
+            grid-gap: 12px;
+          }
         }
 
         &__emptystate {
           padding: 20px 0;
+
+          @include screen-small {
+            padding: 12px 0;
+          }
         }
       }
 
@@ -269,6 +320,10 @@
     &__firstad {
       margin-bottom: 20px;
     }
+
+    // &__button {
+    //   padding-right: 16px;
+    // }
   }
 
   &--orders {

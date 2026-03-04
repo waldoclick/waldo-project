@@ -1,26 +1,28 @@
 <template>
-  <HeroDefault :title="title" :breadcrumbs="breadcrumbs" />
-  <BoxContent>
-    <template #content>
-      <BoxInformation title="Editar condición" :columns="1">
-        <FormCondition :condition="condition" @saved="handleConditionSaved" />
-      </BoxInformation>
-    </template>
-    <template #sidebar>
-      <BoxInformation title="Detalles" :columns="1">
-        <CardInfo
-          v-if="condition"
-          title="Fecha de creación"
-          :description="formatDate(condition.createdAt)"
-        />
-        <CardInfo
-          v-if="condition"
-          title="Última modificación"
-          :description="formatDate(condition.updatedAt)"
-        />
-      </BoxInformation>
-    </template>
-  </BoxContent>
+  <div>
+    <HeroDefault :title="title" :breadcrumbs="breadcrumbs" />
+    <BoxContent>
+      <template #content>
+        <BoxInformation title="Editar condición" :columns="1">
+          <FormCondition :condition="condition" @saved="handleConditionSaved" />
+        </BoxInformation>
+      </template>
+      <template #sidebar>
+        <BoxInformation title="Detalles" :columns="1">
+          <CardInfo
+            v-if="condition"
+            title="Fecha de creación"
+            :description="formatDate(condition.createdAt)"
+          />
+          <CardInfo
+            v-if="condition"
+            title="Última modificación"
+            :description="formatDate(condition.updatedAt)"
+          />
+        </BoxInformation>
+      </template>
+    </BoxContent>
+  </div>
 </template>
 
 <script setup lang="ts">

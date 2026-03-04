@@ -1,26 +1,28 @@
 <template>
-  <HeroDefault :title="title" :breadcrumbs="breadcrumbs" />
-  <BoxContent>
-    <template #content>
-      <BoxInformation title="Editar categoría" :columns="1">
-        <FormCategory :category="category" @saved="handleCategorySaved" />
-      </BoxInformation>
-    </template>
-    <template #sidebar>
-      <BoxInformation title="Detalles" :columns="1">
-        <CardInfo
-          v-if="category"
-          title="Fecha de creación"
-          :description="formatDate(category.createdAt)"
-        />
-        <CardInfo
-          v-if="category"
-          title="Última modificación"
-          :description="formatDate(category.updatedAt)"
-        />
-      </BoxInformation>
-    </template>
-  </BoxContent>
+  <div>
+    <HeroDefault :title="title" :breadcrumbs="breadcrumbs" />
+    <BoxContent>
+      <template #content>
+        <BoxInformation title="Editar categoría" :columns="1">
+          <FormCategory :category="category" @saved="handleCategorySaved" />
+        </BoxInformation>
+      </template>
+      <template #sidebar>
+        <BoxInformation title="Detalles" :columns="1">
+          <CardInfo
+            v-if="category"
+            title="Fecha de creación"
+            :description="formatDate(category.createdAt)"
+          />
+          <CardInfo
+            v-if="category"
+            title="Última modificación"
+            :description="formatDate(category.updatedAt)"
+          />
+        </BoxInformation>
+      </template>
+    </BoxContent>
+  </div>
 </template>
 
 <script setup lang="ts">

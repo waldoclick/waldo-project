@@ -1,12 +1,14 @@
 <template>
-  <HeroDefault title="Comunas" :breadcrumbs="breadcrumbs">
-    <template #actions>
-      <NuxtLink class="btn btn--primary" to="/comunas/new">
-        Agregar comuna
-      </NuxtLink>
-    </template>
-  </HeroDefault>
-  <CommunesDefault />
+  <div>
+    <HeroDefault title="Comunas" :breadcrumbs="breadcrumbs">
+      <template #actions>
+        <NuxtLink class="btn btn--primary" to="/comunas/new">
+          Agregar comuna
+        </NuxtLink>
+      </template>
+    </HeroDefault>
+    <CommunesDefault />
+  </div>
 </template>
 
 <script setup lang="ts">

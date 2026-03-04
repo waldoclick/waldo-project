@@ -19,18 +19,17 @@
       </div>
     </div>
 
-    <!-- Tipos de anuncio -->
+    <!-- Tipos de pack -->
     <div class="form__field">
       <PackMethod />
       <PackInvoice />
     </div>
 
-    <BarCreate
-      :percentage="0"
-      :current-step="1"
-      :total-steps="1"
-      :is-valid="meta.valid"
-      @submit="handleSubmit"
+    <BarPacks
+      :summary-text="packSummaryText"
+      primary-label="Ir a pagar"
+      :primary-disabled="!meta.valid"
+      @primary="handleSubmit"
       @back="() => $router.push('/packs')"
     />
   </Form>
@@ -42,14 +41,16 @@ const { Swal } = useSweetAlert2();
 import { useNuxtApp } from "#app";
 import PackMethod from "@/components/PackMethod.vue";
 import PackInvoice from "@/components/PackInvoice.vue";
-import BarCreate from "@/components/BarCreate.vue";
+import BarPacks from "@/components/BarPacks.vue";
 import { usePackStore } from "@/stores/pack.store";
+import { usePackPaymentSummary } from "@/composables/usePackPaymentSummary";
 
 const { create } = useStrapi();
 const { $recaptcha } = useNuxtApp();
 
 const packStore = usePackStore();
 const emit = defineEmits(["formSubmitted"]);
+const { summaryText: packSummaryText } = usePackPaymentSummary();
 
 const handleSubmit = async (values) => {
   const result = await Swal.fire({
@@ -100,7 +101,7 @@ const handleRedirect = (response) => {
   const tokenField = document.createElement("input");
   tokenField.type = "hidden";
   tokenField.name = "token_ws";
-  tokenField.value = response.token;
+  tokenField.value = response.gatewayRef;
   form.appendChild(tokenField);
 
   // Añadir el formulario al cuerpo del documento y enviarlo

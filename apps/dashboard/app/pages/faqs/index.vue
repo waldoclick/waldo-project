@@ -1,10 +1,14 @@
 <template>
-  <HeroDefault title="FAQs" :breadcrumbs="breadcrumbs">
-    <template #actions>
-      <NuxtLink class="btn btn--primary" to="/faqs/new"> Agregar FAQ </NuxtLink>
-    </template>
-  </HeroDefault>
-  <FaqsDefault />
+  <div>
+    <HeroDefault title="FAQs" :breadcrumbs="breadcrumbs">
+      <template #actions>
+        <NuxtLink class="btn btn--primary" to="/faqs/new">
+          Agregar FAQ
+        </NuxtLink>
+      </template>
+    </HeroDefault>
+    <FaqsDefault />
+  </div>
 </template>
 
 <script setup lang="ts">

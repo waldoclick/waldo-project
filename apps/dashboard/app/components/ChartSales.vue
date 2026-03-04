@@ -90,29 +90,29 @@ const gridAndHoverPlugin = {
     const xScale = scales.x;
     if (xScale) {
       const xTicks = xScale.ticks || [];
-      xTicks.forEach((tick: any) => {
+      for (const tick of xTicks) {
         const x = xScale.getPixelForValue(tick.value);
-        if (!isNaN(x) && x >= chartArea.left && x <= chartArea.right) {
+        if (!Number.isNaN(x) && x >= chartArea.left && x <= chartArea.right) {
           ctx.beginPath();
           ctx.moveTo(Math.round(x), chartArea.top);
           ctx.lineTo(Math.round(x), chartArea.bottom);
           ctx.stroke();
         }
-      });
+      }
     }
 
     const yScale = scales.y;
     if (yScale) {
       const yTicks = yScale.ticks || [];
-      yTicks.forEach((tick: any) => {
+      for (const tick of yTicks) {
         const y = yScale.getPixelForValue(tick.value);
-        if (!isNaN(y) && y >= chartArea.top && y <= chartArea.bottom) {
+        if (!Number.isNaN(y) && y >= chartArea.top && y <= chartArea.bottom) {
           ctx.beginPath();
           ctx.moveTo(chartArea.left, Math.round(y));
           ctx.lineTo(chartArea.right, Math.round(y));
           ctx.stroke();
         }
-      });
+      }
     }
 
     ctx.restore();
@@ -132,7 +132,7 @@ const gridAndHoverPlugin = {
         if (meta && meta.data && meta.data[barPoint.dataIndex]) {
           const bar = meta.data[barPoint.dataIndex];
           const barX = bar.x;
-          if (typeof barX === "number" && !isNaN(barX)) {
+          if (typeof barX === "number" && !Number.isNaN(barX)) {
             ctx.save();
             ctx.strokeStyle = "rgba(200, 200, 200, 0.6)";
             ctx.lineWidth = 2;

@@ -12,6 +12,11 @@
       display: flex;
       flex-direction: column;
       gap: 30px;
+
+      @include screen-small {
+        gap: 12px;
+        margin-bottom: 24px;
+      }
     }
 
     &__header {
@@ -31,6 +36,10 @@
 
       &__title {
         justify-content: center;
+
+        @include screen-small {
+          font-size: 22px;
+        }
       }
 
       &__description {
@@ -88,6 +97,10 @@
         margin-bottom: 15px;
       }
 
+      @include screen-small {
+        padding: 16px;
+      }
+
       &__separator {
         height: 1px;
         border-bottom: 2px solid $gainsboro;
@@ -105,10 +118,18 @@
       align-items: center;
       margin-bottom: 30px;
 
+      @include screen-small {
+        margin-bottom: 12px;
+      }
+
       &__title {
         margin-bottom: 0;
         color: $charcoal;
         text-decoration: underline;
+
+        @include screen-small {
+          font-size: 18px;
+        }
       }
     }
   }

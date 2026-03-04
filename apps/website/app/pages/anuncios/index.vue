@@ -17,7 +17,7 @@
     <MessageDefault
       v-if="adsData && adsData.ads && adsData.ads.length === 0"
       type="fail"
-      title="No hay avisos con esos filtros"
+      title="No hay anuncios con esos filtros"
       description="Prueba ajustando tu búsqueda o mira lo que tenemos disponible"
       button_label="Ver más anuncios"
       button_link="/anuncios"
