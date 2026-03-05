@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Double-Fetch Cleanup
-status: planning
+status: completed
 stopped_at: Completed 08-transactional-components/08-01-PLAN.md
-last_updated: "2026-03-05T23:01:53Z"
-last_activity: 2026-03-05 — Phase 8 plan 01 complete; double-fetch cleanup finished for transactional components
+last_updated: "2026-03-05T22:57:58.131Z"
+last_activity: 2026-03-05 — Phase 8 plan 01 complete; v1.2 milestone finished
 progress:
   total_phases: 2
   completed_phases: 2
