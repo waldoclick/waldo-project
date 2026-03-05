@@ -8,12 +8,12 @@
 
 ### Double-Fetch Elimination
 
-- [ ] **DFX-01**: `PacksDefault.vue` no ejecuta fetch doble al montar (solo `watch({ immediate: true })`)
-- [ ] **DFX-02**: `UsersDefault.vue` no ejecuta fetch doble al montar
-- [ ] **DFX-03**: `RegionsDefault.vue` no ejecuta fetch doble al montar
-- [ ] **DFX-04**: `FaqsDefault.vue` no ejecuta fetch doble al montar
-- [ ] **DFX-05**: `CommunesDefault.vue` no ejecuta fetch doble al montar
-- [ ] **DFX-06**: `ConditionsDefault.vue` no ejecuta fetch doble al montar
+- [x] **DFX-01**: `PacksDefault.vue` no ejecuta fetch doble al montar (solo `watch({ immediate: true })`)
+- [x] **DFX-02**: `UsersDefault.vue` no ejecuta fetch doble al montar
+- [x] **DFX-03**: `RegionsDefault.vue` no ejecuta fetch doble al montar
+- [x] **DFX-04**: `FaqsDefault.vue` no ejecuta fetch doble al montar
+- [x] **DFX-05**: `CommunesDefault.vue` no ejecuta fetch doble al montar
+- [x] **DFX-06**: `ConditionsDefault.vue` no ejecuta fetch doble al montar
 - [ ] **DFX-07**: `ReservationsFree.vue` no ejecuta fetch doble al montar
 - [ ] **DFX-08**: `ReservationsUsed.vue` no ejecuta fetch doble al montar
 - [ ] **DFX-09**: `FeaturedFree.vue` no ejecuta fetch doble al montar
@@ -48,12 +48,12 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DFX-01 | Phase 7 | Pending |
-| DFX-02 | Phase 7 | Pending |
-| DFX-03 | Phase 7 | Pending |
-| DFX-04 | Phase 7 | Pending |
-| DFX-05 | Phase 7 | Pending |
-| DFX-06 | Phase 7 | Pending |
+| DFX-01 | Phase 7 | Complete |
+| DFX-02 | Phase 7 | Complete |
+| DFX-03 | Phase 7 | Complete |
+| DFX-04 | Phase 7 | Complete |
+| DFX-05 | Phase 7 | Complete |
+| DFX-06 | Phase 7 | Complete |
 | DFX-07 | Phase 8 | Pending |
 | DFX-08 | Phase 8 | Pending |
 | DFX-09 | Phase 8 | Pending |
