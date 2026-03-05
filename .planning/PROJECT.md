@@ -29,7 +29,9 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 
 ### Active
 
-*(empty — define for next milestone via /gsd:new-milestone)*
+<!-- v1.2: Double-fetch elimination in non-ads dashboard components -->
+
+- [ ] Eliminar double-fetch en todos los componentes non-ads del dashboard que tienen `onMounted` + `watch({ immediate: true })` coexistiendo
 
 ### Out of Scope
 
@@ -84,5 +86,12 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-05**: Consolidar Reservations*/Featured* una vez que tengan store keys dedicados y estrategias de fetch alineadas
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
+## Current Milestone: v1.2 Double-Fetch Cleanup
+
+**Goal:** Eliminar el double-fetch en todos los componentes non-ads del dashboard aplicando el mismo patrón establecido en v1.1.
+
+**Target features:**
+- Eliminar `onMounted` redundante de todos los componentes que ya tienen `watch({ immediate: true })` como trigger de carga
+
 ---
-*Last updated: 2026-03-05 after v1.1 milestone*
+*Last updated: 2026-03-05 after v1.2 milestone start*
