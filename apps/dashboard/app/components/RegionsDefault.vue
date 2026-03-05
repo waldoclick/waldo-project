@@ -147,8 +147,11 @@ const fetchRegions = async () => {
     }
 
     const response = await strapi.find("regions", searchParams);
-    allRegions.value = Array.isArray(response.data) ? response.data : [];
-    paginationMeta.value = response.meta?.pagination || null;
+    allRegions.value = Array.isArray(response.data)
+      ? (response.data as Region[])
+      : [];
+    paginationMeta.value = (response.meta?.pagination ||
+      null) as typeof paginationMeta.value;
   } catch (error) {
     console.error("Error fetching regions:", error);
     allRegions.value = [];

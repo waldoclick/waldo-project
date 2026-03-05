@@ -156,11 +156,13 @@ const fetchFreeFeatured = async () => {
       "ad-featured-reservations",
       searchParams,
     );
-    allFeatured.value = Array.isArray(response.data) ? response.data : [];
+    allFeatured.value = Array.isArray(response.data)
+      ? (response.data as Featured[])
+      : [];
 
     // Guardar información de paginación de Strapi
     paginationMeta.value = response.meta?.pagination
-      ? response.meta.pagination
+      ? (response.meta.pagination as typeof paginationMeta.value)
       : null;
   } catch (error) {
     console.error("Error fetching free featured:", error);

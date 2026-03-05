@@ -82,16 +82,20 @@ const { data: communeData } = await useAsyncData(
     const response = await strapi.find("communes", {
       filters: { documentId: { $eq: id } },
       populate: "region",
-    });
+    } as Record<string, unknown>);
     const data = Array.isArray(response.data) ? response.data[0] : null;
     if (data) return data;
 
-    const fallbackResponse = await strapi.findOne("communes", id as string, {
-      populate: "region",
-    });
-    return fallbackResponse.data || null;
+    const fallbackResponse = await strapi.findOne(
+      "communes",
+      id as string,
+      {
+        populate: "region",
+      } as Record<string, unknown>,
+    );
+    return (fallbackResponse.data as unknown) || null;
   },
 );
 
-commune.value = communeData.value;
+commune.value = communeData.value ?? null;
 </script>

@@ -1,13 +1,13 @@
 <template>
   <div>
     <HeroDefault title="Rechazados" :breadcrumbs="breadcrumbs" />
-    <AdsRejected />
+    <AdsTable endpoint="ads/rejecteds" section="adsRejected" />
   </div>
 </template>
 
 <script setup lang="ts">
 import HeroDefault from "@/components/HeroDefault.vue";
-import AdsRejected from "@/components/AdsRejected.vue";
+import AdsTable from "@/components/AdsTable.vue";
 
 definePageMeta({
   layout: "dashboard",

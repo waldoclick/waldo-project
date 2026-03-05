@@ -167,10 +167,13 @@ const fetchUserReservations = async () => {
         pageSize,
       },
       sort: "createdAt:desc",
-    });
+    } as Record<string, unknown>);
 
-    allReservations.value = Array.isArray(response.data) ? response.data : [];
-    paginationMeta.value = response.meta?.pagination || null;
+    allReservations.value = Array.isArray(response.data)
+      ? (response.data as Reservation[])
+      : [];
+    paginationMeta.value = (response.meta?.pagination ||
+      null) as typeof paginationMeta.value;
   } catch (error) {
     console.error("Error fetching free reservations for user:", error);
     allReservations.value = [];

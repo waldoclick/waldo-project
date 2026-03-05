@@ -140,8 +140,11 @@ const fetchConditions = async () => {
     }
 
     const response = await strapi.find("conditions", searchParams);
-    allConditions.value = Array.isArray(response.data) ? response.data : [];
-    paginationMeta.value = response.meta?.pagination || null;
+    allConditions.value = Array.isArray(response.data)
+      ? (response.data as Condition[])
+      : [];
+    paginationMeta.value = (response.meta?.pagination ||
+      null) as typeof paginationMeta.value;
   } catch (error) {
     console.error("Error fetching conditions:", error);
     allConditions.value = [];

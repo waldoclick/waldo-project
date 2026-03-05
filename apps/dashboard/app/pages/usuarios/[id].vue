@@ -68,16 +68,16 @@
           />
         </BoxInformation>
         <BoxInformation title="Anuncios" :columns="1">
-          <UserAnnouncements :user-id="route.params.id" />
+          <UserAnnouncements :user-id="String(route.params.id)" />
         </BoxInformation>
         <BoxInformation title="Reservas libres" :columns="1">
           <UserReservations
-            :user-id="route.params.id"
+            :user-id="String(route.params.id)"
             :user-name="item?.username"
           />
         </BoxInformation>
         <BoxInformation title="Destacados libres" :columns="1">
-          <UserFeatured :user-id="route.params.id" />
+          <UserFeatured :user-id="String(route.params.id)" />
         </BoxInformation>
         <BoxInformation
           v-if="item?.is_company"
@@ -152,13 +152,14 @@ import UserAnnouncements from "@/components/UserAnnouncements.vue";
 import UserFeatured from "@/components/UserFeatured.vue";
 import UserReservations from "@/components/UserReservations.vue";
 import { useRut } from "@/composables/useRut";
+import type { User, UserRelation } from "@/types/user";
 
 definePageMeta({
   layout: "dashboard",
 });
 
 const route = useRoute();
-const item = ref<any>(null);
+const item = ref<User | null>(null);
 const { formatRut } = useRut();
 
 const title = computed(() => item.value?.username || "Usuario");
@@ -194,12 +195,12 @@ const formatFullName = (firstname?: string, lastname?: string) => {
 
 const formatBoolean = (value?: boolean) => (value ? "Sí" : "No");
 
-const formatAddress = (address?: string, addressNumber?: number) => {
+const formatAddress = (address?: string, addressNumber?: string | number) => {
   if (!address) return "--";
   return addressNumber ? `${address} ${addressNumber}` : address;
 };
 
-const getRelationName = (relation?: any) => {
+const getRelationName = (relation?: UserRelation) => {
   if (!relation) return "--";
   if (typeof relation === "string") return relation;
   if (relation.name) return relation.name;
@@ -208,11 +209,12 @@ const getRelationName = (relation?: any) => {
   return "--";
 };
 
-const normalizeUser = (response: any) => {
+const normalizeUser = (response: unknown): User | null => {
   if (!response) return null;
-  if (response.data) return response.data;
-  if (response.user) return response.user;
-  if (response.id) return response;
+  if (typeof response === "object" && response !== null) {
+    if ("data" in response) return (response as { data: User }).data;
+    if ("id" in response) return response as User;
+  }
   return null;
 };
 
@@ -223,25 +225,29 @@ const { data: userData } = await useAsyncData(
     if (!id) return null;
     try {
       const strapi = useStrapi();
-      const response = await strapi.findOne("users", id as string, {
-        populate: {
-          role: {
-            fields: ["name"],
+      const response = await strapi.findOne(
+        "users",
+        id as string,
+        {
+          populate: {
+            role: {
+              fields: ["name"],
+            },
+            region: {
+              fields: ["name"],
+            },
+            commune: {
+              fields: ["name"],
+            },
+            business_region: {
+              fields: ["name"],
+            },
+            business_commune: {
+              fields: ["name"],
+            },
           },
-          region: {
-            fields: ["name"],
-          },
-          commune: {
-            fields: ["name"],
-          },
-          business_region: {
-            fields: ["name"],
-          },
-          business_commune: {
-            fields: ["name"],
-          },
-        },
-      });
+        } as Record<string, unknown>,
+      );
       return normalizeUser(response);
     } catch (error) {
       console.error("Error fetching user:", error);
@@ -250,5 +256,5 @@ const { data: userData } = await useAsyncData(
   },
 );
 
-item.value = userData.value;
+item.value = userData.value ?? null;
 </script>

@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 
 export const useMeStore = defineStore("me", () => {
-  const me = ref(null);
+  const me = ref<Record<string, unknown> | null>(null);
 
   const strapi = useStrapi();
 
@@ -14,8 +14,8 @@ export const useMeStore = defineStore("me", () => {
             populate: "region",
           },
         },
-      });
-      me.value = response; // Asegurarse de asignar correctamente los datos
+      } as Record<string, unknown>);
+      me.value = response as unknown as Record<string, unknown>; // Asegurarse de asignar correctamente los datos
     } catch (_error) {
       console.error("Error loading user data:", _error);
     }

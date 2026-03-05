@@ -1,13 +1,13 @@
 <template>
   <div>
     <HeroDefault title="Expirados" :breadcrumbs="breadcrumbs" />
-    <AdsArchived />
+    <AdsTable endpoint="ads/archiveds" section="adsArchived" />
   </div>
 </template>
 
 <script setup lang="ts">
 import HeroDefault from "@/components/HeroDefault.vue";
-import AdsArchived from "@/components/AdsArchived.vue";
+import AdsTable from "@/components/AdsTable.vue";
 
 definePageMeta({
   layout: "dashboard",

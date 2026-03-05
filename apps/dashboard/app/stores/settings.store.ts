@@ -10,7 +10,12 @@ interface SectionSettings {
 
 interface SettingsState {
   orders: SectionSettings;
-  ads: SectionSettings;
+  adsPendings: SectionSettings;
+  adsActives: SectionSettings;
+  adsArchived: SectionSettings;
+  adsBanned: SectionSettings;
+  adsRejected: SectionSettings;
+  adsAbandoned: SectionSettings;
   users: SectionSettings;
   reservations: SectionSettings;
   featured: SectionSettings;
@@ -34,7 +39,12 @@ export const useSettingsStore = defineStore(
   () => {
     // State
     const orders = ref<SectionSettings>({ ...defaultSectionSettings });
-    const ads = ref<SectionSettings>({ ...defaultSectionSettings });
+    const adsPendings = ref<SectionSettings>({ ...defaultSectionSettings });
+    const adsActives = ref<SectionSettings>({ ...defaultSectionSettings });
+    const adsArchived = ref<SectionSettings>({ ...defaultSectionSettings });
+    const adsBanned = ref<SectionSettings>({ ...defaultSectionSettings });
+    const adsRejected = ref<SectionSettings>({ ...defaultSectionSettings });
+    const adsAbandoned = ref<SectionSettings>({ ...defaultSectionSettings });
     const users = ref<SectionSettings>({ ...defaultSectionSettings });
     const reservations = ref<SectionSettings>({ ...defaultSectionSettings });
     const featured = ref<SectionSettings>({ ...defaultSectionSettings });
@@ -51,9 +61,34 @@ export const useSettingsStore = defineStore(
       pageSize: orders.value.pageSize,
     }));
 
-    const getAdsFilters = computed(() => ({
-      sortBy: ads.value.sortBy,
-      pageSize: ads.value.pageSize,
+    const getAdsPendingsFilters = computed(() => ({
+      sortBy: adsPendings.value.sortBy,
+      pageSize: adsPendings.value.pageSize,
+    }));
+
+    const getAdsActivesFilters = computed(() => ({
+      sortBy: adsActives.value.sortBy,
+      pageSize: adsActives.value.pageSize,
+    }));
+
+    const getAdsArchivedFilters = computed(() => ({
+      sortBy: adsArchived.value.sortBy,
+      pageSize: adsArchived.value.pageSize,
+    }));
+
+    const getAdsBannedFilters = computed(() => ({
+      sortBy: adsBanned.value.sortBy,
+      pageSize: adsBanned.value.pageSize,
+    }));
+
+    const getAdsRejectedFilters = computed(() => ({
+      sortBy: adsRejected.value.sortBy,
+      pageSize: adsRejected.value.pageSize,
+    }));
+
+    const getAdsAbandonedFilters = computed(() => ({
+      sortBy: adsAbandoned.value.sortBy,
+      pageSize: adsAbandoned.value.pageSize,
     }));
 
     const getUsersFilters = computed(() => ({
@@ -145,8 +180,18 @@ export const useSettingsStore = defineStore(
       switch (section) {
         case "orders":
           return orders;
-        case "ads":
-          return ads;
+        case "adsPendings":
+          return adsPendings;
+        case "adsActives":
+          return adsActives;
+        case "adsArchived":
+          return adsArchived;
+        case "adsBanned":
+          return adsBanned;
+        case "adsRejected":
+          return adsRejected;
+        case "adsAbandoned":
+          return adsAbandoned;
         case "users":
           return users;
         case "reservations":
@@ -173,7 +218,12 @@ export const useSettingsStore = defineStore(
     return {
       // State
       orders,
-      ads,
+      adsPendings,
+      adsActives,
+      adsArchived,
+      adsBanned,
+      adsRejected,
+      adsAbandoned,
       users,
       reservations,
       featured,
@@ -185,7 +235,12 @@ export const useSettingsStore = defineStore(
       communes,
       // Getters
       getOrdersFilters,
-      getAdsFilters,
+      getAdsPendingsFilters,
+      getAdsActivesFilters,
+      getAdsArchivedFilters,
+      getAdsBannedFilters,
+      getAdsRejectedFilters,
+      getAdsAbandonedFilters,
       getUsersFilters,
       getReservationsFilters,
       getFeaturedFilters,
