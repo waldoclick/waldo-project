@@ -95,19 +95,7 @@ import TableRow from "@/components/TableRow.vue";
 import TableCell from "@/components/TableCell.vue";
 import BadgeDefault from "@/components/BadgeDefault.vue";
 import PaginationDefault from "@/components/PaginationDefault.vue";
-
-interface Pack {
-  id: number;
-  name: string;
-  text?: string;
-  total_days: number;
-  total_ads: number;
-  total_features: number;
-  price: number;
-  description?: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import type { Pack } from "@/types/pack";
 
 const settingsStore = useSettingsStore();
 const section = "packs" as const;
@@ -135,7 +123,7 @@ const fetchPacks = async () => {
     loading.value = true;
     const strapi = useStrapi();
 
-    const searchParams: any = {
+    const searchParams: Record<string, unknown> = {
       pagination: {
         page: settingsStore.packs.currentPage,
         pageSize: settingsStore.packs.pageSize,
