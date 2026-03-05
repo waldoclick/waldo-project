@@ -1,42 +1,34 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.1
-milestone_name: Dashboard Technical Debt Reduction
-status: complete
-stopped_at: Milestone v1.1 archived
+milestone: v1.2
+milestone_name: Double-Fetch Cleanup
+status: planning
+stopped_at: Defining requirements
 last_updated: "2026-03-05T00:00:00.000Z"
-last_activity: 2026-03-05 — v1.1 milestone complete
+last_activity: 2026-03-05 — Milestone v1.2 started
 progress:
-  total_phases: 4
-  completed_phases: 4
-  total_plans: 15
-  completed_plans: 15
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-05 after v1.1 milestone)
+See: .planning/PROJECT.md (updated 2026-03-05 after v1.2 milestone start)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.1 complete — ready for `/gsd:new-milestone`
+**Current focus:** Defining requirements for v1.2
 
 ## Current Position
 
-Phase: —
+Phase: Not started (defining requirements)
 Plan: —
-Status: v1.1 milestone archived
-Last activity: 2026-03-05 — v1.1 milestone complete
-
-Progress: [██████████] 100%
-
-Phases:
-- [x] Phase 3: Quick Wins
-- [x] Phase 4: Component Consolidation
-- [x] Phase 5: Type Safety
-- [x] Phase 6: Performance
+Status: Defining requirements
+Last activity: 2026-03-05 — Milestone v1.2 started
 
 ## Accumulated Context
 
@@ -54,7 +46,7 @@ Key patterns established in v1.1 (carry forward):
 
 ### Pending Todos
 
-- Run `/gsd:new-milestone` to define v1.2 requirements and roadmap
+None.
 
 ### Blockers/Concerns
 
@@ -63,5 +55,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-05
-Stopped at: Milestone v1.1 archived
+Stopped at: Milestone v1.2 started — defining requirements
 Resume file: None
