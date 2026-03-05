@@ -177,9 +177,13 @@ const { data: orderData } = await useAsyncData(
     const id = route.params.id;
     if (!id) return null;
     try {
-      const response = await strapi.findOne("orders", id as string, {
-        populate: { user: true, ad: true },
-      });
+      const response = await strapi.findOne(
+        "orders",
+        id as string,
+        {
+          populate: { user: true, ad: true },
+        } as Record<string, unknown>,
+      );
       return normalizeOrder(response);
     } catch (error) {
       console.error("Error fetching order:", error);
@@ -188,5 +192,5 @@ const { data: orderData } = await useAsyncData(
   },
 );
 
-order.value = orderData.value;
+order.value = orderData.value ?? null;
 </script>

@@ -122,7 +122,7 @@ const { data: featuredData } = await useAsyncData(
             fields: ["name"],
           },
         },
-      });
+      } as Record<string, unknown>);
       const data = Array.isArray(response.data) ? response.data[0] : null;
       if (data) return data;
 
@@ -138,9 +138,9 @@ const { data: featuredData } = await useAsyncData(
               fields: ["name"],
             },
           },
-        },
+        } as Record<string, unknown>,
       );
-      return fallback.data || null;
+      return (fallback.data as unknown) || null;
     } catch (error) {
       console.error("Error fetching featured reservation:", error);
       return null;
@@ -148,5 +148,5 @@ const { data: featuredData } = await useAsyncData(
   },
 );
 
-item.value = featuredData.value;
+item.value = featuredData.value ?? null;
 </script>

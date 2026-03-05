@@ -103,7 +103,7 @@ const fetchPendings = async () => {
       pagination: { page: 1, pageSize: 10 },
       sort: "createdAt:asc",
       populate: ["user"],
-    })) as {
+    } as Record<string, unknown>)) as unknown as {
       data?: Ad[];
       meta?: { pagination?: { total?: number } };
     };

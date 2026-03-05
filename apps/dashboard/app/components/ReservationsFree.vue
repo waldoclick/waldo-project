@@ -151,11 +151,13 @@ const fetchFreeReservations = async () => {
     }
 
     const response = await strapi.find("ad-reservations", searchParams);
-    allReservations.value = Array.isArray(response.data) ? response.data : [];
+    allReservations.value = Array.isArray(response.data)
+      ? (response.data as Reservation[])
+      : [];
 
     // Guardar información de paginación de Strapi
     paginationMeta.value = response.meta?.pagination
-      ? response.meta.pagination
+      ? (response.meta.pagination as typeof paginationMeta.value)
       : null;
   } catch (error) {
     console.error("Error fetching free reservations:", error);

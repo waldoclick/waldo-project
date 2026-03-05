@@ -76,14 +76,14 @@ const { data: conditionData } = await useAsyncData(
     const strapi = useStrapi();
     const response = await strapi.find("conditions", {
       filters: { documentId: { $eq: id } },
-    });
+    } as Record<string, unknown>);
     const data = Array.isArray(response.data) ? response.data[0] : null;
     if (data) return data;
 
     const fallbackResponse = await strapi.findOne("conditions", id as string);
-    return fallbackResponse.data || null;
+    return (fallbackResponse.data as unknown) || null;
   },
 );
 
-condition.value = conditionData.value;
+condition.value = conditionData.value ?? null;
 </script>

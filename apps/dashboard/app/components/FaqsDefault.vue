@@ -168,8 +168,11 @@ const fetchFaqs = async () => {
     }
 
     const response = await strapi.find("faqs", searchParams);
-    allFaqs.value = Array.isArray(response.data) ? response.data : [];
-    paginationMeta.value = response.meta?.pagination || null;
+    allFaqs.value = Array.isArray(response.data)
+      ? (response.data as Faq[])
+      : [];
+    paginationMeta.value = (response.meta?.pagination ||
+      null) as typeof paginationMeta.value;
   } catch (error) {
     console.error("Error fetching faqs:", error);
     allFaqs.value = [];

@@ -168,10 +168,11 @@ const fetchUserAds = async () => {
           fields: ["url", "formats"],
         },
       },
-    });
+    } as Record<string, unknown>);
 
-    allAds.value = Array.isArray(response.data) ? response.data : [];
-    paginationMeta.value = response.meta?.pagination || null;
+    allAds.value = Array.isArray(response.data) ? (response.data as Ad[]) : [];
+    paginationMeta.value = (response.meta?.pagination ||
+      null) as typeof paginationMeta.value;
   } catch (error) {
     console.error("Error fetching user ads:", error);
     allAds.value = [];

@@ -72,7 +72,7 @@ const handleShowPassword = () => {
   passwordType.value = passwordType.value === "password" ? "text" : "password";
 };
 
-const handleSubmit = async (values: { username: string; password: string }) => {
+const handleSubmit = async (values: Record<string, unknown>) => {
   sending.value = true;
 
   try {
@@ -82,8 +82,8 @@ const handleSubmit = async (values: { username: string; password: string }) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        username: values.username,
-        password: values.password,
+        username: values.username as string,
+        password: values.password as string,
       }),
     });
 

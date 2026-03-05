@@ -2,7 +2,8 @@ import { ref } from "vue";
 
 export function useRut() {
   // Formatea el RUT
-  const formatRut = (rut: string): string => {
+  const formatRut = (rut: string | undefined): string => {
+    if (!rut) return "--";
     // Elimina todos los caracteres que no sean números o K
     rut = rut.replace(/[^\dKk]/g, "");
 
@@ -33,7 +34,7 @@ export function useRut() {
     let multiplier = 2;
 
     for (let i = body.length - 1; i >= 0; i--) {
-      sum += Number.parseInt(body[i]) * multiplier;
+      sum += Number.parseInt(body[i] as string) * multiplier;
       multiplier = multiplier === 7 ? 2 : multiplier + 1;
     }
 
