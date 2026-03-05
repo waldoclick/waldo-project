@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: completed
-stopped_at: Completed 06-performance/06-02-PLAN.md
-last_updated: "2026-03-05T17:26:05.237Z"
+stopped_at: Completed 06-performance/06-01-PLAN.md
+last_updated: "2026-03-05T17:26:58.981Z"
 last_activity: 2026-03-04 — Roadmap created for v1.1
 progress:
   total_phases: 4
   completed_phases: 3
   total_plans: 15
-  completed_plans: 13
+  completed_plans: 14
   percent: 0
 ---
 
@@ -68,6 +68,7 @@ Phases:
 | Phase 05-type-safety P04 | 90min | 1 tasks | 59 files |
 | Phase 05-type-safety P05 | 2min | 2 tasks | 4 files |
 | Phase 06-performance P02 | 5min | 1 tasks | 2 files |
+| Phase 06-performance P01 | 5min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -108,6 +109,8 @@ Recent decisions affecting current work:
 - [Phase 05-type-safety]: PendingAd = Omit<Ad, 'user'> & { user?: { username?: string; email?: string } } for DropdownPendings — narrowing over canonical Ad to match Strapi /ads/pendings response shape without inline redeclaration
 - [Phase 06-performance]: dashboardStats uses Promise.all for 16 parallel DB count queries server-side, eliminating 15 HTTP round trips vs. individual dashboard calls
 - [Phase 06-performance]: GET /indicators/dashboard-stats route placed before /:id wildcard to prevent route masking
+- [Phase 06-performance]: Parallel Promise.all for per-category ad counts — reduces N sequential network round trips from client to 1, with N parallel DB queries server-side
+- [Phase 06-performance]: limit:-1 on findMany for salesByMonth — fetches all orders for the year in one query, aggregated server-side by month index
 
 ### Pending Todos
 
@@ -119,6 +122,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-05T17:26:05.235Z
-Stopped at: Completed 06-performance/06-02-PLAN.md
+Last session: 2026-03-05T17:26:58.979Z
+Stopped at: Completed 06-performance/06-01-PLAN.md
 Resume file: None
