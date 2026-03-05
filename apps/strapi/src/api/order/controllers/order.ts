@@ -152,6 +152,53 @@ export default factories.createCoreController(
       }
     },
 
+    async salesByMonth(ctx) {
+      try {
+        const year =
+          parseInt(ctx.query.year as string, 10) || new Date().getFullYear();
+
+        // Fetch all orders for the requested year in a single query.
+        // Filter by year using a date range: from Jan 1 to Dec 31 of the year.
+        const startDate = new Date(`${year}-01-01T00:00:00.000Z`);
+        const endDate = new Date(`${year + 1}-01-01T00:00:00.000Z`);
+
+        const orders = await strapi.entityService.findMany("api::order.order", {
+          filters: {
+            createdAt: {
+              $gte: startDate.toISOString(),
+              $lt: endDate.toISOString(),
+            },
+          } as any,
+          fields: ["amount", "createdAt"],
+          limit: -1, // fetch all matching orders without pagination
+        });
+
+        // Aggregate on the server: sum amount per month (0-indexed months 0-11)
+        const monthlyTotals: Record<number, number> = {};
+        for (let i = 0; i < 12; i++) monthlyTotals[i] = 0;
+
+        for (const order of orders) {
+          const date = new Date(order.createdAt as string);
+          const month = date.getUTCMonth();
+          const amount =
+            typeof order.amount === "string"
+              ? Number.parseFloat(order.amount as string)
+              : (order.amount as number) || 0;
+          monthlyTotals[month] = (monthlyTotals[month] || 0) + amount;
+        }
+
+        // Build response: array of { month (0-11), total }
+        const data = Object.entries(monthlyTotals).map(([month, total]) => ({
+          month: Number.parseInt(month),
+          total,
+        }));
+
+        return ctx.send({ data, meta: { year } });
+      } catch (error) {
+        ctx.throw(500, error);
+      }
+    },
+
     async findOne(ctx: any) {
       try {
         const documentId = ctx.params.documentId ?? ctx.params.id;

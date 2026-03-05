@@ -64,14 +64,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue";
 import { ShoppingBag, ExternalLink } from "lucide-vue-next";
-
-interface Order {
-  id: number;
-  buy_order?: string;
-  amount: number | string;
-  createdAt: string;
-  user?: { username?: string; email?: string };
-}
+import type { Order } from "@/types/order";
 
 const strapi = useStrapi();
 
@@ -89,7 +82,7 @@ const fetchOrders = async () => {
       pagination: { page: 1, pageSize: 10 },
       sort: "createdAt:desc",
       populate: ["user"],
-    })) as { data?: Order[] };
+    } as Record<string, unknown>)) as unknown as { data?: Order[] };
     orders.value = Array.isArray(res.data) ? res.data : [];
   } catch (error) {
     console.error("Error fetching recent orders:", error);

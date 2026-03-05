@@ -1,91 +1,58 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: milestone
-status: planning
-stopped_at: Completed 02-call-site-wiring-and-bug-fixes-02-02-PLAN.md
-last_updated: "2026-03-04T11:08:51.907Z"
-last_activity: 2026-03-03 — Roadmap created for milestone v1.0 Payment Gateway Abstraction
+milestone: v1.2
+milestone_name: Double-Fetch Cleanup
+status: ready_to_plan
+stopped_at: Roadmap created — ready to plan Phase 7
+last_updated: "2026-03-05T00:00:00.000Z"
+last_activity: 2026-03-05 — v1.2 roadmap created; phases 7-8 defined
 progress:
   total_phases: 2
-  completed_phases: 2
-  total_plans: 4
-  completed_plans: 4
-  percent: 50
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-03)
+See: .planning/PROJECT.md (updated 2026-03-05)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 1 — Interface and Adapter Layer
+**Current focus:** Phase 7 — Catalog Components (v1.2 Double-Fetch Cleanup)
 
 ## Current Position
 
-Phase: 1 of 2 (Interface and Adapter Layer)
+Phase: 7 of 8 (Catalog Components)
 Plan: 0 of TBD in current phase
 Status: Ready to plan
-Last activity: 2026-03-03 — Roadmap created for milestone v1.0 Payment Gateway Abstraction
+Last activity: 2026-03-05 — v1.2 roadmap created; phases 7-8 defined
 
-Progress: [█████░░░░░] 50%
-
-## Performance Metrics
-
-**Velocity:**
-- Total plans completed: 0
-- Average duration: -
-- Total execution time: 0 hours
-
-**By Phase:**
-
-| Phase | Plans | Total | Avg/Plan |
-|-------|-------|-------|----------|
-| - | - | - | - |
-
-**Recent Trend:**
-- Last 5 plans: -
-- Trend: -
-
-*Updated after each plan completion*
-| Phase 01-interface-and-adapter-layer P01 | 1 | 1 tasks | 1 files |
-| Phase 01-interface-and-adapter-layer P02 | 2 | 2 tasks | 4 files |
-| Phase 02-call-site-wiring-and-bug-fixes P01 | 4 | 3 tasks | 3 files |
-| Phase 02-call-site-wiring-and-bug-fixes P02 | 8 | 2 tasks | 7 files |
+Progress: [░░░░░░░░░░] 0%
 
 ## Accumulated Context
 
 ### Decisions
 
-Decisions are logged in PROJECT.md Key Decisions table.
-Recent decisions affecting current work:
+All decisions from v1.1 are logged in PROJECT.md Key Decisions table.
 
-- Interface design: Use `gatewayRef` (not `token`) in IPaymentGateway — protocol-agnostic; TransbankAdapter maps `token` to `gatewayRef` internally
-- Scope: FlowService (Pro subscriptions) is a separate domain — NOT part of this abstraction
-- Coupling points: `ad.service.ts` and `pack.service.ts` import TransbankServices directly — these are the only two call sites to rewire
-- Known bug: missing `return` after `ctx.redirect` in pack failure path — addressed in Phase 2
-- [Phase 01-interface-and-adapter-layer]: Wave 0 tests use jest.spyOn(TransbankService.prototype) + savedEnv isolation pattern; WEBPAY_ENVIRONMENT excluded from required vars (has default)
-- [Phase 01-interface-and-adapter-layer]: TransbankAdapter imports TransbankService directly (not singleton) to allow jest.spyOn mocking in unit tests
-- [Phase 01-interface-and-adapter-layer]: Only WEBPAY_COMMERCE_CODE and WEBPAY_API_KEY are required env vars; WEBPAY_ENVIRONMENT has a default in transbank.config.ts
-- [Phase 01-interface-and-adapter-layer]: token-to-gatewayRef mapping happens exclusively in TransbankAdapter — callers never see provider-specific field names
-- [Phase 02-call-site-wiring-and-bug-fixes]: Test import paths from __tests__/ are one level deeper than service files — use ../../../../services/payment-gateway not ../../../services/payment-gateway
-- [Phase 02-call-site-wiring-and-bug-fixes]: Wave 0 RED tests confirm WIRE-04: documentDetails called even on failure because packResponse missing return after ctx.redirect
-- [Phase 02-call-site-wiring-and-bug-fixes]: Wave 0 RED tests confirm WIRE-03: payment_method hardcoded as webpay, not reading PAYMENT_GATEWAY env var
-- [Phase 02-call-site-wiring-and-bug-fixes]: Order schema enum extended to include transbank; payment_method broadened to string in CreateOrderParams with union cast at entityService call
-- [Phase 02-call-site-wiring-and-bug-fixes]: process.env.PAYMENT_GATEWAY ?? transbank pattern used for dynamic payment_method in payment.ts — zero code changes needed to switch gateways
+Key patterns established in v1.1 (carry forward):
+- `watch({ immediate: true })` as sole data-loading trigger — never pair with onMounted
+- Per-entity section keys in settings store — never share a key between distinct list views
+- Strapi SDK v5 cast pattern: `response.data as T[]`, params as `Record<string,unknown>`, payload double-cast
 
 ### Pending Todos
 
-None yet.
+None.
 
 ### Blockers/Concerns
 
-None yet.
+None.
 
 ## Session Continuity
 
-Last session: 2026-03-04T11:05:58.476Z
-Stopped at: Completed 02-call-site-wiring-and-bug-fixes-02-02-PLAN.md
+Last session: 2026-03-05
+Stopped at: Roadmap created — ready to plan Phase 7
 Resume file: None

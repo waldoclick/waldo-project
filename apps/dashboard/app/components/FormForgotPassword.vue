@@ -60,8 +60,7 @@ const onSubmit = async (values: any) => {
     const token = await $recaptcha.execute("submit");
 
     await forgotPassword({
-      email: values.email,
-      recaptchaToken: token,
+      email: values.email as string,
     });
 
     Swal.fire(

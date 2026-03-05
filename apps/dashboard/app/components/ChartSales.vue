@@ -156,12 +156,6 @@ interface SalesByMonthData {
   monto: number;
 }
 
-interface Order {
-  id: number;
-  amount: number;
-  createdAt: string;
-}
-
 const monthNames = [
   "Ene",
   "Feb",
@@ -179,93 +173,43 @@ const monthNames = [
 
 const selectedYear = ref<number>(new Date().getFullYear());
 const availableYears = ref<number[]>([]);
-const allOrders = ref<Order[]>([]);
+const monthlySalesCache = ref<Record<number, SalesByMonthData[]>>({});
 const loading = ref(false);
 const isDropdownOpen = ref(false);
 const dropdownButton = ref<HTMLElement | null>(null);
 const dropdownMenu = ref<HTMLElement | null>(null);
 
-const groupSalesByMonth = (
-  orders: Order[],
-  year: number,
-): SalesByMonthData[] => {
-  const filteredOrders = orders.filter((order) => {
-    const dateString = order.createdAt.endsWith("Z")
-      ? order.createdAt
-      : order.createdAt + "Z";
-    const orderDate = new Date(dateString);
-    return orderDate.getUTCFullYear() === year;
-  });
-  const monthlyData: Record<number, number> = {};
-  for (let i = 0; i < 12; i++) monthlyData[i] = 0;
-  for (const order of filteredOrders) {
-    const dateString = order.createdAt.endsWith("Z")
-      ? order.createdAt
-      : order.createdAt + "Z";
-    const orderDate = new Date(dateString);
-    const month = orderDate.getUTCMonth();
-    const amount =
-      typeof order.amount === "string"
-        ? Number.parseFloat(order.amount)
-        : order.amount;
-    monthlyData[month] = (monthlyData[month] || 0) + (amount || 0);
-  }
-  return Object.entries(monthlyData).map(([monthIndex, monto]) => ({
-    mes: monthNames[Number.parseInt(monthIndex)] || "",
-    monto: monto || 0,
-  }));
-};
-
-const getUniqueYears = (orders: Order[]): number[] => {
-  const years = new Set<number>();
-  for (const order of orders) {
-    years.add(new Date(order.createdAt).getUTCFullYear());
-  }
-  return [...years].sort((a, b) => b - a);
-};
-
-const fetchAllOrders = async () => {
+const fetchSalesForYear = async (year: number) => {
+  if (monthlySalesCache.value[year]) return;
   try {
     loading.value = true;
     const strapi = useStrapi();
-    let allOrdersData: Order[] = [];
-    let page = 1;
-    let hasMore = true;
-    while (hasMore) {
-      const response = await strapi.find("orders", {
-        pagination: { page, pageSize: 100 },
-        sort: "createdAt:desc",
-      });
-      const orders = Array.isArray(response.data) ? response.data : [];
-      allOrdersData = [...allOrdersData, ...orders];
-      const totalPages = response.meta?.pagination?.pageCount || 0;
-      const totalItems = response.meta?.pagination?.total || 0;
-      if (
-        orders.length === 0 ||
-        page >= totalPages ||
-        allOrdersData.length >= totalItems
-      ) {
-        hasMore = false;
-      } else {
-        page++;
-      }
-    }
-    allOrders.value = allOrdersData;
-    availableYears.value = getUniqueYears(allOrdersData);
-    const years = availableYears.value;
-    if (years.length > 0 && years[0] !== undefined) {
-      const currentYear = new Date().getFullYear();
-      if (!years.includes(currentYear)) selectedYear.value = years[0];
-    }
+    const res = await strapi.find(
+      "orders/sales-by-month" as any,
+      { year } as any,
+    );
+    const rawData = Array.isArray((res as any).data)
+      ? ((res as any).data as Array<{ month: number; total: number }>)
+      : [];
+    const mapped: SalesByMonthData[] = Array.from({ length: 12 }, (_, i) => {
+      const entry = rawData.find((d) => d.month === i);
+      return { mes: monthNames[i] ?? "", monto: entry?.total ?? 0 };
+    });
+    monthlySalesCache.value = { ...monthlySalesCache.value, [year]: mapped };
   } catch (error) {
-    console.error("Error fetching orders:", error);
+    console.error("Error fetching sales by month:", error);
   } finally {
     loading.value = false;
   }
 };
 
-const salesData = computed(() =>
-  groupSalesByMonth(allOrders.value, selectedYear.value),
+const salesData = computed(
+  () =>
+    monthlySalesCache.value[selectedYear.value] ??
+    Array.from({ length: 12 }, (_, i) => ({
+      mes: monthNames[i] ?? "",
+      monto: 0,
+    })),
 );
 
 const toggleDropdown = () => {
@@ -275,6 +219,7 @@ const toggleDropdown = () => {
 const selectYear = (year: number) => {
   selectedYear.value = year;
   isDropdownOpen.value = false;
+  fetchSalesForYear(year);
 };
 
 const handleClickOutside = (event: MouseEvent) => {
@@ -289,7 +234,11 @@ const handleClickOutside = (event: MouseEvent) => {
 };
 
 onMounted(() => {
-  fetchAllOrders();
+  const currentYear = new Date().getFullYear();
+  availableYears.value = [currentYear, currentYear - 1, currentYear - 2].filter(
+    (y) => y > 2020,
+  );
+  fetchSalesForYear(selectedYear.value);
   document.addEventListener("click", handleClickOutside);
 });
 

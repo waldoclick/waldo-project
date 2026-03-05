@@ -117,8 +117,10 @@ const fetchRegions = async () => {
     const response = await strapi.find("regions", {
       pagination: { pageSize: 200 },
       sort: "name:asc",
-    });
-    regions.value = Array.isArray(response.data) ? response.data : [];
+    } as Record<string, unknown>);
+    regions.value = Array.isArray(response.data)
+      ? (response.data as RegionOption[])
+      : [];
   } catch (error) {
     console.error("Error fetching regions:", error);
     regions.value = [];
@@ -152,11 +154,11 @@ const handleSubmit = async (values: any) => {
         const lookupResponse = await strapi.find("communes", {
           filters: { documentId: { $eq: documentId } },
           pagination: { pageSize: 1 },
-        });
-        const lookup = Array.isArray(lookupResponse.data)
-          ? lookupResponse.data[0]
-          : null;
-        communeId = lookup?.id;
+        } as Record<string, unknown>);
+        const lookupData = Array.isArray(lookupResponse.data)
+          ? (lookupResponse.data as Array<{ id: number }>)
+          : [];
+        communeId = lookupData[0]?.id;
       }
 
       if (!communeId) {
@@ -169,12 +171,25 @@ const handleSubmit = async (values: any) => {
         return;
       }
 
-      const response = await strapi.update("communes", communeId, payload);
-      const updatedCommune = {
+      const response = await strapi.update(
+        "communes",
+        communeId,
+        payload as unknown as Parameters<typeof strapi.update>[2],
+      );
+      const responseData = response.data as unknown as {
+        id?: number;
+        documentId?: string;
+      };
+      const updatedCommune: CommuneData = {
         ...props.commune,
-        ...response.data,
+        ...responseData,
         name: payload.name,
-        region: { id: payload.region },
+        region: {
+          id:
+            typeof payload.region === "number"
+              ? payload.region
+              : Number(payload.region),
+        },
       };
       form.value = {
         name: payload.name,
@@ -182,15 +197,22 @@ const handleSubmit = async (values: any) => {
       };
       emit("saved", updatedCommune);
       await Swal.fire("Éxito", "Comuna actualizada correctamente.", "success");
-      const updatedId = updatedCommune?.documentId || updatedCommune?.id;
+      const updatedId = responseData?.documentId || responseData?.id;
       if (updatedId) {
         router.push(`/comunas/${updatedId}`);
       }
     } else {
-      const response = await strapi.create("communes", payload);
-      emit("saved", response.data || {});
+      const response = await strapi.create(
+        "communes",
+        payload as unknown as Parameters<typeof strapi.create>[1],
+      );
+      const createdData = response.data as unknown as {
+        id?: number;
+        documentId?: string;
+      };
+      emit("saved", (createdData as CommuneData) || ({} as CommuneData));
       await Swal.fire("Éxito", "Comuna creada correctamente.", "success");
-      const createdId = response.data?.documentId || response.data?.id;
+      const createdId = createdData?.documentId || createdData?.id;
       if (createdId) {
         router.push(`/comunas/${createdId}`);
       } else {

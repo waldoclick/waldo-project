@@ -1,13 +1,13 @@
 <template>
   <div>
     <HeroDefault title="Pendientes" :breadcrumbs="breadcrumbs" />
-    <AdsPendings />
+    <AdsTable endpoint="ads/pendings" section="adsPendings" />
   </div>
 </template>
 
 <script setup lang="ts">
 import HeroDefault from "@/components/HeroDefault.vue";
-import AdsPendings from "@/components/AdsPendings.vue";
+import AdsTable from "@/components/AdsTable.vue";
 
 definePageMeta({
   layout: "dashboard",

@@ -1,73 +1,69 @@
-# Requirements: Waldo — Milestone v1.0
+# Requirements: Waldo Project
 
-**Defined:** 2026-03-03
+**Defined:** 2026-03-05
+**Milestone:** v1.2 Double-Fetch Cleanup
 **Core Value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
 
-## v1 Requirements
+## v1.2 Requirements
 
-Requirements for milestone v1.0: Payment Gateway Abstraction.
+### Double-Fetch Elimination
 
-### Payment Abstraction Layer
-
-- [x] **PAY-01**: El sistema define una interfaz `IPaymentGateway` con métodos `createTransaction` y `commitTransaction` con firmas normalizadas
-- [x] **PAY-02**: El sistema define tipos de respuesta normalizados `IGatewayInitResponse` e `IGatewayCommitResponse`
-- [x] **PAY-03**: El sistema provee un `TransbankAdapter` que implementa `IPaymentGateway` delegando al `TransbankService` existente sin cambiar su comportamiento
-- [x] **PAY-04**: El sistema provee un `PaymentGatewayRegistry` (factory) que retorna la pasarela activa según la variable de entorno `PAYMENT_GATEWAY` (default: `"transbank"`)
-- [x] **PAY-05**: El registry valida que las env vars requeridas estén presentes al instanciar el adapter, lanzando un error claro al startup si faltan
-
-### Wiring y Correcciones
-
-- [x] **WIRE-01**: `ad.service.ts` usa `getPaymentGateway()` de la factory en lugar de importar `TransbankServices` directamente
-- [x] **WIRE-02**: `pack.service.ts` usa `getPaymentGateway()` de la factory en lugar de importar `TransbankServices` directamente
-- [x] **WIRE-03**: El controller reemplaza el string hardcodeado `"webpay"` con `process.env.PAYMENT_GATEWAY ?? "transbank"` al crear el registro de orden
-- [x] **WIRE-04**: Se agrega `return` después de `ctx.redirect` en el flujo fallido de `packResponse` para evitar ejecución continua
+- [ ] **DFX-01**: `PacksDefault.vue` no ejecuta fetch doble al montar (solo `watch({ immediate: true })`)
+- [ ] **DFX-02**: `UsersDefault.vue` no ejecuta fetch doble al montar
+- [ ] **DFX-03**: `RegionsDefault.vue` no ejecuta fetch doble al montar
+- [ ] **DFX-04**: `FaqsDefault.vue` no ejecuta fetch doble al montar
+- [ ] **DFX-05**: `CommunesDefault.vue` no ejecuta fetch doble al montar
+- [ ] **DFX-06**: `ConditionsDefault.vue` no ejecuta fetch doble al montar
+- [ ] **DFX-07**: `ReservationsFree.vue` no ejecuta fetch doble al montar
+- [ ] **DFX-08**: `ReservationsUsed.vue` no ejecuta fetch doble al montar
+- [ ] **DFX-09**: `FeaturedFree.vue` no ejecuta fetch doble al montar
+- [ ] **DFX-10**: `FeaturedUsed.vue` no ejecuta fetch doble al montar
 
 ## Future Requirements
 
-Deferred — not in this milestone.
+### Testing (milestone dedicado posterior)
 
-### Gateways Adicionales
+- **TEST-01**: Composables (`useRut`, `useSanitize`, `useSlugify`, `useImageProxy`) tienen tests unitarios con Vitest
+- **TEST-02**: El componente `AdsTable.vue` tiene tests de comportamiento (renderizado, filtros, paginación)
+- **TEST-03**: Los middlewares `guard.global.ts` y `dev.global.ts` tienen tests de integración
+- **TEST-04**: Cobertura mínima configurada (>70% en composables y stores)
 
-- **GATE-01**: El sistema provee un adapter concreto para una segunda pasarela (MercadoPago, PayPal, u otra)
-- **GATE-02**: El usuario puede seleccionar la pasarela de pago desde el frontend
+### Additional Consolidation
 
-### Robustez
-
-- **ROB-01**: Idempotencia en el endpoint de confirmación de pago (evitar doble-submit)
-- **ROB-02**: Context recovery via almacenamiento server-side del `gatewayRef` (en lugar de `buy_order` string parsing)
-- **ROB-03**: Reconciliación automática cuando Facto falla después de un pago autorizado
+- **COMP-05**: Consolidar Reservations*/Featured* una vez que tengan store keys dedicados y estrategias de fetch alineadas
+- **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| UI para selección de pasarela | Transparente para el usuario — no requerido |
-| Abstracción de suscripciones Pro (FlowService) | Dominio separado, lifecycle diferente |
-| Adapter concreto para segunda pasarela | Solo abstracción en este milestone |
-| Cambios en Website o Dashboard | Solo Strapi |
-| Webhook handling generalizado | Cada pasarela tendrá su propia ruta de callback |
+| UI para elegir pasarela de pago | No requerido, usuarios pagan transparentemente |
+| Segunda pasarela de pago concreta | Solo abstracción en v1.0 |
+| i18n | Deferido conscientemente |
+| Tests unitarios | Milestone dedicado posterior |
+| Consolidación Reservations*/Featured* | Requiere análisis adicional de store keys |
+| ChartSales filtro por fechas | Fuera del alcance de este hito |
 
 ## Traceability
 
-Which phases cover which requirements. Updated during roadmap creation.
-
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PAY-01 | Phase 1 | Complete |
-| PAY-02 | Phase 1 | Complete |
-| PAY-03 | Phase 1 | Complete |
-| PAY-04 | Phase 1 | Complete |
-| PAY-05 | Phase 1 | Complete |
-| WIRE-01 | Phase 2 | Complete |
-| WIRE-02 | Phase 2 | Complete |
-| WIRE-03 | Phase 2 | Complete |
-| WIRE-04 | Phase 2 | Complete |
+| DFX-01 | Phase 7 | Pending |
+| DFX-02 | Phase 7 | Pending |
+| DFX-03 | Phase 7 | Pending |
+| DFX-04 | Phase 7 | Pending |
+| DFX-05 | Phase 7 | Pending |
+| DFX-06 | Phase 7 | Pending |
+| DFX-07 | Phase 8 | Pending |
+| DFX-08 | Phase 8 | Pending |
+| DFX-09 | Phase 8 | Pending |
+| DFX-10 | Phase 8 | Pending |
 
 **Coverage:**
-- v1 requirements: 9 total
-- Mapped to phases: 9
+- v1.2 requirements: 10 total
+- Mapped to phases: 10
 - Unmapped: 0 ✓
 
 ---
-*Requirements defined: 2026-03-03*
-*Last updated: 2026-03-03 after roadmap creation*
+*Requirements defined: 2026-03-05*
+*Last updated: 2026-03-05 after roadmap creation*

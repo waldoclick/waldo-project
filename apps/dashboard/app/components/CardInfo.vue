@@ -6,7 +6,7 @@
     <div v-if="hasDescription" class="card--info__description">
       <client-only>
         <button v-if="info" v-tooltip="info">
-          <IconInfo size="18" />
+          <IconInfo :size="18" />
         </button>
       </client-only>
       <template v-if="isObjectOrArray">
@@ -59,7 +59,7 @@
           v-tooltip="'Copiar al portapapeles'"
           @click="copyToClipboard"
         >
-          <IconCopy size="18" />
+          <IconCopy :size="18" />
         </button>
       </client-only>
     </div>

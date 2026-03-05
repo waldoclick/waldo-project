@@ -93,16 +93,7 @@ import TableDefault from "@/components/TableDefault.vue";
 import TableRow from "@/components/TableRow.vue";
 import TableCell from "@/components/TableCell.vue";
 import PaginationDefault from "@/components/PaginationDefault.vue";
-
-interface User {
-  id: number;
-  username: string;
-  email: string;
-  firstname?: string;
-  lastname?: string;
-  createdAt: string;
-  role?: { name: string };
-}
+import type { User } from "@/types/user";
 
 // Store de settings
 const settingsStore = useSettingsStore();
@@ -135,7 +126,7 @@ const fetchUsers = async () => {
     loading.value = true;
     const strapi = useStrapi();
 
-    const searchParams: any = {
+    const searchParams: Record<string, unknown> = {
       pagination: {
         page: settingsStore.users.currentPage,
         pageSize: settingsStore.users.pageSize,
@@ -160,22 +151,30 @@ const fetchUsers = async () => {
       };
     }
 
-    const response = await strapi.find("users", searchParams);
+    const rawResponse = await strapi.find("users", searchParams);
+    const response = rawResponse as unknown as {
+      data?: User[];
+      results?: User[];
+      pagination?: typeof paginationMeta.value;
+      meta?: { pagination?: typeof paginationMeta.value };
+      length?: number;
+    };
 
     // Manejar diferentes estructuras de respuesta de Strapi
-    if (Array.isArray(response)) {
+    if (Array.isArray(rawResponse)) {
       // Si la respuesta es directamente un array (Strapi v5 por defecto)
-      allUsers.value = response;
+      allUsers.value = rawResponse as User[];
       paginationMeta.value = {
         page: settingsStore.users.currentPage,
         pageSize: settingsStore.users.pageSize,
         pageCount: 1,
-        total: response.length,
+        total: (rawResponse as unknown[]).length,
       };
     } else if (response.data) {
       // Si la respuesta tiene estructura { data: [...], meta: {...} } (controlador personalizado)
       allUsers.value = Array.isArray(response.data) ? response.data : [];
-      paginationMeta.value = response.meta?.pagination || null;
+      paginationMeta.value = (response.meta?.pagination ||
+        null) as typeof paginationMeta.value;
     } else if (response.results) {
       // Si la respuesta tiene estructura { results: [...], pagination: {...} }
       allUsers.value = Array.isArray(response.results) ? response.results : [];

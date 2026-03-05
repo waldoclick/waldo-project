@@ -145,8 +145,11 @@ const fetchCommunes = async () => {
     }
 
     const response = await strapi.find("communes", searchParams);
-    allCommunes.value = Array.isArray(response.data) ? response.data : [];
-    paginationMeta.value = response.meta?.pagination || null;
+    allCommunes.value = Array.isArray(response.data)
+      ? (response.data as Commune[])
+      : [];
+    paginationMeta.value = (response.meta?.pagination ||
+      null) as typeof paginationMeta.value;
   } catch (error) {
     console.error("Error fetching communes:", error);
     allCommunes.value = [];

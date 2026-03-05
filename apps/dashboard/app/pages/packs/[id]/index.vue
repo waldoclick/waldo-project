@@ -101,14 +101,14 @@ const { data: packData } = await useAsyncData(
     const strapi = useStrapi();
     const response = await strapi.find("ad-packs", {
       filters: { documentId: { $eq: id } },
-    });
+    } as Record<string, unknown>);
     const data = Array.isArray(response.data) ? response.data[0] : null;
     if (data) return data;
 
     const fallbackResponse = await strapi.findOne("ad-packs", id as string);
-    return fallbackResponse.data || null;
+    return (fallbackResponse.data as unknown) || null;
   },
 );
 
-item.value = packData.value;
+item.value = packData.value ?? null;
 </script>

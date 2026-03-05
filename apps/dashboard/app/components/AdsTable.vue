@@ -1,65 +1,71 @@
 <template>
-  <section class="ads ads--actives">
-    <div class="ads--actives__container">
-      <div class="ads--actives__header">
+  <section class="ads" :class="`ads--${props.section}`">
+    <div :class="`ads--${props.section}__container`">
+      <div :class="`ads--${props.section}__header`">
         <SearchDefault
-          :model-value="settingsStore.ads.searchTerm"
+          :model-value="sectionSettings.searchTerm"
           placeholder="Buscar anuncios..."
-          class="ads--actives__search"
+          :class="`ads--${props.section}__search`"
           @update:model-value="
-            (value: string) => settingsStore.setSearchTerm(section, value)
+            (value: string) => settingsStore.setSearchTerm(props.section, value)
           "
         />
         <FilterDefault
           :model-value="filters"
           :sort-options="sortOptions"
           :page-sizes="[10, 25, 50, 100]"
-          class="ads--actives__filters"
+          :class="`ads--${props.section}__filters`"
           @update:model-value="handleFiltersChange"
         />
       </div>
 
-      <div class="ads--actives__table-wrapper">
+      <div :class="`ads--${props.section}__table-wrapper`">
         <TableDefault :columns="tableColumns">
           <TableRow v-for="ad in paginatedAds" :key="ad.id">
             <TableCell>
-              <div class="ads--actives__gallery">
+              <div :class="`ads--${props.section}__gallery`">
                 <img
                   v-if="ad.gallery && ad.gallery.length > 0 && ad.gallery[0]"
                   :src="getImageUrl(ad.gallery[0])"
                   :alt="ad.name"
-                  class="ads--actives__gallery__image"
+                  :class="`ads--${props.section}__gallery__image`"
                 />
-                <span v-else class="ads--actives__gallery__placeholder">-</span>
+                <span
+                  v-else
+                  :class="`ads--${props.section}__gallery__placeholder`"
+                  >-</span
+                >
               </div>
             </TableCell>
             <TableCell>
-              <div class="ads--actives__name">{{ ad.name }}</div>
+              <div :class="`ads--${props.section}__name`">{{ ad.name }}</div>
             </TableCell>
             <TableCell>
-              <div class="ads--actives__user">
+              <div :class="`ads--${props.section}__user`">
                 {{ ad.user?.username || "-" }}
               </div>
             </TableCell>
             <TableCell>{{ formatDate(ad.createdAt) }}</TableCell>
             <TableCell align="right">
-              <div class="ads--actives__actions">
+              <div :class="`ads--${props.section}__actions`">
                 <button
-                  class="ads--actives__action"
+                  :class="`ads--${props.section}__action`"
                   title="Ver anuncio"
                   @click="handleViewAd(ad.id)"
                 >
-                  <Eye class="ads--actives__action__icon" />
+                  <Eye :class="`ads--${props.section}__action__icon`" />
                 </button>
                 <a
-                  v-if="ad.slug"
+                  v-if="showWebLink && ad.slug"
                   :href="`${websiteUrl}/anuncios/${ad.slug}`"
-                  class="ads--actives__action"
+                  :class="`ads--${props.section}__action`"
                   target="_blank"
                   rel="noopener noreferrer"
                   title="Ver en web"
                 >
-                  <ExternalLink class="ads--actives__action__icon" />
+                  <ExternalLink
+                    :class="`ads--${props.section}__action__icon`"
+                  />
                 </a>
               </div>
             </TableCell>
@@ -68,24 +74,24 @@
 
         <div
           v-if="paginatedAds.length === 0 && !loading"
-          class="ads--actives__empty"
+          :class="`ads--${props.section}__empty`"
         >
-          <p>No se encontraron anuncios activos</p>
+          <p>{{ emptyMessage }}</p>
         </div>
 
-        <div v-if="loading" class="ads--actives__loading">
+        <div v-if="loading" :class="`ads--${props.section}__loading`">
           <p>Cargando anuncios...</p>
         </div>
       </div>
 
       <PaginationDefault
-        :current-page="settingsStore.ads.currentPage"
+        :current-page="sectionSettings.currentPage"
         :total-pages="totalPages"
         :total-records="totalRecords"
-        :page-size="settingsStore.ads.pageSize"
-        class="ads--actives__pagination"
+        :page-size="sectionSettings.pageSize"
+        :class="`ads--${props.section}__pagination`"
         @page-change="
-          (page: number) => settingsStore.setCurrentPage(section, page)
+          (page: number) => settingsStore.setCurrentPage(props.section, page)
         "
       />
     </div>
@@ -93,9 +99,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Eye, ExternalLink } from "lucide-vue-next";
+import type { Ad, AdGalleryItem } from "@/types/ad";
 import { useSettingsStore } from "@/stores/settings.store";
 import SearchDefault from "@/components/SearchDefault.vue";
 import FilterDefault from "@/components/FilterDefault.vue";
@@ -104,31 +111,57 @@ import TableRow from "@/components/TableRow.vue";
 import TableCell from "@/components/TableCell.vue";
 import PaginationDefault from "@/components/PaginationDefault.vue";
 
-interface Ad {
-  id: number;
-  name: string;
-  slug?: string;
-  createdAt: string;
-  user?: { username: string };
-  gallery?: Array<{ url: string; formats?: any }>;
+// SettingsState section keys
+type SettingsSection =
+  | "orders"
+  | "adsPendings"
+  | "adsActives"
+  | "adsArchived"
+  | "adsBanned"
+  | "adsRejected"
+  | "adsAbandoned"
+  | "users"
+  | "reservations"
+  | "featured"
+  | "categories"
+  | "conditions"
+  | "faqs"
+  | "packs"
+  | "regions"
+  | "communes";
+
+interface Props {
+  endpoint: string;
+  section: SettingsSection;
+  emptyMessage?: string;
+  showWebLink?: boolean;
 }
+
+const props = withDefaults(defineProps<Props>(), {
+  emptyMessage: "No se encontraron anuncios",
+  showWebLink: false,
+});
 
 const { public: publicConfig } = useRuntimeConfig();
 const websiteUrl = publicConfig.websiteUrl as string;
 
-// Store de settings
 const settingsStore = useSettingsStore();
-const section = "ads" as const;
 
-// Computed para los filtros de anuncios
-const filters = computed(() => settingsStore.getAdsFilters);
+// Computed accessor for the current section's settings
+const sectionSettings = computed(() => settingsStore[props.section]);
+
+// Computed para los filtros de la sección
+const filters = computed(() => ({
+  sortBy: sectionSettings.value.sortBy,
+  pageSize: sectionSettings.value.pageSize,
+}));
 
 // Handler para cambios en filtros
 const handleFiltersChange = (newFilters: {
   sortBy: string;
   pageSize: number;
 }) => {
-  settingsStore.setFilters(section, newFilters);
+  settingsStore.setFilters(props.section, newFilters);
 };
 
 // Estado
@@ -141,18 +174,19 @@ const paginationMeta = ref<{
   total: number;
 } | null>(null);
 
-// Fetch de anuncios activos desde Strapi
-const fetchActiveAds = async () => {
+// Fetch de anuncios desde Strapi
+const fetchAds = async () => {
   try {
     loading.value = true;
     const strapi = useStrapi();
+    const section = sectionSettings.value;
 
-    const searchParams: any = {
+    const searchParams: Record<string, unknown> = {
       pagination: {
-        page: settingsStore.ads.currentPage,
-        pageSize: settingsStore.ads.pageSize,
+        page: section.currentPage,
+        pageSize: section.pageSize,
       },
-      sort: settingsStore.ads.sortBy,
+      sort: section.sortBy,
       populate: {
         user: {
           fields: ["username"],
@@ -164,26 +198,26 @@ const fetchActiveAds = async () => {
     };
 
     // Agregar búsqueda si existe
-    if (settingsStore.ads.searchTerm) {
+    if (section.searchTerm) {
       searchParams.filters = {
         $or: [
-          { name: { $containsi: settingsStore.ads.searchTerm } },
-          { description: { $containsi: settingsStore.ads.searchTerm } },
-          { "user.username": { $containsi: settingsStore.ads.searchTerm } },
-          { "user.email": { $containsi: settingsStore.ads.searchTerm } },
+          { name: { $containsi: section.searchTerm } },
+          { description: { $containsi: section.searchTerm } },
+          { "user.username": { $containsi: section.searchTerm } },
+          { "user.email": { $containsi: section.searchTerm } },
         ],
       };
     }
 
-    const response = await strapi.find("ads/actives", searchParams);
-    allAds.value = Array.isArray(response.data) ? response.data : [];
+    const response = await strapi.find(props.endpoint, searchParams);
+    allAds.value = Array.isArray(response.data) ? (response.data as Ad[]) : [];
 
     // Guardar información de paginación de Strapi
     paginationMeta.value = response.meta?.pagination
-      ? response.meta.pagination
+      ? (response.meta.pagination as typeof paginationMeta.value)
       : null;
   } catch (error) {
-    console.error("Error fetching active ads:", error);
+    console.error(`Error fetching ads from ${props.endpoint}:`, error);
     allAds.value = [];
   } finally {
     loading.value = false;
@@ -231,44 +265,37 @@ const formatDate = (dateString: string) => {
 
 const { transformUrl } = useImageProxy();
 
-const getImageUrl = (image: { url: string; formats?: any }) => {
+const getImageUrl = (image: AdGalleryItem) => {
   if (!image) return "";
-  // Usar formato thumbnail si existe, sino la URL original
   const imageUrl = image.formats?.thumbnail?.url || image.url;
   if (!imageUrl) return "";
-
   return transformUrl(imageUrl);
 };
 
 const router = useRouter();
 
 const handleViewAd = (adId: number) => {
-  // Navegar a la página de detalle del anuncio
   router.push(`/anuncios/${adId}`);
 };
 
 // Watch para recargar cuando cambian los filtros o la búsqueda
+// watch(immediate:true) es el único trigger de carga de datos — no onMounted
 watch(
   [
-    () => settingsStore.ads.searchTerm,
-    () => settingsStore.ads.sortBy,
-    () => settingsStore.ads.pageSize,
-    () => settingsStore.ads.currentPage,
+    () => sectionSettings.value.searchTerm,
+    () => sectionSettings.value.sortBy,
+    () => sectionSettings.value.pageSize,
+    () => sectionSettings.value.currentPage,
   ],
   () => {
-    fetchActiveAds();
+    fetchAds();
   },
   { immediate: true },
 );
-
-// Cargar datos al montar
-onMounted(() => {
-  fetchActiveAds();
-});
 </script>
 
 <style scoped>
-.ads--actives__actions {
+.ads [class$="__actions"] {
   display: flex;
   align-items: center;
   justify-content: flex-end;

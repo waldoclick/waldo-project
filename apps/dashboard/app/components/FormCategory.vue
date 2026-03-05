@@ -119,10 +119,11 @@ const handleSubmit = async (values: any) => {
           filters: { documentId: { $eq: documentId } },
           pagination: { pageSize: 1 },
           populate: ["icon"],
-        });
-        const lookup = Array.isArray(lookupResponse.data)
-          ? lookupResponse.data[0]
-          : null;
+        } as Record<string, unknown>);
+        const lookupData = Array.isArray(lookupResponse.data)
+          ? (lookupResponse.data as Array<{ id: number }>)
+          : [];
+        const lookup = lookupData[0] || null;
         categoryId = lookup?.id;
       }
 
@@ -136,10 +137,18 @@ const handleSubmit = async (values: any) => {
         return;
       }
 
-      const response = await strapi.update("categories", categoryId, payload);
+      const response = await strapi.update(
+        "categories",
+        categoryId,
+        payload as unknown as Parameters<typeof strapi.update>[2],
+      );
+      const responseData = response.data as unknown as {
+        id?: number;
+        documentId?: string;
+      };
       const updatedCategory = {
         ...props.category,
-        ...response.data,
+        ...responseData,
         name: payload.name,
         color: payload.color,
       };
@@ -158,10 +167,17 @@ const handleSubmit = async (values: any) => {
         router.push(`/categorias/${updatedId}`);
       }
     } else {
-      const response = await strapi.create("categories", payload);
-      emit("saved", response.data || {});
+      const response = await strapi.create(
+        "categories",
+        payload as unknown as Parameters<typeof strapi.create>[1],
+      );
+      const createdData = response.data as unknown as {
+        id?: number;
+        documentId?: string;
+      };
+      emit("saved", createdData || {});
       await Swal.fire("Éxito", "Categoría creada correctamente.", "success");
-      const createdId = response.data?.documentId || response.data?.id;
+      const createdId = createdData?.documentId || createdData?.id;
       if (createdId) {
         router.push(`/categorias/${createdId}`);
       } else {

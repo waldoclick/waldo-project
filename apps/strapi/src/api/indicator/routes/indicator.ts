@@ -48,6 +48,14 @@ export default {
     },
     {
       method: "GET",
+      path: "/indicators/dashboard-stats",
+      handler: "indicator.dashboardStats",
+      config: {
+        policies: [],
+      },
+    },
+    {
+      method: "GET",
       path: "/indicators/:id",
       handler: "indicator.findOne",
       config: {

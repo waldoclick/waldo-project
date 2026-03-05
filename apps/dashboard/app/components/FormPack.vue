@@ -222,11 +222,11 @@ const handleSubmit = async (values: any) => {
         const lookupResponse = await strapi.find("ad-packs", {
           filters: { documentId: { $eq: documentId } },
           pagination: { pageSize: 1 },
-        });
-        const lookup = Array.isArray(lookupResponse.data)
-          ? lookupResponse.data[0]
-          : null;
-        packId = lookup?.id;
+        } as Record<string, unknown>);
+        const lookupData = Array.isArray(lookupResponse.data)
+          ? (lookupResponse.data as Array<{ id: number }>)
+          : [];
+        packId = lookupData[0]?.id;
       }
 
       if (!packId) {
@@ -239,10 +239,18 @@ const handleSubmit = async (values: any) => {
         return;
       }
 
-      const response = await strapi.update("ad-packs", packId, payload);
+      const response = await strapi.update(
+        "ad-packs",
+        packId,
+        payload as unknown as Parameters<typeof strapi.update>[2],
+      );
+      const responseData = response.data as unknown as {
+        id?: number;
+        documentId?: string;
+      };
       const updatedPack = {
         ...props.pack,
-        ...response.data,
+        ...responseData,
         ...payload,
       };
       form.value = {
@@ -254,17 +262,24 @@ const handleSubmit = async (values: any) => {
         total_ads: payload.total_ads.toString(),
         total_features: payload.total_features.toString(),
       };
-      emit("saved", updatedPack);
+      emit("saved", updatedPack as PackData);
       await Swal.fire("Éxito", "Pack actualizado correctamente.", "success");
-      const updatedId = updatedPack?.documentId || updatedPack?.id;
+      const updatedId = responseData?.documentId || responseData?.id;
       if (updatedId) {
         router.push(`/packs/${updatedId}`);
       }
     } else {
-      const response = await strapi.create("ad-packs", payload);
-      emit("saved", response.data || {});
+      const response = await strapi.create(
+        "ad-packs",
+        payload as unknown as Parameters<typeof strapi.create>[1],
+      );
+      const createdData = response.data as unknown as {
+        id?: number;
+        documentId?: string;
+      };
+      emit("saved", (createdData as PackData) || ({} as PackData));
       await Swal.fire("Éxito", "Pack creado correctamente.", "success");
-      const createdId = response.data?.documentId || response.data?.id;
+      const createdId = createdData?.documentId || createdData?.id;
       if (createdId) {
         router.push(`/packs/${createdId}`);
       } else {
