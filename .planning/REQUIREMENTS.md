@@ -46,19 +46,19 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| UTIL-01 | Phase ? | Pending |
-| UTIL-02 | Phase ? | Pending |
-| UTIL-03 | Phase ? | Pending |
-| UTIL-04 | Phase ? | Pending |
-| UTIL-05 | Phase ? | Pending |
-| UTIL-06 | Phase ? | Pending |
-| UTIL-07 | Phase ? | Pending |
+| UTIL-01 | Phase 9 | Pending |
+| UTIL-02 | Phase 9 | Pending |
+| UTIL-03 | Phase 10 | Pending |
+| UTIL-04 | Phase 10 | Pending |
+| UTIL-05 | Phase 11 | Pending |
+| UTIL-06 | Phase 11 | Pending |
+| UTIL-07 | Phases 9, 10, 11 (success criterion in each) | Pending |
 
 **Coverage:**
 - v1.3 requirements: 7 total
-- Mapped to phases: 0 (roadmap not yet created)
-- Unmapped: 7 ⚠️
+- Mapped to phases: 7 ✓
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-05*
-*Last updated: 2026-03-05 after initial definition*
+*Last updated: 2026-03-05 after roadmap creation*
