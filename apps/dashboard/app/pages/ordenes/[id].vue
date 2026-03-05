@@ -106,6 +106,7 @@ import HeroDefault from "@/components/HeroDefault.vue";
 import BoxContent from "@/components/BoxContent.vue";
 import BoxInformation from "@/components/BoxInformation.vue";
 import CardInfo from "@/components/CardInfo.vue";
+import type { Order } from "@/types/order";
 
 definePageMeta({
   layout: "dashboard",
@@ -113,7 +114,7 @@ definePageMeta({
 
 const route = useRoute();
 const orderId = computed(() => String(route.params.id || ""));
-const order = ref<any>(null);
+const order = ref<Order | null>(null);
 const strapi = useStrapi();
 
 const title = computed(() =>
@@ -152,17 +153,21 @@ const getPaymentMethod = (method: string | undefined) => {
   return method === "webpay" ? "WebPay" : method;
 };
 
-const formatFullName = (user: any) => {
+const formatFullName = (
+  user: { firstname?: string; lastname?: string } | null | undefined,
+) => {
   if (!user) return "--";
   const name = [user.firstname, user.lastname].filter(Boolean).join(" ");
   return name || "--";
 };
 
-const normalizeOrder = (response: any) => {
+const normalizeOrder = (response: unknown): Order | null => {
   if (!response) return null;
-  if (response.data) return response.data;
-  if (response.order) return response.order;
-  if (response.id) return response;
+  if (typeof response === "object" && response !== null) {
+    if ("data" in response) return (response as { data: Order }).data;
+    if ("order" in response) return (response as { order: Order }).order;
+    if ("id" in response) return response as Order;
+  }
   return null;
 };
 
