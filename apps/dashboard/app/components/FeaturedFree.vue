@@ -142,7 +142,7 @@ const fetchFreeFeatured = async () => {
 
     // Agregar búsqueda si existe
     if (settingsStore.featured.searchTerm) {
-      searchParams.filters.$or = [
+      (searchParams.filters as Record<string, unknown>).$or = [
         {
           "user.username": {
             $containsi: settingsStore.featured.searchTerm,

@@ -140,7 +140,7 @@ const fetchFreeReservations = async () => {
 
     // Agregar búsqueda si existe
     if (settingsStore.reservations.searchTerm) {
-      searchParams.filters.$or = [
+      (searchParams.filters as Record<string, unknown>).$or = [
         {
           "user.username": {
             $containsi: settingsStore.reservations.searchTerm,
