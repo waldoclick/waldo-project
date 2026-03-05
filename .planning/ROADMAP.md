@@ -60,7 +60,13 @@ Plans:
   1. `app/types/` contains interface definitions for `Ad`, `User`, `Order`, `Category`, and `Pack` — these are the only authoritative type declarations for those entities in the dashboard
   2. `AdsTable.vue` and all ads pages import and use the shared types; no `any` appears in their props, emits, or data bindings for domain fields
   3. `typeCheck: true` is set in `nuxt.config.ts` and `npm run build` completes without TypeScript errors
-**Plans**: TBD
+**Plans**: 4 plans
+
+Plans:
+- [ ] 05-01-PLAN.md — Define Ad, User, Order, Category, Pack interfaces in app/types/ (TYPE-01)
+- [ ] 05-02-PLAN.md — Replace inline Ad types in AdsTable.vue and anuncios/[id].vue (TYPE-02)
+- [ ] 05-03-PLAN.md — Replace inline types in Users/Orders/Categories/Packs components and detail pages (TYPE-02)
+- [ ] 05-04-PLAN.md — Enable typeCheck: true and achieve clean build (TYPE-03)
 
 ### Phase 6: Performance
 **Goal**: The dashboard makes the minimum number of Strapi calls required to render each view; category counts load in one round trip; sales chart data is aggregated on the server; statistics calls are as consolidated as layout allows
@@ -81,5 +87,5 @@ Phases execute in numeric order: 3 → 4 → 5 → 6
 |-------|----------------|--------|-----------|
 | 3. Quick Wins | 4/4 | Complete   | 2026-03-04 |
 | 4. Component Consolidation | 3/3 | Complete   | 2026-03-05 |
-| 5. Type Safety | 0/? | Not started | - |
+| 5. Type Safety | 0/4 | Not started | - |
 | 6. Performance | 0/? | Not started | - |
