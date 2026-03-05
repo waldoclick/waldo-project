@@ -1,13 +1,13 @@
 <template>
   <div>
     <HeroDefault title="Abandonados" :breadcrumbs="breadcrumbs" />
-    <AdsAbandoned />
+    <AdsTable endpoint="ads/abandoneds" section="adsAbandoned" />
   </div>
 </template>
 
 <script setup lang="ts">
 import HeroDefault from "@/components/HeroDefault.vue";
-import AdsAbandoned from "@/components/AdsAbandoned.vue";
+import AdsTable from "@/components/AdsTable.vue";
 
 definePageMeta({
   layout: "dashboard",
