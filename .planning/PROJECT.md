@@ -28,6 +28,16 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ ChartSales obtiene datos agregados del servidor, no pagina todos los órdenes en cliente — v1.1
 - ✓ Eliminar double-fetch en todos los componentes non-ads del dashboard que tienen `onMounted` + `watch({ immediate: true })` coexistiendo — v1.2
 
+## Current Milestone: v1.3 Utility Extraction
+
+**Goal:** Extract all inline duplicated pure functions (date, price, string) into shared utility files and replace every inline copy with an import.
+
+**Target features:**
+- `utils/date.ts` — shared date formatting (formatDate, formatDateShort)
+- `utils/price.ts` — shared currency formatting (formatCurrency)
+- `utils/string.ts` — shared string utilities (formatFullName, formatAddress, formatBoolean, formatDays, getPaymentMethod)
+- Replace 30+ inline duplicates across 20+ components and pages
+
 ### Active
 
 <!-- Next milestone requirements go here -->
@@ -87,4 +97,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-05 after v1.2 milestone completion*
+*Last updated: 2026-03-05 after v1.3 milestone started*
