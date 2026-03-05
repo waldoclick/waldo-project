@@ -13,7 +13,7 @@ This milestone eliminates critical technical debt in `apps/dashboard`: double fe
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 3: Quick Wins** - Eliminate double fetch, isolate pagination per section, pin dependency versions, restore error visibility, and remove dead code (completed -) (completed 2026-03-04)
-- [x] **Phase 4: Component Consolidation** - Replace 6 duplicated Ads components with a single generic AdsTable and verify behavioral parity (completed 2026-03-05)
+- [ ] **Phase 4: Component Consolidation** - Replace 6 duplicated Ads components with a single generic AdsTable and verify behavioral parity
 - [ ] **Phase 5: Type Safety** - Define shared domain types for all major entities and enable typeCheck in build
 - [ ] **Phase 6: Performance** - Eliminate N+1 category queries, move ChartSales aggregation server-side, and consolidate StatisticsDefault calls
 
@@ -45,7 +45,12 @@ Plans:
   1. `AdsTable.vue` exists and accepts `endpoint` and `status` props; the six `Ads*` component files are deleted from the codebase
   2. Each ads list page (`/ads/pending`, `/ads/active`, `/ads/archived`, `/ads/banned`, `/ads/rejected`, `/ads/abandoned`) renders correctly using `<AdsTable>` with no regressions in filters, pagination, or row actions
   3. If `Reservations*` or `Featured*` components show equivalent duplication on analysis, they are consolidated under the same pattern in this phase — or the decision to defer is documented
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [x] 04-01-PLAN.md — Create AdsTable.vue generic component (COMP-01)
+- [ ] 04-02-PLAN.md — Migrate six ads pages to AdsTable and delete Ads* components (COMP-02, COMP-03)
+- [ ] 04-03-PLAN.md — Document COMP-04 deferral decision for Reservations*/Featured* (COMP-04)
 
 ### Phase 5: Type Safety
 **Goal**: Domain entities have a single source of truth for their TypeScript types; the build enforces type correctness; no component uses `any` for `Ad`, `User`, `Order`, `Category`, or `Pack` data
@@ -75,6 +80,6 @@ Phases execute in numeric order: 3 → 4 → 5 → 6
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 3. Quick Wins | 4/4 | Complete   | 2026-03-04 |
-| 4. Component Consolidation | 1/1 | Complete   | 2026-03-05 |
+| 4. Component Consolidation | 1/3 | In progress | - |
 | 5. Type Safety | 0/? | Not started | - |
 | 6. Performance | 0/? | Not started | - |
