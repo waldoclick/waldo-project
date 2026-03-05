@@ -14,10 +14,10 @@
 - [x] **DFX-04**: `FaqsDefault.vue` no ejecuta fetch doble al montar
 - [x] **DFX-05**: `CommunesDefault.vue` no ejecuta fetch doble al montar
 - [x] **DFX-06**: `ConditionsDefault.vue` no ejecuta fetch doble al montar
-- [ ] **DFX-07**: `ReservationsFree.vue` no ejecuta fetch doble al montar
-- [ ] **DFX-08**: `ReservationsUsed.vue` no ejecuta fetch doble al montar
-- [ ] **DFX-09**: `FeaturedFree.vue` no ejecuta fetch doble al montar
-- [ ] **DFX-10**: `FeaturedUsed.vue` no ejecuta fetch doble al montar
+- [x] **DFX-07**: `ReservationsFree.vue` no ejecuta fetch doble al montar
+- [x] **DFX-08**: `ReservationsUsed.vue` no ejecuta fetch doble al montar
+- [x] **DFX-09**: `FeaturedFree.vue` no ejecuta fetch doble al montar
+- [x] **DFX-10**: `FeaturedUsed.vue` no ejecuta fetch doble al montar
 
 ## Future Requirements
 
@@ -54,10 +54,10 @@
 | DFX-04 | Phase 7 | Complete |
 | DFX-05 | Phase 7 | Complete |
 | DFX-06 | Phase 7 | Complete |
-| DFX-07 | Phase 8 | Pending |
-| DFX-08 | Phase 8 | Pending |
-| DFX-09 | Phase 8 | Pending |
-| DFX-10 | Phase 8 | Pending |
+| DFX-07 | Phase 8 | Complete |
+| DFX-08 | Phase 8 | Complete |
+| DFX-09 | Phase 8 | Complete |
+| DFX-10 | Phase 8 | Complete |
 
 **Coverage:**
 - v1.2 requirements: 10 total
