@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: completed
-stopped_at: Completed 04-component-consolidation/04-03-PLAN.md
-last_updated: "2026-03-05T03:57:10.443Z"
+stopped_at: "Checkpoint: 04-component-consolidation/04-02-PLAN.md Task 3 — awaiting human verification of six ads pages via AdsTable"
+last_updated: "2026-03-05T04:00:44.962Z"
 last_activity: 2026-03-04 — Roadmap created for v1.1
 progress:
   total_phases: 4
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 7
-  completed_plans: 6
+  completed_plans: 7
   percent: 0
 ---
 
@@ -61,6 +61,7 @@ Phases:
 | Phase 03-quick-wins P01 | 4 | 2 tasks | 7 files |
 | Phase 04-component-consolidation P01 | 2 | 1 tasks | 1 files |
 | Phase 04-component-consolidation P03 | 3min | 1 tasks | 1 files |
+| Phase 04-component-consolidation P02 | 5min | 2 tasks | 12 files |
 
 ## Accumulated Context
 
@@ -87,6 +88,8 @@ Recent decisions affecting current work:
 - [Phase 04-component-consolidation]: AdsTable uses computed sectionSettings = computed(() => settingsStore[props.section]) for dynamic section access; showWebLink boolean prop controls ExternalLink rendering; dynamic BEM class bindings preserve section-specific CSS isolation
 - [Phase 04-component-consolidation][COMP-04]: ReservationsFree/ReservationsUsed and FeaturedFree/FeaturedUsed are deferred from consolidation. Analysis: (1) both pairs share a single store section key ("reservations" / "featured") — a generic component would cause pagination state conflicts between the two views; (2) ReservationsUsed uses client-side pagination over 1,000 fetched records while ReservationsFree uses server-side pagination — incompatible fetch strategies; (3) the "Used" variants have an extra "Anuncio" column requiring configurable column schemas. The AdsTable consolidation pattern does not apply because all three prerequisites (shared column schema, independent store keys, identical fetch strategy) are absent. Prerequisites for future consolidation: add dedicated store section keys per sub-view, align fetch strategies, then introduce a columns prop.
 - [Phase 04-component-consolidation]: ReservationsFree/ReservationsUsed and FeaturedFree/FeaturedUsed deferred from consolidation: shared store keys cause pagination conflicts, incompatible fetch strategies, and differing column schemas disqualify the AdsTable pattern
+- [Phase 04-component-consolidation]: All six Ads* dedicated component files deleted after pages migrated — AdsTable.vue is the sole Ads*.vue component
+- [Phase 04-component-consolidation]: activos.vue passes :show-web-link=true to AdsTable — only page needing external link column
 
 ### Pending Todos
 
@@ -98,6 +101,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-05T03:57:10.442Z
-Stopped at: Completed 04-component-consolidation/04-03-PLAN.md
+Last session: 2026-03-05T04:00:44.960Z
+Stopped at: Checkpoint: 04-component-consolidation/04-02-PLAN.md Task 3 — awaiting human verification of six ads pages via AdsTable
 Resume file: None
