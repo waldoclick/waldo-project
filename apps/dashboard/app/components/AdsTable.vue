@@ -102,6 +102,7 @@
 import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Eye, ExternalLink } from "lucide-vue-next";
+import type { Ad, AdGalleryItem } from "@/types/ad";
 import { useSettingsStore } from "@/stores/settings.store";
 import SearchDefault from "@/components/SearchDefault.vue";
 import FilterDefault from "@/components/FilterDefault.vue";
@@ -128,15 +129,6 @@ type SettingsSection =
   | "packs"
   | "regions"
   | "communes";
-
-interface Ad {
-  id: number;
-  name: string;
-  slug?: string;
-  createdAt: string;
-  user?: { username: string };
-  gallery?: Array<{ url: string; formats?: any }>;
-}
 
 interface Props {
   endpoint: string;
@@ -189,7 +181,7 @@ const fetchAds = async () => {
     const strapi = useStrapi();
     const section = sectionSettings.value;
 
-    const searchParams: any = {
+    const searchParams: Record<string, unknown> = {
       pagination: {
         page: section.currentPage,
         pageSize: section.pageSize,
@@ -273,7 +265,7 @@ const formatDate = (dateString: string) => {
 
 const { transformUrl } = useImageProxy();
 
-const getImageUrl = (image: { url: string; formats?: any }) => {
+const getImageUrl = (image: AdGalleryItem) => {
   if (!image) return "";
   const imageUrl = image.formats?.thumbnail?.url || image.url;
   if (!imageUrl) return "";
