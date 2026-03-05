@@ -82,7 +82,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Eye, Pencil } from "lucide-vue-next";
 import { useSettingsStore } from "@/stores/settings.store";
@@ -126,7 +126,7 @@ const fetchCommunes = async () => {
     loading.value = true;
     const strapi = useStrapi();
 
-    const searchParams: any = {
+    const searchParams: Record<string, unknown> = {
       pagination: {
         page: settingsStore.communes.currentPage,
         pageSize: settingsStore.communes.pageSize,
@@ -216,8 +216,4 @@ watch(
   },
   { immediate: true },
 );
-
-onMounted(() => {
-  fetchCommunes();
-});
 </script>
