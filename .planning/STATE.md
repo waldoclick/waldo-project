@@ -84,6 +84,7 @@ Recent decisions affecting current work:
 - [Phase 03-quick-wins]: Six dedicated ads section keys replace shared 'ads' key in settings store — each ads status view has isolated pagination/filter state
 - [Phase 03-quick-wins]: watch with immediate:true is the sole data-loading trigger; onMounted fetch removed from all six Ads components to eliminate double API call on mount
 - [Phase 04-component-consolidation]: AdsTable uses computed sectionSettings = computed(() => settingsStore[props.section]) for dynamic section access; showWebLink boolean prop controls ExternalLink rendering; dynamic BEM class bindings preserve section-specific CSS isolation
+- [Phase 04-component-consolidation][COMP-04]: ReservationsFree/ReservationsUsed and FeaturedFree/FeaturedUsed are deferred from consolidation. Analysis: (1) both pairs share a single store section key ("reservations" / "featured") — a generic component would cause pagination state conflicts between the two views; (2) ReservationsUsed uses client-side pagination over 1,000 fetched records while ReservationsFree uses server-side pagination — incompatible fetch strategies; (3) the "Used" variants have an extra "Anuncio" column requiring configurable column schemas. The AdsTable consolidation pattern does not apply because all three prerequisites (shared column schema, independent store keys, identical fetch strategy) are absent. Prerequisites for future consolidation: add dedicated store section keys per sub-view, align fetch strategies, then introduce a columns prop.
 
 ### Pending Todos
 
