@@ -10,7 +10,7 @@ Requirements for v1.3. Each maps to roadmap phases.
 
 ### Utilities — Date
 
-- [ ] **UTIL-01**: `app/utils/date.ts` exists with `formatDate(dateString: string | undefined): string` (full datetime, es-CL locale, undefined → "--") and `formatDateShort(dateString: string | undefined): string` (date only, no time component)
+- [x] **UTIL-01**: `app/utils/date.ts` exists with `formatDate(dateString: string | undefined): string` (full datetime, es-CL locale, undefined → "--") and `formatDateShort(dateString: string | undefined): string` (date only, no time component)
 - [ ] **UTIL-02**: All inline `formatDate` / `formatDateShort` definitions removed from 33 components and pages; replaced with auto-imported calls — no duplicate definitions remain
 
 ### Utilities — Price
@@ -46,7 +46,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| UTIL-01 | Phase 9 | Pending |
+| UTIL-01 | Phase 9 | Complete |
 | UTIL-02 | Phase 9 | Pending |
 | UTIL-03 | Phase 10 | Pending |
 | UTIL-04 | Phase 10 | Pending |
