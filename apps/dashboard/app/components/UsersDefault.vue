@@ -93,16 +93,7 @@ import TableDefault from "@/components/TableDefault.vue";
 import TableRow from "@/components/TableRow.vue";
 import TableCell from "@/components/TableCell.vue";
 import PaginationDefault from "@/components/PaginationDefault.vue";
-
-interface User {
-  id: number;
-  username: string;
-  email: string;
-  firstname?: string;
-  lastname?: string;
-  createdAt: string;
-  role?: { name: string };
-}
+import type { User } from "@/types/user";
 
 // Store de settings
 const settingsStore = useSettingsStore();
@@ -135,7 +126,7 @@ const fetchUsers = async () => {
     loading.value = true;
     const strapi = useStrapi();
 
-    const searchParams: any = {
+    const searchParams: Record<string, unknown> = {
       pagination: {
         page: settingsStore.users.currentPage,
         pageSize: settingsStore.users.pageSize,

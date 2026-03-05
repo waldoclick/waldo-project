@@ -84,23 +84,7 @@ import TableRow from "@/components/TableRow.vue";
 import TableCell from "@/components/TableCell.vue";
 import BadgeDefault from "@/components/BadgeDefault.vue";
 import PaginationDefault from "@/components/PaginationDefault.vue";
-
-interface Order {
-  id: number;
-  documentId?: string;
-  buy_order?: string;
-  amount: number | string;
-  payment_method: string;
-  is_invoice: boolean;
-  createdAt: string;
-  user?: { username: string };
-  ad?: { name: string } | null;
-}
-
-interface OrdersListResponse {
-  data: Order[];
-  meta: { pagination: { page: number; pageCount: number; total: number } };
-}
+import type { Order, OrdersListResponse } from "@/types/order";
 
 const settingsStore = useSettingsStore();
 const section = "orders" as const;
