@@ -71,7 +71,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Eye } from "lucide-vue-next";
 import { useSettingsStore } from "@/stores/settings.store";
@@ -120,7 +120,7 @@ const fetchFreeReservations = async () => {
     loading.value = true;
     const strapi = useStrapi();
 
-    const searchParams: any = {
+    const searchParams: Record<string, unknown> = {
       pagination: {
         page: settingsStore.reservations.currentPage,
         pageSize: settingsStore.reservations.pageSize,
@@ -225,9 +225,4 @@ watch(
   },
   { immediate: true },
 );
-
-// Cargar datos al montar
-onMounted(() => {
-  fetchFreeReservations();
-});
 </script>
