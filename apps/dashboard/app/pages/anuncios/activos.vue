@@ -1,13 +1,17 @@
 <template>
   <div>
     <HeroDefault title="Activos" :breadcrumbs="breadcrumbs" />
-    <AdsActives />
+    <AdsTable
+      endpoint="ads/actives"
+      section="adsActives"
+      :show-web-link="true"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import HeroDefault from "@/components/HeroDefault.vue";
-import AdsActives from "@/components/AdsActives.vue";
+import AdsTable from "@/components/AdsTable.vue";
 
 definePageMeta({
   layout: "dashboard",
