@@ -21,7 +21,7 @@ Archive: `.planning/milestones/v1.1-ROADMAP.md`
 **Milestone Goal:** Eliminar `onMounted` redundante de todos los componentes non-ads del dashboard que ya tienen `watch({ immediate: true })` como único trigger de carga de datos, aplicando el patrón establecido en v1.1 con AdsTable.
 
 - [x] **Phase 7: Catalog Components** - Remove redundant `onMounted` from 6 catalog/management components (completed 2026-03-05)
-- [ ] **Phase 8: Transactional Components** - Remove redundant `onMounted` from 4 reservations/featured components
+- [x] **Phase 8: Transactional Components** - Remove redundant `onMounted` from 4 reservations/featured components (completed 2026-03-05)
 
 ## Phase Details
 
@@ -60,4 +60,4 @@ Plans:
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 7. Catalog Components | 1/1 | Complete   | 2026-03-05 | - |
-| 8. Transactional Components | v1.2 | 0/1 | Not started | - |
+| 8. Transactional Components | 1/1 | Complete   | 2026-03-05 | - |
