@@ -104,7 +104,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Eye, Pencil } from "lucide-vue-next";
 import { useSettingsStore } from "@/stores/settings.store";
@@ -150,7 +150,7 @@ const fetchFaqs = async () => {
     loading.value = true;
     const strapi = useStrapi();
 
-    const searchParams: any = {
+    const searchParams: Record<string, unknown> = {
       pagination: {
         page: settingsStore.faqs.currentPage,
         pageSize: settingsStore.faqs.pageSize,
@@ -260,8 +260,4 @@ watch(
   },
   { immediate: true },
 );
-
-onMounted(() => {
-  fetchFaqs();
-});
 </script>
