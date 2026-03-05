@@ -87,4 +87,34 @@ export default {
     );
     return { data: category };
   },
+
+  async adCounts(ctx) {
+    try {
+      // Fetch all category IDs in one query
+      const categories = await strapi.entityService.findMany(
+        "api::category.category",
+        {
+          fields: ["id"],
+          limit: -1,
+        }
+      );
+
+      // Count ads per category using parallel DB queries — one count call
+      // per category, but all launched in parallel (not sequentially)
+      const results = await Promise.all(
+        categories.map(async (category) => {
+          const count = await strapi.db.query("api::ad.ad").count({
+            where: {
+              category: { id: { $eq: category.id } },
+            },
+          });
+          return { categoryId: category.id, count };
+        })
+      );
+
+      return ctx.send({ data: results });
+    } catch (error) {
+      ctx.throw(500, error);
+    }
+  },
 };
