@@ -235,11 +235,16 @@ const fetchAllOrders = async () => {
       const response = await strapi.find("orders", {
         pagination: { page, pageSize: 100 },
         sort: "createdAt:desc",
-      });
-      const orders = Array.isArray(response.data) ? response.data : [];
+      } as Record<string, unknown>);
+      const orders = Array.isArray(response.data)
+        ? (response.data as Order[])
+        : [];
       allOrdersData = [...allOrdersData, ...orders];
-      const totalPages = response.meta?.pagination?.pageCount || 0;
-      const totalItems = response.meta?.pagination?.total || 0;
+      const paginationData = response.meta?.pagination as
+        | { pageCount?: number; total?: number }
+        | undefined;
+      const totalPages = paginationData?.pageCount || 0;
+      const totalItems = paginationData?.total || 0;
       if (
         orders.length === 0 ||
         page >= totalPages ||

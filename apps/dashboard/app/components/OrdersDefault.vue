@@ -121,7 +121,7 @@ const { data: ordersResponse } = await useAsyncData(
 
         sort: sortParam.value as string,
         populate: ["user", "ad"],
-      })) as unknown as {
+      } as Record<string, unknown>)) as unknown as {
         data?: Order[];
         meta?: {
           pagination?: { page: number; pageCount?: number; total: number };

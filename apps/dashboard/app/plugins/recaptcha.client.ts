@@ -47,7 +47,8 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   // Initialize the reCAPTCHA
   loadRecaptchaScript()
-    .then((grecaptcha: Window["grecaptcha"]) => {
+    .then((value: unknown) => {
+      const grecaptcha = value as Window["grecaptcha"];
       // Provide a function to use reCAPTCHA
       nuxtApp.provide("recaptcha", {
         execute: async (action: string) => {

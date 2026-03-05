@@ -98,11 +98,11 @@ const handleSubmit = async (values: any) => {
         const lookupResponse = await strapi.find("regions", {
           filters: { documentId: { $eq: documentId } },
           pagination: { pageSize: 1 },
-        });
-        const lookup = Array.isArray(lookupResponse.data)
-          ? lookupResponse.data[0]
-          : null;
-        regionId = lookup?.id;
+        } as Record<string, unknown>);
+        const lookupData = Array.isArray(lookupResponse.data)
+          ? (lookupResponse.data as Array<{ id: number }>)
+          : [];
+        regionId = lookupData[0]?.id;
       }
 
       if (!regionId) {
@@ -115,26 +115,41 @@ const handleSubmit = async (values: any) => {
         return;
       }
 
-      const response = await strapi.update("regions", regionId, payload);
+      const response = await strapi.update(
+        "regions",
+        regionId,
+        payload as unknown as Parameters<typeof strapi.update>[2],
+      );
+      const responseData = response.data as unknown as {
+        id?: number;
+        documentId?: string;
+      };
       const updatedRegion = {
         ...props.region,
-        ...response.data,
+        ...responseData,
         name: payload.name,
       };
       form.value = {
         name: payload.name,
       };
-      emit("saved", updatedRegion);
+      emit("saved", updatedRegion as RegionData);
       await Swal.fire("Éxito", "Región actualizada correctamente.", "success");
-      const updatedId = updatedRegion?.documentId || updatedRegion?.id;
+      const updatedId = responseData?.documentId || responseData?.id;
       if (updatedId) {
         router.push(`/regiones/${updatedId}`);
       }
     } else {
-      const response = await strapi.create("regions", payload);
-      emit("saved", response.data || {});
+      const response = await strapi.create(
+        "regions",
+        payload as unknown as Parameters<typeof strapi.create>[1],
+      );
+      const createdData = response.data as unknown as {
+        id?: number;
+        documentId?: string;
+      };
+      emit("saved", (createdData as RegionData) || ({} as RegionData));
       await Swal.fire("Éxito", "Región creada correctamente.", "success");
-      const createdId = response.data?.documentId || response.data?.id;
+      const createdId = createdData?.documentId || createdData?.id;
       if (createdId) {
         router.push(`/regiones/${createdId}`);
       } else {

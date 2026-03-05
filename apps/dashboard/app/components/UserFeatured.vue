@@ -156,10 +156,13 @@ const fetchUserFeatured = async () => {
         pageSize,
       },
       sort: "createdAt:desc",
-    });
+    } as Record<string, unknown>);
 
-    allFeatured.value = Array.isArray(response.data) ? response.data : [];
-    paginationMeta.value = response.meta?.pagination || null;
+    allFeatured.value = Array.isArray(response.data)
+      ? (response.data as Featured[])
+      : [];
+    paginationMeta.value = (response.meta?.pagination ||
+      null) as typeof paginationMeta.value;
   } catch (error) {
     console.error("Error fetching free featured for user:", error);
     allFeatured.value = [];

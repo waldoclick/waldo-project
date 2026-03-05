@@ -151,8 +151,11 @@ const fetchCategories = async () => {
     }
 
     const response = await strapi.find("categories", searchParams);
-    allCategories.value = Array.isArray(response.data) ? response.data : [];
-    paginationMeta.value = response.meta?.pagination || null;
+    allCategories.value = Array.isArray(response.data)
+      ? (response.data as Category[])
+      : [];
+    paginationMeta.value = (response.meta?.pagination ||
+      null) as typeof paginationMeta.value;
 
     // Fetch ads count for each category
     await fetchAdsCountByCategory();
@@ -179,12 +182,12 @@ const fetchAdsCountByCategory = async () => {
                 $eq: category.id,
               },
             },
-          },
+          } as Record<string, unknown>,
           pagination: {
             page: 1,
             pageSize: 1,
-          },
-        });
+          } as Record<string, unknown>,
+        } as Record<string, unknown>);
         return {
           categoryId: category.id,
           count: adsResponse.meta?.pagination?.total || 0,

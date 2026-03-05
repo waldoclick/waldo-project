@@ -210,11 +210,11 @@ const fetchAds = async () => {
     }
 
     const response = await strapi.find(props.endpoint, searchParams);
-    allAds.value = Array.isArray(response.data) ? response.data : [];
+    allAds.value = Array.isArray(response.data) ? (response.data as Ad[]) : [];
 
     // Guardar información de paginación de Strapi
     paginationMeta.value = response.meta?.pagination
-      ? response.meta.pagination
+      ? (response.meta.pagination as typeof paginationMeta.value)
       : null;
   } catch (error) {
     console.error(`Error fetching ads from ${props.endpoint}:`, error);

@@ -60,10 +60,11 @@ import { useRouter } from "vue-router";
 import { useSweetAlert2 } from "@/composables/useSweetAlert2";
 import AvatarDefault from "@/components/AvatarDefault.vue";
 import { Menu as IconMenu, X as IconX } from "lucide-vue-next";
+import type { User } from "@/types/user";
 
 const { Swal } = useSweetAlert2();
 
-const user = useStrapiUser();
+const user = useStrapiUser() as Ref<User | null>;
 const { logout } = useStrapiAuth();
 
 const isOpen = ref(false);
@@ -100,7 +101,7 @@ const handleLogout = async () => {
     showCancelButton: true,
     confirmButtonText: "Sí, quiero salir",
     cancelButtonText: "No",
-  }).then(async (result) => {
+  }).then(async (result: { isConfirmed: boolean }) => {
     if (result.isConfirmed) {
       try {
         await logout();

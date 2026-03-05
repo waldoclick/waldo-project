@@ -141,8 +141,11 @@ const fetchPacks = async () => {
     }
 
     const response = await strapi.find("ad-packs", searchParams);
-    allPacks.value = Array.isArray(response.data) ? response.data : [];
-    paginationMeta.value = response.meta?.pagination || null;
+    allPacks.value = Array.isArray(response.data)
+      ? (response.data as Pack[])
+      : [];
+    paginationMeta.value = (response.meta?.pagination ||
+      null) as typeof paginationMeta.value;
   } catch (error) {
     console.error("Error fetching packs:", error);
     allPacks.value = [];

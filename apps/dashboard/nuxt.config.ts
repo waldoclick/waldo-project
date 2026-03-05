@@ -334,7 +334,7 @@ export default defineNuxtConfig({
   // 6. Development Configuration
   typescript: {
     strict: true,
-    typeCheck: false, // Disabled by default, enable when ready
+    typeCheck: true,
   },
 
   devtools: { enabled: process.env.NODE_ENV === "development" },

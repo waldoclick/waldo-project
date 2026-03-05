@@ -122,21 +122,25 @@ const { data: reservationData } = await useAsyncData(
             fields: ["name"],
           },
         },
-      });
+      } as Record<string, unknown>);
       const data = Array.isArray(response.data) ? response.data[0] : null;
       if (data) return data;
 
-      const fallback = await strapi.findOne("ad-reservations", id as string, {
-        populate: {
-          user: {
-            fields: ["username"],
+      const fallback = await strapi.findOne(
+        "ad-reservations",
+        id as string,
+        {
+          populate: {
+            user: {
+              fields: ["username"],
+            },
+            ad: {
+              fields: ["name"],
+            },
           },
-          ad: {
-            fields: ["name"],
-          },
-        },
-      });
-      return fallback.data || null;
+        } as Record<string, unknown>,
+      );
+      return (fallback.data as unknown) || null;
     } catch (error) {
       console.error("Error fetching reservation:", error);
       return null;
@@ -144,5 +148,5 @@ const { data: reservationData } = await useAsyncData(
   },
 );
 
-item.value = reservationData.value;
+item.value = reservationData.value ?? null;
 </script>

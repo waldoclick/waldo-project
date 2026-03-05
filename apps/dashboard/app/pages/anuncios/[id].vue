@@ -274,7 +274,10 @@ const formatDate = (dateString: string | undefined) => {
   });
 };
 
-const formatPrice = (price: number, currency: string = "CLP") => {
+const formatPrice = (
+  price: number | undefined,
+  currency: string | undefined = "CLP",
+) => {
   if (!price) return "--";
   return new Intl.NumberFormat("es-CL", {
     style: "currency",
@@ -282,7 +285,10 @@ const formatPrice = (price: number, currency: string = "CLP") => {
   }).format(price);
 };
 
-const formatAddress = (address: string, addressNumber: string) => {
+const formatAddress = (
+  address: string | undefined,
+  addressNumber: string | undefined,
+) => {
   if (!address) return "--";
   return addressNumber ? `${address} ${addressNumber}` : address;
 };
@@ -320,9 +326,10 @@ const closeBanLightbox = () => {
 };
 
 const handleApprove = async () => {
-  if (!item.value?.id && !item.value?.documentId && !route.params.id) return;
+  const adId = item.value?.id ?? route.params.id;
+  if (!adId) return;
   try {
-    await strapiClient(`/ads/${item.value.id}/approve`, {
+    await strapiClient(`/ads/${adId}/approve`, {
       method: "PUT",
     });
     await fetchAd();
@@ -393,14 +400,19 @@ const handleDeleteImage = async ({ image }: { image: { id?: number } }) => {
   if (!result.isConfirmed) return;
 
   try {
+    const galleryItems = item.value?.gallery as
+      | Array<{ id?: number; url: string }>
+      | undefined;
     const galleryIds =
-      item.value?.gallery?.map(
-        (galleryImage: { id: number }) => galleryImage.id,
-      ) || [];
+      galleryItems
+        ?.map((g) => g.id)
+        .filter((id): id is number => id !== undefined) || [];
     const updatedGallery = galleryIds.filter((id: number) => id !== image.id);
 
     const adDocumentId =
-      item.value?.documentId || route.params.id || item.value?.id;
+      item.value?.documentId ||
+      (route.params.id as string) ||
+      item.value?.id?.toString();
     if (!adDocumentId) {
       await Swal.fire(
         "Error",
@@ -412,9 +424,9 @@ const handleDeleteImage = async ({ image }: { image: { id?: number } }) => {
 
     await strapi.update("ads", adDocumentId, {
       gallery: updatedGallery,
-    });
+    } as Record<string, unknown>);
 
-    await strapi.delete("upload/files", image.id);
+    await strapi.delete("upload/files", String(image.id));
 
     await fetchAd();
     await Swal.fire("Éxito", "Imagen eliminada correctamente.", "success");
@@ -428,16 +440,20 @@ const fetchAd = async () => {
   const id = route.params.id;
   if (!id) return;
   try {
-    const response = await strapi.findOne("ads", id as string, {
-      populate: {
-        category: true,
-        condition: true,
-        commune: true,
-        gallery: true,
-      },
-    });
+    const response = await strapi.findOne(
+      "ads",
+      id as string,
+      {
+        populate: {
+          category: true,
+          condition: true,
+          commune: true,
+          gallery: true,
+        },
+      } as Record<string, unknown>,
+    );
     if (response.data) {
-      item.value = response.data;
+      item.value = response.data as unknown as Ad;
     }
   } catch (error) {
     console.error("Error fetching ad:", error);
