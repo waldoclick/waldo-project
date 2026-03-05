@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: completed
-stopped_at: Completed 05-type-safety/05-02-PLAN.md
-last_updated: "2026-03-05T04:59:49.936Z"
+stopped_at: "Completed 05-type-safety/05-04-PLAN.md (awaiting checkpoint:human-verify)"
+last_updated: "2026-03-05T12:37:08.265Z"
 last_activity: 2026-03-04 — Roadmap created for v1.1
 progress:
   total_phases: 4
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 11
-  completed_plans: 9
+  completed_plans: 11
   percent: 0
 ---
 
@@ -65,6 +65,7 @@ Phases:
 | Phase 04-component-consolidation P02 | 10min | 3 tasks | 12 files |
 | Phase 05-type-safety P01 | 5min | 2 tasks | 5 files |
 | Phase 05-type-safety P02 | 10min | 2 tasks | 2 files |
+| Phase 05-type-safety P04 | 90min | 1 tasks | 59 files |
 
 ## Accumulated Context
 
@@ -99,6 +100,9 @@ Recent decisions affecting current work:
 - [Phase 05-type-safety]: Five authoritative domain type files in app/types/ — single source of truth for Ad, User, Order, Category, Pack
 - [Phase 05-type-safety]: Use Vue Component type for statusIconMap typing — LucideIcon is not exported from lucide-vue-next
 - [Phase 05-type-safety]: Use Record<string, unknown> for Strapi query params to avoid :any without requiring full Strapi query types
+- [Phase 05-type-safety]: Removed .nuxt from tsconfig exclude — required for vue-tsc to see Nuxt auto-import types
+- [Phase 05-type-safety]: Strapi SDK v5 cast pattern: response.data as T[], params as Record<string,unknown>, payload as unknown as Parameters<...>[N]
+- [Phase 05-type-safety]: Plugin types declared in plugins.d.ts augmenting NuxtApp — $recaptcha, $cookies, $checkSiteHealth, window.dataLayer
 
 ### Pending Todos
 
@@ -110,6 +114,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-05T04:59:49.934Z
-Stopped at: Completed 05-type-safety/05-02-PLAN.md
+Last session: 2026-03-05T12:37:08.263Z
+Stopped at: Completed 05-type-safety/05-04-PLAN.md (awaiting checkpoint:human-verify)
 Resume file: None
