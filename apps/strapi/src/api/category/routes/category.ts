@@ -6,6 +6,14 @@ export default {
   routes: [
     {
       method: "GET",
+      path: "/categories/ad-counts",
+      handler: "category.adCounts",
+      config: {
+        policies: [],
+      },
+    },
+    {
+      method: "GET",
       path: "/categories",
       handler: "category.find",
       config: {
