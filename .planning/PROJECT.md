@@ -26,12 +26,11 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ Las entidades del dominio (Ad, User, Order, Category) tienen tipos TypeScript compartidos — v1.1
 - ✓ Las llamadas N+1 en CategoriesDefault están eliminadas — v1.1
 - ✓ ChartSales obtiene datos agregados del servidor, no pagina todos los órdenes en cliente — v1.1
+- ✓ Eliminar double-fetch en todos los componentes non-ads del dashboard que tienen `onMounted` + `watch({ immediate: true })` coexistiendo — v1.2
 
 ### Active
 
-<!-- v1.2: Double-fetch elimination in non-ads dashboard components -->
-
-- [ ] Eliminar double-fetch en todos los componentes non-ads del dashboard que tienen `onMounted` + `watch({ immediate: true })` coexistiendo
+<!-- Next milestone requirements go here -->
 
 ### Out of Scope
 
@@ -50,6 +49,7 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - Dashboard (apps/dashboard): Nuxt 4, Pinia, @nuxtjs/strapi v2, SCSS custom; ~65 componentes, 3 stores, 14 plugins
 - v1.1 shipped: AdsTable generic component, canonical domain types, typeCheck: true, 3 Strapi aggregate endpoints
 - Aggregate endpoints added to Strapi in v1.1: `/api/categories/ad-counts`, `/api/orders/sales-by-month`, `/api/indicators/dashboard-stats`
+- v1.2 shipped: Eliminated `onMounted` double-fetch from all 10 non-ads dashboard components; `watch({ immediate: true })` is now sole data-loading trigger across the entire dashboard; `searchParams: any` replaced with `Record<string, unknown>` everywhere
 
 ## Constraints
 
@@ -86,12 +86,5 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-05**: Consolidar Reservations*/Featured* una vez que tengan store keys dedicados y estrategias de fetch alineadas
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
-## Current Milestone: v1.2 Double-Fetch Cleanup
-
-**Goal:** Eliminar el double-fetch en todos los componentes non-ads del dashboard aplicando el mismo patrón establecido en v1.1.
-
-**Target features:**
-- Eliminar `onMounted` redundante de todos los componentes que ya tienen `watch({ immediate: true })` como trigger de carga
-
 ---
-*Last updated: 2026-03-05 after v1.2 milestone start*
+*Last updated: 2026-03-05 after v1.2 milestone completion*
