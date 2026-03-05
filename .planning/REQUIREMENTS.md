@@ -54,10 +54,10 @@
 | DFX-04 | Phase 7 | Pending |
 | DFX-05 | Phase 7 | Pending |
 | DFX-06 | Phase 7 | Pending |
-| DFX-07 | Phase 7 | Pending |
-| DFX-08 | Phase 7 | Pending |
-| DFX-09 | Phase 7 | Pending |
-| DFX-10 | Phase 7 | Pending |
+| DFX-07 | Phase 8 | Pending |
+| DFX-08 | Phase 8 | Pending |
+| DFX-09 | Phase 8 | Pending |
+| DFX-10 | Phase 8 | Pending |
 
 **Coverage:**
 - v1.2 requirements: 10 total
@@ -66,4 +66,4 @@
 
 ---
 *Requirements defined: 2026-03-05*
-*Last updated: 2026-03-05 after initial definition*
+*Last updated: 2026-03-05 after roadmap creation*
