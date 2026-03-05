@@ -4,7 +4,7 @@ milestone: v1.2
 milestone_name: Double-Fetch Cleanup
 status: planning
 stopped_at: Completed 07-catalog-components-01-PLAN.md
-last_updated: "2026-03-05T22:32:15.000Z"
+last_updated: "2026-03-05T22:34:29.897Z"
 last_activity: 2026-03-05 — v1.2 roadmap created; phases 7-8 defined
 progress:
   total_phases: 2
