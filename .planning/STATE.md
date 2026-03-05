@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: completed
-stopped_at: Completed 05-type-safety/05-01-PLAN.md
-last_updated: "2026-03-05T04:56:54.339Z"
+stopped_at: Completed 05-type-safety/05-02-PLAN.md
+last_updated: "2026-03-05T04:59:49.936Z"
 last_activity: 2026-03-04 — Roadmap created for v1.1
 progress:
   total_phases: 4
   completed_phases: 2
   total_plans: 11
-  completed_plans: 8
+  completed_plans: 9
   percent: 0
 ---
 
@@ -64,6 +64,7 @@ Phases:
 | Phase 04-component-consolidation P02 | 5min | 2 tasks | 12 files |
 | Phase 04-component-consolidation P02 | 10min | 3 tasks | 12 files |
 | Phase 05-type-safety P01 | 5min | 2 tasks | 5 files |
+| Phase 05-type-safety P02 | 10min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -96,6 +97,8 @@ Recent decisions affecting current work:
 - [Phase 04-component-consolidation]: activos.vue passes :show-web-link=true to AdsTable — only page needing external link column
 - [Phase 05-type-safety]: OrderUser uses Pick<User> to stay in sync with canonical User interface without duplication
 - [Phase 05-type-safety]: Five authoritative domain type files in app/types/ — single source of truth for Ad, User, Order, Category, Pack
+- [Phase 05-type-safety]: Use Vue Component type for statusIconMap typing — LucideIcon is not exported from lucide-vue-next
+- [Phase 05-type-safety]: Use Record<string, unknown> for Strapi query params to avoid :any without requiring full Strapi query types
 
 ### Pending Todos
 
@@ -107,6 +110,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-05T04:56:54.337Z
-Stopped at: Completed 05-type-safety/05-01-PLAN.md
+Last session: 2026-03-05T04:59:49.934Z
+Stopped at: Completed 05-type-safety/05-02-PLAN.md
 Resume file: None
