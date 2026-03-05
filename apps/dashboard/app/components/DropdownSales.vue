@@ -64,14 +64,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue";
 import { ShoppingBag, ExternalLink } from "lucide-vue-next";
-
-interface Order {
-  id: number;
-  buy_order?: string;
-  amount: number | string;
-  createdAt: string;
-  user?: { username?: string; email?: string };
-}
+import type { Order } from "@/types/order";
 
 const strapi = useStrapi();
 
