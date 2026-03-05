@@ -34,7 +34,10 @@ Archive: `.planning/milestones/v1.1-ROADMAP.md`
   2. `UsersDefault.vue`, `RegionsDefault.vue`, `FaqsDefault.vue`, `CommunesDefault.vue`, `ConditionsDefault.vue` tienen el mismo comportamiento: un único fetch al renderizar
   3. Ninguno de los 6 componentes dispara una segunda llamada de red al refrescar filtros o paginación por primera vez
   4. La build del dashboard pasa `typeCheck: true` sin errores nuevos introducidos por estos cambios
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 07-01-PLAN.md — Remove onMounted + fix searchParams types in all 6 catalog components; verify build
 
 ### Phase 8: Transactional Components
 **Goal**: Los componentes de reservas y destacados no ejecutan fetch doble al montar
@@ -53,5 +56,5 @@ Archive: `.planning/milestones/v1.1-ROADMAP.md`
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 7. Catalog Components | v1.2 | 0/TBD | Not started | - |
+| 7. Catalog Components | v1.2 | 0/1 | Not started | - |
 | 8. Transactional Components | v1.2 | 0/TBD | Not started | - |
