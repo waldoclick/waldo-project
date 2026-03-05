@@ -3,12 +3,12 @@
 @use "../base/container";
 
 .ads {
-  &--pendings,
-  &--actives,
-  &--archived,
-  &--abandoned,
-  &--banned,
-  &--rejected {
+  &--adsPendings,
+  &--adsActives,
+  &--adsArchived,
+  &--adsAbandoned,
+  &--adsBanned,
+  &--adsRejected {
     padding: 50px 0;
 
     &__container {
