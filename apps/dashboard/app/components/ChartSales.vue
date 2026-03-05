@@ -60,6 +60,7 @@ import {
   PointElement,
 } from "chart.js";
 import annotationPlugin from "chartjs-plugin-annotation";
+import type { Order } from "@/types/order";
 
 ChartJS.register(
   CategoryScale,
@@ -154,12 +155,6 @@ ChartJS.register(gridAndHoverPlugin);
 interface SalesByMonthData {
   mes: string;
   monto: number;
-}
-
-interface Order {
-  id: number;
-  amount: number;
-  createdAt: string;
 }
 
 const monthNames = [
