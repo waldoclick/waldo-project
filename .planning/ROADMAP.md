@@ -48,7 +48,10 @@ Plans:
   2. `FeaturedFree.vue` y `FeaturedUsed.vue` cargan datos exactamente una vez al montar
   3. El comportamiento visible desde el dashboard (listados, filtros, paginación) no cambia respecto al estado anterior
   4. La build del dashboard pasa `typeCheck: true` sin errores nuevos
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 08-01-PLAN.md — Remove onMounted + fix searchParams types in all 4 transactional components; verify build
 
 ## Progress
 
@@ -57,4 +60,4 @@ Plans:
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 7. Catalog Components | 1/1 | Complete   | 2026-03-05 | - |
-| 8. Transactional Components | v1.2 | 0/TBD | Not started | - |
+| 8. Transactional Components | v1.2 | 0/1 | Not started | - |
