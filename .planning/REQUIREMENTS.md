@@ -34,7 +34,7 @@
 
 ### Component Consolidation
 
-- [ ] **COMP-01**: Un componente `AdsTable.vue` genérico reemplaza los 6 componentes `Ads*` duplicados (`AdsPendings`, `AdsActives`, `AdsArchived`, `AdsBanned`, `AdsRejected`, `AdsAbandoned`)
+- [x] **COMP-01**: Un componente `AdsTable.vue` genérico reemplaza los 6 componentes `Ads*` duplicados (`AdsPendings`, `AdsActives`, `AdsArchived`, `AdsBanned`, `AdsRejected`, `AdsAbandoned`)
 - [ ] **COMP-02**: Las páginas de avisos renderizan `<AdsTable>` con props (`endpoint`, `status`) en lugar de su componente específico
 - [ ] **COMP-03**: El comportamiento observable de cada vista de avisos es idéntico al pre-refactor (mismos filtros, paginación, acciones)
 - [ ] **COMP-04**: El mismo patrón de consolidación se aplica a `Reservations*` y `Featured*` si el análisis detallado confirma duplicación equivalente
@@ -96,7 +96,7 @@
 | QUICK-05 | Phase 3 | Complete |
 | QUICK-06 | Phase 3 | Complete |
 | QUICK-07 | Phase 3 | Complete |
-| COMP-01 | Phase 4 | Pending |
+| COMP-01 | Phase 4 | Complete |
 | COMP-02 | Phase 4 | Pending |
 | COMP-03 | Phase 4 | Pending |
 | COMP-04 | Phase 4 | Pending |
