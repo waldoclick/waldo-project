@@ -105,13 +105,7 @@ import TableRow from "@/components/TableRow.vue";
 import TableCell from "@/components/TableCell.vue";
 import BadgeDefault from "@/components/BadgeDefault.vue";
 import PaginationDefault from "@/components/PaginationDefault.vue";
-
-interface Category {
-  id: number;
-  name: string;
-  color?: string;
-  updatedAt: string;
-}
+import type { Category } from "@/types/category";
 
 const settingsStore = useSettingsStore();
 const section = "categories" as const;
@@ -140,7 +134,7 @@ const fetchCategories = async () => {
     loading.value = true;
     const strapi = useStrapi();
 
-    const searchParams: any = {
+    const searchParams: Record<string, unknown> = {
       pagination: {
         page: settingsStore.categories.currentPage,
         pageSize: settingsStore.categories.pageSize,

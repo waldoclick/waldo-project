@@ -184,7 +184,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, type Component } from "vue";
+import type { Ad, AdStatus } from "@/types/ad";
 import { useRoute } from "vue-router";
 import HeroDefault from "@/components/HeroDefault.vue";
 import BoxContent from "@/components/BoxContent.vue";
@@ -207,7 +208,7 @@ definePageMeta({
 });
 
 const route = useRoute();
-const item = ref<any>(null);
+const item = ref<Ad | null>(null);
 const { public: publicConfig } = useRuntimeConfig();
 const websiteUrl =
   (publicConfig.websiteUrl as string) || "http://localhost:3000";
@@ -216,15 +217,8 @@ const strapiClient = useStrapiClient();
 const { Swal } = useSweetAlert2();
 
 const title = computed(() => item.value?.name || "Anuncio");
-type AdStatus =
-  | "pending"
-  | "active"
-  | "archived"
-  | "banned"
-  | "rejected"
-  | "abandoned";
 
-const statusIconMap: Record<AdStatus, any> = {
+const statusIconMap: Record<AdStatus, Component> = {
   pending: Clock,
   active: CheckCircle,
   archived: AlertCircle,
@@ -293,7 +287,7 @@ const formatAddress = (address: string, addressNumber: string) => {
   return addressNumber ? `${address} ${addressNumber}` : address;
 };
 
-const getStatusText = (ad: any) => {
+const getStatusText = (ad: Ad) => {
   if (!ad?.status) return "--";
   return statusLabels[ad.status] || ad.status;
 };

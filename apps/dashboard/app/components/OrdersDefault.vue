@@ -119,7 +119,7 @@ const { data: ordersResponse } = await useAsyncData(
           pageSize: settingsStore.orders.pageSize,
         },
 
-        sort: sortParam.value as any,
+        sort: sortParam.value as string,
         populate: ["user", "ad"],
       })) as unknown as {
         data?: Order[];
