@@ -47,8 +47,8 @@
 
 ### Performance
 
-- [ ] **PERF-01**: `CategoriesDefault.vue` obtiene el conteo de avisos por categoría en una sola llamada a Strapi (no N llamadas paralelas)
-- [ ] **PERF-02**: `ChartSales.vue` obtiene datos de ventas agregados por mes desde un endpoint de Strapi, no paginando todos los órdenes en el cliente
+- [x] **PERF-01**: `CategoriesDefault.vue` obtiene el conteo de avisos por categoría en una sola llamada a Strapi (no N llamadas paralelas)
+- [x] **PERF-02**: `ChartSales.vue` obtiene datos de ventas agregados por mes desde un endpoint de Strapi, no paginando todos los órdenes en el cliente
 - [x] **PERF-03**: `StatisticsDefault.vue` las 16 llamadas paralelas están revisadas y consolidadas donde sea posible sin romper el layout de tarjetas
 
 ## Future Requirements
@@ -103,8 +103,8 @@
 | TYPE-01 | Phase 5 | Complete |
 | TYPE-02 | Phase 5 | Complete |
 | TYPE-03 | Phase 5 | Complete |
-| PERF-01 | Phase 6 | Pending |
-| PERF-02 | Phase 6 | Pending |
+| PERF-01 | Phase 6 | Complete |
+| PERF-02 | Phase 6 | Complete |
 | PERF-03 | Phase 6 | Complete |
 
 **Coverage:**
