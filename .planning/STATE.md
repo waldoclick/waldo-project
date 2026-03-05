@@ -1,127 +1,67 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.1
-milestone_name: milestone
-status: completed
-stopped_at: Completed 06-performance/06-01-PLAN.md
-last_updated: "2026-03-05T17:42:48.523Z"
-last_activity: 2026-03-04 — Roadmap created for v1.1
+milestone_name: Dashboard Technical Debt Reduction
+status: complete
+stopped_at: Milestone v1.1 archived
+last_updated: "2026-03-05T00:00:00.000Z"
+last_activity: 2026-03-05 — v1.1 milestone complete
 progress:
   total_phases: 4
   completed_phases: 4
   total_plans: 15
   completed_plans: 15
-  percent: 0
+  percent: 100
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-04)
+See: .planning/PROJECT.md (updated 2026-03-05 after v1.1 milestone)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Milestone v1.1 — Roadmap defined, ready to plan Phase 3
+**Current focus:** v1.1 complete — ready for `/gsd:new-milestone`
 
 ## Current Position
 
-Phase: Phase 3 (not started — next up)
+Phase: —
 Plan: —
-Status: Roadmap complete, awaiting plan-phase
-Last activity: 2026-03-04 — Roadmap created for v1.1
+Status: v1.1 milestone archived
+Last activity: 2026-03-05 — v1.1 milestone complete
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [██████████] 100%
 
 Phases:
-- [ ] Phase 3: Quick Wins
-- [ ] Phase 4: Component Consolidation
-- [ ] Phase 5: Type Safety
-- [ ] Phase 6: Performance
-
-## Performance Metrics
-
-**Velocity:**
-- Total plans completed: 0
-- Average duration: -
-- Total execution time: 0 hours
-
-**By Phase:**
-
-| Phase | Plans | Total | Avg/Plan |
-|-------|-------|-------|----------|
-| 3. Quick Wins | - | - | - |
-| 4. Component Consolidation | - | - | - |
-| 5. Type Safety | - | - | - |
-| 6. Performance | - | - | - |
-
-*Updated after each plan completion*
-| Phase 03-quick-wins P03 | 1 | 2 tasks | 2 files |
-| Phase 03-quick-wins P02 | 2 | 2 tasks | 3 files |
-| Phase 03-quick-wins P04 | 2min | 2 tasks | 3 files |
-| Phase 03-quick-wins P01 | 4 | 2 tasks | 7 files |
-| Phase 04-component-consolidation P01 | 2 | 1 tasks | 1 files |
-| Phase 04-component-consolidation P03 | 3min | 1 tasks | 1 files |
-| Phase 04-component-consolidation P02 | 5min | 2 tasks | 12 files |
-| Phase 04-component-consolidation P02 | 10min | 3 tasks | 12 files |
-| Phase 05-type-safety P01 | 5min | 2 tasks | 5 files |
-| Phase 05-type-safety P02 | 10min | 2 tasks | 2 files |
-| Phase 05-type-safety P04 | 90min | 1 tasks | 59 files |
-| Phase 05-type-safety P05 | 2min | 2 tasks | 4 files |
-| Phase 06-performance P02 | 5min | 1 tasks | 2 files |
-| Phase 06-performance P01 | 5min | 2 tasks | 4 files |
+- [x] Phase 3: Quick Wins
+- [x] Phase 4: Component Consolidation
+- [x] Phase 5: Type Safety
+- [x] Phase 6: Performance
 
 ## Accumulated Context
 
 ### Decisions
 
-Decisions are logged in PROJECT.md Key Decisions table.
-Recent decisions affecting current work:
+All decisions from v1.1 are logged in PROJECT.md Key Decisions table.
 
-- [v1.0] IPaymentGateway uses `gatewayRef` (not `token`) — protocol-agnostic; TransbankAdapter maps internally
-- [v1.0] FlowService (Pro subscriptions) excluded — separate domain
-- [v1.0] process.env.PAYMENT_GATEWAY ?? "transbank" pattern — zero code changes to switch gateways
-- [v1.1] AdsTable generic component replaces 6 duplicated Ads* components — ~1,200 lines eliminated
-- [v1.1] Shared domain types in app/types/ — single source of truth for Ad, User, Order, Category, Pack
-- [v1.1] PERF-01 and PERF-02 require Strapi aggregate endpoints — creating them is in scope for Phase 6 if absent
-- [Phase 03-quick-wins]: Pass error directly to Sentry.captureException without wrapping to preserve stack traces
-- [Phase 03-quick-wins]: No NODE_ENV guards in useLogger — Sentry SDK handles dev/prod distinction via its own init
-- [Phase 03-quick-wins]: console.error preserved in production so Sentry browser SDK can capture runtime errors
-- [Phase 03-quick-wins]: Pin vue to 3.5.25 and vue-router to 4.6.3 (exact installed versions) to ensure deterministic installs
-- [Phase 03-quick-wins]: Delete auth.ts — guard.global.ts provides equivalent global auth protection with zero page references to named middleware
-- [Phase 03-quick-wins]: Remove vue-recaptcha and vue3-recaptcha-v2 — recaptcha.client.ts plugin loads Google SDK directly, no npm packages needed
-- [Phase 03-quick-wins]: Website-only state (isSearchLightboxActive, isLoginLightboxActive, contactFormSent) removed from AppStore — confirmed zero dashboard usage before removal
-- [Phase 03-quick-wins]: Six dedicated ads section keys replace shared 'ads' key in settings store — each ads status view has isolated pagination/filter state
-- [Phase 03-quick-wins]: watch with immediate:true is the sole data-loading trigger; onMounted fetch removed from all six Ads components to eliminate double API call on mount
-- [Phase 04-component-consolidation]: AdsTable uses computed sectionSettings = computed(() => settingsStore[props.section]) for dynamic section access; showWebLink boolean prop controls ExternalLink rendering; dynamic BEM class bindings preserve section-specific CSS isolation
-- [Phase 04-component-consolidation][COMP-04]: ReservationsFree/ReservationsUsed and FeaturedFree/FeaturedUsed are deferred from consolidation. Analysis: (1) both pairs share a single store section key ("reservations" / "featured") — a generic component would cause pagination state conflicts between the two views; (2) ReservationsUsed uses client-side pagination over 1,000 fetched records while ReservationsFree uses server-side pagination — incompatible fetch strategies; (3) the "Used" variants have an extra "Anuncio" column requiring configurable column schemas. The AdsTable consolidation pattern does not apply because all three prerequisites (shared column schema, independent store keys, identical fetch strategy) are absent. Prerequisites for future consolidation: add dedicated store section keys per sub-view, align fetch strategies, then introduce a columns prop.
-- [Phase 04-component-consolidation]: ReservationsFree/ReservationsUsed and FeaturedFree/FeaturedUsed deferred from consolidation: shared store keys cause pagination conflicts, incompatible fetch strategies, and differing column schemas disqualify the AdsTable pattern
-- [Phase 04-component-consolidation]: All six Ads* dedicated component files deleted after pages migrated — AdsTable.vue is the sole Ads*.vue component
-- [Phase 04-component-consolidation]: activos.vue passes :show-web-link=true to AdsTable — only page needing external link column
-- [Phase 04-component-consolidation]: All six Ads* dedicated component files deleted after pages migrated — AdsTable.vue is the sole Ads*.vue component
-- [Phase 04-component-consolidation]: activos.vue passes :show-web-link=true to AdsTable — only page needing external link column
-- [Phase 05-type-safety]: OrderUser uses Pick<User> to stay in sync with canonical User interface without duplication
-- [Phase 05-type-safety]: Five authoritative domain type files in app/types/ — single source of truth for Ad, User, Order, Category, Pack
-- [Phase 05-type-safety]: Use Vue Component type for statusIconMap typing — LucideIcon is not exported from lucide-vue-next
-- [Phase 05-type-safety]: Use Record<string, unknown> for Strapi query params to avoid :any without requiring full Strapi query types
-- [Phase 05-type-safety]: Removed .nuxt from tsconfig exclude — required for vue-tsc to see Nuxt auto-import types
-- [Phase 05-type-safety]: Strapi SDK v5 cast pattern: response.data as T[], params as Record<string,unknown>, payload as unknown as Parameters<...>[N]
-- [Phase 05-type-safety]: Plugin types declared in plugins.d.ts augmenting NuxtApp — $recaptcha, $cookies, $checkSiteHealth, window.dataLayer
-- [Phase 05-type-safety]: PendingAd = Omit<Ad, 'user'> & { user?: { username?: string; email?: string } } for DropdownPendings — narrowing over canonical Ad to match Strapi /ads/pendings response shape without inline redeclaration
-- [Phase 06-performance]: dashboardStats uses Promise.all for 16 parallel DB count queries server-side, eliminating 15 HTTP round trips vs. individual dashboard calls
-- [Phase 06-performance]: GET /indicators/dashboard-stats route placed before /:id wildcard to prevent route masking
-- [Phase 06-performance]: Parallel Promise.all for per-category ad counts — reduces N sequential network round trips from client to 1, with N parallel DB queries server-side
-- [Phase 06-performance]: limit:-1 on findMany for salesByMonth — fetches all orders for the year in one query, aggregated server-side by month index
+Key patterns established in v1.1 (carry forward):
+- `watch({ immediate: true })` as sole data-loading trigger — never pair with onMounted
+- Per-entity section keys in settings store — never share a key between distinct list views
+- Strapi SDK v5 cast pattern: `response.data as T[]`, params as `Record<string,unknown>`, payload double-cast
+- Aggregate endpoint pattern: `findMany` with `limit:-1` + server-side aggregation
+- Custom Strapi route ordering: specific paths before parameterized paths
+- `Omit<DomainType, field>` narrowing for API response shape compatibility
 
 ### Pending Todos
 
-- Plan Phase 3 (Quick Wins) — next step
+- Run `/gsd:new-milestone` to define v1.2 requirements and roadmap
 
 ### Blockers/Concerns
 
-- PERF-01 / PERF-02: Success depends on Strapi aggregate endpoints existing or being created. Verify during Phase 6 planning whether endpoints exist or need to be built (note: PROJECT.md says no Strapi changes — this constraint may need to be revisited for PERF-01/PERF-02).
+None.
 
 ## Session Continuity
 
-Last session: 2026-03-05T17:26:58.979Z
-Stopped at: Completed 06-performance/06-01-PLAN.md
+Last session: 2026-03-05
+Stopped at: Milestone v1.1 archived
 Resume file: None
