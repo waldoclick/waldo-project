@@ -76,7 +76,12 @@ Plans:
   1. `CategoriesDefault.vue` triggers one Strapi call that returns per-category ad counts — the network tab shows no parallel N calls for individual category counts (requires a Strapi endpoint that returns aggregated counts; creating this endpoint is in scope for this phase if it does not already exist)
   2. `ChartSales.vue` fetches a single pre-aggregated monthly sales dataset from Strapi — it does not paginate through raw order records on the client (requires a Strapi aggregate endpoint; in scope to create if absent)
   3. `StatisticsDefault.vue`'s parallel calls are audited; any that can be served by a single endpoint are consolidated, and the reduction in call count is documented — the statistics card layout is unchanged
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 06-01-PLAN.md — Create Strapi aggregate endpoints for category ad-counts and order sales-by-month (PERF-01, PERF-02)
+- [ ] 06-02-PLAN.md — Create Strapi dashboard-stats endpoint consolidating all 16 StatisticsDefault counts (PERF-03)
+- [ ] 06-03-PLAN.md — Update CategoriesDefault, ChartSales, and StatisticsDefault to use aggregate endpoints (PERF-01, PERF-02, PERF-03)
 
 ## Progress
 
@@ -88,4 +93,4 @@ Phases execute in numeric order: 3 → 4 → 5 → 6
 | 3. Quick Wins | 4/4 | Complete   | 2026-03-04 |
 | 4. Component Consolidation | 3/3 | Complete   | 2026-03-05 |
 | 5. Type Safety | 4/4 | Complete   | 2026-03-05 |
-| 6. Performance | 0/? | Not started | - |
+| 6. Performance | 0/3 | Not started | - |
