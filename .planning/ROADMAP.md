@@ -45,10 +45,12 @@ Archive: `.planning/milestones/v1.2-ROADMAP.md`
   2. No component or page in `apps/dashboard` contains an inline definition of `formatDate` or `formatDateShort`
   3. All 33 previously-inline call sites render dates identically to before (no visual regression)
   4. `nuxt typecheck` passes with zero TypeScript errors after replacements
-**Plans**: 3 plans
+**Plans**: 5 plans
 - [ ] 09-01-utils-setup-PLAN.md — Create date utilities and tests
-- [ ] 09-02-utils-replace-components-PLAN.md — Replace inline formatters in components
-- [ ] 09-03-utils-replace-pages-PLAN.md — Replace inline formatters in pages
+- [ ] 09-02-utils-replace-components-PLAN.md — Replace inline formatters in components (Part 1)
+- [ ] 09-03-utils-replace-components-part2-PLAN.md — Replace inline formatters in components (Part 2)
+- [ ] 09-04-utils-replace-pages-PLAN.md — Replace inline formatters in pages (Part 1)
+- [ ] 09-05-utils-replace-pages-part2-PLAN.md — Replace inline formatters in pages (Part 2)
 
 ### Phase 10: Price Utilities
 **Goal**: Developers import currency formatting from a single source; no inline currency formatters exist anywhere in the dashboard
@@ -78,6 +80,6 @@ Archive: `.planning/milestones/v1.2-ROADMAP.md`
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 9. Date Utilities | v1.3 | 0/3 | Not started | - |
+| 9. Date Utilities | v1.3 | 0/5 | Not started | - |
 | 10. Price Utilities | v1.3 | 0/? | Not started | - |
 | 11. String Utilities | v1.3 | 0/? | Not started | - |
