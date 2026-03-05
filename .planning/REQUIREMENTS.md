@@ -41,7 +41,7 @@
 
 ### Type Safety
 
-- [ ] **TYPE-01**: Los tipos de dominio principales (`Ad`, `User`, `Order`, `Category`, `Pack`) están definidos en `app/types/` y compartidos entre componentes
+- [x] **TYPE-01**: Los tipos de dominio principales (`Ad`, `User`, `Order`, `Category`, `Pack`) están definidos en `app/types/` y compartidos entre componentes
 - [ ] **TYPE-02**: Los componentes consolidados (`AdsTable`, páginas de avisos) usan los tipos compartidos en lugar de `any` o interfaces inline
 - [ ] **TYPE-03**: `typeCheck: true` está habilitado en `nuxt.config.ts` y el build pasa sin errores de tipo
 
@@ -100,7 +100,7 @@
 | COMP-02 | Phase 4 | Complete |
 | COMP-03 | Phase 4 | Complete |
 | COMP-04 | Phase 4 | Complete |
-| TYPE-01 | Phase 5 | Pending |
+| TYPE-01 | Phase 5 | Complete |
 | TYPE-02 | Phase 5 | Pending |
 | TYPE-03 | Phase 5 | Pending |
 | PERF-01 | Phase 6 | Pending |
