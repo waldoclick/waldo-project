@@ -4,7 +4,7 @@ milestone: v1.2
 milestone_name: Double-Fetch Cleanup
 status: completed
 stopped_at: Completed 08-transactional-components/08-01-PLAN.md
-last_updated: "2026-03-05T22:57:58.131Z"
+last_updated: "2026-03-05T23:02:41.283Z"
 last_activity: 2026-03-05 — Phase 8 plan 01 complete; v1.2 milestone finished
 progress:
   total_phases: 2
@@ -21,7 +21,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-05)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 8 — Transactional Components (v1.2 Double-Fetch Cleanup — COMPLETE)
+**Current focus:** Planning next milestone
 
 ## Current Position
 

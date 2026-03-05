@@ -45,6 +45,40 @@
 
 ---
 
+## Milestone: v1.2 — Double-Fetch Cleanup
+
+**Shipped:** 2026-03-05
+**Phases:** 2 (7-8) | **Plans:** 2 | **Timeline:** ~28 minutes
+
+### What Was Built
+- `onMounted` eliminated from all 10 remaining non-ads dashboard components (6 catalog + 4 transactional)
+- `watch({ immediate: true })` is now the sole data-loading trigger across the entire dashboard
+- `searchParams: any` replaced with `Record<string, unknown>` in all 10 files (Strapi SDK v5 pattern)
+- TS18046 narrowing error resolved via explicit cast: `(searchParams.filters as Record<string, unknown>).$or`
+
+### What Worked
+- Purely subtractive approach: zero new code added, zero behavior changes — this is the safest possible refactor
+- Pattern was already established in v1.1 (AdsTable + Phase 7 catalog components) so Phase 8 was mechanical
+- The `typeCheck: true` build gate (enabled in v1.1) immediately caught the TS18046 narrowing regression — proving its value
+
+### What Was Inefficient
+- The TS18046 error was foreseeable: changing `any` to `Record<string, unknown>` for a nested mutation always requires a cast. Could have been caught by reading the component code more carefully before executing. Low cost in practice (~2 min fix), but preventable with a quick pre-read.
+
+### Patterns Established
+- `(searchParams.filters as Record<string, unknown>).$or = [...]` — canonical cast for nested `Record<string, unknown>` property mutation with vue-tsc strict mode
+- ReservationsUsed.vue dual-watch pattern preserved: primary fetch watch + secondary page-bounds watch are intentionally separate
+
+### Key Lessons
+1. **`any` → `Record<string, unknown>` always requires nested cast.** When a property is typed as `unknown`, sub-property access fails strict typeCheck. Anticipate and pre-cast in the same commit.
+2. **Purely subtractive refactors are the fastest path to correctness.** v1.2 took 28 minutes because it added nothing — just removed the duplicate trigger.
+
+### Cost Observations
+- Model mix: ~100% sonnet
+- Sessions: 1 (both phases in single execute-phase run)
+- Notable: Fastest milestone to date — 2 phases, 28 minutes total wall time
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -53,6 +87,7 @@
 |-----------|--------|-------|------------|
 | v1.0 | 2 | 4 | Initial payment gateway abstraction |
 | v1.1 | 4 | 15 | First full GSD workflow with wave parallelization |
+| v1.2 | 2 | 2 | Pattern application: extend v1.1 cleanup to remaining components |
 
 ### Cumulative Quality
 
@@ -60,8 +95,10 @@
 |-----------|-------|-----------|-------------------|
 | v1.0 | none | false | 0 |
 | v1.1 | none | true | 1 (vue-tsc) |
+| v1.2 | none | true | 0 |
 
 ### Top Lessons (Verified Across Milestones)
 
 1. Keep Strapi as the single business logic layer — frontend stays stateless and swappable
 2. Establish canonical types and patterns early; deferred type debt compounds across components
+3. `typeCheck: true` catches regressions immediately — v1.2 TS18046 error caught in same commit cycle
