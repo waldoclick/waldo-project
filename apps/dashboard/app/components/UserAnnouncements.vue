@@ -63,13 +63,7 @@ import TableDefault from "@/components/TableDefault.vue";
 import TableRow from "@/components/TableRow.vue";
 import TableCell from "@/components/TableCell.vue";
 import PaginationDefault from "@/components/PaginationDefault.vue";
-
-interface Ad {
-  id: number;
-  name: string;
-  createdAt: string;
-  gallery?: Array<{ url: string; formats?: any }>;
-}
+import type { Ad, AdGalleryItem } from "@/types/ad";
 
 const props = defineProps<{
   userId: string | number;
@@ -116,7 +110,7 @@ const formatDate = (dateString: string) => {
 
 const { transformUrl } = useImageProxy();
 
-const getImageUrl = (image: { url: string; formats?: any }) => {
+const getImageUrl = (image: AdGalleryItem) => {
   if (!image) return "";
   const imageUrl = image.formats?.thumbnail?.url || image.url;
   if (!imageUrl) return "";
