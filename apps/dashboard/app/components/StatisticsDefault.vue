@@ -180,87 +180,35 @@ const counts = ref({
 
 const countsLoading = ref(true);
 
-const fetchCount = async (
-  strapi: ReturnType<typeof useStrapi>,
-  collection: string,
-  params?: { filters?: Record<string, unknown> },
-): Promise<number> => {
-  try {
-    const res = await strapi.find(collection, {
-      pagination: { page: 1, pageSize: 1 },
-      ...params,
-    } as Parameters<ReturnType<typeof useStrapi>["find"]>[1]);
-    return (res.meta?.pagination as { total?: number })?.total ?? 0;
-  } catch {
-    return 0;
-  }
-};
-
 onMounted(async () => {
   const strapi = useStrapi();
   try {
     countsLoading.value = true;
-    const [
-      pending,
-      published,
-      archived,
-      rejected,
-      reservasUsadas,
-      reservasLibres,
-      destacadosUsados,
-      destacadosLibres,
-      ordenes,
-      usuarios,
-      categorias,
-      condiciones,
-      faqs,
-      packs,
-      regiones,
-      comunas,
-    ] = await Promise.all([
-      fetchCount(strapi, "ads/pendings"),
-      fetchCount(strapi, "ads/actives"),
-      fetchCount(strapi, "ads/archiveds"),
-      fetchCount(strapi, "ads/rejecteds"),
-      fetchCount(strapi, "ad-reservations", {
-        filters: { ad: { $notNull: true } },
-      }),
-      fetchCount(strapi, "ad-reservations", {
-        filters: { ad: { $null: true } },
-      }),
-      fetchCount(strapi, "ad-featured-reservations", {
-        filters: { ad: { $notNull: true } },
-      }),
-      fetchCount(strapi, "ad-featured-reservations", {
-        filters: { ad: { $null: true }, price: { $eq: "0" } },
-      }),
-      fetchCount(strapi, "orders"),
-      fetchCount(strapi, "users"),
-      fetchCount(strapi, "categories"),
-      fetchCount(strapi, "conditions"),
-      fetchCount(strapi, "faqs"),
-      fetchCount(strapi, "ad-packs"),
-      fetchCount(strapi, "regions"),
-      fetchCount(strapi, "communes"),
-    ]);
-    counts.value = {
-      pending,
-      published,
-      archived,
-      rejected,
-      reservasUsadas,
-      reservasLibres,
-      destacadosUsados,
-      destacadosLibres,
-      ordenes,
-      usuarios,
-      categorias,
-      condiciones,
-      faqs,
-      packs,
-      regiones,
-      comunas,
-    };
+    const res = await strapi.find(
+      "indicators/dashboard-stats" as any,
+      {} as any,
+    );
+    const data = (res as any).data as typeof counts.value;
+    if (data) {
+      counts.value = {
+        pending: data.pending ?? 0,
+        published: data.published ?? 0,
+        archived: data.archived ?? 0,
+        rejected: data.rejected ?? 0,
+        reservasUsadas: data.reservasUsadas ?? 0,
+        reservasLibres: data.reservasLibres ?? 0,
+        destacadosUsados: data.destacadosUsados ?? 0,
+        destacadosLibres: data.destacadosLibres ?? 0,
+        ordenes: data.ordenes ?? 0,
+        usuarios: data.usuarios ?? 0,
+        categorias: data.categorias ?? 0,
+        condiciones: data.condiciones ?? 0,
+        faqs: data.faqs ?? 0,
+        packs: data.packs ?? 0,
+        regiones: data.regiones ?? 0,
+        comunas: data.comunas ?? 0,
+      };
+    }
   } catch (error) {
     console.error("Error fetching statistics counts:", error);
   } finally {

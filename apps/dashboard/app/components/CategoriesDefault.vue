@@ -94,7 +94,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Eye, Pencil } from "lucide-vue-next";
 import { useSettingsStore } from "@/stores/settings.store";
@@ -157,61 +157,27 @@ const fetchCategories = async () => {
     paginationMeta.value = (response.meta?.pagination ||
       null) as typeof paginationMeta.value;
 
-    // Fetch ads count for each category
-    await fetchAdsCountByCategory();
+    // Fetch all ad counts in a single request
+    const countsResponse = await strapi.find(
+      "categories/ad-counts" as any,
+      {} as any,
+    );
+    const countsData = Array.isArray((countsResponse as any).data)
+      ? ((countsResponse as any).data as Array<{
+          categoryId: number;
+          count: number;
+        }>)
+      : [];
+    const counts: Record<number, number> = {};
+    for (const entry of countsData) {
+      counts[entry.categoryId] = entry.count;
+    }
+    adsCountByCategory.value = counts;
   } catch (error) {
     console.error("Error fetching categories:", error);
     allCategories.value = [];
   } finally {
     loading.value = false;
-  }
-};
-
-const fetchAdsCountByCategory = async () => {
-  try {
-    const strapi = useStrapi();
-    const counts: Record<number, number> = {};
-
-    // Fetch ads count for each category in parallel
-    const countPromises = allCategories.value.map(async (category) => {
-      try {
-        const adsResponse = await strapi.find("ads", {
-          filters: {
-            category: {
-              id: {
-                $eq: category.id,
-              },
-            },
-          } as Record<string, unknown>,
-          pagination: {
-            page: 1,
-            pageSize: 1,
-          } as Record<string, unknown>,
-        } as Record<string, unknown>);
-        return {
-          categoryId: category.id,
-          count: adsResponse.meta?.pagination?.total || 0,
-        };
-      } catch (error) {
-        console.error(
-          `Error fetching ads count for category ${category.id}:`,
-          error,
-        );
-        return {
-          categoryId: category.id,
-          count: 0,
-        };
-      }
-    });
-
-    const results = await Promise.all(countPromises);
-    for (const { categoryId, count } of results) {
-      counts[categoryId] = count;
-    }
-
-    adsCountByCategory.value = counts;
-  } catch (error) {
-    console.error("Error fetching ads count by category:", error);
   }
 };
 
@@ -283,8 +249,4 @@ watch(
   },
   { immediate: true },
 );
-
-onMounted(() => {
-  fetchCategories();
-});
 </script>
