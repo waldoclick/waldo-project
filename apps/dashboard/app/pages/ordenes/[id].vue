@@ -137,17 +137,6 @@ const formatCurrency = (amount: number | string) => {
   }).format(numAmount);
 };
 
-const formatDate = (dateString: string | undefined) => {
-  if (!dateString) return "--";
-  return new Date(dateString).toLocaleString("es-CL", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-};
-
 const getPaymentMethod = (method: string | undefined) => {
   if (!method) return "--";
   return method === "webpay" ? "WebPay" : method;

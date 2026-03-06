@@ -61,17 +61,6 @@ const breadcrumbs = computed(() => [
   ...(item.value?.title ? [{ label: item.value.title }] : []),
 ]);
 
-const formatDate = (dateString: string | undefined) => {
-  if (!dateString) return "--";
-  return new Date(dateString).toLocaleString("es-CL", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-};
-
 const { data: faqData } = await useAsyncData(
   `faq-${route.params.id}`,
   async () => {
