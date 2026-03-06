@@ -264,7 +264,7 @@ const getImageUrl = (image: AdGalleryItem) => {
 const router = useRouter();
 
 const handleViewAd = (adId: number) => {
-  router.push(`/anuncios/${adId}`);
+  router.push(`/ads/${adId}`);
 };
 
 // Watch para recargar cuando cambian los filtros o la búsqueda

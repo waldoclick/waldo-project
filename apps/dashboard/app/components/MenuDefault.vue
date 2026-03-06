@@ -26,9 +26,9 @@
       <!-- Órdenes -->
       <li
         class="menu--default__item"
-        :class="{ 'menu--default__item--active': isRouteActive('/ordenes') }"
+        :class="{ 'menu--default__item--active': isRouteActive('/orders') }"
       >
-        <NuxtLink to="/ordenes" class="menu--default__link">
+        <NuxtLink to="/orders" class="menu--default__link">
           <ShoppingCart class="menu--default__icon" />
           <span>Órdenes</span>
         </NuxtLink>
@@ -38,32 +38,32 @@
       <li
         class="menu--default__item"
         :class="{
-          'menu--default__item--active': isRouteActive('/anuncios'),
-          'menu--default__item--expanded': openMenu === 'anuncios',
+          'menu--default__item--active': isRouteActive('/ads'),
+          'menu--default__item--expanded': openMenu === 'ads',
         }"
       >
         <button
           class="menu--default__link menu--default__link--button"
-          @click="toggleMenu('anuncios')"
+          @click="toggleMenu('ads')"
         >
           <FileText class="menu--default__icon" />
           <span>Anuncios</span>
           <ChevronDown
-            v-if="openMenu === 'anuncios'"
+            v-if="openMenu === 'ads'"
             class="menu--default__arrow"
           />
           <ChevronRight v-else class="menu--default__arrow" />
         </button>
-        <ul v-if="openMenu === 'anuncios'" class="menu--default__sublist">
+        <ul v-if="openMenu === 'ads'" class="menu--default__sublist">
           <li
             class="menu--default__subitem"
             :class="{
               'menu--default__subitem--active': isRouteActive(
-                '/anuncios/pendientes',
+                '/ads/pending',
               ),
             }"
           >
-            <NuxtLink to="/anuncios/pendientes" class="menu--default__sublink">
+            <NuxtLink to="/ads/pending" class="menu--default__sublink">
               <Clock class="menu--default__subicon" />
               <span>Pendientes</span>
             </NuxtLink>
@@ -72,10 +72,10 @@
             class="menu--default__subitem"
             :class="{
               'menu--default__subitem--active':
-                isRouteActive('/anuncios/activos'),
+                isRouteActive('/ads/active'),
             }"
           >
-            <NuxtLink to="/anuncios/activos" class="menu--default__sublink">
+            <NuxtLink to="/ads/active" class="menu--default__sublink">
               <CheckCircle class="menu--default__subicon" />
               <span>Activos</span>
             </NuxtLink>
@@ -84,11 +84,11 @@
             class="menu--default__subitem"
             :class="{
               'menu--default__subitem--active': isRouteActive(
-                '/anuncios/expirados',
+                '/ads/expired',
               ),
             }"
           >
-            <NuxtLink to="/anuncios/expirados" class="menu--default__sublink">
+            <NuxtLink to="/ads/expired" class="menu--default__sublink">
               <AlertCircle class="menu--default__subicon" />
               <span>Expirados</span>
             </NuxtLink>
@@ -97,10 +97,10 @@
             class="menu--default__subitem"
             :class="{
               'menu--default__subitem--active':
-                isRouteActive('/anuncios/baneados'),
+                isRouteActive('/ads/banned'),
             }"
           >
-            <NuxtLink to="/anuncios/baneados" class="menu--default__sublink">
+            <NuxtLink to="/ads/banned" class="menu--default__sublink">
               <Ban class="menu--default__subicon" />
               <span>Baneados</span>
             </NuxtLink>
@@ -109,11 +109,11 @@
             class="menu--default__subitem"
             :class="{
               'menu--default__subitem--active': isRouteActive(
-                '/anuncios/rechazados',
+                '/ads/rejected',
               ),
             }"
           >
-            <NuxtLink to="/anuncios/rechazados" class="menu--default__sublink">
+            <NuxtLink to="/ads/rejected" class="menu--default__sublink">
               <XCircle class="menu--default__subicon" />
               <span>Rechazados</span>
             </NuxtLink>
@@ -122,11 +122,11 @@
             class="menu--default__subitem"
             :class="{
               'menu--default__subitem--active': isRouteActive(
-                '/anuncios/abandonados',
+                '/ads/abandoned',
               ),
             }"
           >
-            <NuxtLink to="/anuncios/abandonados" class="menu--default__sublink">
+            <NuxtLink to="/ads/abandoned" class="menu--default__sublink">
               <XOctagon class="menu--default__subicon" />
               <span>Abandonados</span>
             </NuxtLink>
