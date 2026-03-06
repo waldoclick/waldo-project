@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Utility Extraction
-status: planning
-stopped_at: Completed 09-date-utilities-01-utils-setup-PLAN.md
-last_updated: "2026-03-05T23:56:50.643Z"
+status: completed
+stopped_at: Completed 09-02-utils-replace-components-PLAN.md
+last_updated: "2026-03-06T00:03:25.294Z"
 last_activity: 2026-03-05 — v1.3 roadmap created; phases 9-11 defined for utility extraction
 progress:
   total_phases: 3
   completed_phases: 0
   total_plans: 5
-  completed_plans: 1
-  percent: 0
+  completed_plans: 2
+  percent: 40
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-03-05)
 ## Current Position
 
 Phase: 9 of 11 (Date Utilities)
-Plan: 1 of 1 in current phase
-Status: Plan 01 complete
+Plan: 2 of 5 in current phase
+Status: Plan 02 complete
 Last activity: 2026-03-05 — v1.3 roadmap created; phases 9-11 defined for utility extraction
 
-Progress: [██░░░░░░░░] 20% (v1.3)
+Progress: [████░░░░░░] 40% (v1.3)
 
 ## Accumulated Context
 
@@ -46,6 +46,7 @@ Key patterns established (carry forward):
 v1.3 decisions:
 - UTIL-07 (build validation) is a success criterion in every phase, not a standalone phase — `nuxt typecheck` must pass after each phase's replacements
 - [Phase 09-date-utilities]: Used numeric: 'always' for Intl.RelativeTimeFormat to ensure consistent 'hace X ...' output.
+- [Phase 09]: Replaced inline formatDate with auto-imported utility in 8 components (Batch A)
 
 ### Pending Todos
 
@@ -55,8 +56,14 @@ None.
 
 None.
 
+## Performance Metrics
+
+| Phase | Plan | Duration | Tasks | Files |
+| :--- | :--- | :--- | :--- | :--- |
+| 09 | 02 | 15 min | 2 | 8 |
+
 ## Session Continuity
 
 Last session: 2026-03-05T23:56:50.642Z
-Stopped at: Completed 09-date-utilities-01-utils-setup-PLAN.md
+Stopped at: Completed 09-02-utils-replace-components-PLAN.md
 Resume file: None
