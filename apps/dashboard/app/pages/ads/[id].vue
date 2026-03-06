@@ -129,7 +129,7 @@
           </button>
           <a
             v-if="isActive && item?.slug"
-            :href="`${websiteUrl}/ads/${item.slug}`"
+            :href="`${websiteUrl}/anuncios/${item.slug}`"
             target="_blank"
             rel="noopener noreferrer"
             class="btn btn--primary btn--block"
