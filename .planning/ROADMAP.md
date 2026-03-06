@@ -80,7 +80,10 @@ Archive: `.planning/milestones/v1.5-ROADMAP.md`
   1. Loading `preguntas-frecuentes.vue` triggers exactly 1 API call (not 2)
   2. Loading `mis-anuncios.vue` triggers exactly 2 API calls — one for tab counts, one for ads — (not 6)
   3. Switching tabs or changing page number on `mis-anuncios.vue` does NOT re-trigger `loadTabCounts()`
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 18-01-PLAN.md — Fix FAQ double-fetch + add /ads/me/counts Strapi endpoint
+- [ ] 18-02-PLAN.md — Refactor mis-anuncios.vue to use new counts endpoint
 
 #### Phase 19: Store Cache Guards & Component Cleanup
 **Goal**: Stores never re-fetch data already in memory; components never duplicate plugin-provided data
