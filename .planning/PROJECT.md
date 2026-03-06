@@ -27,16 +27,14 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ Las llamadas N+1 en CategoriesDefault están eliminadas — v1.1
 - ✓ ChartSales obtiene datos agregados del servidor, no pagina todos los órdenes en cliente — v1.1
 - ✓ Eliminar double-fetch en todos los componentes non-ads del dashboard que tienen `onMounted` + `watch({ immediate: true })` coexistiendo — v1.2
+- ✓ Utilidades de fecha, precio y string centralizadas y estrictamente tipadas — v1.3
 
-## Current Milestone: v1.3 Utility Extraction
+## Current State
 
-**Goal:** Extract all inline duplicated pure functions (date, price, string) into shared utility files and replace every inline copy with an import.
-
-**Target features:**
-- `utils/date.ts` — shared date formatting (formatDate, formatDateShort)
-- `utils/price.ts` — shared currency formatting (formatCurrency)
-- `utils/string.ts` — shared string utilities (formatFullName, formatAddress, formatBoolean, formatDays, getPaymentMethod)
-- Replace 30+ inline duplicates across 20+ components and pages
+Shipped **v1.3 Utility Extraction** on 2026-03-06.
+- **Utils**: `date.ts`, `price.ts`, `string.ts` created in `apps/dashboard/app/utils/`.
+- **Refactor**: 50+ files updated to remove inline formatting logic.
+- **Quality**: 100% type safety and unit test coverage for new utilities.
 
 ### Active
 
@@ -57,15 +55,13 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - El sistema valida disponibilidad de créditos según PackType y FeaturedType antes de procesar el pago
 - Deploy independiente por app vía Laravel Forge con git sparse-checkout
 - Dashboard (apps/dashboard): Nuxt 4, Pinia, @nuxtjs/strapi v2, SCSS custom; ~65 componentes, 3 stores, 14 plugins
-- v1.1 shipped: AdsTable generic component, canonical domain types, typeCheck: true, 3 Strapi aggregate endpoints
-- Aggregate endpoints added to Strapi in v1.1: `/api/categories/ad-counts`, `/api/orders/sales-by-month`, `/api/indicators/dashboard-stats`
-- v1.2 shipped: Eliminated `onMounted` double-fetch from all 10 non-ads dashboard components; `watch({ immediate: true })` is now sole data-loading trigger across the entire dashboard; `searchParams: any` replaced with `Record<string, unknown>` everywhere
+- v1.3 shipped: `date.ts`, `price.ts`, `string.ts` utilities created and fully integrated.
 
 ## Constraints
 
 - **Tech**: Nuxt 4, Vue 3 Composition API, TypeScript strict — refactors deben seguir patrones existentes
 - **Sin breaking changes**: El comportamiento del dashboard desde la perspectiva del usuario no debe cambiar
-- **Sin tests**: Los tests unitarios quedan para un milestone dedicado posterior
+- **Sin tests**: Los tests unitarios quedan para un milestone dedicado posterior (excepto utilities v1.3 que sí tienen tests)
 
 ## Key Decisions
 
@@ -81,6 +77,8 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 | Strapi SDK v5 cast pattern | `response.data as T[]`, params as `Record<string,unknown>`, payload double-cast | ✓ Good |
 | Aggregate endpoints en Strapi para N+1 | N HTTP round trips → 1; N DB queries paralelas server-side son negligibles | ✓ Good |
 | `typeCheck: true` habilitado en v1.1 | Todo trabajo futuro en dashboard tiene type checking en build | ✓ Good |
+| Strict null handling in utilities | Ensures `undefined`/`null` never crash the UI, returning fallback strings | ✓ Good |
+| Consolidated utility files | Reduces code duplication and ensures consistent formatting across the app | ✓ Good |
 
 ## Future Requirements
 
@@ -97,4 +95,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-05 after v1.3 milestone started*
+*Last updated: 2026-03-06 after v1.3 milestone completion*
