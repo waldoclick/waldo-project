@@ -602,6 +602,8 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
               name: `${ad.user.firstname} ${ad.user.lastname}`,
               adTitle: ad.name,
               reason: rejectionReason,
+              adReservationReturned: !!ad.ad_reservation?.id,
+              featuredReservationReturned: !!ad.ad_featured_reservation?.id,
             }
           );
         } else {
@@ -709,6 +711,8 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
               name: `${ad.user.firstname} ${ad.user.lastname}`,
               adTitle: ad.name,
               reason: reasonForBan ?? undefined,
+              adReservationReturned: !!ad.ad_reservation?.id,
+              featuredReservationReturned: !!ad.ad_featured_reservation?.id,
             }
           );
         } else {
