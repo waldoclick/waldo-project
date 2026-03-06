@@ -2,16 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: URL Localization
-status: active
+status: executing
 stopped_at: Completed 12-01-PLAN.md
-last_updated: "2026-03-06T01:57:56Z"
-last_activity: 2026-03-06 — Completed Phase 12 Plan 01 (ads page migration)
+last_updated: "2026-03-06T02:03:15.753Z"
+last_activity: 2026-03-06 — Completed 12-01 (rename anuncios→ads, update all route refs)
 progress:
   total_phases: 4
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 1
   completed_plans: 1
-  percent: 25
 ---
 
 # Project State
