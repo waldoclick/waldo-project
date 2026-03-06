@@ -48,21 +48,21 @@ Requirements for milestone v1.7 Cron Reliability. All cron files live in `apps/s
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CRON-01 | — | Pending |
-| CRON-02 | — | Pending |
-| CRON-03 | — | Pending |
-| CRON-04 | — | Pending |
-| CRON-05 | — | Pending |
-| DOC-01 | — | Pending |
-| DOC-02 | — | Pending |
-| DOC-03 | — | Pending |
-| DOC-04 | — | Pending |
-| DOC-05 | — | Pending |
+| CRON-01 | Phase 20 | Pending |
+| CRON-02 | Phase 21 | Pending |
+| CRON-03 | Phase 21 | Pending |
+| CRON-04 | Phase 22 | Pending |
+| CRON-05 | Phase 20 | Pending |
+| DOC-01 | Phase 23 | Pending |
+| DOC-02 | Phase 23 | Pending |
+| DOC-03 | Phase 20 | Pending |
+| DOC-04 | Phase 22 | Pending |
+| DOC-05 | Phase 21 | Pending |
 
 **Coverage:**
 - v1.7 requirements: 10 total
-- Mapped to phases: 0
-- Unmapped: 10 ⚠️ (pending roadmap creation)
+- Mapped to phases: 10 ✓
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-06*
