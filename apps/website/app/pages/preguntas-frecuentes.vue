@@ -4,7 +4,7 @@
     :text="`Encuentra respuestas a las preguntas más comunes sobre cómo funciona Waldo.click®, la plataforma para comprar y vender activos industriales.`"
     :is-left="true"
     title-tag="h1"
-    :faqs="faqs || faqsData || []"
+    :faqs="faqs || []"
   />
 </template>
 
@@ -20,35 +20,20 @@ definePageMeta({
   layout: "about",
 });
 
-// Cargar FAQs asegurando que estén disponibles
+// Cargar FAQs — useAsyncData integra con el ciclo SSR de Nuxt;
+// el cache guard del store evita peticiones duplicadas.
 const faqsStore = useFaqsStore();
-// Primera llamada directa para tener FAQs inmediatamente
-await faqsStore.loadFaqs();
-const faqsData = faqsStore.faqs || [];
 
-// Luego usamos useAsyncData para integrar con el ciclo de Nuxt
-// y asegurarnos que tenemos la data más actualizada
 const { data: faqs } = await useAsyncData(
   "faqs",
   async () => {
-    // Forzamos una recarga completa para obtener todos los datos
     await faqsStore.loadFaqs();
-    const result = faqsStore.faqs || [];
-    return result;
+    return faqsStore.faqs || [];
   },
-  {
-    // Opciones para priorizar la carga
-    immediate: true,
-    server: true,
-  },
+  { immediate: true, server: true },
 );
 
-// Combinamos ambos conjuntos de datos para asegurarnos tener todos
-const allFaqs = [...(faqsData || []), ...(faqs.value || [])].filter(
-  (faq, index, self) => index === self.findIndex((f) => f.id === faq.id),
-);
-
-// Datos para SEO - usamos todos los datos disponibles
+// Datos para SEO
 $setSEO({
   title: "Preguntas Frecuentes",
   description:
@@ -64,7 +49,7 @@ $setStructuredData({
   description:
     "Resuelve tus dudas sobre cómo funciona Waldo.click®, la plataforma para comprar y vender activos industriales.",
   url: "https://waldo.click/preguntas-frecuentes",
-  mainEntity: allFaqs.map((faq) => ({
+  mainEntity: (faqs.value || []).map((faq) => ({
     "@type": "Question",
     name: faq.title,
     acceptedAnswer: {
