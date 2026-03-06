@@ -17,8 +17,8 @@ Requirements for milestone v1.7 Cron Reliability. All cron files live in `apps/s
 
 ### Documentation
 
-- [ ] **DOC-01**: `cron-tasks.ts` has English comments documenting each job's purpose, schedule, and timezone
-- [ ] **DOC-02**: `ad.cron.ts` has English comments explaining deduplication via `remainings`, deactivation on zero days, and daily report email
+- [x] **DOC-01**: `cron-tasks.ts` has English comments documenting each job's purpose, schedule, and timezone
+- [x] **DOC-02**: `ad.cron.ts` has English comments explaining deduplication via `remainings`, deactivation on zero days, and daily report email
 - [x] **DOC-03**: `user.cron.ts` has English comments explaining the multi-ad flow, user deduplication intent, reservation restore logic, and the 3-reservation guarantee
 - [x] **DOC-04**: `cleanup.cron.ts` has English comments explaining the audit-only approach, folder query strategy, and orphan detection logic
 - [x] **DOC-05**: `backup.cron.ts` has English comments explaining config path, command construction, compression, rotation, and the password-redaction approach
@@ -53,8 +53,8 @@ Requirements for milestone v1.7 Cron Reliability. All cron files live in `apps/s
 | CRON-03 | Phase 21 | Complete |
 | CRON-04 | Phase 22 | Complete |
 | CRON-05 | Phase 20 | Complete |
-| DOC-01 | Phase 23 | Pending |
-| DOC-02 | Phase 23 | Pending |
+| DOC-01 | Phase 23 | Complete |
+| DOC-02 | Phase 23 | Complete |
 | DOC-03 | Phase 20 | Complete |
 | DOC-04 | Phase 22 | Complete |
 | DOC-05 | Phase 21 | Complete |
