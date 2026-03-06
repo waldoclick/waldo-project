@@ -29,6 +29,15 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ Eliminar double-fetch en todos los componentes non-ads del dashboard que tienen `onMounted` + `watch({ immediate: true })` coexistiendo — v1.2
 - ✓ Utilidades de fecha, precio y string centralizadas y estrictamente tipadas — v1.3
 
+## Current Milestone: v1.4 URL Localization
+
+**Goal:** Migrate all Spanish URL segments in the dashboard to English equivalents — no functional changes, pure route rename.
+
+**Target features:**
+- Rename all Spanish page directories to English (`anuncios` → `ads`, `categorias` → `categories`, etc.)
+- Update all route references in components, navigation, and links
+- Add redirects from old Spanish URLs to new English URLs (for bookmarks/external links)
+
 ## Current State
 
 Shipped **v1.3 Utility Extraction** on 2026-03-06.
@@ -38,7 +47,7 @@ Shipped **v1.3 Utility Extraction** on 2026-03-06.
 
 ### Active
 
-<!-- Next milestone requirements go here -->
+- [ ] All dashboard URL segments are in English
 
 ### Out of Scope
 
@@ -95,4 +104,4 @@ Shipped **v1.3 Utility Extraction** on 2026-03-06.
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-06 after v1.3 milestone completion*
+*Last updated: 2026-03-05 after v1.4 milestone start*
