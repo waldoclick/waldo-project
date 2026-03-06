@@ -67,7 +67,7 @@ Archive: `.planning/milestones/v1.5-ROADMAP.md`
 
 ### Phases
 
-- [ ] **Phase 18: Page Double-Fetch Fixes** — Eliminate over-fetching in `preguntas-frecuentes.vue` and `mis-anuncios.vue`
+- [x] **Phase 18: Page Double-Fetch Fixes** — Eliminate over-fetching in `preguntas-frecuentes.vue` and `mis-anuncios.vue` (completed 2026-03-06)
 - [ ] **Phase 19: Store Cache Guards & Component Cleanup** — Add cache guards to 3 stores and remove redundant commune fetch from `FormCreateThree.vue`
 
 ### Phase Details
@@ -100,5 +100,5 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 18. Page Double-Fetch Fixes | 1/2 | In Progress|  |
+| 18. Page Double-Fetch Fixes | 2/2 | Complete   | 2026-03-06 |
 | 19. Store Cache Guards & Component Cleanup | 0/1 | Not started | - |
