@@ -2,15 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.7
 milestone_name: Cron Reliability
-status: ready_to_plan
-stopped_at: Roadmap created — ready to plan Phase 20
-last_updated: "2026-03-06T00:00:00.000Z"
-last_activity: 2026-03-06 — Roadmap created for v1.7 (4 phases, 10 requirements)
+status: planning
+stopped_at: Completed 20-01-PLAN.md (user.cron Fix & Docs)
+last_updated: "2026-03-06T22:57:03.996Z"
+last_activity: 2026-03-06 — Roadmap created, 4 phases mapped to 10 requirements
 progress:
   total_phases: 4
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  completed_phases: 1
+  total_plans: 1
+  completed_plans: 1
+  percent: 0
 ---
 
 # Project State
@@ -45,6 +46,7 @@ Progress: [░░░░░░░░░░] 0%
 | - | - | - | - |
 
 *Updated after each plan completion*
+| Phase 20 P01 | 77s | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -57,6 +59,7 @@ Key patterns established (carry forward):
 - Strapi SDK v5 cast pattern: `response.data as T[]`, params as `Record<string,unknown>`, payload double-cast
 - **v1.5**: Reservation freeing updates reservation side (FK lives on reservation), not ad side
 - **v1.6**: `useAsyncData` is sole data-loading trigger in Nuxt pages
+- [Phase 20]: Use Map<userId,{user,ads[]}> two-phase approach in restoreFreeAds: collect all expired ads first, then process per user — ensures every ad is deactivated and restoreUserFreeReservations is called exactly once per user
 
 ### Pending Todos
 
@@ -68,6 +71,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-06
-Stopped at: Roadmap created — 4 phases (20-23) covering all 10 v1.7 requirements
+Last session: 2026-03-06T22:57:03.994Z
+Stopped at: Completed 20-01-PLAN.md (user.cron Fix & Docs)
 Resume file: None
