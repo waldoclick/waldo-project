@@ -26,15 +26,15 @@
     <nav class="dropdown--user__menu" :class="{ 'is-open': isOpen }">
       <ul class="dropdown--user__menu__links">
         <li @click="toggleOpen">
-          <NuxtLink to="/cuenta/perfil" title="Mi perfil">Mi perfil</NuxtLink>
+          <NuxtLink to="/account/profile" title="Mi perfil">Mi perfil</NuxtLink>
         </li>
         <li @click="toggleOpen">
-          <NuxtLink to="/cuenta/perfil/editar" title="Editar perfil">
+          <NuxtLink to="/account/profile/edit" title="Editar perfil">
             <span>Editar perfil</span>
           </NuxtLink>
         </li>
         <li @click="toggleOpen">
-          <NuxtLink to="/cuenta/cambiar-contrasena" title="Cambiar contraseña">
+          <NuxtLink to="/account/change-password" title="Cambiar contraseña">
             <span>Cambiar contraseña</span>
           </NuxtLink>
         </li>

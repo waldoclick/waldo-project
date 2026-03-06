@@ -23,7 +23,7 @@
       <div class="dropdown--pendings__panel__head">
         <h3 class="dropdown--pendings__panel__title">Anuncios Pendientes</h3>
         <NuxtLink
-          to="/anuncios/pendientes"
+          to="/ads/pending"
           class="dropdown--pendings__panel__link"
           @click="open = false"
         >
@@ -53,7 +53,7 @@
         <NuxtLink
           v-for="(ad, index) in ads"
           :key="ad.id"
-          :to="`/anuncios/${ad.id}`"
+          :to="`/ads/${ad.id}`"
           class="dropdown--pendings__list__item"
           :class="{
             'dropdown--pendings__list__item--border': index < ads.length - 1,
