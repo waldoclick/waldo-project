@@ -11,7 +11,7 @@ Requirements for v1.3. Each maps to roadmap phases.
 ### Utilities — Date
 
 - [x] **UTIL-01**: `app/utils/date.ts` exists with `formatDate(dateString: string | undefined): string` (full datetime, es-CL locale, undefined → "--") and `formatDateShort(dateString: string | undefined): string` (date only, no time component)
-- [ ] **UTIL-02**: All inline `formatDate` / `formatDateShort` definitions removed from 33 components and pages; replaced with auto-imported calls — no duplicate definitions remain
+- [x] **UTIL-02**: All inline `formatDate` / `formatDateShort` definitions removed from 33 components and pages; replaced with auto-imported calls — no duplicate definitions remain
 
 ### Utilities — Price
 
@@ -25,7 +25,7 @@ Requirements for v1.3. Each maps to roadmap phases.
 
 ### Build Validation
 
-- [ ] **UTIL-07**: TypeScript build (`typeCheck: true`) passes with zero errors after all replacements; dashboard has no remaining inline duplicate function definitions for any of the above utilities
+- [x] **UTIL-07**: TypeScript build (`typeCheck: true`) passes with zero errors after all replacements; dashboard has no remaining inline duplicate function definitions for any of the above utilities
 
 ## Future Requirements
 
@@ -47,12 +47,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | UTIL-01 | Phase 9 | Complete |
-| UTIL-02 | Phase 9 | Pending |
+| UTIL-02 | Phase 9 | Complete |
 | UTIL-03 | Phase 10 | Pending |
 | UTIL-04 | Phase 10 | Pending |
 | UTIL-05 | Phase 11 | Pending |
 | UTIL-06 | Phase 11 | Pending |
-| UTIL-07 | Phases 9, 10, 11 (success criterion in each) | Pending |
+| UTIL-07 | Phases 9, 10, 11 (success criterion in each) | Complete |
 
 **Coverage:**
 - v1.3 requirements: 7 total
