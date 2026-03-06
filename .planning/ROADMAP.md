@@ -89,7 +89,11 @@ Plans:
   1. Navigating to `/account/profile`, `/account/profile/edit`, and `/account/change-password` each loads the correct page
   2. Navigating to `/featured`, `/featured/free`, `/featured/used`, `/featured/[id]` loads the correct content
   3. Navigating to `/reservations`, `/reservations/free`, `/reservations/used`, `/reservations/[id]` loads the correct content
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 14-01-PLAN.md — Rename cuenta→account and destacados→featured, translate sub-page filenames, update internal route refs
+- [ ] 14-02-PLAN.md — Rename reservas→reservations, translate sub-page filenames, update internal route refs
 
 ### Phase 15: Links, Redirects & Build Verification
 **Goal**: Every internal link uses English URLs, Spanish URLs redirect rather than 404, and the dashboard builds cleanly
