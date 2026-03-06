@@ -131,7 +131,7 @@ const title = computed(() =>
   orderId.value ? `Orden #${orderId.value}` : "Orden",
 );
 const breadcrumbs = computed(() => [
-  { label: "Órdenes", to: "/ordenes" },
+  { label: "Orders", to: "/orders" },
   ...(orderId.value ? [{ label: `#${orderId.value}` }] : []),
 ]);
 
