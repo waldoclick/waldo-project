@@ -212,17 +212,6 @@ const formatCurrency = (amount: number | string) => {
   }).format(numAmount);
 };
 
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  return new Intl.DateTimeFormat("es-CL", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
-};
-
 const getPaymentMethod = (method: string) => {
   return method === "webpay" ? "WebPay" : method;
 };
