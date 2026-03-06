@@ -119,6 +119,50 @@
 
 ---
 
+## Milestone: v1.4 — URL Localization
+
+**Shipped:** 2026-03-06
+**Phases:** 4 (12-15) | **Plans:** 9 | **Timeline:** 1 day (2026-03-05 → 2026-03-06)
+**Files changed:** 94 files, +3,621/-243 lines | **Requirements:** 15/15 complete
+
+### What Was Built
+- All 11 Spanish page directory names renamed to English equivalents (`anuncios`→`ads`, `categorias`→`categories`, `comunas`→`communes`, `condiciones`→`conditions`, `ordenes`→`orders`, `regiones`→`regions`, `usuarios`→`users`, `cuenta`→`account`, `destacados`→`featured`, `reservas`→`reservations`; `faqs`/`packs` `editar.vue`→`edit.vue`)
+- All 5 navigation components (MenuDefault, DropdownUser, DropdownSales, DropdownPendings, StatisticsDefault) updated to English routes
+- All 17 data/form components updated (`router.push`, `NuxtLink :to`, `isRouteActive()` key strings)
+- `nuxt.config.ts` `routeRules` with 301 redirects covering all legacy Spanish URL prefixes
+- `nuxt typecheck` passes with zero errors after all changes
+
+### What Worked
+- `git mv` pattern established in Phase 12 carried through all 4 phases perfectly — no rework
+- Two-commit pattern (rename first, update refs second) kept each task clean and reviewable
+- Preserving Spanish UI labels (breadcrumbs, page titles) while only changing route path strings was a clear, correct boundary: avoids unintended UX changes while achieving URL migration
+- Phase order was optimal: Phases 12-14 were independent route renames, Phase 15 was the integration (links + redirects + typecheck). No merge conflicts.
+- Explicit `routeRules` (no wildcards) worked cleanly — TypeScript-compatible and covers 100% of known routes
+
+### What Was Inefficient
+- Phase 15, Plan 02: Several components (AdsTable, UserAnnouncements, OrdersDefault, router plugin) were already updated in a prior session commit (8a95dfd) — the plan had to account for "already done" state. A brief pre-read before executing would have removed them from scope.
+- Phase 15, Plan 02: `UsersDefault.vue` router.push was missed in the initial plan execution and required a follow-up fix commit. The component was not in the original plan's file list. A broader grep for Spanish path strings before finalizing the plan would have caught it.
+- Spanish breadcrumb labels were incorrectly translated in an intermediate commit (25 page files) and had to be reverted — the plan explicitly said not to change UI labels, but the executor translated them anyway. Tighter success criteria per task would prevent this.
+
+### Patterns Established
+- `git mv` for all Nuxt page directory and file renames — preserves Git rename history, keeps `git log --follow` functional
+- Two-commit pattern for URL migration: `git mv` rename first → update all internal route refs second
+- External public website hrefs (e.g. `websiteUrl + /anuncios/[slug]`) are explicitly out of scope for dashboard URL localization
+- `routeRules` with explicit named paths (no `:splat` wildcards) — compatible with Nuxt TypeScript build
+- Spanish UI labels (breadcrumbs, page `<h1>` text, sidebar labels) are content, not routing — never changed in a URL migration
+
+### Key Lessons
+1. **Pre-read component code before finalizing a plan's file list.** A 5-minute grep for Spanish path strings before writing the plan would have caught the UsersDefault.vue miss and the already-updated components from prior commits.
+2. **Explicit scope boundaries in plans prevent scope creep.** The "do NOT change Spanish UI labels" instruction was in the plan but not in per-task success criteria — adding it per task would have prevented the breadcrumb revert.
+3. **URL migration is purely mechanical when the pattern is clear.** The `git mv` + two-commit pattern made each phase ~2-3 min of actual execution. The upfront cost is identifying all affected files — this should be the research focus, not the implementation.
+
+### Cost Observations
+- Model mix: ~100% sonnet (balanced profile)
+- Sessions: ~8 (one per plan + fixes + milestone close)
+- Notable: Fastest per-plan average — 9 plans in 1 day; most plans were 2-3 min execution once file list was identified
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -129,6 +173,7 @@
 | v1.1 | 4 | 15 | First full GSD workflow with wave parallelization |
 | v1.2 | 2 | 2 | Pattern application: extend v1.1 cleanup to remaining components |
 | v1.3 | 3 | 7 | Utility extraction: centralized formatting, introduced unit testing for utilities |
+| v1.4 | 4 | 9 | URL localization: all routes in English, 301 redirects for legacy Spanish URLs |
 
 ### Cumulative Quality
 
@@ -138,6 +183,7 @@
 | v1.1 | none | true | 1 (vue-tsc) |
 | v1.2 | none | true | 0 |
 | v1.3 | utils (100% coverage) | true | 0 |
+| v1.4 | utils (100% coverage) | true | 0 |
 
 ### Top Lessons (Verified Across Milestones)
 
@@ -145,3 +191,5 @@
 2. Establish canonical types and patterns early; deferred type debt compounds across components
 3. `typeCheck: true` catches regressions immediately — v1.2 TS18046 error caught in same commit cycle
 4. Auto-import + utility files make codebase-wide refactors purely subtractive — remove inline, done
+5. Pre-read component code before finalizing a plan's file list — prevents missed files and scope from prior commits
+6. Explicit scope boundaries in per-task success criteria prevent unintended changes (e.g., UI labels vs route paths)

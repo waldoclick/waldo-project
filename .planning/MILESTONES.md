@@ -1,5 +1,24 @@
 # Milestones
 
+## v1.4 URL Localization (Shipped: 2026-03-06)
+
+**Phases completed:** 4 phases (12-15), 9 plans
+**Files changed:** 94 files, +3,621 / -243 lines
+**Timeline:** 2026-03-05 → 2026-03-06 (1 day)
+**Requirements:** 15/15 complete ✓
+
+**Key accomplishments:**
+1. **Ads Migration**: Renamed `anuncios/` → `ads/` with all 8 status sub-pages (`active`, `pending`, `abandoned`, `banned`, `expired`, `rejected`); established `git mv` rename pattern for the milestone.
+2. **Catalog Segments**: Renamed 6 directories (`categorias`→`categories`, `comunas`→`communes`, `condiciones`→`conditions`, `ordenes`→`orders`, `regiones`→`regions`, `usuarios`→`users`) with all `editar`→`edit` sub-pages.
+3. **Account & Transactional**: Renamed `cuenta`→`account`, `destacados`→`featured`, `reservas`→`reservations`; preserved Spanish UI labels (breadcrumbs) — only route path strings updated.
+4. **Navigation Links**: Updated all 5 navigation components (MenuDefault, DropdownUser, DropdownSales, DropdownPendings, StatisticsDefault) and 17 data/form components to English router paths.
+5. **301 Redirects**: Added `routeRules` to `nuxt.config.ts` covering all legacy Spanish URL prefixes → English equivalents; no wildcard routes needed.
+6. **Build Verification**: `nuxt typecheck` passes with zero errors after all changes; all 15 requirements satisfied.
+
+**Archive:** `.planning/milestones/v1.4-ROADMAP.md` | `.planning/milestones/v1.4-REQUIREMENTS.md`
+
+---
+
 ## v1.3 Utility Extraction (Shipped: 2026-03-06)
 
 **Phases completed:** 3 phases (9-11), 7 plans, 66 files changed
