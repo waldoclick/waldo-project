@@ -17,7 +17,7 @@
 - [ ] **URL-07**: Navigating to `/featured`, `/featured/free`, `/featured/used`, `/featured/[id]` works correctly
 - [x] **URL-08**: Navigating to `/orders`, `/orders/[id]` works correctly
 - [x] **URL-09**: Navigating to `/regions`, `/regions/new`, `/regions/[id]`, `/regions/[id]/edit` works correctly
-- [ ] **URL-10**: Navigating to `/reservations`, `/reservations/free`, `/reservations/used`, `/reservations/[id]` works correctly
+- [x] **URL-10**: Navigating to `/reservations`, `/reservations/free`, `/reservations/used`, `/reservations/[id]` works correctly
 - [x] **URL-11**: Navigating to `/users`, `/users/[id]` works correctly
 
 ### Redirects
@@ -66,7 +66,7 @@
 | URL-07 | Phase 14 | Pending |
 | URL-08 | Phase 13 | Complete |
 | URL-09 | Phase 13 | Complete |
-| URL-10 | Phase 14 | Pending |
+| URL-10 | Phase 14 | Complete |
 | URL-11 | Phase 13 | Complete |
 | REDIR-01 | Phase 15 | Pending |
 | LINK-01 | Phase 15 | Pending |
