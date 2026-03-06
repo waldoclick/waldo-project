@@ -30,7 +30,7 @@ Archive: `.planning/milestones/v1.2-ROADMAP.md`
 
 **Milestone Goal:** Extract all inline duplicated pure functions (date, price, string) into shared utility files and replace every inline copy with an import — zero duplicate function definitions remain in the dashboard.
 
-- [ ] **Phase 9: Date Utilities** - Create `app/utils/date.ts` and replace all 33 inline date formatting definitions
+- [x] **Phase 9: Date Utilities** - Create `app/utils/date.ts` and replace all 33 inline date formatting definitions
 - [ ] **Phase 10: Price Utilities** - Create `app/utils/price.ts` and replace all 13 inline currency formatting definitions
 - [ ] **Phase 11: String Utilities** - Create `app/utils/string.ts` and replace all 6 inline string utility definitions
 
@@ -46,11 +46,11 @@ Archive: `.planning/milestones/v1.2-ROADMAP.md`
   3. All 33 previously-inline call sites render dates identically to before (no visual regression)
   4. `nuxt typecheck` passes with zero TypeScript errors after replacements
 **Plans**: 5 plans
-- [ ] 09-01-utils-setup-PLAN.md — Create date utilities and tests
-- [ ] 09-02-utils-replace-components-PLAN.md — Replace inline formatters in components (Part 1)
-- [ ] 09-03-utils-replace-components-part2-PLAN.md — Replace inline formatters in components (Part 2)
-- [ ] 09-04-utils-replace-pages-PLAN.md — Replace inline formatters in pages (Part 1)
-- [ ] 09-05-utils-replace-pages-part2-PLAN.md — Replace inline formatters in pages (Part 2)
+- [x] 09-01-utils-setup-PLAN.md — Create date utilities and tests
+- [x] 09-02-utils-replace-components-PLAN.md — Replace inline formatters in components (Part 1)
+- [x] 09-03-utils-replace-components-part2-PLAN.md — Replace inline formatters in components (Part 2)
+- [x] 09-04-utils-replace-pages-PLAN.md — Replace inline formatters in pages (Part 1)
+- [x] 09-05-utils-replace-pages-part2-PLAN.md — Replace inline formatters in pages (Part 2)
 
 ### Phase 10: Price Utilities
 **Goal**: Developers import currency formatting from a single source; no inline currency formatters exist anywhere in the dashboard
@@ -80,6 +80,6 @@ Archive: `.planning/milestones/v1.2-ROADMAP.md`
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 9. Date Utilities | v1.3 | 0/5 | Not started | - |
+| 9. Date Utilities | v1.3 | 5/5 | Complete | 2026-03-06 |
 | 10. Price Utilities | v1.3 | 0/? | Not started | - |
 | 11. String Utilities | v1.3 | 0/? | Not started | - |
