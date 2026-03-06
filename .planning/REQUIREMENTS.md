@@ -13,13 +13,13 @@
 
 ### Store Cache Guards
 
-- [ ] **STORE-01**: `packs.store.ts` tiene cache guard — `loadPacks()` no hace HTTP request si los datos ya están cargados
-- [ ] **STORE-02**: `conditions.store.ts` tiene cache guard — `loadConditions()` no re-fetcha si los datos ya están cargados
-- [ ] **STORE-03**: `regions.store.ts` tiene cache guard — `loadRegions()` no re-fetcha si los datos ya están cargados
+- [x] **STORE-01**: `packs.store.ts` tiene cache guard — `loadPacks()` no hace HTTP request si los datos ya están cargados
+- [x] **STORE-02**: `conditions.store.ts` tiene cache guard — `loadConditions()` no re-fetcha si los datos ya están cargados
+- [x] **STORE-03**: `regions.store.ts` tiene cache guard — `loadRegions()` no re-fetcha si los datos ya están cargados
 
 ### Component Redundancy Fix
 
-- [ ] **COMP-01**: `FormCreateThree.vue` no llama `loadCommunes()` en `onMounted` — el plugin `communes.client.ts` ya garantiza que los datos están disponibles
+- [x] **COMP-01**: `FormCreateThree.vue` no llama `loadCommunes()` en `onMounted` — el plugin `communes.client.ts` ya garantiza que los datos están disponibles
 
 ## v2 Requirements
 
@@ -41,10 +41,10 @@ _(none identified)_
 | PAGE-01 | Phase 18 | Complete |
 | PAGE-02 | Phase 18 | Complete |
 | PAGE-03 | Phase 18 | Complete |
-| STORE-01 | Phase 19 | Pending |
-| STORE-02 | Phase 19 | Pending |
-| STORE-03 | Phase 19 | Pending |
-| COMP-01 | Phase 19 | Pending |
+| STORE-01 | Phase 19 | Complete |
+| STORE-02 | Phase 19 | Complete |
+| STORE-03 | Phase 19 | Complete |
+| COMP-01 | Phase 19 | Complete |
 
 **Coverage:**
 - v1 requirements: 7 total
