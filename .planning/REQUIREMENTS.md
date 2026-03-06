@@ -9,21 +9,21 @@ Requirements for milestone v1.8 Free Featured Reservation Guarantee. All cron fi
 
 ### Core Guarantee
 
-- [ ] **FEAT-01**: Every user always has exactly 3 free `ad-featured-reservation` records with `price = 0` that are NOT linked to an active ad. A featured reservation is "occupied" if its `ad` relation points to an ad where `active: true`.
-- [ ] **FEAT-02**: `featured.cron.ts` implements a `FeaturedCronService` class with a `restoreFreeFeaturedReservations()` method that scans all users and tops up each user's free available featured slots to 3.
-- [ ] **FEAT-03**: The "free available" count per user is computed as: `ad-featured-reservation` records where `price = 0` AND (`ad = null` OR `ad.active = false`).
-- [ ] **FEAT-04**: If a user's free available count is less than 3, the cron creates the missing records (`price = 0`, no `total_days`, linked to user via `user` relation, `publishedAt` set).
-- [ ] **FEAT-05**: `featuredCron` is registered in `cron-tasks.ts` and runs daily at 2:30 AM `America/Santiago`.
+- [x] **FEAT-01**: Every user always has exactly 3 free `ad-featured-reservation` records with `price = 0` that are NOT linked to an active ad. A featured reservation is "occupied" if its `ad` relation points to an ad where `active: true`.
+- [x] **FEAT-02**: `featured.cron.ts` implements a `FeaturedCronService` class with a `restoreFreeFeaturedReservations()` method that scans all users and tops up each user's free available featured slots to 3.
+- [x] **FEAT-03**: The "free available" count per user is computed as: `ad-featured-reservation` records where `price = 0` AND (`ad = null` OR `ad.active = false`).
+- [x] **FEAT-04**: If a user's free available count is less than 3, the cron creates the missing records (`price = 0`, no `total_days`, linked to user via `user` relation, `publishedAt` set).
+- [x] **FEAT-05**: `featuredCron` is registered in `cron-tasks.ts` and runs daily at 2:30 AM `America/Santiago`.
 
 ### Cron Runner
 
-- [ ] **RUNNER-01**: The `cron-runner` API files (`apps/strapi/src/api/cron-runner/controllers/cron-runner.ts` and `apps/strapi/src/api/cron-runner/routes/cron-runner.ts`) are committed to the repository.
-- [ ] **RUNNER-02**: The `cron-runner` controller's `CRON_NAME_MAP` includes `"featured-cron": "featuredCron"`.
+- [x] **RUNNER-01**: The `cron-runner` API files (`apps/strapi/src/api/cron-runner/controllers/cron-runner.ts` and `apps/strapi/src/api/cron-runner/routes/cron-runner.ts`) are committed to the repository.
+- [x] **RUNNER-02**: The `cron-runner` controller's `CRON_NAME_MAP` includes `"featured-cron": "featuredCron"`.
 
 ### Documentation
 
-- [ ] **DOC-01**: `featured.cron.ts` has English JSDoc and inline comments explaining: the 3-slot guarantee, what "free available" means (price=0, ad=null or ad.active=false), the scan-all-users approach, and the create logic.
-- [ ] **DOC-02**: The `featuredCron` entry in `cron-tasks.ts` has an English JSDoc comment documenting purpose, schedule expression, timezone, and the service method called — matching the established pattern from v1.7.
+- [x] **DOC-01**: `featured.cron.ts` has English JSDoc and inline comments explaining: the 3-slot guarantee, what "free available" means (price=0, ad=null or ad.active=false), the scan-all-users approach, and the create logic.
+- [x] **DOC-02**: The `featuredCron` entry in `cron-tasks.ts` has an English JSDoc comment documenting purpose, schedule expression, timezone, and the service method called — matching the established pattern from v1.7.
 
 ## Out of Scope
 
@@ -38,15 +38,15 @@ Requirements for milestone v1.8 Free Featured Reservation Guarantee. All cron fi
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FEAT-01 | Phase 24 | Pending |
-| FEAT-02 | Phase 24 | Pending |
-| FEAT-03 | Phase 24 | Pending |
-| FEAT-04 | Phase 24 | Pending |
-| FEAT-05 | Phase 24 | Pending |
-| RUNNER-01 | Phase 24 | Pending |
-| RUNNER-02 | Phase 24 | Pending |
-| DOC-01 | Phase 24 | Pending |
-| DOC-02 | Phase 24 | Pending |
+| FEAT-01 | Phase 24 | Complete |
+| FEAT-02 | Phase 24 | Complete |
+| FEAT-03 | Phase 24 | Complete |
+| FEAT-04 | Phase 24 | Complete |
+| FEAT-05 | Phase 24 | Complete |
+| RUNNER-01 | Phase 24 | Complete |
+| RUNNER-02 | Phase 24 | Complete |
+| DOC-01 | Phase 24 | Complete |
+| DOC-02 | Phase 24 | Complete |
 
 **Coverage:**
 - v1.8 requirements: 9 total
