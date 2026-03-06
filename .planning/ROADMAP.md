@@ -77,7 +77,10 @@ Archive: `.planning/milestones/v1.4-ROADMAP.md`
   3. Banning an ad with an `ad_reservation` causes that reservation's `ad` field to become `null` in the database
   4. Banning an ad with an `ad_featured_reservation` causes that reservation's `ad` field to become `null` in the database
   5. Reservations freed by reject/ban are immediately reusable by new ads (no orphan state)
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 16-01-PLAN.md — Wire reservation-freeing into rejectAd() and bannedAd()
 
 #### Phase 17: Email Notification Update
 **Goal**: Users receive clear confirmation in reject/ban emails that their credits were refunded
