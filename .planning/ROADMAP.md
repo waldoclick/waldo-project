@@ -92,11 +92,14 @@ Plans:
   3. Ban email sent for an ad that had an `ad_reservation` contains a message indicating the ad credit was returned
   4. Ban email sent for an ad that had an `ad_featured_reservation` contains a message indicating the featured credit was returned
   5. Reject/ban emails for ads with no reservations do not include any credit-return messaging (conditional rendering)
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 17-01-PLAN.md — Update email templates and service layer with conditional credit-return messaging
 
 ### Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 16. Credit Refund Logic | 1/1 | Complete    | 2026-03-06 |
-| 17. Email Notification Update | 0/? | Not started | — |
+| 17. Email Notification Update | 0/1 | Not started | — |
