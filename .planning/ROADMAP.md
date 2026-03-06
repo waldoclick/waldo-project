@@ -112,5 +112,5 @@ Plans:
 |-------|----------------|--------|-----------|
 | 12. Ads Migration | 1/1 | Complete    | 2026-03-06 |
 | 13. Catalog Segments Migration | 3/3 | Complete    | 2026-03-06 |
-| 14. Account, Featured & Reservations Migration | 0/? | Not started | - |
+| 14. Account, Featured & Reservations Migration | 0/2 | In Progress | - |
 | 15. Links, Redirects & Build Verification | 0/? | Not started | - |
