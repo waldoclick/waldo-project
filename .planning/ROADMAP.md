@@ -61,7 +61,10 @@ Archive: `.planning/milestones/v1.3-ROADMAP.md`
   1. Navigating to `/ads` shows the ads list without errors
   2. Each status sub-page (`/ads/active`, `/ads/pending`, `/ads/abandoned`, `/ads/banned`, `/ads/expired`, `/ads/rejected`) loads the correct filtered list
   3. The old `/anuncios` paths are not relied upon by any renamed page file
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 12-01-PLAN.md — Rename anuncios/ to ads/, translate sub-page filenames, update internal route refs
 
 ### Phase 13: Catalog Segments Migration
 **Goal**: Six catalog sections are accessible at their English URLs — categories, communes, conditions, orders, regions, users
