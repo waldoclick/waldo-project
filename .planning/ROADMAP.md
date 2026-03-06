@@ -8,6 +8,7 @@
 - ✅ **v1.4 URL Localization** — Phases 12-15 (shipped 2026-03-06)
 - ✅ **v1.5 Ad Credit Refund** — Phases 16-17 (shipped 2026-03-06)
 - ✅ **v1.6 Website API Optimization** — Phases 18-19 (shipped 2026-03-06)
+- 🚧 **v1.7 Cron Reliability** — Phases 20-23 (in progress)
 
 ## Phases
 
@@ -70,3 +71,62 @@ Archive: `.planning/milestones/v1.5-ROADMAP.md`
 Archive: `.planning/milestones/v1.6-ROADMAP.md`
 
 </details>
+
+### 🚧 v1.7 Cron Reliability (In Progress)
+
+**Milestone Goal:** Fix the three non-functional cron jobs (userCron, backupCron, cleanupCron) and add English documentation comments throughout all cron files.
+
+- [ ] **Phase 20: user.cron Fix & Docs** - Fix multi-ad deactivation bug, remove unused import, add English comments
+- [ ] **Phase 21: backup.cron Fix & Docs** - Fix Strapi v5 config path, redact password from logs, add English comments
+- [ ] **Phase 22: cleanup.cron Fix & Docs** - Fix folder filter query for Strapi v5 compatibility, add English comments
+- [ ] **Phase 23: ad.cron + cron-tasks Docs** - Add English comments to ad.cron.ts and cron-tasks.ts (no bug fixes needed)
+
+## Phase Details
+
+### Phase 20: user.cron Fix & Docs
+**Goal**: `user.cron.ts` correctly deactivates all expired free ads per user (not just the first), has no unused imports, and is fully documented in English
+**Depends on**: Nothing (first phase of milestone)
+**Requirements**: CRON-01, CRON-05, DOC-03
+**Success Criteria** (what must be TRUE):
+  1. The user deactivation loop iterates over all expired ads per user, not short-circuiting after the first
+  2. `PaymentUtils` import no longer appears in `user.cron.ts`
+  3. Each logical block in `user.cron.ts` has an English comment explaining multi-ad flow, user deduplication, reservation restore logic, and the 3-reservation guarantee
+**Plans**: TBD
+
+### Phase 21: backup.cron Fix & Docs
+**Goal**: `backup.cron.ts` reads the database config via the correct Strapi v5 path, never logs the DB password in plaintext, and is fully documented in English
+**Depends on**: Phase 20
+**Requirements**: CRON-02, CRON-03, DOC-05
+**Success Criteria** (what must be TRUE):
+  1. `backup.cron.ts` uses `strapi.config.get('database').connection` (or equivalent correct Strapi v5 path) to access DB config — no hardcoded or incorrect path
+  2. The shell command logged before execution has the password field redacted or omitted entirely
+  3. Each logical block in `backup.cron.ts` has an English comment explaining config path, command construction, compression, rotation, and password-redaction approach
+**Plans**: TBD
+
+### Phase 22: cleanup.cron Fix & Docs
+**Goal**: `cleanup.cron.ts` correctly retrieves files from the `ads` folder using a Strapi v5-compatible query and is fully documented in English
+**Depends on**: Phase 21
+**Requirements**: CRON-04, DOC-04
+**Success Criteria** (what must be TRUE):
+  1. The folder filter query in `cleanup.cron.ts` returns files from the `ads` folder (does not return an empty set due to `plugin::upload.file` relation incompatibility)
+  2. The orphan detection logic runs against the correctly scoped set of files
+  3. Each logical block in `cleanup.cron.ts` has an English comment explaining the audit-only approach, folder query strategy, and orphan detection logic
+**Plans**: TBD
+
+### Phase 23: ad.cron + cron-tasks Docs
+**Goal**: `ad.cron.ts` and `cron-tasks.ts` have English comments so all five cron files are uniformly documented
+**Depends on**: Phase 22
+**Requirements**: DOC-01, DOC-02
+**Success Criteria** (what must be TRUE):
+  1. `cron-tasks.ts` has English comments for each registered job documenting purpose, schedule expression, and timezone
+  2. `ad.cron.ts` has English comments explaining deduplication via `remainings`, deactivation on zero days, and the daily report email
+**Plans**: TBD
+
+## Progress
+
+| Phase | Milestone | Plans Complete | Status | Completed |
+|-------|-----------|----------------|--------|-----------|
+| 20. user.cron Fix & Docs | v1.7 | 0/? | Not started | - |
+| 21. backup.cron Fix & Docs | v1.7 | 0/? | Not started | - |
+| 22. cleanup.cron Fix & Docs | v1.7 | 0/? | Not started | - |
+| 23. ad.cron + cron-tasks Docs | v1.7 | 0/? | Not started | - |
