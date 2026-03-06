@@ -31,7 +31,7 @@ Archive: `.planning/milestones/v1.2-ROADMAP.md`
 **Milestone Goal:** Extract all inline duplicated pure functions (date, price, string) into shared utility files and replace every inline copy with an import — zero duplicate function definitions remain in the dashboard.
 
 - [x] **Phase 9: Date Utilities** - Create `app/utils/date.ts` and replace all 33 inline date formatting definitions
-- [ ] **Phase 10: Price Utilities** - Create `app/utils/price.ts` and replace all 13 inline currency formatting definitions
+- [x] **Phase 10: Price Utilities** - Create `app/utils/price.ts` and replace all 13 inline currency formatting definitions (completed 2026-03-06)
 - [ ] **Phase 11: String Utilities** - Create `app/utils/string.ts` and replace all 6 inline string utility definitions
 
 ## Phase Details
@@ -81,5 +81,5 @@ Archive: `.planning/milestones/v1.2-ROADMAP.md`
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 9. Date Utilities | v1.3 | 5/5 | Complete | 2026-03-06 |
-| 10. Price Utilities | v1.3 | 0/? | Not started | - |
+| 10. Price Utilities | v1.3 | 1/1 | Complete | 2026-03-05 |
 | 11. String Utilities | v1.3 | 0/? | Not started | - |

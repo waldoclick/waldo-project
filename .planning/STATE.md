@@ -4,13 +4,13 @@ milestone: v1.3
 milestone_name: Utility Extraction
 status: completed
 stopped_at: Completed 09-05-utils-replace-pages-part2-PLAN.md
-last_updated: "2026-03-06T00:26:26.833Z"
-last_activity: 2026-03-06 — Completed 09-05-utils-replace-pages-part2-PLAN.md
+last_updated: "2026-03-06T00:52:51.636Z"
+last_activity: 2026-03-05 — Completed 10-01-price-utilities-PLAN.md
 progress:
   total_phases: 3
-  completed_phases: 1
-  total_plans: 5
-  completed_plans: 5
+  completed_phases: 2
+  total_plans: 6
+  completed_plans: 6
   percent: 100
 ---
 
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-05)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 9 — Date Utilities
+**Current focus:** Phase 10 — Price Utilities
 
 ## Current Position
 
-Phase: 9 of 11 (Date Utilities)
-Plan: 5 of 5 in current phase
-Status: Plan 05 complete
-Last activity: 2026-03-06 — Completed 09-05-utils-replace-pages-part2-PLAN.md
+Phase: 10 of 11 (Price Utilities)
+Plan: 1 of 1 in current phase
+Status: Plan 01 complete
+Last activity: 2026-03-05 — Completed 10-01-price-utilities-PLAN.md
 
 Progress: [██████████] 100% (v1.3)
 
@@ -50,6 +50,9 @@ v1.3 decisions:
 - [Phase 09]: Replaced inline formatDate with auto-imported utility in 8 components (Batch B)
 - [Phase 09]: Removed inline formatDate definitions to rely on Nuxt auto-import of utils/date.ts
 - [Phase 09]: Replaced inline formatDate/formatDateShort in pages (Batch B) with centralized utility
+- [Phase 10]: Use Intl.NumberFormat with es-CL/CLP as default
+- [Phase 10]: Return '--' for invalid/empty inputs to ensure UI consistency
+- [Phase 10]: Rename conflicting local formatter in ChartSales to formatCompactCurrency
 
 ### Pending Todos
 
@@ -67,9 +70,10 @@ None.
 | 09 | 03 | 5 min | 2 | 8 |
 | 09 | 04 | 3 min | 2 | 8 |
 | 09 | 05 | 5 min | 3 | 9 |
+| 10 | 01 | 15 min | 3 | 14 |
 
 ## Session Continuity
 
-Last session: 2026-03-06T00:20:00.000Z
-Stopped at: Completed 09-05-utils-replace-pages-part2-PLAN.md
+Last session: 2026-03-05T22:00:00.000Z
+Stopped at: Completed 10-01-price-utilities-PLAN.md
 Resume file: None
