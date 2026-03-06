@@ -81,5 +81,5 @@ Archive: `.planning/milestones/v1.2-ROADMAP.md`
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 9. Date Utilities | v1.3 | 5/5 | Complete | 2026-03-06 |
-| 10. Price Utilities | v1.3 | 1/1 | Complete | 2026-03-05 |
+| 10. Price Utilities | v1.3 | Complete    | 2026-03-06 | 2026-03-05 |
 | 11. String Utilities | v1.3 | 0/? | Not started | - |
