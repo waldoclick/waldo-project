@@ -91,7 +91,10 @@ Archive: `.planning/milestones/v1.6-ROADMAP.md`
   1. The user deactivation loop iterates over all expired ads per user, not short-circuiting after the first
   2. `PaymentUtils` import no longer appears in `user.cron.ts`
   3. Each logical block in `user.cron.ts` has an English comment explaining multi-ad flow, user deduplication, reservation restore logic, and the 3-reservation guarantee
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 20-01-PLAN.md — Fix multi-ad deactivation loop, remove PaymentUtils import, add English comments
 
 ### Phase 21: backup.cron Fix & Docs
 **Goal**: `backup.cron.ts` reads the database config via the correct Strapi v5 path, never logs the DB password in plaintext, and is fully documented in English
