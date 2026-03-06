@@ -104,7 +104,12 @@ Plans:
   2. Any `navigateTo()` or `<NuxtLink>` call in component code resolves to an English path
   3. Visiting a legacy Spanish URL (e.g., `/anuncios/pendientes`) redirects to the English equivalent (`/ads/pending`) without a 404
   4. `nuxt typecheck` completes with zero errors after all changes
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 15-01-PLAN.md — Update MenuDefault, DropdownUser, DropdownSales, DropdownPendings, StatisticsDefault to English routes
+- [ ] 15-02-PLAN.md — Update form/data components and rename faqs/packs editar.vue → edit.vue
+- [ ] 15-03-PLAN.md — Add Spanish→English redirects to nuxt.config.ts, run nuxt typecheck
 
 ## Progress Table
 
@@ -113,4 +118,4 @@ Plans:
 | 12. Ads Migration | 1/1 | Complete    | 2026-03-06 |
 | 13. Catalog Segments Migration | 3/3 | Complete    | 2026-03-06 |
 | 14. Account, Featured & Reservations Migration | 2/2 | Complete    | 2026-03-06 |
-| 15. Links, Redirects & Build Verification | 0/? | Not started | - |
+| 15. Links, Redirects & Build Verification | 0/3 | Not started | - |
