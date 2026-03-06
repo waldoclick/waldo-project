@@ -224,17 +224,6 @@ const sortOptions = [
   { value: "email:desc", label: "Email Z-A" },
 ];
 
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  return new Intl.DateTimeFormat("es-CL", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
-};
-
 const formatName = (firstname?: string, lastname?: string) => {
   if (!firstname && !lastname) return "-";
   return [firstname, lastname].filter(Boolean).join(" ") || "-";
