@@ -117,7 +117,10 @@ Plans:
   1. The folder filter query in `cleanup.cron.ts` returns files from the `ads` folder (does not return an empty set due to `plugin::upload.file` relation incompatibility)
   2. The orphan detection logic runs against the correctly scoped set of files
   3. Each logical block in `cleanup.cron.ts` has an English comment explaining the audit-only approach, folder query strategy, and orphan detection logic
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 22-01-PLAN.md — Fix folder filter query (two-step folderPath resolution), translate all Spanish text to English
 
 ### Phase 23: ad.cron + cron-tasks Docs
 **Goal**: `ad.cron.ts` and `cron-tasks.ts` have English comments so all five cron files are uniformly documented
@@ -134,5 +137,5 @@ Plans:
 |-------|-----------|----------------|--------|-----------|
 | 20. user.cron Fix & Docs | 1/1 | Complete   | 2026-03-06 | - |
 | 21. backup.cron Fix & Docs | 1/1 | Complete   | 2026-03-06 | - |
-| 22. cleanup.cron Fix & Docs | v1.7 | 0/? | Not started | - |
+| 22. cleanup.cron Fix & Docs | v1.7 | 0/1 | Planned | - |
 | 23. ad.cron + cron-tasks Docs | v1.7 | 0/? | Not started | - |
