@@ -10,6 +10,7 @@ export const useConditionsStore = defineStore("conditions", {
     conditions: [],
     loading: false,
     error: null,
+    lastFetch: 0,
   }),
 
   getters: {
@@ -34,6 +35,9 @@ export const useConditionsStore = defineStore("conditions", {
 
   actions: {
     async loadConditions() {
+      const now = Date.now();
+      if (this.conditions.length > 0 && now - this.lastFetch < 1800000) return;
+
       try {
         this.loading = true;
         this.error = null;
@@ -53,6 +57,7 @@ export const useConditionsStore = defineStore("conditions", {
         }
 
         this.conditions = typedResponse.data;
+        this.lastFetch = Date.now();
       } catch (err) {
         this.error = "Error al cargar las condiciones";
         console.error("Error loading conditions:", err);
