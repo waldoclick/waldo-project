@@ -43,9 +43,9 @@ const commune = ref<any>(null);
 
 const title = computed(() => commune.value?.name || "Comuna");
 const breadcrumbs = computed(() => [
-  { label: "Comunas", to: "/comunas" },
+  { label: "Communes", to: "/communes" },
   ...(commune.value?.name
-    ? [{ label: commune.value.name, to: `/comunas/${route.params.id}` }]
+    ? [{ label: commune.value.name, to: `/communes/${route.params.id}` }]
     : []),
   { label: "Editar" },
 ]);

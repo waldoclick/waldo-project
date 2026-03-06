@@ -43,9 +43,9 @@ const category = ref<any>(null);
 
 const title = computed(() => category.value?.name || "Categoría");
 const breadcrumbs = computed(() => [
-  { label: "Categorías", to: "/categorias" },
+  { label: "Categories", to: "/categories" },
   ...(category.value?.name
-    ? [{ label: category.value.name, to: `/categorias/${route.params.id}` }]
+    ? [{ label: category.value.name, to: `/categories/${route.params.id}` }]
     : []),
   { label: "Editar" },
 ]);

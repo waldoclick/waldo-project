@@ -4,7 +4,7 @@
       <template #actions>
         <NuxtLink
           class="btn btn--primary"
-          :to="`/comunas/${route.params.id}/editar`"
+          :to="`/communes/${route.params.id}/edit`"
         >
           Editar comuna
         </NuxtLink>
@@ -57,7 +57,7 @@ const commune = ref<any>(null);
 
 const title = computed(() => commune.value?.name || "Comuna");
 const breadcrumbs = computed(() => [
-  { label: "Comunas", to: "/comunas" },
+  { label: "Communes", to: "/communes" },
   ...(commune.value?.name ? [{ label: commune.value.name }] : []),
 ]);
 

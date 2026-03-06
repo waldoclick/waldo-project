@@ -2,7 +2,7 @@
   <div>
     <HeroDefault title="Condiciones" :breadcrumbs="breadcrumbs">
       <template #actions>
-        <NuxtLink class="btn btn--primary" to="/condiciones/new">
+        <NuxtLink class="btn btn--primary" to="/conditions/new">
           Agregar condición
         </NuxtLink>
       </template>
