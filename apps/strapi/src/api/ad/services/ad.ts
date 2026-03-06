@@ -177,6 +177,7 @@ async function getAdvertisements(
         status,
         ...ad,
         needs_payment,
+        featured: featured === true || featured === "free",
       };
     });
 
