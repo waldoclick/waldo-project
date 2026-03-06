@@ -1,73 +1,83 @@
-# Requirements: Waldo — Milestone v1.0
+# Requirements: Waldo Project
 
-**Defined:** 2026-03-03
+**Defined:** 2026-03-05
+**Milestone:** v1.4 URL Localization
 **Core Value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
 
-## v1 Requirements
+## v1.4 Requirements
 
-Requirements for milestone v1.0: Payment Gateway Abstraction.
+### URL Migration
 
-### Payment Abstraction Layer
+- [x] **URL-01**: Navigating to `/ads` and all sub-routes (`/ads/active`, `/ads/pending`, etc.) works correctly
+- [x] **URL-02**: Navigating to `/ads/abandoned`, `/ads/banned`, `/ads/expired`, `/ads/rejected` works correctly
+- [x] **URL-03**: Navigating to `/categories`, `/categories/new`, `/categories/[id]`, `/categories/[id]/edit` works correctly
+- [x] **URL-04**: Navigating to `/communes`, `/communes/new`, `/communes/[id]`, `/communes/[id]/edit` works correctly
+- [x] **URL-05**: Navigating to `/conditions`, `/conditions/new`, `/conditions/[id]`, `/conditions/[id]/edit` works correctly
+- [x] **URL-06**: Navigating to `/account/profile`, `/account/profile/edit`, `/account/change-password` works correctly
+- [x] **URL-07**: Navigating to `/featured`, `/featured/free`, `/featured/used`, `/featured/[id]` works correctly
+- [x] **URL-08**: Navigating to `/orders`, `/orders/[id]` works correctly
+- [x] **URL-09**: Navigating to `/regions`, `/regions/new`, `/regions/[id]`, `/regions/[id]/edit` works correctly
+- [x] **URL-10**: Navigating to `/reservations`, `/reservations/free`, `/reservations/used`, `/reservations/[id]` works correctly
+- [x] **URL-11**: Navigating to `/users`, `/users/[id]` works correctly
 
-- [x] **PAY-01**: El sistema define una interfaz `IPaymentGateway` con métodos `createTransaction` y `commitTransaction` con firmas normalizadas
-- [x] **PAY-02**: El sistema define tipos de respuesta normalizados `IGatewayInitResponse` e `IGatewayCommitResponse`
-- [x] **PAY-03**: El sistema provee un `TransbankAdapter` que implementa `IPaymentGateway` delegando al `TransbankService` existente sin cambiar su comportamiento
-- [x] **PAY-04**: El sistema provee un `PaymentGatewayRegistry` (factory) que retorna la pasarela activa según la variable de entorno `PAYMENT_GATEWAY` (default: `"transbank"`)
-- [x] **PAY-05**: El registry valida que las env vars requeridas estén presentes al instanciar el adapter, lanzando un error claro al startup si faltan
+### Redirects
 
-### Wiring y Correcciones
+- [x] **REDIR-01**: All old Spanish URLs redirect to their English equivalents (e.g., `/anuncios/pendientes` → `/ads/pending`)
 
-- [x] **WIRE-01**: `ad.service.ts` usa `getPaymentGateway()` de la factory en lugar de importar `TransbankServices` directamente
-- [x] **WIRE-02**: `pack.service.ts` usa `getPaymentGateway()` de la factory en lugar de importar `TransbankServices` directamente
-- [x] **WIRE-03**: El controller reemplaza el string hardcodeado `"webpay"` con `process.env.PAYMENT_GATEWAY ?? "transbank"` al crear el registro de orden
-- [x] **WIRE-04**: Se agrega `return` después de `ctx.redirect` en el flujo fallido de `packResponse` para evitar ejecución continua
+### Internal Links
+
+- [x] **LINK-01**: All navigation menu links point to English URLs
+- [x] **LINK-02**: All component-internal `navigateTo` / `<NuxtLink>` calls use English URLs
+- [x] **LINK-03**: Dashboard builds with `nuxt typecheck` passing after changes
 
 ## Future Requirements
 
-Deferred — not in this milestone.
+### Testing
 
-### Gateways Adicionales
+- **TEST-01**: Composables (`useRut`, `useSanitize`, `useSlugify`, `useImageProxy`) tienen tests unitarios con Vitest
+- **TEST-02**: El componente `AdsTable.vue` tiene tests de comportamiento (renderizado, filtros, paginación)
+- **TEST-03**: Los middlewares `guard.global.ts` y `dev.global.ts` tienen tests de integración
+- **TEST-04**: Cobertura mínima configurada (>70% en composables y stores)
 
-- **GATE-01**: El sistema provee un adapter concreto para una segunda pasarela (MercadoPago, PayPal, u otra)
-- **GATE-02**: El usuario puede seleccionar la pasarela de pago desde el frontend
+### Additional Consolidation
 
-### Robustez
-
-- **ROB-01**: Idempotencia en el endpoint de confirmación de pago (evitar doble-submit)
-- **ROB-02**: Context recovery via almacenamiento server-side del `gatewayRef` (en lugar de `buy_order` string parsing)
-- **ROB-03**: Reconciliación automática cuando Facto falla después de un pago autorizado
+- **COMP-05**: Consolidar Reservations*/Featured* una vez que tengan store keys dedicados y estrategias de fetch alineadas
+- **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| UI para selección de pasarela | Transparente para el usuario — no requerido |
-| Abstracción de suscripciones Pro (FlowService) | Dominio separado, lifecycle diferente |
-| Adapter concreto para segunda pasarela | Solo abstracción en este milestone |
-| Cambios en Website o Dashboard | Solo Strapi |
-| Webhook handling generalizado | Cada pasarela tendrá su propia ruta de callback |
+| Website URL migration | Dashboard-only scope; website routes are separate |
+| Strapi API endpoint renaming | Backend endpoints are internal, not user-facing |
+| i18n / internationalization | Consciously deferred; i18n module is commented out |
+| URL aliases (keep both working permanently) | Redirects are sufficient; dual routing adds complexity |
 
 ## Traceability
 
-Which phases cover which requirements. Updated during roadmap creation.
-
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PAY-01 | Phase 1 | Complete |
-| PAY-02 | Phase 1 | Complete |
-| PAY-03 | Phase 1 | Complete |
-| PAY-04 | Phase 1 | Complete |
-| PAY-05 | Phase 1 | Complete |
-| WIRE-01 | Phase 2 | Complete |
-| WIRE-02 | Phase 2 | Complete |
-| WIRE-03 | Phase 2 | Complete |
-| WIRE-04 | Phase 2 | Complete |
+| URL-01 | Phase 12 | Complete |
+| URL-02 | Phase 12 | Complete |
+| URL-03 | Phase 13 | Complete |
+| URL-04 | Phase 13 | Complete |
+| URL-05 | Phase 13 | Complete |
+| URL-06 | Phase 14 | Complete |
+| URL-07 | Phase 14 | Complete |
+| URL-08 | Phase 13 | Complete |
+| URL-09 | Phase 13 | Complete |
+| URL-10 | Phase 14 | Complete |
+| URL-11 | Phase 13 | Complete |
+| REDIR-01 | Phase 15 | Complete |
+| LINK-01 | Phase 15 | Complete |
+| LINK-02 | Phase 15 | Complete |
+| LINK-03 | Phase 15 | Complete |
 
 **Coverage:**
-- v1 requirements: 9 total
-- Mapped to phases: 9
+- v1.4 requirements: 15 total
+- Mapped to phases: 15
 - Unmapped: 0 ✓
 
 ---
-*Requirements defined: 2026-03-03*
-*Last updated: 2026-03-03 after roadmap creation*
+*Requirements defined: 2026-03-05*
+*Last updated: 2026-03-05 after initial definition*

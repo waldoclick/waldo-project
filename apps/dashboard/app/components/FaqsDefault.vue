@@ -104,7 +104,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Eye, Pencil } from "lucide-vue-next";
 import { useSettingsStore } from "@/stores/settings.store";
@@ -150,7 +150,7 @@ const fetchFaqs = async () => {
     loading.value = true;
     const strapi = useStrapi();
 
-    const searchParams: any = {
+    const searchParams: Record<string, unknown> = {
       pagination: {
         page: settingsStore.faqs.currentPage,
         pageSize: settingsStore.faqs.pageSize,
@@ -168,8 +168,11 @@ const fetchFaqs = async () => {
     }
 
     const response = await strapi.find("faqs", searchParams);
-    allFaqs.value = Array.isArray(response.data) ? response.data : [];
-    paginationMeta.value = response.meta?.pagination || null;
+    allFaqs.value = Array.isArray(response.data)
+      ? (response.data as Faq[])
+      : [];
+    paginationMeta.value = (response.meta?.pagination ||
+      null) as typeof paginationMeta.value;
   } catch (error) {
     console.error("Error fetching faqs:", error);
     allFaqs.value = [];
@@ -204,17 +207,6 @@ const sortOptions = [
   { value: "title:desc", label: "Título Z-A" },
 ];
 
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  return new Intl.DateTimeFormat("es-CL", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
-};
-
 const stripHtml = (html: string) => {
   if (!html) return "";
   // Remove HTML tags - safe for SSR
@@ -242,7 +234,7 @@ const handleViewFaq = (faqId: number) => {
 };
 
 const handleEditFaq = (faqId: number) => {
-  router.push(`/faqs/${faqId}/editar`);
+  router.push(`/faqs/${faqId}/edit`);
 };
 
 watch(
@@ -257,8 +249,4 @@ watch(
   },
   { immediate: true },
 );
-
-onMounted(() => {
-  fetchFaqs();
-});
 </script>

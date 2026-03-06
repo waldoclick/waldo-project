@@ -23,6 +23,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
+import { formatCurrency } from "@/utils/price";
 import {
   DollarSign,
   Euro,
@@ -56,11 +57,9 @@ const formatValue = (value: number, unit: string) => {
   if (unit === "Porcentaje") {
     return `${value}%`;
   }
-  return new Intl.NumberFormat("es-CL", {
-    style: "currency",
-    currency: "CLP",
+  return formatCurrency(value, {
     maximumFractionDigits: unit === "Pesos" ? 0 : 2,
-  }).format(value);
+  });
 };
 
 // Función para obtener el nombre corto del indicador

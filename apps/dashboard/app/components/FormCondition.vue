@@ -99,11 +99,11 @@ const handleSubmit = async (values: any) => {
         const lookupResponse = await strapi.find("conditions", {
           filters: { documentId: { $eq: documentId } },
           pagination: { pageSize: 1 },
-        });
-        const lookup = Array.isArray(lookupResponse.data)
-          ? lookupResponse.data[0]
-          : null;
-        conditionId = lookup?.id;
+        } as Record<string, unknown>);
+        const lookupData = Array.isArray(lookupResponse.data)
+          ? (lookupResponse.data as Array<{ id: number }>)
+          : [];
+        conditionId = lookupData[0]?.id;
       }
 
       if (!conditionId) {
@@ -116,34 +116,49 @@ const handleSubmit = async (values: any) => {
         return;
       }
 
-      const response = await strapi.update("conditions", conditionId, payload);
+      const response = await strapi.update(
+        "conditions",
+        conditionId,
+        payload as unknown as Parameters<typeof strapi.update>[2],
+      );
+      const responseData = response.data as unknown as {
+        id?: number;
+        documentId?: string;
+      };
       const updatedCondition = {
         ...props.condition,
-        ...response.data,
+        ...responseData,
         name: payload.name,
       };
       form.value = {
         name: payload.name,
       };
-      emit("saved", updatedCondition);
+      emit("saved", updatedCondition as ConditionData);
       await Swal.fire(
         "Éxito",
         "Condición actualizada correctamente.",
         "success",
       );
-      const updatedId = updatedCondition?.documentId || updatedCondition?.id;
+      const updatedId = responseData?.documentId || responseData?.id;
       if (updatedId) {
-        router.push(`/condiciones/${updatedId}`);
+        router.push(`/conditions/${updatedId}`);
       }
     } else {
-      const response = await strapi.create("conditions", payload);
-      emit("saved", response.data || {});
+      const response = await strapi.create(
+        "conditions",
+        payload as unknown as Parameters<typeof strapi.create>[1],
+      );
+      const createdData = response.data as unknown as {
+        id?: number;
+        documentId?: string;
+      };
+      emit("saved", (createdData as ConditionData) || ({} as ConditionData));
       await Swal.fire("Éxito", "Condición creada correctamente.", "success");
-      const createdId = response.data?.documentId || response.data?.id;
+      const createdId = createdData?.documentId || createdData?.id;
       if (createdId) {
-        router.push(`/condiciones/${createdId}`);
+        router.push(`/conditions/${createdId}`);
       } else {
-        router.push("/condiciones");
+        router.push("/conditions");
       }
     }
   } catch (error) {

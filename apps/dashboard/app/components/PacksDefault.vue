@@ -34,7 +34,7 @@
                 {{ pack.total_ads || 0 }} anuncios
               </BadgeDefault>
             </TableCell>
-            <TableCell>{{ pack.total_features || 0 }} features</TableCell>
+            <TableCell>{{ pack.total_features || 0 }} destacados</TableCell>
             <TableCell>{{ formatDate(pack.createdAt) }}</TableCell>
             <TableCell align="right">
               <div class="packs--default__actions">
@@ -84,9 +84,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Eye, Pencil } from "lucide-vue-next";
+import { formatCurrency } from "@/utils/price";
 import { useSettingsStore } from "@/stores/settings.store";
 import SearchDefault from "@/components/SearchDefault.vue";
 import FilterDefault from "@/components/FilterDefault.vue";
@@ -95,19 +96,7 @@ import TableRow from "@/components/TableRow.vue";
 import TableCell from "@/components/TableCell.vue";
 import BadgeDefault from "@/components/BadgeDefault.vue";
 import PaginationDefault from "@/components/PaginationDefault.vue";
-
-interface Pack {
-  id: number;
-  name: string;
-  text?: string;
-  total_days: number;
-  total_ads: number;
-  total_features: number;
-  price: number;
-  description?: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import type { Pack } from "@/types/pack";
 
 const settingsStore = useSettingsStore();
 const section = "packs" as const;
@@ -135,7 +124,7 @@ const fetchPacks = async () => {
     loading.value = true;
     const strapi = useStrapi();
 
-    const searchParams: any = {
+    const searchParams: Record<string, unknown> = {
       pagination: {
         page: settingsStore.packs.currentPage,
         pageSize: settingsStore.packs.pageSize,
@@ -153,8 +142,11 @@ const fetchPacks = async () => {
     }
 
     const response = await strapi.find("ad-packs", searchParams);
-    allPacks.value = Array.isArray(response.data) ? response.data : [];
-    paginationMeta.value = response.meta?.pagination || null;
+    allPacks.value = Array.isArray(response.data)
+      ? (response.data as Pack[])
+      : [];
+    paginationMeta.value = (response.meta?.pagination ||
+      null) as typeof paginationMeta.value;
   } catch (error) {
     console.error("Error fetching packs:", error);
     allPacks.value = [];
@@ -178,7 +170,7 @@ const tableColumns = [
   { label: "Precio" },
   { label: "Duración" },
   { label: "Anuncios" },
-  { label: "Features" },
+  { label: "Destacados" },
   { label: "Fecha de Creación" },
   { label: "Acciones", align: "right" as const },
 ];
@@ -192,28 +184,6 @@ const sortOptions = [
   { value: "price:desc", label: "Precio mayor a menor" },
 ];
 
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  return new Intl.DateTimeFormat("es-CL", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
-};
-
-const formatCurrency = (amount: number | string) => {
-  const numAmount =
-    typeof amount === "string" ? Number.parseFloat(amount) : amount;
-  return new Intl.NumberFormat("es-CL", {
-    style: "currency",
-    currency: "CLP",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(numAmount);
-};
-
 const router = useRouter();
 
 const handleViewPack = (packId: number) => {
@@ -221,7 +191,7 @@ const handleViewPack = (packId: number) => {
 };
 
 const handleEditPack = (packId: number) => {
-  router.push(`/packs/${packId}/editar`);
+  router.push(`/packs/${packId}/edit`);
 };
 
 watch(
@@ -236,8 +206,4 @@ watch(
   },
   { immediate: true },
 );
-
-onMounted(() => {
-  fetchPacks();
-});
 </script>

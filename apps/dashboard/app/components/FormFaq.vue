@@ -127,11 +127,11 @@ const handleSubmit = async (values: any) => {
         const lookupResponse = await strapi.find("faqs", {
           filters: { documentId: { $eq: documentId } },
           pagination: { pageSize: 1 },
-        });
-        const lookup = Array.isArray(lookupResponse.data)
-          ? lookupResponse.data[0]
-          : null;
-        faqId = lookup?.id;
+        } as Record<string, unknown>);
+        const lookupData = Array.isArray(lookupResponse.data)
+          ? (lookupResponse.data as Array<{ id: number }>)
+          : [];
+        faqId = lookupData[0]?.id;
       }
 
       if (!faqId) {
@@ -144,10 +144,18 @@ const handleSubmit = async (values: any) => {
         return;
       }
 
-      const response = await strapi.update("faqs", faqId, payload);
+      const response = await strapi.update(
+        "faqs",
+        faqId,
+        payload as unknown as Parameters<typeof strapi.update>[2],
+      );
+      const responseData = response.data as unknown as {
+        id?: number;
+        documentId?: string;
+      };
       const updatedFaq = {
         ...props.faq,
-        ...response.data,
+        ...responseData,
         ...payload,
       };
       form.value = {
@@ -155,17 +163,24 @@ const handleSubmit = async (values: any) => {
         text: payload.text,
         featured: payload.featured,
       };
-      emit("saved", updatedFaq);
+      emit("saved", updatedFaq as FaqData);
       await Swal.fire("Éxito", "FAQ actualizado correctamente.", "success");
-      const updatedId = updatedFaq?.documentId || updatedFaq?.id;
+      const updatedId = responseData?.documentId || responseData?.id;
       if (updatedId) {
         router.push(`/faqs/${updatedId}`);
       }
     } else {
-      const response = await strapi.create("faqs", payload);
-      emit("saved", response.data || {});
+      const response = await strapi.create(
+        "faqs",
+        payload as unknown as Parameters<typeof strapi.create>[1],
+      );
+      const createdData = response.data as unknown as {
+        id?: number;
+        documentId?: string;
+      };
+      emit("saved", (createdData as FaqData) || ({} as FaqData));
       await Swal.fire("Éxito", "FAQ creado correctamente.", "success");
-      const createdId = response.data?.documentId || response.data?.id;
+      const createdId = createdData?.documentId || createdData?.id;
       if (createdId) {
         router.push(`/faqs/${createdId}`);
       } else {

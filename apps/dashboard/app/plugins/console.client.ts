@@ -5,7 +5,6 @@ export default defineNuxtPlugin(() => {
     // console.log = () => {};
     console.debug = () => {};
     console.warn = () => {};
-    console.error = () => {};
     console.info = () => {};
   }
 });

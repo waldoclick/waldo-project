@@ -80,7 +80,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Eye, Pencil } from "lucide-vue-next";
 import { useSettingsStore } from "@/stores/settings.store";
@@ -123,7 +123,7 @@ const fetchConditions = async () => {
     loading.value = true;
     const strapi = useStrapi();
 
-    const searchParams: any = {
+    const searchParams: Record<string, unknown> = {
       pagination: {
         page: settingsStore.conditions.currentPage,
         pageSize: settingsStore.conditions.pageSize,
@@ -140,8 +140,11 @@ const fetchConditions = async () => {
     }
 
     const response = await strapi.find("conditions", searchParams);
-    allConditions.value = Array.isArray(response.data) ? response.data : [];
-    paginationMeta.value = response.meta?.pagination || null;
+    allConditions.value = Array.isArray(response.data)
+      ? (response.data as Condition[])
+      : [];
+    paginationMeta.value = (response.meta?.pagination ||
+      null) as typeof paginationMeta.value;
   } catch (error) {
     console.error("Error fetching conditions:", error);
     allConditions.value = [];
@@ -174,25 +177,14 @@ const sortOptions = [
   { value: "name:desc", label: "Nombre Z-A" },
 ];
 
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  return new Intl.DateTimeFormat("es-CL", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
-};
-
 const router = useRouter();
 
 const handleViewCondition = (conditionId: number) => {
-  router.push(`/condiciones/${conditionId}`);
+  router.push(`/conditions/${conditionId}`);
 };
 
 const handleEditCondition = (conditionId: number) => {
-  router.push(`/condiciones/${conditionId}/editar`);
+  router.push(`/conditions/${conditionId}/edit`);
 };
 
 watch(
@@ -207,8 +199,4 @@ watch(
   },
   { immediate: true },
 );
-
-onMounted(() => {
-  fetchConditions();
-});
 </script>

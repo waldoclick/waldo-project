@@ -108,6 +108,8 @@ export default (
               populate: {
                 role: true,
                 commune: { populate: ["region"] },
+                business_region: true,
+                business_commune: { populate: ["region"] },
                 ad_reservations: { populate: ["ad"] },
                 ad_featured_reservations: { populate: ["ad"] },
               },
@@ -146,6 +148,8 @@ export default (
               populate: {
                 role: true,
                 commune: { populate: ["region"] },
+                business_region: true,
+                business_commune: { populate: ["region"] },
                 ad_reservations: { populate: ["ad"] },
                 ad_featured_reservations: { populate: ["ad"] },
               },

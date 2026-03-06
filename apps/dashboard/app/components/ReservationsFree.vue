@@ -71,7 +71,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Eye } from "lucide-vue-next";
 import { useSettingsStore } from "@/stores/settings.store";
@@ -120,7 +120,7 @@ const fetchFreeReservations = async () => {
     loading.value = true;
     const strapi = useStrapi();
 
-    const searchParams: any = {
+    const searchParams: Record<string, unknown> = {
       pagination: {
         page: settingsStore.reservations.currentPage,
         pageSize: settingsStore.reservations.pageSize,
@@ -140,7 +140,7 @@ const fetchFreeReservations = async () => {
 
     // Agregar búsqueda si existe
     if (settingsStore.reservations.searchTerm) {
-      searchParams.filters.$or = [
+      (searchParams.filters as Record<string, unknown>).$or = [
         {
           "user.username": {
             $containsi: settingsStore.reservations.searchTerm,
@@ -151,11 +151,13 @@ const fetchFreeReservations = async () => {
     }
 
     const response = await strapi.find("ad-reservations", searchParams);
-    allReservations.value = Array.isArray(response.data) ? response.data : [];
+    allReservations.value = Array.isArray(response.data)
+      ? (response.data as Reservation[])
+      : [];
 
     // Guardar información de paginación de Strapi
     paginationMeta.value = response.meta?.pagination
-      ? response.meta.pagination
+      ? (response.meta.pagination as typeof paginationMeta.value)
       : null;
   } catch (error) {
     console.error("Error fetching free reservations:", error);
@@ -192,22 +194,11 @@ const sortOptions = [
   { value: "user.username:desc", label: "Usuario Z-A" },
 ];
 
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  return new Intl.DateTimeFormat("es-CL", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
-};
-
 const router = useRouter();
 
 const handleViewReservation = (reservationId: number) => {
   // Navegar a la página de detalle de la reserva
-  router.push(`/reservas/${reservationId}`);
+  router.push(`/reservations/${reservationId}`);
 };
 
 // Watch para recargar cuando cambian los filtros o la búsqueda
@@ -223,9 +214,4 @@ watch(
   },
   { immediate: true },
 );
-
-// Cargar datos al montar
-onMounted(() => {
-  fetchFreeReservations();
-});
 </script>

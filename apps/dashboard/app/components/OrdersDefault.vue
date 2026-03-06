@@ -44,7 +44,7 @@
               <NuxtLink
                 class="orders--default__action"
                 title="Ver orden"
-                :to="`/ordenes/${order.id}`"
+                :to="`/orders/${order.id}`"
               >
                 <Eye class="orders--default__action__icon" />
               </NuxtLink>
@@ -76,6 +76,8 @@ import { computed } from "vue";
 import { useAsyncData } from "nuxt/app";
 import { useStrapi } from "#imports";
 import { Eye } from "lucide-vue-next";
+import { formatCurrency } from "@/utils/price";
+import { getPaymentMethod } from "@/utils/string";
 import { useSettingsStore } from "@/stores/settings.store";
 import SearchDefault from "@/components/SearchDefault.vue";
 import FilterDefault from "@/components/FilterDefault.vue";
@@ -84,23 +86,7 @@ import TableRow from "@/components/TableRow.vue";
 import TableCell from "@/components/TableCell.vue";
 import BadgeDefault from "@/components/BadgeDefault.vue";
 import PaginationDefault from "@/components/PaginationDefault.vue";
-
-interface Order {
-  id: number;
-  documentId?: string;
-  buy_order?: string;
-  amount: number | string;
-  payment_method: string;
-  is_invoice: boolean;
-  createdAt: string;
-  user?: { username: string };
-  ad?: { name: string } | null;
-}
-
-interface OrdersListResponse {
-  data: Order[];
-  meta: { pagination: { page: number; pageCount: number; total: number } };
-}
+import type { Order, OrdersListResponse } from "@/types/order";
 
 const settingsStore = useSettingsStore();
 const section = "orders" as const;
@@ -135,9 +121,9 @@ const { data: ordersResponse } = await useAsyncData(
           pageSize: settingsStore.orders.pageSize,
         },
 
-        sort: sortParam.value as any,
+        sort: sortParam.value as string,
         populate: ["user", "ad"],
-      })) as unknown as {
+      } as Record<string, unknown>)) as unknown as {
         data?: Order[];
         meta?: {
           pagination?: { page: number; pageCount?: number; total: number };
@@ -216,30 +202,4 @@ const sortOptions = [
   { value: "ad.name:asc", label: "Título A-Z" },
   { value: "ad.name:desc", label: "Título Z-A" },
 ];
-
-const formatCurrency = (amount: number | string) => {
-  const numAmount =
-    typeof amount === "string" ? Number.parseFloat(amount) : amount;
-  return new Intl.NumberFormat("es-CL", {
-    style: "currency",
-    currency: "CLP",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(numAmount);
-};
-
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  return new Intl.DateTimeFormat("es-CL", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
-};
-
-const getPaymentMethod = (method: string) => {
-  return method === "webpay" ? "WebPay" : method;
-};
 </script>

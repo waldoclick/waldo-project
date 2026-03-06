@@ -45,6 +45,7 @@
 import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Eye } from "lucide-vue-next";
+import { formatCurrency } from "@/utils/price";
 import TableDefault from "@/components/TableDefault.vue";
 import TableRow from "@/components/TableRow.vue";
 import TableCell from "@/components/TableCell.vue";
@@ -88,32 +89,10 @@ const totalRecords = computed(() => {
   return paginationMeta.value?.total || 0;
 });
 
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  return new Intl.DateTimeFormat("es-CL", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
-};
-
-const formatCurrency = (amount: number | string) => {
-  const numAmount =
-    typeof amount === "string" ? Number.parseFloat(amount) : amount;
-  return new Intl.NumberFormat("es-CL", {
-    style: "currency",
-    currency: "CLP",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(numAmount);
-};
-
 const router = useRouter();
 
 const handleViewFeatured = (featuredId: number) => {
-  router.push(`/destacados/${featuredId}`);
+  router.push(`/featured/${featuredId}`);
 };
 
 const handlePageChange = (page: number) => {
@@ -156,10 +135,13 @@ const fetchUserFeatured = async () => {
         pageSize,
       },
       sort: "createdAt:desc",
-    });
+    } as Record<string, unknown>);
 
-    allFeatured.value = Array.isArray(response.data) ? response.data : [];
-    paginationMeta.value = response.meta?.pagination || null;
+    allFeatured.value = Array.isArray(response.data)
+      ? (response.data as Featured[])
+      : [];
+    paginationMeta.value = (response.meta?.pagination ||
+      null) as typeof paginationMeta.value;
   } catch (error) {
     console.error("Error fetching free featured for user:", error);
     allFeatured.value = [];

@@ -26,9 +26,9 @@
       <!-- Órdenes -->
       <li
         class="menu--default__item"
-        :class="{ 'menu--default__item--active': isRouteActive('/ordenes') }"
+        :class="{ 'menu--default__item--active': isRouteActive('/orders') }"
       >
-        <NuxtLink to="/ordenes" class="menu--default__link">
+        <NuxtLink to="/orders" class="menu--default__link">
           <ShoppingCart class="menu--default__icon" />
           <span>Órdenes</span>
         </NuxtLink>
@@ -38,32 +38,27 @@
       <li
         class="menu--default__item"
         :class="{
-          'menu--default__item--active': isRouteActive('/anuncios'),
-          'menu--default__item--expanded': openMenu === 'anuncios',
+          'menu--default__item--active': isRouteActive('/ads'),
+          'menu--default__item--expanded': openMenu === 'ads',
         }"
       >
         <button
           class="menu--default__link menu--default__link--button"
-          @click="toggleMenu('anuncios')"
+          @click="toggleMenu('ads')"
         >
           <FileText class="menu--default__icon" />
           <span>Anuncios</span>
-          <ChevronDown
-            v-if="openMenu === 'anuncios'"
-            class="menu--default__arrow"
-          />
+          <ChevronDown v-if="openMenu === 'ads'" class="menu--default__arrow" />
           <ChevronRight v-else class="menu--default__arrow" />
         </button>
-        <ul v-if="openMenu === 'anuncios'" class="menu--default__sublist">
+        <ul v-if="openMenu === 'ads'" class="menu--default__sublist">
           <li
             class="menu--default__subitem"
             :class="{
-              'menu--default__subitem--active': isRouteActive(
-                '/anuncios/pendientes',
-              ),
+              'menu--default__subitem--active': isRouteActive('/ads/pending'),
             }"
           >
-            <NuxtLink to="/anuncios/pendientes" class="menu--default__sublink">
+            <NuxtLink to="/ads/pending" class="menu--default__sublink">
               <Clock class="menu--default__subicon" />
               <span>Pendientes</span>
             </NuxtLink>
@@ -71,11 +66,10 @@
           <li
             class="menu--default__subitem"
             :class="{
-              'menu--default__subitem--active':
-                isRouteActive('/anuncios/activos'),
+              'menu--default__subitem--active': isRouteActive('/ads/active'),
             }"
           >
-            <NuxtLink to="/anuncios/activos" class="menu--default__sublink">
+            <NuxtLink to="/ads/active" class="menu--default__sublink">
               <CheckCircle class="menu--default__subicon" />
               <span>Activos</span>
             </NuxtLink>
@@ -83,12 +77,10 @@
           <li
             class="menu--default__subitem"
             :class="{
-              'menu--default__subitem--active': isRouteActive(
-                '/anuncios/expirados',
-              ),
+              'menu--default__subitem--active': isRouteActive('/ads/expired'),
             }"
           >
-            <NuxtLink to="/anuncios/expirados" class="menu--default__sublink">
+            <NuxtLink to="/ads/expired" class="menu--default__sublink">
               <AlertCircle class="menu--default__subicon" />
               <span>Expirados</span>
             </NuxtLink>
@@ -96,11 +88,10 @@
           <li
             class="menu--default__subitem"
             :class="{
-              'menu--default__subitem--active':
-                isRouteActive('/anuncios/baneados'),
+              'menu--default__subitem--active': isRouteActive('/ads/banned'),
             }"
           >
-            <NuxtLink to="/anuncios/baneados" class="menu--default__sublink">
+            <NuxtLink to="/ads/banned" class="menu--default__sublink">
               <Ban class="menu--default__subicon" />
               <span>Baneados</span>
             </NuxtLink>
@@ -108,12 +99,10 @@
           <li
             class="menu--default__subitem"
             :class="{
-              'menu--default__subitem--active': isRouteActive(
-                '/anuncios/rechazados',
-              ),
+              'menu--default__subitem--active': isRouteActive('/ads/rejected'),
             }"
           >
-            <NuxtLink to="/anuncios/rechazados" class="menu--default__sublink">
+            <NuxtLink to="/ads/rejected" class="menu--default__sublink">
               <XCircle class="menu--default__subicon" />
               <span>Rechazados</span>
             </NuxtLink>
@@ -121,12 +110,10 @@
           <li
             class="menu--default__subitem"
             :class="{
-              'menu--default__subitem--active': isRouteActive(
-                '/anuncios/abandonados',
-              ),
+              'menu--default__subitem--active': isRouteActive('/ads/abandoned'),
             }"
           >
-            <NuxtLink to="/anuncios/abandonados" class="menu--default__sublink">
+            <NuxtLink to="/ads/abandoned" class="menu--default__sublink">
               <XOctagon class="menu--default__subicon" />
               <span>Abandonados</span>
             </NuxtLink>
@@ -138,31 +125,31 @@
       <li
         class="menu--default__item"
         :class="{
-          'menu--default__item--active': isRouteActive('/reservas'),
-          'menu--default__item--expanded': openMenu === 'reservas',
+          'menu--default__item--active': isRouteActive('/reservations'),
+          'menu--default__item--expanded': openMenu === 'reservations',
         }"
       >
         <button
           class="menu--default__link menu--default__link--button"
-          @click="toggleMenu('reservas')"
+          @click="toggleMenu('reservations')"
         >
           <Calendar class="menu--default__icon" />
           <span>Reservas</span>
           <ChevronDown
-            v-if="openMenu === 'reservas'"
+            v-if="openMenu === 'reservations'"
             class="menu--default__arrow"
           />
           <ChevronRight v-else class="menu--default__arrow" />
         </button>
-        <ul v-if="openMenu === 'reservas'" class="menu--default__sublist">
+        <ul v-if="openMenu === 'reservations'" class="menu--default__sublist">
           <li
             class="menu--default__subitem"
             :class="{
               'menu--default__subitem--active':
-                isRouteActive('/reservas/usadas'),
+                isRouteActive('/reservations/used'),
             }"
           >
-            <NuxtLink to="/reservas/usadas" class="menu--default__sublink">
+            <NuxtLink to="/reservations/used" class="menu--default__sublink">
               <CheckCircle class="menu--default__subicon" />
               <span>Usadas</span>
             </NuxtLink>
@@ -171,10 +158,10 @@
             class="menu--default__subitem"
             :class="{
               'menu--default__subitem--active':
-                isRouteActive('/reservas/libres'),
+                isRouteActive('/reservations/free'),
             }"
           >
-            <NuxtLink to="/reservas/libres" class="menu--default__sublink">
+            <NuxtLink to="/reservations/free" class="menu--default__sublink">
               <Circle class="menu--default__subicon" />
               <span>Libres</span>
             </NuxtLink>
@@ -186,31 +173,30 @@
       <li
         class="menu--default__item"
         :class="{
-          'menu--default__item--active': isRouteActive('/destacados'),
-          'menu--default__item--expanded': openMenu === 'destacados',
+          'menu--default__item--active': isRouteActive('/featured'),
+          'menu--default__item--expanded': openMenu === 'featured',
         }"
       >
         <button
           class="menu--default__link menu--default__link--button"
-          @click="toggleMenu('destacados')"
+          @click="toggleMenu('featured')"
         >
           <Star class="menu--default__icon" />
           <span>Destacados</span>
           <ChevronDown
-            v-if="openMenu === 'destacados'"
+            v-if="openMenu === 'featured'"
             class="menu--default__arrow"
           />
           <ChevronRight v-else class="menu--default__arrow" />
         </button>
-        <ul v-if="openMenu === 'destacados'" class="menu--default__sublist">
+        <ul v-if="openMenu === 'featured'" class="menu--default__sublist">
           <li
             class="menu--default__subitem"
             :class="{
-              'menu--default__subitem--active':
-                isRouteActive('/destacados/usados'),
+              'menu--default__subitem--active': isRouteActive('/featured/used'),
             }"
           >
-            <NuxtLink to="/destacados/usados" class="menu--default__sublink">
+            <NuxtLink to="/featured/used" class="menu--default__sublink">
               <CheckCircle class="menu--default__subicon" />
               <span>Usados</span>
             </NuxtLink>
@@ -218,11 +204,10 @@
           <li
             class="menu--default__subitem"
             :class="{
-              'menu--default__subitem--active':
-                isRouteActive('/destacados/libres'),
+              'menu--default__subitem--active': isRouteActive('/featured/free'),
             }"
           >
-            <NuxtLink to="/destacados/libres" class="menu--default__sublink">
+            <NuxtLink to="/featured/free" class="menu--default__sublink">
               <Circle class="menu--default__subicon" />
               <span>Libres</span>
             </NuxtLink>
@@ -233,9 +218,9 @@
       <!-- Usuarios -->
       <li
         class="menu--default__item"
-        :class="{ 'menu--default__item--active': isRouteActive('/usuarios') }"
+        :class="{ 'menu--default__item--active': isRouteActive('/users') }"
       >
-        <NuxtLink to="/usuarios" class="menu--default__link">
+        <NuxtLink to="/users" class="menu--default__link">
           <Users class="menu--default__icon" />
           <span>Usuarios</span>
         </NuxtLink>
@@ -265,10 +250,10 @@
           <li
             class="menu--default__subitem"
             :class="{
-              'menu--default__subitem--active': isRouteActive('/categorias'),
+              'menu--default__subitem--active': isRouteActive('/categories'),
             }"
           >
-            <NuxtLink to="/categorias" class="menu--default__sublink">
+            <NuxtLink to="/categories" class="menu--default__sublink">
               <Tag class="menu--default__subicon" />
               <span>Categorías</span>
             </NuxtLink>
@@ -276,10 +261,10 @@
           <li
             class="menu--default__subitem"
             :class="{
-              'menu--default__subitem--active': isRouteActive('/condiciones'),
+              'menu--default__subitem--active': isRouteActive('/conditions'),
             }"
           >
-            <NuxtLink to="/condiciones" class="menu--default__sublink">
+            <NuxtLink to="/conditions" class="menu--default__sublink">
               <FileCheck class="menu--default__subicon" />
               <span>Condiciones</span>
             </NuxtLink>
@@ -309,10 +294,10 @@
           <li
             class="menu--default__subitem"
             :class="{
-              'menu--default__subitem--active': isRouteActive('/regiones'),
+              'menu--default__subitem--active': isRouteActive('/regions'),
             }"
           >
-            <NuxtLink to="/regiones" class="menu--default__sublink">
+            <NuxtLink to="/regions" class="menu--default__sublink">
               <MapPin class="menu--default__subicon" />
               <span>Regiones</span>
             </NuxtLink>
@@ -320,10 +305,10 @@
           <li
             class="menu--default__subitem"
             :class="{
-              'menu--default__subitem--active': isRouteActive('/comunas'),
+              'menu--default__subitem--active': isRouteActive('/communes'),
             }"
           >
-            <NuxtLink to="/comunas" class="menu--default__sublink">
+            <NuxtLink to="/communes" class="menu--default__sublink">
               <Building class="menu--default__subicon" />
               <span>Comunas</span>
             </NuxtLink>
@@ -376,12 +361,12 @@ const isRouteActive = (path: string): boolean => {
 // Detectar si algún mantenedor está activo
 const isMantenedoresActive = computed(() => {
   return (
-    isRouteActive("/categorias") ||
-    isRouteActive("/condiciones") ||
+    isRouteActive("/categories") ||
+    isRouteActive("/conditions") ||
     isRouteActive("/faqs") ||
     isRouteActive("/packs") ||
-    isRouteActive("/regiones") ||
-    isRouteActive("/comunas")
+    isRouteActive("/regions") ||
+    isRouteActive("/communes")
   );
 });
 
@@ -394,19 +379,19 @@ const toggleMenu = (menu: string) => {
 watch(
   () => route.path,
   (path) => {
-    if (path.startsWith("/anuncios")) {
-      openMenu.value = "anuncios";
-    } else if (path.startsWith("/reservas")) {
-      openMenu.value = "reservas";
-    } else if (path.startsWith("/destacados")) {
-      openMenu.value = "destacados";
+    if (path.startsWith("/ads")) {
+      openMenu.value = "ads";
+    } else if (path.startsWith("/reservations")) {
+      openMenu.value = "reservations";
+    } else if (path.startsWith("/featured")) {
+      openMenu.value = "featured";
     } else if (
-      path.startsWith("/categorias") ||
-      path.startsWith("/condiciones") ||
+      path.startsWith("/categories") ||
+      path.startsWith("/conditions") ||
       path.startsWith("/faqs") ||
       path.startsWith("/packs") ||
-      path.startsWith("/regiones") ||
-      path.startsWith("/comunas")
+      path.startsWith("/regions") ||
+      path.startsWith("/communes")
     ) {
       openMenu.value = "mantenedores";
     } else {

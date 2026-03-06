@@ -1,91 +1,96 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: milestone
-status: planning
-stopped_at: Completed 02-call-site-wiring-and-bug-fixes-02-02-PLAN.md
-last_updated: "2026-03-04T11:08:51.907Z"
-last_activity: 2026-03-03 — Roadmap created for milestone v1.0 Payment Gateway Abstraction
+milestone: v1.4
+milestone_name: URL Localization
+status: executing
+stopped_at: Phase 15 complete — milestone v1.4 shipped
+last_updated: "2026-03-06T05:00:00Z"
+last_activity: 2026-03-06 — Restored Spanish breadcrumb labels in 25 page files (URLs stay English; labels were incorrectly translated); nuxt typecheck exit 0 confirmed
 progress:
-  total_phases: 2
-  completed_phases: 2
-  total_plans: 4
-  completed_plans: 4
-  percent: 50
+  total_phases: 4
+  completed_phases: 4
+  total_plans: 9
+  completed_plans: 9
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-03)
+See: .planning/PROJECT.md (updated 2026-03-05)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 1 — Interface and Adapter Layer
+**Current focus:** v1.4 URL Localization — SHIPPED. All phases 12-15 complete.
 
 ## Current Position
 
-Phase: 1 of 2 (Interface and Adapter Layer)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-03-03 — Roadmap created for milestone v1.0 Payment Gateway Abstraction
+Phase: 15 — Links, Redirects & Build Verification
+Plan: 03 (complete)
+Status: Phase Complete
+Last activity: 2026-03-06 — Completed 15-03 (add routeRules 301 redirects for all Spanish→English URLs; nuxt typecheck passes clean)
 
-Progress: [█████░░░░░] 50%
-
-## Performance Metrics
-
-**Velocity:**
-- Total plans completed: 0
-- Average duration: -
-- Total execution time: 0 hours
-
-**By Phase:**
-
-| Phase | Plans | Total | Avg/Plan |
-|-------|-------|-------|----------|
-| - | - | - | - |
-
-**Recent Trend:**
-- Last 5 plans: -
-- Trend: -
-
-*Updated after each plan completion*
-| Phase 01-interface-and-adapter-layer P01 | 1 | 1 tasks | 1 files |
-| Phase 01-interface-and-adapter-layer P02 | 2 | 2 tasks | 4 files |
-| Phase 02-call-site-wiring-and-bug-fixes P01 | 4 | 3 tasks | 3 files |
-| Phase 02-call-site-wiring-and-bug-fixes P02 | 8 | 2 tasks | 7 files |
+```
+v1.4 Progress: [██████████] 100% (37/37 plans completed)
+```
 
 ## Accumulated Context
 
 ### Decisions
 
-Decisions are logged in PROJECT.md Key Decisions table.
-Recent decisions affecting current work:
+All decisions from v1.1, v1.2, and v1.3 are logged in PROJECT.md Key Decisions table.
 
-- Interface design: Use `gatewayRef` (not `token`) in IPaymentGateway — protocol-agnostic; TransbankAdapter maps `token` to `gatewayRef` internally
-- Scope: FlowService (Pro subscriptions) is a separate domain — NOT part of this abstraction
-- Coupling points: `ad.service.ts` and `pack.service.ts` import TransbankServices directly — these are the only two call sites to rewire
-- Known bug: missing `return` after `ctx.redirect` in pack failure path — addressed in Phase 2
-- [Phase 01-interface-and-adapter-layer]: Wave 0 tests use jest.spyOn(TransbankService.prototype) + savedEnv isolation pattern; WEBPAY_ENVIRONMENT excluded from required vars (has default)
-- [Phase 01-interface-and-adapter-layer]: TransbankAdapter imports TransbankService directly (not singleton) to allow jest.spyOn mocking in unit tests
-- [Phase 01-interface-and-adapter-layer]: Only WEBPAY_COMMERCE_CODE and WEBPAY_API_KEY are required env vars; WEBPAY_ENVIRONMENT has a default in transbank.config.ts
-- [Phase 01-interface-and-adapter-layer]: token-to-gatewayRef mapping happens exclusively in TransbankAdapter — callers never see provider-specific field names
-- [Phase 02-call-site-wiring-and-bug-fixes]: Test import paths from __tests__/ are one level deeper than service files — use ../../../../services/payment-gateway not ../../../services/payment-gateway
-- [Phase 02-call-site-wiring-and-bug-fixes]: Wave 0 RED tests confirm WIRE-04: documentDetails called even on failure because packResponse missing return after ctx.redirect
-- [Phase 02-call-site-wiring-and-bug-fixes]: Wave 0 RED tests confirm WIRE-03: payment_method hardcoded as webpay, not reading PAYMENT_GATEWAY env var
-- [Phase 02-call-site-wiring-and-bug-fixes]: Order schema enum extended to include transbank; payment_method broadened to string in CreateOrderParams with union cast at entityService call
-- [Phase 02-call-site-wiring-and-bug-fixes]: process.env.PAYMENT_GATEWAY ?? transbank pattern used for dynamic payment_method in payment.ts — zero code changes needed to switch gateways
+Key patterns established (carry forward):
+- `watch({ immediate: true })` as sole data-loading trigger — never pair with onMounted
+- Per-entity section keys in settings store — never share a key between distinct list views
+- Strapi SDK v5 cast pattern: `response.data as T[]`, params as `Record<string,unknown>`, payload double-cast
+- All utility functions accept `null | undefined` and return `"--"` for missing data
+- Nuxt auto-import picks up `app/utils/*.ts` — no explicit imports needed
+  - [Phase 13-catalog-segments-migration]: Used git mv to rename comunas→communes and condiciones→conditions, updated all route refs from Spanish to English paths
+- [Phase 14-account-featured-reservations-migration]: Kept Spanish UI labels (title=Libres, Usadas) — only route path strings updated — Plan spec stated do NOT change Spanish UI labels in templates
+- [Phase 14-account-featured-reservations-migration]: Task 1 renames were already committed in prior session (bc5152d); account/ pages were empty stubs requiring no route ref updates — git mv rename pattern: rename dir/files first, then update route refs in separate commit
+- [Phase 15-links-redirects-build-verification]: Task 2 components already updated in prior session 8a95dfd; only MenuDefault.vue required new changes in this plan
+- [Phase 15-links-redirects-build-verification plan 02]: External public website hrefs (websiteUrl + /anuncios/[slug]) exempt from localization — only dashboard router.push/NuxtLink :to paths in scope
+- [Phase 15-links-redirects-build-verification plan 02]: Used git mv for faqs/packs editar.vue→edit.vue to preserve history while creating /edit Nuxt file-based route
+- [Phase 15-links-redirects-build-verification plan 03]: Used explicit named routeRules redirects only (no wildcard :splat) — covers all known routes, avoids TS incompatibility
+
+### v1.4-Specific Context
+
+- Nuxt 4 uses file-based routing: renaming a directory renames the route automatically
+- Redirects should be added in `nuxt.config.ts` under `routeRules` or as server middleware
+- ~30 components contain internal route references that will need updating (navigateTo, NuxtLink, router.push)
+- No API changes, no store changes, no functional behavior changes — pure path rename
+- Phase 12 and Phase 14 can be executed in parallel (independent segments), but Phase 15 must be last
+- Route migration pattern: `git mv` dir, `git mv` individual files, then update refs in a second commit
 
 ### Pending Todos
 
-None yet.
+None.
 
 ### Blockers/Concerns
 
-None yet.
+None.
+
+## Performance Metrics
+
+| Phase | Plan | Duration | Tasks | Files |
+| :--- | :--- | :--- | :--- | :--- |
+| 09 | 02 | 15 min | 2 | 8 |
+| 09 | 03 | 5 min | 2 | 8 |
+| 09 | 04 | 3 min | 2 | 8 |
+| 09 | 05 | 5 min | 3 | 9 |
+| 10 | 01 | 15 min | 3 | 14 |
+| 11 | 01 | ~15 min | 3 | 8 |
+| 12 | 01 | 2 min | 2 | 8 |
+| 13 | 01 | 3 min | 2 | 8 |
+| 13 | 02 | 3 min | 2 | 8 |
+| 13 | 03 | 2 min | 2 | 4 |
+| 14 | 01 | 2 min | 2 | 4 |
+| 15 | 01 | — | — | — |
+| 15 | 02 | 14 min | 3 | 24 |
+| 15 | 03 | 2 min | 2 | 1 |
 
 ## Session Continuity
 
-Last session: 2026-03-04T11:05:58.476Z
-Stopped at: Completed 02-call-site-wiring-and-bug-fixes-02-02-PLAN.md
+Last session: 2026-03-06T03:33:43Z
+Stopped at: Completed 15-03-PLAN.md
 Resume file: None

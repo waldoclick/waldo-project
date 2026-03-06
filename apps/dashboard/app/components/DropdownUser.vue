@@ -26,15 +26,15 @@
     <nav class="dropdown--user__menu" :class="{ 'is-open': isOpen }">
       <ul class="dropdown--user__menu__links">
         <li @click="toggleOpen">
-          <NuxtLink to="/cuenta/perfil" title="Mi perfil">Mi perfil</NuxtLink>
+          <NuxtLink to="/account/profile" title="Mi perfil">Mi perfil</NuxtLink>
         </li>
         <li @click="toggleOpen">
-          <NuxtLink to="/cuenta/perfil/editar" title="Editar perfil">
+          <NuxtLink to="/account/profile/edit" title="Editar perfil">
             <span>Editar perfil</span>
           </NuxtLink>
         </li>
         <li @click="toggleOpen">
-          <NuxtLink to="/cuenta/cambiar-contrasena" title="Cambiar contraseña">
+          <NuxtLink to="/account/change-password" title="Cambiar contraseña">
             <span>Cambiar contraseña</span>
           </NuxtLink>
         </li>
@@ -60,10 +60,11 @@ import { useRouter } from "vue-router";
 import { useSweetAlert2 } from "@/composables/useSweetAlert2";
 import AvatarDefault from "@/components/AvatarDefault.vue";
 import { Menu as IconMenu, X as IconX } from "lucide-vue-next";
+import type { User } from "@/types/user";
 
 const { Swal } = useSweetAlert2();
 
-const user = useStrapiUser();
+const user = useStrapiUser() as Ref<User | null>;
 const { logout } = useStrapiAuth();
 
 const isOpen = ref(false);
@@ -100,7 +101,7 @@ const handleLogout = async () => {
     showCancelButton: true,
     confirmButtonText: "Sí, quiero salir",
     cancelButtonText: "No",
-  }).then(async (result) => {
+  }).then(async (result: { isConfirmed: boolean }) => {
     if (result.isConfirmed) {
       try {
         await logout();

@@ -11,10 +11,10 @@ export default defineNuxtPlugin(() => {
 
   router.beforeEach((to, from) => {
     // Solo guardamos el referer si la ruta anterior no está en la lista de excluidas
-    // y no es una ruta de /cuenta o /auth
+    // y no es una ruta de /account o /auth
     if (
       !excludedRoutes.has(from.fullPath) &&
-      !from.fullPath.startsWith("/cuenta") &&
+      !from.fullPath.startsWith("/account") &&
       !from.fullPath.startsWith("/auth")
     ) {
       appStore.setReferer(from.fullPath);

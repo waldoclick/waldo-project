@@ -76,7 +76,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useStrapi } from "#imports";
 import { Eye } from "lucide-vue-next";
@@ -120,7 +120,7 @@ const fetchUsedReservations = async () => {
     loading.value = true;
     const strapi = useStrapi();
 
-    const searchParams: any = {
+    const searchParams: Record<string, unknown> = {
       pagination: {
         page: 1,
         pageSize: 1000,
@@ -219,22 +219,11 @@ const sortOptions = [
   { value: "ad.name:desc", label: "Anuncio Z-A" },
 ];
 
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  return new Intl.DateTimeFormat("es-CL", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
-};
-
 const router = useRouter();
 
 const handleViewReservation = (reservationId: number) => {
   // Navegar a la página de detalle de la reserva
-  router.push(`/reservas/${reservationId}`);
+  router.push(`/reservations/${reservationId}`);
 };
 
 // Watch para recargar cuando cambian los filtros o la búsqueda
@@ -259,9 +248,4 @@ watch(
     }
   },
 );
-
-// Cargar datos al montar
-onMounted(() => {
-  fetchUsedReservations();
-});
 </script>

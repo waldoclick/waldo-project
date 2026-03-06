@@ -74,9 +74,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Eye } from "lucide-vue-next";
+import { formatCurrency } from "@/utils/price";
 import { useSettingsStore } from "@/stores/settings.store";
 import SearchDefault from "@/components/SearchDefault.vue";
 import FilterDefault from "@/components/FilterDefault.vue";
@@ -124,7 +125,7 @@ const fetchUsedFeatured = async () => {
     loading.value = true;
     const strapi = useStrapi();
 
-    const searchParams: any = {
+    const searchParams: Record<string, unknown> = {
       pagination: {
         page: settingsStore.featured.currentPage,
         pageSize: settingsStore.featured.pageSize,
@@ -147,7 +148,7 @@ const fetchUsedFeatured = async () => {
 
     // Agregar búsqueda si existe
     if (settingsStore.featured.searchTerm) {
-      searchParams.filters.$or = [
+      (searchParams.filters as Record<string, unknown>).$or = [
         {
           "user.username": {
             $containsi: settingsStore.featured.searchTerm,
@@ -162,11 +163,13 @@ const fetchUsedFeatured = async () => {
       "ad-featured-reservations",
       searchParams,
     );
-    allFeatured.value = Array.isArray(response.data) ? response.data : [];
+    allFeatured.value = Array.isArray(response.data)
+      ? (response.data as Featured[])
+      : [];
 
     // Guardar información de paginación de Strapi
     paginationMeta.value = response.meta?.pagination
-      ? response.meta.pagination
+      ? (response.meta.pagination as typeof paginationMeta.value)
       : null;
   } catch (error) {
     console.error("Error fetching used featured:", error);
@@ -207,33 +210,11 @@ const sortOptions = [
   { value: "ad.name:desc", label: "Anuncio Z-A" },
 ];
 
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  return new Intl.DateTimeFormat("es-CL", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
-};
-
-const formatCurrency = (amount: number | string) => {
-  const numAmount =
-    typeof amount === "string" ? Number.parseFloat(amount) : amount;
-  return new Intl.NumberFormat("es-CL", {
-    style: "currency",
-    currency: "CLP",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(numAmount);
-};
-
 const router = useRouter();
 
 const handleViewFeatured = (featuredId: number) => {
   // Navegar a la página de detalle del destacado
-  router.push(`/destacados/${featuredId}`);
+  router.push(`/featured/${featuredId}`);
 };
 
 // Watch para recargar cuando cambian los filtros o la búsqueda
@@ -249,9 +230,4 @@ watch(
   },
   { immediate: true },
 );
-
-// Cargar datos al montar
-onMounted(() => {
-  fetchUsedFeatured();
-});
 </script>

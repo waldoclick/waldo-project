@@ -1,7 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
 import sass from "sass";
-// import { feedbackIntegration } from "@sentry/integrations";
 import * as Sentry from "@sentry/nuxt";
 
 export default defineNuxtConfig({
@@ -26,7 +25,6 @@ export default defineNuxtConfig({
     "@nuxtjs/seo",
     "@nuxt/image",
     "@nuxtjs/google-fonts",
-    // "@nuxtjs/i18n",
   ],
 
   // Security configuration - using nuxt-security defaults with customizations
@@ -113,20 +111,6 @@ export default defineNuxtConfig({
       },
     },
   },
-
-  // i18n: {
-  //   defaultLocale: 'es',
-  //   locales: ['es'],
-  //   strategy: 'prefix_except_default',
-  //   detectBrowserLanguage: {
-  //     useCookie: true,
-  //     cookieKey: 'i18n_redirected',
-  //     redirectOn: 'root',
-  //   },
-  //   bundle: {
-  //     optimizeTranslationDirective: false
-  //   }
-  // },
 
   site: {
     name: "Admin Waldo.click®",
@@ -221,7 +205,6 @@ export default defineNuxtConfig({
           sizes: "16x16",
           href: "/favicons/favicon-16x16.png",
         },
-        // { rel: "manifest", href: "/favicons/manifest.json" },
       ],
       script: [
         {
@@ -272,13 +255,6 @@ export default defineNuxtConfig({
     // Pinia Configuration
   },
 
-  // Google Tag Manager Configuration - Manual implementation for Nuxt 4
-  // gtm: {
-  //   id: process.env.GTM_ID || "GTM-N4B8LDKS",
-  //   enabled: true,
-  //   debug: false,
-  // },
-
   eslint: {
     config: {
       stylistic: false,
@@ -319,6 +295,64 @@ export default defineNuxtConfig({
     devPassword: process.env.DEV_PASSWORD,
   },
 
+  // URL Localization redirects: Spanish legacy URLs → English equivalents
+  routeRules: {
+    // Ads (anuncios)
+    "/anuncios": { redirect: { to: "/ads", statusCode: 301 } },
+    "/anuncios/pendientes": {
+      redirect: { to: "/ads/pending", statusCode: 301 },
+    },
+    "/anuncios/activos": { redirect: { to: "/ads/active", statusCode: 301 } },
+    "/anuncios/expirados": {
+      redirect: { to: "/ads/expired", statusCode: 301 },
+    },
+    "/anuncios/baneados": { redirect: { to: "/ads/banned", statusCode: 301 } },
+    "/anuncios/rechazados": {
+      redirect: { to: "/ads/rejected", statusCode: 301 },
+    },
+    "/anuncios/abandonados": {
+      redirect: { to: "/ads/abandoned", statusCode: 301 },
+    },
+    // Orders (ordenes)
+    "/ordenes": { redirect: { to: "/orders", statusCode: 301 } },
+    // Reservations (reservas)
+    "/reservas": { redirect: { to: "/reservations", statusCode: 301 } },
+    "/reservas/libres": {
+      redirect: { to: "/reservations/free", statusCode: 301 },
+    },
+    "/reservas/usadas": {
+      redirect: { to: "/reservations/used", statusCode: 301 },
+    },
+    // Featured (destacados)
+    "/destacados": { redirect: { to: "/featured", statusCode: 301 } },
+    "/destacados/libres": {
+      redirect: { to: "/featured/free", statusCode: 301 },
+    },
+    "/destacados/usados": {
+      redirect: { to: "/featured/used", statusCode: 301 },
+    },
+    // Users (usuarios)
+    "/usuarios": { redirect: { to: "/users", statusCode: 301 } },
+    "/usuarios/[id]": { redirect: { to: "/users/[id]", statusCode: 301 } },
+    // Account (cuenta)
+    "/cuenta": { redirect: { to: "/account", statusCode: 301 } },
+    "/cuenta/perfil": { redirect: { to: "/account/profile", statusCode: 301 } },
+    "/cuenta/perfil/editar": {
+      redirect: { to: "/account/profile/edit", statusCode: 301 },
+    },
+    "/cuenta/cambiar-contrasena": {
+      redirect: { to: "/account/change-password", statusCode: 301 },
+    },
+    // Categories (categorias)
+    "/categorias": { redirect: { to: "/categories", statusCode: 301 } },
+    // Conditions (condiciones)
+    "/condiciones": { redirect: { to: "/conditions", statusCode: 301 } },
+    // Regions (regiones)
+    "/regiones": { redirect: { to: "/regions", statusCode: 301 } },
+    // Communes (comunas)
+    "/comunas": { redirect: { to: "/communes", statusCode: 301 } },
+  },
+
   // 5. Nitro Configuration
   nitro: {
     compressPublicAssets: true,
@@ -336,30 +370,15 @@ export default defineNuxtConfig({
   // 6. Performance Optimizations
   // (Nitro config moved above to avoid duplication)
 
-  // Robots Configuration
-  robots:
-    process.env.BLOCK_SEARCH_ENGINES === "true"
-      ? {
-          disallow: "/",
-        }
-      : {
-          allow: "/",
-          disallow: [
-            "/404",
-            "/500",
-            "/auth/reset-password",
-            "/dev/",
-            "/cuenta/**",
-            "/anunciar/**",
-            "/packs/**",
-            "/contacto/**",
-          ],
-        },
+  // Robots: dashboard is always private, never indexable
+  robots: {
+    disallow: "/",
+  },
 
   // 6. Development Configuration
   typescript: {
     strict: true,
-    typeCheck: false, // Disabled by default, enable when ready
+    typeCheck: true,
   },
 
   devtools: { enabled: process.env.NODE_ENV === "development" },
@@ -397,15 +416,5 @@ export default defineNuxtConfig({
     },
   },
 
-  image: {
-    // Configuración para evitar event handlers inline
-    // onError: false, // Deshabilitar onerror inline
-    // quality: 80,
-    // format: ["webp"],
-    // provider: "ipx",
-    // ipx: {
-    //   maxAge: 60 * 60 * 24 * 7, // 7 días
-    //   dir: "public",
-    // },
-  },
+  image: {},
 });

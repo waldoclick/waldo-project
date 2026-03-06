@@ -89,21 +89,10 @@ const totalRecords = computed(() => {
   return paginationMeta.value?.total || 0;
 });
 
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  return new Intl.DateTimeFormat("es-CL", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
-};
-
 const router = useRouter();
 
 const handleViewReservation = (reservationId: number) => {
-  router.push(`/reservas/${reservationId}`);
+  router.push(`/reservations/${reservationId}`);
 };
 
 const handlePageChange = (page: number) => {
@@ -167,10 +156,13 @@ const fetchUserReservations = async () => {
         pageSize,
       },
       sort: "createdAt:desc",
-    });
+    } as Record<string, unknown>);
 
-    allReservations.value = Array.isArray(response.data) ? response.data : [];
-    paginationMeta.value = response.meta?.pagination || null;
+    allReservations.value = Array.isArray(response.data)
+      ? (response.data as Reservation[])
+      : [];
+    paginationMeta.value = (response.meta?.pagination ||
+      null) as typeof paginationMeta.value;
   } catch (error) {
     console.error("Error fetching free reservations for user:", error);
     allReservations.value = [];

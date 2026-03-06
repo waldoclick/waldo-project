@@ -23,7 +23,7 @@
       <div class="dropdown--pendings__panel__head">
         <h3 class="dropdown--pendings__panel__title">Anuncios Pendientes</h3>
         <NuxtLink
-          to="/anuncios/pendientes"
+          to="/ads/pending"
           class="dropdown--pendings__panel__link"
           @click="open = false"
         >
@@ -53,7 +53,7 @@
         <NuxtLink
           v-for="(ad, index) in ads"
           :key="ad.id"
-          :to="`/anuncios/${ad.id}`"
+          :to="`/ads/${ad.id}`"
           class="dropdown--pendings__list__item"
           :class="{
             'dropdown--pendings__list__item--border': index < ads.length - 1,
@@ -78,19 +78,17 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue";
 import { Bell, CheckCircle2, Circle, ExternalLink } from "lucide-vue-next";
+import type { Ad } from "@/types/ad";
 
-interface Ad {
-  id: number;
-  name: string;
-  createdAt: string;
+type PendingAd = Omit<Ad, "user"> & {
   user?: { username?: string; email?: string };
-}
+};
 
 const strapi = useStrapi();
 
 const open = ref(false);
 const loading = ref(true);
-const ads = ref<Ad[]>([]);
+const ads = ref<PendingAd[]>([]);
 const pendingCount = ref(0);
 const dropdownRef = ref<HTMLElement | null>(null);
 const triggerRef = ref<HTMLElement | null>(null);
@@ -103,8 +101,8 @@ const fetchPendings = async () => {
       pagination: { page: 1, pageSize: 10 },
       sort: "createdAt:asc",
       populate: ["user"],
-    })) as {
-      data?: Ad[];
+    } as Record<string, unknown>)) as unknown as {
+      data?: PendingAd[];
       meta?: { pagination?: { total?: number } };
     };
     ads.value = Array.isArray(res.data) ? res.data : [];

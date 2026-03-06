@@ -4,7 +4,7 @@
       <template #actions>
         <NuxtLink
           class="btn btn--primary"
-          :to="`/faqs/${route.params.id}/editar`"
+          :to="`/faqs/${route.params.id}/edit`"
         >
           Editar FAQ
         </NuxtLink>
@@ -61,17 +61,6 @@ const breadcrumbs = computed(() => [
   ...(item.value?.title ? [{ label: item.value.title }] : []),
 ]);
 
-const formatDate = (dateString: string | undefined) => {
-  if (!dateString) return "--";
-  return new Date(dateString).toLocaleString("es-CL", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-};
-
 const { data: faqData } = await useAsyncData(
   `faq-${route.params.id}`,
   async () => {
@@ -81,14 +70,14 @@ const { data: faqData } = await useAsyncData(
     const strapi = useStrapi();
     const response = await strapi.find("faqs", {
       filters: { documentId: { $eq: id } },
-    });
+    } as Record<string, unknown>);
     const data = Array.isArray(response.data) ? response.data[0] : null;
     if (data) return data;
 
     const fallbackResponse = await strapi.findOne("faqs", id as string);
-    return fallbackResponse.data || null;
+    return (fallbackResponse.data as unknown) || null;
   },
 );
 
-item.value = faqData.value;
+item.value = faqData.value ?? null;
 </script>

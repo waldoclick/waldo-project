@@ -1,3 +1,5 @@
+import type { User } from "@/types/user";
+
 export default defineNuxtRouteMiddleware(async (to, _from) => {
   const publicRoutes = [
     "/auth/login",
@@ -12,20 +14,14 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
     return;
   }
 
-  const user = useStrapiUser();
+  const user = useStrapiUser() as Ref<User | null>;
   if (!user.value) {
     useCookie("redirect", { path: "/" }).value = to.fullPath;
     return navigateTo("/auth/login");
   }
 
   const userRole = user.value?.role;
-  const roleName =
-    typeof userRole === "string"
-      ? userRole.toLowerCase()
-      : userRole?.name?.toLowerCase() ||
-        userRole?.type?.toLowerCase() ||
-        user.value?.type?.toLowerCase() ||
-        null;
+  const roleName = userRole?.name?.toLowerCase() || null;
 
   if (roleName !== "manager") {
     const { logout } = useStrapiAuth();

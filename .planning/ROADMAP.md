@@ -1,59 +1,121 @@
-# Roadmap: Waldo — v1.0 Payment Gateway Abstraction
+# Roadmap: Waldo Project
 
-## Overview
+## Milestones
 
-This milestone introduces a gateway-agnostic abstraction layer over Waldo's existing Transbank payment integration in Strapi v5. Phase 1 defines the interface contract and implements the TransbankAdapter and registry — no existing behavior changes. Phase 2 wires the two payment service call sites through the abstraction and fixes two known bugs in the payment flow. When complete, adding a second payment gateway requires one new adapter file and an env var change — zero modifications to existing services.
+- ✅ **v1.1 Dashboard Technical Debt Reduction** — Phases 3-6 (shipped 2026-03-05)
+- ✅ **v1.2 Double-Fetch Cleanup** — Phases 7-8 (shipped 2026-03-05)
+- ✅ **v1.3 Utility Extraction** — Phases 9-11 (shipped 2026-03-06)
+- ✅ **v1.4 URL Localization** — Phases 12-15 (shipped 2026-03-06)
 
 ## Phases
 
-**Phase Numbering:**
-- Integer phases (1, 2, 3): Planned milestone work
-- Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
+<details>
+<summary>✅ v1.1 Dashboard Technical Debt Reduction (Phases 3-6) — SHIPPED 2026-03-05</summary>
 
-Decimal phases appear between their surrounding integers in numeric order.
+Phases 3-6 completed in v1.1: double-fetch + pagination isolation, Sentry/dead-code cleanup,
+AdsTable generic component, canonical domain types + typeCheck, Strapi aggregate endpoints.
+Archive: `.planning/milestones/v1.1-ROADMAP.md`
 
-- [x] **Phase 1: Interface and Adapter Layer** - Define IPaymentGateway contract, implement TransbankAdapter, and build the PaymentGatewayRegistry (completed 2026-03-04)
-- [x] **Phase 2: Call Site Wiring and Bug Fixes** - Route AdService and PackService through the registry; fix hardcoded string and missing return bug (completed 2026-03-04)
+</details>
+
+<details>
+<summary>✅ v1.2 Double-Fetch Cleanup (Phases 7-8) — SHIPPED 2026-03-05</summary>
+
+Phases 7-8 completed in v1.2: eliminated redundant `onMounted` from all 10 non-ads dashboard
+components; `watch({ immediate: true })` is now sole data-loading trigger across the entire dashboard.
+Archive: `.planning/milestones/v1.2-ROADMAP.md`
+
+</details>
+
+<details>
+<summary>✅ v1.3 Utility Extraction (Phases 9-11) — SHIPPED 2026-03-06</summary>
+
+**Milestone Goal:** Extract all inline duplicated pure functions (date, price, string) into shared utility files and replace every inline copy with an import — zero duplicate function definitions remain in the dashboard.
+
+- [x] **Phase 9: Date Utilities** - Create `app/utils/date.ts` and replace all 33 inline date formatting definitions
+- [x] **Phase 10: Price Utilities** - Create `app/utils/price.ts` and replace all 13 inline currency formatting definitions
+- [x] **Phase 11: String Utilities** - Create `app/utils/string.ts` and replace all 6 inline string utility definitions
+
+Archive: `.planning/milestones/v1.3-ROADMAP.md`
+
+</details>
+
+---
+
+### v1.4 URL Localization (Phases 12-15)
+
+**Milestone Goal:** All dashboard URL segments are in English. Old Spanish URLs redirect to their English equivalents. No functional changes — pure route rename.
+
+- [x] **Phase 12: Ads Migration** — Rename `anuncios` directory and all 6 sub-status pages to English equivalents (completed 2026-03-06)
+- [x] **Phase 13: Catalog Segments Migration** — Rename `categorias`, `comunas`, `condiciones`, `ordenes`, `regiones`, `usuarios` to English (completed 2026-03-06)
+- [x] **Phase 14: Account, Featured & Reservations Migration** — Rename `cuenta`, `destacados`, `reservas` with their non-standard sub-routing patterns (completed 2026-03-06)
+- [x] **Phase 15: Links, Redirects & Build Verification** — Update all internal route references, add Spanish→English redirects, verify `nuxt typecheck` (completed 2026-03-06)
 
 ## Phase Details
 
-### Phase 1: Interface and Adapter Layer
-**Goal**: The payment gateway abstraction exists as a complete, self-contained module — interface, adapter, and registry — with no changes to existing payment behavior
-**Depends on**: Nothing (first phase)
-**Requirements**: PAY-01, PAY-02, PAY-03, PAY-04, PAY-05
+### Phase 12: Ads Migration
+**Goal**: The `/ads` route tree is fully functional with all 8 status sub-pages accessible
+**Depends on**: Nothing (first phase of v1.4)
+**Requirements**: URL-01, URL-02
 **Success Criteria** (what must be TRUE):
-  1. `IPaymentGateway` interface exists with `createTransaction` and `commitTransaction` method signatures that use gateway-agnostic types (`gatewayRef`, not `token`)
-  2. `IGatewayInitResponse` and `IGatewayCommitResponse` normalized types exist and cover all data the current Transbank flow depends on
-  3. `TransbankAdapter` implements `IPaymentGateway` and produces identical behavior to calling `TransbankService` directly — no call site changes required
-  4. `getPaymentGateway()` returns the active adapter based on `PAYMENT_GATEWAY` env var, defaulting to `"transbank"` when unset
-  5. Strapi startup fails with a clear error message if required env vars for the selected gateway are absent
+  1. Navigating to `/ads` shows the ads list without errors
+  2. Each status sub-page (`/ads/active`, `/ads/pending`, `/ads/abandoned`, `/ads/banned`, `/ads/expired`, `/ads/rejected`) loads the correct filtered list
+  3. The old `/anuncios` paths are not relied upon by any renamed page file
+**Plans**: 1 plan
+
+Plans:
+- [ ] 12-01-PLAN.md — Rename anuncios/ to ads/, translate sub-page filenames, update internal route refs
+
+### Phase 13: Catalog Segments Migration
+**Goal**: Six catalog sections are accessible at their English URLs — categories, communes, conditions, orders, regions, users
+**Depends on**: Phase 12
+**Requirements**: URL-03, URL-04, URL-05, URL-08, URL-09, URL-11
+**Success Criteria** (what must be TRUE):
+  1. Navigating to `/categories`, `/communes`, `/conditions`, `/orders`, `/regions`, `/users` each loads the correct list page
+  2. Detail and edit sub-routes (e.g., `/categories/[id]/edit`, `/regions/new`) load without 404 or routing errors
+  3. The renamed directory files are the sole source of routing for these 6 sections
+**Plans**: 3 plans
+
+Plans:
+- [ ] 13-01-PLAN.md — Rename categorias→categories and regiones→regions, translate editar→edit sub-pages, update internal route refs
+- [ ] 13-02-PLAN.md — Rename comunas→communes and condiciones→conditions, translate editar→edit sub-pages, update internal route refs
+- [ ] 13-03-PLAN.md — Rename ordenes→orders and usuarios→users, update internal route refs
+
+### Phase 14: Account, Featured & Reservations Migration
+**Goal**: Account settings, featured ads, and reservations are accessible at their English URLs with correct sub-page routing
+**Depends on**: Phase 12
+**Requirements**: URL-06, URL-07, URL-10
+**Success Criteria** (what must be TRUE):
+  1. Navigating to `/account/profile`, `/account/profile/edit`, and `/account/change-password` each loads the correct page
+  2. Navigating to `/featured`, `/featured/free`, `/featured/used`, `/featured/[id]` loads the correct content
+  3. Navigating to `/reservations`, `/reservations/free`, `/reservations/used`, `/reservations/[id]` loads the correct content
 **Plans**: 2 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Write failing test suite (Wave 0: RED state for PAY-01 through PAY-05)
-- [ ] 01-02-PLAN.md — Implement types, adapter, registry, and barrel (Wave 1: GREEN state)
+- [ ] 14-01-PLAN.md — Rename cuenta→account and destacados→featured, translate sub-page filenames, update internal route refs
+- [ ] 14-02-PLAN.md — Rename reservas→reservations, translate sub-page filenames, update internal route refs
 
-### Phase 2: Call Site Wiring and Bug Fixes
-**Goal**: All payment call sites use the abstraction layer; Transbank behavior is identical to pre-refactor; two existing bugs in the payment flow are corrected
-**Depends on**: Phase 1
-**Requirements**: WIRE-01, WIRE-02, WIRE-03, WIRE-04
+### Phase 15: Links, Redirects & Build Verification
+**Goal**: Every internal link uses English URLs, Spanish URLs redirect rather than 404, and the dashboard builds cleanly
+**Depends on**: Phase 12, Phase 13, Phase 14
+**Requirements**: LINK-01, LINK-02, LINK-03, REDIR-01
 **Success Criteria** (what must be TRUE):
-  1. `ad.service.ts` no longer imports `TransbankServices` directly — it calls `getPaymentGateway()` and the payment flow behaves identically
-  2. `pack.service.ts` no longer imports `TransbankServices` directly — it calls `getPaymentGateway()` and the payment flow behaves identically
-  3. The `payment_method` field stored in the order record reflects the value of `PAYMENT_GATEWAY` env var rather than the hardcoded string `"webpay"`
-  4. In the `packResponse` failure path, execution stops after `ctx.redirect` — downstream Facto and order creation logic does not run on payment failure
-**Plans**: 2 plans
+  1. Clicking any sidebar or navigation menu item takes the user to an English URL
+  2. Any `navigateTo()` or `<NuxtLink>` call in component code resolves to an English path
+  3. Visiting a legacy Spanish URL (e.g., `/anuncios/pendientes`) redirects to the English equivalent (`/ads/pending`) without a 404
+  4. `nuxt typecheck` completes with zero errors after all changes
+**Plans**: 3 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Write failing test suite for WIRE-01 through WIRE-04 (Wave 0: RED state)
-- [ ] 02-02-PLAN.md — Rewire services and fix controller bugs (Wave 1: GREEN state)
+- [ ] 15-01-PLAN.md — Update MenuDefault, DropdownUser, DropdownSales, DropdownPendings, StatisticsDefault to English routes
+- [ ] 15-02-PLAN.md — Update form/data components and rename faqs/packs editar.vue → edit.vue
+- [ ] 15-03-PLAN.md — Add Spanish→English redirects to nuxt.config.ts, run nuxt typecheck
 
-## Progress
-
-**Execution Order:**
-Phases execute in numeric order: 1 → 2
+## Progress Table
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Interface and Adapter Layer | 2/2 | Complete   | 2026-03-04 |
-| 2. Call Site Wiring and Bug Fixes | 2/2 | Complete   | 2026-03-04 |
+| 12. Ads Migration | 1/1 | Complete    | 2026-03-06 |
+| 13. Catalog Segments Migration | 3/3 | Complete    | 2026-03-06 |
+| 14. Account, Featured & Reservations Migration | 2/2 | Complete    | 2026-03-06 |
+| 15. Links, Redirects & Build Verification | 3/3 | Complete   | 2026-03-06 |

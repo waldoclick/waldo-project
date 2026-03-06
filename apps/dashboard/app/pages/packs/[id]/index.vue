@@ -4,7 +4,7 @@
       <template #actions>
         <NuxtLink
           class="btn btn--primary"
-          :to="`/packs/${route.params.id}/editar`"
+          :to="`/packs/${route.params.id}/edit`"
         >
           Editar pack
         </NuxtLink>
@@ -81,17 +81,6 @@ const breadcrumbs = computed(() => [
   ...(item.value?.name ? [{ label: item.value.name }] : []),
 ]);
 
-const formatDate = (dateString: string | undefined) => {
-  if (!dateString) return "--";
-  return new Date(dateString).toLocaleString("es-CL", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-};
-
 const { data: packData } = await useAsyncData(
   `pack-${route.params.id}`,
   async () => {
@@ -101,14 +90,14 @@ const { data: packData } = await useAsyncData(
     const strapi = useStrapi();
     const response = await strapi.find("ad-packs", {
       filters: { documentId: { $eq: id } },
-    });
+    } as Record<string, unknown>);
     const data = Array.isArray(response.data) ? response.data[0] : null;
     if (data) return data;
 
     const fallbackResponse = await strapi.findOne("ad-packs", id as string);
-    return fallbackResponse.data || null;
+    return (fallbackResponse.data as unknown) || null;
   },
 );
 
-item.value = packData.value;
+item.value = packData.value ?? null;
 </script>

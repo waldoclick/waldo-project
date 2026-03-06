@@ -13,7 +13,7 @@
       <div class="dropdown--sales__panel__head">
         <h3 class="dropdown--sales__panel__title">Últimas órdenes</h3>
         <NuxtLink
-          to="/ordenes"
+          to="/orders"
           class="dropdown--sales__panel__link"
           @click="open = false"
         >
@@ -36,7 +36,7 @@
         <NuxtLink
           v-for="(order, index) in orders"
           :key="order.id"
-          :to="`/ordenes/${order.id}`"
+          :to="`/orders/${order.id}`"
           class="dropdown--sales__list__item"
           :class="{
             'dropdown--sales__list__item--border': index < orders.length - 1,
@@ -63,15 +63,9 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue";
+import { formatCurrency } from "@/utils/price";
 import { ShoppingBag, ExternalLink } from "lucide-vue-next";
-
-interface Order {
-  id: number;
-  buy_order?: string;
-  amount: number | string;
-  createdAt: string;
-  user?: { username?: string; email?: string };
-}
+import type { Order } from "@/types/order";
 
 const strapi = useStrapi();
 
@@ -89,7 +83,7 @@ const fetchOrders = async () => {
       pagination: { page: 1, pageSize: 10 },
       sort: "createdAt:desc",
       populate: ["user"],
-    })) as { data?: Order[] };
+    } as Record<string, unknown>)) as unknown as { data?: Order[] };
     orders.value = Array.isArray(res.data) ? res.data : [];
   } catch (error) {
     console.error("Error fetching recent orders:", error);
@@ -97,16 +91,6 @@ const fetchOrders = async () => {
   } finally {
     loading.value = false;
   }
-};
-
-const formatCurrency = (amount: number | string, currency = "CLP") => {
-  const num = typeof amount === "string" ? Number.parseFloat(amount) : amount;
-  return new Intl.NumberFormat("es-CL", {
-    style: "currency",
-    currency,
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(num);
 };
 
 const formatTime = (dateString: string) => {

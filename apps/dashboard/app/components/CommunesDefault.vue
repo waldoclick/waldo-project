@@ -82,7 +82,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Eye, Pencil } from "lucide-vue-next";
 import { useSettingsStore } from "@/stores/settings.store";
@@ -126,7 +126,7 @@ const fetchCommunes = async () => {
     loading.value = true;
     const strapi = useStrapi();
 
-    const searchParams: any = {
+    const searchParams: Record<string, unknown> = {
       pagination: {
         page: settingsStore.communes.currentPage,
         pageSize: settingsStore.communes.pageSize,
@@ -145,8 +145,11 @@ const fetchCommunes = async () => {
     }
 
     const response = await strapi.find("communes", searchParams);
-    allCommunes.value = Array.isArray(response.data) ? response.data : [];
-    paginationMeta.value = response.meta?.pagination || null;
+    allCommunes.value = Array.isArray(response.data)
+      ? (response.data as Commune[])
+      : [];
+    paginationMeta.value = (response.meta?.pagination ||
+      null) as typeof paginationMeta.value;
   } catch (error) {
     console.error("Error fetching communes:", error);
     allCommunes.value = [];
@@ -180,25 +183,14 @@ const sortOptions = [
   { value: "name:desc", label: "Nombre Z-A" },
 ];
 
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  return new Intl.DateTimeFormat("es-CL", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
-};
-
 const router = useRouter();
 
 const handleViewCommune = (communeId: number) => {
-  router.push(`/comunas/${communeId}`);
+  router.push(`/communes/${communeId}`);
 };
 
 const handleEditCommune = (communeId: number) => {
-  router.push(`/comunas/${communeId}/editar`);
+  router.push(`/communes/${communeId}/edit`);
 };
 
 watch(
@@ -213,8 +205,4 @@ watch(
   },
   { immediate: true },
 );
-
-onMounted(() => {
-  fetchCommunes();
-});
 </script>
