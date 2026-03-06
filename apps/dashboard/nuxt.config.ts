@@ -333,6 +333,7 @@ export default defineNuxtConfig({
     },
     // Users (usuarios)
     "/usuarios": { redirect: { to: "/users", statusCode: 301 } },
+    "/usuarios/[id]": { redirect: { to: "/users/[id]", statusCode: 301 } },
     // Account (cuenta)
     "/cuenta": { redirect: { to: "/account", statusCode: 301 } },
     "/cuenta/perfil": { redirect: { to: "/account/profile", statusCode: 301 } },
