@@ -129,7 +129,10 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. `cron-tasks.ts` has English comments for each registered job documenting purpose, schedule expression, and timezone
   2. `ad.cron.ts` has English comments explaining deduplication via `remainings`, deactivation on zero days, and the daily report email
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 23-01-PLAN.md — Add English comments to ad.cron.ts and cron-tasks.ts
 
 ## Progress
 
@@ -138,4 +141,4 @@ Plans:
 | 20. user.cron Fix & Docs | 1/1 | Complete   | 2026-03-06 | - |
 | 21. backup.cron Fix & Docs | 1/1 | Complete   | 2026-03-06 | - |
 | 22. cleanup.cron Fix & Docs | 1/1 | Complete   | 2026-03-06 | - |
-| 23. ad.cron + cron-tasks Docs | v1.7 | 0/? | Not started | - |
+| 23. ad.cron + cron-tasks Docs | v1.7 | 0/1 | Not started | - |
