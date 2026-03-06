@@ -645,7 +645,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
     try {
       const ad = await strapi.db.query("api::ad.ad").findOne({
         where: { id: adId },
-        populate: ["user"],
+        populate: ["user", "ad_reservation", "ad_featured_reservation"],
       });
 
       if (!ad) {
@@ -680,6 +680,22 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
           banned_by: userId,
         },
       });
+
+      // Liberar reservas asociadas al anuncio baneado
+      if (ad.ad_reservation?.id) {
+        await strapi.entityService.update(
+          "api::ad-reservation.ad-reservation",
+          ad.ad_reservation.id,
+          { data: { ad: null } }
+        );
+      }
+      if (ad.ad_featured_reservation?.id) {
+        await strapi.entityService.update(
+          "api::ad-featured-reservation.ad-featured-reservation",
+          ad.ad_featured_reservation.id,
+          { data: { ad: null } }
+        );
+      }
 
       // Enviar email de baneo al usuario
       try {
