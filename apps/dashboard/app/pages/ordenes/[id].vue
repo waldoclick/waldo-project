@@ -32,7 +32,10 @@
             title="Usuario"
             :description="order.user?.username || '--'"
           />
-          <CardInfo title="Email" :description="order.user?.email || '--'" />
+          <CardInfo
+            title="Correo electrónico"
+            :description="order.user?.email || '--'"
+          />
           <CardInfo
             title="Nombre"
             :description="

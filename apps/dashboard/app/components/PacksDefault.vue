@@ -34,7 +34,7 @@
                 {{ pack.total_ads || 0 }} anuncios
               </BadgeDefault>
             </TableCell>
-            <TableCell>{{ pack.total_features || 0 }} features</TableCell>
+            <TableCell>{{ pack.total_features || 0 }} destacados</TableCell>
             <TableCell>{{ formatDate(pack.createdAt) }}</TableCell>
             <TableCell align="right">
               <div class="packs--default__actions">
@@ -170,7 +170,7 @@ const tableColumns = [
   { label: "Precio" },
   { label: "Duración" },
   { label: "Anuncios" },
-  { label: "Features" },
+  { label: "Destacados" },
   { label: "Fecha de Creación" },
   { label: "Acciones", align: "right" as const },
 ];
