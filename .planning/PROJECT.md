@@ -38,7 +38,21 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 
 ### Active
 
-_(none — awaiting next milestone definition)_
+- [ ] `pages/preguntas-frecuentes.vue` no hace double-fetch al cargar — v1.6
+- [ ] `pages/cuenta/mis-anuncios.vue` no dispara 6 llamadas en cada carga — v1.6
+- [ ] `packs.store.ts` tiene cache guard para evitar llamadas redundantes — v1.6
+- [ ] `conditions.store.ts` tiene cache guard — v1.6
+- [ ] `regions.store.ts` tiene cache guard — v1.6
+- [ ] `FormCreateThree.vue` no repite la llamada a communes que ya hizo el plugin — v1.6
+
+## Current Milestone: v1.6 Website API Optimization
+
+**Goal:** Eliminar double-fetches y llamadas redundantes a la API en el website, siguiendo el mismo patrón ya aplicado en el dashboard (v1.2).
+
+**Target features:**
+- Fix double-fetch en `preguntas-frecuentes.vue` y `mis-anuncios.vue`
+- Agregar cache guards en `packs.store.ts`, `conditions.store.ts`, `regions.store.ts`
+- Eliminar fetch redundante de communes en `FormCreateThree.vue`
 
 ### Out of Scope
 
@@ -111,4 +125,4 @@ Shipped **v1.5 Ad Credit Refund** on 2026-03-06.
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-06 after v1.5 milestone*
+*Last updated: 2026-03-06 after v1.6 milestone started*

@@ -1,11 +1,11 @@
 ---
 gsd_state_version: 1.0
-milestone: null
-milestone_name: null
-status: idle
+milestone: v1.6
+milestone_name: Website API Optimization
+status: defining_requirements
 stopped_at: null
-last_updated: "2026-03-06T21:05:00.000Z"
-last_activity: "2026-03-06 — v1.5 Ad Credit Refund milestone complete and archived"
+last_updated: "2026-03-06T21:30:00.000Z"
+last_activity: "2026-03-06 — Milestone v1.6 started"
 progress:
   total_phases: 0
   completed_phases: 0
@@ -20,16 +20,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Idle — v1.5 complete, no next milestone defined
+**Current focus:** Defining requirements for v1.6 Website API Optimization
 
 ## Current Position
 
 ```
-[ idle — awaiting next milestone ]
+[ defining requirements — v1.6 Website API Optimization ]
 ```
 
-Status: v1.5 Ad Credit Refund shipped. Run `/gsd-plan` to define the next milestone.
-Last activity: 2026-03-06 — v1.5 milestone archived
+Status: Defining requirements
+Last activity: 2026-03-06 — Milestone v1.6 started
 
 ## Accumulated Context
 
