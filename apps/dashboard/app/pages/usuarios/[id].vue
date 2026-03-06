@@ -168,26 +168,6 @@ const breadcrumbs = computed(() => [
   ...(item.value?.username ? [{ label: item.value.username }] : []),
 ]);
 
-const formatDate = (dateString: string | undefined) => {
-  if (!dateString) return "--";
-  return new Date(dateString).toLocaleString("es-CL", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-};
-
-const formatDateShort = (dateString: string | undefined) => {
-  if (!dateString) return "--";
-  return new Date(dateString).toLocaleDateString("es-CL", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
-};
-
 const formatFullName = (firstname?: string, lastname?: string) => {
   if (!firstname && !lastname) return "--";
   return [firstname, lastname].filter(Boolean).join(" ") || "--";
