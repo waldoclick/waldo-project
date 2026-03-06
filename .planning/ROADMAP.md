@@ -74,7 +74,12 @@ Plans:
   1. Navigating to `/categories`, `/communes`, `/conditions`, `/orders`, `/regions`, `/users` each loads the correct list page
   2. Detail and edit sub-routes (e.g., `/categories/[id]/edit`, `/regions/new`) load without 404 or routing errors
   3. The renamed directory files are the sole source of routing for these 6 sections
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 13-01-PLAN.md — Rename categorias→categories and regiones→regions, translate editar→edit sub-pages, update internal route refs
+- [ ] 13-02-PLAN.md — Rename comunas→communes and condiciones→conditions, translate editar→edit sub-pages, update internal route refs
+- [ ] 13-03-PLAN.md — Rename ordenes→orders and usuarios→users, update internal route refs
 
 ### Phase 14: Account, Featured & Reservations Migration
 **Goal**: Account settings, featured ads, and reservations are accessible at their English URLs with correct sub-page routing
@@ -102,6 +107,6 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 12. Ads Migration | 1/1 | Complete    | 2026-03-06 |
-| 13. Catalog Segments Migration | 0/? | Not started | - |
+| 13. Catalog Segments Migration | 0/3 | Not started | - |
 | 14. Account, Featured & Reservations Migration | 0/? | Not started | - |
 | 15. Links, Redirects & Build Verification | 0/? | Not started | - |
