@@ -44,7 +44,7 @@
               <NuxtLink
                 class="orders--default__action"
                 title="Ver orden"
-                :to="`/ordenes/${order.id}`"
+                :to="`/orders/${order.id}`"
               >
                 <Eye class="orders--default__action__icon" />
               </NuxtLink>

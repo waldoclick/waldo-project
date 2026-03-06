@@ -109,7 +109,7 @@ const getImageUrl = (image: AdGalleryItem) => {
 const router = useRouter();
 
 const handleViewAd = (adId: number) => {
-  router.push(`/anuncios/${adId}`);
+  router.push(`/ads/${adId}`);
 };
 
 const handlePageChange = (page: number) => {
