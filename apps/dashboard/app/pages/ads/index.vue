@@ -7,5 +7,5 @@ definePageMeta({
   layout: "dashboard",
 });
 
-await navigateTo("/anuncios/pendientes", { replace: true });
+await navigateTo("/ads/pending", { replace: true });
 </script>

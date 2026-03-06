@@ -14,7 +14,7 @@ definePageMeta({
 });
 
 const breadcrumbs = [
-  { label: "Anuncios", to: "/anuncios/pendientes" },
+  { label: "Ads", to: "/ads/pending" },
   { label: "Abandonados" },
 ];
 </script>

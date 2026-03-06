@@ -129,7 +129,7 @@
           </button>
           <a
             v-if="isActive && item?.slug"
-            :href="`${websiteUrl}/anuncios/${item.slug}`"
+            :href="`${websiteUrl}/ads/${item.slug}`"
             target="_blank"
             rel="noopener noreferrer"
             class="btn btn--primary btn--block"
@@ -232,12 +232,12 @@ const statusIconMap: Record<AdStatus, Component> = {
 };
 
 const statusBreadcrumbMap: Record<AdStatus, { label: string; to: string }> = {
-  pending: { label: "Pendientes", to: "/anuncios/pendientes" },
-  active: { label: "Activos", to: "/anuncios/activos" },
-  archived: { label: "Expirados", to: "/anuncios/expirados" },
-  banned: { label: "Baneados", to: "/anuncios/baneados" },
-  rejected: { label: "Rechazados", to: "/anuncios/rechazados" },
-  abandoned: { label: "Abandonados", to: "/anuncios/abandonados" },
+  pending: { label: "Pending", to: "/ads/pending" },
+  active: { label: "Active", to: "/ads/active" },
+  archived: { label: "Expired", to: "/ads/expired" },
+  banned: { label: "Banned", to: "/ads/banned" },
+  rejected: { label: "Rejected", to: "/ads/rejected" },
+  abandoned: { label: "Abandoned", to: "/ads/abandoned" },
 };
 
 const breadcrumbs = computed(() => {
@@ -247,7 +247,7 @@ const breadcrumbs = computed(() => {
   const parent = statusBreadcrumbMap[safeStatus];
 
   return [
-    { label: "Anuncios", to: "/anuncios/pendientes" },
+    { label: "Ads", to: "/ads/pending" },
     { label: parent.label, to: parent.to },
     ...(item.value?.name ? [{ label: item.value.name }] : []),
   ];
