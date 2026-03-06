@@ -94,11 +94,13 @@ Plans:
   2. Calling `loadConditions()` a second time makes zero HTTP requests
   3. Calling `loadRegions()` a second time makes zero HTTP requests
   4. `FormCreateThree.vue` does not call `loadCommunes()` on mount — commune data from the plugin is used directly
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+- [ ] 19-01-PLAN.md — Add cache guards to packs/conditions/regions stores + remove redundant loadCommunes() from FormCreateThree.vue
 
 ### Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 18. Page Double-Fetch Fixes | 2/2 | Complete    | 2026-03-06 |
-| 19. Store Cache Guards & Component Cleanup | 0/1 | Not started | - |
+| 19. Store Cache Guards & Component Cleanup | 0/1 | Planned | - |
