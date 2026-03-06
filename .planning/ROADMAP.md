@@ -6,6 +6,7 @@
 - ✅ **v1.2 Double-Fetch Cleanup** — Phases 7-8 (shipped 2026-03-05)
 - ✅ **v1.3 Utility Extraction** — Phases 9-11 (shipped 2026-03-06)
 - ✅ **v1.4 URL Localization** — Phases 12-15 (shipped 2026-03-06)
+- ✅ **v1.5 Ad Credit Refund** — Phases 16-17 (shipped 2026-03-06)
 
 ## Phases
 
@@ -30,12 +31,8 @@ Archive: `.planning/milestones/v1.2-ROADMAP.md`
 <details>
 <summary>✅ v1.3 Utility Extraction (Phases 9-11) — SHIPPED 2026-03-06</summary>
 
-**Milestone Goal:** Extract all inline duplicated pure functions (date, price, string) into shared utility files and replace every inline copy with an import — zero duplicate function definitions remain in the dashboard.
-
-- [x] **Phase 9: Date Utilities** - Create `app/utils/date.ts` and replace all 33 inline date formatting definitions
-- [x] **Phase 10: Price Utilities** - Create `app/utils/price.ts` and replace all 13 inline currency formatting definitions
-- [x] **Phase 11: String Utilities** - Create `app/utils/string.ts` and replace all 6 inline string utility definitions
-
+Phases 9-11 completed in v1.3: date, price, and string utilities extracted into `app/utils/`; all
+51 inline duplicate function definitions eliminated across the dashboard.
 Archive: `.planning/milestones/v1.3-ROADMAP.md`
 
 </details>
@@ -43,63 +40,26 @@ Archive: `.planning/milestones/v1.3-ROADMAP.md`
 <details>
 <summary>✅ v1.4 URL Localization (Phases 12-15) — SHIPPED 2026-03-06</summary>
 
-**Milestone Goal:** All dashboard URL segments are in English. Old Spanish URLs redirect to their English equivalents. No functional changes — pure route rename.
-
-- [x] **Phase 12: Ads Migration** — Renamed `anuncios/` → `ads/` with 8 status sub-pages (completed 2026-03-06)
-- [x] **Phase 13: Catalog Segments Migration** — Renamed 6 directories to English (completed 2026-03-06)
-- [x] **Phase 14: Account, Featured & Reservations Migration** — Renamed `cuenta`→`account`, `destacados`→`featured`, `reservas`→`reservations` (completed 2026-03-06)
-- [x] **Phase 15: Links, Redirects & Build Verification** — Updated all route references, added 301 redirects, `nuxt typecheck` passes (completed 2026-03-06)
-
+Phases 12-15 completed in v1.4: all dashboard URL segments renamed to English; 301 redirects added
+for legacy Spanish paths; `nuxt typecheck` passes with zero errors.
 Archive: `.planning/milestones/v1.4-ROADMAP.md`
+
+</details>
+
+<details>
+<summary>✅ v1.5 Ad Credit Refund (Phases 16-17) — SHIPPED 2026-03-06</summary>
+
+**Milestone Goal:** When an ad is rejected or banned, return the ad reservation and featured reservation credits to the user, and notify them via email that their credits were refunded.
+
+- [x] **Phase 16: Credit Refund Logic** — Wired reservation-freeing into `rejectAd()` and `bannedAd()` (completed 2026-03-06)
+- [x] **Phase 17: Email Notification Update** — Updated `ad-rejected.mjml` and `ad-banned.mjml` with conditional credit-return messaging (completed 2026-03-06)
+
+Archive: `.planning/milestones/v1.5-ROADMAP.md`
 
 </details>
 
 ---
 
-## v1.5 Ad Credit Refund
+## Next Milestone
 
-**Milestone Goal:** When an ad is rejected or banned, return the ad reservation and featured reservation credits to the user, and notify them via email that their credits were refunded.
-
-### Phases
-
-- [x] **Phase 16: Credit Refund Logic** — Wire credit return into `rejectAd()` and `bannedAd()` in Strapi (completed 2026-03-06)
-- [x] **Phase 17: Email Notification Update** — Update `ad-rejected.mjml` and `ad-banned.mjml` to include conditional credit-returned messaging (completed 2026-03-06)
-
-### Phase Details
-
-#### Phase 16: Credit Refund Logic
-**Goal**: When an ad is rejected or banned, its associated reservations are immediately freed for reuse
-**Depends on**: Nothing (first phase of v1.5)
-**Requirements**: REFUND-01, REFUND-02, REFUND-03, REFUND-04
-**Success Criteria** (what must be TRUE):
-  1. Rejecting an ad with an `ad_reservation` causes that reservation's `ad` field to become `null` in the database
-  2. Rejecting an ad with an `ad_featured_reservation` causes that reservation's `ad` field to become `null` in the database
-  3. Banning an ad with an `ad_reservation` causes that reservation's `ad` field to become `null` in the database
-  4. Banning an ad with an `ad_featured_reservation` causes that reservation's `ad` field to become `null` in the database
-  5. Reservations freed by reject/ban are immediately reusable by new ads (no orphan state)
-**Plans**: 1 plan
-
-Plans:
-- [ ] 16-01-PLAN.md — Wire reservation-freeing into rejectAd() and bannedAd()
-
-#### Phase 17: Email Notification Update
-**Goal**: Users receive clear confirmation in reject/ban emails that their credits were refunded
-**Depends on**: Phase 16 (refund flags `adReservationReturned` / `featuredReservationReturned` set in service layer)
-**Requirements**: EMAIL-01, EMAIL-02, EMAIL-03, EMAIL-04
-**Success Criteria** (what must be TRUE):
-  1. Reject email sent for an ad that had an `ad_reservation` contains a message indicating the ad credit was returned
-  2. Reject email sent for an ad that had an `ad_featured_reservation` contains a message indicating the featured credit was returned
-  3. Ban email sent for an ad that had an `ad_reservation` contains a message indicating the ad credit was returned
-  4. Ban email sent for an ad that had an `ad_featured_reservation` contains a message indicating the featured credit was returned
-  5. Reject/ban emails for ads with no reservations do not include any credit-return messaging (conditional rendering)
-**Plans**: 1 plan
-
-Plans:
-- [ ] 17-01-PLAN.md — Update email templates and service layer with conditional credit-return messaging
-
-### Progress
-
-| Phase | Plans Complete | Status | Completed |
-|-------|----------------|--------|-----------|
-| 16. Credit Refund Logic | 1/1 | Complete    | 2026-03-06 |
-| 17. Email Notification Update | 1/1 | Complete    | 2026-03-06 |
+_No milestone defined. Run `/gsd-plan` to define the next milestone._

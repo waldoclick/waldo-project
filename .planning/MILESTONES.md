@@ -1,5 +1,20 @@
 # Milestones
 
+## v1.5 Ad Credit Refund (Shipped: 2026-03-06)
+
+**Phases completed:** 2 phases (16-17), 2 plans
+**Files changed:** 3 source files modified
+**Timeline:** 2026-03-06 (~4 minutes)
+**Requirements:** 8/8 complete ✓
+
+**Key accomplishments:**
+1. **Credit Refund Logic**: Wired reservation-freeing into `rejectAd()` and `bannedAd()` in `apps/strapi/src/api/ad/services/ad.ts` — four `entityService.update` calls set `ad = null` on the FK-owning reservation side, matching the existing cron pattern; optional-chaining null guards mean no error when reservations are absent.
+2. **Email Notification Update**: Added conditional Nunjucks blocks (`{% if adReservationReturned %}`, `{% if featuredReservationReturned %}`) to `ad-rejected.mjml` and `ad-banned.mjml`; both service methods compute the flags from `!!ad.ad_reservation?.id` evaluated on the pre-freed ad object and pass them to `sendMjmlEmail()`.
+
+**Archive:** `.planning/milestones/v1.5-ROADMAP.md` | `.planning/milestones/v1.5-REQUIREMENTS.md`
+
+---
+
 ## v1.4 URL Localization (Shipped: 2026-03-06)
 
 **Phases completed:** 4 phases (12-15), 9 plans
