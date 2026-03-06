@@ -7,5 +7,5 @@ definePageMeta({
   layout: "dashboard",
 });
 
-await navigateTo("/reservas/libres", { replace: true });
+await navigateTo("/reservations/free", { replace: true });
 </script>
