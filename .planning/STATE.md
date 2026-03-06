@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: URL Localization
 status: executing
-stopped_at: Completed 14-01-PLAN.md
-last_updated: "2026-03-06T03:06:02.792Z"
-last_activity: 2026-03-06 — Completed 14-01 (rename cuenta→account, destacados→featured, update route refs)
+stopped_at: Completed 15-02-PLAN.md
+last_updated: "2026-03-06T03:30:25.813Z"
+last_activity: 2026-03-06 — Completed 15-02 (update 17 components + router plugin to English router.push paths; rename editar.vue → edit.vue)
 progress:
   total_phases: 4
   completed_phases: 3
-  total_plans: 6
-  completed_plans: 6
+  total_plans: 9
+  completed_plans: 8
 ---
 
 # Project State
@@ -20,17 +20,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-05)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.4 URL Localization — Phase 14 plan 01 complete; all plans complete
+**Current focus:** v1.4 URL Localization — Phase 15 plan 02 complete
 
 ## Current Position
 
-Phase: 14 — Account & Featured Reservations Migration
-Plan: 01 (complete) — all plans in phase complete
+Phase: 15 — Links, Redirects & Build Verification
+Plan: 02 (complete)
 Status: In Progress
-Last activity: 2026-03-06 — Completed 14-01 (rename cuenta→account, destacados→featured, update route refs)
+Last activity: 2026-03-06 — Completed 15-02 (update 17 components + router plugin to English router.push paths; rename editar.vue → edit.vue)
 
 ```
-v1.4 Progress: [██████████] 100% (34/34 plans completed)
+v1.4 Progress: [██████████] 95% (35/37 plans completed)
 ```
 
 ## Accumulated Context
@@ -48,6 +48,9 @@ Key patterns established (carry forward):
   - [Phase 13-catalog-segments-migration]: Used git mv to rename comunas→communes and condiciones→conditions, updated all route refs from Spanish to English paths
 - [Phase 14-account-featured-reservations-migration]: Kept Spanish UI labels (title=Libres, Usadas) — only route path strings updated — Plan spec stated do NOT change Spanish UI labels in templates
 - [Phase 14-account-featured-reservations-migration]: Task 1 renames were already committed in prior session (bc5152d); account/ pages were empty stubs requiring no route ref updates — git mv rename pattern: rename dir/files first, then update route refs in separate commit
+- [Phase 15-links-redirects-build-verification]: Task 2 components already updated in prior session 8a95dfd; only MenuDefault.vue required new changes in this plan
+- [Phase 15-links-redirects-build-verification plan 02]: External public website hrefs (websiteUrl + /anuncios/[slug]) exempt from localization — only dashboard router.push/NuxtLink :to paths in scope
+- [Phase 15-links-redirects-build-verification plan 02]: Used git mv for faqs/packs editar.vue→edit.vue to preserve history while creating /edit Nuxt file-based route
 
 ### v1.4-Specific Context
 
@@ -81,9 +84,11 @@ None.
 | 13 | 02 | 3 min | 2 | 8 |
 | 13 | 03 | 2 min | 2 | 4 |
 | 14 | 01 | 2 min | 2 | 4 |
+| 15 | 01 | — | — | — |
+| 15 | 02 | 14 min | 3 | 24 |
 
 ## Session Continuity
 
-Last session: 2026-03-06T03:02:46.497Z
-Stopped at: Completed 14-01-PLAN.md
+Last session: 2026-03-06T03:30:20.874Z
+Stopped at: Completed 15-01-PLAN.md
 Resume file: None

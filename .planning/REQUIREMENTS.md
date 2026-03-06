@@ -26,8 +26,8 @@
 
 ### Internal Links
 
-- [ ] **LINK-01**: All navigation menu links point to English URLs
-- [ ] **LINK-02**: All component-internal `navigateTo` / `<NuxtLink>` calls use English URLs
+- [x] **LINK-01**: All navigation menu links point to English URLs
+- [x] **LINK-02**: All component-internal `navigateTo` / `<NuxtLink>` calls use English URLs
 - [ ] **LINK-03**: Dashboard builds with `nuxt typecheck` passing after changes
 
 ## Future Requirements
@@ -69,8 +69,8 @@
 | URL-10 | Phase 14 | Complete |
 | URL-11 | Phase 13 | Complete |
 | REDIR-01 | Phase 15 | Pending |
-| LINK-01 | Phase 15 | Pending |
-| LINK-02 | Phase 15 | Pending |
+| LINK-01 | Phase 15 | Complete |
+| LINK-02 | Phase 15 | Complete |
 | LINK-03 | Phase 15 | Pending |
 
 **Coverage:**
