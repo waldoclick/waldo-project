@@ -1,34 +1,24 @@
 # Requirements: Waldo Project
 
-**Defined:** 2026-03-05
-**Milestone:** v1.4 URL Localization
+**Defined:** 2026-03-06
+**Milestone:** v1.5 Ad Credit Refund
 **Core Value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
 
-## v1.4 Requirements
+## v1.5 Requirements
 
-### URL Migration
+### Credit Refund
 
-- [x] **URL-01**: Navigating to `/ads` and all sub-routes (`/ads/active`, `/ads/pending`, etc.) works correctly
-- [x] **URL-02**: Navigating to `/ads/abandoned`, `/ads/banned`, `/ads/expired`, `/ads/rejected` works correctly
-- [x] **URL-03**: Navigating to `/categories`, `/categories/new`, `/categories/[id]`, `/categories/[id]/edit` works correctly
-- [x] **URL-04**: Navigating to `/communes`, `/communes/new`, `/communes/[id]`, `/communes/[id]/edit` works correctly
-- [x] **URL-05**: Navigating to `/conditions`, `/conditions/new`, `/conditions/[id]`, `/conditions/[id]/edit` works correctly
-- [x] **URL-06**: Navigating to `/account/profile`, `/account/profile/edit`, `/account/change-password` works correctly
-- [x] **URL-07**: Navigating to `/featured`, `/featured/free`, `/featured/used`, `/featured/[id]` works correctly
-- [x] **URL-08**: Navigating to `/orders`, `/orders/[id]` works correctly
-- [x] **URL-09**: Navigating to `/regions`, `/regions/new`, `/regions/[id]`, `/regions/[id]/edit` works correctly
-- [x] **URL-10**: Navigating to `/reservations`, `/reservations/free`, `/reservations/used`, `/reservations/[id]` works correctly
-- [x] **URL-11**: Navigating to `/users`, `/users/[id]` works correctly
+- [ ] **REFUND-01**: Al rechazar un aviso, si tiene `ad_reservation` asociada, se setea `ad_reservation.ad = null` (crédito de aviso devuelto)
+- [ ] **REFUND-02**: Al rechazar un aviso, si tiene `ad_featured_reservation` asociada, se setea `ad_featured_reservation.ad = null` (crédito de destacado devuelto)
+- [ ] **REFUND-03**: Al banear un aviso, si tiene `ad_reservation` asociada, se setea `ad_reservation.ad = null` (crédito de aviso devuelto)
+- [ ] **REFUND-04**: Al banear un aviso, si tiene `ad_featured_reservation` asociada, se setea `ad_featured_reservation.ad = null` (crédito de destacado devuelto)
 
-### Redirects
+### Email Notification
 
-- [x] **REDIR-01**: All old Spanish URLs redirect to their English equivalents (e.g., `/anuncios/pendientes` → `/ads/pending`)
-
-### Internal Links
-
-- [x] **LINK-01**: All navigation menu links point to English URLs
-- [x] **LINK-02**: All component-internal `navigateTo` / `<NuxtLink>` calls use English URLs
-- [x] **LINK-03**: Dashboard builds with `nuxt typecheck` passing after changes
+- [ ] **EMAIL-01**: El email de rechazo incluye mensaje indicando que el crédito de aviso fue devuelto (condicional: solo si el aviso tenía `ad_reservation`)
+- [ ] **EMAIL-02**: El email de rechazo incluye mensaje indicando que el crédito de destacado fue devuelto (condicional: solo si el aviso tenía `ad_featured_reservation`)
+- [ ] **EMAIL-03**: El email de baneo incluye mensaje indicando que el crédito de aviso fue devuelto (condicional: solo si el aviso tenía `ad_reservation`)
+- [ ] **EMAIL-04**: El email de baneo incluye mensaje indicando que el crédito de destacado fue devuelto (condicional: solo si el aviso tenía `ad_featured_reservation`)
 
 ## Future Requirements
 
@@ -48,36 +38,30 @@
 
 | Feature | Reason |
 |---------|--------|
-| Website URL migration | Dashboard-only scope; website routes are separate |
-| Strapi API endpoint renaming | Backend endpoints are internal, not user-facing |
-| i18n / internationalization | Consciously deferred; i18n module is commented out |
-| URL aliases (keep both working permanently) | Redirects are sufficient; dual routing adds complexity |
+| Devolver créditos al expirar un aviso pagado | El cron ya maneja expiración de avisos gratuitos; avisos pagados tienen lógica distinta — fuera de scope |
+| UI en el dashboard para confirmar devolución | El dashboard solo llama el endpoint; la lógica vive íntegramente en Strapi |
+| Testing milestone (composables, AdsTable, middlewares) | Deferred — próximo milestone dedicado |
 
 ## Traceability
 
+Populated during roadmap creation.
+
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| URL-01 | Phase 12 | Complete |
-| URL-02 | Phase 12 | Complete |
-| URL-03 | Phase 13 | Complete |
-| URL-04 | Phase 13 | Complete |
-| URL-05 | Phase 13 | Complete |
-| URL-06 | Phase 14 | Complete |
-| URL-07 | Phase 14 | Complete |
-| URL-08 | Phase 13 | Complete |
-| URL-09 | Phase 13 | Complete |
-| URL-10 | Phase 14 | Complete |
-| URL-11 | Phase 13 | Complete |
-| REDIR-01 | Phase 15 | Complete |
-| LINK-01 | Phase 15 | Complete |
-| LINK-02 | Phase 15 | Complete |
-| LINK-03 | Phase 15 | Complete |
+| REFUND-01 | — | Pending |
+| REFUND-02 | — | Pending |
+| REFUND-03 | — | Pending |
+| REFUND-04 | — | Pending |
+| EMAIL-01 | — | Pending |
+| EMAIL-02 | — | Pending |
+| EMAIL-03 | — | Pending |
+| EMAIL-04 | — | Pending |
 
 **Coverage:**
-- v1.4 requirements: 15 total
-- Mapped to phases: 15
-- Unmapped: 0 ✓
+- v1.5 requirements: 8 total
+- Mapped to phases: 0
+- Unmapped: 8 ⚠️ (pending roadmap)
 
 ---
-*Requirements defined: 2026-03-05*
-*Last updated: 2026-03-05 after initial definition*
+*Requirements defined: 2026-03-06*
+*Last updated: 2026-03-06 after initial definition*
