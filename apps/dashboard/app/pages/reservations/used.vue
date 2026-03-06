@@ -14,7 +14,7 @@ definePageMeta({
 });
 
 const breadcrumbs = [
-  { label: "Reservas", to: "/reservas/libres" },
+  { label: "Reservations", to: "/reservations/free" },
   { label: "Usadas" },
 ];
 </script>

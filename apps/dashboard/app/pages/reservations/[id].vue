@@ -71,7 +71,7 @@ const title = computed(() =>
   item.value?.id ? `Reserva #${item.value.id}` : "Reserva",
 );
 const breadcrumbs = computed(() => [
-  { label: "Reservas", to: "/reservas/libres" },
+  { label: "Reservations", to: "/reservations/free" },
   ...(item.value?.id ? [{ label: `#${item.value.id}` }] : []),
 ]);
 
