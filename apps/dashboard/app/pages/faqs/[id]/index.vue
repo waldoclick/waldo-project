@@ -4,7 +4,7 @@
       <template #actions>
         <NuxtLink
           class="btn btn--primary"
-          :to="`/faqs/${route.params.id}/editar`"
+          :to="`/faqs/${route.params.id}/edit`"
         >
           Editar FAQ
         </NuxtLink>
