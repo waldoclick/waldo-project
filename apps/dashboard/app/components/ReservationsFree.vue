@@ -198,7 +198,7 @@ const router = useRouter();
 
 const handleViewReservation = (reservationId: number) => {
   // Navegar a la página de detalle de la reserva
-  router.push(`/reservas/${reservationId}`);
+  router.push(`/reservations/${reservationId}`);
 };
 
 // Watch para recargar cuando cambian los filtros o la búsqueda

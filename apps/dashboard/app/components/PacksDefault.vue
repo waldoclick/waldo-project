@@ -191,7 +191,7 @@ const handleViewPack = (packId: number) => {
 };
 
 const handleEditPack = (packId: number) => {
-  router.push(`/packs/${packId}/editar`);
+  router.push(`/packs/${packId}/edit`);
 };
 
 watch(

@@ -199,7 +199,7 @@ const handleSubmit = async (values: any) => {
       await Swal.fire("Éxito", "Comuna actualizada correctamente.", "success");
       const updatedId = responseData?.documentId || responseData?.id;
       if (updatedId) {
-        router.push(`/comunas/${updatedId}`);
+        router.push(`/communes/${updatedId}`);
       }
     } else {
       const response = await strapi.create(
@@ -214,9 +214,9 @@ const handleSubmit = async (values: any) => {
       await Swal.fire("Éxito", "Comuna creada correctamente.", "success");
       const createdId = createdData?.documentId || createdData?.id;
       if (createdId) {
-        router.push(`/comunas/${createdId}`);
+        router.push(`/communes/${createdId}`);
       } else {
-        router.push("/comunas");
+        router.push("/communes");
       }
     }
   } catch (error) {

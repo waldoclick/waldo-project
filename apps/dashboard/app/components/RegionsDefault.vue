@@ -192,11 +192,11 @@ const getCommunesCount = (region: Region): number => {
 const router = useRouter();
 
 const handleViewRegion = (regionId: number) => {
-  router.push(`/regiones/${regionId}`);
+  router.push(`/regions/${regionId}`);
 };
 
 const handleEditRegion = (regionId: number) => {
-  router.push(`/regiones/${regionId}/editar`);
+  router.push(`/regions/${regionId}/edit`);
 };
 
 watch(

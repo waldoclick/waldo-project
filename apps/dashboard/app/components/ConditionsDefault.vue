@@ -180,11 +180,11 @@ const sortOptions = [
 const router = useRouter();
 
 const handleViewCondition = (conditionId: number) => {
-  router.push(`/condiciones/${conditionId}`);
+  router.push(`/conditions/${conditionId}`);
 };
 
 const handleEditCondition = (conditionId: number) => {
-  router.push(`/condiciones/${conditionId}/editar`);
+  router.push(`/conditions/${conditionId}/edit`);
 };
 
 watch(

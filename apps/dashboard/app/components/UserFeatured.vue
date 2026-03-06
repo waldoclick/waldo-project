@@ -92,7 +92,7 @@ const totalRecords = computed(() => {
 const router = useRouter();
 
 const handleViewFeatured = (featuredId: number) => {
-  router.push(`/destacados/${featuredId}`);
+  router.push(`/featured/${featuredId}`);
 };
 
 const handlePageChange = (page: number) => {

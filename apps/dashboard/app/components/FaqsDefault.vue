@@ -234,7 +234,7 @@ const handleViewFaq = (faqId: number) => {
 };
 
 const handleEditFaq = (faqId: number) => {
-  router.push(`/faqs/${faqId}/editar`);
+  router.push(`/faqs/${faqId}/edit`);
 };
 
 watch(

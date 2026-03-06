@@ -214,11 +214,11 @@ const sortOptions = [
 const router = useRouter();
 
 const handleViewCategory = (categoryId: number) => {
-  router.push(`/categorias/${categoryId}`);
+  router.push(`/categories/${categoryId}`);
 };
 
 const handleEditCategory = (categoryId: number) => {
-  router.push(`/categorias/${categoryId}/editar`);
+  router.push(`/categories/${categoryId}/edit`);
 };
 
 const isHexColor = (value?: string) => {
