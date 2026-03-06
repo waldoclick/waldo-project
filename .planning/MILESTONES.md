@@ -1,5 +1,14 @@
 # Milestones
 
+## v1.6 v1.6 (Shipped: 2026-03-06)
+
+**Phases completed:** 2 phases, 3 plans, 0 tasks
+
+**Key accomplishments:**
+- (none recorded)
+
+---
+
 ## v1.5 Ad Credit Refund (Shipped: 2026-03-06)
 
 **Phases completed:** 2 phases (16-17), 2 plans
