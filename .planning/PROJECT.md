@@ -34,40 +34,28 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ El email de baneo notifica al usuario que sus créditos fueron devueltos (condicional) — v1.5
 - ✓ Todos los segmentos de URL del dashboard están en inglés — v1.4
 - ✓ Las URLs españolas antiguas redirigen a sus equivalentes en inglés (301) — v1.4
-- ✓ Todos los links de navegación y referencias internas usan URLs en inglés — v1.4
+  - ✓ Todos los links de navegación y referencias internas usan URLs en inglés — v1.4
+  - ✓ `pages/preguntas-frecuentes.vue` no hace double-fetch al cargar — v1.6
+  - ✓ `pages/cuenta/mis-anuncios.vue` no dispara 6 llamadas en cada carga — v1.6
+  - ✓ `packs.store.ts` tiene cache guard para evitar llamadas redundantes — v1.6
+  - ✓ `conditions.store.ts` tiene cache guard — v1.6
+  - ✓ `regions.store.ts` tiene cache guard — v1.6
+  - ✓ `FormCreateThree.vue` no repite la llamada a communes que ya hizo el plugin — v1.6
 
 ### Active
 
-- [ ] `pages/preguntas-frecuentes.vue` no hace double-fetch al cargar — v1.6
-- [ ] `pages/cuenta/mis-anuncios.vue` no dispara 6 llamadas en cada carga — v1.6
-- [ ] `packs.store.ts` tiene cache guard para evitar llamadas redundantes — v1.6
-- [ ] `conditions.store.ts` tiene cache guard — v1.6
-- [ ] `regions.store.ts` tiene cache guard — v1.6
-- [ ] `FormCreateThree.vue` no repite la llamada a communes que ya hizo el plugin — v1.6
+*(No active requirements — v1.6 is the current shipped milestone)*
 
-## Current Milestone: v1.6 Website API Optimization
+## Current Milestone: none
 
-**Goal:** Eliminar double-fetches y llamadas redundantes a la API en el website, siguiendo el mismo patrón ya aplicado en el dashboard (v1.2).
-
-**Target features:**
-- Fix double-fetch en `preguntas-frecuentes.vue` y `mis-anuncios.vue`
-- Agregar cache guards en `packs.store.ts`, `conditions.store.ts`, `regions.store.ts`
-- Eliminar fetch redundante de communes en `FormCreateThree.vue`
-
-### Out of Scope
-
-- UI para que el usuario elija pasarela — no requerido ahora, los usuarios pagan transparentemente
-- Integración de una segunda pasarela concreta — el trabajo actual es solo la abstracción
-- Cambios en Website o Strapi para features de usuario — dashboard-first approach
-- Internacionalización (i18n) — módulo comentado, deferido conscientemente
-- Migración de URLs del sitio web público — scope solo dashboard
-- URL aliases permanentes (mantener ambas funcionando) — los redirects 301 son suficientes
+**v1.6 Website API Optimization shipped 2026-03-06.** No active milestone — ready for `/gsd-new-milestone`.
 
 ## Previous State
 
-Shipped **v1.5 Ad Credit Refund** on 2026-03-06.
-- **Credit refund**: `rejectAd()` and `bannedAd()` in Strapi now free `ad_reservation.ad = null` and `ad_featured_reservation.ad = null` before sending email, using the same `entityService.update` pattern as the existing cron.
-- **Email notification**: `ad-rejected.mjml` and `ad-banned.mjml` render conditional Spanish-language credit-return paragraphs when `adReservationReturned` / `featuredReservationReturned` flags are true; ads with no reservations show no credit messaging.
+Shipped **v1.6 Website API Optimization** on 2026-03-06.
+- **Page double-fetch fixes**: `preguntas-frecuentes.vue` reduced from 2 HTTP calls to 1 (single `useAsyncData`); `mis-anuncios.vue` reduced from 6 calls to 2 via new `GET /api/ads/me/counts` Strapi aggregate endpoint.
+- **Store cache guards**: 30-min timestamp-based cache guard added to `packs.store.ts`, `conditions.store.ts`, and `regions.store.ts`; `packs.store.ts` also gained localStorage persistence to survive page refresh.
+- **Component cleanup**: `FormCreateThree.vue` no longer calls `loadCommunes()` on mount — commune data from the `communes.client.ts` plugin is used directly.
 
 ## Context
 
@@ -77,8 +65,7 @@ Shipped **v1.5 Ad Credit Refund** on 2026-03-06.
 - El sistema valida disponibilidad de créditos según PackType y FeaturedType antes de procesar el pago
 - Deploy independiente por app vía Laravel Forge con git sparse-checkout
 - Dashboard (apps/dashboard): Nuxt 4, Pinia, @nuxtjs/strapi v2, SCSS custom; ~65 componentes, 3 stores, 14 plugins
-- v1.3 shipped: `date.ts`, `price.ts`, `string.ts` utilities created and fully integrated
-- v1.4 shipped: all dashboard routes in English, 301 redirects for all legacy Spanish URLs
+  - v1.6 shipped: `GET /api/ads/me/counts` aggregate endpoint in Strapi; website stores have 30-min timestamp cache guards; `preguntas-frecuentes.vue` and `mis-anuncios.vue` API calls minimized
 
 ## Constraints
 
@@ -108,7 +95,11 @@ Shipped **v1.5 Ad Credit Refund** on 2026-03-06.
 | Links externos al sitio web público exentos de localización | Solo rutas del dashboard en scope; `websiteUrl + /anuncios/[slug]` son URLs del sitio público — v1.4 | ✓ Good |
 | Reservation freeing updates reservation side (FK on reservation, not ad) | Consistent with existing cron pattern in `user.cron.ts`; `entityService.update(uid, id, { data: { ad: null } })` — v1.5 | ✓ Good |
 | No try/catch around reservation-freeing calls | If freeing fails, whole reject/ban should fail — caller handles outer error; silent failure would leave orphaned credits — v1.5 | ✓ Good |
-| `!!ad.ad_reservation?.id` evaluated on pre-freed ad object | Ad is fetched before freeing runs; original value correctly reflects "did this ad have a reservation?" for email flag — v1.5 | ✓ Good |
+  | `!!ad.ad_reservation?.id` evaluated on pre-freed ad object | Ad is fetched before freeing runs; original value correctly reflects "did this ad have a reservation?" for email flag — v1.5 | ✓ Good |
+  | `useAsyncData`-only data loading in website pages | Bare `await` store calls before `useAsyncData` cause double-fetch (SSR + client); single `useAsyncData` is the canonical pattern — v1.6 | ✓ Good |
+  | Aggregate `GET /ads/me/counts` endpoint vs. 5 parallel client calls | Server-side `Promise.all` with 5 `entityService.count()` calls; client sees 1 HTTP request instead of 5 — v1.6 | ✓ Good |
+  | Cache guard: array-length + timestamp (not timestamp-only) | Timestamp-only guard produces false cache hit on empty state after TTL reset; length check ensures data actually exists — v1.6 | ✓ Good |
+  | `packs.store.ts` gained localStorage `persist` | Without persist the cache guard is useless on page refresh (store always empty); aligns packs with conditions/regions stores — v1.6 | ✓ Good |
 
 ## Future Requirements
 
@@ -125,4 +116,4 @@ Shipped **v1.5 Ad Credit Refund** on 2026-03-06.
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-06 after v1.6 milestone started*
+*Last updated: 2026-03-06 after v1.6 milestone shipped*
