@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: URL Localization
 status: active
-stopped_at: null
-last_updated: "2026-03-05T00:00:00.000Z"
-last_activity: 2026-03-05 — Roadmap created for v1.4
+stopped_at: Completed 12-01-PLAN.md
+last_updated: "2026-03-06T01:57:56Z"
+last_activity: 2026-03-06 — Completed Phase 12 Plan 01 (ads page migration)
 progress:
   total_phases: 4
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
-  percent: 0
+  total_plans: 1
+  completed_plans: 1
+  percent: 25
 ---
 
 # Project State
@@ -21,17 +21,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-05)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.4 URL Localization — Phase 12 (Ads Migration) up next
+**Current focus:** v1.4 URL Localization — Phase 12 plan 01 complete; continue with remaining plans
 
 ## Current Position
 
 Phase: 12 — Ads Migration
-Plan: —
-Status: Not started
-Last activity: 2026-03-05 — Roadmap created for v1.4
+Plan: 01 (complete) — next plan TBD
+Status: In Progress
+Last activity: 2026-03-06 — Completed 12-01 (rename anuncios→ads, update all route refs)
 
 ```
-v1.4 Progress: ░░░░░░░░░░ 0% (0/4 phases)
+v1.4 Progress: [██░░░░░░░░] 25% (1 plan completed)
 ```
 
 ## Accumulated Context
@@ -54,6 +54,7 @@ Key patterns established (carry forward):
 - ~30 components contain internal route references that will need updating (navigateTo, NuxtLink, router.push)
 - No API changes, no store changes, no functional behavior changes — pure path rename
 - Phase 12 and Phase 14 can be executed in parallel (independent segments), but Phase 15 must be last
+- Route migration pattern: `git mv` dir, `git mv` individual files, then update refs in a second commit
 
 ### Pending Todos
 
@@ -73,9 +74,10 @@ None.
 | 09 | 05 | 5 min | 3 | 9 |
 | 10 | 01 | 15 min | 3 | 14 |
 | 11 | 01 | ~15 min | 3 | 8 |
+| 12 | 01 | 2 min | 2 | 8 |
 
 ## Session Continuity
 
-Last session: 2026-03-05
-Stopped at: v1.4 roadmap created
+Last session: 2026-03-06
+Stopped at: Completed 12-01-PLAN.md
 Resume file: None

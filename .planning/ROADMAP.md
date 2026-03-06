@@ -46,7 +46,7 @@ Archive: `.planning/milestones/v1.3-ROADMAP.md`
 
 **Milestone Goal:** All dashboard URL segments are in English. Old Spanish URLs redirect to their English equivalents. No functional changes — pure route rename.
 
-- [ ] **Phase 12: Ads Migration** — Rename `anuncios` directory and all 6 sub-status pages to English equivalents
+- [x] **Phase 12: Ads Migration** — Rename `anuncios` directory and all 6 sub-status pages to English equivalents (completed 2026-03-06)
 - [ ] **Phase 13: Catalog Segments Migration** — Rename `categorias`, `comunas`, `condiciones`, `ordenes`, `regiones`, `usuarios` to English
 - [ ] **Phase 14: Account, Featured & Reservations Migration** — Rename `cuenta`, `destacados`, `reservas` with their non-standard sub-routing patterns
 - [ ] **Phase 15: Links, Redirects & Build Verification** — Update all internal route references, add Spanish→English redirects, verify `nuxt typecheck`
@@ -101,7 +101,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 12. Ads Migration | 0/? | Not started | - |
+| 12. Ads Migration | 1/1 | Complete   | 2026-03-06 |
 | 13. Catalog Segments Migration | 0/? | Not started | - |
 | 14. Account, Featured & Reservations Migration | 0/? | Not started | - |
 | 15. Links, Redirects & Build Verification | 0/? | Not started | - |
