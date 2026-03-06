@@ -10,6 +10,16 @@
 {% if reason %}
 <mj-text> <b>Motivo del baneo:</b> {{ reason }} </mj-text>
 {% endif %}
+{% if adReservationReturned %}
+<mj-text>
+  Tu crédito de anuncio ha sido devuelto y ya está disponible para ser utilizado nuevamente.
+</mj-text>
+{% endif %}
+{% if featuredReservationReturned %}
+<mj-text>
+  Tu crédito de destacado ha sido devuelto y ya está disponible para ser utilizado nuevamente.
+</mj-text>
+{% endif %}
 <mj-text>
   Puedes revisar las
   <a
