@@ -34,6 +34,7 @@ export interface Ad {
   remaining_days?: number;
   reason_for_ban?: string;
   banned_at?: string;
+  featured?: boolean;
   reason_for_rejection?: string;
   rejected_at?: string;
   createdAt: string;
