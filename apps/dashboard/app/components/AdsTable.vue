@@ -38,7 +38,15 @@
               </div>
             </TableCell>
             <TableCell>
-              <div :class="`ads--${props.section}__name`">{{ ad.name }}</div>
+              <div :class="`ads--${props.section}__name`">
+                <Star
+                  v-if="ad.featured"
+                  :class="`ads--${props.section}__featured-icon`"
+                  :size="14"
+                  fill="#ffd699"
+                  color="#ffd699"
+                />{{ ad.name }}
+              </div>
             </TableCell>
             <TableCell>
               <div :class="`ads--${props.section}__user`">
@@ -101,7 +109,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
-import { Eye, ExternalLink } from "lucide-vue-next";
+import { Eye, ExternalLink, Star } from "lucide-vue-next";
 import type { Ad, AdGalleryItem } from "@/types/ad";
 import { useSettingsStore } from "@/stores/settings.store";
 import SearchDefault from "@/components/SearchDefault.vue";
@@ -289,5 +297,11 @@ watch(
   align-items: center;
   justify-content: flex-end;
   gap: 0.5rem;
+}
+
+.ads [class$="__name"] {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 </style>
