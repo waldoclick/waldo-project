@@ -1,4 +1,3 @@
-import PaymentUtils from "../api/payment/utils";
 import logger from "../utils/logtail";
 import { sendMjmlEmail } from "../services/mjml";
 
@@ -18,14 +17,15 @@ export interface ICronjobResult {
 export default class UserCronService {
   async restoreFreeAds(): Promise<ICronjobResult> {
     try {
-      // Verificar si strapi está definido
+      // Verify strapi is available before proceeding.
       if (typeof strapi === "undefined") {
         throw new Error("strapi is not defined");
       }
 
-      logger.info("=== INICIANDO RESTAURACIÓN DE AVISOS GRATUITOS ===");
+      logger.info("=== STARTING FREE AD RESTORATION ===");
 
-      // Buscar anuncios gratuitos que llegaron a 0 días restantes
+      // Query all active free ads (price = 0) that have reached 0 remaining days.
+      // These are eligible for deactivation and reservation restore this run.
       const expiredFreeAds = (await strapi.entityService.findMany(
         "api::ad.ad",
         {
@@ -33,7 +33,7 @@ export default class UserCronService {
             remaining_days: 0,
             active: true,
             ad_reservation: {
-              price: 0, // Solo anuncios gratuitos
+              price: 0, // Free ads only
             },
           },
           populate: {
@@ -44,56 +44,62 @@ export default class UserCronService {
         }
       )) as any[];
 
-      logger.info(
-        `Encontrados ${expiredFreeAds.length} anuncios gratuitos expirados`
-      );
+      logger.info(`Found ${expiredFreeAds.length} expired free ads to process`);
 
-      const usersWithRestoredAds = [];
-      const processedUsers = new Set<string>();
-
-      // Procesar cada anuncio expirado
+      // Group expired ads by user. A single user may have multiple expired free ads
+      // (e.g., published two free ads on different days, both expired today).
+      // We collect them all so we can deactivate each ad individually, but call
+      // restoreUserFreeReservations only once per user to avoid duplicate top-ups.
+      const userAdMap = new Map<string, { user: any; ads: any[] }>();
       for (const ad of expiredFreeAds) {
         const userId = ad.user.id.toString();
-
-        // Evitar procesar el mismo usuario múltiples veces
-        if (processedUsers.has(userId)) {
-          continue;
+        if (!userAdMap.has(userId)) {
+          userAdMap.set(userId, { user: ad.user, ads: [] });
         }
-        processedUsers.add(userId);
+        userAdMap.get(userId)!.ads.push(ad);
+      }
 
+      const usersWithRestoredAds = [];
+
+      // Process each unique user: deactivate all their expired ads, then restore
+      // their free reservation pool to the guaranteed minimum of 3.
+      for (const [userId, { user, ads }] of userAdMap) {
         try {
-          // Desactivar el anuncio expirado
-          await strapi.entityService.update("api::ad.ad", ad.id, {
-            data: { active: false },
-          });
+          // Deactivate every expired ad for this user. Each ad must be set inactive
+          // and its reservation unlinked so it re-enters the available pool.
+          for (const ad of ads) {
+            await strapi.entityService.update("api::ad.ad", ad.id, {
+              data: { active: false },
+            });
 
-          // Desvincular la reserva del anuncio para que quede disponible
-          await strapi.entityService.update(
-            "api::ad-reservation.ad-reservation",
-            ad.ad_reservation.id,
-            {
-              data: { ad: null },
-            }
-          );
+            // Unlink the reservation from the ad so it becomes available again.
+            await strapi.entityService.update(
+              "api::ad-reservation.ad-reservation",
+              ad.ad_reservation.id,
+              {
+                data: { ad: null },
+              }
+            );
 
-          logger.info("Anuncio gratuito expirado procesado", {
-            adId: ad.id,
-            userId,
-            reservationId: ad.ad_reservation.id,
-          });
+            logger.info("Expired free ad deactivated", {
+              adId: ad.id,
+              userId,
+              reservationId: ad.ad_reservation.id,
+            });
+          }
 
-          // Verificar si el usuario necesita más reservas gratuitas
+          // Restore reservations once after all ads for this user are deactivated.
+          // Calling once per user (not once per ad) prevents creating duplicate reservations.
           const result = await this.restoreUserFreeReservations(userId);
 
           usersWithRestoredAds.push({
-            id: ad.user.id,
-            username: ad.user.username,
-            email: ad.user.email,
+            id: user.id,
+            username: user.username,
+            email: user.email,
             ...result,
           });
         } catch (error) {
-          logger.error("Error procesando anuncio expirado", {
-            adId: ad.id,
+          logger.error("Error processing expired ads for user", {
             userId,
             error: error.message,
           });
@@ -101,10 +107,10 @@ export default class UserCronService {
       }
 
       logger.info(
-        `Procesados ${usersWithRestoredAds.length} usuarios con anuncios expirados`
+        `Processed ${usersWithRestoredAds.length} users with expired free ads`
       );
 
-      // Enviar reporte por correo
+      // Send a summary report to admins listing every user whose ads were processed.
       if (usersWithRestoredAds.length > 0) {
         const adminEmails =
           process.env.ADMIN_EMAILS || "waldo.development@gmail.com";
@@ -121,7 +127,7 @@ export default class UserCronService {
         );
       }
 
-      logger.info("=== RESTAURACIÓN DE AVISOS GRATUITOS COMPLETADA ===");
+      logger.info("=== FREE AD RESTORATION COMPLETE ===");
 
       return {
         success: true,
@@ -139,7 +145,7 @@ export default class UserCronService {
    */
   private async restoreUserFreeReservations(userId: string) {
     try {
-      // Contar reservas gratuitas actuales (disponibles + activas)
+      // Count this user's current free reservations: available (ad = null) and active (ad has remaining days > 0).
       const currentReservations = (await strapi.entityService.findMany(
         "api::ad-reservation.ad-reservation",
         {
@@ -147,12 +153,12 @@ export default class UserCronService {
             user: { id: { $eq: userId } },
             price: 0,
             $or: [
-              { ad: null }, // Disponibles
+              { ad: null }, // Available
               {
                 ad: {
                   remaining_days: { $gt: 0 },
                 },
-              }, // Activas
+              }, // Active
             ],
           },
           populate: {
@@ -168,9 +174,11 @@ export default class UserCronService {
         (r) => r.ad && r.ad.remaining_days > 0
       ).length;
       const totalReservations = availableReservations + activeReservations;
+
+      // A user is guaranteed 3 free reservations at all times (available + active). Create however many are missing.
       const neededReservations = Math.max(0, 3 - totalReservations);
 
-      // Crear reservas faltantes
+      // Create missing free reservations so the user is topped back up to 3.
       for (let i = 0; i < neededReservations; i++) {
         await strapi.entityService.create(
           "api::ad-reservation.ad-reservation",
@@ -179,14 +187,14 @@ export default class UserCronService {
               price: 0,
               total_days: 15,
               user: userId,
-              description: `Reserva gratuita restaurada ${new Date().toISOString()}`,
+              description: `Free reservation restored ${new Date().toISOString()}`,
               publishedAt: new Date(),
             },
           }
         );
       }
 
-      logger.info("Reservas gratuitas restauradas para usuario", {
+      logger.info("Free reservations restored for user", {
         userId,
         availableReservations,
         activeReservations,
