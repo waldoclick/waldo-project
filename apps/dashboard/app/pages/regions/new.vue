@@ -21,5 +21,5 @@ definePageMeta({
   layout: "dashboard",
 });
 
-const breadcrumbs = [{ label: "Regions", to: "/regions" }, { label: "Nueva" }];
+const breadcrumbs = [{ label: "Regiones", to: "/regions" }, { label: "Nueva" }];
 </script>

@@ -43,7 +43,7 @@ const condition = ref<any>(null);
 
 const title = computed(() => condition.value?.name || "Condición");
 const breadcrumbs = computed(() => [
-  { label: "Conditions", to: "/conditions" },
+  { label: "Condiciones", to: "/conditions" },
   ...(condition.value?.name
     ? [{ label: condition.value.name, to: `/conditions/${route.params.id}` }]
     : []),

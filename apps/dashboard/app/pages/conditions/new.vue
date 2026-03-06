@@ -22,7 +22,7 @@ definePageMeta({
 });
 
 const breadcrumbs = [
-  { label: "Conditions", to: "/conditions" },
+  { label: "Condiciones", to: "/conditions" },
   { label: "Nueva" },
 ];
 </script>

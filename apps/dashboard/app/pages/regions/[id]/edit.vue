@@ -43,7 +43,7 @@ const region = ref<any>(null);
 
 const title = computed(() => region.value?.name || "Región");
 const breadcrumbs = computed(() => [
-  { label: "Regions", to: "/regions" },
+  { label: "Regiones", to: "/regions" },
   ...(region.value?.name
     ? [{ label: region.value.name, to: `/regions/${route.params.id}` }]
     : []),

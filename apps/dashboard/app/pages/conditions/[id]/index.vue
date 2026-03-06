@@ -52,7 +52,7 @@ const item = ref<any>(null);
 
 const title = computed(() => item.value?.name || "Condición");
 const breadcrumbs = computed(() => [
-  { label: "Conditions", to: "/conditions" },
+  { label: "Condiciones", to: "/conditions" },
   ...(item.value?.name ? [{ label: item.value.name }] : []),
 ]);
 

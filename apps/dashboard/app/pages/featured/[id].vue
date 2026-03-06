@@ -71,7 +71,7 @@ const title = computed(() =>
   item.value?.id ? `Destacado #${item.value.id}` : "Destacado",
 );
 const breadcrumbs = computed(() => [
-  { label: "Featured", to: "/featured/free" },
+  { label: "Destacados", to: "/featured/free" },
   ...(item.value?.id ? [{ label: `#${item.value.id}` }] : []),
 ]);
 
