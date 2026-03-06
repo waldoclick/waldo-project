@@ -233,7 +233,7 @@ const router = useRouter();
 
 const handleViewUser = (userId: number) => {
   // Navegar a la página de detalle del usuario
-  router.push(`/usuarios/${userId}`);
+  router.push(`/users/${userId}`);
 };
 
 // Watch para recargar cuando cambian los filtros o la búsqueda
