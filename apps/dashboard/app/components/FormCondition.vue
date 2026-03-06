@@ -141,7 +141,7 @@ const handleSubmit = async (values: any) => {
       );
       const updatedId = responseData?.documentId || responseData?.id;
       if (updatedId) {
-        router.push(`/condiciones/${updatedId}`);
+        router.push(`/conditions/${updatedId}`);
       }
     } else {
       const response = await strapi.create(
@@ -156,9 +156,9 @@ const handleSubmit = async (values: any) => {
       await Swal.fire("Éxito", "Condición creada correctamente.", "success");
       const createdId = createdData?.documentId || createdData?.id;
       if (createdId) {
-        router.push(`/condiciones/${createdId}`);
+        router.push(`/conditions/${createdId}`);
       } else {
-        router.push("/condiciones");
+        router.push("/conditions");
       }
     }
   } catch (error) {

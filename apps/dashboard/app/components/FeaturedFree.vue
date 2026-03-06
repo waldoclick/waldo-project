@@ -205,7 +205,7 @@ const router = useRouter();
 
 const handleViewFeatured = (featuredId: number) => {
   // Navegar a la página de detalle del destacado
-  router.push(`/destacados/${featuredId}`);
+  router.push(`/featured/${featuredId}`);
 };
 
 // Watch para recargar cuando cambian los filtros o la búsqueda

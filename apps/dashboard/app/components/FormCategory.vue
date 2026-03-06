@@ -164,7 +164,7 @@ const handleSubmit = async (values: any) => {
       );
       const updatedId = updatedCategory?.documentId || updatedCategory?.id;
       if (updatedId) {
-        router.push(`/categorias/${updatedId}`);
+        router.push(`/categories/${updatedId}`);
       }
     } else {
       const response = await strapi.create(
@@ -179,9 +179,9 @@ const handleSubmit = async (values: any) => {
       await Swal.fire("Éxito", "Categoría creada correctamente.", "success");
       const createdId = createdData?.documentId || createdData?.id;
       if (createdId) {
-        router.push(`/categorias/${createdId}`);
+        router.push(`/categories/${createdId}`);
       } else {
-        router.push("/categorias");
+        router.push("/categories");
       }
     }
   } catch (error) {

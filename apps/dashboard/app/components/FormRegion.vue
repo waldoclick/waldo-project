@@ -136,7 +136,7 @@ const handleSubmit = async (values: any) => {
       await Swal.fire("Éxito", "Región actualizada correctamente.", "success");
       const updatedId = responseData?.documentId || responseData?.id;
       if (updatedId) {
-        router.push(`/regiones/${updatedId}`);
+        router.push(`/regions/${updatedId}`);
       }
     } else {
       const response = await strapi.create(
@@ -151,9 +151,9 @@ const handleSubmit = async (values: any) => {
       await Swal.fire("Éxito", "Región creada correctamente.", "success");
       const createdId = createdData?.documentId || createdData?.id;
       if (createdId) {
-        router.push(`/regiones/${createdId}`);
+        router.push(`/regions/${createdId}`);
       } else {
-        router.push("/regiones");
+        router.push("/regions");
       }
     }
   } catch (error) {

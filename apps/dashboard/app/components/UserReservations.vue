@@ -92,7 +92,7 @@ const totalRecords = computed(() => {
 const router = useRouter();
 
 const handleViewReservation = (reservationId: number) => {
-  router.push(`/reservas/${reservationId}`);
+  router.push(`/reservations/${reservationId}`);
 };
 
 const handlePageChange = (page: number) => {

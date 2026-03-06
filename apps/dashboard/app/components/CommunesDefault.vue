@@ -186,11 +186,11 @@ const sortOptions = [
 const router = useRouter();
 
 const handleViewCommune = (communeId: number) => {
-  router.push(`/comunas/${communeId}`);
+  router.push(`/communes/${communeId}`);
 };
 
 const handleEditCommune = (communeId: number) => {
-  router.push(`/comunas/${communeId}/editar`);
+  router.push(`/communes/${communeId}/edit`);
 };
 
 watch(
