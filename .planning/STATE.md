@@ -2,12 +2,12 @@
 gsd_state_version: 1.0
 milestone: v1.6
 milestone_name: Website API Optimization
-status: defining_requirements
+status: roadmap_ready
 stopped_at: null
-last_updated: "2026-03-06T21:30:00.000Z"
-last_activity: "2026-03-06 — Milestone v1.6 started"
+last_updated: "2026-03-06T21:35:00.000Z"
+last_activity: "2026-03-06 — Roadmap created for v1.6 (Phases 18-19)"
 progress:
-  total_phases: 0
+  total_phases: 2
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -20,16 +20,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Defining requirements for v1.6 Website API Optimization
+**Current focus:** v1.6 Website API Optimization — roadmap ready, Phase 18 next
 
 ## Current Position
 
 ```
-[ defining requirements — v1.6 Website API Optimization ]
+Phase 18 of 19 — Page Double-Fetch Fixes [ not started ]
+████░░░░░░ 0/2 phases complete
 ```
 
-Status: Defining requirements
-Last activity: 2026-03-06 — Milestone v1.6 started
+Status: Roadmap ready — awaiting plan for Phase 18
+Last activity: 2026-03-06 — Roadmap created for v1.6 (Phases 18-19)
 
 ## Accumulated Context
 
