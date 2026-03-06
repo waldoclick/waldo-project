@@ -4,7 +4,7 @@ milestone: v1.6
 milestone_name: Website API Optimization
 status: completed
 stopped_at: Completed 19-01-PLAN.md
-last_updated: "2026-03-06T21:59:36Z"
+last_updated: "2026-03-06T22:04:42.777Z"
 last_activity: 2026-03-06 — Completed 19-01 (cache guards in packs/conditions/regions stores, removed redundant loadCommunes from FormCreateThree)
 progress:
   total_phases: 2
