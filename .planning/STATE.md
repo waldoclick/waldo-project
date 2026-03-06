@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: URL Localization
 status: executing
-stopped_at: Completed 13-01-PLAN.md
-last_updated: "2026-03-06T02:45:49.161Z"
+stopped_at: Completed 14-02-PLAN.md
+last_updated: "2026-03-06T03:01:36.326Z"
 last_activity: 2026-03-06 — Completed 13-02 (rename comunas→communes, condiciones→conditions, update route refs)
 progress:
   total_phases: 4
   completed_phases: 2
-  total_plans: 4
-  completed_plans: 4
+  total_plans: 6
+  completed_plans: 5
 ---
 
 # Project State
@@ -46,6 +46,7 @@ Key patterns established (carry forward):
 - All utility functions accept `null | undefined` and return `"--"` for missing data
 - Nuxt auto-import picks up `app/utils/*.ts` — no explicit imports needed
   - [Phase 13-catalog-segments-migration]: Used git mv to rename comunas→communes and condiciones→conditions, updated all route refs from Spanish to English paths
+- [Phase 14-account-featured-reservations-migration]: Kept Spanish UI labels (title=Libres, Usadas) — only route path strings updated — Plan spec stated do NOT change Spanish UI labels in templates
 
 ### v1.4-Specific Context
 
@@ -81,6 +82,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-06T02:41:49.083Z
-Stopped at: Completed 13-01-PLAN.md
+Last session: 2026-03-06T03:01:32.510Z
+Stopped at: Completed 14-02-PLAN.md
 Resume file: None
