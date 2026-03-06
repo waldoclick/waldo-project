@@ -91,7 +91,7 @@ Archive: `.planning/milestones/v1.7-ROADMAP.md`
 
 **Milestone Goal:** Guarantee that every user always has 3 free `ad-featured-reservation` records with `price = 0` that are not linked to an active ad. A daily cron (`featuredCron`) scans all users and creates missing slots. Also commits the existing `cron-runner` API.
 
-- [ ] **Phase 24: featuredCron Implementation** — Implement `featured.cron.ts` with `FeaturedCronService.restoreFreeFeaturedReservations()`, register `featuredCron` in `cron-tasks.ts` (daily 2:30 AM Santiago), commit `cron-runner` API files, add English docs throughout.
+- [x] **Phase 24: featuredCron Implementation** — Implement `featured.cron.ts` with `FeaturedCronService.restoreFreeFeaturedReservations()`, register `featuredCron` in `cron-tasks.ts` (daily 2:30 AM Santiago), commit `cron-runner` API files, add English docs throughout. (completed 2026-03-06)
 
 ## Phase Details
 
@@ -114,4 +114,4 @@ Plans:
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 24. featuredCron Implementation | v1.8 | 0/1 | In Progress | - |
+| 24. featuredCron Implementation | 1/1 | Complete   | 2026-03-06 | - |
