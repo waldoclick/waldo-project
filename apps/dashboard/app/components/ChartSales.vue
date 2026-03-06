@@ -46,6 +46,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from "vue";
+import { formatCurrency } from "@/utils/price";
 import { Bar } from "vue-chartjs";
 import { ChevronDown } from "lucide-vue-next";
 import {
@@ -252,19 +253,10 @@ const average = computed(() => {
   return sum / salesData.value.length;
 });
 
-const formatCurrency = (value: number) => {
+const formatCompactCurrency = (value: number) => {
   if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
   if (value >= 1000) return `$${(value / 1000).toFixed(0)}K`;
   return `$${value}`;
-};
-
-const formatCurrencyTooltip = (value: number) => {
-  return new Intl.NumberFormat("es-CL", {
-    style: "currency",
-    currency: "CLP",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(value);
 };
 
 const getFullMonthName = (abbrev: string): string => {
@@ -346,9 +338,7 @@ const chartOptions = computed(() => ({
         title: (context: any[]) =>
           context?.length ? getFullMonthName(context[0].label) : "",
         label: (context: any) =>
-          context.datasetIndex === 0
-            ? formatCurrencyTooltip(context.parsed.y)
-            : "",
+          context.datasetIndex === 0 ? formatCurrency(context.parsed.y) : "",
         afterLabel: (context: any) =>
           context.datasetIndex === 0 ? "Monto" : "",
         labelTextColor: () => "#000",
@@ -380,7 +370,7 @@ const chartOptions = computed(() => ({
       },
       ticks: {
         font: { size: 11 },
-        callback: (value: any) => formatCurrency(value),
+        callback: (value: any) => formatCompactCurrency(value),
       },
       width: 60,
     },

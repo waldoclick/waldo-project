@@ -63,6 +63,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue";
+import { formatCurrency } from "@/utils/price";
 import { ShoppingBag, ExternalLink } from "lucide-vue-next";
 import type { Order } from "@/types/order";
 
@@ -90,16 +91,6 @@ const fetchOrders = async () => {
   } finally {
     loading.value = false;
   }
-};
-
-const formatCurrency = (amount: number | string, currency = "CLP") => {
-  const num = typeof amount === "string" ? Number.parseFloat(amount) : amount;
-  return new Intl.NumberFormat("es-CL", {
-    style: "currency",
-    currency,
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(num);
 };
 
 const formatTime = (dateString: string) => {
