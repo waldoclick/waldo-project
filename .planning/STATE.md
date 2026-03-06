@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.5
 milestone_name: Ad Credit Refund
-status: planning
+status: completed
 stopped_at: Completed 16-01-PLAN.md
-last_updated: "2026-03-06T20:31:33.509Z"
-last_activity: 2026-03-06 — Roadmap created for v1.5
+last_updated: "2026-03-06T20:34:41.945Z"
+last_activity: "2026-03-06 — Phase 16 Plan 01: reservation-freeing logic wired into rejectAd() and bannedAd()"
 progress:
   total_phases: 2
   completed_phases: 1
