@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.5
 milestone_name: Ad Credit Refund
-status: roadmap_created
-stopped_at: Roadmap created — Phase 16 is next
-last_updated: "2026-03-06T20:15:00.000Z"
-last_activity: 2026-03-06 — v1.5 roadmap created (2 phases, 8 requirements mapped)
+status: planning
+stopped_at: Completed 16-01-PLAN.md
+last_updated: "2026-03-06T20:31:33.509Z"
+last_activity: 2026-03-06 — Roadmap created for v1.5
 progress:
   total_phases: 2
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  completed_phases: 1
+  total_plans: 1
+  completed_plans: 1
 ---
 
 # Project State
@@ -20,18 +20,18 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.5 Ad Credit Refund — roadmap ready, Phase 16 is next
+**Current focus:** v1.5 Ad Credit Refund — Phase 16 Plan 01 complete, Phase 17 is next
 
 ## Current Position
 
 ```
-████░░░░░░░░░░░░░░░░ 0/2 phases complete
+██████████░░░░░░░░░░ 1/2 phases in progress (1/1 plans done for Phase 16)
 ```
 
-Phase: 16 – Credit Refund Logic (not started)
-Plan: —
-Status: Ready to plan Phase 16
-Last activity: 2026-03-06 — Roadmap created for v1.5
+Phase: 16 – Credit Refund Logic (1/1 plans complete)
+Plan: 01 complete — ready for Phase 17
+Status: Phase 16 done
+Last activity: 2026-03-06 — Phase 16 Plan 01: reservation-freeing logic wired into rejectAd() and bannedAd()
 
 ## Accumulated Context
 
@@ -45,6 +45,8 @@ Key patterns established (carry forward):
 - Strapi SDK v5 cast pattern: `response.data as T[]`, params as `Record<string,unknown>`, payload double-cast
 - All utility functions accept `null | undefined` and return `"--"` for missing data
 - Nuxt auto-import picks up `app/utils/*.ts` — no explicit imports needed
+- **v1.5**: Reservation freeing updates reservation side (FK lives on reservation), not ad side — `entityService.update(uid, id, { data: { ad: null } })`
+- **v1.5**: No try/catch around freeing calls — if freeing fails, whole reject/ban fails (caller handles)
 
 ### v1.5 Implementation Context
 
@@ -67,9 +69,10 @@ None.
 
 | Phase | Plan | Duration | Tasks | Files |
 | :--- | :--- | :--- | :--- | :--- |
+| 16-credit-refund-logic | 01 | 2min | 2 | 1 |
 
 ## Session Continuity
 
-Last session: 2026-03-06
-Stopped at: Roadmap created — ready to plan Phase 16
+Last session: 2026-03-06T20:31:33.508Z
+Stopped at: Completed 16-01-PLAN.md
 Resume file: None
