@@ -45,7 +45,9 @@
           <CardInfo
             v-if="item"
             title="Precio"
-            :description="formatPrice(item.price, item.currency)"
+            :description="
+              formatCurrency(item.price, { currency: item.currency })
+            "
           />
           <CardInfo
             v-if="item"
@@ -185,6 +187,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, type Component } from "vue";
+import { formatCurrency } from "@/utils/price";
 import type { Ad, AdStatus } from "@/types/ad";
 import { useRoute } from "vue-router";
 import HeroDefault from "@/components/HeroDefault.vue";
@@ -261,17 +264,6 @@ const statusLabels: Record<string, string> = {
   banned: "Baneado",
   rejected: "Rechazado",
   abandoned: "Abandonado",
-};
-
-const formatPrice = (
-  price: number | undefined,
-  currency: string | undefined = "CLP",
-) => {
-  if (!price) return "--";
-  return new Intl.NumberFormat("es-CL", {
-    style: "currency",
-    currency: currency,
-  }).format(price);
 };
 
 const formatAddress = (
