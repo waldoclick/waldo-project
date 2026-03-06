@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: URL Localization
 status: executing
-stopped_at: Completed 14-02-PLAN.md
-last_updated: "2026-03-06T03:01:36.326Z"
-last_activity: 2026-03-06 — Completed 13-02 (rename comunas→communes, condiciones→conditions, update route refs)
+stopped_at: Completed 14-01-PLAN.md
+last_updated: "2026-03-06T03:03:05.197Z"
+last_activity: 2026-03-06 — Completed 14-01 (rename cuenta→account, destacados→featured, update route refs)
 progress:
   total_phases: 4
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 6
-  completed_plans: 5
+  completed_plans: 6
 ---
 
 # Project State
@@ -20,17 +20,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-05)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.4 URL Localization — Phase 13 plan 02 complete; continue with remaining plans
+**Current focus:** v1.4 URL Localization — Phase 14 plan 01 complete; all plans complete
 
 ## Current Position
 
-Phase: 13 — Catalog Segments Migration
-Plan: 02 (complete) — next: 13-03 or remaining plans
+Phase: 14 — Account & Featured Reservations Migration
+Plan: 01 (complete) — all plans in phase complete
 Status: In Progress
-Last activity: 2026-03-06 — Completed 13-02 (rename comunas→communes, condiciones→conditions, update route refs)
+Last activity: 2026-03-06 — Completed 14-01 (rename cuenta→account, destacados→featured, update route refs)
 
 ```
-v1.4 Progress: [█████████░] 94% (30/32 plans completed)
+v1.4 Progress: [██████████] 100% (34/34 plans completed)
 ```
 
 ## Accumulated Context
@@ -47,6 +47,7 @@ Key patterns established (carry forward):
 - Nuxt auto-import picks up `app/utils/*.ts` — no explicit imports needed
   - [Phase 13-catalog-segments-migration]: Used git mv to rename comunas→communes and condiciones→conditions, updated all route refs from Spanish to English paths
 - [Phase 14-account-featured-reservations-migration]: Kept Spanish UI labels (title=Libres, Usadas) — only route path strings updated — Plan spec stated do NOT change Spanish UI labels in templates
+- [Phase 14-account-featured-reservations-migration]: Task 1 renames were already committed in prior session (bc5152d); account/ pages were empty stubs requiring no route ref updates — git mv rename pattern: rename dir/files first, then update route refs in separate commit
 
 ### v1.4-Specific Context
 
@@ -79,9 +80,10 @@ None.
 | 13 | 01 | 3 min | 2 | 8 |
 | 13 | 02 | 3 min | 2 | 8 |
 | 13 | 03 | 2 min | 2 | 4 |
+| 14 | 01 | 2 min | 2 | 4 |
 
 ## Session Continuity
 
-Last session: 2026-03-06T03:01:32.510Z
-Stopped at: Completed 14-02-PLAN.md
+Last session: 2026-03-06T03:02:46.497Z
+Stopped at: Completed 14-01-PLAN.md
 Resume file: None
