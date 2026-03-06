@@ -8,10 +8,10 @@
 
 ### Credit Refund
 
-- [ ] **REFUND-01**: Al rechazar un aviso, si tiene `ad_reservation` asociada, se setea `ad_reservation.ad = null` (crédito de aviso devuelto)
-- [ ] **REFUND-02**: Al rechazar un aviso, si tiene `ad_featured_reservation` asociada, se setea `ad_featured_reservation.ad = null` (crédito de destacado devuelto)
-- [ ] **REFUND-03**: Al banear un aviso, si tiene `ad_reservation` asociada, se setea `ad_reservation.ad = null` (crédito de aviso devuelto)
-- [ ] **REFUND-04**: Al banear un aviso, si tiene `ad_featured_reservation` asociada, se setea `ad_featured_reservation.ad = null` (crédito de destacado devuelto)
+- [x] **REFUND-01**: Al rechazar un aviso, si tiene `ad_reservation` asociada, se setea `ad_reservation.ad = null` (crédito de aviso devuelto)
+- [x] **REFUND-02**: Al rechazar un aviso, si tiene `ad_featured_reservation` asociada, se setea `ad_featured_reservation.ad = null` (crédito de destacado devuelto)
+- [x] **REFUND-03**: Al banear un aviso, si tiene `ad_reservation` asociada, se setea `ad_reservation.ad = null` (crédito de aviso devuelto)
+- [x] **REFUND-04**: Al banear un aviso, si tiene `ad_featured_reservation` asociada, se setea `ad_featured_reservation.ad = null` (crédito de destacado devuelto)
 
 ### Email Notification
 
@@ -46,10 +46,10 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| REFUND-01 | Phase 16 | Pending |
-| REFUND-02 | Phase 16 | Pending |
-| REFUND-03 | Phase 16 | Pending |
-| REFUND-04 | Phase 16 | Pending |
+| REFUND-01 | Phase 16 | Complete |
+| REFUND-02 | Phase 16 | Complete |
+| REFUND-03 | Phase 16 | Complete |
+| REFUND-04 | Phase 16 | Complete |
 | EMAIL-01 | Phase 17 | Pending |
 | EMAIL-02 | Phase 17 | Pending |
 | EMAIL-03 | Phase 17 | Pending |
