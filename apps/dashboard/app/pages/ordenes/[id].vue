@@ -102,6 +102,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
+import { formatCurrency } from "@/utils/price";
 import HeroDefault from "@/components/HeroDefault.vue";
 import BoxContent from "@/components/BoxContent.vue";
 import BoxInformation from "@/components/BoxInformation.vue";
@@ -124,18 +125,6 @@ const breadcrumbs = computed(() => [
   { label: "Órdenes", to: "/ordenes" },
   ...(orderId.value ? [{ label: `#${orderId.value}` }] : []),
 ]);
-
-const formatCurrency = (amount: number | string) => {
-  const numAmount =
-    typeof amount === "string" ? Number.parseFloat(amount) : amount;
-  if (!numAmount) return "--";
-  return new Intl.NumberFormat("es-CL", {
-    style: "currency",
-    currency: "CLP",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(numAmount);
-};
 
 const getPaymentMethod = (method: string | undefined) => {
   if (!method) return "--";
