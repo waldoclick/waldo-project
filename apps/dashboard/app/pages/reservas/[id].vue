@@ -53,6 +53,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
+import { formatCurrency } from "@/utils/price";
 import HeroDefault from "@/components/HeroDefault.vue";
 import BoxContent from "@/components/BoxContent.vue";
 import BoxInformation from "@/components/BoxInformation.vue";
@@ -72,18 +73,6 @@ const breadcrumbs = computed(() => [
   { label: "Reservas", to: "/reservas/libres" },
   ...(item.value?.id ? [{ label: `#${item.value.id}` }] : []),
 ]);
-
-const formatCurrency = (amount: number | string | undefined) => {
-  if (amount === undefined || amount === null) return "--";
-  const numAmount =
-    typeof amount === "string" ? Number.parseFloat(amount) : amount;
-  return new Intl.NumberFormat("es-CL", {
-    style: "currency",
-    currency: "CLP",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(numAmount);
-};
 
 const formatDays = (days?: number) => {
   if (!days && days !== 0) return "--";

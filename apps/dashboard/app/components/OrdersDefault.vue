@@ -76,6 +76,7 @@ import { computed } from "vue";
 import { useAsyncData } from "nuxt/app";
 import { useStrapi } from "#imports";
 import { Eye } from "lucide-vue-next";
+import { formatCurrency } from "@/utils/price";
 import { useSettingsStore } from "@/stores/settings.store";
 import SearchDefault from "@/components/SearchDefault.vue";
 import FilterDefault from "@/components/FilterDefault.vue";
@@ -200,17 +201,6 @@ const sortOptions = [
   { value: "ad.name:asc", label: "Título A-Z" },
   { value: "ad.name:desc", label: "Título Z-A" },
 ];
-
-const formatCurrency = (amount: number | string) => {
-  const numAmount =
-    typeof amount === "string" ? Number.parseFloat(amount) : amount;
-  return new Intl.NumberFormat("es-CL", {
-    style: "currency",
-    currency: "CLP",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(numAmount);
-};
 
 const getPaymentMethod = (method: string) => {
   return method === "webpay" ? "WebPay" : method;

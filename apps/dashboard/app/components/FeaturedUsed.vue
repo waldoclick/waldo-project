@@ -77,6 +77,7 @@
 import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Eye } from "lucide-vue-next";
+import { formatCurrency } from "@/utils/price";
 import { useSettingsStore } from "@/stores/settings.store";
 import SearchDefault from "@/components/SearchDefault.vue";
 import FilterDefault from "@/components/FilterDefault.vue";
@@ -208,17 +209,6 @@ const sortOptions = [
   { value: "ad.name:asc", label: "Anuncio A-Z" },
   { value: "ad.name:desc", label: "Anuncio Z-A" },
 ];
-
-const formatCurrency = (amount: number | string) => {
-  const numAmount =
-    typeof amount === "string" ? Number.parseFloat(amount) : amount;
-  return new Intl.NumberFormat("es-CL", {
-    style: "currency",
-    currency: "CLP",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(numAmount);
-};
 
 const router = useRouter();
 

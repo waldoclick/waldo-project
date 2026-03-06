@@ -72,6 +72,7 @@
 import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Eye } from "lucide-vue-next";
+import { formatCurrency } from "@/utils/price";
 import { useSettingsStore } from "@/stores/settings.store";
 import SearchDefault from "@/components/SearchDefault.vue";
 import FilterDefault from "@/components/FilterDefault.vue";
@@ -199,17 +200,6 @@ const sortOptions = [
   { value: "user.username:asc", label: "Usuario A-Z" },
   { value: "user.username:desc", label: "Usuario Z-A" },
 ];
-
-const formatCurrency = (amount: number | string) => {
-  const numAmount =
-    typeof amount === "string" ? Number.parseFloat(amount) : amount;
-  return new Intl.NumberFormat("es-CL", {
-    style: "currency",
-    currency: "CLP",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(numAmount);
-};
 
 const router = useRouter();
 

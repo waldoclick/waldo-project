@@ -45,6 +45,7 @@
 import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Eye } from "lucide-vue-next";
+import { formatCurrency } from "@/utils/price";
 import TableDefault from "@/components/TableDefault.vue";
 import TableRow from "@/components/TableRow.vue";
 import TableCell from "@/components/TableCell.vue";
@@ -87,17 +88,6 @@ const totalPages = computed(() => {
 const totalRecords = computed(() => {
   return paginationMeta.value?.total || 0;
 });
-
-const formatCurrency = (amount: number | string) => {
-  const numAmount =
-    typeof amount === "string" ? Number.parseFloat(amount) : amount;
-  return new Intl.NumberFormat("es-CL", {
-    style: "currency",
-    currency: "CLP",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(numAmount);
-};
 
 const router = useRouter();
 
