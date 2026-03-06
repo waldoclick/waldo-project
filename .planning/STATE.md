@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.5
 milestone_name: Ad Credit Refund
 status: completed
-stopped_at: Completed 16-01-PLAN.md
-last_updated: "2026-03-06T20:34:41.945Z"
-last_activity: "2026-03-06 — Phase 16 Plan 01: reservation-freeing logic wired into rejectAd() and bannedAd()"
+stopped_at: Completed 17-01-PLAN.md
+last_updated: "2026-03-06T20:43:19.381Z"
+last_activity: "2026-03-06 — Phase 17 Plan 01: conditional credit-return messaging added to rejection/ban email templates"
 progress:
   total_phases: 2
-  completed_phases: 1
-  total_plans: 1
-  completed_plans: 1
+  completed_phases: 2
+  total_plans: 2
+  completed_plans: 2
 ---
 
 # Project State
@@ -20,18 +20,18 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.5 Ad Credit Refund — Phase 16 Plan 01 complete, Phase 17 is next
+**Current focus:** v1.5 Ad Credit Refund — Phase 17 Plan 01 complete, milestone done
 
 ## Current Position
 
 ```
-██████████░░░░░░░░░░ 1/2 phases in progress (1/1 plans done for Phase 16)
+[██████████] 100%
 ```
 
-Phase: 16 – Credit Refund Logic (1/1 plans complete)
-Plan: 01 complete — ready for Phase 17
-Status: Phase 16 done
-Last activity: 2026-03-06 — Phase 16 Plan 01: reservation-freeing logic wired into rejectAd() and bannedAd()
+Phase: 17 – Email Notification Update (1/1 plans complete)
+Plan: 01 complete — Phase 17 done, v1.5 milestone complete
+Status: All phases complete
+Last activity: 2026-03-06 — Phase 17 Plan 01: conditional credit-return messaging added to rejection/ban email templates
 
 ## Accumulated Context
 
@@ -47,6 +47,8 @@ Key patterns established (carry forward):
 - Nuxt auto-import picks up `app/utils/*.ts` — no explicit imports needed
 - **v1.5**: Reservation freeing updates reservation side (FK lives on reservation), not ad side — `entityService.update(uid, id, { data: { ad: null } })`
 - **v1.5**: No try/catch around freeing calls — if freeing fails, whole reject/ban fails (caller handles)
+- **v1.5**: Email templates use `!!ad.ad_reservation?.id` evaluated on pre-freed ad object — correctly reflects "was a credit returned?" boolean
+- [Phase 17-email-notification-update]: Use !!ad.ad_reservation?.id evaluated before freeing to derive 'was credit returned?' boolean — id still present on pre-freed ad object — ad was fetched before reservation freeing, so the id is still present if a reservation existed
 
 ### v1.5 Implementation Context
 
@@ -70,9 +72,10 @@ None.
 | Phase | Plan | Duration | Tasks | Files |
 | :--- | :--- | :--- | :--- | :--- |
 | 16-credit-refund-logic | 01 | 2min | 2 | 1 |
+| 17-email-notification-update | 01 | 2min | 2 | 3 |
 
 ## Session Continuity
 
-Last session: 2026-03-06T20:31:33.508Z
-Stopped at: Completed 16-01-PLAN.md
+Last session: 2026-03-06T20:43:19.379Z
+Stopped at: Completed 17-01-PLAN.md
 Resume file: None
