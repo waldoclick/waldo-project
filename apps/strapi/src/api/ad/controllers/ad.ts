@@ -326,6 +326,66 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
   },
 
   /**
+   * Get counts of user's advertisements grouped by status
+   *
+   * Returns a single object with counts for all 5 statuses in parallel,
+   * avoiding the need for 5 separate API calls.
+   *
+   * @route GET /api/ads/me/counts
+   */
+  async meCounts(ctx: any) {
+    try {
+      if (!ctx.state.user?.id) {
+        return ctx.unauthorized(
+          "Debes estar autenticado para ver tus anuncios."
+        );
+      }
+      const userId: number = ctx.state.user.id;
+
+      const [published, review, expired, rejected, banned] = await Promise.all([
+        strapi.entityService.count("api::ad.ad", {
+          filters: {
+            user: userId,
+            active: true,
+            banned: false,
+            rejected: false,
+            remaining_days: { $gt: 0 },
+          } as any,
+        }),
+        strapi.entityService.count("api::ad.ad", {
+          filters: {
+            user: userId,
+            active: false,
+            banned: false,
+            rejected: false,
+            remaining_days: { $gt: 0 },
+            $or: [{ is_paid: true, order: { $ne: null } }, { is_paid: false }],
+          } as any,
+        }),
+        strapi.entityService.count("api::ad.ad", {
+          filters: {
+            user: userId,
+            active: false,
+            banned: false,
+            rejected: false,
+            remaining_days: 0,
+          } as any,
+        }),
+        strapi.entityService.count("api::ad.ad", {
+          filters: { user: userId, rejected: true } as any,
+        }),
+        strapi.entityService.count("api::ad.ad", {
+          filters: { user: userId, banned: true } as any,
+        }),
+      ]);
+
+      return ctx.send({ published, review, expired, rejected, banned });
+    } catch (error) {
+      return ctx.internalServerError("Internal server error");
+    }
+  },
+
+  /**
    * Get user's advertisements
    *
    * Retrieves a paginated list of advertisements for the authenticated user.

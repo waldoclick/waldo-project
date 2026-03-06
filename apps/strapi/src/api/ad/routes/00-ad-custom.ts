@@ -46,6 +46,11 @@ export default {
     },
     {
       method: "GET",
+      path: "/ads/me/counts",
+      handler: "ad.meCounts",
+    },
+    {
+      method: "GET",
       path: "/ads/me",
       handler: "ad.me",
     },
