@@ -1,5 +1,21 @@
 # Milestones
 
+## v1.3 Utility Extraction (Shipped: 2026-03-06)
+
+**Phases completed:** 3 phases (9-11), 7 plans, 66 files changed
+**Timeline:** 2026-03-05 → 2026-03-06
+
+**Key accomplishments:**
+1. **Date Utilities**: Created `app/utils/date.ts`, replaced 33 inline date formatters across dashboard components/pages.
+2. **Price Utilities**: Created `app/utils/price.ts`, replaced 13 inline currency formatters, standardized on CLP.
+3. **String Utilities**: Created `app/utils/string.ts`, centralized 5 common helpers (Name, Address, Boolean, Days, PaymentMethod).
+4. **Strict Typing**: All utilities handle `null`/`undefined` gracefully; `nuxt typecheck` passes with zero errors.
+5. **Zero Duplication**: Eliminated 51 duplicated inline formatting definitions across the codebase.
+
+**Archive:** `.planning/milestones/v1.3-ROADMAP.md` | `.planning/milestones/v1.3-REQUIREMENTS.md`
+
+---
+
 ## v1.2 Double-Fetch Cleanup (Shipped: 2026-03-05)
 
 **Phases completed:** 2 phases (7-8), 2 plans, 4 tasks
