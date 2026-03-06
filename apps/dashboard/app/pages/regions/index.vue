@@ -2,7 +2,7 @@
   <div>
     <HeroDefault title="Regiones" :breadcrumbs="breadcrumbs">
       <template #actions>
-        <NuxtLink class="btn btn--primary" to="/regiones/new">
+        <NuxtLink class="btn btn--primary" to="/regions/new">
           Agregar región
         </NuxtLink>
       </template>

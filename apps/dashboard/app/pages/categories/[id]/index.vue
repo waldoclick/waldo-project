@@ -4,7 +4,7 @@
       <template #actions>
         <NuxtLink
           class="btn btn--primary"
-          :to="`/categorias/${route.params.id}/editar`"
+          :to="`/categories/${route.params.id}/edit`"
         >
           Editar categoría
         </NuxtLink>
@@ -58,7 +58,7 @@ const { transformUrl } = useImageProxy();
 
 const title = computed(() => item.value?.name || "Categoría");
 const breadcrumbs = computed(() => [
-  { label: "Categorías", to: "/categorias" },
+  { label: "Categorías", to: "/categories" },
   ...(item.value?.name ? [{ label: item.value.name }] : []),
 ]);
 

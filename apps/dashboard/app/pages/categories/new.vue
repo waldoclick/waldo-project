@@ -22,7 +22,7 @@ definePageMeta({
 });
 
 const breadcrumbs = [
-  { label: "Categorías", to: "/categorias" },
+  { label: "Categories", to: "/categories" },
   { label: "Nueva" },
 ];
 </script>
