@@ -161,14 +161,14 @@ async function getAdvertisements(
     // Add needs_payment and status fields to all ads
     const adsWithPaymentStatusAndState = ads.map((ad) => {
       const pack = ad.details?.pack;
-      const featured = ad.details?.featured;
       const hasOrder = ad.order !== null;
+      const isFeatured = !!ad.ad_featured_reservation?.id;
 
       let needs_payment = false;
 
       if (typeof pack === "number") {
         needs_payment = !hasOrder;
-      } else if (featured === true) {
+      } else if (isFeatured) {
         needs_payment = !hasOrder;
       }
 
@@ -178,8 +178,7 @@ async function getAdvertisements(
         status,
         ...ad,
         needs_payment,
-        featured:
-          status === "active" && (featured === true || featured === "free"),
+        featured: isFeatured,
       };
     });
 
