@@ -5,9 +5,9 @@ milestone_name: URL Localization
 status: active
 stopped_at: null
 last_updated: "2026-03-05T00:00:00.000Z"
-last_activity: 2026-03-05 — Milestone v1.4 started
+last_activity: 2026-03-05 — Roadmap created for v1.4
 progress:
-  total_phases: 0
+  total_phases: 4
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -21,14 +21,18 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-05)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Defining requirements for v1.4 URL Localization
+**Current focus:** v1.4 URL Localization — Phase 12 (Ads Migration) up next
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: 12 — Ads Migration
 Plan: —
-Status: Defining requirements
-Last activity: 2026-03-05 — Milestone v1.4 started
+Status: Not started
+Last activity: 2026-03-05 — Roadmap created for v1.4
+
+```
+v1.4 Progress: ░░░░░░░░░░ 0% (0/4 phases)
+```
 
 ## Accumulated Context
 
@@ -42,6 +46,14 @@ Key patterns established (carry forward):
 - Strapi SDK v5 cast pattern: `response.data as T[]`, params as `Record<string,unknown>`, payload double-cast
 - All utility functions accept `null | undefined` and return `"--"` for missing data
 - Nuxt auto-import picks up `app/utils/*.ts` — no explicit imports needed
+
+### v1.4-Specific Context
+
+- Nuxt 4 uses file-based routing: renaming a directory renames the route automatically
+- Redirects should be added in `nuxt.config.ts` under `routeRules` or as server middleware
+- ~30 components contain internal route references that will need updating (navigateTo, NuxtLink, router.push)
+- No API changes, no store changes, no functional behavior changes — pure path rename
+- Phase 12 and Phase 14 can be executed in parallel (independent segments), but Phase 15 must be last
 
 ### Pending Todos
 
@@ -64,6 +76,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-06
-Stopped at: Milestone v1.3 archived
+Last session: 2026-03-05
+Stopped at: v1.4 roadmap created
 Resume file: None
