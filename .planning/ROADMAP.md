@@ -5,7 +5,7 @@
 - ✅ **v1.1 Dashboard Technical Debt Reduction** — Phases 3-6 (shipped 2026-03-05)
 - ✅ **v1.2 Double-Fetch Cleanup** — Phases 7-8 (shipped 2026-03-05)
 - ✅ **v1.3 Utility Extraction** — Phases 9-11 (shipped 2026-03-06)
-- 🚧 **v1.4 URL Localization** — Phases 12-15 (active)
+- ✅ **v1.4 URL Localization** — Phases 12-15 (shipped 2026-03-06)
 
 ## Phases
 

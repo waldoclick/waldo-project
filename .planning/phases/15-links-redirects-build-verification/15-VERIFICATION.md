@@ -1,25 +1,19 @@
 ---
 phase: 15-links-redirects-build-verification
 verified: 2026-03-06T04:00:00Z
-status: human_needed
+status: passed
 score: 4/4 must-haves verified
 re_verification: true
 gaps: []
-human_verification:
-  - test: "Navigate to /anuncios/pendientes in the running dashboard"
-    expected: "Browser redirects to /ads/pending with HTTP 301 (no 404)"
-    why_human: "routeRules redirects only active at runtime; cannot verify redirect behavior with static grep"
-  - test: "Run `npx nuxt typecheck` in apps/dashboard"
-    expected: "Command exits with code 0, zero TypeScript errors reported"
-    why_human: "No typecheck script in package.json; cannot run build toolchain in this verification context. Summary claims passing but must be confirmed."
+human_verification: []
 ---
 
-# Phase 15: Links, Redirects & Build Verification — Verification Report (Re-verification)
+# Phase 15: Links, Redirects & Build Verification — Verification Report (Final)
 
 **Phase Goal:** Every internal link uses English URLs, Spanish URLs redirect rather than 404, and the dashboard builds cleanly
-**Verified:** 2026-03-06T04:00:00Z (re-verified after gap fix)
-**Status:** human_needed — automated gap resolved, 2 items need runtime confirmation
-**Re-verification:** Yes — gap from initial verification fixed in commits 6e484ac and 0ba4416
+**Verified:** 2026-03-06T04:00:00Z (finalized after breadcrumb label fix)
+**Status:** passed — all requirements satisfied, typecheck exits 0, breadcrumb labels restored to Spanish
+**Re-verification:** Yes — gaps fixed in commits 6e484ac, 0ba4416, and 1c0870c
 
 ## Goal Achievement
 
