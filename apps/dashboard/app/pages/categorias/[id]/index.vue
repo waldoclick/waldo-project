@@ -66,17 +66,6 @@ const iconPreview = computed(() =>
   item.value?.icon?.url ? transformUrl(item.value.icon.url) : "",
 );
 
-const formatDate = (dateString: string | undefined) => {
-  if (!dateString) return "--";
-  return new Date(dateString).toLocaleString("es-CL", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-};
-
 const { data: categoryData } = await useAsyncData(
   `category-${route.params.id}`,
   async () => {
