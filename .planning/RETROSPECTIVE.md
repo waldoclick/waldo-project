@@ -163,6 +163,43 @@
 
 ---
 
+## Milestone: v1.5 — Ad Credit Refund
+
+**Shipped:** 2026-03-06
+**Phases:** 2 (16-17) | **Plans:** 2 | **Timeline:** ~4 minutes
+**Files changed:** 3 source files modified | **Requirements:** 8/8 complete
+
+### What Was Built
+- `rejectAd()` and `bannedAd()` in `ad.ts` now free `ad_reservation.ad = null` and `ad_featured_reservation.ad = null` via `entityService.update` before sending email — credits immediately reusable
+- `ad-rejected.mjml` and `ad-banned.mjml` render conditional Spanish credit-return paragraphs (`{% if adReservationReturned %}`, `{% if featuredReservationReturned %}`) — only shown when credits were actually returned
+
+### What Worked
+- Reusing the existing cron pattern (`entityService.update(uid, id, { data: { ad: null } })`) made implementation trivial — no new patterns needed
+- Placing the freeing block *before* the email try block was the right sequencing decision: the email boolean flags evaluate correctly from the pre-freed `ad` object
+- Phase split (Phase 16: service logic, Phase 17: email templates) was correct — clean separation, each phase independently verifiable
+- Both phases executed in 2 minutes each — mechanical implementation once the pattern was clear
+
+### What Was Inefficient
+- The MJML template files were modified but not committed by the executor agent — required a manual follow-up commit (`7e7a3cc`). The executor committed `ad.ts` changes but left the templates unstaged. This is a known gap in the executor's self-check for MJML files.
+
+### Patterns Established
+- Reservation freeing updates the reservation side (FK lives on reservation entity, not ad) — consistent with cron, never update the ad side
+- No try/catch around reservation-freeing calls — freeing failure should propagate as a hard error, not be silently swallowed
+- Boolean flags for email templates: `!!ad.X?.id` evaluated on pre-freed snapshot — captures "did this ad have X before we freed it?"
+- MJML Nunjucks conditional pattern: `{% if flagName %}...<mj-text>...</mj-text>...{% endif %}` for optional email sections
+
+### Key Lessons
+1. **Verify MJML file commits explicitly.** Executor agents may commit TypeScript changes but leave MJML (or other non-TS files) unstaged. Add MJML files to the per-task verify grep check in plans.
+2. **Pre-freed object snapshot is the correct timing for email flag computation.** Always read reservation state *before* freeing when you need to communicate "what was returned" — the freeing call destroys the evidence.
+3. **Reuse existing patterns over inventing new ones.** The `entityService.update(ad: null)` pattern was already proven in the cron. Recognizing and reusing it avoided any design work.
+
+### Cost Observations
+- Model mix: ~100% sonnet (balanced profile)
+- Sessions: 3 (plan-phase, execute-phase, milestone close)
+- Notable: Smallest milestone by scope — 2 plans, 3 files, ~4 min execution. Demonstrates the value of tight milestone scoping.
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -174,6 +211,7 @@
 | v1.2 | 2 | 2 | Pattern application: extend v1.1 cleanup to remaining components |
 | v1.3 | 3 | 7 | Utility extraction: centralized formatting, introduced unit testing for utilities |
 | v1.4 | 4 | 9 | URL localization: all routes in English, 301 redirects for legacy Spanish URLs |
+| v1.5 | 2 | 2 | Backend credit refund + conditional email notifications in Strapi |
 
 ### Cumulative Quality
 
@@ -184,6 +222,7 @@
 | v1.2 | none | true | 0 |
 | v1.3 | utils (100% coverage) | true | 0 |
 | v1.4 | utils (100% coverage) | true | 0 |
+| v1.5 | utils (100% coverage) | true | 0 |
 
 ### Top Lessons (Verified Across Milestones)
 
@@ -193,3 +232,5 @@
 4. Auto-import + utility files make codebase-wide refactors purely subtractive — remove inline, done
 5. Pre-read component code before finalizing a plan's file list — prevents missed files and scope from prior commits
 6. Explicit scope boundaries in per-task success criteria prevent unintended changes (e.g., UI labels vs route paths)
+7. Reuse existing patterns over inventing new ones — the cron's `entityService.update(ad: null)` pattern applied directly to reject/ban with zero design work
+8. Verify non-TypeScript file commits explicitly — MJML, SQL, config files may be silently skipped by executor agents
