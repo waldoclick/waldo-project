@@ -251,6 +251,5 @@ const handleformBack = async () => {
 
 onMounted(() => {
   regionsStore.loadRegions();
-  communesStore.loadCommunes();
 });
 </script>
