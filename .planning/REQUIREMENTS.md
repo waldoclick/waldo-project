@@ -7,8 +7,8 @@
 
 ### Page Double-Fetch Fixes
 
-- [ ] **PAGE-01**: `preguntas-frecuentes.vue` realiza exactamente 1 llamada a la API al cargar la página (actualmente hace 2)
-- [ ] **PAGE-02**: `mis-anuncios.vue` realiza exactamente 2 llamadas a la API al cargar la página — 1 para tab counts y 1 para ads — (actualmente hace 6)
+- [x] **PAGE-01**: `preguntas-frecuentes.vue` realiza exactamente 1 llamada a la API al cargar la página (actualmente hace 2)
+- [x] **PAGE-02**: `mis-anuncios.vue` realiza exactamente 2 llamadas a la API al cargar la página — 1 para tab counts y 1 para ads — (actualmente hace 6)
 - [ ] **PAGE-03**: `loadTabCounts()` en `mis-anuncios.vue` solo se ejecuta una vez al montar la página, no en cada cambio de filtro o página
 
 ### Store Cache Guards
@@ -38,8 +38,8 @@ _(none identified)_
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PAGE-01 | Phase 18 | Pending |
-| PAGE-02 | Phase 18 | Pending |
+| PAGE-01 | Phase 18 | Complete |
+| PAGE-02 | Phase 18 | Complete |
 | PAGE-03 | Phase 18 | Pending |
 | STORE-01 | Phase 19 | Pending |
 | STORE-02 | Phase 19 | Pending |
