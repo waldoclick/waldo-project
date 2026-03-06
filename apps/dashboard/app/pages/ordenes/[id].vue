@@ -33,7 +33,12 @@
             :description="order.user?.username || '--'"
           />
           <CardInfo title="Email" :description="order.user?.email || '--'" />
-          <CardInfo title="Nombre" :description="formatFullName(order.user)" />
+          <CardInfo
+            title="Nombre"
+            :description="
+              formatFullName(order.user?.firstname, order.user?.lastname)
+            "
+          />
           <CardInfo title="Teléfono" :description="order.user?.phone || '--'" />
         </BoxInformation>
 
@@ -103,6 +108,7 @@
 import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
 import { formatCurrency } from "@/utils/price";
+import { formatFullName, getPaymentMethod } from "@/utils/string";
 import HeroDefault from "@/components/HeroDefault.vue";
 import BoxContent from "@/components/BoxContent.vue";
 import BoxInformation from "@/components/BoxInformation.vue";
@@ -125,19 +131,6 @@ const breadcrumbs = computed(() => [
   { label: "Órdenes", to: "/ordenes" },
   ...(orderId.value ? [{ label: `#${orderId.value}` }] : []),
 ]);
-
-const getPaymentMethod = (method: string | undefined) => {
-  if (!method) return "--";
-  return method === "webpay" ? "WebPay" : method;
-};
-
-const formatFullName = (
-  user: { firstname?: string; lastname?: string } | null | undefined,
-) => {
-  if (!user) return "--";
-  const name = [user.firstname, user.lastname].filter(Boolean).join(" ");
-  return name || "--";
-};
 
 const normalizeOrder = (response: unknown): Order | null => {
   if (!response) return null;

@@ -54,6 +54,7 @@
 import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
 import { formatCurrency } from "@/utils/price";
+import { formatDays } from "@/utils/string";
 import HeroDefault from "@/components/HeroDefault.vue";
 import BoxContent from "@/components/BoxContent.vue";
 import BoxInformation from "@/components/BoxInformation.vue";
@@ -73,11 +74,6 @@ const breadcrumbs = computed(() => [
   { label: "Reservas", to: "/reservas/libres" },
   ...(item.value?.id ? [{ label: `#${item.value.id}` }] : []),
 ]);
-
-const formatDays = (days?: number) => {
-  if (!days && days !== 0) return "--";
-  return `${days} días`;
-};
 
 const { data: reservationData } = await useAsyncData(
   `reservation-${route.params.id}`,

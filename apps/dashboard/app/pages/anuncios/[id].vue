@@ -188,6 +188,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, type Component } from "vue";
 import { formatCurrency } from "@/utils/price";
+import { formatAddress } from "@/utils/string";
 import type { Ad, AdStatus } from "@/types/ad";
 import { useRoute } from "vue-router";
 import HeroDefault from "@/components/HeroDefault.vue";
@@ -264,14 +265,6 @@ const statusLabels: Record<string, string> = {
   banned: "Baneado",
   rejected: "Rechazado",
   abandoned: "Abandonado",
-};
-
-const formatAddress = (
-  address: string | undefined,
-  addressNumber: string | undefined,
-) => {
-  if (!address) return "--";
-  return addressNumber ? `${address} ${addressNumber}` : address;
 };
 
 const getStatusText = (ad: Ad) => {
