@@ -104,7 +104,10 @@ Plans:
   1. `backup.cron.ts` uses `strapi.config.get('database').connection` (or equivalent correct Strapi v5 path) to access DB config — no hardcoded or incorrect path
   2. The shell command logged before execution has the password field redacted or omitted entirely
   3. Each logical block in `backup.cron.ts` has an English comment explaining config path, command construction, compression, rotation, and password-redaction approach
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 21-01-PLAN.md — Fix Strapi v5 config path, redact DB password from logs, add English comments
 
 ### Phase 22: cleanup.cron Fix & Docs
 **Goal**: `cleanup.cron.ts` correctly retrieves files from the `ads` folder using a Strapi v5-compatible query and is fully documented in English
