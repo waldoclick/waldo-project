@@ -18,7 +18,7 @@ definePageMeta({
 });
 
 const breadcrumbs = [
-  { label: "Ads", to: "/ads/pending" },
+  { label: "Anuncios", to: "/ads/pending" },
   { label: "Activos" },
 ];
 </script>

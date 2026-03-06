@@ -169,7 +169,7 @@ const { formatRut } = useRut();
 
 const title = computed(() => item.value?.username || "Usuario");
 const breadcrumbs = computed(() => [
-  { label: "Users", to: "/users" },
+  { label: "Usuarios", to: "/users" },
   ...(item.value?.username ? [{ label: item.value.username }] : []),
 ]);
 
