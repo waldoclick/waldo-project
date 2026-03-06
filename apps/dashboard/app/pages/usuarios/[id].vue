@@ -5,7 +5,11 @@
       <template #content>
         <BoxInformation title="Información de usuario" :columns="2">
           <CardInfo v-if="item" title="Usuario" :description="item.username" />
-          <CardInfo v-if="item" title="Email" :description="item.email" />
+          <CardInfo
+            v-if="item"
+            title="Correo electrónico"
+            :description="item.email"
+          />
           <CardInfo
             v-if="item"
             title="Nombre completo"

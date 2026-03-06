@@ -208,7 +208,7 @@ const totalRecords = computed(() => {
 const tableColumns = [
   { label: "ID" },
   { label: "Usuario" },
-  { label: "Email" },
+  { label: "Correo electrónico" },
   { label: "Nombre" },
   { label: "Rol" },
   { label: "Fecha" },
@@ -220,8 +220,8 @@ const sortOptions = [
   { value: "createdAt:asc", label: "Más antiguos" },
   { value: "username:asc", label: "Usuario A-Z" },
   { value: "username:desc", label: "Usuario Z-A" },
-  { value: "email:asc", label: "Email A-Z" },
-  { value: "email:desc", label: "Email Z-A" },
+  { value: "email:asc", label: "Correo A-Z" },
+  { value: "email:desc", label: "Correo Z-A" },
 ];
 
 const formatName = (firstname?: string, lastname?: string) => {
