@@ -250,10 +250,10 @@
           <li
             class="menu--default__subitem"
             :class="{
-              'menu--default__subitem--active': isRouteActive('/categorias'),
+              'menu--default__subitem--active': isRouteActive('/categories'),
             }"
           >
-            <NuxtLink to="/categorias" class="menu--default__sublink">
+            <NuxtLink to="/categories" class="menu--default__sublink">
               <Tag class="menu--default__subicon" />
               <span>Categorías</span>
             </NuxtLink>
@@ -261,10 +261,10 @@
           <li
             class="menu--default__subitem"
             :class="{
-              'menu--default__subitem--active': isRouteActive('/condiciones'),
+              'menu--default__subitem--active': isRouteActive('/conditions'),
             }"
           >
-            <NuxtLink to="/condiciones" class="menu--default__sublink">
+            <NuxtLink to="/conditions" class="menu--default__sublink">
               <FileCheck class="menu--default__subicon" />
               <span>Condiciones</span>
             </NuxtLink>
@@ -294,10 +294,10 @@
           <li
             class="menu--default__subitem"
             :class="{
-              'menu--default__subitem--active': isRouteActive('/regiones'),
+              'menu--default__subitem--active': isRouteActive('/regions'),
             }"
           >
-            <NuxtLink to="/regiones" class="menu--default__sublink">
+            <NuxtLink to="/regions" class="menu--default__sublink">
               <MapPin class="menu--default__subicon" />
               <span>Regiones</span>
             </NuxtLink>
@@ -305,10 +305,10 @@
           <li
             class="menu--default__subitem"
             :class="{
-              'menu--default__subitem--active': isRouteActive('/comunas'),
+              'menu--default__subitem--active': isRouteActive('/communes'),
             }"
           >
-            <NuxtLink to="/comunas" class="menu--default__sublink">
+            <NuxtLink to="/communes" class="menu--default__sublink">
               <Building class="menu--default__subicon" />
               <span>Comunas</span>
             </NuxtLink>
@@ -361,12 +361,12 @@ const isRouteActive = (path: string): boolean => {
 // Detectar si algún mantenedor está activo
 const isMantenedoresActive = computed(() => {
   return (
-    isRouteActive("/categorias") ||
-    isRouteActive("/condiciones") ||
+    isRouteActive("/categories") ||
+    isRouteActive("/conditions") ||
     isRouteActive("/faqs") ||
     isRouteActive("/packs") ||
-    isRouteActive("/regiones") ||
-    isRouteActive("/comunas")
+    isRouteActive("/regions") ||
+    isRouteActive("/communes")
   );
 });
 
@@ -379,19 +379,19 @@ const toggleMenu = (menu: string) => {
 watch(
   () => route.path,
   (path) => {
-    if (path.startsWith("/anuncios")) {
-      openMenu.value = "anuncios";
-    } else if (path.startsWith("/reservas")) {
-      openMenu.value = "reservas";
-    } else if (path.startsWith("/destacados")) {
-      openMenu.value = "destacados";
+    if (path.startsWith("/ads")) {
+      openMenu.value = "ads";
+    } else if (path.startsWith("/reservations")) {
+      openMenu.value = "reservations";
+    } else if (path.startsWith("/featured")) {
+      openMenu.value = "featured";
     } else if (
-      path.startsWith("/categorias") ||
-      path.startsWith("/condiciones") ||
+      path.startsWith("/categories") ||
+      path.startsWith("/conditions") ||
       path.startsWith("/faqs") ||
       path.startsWith("/packs") ||
-      path.startsWith("/regiones") ||
-      path.startsWith("/comunas")
+      path.startsWith("/regions") ||
+      path.startsWith("/communes")
     ) {
       openMenu.value = "mantenedores";
     } else {
