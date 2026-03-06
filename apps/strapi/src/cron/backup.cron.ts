@@ -18,18 +18,19 @@ export class BackupService {
 
   async createDatabaseBackup(): Promise<ICronjobResult> {
     try {
-      // Verificar si strapi está definido
+      // Guard: ensure Strapi is available before accessing config or services.
       if (typeof strapi === "undefined") {
         throw new Error("strapi is not defined");
       }
 
-      strapi.log.info("=== INICIANDO BACKUP DE BASE DE DATOS ===");
+      strapi.log.info("=== DATABASE BACKUP STARTED ===");
 
-      // Crear directorio de backups si no existe
+      // Ensure the backups directory exists before attempting to write files.
       await this.ensureBackupDirectory();
 
-      // Obtener configuración de la base de datos
-      const dbConfig = strapi.config.database.connection;
+      // Access DB config via the Strapi v5 config API. strapi.config.get('database') returns the full database config object.
+      const dbConfig = (strapi.config.get("database") as { connection: any })
+        .connection;
       const client = dbConfig.client;
 
       let backupCommand: string;
@@ -62,29 +63,35 @@ export class BackupService {
 
       const backupPath = path.join(this.backupDir, backupFileName);
 
-      strapi.log.info(`Ejecutando backup para ${client}...`);
-      strapi.log.info(`Comando: ${backupCommand}`);
+      // Log a sanitized version of the shell command — password replaced with [REDACTED]
+      // so credentials never appear in log files or monitoring dashboards.
+      const sanitizedCommand = backupCommand
+        .replace(/-p\S+/, "-p[REDACTED]") // MySQL: -p<password>
+        .replace(/PGPASSWORD=\S+/, "PGPASSWORD=[REDACTED]"); // PostgreSQL: PGPASSWORD=<password>
 
-      // Ejecutar el comando de backup
+      strapi.log.info(`Running ${client} backup...`);
+      strapi.log.info(`Command: ${sanitizedCommand}`);
+
+      // Execute the backup shell command. stderr warnings from mysqldump/pg_dump are non-fatal.
       const { stdout, stderr } = await execAsync(backupCommand);
 
       if (stderr && !stderr.includes("Warning")) {
         strapi.log.warn(`Backup stderr: ${stderr}`);
       }
 
-      strapi.log.info(`Backup creado exitosamente: ${backupPath}`);
+      strapi.log.info(`Backup created successfully: ${backupPath}`);
 
-      // Comprimir el backup
+      // Compress the raw backup file to save disk space. Original file is removed by gzip.
       await this.compressBackup(backupPath);
 
-      // Limpiar backups antiguos
+      // Remove backup files older than maxBackupDays to prevent unbounded disk growth.
       await this.cleanOldBackups();
 
-      strapi.log.info("=== BACKUP DE BASE DE DATOS FINALIZADO ===");
+      strapi.log.info("=== DATABASE BACKUP COMPLETE ===");
 
       return {
         success: true,
-        results: `Backup creado exitosamente: ${backupFileName}`,
+        results: `Backup created successfully: ${backupFileName}`,
       };
     } catch (error) {
       strapi.log.error("Error creando backup:", error);
@@ -97,8 +104,9 @@ export class BackupService {
 
   private async ensureBackupDirectory(): Promise<void> {
     if (!fs.existsSync(this.backupDir)) {
+      // Create backups directory if it does not yet exist (recursive ensures parent dirs are created too).
       fs.mkdirSync(this.backupDir, { recursive: true });
-      strapi.log.info(`Directorio de backups creado: ${this.backupDir}`);
+      strapi.log.info(`Backup directory created: ${this.backupDir}`);
     }
   }
 
@@ -116,6 +124,7 @@ export class BackupService {
       `backup_mysql_${timestamp}.sql`
     );
 
+    // Build a mysqldump shell command. Password is passed via -p flag (no space).
     return `mysqldump -h ${host} -P ${port} -u ${user} -p${password} ${database} > ${backupPath}`;
   }
 
@@ -134,7 +143,7 @@ export class BackupService {
       `backup_postgres_${timestamp}.sql`
     );
 
-    // Usar PGPASSWORD para evitar prompt de contraseña
+    // Pass the password via PGPASSWORD env var to avoid an interactive password prompt.
     return `PGPASSWORD=${password} pg_dump -h ${host} -p ${port} -U ${user} -d ${database} -n ${schema} > ${backupPath}`;
   }
 
@@ -145,6 +154,7 @@ export class BackupService {
       `backup_sqlite_${timestamp}.db`
     );
 
+    // SQLite backup is a simple file copy — no credentials needed.
     return `cp "${filename}" "${backupPath}"`;
   }
 
@@ -152,9 +162,9 @@ export class BackupService {
     try {
       const compressedPath = `${backupPath}.gz`;
       await execAsync(`gzip "${backupPath}"`);
-      strapi.log.info(`Backup comprimido: ${compressedPath}`);
+      strapi.log.info(`Backup compressed: ${compressedPath}`);
     } catch (error) {
-      strapi.log.warn(`No se pudo comprimir el backup: ${error.message}`);
+      strapi.log.warn(`Could not compress backup: ${error.message}`);
     }
   }
 
@@ -168,6 +178,7 @@ export class BackupService {
 
       let deletedCount = 0;
 
+      // Walk backup directory and delete files older than the retention window.
       for (const file of files) {
         const filePath = path.join(this.backupDir, file);
         const stats = fs.statSync(filePath);
@@ -175,17 +186,17 @@ export class BackupService {
         if (stats.mtime < cutoffDate) {
           fs.unlinkSync(filePath);
           deletedCount++;
-          strapi.log.info(`Backup antiguo eliminado: ${file}`);
+          strapi.log.info(`Old backup deleted: ${file}`);
         }
       }
 
       if (deletedCount > 0) {
         strapi.log.info(
-          `${deletedCount} backups antiguos eliminados (más de ${this.maxBackupDays} días)`
+          `${deletedCount} old backup(s) deleted (older than ${this.maxBackupDays} days)`
         );
       }
     } catch (error) {
-      strapi.log.error(`Error limpiando backups antiguos: ${error.message}`);
+      strapi.log.error(`Error cleaning old backups: ${error.message}`);
     }
   }
 }
