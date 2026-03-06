@@ -44,11 +44,22 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 
 ### Active
 
-*(No active requirements — v1.6 is the current shipped milestone)*
+- [ ] `user.cron.ts` bug: multiple expired free ads per user only deactivates the first one
+- [ ] `backup.cron.ts` fails with Strapi v5 config path (`config.database.connection` → correct path)
+- [ ] `backup.cron.ts` logs DB password in plaintext
+- [ ] `cleanup.cron.ts` folder filter never matches (Strapi v5 `plugin::upload.file` folder relation incompatible with name sub-filter)
+- [ ] Unused import (`PaymentUtils`) removed from `user.cron.ts`
+- [ ] All cron files have English comments documenting what each job does, when it runs, and key assumptions
 
-## Current Milestone: none
+## Current Milestone: v1.7 Cron Reliability
 
-**v1.6 Website API Optimization shipped 2026-03-06.** No active milestone — ready for `/gsd-new-milestone`.
+**Goal:** Fix the three non-functional cron jobs (userCron, backupCron, cleanupCron) and add English documentation comments throughout all cron files.
+
+**Target features:**
+- Fix userCron multi-ad-per-user deactivation bug
+- Fix backupCron Strapi v5 config path + redact password from logs
+- Fix cleanupCron Strapi v5 folder filter query
+- English comments across all 5 cron files (cron-tasks.ts + 4 service files)
 
 ## Previous State
 
@@ -116,4 +127,4 @@ Shipped **v1.6 Website API Optimization** on 2026-03-06.
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-06 after v1.6 milestone shipped*
+*Last updated: 2026-03-06 after v1.7 milestone started*
