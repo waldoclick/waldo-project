@@ -11,8 +11,8 @@
 - [x] **URL-01**: Navigating to `/ads` and all sub-routes (`/ads/active`, `/ads/pending`, etc.) works correctly
 - [x] **URL-02**: Navigating to `/ads/abandoned`, `/ads/banned`, `/ads/expired`, `/ads/rejected` works correctly
 - [ ] **URL-03**: Navigating to `/categories`, `/categories/new`, `/categories/[id]`, `/categories/[id]/edit` works correctly
-- [ ] **URL-04**: Navigating to `/communes`, `/communes/new`, `/communes/[id]`, `/communes/[id]/edit` works correctly
-- [ ] **URL-05**: Navigating to `/conditions`, `/conditions/new`, `/conditions/[id]`, `/conditions/[id]/edit` works correctly
+- [x] **URL-04**: Navigating to `/communes`, `/communes/new`, `/communes/[id]`, `/communes/[id]/edit` works correctly
+- [x] **URL-05**: Navigating to `/conditions`, `/conditions/new`, `/conditions/[id]`, `/conditions/[id]/edit` works correctly
 - [ ] **URL-06**: Navigating to `/account/profile`, `/account/profile/edit`, `/account/change-password` works correctly
 - [ ] **URL-07**: Navigating to `/featured`, `/featured/free`, `/featured/used`, `/featured/[id]` works correctly
 - [x] **URL-08**: Navigating to `/orders`, `/orders/[id]` works correctly
@@ -60,8 +60,8 @@
 | URL-01 | Phase 12 | Complete |
 | URL-02 | Phase 12 | Complete |
 | URL-03 | Phase 13 | Pending |
-| URL-04 | Phase 13 | Pending |
-| URL-05 | Phase 13 | Pending |
+| URL-04 | Phase 13 | Complete |
+| URL-05 | Phase 13 | Complete |
 | URL-06 | Phase 14 | Pending |
 | URL-07 | Phase 14 | Pending |
 | URL-08 | Phase 13 | Complete |

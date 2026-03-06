@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: URL Localization
 status: executing
-stopped_at: Completed 13-03-PLAN.md
-last_updated: "2026-03-06T02:39:38.035Z"
-last_activity: 2026-03-06 — Completed 12-01 (rename anuncios→ads, update all route refs)
+stopped_at: Completed 13-01-PLAN.md
+last_updated: "2026-03-06T02:41:52.015Z"
+last_activity: 2026-03-06 — Completed 13-02 (rename comunas→communes, condiciones→conditions, update route refs)
 progress:
   total_phases: 4
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 4
-  completed_plans: 2
+  completed_plans: 4
 ---
 
 # Project State
@@ -20,14 +20,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-05)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.4 URL Localization — Phase 13 plan 03 complete; continue with remaining plans
+**Current focus:** v1.4 URL Localization — Phase 13 plan 02 complete; continue with remaining plans
 
 ## Current Position
 
 Phase: 13 — Catalog Segments Migration
-Plan: 03 (complete) — next: 13-04 or remaining plans
+Plan: 02 (complete) — next: 13-03 or remaining plans
 Status: In Progress
-Last activity: 2026-03-06 — Completed 13-03 (rename ordenes→orders and usuarios→users, update route refs)
+Last activity: 2026-03-06 — Completed 13-02 (rename comunas→communes, condiciones→conditions, update route refs)
 
 ```
 v1.4 Progress: [█████████░] 94% (30/32 plans completed)
@@ -45,7 +45,7 @@ Key patterns established (carry forward):
 - Strapi SDK v5 cast pattern: `response.data as T[]`, params as `Record<string,unknown>`, payload double-cast
 - All utility functions accept `null | undefined` and return `"--"` for missing data
 - Nuxt auto-import picks up `app/utils/*.ts` — no explicit imports needed
-- [Phase 13-catalog-segments-migration]: Used git mv to rename ordenes→orders and usuarios→users directories, preserving Git history
+  - [Phase 13-catalog-segments-migration]: Used git mv to rename comunas→communes and condiciones→conditions, updated all route refs from Spanish to English paths
 
 ### v1.4-Specific Context
 
@@ -75,10 +75,11 @@ None.
 | 10 | 01 | 15 min | 3 | 14 |
 | 11 | 01 | ~15 min | 3 | 8 |
 | 12 | 01 | 2 min | 2 | 8 |
+| 13 | 02 | 3 min | 2 | 8 |
 | 13 | 03 | 2 min | 2 | 4 |
 
 ## Session Continuity
 
-Last session: 2026-03-06T02:39:34.199Z
-Stopped at: Completed 13-03-PLAN.md
+Last session: 2026-03-06T02:41:49.083Z
+Stopped at: Completed 13-01-PLAN.md
 Resume file: None
