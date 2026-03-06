@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Utility Extraction
-status: completed
-stopped_at: Completed 10-01-price-utilities-PLAN.md
-last_updated: "2026-03-06T01:08:59.952Z"
-last_activity: 2026-03-05 — Completed 10-01-price-utilities-PLAN.md
+status: archived
+stopped_at: Milestone v1.3 archived 2026-03-06
+last_updated: "2026-03-06T01:14:45.147Z"
+last_activity: 2026-03-06 — Milestone v1.3 Utility Extraction archived
 progress:
   total_phases: 3
   completed_phases: 3
@@ -18,41 +18,30 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-05)
+See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 10 — Price Utilities
+**Current focus:** Planning next milestone
 
 ## Current Position
 
-Phase: 10 of 11 (Price Utilities)
-Plan: 1 of 1 in current phase
-Status: Plan 01 complete
-Last activity: 2026-03-05 — Completed 10-01-price-utilities-PLAN.md
+Milestone v1.3 complete and archived.
+All 3 phases (9-11), 7 plans — shipped 2026-03-06.
 
-Progress: [██████████] 100% (v1.3)
+Progress: [██████████] 100% (v1.3) — ARCHIVED
 
 ## Accumulated Context
 
 ### Decisions
 
-All decisions from v1.1 and v1.2 are logged in PROJECT.md Key Decisions table.
+All decisions from v1.1, v1.2, and v1.3 are logged in PROJECT.md Key Decisions table.
 
 Key patterns established (carry forward):
 - `watch({ immediate: true })` as sole data-loading trigger — never pair with onMounted
 - Per-entity section keys in settings store — never share a key between distinct list views
 - Strapi SDK v5 cast pattern: `response.data as T[]`, params as `Record<string,unknown>`, payload double-cast
-
-v1.3 decisions:
-- UTIL-07 (build validation) is a success criterion in every phase, not a standalone phase — `nuxt typecheck` must pass after each phase's replacements
-- [Phase 09-date-utilities]: Used numeric: 'always' for Intl.RelativeTimeFormat to ensure consistent 'hace X ...' output.
-- [Phase 09]: Replaced inline formatDate with auto-imported utility in 8 components (Batch A)
-- [Phase 09]: Replaced inline formatDate with auto-imported utility in 8 components (Batch B)
-- [Phase 09]: Removed inline formatDate definitions to rely on Nuxt auto-import of utils/date.ts
-- [Phase 09]: Replaced inline formatDate/formatDateShort in pages (Batch B) with centralized utility
-- [Phase 10]: Use Intl.NumberFormat with es-CL/CLP as default
-- [Phase 10]: Return '--' for invalid/empty inputs to ensure UI consistency
-- [Phase 10]: Rename conflicting local formatter in ChartSales to formatCompactCurrency
+- All utility functions accept `null | undefined` and return `"--"` for missing data
+- Nuxt auto-import picks up `app/utils/*.ts` — no explicit imports needed
 
 ### Pending Todos
 
@@ -71,9 +60,10 @@ None.
 | 09 | 04 | 3 min | 2 | 8 |
 | 09 | 05 | 5 min | 3 | 9 |
 | 10 | 01 | 15 min | 3 | 14 |
+| 11 | 01 | ~15 min | 3 | 8 |
 
 ## Session Continuity
 
-Last session: 2026-03-05T22:00:00.000Z
-Stopped at: Completed 10-01-price-utilities-PLAN.md
+Last session: 2026-03-06
+Stopped at: Milestone v1.3 archived
 Resume file: None
