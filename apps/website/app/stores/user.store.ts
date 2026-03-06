@@ -122,6 +122,27 @@ export const useUserStore = defineStore("user", () => {
     }
   };
 
+  const loadUserAdCounts = async (): Promise<{
+    published: number;
+    review: number;
+    expired: number;
+    rejected: number;
+    banned: number;
+  }> => {
+    try {
+      const response = await strapi.find("ads/me/counts", {});
+      return response as unknown as {
+        published: number;
+        review: number;
+        expired: number;
+        rejected: number;
+        banned: number;
+      };
+    } catch {
+      return { published: 0, review: 0, expired: 0, rejected: 0, banned: 0 };
+    }
+  };
+
   const deactivateAd = async (adId: number, reason?: string) => {
     try {
       const token = useCookie("waldo_jwt").value;
@@ -153,6 +174,7 @@ export const useUserStore = defineStore("user", () => {
     loadUsers,
     loadUser,
     loadUserAds,
+    loadUserAdCounts,
     loadUserOrders,
     updateUserProfile,
     deactivateAd,
