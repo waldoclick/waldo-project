@@ -53,3 +53,47 @@ Archive: `.planning/milestones/v1.3-ROADMAP.md`
 Archive: `.planning/milestones/v1.4-ROADMAP.md`
 
 </details>
+
+---
+
+## v1.5 Ad Credit Refund
+
+**Milestone Goal:** When an ad is rejected or banned, return the ad reservation and featured reservation credits to the user, and notify them via email that their credits were refunded.
+
+### Phases
+
+- [ ] **Phase 16: Credit Refund Logic** — Wire credit return into `rejectAd()` and `bannedAd()` in Strapi
+- [ ] **Phase 17: Email Notification Update** — Update `ad-rejected.mjml` and `ad-banned.mjml` to include conditional credit-returned messaging
+
+### Phase Details
+
+#### Phase 16: Credit Refund Logic
+**Goal**: When an ad is rejected or banned, its associated reservations are immediately freed for reuse
+**Depends on**: Nothing (first phase of v1.5)
+**Requirements**: REFUND-01, REFUND-02, REFUND-03, REFUND-04
+**Success Criteria** (what must be TRUE):
+  1. Rejecting an ad with an `ad_reservation` causes that reservation's `ad` field to become `null` in the database
+  2. Rejecting an ad with an `ad_featured_reservation` causes that reservation's `ad` field to become `null` in the database
+  3. Banning an ad with an `ad_reservation` causes that reservation's `ad` field to become `null` in the database
+  4. Banning an ad with an `ad_featured_reservation` causes that reservation's `ad` field to become `null` in the database
+  5. Reservations freed by reject/ban are immediately reusable by new ads (no orphan state)
+**Plans**: TBD
+
+#### Phase 17: Email Notification Update
+**Goal**: Users receive clear confirmation in reject/ban emails that their credits were refunded
+**Depends on**: Phase 16 (refund flags `adReservationReturned` / `featuredReservationReturned` set in service layer)
+**Requirements**: EMAIL-01, EMAIL-02, EMAIL-03, EMAIL-04
+**Success Criteria** (what must be TRUE):
+  1. Reject email sent for an ad that had an `ad_reservation` contains a message indicating the ad credit was returned
+  2. Reject email sent for an ad that had an `ad_featured_reservation` contains a message indicating the featured credit was returned
+  3. Ban email sent for an ad that had an `ad_reservation` contains a message indicating the ad credit was returned
+  4. Ban email sent for an ad that had an `ad_featured_reservation` contains a message indicating the featured credit was returned
+  5. Reject/ban emails for ads with no reservations do not include any credit-return messaging (conditional rendering)
+**Plans**: TBD
+
+### Progress
+
+| Phase | Plans Complete | Status | Completed |
+|-------|----------------|--------|-----------|
+| 16. Credit Refund Logic | 0/? | Not started | — |
+| 17. Email Notification Update | 0/? | Not started | — |
