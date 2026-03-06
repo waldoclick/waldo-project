@@ -8,8 +8,8 @@
 
 ### URL Migration
 
-- [ ] **URL-01**: Navigating to `/ads` and all sub-routes (`/ads/active`, `/ads/pending`, etc.) works correctly
-- [ ] **URL-02**: Navigating to `/ads/abandoned`, `/ads/banned`, `/ads/expired`, `/ads/rejected` works correctly
+- [x] **URL-01**: Navigating to `/ads` and all sub-routes (`/ads/active`, `/ads/pending`, etc.) works correctly
+- [x] **URL-02**: Navigating to `/ads/abandoned`, `/ads/banned`, `/ads/expired`, `/ads/rejected` works correctly
 - [ ] **URL-03**: Navigating to `/categories`, `/categories/new`, `/categories/[id]`, `/categories/[id]/edit` works correctly
 - [ ] **URL-04**: Navigating to `/communes`, `/communes/new`, `/communes/[id]`, `/communes/[id]/edit` works correctly
 - [ ] **URL-05**: Navigating to `/conditions`, `/conditions/new`, `/conditions/[id]`, `/conditions/[id]/edit` works correctly
@@ -57,8 +57,8 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| URL-01 | Phase 12 | Pending |
-| URL-02 | Phase 12 | Pending |
+| URL-01 | Phase 12 | Complete |
+| URL-02 | Phase 12 | Complete |
 | URL-03 | Phase 13 | Pending |
 | URL-04 | Phase 13 | Pending |
 | URL-05 | Phase 13 | Pending |
