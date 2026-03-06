@@ -57,26 +57,26 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| URL-01 | — | Pending |
-| URL-02 | — | Pending |
-| URL-03 | — | Pending |
-| URL-04 | — | Pending |
-| URL-05 | — | Pending |
-| URL-06 | — | Pending |
-| URL-07 | — | Pending |
-| URL-08 | — | Pending |
-| URL-09 | — | Pending |
-| URL-10 | — | Pending |
-| URL-11 | — | Pending |
-| REDIR-01 | — | Pending |
-| LINK-01 | — | Pending |
-| LINK-02 | — | Pending |
-| LINK-03 | — | Pending |
+| URL-01 | Phase 12 | Pending |
+| URL-02 | Phase 12 | Pending |
+| URL-03 | Phase 13 | Pending |
+| URL-04 | Phase 13 | Pending |
+| URL-05 | Phase 13 | Pending |
+| URL-06 | Phase 14 | Pending |
+| URL-07 | Phase 14 | Pending |
+| URL-08 | Phase 13 | Pending |
+| URL-09 | Phase 13 | Pending |
+| URL-10 | Phase 14 | Pending |
+| URL-11 | Phase 13 | Pending |
+| REDIR-01 | Phase 15 | Pending |
+| LINK-01 | Phase 15 | Pending |
+| LINK-02 | Phase 15 | Pending |
+| LINK-03 | Phase 15 | Pending |
 
 **Coverage:**
 - v1.4 requirements: 15 total
-- Mapped to phases: 0
-- Unmapped: 15 ⚠️
+- Mapped to phases: 15
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-05*
