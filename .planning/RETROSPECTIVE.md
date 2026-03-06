@@ -212,6 +212,7 @@
 | v1.3 | 3 | 7 | Utility extraction: centralized formatting, introduced unit testing for utilities |
 | v1.4 | 4 | 9 | URL localization: all routes in English, 301 redirects for legacy Spanish URLs |
 | v1.5 | 2 | 2 | Backend credit refund + conditional email notifications in Strapi |
+| v1.6 | 2 | 3 | Website API optimization: aggregate endpoint + store cache guards |
 
 ### Cumulative Quality
 
@@ -223,6 +224,7 @@
 | v1.3 | utils (100% coverage) | true | 0 |
 | v1.4 | utils (100% coverage) | true | 0 |
 | v1.5 | utils (100% coverage) | true | 0 |
+| v1.6 | utils (100% coverage) | true | 0 |
 
 ### Top Lessons (Verified Across Milestones)
 
@@ -234,3 +236,48 @@
 6. Explicit scope boundaries in per-task success criteria prevent unintended changes (e.g., UI labels vs route paths)
 7. Reuse existing patterns over inventing new ones — the cron's `entityService.update(ad: null)` pattern applied directly to reject/ban with zero design work
 8. Verify non-TypeScript file commits explicitly — MJML, SQL, config files may be silently skipped by executor agents
+9. `useAsyncData` is the sole correct data-loading trigger in Nuxt pages — bare `await` before it causes double-fetch on SSR + hydration
+10. Cache guards need both data-length check and timestamp — and always verify the store has `persist` or the guard is useless
+
+---
+
+## Milestone: v1.6 — Website API Optimization
+
+**Shipped:** 2026-03-06
+**Phases:** 2 (18-19) | **Plans:** 3 | **Timeline:** ~7 minutes
+**Files changed:** 27 files, +1,648/-82 lines | **Requirements:** 6/6 complete
+
+### What Was Built
+- `preguntas-frecuentes.vue`: bare `await faqsStore.loadFaqs()` before `useAsyncData` removed — 2 HTTP calls → 1 (SSR-integrated `useAsyncData` only)
+- New `GET /api/ads/me/counts` Strapi endpoint: runs 5 `entityService.count()` calls in parallel via `Promise.all`, returns `{ published, review, expired, rejected, banned }` in a single response
+- `user.store.ts`: new `loadUserAdCounts()` action consuming the counts endpoint
+- `mis-anuncios.vue`: `loadTabCounts()` (5 parallel requests) replaced with `loadUserAdCounts()` (1 request) + `loadAds()` — 6 HTTP calls → 2 on mount; stale `tabToUpdate` block removed
+- 30-min timestamp-based cache guard (`lastFetch: 0` + array-length check) added to `packs.store.ts`, `conditions.store.ts`, `regions.store.ts`; `ConditionState` / `RegionState` type interfaces updated with `lastFetch: number`
+- `packs.store.ts` gained `persist` with localStorage — previously missing, making a cache guard useless on page refresh
+- `FormCreateThree.vue` no longer calls `loadCommunes()` on mount — commune data from `communes.client.ts` plugin is used directly
+
+### What Worked
+- The `useAsyncData`-only pattern was already established (v1.1); applying it to website pages was mechanical and fast
+- Server-side `Promise.all` for count queries is a clean extension of the aggregate endpoint pattern from v1.1
+- Splitting Phase 18 into 2 plans (endpoint first, consumer second) made each plan trivially verifiable
+- Phase 19 had zero deviations — the plan was accurate and the implementation matched exactly
+- Fastest 3-plan milestone: all 3 plans executed in ~7 minutes total wall time
+
+### What Was Inefficient
+- The milestone completion commit was created by the CLI tool but left ROADMAP.md, PROJECT.md, and RETROSPECTIVE.md in their pre-completion state — the workflow had to resume in a new session. Full workflow completion should be a single atomic session.
+
+### Patterns Established
+- `useAsyncData`-only in website pages: never pair bare `await storeAction()` with `useAsyncData` in the same page — the bare await runs twice (SSR + client hydration)
+- Aggregate counts endpoint: `GET /resource/me/counts` returns all N status counts in one `Promise.all`; client gets 1 request instead of N
+- Options API store cache guard: `lastFetch: 0` in `state()`, guard at top of load action, set `lastFetch = Date.now()` after fetch
+- Always add `persist` when adding a cache guard — a cache guard without persistence is useless after page refresh
+
+### Key Lessons
+1. **`useAsyncData` is SSR-aware; bare `await` is not.** A bare `await storeAction()` before `useAsyncData` fires once on SSR and once on client hydration — always use `useAsyncData` as the sole trigger in website pages.
+2. **Cache guard needs both length check AND timestamp.** Timestamp-only guard gives a false cache hit when the store is empty but `lastFetch` was previously set. The combined check (`length > 0 && age < TTL`) is always correct.
+3. **Verify `persist` when adding cache guards to stores.** If the store lacks persistence, the cache guard is redundant — data is lost on every page refresh.
+
+### Cost Observations
+- Model mix: ~100% sonnet (balanced profile)
+- Sessions: 4 (plan-phase × 2, execute-phase × 2, milestone close split across 2 sessions)
+- Notable: Fastest milestone by execution time — 3 plans, ~7 min. The patterns were fully established; this was pure application.
