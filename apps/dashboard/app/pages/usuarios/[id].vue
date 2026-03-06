@@ -144,6 +144,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
+import { formatFullName, formatAddress, formatBoolean } from "@/utils/string";
 import HeroDefault from "@/components/HeroDefault.vue";
 import BoxContent from "@/components/BoxContent.vue";
 import BoxInformation from "@/components/BoxInformation.vue";
@@ -167,18 +168,6 @@ const breadcrumbs = computed(() => [
   { label: "Usuarios", to: "/usuarios" },
   ...(item.value?.username ? [{ label: item.value.username }] : []),
 ]);
-
-const formatFullName = (firstname?: string, lastname?: string) => {
-  if (!firstname && !lastname) return "--";
-  return [firstname, lastname].filter(Boolean).join(" ") || "--";
-};
-
-const formatBoolean = (value?: boolean) => (value ? "Sí" : "No");
-
-const formatAddress = (address?: string, addressNumber?: string | number) => {
-  if (!address) return "--";
-  return addressNumber ? `${address} ${addressNumber}` : address;
-};
 
 const getRelationName = (relation?: UserRelation) => {
   if (!relation) return "--";

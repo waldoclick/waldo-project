@@ -77,6 +77,7 @@ import { useAsyncData } from "nuxt/app";
 import { useStrapi } from "#imports";
 import { Eye } from "lucide-vue-next";
 import { formatCurrency } from "@/utils/price";
+import { getPaymentMethod } from "@/utils/string";
 import { useSettingsStore } from "@/stores/settings.store";
 import SearchDefault from "@/components/SearchDefault.vue";
 import FilterDefault from "@/components/FilterDefault.vue";
@@ -201,8 +202,4 @@ const sortOptions = [
   { value: "ad.name:asc", label: "Título A-Z" },
   { value: "ad.name:desc", label: "Título Z-A" },
 ];
-
-const getPaymentMethod = (method: string) => {
-  return method === "webpay" ? "WebPay" : method;
-};
 </script>
