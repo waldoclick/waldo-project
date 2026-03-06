@@ -4,7 +4,7 @@ milestone: v1.5
 milestone_name: Ad Credit Refund
 status: completed
 stopped_at: Completed 17-01-PLAN.md
-last_updated: "2026-03-06T20:43:19.381Z"
+last_updated: "2026-03-06T20:46:01.683Z"
 last_activity: "2026-03-06 — Phase 17 Plan 01: conditional credit-return messaging added to rejection/ban email templates"
 progress:
   total_phases: 2
