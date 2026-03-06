@@ -1,16 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.7
-milestone_name: Cron Reliability
+milestone: v1.8
+milestone_name: Free Featured Reservation Guarantee
 status: planning
-stopped_at: Completed 23-01-PLAN.md (Ad Cron and Cron Tasks Docs)
-last_updated: "2026-03-06T23:13:45.219Z"
-last_activity: 2026-03-06 — Roadmap created, 4 phases mapped to 10 requirements
+stopped_at: Milestone v1.8 initialized — Phase 24 ready to plan
+last_updated: "2026-03-06T23:30:00.000Z"
+last_activity: 2026-03-06 — Roadmap created, 1 phase mapped to 9 requirements
 progress:
-  total_phases: 4
-  completed_phases: 4
-  total_plans: 4
-  completed_plans: 4
+  total_phases: 1
+  completed_phases: 0
+  total_plans: 1
+  completed_plans: 0
   percent: 0
 ---
 
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.7 Cron Reliability — Phase 20: user.cron Fix & Docs
+**Current focus:** v1.8 Free Featured Reservation Guarantee — Phase 24: featuredCron Implementation
 
 ## Current Position
 
-Phase: 20 of 23 (user.cron Fix & Docs)
+Phase: 24 of 24 (featuredCron Implementation)
 Plan: — (not yet planned)
 Status: Ready to plan
-Last activity: 2026-03-06 — Roadmap created, 4 phases mapped to 10 requirements
+Last activity: 2026-03-06 — Roadmap created, 1 phase mapped to 9 requirements
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -46,28 +46,22 @@ Progress: [░░░░░░░░░░] 0%
 | - | - | - | - |
 
 *Updated after each plan completion*
-| Phase 20 P01 | 77s | 1 tasks | 1 files |
-| Phase 21 P01 | 77 | 1 tasks | 1 files |
-| Phase 22 P01 | 1 | 1 tasks | 1 files |
-| Phase 23 P01 | 128 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
 ### Decisions
 
-All decisions from v1.1–v1.6 are logged in PROJECT.md Key Decisions table.
+All decisions from v1.1–v1.7 are logged in PROJECT.md Key Decisions table.
 
 Key patterns established (carry forward):
 - `watch({ immediate: true })` as sole data-loading trigger — never pair with onMounted
 - Strapi SDK v5 cast pattern: `response.data as T[]`, params as `Record<string,unknown>`, payload double-cast
 - **v1.5**: Reservation freeing updates reservation side (FK lives on reservation), not ad side
 - **v1.6**: `useAsyncData` is sole data-loading trigger in Nuxt pages
-- [Phase 20]: Use Map<userId,{user,ads[]}> two-phase approach in restoreFreeAds: collect all expired ads first, then process per user — ensures every ad is deactivated and restoreUserFreeReservations is called exactly once per user
-- [Phase 21]: Use strapi.config.get('database') as { connection: any } to satisfy TypeScript — get() returns unknown so cast is required
-- [Phase 21]: Build sanitizedCommand locally before log calls — raw backupCommand passed unchanged to execAsync
-- [Phase 22]: Use db.query('plugin::upload.folder').findOne to resolve folder path, then filter upload files by folderPath — direct relation filter silently returns empty array in Strapi v5
-- [Phase 22]: Null guard returns [] when 'ads' folder doesn't exist — safe skip, not an error
-- [Phase 23]: Email subject string 'Reporte diario de actualización de anuncios' left unchanged — it is application data (not a comment), changing it would alter behavior and is outside the comments-only scope
+- **v1.7 cron pattern**: class-based service (`class XxxCronService`), `logger` from `../utils/logtail`, per-item try/catch inside user loop, `entityService.findMany` + `entityService.create`
+- **v1.7 cron-tasks.ts JSDoc pattern**: state purpose + schedule expression meaning + timezone + service method called
+- **v1.8 (pending)**: `featuredCron` "free available" = price=0 AND (ad=null OR ad.active=false)
+- **v1.8 (pending)**: Featured reservations created with no `total_days` (field is optional, featured slots have no expiry)
 
 ### Pending Todos
 
@@ -79,6 +73,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-06T23:13:45.217Z
-Stopped at: Completed 23-01-PLAN.md (Ad Cron and Cron Tasks Docs)
+Last session: 2026-03-06T23:30:00.000Z
+Stopped at: Milestone v1.8 initialized — Phase 24 ready to plan
 Resume file: None

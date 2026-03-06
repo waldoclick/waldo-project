@@ -1,67 +1,56 @@
-# Requirements: Waldo Project — v1.7 Cron Reliability
+# Requirements: Waldo Project — v1.8 Free Featured Reservation Guarantee
 
 **Defined:** 2026-03-06
 **Core Value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
 
-## v1.7 Requirements
+## v1.8 Requirements
 
-Requirements for milestone v1.7 Cron Reliability. All cron files live in `apps/strapi/`.
+Requirements for milestone v1.8 Free Featured Reservation Guarantee. All cron files live in `apps/strapi/`.
 
-### Bug Fixes
+### Core Guarantee
 
-- [x] **CRON-01**: `user.cron.ts` deactivates ALL expired free ads for a user, not just the first one per user per run
-- [x] **CRON-02**: `backup.cron.ts` accesses the Strapi v5 database config via the correct path (`strapi.config.get('database').connection`)
-- [x] **CRON-03**: `backup.cron.ts` does not log the database password in plaintext (shell command is logged with password redacted or omitted)
-- [x] **CRON-04**: `cleanup.cron.ts` folder filter correctly retrieves files from the `ads` folder using a Strapi v5-compatible query approach
-- [x] **CRON-05**: Unused `PaymentUtils` import is removed from `user.cron.ts`
+- [ ] **FEAT-01**: Every user always has exactly 3 free `ad-featured-reservation` records with `price = 0` that are NOT linked to an active ad. A featured reservation is "occupied" if its `ad` relation points to an ad where `active: true`.
+- [ ] **FEAT-02**: `featured.cron.ts` implements a `FeaturedCronService` class with a `restoreFreeFeaturedReservations()` method that scans all users and tops up each user's free available featured slots to 3.
+- [ ] **FEAT-03**: The "free available" count per user is computed as: `ad-featured-reservation` records where `price = 0` AND (`ad = null` OR `ad.active = false`).
+- [ ] **FEAT-04**: If a user's free available count is less than 3, the cron creates the missing records (`price = 0`, no `total_days`, linked to user via `user` relation, `publishedAt` set).
+- [ ] **FEAT-05**: `featuredCron` is registered in `cron-tasks.ts` and runs daily at 2:30 AM `America/Santiago`.
+
+### Cron Runner
+
+- [ ] **RUNNER-01**: The `cron-runner` API files (`apps/strapi/src/api/cron-runner/controllers/cron-runner.ts` and `apps/strapi/src/api/cron-runner/routes/cron-runner.ts`) are committed to the repository.
+- [ ] **RUNNER-02**: The `cron-runner` controller's `CRON_NAME_MAP` includes `"featured-cron": "featuredCron"`.
 
 ### Documentation
 
-- [x] **DOC-01**: `cron-tasks.ts` has English comments documenting each job's purpose, schedule, and timezone
-- [x] **DOC-02**: `ad.cron.ts` has English comments explaining deduplication via `remainings`, deactivation on zero days, and daily report email
-- [x] **DOC-03**: `user.cron.ts` has English comments explaining the multi-ad flow, user deduplication intent, reservation restore logic, and the 3-reservation guarantee
-- [x] **DOC-04**: `cleanup.cron.ts` has English comments explaining the audit-only approach, folder query strategy, and orphan detection logic
-- [x] **DOC-05**: `backup.cron.ts` has English comments explaining config path, command construction, compression, rotation, and the password-redaction approach
-
-## Future Requirements
-
-### Cron Monitoring
-
-- **MON-01**: Cron jobs emit structured log events (start, end, duration, count of records affected) compatible with Logtail
-- **MON-02**: Failed cron runs send an alert email to `ADMIN_EMAILS`
-
-### Cleanup Enhancement
-
-- **CLEA-01**: `cleanup.cron.ts` optionally deletes orphan images when `DELETE_ORPHANS=true` env var is set
+- [ ] **DOC-01**: `featured.cron.ts` has English JSDoc and inline comments explaining: the 3-slot guarantee, what "free available" means (price=0, ad=null or ad.active=false), the scan-all-users approach, and the create logic.
+- [ ] **DOC-02**: The `featuredCron` entry in `cron-tasks.ts` has an English JSDoc comment documenting purpose, schedule expression, timezone, and the service method called — matching the established pattern from v1.7.
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| Unit tests for cron jobs | Testing milestone deferred; same policy as rest of codebase |
-| Cron UI / admin panel | Out of scope for this project |
-| Distributed cron locking | Single-instance deployment on Forge; no concurrent runs possible |
-| Changing backup destination (S3, etc.) | `process.cwd()/backups` is sufficient for current Forge deploy |
-| Auto-delete orphan images | Audit-only is the safe default; deletion deferred to CLEA-01 |
+| Unit tests for featured.cron.ts | Testing milestone deferred; same policy as rest of codebase |
+| Capping at exactly 3 (deleting excess) | Only top-up is in scope; excess records are harmless |
+| Email notification to admin | Summary report deferred; low value for this simple top-up cron |
+| Backfill for existing users at deploy time | featuredCron runs at 2:30 AM; first run will top up all under-provisioned users |
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CRON-01 | Phase 20 | Complete |
-| CRON-02 | Phase 21 | Complete |
-| CRON-03 | Phase 21 | Complete |
-| CRON-04 | Phase 22 | Complete |
-| CRON-05 | Phase 20 | Complete |
-| DOC-01 | Phase 23 | Complete |
-| DOC-02 | Phase 23 | Complete |
-| DOC-03 | Phase 20 | Complete |
-| DOC-04 | Phase 22 | Complete |
-| DOC-05 | Phase 21 | Complete |
+| FEAT-01 | Phase 24 | Pending |
+| FEAT-02 | Phase 24 | Pending |
+| FEAT-03 | Phase 24 | Pending |
+| FEAT-04 | Phase 24 | Pending |
+| FEAT-05 | Phase 24 | Pending |
+| RUNNER-01 | Phase 24 | Pending |
+| RUNNER-02 | Phase 24 | Pending |
+| DOC-01 | Phase 24 | Pending |
+| DOC-02 | Phase 24 | Pending |
 
 **Coverage:**
-- v1.7 requirements: 10 total
-- Mapped to phases: 10 ✓
+- v1.8 requirements: 9 total
+- Mapped to phases: 9 ✓
 - Unmapped: 0
 
 ---
