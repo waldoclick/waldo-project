@@ -28,16 +28,17 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ ChartSales obtiene datos agregados del servidor, no pagina todos los órdenes en cliente — v1.1
 - ✓ Eliminar double-fetch en todos los componentes non-ads del dashboard que tienen `onMounted` + `watch({ immediate: true })` coexistiendo — v1.2
 - ✓ Utilidades de fecha, precio y string centralizadas y estrictamente tipadas — v1.3
+- ✓ Al rechazar un aviso, el AdReservation y FeaturedReservation asociados quedan disponibles para reuso — v1.5
+- ✓ Al banear un aviso, el AdReservation y FeaturedReservation asociados quedan disponibles para reuso — v1.5
+- ✓ El email de rechazo notifica al usuario que sus créditos fueron devueltos (condicional) — v1.5
+- ✓ El email de baneo notifica al usuario que sus créditos fueron devueltos (condicional) — v1.5
 - ✓ Todos los segmentos de URL del dashboard están en inglés — v1.4
 - ✓ Las URLs españolas antiguas redirigen a sus equivalentes en inglés (301) — v1.4
 - ✓ Todos los links de navegación y referencias internas usan URLs en inglés — v1.4
 
 ### Active
 
-- [ ] Al rechazar un aviso, el AdReservation y FeaturedReservation asociados quedan disponibles para reuso
-- [ ] Al banear un aviso, el AdReservation y FeaturedReservation asociados quedan disponibles para reuso
-- [ ] El email de rechazo notifica al usuario que sus créditos fueron devueltos
-- [ ] El email de baneo notifica al usuario que sus créditos fueron devueltos
+_(none — awaiting next milestone definition)_
 
 ### Out of Scope
 
@@ -48,22 +49,11 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - Migración de URLs del sitio web público — scope solo dashboard
 - URL aliases permanentes (mantener ambas funcionando) — los redirects 301 son suficientes
 
-## Current Milestone: v1.5 Ad Credit Refund
-
-**Goal:** When an ad is rejected or banned in Strapi, return the ad reservation credit and featured reservation credit to the user, and notify them by email that their credits were refunded.
-
-**Target features:**
-- Credit refund on reject endpoint (ad + featured reservations)
-- Credit refund on ban endpoint (ad + featured reservations)
-- Email notification updated to inform user that credits were returned
-
 ## Previous State
 
-Shipped **v1.4 URL Localization** on 2026-03-06.
-- **Route rename**: All 11 Spanish page directories renamed to English equivalents (94 files, +3,621/-243 lines).
-- **Components**: All 22 navigation/data components updated to English `router.push`/`NuxtLink` paths.
-- **Redirects**: `nuxt.config.ts` `routeRules` covers all legacy Spanish URL prefixes with 301 redirects.
-- **Build**: `nuxt typecheck` passes with zero errors.
+Shipped **v1.5 Ad Credit Refund** on 2026-03-06.
+- **Credit refund**: `rejectAd()` and `bannedAd()` in Strapi now free `ad_reservation.ad = null` and `ad_featured_reservation.ad = null` before sending email, using the same `entityService.update` pattern as the existing cron.
+- **Email notification**: `ad-rejected.mjml` and `ad-banned.mjml` render conditional Spanish-language credit-return paragraphs when `adReservationReturned` / `featuredReservationReturned` flags are true; ads with no reservations show no credit messaging.
 
 ## Context
 
@@ -102,6 +92,9 @@ Shipped **v1.4 URL Localization** on 2026-03-06.
 | Labels de UI en español se preservan (solo rutas en inglés) | Las breadcrumbs y labels son contenido visible por usuario — no se traducen en esta migración — v1.4 | ✓ Good |
 | `routeRules` explícitas (sin wildcards `:splat`) | Rutas explícitas cubren el 100% sin incompatibilidades de TypeScript/build — v1.4 | ✓ Good |
 | Links externos al sitio web público exentos de localización | Solo rutas del dashboard en scope; `websiteUrl + /anuncios/[slug]` son URLs del sitio público — v1.4 | ✓ Good |
+| Reservation freeing updates reservation side (FK on reservation, not ad) | Consistent with existing cron pattern in `user.cron.ts`; `entityService.update(uid, id, { data: { ad: null } })` — v1.5 | ✓ Good |
+| No try/catch around reservation-freeing calls | If freeing fails, whole reject/ban should fail — caller handles outer error; silent failure would leave orphaned credits — v1.5 | ✓ Good |
+| `!!ad.ad_reservation?.id` evaluated on pre-freed ad object | Ad is fetched before freeing runs; original value correctly reflects "did this ad have a reservation?" for email flag — v1.5 | ✓ Good |
 
 ## Future Requirements
 
@@ -118,4 +111,4 @@ Shipped **v1.4 URL Localization** on 2026-03-06.
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-06 after v1.5 milestone start*
+*Last updated: 2026-03-06 after v1.5 milestone*
