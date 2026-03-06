@@ -78,7 +78,7 @@ Archive: `.planning/milestones/v1.6-ROADMAP.md`
 
 - [x] **Phase 20: user.cron Fix & Docs** - Fix multi-ad deactivation bug, remove unused import, add English comments (completed 2026-03-06)
 - [x] **Phase 21: backup.cron Fix & Docs** - Fix Strapi v5 config path, redact password from logs, add English comments (completed 2026-03-06)
-- [ ] **Phase 22: cleanup.cron Fix & Docs** - Fix folder filter query for Strapi v5 compatibility, add English comments
+- [x] **Phase 22: cleanup.cron Fix & Docs** - Fix folder filter query for Strapi v5 compatibility, add English comments (completed 2026-03-06)
 - [ ] **Phase 23: ad.cron + cron-tasks Docs** - Add English comments to ad.cron.ts and cron-tasks.ts (no bug fixes needed)
 
 ## Phase Details
@@ -137,5 +137,5 @@ Plans:
 |-------|-----------|----------------|--------|-----------|
 | 20. user.cron Fix & Docs | 1/1 | Complete   | 2026-03-06 | - |
 | 21. backup.cron Fix & Docs | 1/1 | Complete   | 2026-03-06 | - |
-| 22. cleanup.cron Fix & Docs | v1.7 | 0/1 | Planned | - |
+| 22. cleanup.cron Fix & Docs | 1/1 | Complete   | 2026-03-06 | - |
 | 23. ad.cron + cron-tasks Docs | v1.7 | 0/? | Not started | - |
