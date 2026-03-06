@@ -26,4 +26,5 @@ export interface ConditionState {
   conditions: Condition[];
   loading: boolean;
   error: string | null;
+  lastFetch: number;
 }

@@ -6,15 +6,20 @@ import type { Pack } from "@/types/pack";
 export const usePacksStore = defineStore("packs", {
   state: () => ({
     packs: [] as Pack[],
+    lastFetch: 0,
   }),
 
   actions: {
     async loadPacks() {
+      const now = Date.now();
+      if (this.packs.length > 0 && now - this.lastFetch < 1800000) return;
+
       const strapi = useStrapi();
       const response = await strapi.find("ad-packs", {
         populate: "*",
       });
       this.packs = response.data as unknown as Pack[];
+      this.lastFetch = Date.now();
     },
 
     async getPackById(id: string | number) {
@@ -25,5 +30,9 @@ export const usePacksStore = defineStore("packs", {
       });
       return response.data?.[0];
     },
+  },
+
+  persist: {
+    storage: typeof window !== "undefined" ? localStorage : undefined,
   },
 });

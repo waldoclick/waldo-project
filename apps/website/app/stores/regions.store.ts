@@ -16,6 +16,7 @@ export const useRegionsStore = defineStore("regions", {
     },
     loading: false,
     error: null,
+    lastFetch: 0,
   }),
 
   getters: {
@@ -38,6 +39,10 @@ export const useRegionsStore = defineStore("regions", {
 
   actions: {
     async loadRegions() {
+      const now = Date.now();
+      if (this.regions.data.length > 0 && now - this.lastFetch < 1800000)
+        return;
+
       try {
         this.loading = true;
         this.error = null;
@@ -56,6 +61,7 @@ export const useRegionsStore = defineStore("regions", {
         }
 
         this.regions = typedResponse;
+        this.lastFetch = Date.now();
       } catch (err) {
         this.error = "Error al cargar las regiones";
         console.error("Error loading regions:", err);

@@ -24,4 +24,5 @@ export interface RegionState {
   regions: RegionResponse;
   loading: boolean;
   error: string | null;
+  lastFetch: number;
 }
