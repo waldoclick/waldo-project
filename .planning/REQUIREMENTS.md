@@ -44,23 +44,21 @@
 
 ## Traceability
 
-Populated during roadmap creation.
-
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| REFUND-01 | — | Pending |
-| REFUND-02 | — | Pending |
-| REFUND-03 | — | Pending |
-| REFUND-04 | — | Pending |
-| EMAIL-01 | — | Pending |
-| EMAIL-02 | — | Pending |
-| EMAIL-03 | — | Pending |
-| EMAIL-04 | — | Pending |
+| REFUND-01 | Phase 16 | Pending |
+| REFUND-02 | Phase 16 | Pending |
+| REFUND-03 | Phase 16 | Pending |
+| REFUND-04 | Phase 16 | Pending |
+| EMAIL-01 | Phase 17 | Pending |
+| EMAIL-02 | Phase 17 | Pending |
+| EMAIL-03 | Phase 17 | Pending |
+| EMAIL-04 | Phase 17 | Pending |
 
 **Coverage:**
 - v1.5 requirements: 8 total
-- Mapped to phases: 0
-- Unmapped: 8 ⚠️ (pending roadmap)
+- Mapped to phases: 8 ✓
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-06*
