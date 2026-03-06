@@ -79,6 +79,46 @@
 
 ---
 
+## Milestone: v1.3 — Utility Extraction
+
+**Shipped:** 2026-03-06
+**Phases:** 3 (9-11) | **Plans:** 7 | **Timeline:** ~1 day
+
+### What Was Built
+- `app/utils/date.ts`: `formatDate` and `formatDateShort` — replaced 33 inline date formatter definitions across 17 files
+- `app/utils/price.ts`: `formatCurrency` with CLP/es-CL as default — replaced 13 inline currency formatter definitions
+- `app/utils/string.ts`: `formatFullName`, `formatAddress`, `formatBoolean`, `formatDays`, `getPaymentMethod` — replaced 6 inline definitions
+- 100% unit test coverage for all three utility files
+- `nuxt typecheck` passes clean after every phase's replacements
+
+### What Worked
+- Nuxt auto-import for `app/utils/*.ts` eliminated all explicit import boilerplate — the refactor was purely subtractive in components
+- Batching replacements by component vs page kept each plan focused and reviewable
+- Treating UTIL-07 (typecheck validation) as a success criterion per phase rather than a standalone phase kept quality gates tight without adding overhead
+- The `"--"` fallback pattern was immediately consistent across all three utilities — no ambiguity about missing data display
+
+### What Was Inefficient
+- The v1.3-ROADMAP.md archive was captured mid-execution (before Phase 11 completed), requiring a manual correction at milestone close — the archive step should run after all phases are done, not before the final phase
+- Phase 10 had Plans: TBD in ROADMAP.md at start — plan count was resolved organically (1 plan), but pre-defining plan structure would have been cleaner
+
+### Patterns Established
+- `app/utils/*.ts` as the canonical location for shared pure formatting functions (Nuxt auto-imported)
+- All utility functions typed as `(value: T | null | undefined) => string` with `"--"` as the universal fallback
+- `formatCompactCurrency` naming pattern for component-local compact variants alongside the global `formatCurrency`
+- Unit tests in `tests/utils/{name}.test.ts` co-located with each utility at creation time
+
+### Key Lessons
+1. **Auto-import makes refactors trivially clean.** When the utility lands in `app/utils/`, every component gets it for free — the refactor is just removing inline definitions. No import churn.
+2. **Archive milestones only after all phases complete.** Premature archival creates stale artifacts that need correction. The archive step is strictly a post-completion action.
+3. **Consistent null handling (`"--"`) across all utilities eliminates a whole class of UI bugs.** The pattern is simple, predictable, and worth enforcing at utility creation time.
+
+### Cost Observations
+- Model mix: ~100% sonnet (balanced profile)
+- Sessions: ~5 (one per plan + milestone close)
+- Notable: Phase 9 took ~43 min total (5 plans) — the largest single milestone by plan count; Phases 10-11 were 1 plan each at ~15 min
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -88,6 +128,7 @@
 | v1.0 | 2 | 4 | Initial payment gateway abstraction |
 | v1.1 | 4 | 15 | First full GSD workflow with wave parallelization |
 | v1.2 | 2 | 2 | Pattern application: extend v1.1 cleanup to remaining components |
+| v1.3 | 3 | 7 | Utility extraction: centralized formatting, introduced unit testing for utilities |
 
 ### Cumulative Quality
 
@@ -96,9 +137,11 @@
 | v1.0 | none | false | 0 |
 | v1.1 | none | true | 1 (vue-tsc) |
 | v1.2 | none | true | 0 |
+| v1.3 | utils (100% coverage) | true | 0 |
 
 ### Top Lessons (Verified Across Milestones)
 
 1. Keep Strapi as the single business logic layer — frontend stays stateless and swappable
 2. Establish canonical types and patterns early; deferred type debt compounds across components
 3. `typeCheck: true` catches regressions immediately — v1.2 TS18046 error caught in same commit cycle
+4. Auto-import + utility files make codebase-wide refactors purely subtractive — remove inline, done
