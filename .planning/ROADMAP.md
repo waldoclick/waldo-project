@@ -8,7 +8,8 @@
 - ✅ **v1.4 URL Localization** — Phases 12-15 (shipped 2026-03-06)
 - ✅ **v1.5 Ad Credit Refund** — Phases 16-17 (shipped 2026-03-06)
 - ✅ **v1.6 Website API Optimization** — Phases 18-19 (shipped 2026-03-06)
-- 🚧 **v1.7 Cron Reliability** — Phases 20-23 (in progress)
+- ✅ **v1.7 Cron Reliability** — Phases 20-23 (shipped 2026-03-06)
+- 🚧 **v1.8 Free Featured Reservation Guarantee** — Phase 24 (in progress)
 
 ## Phases
 
@@ -72,73 +73,45 @@ Archive: `.planning/milestones/v1.6-ROADMAP.md`
 
 </details>
 
-### 🚧 v1.7 Cron Reliability (In Progress)
+<details>
+<summary>✅ v1.7 Cron Reliability (Phases 20-23) — SHIPPED 2026-03-06</summary>
 
 **Milestone Goal:** Fix the three non-functional cron jobs (userCron, backupCron, cleanupCron) and add English documentation comments throughout all cron files.
 
-- [x] **Phase 20: user.cron Fix & Docs** - Fix multi-ad deactivation bug, remove unused import, add English comments (completed 2026-03-06)
-- [x] **Phase 21: backup.cron Fix & Docs** - Fix Strapi v5 config path, redact password from logs, add English comments (completed 2026-03-06)
-- [x] **Phase 22: cleanup.cron Fix & Docs** - Fix folder filter query for Strapi v5 compatibility, add English comments (completed 2026-03-06)
-- [x] **Phase 23: ad.cron + cron-tasks Docs** - Add English comments to ad.cron.ts and cron-tasks.ts (no bug fixes needed) (completed 2026-03-06)
+- [x] **Phase 20: user.cron Fix & Docs** — Fixed multi-ad deactivation loop, removed unused PaymentUtils import, added English comments (completed 2026-03-06)
+- [x] **Phase 21: backup.cron Fix & Docs** — Fixed Strapi v5 config path, redacted password from logs, added English comments (completed 2026-03-06)
+- [x] **Phase 22: cleanup.cron Fix & Docs** — Fixed folder filter query for Strapi v5 compatibility, added English comments (completed 2026-03-06)
+- [x] **Phase 23: ad.cron + cron-tasks Docs** — Added English comments to ad.cron.ts and cron-tasks.ts (completed 2026-03-06)
+
+Archive: `.planning/milestones/v1.7-ROADMAP.md`
+
+</details>
+
+### 🚧 v1.8 Free Featured Reservation Guarantee (In Progress)
+
+**Milestone Goal:** Guarantee that every user always has 3 free `ad-featured-reservation` records with `price = 0` that are not linked to an active ad. A daily cron (`featuredCron`) scans all users and creates missing slots. Also commits the existing `cron-runner` API.
+
+- [ ] **Phase 24: featuredCron Implementation** — Implement `featured.cron.ts` with `FeaturedCronService.restoreFreeFeaturedReservations()`, register `featuredCron` in `cron-tasks.ts` (daily 2:30 AM Santiago), commit `cron-runner` API files, add English docs throughout.
 
 ## Phase Details
 
-### Phase 20: user.cron Fix & Docs
-**Goal**: `user.cron.ts` correctly deactivates all expired free ads per user (not just the first), has no unused imports, and is fully documented in English
-**Depends on**: Nothing (first phase of milestone)
-**Requirements**: CRON-01, CRON-05, DOC-03
+### Phase 24: featuredCron Implementation
+**Goal**: Every user always has 3 free available featured reservations; `featuredCron` runs daily at 2:30 AM Santiago time; `cron-runner` API is committed and includes `featured-cron` in its name map
+**Depends on**: Nothing (first phase of milestone; cron-runner files already exist untracked)
+**Requirements**: FEAT-01, FEAT-02, FEAT-03, FEAT-04, FEAT-05, RUNNER-01, RUNNER-02, DOC-01, DOC-02
 **Success Criteria** (what must be TRUE):
-  1. The user deactivation loop iterates over all expired ads per user, not short-circuiting after the first
-  2. `PaymentUtils` import no longer appears in `user.cron.ts`
-  3. Each logical block in `user.cron.ts` has an English comment explaining multi-ad flow, user deduplication, reservation restore logic, and the 3-reservation guarantee
+  1. `featured.cron.ts` exists in `apps/strapi/src/cron/` and correctly implements the "free available = price=0 AND (ad=null OR ad.active=false)" logic
+  2. `featuredCron` is registered in `cron-tasks.ts` with `rule: "30 2 * * *"` and `tz: "America/Santiago"`
+  3. `cron-runner` controller and routes files are committed
+  4. The `CRON_NAME_MAP` in `cron-runner.ts` contains `"featured-cron": "featuredCron"`
+  5. `featured.cron.ts` and the `featuredCron` entry in `cron-tasks.ts` have English JSDoc and inline comments
 **Plans**: 1 plan
 
 Plans:
-- [ ] 20-01-PLAN.md — Fix multi-ad deactivation loop, remove PaymentUtils import, add English comments
-
-### Phase 21: backup.cron Fix & Docs
-**Goal**: `backup.cron.ts` reads the database config via the correct Strapi v5 path, never logs the DB password in plaintext, and is fully documented in English
-**Depends on**: Phase 20
-**Requirements**: CRON-02, CRON-03, DOC-05
-**Success Criteria** (what must be TRUE):
-  1. `backup.cron.ts` uses `strapi.config.get('database').connection` (or equivalent correct Strapi v5 path) to access DB config — no hardcoded or incorrect path
-  2. The shell command logged before execution has the password field redacted or omitted entirely
-  3. Each logical block in `backup.cron.ts` has an English comment explaining config path, command construction, compression, rotation, and password-redaction approach
-**Plans**: 1 plan
-
-Plans:
-- [ ] 21-01-PLAN.md — Fix Strapi v5 config path, redact DB password from logs, add English comments
-
-### Phase 22: cleanup.cron Fix & Docs
-**Goal**: `cleanup.cron.ts` correctly retrieves files from the `ads` folder using a Strapi v5-compatible query and is fully documented in English
-**Depends on**: Phase 21
-**Requirements**: CRON-04, DOC-04
-**Success Criteria** (what must be TRUE):
-  1. The folder filter query in `cleanup.cron.ts` returns files from the `ads` folder (does not return an empty set due to `plugin::upload.file` relation incompatibility)
-  2. The orphan detection logic runs against the correctly scoped set of files
-  3. Each logical block in `cleanup.cron.ts` has an English comment explaining the audit-only approach, folder query strategy, and orphan detection logic
-**Plans**: 1 plan
-
-Plans:
-- [ ] 22-01-PLAN.md — Fix folder filter query (two-step folderPath resolution), translate all Spanish text to English
-
-### Phase 23: ad.cron + cron-tasks Docs
-**Goal**: `ad.cron.ts` and `cron-tasks.ts` have English comments so all five cron files are uniformly documented
-**Depends on**: Phase 22
-**Requirements**: DOC-01, DOC-02
-**Success Criteria** (what must be TRUE):
-  1. `cron-tasks.ts` has English comments for each registered job documenting purpose, schedule expression, and timezone
-  2. `ad.cron.ts` has English comments explaining deduplication via `remainings`, deactivation on zero days, and the daily report email
-**Plans**: 1 plan
-
-Plans:
-- [ ] 23-01-PLAN.md — Add English comments to ad.cron.ts and cron-tasks.ts
+- [ ] 24-01-PLAN.md — Implement featured.cron.ts, register featuredCron, commit cron-runner files
 
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 20. user.cron Fix & Docs | 1/1 | Complete   | 2026-03-06 | - |
-| 21. backup.cron Fix & Docs | 1/1 | Complete   | 2026-03-06 | - |
-| 22. cleanup.cron Fix & Docs | 1/1 | Complete   | 2026-03-06 | - |
-| 23. ad.cron + cron-tasks Docs | 1/1 | Complete   | 2026-03-06 | - |
+| 24. featuredCron Implementation | v1.8 | 0/1 | In Progress | - |

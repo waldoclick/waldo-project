@@ -1,5 +1,33 @@
 # Milestones
 
+## v1.8 Free Featured Reservation Guarantee (Started: 2026-03-06)
+
+**Status:** In progress — Phase 24
+
+**Target features:**
+- `featured.cron.ts` — daily cron guaranteeing every user has 3 free available featured reservation slots
+- Commit `cron-runner` API (controller + routes) already authored
+- Register `featuredCron` in `cron-tasks.ts` at 2:30 AM America/Santiago
+
+---
+
+## v1.7 Cron Reliability (Shipped: 2026-03-06)
+
+**Phases completed:** 4 phases (20-23), 4 plans
+**Files changed:** 5 source files modified + 1 new API (cron-runner, untracked)
+**Timeline:** 2026-03-06 (~35 minutes)
+**Requirements:** 10/10 complete ✓
+
+**Key accomplishments:**
+1. **user.cron Bug Fix**: Fixed multi-ad-per-user deactivation loop (`for...of` over all expired ads per user instead of short-circuiting after first); removed unused `PaymentUtils` import; added English JSDoc throughout.
+2. **backup.cron Bug Fix**: Corrected Strapi v5 config path to `strapi.config.get('database') as { connection: any }`; redacted DB password from logged shell command; added English docs.
+3. **cleanup.cron Bug Fix**: Replaced incompatible relation sub-filter with two-step folderPath resolution via `db.query('plugin::upload.folder').findOne`; translated all Spanish comments to English.
+4. **ad.cron + cron-tasks Docs**: Added English JSDoc to `ad.cron.ts` (deduplication via `remainings`, deactivation on 0 days, daily report email) and to all four job entries in `cron-tasks.ts`.
+
+**Archive:** `.planning/milestones/v1.7-ROADMAP.md` | `.planning/milestones/v1.7-REQUIREMENTS.md`
+
+---
+
 ## v1.6 v1.6 (Shipped: 2026-03-06)
 
 **Phases completed:** 2 phases, 3 plans, 0 tasks

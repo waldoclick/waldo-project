@@ -44,29 +44,25 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 
 ### Active
 
-- [ ] `user.cron.ts` bug: multiple expired free ads per user only deactivates the first one
-- [ ] `backup.cron.ts` fails with Strapi v5 config path (`config.database.connection` → correct path)
-- [ ] `backup.cron.ts` logs DB password in plaintext
-- [ ] `cleanup.cron.ts` folder filter never matches (Strapi v5 `plugin::upload.file` folder relation incompatible with name sub-filter)
-- [ ] Unused import (`PaymentUtils`) removed from `user.cron.ts`
-- [ ] All cron files have English comments documenting what each job does, when it runs, and key assumptions
+- [ ] Every user always has 3 free available `ad-featured-reservation` slots (`price=0`, `ad=null` or `ad.active=false`) — `featuredCron` top-up guarantee
+- [ ] `cron-runner` API files committed to repository (currently untracked)
 
-## Current Milestone: v1.7 Cron Reliability
+## Current Milestone: v1.8 Free Featured Reservation Guarantee
 
-**Goal:** Fix the three non-functional cron jobs (userCron, backupCron, cleanupCron) and add English documentation comments throughout all cron files.
+**Goal:** Guarantee that every user always has 3 free `ad-featured-reservation` records with `price = 0` that are not linked to an active ad. A new `featuredCron` scans all users daily at 2:30 AM Santiago and creates missing slots. The existing `cron-runner` API is also committed as part of this milestone.
 
 **Target features:**
-- Fix userCron multi-ad-per-user deactivation bug
-- Fix backupCron Strapi v5 config path + redact password from logs
-- Fix cleanupCron Strapi v5 folder filter query
-- English comments across all 5 cron files (cron-tasks.ts + 4 service files)
+- `featured.cron.ts` — `FeaturedCronService.restoreFreeFeaturedReservations()` with correct free-available query
+- `featuredCron` registered in `cron-tasks.ts` at 2:30 AM America/Santiago
+- `cron-runner` API committed (controller + routes, already authored)
 
 ## Previous State
 
-Shipped **v1.6 Website API Optimization** on 2026-03-06.
-- **Page double-fetch fixes**: `preguntas-frecuentes.vue` reduced from 2 HTTP calls to 1 (single `useAsyncData`); `mis-anuncios.vue` reduced from 6 calls to 2 via new `GET /api/ads/me/counts` Strapi aggregate endpoint.
-- **Store cache guards**: 30-min timestamp-based cache guard added to `packs.store.ts`, `conditions.store.ts`, and `regions.store.ts`; `packs.store.ts` also gained localStorage persistence to survive page refresh.
-- **Component cleanup**: `FormCreateThree.vue` no longer calls `loadCommunes()` on mount — commune data from the `communes.client.ts` plugin is used directly.
+Shipped **v1.7 Cron Reliability** on 2026-03-06.
+- **user.cron Bug Fix**: Fixed multi-ad-per-user deactivation loop; removed unused `PaymentUtils` import; added English JSDoc throughout.
+- **backup.cron Bug Fix**: Corrected Strapi v5 config path; redacted DB password from logged shell command; added English docs.
+- **cleanup.cron Bug Fix**: Replaced incompatible relation sub-filter with two-step folderPath resolution via `db.query('plugin::upload.folder').findOne`; translated all Spanish to English.
+- **ad.cron + cron-tasks Docs**: English JSDoc on all job entries and service methods.
 
 ## Context
 
@@ -111,6 +107,9 @@ Shipped **v1.6 Website API Optimization** on 2026-03-06.
   | Aggregate `GET /ads/me/counts` endpoint vs. 5 parallel client calls | Server-side `Promise.all` with 5 `entityService.count()` calls; client sees 1 HTTP request instead of 5 — v1.6 | ✓ Good |
   | Cache guard: array-length + timestamp (not timestamp-only) | Timestamp-only guard produces false cache hit on empty state after TTL reset; length check ensures data actually exists — v1.6 | ✓ Good |
   | `packs.store.ts` gained localStorage `persist` | Without persist the cache guard is useless on page refresh (store always empty); aligns packs with conditions/regions stores — v1.6 | ✓ Good |
+  | `featuredCron` "free available" = price=0 AND (ad=null OR ad.active=false) | An occupied slot must mean the ad is currently active; an inactive ad's slot is reclaimable — v1.8 | Pending |
+  | `featuredCron` creates slots with no `total_days` | Featured reservations have no expiry concept; omitting total_days matches schema intent (field is optional) — v1.8 | Pending |
+  | `featuredCron` schedule at 2:30 AM (not 2:00 AM) | Slots between existing userCron (2:00 AM) and backupCron (3:00 AM); 30-min gap prevents overlap — v1.8 | Pending |
 
 ## Future Requirements
 
@@ -127,4 +126,4 @@ Shipped **v1.6 Website API Optimization** on 2026-03-06.
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-06 after v1.7 milestone started*
+*Last updated: 2026-03-06 after v1.8 milestone started*
