@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: URL Localization
 status: executing
-stopped_at: Completed 15-02-PLAN.md
-last_updated: "2026-03-06T03:30:25.813Z"
-last_activity: 2026-03-06 — Completed 15-02 (update 17 components + router plugin to English router.push paths; rename editar.vue → edit.vue)
+stopped_at: Completed 15-03-PLAN.md
+last_updated: "2026-03-06T03:33:43Z"
+last_activity: 2026-03-06 — Completed 15-03 (add routeRules 301 redirects for all Spanish→English URLs; nuxt typecheck passes clean)
 progress:
   total_phases: 4
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 9
-  completed_plans: 8
+  completed_plans: 9
 ---
 
 # Project State
@@ -20,17 +20,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-05)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.4 URL Localization — Phase 15 plan 02 complete
+**Current focus:** v1.4 URL Localization — Phase 15 complete (all 3 plans done)
 
 ## Current Position
 
 Phase: 15 — Links, Redirects & Build Verification
-Plan: 02 (complete)
-Status: In Progress
-Last activity: 2026-03-06 — Completed 15-02 (update 17 components + router plugin to English router.push paths; rename editar.vue → edit.vue)
+Plan: 03 (complete)
+Status: Phase Complete
+Last activity: 2026-03-06 — Completed 15-03 (add routeRules 301 redirects for all Spanish→English URLs; nuxt typecheck passes clean)
 
 ```
-v1.4 Progress: [██████████] 95% (35/37 plans completed)
+v1.4 Progress: [██████████] 100% (37/37 plans completed)
 ```
 
 ## Accumulated Context
@@ -51,6 +51,7 @@ Key patterns established (carry forward):
 - [Phase 15-links-redirects-build-verification]: Task 2 components already updated in prior session 8a95dfd; only MenuDefault.vue required new changes in this plan
 - [Phase 15-links-redirects-build-verification plan 02]: External public website hrefs (websiteUrl + /anuncios/[slug]) exempt from localization — only dashboard router.push/NuxtLink :to paths in scope
 - [Phase 15-links-redirects-build-verification plan 02]: Used git mv for faqs/packs editar.vue→edit.vue to preserve history while creating /edit Nuxt file-based route
+- [Phase 15-links-redirects-build-verification plan 03]: Used explicit named routeRules redirects only (no wildcard :splat) — covers all known routes, avoids TS incompatibility
 
 ### v1.4-Specific Context
 
@@ -86,9 +87,10 @@ None.
 | 14 | 01 | 2 min | 2 | 4 |
 | 15 | 01 | — | — | — |
 | 15 | 02 | 14 min | 3 | 24 |
+| 15 | 03 | 2 min | 2 | 1 |
 
 ## Session Continuity
 
-Last session: 2026-03-06T03:30:20.874Z
-Stopped at: Completed 15-02-PLAN.md
+Last session: 2026-03-06T03:33:43Z
+Stopped at: Completed 15-03-PLAN.md
 Resume file: None

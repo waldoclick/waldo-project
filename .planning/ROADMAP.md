@@ -49,7 +49,7 @@ Archive: `.planning/milestones/v1.3-ROADMAP.md`
 - [x] **Phase 12: Ads Migration** — Rename `anuncios` directory and all 6 sub-status pages to English equivalents (completed 2026-03-06)
 - [x] **Phase 13: Catalog Segments Migration** — Rename `categorias`, `comunas`, `condiciones`, `ordenes`, `regiones`, `usuarios` to English (completed 2026-03-06)
 - [x] **Phase 14: Account, Featured & Reservations Migration** — Rename `cuenta`, `destacados`, `reservas` with their non-standard sub-routing patterns (completed 2026-03-06)
-- [ ] **Phase 15: Links, Redirects & Build Verification** — Update all internal route references, add Spanish→English redirects, verify `nuxt typecheck`
+- [x] **Phase 15: Links, Redirects & Build Verification** — Update all internal route references, add Spanish→English redirects, verify `nuxt typecheck` (completed 2026-03-06)
 
 ## Phase Details
 
@@ -118,4 +118,4 @@ Plans:
 | 12. Ads Migration | 1/1 | Complete    | 2026-03-06 |
 | 13. Catalog Segments Migration | 3/3 | Complete    | 2026-03-06 |
 | 14. Account, Featured & Reservations Migration | 2/2 | Complete    | 2026-03-06 |
-| 15. Links, Redirects & Build Verification | 2/3 | In Progress|  |
+| 15. Links, Redirects & Build Verification | 3/3 | Complete   | 2026-03-06 |

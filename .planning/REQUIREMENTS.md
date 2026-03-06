@@ -22,13 +22,13 @@
 
 ### Redirects
 
-- [ ] **REDIR-01**: All old Spanish URLs redirect to their English equivalents (e.g., `/anuncios/pendientes` → `/ads/pending`)
+- [x] **REDIR-01**: All old Spanish URLs redirect to their English equivalents (e.g., `/anuncios/pendientes` → `/ads/pending`)
 
 ### Internal Links
 
 - [x] **LINK-01**: All navigation menu links point to English URLs
 - [x] **LINK-02**: All component-internal `navigateTo` / `<NuxtLink>` calls use English URLs
-- [ ] **LINK-03**: Dashboard builds with `nuxt typecheck` passing after changes
+- [x] **LINK-03**: Dashboard builds with `nuxt typecheck` passing after changes
 
 ## Future Requirements
 
@@ -68,10 +68,10 @@
 | URL-09 | Phase 13 | Complete |
 | URL-10 | Phase 14 | Complete |
 | URL-11 | Phase 13 | Complete |
-| REDIR-01 | Phase 15 | Pending |
+| REDIR-01 | Phase 15 | Complete |
 | LINK-01 | Phase 15 | Complete |
 | LINK-02 | Phase 15 | Complete |
-| LINK-03 | Phase 15 | Pending |
+| LINK-03 | Phase 15 | Complete |
 
 **Coverage:**
 - v1.4 requirements: 15 total
