@@ -34,10 +34,10 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 
 ### Active
 
-- [ ] Composables (`useRut`, `useSanitize`, `useSlugify`, `useImageProxy`) tienen tests unitarios con Vitest
-- [ ] El componente `AdsTable.vue` tiene tests de comportamiento (renderizado, filtros, paginación)
-- [ ] Los middlewares `guard.global.ts` y `dev.global.ts` tienen tests de integración
-- [ ] Cobertura mínima configurada (>70% en composables y stores)
+- [ ] Al rechazar un aviso, el AdReservation y FeaturedReservation asociados quedan disponibles para reuso
+- [ ] Al banear un aviso, el AdReservation y FeaturedReservation asociados quedan disponibles para reuso
+- [ ] El email de rechazo notifica al usuario que sus créditos fueron devueltos
+- [ ] El email de baneo notifica al usuario que sus créditos fueron devueltos
 
 ### Out of Scope
 
@@ -48,19 +48,22 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - Migración de URLs del sitio web público — scope solo dashboard
 - URL aliases permanentes (mantener ambas funcionando) — los redirects 301 son suficientes
 
-## Current State
+## Current Milestone: v1.5 Ad Credit Refund
+
+**Goal:** When an ad is rejected or banned in Strapi, return the ad reservation credit and featured reservation credit to the user, and notify them by email that their credits were refunded.
+
+**Target features:**
+- Credit refund on reject endpoint (ad + featured reservations)
+- Credit refund on ban endpoint (ad + featured reservations)
+- Email notification updated to inform user that credits were returned
+
+## Previous State
 
 Shipped **v1.4 URL Localization** on 2026-03-06.
 - **Route rename**: All 11 Spanish page directories renamed to English equivalents (94 files, +3,621/-243 lines).
 - **Components**: All 22 navigation/data components updated to English `router.push`/`NuxtLink` paths.
 - **Redirects**: `nuxt.config.ts` `routeRules` covers all legacy Spanish URL prefixes with 301 redirects.
 - **Build**: `nuxt typecheck` passes with zero errors.
-
-### Next Milestone Goals
-
-- Dedicated testing milestone: unit tests for composables, behavior tests for `AdsTable`, integration tests for middlewares
-- Optional: `Reservations*/Featured*` consolidation (deferred in v1.1 pending aligned fetch strategies)
-- Optional: `ChartSales.vue` date-range filter support
 
 ## Context
 
@@ -115,4 +118,4 @@ Shipped **v1.4 URL Localization** on 2026-03-06.
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-06 after v1.4 milestone*
+*Last updated: 2026-03-06 after v1.5 milestone start*
