@@ -63,7 +63,7 @@ Archive: `.planning/milestones/v1.4-ROADMAP.md`
 ### Phases
 
 - [x] **Phase 16: Credit Refund Logic** — Wire credit return into `rejectAd()` and `bannedAd()` in Strapi (completed 2026-03-06)
-- [ ] **Phase 17: Email Notification Update** — Update `ad-rejected.mjml` and `ad-banned.mjml` to include conditional credit-returned messaging
+- [x] **Phase 17: Email Notification Update** — Update `ad-rejected.mjml` and `ad-banned.mjml` to include conditional credit-returned messaging (completed 2026-03-06)
 
 ### Phase Details
 
@@ -102,4 +102,4 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 16. Credit Refund Logic | 1/1 | Complete    | 2026-03-06 |
-| 17. Email Notification Update | 0/1 | Not started | — |
+| 17. Email Notification Update | 1/1 | Complete   | 2026-03-06 |

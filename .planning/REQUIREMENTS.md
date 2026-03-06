@@ -15,10 +15,10 @@
 
 ### Email Notification
 
-- [ ] **EMAIL-01**: El email de rechazo incluye mensaje indicando que el crédito de aviso fue devuelto (condicional: solo si el aviso tenía `ad_reservation`)
-- [ ] **EMAIL-02**: El email de rechazo incluye mensaje indicando que el crédito de destacado fue devuelto (condicional: solo si el aviso tenía `ad_featured_reservation`)
-- [ ] **EMAIL-03**: El email de baneo incluye mensaje indicando que el crédito de aviso fue devuelto (condicional: solo si el aviso tenía `ad_reservation`)
-- [ ] **EMAIL-04**: El email de baneo incluye mensaje indicando que el crédito de destacado fue devuelto (condicional: solo si el aviso tenía `ad_featured_reservation`)
+- [x] **EMAIL-01**: El email de rechazo incluye mensaje indicando que el crédito de aviso fue devuelto (condicional: solo si el aviso tenía `ad_reservation`)
+- [x] **EMAIL-02**: El email de rechazo incluye mensaje indicando que el crédito de destacado fue devuelto (condicional: solo si el aviso tenía `ad_featured_reservation`)
+- [x] **EMAIL-03**: El email de baneo incluye mensaje indicando que el crédito de aviso fue devuelto (condicional: solo si el aviso tenía `ad_reservation`)
+- [x] **EMAIL-04**: El email de baneo incluye mensaje indicando que el crédito de destacado fue devuelto (condicional: solo si el aviso tenía `ad_featured_reservation`)
 
 ## Future Requirements
 
@@ -50,10 +50,10 @@
 | REFUND-02 | Phase 16 | Complete |
 | REFUND-03 | Phase 16 | Complete |
 | REFUND-04 | Phase 16 | Complete |
-| EMAIL-01 | Phase 17 | Pending |
-| EMAIL-02 | Phase 17 | Pending |
-| EMAIL-03 | Phase 17 | Pending |
-| EMAIL-04 | Phase 17 | Pending |
+| EMAIL-01 | Phase 17 | Complete |
+| EMAIL-02 | Phase 17 | Complete |
+| EMAIL-03 | Phase 17 | Complete |
+| EMAIL-04 | Phase 17 | Complete |
 
 **Coverage:**
 - v1.5 requirements: 8 total
