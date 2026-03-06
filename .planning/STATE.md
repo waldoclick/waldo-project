@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: URL Localization
-status: executing
-stopped_at: Phase 15 complete — milestone v1.4 shipped
-last_updated: "2026-03-06T05:00:00Z"
-last_activity: 2026-03-06 — Restored Spanish breadcrumb labels in 25 page files (URLs stay English; labels were incorrectly translated); nuxt typecheck exit 0 confirmed
+status: complete
+stopped_at: Milestone v1.4 archived and tagged
+last_updated: "2026-03-06T19:59:45.730Z"
+last_activity: 2026-03-06 — Archived v1.4 URL Localization milestone; all 15 phases complete across v1.1–v1.4
 progress:
   total_phases: 4
   completed_phases: 4
@@ -17,10 +17,10 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-05)
+See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.4 URL Localization — SHIPPED. All phases 12-15 complete.
+**Current focus:** Planning next milestone. Run `/gsd-new-milestone` to start.
 
 ## Current Position
 

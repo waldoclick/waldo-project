@@ -28,26 +28,16 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ ChartSales obtiene datos agregados del servidor, no pagina todos los órdenes en cliente — v1.1
 - ✓ Eliminar double-fetch en todos los componentes non-ads del dashboard que tienen `onMounted` + `watch({ immediate: true })` coexistiendo — v1.2
 - ✓ Utilidades de fecha, precio y string centralizadas y estrictamente tipadas — v1.3
-
-## Current Milestone: v1.4 URL Localization
-
-**Goal:** Migrate all Spanish URL segments in the dashboard to English equivalents — no functional changes, pure route rename.
-
-**Target features:**
-- Rename all Spanish page directories to English (`anuncios` → `ads`, `categorias` → `categories`, etc.)
-- Update all route references in components, navigation, and links
-- Add redirects from old Spanish URLs to new English URLs (for bookmarks/external links)
-
-## Current State
-
-Shipped **v1.3 Utility Extraction** on 2026-03-06.
-- **Utils**: `date.ts`, `price.ts`, `string.ts` created in `apps/dashboard/app/utils/`.
-- **Refactor**: 50+ files updated to remove inline formatting logic.
-- **Quality**: 100% type safety and unit test coverage for new utilities.
+- ✓ Todos los segmentos de URL del dashboard están en inglés — v1.4
+- ✓ Las URLs españolas antiguas redirigen a sus equivalentes en inglés (301) — v1.4
+- ✓ Todos los links de navegación y referencias internas usan URLs en inglés — v1.4
 
 ### Active
 
-- [ ] All dashboard URL segments are in English
+- [ ] Composables (`useRut`, `useSanitize`, `useSlugify`, `useImageProxy`) tienen tests unitarios con Vitest
+- [ ] El componente `AdsTable.vue` tiene tests de comportamiento (renderizado, filtros, paginación)
+- [ ] Los middlewares `guard.global.ts` y `dev.global.ts` tienen tests de integración
+- [ ] Cobertura mínima configurada (>70% en composables y stores)
 
 ### Out of Scope
 
@@ -55,6 +45,22 @@ Shipped **v1.3 Utility Extraction** on 2026-03-06.
 - Integración de una segunda pasarela concreta — el trabajo actual es solo la abstracción
 - Cambios en Website o Strapi para features de usuario — dashboard-first approach
 - Internacionalización (i18n) — módulo comentado, deferido conscientemente
+- Migración de URLs del sitio web público — scope solo dashboard
+- URL aliases permanentes (mantener ambas funcionando) — los redirects 301 son suficientes
+
+## Current State
+
+Shipped **v1.4 URL Localization** on 2026-03-06.
+- **Route rename**: All 11 Spanish page directories renamed to English equivalents (94 files, +3,621/-243 lines).
+- **Components**: All 22 navigation/data components updated to English `router.push`/`NuxtLink` paths.
+- **Redirects**: `nuxt.config.ts` `routeRules` covers all legacy Spanish URL prefixes with 301 redirects.
+- **Build**: `nuxt typecheck` passes with zero errors.
+
+### Next Milestone Goals
+
+- Dedicated testing milestone: unit tests for composables, behavior tests for `AdsTable`, integration tests for middlewares
+- Optional: `Reservations*/Featured*` consolidation (deferred in v1.1 pending aligned fetch strategies)
+- Optional: `ChartSales.vue` date-range filter support
 
 ## Context
 
@@ -64,7 +70,8 @@ Shipped **v1.3 Utility Extraction** on 2026-03-06.
 - El sistema valida disponibilidad de créditos según PackType y FeaturedType antes de procesar el pago
 - Deploy independiente por app vía Laravel Forge con git sparse-checkout
 - Dashboard (apps/dashboard): Nuxt 4, Pinia, @nuxtjs/strapi v2, SCSS custom; ~65 componentes, 3 stores, 14 plugins
-- v1.3 shipped: `date.ts`, `price.ts`, `string.ts` utilities created and fully integrated.
+- v1.3 shipped: `date.ts`, `price.ts`, `string.ts` utilities created and fully integrated
+- v1.4 shipped: all dashboard routes in English, 301 redirects for all legacy Spanish URLs
 
 ## Constraints
 
@@ -88,6 +95,10 @@ Shipped **v1.3 Utility Extraction** on 2026-03-06.
 | `typeCheck: true` habilitado en v1.1 | Todo trabajo futuro en dashboard tiene type checking en build | ✓ Good |
 | Strict null handling in utilities | Ensures `undefined`/`null` never crash the UI, returning fallback strings | ✓ Good |
 | Consolidated utility files | Reduces code duplication and ensures consistent formatting across the app | ✓ Good |
+| `git mv` para renombrar directorios y archivos de rutas | Preserva historial de Git en renombres de Nuxt page files; dos commits: rename primero, refs después — v1.4 | ✓ Good |
+| Labels de UI en español se preservan (solo rutas en inglés) | Las breadcrumbs y labels son contenido visible por usuario — no se traducen en esta migración — v1.4 | ✓ Good |
+| `routeRules` explícitas (sin wildcards `:splat`) | Rutas explícitas cubren el 100% sin incompatibilidades de TypeScript/build — v1.4 | ✓ Good |
+| Links externos al sitio web público exentos de localización | Solo rutas del dashboard en scope; `websiteUrl + /anuncios/[slug]` son URLs del sitio público — v1.4 | ✓ Good |
 
 ## Future Requirements
 
@@ -104,4 +115,4 @@ Shipped **v1.3 Utility Extraction** on 2026-03-06.
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-05 after v1.4 milestone start*
+*Last updated: 2026-03-06 after v1.4 milestone*
