@@ -8,35 +8,36 @@ export interface ICronjobResult {
 
 export class CleanupService {
   /**
-   * Busca imágenes huérfanas en la carpeta 'ads' de Cloudinary
-   * que no estén asociadas a ningún anuncio en la base de datos
+   * Finds orphan images in the 'ads' folder in Strapi/Cloudinary
+   * that are not associated with any ad in the database.
+   *
+   * Audit-only: logs orphans and returns the result — never auto-deletes.
+   * Deletion must be triggered manually via deleteOrphanImages().
    */
   async findOrphanImages(): Promise<ICronjobResult> {
     try {
-      logger.info("=== INICIANDO BÚSQUEDA DE IMÁGENES HUÉRFANAS ===");
+      logger.info("=== ORPHAN IMAGE SEARCH STARTED ===");
 
-      // Verificar si strapi está definido
+      // Verify that strapi is defined in the global scope
       if (typeof strapi === "undefined") {
         throw new Error("strapi is not defined");
       }
 
-      // 1. Obtener todas las imágenes de la carpeta 'ads' desde Strapi/Cloudinary
+      // 1. Fetch all images in the 'ads' folder from Strapi/Cloudinary
       const strapiImages = await this.getStrapiImages();
-      logger.info(
-        `Encontradas ${strapiImages.length} imágenes en carpeta 'ads'`
-      );
+      logger.info(`Found ${strapiImages.length} images in the 'ads' folder`);
 
-      // 2. Obtener todas las imágenes asociadas a anuncios desde la base de datos
+      // 2. Fetch all image URLs referenced by active ads in the database
       const dbImages = await this.getDatabaseImages();
-      logger.info(`Encontradas ${dbImages.length} imágenes en base de datos`);
+      logger.info(`Found ${dbImages.length} images referenced in the database`);
 
-      // 3. Encontrar imágenes huérfanas
+      // 3. Compute the set difference: images in Strapi but not referenced by any ad
       const orphanImages = this.findOrphans(strapiImages, dbImages);
-      logger.info(`Encontradas ${orphanImages.length} imágenes huérfanas`);
+      logger.info(`Found ${orphanImages.length} orphan images`);
 
-      // 4. Log de imágenes huérfanas encontradas
+      // 4. Log detected orphans for manual review
       if (orphanImages.length > 0) {
-        logger.warn("Imágenes huérfanas encontradas:", {
+        logger.warn("Orphan images detected:", {
           count: orphanImages.length,
           images: orphanImages.map((img) => ({
             id: img.id,
@@ -58,19 +59,42 @@ export class CleanupService {
   }
 
   /**
-   * Obtiene todas las imágenes de la carpeta 'ads' desde Strapi
+   * Fetches all upload files that belong to the 'ads' folder in Strapi.
+   *
+   * Why two steps?
+   * In Strapi v5, `entityService.findMany('plugin::upload.file')` does NOT
+   * support relation-traversal filters (e.g. `folder: { name: 'ads' }`).
+   * Passing such a filter silently returns an empty array.
+   *
+   * The correct approach is to filter by the `folderPath` string attribute,
+   * which stores the folder's numeric path (e.g. "/1"). Since we know only
+   * the folder name ("ads"), we must first resolve the folder's path string
+   * via `db.query`, then use that path value in the file filter.
    */
   private async getStrapiImages(): Promise<any[]> {
     try {
-      // Usar el servicio de upload de Strapi para obtener imágenes
+      // Step 1: Resolve the 'ads' folder to get its numeric path string.
+      // `folderPath` on upload files contains the folder's path (e.g. "/1"),
+      // not the human-readable name — so we must look the folder up first.
+      const adsFolder = await strapi.db
+        .query("plugin::upload.folder")
+        .findOne({ where: { name: "ads" } });
+
+      // If the 'ads' folder does not exist yet (no ads have been uploaded),
+      // there are no images to check — return an empty set safely.
+      if (!adsFolder) {
+        logger.warn(
+          "Folder 'ads' not found in Strapi — skipping orphan detection"
+        );
+        return [];
+      }
+
+      // Step 2: Filter upload files by the resolved folderPath.
+      // This is the supported Strapi v5 pattern for scoping files to a folder.
       const images = await strapi.entityService.findMany(
         "plugin::upload.file",
         {
-          filters: {
-            folder: {
-              name: "ads", // Filtrar por carpeta 'ads'
-            },
-          },
+          filters: { folderPath: adsFolder.path },
           pagination: { pageSize: -1 },
         }
       );
@@ -83,11 +107,15 @@ export class CleanupService {
   }
 
   /**
-   * Obtiene todas las imágenes asociadas a anuncios desde la base de datos
+   * Fetches all image URLs referenced by ads in the database.
+   *
+   * This builds the "known good" set: any file URL that appears here
+   * is actively in use and must not be treated as an orphan.
+   * We populate the gallery relation on every ad to collect all referenced URLs.
    */
   private async getDatabaseImages(): Promise<string[]> {
     try {
-      // Obtener todos los anuncios con sus galerías
+      // Fetch all ads with their gallery relations populated
       const ads = (await strapi.entityService.findMany("api::ad.ad", {
         populate: {
           gallery: true,
@@ -97,7 +125,7 @@ export class CleanupService {
 
       const imageUrls: string[] = [];
 
-      // Extraer URLs de las imágenes de la galería
+      // Extract all image URLs from each ad's gallery
       ads.forEach((ad) => {
         if (ad.gallery && Array.isArray(ad.gallery)) {
           ad.gallery.forEach((image: any) => {
@@ -119,13 +147,18 @@ export class CleanupService {
   }
 
   /**
-   * Encuentra imágenes que están en Strapi/Cloudinary pero no en la base de datos
+   * Computes orphan images using set-difference logic.
+   *
+   * An image is an orphan if it exists in Strapi (uploaded to the 'ads' folder)
+   * but its URL does not appear in the set of URLs referenced by any active ad.
+   * Both `url` and `secure_url` are checked to handle HTTP/HTTPS variants.
    */
   private findOrphans(strapiImages: any[], dbImages: string[]): any[] {
     const dbImageSet = new Set(dbImages);
 
     return strapiImages.filter((strapiImg) => {
-      // Verificar si la imagen de Strapi está en la base de datos
+      // An image is considered "in use" if either its url or secure_url
+      // appears in the set of URLs referenced by at least one ad
       const isInDatabase =
         dbImageSet.has(strapiImg.url) || dbImageSet.has(strapiImg.secure_url);
 
@@ -134,24 +167,27 @@ export class CleanupService {
   }
 
   /**
-   * Elimina imágenes huérfanas usando Strapi (OPCIONAL - usar con precaución)
+   * Deletes the given orphan images via the Strapi entity service.
+   *
+   * NOTE: This method exists for manual/administrative use only.
+   * It is intentionally NOT called by the cron job — deletion is a
+   * destructive operation and must be triggered explicitly after reviewing
+   * the orphan list produced by findOrphanImages().
    */
   async deleteOrphanImages(orphanImages: any[]): Promise<ICronjobResult> {
     try {
-      logger.info(
-        `=== INICIANDO ELIMINACIÓN DE ${orphanImages.length} IMÁGENES HUÉRFANAS ===`
-      );
+      logger.info(`=== DELETING ${orphanImages.length} ORPHAN IMAGES ===`);
 
       const deletedImages = [];
       const failedDeletions = [];
 
       for (const image of orphanImages) {
         try {
-          // Usar Strapi para eliminar la imagen
+          // Delete the image file record via Strapi entity service
           await strapi.entityService.delete("plugin::upload.file", image.id);
 
           deletedImages.push(image.id);
-          logger.info(`Imagen eliminada: ${image.id} - ${image.name}`);
+          logger.info(`Image deleted: ${image.id} - ${image.name}`);
         } catch (error) {
           failedDeletions.push({
             id: image.id,
@@ -159,13 +195,13 @@ export class CleanupService {
             error: error.message,
           });
           logger.error(
-            `Error eliminando imagen ${image.id} - ${image.name}:`,
+            `Error deleting image ${image.id} - ${image.name}:`,
             error
           );
         }
       }
 
-      logger.info(`=== ELIMINACIÓN COMPLETADA ===`, {
+      logger.info(`=== DELETION COMPLETE ===`, {
         deleted: deletedImages.length,
         failed: failedDeletions.length,
         deletedImages,
