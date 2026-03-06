@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from "vue";
+import { ref, watch } from "vue";
 import AccountAnnouncements from "@/components/AccountAnnouncements.vue";
 import type { Ad } from "@/types/ad";
 import { useUserStore } from "@/stores/user.store";
@@ -55,39 +55,9 @@ const loadAds = async () => {
       ads.value = response.data as unknown as Ad[]; // Asegúrate de que esta línea esté correctamente escrita
       const total = response.meta.pagination.total;
       pagination.value.total = total;
-
-      // Actualizar el count del tab correspondiente
-      const tabToUpdate = tabs.value.find(
-        (tab) => tab.value === currentFilter.value,
-      );
-      if (tabToUpdate) {
-        tabToUpdate.count = total;
-      }
     }
   } catch (error) {
     console.error("Error loading ads:", error);
-  } finally {
-    isLoading.value = false;
-  }
-};
-
-const loadTabCounts = async () => {
-  isLoading.value = true;
-
-  try {
-    const promises = tabs.value.map(async (tab) => {
-      const response = await userStore.loadUserAds(
-        { status: tab.value },
-        { page: 1, pageSize: 10 }, // Asegurar paginación básica
-        ["createdAt:desc"] as never[], // Pasar el sort como un parámetro separado
-      );
-      if (response) {
-        tab.count = response.meta.pagination.total; // Actualizar el count del tab
-      }
-    });
-    await Promise.all(promises); // Esperar a que todas las promesas se resuelvan
-  } catch (error) {
-    console.error("Error loading tab counts:", error);
   } finally {
     isLoading.value = false;
   }
@@ -108,7 +78,11 @@ watch([currentFilter, currentPage], () => {
 });
 
 useAsyncData(async () => {
-  await loadTabCounts(); // Cargar los totales de los tabs al iniciar
+  const counts = await userStore.loadUserAdCounts();
+  // Populate all tab counts at once from the single response
+  for (const tab of tabs.value) {
+    tab.count = counts[tab.value] ?? 0;
+  }
   await loadAds(); // Cargar los anuncios del filtro actual
 });
 
