@@ -16,6 +16,8 @@ import { onMounted, watch } from "vue";
 import { useAdAnalytics } from "~/composables/useAdAnalytics";
 import { usePacksStore } from "@/stores/packs.store";
 import { useAdStore } from "@/stores/ad.store";
+import { useMeStore } from "@/stores/me.store";
+import { useCategoriesStore } from "@/stores/categories.store";
 
 // Analytics
 const adAnalytics = useAdAnalytics();
@@ -23,17 +25,25 @@ const packsStore = usePacksStore();
 const user = useStrapiUser();
 const adStore = useAdStore();
 
-// Inicializar analytics y enviar el primer evento view_item
-onMounted(async () => {
-  // Cargar packs si es necesario
-  if (packsStore.packs.length === 0) {
-    await packsStore.loadPacks();
-  }
+const meStore = useMeStore();
+const categoriesStore = useCategoriesStore();
 
-  // Crear lista de items para el evento view_item
+// Pre-load creation flow data for SSR — categories, packs, and me data
+// must be available before components mount to avoid client-side flash
+await useAsyncData("anunciar-init", async () => {
+  await Promise.all([
+    meStore.loadMe(),
+    categoriesStore.loadCategories(),
+    packsStore.loadPacks(),
+  ]);
+});
+
+// onMounted: analytics-only — GA4 view_item_list event must fire client-side
+onMounted(() => {
+  // Build analytics item list from pre-loaded packs store
   const analyticsItems = [];
 
-  // Añadir packs pagados
+  // Add paid packs
   for (const pack of packsStore.packs) {
     analyticsItems.push({
       item_id: pack.id,
@@ -44,7 +54,7 @@ onMounted(async () => {
     });
   }
 
-  // Añadir opción de pack gratuito si está disponible
+  // Add free ad option if available
   if (user.value && user.value.freeAdReservationsCount > 0) {
     analyticsItems.push({
       item_id: "free",
@@ -55,7 +65,7 @@ onMounted(async () => {
     });
   }
 
-  // Añadir opción de pack de pago (reserva) si está disponible
+  // Add paid reservation option if available
   if (user.value && user.value.paidAdReservationsCount > 0) {
     analyticsItems.push({
       item_id: "paid",
@@ -66,7 +76,7 @@ onMounted(async () => {
     });
   }
 
-  // Añadir opciones de destacado
+  // Add featured options
   if (user.value && user.value.adFeaturedReservationsCount > 0) {
     analyticsItems.push({
       item_id: "featured_free",
@@ -94,7 +104,7 @@ onMounted(async () => {
     },
   );
 
-  // Enviar el evento view_item
+  // Fire view_item_list analytics event
   adAnalytics.viewItemList(analyticsItems);
 });
 

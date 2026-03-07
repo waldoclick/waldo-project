@@ -70,14 +70,12 @@ const isProfileComplete = ref(false);
 
 const maxStep = 5;
 
-// Leer el parámetro step de la URL cuando se monte el componente
+// onMounted: UI-only — reads URL query param to set wizard step; meStore pre-loaded by parent page
 onMounted(async () => {
-  // Cargar datos del usuario actualizados
-  await meStore.loadMe();
-  // Verificar si el perfil está completo
+  // Verify profile completeness from pre-loaded me data
   isProfileComplete.value = await meStore.isProfileComplete();
 
-  // Leer el parámetro step de la URL
+  // Read step param from URL
   const stepFromUrl = Number.parseInt(route.query.step, 10);
   if (
     !Number.isNaN(stepFromUrl) &&
