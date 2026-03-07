@@ -102,7 +102,7 @@ const config = useRuntimeConfig();
 $setSEO({
   title: "Mapa del Sitio",
   description:
-    "Explora la estructura de nuestro sitio y encuentra fácilmente lo que buscas en Waldo.click.",
+    "Navega fácilmente por Waldo.click®. Encuentra anuncios de activos industriales, categorías, comunas y todas las secciones del sitio.",
   imageUrl: `${config.public.baseUrl}/share.jpg`,
 });
 
@@ -111,7 +111,7 @@ $setStructuredData({
   "@type": "WebPage",
   name: "Mapa del Sitio",
   description:
-    "Explora la estructura de nuestro sitio y encuentra fácilmente lo que buscas en Waldo.click.",
+    "Navega fácilmente por Waldo.click®. Encuentra anuncios de activos industriales, categorías, comunas y todas las secciones del sitio.",
   url: `${config.public.baseUrl}/sitemap`,
 });
 </script>
