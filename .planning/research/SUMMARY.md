@@ -1,156 +1,179 @@
 # Project Research Summary
 
-**Project:** Payment Gateway Abstraction
-**Domain:** Backend service refactor — payment infrastructure
-**Researched:** 2026-03-03
-**Confidence:** HIGH
+**Project:** Waldo — `apps/website` Meta Copy Audit (v1.16)
+**Domain:** SEO copy audit — classified ads platform (industrial equipment, Chile)
+**Researched:** 2026-03-07
+**Confidence:** HIGH (all findings from direct source inspection)
+
+---
 
 ## Executive Summary
 
-This project is a structural refactor to introduce a gateway-agnostic abstraction over Waldo's existing Transbank payment integration. The codebase already has two payment implementations (`TransbankService` for one-time payments, `FlowService` for Pro subscriptions), but the one-time payment domain (`AdService`, `PackService`) directly imports and calls `TransbankService` with no indirection. The task is not to add functionality — it is to insert a thin adapter layer so that a second one-time payment gateway can be swapped in via environment variable, with zero behavior change to the current Transbank flow.
+v1.16 is a **copy-only milestone** — zero new packages, zero architectural changes. The work is to audit and rewrite all `<title>` and `<meta description>` strings across 31 pages of `apps/website`. The delivery mechanism is already wired: a `$setSEO({ title, description })` plugin call on every page feeds `useSeoMeta`, which `@nuxtjs/seo`'s `nuxt-seo-utils` sub-module then wraps with a `titleTemplate` of `%s | Waldo.click®`. The final browser title is always `{title param} | Waldo.click®`. Writers must never include the suffix in the title string — the template adds it automatically.
 
-The recommended approach is a plain TypeScript service module at `src/services/payment-gateway/`, following the exact same pattern as the existing 9 service directories. No Strapi plugin system, no external libraries, no new dependencies. The deliverable is: one interface file, one `TransbankAdapter` wrapping the existing service unchanged, one registry reading `PAYMENT_GATEWAY` env var, and import swaps in two service files. The entire implementation is roughly 100 lines of TypeScript.
+There is **one critical bug already in production**: two high-traffic indexed public pages (`anuncios/[slug].vue` and `[slug].vue`) manually embed `| Waldo.click` in their title strings, producing doubled suffixes in SERP snippets (e.g., `…| Waldo.click | Waldo.click®`). Both pages also carry dynamic ad counters in their descriptions that reflect only the current page slice (up to 12 items), not actual user totals, and must be replaced with static copy. These are the highest-priority fixes in the milestone.
 
-The primary risks are interface design mistakes that would require rework when a second gateway is added (e.g., leaking Transbank-specific concepts into the interface), and silent failures in the post-payment flow (e.g., Facto throwing after a successful `commitTransaction` leaving revenue unreconciled). Both risks have clear prevention strategies and do not block the current milestone — they just need to be kept in mind during implementation.
+The recommended approach is: (1) fix the two double-suffix bugs first as a standalone patch, (2) audit and rewrite the 5–6 indexed public pages where SEO quality matters most, (3) bring the 19 private/noindex pages up to brand-voice standard. The work is low-risk (string changes only, fully type-safe), but requires careful character budgeting: each `title:` param must stay under 45 characters because the `| Waldo.click®` suffix consumes 15 characters of the 60-character SERP limit.
+
+> ⚠️ **Research conflict resolved:** ARCHITECTURE.md (written from `nuxt.config.ts` inspection alone) concluded there is no auto-suffix and titles must be written in full. STACK.md (written from installed `node_modules` inspection) confirmed that `nuxt-seo-utils` silently injects `titleTemplate` at runtime. **STACK.md is correct.** The suffix IS applied automatically. Requirements must be written assuming the `title:` param is `%s` and the final output is `{title} | Waldo.click®`. The code examples in ARCHITECTURE.md that include `| Waldo.click®` in the `title:` param are **wrong** and would produce double-suffixes.
+
+---
 
 ## Key Findings
 
 ### Recommended Stack
 
-No new packages are needed. The entire abstraction is structural TypeScript using the patterns already present in the codebase. The existing `src/services/transbank/` module is a direct template for how to structure `src/services/payment-gateway/`.
+No stack changes for this milestone. All tooling is already in place in `apps/website`.
 
-**Core technologies:**
-- `TypeScript interface (IPaymentGateway)`: contract enforcement — compile-time safety with zero runtime overhead
-- `Factory/registry function (getPaymentGateway())`: gateway selection — reads `PAYMENT_GATEWAY` env var, lazy singleton, mirrors how Transbank config already works
-- `Plain TS module (src/services/payment-gateway/)`: module structure — consistent with all 9 existing service directories, no Strapi DI needed
+**Core technologies relevant to this work:**
 
-### Expected Features
+- **`$setSEO` plugin** (`app/plugins/seo.ts`): The single call site for all SEO metadata on every page. Wraps `useSeoMeta` and sets title, description, OG, and Twitter tags atomically. Always use `$setSEO` — never call `useSeoMeta({ title, description })` directly on pages.
+- **`@nuxtjs/seo` v3.4.0** (via `nuxt-seo-utils` sub-module): Silently registers `titleTemplate: "%s %separator %siteName"` at low priority. Confirmed in `node_modules/nuxt-seo-utils/dist/runtime/app/logic/applyDefaults.js:52`. The `%siteName` resolves to `"Waldo.click®"` from `nuxt.config.ts` (`site.name`). Default separator is `|` (confirmed in `unhead` source).
+- **`site.name: "Waldo.click®"`** (`nuxt.config.ts:136`): The only site-wide title variable. Not configurable per-page.
 
-The scope of this milestone is strictly the abstraction plumbing. No user-visible changes.
+**Character budget rule:** `title:` param ≤ 45 characters. Final browser title = `{title} | Waldo.click®` ≤ 60 characters.
 
-**Must have (table stakes):**
-- `IPaymentGateway` interface with `createTransaction` + `commitTransaction` — the contract every adapter must satisfy
-- Normalized response envelopes (`IGatewayInitResponse`, `IGatewayCommitResponse`) — gateway-agnostic shapes callers can depend on
-- `TransbankAdapter` implementing the interface — zero behavioral change, pure delegation to existing `TransbankService`
-- `PaymentGatewayRegistry` with `getPaymentGateway()` — reads `PAYMENT_GATEWAY` env var, defaults to `"transbank"`
-- Import swap in `ad.service.ts` and `pack.service.ts` — the two call sites that currently import `TransbankServices` directly
-- Fix hardcoded `"webpay"` string in `payment.ts` controller — replace with `process.env.PAYMENT_GATEWAY ?? "transbank"` for data correctness
+### Expected Features (Audit Scope)
 
-**Should have (future, not this milestone):**
-- Concrete adapter for a second gateway (e.g., MercadoPago) — proves the abstraction works end-to-end
-- Startup env var validation in registry — clear error if required gateway vars are missing
+FEATURES.md is a verbatim page-by-page inventory of all current title/description values across all 31 pages. Key findings grouped by priority:
 
-**Defer (v2+):**
-- Flow/subscription abstraction — entirely separate domain and lifecycle, out of scope
-- Gateway health-check / automatic fallback — adds orchestration complexity not yet needed
-- Per-user or per-region gateway routing — high complexity, not required
+**Must fix — critical bugs (affects live indexed pages):**
+- `anuncios/[slug].vue` — ⚠️ double-suffix: title param embeds `| Venta de Equipo en Waldo.click`; description slice at 150 chars exceeds budget when prefix/suffix are added; double-space when `ad.description` is empty/null
+- `[slug].vue` (user profile) — ⚠️ double-suffix: title param embeds `| Waldo.click®`; `totalAds` counter reflects page slice (up to 12 items), not user's real total
+
+**Should fix — indexed public pages (direct SEO impact):**
+- `index.vue` (homepage) — current copy functional; review keyword strategy for Chilean market
+- `anuncios/index.vue` — `generateSEODescription()` embeds `${totalAds}` counter; trailing brand string uses `"Waldo.click"` (no `®`)
+- `contacto/index.vue` — title is a single generic word (`"Contacto"`) — too generic for SERP
+- `preguntas-frecuentes.vue` — functional; polish only
+- `sitemap.vue` — description uses `"Waldo.click"` without `®`
+
+**Lower priority — private/noindex pages (brand voice):**
+- `login/index.vue` — `"Iniciar sesión"` lowercase `s` (all other pages use Title Case)
+- `packs/comprar.vue` — description is only 44 chars (target: 120–150)
+- `cuenta/mis-ordenes.vue` — description is only 54 chars
+- All other `cuenta/**`, `anunciar/**`, `packs/**` pages — currently acceptable; polish optional
+
+**Non-copy fix (missing `noindex`):**
+- `packs/index.vue` — auth-gated but missing `useSeoMeta({ robots: "noindex, nofollow" })`; `robots.txt` disallows subpaths but not the root path
+
+**No action needed:**
+- `login/facebook.vue`, `login/google.vue` — redirect-only OAuth callbacks; no UI; correctly excluded from robots
 
 ### Architecture Approach
 
-The architecture inserts a single new layer between the two payment service files and the existing Transbank implementation. `AdService` and `PackService` call `getPaymentGateway()` instead of importing `TransbankServices` directly. The registry returns a `TransbankAdapter`, which delegates 100% to the existing `TransbankService`. The controller, routes, policies, and all other files are untouched. Adding a future gateway requires creating one new adapter file, registering it in the registry, and setting an env var — zero changes to existing files.
+All pages share a single, well-established SEO pattern. **No architectural changes are in scope for v1.16** — only the string values inside existing `$setSEO(...)` calls change.
 
 **Major components:**
-1. `IPaymentGateway` interface + response types (`gateway.interface.ts`) — the contract, pure types, no logic
-2. `TransbankAdapter` (`adapters/transbank.adapter.ts`) — thin wrapper, delegates all calls to existing `TransbankService`
-3. `PaymentGatewayRegistry` (`registry.ts`) — reads `PAYMENT_GATEWAY` env var, returns the correct adapter instance
-4. Modified `AdService` + `PackService` — import swap only, identical runtime behavior
+
+1. **`$setSEO` plugin** (`app/plugins/seo.ts`) — Unchanged. Accepts `{ title, description, imageUrl?, url?, ogType?, twitterCard? }` and sets all 9 meta tags atomically via `useSeoMeta`.
+2. **Static pages (27 pages)** — Call `$setSEO` synchronously in `<script setup>` before any `await`. Hardcoded string values. SSR-safe.
+3. **Dynamic pages (3 pages: `anuncios/[slug].vue`, `[slug].vue`, `anuncios/index.vue`)** — Call `$setSEO` inside `watch(data, handler, { immediate: true })` after `useAsyncData({ server: true, lazy: false })`. SSR-safe because `immediate: true` fires synchronously with already-resolved data.
+4. **`packs/gracias.vue`** (edge case) — `watch` without `{ immediate: true }`: no title set on SSR. Acceptable as-is (`noindex`), but trivial to fix.
+
+**Title rendering pipeline (confirmed via `node_modules` inspection):**
+```
+$setSEO({ title: "Foo" })
+  → useSeoMeta({ title: "Foo", ogTitle: "Foo", ... })
+    → nuxt-seo-utils injects titleTemplate: "%s | Waldo.click®"
+      → final <title>: "Foo | Waldo.click®"
+```
 
 ### Critical Pitfalls
 
-1. **Transbank-specific concepts leaking into the interface** — Use an opaque `gatewayRef` string instead of `token` in the interface. The `TransbankAdapter` maps Transbank's `token` to `gatewayRef` internally. Prevents interface breakage when a second gateway uses a different reference mechanism. (Phase 1)
+1. **Double-suffix bug** — Any `title:` param containing `| Waldo.click` already has the suffix embedded; the template adds it again. Two production pages are currently affected. **Fix:** Remove all `| Waldo.click` substrings from the raw title params and let the template handle branding.
 
-2. **`buy_order` string used for context recovery** — The current code parses `order-{userId}-{adId}-{uniqueId}` echoed back by Transbank. Other gateways won't echo custom strings. For now the adapter preserves this behavior, but the interface must not assume it. Store context server-side keyed by `gatewayRef` when the second gateway is added. (Phase 1 design constraint)
+2. **Title length budget is 45 chars, not 60** — The `| Waldo.click®` suffix consumes 15 of the 60-char SERP limit. Any title param longer than 45 characters will be truncated in Google SERPs. The current codebase is mostly within budget, but dynamic titles like ad detail pages are at risk.
 
-3. **Facto call throws after successful `commitTransaction`** — Payment is authorized but order is never created, leaving unreconciled revenue. Wrap post-commit operations in try/catch with logging and a reconciliation queue path. (Phase 2)
+3. **Dynamic counters in descriptions** — `${totalAds}`, `${total}`, `${ads.length}` produce stale, inaccurate descriptions. The profile page `[slug].vue` describes a user with 50 ads as having "12 anuncios" (page-1 slice). Rule: no numeric interpolation in any indexed page description. Use "cientos de" or remove the count entirely.
 
-4. **Missing `return` after `ctx.redirect` in `packResponse`** — Execution continues into Facto and order creation even when payment failed. Fix this bug as part of the wiring phase. (Phase 2)
+4. **SSR-unsafe `$setSEO` placement** — `$setSEO` must be called in the synchronous `<script setup>` context (or via `watch` with `{ immediate: true }` on a server-resolved `useAsyncData` ref). Calling it in `onMounted` or a non-immediate watcher means the `<title>` is absent from the SSR HTML that Googlebot crawls. Current `packs/gracias.vue` has this issue (noindex so low risk).
 
-5. **Over-abstracting for imagined future gateways** — Interface must not include webhooks, refunds, subscriptions, or multi-method routing. Design for exactly what Transbank does today. The second concrete gateway reveals what actually needs to generalize. (Phase 1)
+5. **Chilean vocabulary** — Use `"avisos"` (not `"anuncios"`) for classified ads in copy; `"equipo industrial"` / `"maquinaria"` / `"activos industriales"` (not `"productos"`); `"compra y venta"` (not `"compraventa"`). City-level keywords (`Santiago`, `Valparaíso`, etc.) are high-value in dynamic page titles — the current pattern of `${commune?.name}` is correct.
+
+---
 
 ## Implications for Roadmap
 
-Based on research, the work decomposes into two clean phases with a clear dependency boundary: define the contract first, then wire it.
+This milestone has a clear linear dependency chain. The roadmap should reflect three phases of increasing scope and decreasing SEO impact.
 
-### Phase 1: Interface and Adapter Layer
+### Phase 1: Bug Fixes (Critical — do this first)
+**Rationale:** The double-suffix bug affects two of the highest-traffic indexed pages and is actively degrading SERP snippets today. It is a standalone fix with zero regression risk: remove 2 substrings from 2 template strings. This must ship before any copy quality work, because evaluating copy against a broken rendering pipeline is meaningless.
+**Delivers:** Correct `<title>` rendering for ad detail page and user profile page; elimination of misleading `totalAds` counters in descriptions; fix for empty-description double-space bug
+**Files:** `apps/website/app/pages/anuncios/[slug].vue` (line 187), `apps/website/app/pages/[slug].vue` (line 161)
+**Avoids:** Double-suffix pitfall; dynamic counter pitfall; empty-description formatting bug
 
-**Rationale:** Everything else depends on the interface being correct. Defining types first is zero-risk and creates the foundation the adapter and registry build on. The interface must be finalized before any call sites are modified, so this phase must complete before Phase 2 begins.
+### Phase 2: Indexed Public Pages (High SEO Impact)
+**Rationale:** These are the only pages that rank in Google. There are 5–6 pages in this group, bounded effort with direct traffic impact. All changes are static string replacements with no logic changes.
+**Delivers:** Keyword-rich, properly sized titles and descriptions for all indexable pages
+**Addresses:** `index.vue`, `anuncios/index.vue` (static description replacement), `contacto/index.vue` (expand generic title), `preguntas-frecuentes.vue` (polish), `sitemap.vue` (add `®`)
+**Constraints to enforce:** 45-char title budget; 130–150 char description target; Chilean vocabulary standards; zero numeric counters; no brand suffix in title params
+**Avoids:** Generic title pitfall; description length pitfalls; vocabulary errors; keyword stuffing
 
-**Delivers:** All new files under `src/services/payment-gateway/` — types, adapter, registry. No existing behavior changes. Fully self-contained; can be code-reviewed in isolation without touching the payment flow.
-
-**Addresses:** Table stakes features 1-4 (interface, response envelopes, adapter, registry)
-
-**Avoids:** Pitfalls 1, 2, 3, 5 (interface design mistakes, Transbank-specific leakage, over-abstraction)
-
-**Build order within phase:**
-1. `gateway.interface.ts` — pure types, no dependencies
-2. `transbank.adapter.ts` — depends on interface + existing `TransbankService`
-3. `registry.ts` — depends on adapter; includes env var validation
-
-### Phase 2: Call Site Wiring and Bug Fixes
-
-**Rationale:** Only after the registry is stable should existing call sites be modified. The import swap is mechanical and low-risk, but isolating it in its own phase allows clean verification that behavior is identical before and after.
-
-**Delivers:** `AdService` and `PackService` routed through the abstraction layer. Hardcoded `"webpay"` string corrected. Existing bug in `packResponse` fixed. End-to-end behavior identical to pre-refactor.
-
-**Addresses:** Table stakes features 5-6 (import swap, controller fix)
-
-**Avoids:** Pitfalls 3, 4, 7, 8 (Facto error handling, missing return, hardcoded payment_method)
-
-**Build order within phase:**
-1. Swap imports in `ad.service.ts` (2 call sites)
-2. Swap imports in `pack.service.ts` (2 call sites)
-3. Fix `"webpay"` hardcoding in `payment.ts` controller
-4. Add `return` after `ctx.redirect` in `packResponse` failure path
-5. Verify end-to-end behavior is identical (Transbank integration unchanged)
+### Phase 3: Private/Noindex Pages (Brand Voice)
+**Rationale:** These 19 pages are not indexed but are seen by logged-in users in browser tabs and social share previews. Coherent, professional copy matters for UX even when SEO rank is irrelevant.
+**Delivers:** Consistent brand voice across all `cuenta/**`, `anunciar/**`, `packs/**`, `login/**`, and auth pages; missing `noindex` added to `packs/index.vue`
+**Addresses:** `login/index.vue` casing fix; `packs/comprar.vue` and `cuenta/mis-ordenes.vue` description padding; `packs/index.vue` noindex gap; opportunistic `packs/gracias.vue` watch fix
+**Avoids:** Sub-50-char descriptions on transactional pages; brand inconsistency
 
 ### Phase Ordering Rationale
 
-- Phase 1 must precede Phase 2 because the call sites can't reference the registry until it exists.
-- The split prevents a large diff that mixes new abstractions with call site changes — each phase is independently reviewable and revertable.
-- No phase requires deeper external research. The codebase is the authoritative source. Patterns are fully established.
+- **Phase 1 before Phase 2:** The double-suffix rendering bug must be fixed before any copy quality review. Writing copy targeted at a broken title output is wasted effort.
+- **Phase 2 before Phase 3:** Public indexed pages have direct revenue impact; private pages are polish. If only Phases 1 and 2 ship, the milestone is successful.
+- **No architectural work in any phase:** All changes are string replacements inside existing `$setSEO(...)` calls. TypeScript `typeCheck: true` passes automatically since `title` and `description` remain `string` types throughout.
 
 ### Research Flags
 
-Phases with standard patterns (no additional research needed):
-- **Phase 1:** Plain TypeScript module pattern is directly observed in 9 existing service directories. Interface design is derived 1-to-1 from `TransbankService`'s existing public API.
-- **Phase 2:** Mechanical import swap. Pattern is clear from codebase inspection.
+No phase requires additional research during planning. This is an unusually well-mapped milestone — every file, every current value, and every required change is fully documented in the research files.
 
-No phases require `/gsd:research-phase` during planning. All implementation details are fully specified in the research files.
+Phases with standard patterns (skip `/gsd:research-phase`):
+- **Phase 1:** Two targeted string edits in two known files (exact line numbers in STACK.md lines 289-292)
+- **Phase 2:** Standard SEO copy writing + character budget validation — patterns fully documented in PITFALLS.md
+- **Phase 3:** Simple string replacements — all 31 page files inventoried verbatim in FEATURES.md
+
+---
 
 ## Confidence Assessment
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | HIGH | Derived from direct codebase analysis — no speculation |
-| Features | HIGH | Scope is constrained to existing behavior; no external API uncertainty |
-| Architecture | HIGH | Based on direct codebase analysis; patterns are explicit and consistent |
-| Pitfalls | HIGH | All pitfalls are specific to actual code found in the codebase |
+| Stack | HIGH | `nuxt-seo-utils` source inspected directly in `node_modules`; `$setSEO` plugin read from source; `nuxt.config.ts` verified |
+| Features | HIGH | Every page file in `apps/website/app/pages/` read directly; all values extracted verbatim from source |
+| Architecture | MEDIUM | ARCHITECTURE.md drew an **incorrect conclusion** (no auto-suffix) by reading `nuxt.config.ts` without checking the module's runtime behaviour. Correct conclusion confirmed by STACK.md. All other architectural patterns and diagrams in ARCHITECTURE.md are accurate. |
+| Pitfalls | HIGH | Cross-referenced with Google Search Central docs (2025-12 and 2026-02 updates) + `nuxtseo.com` docs (2026-01 updates) + direct codebase inspection |
 
 **Overall confidence:** HIGH
 
 ### Gaps to Address
 
-- **Interface naming (`token` vs `gatewayRef`):** Research identified this as a critical design decision. The ARCHITECTURE.md research used `token` in the interface (matching Transbank exactly), while PITFALLS.md recommends `gatewayRef` for protocol-agnostic design. The roadmapper/planner should make this call explicitly. Recommendation: use `gatewayRef` if a second gateway is a near-term priority; use `token` if this refactor is purely structural and the interface will be revised when needed.
+- **ARCHITECTURE.md conflict (resolved):** Requirements must be written using STACK.md's finding — the title suffix IS applied automatically by `nuxt-seo-utils`. The `title:` param must NOT include `| Waldo.click®`. Code examples in ARCHITECTURE.md's "Correct Pattern" sections that include the suffix in the title string would produce double-suffixes and must not be used as implementation references.
 
-- **`FlowService.getPaymentStatus()` is incomplete:** This placeholder returning dummy data is noted but out of scope. It should be flagged as existing tech debt for a future milestone.
+- **`packs/gracias.vue` SSR gap:** `watch` without `{ immediate: true }` means no `<title>` on SSR. The page is `noindex` so there is no ranking risk, but the fix is one line. Requirements should decide whether this is in scope for Phase 3.
 
-- **Idempotency on commit endpoint:** No protection against double-submit on callback URL. Noted as a future improvement; does not block this milestone.
+- **OG image path inconsistency (out of scope):** Some pages pass `config.public.baseUrl + "/share.jpg"` while the plugin default is `/images/share.jpg`. Not a v1.16 concern, but worth a future ticket.
+
+---
 
 ## Sources
 
 ### Primary (HIGH confidence)
-- Direct codebase analysis: `apps/strapi/src/services/transbank/` — existing service pattern used as template
-- Direct codebase analysis: `apps/strapi/src/api/payment/services/ad.service.ts` — call site behavior
-- Direct codebase analysis: `apps/strapi/src/api/payment/services/pack.service.ts` — call site behavior
-- Direct codebase analysis: `apps/strapi/src/api/payment/controllers/payment.ts` — controller behavior and hardcoded strings
-- Direct codebase analysis: `apps/strapi/src/services/payment-gateway/` — existing directory structure and service patterns
+
+- `apps/website/app/plugins/seo.ts` — `$setSEO` plugin signature and implementation
+- `apps/website/nuxt.config.ts` — `site.name: "Waldo.click®"`, `@nuxtjs/seo` config
+- `apps/website/app/app.vue` — global `blockSearchEngines` noindex guard
+- All 31 files in `apps/website/app/pages/` — verbatim title/description values
+- `node_modules/nuxt-seo-utils/dist/runtime/app/logic/applyDefaults.js:52` — confirms `titleTemplate: "%s %separator %siteName"` is injected at runtime
+- `node_modules/unhead/dist/shared/unhead.ckV6dpEQ.mjs:131` — confirms default separator is `|`
+- `node_modules/@nuxtjs/seo/package.json` — confirms version 3.4.0
+- Google Search Central — Title Links: https://developers.google.com/search/docs/appearance/title-link (updated 2025-12-10)
+- Google Search Central — Meta Descriptions: https://developers.google.com/search/docs/appearance/snippet (updated 2026-02-04)
+- Nuxt SEO Utils — Enhanced Titles: https://nuxtseo.com/docs/seo-utils/guides/fallback-title (updated 2026-01-27)
+- Nuxt SEO — Mastering Meta / Titles: https://nuxtseo.com/learn-seo/nuxt/mastering-meta/titles (updated 2026-01-04)
 
 ### Secondary (MEDIUM confidence)
-- Standard adapter pattern (GoF) — architectural approach for wrapping existing implementations behind a shared interface
 
-### Tertiary (LOW confidence)
-- None
+- `.planning/PROJECT.md` v1.16 milestone — confirmed scope and milestone intent
 
 ---
-*Research completed: 2026-03-03*
+*Research completed: 2026-03-07*
 *Ready for roadmap: yes*
