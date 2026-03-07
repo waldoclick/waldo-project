@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: completed
-stopped_at: Completed 40-01-PLAN.md
-last_updated: "2026-03-07T21:26:45.848Z"
+stopped_at: Completed 41-41-PLAN.md
+last_updated: "2026-03-07T23:05:23.598Z"
 progress:
   total_phases: 2
   completed_phases: 1
@@ -71,6 +71,7 @@ Key patterns established (carry forward):
 - [Phase 40-users-filter-authenticated]: Removed Rol column from users table; populate:role dropped from searchParams — Column always showed '-' because content-API sanitizer strips populate:role for regular JWTs. Server-side filtering (Plan 01) makes it fully redundant.
 - [Phase 40-users-filter-authenticated]: Use strapi.db.query to bypass content-API sanitizer for server-enforced role filtering — Content-API sanitizer strips filters[role] for regular JWTs; strapi.db.query directly bypasses sanitization — only correct fix for server-side role enforcement
 - [Phase 40-users-filter-authenticated]: Inline sanitize replaces getDetailedUserData in list endpoint to eliminate N+1 queries — getDetailedUserData made 5+ extra DB queries per user; list endpoint only needs password/token removal, not full ad/reservation counts
+- [Phase 41-sentry-production-only]: Use dsn: undefined pattern (not conditional init) in sentry.*.config.ts — matches existing correct files, official SDK-supported approach
 
 ### Pending Todos
 
@@ -82,6 +83,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-07T21:26:11.805Z
-Stopped at: Completed 40-01-PLAN.md
+Last session: 2026-03-07T23:05:17.722Z
+Stopped at: Completed 41-41-PLAN.md
 Resume with: `/gsd-new-milestone` to plan v1.17
