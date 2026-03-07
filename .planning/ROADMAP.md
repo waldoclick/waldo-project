@@ -115,7 +115,10 @@ Archive: `.planning/milestones/v1.9-ROADMAP.md`
 2. Each order row displays date and time in the format `"7 mar 2026 • 01:08 a. m."` — never time-only
 3. `nuxt typecheck` passes with zero errors after the changes (no type regressions introduced)
 4. Dropdown layout, styling, and navigation behavior are unchanged — only the text content of the two fields differs
-**Plans:** TBD
+**Plans:** 1 plan
+
+Plans:
+- [ ] 30-01-PLAN.md — Fix DropdownSales.vue: buyer full name (DROP-01) and full timestamp (DROP-02)
 
 ## Progress
 
