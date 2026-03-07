@@ -50,6 +50,7 @@
                   :description="summary.isInvoice ? 'Sí' : 'No'"
                 />
                 <CardInfo
+                  v-if="summary.hasToPay"
                   title="Total"
                   :description="getTotalDescription(summary)"
                 />
