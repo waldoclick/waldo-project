@@ -1,16 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: none
-milestone_name: none
-status: MILESTONE_COMPLETE — v1.16 shipped, awaiting `/gsd-new-milestone`
-stopped_at: "v1.16 milestone closed — all phases complete, tag pending"
-last_updated: "2026-03-07T20:00:00.000Z"
+milestone: v1.1
+milestone_name: milestone
+status: completed
+stopped_at: Completed 40-users-filter-authenticated-02-PLAN.md
+last_updated: "2026-03-07T21:22:33.145Z"
 progress:
-  total_phases: 0
+  total_phases: 2
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
-  percent: 0
+  total_plans: 3
+  completed_plans: 1
+  percent: 100
 ---
 
 # Project State
@@ -68,6 +68,7 @@ Key patterns established (carry forward):
 - **v1.16**: `descPrefix`/`descSuffix` split for budget-aware ad description slicing
 - **v1.16**: SSR-safe `$setSEO` must be at synchronous top-level scope — not inside `watch()` only
 - **v1.16**: `noindex, nofollow` applied per-page to all non-indexable pages
+- [Phase 40-users-filter-authenticated]: Removed Rol column from users table; populate:role dropped from searchParams — Column always showed '-' because content-API sanitizer strips populate:role for regular JWTs. Server-side filtering (Plan 01) makes it fully redundant.
 
 ### Pending Todos
 
@@ -79,6 +80,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-07
-Stopped at: v1.16 milestone close — RETROSPECTIVE written, STATE updated, tag pending
+Last session: 2026-03-07T21:22:28.027Z
+Stopped at: Completed 40-users-filter-authenticated-02-PLAN.md
 Resume with: `/gsd-new-milestone` to plan v1.17
