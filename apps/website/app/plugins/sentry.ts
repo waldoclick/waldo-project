@@ -46,11 +46,9 @@ export default defineNuxtPlugin((nuxtApp) => {
     Sentry.setTag("page", route.path);
     Sentry.setTag("component", instance?.$options?.name || "unknown");
 
-    // Solo capturar errores en entornos de staging o producción
-    if (
-      process.env.NODE_ENV === "staging" ||
-      process.env.NODE_ENV === "production"
-    ) {
+    // Only report errors to Sentry in production — staging and development errors
+    // should not reach Sentry.
+    if (process.env.NODE_ENV === "production") {
       Sentry.captureException(error, {
         extra: {
           componentName: instance?.$options?.name,
@@ -69,10 +67,9 @@ export default defineNuxtPlugin((nuxtApp) => {
         return;
       }
 
-      if (
-        process.env.NODE_ENV === "staging" ||
-        process.env.NODE_ENV === "production"
-      ) {
+      // Only report errors to Sentry in production — staging and development errors
+      // should not reach Sentry.
+      if (process.env.NODE_ENV === "production") {
         // Manejar errores de API de Strapi
         if (event.reason?.response?.data) {
           const strapiError = event.reason.response.data;
