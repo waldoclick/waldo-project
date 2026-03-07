@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.9
 milestone_name: Website Technical Debt
-status: Phase 26 complete — ready to plan Phase 27
-Stopped at: Phase 26 complete (26-01-SUMMARY.md written) — planning Phase 27 TypeScript Migration
-last_updated: "2026-03-07T03:12:00.000Z"
-last_activity: 2026-03-07 — Phase 26 complete (7 components migrated to useAsyncData; 33 onMounted calls documented)
+status: Phase 27 planned — ready to execute 27-01-PLAN.md
+Stopped at: Phase 27 plan written (27-01-PLAN.md) — ready to execute
+last_updated: "2026-03-07T03:30:00.000Z"
+last_activity: 2026-03-07 — Phase 27 plan written (3 tasks: 12 simple pages, stores/composables any, 6 complex pages)
 progress:
   total_phases: 4
   completed_phases: 2
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-03-07)
 ## Current Position
 
 Phase: 27 — TypeScript Migration
-Plan: TBD (not yet planned)
-Status: Phase 26 complete — planning Phase 27
-Last activity: 2026-03-07 — Phase 26 complete (FETCH-01..08 done; 7 components SSR-compatible; 33 onMounted calls classified)
+Plan: 27-01-PLAN.md (written, not yet executed)
+Status: Plan ready — awaiting execution
+Last activity: 2026-03-07 — Phase 27 plan written (3 tasks: simple page batch, stores/composables any elimination, complex pages)
 
 Progress: [████░░░░░░] 50% (2/4 phases)
 
@@ -84,6 +84,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-07T03:12:00.000Z
-Stopped at: Phase 26 complete — creating Phase 27 plan
-Resume with: Review Phase 27 research and plan output
+Last session: 2026-03-07T03:30:00.000Z
+Stopped at: Phase 27 plan written — execute 27-01-PLAN.md next
+Resume with: Execute 27-01-PLAN.md (3 tasks: simple pages, stores/composables, complex pages)
