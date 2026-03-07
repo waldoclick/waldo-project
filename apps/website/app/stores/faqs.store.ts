@@ -33,7 +33,7 @@ export const useFaqsStore = defineStore(
             pagination: { pageSize: PAGE_SIZE, page: 1 },
             populate: "*",
             sort: ["createdAt:asc"], // Ordenar de más antigua a más nueva
-          });
+          } as unknown as Record<string, unknown>);
 
           const typedResponse = response as unknown as FAQResponse;
 

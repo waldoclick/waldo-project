@@ -1,10 +1,6 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import type {
-  StrapiResponse,
-  StrapiData,
-  Strapi4RequestParams,
-} from "@nuxtjs/strapi";
+import type { StrapiResponse, StrapiData } from "@nuxtjs/strapi";
 import type {
   Indicator,
   ConvertParams,
@@ -22,7 +18,7 @@ export const useIndicatorStore = defineStore(
 
     async function fetchIndicators() {
       // Obtenemos la fecha actual en formato YYYY-MM-DD
-      const today = new Date().toISOString().split("T")[0];
+      const today = new Date().toISOString().split("T")[0]!;
 
       // Si ya tenemos datos y la fecha es la misma que la última consulta
       if (indicators.value.length > 0 && lastFetchDate.value === today) {
@@ -82,7 +78,7 @@ export const useIndicatorStore = defineStore(
             amount,
             from,
             to,
-          } as Strapi4RequestParams,
+          } as unknown as Record<string, unknown>,
         );
         return response;
       } catch (err) {

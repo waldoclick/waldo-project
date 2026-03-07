@@ -27,7 +27,7 @@ export const usePacksStore = defineStore("packs", {
       const response = await strapi.find("ad-packs", {
         filters: { id: { $eq: id } },
         populate: "*",
-      });
+      } as unknown as Record<string, unknown>);
       return response.data?.[0];
     },
   },

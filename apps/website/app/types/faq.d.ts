@@ -2,6 +2,7 @@ export interface FAQ {
   id: number;
   title: string;
   text: string;
+  featured: boolean;
   createdAt: string;
   updatedAt: string;
   publishedAt: string | null;
