@@ -13,7 +13,7 @@
 - ✅ **v1.9 Website Technical Debt** — Phases 25-29 (shipped 2026-03-07)
 - ✅ **v1.10 Dashboard Orders Dropdown UI** — Phase 30 (shipped 2026-03-07)
 - ✅ **v1.11 GTM / GA4 Tracking Fix** — Phase 31 (shipped 2026-03-07)
-- 🔄 **v1.12 Ad Creation Analytics Gaps** — Phase 32 (in progress)
+- ✅ **v1.12 Ad Creation Analytics Gaps** — Phase 32 (shipped 2026-03-07)
 
 ## Phases
 
@@ -117,9 +117,9 @@ Phase 31 completed in v1.11: removed broken `gtag()` shim from `gtm.client.ts`; 
 
 </details>
 
-### v1.12 Ad Creation Analytics Gaps (IN PROGRESS)
+### v1.12 Ad Creation Analytics Gaps (SHIPPED 2026-03-07)
 
-- [ ] **Phase 32: Analytics Gaps Cleanup** — Remove dead import in CreateAd.vue; fix step_view overcounting; add redirect_to_payment event; guard purchase event; type window.dataLayer
+- [x] **Phase 32: Analytics Gaps Cleanup** — Remove dead import in CreateAd.vue; fix step_view overcounting; add redirect_to_payment event; guard purchase event; type window.dataLayer
 
 ## Phase Details
 
@@ -150,10 +150,10 @@ Plans:
 4. `gracias.vue` `purchase` event is guarded by a `fired` ref — fires exactly once even on watchEffect re-runs
 5. `DataLayerEvent` is exported from `useAdAnalytics.ts` and declared in `window.d.ts`; `window.dataLayer` typed as `DataLayerEvent[]`
 6. `nuxt typecheck` passes with zero errors after the changes
-**Plans:** 0/1 plans complete
+**Plans:** 1/1 plans complete
 
 Plans:
-- [ ] 32-01-PLAN.md — ANA-01 through ANA-05 implementation
+- [x] 32-01-PLAN.md — ANA-01 through ANA-05 implementation
 
 ## Progress
 
@@ -166,4 +166,4 @@ Plans:
 | 29. TypeScript Strict Errors | v1.9 | 1/1 | Complete | 2026-03-07 |
 | 30. Dropdown Display Fix | v1.10 | 1/1 | Complete | 2026-03-07 |
 | 31. GTM Plugin + Consent Mode v2 | v1.11 | 1/1 | Complete | 2026-03-07 |
-| 32. Analytics Gaps Cleanup | v1.12 | 0/1 | In Progress | — |
+| 32. Analytics Gaps Cleanup | v1.12 | 1/1 | Complete | 2026-03-07 |
