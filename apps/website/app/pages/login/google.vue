@@ -13,6 +13,8 @@ import { useMeStore } from "@/stores/me.store";
 import LoadingDefault from "@/components/LoadingDefault.vue";
 import { useLogger } from "@/composables/useLogger";
 
+useSeoMeta({ robots: "noindex, nofollow" });
+
 // Obtener la función authenticateProvider de useStrapiAuth
 const { authenticateProvider } = useStrapiAuth();
 // Obtener la ruta y el router

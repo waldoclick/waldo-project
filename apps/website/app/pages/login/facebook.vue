@@ -6,6 +6,8 @@
 import { useRoute, useRouter } from "vue-router";
 const { Swal } = useSweetAlert2();
 
+useSeoMeta({ robots: "noindex, nofollow" });
+
 // Obtener la función authenticateProvider de useStrapiAuth
 const { authenticateProvider } = useStrapiAuth();
 

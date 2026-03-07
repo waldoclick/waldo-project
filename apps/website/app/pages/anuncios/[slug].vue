@@ -183,17 +183,13 @@ watch(
   () => adData.value,
   (newData) => {
     if (newData) {
+      const commune = newData.commune?.name || "Chile";
+      const descPart = newData.description
+        ? ` ${String(newData.description).slice(0, 150)}...`
+        : "";
       $setSEO({
-        title: `${newData.name} en ${
-          newData.commune?.name || "Chile"
-        } | Venta de Equipo en Waldo.click`,
-        description: `¡Oportunidad! ${String(newData.name)} en ${
-          newData.commune?.name || "Chile"
-        }. ${
-          newData.description
-            ? String(newData.description).slice(0, 150) + "..."
-            : ""
-        } Encuentra más equipo industrial en Waldo.click`,
+        title: `${newData.name} en ${commune}`,
+        description: `¡Oportunidad! ${String(newData.name)} en ${commune}.${descPart} Encuentra más activos industriales en Waldo.click®`,
         imageUrl:
           newData.gallery?.[0]?.url || `${config.public.baseUrl}/share.jpg`,
         url: `${config.public.baseUrl}/anuncios/${route.params.slug}`,
@@ -203,16 +199,8 @@ watch(
         {
           "@context": "https://schema.org",
           "@type": "WebPage",
-          name: `${newData.name} en ${
-            newData.commune?.name || "Chile"
-          } | Venta de Equipo en Waldo.click`,
-          description: `¡Oportunidad! ${String(newData.name)} en ${
-            newData.commune?.name || "Chile"
-          }. ${
-            newData.description
-              ? String(newData.description).slice(0, 150) + "..."
-              : ""
-          } Encuentra más equipo industrial en Waldo.click`,
+          name: `${newData.name} en ${commune}`,
+          description: `¡Oportunidad! ${String(newData.name)} en ${commune}.${descPart} Encuentra más activos industriales en Waldo.click®`,
           url: `${config.public.baseUrl}/anuncios/${route.params.slug}`,
         },
         {

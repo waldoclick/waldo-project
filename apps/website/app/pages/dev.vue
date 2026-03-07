@@ -53,6 +53,8 @@ $setStructuredData({
   url: `${config.public.baseUrl}/dev`,
 });
 
+useSeoMeta({ robots: "noindex, nofollow" });
+
 definePageMeta({
   middleware: ["guest"],
 });
