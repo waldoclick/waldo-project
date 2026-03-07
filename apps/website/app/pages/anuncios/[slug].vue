@@ -46,7 +46,7 @@ const {
   pending,
   error: adError,
 } = await useAsyncData(
-  "adData",
+  `ad-${route.params.slug}`,
   async () => {
     const adsStore = useAdsStore();
 

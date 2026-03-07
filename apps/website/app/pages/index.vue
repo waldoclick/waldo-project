@@ -42,7 +42,7 @@ const { data: categories } = await useAsyncData("categories", async () => {
 });
 
 // Load packs
-const { data: packs } = await useAsyncData("packs", async () => {
+const { data: packs } = await useAsyncData("home-packs", async () => {
   const packsStore = usePacksStore();
   try {
     await packsStore.loadPacks();
