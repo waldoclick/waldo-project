@@ -54,6 +54,6 @@ Install and configure `@saslavik/nuxt-gtm` in `apps/dashboard`, mirroring the v1
 
 | Requirement | Phase | Plan | Status |
 |-------------|-------|------|--------|
-| GTM-DASH-01 | 34 | TBD | pending |
-| GTM-DASH-02 | 34 | TBD | pending |
-| GTM-DASH-03 | 34 | TBD | pending |
+| GTM-DASH-01 | 34 | 34-01 | complete |
+| GTM-DASH-02 | 34 | 34-01 | complete |
+| GTM-DASH-03 | 34 | 34-01 | complete |
