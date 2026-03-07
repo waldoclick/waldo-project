@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.13
 milestone_name: GTM Module Migration
 status: complete
-stopped_at: Phase 33 complete — v1.13 shipped
+stopped_at: v1.13 milestone fully closed — all planning docs updated
 last_updated: "2026-03-07T16:00:00.000Z"
 last_activity: 2026-03-07 — v1.13 complete, GA4 Realtime confirmed working locally
 progress:
@@ -20,7 +20,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-07)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.13 — GTM Module Migration (COMPLETE)
+**Current focus:** v1.13 complete — milestone closed. Ready for `/gsd-new-milestone` to plan v1.14.
 
 ## Current Position
 
@@ -81,5 +81,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-07
-Stopped at: v1.13 complete — GA4 Realtime confirmed working locally
-Next: deploy to staging/production and monitor GA4
+Stopped at: v1.13 complete — milestone closure complete (REQUIREMENTS, PROJECT, MILESTONES, RETROSPECTIVE, STATE all updated)
+Next: `/gsd-new-milestone` to plan v1.14

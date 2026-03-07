@@ -7,10 +7,10 @@
 
 ### GTM Module Migration
 
-- [ ] **GTM-MOD-01**: `apps/website/app/plugins/gtm.client.ts` is deleted — the hand-rolled plugin no longer exists
-- [ ] **GTM-MOD-02**: `@saslavik/nuxt-gtm@0.1.3` is installed as a devDependency in `apps/website` and added to `modules` in `nuxt.config.ts`
-- [ ] **GTM-MOD-03**: Module configured with `enableRouterSync: true` for SPA page_view tracking; GTM ID sourced from `runtimeConfig.public.gtm.id` (env var `GTM_ID`); manual `gtmId` field removed from runtimeConfig
-- [ ] **GTM-MOD-04**: `useAppConfiguration` feature flag updated to `!!config.public.gtm?.id`; `npx nuxt typecheck` passes with zero errors
+- [x] **GTM-MOD-01**: `apps/website/app/plugins/gtm.client.ts` is deleted — the hand-rolled plugin no longer exists
+- [x] **GTM-MOD-02**: `@saslavik/nuxt-gtm@0.1.3` is installed as a devDependency in `apps/website` and added to `modules` in `nuxt.config.ts`
+- [x] **GTM-MOD-03**: Module configured with `enableRouterSync: true` for SPA page_view tracking; GTM ID sourced from `runtimeConfig.public.gtm.id` (env var `GTM_ID`); manual `gtmId` field removed from runtimeConfig
+- [x] **GTM-MOD-04**: `useAppConfiguration` feature flag updated to `!!config.public.gtm?.id`; `npx nuxt typecheck` passes with zero errors
 
 ## v1.12 Requirements
 
@@ -43,10 +43,10 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| GTM-MOD-01 | Phase 33 | Pending |
-| GTM-MOD-02 | Phase 33 | Pending |
-| GTM-MOD-03 | Phase 33 | Pending |
-| GTM-MOD-04 | Phase 33 | Pending |
+| GTM-MOD-01 | Phase 33 | Complete |
+| GTM-MOD-02 | Phase 33 | Complete |
+| GTM-MOD-03 | Phase 33 | Complete |
+| GTM-MOD-04 | Phase 33 | Complete |
 | ANA-01 | Phase 32 | Complete |
 | ANA-02 | Phase 32 | Complete |
 | ANA-03 | Phase 32 | Complete |
@@ -62,4 +62,4 @@
 
 ---
 *Requirements defined: 2026-03-07*
-*Last updated: 2026-03-07 — GTM-MOD-01 through GTM-MOD-04 defined for v1.13*
+*Last updated: 2026-03-07 — v1.13 complete, GTM-MOD-01 through GTM-MOD-04 marked Complete*

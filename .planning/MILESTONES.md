@@ -1,5 +1,66 @@
 # Milestones
 
+## v1.13 GTM Module Migration (Shipped: 2026-03-07)
+
+**Phases completed:** 1 phase (33), 1 plan
+**Files changed:** 3 modified, 1 deleted (apps/website)
+**Timeline:** 2026-03-07 (~15 minutes)
+**Requirements:** 4/4 complete ✓
+
+**Key accomplishments:**
+1. **GTM Plugin Replacement (Phase 33)**: Deleted broken hand-rolled `gtm.client.ts` plugin; installed `@saslavik/nuxt-gtm@0.1.3` (the only Nuxt 4-compatible GTM module); configured with `enableRouterSync: true` for automatic SPA `page_view` events; `runtimeConfig.public.gtm.id` replaces the flat `gtmId` field; feature flag updated to `!!config.public.gtm?.id`; `nuxt typecheck` passes with zero errors; GA4 Realtime confirmed working locally.
+
+**Archive:** `.planning/milestones/v1.13-ROADMAP.md` | `.planning/milestones/v1.13-REQUIREMENTS.md`
+
+---
+
+## v1.12 Ad Creation Analytics Gaps (Shipped: 2026-03-07)
+
+**Phases completed:** 1 phase (32), 1 plan
+**Files changed:** 6 files (apps/website)
+**Timeline:** 2026-03-07 (~10 minutes)
+**Requirements:** 5/5 complete ✓
+
+**Key accomplishments:**
+1. **Dead Code Removal (ANA-01)**: Removed dead `useAdAnalytics` import and instantiation from `CreateAd.vue` — analytics are owned by the parent `index.vue` page.
+2. **step_view Overcounting Fix (ANA-02)**: Removed `{ immediate: true }` from `watch(adStore.step)`; added explicit `adAnalytics.stepView(1, "Payment Method")` in `onMounted` — step 1 fires exactly once per flow entry.
+3. **redirect_to_payment Event (ANA-03)**: Added `pushEvent("redirect_to_payment", [], { payment_method: "webpay" })` immediately before `handleRedirect()` in `resumen.vue`.
+4. **Purchase Guard (ANA-04)**: `purchaseFired = ref(false)` guard prevents duplicate `purchase` events on `watchEffect` re-runs in `gracias.vue`.
+5. **DataLayerEvent Typing (ANA-05)**: `DataLayerEvent` exported from `useAdAnalytics.ts`; `ecommerce` widened to `| null`; `window.dataLayer` typed as `(DataLayerEvent | Record<string, unknown>)[]` in `window.d.ts`.
+
+**Archive:** `.planning/phases/32-ad-creation-analytics-gaps/`
+
+---
+
+## v1.11 GTM / GA4 Tracking Fix (Shipped: 2026-03-07)
+
+**Phases completed:** 1 phase (31), 1 plan
+**Files changed:** 2 files (apps/website)
+**Timeline:** 2026-03-07 (~2 minutes)
+**Requirements:** 2/2 complete ✓
+
+**Key accomplishments:**
+1. **Broken gtag() Shim Removed (GTM-01)**: Deleted the local `gtag()` function that was pushing JavaScript arrays (not objects) into `window.dataLayer`; SPA navigation `page_view` events now push plain objects via `window.dataLayer.push({ event: "page_view", page_path, page_title })`.
+2. **Consent Mode v2 (GTM-02)**: Default denial pushed after `window.dataLayer` init and before GTM script injection (`analytics_storage: "denied"`, `ad_storage: "denied"`); `LightboxCookies.vue` `acceptCookies()` replaced `accept_cookies` event with correct Consent Mode v2 update command.
+
+**Archive:** `.planning/phases/31-gtm-plugin-consent-mode-v2/`
+
+---
+
+## v1.10 Dashboard Orders Dropdown UI (Shipped: 2026-03-07)
+
+**Phases completed:** 1 phase (30), 1 plan
+**Files changed:** 1 file (apps/dashboard)
+**Timeline:** 2026-03-07 (~5 minutes)
+**Requirements:** 2/2 complete ✓
+
+**Key accomplishments:**
+1. **Dropdown Display Fix (Phase 30)**: `DropdownSales.vue` "Últimas órdenes" now shows buyer full name (`formatFullName(firstname, lastname)` with fallback to `username` → `email` → `"Usuario"`) instead of raw `buy_order` ID; full date + time (`"7 mar 2026 • 01:08 a. m."`) instead of time-only display. `getBuyerName()` wrapper helper encapsulates the `OrderUser` destructuring and fallback chain.
+
+**Archive:** `.planning/phases/30-dropdown-display-fix/`
+
+---
+
 ## v1.9 Website Technical Debt (Shipped: 2026-03-07)
 
 **Phases completed:** 5 phases (25-29), 6 plans
