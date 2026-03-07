@@ -1,4 +1,5 @@
 import logger from "../utils/logtail";
+import { sendMjmlEmail } from "../services/mjml";
 
 export interface ICronjobResult {
   success: boolean;
@@ -28,7 +29,8 @@ export default class FeaturedCronService {
    *        a. Count free-available slots: price=0 AND (ad=null OR ad.active=false)
    *        b. neededSlots = max(0, 3 - freeAvailableCount)
    *        c. Create each missing slot with price=0, total_days=15
-   *   3. Log summary and return result
+   *   3. Send email report listing every user who received new slots
+   *   4. Return summary result
    */
   async restoreFreeFeaturedReservations(): Promise<ICronjobResult> {
     try {
@@ -39,11 +41,11 @@ export default class FeaturedCronService {
 
       logger.info("=== STARTING FREE AD RESERVATION RESTORE ===");
 
-      // Fetch all users — we need every user id, nothing else.
+      // Fetch all users — id, username, and email are needed for the report.
       const allUsers = (await strapi.entityService.findMany(
         "plugin::users-permissions.user",
         {
-          fields: ["id"],
+          fields: ["id", "username", "email"],
           pagination: { pageSize: -1 },
         }
       )) as any[];
@@ -51,6 +53,16 @@ export default class FeaturedCronService {
       logger.info(`Processing ${allUsers.length} users`);
 
       let totalCreated = 0;
+
+      // Collect users who received new slots so we can include them in the report.
+      const usersWithNewSlots: {
+        id: number;
+        username: string;
+        email: string;
+        freeAvailableCount: number;
+        neededSlots: number;
+        totalAfterRestore: number;
+      }[] = [];
 
       // Iterate over every user and top up their free ad reservation pool.
       for (const user of allUsers) {
@@ -108,6 +120,15 @@ export default class FeaturedCronService {
               neededSlots,
               totalAfterRestore: freeAvailableCount + neededSlots,
             });
+
+            usersWithNewSlots.push({
+              id: user.id,
+              username: user.username,
+              email: user.email,
+              freeAvailableCount,
+              neededSlots,
+              totalAfterRestore: freeAvailableCount + neededSlots,
+            });
           }
         } catch (error) {
           // Per-user errors are caught individually so one bad user does not abort the whole run.
@@ -121,6 +142,23 @@ export default class FeaturedCronService {
       logger.info(
         `=== FREE AD RESERVATION RESTORE COMPLETE — users: ${allUsers.length}, slots created: ${totalCreated} ===`
       );
+
+      // Send an admin report listing every user who received new slots this run.
+      if (usersWithNewSlots.length > 0) {
+        const adminEmails =
+          process.env.ADMIN_EMAILS || "waldo.development@gmail.com";
+        const emailArray = adminEmails.split(",").map((email) => email.trim());
+
+        await sendMjmlEmail(
+          strapi,
+          "report-free-reservations-restoration",
+          emailArray,
+          "Reporte de restauración de reservas gratuitas",
+          {
+            users: usersWithNewSlots,
+          }
+        );
+      }
 
       return {
         success: true,

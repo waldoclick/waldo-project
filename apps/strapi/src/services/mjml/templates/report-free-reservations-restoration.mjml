@@ -1,0 +1,26 @@
+{% extends "layouts/base.mjml" %} {% block content %}
+<mj-text font-size="16px">
+  Los siguientes usuarios han recibido nuevas reservas gratuitas de anuncios:
+</mj-text>
+
+<mj-table>
+  <tr style="border-bottom: 1px solid #cccccc">
+    <td style="padding: 8px; font-weight: bold">ID</td>
+    <td style="padding: 8px; font-weight: bold">Usuario</td>
+    <td style="padding: 8px; font-weight: bold">Email</td>
+    <td style="padding: 8px; font-weight: bold">Nuevas Reservas</td>
+    <td style="padding: 8px; font-weight: bold">Disponibles Previas</td>
+    <td style="padding: 8px; font-weight: bold">Total Después</td>
+  </tr>
+  {% for user in users %}
+  <tr style="border-bottom: 1px solid #cccccc">
+    <td style="padding: 8px">{{ user.id }}</td>
+    <td style="padding: 8px">{{ user.username }}</td>
+    <td style="padding: 8px">{{ user.email }}</td>
+    <td style="padding: 8px">{{ user.neededSlots }}</td>
+    <td style="padding: 8px">{{ user.freeAvailableCount }}</td>
+    <td style="padding: 8px">{{ user.totalAfterRestore }}</td>
+  </tr>
+  {% endfor %}
+</mj-table>
+{% endblock %}
