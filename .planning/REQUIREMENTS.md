@@ -3,33 +3,34 @@
 **Defined:** 2026-03-07
 **Core Value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
 
-## v1.10 Requirements
+## v1.11 Requirements
 
-### Dashboard Orders Dropdown
+### GTM / GA4 Tracking Fix
 
-- [ ] **DROP-01**: El dropdown "Últimas órdenes" muestra el nombre completo del usuario (`firstname + lastname`, con fallback a `username`, luego `email`) donde hoy muestra el `buy_order` ID
-- [ ] **DROP-02**: El dropdown "Últimas órdenes" muestra la fecha corta + hora (`"7 mar 2026 • 01:08 a. m."`) donde hoy muestra solo la hora
+- [ ] **GTM-01**: El plugin `gtm.client.ts` no pushea arrays al dataLayer — el shim local de `gtag()` y las llamadas muerta `gtag("js", ...)` / `gtag("config", ...)` pre-carga son eliminadas; el tracking de `page_view` para SPA usa `window.dataLayer.push({ event: "page_view", page_path, page_title })` directamente
+- [ ] **GTM-02**: Consent Mode v2 implementado — antes de que cargue el script GTM se pushea `{ "consent": "default", analytics_storage: "denied", ad_storage: "denied" }` al dataLayer; `LightboxCookies.vue` pushea `{ "consent": "update", analytics_storage: "granted", ad_storage: "granted" }` al aceptar (en lugar del evento `accept_cookies` actual)
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| Cambiar el precio o el layout del dropdown | Solo se cambia el texto informativo, no la estructura |
-| Modificar la página de detalle de órdenes | Fuera del scope de este milestone |
-| Agregar paginación o filtros al dropdown | Fuera del scope de este milestone |
+| Migrar a una librería GTM de terceros (e.g. `@gtm-support/vue-gtm`) | Cambio de dependencia innecesario; el plugin actual es suficiente una vez corregido |
+| Agregar eventos GA4 adicionales (purchase, add_to_cart, etc.) | Fuera del scope de este fix — el objetivo es restaurar el tracking básico |
+| Cambiar el ID de GTM (`GTM-N4B8LDKS`) | Configuración de negocio, no técnica |
+| Implementar granular consent (por categoría de cookie) | Versión simplificada (accept all / deny all) es suficiente para el cumplimiento actual |
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DROP-01 | Phase 30 | Pending |
-| DROP-02 | Phase 30 | Pending |
+| GTM-01 | Phase 31 | Pending |
+| GTM-02 | Phase 31 | Pending |
 
 **Coverage:**
-- v1.10 requirements: 2 total
+- v1.11 requirements: 2 total
 - Mapped to phases: 2
 - Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-07*
-*Last updated: 2026-03-07 after roadmap creation — DROP-01, DROP-02 mapped to Phase 30*
+*Last updated: 2026-03-07 — GTM-01, GTM-02 mapped to Phase 31*
