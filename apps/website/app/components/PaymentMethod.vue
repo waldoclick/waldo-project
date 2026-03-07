@@ -104,14 +104,12 @@ const { getAdReservations } = useUser();
 const packs = computed(() => packsStore.packs);
 const payment = ref(null);
 
-onMounted(async () => {
-  // Cargar los packs
-  await packsStore.loadPacks();
+// onMounted: UI-only — initializes local payment ref from store; packs pre-loaded by parent page
+onMounted(() => {
+  // Set initial payment value from store
+  payment.value = adStore.pack || 1;
 
-  // Obtener el valor inicial del pack desde el store
-  payment.value = adStore.pack || 1; // Asigna un valor por defecto si no hay pack seleccionado
-
-  // Actualizar el pack en el store si todavía no tiene un valor
+  // Set default pack in store if not yet selected
   if (!adStore.isPackSelected) {
     adStore.updatePack(payment.value);
   }

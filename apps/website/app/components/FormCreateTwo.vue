@@ -199,15 +199,13 @@ const handlePriceInput = () => {
 // Computed para obtener categorías
 const categories = computed(() => categoriesStore.categories);
 
-// Cargar categorías en mounted
-onMounted(async () => {
+// onMounted: UI-only — initializes form from adStore state; categories pre-loaded by parent page
+onMounted(() => {
   form.value.name = adStore.ad.name || "";
   form.value.category = adStore.ad.category || "";
   form.value.price = adStore.ad.price || 0;
   form.value.currency = adStore.ad.currency || "CLP";
   form.value.description = adStore.ad.description || "";
-
-  await categoriesStore.loadCategories();
 });
 
 // Watch para actualizar el formulario si cambia el store
