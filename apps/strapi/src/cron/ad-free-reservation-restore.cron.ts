@@ -102,6 +102,53 @@ export default class UserCronService {
         `Processed ${usersWithRestoredAds.length} users with expired free ads`
       );
 
+      // Global top-up sweep: ensure ALL users have their free reservation pool
+      // topped up to 3, not just those whose ads happened to expire today.
+      // Users who already had their ads expire on a previous day (and thus weren't
+      // caught by the expiredFreeAds query above) are handled here.
+      const processedUserIds = new Set(
+        usersWithRestoredAds.map((u) => u.id.toString())
+      );
+
+      const allUsers = (await strapi.entityService.findMany(
+        "plugin::users-permissions.user",
+        {
+          fields: ["id", "username", "email"],
+          pagination: { pageSize: -1 },
+        }
+      )) as any[];
+
+      for (const user of allUsers) {
+        const userId = user.id.toString();
+
+        // Skip users already processed in the expired-ads loop above.
+        if (processedUserIds.has(userId)) {
+          continue;
+        }
+
+        try {
+          const result = await this.restoreUserFreeReservations(userId);
+
+          if (result.neededReservations > 0) {
+            usersWithRestoredAds.push({
+              id: user.id,
+              username: user.username,
+              email: user.email,
+              ...result,
+            });
+          }
+        } catch (error) {
+          logger.error("Error in global sweep for user", {
+            userId,
+            error: error.message,
+          });
+        }
+      }
+
+      logger.info(
+        `Global sweep complete — total users topped up: ${usersWithRestoredAds.length}`
+      );
+
       // Send a summary report to admins listing every user whose ads were processed.
       if (usersWithRestoredAds.length > 0) {
         const adminEmails =
