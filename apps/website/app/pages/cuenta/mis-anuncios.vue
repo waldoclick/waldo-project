@@ -33,7 +33,7 @@ const tabs = ref<
   { value: "banned", label: "Baneados", count: 0, icon: Ban },
 ]);
 
-const ads = ref<Ad[]>([]); // Asegúrate de que esta línea esté correctamente escrita
+const ads = ref<Ad[]>([]);
 
 const currentFilter = ref<FilterType>("published");
 const currentPage = ref(1);
@@ -48,11 +48,11 @@ const loadAds = async () => {
     const response = await userStore.loadUserAds(
       { status: currentFilter.value },
       { page: currentPage.value, pageSize: pagination.value.pageSize },
-      ["createdAt:desc"] as unknown as never[], // Pasar el sort como un parámetro separado
+      ["createdAt:desc"] as unknown as never[], // pass sort as a separate parameter
     );
 
     if (response) {
-      ads.value = response.data as unknown as Ad[]; // Asegúrate de que esta línea esté correctamente escrita
+      ads.value = response.data as unknown as Ad[];
       const total = response.meta.pagination.total;
       pagination.value.total = total;
     }
@@ -72,18 +72,17 @@ const handlePageChange = (page: number) => {
   currentPage.value = page;
 };
 
-// Observa cambios en currentFilter y currentPage y recarga los anuncios automáticamente
+// Re-fetch ads when filter or page changes
 watch([currentFilter, currentPage], () => {
   loadAds();
 });
 
-await useAsyncData("mis-anuncios", async () => {
+useAsyncData(async () => {
   const counts = await userStore.loadUserAdCounts();
-  // Populate all tab counts at once from the single response
   for (const tab of tabs.value) {
     tab.count = counts[tab.value] ?? 0;
   }
-  await loadAds(); // Cargar los anuncios del filtro actual
+  await loadAds();
 });
 
 definePageMeta({

@@ -37,7 +37,7 @@ const loadOrders = async () => {
   isLoading.value = true;
   try {
     const response = await userStore.loadUserOrders(
-      {}, // Sin filtros específicos por estatus
+      {}, // no status filters
       { page: currentPage.value, pageSize: pagination.value.pageSize },
       ["createdAt:desc"] as never[],
     );
@@ -58,7 +58,7 @@ const handlePageChange = (page: number) => {
   loadOrders();
 };
 
-await useAsyncData("mis-ordenes", async () => {
+useAsyncData(async () => {
   await loadOrders();
 });
 
