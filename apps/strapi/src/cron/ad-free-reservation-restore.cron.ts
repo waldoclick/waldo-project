@@ -29,26 +29,37 @@ export default class UserCronService {
 
       const usersWithRestoredAds = [];
 
-      for (const user of allUsers) {
-        const userId = user.id.toString();
+      // Process users in batches of 50 to parallelize DB queries without
+      // overwhelming the connection pool with thousands of concurrent requests.
+      const BATCH_SIZE = 50;
+      for (let i = 0; i < allUsers.length; i += BATCH_SIZE) {
+        const batch = allUsers.slice(i, i + BATCH_SIZE);
 
-        try {
-          const result = await this.restoreUserFreeReservations(userId);
+        const results = await Promise.all(
+          batch.map(async (user) => {
+            const userId = user.id.toString();
+            try {
+              const result = await this.restoreUserFreeReservations(userId);
+              if (result.neededReservations > 0) {
+                return {
+                  id: user.id,
+                  username: user.username,
+                  email: user.email,
+                  ...result,
+                };
+              }
+              return null;
+            } catch (error) {
+              logger.error("Error restoring free reservations for user", {
+                userId,
+                error: error.message,
+              });
+              return null;
+            }
+          })
+        );
 
-          if (result.neededReservations > 0) {
-            usersWithRestoredAds.push({
-              id: user.id,
-              username: user.username,
-              email: user.email,
-              ...result,
-            });
-          }
-        } catch (error) {
-          logger.error("Error restoring free reservations for user", {
-            userId,
-            error: error.message,
-          });
-        }
+        usersWithRestoredAds.push(...results.filter(Boolean));
       }
 
       logger.info(
