@@ -70,9 +70,12 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
   - ✓ `sitemap.vue` corregido: `Waldo.click` → `Waldo.click®` en `$setSEO` y `$setStructuredData` — v1.16
   - ✓ Páginas `login/facebook.vue`, `login/google.vue`, `dev.vue` tienen `noindex, nofollow` — v1.16
 
+   - ✓ Sentry restringido a producción en los 3 apps — 7 entry points con `NODE_ENV === 'production'` guard; dev/staging generan cero tráfico a Sentry — v1.17
+   - ✓ `GET /api/users` filtra server-side solo usuarios Authenticated vía `strapi.db.query` (no forgeable por clientes); N+1 eliminado; columna "Rol" removida del dashboard — v1.17
+
 ### Active
 
-*(No active milestone — planning next)*
+*(No active milestone — planning v1.18)*
 
 ## Previous State
 
@@ -212,7 +215,11 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
   | `noindex` via `useSeoMeta` as defense-in-depth | robots.txt already disallows private paths; inline noindex survives misconfiguration or direct deep-links — v1.15 | ✓ Good |
   | Static copy for all `$setSEO` calls — no dynamic counters | Counters like `${totalAds}` go stale on SSR; static keyword-rich copy is more durable and SERP-accurate — v1.16 | ✓ Good |
   | Title budget enforced at ≤ 45 chars (excluding `\| Waldo.click®` suffix) | `@nuxtjs/seo` appends the suffix automatically; including it manually causes double-brand in rendered title — v1.16 | ✓ Good |
-  | `$setStructuredData` description always mirrors `$setSEO` description | Structured data must be consistent with visible meta; kept as verbatim copy in same edit — v1.16 | ✓ Good |
+   | `$setStructuredData` description always mirrors `$setSEO` description | Structured data must be consistent with visible meta; kept as verbatim copy in same edit — v1.16 | ✓ Good |
+   | `strapi.db.query` for role filter, not content-API service | Content-API sanitizer strips `filters[role]` for regular JWTs; `db.query` bypasses it — non-forgeable server-side enforcement — v1.17 | ✓ Good |
+   | Inline sanitize (spread + omit) replaces `getDetailedUserData` on users list | N+1 eliminated: `Promise.all(users.map(getDetailedUserData))` replaced with field-spread; no loss of list functionality — v1.17 | ✓ Good |
+   | `dsn: undefined` for production-only Sentry (not conditional init) | SDK-supported pattern; skips all instrumentation with zero overhead; consistent with existing correct files in repo — v1.17 | ✓ Good |
+   | `enabled: process.env.NODE_ENV === 'production'` in Strapi Sentry plugin | Unloads plugin entirely in dev/staging; `enabled: true` was shipping dev/staging noise to Sentry — v1.17 | ✓ Good |
 
 ## Future Requirements
 
@@ -229,4 +236,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-07 after v1.16 milestone — Website Meta Copy Audit*
+*Last updated: 2026-03-07 after v1.17 milestone — Security & Stability*

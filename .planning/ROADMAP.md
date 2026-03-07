@@ -18,40 +18,26 @@
 - ✅ **v1.14 GTM Module: Dashboard** — Phase 34 (shipped 2026-03-07)
 - ✅ **v1.15 Website SEO Audit** — Phase 35 (shipped 2026-03-07)
 - ✅ **v1.16 Website Meta Copy Audit** — Phases 36-38 (shipped 2026-03-07)
+- ✅ **v1.17 Security & Stability** — Phases 40-41 (shipped 2026-03-07)
 
 ## Phases
 
 <details>
-<summary>✅ v1.1–v1.15 (Phases 3-35) — SHIPPED</summary>
+<summary>✅ v1.1–v1.16 (Phases 3-38) — SHIPPED</summary>
 
 All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 
 </details>
 
 <details>
-<summary>✅ v1.16 — Website Meta Copy Audit (Phases 36-38) — SHIPPED 2026-03-07</summary>
+<summary>✅ v1.17 — Security & Stability (Phases 40-41) — SHIPPED 2026-03-07</summary>
 
-- [x] **Phase 36: SEO Bug Fixes** — Eliminate double-suffix titles, remove stale counters, and add missing noindex (completed 2026-03-07)
-- [x] **Phase 37: Dynamic Page Copy** — Rewrite meta copy for all four public dynamic pages using canonical vocabulary (completed 2026-03-07)
-- [x] **Phase 38: Static Page Copy** — Rewrite meta copy for all four public static pages using canonical vocabulary (completed 2026-03-07)
+- [x] **Phase 40: Users Filter Authenticated** — Server-enforced Authenticated role filter via strapi.db.query; N+1 eliminated; TDD (completed 2026-03-07)
+- [x] **Phase 41: Sentry Production-Only** — Production-only guard in all 7 Sentry entry points across website, dashboard, strapi (completed 2026-03-07)
 
 </details>
 
-## Standalone Phases
-
-### Phase 40: Users Filter Authenticated
-
-**Goal:** Show only Authenticated users in the dashboard users table and remove the "Rol" column. Fix is server-side: wire `getUserDataWithFilters` controller in `strapi-server.ts` with a non-forgeable authenticated role filter via `strapi.db.query`.
-
-**Requirements:** FILTER-01 (authenticated filter enforced server-side), FILTER-02 (pagination respected), FILTER-03 (sort and client filters forwarded), FILTER-04 (Rol column removed from dashboard)
-
-**Plans:** 2/2 plans complete
-
-Plans:
-- [ ] 40-01-PLAN.md — Strapi: harden getUserDataWithFilters + wire strapi-server.ts (TDD)
-- [ ] 40-02-PLAN.md — Dashboard: remove populate:role from searchParams and drop Rol column
-
----
+## Active Phases
 
 ### Phase 39: Spanish Default Language
 
@@ -75,5 +61,6 @@ Plans:
 | 36. SEO Bug Fixes | v1.16 | 1/1 | Complete | 2026-03-07 |
 | 37. Dynamic Page Copy | v1.16 | 1/1 | Complete | 2026-03-07 |
 | 38. Static Page Copy | v1.16 | 2/2 | Complete | 2026-03-07 |
-| 39. Spanish Default Language | standalone | 0/1 | In Progress | — |
-| 40. Users Filter Authenticated | 2/2 | Complete   | 2026-03-07 | — |
+| 39. Spanish Default Language | v1.18 | 0/1 | Not started | — |
+| 40. Users Filter Authenticated | v1.17 | 2/2 | Complete | 2026-03-07 |
+| 41. Sentry Production-Only | v1.17 | 1/1 | Complete | 2026-03-07 |

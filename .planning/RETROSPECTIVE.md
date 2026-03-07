@@ -618,6 +618,7 @@
 | v1.14 | utils (100% coverage) | true | 0 |
 | v1.15 | utils (100% coverage) | true | 0 |
 | v1.16 | utils (100% coverage) | true | 0 |
+| v1.17 | utils + jest (strapi role controller) | true | 0 |
 
 ### Top Lessons (Verified Across Milestones)
 
@@ -635,3 +636,42 @@
 12. Before implementing a new cron, audit existing ones for overlapping responsibility — duplicate crons waste a full implementation cycle
 13. Verify the Nuxt ecosystem before hand-rolling a plugin — a maintained Nuxt 4-compatible module exists for most common integrations (GTM, analytics, etc.)
 14. Fix structural/SSR bugs before authoring copy — a title double-suffix or SSR deferral bug makes copy partially invisible to crawlers regardless of content quality
+15. Use `strapi.db.query` for server-enforced filters — the content-API sanitizer strips `filters[role]` for regular JWTs, making client-enforced role filtering bypassable
+16. Gate Sentry (and all observability tools) on `NODE_ENV === 'production'` from day one — staging noise pollutes dashboards and costs money
+
+## Milestone: v1.17 — Security & Stability
+
+**Shipped:** 2026-03-07
+**Phases:** 2 (40, 41) | **Plans:** 3 | **Timeline:** 1 day
+
+### What Was Built
+- Server-enforced Authenticated role filter on `GET /api/users` via `strapi.db.query` controller override — non-forgeable, N+1 eliminated, sort support added (Phase 40)
+- TDD red-green for role filter controller: Jest unit tests committed before production code (Phase 40)
+- `strapi-server.ts` reduced from 173 lines of commented-out code to 8 lines — minimal override pattern (Phase 40)
+- Dashboard users table "Rol" column removed along with `populate:role` that the API was already stripping (Phase 40)
+- Production-only Sentry guard applied to all 7 entry points across website, dashboard, and strapi (Phase 41)
+
+### What Worked
+- Research phase identified the exact root cause before planning: content-API sanitizer strips `filters[role]` — pointed directly to `strapi.db.query` as the solution
+- TDD pattern (RED commit before GREEN) made the role filter verifiable without manual testing
+- Phase 41 was purely mechanical once the 4 broken files were identified — execution in 2 min
+
+### What Was Inefficient
+- Phase 41 should have been caught earlier — Sentry `staging ||` condition and missing server guard were pre-existing bugs. A Sentry audit at v1.9 would have found these.
+- Phase 39 (Spanish Default Language) was planned for this milestone but not executed — left pending for v1.18.
+
+### Patterns Established
+- `strapi.db.query` for role-enforced queries — bypasses content-API sanitizer, non-forgeable
+- TDD RED: failing tests committed first, GREEN implementation in subsequent commit
+- Production-only Sentry: `isProduction = process.env.NODE_ENV === 'production'`, `dsn = isProduction ? config.public.sentryDsn : undefined`
+- Strapi plugin guard: `enabled: process.env.NODE_ENV === 'production'` unloads plugin entirely
+
+### Key Lessons
+1. **Server-enforce all security filters.** Client-side role filtering is bypassable — the only safe pattern is `strapi.db.query` with a server-looked-up role ID.
+2. **Audit observability tools early.** Sentry with `enabled: true` in dev/staging costs money and pollutes dashboards — production-gate from initial setup.
+3. **TDD is worth the commit overhead.** The failing-tests-first commit provides a verifiable contract before any production code exists.
+
+### Cost Observations
+- Model mix: ~100% sonnet
+- Sessions: 2 (one per phase)
+- Notable: Phase 41 was the fastest plan in the project (2 min, 4 files, purely mechanical)
