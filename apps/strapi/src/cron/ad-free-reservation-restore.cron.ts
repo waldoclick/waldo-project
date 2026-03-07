@@ -106,7 +106,9 @@ export default class UserCronService {
   private async restoreUserFreeReservations(userId: string) {
     try {
       // Count this user's current free reservations: available (ad = null) and
-      // in active use (linked ad has active = true).
+      // in use (linked ad has remaining_days > 0 and is not banned or rejected).
+      // "In use" covers both active ads (active=true) and pending ads (active=false,
+      // remaining_days>0) — both consume a reservation slot.
       // Note: { ad: { id: { $null: true } } } is the correct Strapi v5 entityService syntax
       // for a null-relation check — plain { ad: null } silently returns zero results.
       const currentReservations = (await strapi.entityService.findMany(
@@ -119,9 +121,11 @@ export default class UserCronService {
               { ad: { id: { $null: true } } }, // Available (not yet used)
               {
                 ad: {
-                  active: { $eq: true },
+                  remaining_days: { $gt: 0 },
+                  banned: { $eq: false },
+                  rejected: { $eq: false },
                 },
-              }, // In use by an active ad
+              }, // In use by an active or pending ad
             ],
           },
           populate: {
@@ -134,7 +138,7 @@ export default class UserCronService {
         (r) => !r.ad
       ).length;
       const activeReservations = currentReservations.filter(
-        (r) => r.ad && r.ad.active === true
+        (r) => r.ad && r.ad.remaining_days > 0 && !r.ad.banned && !r.ad.rejected
       ).length;
       const totalReservations = availableReservations + activeReservations;
 
