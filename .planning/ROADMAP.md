@@ -11,7 +11,7 @@
 - ✅ **v1.7 Cron Reliability** — Phases 20-23 (shipped 2026-03-06)
 - ✅ **v1.8 Free Featured Reservation Guarantee** — Phase 24 (shipped 2026-03-07)
 - ✅ **v1.9 Website Technical Debt** — Phases 25-29 (shipped 2026-03-07)
-- 🔄 **v1.10 Dashboard Orders Dropdown UI** — Phase 30 (active)
+- ✅ **v1.10 Dashboard Orders Dropdown UI** — Phase 30 (shipped 2026-03-07)
 
 ## Phases
 
@@ -100,9 +100,9 @@ Archive: `.planning/milestones/v1.9-ROADMAP.md`
 
 </details>
 
-### v1.10 Dashboard Orders Dropdown UI (Active)
+### v1.10 Dashboard Orders Dropdown UI (COMPLETE — 2026-03-07)
 
-- [ ] **Phase 30: Dropdown Display Fix** — Surface buyer full name and full timestamp in `DropdownSales.vue`
+- [x] **Phase 30: Dropdown Display Fix** — Surface buyer full name and full timestamp in `DropdownSales.vue`
 
 ## Phase Details
 
@@ -118,7 +118,7 @@ Archive: `.planning/milestones/v1.9-ROADMAP.md`
 **Plans:** 1 plan
 
 Plans:
-- [ ] 30-01-PLAN.md — Fix DropdownSales.vue: buyer full name (DROP-01) and full timestamp (DROP-02)
+- [x] 30-01-PLAN.md — Fix DropdownSales.vue: buyer full name (DROP-01) and full timestamp (DROP-02)
 
 ## Progress
 
@@ -129,4 +129,4 @@ Plans:
 | 27. TypeScript Migration | v1.9 | 1/1 | Complete | 2026-03-07 |
 | 28. TypeScript Strict + Store Audit | v1.9 | 2/2 | Complete | 2026-03-07 |
 | 29. TypeScript Strict Errors | v1.9 | 1/1 | Complete | 2026-03-07 |
-| 30. Dropdown Display Fix | v1.10 | 0/1 | Not started | - |
+| 30. Dropdown Display Fix | v1.10 | 1/1 | Complete | 2026-03-07 |
