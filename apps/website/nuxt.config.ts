@@ -137,6 +137,7 @@ export default defineNuxtConfig({
 
   site: {
     name: "Waldo.click®",
+    defaultLocale: "es",
     ...(process.env.NODE_ENV !== "local" && { url: process.env.BASE_URL }),
   },
 
@@ -144,6 +145,7 @@ export default defineNuxtConfig({
 
   app: {
     head: {
+      htmlAttrs: { lang: "es" },
       meta: [
         { charset: "utf-8" },
         { name: "viewport", content: "width=device-width, initial-scale=1" },
