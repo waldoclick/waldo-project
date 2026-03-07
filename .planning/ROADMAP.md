@@ -12,7 +12,8 @@
 - ✅ **v1.8 Free Featured Reservation Guarantee** — Phase 24 (shipped 2026-03-07)
 - ✅ **v1.9 Website Technical Debt** — Phases 25-29 (shipped 2026-03-07)
 - ✅ **v1.10 Dashboard Orders Dropdown UI** — Phase 30 (shipped 2026-03-07)
-- 🔄 **v1.11 GTM / GA4 Tracking Fix** — Phase 31 (in progress)
+- ✅ **v1.11 GTM / GA4 Tracking Fix** — Phase 31 (shipped 2026-03-07)
+- 🔄 **v1.12 Ad Creation Analytics Gaps** — Phase 32 (in progress)
 
 ## Phases
 
@@ -109,9 +110,16 @@ Archive: `.planning/milestones/v1.10-ROADMAP.md`
 
 </details>
 
-### v1.11 GTM / GA4 Tracking Fix (IN PROGRESS)
+<details>
+<summary>✅ v1.11 GTM / GA4 Tracking Fix (Phase 31) — SHIPPED 2026-03-07</summary>
 
-- [x] **Phase 31: GTM Plugin + Consent Mode v2** — Fix broken gtag() shim; implement Consent Mode v2 default denial and update flow (completed 2026-03-07)
+Phase 31 completed in v1.11: removed broken `gtag()` shim from `gtm.client.ts`; SPA `page_view` now pushes plain objects to dataLayer; Consent Mode v2 default denial pushed before GTM loads; `LightboxCookies.vue` pushes correct consent update command on accept.
+
+</details>
+
+### v1.12 Ad Creation Analytics Gaps (IN PROGRESS)
+
+- [ ] **Phase 32: Analytics Gaps Cleanup** — Remove dead import in CreateAd.vue; fix step_view overcounting; add redirect_to_payment event; guard purchase event; type window.dataLayer
 
 ## Phase Details
 
@@ -129,7 +137,23 @@ Archive: `.planning/milestones/v1.10-ROADMAP.md`
 **Plans:** 1/1 plans complete
 
 Plans:
-- [ ] 31-01-PLAN.md — Fix gtag shim + Consent Mode v2 default/update in gtm.client.ts and LightboxCookies.vue
+- [x] 31-01-PLAN.md — Fix gtag shim + Consent Mode v2 default/update in gtm.client.ts and LightboxCookies.vue
+
+### Phase 32: Analytics Gaps Cleanup
+**Goal:** Close all five identified gaps in the ad creation analytics flow — dead code removed, step_view fires exactly once per step, redirect_to_payment tracked before Webpay leaves the SPA, purchase fires exactly once, dataLayer fully typed
+**Depends on:** Phase 31 (window.d.ts patterns established in v1.9/v1.11)
+**Requirements:** ANA-01, ANA-02, ANA-03, ANA-04, ANA-05
+**Success criteria:**
+1. `CreateAd.vue` has no `useAdAnalytics` import or `adAnalytics` instantiation — dead code gone
+2. `watch(adStore.step)` in `index.vue` has no `immediate: true`; step 1 fires exactly once per fresh flow entry
+3. `resumen.vue` pushes `redirect_to_payment` with `payment_method: "webpay"` before `handleRedirect()` is called
+4. `gracias.vue` `purchase` event is guarded by a `fired` ref — fires exactly once even on watchEffect re-runs
+5. `DataLayerEvent` is exported from `useAdAnalytics.ts` and declared in `window.d.ts`; `window.dataLayer` typed as `DataLayerEvent[]`
+6. `nuxt typecheck` passes with zero errors after the changes
+**Plans:** 0/1 plans complete
+
+Plans:
+- [ ] 32-01-PLAN.md — ANA-01 through ANA-05 implementation
 
 ## Progress
 
@@ -141,4 +165,5 @@ Plans:
 | 28. TypeScript Strict + Store Audit | v1.9 | 2/2 | Complete | 2026-03-07 |
 | 29. TypeScript Strict Errors | v1.9 | 1/1 | Complete | 2026-03-07 |
 | 30. Dropdown Display Fix | v1.10 | 1/1 | Complete | 2026-03-07 |
-| 31. GTM Plugin + Consent Mode v2 | 1/1 | Complete    | 2026-03-07 | — |
+| 31. GTM Plugin + Consent Mode v2 | v1.11 | 1/1 | Complete | 2026-03-07 |
+| 32. Analytics Gaps Cleanup | v1.12 | 0/1 | In Progress | — |
