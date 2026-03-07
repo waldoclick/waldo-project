@@ -157,7 +157,10 @@ Plans:
   1. `nuxt.config.ts` has `typescript: { typeCheck: true }` and `npm run build` completes without TypeScript errors
   2. Every one of the 14 stores with `persist: true` has an inline comment (`// persist: CORRECT`, `// persist: REVIEW`, or `// persist: RISK`) immediately above or beside the persist option
   3. A developer reading the stores can immediately tell which persisted data is intentional (cross-session cache), which is under review (potentially volatile), and which is risky (sensitive/stale) — no undocumented persist entries remain
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 28-01-PLAN.md — Fix Strapi SDK type errors in 4 stores, enable typeCheck: true, verify build passes
+- [ ] 28-02-PLAN.md — Add persist: CORRECT|REVIEW|RISK audit comments to all 14 stores
 
 ## Progress
 
