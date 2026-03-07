@@ -4,7 +4,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import AccountPassword from "@/components/AccountPassword.vue";
 
 const user = useStrapiUser();

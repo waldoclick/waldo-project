@@ -4,7 +4,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import AccountCover from "@/components/AccountCover.vue";
 
 const user = useStrapiUser();

@@ -2,7 +2,7 @@
   <PoliciesDefault />
 </template>
 
-<script setup>
+<script setup lang="ts">
 // Define SEO
 const { $setSEO, $setStructuredData } = useNuxtApp();
 

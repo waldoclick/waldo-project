@@ -4,7 +4,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import AccountAvatar from "@/components/AccountAvatar.vue";
 
 const user = useStrapiUser();

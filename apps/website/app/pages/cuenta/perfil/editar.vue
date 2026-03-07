@@ -4,7 +4,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import AccountEdit from "@/components/AccountEdit.vue";
 import { useRegionsStore } from "@/stores/regions.store";
 import { useCommunesStore } from "@/stores/communes.store";
