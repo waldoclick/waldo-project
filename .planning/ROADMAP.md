@@ -111,7 +111,7 @@ Archive: `.planning/milestones/v1.10-ROADMAP.md`
 
 ### v1.11 GTM / GA4 Tracking Fix (IN PROGRESS)
 
-- [ ] **Phase 31: GTM Plugin + Consent Mode v2** — Fix broken gtag() shim; implement Consent Mode v2 default denial and update flow
+- [x] **Phase 31: GTM Plugin + Consent Mode v2** — Fix broken gtag() shim; implement Consent Mode v2 default denial and update flow (completed 2026-03-07)
 
 ## Phase Details
 
@@ -126,7 +126,7 @@ Archive: `.planning/milestones/v1.10-ROADMAP.md`
 4. `LightboxCookies.vue` `acceptCookies()` pushes `{ "consent": "update", analytics_storage: "granted", ad_storage: "granted" }` instead of the `accept_cookies` event
 5. `nuxt typecheck` passes with zero errors after the changes
 6. No behavior changes to the cookie banner UI — only the dataLayer payload differs
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
 - [ ] 31-01-PLAN.md — Fix gtag shim + Consent Mode v2 default/update in gtm.client.ts and LightboxCookies.vue
@@ -141,4 +141,4 @@ Plans:
 | 28. TypeScript Strict + Store Audit | v1.9 | 2/2 | Complete | 2026-03-07 |
 | 29. TypeScript Strict Errors | v1.9 | 1/1 | Complete | 2026-03-07 |
 | 30. Dropdown Display Fix | v1.10 | 1/1 | Complete | 2026-03-07 |
-| 31. GTM Plugin + Consent Mode v2 | v1.11 | 0/1 | In Progress | — |
+| 31. GTM Plugin + Consent Mode v2 | 1/1 | Complete   | 2026-03-07 | — |

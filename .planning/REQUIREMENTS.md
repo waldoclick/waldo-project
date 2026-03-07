@@ -7,8 +7,8 @@
 
 ### GTM / GA4 Tracking Fix
 
-- [ ] **GTM-01**: El plugin `gtm.client.ts` no pushea arrays al dataLayer — el shim local de `gtag()` y las llamadas muerta `gtag("js", ...)` / `gtag("config", ...)` pre-carga son eliminadas; el tracking de `page_view` para SPA usa `window.dataLayer.push({ event: "page_view", page_path, page_title })` directamente
-- [ ] **GTM-02**: Consent Mode v2 implementado — antes de que cargue el script GTM se pushea `{ "consent": "default", analytics_storage: "denied", ad_storage: "denied" }` al dataLayer; `LightboxCookies.vue` pushea `{ "consent": "update", analytics_storage: "granted", ad_storage: "granted" }` al aceptar (en lugar del evento `accept_cookies` actual)
+- [x] **GTM-01**: El plugin `gtm.client.ts` no pushea arrays al dataLayer — el shim local de `gtag()` y las llamadas muerta `gtag("js", ...)` / `gtag("config", ...)` pre-carga son eliminadas; el tracking de `page_view` para SPA usa `window.dataLayer.push({ event: "page_view", page_path, page_title })` directamente
+- [x] **GTM-02**: Consent Mode v2 implementado — antes de que cargue el script GTM se pushea `{ "consent": "default", analytics_storage: "denied", ad_storage: "denied" }` al dataLayer; `LightboxCookies.vue` pushea `{ "consent": "update", analytics_storage: "granted", ad_storage: "granted" }` al aceptar (en lugar del evento `accept_cookies` actual)
 
 ## Out of Scope
 
@@ -23,8 +23,8 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| GTM-01 | Phase 31 | Pending |
-| GTM-02 | Phase 31 | Pending |
+| GTM-01 | Phase 31 | Complete |
+| GTM-02 | Phase 31 | Complete |
 
 **Coverage:**
 - v1.11 requirements: 2 total
