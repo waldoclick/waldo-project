@@ -1,27 +1,11 @@
 <template>
   <div class="page">
-    <MemoDefault
-      v-if="isExternalProvider"
-      :icon="ShieldOff"
-      text="No puedes cambiar tu contraseña porque iniciaste sesión con Google u otro proveedor externo."
-      link="/cuenta"
-      button-text="Volver a mi cuenta"
-    />
-    <AccountPassword v-else />
+    <AccountPassword />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import { ShieldOff } from "lucide-vue-next";
 import AccountPassword from "@/components/AccountPassword.vue";
-import MemoDefault from "@/components/MemoDefault.vue";
-
-const user = useStrapiUser();
-
-// Show in-page message instead of throwing a Nuxt error when user
-// authenticated via an external provider (Google, Facebook, etc.)
-const isExternalProvider = computed(() => user.value?.provider !== "local");
 
 const { $setSEO, $setStructuredData } = useNuxtApp();
 const config = useRuntimeConfig();

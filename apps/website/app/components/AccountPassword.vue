@@ -11,11 +11,25 @@
       </div>
     </div>
     <div class="account--password__form">
-      <FormPassword />
+      <MemoDefault
+        v-if="isExternalProvider"
+        :icon="ShieldOff"
+        text="No puedes cambiar tu contraseña porque iniciaste sesión con Google u otro proveedor externo."
+        link="/cuenta"
+        button-text="Volver a mi cuenta"
+      />
+      <FormPassword v-else />
     </div>
   </section>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import { computed } from "vue";
+import { ShieldOff } from "lucide-vue-next";
 import FormPassword from "@/components/FormPassword.vue";
+import MemoDefault from "@/components/MemoDefault.vue";
+
+const user = useStrapiUser();
+
+const isExternalProvider = computed(() => user.value?.provider !== "local");
 </script>
