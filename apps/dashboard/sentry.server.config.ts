@@ -1,7 +1,13 @@
 import * as Sentry from "@sentry/nuxt";
+
+// Only initialize Sentry in production to prevent dev/staging noise from
+// reaching Sentry. Passing dsn: undefined is the official SDK-supported way
+// to disable all instrumentation with zero overhead.
+const isProduction = process.env.NODE_ENV === "production";
+
 const config = useRuntimeConfig();
 
-const dsn = config.public.sentryDsn;
+const dsn = isProduction ? config.public.sentryDsn : undefined;
 const enableDebug = config.public.sentryDebug;
 
 Sentry.init({
