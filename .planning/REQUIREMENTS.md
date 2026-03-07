@@ -10,11 +10,11 @@ Requirements for milestone v1.9. Each maps to roadmap phases.
 
 ### Bugs Críticos
 
-- [ ] **BUG-01**: El plugin `$setStructuredData` está implementado y los datos estructurados JSON-LD se aplican correctamente en todas las páginas que lo invocan
-- [ ] **BUG-02**: Las keys de `useAsyncData` son únicas — `"packs"` en `packs/index.vue` usa una key distinta a `"packs"` en `index.vue`, y `"adData"` en `anuncios/[slug].vue` incluye el slug dinámico
-- [ ] **BUG-03**: `console.error`, `console.warn` y `console.info` están restaurados en producción — solo `console.log` y `console.debug` son suprimidos
-- [ ] **BUG-04**: `useAsyncData` en `mis-anuncios.vue` tiene `await` y key explícita — SSR consistente con CSR
-- [ ] **BUG-05**: `useAsyncData` en `mis-ordenes.vue` tiene `await` y key explícita — SSR consistente con CSR
+- [x] **BUG-01**: El plugin `$setStructuredData` está implementado y los datos estructurados JSON-LD se aplican correctamente en todas las páginas que lo invocan
+- [x] **BUG-02**: Las keys de `useAsyncData` son únicas — `"packs"` en `packs/index.vue` usa una key distinta a `"packs"` en `index.vue`, y `"adData"` en `anuncios/[slug].vue` incluye el slug dinámico
+- [x] **BUG-03**: `console.error`, `console.warn` y `console.info` están restaurados en producción — solo `console.log` y `console.debug` son suprimidos
+- [x] **BUG-04**: `useAsyncData` en `mis-anuncios.vue` tiene `await` y key explícita — SSR consistente con CSR
+- [x] **BUG-05**: `useAsyncData` en `mis-ordenes.vue` tiene `await` y key explícita — SSR consistente con CSR
 
 ### TypeScript
 
@@ -64,11 +64,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| BUG-01 | Phase 25 | Pending |
-| BUG-02 | Phase 25 | Pending |
-| BUG-03 | Phase 25 | Pending |
-| BUG-04 | Phase 25 | Pending |
-| BUG-05 | Phase 25 | Pending |
+| BUG-01 | Phase 25 | Complete |
+| BUG-02 | Phase 25 | Complete |
+| BUG-03 | Phase 25 | Complete |
+| BUG-04 | Phase 25 | Complete |
+| BUG-05 | Phase 25 | Complete |
 | TS-01 | Phase 27 | Pending |
 | TS-02 | Phase 27 | Pending |
 | TS-03 | Phase 27 | Pending |
