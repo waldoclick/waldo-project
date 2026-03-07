@@ -53,7 +53,7 @@ const { data: packs } = await useAsyncData("home-packs", async () => {
   }
 });
 
-// Load FAQs destacadas para el home
+// Load featured FAQs for the home page
 const { data: faqs } = await useAsyncData("featured-faqs", async () => {
   const faqsStore = useFaqsStore();
   try {

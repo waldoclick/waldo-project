@@ -2,7 +2,7 @@
 import { useHead } from "#app";
 
 export default defineNuxtPlugin(() => {
-  // Función para agregar datos estructurados
+  // Inject structured data (JSON-LD) into the page head
   const setStructuredData = (data: object) => {
     useHead({
       script: [
@@ -14,7 +14,7 @@ export default defineNuxtPlugin(() => {
     });
   };
 
-  // Exponer la función globalmente
+  // Expose globally via $setStructuredData
   return {
     provide: {
       setStructuredData,

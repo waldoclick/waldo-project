@@ -57,9 +57,9 @@ const {
         return null;
       }
 
-      // Por ahora, siempre mostramos la información del anuncio
+      // For now, always show the ad information
 
-      // Formatear precio original y convertir
+      // Format original price and convert to alternate currency
       if (ad.price) {
         ad.priceData = {
           formattedPrice: new Intl.NumberFormat("es-CL", {
@@ -95,7 +95,7 @@ const {
         }
       }
 
-      // Solo cargamos relacionados y agregamos al historial si existe el anuncio
+      // Only load related ads and add to history if the ad exists
       await relatedStore.loadRelatedAds(ad.id);
 
       historyStore.addToHistory({
@@ -116,11 +116,11 @@ const {
   {
     server: true,
     lazy: false,
-    watch: [() => route.params.slug], // ✅ Observar cambios en el slug
+    watch: [() => route.params.slug], // watch for slug changes
   },
 );
 
-// Determinar el mensaje de error apropiado
+// Build the appropriate error message
 const getErrorMessage = () => {
   if (adError.value) {
     return {
@@ -138,14 +138,14 @@ const getErrorMessage = () => {
   };
 };
 
-// Observar los datos y mostrar error 404 cuando no hay datos
+// Show 404 when data is done loading but no ad was found
 watchEffect(() => {
   if (!pending.value && !adData.value) {
     showError(getErrorMessage());
   }
 });
 
-// Configurar SEO cuando los datos estén disponibles
+// Set SEO and structured data when ad data is available
 watch(
   () => adData.value,
   (newData) => {
