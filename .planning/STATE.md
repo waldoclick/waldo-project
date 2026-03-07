@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.13
 milestone_name: GTM Module Migration
-status: planned
-stopped_at: Phase 33 planned — ready to execute
-last_updated: "2026-03-07T15:00:00.000Z"
-last_activity: 2026-03-07 — v1.12 complete, v1.13 planned (GTM module migration)
+status: complete
+stopped_at: Phase 33 complete — v1.13 shipped
+last_updated: "2026-03-07T16:00:00.000Z"
+last_activity: 2026-03-07 — v1.13 complete, GA4 Realtime confirmed working locally
 progress:
   total_phases: 1
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 1
-  completed_plans: 0
+  completed_plans: 1
 ---
 
 # Project State
@@ -20,23 +20,23 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-07)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.13 — GTM Module Migration (PLANNED)
+**Current focus:** v1.13 — GTM Module Migration (COMPLETE)
 
 ## Current Position
 
-Phase: 33 — GTM Module Migration (planned)
-Plan: 0 of 1 complete
-Status: planned — ready to execute
+Phase: 33 — GTM Module Migration (complete)
+Plan: 1 of 1 complete
+Status: complete — v1.13 shipped
 
 ```
-[░░░░░░░░░░]   0% — 0/1 phases complete (v1.13)
+[██████████] 100% — 1/1 phases complete (v1.13)
 ```
 
 ## Accumulated Context
 
 ### Decisions
 
-All decisions from v1.1–v1.12 are logged in PROJECT.md Key Decisions table.
+All decisions from v1.1–v1.13 are logged in PROJECT.md Key Decisions table.
 
 Key patterns established (carry forward):
 - `watch({ immediate: true })` as sole data-loading trigger — never pair with onMounted
@@ -66,6 +66,9 @@ Key patterns established (carry forward):
 - [Phase 32-analytics-gaps]: window.dataLayer typed as (DataLayerEvent | Record<string, unknown>)[] — union covers GA4 events and GTM consent commands
 - [Phase 32-analytics-gaps]: DataLayerEvent.ecommerce accepts null to support GTM ecommerce clear pattern
 - [Phase 32-analytics-gaps]: step_view fires from onMounted (step 1, once) + watcher (steps 2-5 on change); no immediate:true on step watcher
+- [Phase 33-gtm-module-migration]: GTM delivered via @saslavik/nuxt-gtm module (NOT @nuxtjs/gtm which is Nuxt 2 only)
+- [Phase 33-gtm-module-migration]: Module config: top-level `gtm: { id, enableRouterSync: true, debug: false }` in nuxt.config.ts
+- [Phase 33-gtm-module-migration]: runtimeConfig.public.gtm.id replaces gtmId — feature flag: !!config.public.gtm?.id
 
 ### Pending Todos
 
@@ -78,5 +81,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-07
-Stopped at: v1.12 complete — tagged v1.12; v1.13 GTM Module Migration planned
-Resume with: `/gsd-execute-phase 33-gtm-module-migration`
+Stopped at: v1.13 complete — GA4 Realtime confirmed working locally
+Next: deploy to staging/production and monitor GA4
