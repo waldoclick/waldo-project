@@ -10,15 +10,16 @@ export interface ICronjobResult {
  * FeaturedCronService
  *
  * Guarantees every registered user always has exactly 3 "free available"
- * ad-featured-reservation slots. A slot is considered "free available" when:
- *   - price = 0  (it is a complimentary featured reservation)
+ * ad-reservation slots (api::ad-reservation.ad-reservation). A slot is
+ * considered "free available" when:
+ *   - price = 0  (it is a complimentary reservation)
  *   - AND (ad = null OR ad.active = false)  (not currently linked to a live ad)
  *
  * Runs daily at 2:30 AM America/Santiago via cron-tasks.ts.
  */
 export default class FeaturedCronService {
   /**
-   * Scan every user, count their free-available featured reservations,
+   * Scan every user, count their free-available ad-reservations,
    * and create however many slots are missing to reach the guaranteed minimum of 3.
    *
    * Algorithm:
@@ -26,7 +27,7 @@ export default class FeaturedCronService {
    *   2. For each user:
    *        a. Count free-available slots: price=0 AND (ad=null OR ad.active=false)
    *        b. neededSlots = max(0, 3 - freeAvailableCount)
-   *        c. Create each missing slot with price=0, no total_days (no expiry concept)
+   *        c. Create each missing slot with price=0, total_days=15
    *   3. Log summary and return result
    */
   async restoreFreeFeaturedReservations(): Promise<ICronjobResult> {
@@ -36,7 +37,7 @@ export default class FeaturedCronService {
         throw new Error("strapi is not defined");
       }
 
-      logger.info("=== STARTING FREE FEATURED RESERVATION RESTORE ===");
+      logger.info("=== STARTING FREE AD RESERVATION RESTORE ===");
 
       // Fetch all users — we need every user id, nothing else.
       const allUsers = (await strapi.entityService.findMany(
@@ -51,21 +52,24 @@ export default class FeaturedCronService {
 
       let totalCreated = 0;
 
-      // Iterate over every user and top up their free featured reservation pool.
+      // Iterate over every user and top up their free ad reservation pool.
       for (const user of allUsers) {
         const userId = user.id;
 
         try {
-          // Count the user's current free-available featured reservations.
+          // Count the user's current free-available ad-reservations.
           // Free-available = price=0 AND (ad is null OR ad.active=false).
+          // Note: { ad: { id: { $null: true } } } is the correct Strapi v5
+          // entityService syntax for a null-relation check — plain { ad: null }
+          // does not work and silently returns zero results.
           const freeAvailableSlots = (await strapi.entityService.findMany(
-            "api::ad-featured-reservation.ad-featured-reservation",
+            "api::ad-reservation.ad-reservation",
             {
               filters: {
                 user: { id: { $eq: userId } },
                 price: 0, // Free slots only
                 $or: [
-                  { ad: null }, // Not linked to any ad
+                  { ad: { id: { $null: true } } }, // Not linked to any ad
                   { ad: { active: { $eq: false } } }, // Linked to an inactive ad
                 ],
               },
@@ -79,18 +83,17 @@ export default class FeaturedCronService {
           // Determine how many new slots must be created to reach the guaranteed 3.
           const neededSlots = Math.max(0, 3 - freeAvailableCount);
 
-          // Create each missing slot.  Note: total_days is intentionally omitted —
-          // featured reservations have no expiry concept (unlike ad-reservations).
+          // Create each missing slot with total_days=15, consistent with how
+          // registration (authController.ts) initialises free ad-reservations.
           for (let i = 0; i < neededSlots; i++) {
             await strapi.entityService.create(
-              "api::ad-featured-reservation.ad-featured-reservation",
+              "api::ad-reservation.ad-reservation",
               {
                 data: {
                   price: 0,
+                  total_days: 15,
                   user: userId,
-                  description: `Free featured reservation restored ${new Date().toISOString()}`,
-                  publishedAt: new Date(),
-                  // total_days intentionally absent — featured slots never expire
+                  description: `Free reservation restored ${new Date().toISOString()}`,
                 },
               }
             );
@@ -99,7 +102,7 @@ export default class FeaturedCronService {
           }
 
           if (neededSlots > 0) {
-            logger.info("Free featured reservations created for user", {
+            logger.info("Free ad reservations created for user", {
               userId,
               freeAvailableCount,
               neededSlots,
@@ -108,7 +111,7 @@ export default class FeaturedCronService {
           }
         } catch (error) {
           // Per-user errors are caught individually so one bad user does not abort the whole run.
-          logger.error("Error processing featured reservations for user", {
+          logger.error("Error processing ad reservations for user", {
             userId,
             error: error.message,
           });
@@ -116,18 +119,18 @@ export default class FeaturedCronService {
       }
 
       logger.info(
-        `=== FREE FEATURED RESERVATION RESTORE COMPLETE — users: ${allUsers.length}, slots created: ${totalCreated} ===`
+        `=== FREE AD RESERVATION RESTORE COMPLETE — users: ${allUsers.length}, slots created: ${totalCreated} ===`
       );
 
       return {
         success: true,
-        results: `Processed ${allUsers.length} users, created ${totalCreated} free featured reservation slots`,
+        results: `Processed ${allUsers.length} users, created ${totalCreated} free ad reservation slots`,
       };
     } catch (error) {
       logger.error("Error in restoreFreeFeaturedReservations:", error);
       return {
         success: false,
-        error: "Failed to restore free featured reservations",
+        error: "Failed to restore free ad reservations",
       };
     }
   }
