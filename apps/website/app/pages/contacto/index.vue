@@ -15,9 +15,9 @@ definePageMeta({
 });
 
 $setSEO({
-  title: "Contacto",
+  title: "Contacto y Soporte",
   description:
-    "¿Tienes preguntas o necesitas ayuda? Contáctanos en Waldo.click® y nuestro equipo te responderá lo antes posible.",
+    "¿Tienes dudas sobre anuncios de activos industriales o necesitas ayuda? Escríbenos en Waldo.click® y nuestro equipo te responderá pronto.",
   imageUrl: `${config.public.baseUrl}/contact-share.jpg`,
   url: `${config.public.baseUrl}/contacto`,
 });
@@ -28,6 +28,6 @@ $setStructuredData({
   name: "Waldo.click - Página de Contacto",
   url: `${config.public.baseUrl}/contacto`,
   description:
-    "¿Tienes preguntas o necesitas ayuda? Contáctanos en Waldo.click® y nuestro equipo te responderá lo antes posible.",
+    "¿Tienes dudas sobre anuncios de activos industriales o necesitas ayuda? Escríbenos en Waldo.click® y nuestro equipo te responderá pronto.",
 });
 </script>
