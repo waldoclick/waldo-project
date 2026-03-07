@@ -25,14 +25,14 @@ Requirements for milestone v1.9. Each maps to roadmap phases.
 
 ### Data Fetching
 
-- [ ] **FETCH-01**: `FormProfile.vue` carga sus datos vía `useAsyncData` o recibe los datos como props — no usa `onMounted(async)` para fetch
-- [ ] **FETCH-02**: `FormCreateTwo.vue` carga comunas vía `useAsyncData` o desde store ya hidratado — no usa `onMounted(async)` para fetch
-- [ ] **FETCH-03**: `ResumeDefault.vue` carga datos del anuncio vía `useAsyncData` o props — no usa `onMounted(async)` para fetch
-- [ ] **FETCH-04**: `PaymentMethod.vue` carga el método de pago vía `useAsyncData` o props — no usa `onMounted(async)` para fetch
-- [ ] **FETCH-05**: `CreateAd.vue` verifica el usuario vía store ya hidratado o `useAsyncData` en la página padre — no usa `onMounted(async)` para fetch
-- [ ] **FETCH-06**: `FilterResults.vue` carga los filtros vía store con cache guard o `useAsyncData` — no usa `onMounted(async)` para fetch
-- [ ] **FETCH-07**: `PackMethod.vue` carga los packs vía store con cache guard o `useAsyncData` — no usa `onMounted(async)` para fetch
-- [ ] **FETCH-08**: Los 62 `onMounted` en componentes están auditados y clasificados como: (a) UI-only (permitido), (b) fetch que debe moverse, (c) ya corregido — resultado documentado en comentario o commit message
+- [x] **FETCH-01**: `FormProfile.vue` carga sus datos vía `useAsyncData` o recibe los datos como props — no usa `onMounted(async)` para fetch
+- [x] **FETCH-02**: `FormCreateTwo.vue` carga comunas vía `useAsyncData` o desde store ya hidratado — no usa `onMounted(async)` para fetch
+- [x] **FETCH-03**: `ResumeDefault.vue` carga datos del anuncio vía `useAsyncData` o props — no usa `onMounted(async)` para fetch
+- [x] **FETCH-04**: `PaymentMethod.vue` carga el método de pago vía `useAsyncData` o props — no usa `onMounted(async)` para fetch
+- [x] **FETCH-05**: `CreateAd.vue` verifica el usuario vía store ya hidratado o `useAsyncData` en la página padre — no usa `onMounted(async)` para fetch
+- [x] **FETCH-06**: `FilterResults.vue` carga los filtros vía store con cache guard o `useAsyncData` — no usa `onMounted(async)` para fetch
+- [x] **FETCH-07**: `PackMethod.vue` carga los packs vía store con cache guard o `useAsyncData` — no usa `onMounted(async)` para fetch
+- [x] **FETCH-08**: Los 62 `onMounted` en componentes están auditados y clasificados como: (a) UI-only (permitido), (b) fetch que debe moverse, (c) ya corregido — resultado documentado en comentario o commit message
 
 ### Store Persistence
 
@@ -73,14 +73,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TS-02 | Phase 27 | Pending |
 | TS-03 | Phase 27 | Pending |
 | TS-04 | Phase 28 | Pending |
-| FETCH-01 | Phase 26 | Pending |
-| FETCH-02 | Phase 26 | Pending |
-| FETCH-03 | Phase 26 | Pending |
-| FETCH-04 | Phase 26 | Pending |
-| FETCH-05 | Phase 26 | Pending |
-| FETCH-06 | Phase 26 | Pending |
-| FETCH-07 | Phase 26 | Pending |
-| FETCH-08 | Phase 26 | Pending |
+| FETCH-01 | Phase 26 | Complete |
+| FETCH-02 | Phase 26 | Complete |
+| FETCH-03 | Phase 26 | Complete |
+| FETCH-04 | Phase 26 | Complete |
+| FETCH-05 | Phase 26 | Complete |
+| FETCH-06 | Phase 26 | Complete |
+| FETCH-07 | Phase 26 | Complete |
+| FETCH-08 | Phase 26 | Complete |
 | STORE-01 | Phase 28 | Pending |
 
 **Coverage:**
@@ -90,4 +90,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-03-07*
-*Last updated: 2026-03-07 after initial definition*
+*Last updated: 2026-03-07 after Phase 26 completion (FETCH-01..08 complete)*
