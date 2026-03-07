@@ -7,10 +7,10 @@
 
 ### Bugs
 
-- [ ] **BUG-01**: `anuncios/[slug].vue` — el título no incluye `| Venta de Equipo en Waldo.click` (double-suffix eliminado); la descripción usa `Waldo.click®` (con ®); no hay doble-espacio cuando la descripción del aviso es null
-- [ ] **BUG-02**: `[slug].vue` (perfil público) — el título no incluye `| Waldo.click®` manualmente (double-suffix eliminado); la descripción no contiene `${totalAds}` ni ningún contador dinámico
-- [ ] **BUG-03**: `anuncios/index.vue` — `$setSEO` se ejecuta en contexto SSR (no solo en `watch(route.query)`); la descripción generada usa `Waldo.click®` (con ®)
-- [ ] **BUG-04**: Las páginas `packs/index.vue`, `login/facebook.vue`, `login/google.vue` y `dev.vue` declaran `useSeoMeta({ robots: "noindex, nofollow" })` — son páginas privadas/técnicas sin valor indexable que actualmente carecen de esta declaración
+- [x] **BUG-01**: `anuncios/[slug].vue` — el título no incluye `| Venta de Equipo en Waldo.click` (double-suffix eliminado); la descripción usa `Waldo.click®` (con ®); no hay doble-espacio cuando la descripción del aviso es null
+- [x] **BUG-02**: `[slug].vue` (perfil público) — el título no incluye `| Waldo.click®` manualmente (double-suffix eliminado); la descripción no contiene `${totalAds}` ni ningún contador dinámico
+- [x] **BUG-03**: `anuncios/index.vue` — `$setSEO` se ejecuta en contexto SSR (no solo en `watch(route.query)`); la descripción generada usa `Waldo.click®` (con ®)
+- [x] **BUG-04**: Las páginas `packs/index.vue`, `login/facebook.vue`, `login/google.vue` y `dev.vue` declaran `useSeoMeta({ robots: "noindex, nofollow" })` — son páginas privadas/técnicas sin valor indexable que actualmente carecen de esta declaración
 
 ### Copy
 
@@ -39,10 +39,10 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| BUG-01 | Phase 36 | Pending |
-| BUG-02 | Phase 36 | Pending |
-| BUG-03 | Phase 36 | Pending |
-| BUG-04 | Phase 36 | Pending |
+| BUG-01 | Phase 36 | Complete |
+| BUG-02 | Phase 36 | Complete |
+| BUG-03 | Phase 36 | Complete |
+| BUG-04 | Phase 36 | Complete |
 | COPY-01 | Phase 37 | Pending |
 | COPY-02 | Phase 37 | Pending |
 | COPY-03 | Phase 37 | Pending |

@@ -1,15 +1,15 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.16
-milestone_name: Website Meta Copy Audit
-status: ROADMAP_DEFINED
-stopped_at: Roadmap defined — 3 phases (36-38) ready for planning
-last_updated: "2026-03-07T23:30:00.000Z"
+milestone: v1.1
+milestone_name: milestone
+status: ROADMAP_DEFINED — awaiting `/gsd-plan-phase 36`
+stopped_at: Completed 36-1-PLAN.md — SEO Bug Fixes
+last_updated: "2026-03-07T18:11:13.457Z"
 progress:
   total_phases: 3
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  completed_phases: 1
+  total_plans: 1
+  completed_plans: 1
   percent: 0
 ---
 
@@ -102,6 +102,9 @@ Key patterns established (carry forward):
 - **v1.15**: `$setSEO` derives ogTitle/ogDescription from title/description — zero call-site changes when extending plugin
 - **v1.15**: `key: "structured-data"` on useHead script entry prevents JSON-LD accumulation on SPA nav
 - **v1.15**: `useSeoMeta({ robots: "noindex, nofollow" })` for private page noindex defense-in-depth
+- [Phase 36]: descPart variable with leading space eliminates double-space when ad description is null
+- [Phase 36]: SSR-safe $setSEO placed at synchronous top-level scope above watch block in anuncios/index.vue
+- [Phase 36]: useSeoMeta({ robots: noindex, nofollow }) added to packs/index.vue, login/facebook.vue, login/google.vue, dev.vue
 
 ### v1.16 Canonical Vocabulary (hard constraints)
 - ✅ `anuncios` — NEVER `avisos`, NEVER `clasificados`
@@ -121,6 +124,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-07T23:30:00.000Z
-Stopped at: Roadmap written — Phases 36, 37, 38 defined
+Last session: 2026-03-07T18:11:13.451Z
+Stopped at: Completed 36-1-PLAN.md — SEO Bug Fixes
 Resume with: `/gsd-plan-phase 36`
