@@ -115,6 +115,7 @@ export default defineNuxtConfig({
 
   site: {
     name: "Admin Waldo.click®",
+    defaultLocale: "es",
     ...(process.env.NODE_ENV !== "local" && { url: process.env.BASE_URL }),
   },
 
@@ -122,6 +123,7 @@ export default defineNuxtConfig({
 
   app: {
     head: {
+      htmlAttrs: { lang: "es" },
       title: "Admin Waldo.click®",
       meta: [
         { charset: "utf-8" },
