@@ -45,10 +45,10 @@
         >
           <div class="dropdown--sales__list__item__main">
             <span class="dropdown--sales__list__item__title">
-              {{ order.buy_order || `Orden #${order.id}` }}
+              {{ getBuyerName(order.user) }}
             </span>
             <span class="dropdown--sales__list__item__meta">
-              {{ order.user?.username || order.user?.email || "Usuario" }} •
+              {{ formatDateShort(order.createdAt) }} •
               {{ formatTime(order.createdAt) }}
             </span>
           </div>
@@ -64,8 +64,10 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue";
 import { formatCurrency } from "@/utils/price";
+import { formatDateShort } from "@/utils/date";
+import { formatFullName } from "@/utils/string";
 import { ShoppingBag, ExternalLink } from "lucide-vue-next";
-import type { Order } from "@/types/order";
+import type { Order, OrderUser } from "@/types/order";
 
 const strapi = useStrapi();
 
@@ -98,6 +100,12 @@ const formatTime = (dateString: string) => {
     hour: "2-digit",
     minute: "2-digit",
   });
+};
+
+const getBuyerName = (user?: OrderUser): string => {
+  const full = formatFullName(user?.firstname, user?.lastname);
+  if (full !== "--") return full;
+  return user?.username || user?.email || "Usuario";
 };
 
 const handleClickOutside = (event: MouseEvent) => {
