@@ -38,6 +38,7 @@ await useAsyncData("anunciar-init", async () => {
     categoriesStore.loadCategories(),
     packsStore.loadPacks(),
   ]);
+  return true;
 });
 
 // onMounted: analytics-only — GA4 view_item_list event must fire client-side
