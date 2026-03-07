@@ -22,7 +22,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const { $setSEO, $setStructuredData } = useNuxtApp();
 const route = useRoute();
 const packsStore = usePacksStore();
@@ -34,7 +34,7 @@ import MessageDefault from "@/components/MessageDefault.vue";
 import FooterDefault from "@/components/FooterDefault.vue";
 import { usePacksStore } from "@/stores/packs.store";
 
-const formatPrice = (price) => {
+const formatPrice = (price: number) => {
   return new Intl.NumberFormat("es-CL", {
     style: "currency",
     currency: "CLP",
@@ -43,7 +43,7 @@ const formatPrice = (price) => {
   }).format(price);
 };
 
-const handleError = (type) => {
+const handleError = (type: "INVALID_URL" | "NOT_FOUND") => {
   const errorMessages = {
     INVALID_URL: {
       message: "Pack no encontrado",

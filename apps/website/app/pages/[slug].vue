@@ -13,9 +13,10 @@
   </div>
 </template>
 
-<script setup>
-// Define SEO
-const { $setSEO, $setStructuredData } = useNuxtApp();
+<script setup lang="ts">
+import type { User } from "@/types/user";
+import type { Ad } from "@/types/ad";
+import type { Pagination } from "@/types/pagination";
 // stores
 import { useRoute } from "nuxt/app";
 import { useAdsStore } from "@/stores/ads.store";
@@ -25,6 +26,15 @@ import HeaderDefault from "@/components/HeaderDefault";
 import HeroProfile from "@/components/HeroProfile";
 import ProfileDefault from "@/components/ProfileDefault";
 import FooterDefault from "@/components/FooterDefault";
+
+interface ProfileData {
+  user: User;
+  ads: Ad[];
+  pagination: Pagination;
+}
+
+// Define SEO
+const { $setSEO, $setStructuredData } = useNuxtApp();
 
 const route = useRoute();
 
@@ -63,11 +73,11 @@ const {
   data: adsData,
   pending,
   error,
-} = await useAsyncData(
+} = await useAsyncData<ProfileData | null>(
   () => `adsData-${route.params.slug}`,
   async () => {
     const userStore = useUserStore();
-    const username = route.params.slug;
+    const username = String(route.params.slug || "");
     const adsStore = useAdsStore();
 
     try {

@@ -18,7 +18,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const { $setSEO, $setStructuredData } = useNuxtApp();
 
 import { useRoute } from "vue-router";
@@ -27,12 +27,39 @@ import { useAdsStore } from "@/stores/ads.store";
 import { useRelatedStore } from "@/stores/related.store";
 import { useHistoryStore } from "@/stores/history.store";
 import { useIndicatorStore } from "@/stores/indicator.store";
+import type { Ad } from "@/types/ad";
 
 import HeaderDefault from "@/components/HeaderDefault.vue";
 import FooterDefault from "@/components/FooterDefault.vue";
 import HeroAnnouncement from "@/components/HeroAnnouncement.vue";
 import AdSingle from "@/components/AdSingle.vue";
 import RelatedAds from "~/components/RelatedAds.vue";
+
+interface PriceData {
+  formattedPrice: string;
+  originalPrice: number;
+  originalCurrency: string;
+  convertedPrice?: number;
+  convertedTimestamp?: string;
+  convertedCurrency?: string;
+  formattedConvertedPrice?: string;
+}
+
+// Ad as returned by Strapi API — commune and category are objects, not IDs
+interface AdWithPriceData extends Omit<
+  Ad,
+  "commune" | "category" | "condition"
+> {
+  commune: {
+    id: number;
+    name: string;
+    region?: { id: number; name: string };
+  } | null;
+  category: { id: number; name: string } | null;
+  condition: { id: number; name: string } | null;
+  priceData?: PriceData;
+  active?: boolean;
+}
 
 const route = useRoute();
 const config = useRuntimeConfig();
@@ -45,13 +72,15 @@ const {
   refresh,
   pending,
   error: adError,
-} = await useAsyncData(
+} = await useAsyncData<AdWithPriceData | null>(
   `ad-${route.params.slug}`,
   async () => {
     const adsStore = useAdsStore();
 
     try {
-      const ad = await adsStore.loadAdBySlug(route.params.slug);
+      const ad = (await adsStore.loadAdBySlug(
+        route.params.slug as string,
+      )) as AdWithPriceData | null;
 
       if (!ad) {
         return null;
