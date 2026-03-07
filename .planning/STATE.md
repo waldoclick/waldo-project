@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.9
 milestone_name: Website Technical Debt
 status: Phase 25 planned — ready to execute
-stopped_at: Phase 25 plan written (25-PLAN-01.md)
+stopped_at: Phase 25 plan written (25-01-PLAN.md)
 last_updated: "2026-03-06T00:00:00.000Z"
 last_activity: 2026-03-06 — Phase 25 planned (1 plan, 5 tasks, 1 wave)
 progress:
