@@ -28,6 +28,7 @@ export default defineNuxtConfig({
     "@nuxt/image",
     "@nuxtjs/google-fonts",
     // "@nuxtjs/i18n",
+    "@saslavik/nuxt-gtm",
   ],
 
   // Security configuration - using nuxt-security defaults with customizations
@@ -273,12 +274,12 @@ export default defineNuxtConfig({
     // Pinia Configuration
   },
 
-  // Google Tag Manager Configuration - Manual implementation for Nuxt 4
-  // gtm: {
-  //   id: process.env.GTM_ID || "GTM-N4B8LDKS",
-  //   enabled: true,
-  //   debug: false,
-  // },
+  // Google Tag Manager Configuration
+  gtm: {
+    id: process.env.GTM_ID || "GTM-N4B8LDKS",
+    enableRouterSync: true,
+    debug: false,
+  },
 
   eslint: {
     config: {
@@ -307,7 +308,9 @@ export default defineNuxtConfig({
       blockSearchEngines: process.env.BLOCK_SEARCH_ENGINES === "true",
       recaptchaSiteKey: process.env.RECAPTCHA_SITE_KEY,
       googleClientId: process.env.GOOGLE_CLIENT_ID,
-      gtmId: process.env.GTM_ID || "GTM-N4B8LDKS", // GTM ID for Nuxt 4 compatibility
+      gtm: {
+        id: process.env.GTM_ID || "GTM-N4B8LDKS",
+      },
       sentryDsn: process.env.SENTRY_DSN,
       sentryFeedback: process.env.SENTRY_FEEDBACK === "true",
       sentryDebug: process.env.SENTRY_DEBUG === "true",
