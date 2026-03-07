@@ -64,29 +64,29 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| BUG-01 | — | Pending |
-| BUG-02 | — | Pending |
-| BUG-03 | — | Pending |
-| BUG-04 | — | Pending |
-| BUG-05 | — | Pending |
-| TS-01 | — | Pending |
-| TS-02 | — | Pending |
-| TS-03 | — | Pending |
-| TS-04 | — | Pending |
-| FETCH-01 | — | Pending |
-| FETCH-02 | — | Pending |
-| FETCH-03 | — | Pending |
-| FETCH-04 | — | Pending |
-| FETCH-05 | — | Pending |
-| FETCH-06 | — | Pending |
-| FETCH-07 | — | Pending |
-| FETCH-08 | — | Pending |
-| STORE-01 | — | Pending |
+| BUG-01 | Phase 25 | Pending |
+| BUG-02 | Phase 25 | Pending |
+| BUG-03 | Phase 25 | Pending |
+| BUG-04 | Phase 25 | Pending |
+| BUG-05 | Phase 25 | Pending |
+| TS-01 | Phase 27 | Pending |
+| TS-02 | Phase 27 | Pending |
+| TS-03 | Phase 27 | Pending |
+| TS-04 | Phase 28 | Pending |
+| FETCH-01 | Phase 26 | Pending |
+| FETCH-02 | Phase 26 | Pending |
+| FETCH-03 | Phase 26 | Pending |
+| FETCH-04 | Phase 26 | Pending |
+| FETCH-05 | Phase 26 | Pending |
+| FETCH-06 | Phase 26 | Pending |
+| FETCH-07 | Phase 26 | Pending |
+| FETCH-08 | Phase 26 | Pending |
+| STORE-01 | Phase 28 | Pending |
 
 **Coverage:**
 - v1.9 requirements: 18 total
-- Mapped to phases: 0
-- Unmapped: 18 ⚠️
+- Mapped to phases: 18 ✓
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-07*
