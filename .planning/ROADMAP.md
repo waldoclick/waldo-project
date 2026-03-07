@@ -9,7 +9,7 @@
 - ✅ **v1.5 Ad Credit Refund** — Phases 16-17 (shipped 2026-03-06)
 - ✅ **v1.6 Website API Optimization** — Phases 18-19 (shipped 2026-03-06)
 - ✅ **v1.7 Cron Reliability** — Phases 20-23 (shipped 2026-03-06)
-- 🚧 **v1.8 Free Featured Reservation Guarantee** — Phase 24 (in progress)
+- ✅ **v1.8 Free Featured Reservation Guarantee** — Phase 24 (shipped 2026-03-07)
 
 ## Phases
 
@@ -87,11 +87,19 @@ Archive: `.planning/milestones/v1.7-ROADMAP.md`
 
 </details>
 
-### 🚧 v1.8 Free Featured Reservation Guarantee (In Progress)
+<details>
+<summary>✅ v1.8 Free Featured Reservation Guarantee (Phase 24) — SHIPPED 2026-03-07</summary>
 
-**Milestone Goal:** Guarantee that every user always has 3 free `ad-featured-reservation` records with `price = 0` that are not linked to an active ad. A daily cron (`featuredCron`) scans all users and creates missing slots. Also commits the existing `cron-runner` API.
+**Milestone Goal:** Guarantee that every user always has 3 free `ad-featured-reservation` records with `price = 0` that are not linked to an active ad. A daily cron (`featuredCron`) scans all users and creates missing slots. Also fixes `ad-free-reservation-restore.cron.ts` logic and optimizes it with parallel batch processing.
 
-- [x] **Phase 24: featuredCron Implementation** — Implement `featured.cron.ts` with `FeaturedCronService.restoreFreeFeaturedReservations()`, register `featuredCron` in `cron-tasks.ts` (daily 2:30 AM Santiago), commit `cron-runner` API files, add English docs throughout. (completed 2026-03-06)
+- [x] **Phase 24: featuredCron Implementation** — Implement `featured.cron.ts`, register `featuredCron` in `cron-tasks.ts` (daily 2:30 AM Santiago), commit `cron-runner` API files, add English docs throughout. (completed 2026-03-06)
+- [x] **Fix: ad-free-reservation-restore logic** — Reservations stay permanently linked to expired ads (history); `restoreUserFreeReservations` counts by `ad.active=true` not `remaining_days>0`; cron simplified to single responsibility (guarantee 3 free reservations per user); parallel batch processing (50 users/batch). (completed 2026-03-07)
+
+Archive: `.planning/milestones/v1.8-ROADMAP.md`
+
+</details>
+
+### 🚧 Next milestone TBD
 
 ## Phase Details
 

@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.8
 milestone_name: Free Featured Reservation Guarantee
-status: planning
-stopped_at: Completed 24-01-PLAN.md — featuredCron implementation complete
-last_updated: "2026-03-06T23:40:14.925Z"
-last_activity: 2026-03-06 — Roadmap created, 1 phase mapped to 9 requirements
+status: complete
+stopped_at: Closed milestone v1.8 — all fixes shipped
+last_updated: "2026-03-07T01:30:00.000Z"
+last_activity: 2026-03-07 — Milestone v1.8 closed
 progress:
   total_phases: 1
   completed_phases: 1
   total_plans: 1
   completed_plans: 1
-  percent: 0
+  percent: 100
 ---
 
 # Project State
@@ -21,32 +21,29 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.8 Free Featured Reservation Guarantee — Phase 24: featuredCron Implementation
+**Current focus:** v1.8 COMPLETE — next milestone TBD
 
 ## Current Position
 
 Phase: 24 of 24 (featuredCron Implementation)
-Plan: — (not yet planned)
-Status: Ready to plan
-Last activity: 2026-03-06 — Roadmap created, 1 phase mapped to 9 requirements
+Plan: 24-01 (complete)
+Status: Milestone closed
+Last activity: 2026-03-07 — Milestone v1.8 closed, all fixes shipped
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 0
-- Average duration: —
-- Total execution time: —
+- Total plans completed: 1
+- Average duration: ~2 min
+- Total execution time: ~2 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| - | - | - | - |
-
-*Updated after each plan completion*
-| Phase 24 P01 | 101s | 3 tasks | 2 files |
+| 24 | 1 | ~2 min | ~2 min |
 
 ## Accumulated Context
 
@@ -61,10 +58,11 @@ Key patterns established (carry forward):
 - **v1.6**: `useAsyncData` is sole data-loading trigger in Nuxt pages
 - **v1.7 cron pattern**: class-based service (`class XxxCronService`), `logger` from `../utils/logtail`, per-item try/catch inside user loop, `entityService.findMany` + `entityService.create`
 - **v1.7 cron-tasks.ts JSDoc pattern**: state purpose + schedule expression meaning + timezone + service method called
-- **v1.8 (pending)**: `featuredCron` "free available" = price=0 AND (ad=null OR ad.active=false)
-- **v1.8 (pending)**: Featured reservations created with no `total_days` (field is optional, featured slots have no expiry)
-- [Phase 24]: Free-available featured slots defined as price=0 AND (ad=null OR ad.active=false)
-- [Phase 24]: total_days intentionally omitted on featured reservations — no expiry concept (unlike ad-reservations which use total_days: 15)
+- **v1.8**: `featuredCron` "free available" = price=0 AND (ad=null OR ad.active=false)
+- **v1.8**: Featured reservations created with no `total_days` (field is optional, featured slots have no expiry)
+- **v1.8**: Free ad reservations stay permanently linked to their ad when it expires — never unlinked. A new reservation is created to replace it.
+- **v1.8**: `restoreUserFreeReservations` counts pool as: `ad=null` (available) + `ad.active=true` (in use). Reservations linked to `ad.active=false` are consumed history, not counted.
+- **v1.8**: Cron parallelization pattern — `Promise.all` in batches of 50 to avoid DB connection pool exhaustion
 
 ### Pending Todos
 
@@ -76,6 +74,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-06T23:40:14.923Z
-Stopped at: Completed 24-01-PLAN.md — featuredCron implementation complete
+Last session: 2026-03-07T01:30:00.000Z
+Stopped at: Closed milestone v1.8
 Resume file: None
