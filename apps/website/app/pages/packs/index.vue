@@ -14,7 +14,7 @@ import PacksDefault from "@/components/PacksDefault.vue";
 import FooterDefault from "@/components/FooterDefault.vue";
 
 // Load packs
-const { data: packs } = await useAsyncData("packs", () => {
+const { data: packs } = await useAsyncData("packs-page-packs", () => {
   return new Promise(async (resolve) => {
     const packsStore = usePacksStore();
     try {
