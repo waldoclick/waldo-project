@@ -12,6 +12,7 @@
       </div>
     </div>
     <FooterDefault />
+    <LightboxLogin />
     <LightboxRegister />
     <LightboxCookies />
     <LightboxAdblock />
@@ -25,6 +26,7 @@ import HeroFake from "@/components/HeroFake.vue";
 import FooterDefault from "@/components/FooterDefault.vue";
 import MenuAbout from "@/components/MenuAbout.vue";
 
+import LightboxLogin from "@/components/LightboxLogin.vue";
 import LightboxRegister from "@/components/LightboxRegister.vue";
 import LightboxCookies from "@/components/LightboxCookies.vue";
 import LightboxAdblock from "@/components/LightboxAdblock.vue";
