@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.10
 milestone_name: Dashboard Orders Dropdown UI
-status: roadmap_created
-stopped_at: Roadmap created — Phase 30 is next
-last_updated: "2026-03-07T19:30:00.000Z"
-last_activity: "2026-03-07 — Roadmap created for v1.10"
+status: complete
+stopped_at: v1.10 complete — all requirements shipped
+last_updated: "2026-03-07T20:30:00.000Z"
+last_activity: "2026-03-07 — Phase 30 complete, milestone v1.10 shipped"
 progress:
   total_phases: 1
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
-  percent: 0
+  completed_phases: 1
+  total_plans: 1
+  completed_plans: 1
+  percent: 100
 ---
 
 # Project State
@@ -21,17 +21,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-07)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.10 — Dashboard Orders Dropdown UI (roadmap ready, planning Phase 30 next)
+**Current focus:** v1.10 — Dashboard Orders Dropdown UI (COMPLETE)
 
 ## Current Position
 
-Phase: 30 — Dropdown Display Fix (not started)
-Plan: —
-Status: Roadmap created — awaiting plan
-Last activity: 2026-03-07 — Roadmap created for v1.10
+Phase: 30 — Dropdown Display Fix (complete)
+Plan: 30-01 (complete)
+Status: Milestone v1.10 shipped
+Last activity: 2026-03-07 — Phase 30 complete
 
 ```
-[░░░░░░░░░░] 0% — 0/1 phases complete
+[██████████] 100% — 1/1 phases complete
 ```
 
 ## Accumulated Context
@@ -72,13 +72,13 @@ Key patterns established (carry forward):
 - [Phase 29]: createError statusMessage not description — NuxtError has no description property; statusMessage is the correct H3Error field
 - [Phase 29]: useAsyncData default option eliminates T | undefined without changing runtime behavior
 - [Phase 29]: typeCheck: true is now the permanent setting — all future builds enforce TypeScript
+- [Phase 30]: getBuyerName wrapper pattern — formatFullName takes (firstname, lastname) separately and returns "--" when both empty; wrapper adds username/email fallback chain for OrderUser objects
 
-### v1.10 Context
+### Milestone v1.10 — COMPLETE
 
-- **Milestone**: Dashboard Orders Dropdown UI — single component fix (`apps/dashboard/app/components/DropdownSales.vue`)
-- **DROP-01**: Replace `order.buy_order` with `formatFullName(order.user)` — utility already exists in `apps/dashboard/app/utils/string.ts`
-- **DROP-02**: Replace `formatTime(order.createdAt)` with `formatDateShort(order.createdAt) + " • " + formatTime(order.createdAt)` — `formatDateShort` already exists in `apps/dashboard/app/utils/date.ts`
-- **typeCheck: true** is enabled in dashboard since v1.1 — all changes must pass `nuxt typecheck`
+All 2 requirements satisfied:
+- DROP-01: Buyer full name in dropdown title (Phase 30)
+- DROP-02: Full date + time in dropdown meta (Phase 30)
 
 ### Milestone v1.9 — COMPLETE
 
@@ -99,6 +99,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-07T19:30:00.000Z
-Stopped at: Roadmap created for v1.10 — Phase 30 ready to plan
-Resume with: `/gsd-plan-phase 30`
+Last session: 2026-03-07T20:30:00.000Z
+Stopped at: v1.10 milestone complete — Phase 30 shipped
+Resume with: `/gsd-new-milestone` for next milestone
