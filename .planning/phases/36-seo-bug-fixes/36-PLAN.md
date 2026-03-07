@@ -184,54 +184,30 @@ No wave dependencies. All four files are distinct; changes do not overlap.
 
 ---
 
-## Task 4 — BUG-04: Add noindex robots meta to `packs/index.vue`
+## Task 4 — BUG-04: Add missing noindex to private/technical pages
 
 **Requirement:** BUG-04
-**File:** `apps/website/app/pages/packs/index.vue`
-**Why:** The packs page is an authenticated page (has `middleware: "auth"`) but currently lacks a `<meta name="robots" content="noindex, nofollow">` tag. It should not be crawlable.
+**Files:**
+- `apps/website/app/pages/packs/index.vue` — auth-gated, not indexable
+- `apps/website/app/pages/login/facebook.vue` — OAuth callback, no user-facing content
+- `apps/website/app/pages/login/google.vue` — OAuth callback, no user-facing content
+- `apps/website/app/pages/dev.vue` — internal dev page, must not appear in Google
+
+**Why:** These four pages are private or technical and lack `useSeoMeta({ robots: "noindex, nofollow" })`. All other private pages (all of `/cuenta`, `registro`, `recuperar-contrasena`, etc.) already have it from v1.15.
 
 **Actions:**
 
-1. Add `useSeoMeta({ robots: "noindex, nofollow" })` after the existing `$setStructuredData` call (line ~54) and before `definePageMeta`:
+1. `packs/index.vue` — add `useSeoMeta({ robots: "noindex, nofollow" })` after the `$setStructuredData` call and before `definePageMeta`.
 
-   Before:
-   ```typescript
-   $setStructuredData({
-     "@context": "https://schema.org",
-     "@type": "WebPage",
-     name: "Packs de Avisos — Waldo.click®",
-     description: "Elige el pack de avisos que mejor se adapte a tus necesidades.",
-     url: `${config.public.baseUrl}/packs`,
-   });
+2. `login/facebook.vue` — add `useSeoMeta({ robots: "noindex, nofollow" })` at the top-level script setup scope.
 
-   // Middleware
-   definePageMeta({
-     middleware: "auth",
-   });
-   ```
+3. `login/google.vue` — add `useSeoMeta({ robots: "noindex, nofollow" })` at the top-level script setup scope.
 
-   After:
-   ```typescript
-   $setStructuredData({
-     "@context": "https://schema.org",
-     "@type": "WebPage",
-     name: "Packs de Avisos — Waldo.click®",
-     description: "Elige el pack de avisos que mejor se adapte a tus necesidades.",
-     url: `${config.public.baseUrl}/packs`,
-   });
-
-   useSeoMeta({ robots: "noindex, nofollow" });
-
-   // Middleware
-   definePageMeta({
-     middleware: "auth",
-   });
-   ```
+4. `dev.vue` — add `useSeoMeta({ robots: "noindex, nofollow" })` at the top-level script setup scope.
 
 **Verification:**
-- `yarn workspace website typecheck` — no TypeScript errors
-- Confirm: `useSeoMeta` is called with `{ robots: "noindex, nofollow" }`
-- Manual: inspect page source for `<meta name="robots" content="noindex, nofollow">`
+- `npx nuxt typecheck` — no TypeScript errors
+- Confirm each file has `useSeoMeta({ robots: "noindex, nofollow" })`
 
 ---
 
@@ -244,7 +220,7 @@ Each task is committed independently (four commits). All are in the same wave �
 | 1 | `apps/website/app/pages/anuncios/[slug].vue` | `fix(seo): remove double-suffix and fix description in ad detail page` |
 | 2 | `apps/website/app/pages/[slug].vue` | `fix(seo): remove double-suffix and stale counter from user profile page` |
 | 3 | `apps/website/app/pages/anuncios/index.vue` | `fix(seo): make ad listing SSR-safe and add ® to description` |
-| 4 | `apps/website/app/pages/packs/index.vue` | `fix(seo): add noindex robots meta to packs page` |
+| 4 | `apps/website/app/pages/packs/index.vue`, `login/facebook.vue`, `login/google.vue`, `dev.vue` | `fix(seo): add noindex to private and technical pages` |
 
 ---
 
@@ -253,5 +229,5 @@ Each task is committed independently (four commits). All are in the same wave �
 - [ ] BUG-01: `anuncios/[slug].vue` title is `{name} en {commune}` (no `| Venta…` fragment); description contains `Waldo.click®`; no double-space when description is null
 - [ ] BUG-02: `[slug].vue` title is `Perfil de {username}` (no embedded `| Waldo.click®`); description contains no numeric counter
 - [ ] BUG-03: `anuncios/index.vue` server-rendered HTML contains correct title/description; description ends with `Waldo.click®`
-- [ ] BUG-04: `packs/index.vue` renders `<meta name="robots" content="noindex, nofollow">`
+- [ ] BUG-04: `packs/index.vue`, `login/facebook.vue`, `login/google.vue`, `dev.vue` renderan `<meta name="robots" content="noindex, nofollow">`
 - [ ] `yarn workspace website typecheck` passes with zero errors

@@ -10,7 +10,7 @@
 - [ ] **BUG-01**: `anuncios/[slug].vue` — el título no incluye `| Venta de Equipo en Waldo.click` (double-suffix eliminado); la descripción usa `Waldo.click®` (con ®); no hay doble-espacio cuando la descripción del aviso es null
 - [ ] **BUG-02**: `[slug].vue` (perfil público) — el título no incluye `| Waldo.click®` manualmente (double-suffix eliminado); la descripción no contiene `${totalAds}` ni ningún contador dinámico
 - [ ] **BUG-03**: `anuncios/index.vue` — `$setSEO` se ejecuta en contexto SSR (no solo en `watch(route.query)`); la descripción generada usa `Waldo.click®` (con ®)
-- [ ] **BUG-04**: `packs/index.vue` — la página declara `useSeoMeta({ robots: "noindex, nofollow" })`
+- [ ] **BUG-04**: Las páginas `packs/index.vue`, `login/facebook.vue`, `login/google.vue` y `dev.vue` declaran `useSeoMeta({ robots: "noindex, nofollow" })` — son páginas privadas/técnicas sin valor indexable que actualmente carecen de esta declaración
 
 ### Copy
 
@@ -59,4 +59,4 @@
 
 ---
 *Requirements defined: 2026-03-07*
-*Last updated: 2026-03-07 after initial definition*
+*Last updated: 2026-03-07 after BUG-04 scope expanded to include login/facebook.vue, login/google.vue, dev.vue*
