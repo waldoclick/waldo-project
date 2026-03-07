@@ -45,7 +45,7 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 
 **Requirements:** FILTER-01 (authenticated filter enforced server-side), FILTER-02 (pagination respected), FILTER-03 (sort and client filters forwarded), FILTER-04 (Rol column removed from dashboard)
 
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
 - [ ] 40-01-PLAN.md — Strapi: harden getUserDataWithFilters + wire strapi-server.ts (TDD)
@@ -76,4 +76,4 @@ Plans:
 | 37. Dynamic Page Copy | v1.16 | 1/1 | Complete | 2026-03-07 |
 | 38. Static Page Copy | v1.16 | 2/2 | Complete | 2026-03-07 |
 | 39. Spanish Default Language | standalone | 0/1 | In Progress | — |
-| 40. Users Filter Authenticated | 1/2 | In Progress|  | — |
+| 40. Users Filter Authenticated | 2/2 | Complete   | 2026-03-07 | — |
