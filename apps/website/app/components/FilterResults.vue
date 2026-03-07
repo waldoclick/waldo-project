@@ -63,11 +63,10 @@ const isClient = ref(false);
 const selectedCommune = ref("null");
 const selectedOrder = ref("featured");
 
-// Cargar datos y establecer valores iniciales
-onMounted(async () => {
+// onMounted: UI-only — sets client flag for SSR-conditional rendering; filterCommunes pre-loaded by parent page
+onMounted(() => {
   isClient.value = true;
-  await filterStore.loadFilterCommunes();
-  // Establecer los valores basados en los parámetros de la URL
+  // Initialize filter values from URL params
   selectedCommune.value = route.query.commune?.toString() || "null";
   selectedOrder.value = route.query.order?.toString() || "featured";
 });

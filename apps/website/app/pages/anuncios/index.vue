@@ -61,6 +61,7 @@ import { ref, watch, computed } from "vue";
 import { useRoute } from "nuxt/app";
 import { useCategoriesStore } from "@/stores/categories.store";
 import { useAdsStore } from "@/stores/ads.store";
+import { useFilterStore } from "@/stores/filter.store";
 
 // components
 import HeaderDefault from "@/components/HeaderDefault.vue";
@@ -102,6 +103,7 @@ interface Commune {
 const route = useRoute();
 const categoriesStore = useCategoriesStore();
 const adsStore = useAdsStore();
+const filterStore = useFilterStore();
 const media = useStrapiMedia("");
 
 const defaultCategory = ref<Category>({
@@ -127,6 +129,9 @@ const { data: adsData, refresh } = await useAsyncData<AdsData>(
       route.query.order || "default"
     }-${route.query.commune || "all"}-${route.query.s || ""}`, // Clave dinámica basada en query params
   async () => {
+    // Pre-load filter communes for FilterResults component
+    await filterStore.loadFilterCommunes();
+
     // Limpiar el store antes de cargar nuevos datos para evitar datos obsoletos de navegaciones anteriores
     adsStore.clearAll();
 
