@@ -54,6 +54,7 @@ export default defineNuxtConfig({
             "'unsafe-inline'",
             process.env.BASE_URL || "http://localhost:3000",
             process.env.API_URL || "http://localhost:1337",
+            "https://static.hotjar.com",
             "https://cdn.logrocket.io",
             "https://cdn.lr-ingest.io",
             "https://cdn.lgrckt-in.com",
