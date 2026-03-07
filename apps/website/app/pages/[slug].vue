@@ -152,14 +152,13 @@ watch(
   () => adsData.value,
   (newData) => {
     if (!newData || !newData.user) return;
-    const totalAds = newData.ads?.length || 0;
     const location = newData.user.commune?.name
       ? `en ${newData.user.commune.name}`
       : "en Chile";
 
     $setSEO({
-      title: `Perfil de ${newData.user.username} | Waldo.click®`,
-      description: `Explora los ${totalAds} anuncios publicados por ${newData.user.username} ${location}. Encuentra los mejores precios en equipamiento industrial en Waldo.click®.`,
+      title: `Perfil de ${newData.user.username}`,
+      description: `Vendedor verificado en Waldo.click®. Explora los anuncios de ${newData.user.username} ${location} y encuentra equipamiento industrial al mejor precio.`,
       imageUrl:
         newData.user.avatar?.url || `${config.public.baseUrl}/share.jpg`,
       url: `${config.public.baseUrl}/${route.params.slug}`,
