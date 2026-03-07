@@ -10,7 +10,7 @@
 - ✅ **v1.6 Website API Optimization** — Phases 18-19 (shipped 2026-03-06)
 - ✅ **v1.7 Cron Reliability** — Phases 20-23 (shipped 2026-03-06)
 - ✅ **v1.8 Free Featured Reservation Guarantee** — Phase 24 (shipped 2026-03-07)
-- 🚧 **v1.9 Website Technical Debt** — Phases 25-28 (in progress)
+- 🚧 **v1.9 Website Technical Debt** — Phases 25-29 (in progress)
 
 ## Phases
 
@@ -100,14 +100,15 @@ Archive: `.planning/milestones/v1.8-ROADMAP.md`
 
 </details>
 
-### 🚧 v1.9 Website Technical Debt (Phases 25-28)
+### 🚧 v1.9 Website Technical Debt (Phases 25-29)
 
 **Milestone Goal:** Eliminar los bugs de correctness críticos del website (structured data rota, key collisions en useAsyncData, errores suprimidos en producción) y establecer una base TypeScript sólida con typeCheck habilitado.
 
 - [x] **Phase 25: Critical Correctness Bugs** — Fixed Strapi route shadowing (/ads/me/* routes), useAsyncData key collisions, $setStructuredData type augmentation, production console filter (completed 2026-03-06)
 - [x] **Phase 26: Data Fetching Cleanup** — Moved onMounted(async) data-fetching to useAsyncData in parent pages for 7 components; all 33 onMounted calls documented with classification comments (completed 2026-03-07)
 - [x] **Phase 27: TypeScript Migration** — Migrate 17 pages to lang="ts"; eliminate any in critical stores and composables
-- [ ] **Phase 28: TypeScript Strict + Store Audit** — Enable typeCheck: true in nuxt.config.ts; audit persist in all 14 stores
+- [~] **Phase 28: TypeScript Strict + Store Audit** — STORE-01 complete (persist comments on all 14 stores); TS-04 deferred — typeCheck revealed 183 errors across 55 files (moved to Phase 29)
+- [ ] **Phase 29: TypeScript Strict Errors** — Fix all 183 typecheck errors across 55 files, then enable typeCheck: true
 
 ## Phase Details
 
@@ -150,17 +151,32 @@ Plans:
 **Plans**: 1 plan
 Plans:
 - [x] 27-01-PLAN.md — Migrated all 18 pages to lang="ts"; eliminated any in 3 stores and 3 composables (3 tasks, 1 wave)
-**Goal**: The website build enforces TypeScript type checking on every build, and every store's localStorage persistence is explicitly justified with an inline comment
+
+### Phase 28: TypeScript Strict + Store Audit
+**Goal**: Every store's localStorage persistence is explicitly justified with an inline comment; typeCheck: true enabling deferred after scope discovery
 **Depends on**: Phase 27 (typeCheck: true can only be enabled after pages and stores are clean)
-**Requirements**: TS-04, STORE-01
-**Success Criteria** (what must be TRUE):
-  1. `nuxt.config.ts` has `typescript: { typeCheck: true }` and `npm run build` completes without TypeScript errors
-  2. Every one of the 14 stores with `persist: true` has an inline comment (`// persist: CORRECT`, `// persist: REVIEW`, or `// persist: RISK`) immediately above or beside the persist option
-  3. A developer reading the stores can immediately tell which persisted data is intentional (cross-session cache), which is under review (potentially volatile), and which is risky (sensitive/stale) — no undocumented persist entries remain
+**Requirements**: TS-04 (deferred), STORE-01 (complete)
+**Outcome**: STORE-01 complete — all 14 stores documented. TS-04 deferred — running typeCheck revealed 183 errors across 55 files (18x scope increase); moved to Phase 29.
 **Plans**: 2 plans
 Plans:
-- [ ] 28-01-PLAN.md — Fix Strapi SDK type errors in 4 stores, enable typeCheck: true, verify build passes
-- [ ] 28-02-PLAN.md — Add persist: CORRECT|REVIEW|RISK audit comments to all 14 stores
+- [x] 28-01-PLAN.md — Strapi SDK filter type casts applied to 4 stores; typeCheck not enabled (183 errors discovered)
+- [x] 28-02-PLAN.md — Added persist: CORRECT|REVIEW|RISK audit comments to all 14 stores (STORE-01 complete)
+
+### Phase 29: TypeScript Strict Errors
+**Goal**: All 183 typecheck errors resolved across 55 files; typeCheck: true enabled in nuxt.config.ts; every build enforces TypeScript
+**Depends on**: Phase 28 (Strapi SDK casts done; persist audit done; full error catalogue available)
+**Requirements**: TS-04
+**Error categories to fix**:
+  1. Window globals (`window.$crisp`, `window.dataLayer`, `window.google`) — add type declarations
+  2. Plugin type augmentation (`$strapi`, `$setStructuredData`, `$sentry`, `$reCaptcha`) — augment NuxtApp interface
+  3. User type mismatches — `useAuth()` / `useStrapiUser()` return type vs local `User` interface
+  4. API response mismatches — Strapi SDK return shapes vs manually-typed store interfaces
+  5. Vue component prop types — implicit `any` on props in migrated pages
+  6. Composable return type gaps — inferred types incompatible with explicit annotations
+**Success Criteria** (what must be TRUE):
+  1. `nuxt typecheck` exits with zero errors
+  2. `nuxt.config.ts` has `typescript: { typeCheck: true }` and `npm run build` completes without errors
+  3. No `@ts-ignore` or `@ts-expect-error` suppressions added
 
 ## Progress
 
@@ -170,4 +186,5 @@ Plans:
 | 25. Critical Correctness Bugs | v1.9 | 1/1 | Complete | 2026-03-06 |
 | 26. Data Fetching Cleanup | v1.9 | 1/1 | Complete | 2026-03-07 |
 | 27. TypeScript Migration | v1.9 | 1/1 | Complete | 2026-03-07 |
-| 28. TypeScript Strict + Store Audit | v1.9 | 0/? | Not started | — |
+| 28. TypeScript Strict + Store Audit | v1.9 | 2/2 | Partial (STORE-01 done, TS-04 deferred) | 2026-03-07 |
+| 29. TypeScript Strict Errors | v1.9 | 0/? | Not started | — |

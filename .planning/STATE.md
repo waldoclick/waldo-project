@@ -2,16 +2,17 @@
 gsd_state_version: 1.0
 milestone: v1.9
 milestone_name: Website Technical Debt
-status: Phase 27 complete — ready to plan Phase 28
-Stopped at: Phase 27 plan executed (27-01-PLAN.md) — Phase 28 is next
-last_updated: "2026-03-07T12:00:00.000Z"
-last_activity: 2026-03-07 — Phase 27 complete (3 tasks: 18 pages migrated to lang=ts, any eliminated from 3 stores and 3 composables)
+status: Phase 28 closed — Phase 29 is next
+Stopped at: Phase 28 closed (STORE-01 complete, TS-04 deferred to Phase 29)
+last_updated: "2026-03-07T14:00:00.000Z"
+last_activity: 2026-03-07 — Phase 28 closed; STORE-01 complete (14 stores with persist audit comments); TS-04 deferred after typeCheck revealed 183 errors across 55 files
 progress:
-  total_phases: 4
+  total_phases: 5
   completed_phases: 3
-  total_plans: 3
-  completed_plans: 3
-  percent: 75
+  partial_phases: 1
+  total_plans: 5
+  completed_plans: 4
+  percent: 70
 ---
 
 # Project State
@@ -25,12 +26,12 @@ See: .planning/PROJECT.md (updated 2026-03-07)
 
 ## Current Position
 
-Phase: 28 — TypeScript Strict + Store Audit
+Phase: 29 — TypeScript Strict Errors
 Plan: not yet written
-Status: Ready to plan Phase 28
-Last activity: 2026-03-07 — Phase 27 complete (18 pages migrated to lang=ts, any eliminated from 3 stores + 3 composables)
+Status: Ready to plan Phase 29
+Last activity: 2026-03-07 — Phase 28 closed (STORE-01 complete; TS-04 deferred — 183 typecheck errors across 55 files discovered)
 
-Progress: [██████░░░░] 75% (3/4 phases)
+Progress: [███████░░░] 70% (3.5/5 phases — Phase 28 partial)
 
 ### v1.9 Phases
 
@@ -39,7 +40,8 @@ Progress: [██████░░░░] 75% (3/4 phases)
 | 25 | Critical Correctness Bugs | BUG-01..05 (5) | ✅ Complete |
 | 26 | Data Fetching Cleanup | FETCH-01..08 (8) | ✅ Complete |
 | 27 | TypeScript Migration | TS-01..03 (3) | ✅ Complete |
-| 28 | TypeScript Strict + Store Audit | TS-04, STORE-01 (2) | Not started |
+| 28 | TypeScript Strict + Store Audit | TS-04 (deferred), STORE-01 (done) | ⚠️ Partial |
+| 29 | TypeScript Strict Errors | TS-04 | Not started |
 
 ## Accumulated Context
 
@@ -70,15 +72,28 @@ Key patterns established (carry forward):
 - [Phase 27]: DataLayerEvent requires [key: string]: unknown index signature to allow extraData spread
 - [Phase 27]: prepareSummary() refactored to zero-param — uses store already in scope, avoids typing Pinia store parameter
 - [Phase 27]: AnalyticsItem exported from ad.store.ts (co-located with store logic, importable by pages)
+- [Phase 28]: TS-04 deferred to Phase 29 — running typeCheck revealed 183 errors across 55 files (18x scope increase from the 10 known pre-existing errors)
+- [Phase 28]: persist audit comment classification finalized: 9 CORRECT (static ref data with TTL or wizard state), 3 REVIEW (volatile UI or missing TTL), 2 RISK (query results or view-specific data that survives reload)
+- [Phase 28]: Strapi SDK filter type cast pattern locked in: `filters: { ... } as unknown as Record<string, unknown>` — applied to ads.store, packs.store, categories.store, communes.store
 
 ### v1.9 Context
 
-- Pre-existing LSP errors remain in `ads.store.ts`, `packs.store.ts`, `categories.store.ts`, `communes.store.ts` — Strapi SDK filter type mismatches. These are Phase 28 scope (require `as unknown as` casts or SDK type workarounds).
 - **Phase 25 DONE** — correct `useAsyncData` key pattern now established; Strapi route ordering bug fixed; `$setStructuredData` types clean
 - **Phase 26 DONE** — all 7 components migrated from onMounted(async) to useAsyncData/watch({ immediate: true }); all 33 onMounted calls documented with classification comments
 - **Phase 27 DONE** — all 18 pages have `lang="ts"`; zero `any` in 3 stores and 3 composables; AnalyticsItem exported; DataLayerEvent interface defined
-- Phase 28 requires `nuxt typecheck` to pass with zero errors — run manually before enabling `typeCheck: true`
-- Known remaining TS errors (Phase 28 scope): Strapi SDK filter type mismatches in ads.store.ts (6 errors), packs.store.ts (1), categories.store.ts (2), communes.store.ts (1)
+- **Phase 28 CLOSED (partial)** — STORE-01 complete (14 stores with persist audit comments); TS-04 deferred
+- **Phase 29 scope** — Fix 183 typecheck errors across 55 files, then enable `typeCheck: true`
+
+### Phase 29 Error Catalogue (from Phase 28 typeCheck run)
+
+183 errors across 55 files. Known categories:
+
+1. **Window globals** — `window.$crisp`, `window.dataLayer`, `window.google` have no type declarations
+2. **Plugin type augmentation** — `$strapi`, `$setStructuredData`, `$sentry`, `$reCaptcha` not in NuxtApp interface
+3. **User type mismatches** — `useAuth()` / `useStrapiUser()` return type incompatible with local `User` interface
+4. **API response mismatches** — Strapi SDK return shapes differ from manually-typed store interfaces
+5. **Vue component prop types** — implicit `any` on props in migrated pages
+6. **Composable return type gaps** — inferred types incompatible with explicit annotations added in Phase 27
 
 ### Pending Todos
 
@@ -90,6 +105,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-07T12:00:00.000Z
-Stopped at: Phase 27 complete — plan and execute Phase 28 next
-Resume with: Plan Phase 28 (28-01-PLAN.md): enable typeCheck: true, audit 14 store persist options
+Last session: 2026-03-07T14:00:00.000Z
+Stopped at: Phase 28 closed — plan and execute Phase 29 next
+Resume with: Plan Phase 29 (29-01-PLAN.md): fix 183 typecheck errors across 55 files, then enable typeCheck: true
