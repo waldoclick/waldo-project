@@ -11,6 +11,7 @@
 - ✅ **v1.7 Cron Reliability** — Phases 20-23 (shipped 2026-03-06)
 - ✅ **v1.8 Free Featured Reservation Guarantee** — Phase 24 (shipped 2026-03-07)
 - ✅ **v1.9 Website Technical Debt** — Phases 25-29 (shipped 2026-03-07)
+- 🔄 **v1.10 Dashboard Orders Dropdown UI** — Phase 30 (active)
 
 ## Phases
 
@@ -99,9 +100,22 @@ Archive: `.planning/milestones/v1.9-ROADMAP.md`
 
 </details>
 
-### Next Milestone
+### v1.10 Dashboard Orders Dropdown UI (Active)
 
-No active milestone. Run `/gsd-new-milestone` to define the next milestone.
+- [ ] **Phase 30: Dropdown Display Fix** — Surface buyer full name and full timestamp in `DropdownSales.vue`
+
+## Phase Details
+
+### Phase 30: Dropdown Display Fix
+**Goal:** The "Últimas órdenes" dropdown shows who bought (full name) and when (date + time) for every order entry
+**Depends on:** Nothing (self-contained component change in `apps/dashboard`)
+**Requirements:** DROP-01, DROP-02
+**Success criteria:**
+1. Each order row displays the buyer's full name (`firstname + lastname`), falling back to `username`, then `email` — never a raw `buy_order` ID
+2. Each order row displays date and time in the format `"7 mar 2026 • 01:08 a. m."` — never time-only
+3. `nuxt typecheck` passes with zero errors after the changes (no type regressions introduced)
+4. Dropdown layout, styling, and navigation behavior are unchanged — only the text content of the two fields differs
+**Plans:** TBD
 
 ## Progress
 
@@ -112,3 +126,4 @@ No active milestone. Run `/gsd-new-milestone` to define the next milestone.
 | 27. TypeScript Migration | v1.9 | 1/1 | Complete | 2026-03-07 |
 | 28. TypeScript Strict + Store Audit | v1.9 | 2/2 | Complete | 2026-03-07 |
 | 29. TypeScript Strict Errors | v1.9 | 1/1 | Complete | 2026-03-07 |
+| 30. Dropdown Display Fix | v1.10 | 0/1 | Not started | - |
