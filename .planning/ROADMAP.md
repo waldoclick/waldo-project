@@ -15,12 +15,12 @@
 - ✅ **v1.11 GTM / GA4 Tracking Fix** — Phase 31 (shipped 2026-03-07)
 - ✅ **v1.12 Ad Creation Analytics Gaps** — Phase 32 (shipped 2026-03-07)
 - ✅ **v1.13 GTM Module Migration** — Phase 33 (shipped 2026-03-07)
-- 🔄 **v1.14 GTM Module: Dashboard** — Phase 34 (in progress)
+- ✅ **v1.14 GTM Module: Dashboard** — Phase 34 (shipped 2026-03-07)
 
 ## Phases
 
 <details>
-<summary>✅ v1.1–v1.13 (Phases 3-33) — SHIPPED</summary>
+<summary>✅ v1.1–v1.14 (Phases 3-34) — SHIPPED</summary>
 
 All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 
@@ -40,11 +40,11 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 **Plans:** 1 plan
 
 Plans:
-- [ ] 34-01-PLAN.md — Install @saslavik/nuxt-gtm, configure with enableRouterSync, remove gtmId
+- [x] 34-01-PLAN.md — Install @saslavik/nuxt-gtm, configure with enableRouterSync, remove gtmId
 
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 25-33 | v1.9–v1.13 | All | Complete | 2026-03-07 |
-| 34. GTM Module: Dashboard | v1.14 | 0/1 | In Progress | — |
+| 34. GTM Module: Dashboard | v1.14 | 1/1 | Complete | 2026-03-07 |

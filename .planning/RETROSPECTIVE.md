@@ -461,6 +461,38 @@
 
 ---
 
+## Milestone: v1.14 — GTM Module: Dashboard
+
+**Shipped:** 2026-03-07
+**Phases:** 1 (34) | **Plans:** 1 | **Timeline:** ~5 minutes
+**Files changed:** 3 modified, 1 deleted (apps/dashboard) | **Requirements:** 3/3 complete
+
+### What Was Built
+- `apps/dashboard/app/plugins/gtm.client.ts` — **DELETED** (64-line hand-rolled plugin replaced by module)
+- `apps/dashboard/package.json` — `@saslavik/nuxt-gtm@0.1.3` added to devDependencies
+- `apps/dashboard/nuxt.config.ts` — module added to `modules[]`; top-level `gtm: { id, enableRouterSync: true, debug: false }` config block; `runtimeConfig.public.gtm: { id }` replaces flat `gtmId` field
+
+### What Worked
+- The v1.13 pattern transferred directly — same module, same config shape, same runtimeConfig structure; zero design decisions needed
+- `nuxt prepare` confirmed GTM module injection with `$gtm: GtmSupport` in the auto-generated types
+
+### What Was Inefficient
+- Pre-existing `formatDate` typecheck errors (54 errors, unrelated to GTM) blocked a clean `nuxt typecheck` pass — deferred to a future phase. GTM-DASH-03 acceptance criterion was met (zero NEW errors from GTM changes) but total typecheck output is noisy.
+
+### Patterns Established
+- Both website (`apps/website`) and dashboard (`apps/dashboard`) now use identical GTM module configuration — pattern is fully standardized across the monorepo
+
+### Key Lessons
+1. **Pattern reuse within a milestone series is near-zero cost.** v1.14 took 5 minutes because v1.13 established every detail — module choice, config shape, runtimeConfig structure. The only work was copying the pattern.
+2. **Deferred issues need explicit scope boundaries.** The pre-existing `formatDate` errors were clearly out of scope (no failing component was touched), but without the `deferred-items.md` file the acceptance criteria would appear to fail.
+
+### Cost Observations
+- Model mix: ~100% sonnet (balanced profile)
+- Sessions: 1
+- Notable: Fastest milestone to date — 5 minutes, 1 plan, 3 requirements. Purely a pattern application from v1.13.
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -481,6 +513,7 @@
 | v1.11 | 1 | 1 | GTM plugin fixed: broken gtag() shim removed, Consent Mode v2 added |
 | v1.12 | 1 | 1 | Ad creation analytics gaps closed: 5 targeted fixes across 6 files |
 | v1.13 | 1 | 1 | GTM hand-rolled plugin replaced with @saslavik/nuxt-gtm module |
+| v1.14 | 1 | 1 | Dashboard GTM module installed; website + dashboard now consistent |
 
 ### Cumulative Quality
 
@@ -500,6 +533,7 @@
 | v1.11 | utils (100% coverage) | true | 0 |
 | v1.12 | utils (100% coverage) | true | 0 |
 | v1.13 | utils (100% coverage) | true | 1 (@saslavik/nuxt-gtm) |
+| v1.14 | utils (100% coverage) | true | 0 |
 
 ### Top Lessons (Verified Across Milestones)
 

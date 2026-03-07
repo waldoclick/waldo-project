@@ -1,11 +1,16 @@
 # Milestones
 
-## v1.14 GTM Module: Dashboard (In Progress)
+## v1.14 GTM Module: Dashboard (Shipped: 2026-03-07)
 
-**Phases planned:** 1 phase (34), 1 plan
-**Requirements:** 3 pending (GTM-DASH-01, GTM-DASH-02, GTM-DASH-03)
+**Phases completed:** 1 phase (34), 1 plan
+**Files changed:** 3 modified, 1 deleted (apps/dashboard)
+**Timeline:** 2026-03-07 (~5 minutes)
+**Requirements:** 3/3 complete ✓
 
-**Goal:** Install `@saslavik/nuxt-gtm@0.1.3` in `apps/dashboard`; configure with `enableRouterSync: true`; remove legacy `gtmId` field; `nuxt typecheck` passes with zero errors.
+**Key accomplishments:**
+1. **GTM Module Dashboard (Phase 34)**: Installed `@saslavik/nuxt-gtm@0.1.3` in `apps/dashboard` devDependencies; registered module in `nuxt.config.ts`; added top-level `gtm: { id, enableRouterSync: true, debug: false }` config block; replaced `runtimeConfig.public.gtmId` flat field with `runtimeConfig.public.gtm.id`; deleted 64-line hand-rolled `gtm.client.ts` plugin. Both website and dashboard now use the same GTM module pattern consistently.
+
+**Archive:** `.planning/milestones/v1.14-ROADMAP.md` | `.planning/milestones/v1.14-REQUIREMENTS.md`
 
 ---
 

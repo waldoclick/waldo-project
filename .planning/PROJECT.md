@@ -53,14 +53,20 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ El dropdown de últimas órdenes muestra nombre completo del comprador y fecha+hora completa — v1.10
 - ✓ Dead import `useAdAnalytics` eliminado de `CreateAd.vue`; overcounting de `step_view` corregido; eventos `redirect_to_payment` y `purchase` (guarded) implementados; `DataLayerEvent` exportado y `window.dataLayer` tipado — v1.12
 - ✓ `gtm.client.ts` eliminado; `@saslavik/nuxt-gtm@0.1.3` instalado y configurado con `enableRouterSync: true`; GA4 Realtime confirmado funcionando — v1.13
+- ✓ `@saslavik/nuxt-gtm@0.1.3` instalado en `apps/dashboard`; módulo configurado con `enableRouterSync: true`; `runtimeConfig.public.gtm.id` reemplaza campo plano `gtmId`; plugin hand-rolled eliminado — v1.14
 
 ### Active
 
-- GTM-DASH-01: `@saslavik/nuxt-gtm@0.1.3` instalado en `apps/dashboard` y agregado a modules — v1.14
-- GTM-DASH-02: Módulo configurado con `enableRouterSync: true`; GTM ID leído desde `runtimeConfig.public.gtm.id`; campo plano `gtmId` eliminado — v1.14
-- GTM-DASH-03: `nuxt typecheck` pasa con zero errores en `apps/dashboard` — v1.14
+None — v1.14 shipped. Next milestone to be defined.
 
 ## Previous State
+
+<details>
+<summary>v1.14 GTM Module: Dashboard (shipped 2026-03-07)</summary>
+
+- **Phase 34 — GTM Module Dashboard**: Installed `@saslavik/nuxt-gtm@0.1.3` in `apps/dashboard`; registered in `modules[]`; top-level `gtm: { id, enableRouterSync: true, debug: false }` config; `runtimeConfig.public.gtm.id` replaces flat `gtmId` field; hand-rolled `gtm.client.ts` deleted.
+
+</details>
 
 <details>
 <summary>v1.13 GTM Module Migration (shipped 2026-03-07)</summary>
@@ -122,7 +128,7 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - Website (apps/website): Nuxt 4, Pinia, @nuxtjs/strapi v2; 29 páginas lang="ts", 14 stores con persist audit, typeCheck: true (since v1.9)
 - 4 cron jobs activos en Strapi: `adCron` (1 AM), `userCron` (2 AM), `backupCron` (3 AM), `cleanupCron` (domingo 4 AM)
 - `cron-runner` API disponible en `POST /api/cron-runner/:name` para ejecución manual de cualquier cron
-- GTM handled via `@saslavik/nuxt-gtm@0.1.3` module (since v1.13) — `enableRouterSync: true` fires page_view on every SPA route change; GTM ID from `runtimeConfig.public.gtm.id`; hand-rolled `gtm.client.ts` plugin deleted
+- GTM handled via `@saslavik/nuxt-gtm@0.1.3` module in both website (since v1.13) and dashboard (since v1.14) — `enableRouterSync: true` fires page_view on every SPA route change; GTM ID from `runtimeConfig.public.gtm.id`; hand-rolled `gtm.client.ts` plugins deleted in both apps
 - Ad creation analytics (`useAdAnalytics.ts`): all events tracked — view_item_list, step_view (exact, no overcounting), begin_checkout, redirect_to_payment, purchase (guarded); `DataLayerEvent` fully typed in `window.d.ts` (since v1.12)
 
 ## Constraints
@@ -193,4 +199,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-07 after v1.14 milestone start (GTM Module: Dashboard)*
+*Last updated: 2026-03-07 after v1.14 milestone shipped (GTM Module: Dashboard)*
