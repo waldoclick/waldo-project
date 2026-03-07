@@ -141,4 +141,4 @@ Plans:
 | 28. TypeScript Strict + Store Audit | v1.9 | 2/2 | Complete | 2026-03-07 |
 | 29. TypeScript Strict Errors | v1.9 | 1/1 | Complete | 2026-03-07 |
 | 30. Dropdown Display Fix | v1.10 | 1/1 | Complete | 2026-03-07 |
-| 31. GTM Plugin + Consent Mode v2 | 1/1 | Complete   | 2026-03-07 | — |
+| 31. GTM Plugin + Consent Mode v2 | 1/1 | Complete    | 2026-03-07 | — |
