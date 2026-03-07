@@ -194,7 +194,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useCategoriesStore } from "@/stores/categories.store";
 import { useCommunesStore } from "@/stores/communes.store";
 import { useConditionsStore } from "@/stores/conditions.store";
@@ -291,48 +291,49 @@ const getImageUrl = (imageUrl) => {
   return transformUrl(imageUrl);
 };
 
-onMounted(async () => {
-  try {
-    if (props.summary?.category) {
-      categoryName.value = "Cargando categoría...";
-      const categoryData = await adCategory.getCategoryById(
-        props.summary.category,
-      );
-      categoryName.value = categoryData?.name || "Categoría no encontrada";
-    }
+// Load resolved names when summary prop becomes available (or immediately if already set).
+// Uses watch({ immediate: true }) instead of onMounted so it also re-runs if parent
+// passes a new summary (e.g., after ad creation redirect).
+watch(
+  () => props.summary,
+  async (summary) => {
+    if (!summary) return;
+    try {
+      if (summary.category) {
+        categoryName.value = "Cargando categoría...";
+        const categoryData = await adCategory.getCategoryById(summary.category);
+        categoryName.value = categoryData?.name || "Categoría no encontrada";
+      }
 
-    if (props.summary?.commune) {
-      communeInfo.value = "Cargando ubicación...";
-      const communeData = await communesStore.getCommuneById(
-        props.summary.commune,
-      );
-      const regionData = communeData?.region;
-      communeInfo.value = regionData
-        ? `${communeData.name}, ${regionData.name}`
-        : communeData?.name || "Ubicación no encontrada";
-    }
+      if (summary.commune) {
+        communeInfo.value = "Cargando ubicación...";
+        const communeData = await communesStore.getCommuneById(summary.commune);
+        const regionData = communeData?.region;
+        communeInfo.value = regionData
+          ? `${communeData.name}, ${regionData.name}`
+          : communeData?.name || "Ubicación no encontrada";
+      }
 
-    if (props.summary?.condition) {
-      conditionName.value = "Cargando condición...";
-      const conditionData = await conditionsStore.getConditionById(
-        props.summary.condition,
-      );
-      conditionName.value = conditionData?.name || "Condición no encontrada";
+      if (summary.condition) {
+        conditionName.value = "Cargando condición...";
+        const conditionData = await conditionsStore.getConditionById(
+          summary.condition,
+        );
+        conditionName.value = conditionData?.name || "Condición no encontrada";
+      }
+    } catch (error) {
+      console.error("Error loading summary data:", error);
+      if (categoryName.value === "Cargando categoría...") {
+        categoryName.value = "Error al cargar categoría";
+      }
+      if (communeInfo.value === "Cargando ubicación...") {
+        communeInfo.value = "Error al cargar ubicación";
+      }
+      if (conditionName.value === "Cargando condición...") {
+        conditionName.value = "Error al cargar condición";
+      }
     }
-  } catch (error) {
-    console.error("Error cargando datos:", error);
-    categoryName.value =
-      categoryName.value === "Cargando categoría..."
-        ? "Error al cargar categoría"
-        : categoryName.value;
-    communeInfo.value =
-      communeInfo.value === "Cargando ubicación..."
-        ? "Error al cargar ubicación"
-        : communeInfo.value;
-    conditionName.value =
-      conditionName.value === "Cargando condición..."
-        ? "Error al cargar condición"
-        : conditionName.value;
-  }
-});
+  },
+  { immediate: true },
+);
 </script>
