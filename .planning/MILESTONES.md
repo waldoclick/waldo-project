@@ -1,5 +1,23 @@
 # Milestones
 
+## v1.9 Website Technical Debt (Shipped: 2026-03-07)
+
+**Phases completed:** 5 phases (25-29), 6 plans
+**Files changed:** ~101 files (apps/website + apps/strapi), +614 / -401 lines
+**Timeline:** 2026-03-06 → 2026-03-07
+**Requirements:** 18/18 complete ✓
+
+**Key accomplishments:**
+1. **Critical Correctness Bugs (Phase 25)**: Fixed `$setStructuredData` type augmentation; corrected `useAsyncData` key collisions on `/`, `/packs`, and `/anuncios/[slug]`; restored `console.error`/`warn` visibility in production (only `log`/`debug` suppressed); fixed Strapi route ordering — `/ads/me/counts` and `/ads/me` shadowed by wildcard `:id` route, moved to top of `00-ad-custom.ts`.
+2. **Data Fetching Cleanup (Phase 26)**: Moved `onMounted(async)` data-fetching to `useAsyncData` in 7 components/pages (`perfil/editar`, `anunciar/index`, `ResumeDefault`, `anuncios/index`, `packs/comprar`, `CreateAd`, `FormProfile`); all 33 remaining `onMounted` calls documented with classification comments (`UI-only`, `analytics-only`, `client-only-intentional`).
+3. **TypeScript Migration (Phase 27)**: Added `lang="ts"` to all 17 pages that were plain JavaScript; eliminated `any` in `user.store`, `me.store`, `ad.store`, `useAdAnalytics`, `useAdPaymentSummary`, `usePackPaymentSummary`; exported `AnalyticsItem` and `DataLayerEvent` interfaces.
+4. **Store Persist Audit (Phase 28)**: Added `// persist: CORRECT | REVIEW | RISK` classification comments to all 14 stores with `localStorage` persistence; applied Strapi SDK filter cast pattern (`filters: { ... } as unknown as Record<string, unknown>`) to 4 stores.
+5. **TypeScript Strict Errors (Phase 29)**: Fixed all 183 `nuxt typecheck` errors across 55 files — created `app/types/window.d.ts` (GTM/Google globals) and `app/types/plugins.d.ts` (NuxtApp augmentation); extended `strapi.d.ts`, `ad.d.ts`, `category.d.ts`, `filter.d.ts`; fixed API mismatches (`useSeoMeta`, `createError statusMessage`); enabled `typeCheck: true` in `nuxt.config.ts` — `nuxt typecheck` passes with zero errors; `vue-tsc` added as devDependency (hotfix).
+
+**Archive:** `.planning/phases/25-critical-correctness-bugs/` | `.planning/phases/26-data-fetching-cleanup/` | `.planning/phases/27-typescript-migration/` | `.planning/phases/28-typescript-strict-store-audit/` | `.planning/phases/29-typescript-strict-errors/`
+
+---
+
 ## v1.8 Free Featured Reservation Guarantee (Shipped: 2026-03-07)
 
 **Phases completed:** 1 phases, 1 plans, 0 tasks
