@@ -166,6 +166,10 @@ const handlePayClick = async () => {
       if (ad_id) {
         adStore.updateAdId(ad_id);
       }
+      // Track redirect to payment gateway before leaving SPA
+      adAnalytics.pushEvent("redirect_to_payment", [], {
+        payment_method: "webpay",
+      });
       handleRedirect(response.data.webpay);
     } else {
       // If no webpay, refresh user data and redirect to success page
