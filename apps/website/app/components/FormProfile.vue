@@ -629,11 +629,10 @@ watch(
   { immediate: true },
 );
 
-// Cargar regiones y comunas al montar el componente
-onMounted(async () => {
-  await regionsStore.loadRegions();
-  await communesStore.loadCommunes();
-
+// Regions and communes are pre-loaded by the parent page (perfil/editar.vue) via useAsyncData.
+// Derive selectedRegionId from the commune after the stores are populated.
+// onMounted: UI-only — derives local state from pre-hydrated store data (no API call)
+onMounted(() => {
   if (!normalizeId(selectedRegionId.value) && form.value.commune) {
     const commune = listCommunes.value.find(
       (item) => item.id === normalizeId(form.value.commune),
