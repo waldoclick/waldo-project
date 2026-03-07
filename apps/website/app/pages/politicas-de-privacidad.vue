@@ -18,7 +18,7 @@ definePageMeta({
 $setSEO({
   title: "Políticas de Privacidad",
   description:
-    "Conoce cómo Waldo.click® protege tu información personal y asegura la privacidad en tus transacciones.",
+    "Conoce cómo Waldo.click® protege tu información personal al publicar y comprar anuncios de activos industriales en nuestra plataforma.",
   imageUrl: `${config.public.baseUrl}/share.jpg`,
   url: `${config.public.baseUrl}/politicas-de-privacidad`,
 });
@@ -28,7 +28,7 @@ $setStructuredData({
   "@type": "WebPage",
   name: "Políticas de Privacidad",
   description:
-    "Conoce cómo Waldo.click® protege tu información personal y asegura la privacidad en tus transacciones.",
+    "Conoce cómo Waldo.click® protege tu información personal al publicar y comprar anuncios de activos industriales en nuestra plataforma.",
   url: `${config.public.baseUrl}/politicas-de-privacidad`,
 });
 </script>
