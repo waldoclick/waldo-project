@@ -32,4 +32,4 @@
 
 ---
 *Requirements defined: 2026-03-07*
-*Last updated: 2026-03-07 after initial definition*
+*Last updated: 2026-03-07 after roadmap creation — DROP-01, DROP-02 mapped to Phase 30*
