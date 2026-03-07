@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: ROADMAP_DEFINED — awaiting `/gsd-plan-phase 36`
-stopped_at: Completed 38-02-PLAN.md — Static Page Copy (sitemap + privacy policy)
-last_updated: "2026-03-07T18:54:52.176Z"
+stopped_at: Completed 38-01-PLAN.md — FAQ and Contact Page SEO Copy
+last_updated: "2026-03-07T18:56:24.416Z"
 progress:
   total_phases: 3
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 4
-  completed_plans: 3
+  completed_plans: 4
   percent: 0
 ---
 
@@ -108,6 +108,7 @@ Key patterns established (carry forward):
 - [Phase 37]: Budget-aware slice formula (155 - prefix.length - suffix.length - 4) eliminates hardcoded 150-char limit for ad descriptions
 - [Phase 37]: descPrefix/descSuffix pattern isolates variable ad name/commune from fixed brand suffix, enabling exact budget calculation
 - [Phase 38-static-page-copy]: sitemap: 'Navega fácilmente por Waldo.click®' prefix front-loads trademark fix
+- [Phase 38-static-page-copy]: FAQ title expanded to 'Preguntas Frecuentes sobre Anuncios'; Contact title to 'Contacto y Soporte' — both avoiding bare single-word titles and double-suffix brand name issues
 
 ### v1.16 Canonical Vocabulary (hard constraints)
 - ✅ `anuncios` — NEVER `avisos`, NEVER `clasificados`
@@ -127,6 +128,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-07T18:54:48.330Z
-Stopped at: Completed 38-02-PLAN.md — Static Page Copy (sitemap + privacy policy)
+Last session: 2026-03-07T18:56:24.413Z
+Stopped at: Completed 38-01-PLAN.md — FAQ and Contact Page SEO Copy
 Resume with: `/gsd-plan-phase 36`

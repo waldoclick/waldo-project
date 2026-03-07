@@ -33,7 +33,7 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 
 - [x] **Phase 36: SEO Bug Fixes** — Eliminate double-suffix titles, remove stale counters, and add missing noindex on `packs/index.vue` (completed 2026-03-07)
 - [x] **Phase 37: Dynamic Page Copy** — Rewrite meta copy for all four public dynamic pages (home, ad listing, ad detail, user profile) using canonical vocabulary (completed 2026-03-07)
-- [ ] **Phase 38: Static Page Copy** — Rewrite meta copy for all four public static pages (FAQ, contact, sitemap, privacy policy) using canonical vocabulary
+- [x] **Phase 38: Static Page Copy** — Rewrite meta copy for all four public static pages (FAQ, contact, sitemap, privacy policy) using canonical vocabulary (completed 2026-03-07)
 
 ### Phase 36: SEO Bug Fixes
 **Goal**: All crawlable pages emit clean, well-formed title and description tags with no rendering artifacts
@@ -82,4 +82,4 @@ Plans:
 | 35. Website SEO Audit | v1.15 | 3/3 | Complete | 2026-03-07 |
 | 36. SEO Bug Fixes | 1/1 | Complete   | 2026-03-07 | - |
 | 37. Dynamic Page Copy | 1/1 | Complete   | 2026-03-07 | - |
-| 38. Static Page Copy | 1/2 | In Progress|  | - |
+| 38. Static Page Copy | 2/2 | Complete   | 2026-03-07 | - |
