@@ -20,14 +20,13 @@ export const usePackPaymentSummary = () => {
   const summaryText = computed(() => {
     if (!selectedPack.value) return "";
 
-    const pack = selectedPack.value as any;
     const totalAds =
-      typeof pack.total_ads === "string"
-        ? Number.parseInt(pack.total_ads, 10)
-        : pack.total_ads;
+      typeof selectedPack.value.total_ads === "string"
+        ? Number.parseInt(selectedPack.value.total_ads, 10)
+        : selectedPack.value.total_ads;
     const unidad = totalAds === 1 ? "anuncio" : "anuncios";
 
-    return `${pack.total_ads} ${unidad} x ${formatPrice(pack.price)}`;
+    return `${selectedPack.value.total_ads} ${unidad} x ${formatPrice(selectedPack.value.price)}`;
   });
 
   return {

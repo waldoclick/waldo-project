@@ -1,8 +1,9 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
+import type { User } from "@/types/user";
 
 export const useMeStore = defineStore("me", () => {
-  const me = ref(null);
+  const me = ref<User | null>(null);
 
   const strapi = useStrapi();
 
@@ -15,7 +16,7 @@ export const useMeStore = defineStore("me", () => {
           },
         },
       });
-      me.value = response; // Asegurarse de asignar correctamente los datos
+      me.value = response as unknown as User; // Strapi SDK v5: find returns ResponseMany, cast to User
     } catch (_error) {
       console.error("Error loading user data:", _error);
     }
@@ -31,11 +32,8 @@ export const useMeStore = defineStore("me", () => {
     const requiredFields = ["firstname", "lastname", "rut", "phone", "commune"];
 
     for (const field of requiredFields) {
-      if (
-        me.value[field] === undefined ||
-        me.value[field] === null ||
-        me.value[field] === ""
-      ) {
+      const value = (me.value as Record<string, unknown>)[field];
+      if (value === undefined || value === null || value === "") {
         return false;
       }
     }
@@ -43,7 +41,7 @@ export const useMeStore = defineStore("me", () => {
     return true;
   };
 
-  const saveUsername = async (data: any) => {
+  const saveUsername = async (data: { username: string }) => {
     try {
       const response = await strapi.update("users/username", data);
       return response;

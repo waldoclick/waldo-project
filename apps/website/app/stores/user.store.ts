@@ -38,7 +38,7 @@ export const useUserStore = defineStore("user", () => {
     }
   };
 
-  const loadUser = async (slug: any) => {
+  const loadUser = async (slug: string) => {
     try {
       const response = await strapi.find("users", {
         filters: {
@@ -93,7 +93,10 @@ export const useUserStore = defineStore("user", () => {
     }
   };
 
-  const updateUserProfile = async (userId: string, userData: any) => {
+  const updateUserProfile = async (
+    userId: string,
+    userData: Record<string, unknown>,
+  ) => {
     try {
       // Obtener el token JWT
       const token = useCookie("waldo_jwt").value;

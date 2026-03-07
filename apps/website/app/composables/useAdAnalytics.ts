@@ -34,6 +34,13 @@ const createFeaturedAnalyticsItem = (featuredValue: boolean) => {
   } as AnalyticsItem;
 };
 
+interface DataLayerEvent {
+  event: string;
+  flow: string;
+  ecommerce?: Record<string, unknown>;
+  [key: string]: unknown;
+}
+
 export const useAdAnalytics = () => {
   const adStore = useAdStore();
 
@@ -47,7 +54,7 @@ export const useAdAnalytics = () => {
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push({ ecommerce: null });
 
-    const eventData: any = {
+    const eventData: DataLayerEvent = {
       event: eventName,
       flow: "ad_creation",
       ...extraData,
