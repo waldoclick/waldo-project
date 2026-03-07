@@ -4,12 +4,12 @@ milestone: v1.1
 milestone_name: milestone
 status: completed
 stopped_at: Completed 41-41-PLAN.md
-last_updated: "2026-03-07T23:14:21.925Z"
+last_updated: "2026-03-07T23:47:02.949Z"
 progress:
-  total_phases: 2
-  completed_phases: 1
-  total_plans: 3
-  completed_plans: 2
+  total_phases: 1
+  completed_phases: 0
+  total_plans: 1
+  completed_plans: 0
   percent: 100
 ---
 
@@ -20,7 +20,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-07)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** No active milestone — v1.16 complete, ready to plan v1.17
+**Current focus:** No active milestone — v1.17 complete, ready to plan v1.18
 
 ## Current Position
 
@@ -85,4 +85,4 @@ None.
 
 Last session: 2026-03-07T23:05:17.722Z
 Stopped at: Completed 41-41-PLAN.md
-Resume with: `/gsd-new-milestone` to plan v1.17
+Resume with: `/gsd-new-milestone` to plan v1.18
