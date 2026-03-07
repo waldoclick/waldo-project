@@ -68,7 +68,7 @@ export const useCommunesStore = defineStore("communes", {
           },
           populate: "*",
           sort: ["name:asc"],
-        });
+        } as unknown as Record<string, unknown>);
         const typedResponse = response as unknown as CommuneResponse;
 
         if (!typedResponse.data || !Array.isArray(typedResponse.data)) {

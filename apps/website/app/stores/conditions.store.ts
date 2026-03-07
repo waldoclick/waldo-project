@@ -79,7 +79,7 @@ export const useConditionsStore = defineStore("conditions", {
             },
           },
           populate: "*",
-        });
+        } as unknown as Record<string, unknown>);
         const typedResponse = response as unknown as ConditionResponse;
 
         if (!typedResponse.data || !Array.isArray(typedResponse.data)) {

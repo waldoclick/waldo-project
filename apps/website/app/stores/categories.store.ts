@@ -108,7 +108,7 @@ export const useCategoriesStore = defineStore(
             },
           },
           populate: "*",
-        });
+        } as unknown as Record<string, unknown>);
         const typedResponse = response as unknown as CategoryResponse;
 
         if (!typedResponse.data || !Array.isArray(typedResponse.data)) {
@@ -148,7 +148,7 @@ export const useCategoriesStore = defineStore(
               $eq: id,
             },
           },
-        });
+        } as unknown as Record<string, unknown>);
 
         const typedResponse = response as unknown as CategoryResponse;
         if (!typedResponse.data || !Array.isArray(typedResponse.data)) {

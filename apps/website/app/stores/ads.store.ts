@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import type { Ad } from "@/types/ad";
 import type { Pagination } from "@/types/pagination";
-import type { StrapiResponse } from "@/types/strapi.interface";
+import type { StrapiResponse } from "@nuxtjs/strapi";
 
 export const useAdsStore = defineStore(
   "ads",
@@ -38,7 +38,7 @@ export const useAdsStore = defineStore(
           pagination: paginationParams,
           sort: sortParams,
           populate: "*",
-        };
+        } as unknown as Record<string, unknown>;
 
         const response = await strapi.find("ads", params);
         const typedResponse = response as unknown as StrapiResponse<Ad>;
@@ -70,11 +70,11 @@ export const useAdsStore = defineStore(
             condition: true,
             gallery: true,
           },
-        });
+        } as unknown as Record<string, unknown>);
         const typedResponse = response as unknown as StrapiResponse<Ad>;
 
         if (typedResponse.data.length > 0) {
-          return typedResponse.data[0];
+          return typedResponse.data[0]!;
         } else {
           throw new Error("Ad not found");
         }
@@ -103,11 +103,11 @@ export const useAdsStore = defineStore(
             condition: true,
             gallery: true,
           },
-        });
+        } as unknown as Record<string, unknown>);
         const typedResponse = response as unknown as StrapiResponse<Ad>;
 
         if (typedResponse.data.length > 0) {
-          return typedResponse.data[0];
+          return typedResponse.data[0]!;
         } else {
           throw new Error("Ad not found");
         }
