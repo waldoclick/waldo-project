@@ -106,7 +106,7 @@ Archive: `.planning/milestones/v1.8-ROADMAP.md`
 
 - [x] **Phase 25: Critical Correctness Bugs** — Fixed Strapi route shadowing (/ads/me/* routes), useAsyncData key collisions, $setStructuredData type augmentation, production console filter (completed 2026-03-06)
 - [x] **Phase 26: Data Fetching Cleanup** — Moved onMounted(async) data-fetching to useAsyncData in parent pages for 7 components; all 33 onMounted calls documented with classification comments (completed 2026-03-07)
-- [ ] **Phase 27: TypeScript Migration** — Migrate 17 pages to lang="ts"; eliminate any in critical stores and composables
+- [x] **Phase 27: TypeScript Migration** — Migrate 17 pages to lang="ts"; eliminate any in critical stores and composables
 - [ ] **Phase 28: TypeScript Strict + Store Audit** — Enable typeCheck: true in nuxt.config.ts; audit persist in all 14 stores
 
 ## Phase Details
@@ -147,9 +147,9 @@ Plans:
   2. `user.store.ts`, `me.store.ts`, and `ad.store.ts` have no `any` casts in their identified hot spots (`loadUser`, `updateUserProfile`, `me` ref, `analytics.view_item_list`)
   3. `useAdAnalytics.ts`, `useAdPaymentSummary.ts`, and `usePackPaymentSummary.ts` have no `any` type annotations
   4. Running `nuxt typecheck` (without the global `typeCheck: true` build flag) on the website produces zero new errors from the migrated pages and composables
-**Plans**: TBD
-
-### Phase 28: TypeScript Strict + Store Audit
+**Plans**: 1 plan
+Plans:
+- [x] 27-01-PLAN.md — Migrated all 18 pages to lang="ts"; eliminated any in 3 stores and 3 composables (3 tasks, 1 wave)
 **Goal**: The website build enforces TypeScript type checking on every build, and every store's localStorage persistence is explicitly justified with an inline comment
 **Depends on**: Phase 27 (typeCheck: true can only be enabled after pages and stores are clean)
 **Requirements**: TS-04, STORE-01
@@ -166,5 +166,5 @@ Plans:
 | 24. featuredCron Implementation | v1.8 | 1/1 | Complete | 2026-03-07 |
 | 25. Critical Correctness Bugs | v1.9 | 1/1 | Complete | 2026-03-06 |
 | 26. Data Fetching Cleanup | v1.9 | 1/1 | Complete | 2026-03-07 |
-| 27. TypeScript Migration | v1.9 | 0/? | Not started | — |
+| 27. TypeScript Migration | v1.9 | 1/1 | Complete | 2026-03-07 |
 | 28. TypeScript Strict + Store Audit | v1.9 | 0/? | Not started | — |
