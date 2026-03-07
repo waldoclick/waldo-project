@@ -20,8 +20,8 @@
 - [x] **COPY-04**: `[slug].vue` (perfil público) — título y descripción reescritos con vocabulario canónico (después de BUG-02); título ≤ 45 chars; descripción entre 120–155 chars
 - [ ] **COPY-05**: `preguntas-frecuentes.vue` — vocabulario revisado y ajustado a términos canónicos; título ≤ 45 chars; descripción entre 120–155 chars
 - [ ] **COPY-06**: `contacto/index.vue` — título expandido (actualmente una sola palabra genérica); descripción revisada; título ≤ 45 chars; descripción entre 120–155 chars
-- [ ] **COPY-07**: `sitemap.vue` — `Waldo.click` reemplazado por `Waldo.click®`; descripción revisada; título ≤ 45 chars; descripción entre 120–155 chars
-- [ ] **COPY-08**: `politicas-de-privacidad.vue` — vocabulario revisado para consistencia con el resto del sitio; título ≤ 45 chars; descripción entre 120–155 chars
+- [x] **COPY-07**: `sitemap.vue` — `Waldo.click` reemplazado por `Waldo.click®`; descripción revisada; título ≤ 45 chars; descripción entre 120–155 chars
+- [x] **COPY-08**: `politicas-de-privacidad.vue` — vocabulario revisado para consistencia con el resto del sitio; título ≤ 45 chars; descripción entre 120–155 chars
 
 ## Out of Scope
 
@@ -49,8 +49,8 @@
 | COPY-04 | Phase 37 | Complete |
 | COPY-05 | Phase 38 | Pending |
 | COPY-06 | Phase 38 | Pending |
-| COPY-07 | Phase 38 | Pending |
-| COPY-08 | Phase 38 | Pending |
+| COPY-07 | Phase 38 | Complete |
+| COPY-08 | Phase 38 | Complete |
 
 **Coverage:**
 - v1 requirements: 12 total
