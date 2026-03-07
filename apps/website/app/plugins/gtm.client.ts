@@ -16,7 +16,7 @@ export default defineNuxtPlugin({
       // Check if user has already accepted cookies in a previous session
       const cookieAccepted = document.cookie
         .split(";")
-        .some((c) => c.trim().startsWith("site-cookies-accepted="));
+        .some((c) => c.trim().startsWith("site-cookies-accepted-v2="));
 
       // Consent Mode v2: push default state BEFORE GTM script loads.
       // Format: array-command ["consent", "default"|"update", {...}]

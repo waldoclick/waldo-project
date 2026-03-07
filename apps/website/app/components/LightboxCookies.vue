@@ -44,7 +44,7 @@ import { X as IconX } from "lucide-vue-next";
 const { $cookies } = useNuxtApp();
 
 const isOpen = ref(false);
-const cookieName = "site-cookies-accepted";
+const cookieName = "site-cookies-accepted-v2";
 
 // onMounted: client-only — reads cookie to decide whether to show consent banner; requires browser cookie access
 onMounted(() => {
