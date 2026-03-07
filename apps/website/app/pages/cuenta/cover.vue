@@ -6,15 +6,16 @@
 
 <script setup lang="ts">
 import AccountCover from "@/components/AccountCover.vue";
+import type { User } from "@/types/user";
 
-const user = useStrapiUser();
+const user = useStrapiUser<User>();
 
 // Validar si es usuario PRO
 if (!user.value?.pro) {
   showError({
     statusCode: 403,
     message: "Función exclusiva para cuentas PRO",
-    description:
+    statusMessage:
       "Mejora tu experiencia en Waldo.click® con una cuenta PRO y personaliza tu perfil con una portada única. Destaca entre los demás vendedores y aumenta la visibilidad de tus anuncios.",
   });
 }

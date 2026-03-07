@@ -18,16 +18,15 @@ const authenticate = async () => {
     // Autenticar al usuario con facebook utilizando el token de acceso de la URL
     const response = await authenticateProvider(
       "facebook",
-      route.query.access_token,
+      route.query.access_token as string,
     );
     // Redirigir a /anuncios si la autenticación es exitosa
     if (response) {
       router.push("/anuncios");
     }
   } catch (error) {
-    // Mostrar el mensaje de error y redirigir a /login
     const errorMessage =
-      error.response?.data?.error?.details?.error?.message ||
+      (error as any)?.response?.data?.error?.details?.error?.message ||
       "Error desconocido durante la autenticación.";
     Swal.fire("Error", errorMessage, "error");
     router.push("/login");

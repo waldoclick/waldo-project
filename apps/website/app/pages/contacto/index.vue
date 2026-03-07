@@ -6,7 +6,7 @@
 const { $setSEO, $setStructuredData } = useNuxtApp();
 
 // Componente principal
-import ContactDefault from "@/components/ContactDefault";
+import ContactDefault from "@/components/ContactDefault.vue";
 
 // Definir layout
 definePageMeta({

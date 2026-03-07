@@ -4,7 +4,7 @@
     <HeaderDefault :show-search="true" />
     <HeroAnnouncement
       :name="adData.name"
-      :category="adData.category"
+      :category="(adData.category as Record<string, any>) || {}"
       :user="adData.user"
     />
     <AdSingle :all="adData" />
@@ -103,13 +103,17 @@ const {
 
         const result = await indicatorStore.convertCurrency({
           amount: ad.priceData.originalPrice,
-          from: ad.priceData.originalCurrency,
-          to: ad.currency === "CLP" ? "USD" : "CLP",
+          from: ad.priceData.originalCurrency as "CLP" | "USD" | "EUR",
+          to: (ad.currency === "CLP" ? "USD" : "CLP") as "CLP" | "USD" | "EUR",
         });
 
         if (result?.data) {
-          ad.priceData.convertedPrice = result.data.result;
-          ad.priceData.convertedTimestamp = result.meta.timestamp;
+          const resultData = result.data as unknown as { result: number };
+          const resultMeta = (result as any).meta as
+            | { timestamp: string }
+            | undefined;
+          ad.priceData.convertedPrice = resultData.result;
+          ad.priceData.convertedTimestamp = resultMeta?.timestamp;
           ad.priceData.convertedCurrency =
             ad.currency === "CLP" ? "USD" : "CLP";
           ad.priceData.formattedConvertedPrice = new Intl.NumberFormat(
@@ -120,7 +124,7 @@ const {
               minimumFractionDigits: 0,
               maximumFractionDigits: 0,
             },
-          ).format(ad.priceData.convertedPrice);
+          ).format(ad.priceData.convertedPrice ?? 0);
         }
       }
 

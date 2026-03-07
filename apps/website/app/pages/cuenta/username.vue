@@ -6,15 +6,16 @@
 
 <script setup lang="ts">
 import AccountUsername from "@/components/AccountUsername.vue";
+import type { User } from "@/types/user";
 
-const user = useStrapiUser();
+const user = useStrapiUser<User>();
 
 // Validar si es usuario PRO
 if (!user.value?.pro) {
   showError({
     statusCode: 403,
     message: "Función exclusiva para cuentas PRO",
-    description:
+    statusMessage:
       "Personaliza tu nombre de usuario y construye tu marca personal con una cuenta PRO. Crea una identidad única y memorable para tus compradores potenciales.",
   });
 }

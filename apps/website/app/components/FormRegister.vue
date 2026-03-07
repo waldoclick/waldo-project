@@ -262,14 +262,14 @@ const handleSubmit = async () => {
 
       // Crear el campo username a partir del email
       const emailParts = form.value.email.split("@");
-      form.value.username = emailParts[0]; // Asigna el nombre antes del @
+      form.value.username = emailParts[0] ?? ""; // Asigna el nombre antes del @
 
       delete form.value.confirm_password;
 
       // Agregar el token al objeto de registro
       await register({
         ...form.value,
-        recaptchaToken: token,
+        recaptchaToken: token ?? "",
       });
 
       Swal.fire(

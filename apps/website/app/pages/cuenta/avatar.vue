@@ -6,15 +6,16 @@
 
 <script setup lang="ts">
 import AccountAvatar from "@/components/AccountAvatar.vue";
+import type { User } from "@/types/user";
 
-const user = useStrapiUser();
+const user = useStrapiUser<User>();
 
 // Validar si es usuario PRO
 if (!user.value?.pro) {
   showError({
     statusCode: 403,
     message: "Función exclusiva para cuentas PRO",
-    description:
+    statusMessage:
       "Destaca tu presencia con un avatar personalizado. Las cuentas PRO pueden subir su propia imagen de perfil para generar más confianza y reconocimiento en la comunidad.",
   });
 }

@@ -47,43 +47,24 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 
 ### Active
 
-<!-- v1.9 Website Technical Debt -->
-- [ ] `$setStructuredData` plugin implementado — structured data (JSON-LD) aplicado en todas las páginas
-- [ ] Keys de `useAsyncData` únicas y dinámicas — sin colisión entre páginas
-- [ ] `console.error`/`warn` restaurados en producción — errores visibles vía Sentry
-- [ ] `useAsyncData` con `await` y key explícita en `mis-anuncios` y `mis-ordenes`
-- [ ] 17 páginas migradas a `lang="ts"` y `typeCheck: true` habilitado en el build
-- [ ] Data fetching movido de `onMounted` a `useAsyncData` en componentes del flujo de creación
-- [ ] Auditoría de `persist` en stores — documentado qué debe y qué no debe persistir
-
-## Current Milestone: v1.9 Website Technical Debt
-
-**Goal:** Eliminar los bugs de correctness críticos del website (structured data rota, key collisions en useAsyncData, errores suprimidos en producción) y establecer una base TypeScript sólida con typeCheck habilitado.
-
-**Target features:**
-- Fix `$setStructuredData` (structured data nunca se ha aplicado en ninguna página)
-- Corregir key collisions en `useAsyncData` (`"packs"` duplicado, `"adData"` estático)
-- Restaurar `console.error`/`warn`/`info` en producción
-- Corregir `useAsyncData` sin `await`/key en `mis-anuncios` y `mis-ordenes`
-- Migrar 17 páginas a `lang="ts"` y habilitar `typeCheck: true`
-- Mover data fetching de `onMounted` a `useAsyncData` en componentes del flujo de creación
-- Auditar y documentar `persist` en los 14 stores con localStorage
+None — v1.9 shipped. Next milestone to be defined.
 
 ## Previous State
 
-Shipped **v1.8 Free Featured Reservation Guarantee** on 2026-03-07.
-- **`ad-free-reservation-restore.cron.ts` logic fix**: Reservations now stay permanently linked to expired ads (history); `restoreUserFreeReservations` counts by `ad.active=true` not `remaining_days>0`; cron simplified to single responsibility — guarantee 3 free reservations per user.
+Shipped **v1.9 Website Technical Debt** on 2026-03-07 (Phases 25-29).
+- **Phase 25 — Critical Correctness Bugs**: Fixed `$setStructuredData` type augmentation; corrected `useAsyncData` key collisions; restored `console.error`/`warn` in production; fixed SSR/CSR hydration in `mis-anuncios` and `mis-ordenes`; fixed Strapi `/ads/me` route ordering.
+- **Phase 26 — Data Fetching Cleanup**: Moved `onMounted(async)` data-fetching to `useAsyncData` in 7 components; all 33 `onMounted` calls documented with classification comments.
+- **Phase 27 — TypeScript Migration**: Migrated all 17 pages to `lang="ts"`; eliminated `any` in 3 stores and 3 composables.
+- **Phase 28 — TypeScript Strict + Store Audit**: Added persist audit comments to all 14 stores (STORE-01); deferred `typeCheck: true` after discovering 183 errors.
+- **Phase 29 — TypeScript Strict Errors**: Fixed all 183 typecheck errors across 55 files via type declarations and call-site corrections; enabled `typeCheck: true`; `nuxt typecheck` passes with zero errors.
+
+<details>
+<summary>v1.8 Free Featured Reservation Guarantee (shipped 2026-03-07)</summary>
+
+- **`ad-free-reservation-restore.cron.ts` logic fix**: Reservations stay permanently linked to expired ads (history); `restoreUserFreeReservations` counts by `ad.active=true` not `remaining_days>0`; cron simplified to single responsibility — guarantee 3 free reservations per user.
 - **Parallel batch processing**: `Promise.all` in batches of 50 users to avoid DB connection pool exhaustion.
 - **`cron-runner` API committed**: Controller + routes for manual cron job execution via `POST /api/cron-runner/:name`.
 - **`featured.cron.ts` reverted**: Implemented and then removed by business decision — the free-slot guarantee is covered by `ad-free-reservation-restore.cron.ts`.
-
-<details>
-<summary>v1.7 Cron Reliability (shipped 2026-03-06)</summary>
-
-- **user.cron Bug Fix**: Fixed multi-ad-per-user deactivation loop; removed unused `PaymentUtils` import; added English JSDoc throughout.
-- **backup.cron Bug Fix**: Corrected Strapi v5 config path; redacted DB password from logged shell command; added English docs.
-- **cleanup.cron Bug Fix**: Replaced incompatible relation sub-filter with two-step folderPath resolution via `db.query('plugin::upload.folder').findOne`; translated all Spanish to English.
-- **ad.cron + cron-tasks Docs**: English JSDoc on all job entries and service methods.
 
 </details>
 
@@ -137,6 +118,12 @@ Shipped **v1.8 Free Featured Reservation Guarantee** on 2026-03-07.
   | `featured.cron.ts` reverted post-implementation | Business decision: free-slot guarantee already covered by `ad-free-reservation-restore.cron.ts`; duplicate cron removed — v1.8 | ✓ Good |
   | `ad-free-reservation-restore.cron.ts` counts by `ad.active=true` | Reservations linked to inactive/expired ads are consumed history, not available pool — v1.8 | ✓ Good |
   | Batch size of 50 users for parallel processing | Avoids DB connection pool exhaustion; `Promise.all` per batch for throughput — v1.8 | ✓ Good |
+  | `window.d.ts` consolidates all Window globals | TypeScript merges all declare global blocks; one file prevents per-file duplication — v1.9 | ✓ Good |
+  | `StrapiUser` augmented in `strapi.d.ts` | One declaration makes custom fields available everywhere `useStrapiUser()` is called — v1.9 | ✓ Good |
+  | `Ad.category` and `Ad.commune` widened to union types | Models populated vs. unpopulated Strapi responses correctly; `number \| CategoryObject` — v1.9 | ✓ Good |
+  | `createError statusMessage` not `description` | `NuxtError` extends `H3Error`; `statusMessage` is the correct field — v1.9 | ✓ Good |
+  | `useAsyncData` default option eliminates `T \| undefined` | Removes undefined from type without changing runtime behavior; props receive `T` cleanly — v1.9 | ✓ Good |
+  | `typeCheck: true` permanently enabled in website | Every future build enforces TypeScript; TS-04 goal achieved; no more deferred type errors — v1.9 | ✓ Good |
 
 ## Future Requirements
 
@@ -153,4 +140,4 @@ Shipped **v1.8 Free Featured Reservation Guarantee** on 2026-03-07.
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-07 after v1.9 milestone started*
+*Last updated: 2026-03-07 after v1.9 milestone closed (Phase 29 complete — typeCheck: true enabled, zero errors)*

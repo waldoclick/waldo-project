@@ -12,6 +12,9 @@ export interface FilterCategory {
   id: number;
   name: string;
   slug: string;
+  color?: string;
+  icon?: { url: string };
+  count?: number;
 }
 
 export interface FilterResponse<T> {

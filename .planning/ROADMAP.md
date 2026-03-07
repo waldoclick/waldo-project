@@ -10,7 +10,7 @@
 - ✅ **v1.6 Website API Optimization** — Phases 18-19 (shipped 2026-03-06)
 - ✅ **v1.7 Cron Reliability** — Phases 20-23 (shipped 2026-03-06)
 - ✅ **v1.8 Free Featured Reservation Guarantee** — Phase 24 (shipped 2026-03-07)
-- 🚧 **v1.9 Website Technical Debt** — Phases 25-29 (in progress)
+- ✅ **v1.9 Website Technical Debt** — Phases 25-29 (shipped 2026-03-07)
 
 ## Phases
 
@@ -100,7 +100,7 @@ Archive: `.planning/milestones/v1.8-ROADMAP.md`
 
 </details>
 
-### 🚧 v1.9 Website Technical Debt (Phases 25-29)
+### ✅ v1.9 Website Technical Debt (Phases 25-29) — SHIPPED 2026-03-07
 
 **Milestone Goal:** Eliminar los bugs de correctness críticos del website (structured data rota, key collisions en useAsyncData, errores suprimidos en producción) y establecer una base TypeScript sólida con typeCheck habilitado.
 
@@ -108,7 +108,7 @@ Archive: `.planning/milestones/v1.8-ROADMAP.md`
 - [x] **Phase 26: Data Fetching Cleanup** — Moved onMounted(async) data-fetching to useAsyncData in parent pages for 7 components; all 33 onMounted calls documented with classification comments (completed 2026-03-07)
 - [x] **Phase 27: TypeScript Migration** — Migrate 17 pages to lang="ts"; eliminate any in critical stores and composables
 - [~] **Phase 28: TypeScript Strict + Store Audit** — STORE-01 complete (persist comments on all 14 stores); TS-04 deferred — typeCheck revealed 183 errors across 55 files (moved to Phase 29)
-- [ ] **Phase 29: TypeScript Strict Errors** — Fix all 183 typecheck errors across 55 files, then enable typeCheck: true
+- [x] **Phase 29: TypeScript Strict Errors** — Fixed all 183 typecheck errors across 55 files; enabled typeCheck: true; nuxt typecheck passes with zero errors (completed 2026-03-07)
 
 ## Phase Details
 
@@ -187,4 +187,4 @@ Plans:
 | 26. Data Fetching Cleanup | v1.9 | 1/1 | Complete | 2026-03-07 |
 | 27. TypeScript Migration | v1.9 | 1/1 | Complete | 2026-03-07 |
 | 28. TypeScript Strict + Store Audit | v1.9 | 2/2 | Partial (STORE-01 done, TS-04 deferred) | 2026-03-07 |
-| 29. TypeScript Strict Errors | v1.9 | 0/? | Not started | — |
+| 29. TypeScript Strict Errors | v1.9 | 1/1 | Complete | 2026-03-07 |

@@ -37,7 +37,7 @@ import { useRouter, useRoute } from "vue-router";
 // Components
 import CardAnnouncement from "@/components/CardAnnouncement.vue";
 import EmptyState from "@/components/EmptyState.vue";
-import type { Ad } from "@/types/user";
+import type { Ad } from "@/types/ad";
 
 // Props
 const props = defineProps({

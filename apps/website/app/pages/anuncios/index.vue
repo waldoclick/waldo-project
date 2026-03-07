@@ -3,8 +3,8 @@
     <HeaderDefault :show-search="true" />
     <HeroResults
       v-if="adsData && adsData.category"
-      :bg-color="adsData.category.color"
-      :color="adsData.category.color"
+      :bg-color="adsData.category.color || '#f0f0f0'"
+      :color="adsData.category.color || '#f0f0f0'"
       :title="adsData.category.name"
       :icon="getCategoryIcon(adsData.category)"
     />
@@ -77,14 +77,6 @@ import type { Category } from "@/types/category";
 import type { Ad } from "@/types/ad";
 import type { Pagination } from "@/types/pagination";
 
-interface Category {
-  name: string;
-  color: string;
-  icon?: {
-    url: string;
-  };
-}
-
 interface AdsData {
   ads: Ad[];
   pagination: Pagination;
@@ -107,11 +99,16 @@ const filterStore = useFilterStore();
 const media = useStrapiMedia("");
 
 const defaultCategory = ref<Category>({
+  id: 0,
   name: "Anuncios",
+  slug: "",
   color: "#f0f0f0",
   icon: {
     url: "",
   },
+  createdAt: "",
+  updatedAt: "",
+  publishedAt: "",
 });
 
 // Función para obtener el icono de la categoría
@@ -175,7 +172,7 @@ const { data: adsData, refresh } = await useAsyncData<AdsData>(
 
     // Si no hay resultados, cargar anuncios relacionados
     // Verificar tanto el array como el total para evitar ejecutar related ads cuando hay resultados
-    let relatedAds = [];
+    let relatedAds: Ad[] = [];
     let relatedLoading = false;
     let relatedError = null;
 
@@ -244,33 +241,40 @@ const generateSEOTitle = () => {
   const communeId = route.query.commune?.toString();
   // Buscar la comuna en los anuncios para obtener su nombre
   const communeName = adsData.value?.ads.find(
-    (ad) => ad.commune?.id?.toString() === communeId,
-  )?.commune?.name;
+    (ad) =>
+      typeof ad.commune === "object" &&
+      ad.commune !== null &&
+      ad.commune.id?.toString() === communeId,
+  )?.commune;
+  const communeNameStr =
+    typeof communeName === "object" && communeName !== null
+      ? communeName.name
+      : undefined;
 
   if (searchQuery) {
     let title = `Buscando "${searchQuery}"`;
     if (categoryName && categoryName !== "Anuncios")
       title += ` en ${categoryName}`;
-    if (communeName) title += ` en ${communeName}`;
+    if (communeNameStr) title += ` en ${communeNameStr}`;
     return `${title}`;
   }
 
   if (categoryName === "Anuncios") {
-    return communeName
-      ? `Activos industriales en ${communeName}`
+    return communeNameStr
+      ? `Activos industriales en ${communeNameStr}`
       : "Activos industriales en Chile";
   }
 
-  if (categoryName && communeName) {
-    return `Activos industriales de ${categoryName} en ${communeName}`;
+  if (categoryName && communeNameStr) {
+    return `Activos industriales de ${categoryName} en ${communeNameStr}`;
   }
 
   if (categoryName) {
     return `Activos industriales de ${categoryName}`;
   }
 
-  if (communeName) {
-    return `Activos industriales en ${communeName}`;
+  if (communeNameStr) {
+    return `Activos industriales en ${communeNameStr}`;
   }
 
   return "Activos industriales en Chile";
@@ -282,9 +286,16 @@ const generateSEODescription = () => {
   const categoryName = adsData.value?.category?.name;
   const communeId = route.query.commune?.toString();
   // Buscar la comuna en los anuncios para obtener su nombre
-  const communeName = adsData.value?.ads.find(
-    (ad) => ad.commune?.id?.toString() === communeId,
-  )?.commune?.name;
+  const communeObj = adsData.value?.ads.find(
+    (ad) =>
+      typeof ad.commune === "object" &&
+      ad.commune !== null &&
+      ad.commune.id?.toString() === communeId,
+  )?.commune;
+  const communeName =
+    typeof communeObj === "object" && communeObj !== null
+      ? communeObj.name
+      : undefined;
   const totalAds = adsData.value?.pagination?.total || 0;
 
   let description = "";

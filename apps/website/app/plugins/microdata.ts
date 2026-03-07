@@ -8,7 +8,7 @@ export default defineNuxtPlugin(() => {
       script: [
         {
           type: "application/ld+json",
-          children: JSON.stringify(data),
+          innerHTML: JSON.stringify(data),
         },
       ],
     });

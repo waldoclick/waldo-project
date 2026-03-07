@@ -116,7 +116,7 @@
 import { computed, ref, onMounted } from "vue";
 import { useRuntimeConfig } from "#app";
 import { useRoute } from "vue-router";
-import type { Announcement } from "~/types/ad";
+import type { Ad } from "~/types/ad";
 import { useImageProxy } from "@/composables/useImage";
 import { Image as IconImage } from "lucide-vue-next";
 
@@ -131,7 +131,7 @@ const { transformUrl } = useImageProxy();
 // Props
 const props = defineProps({
   all: {
-    type: Object as () => Announcement,
+    type: Object as () => Ad,
     default: () => ({}),
   },
 });
@@ -169,7 +169,8 @@ const getFirstImage = computed(() => {
   const gallery = props.all.gallery;
 
   if (gallery && gallery.length > 0) {
-    const firstImage = gallery[0]?.formats?.medium?.url || gallery[0]?.url;
+    const firstImage =
+      gallery[0]?.formats?.medium?.url || gallery[0]?.url || "";
     return transformUrl(firstImage);
   }
   return "";
@@ -180,10 +181,17 @@ const isFeatured = computed(() => {
 });
 
 const getCategory = computed(() => {
-  const category = props.all.category || {};
+  const category =
+    typeof props.all.category === "object" && props.all.category !== null
+      ? props.all.category
+      : {};
 
   // Excluir las fechas y devolver valores por defecto si no existen
-  const { name = "Unknown", slug = "unknown", color = "#000" } = category;
+  const {
+    name = "Unknown",
+    slug = "unknown",
+    color = "#000",
+  } = category as { name?: string; slug?: string; color?: string };
 
   return { name, slug, color };
 });
@@ -194,7 +202,7 @@ const galleryCount = computed(() => {
 });
 
 // Referencia al elemento card
-const cardElement = ref(null);
+const cardElement = ref<HTMLElement | null>(null);
 
 // Establecer variables CSS iniciales
 // onMounted: UI-only — sets CSS custom property for category color on DOM element

@@ -199,8 +199,8 @@ const handleLogout = async () => {
     showCancelButton: true,
     confirmButtonText: "Sí, quiero salir",
     cancelButtonText: "No",
-  }).then(async (result) => {
-    if (result.isConfirmed) {
+  }).then(async ({ isConfirmed }: { isConfirmed: boolean }) => {
+    if (isConfirmed) {
       try {
         appStore.closeMobileMenu();
         await logout();

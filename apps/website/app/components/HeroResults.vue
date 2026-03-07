@@ -56,7 +56,7 @@ const categoryIcon = computed(() => {
 });
 
 // Referencia al elemento hero
-const heroElement = ref(null);
+const heroElement = ref<HTMLElement | null>(null);
 
 // onMounted: UI-only — sets initial CSS custom properties for background and icon colors on DOM element
 onMounted(() => {

@@ -116,7 +116,7 @@ import {
 } from "lucide-vue-next";
 
 // components
-import AvatarDefault from "@/components/AvatarDefault";
+import AvatarDefault from "@/components/AvatarDefault.vue";
 
 // Obtener el usuario desde Strapi
 const user = useStrapiUser<User>();
@@ -138,8 +138,8 @@ const confirmation = async () => {
     showCancelButton: true,
     confirmButtonText: "Sí, quiero salir",
     cancelButtonText: "No",
-  }).then(async (result) => {
-    if (result.isConfirmed) {
+  }).then(async ({ isConfirmed }: { isConfirmed: boolean }) => {
+    if (isConfirmed) {
       try {
         await logout();
         router.push("/");

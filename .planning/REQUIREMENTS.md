@@ -21,7 +21,7 @@ Requirements for milestone v1.9. Each maps to roadmap phases.
 - [x] **TS-01**: Las 17 páginas sin `lang="ts"` están migradas a TypeScript
 - [x] **TS-02**: Los tipos `any` en stores críticos están eliminados: `user.store.ts` (`loadUser`, `updateUserProfile`), `me.store.ts` (`me` ref tipado), `ad.store.ts` (`analytics.view_item_list`)
 - [x] **TS-03**: Los tipos `any` en composables críticos están eliminados: `useAdAnalytics.ts`, `useAdPaymentSummary.ts`, `usePackPaymentSummary.ts`
-- [ ] **TS-04**: `typeCheck: true` está habilitado en `nuxt.config.ts` y el build pasa sin errores de TypeScript *(deferred to Phase 29 — 183 errors across 55 files discovered; fix errors first, then enable)*
+- [x] **TS-04**: `typeCheck: true` está habilitado en `nuxt.config.ts` y el build pasa sin errores de TypeScript
 
 ### Data Fetching
 
@@ -72,7 +72,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TS-01 | Phase 27 | Complete |
 | TS-02 | Phase 27 | Complete |
 | TS-03 | Phase 27 | Complete |
-| TS-04 | Phase 29 | Deferred (183 errors) |
+| TS-04 | Phase 29 | Complete |
 | FETCH-01 | Phase 26 | Complete |
 | FETCH-02 | Phase 26 | Complete |
 | FETCH-03 | Phase 26 | Complete |
@@ -87,8 +87,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 - v1.9 requirements: 18 total
 - Mapped to phases: 18 ✓
 - Unmapped: 0 ✓
-- Complete: 17/18 (TS-04 deferred to Phase 29)
+- Complete: 18/18 ✓
 
 ---
 *Requirements defined: 2026-03-07*
-*Last updated: 2026-03-07 after Phase 28 closure (STORE-01 complete; TS-04 deferred to Phase 29 — 183 typecheck errors)*
+*Last updated: 2026-03-07 after Phase 29 closure (TS-04 complete — typeCheck: true enabled, zero errors)*

@@ -36,8 +36,8 @@ const computedLinkClass = computed(() => {
     .map((cls) =>
       typeof cls === "string"
         ? cls
-        : Object.keys(cls)
-            .filter((key) => cls[key])
+        : Object.keys(cls as Record<string, boolean>)
+            .filter((key) => (cls as Record<string, boolean>)[key])
             .join(" "),
     )
     .join(" ");

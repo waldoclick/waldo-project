@@ -33,7 +33,7 @@ export function useRut() {
     let multiplier = 2;
 
     for (let i = body.length - 1; i >= 0; i--) {
-      sum += Number.parseInt(body[i]) * multiplier;
+      sum += Number.parseInt(body[i]!) * multiplier;
       multiplier = multiplier === 7 ? 2 : multiplier + 1;
     }
 

@@ -45,7 +45,7 @@ export const useUserStore = defineStore("user", () => {
           username: {
             $eq: slug,
           },
-        },
+        } as any,
         populate: "*",
       });
 

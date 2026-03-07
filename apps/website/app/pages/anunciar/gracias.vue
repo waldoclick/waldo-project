@@ -46,15 +46,15 @@ const handleError = (
   const errorMessages = {
     INVALID_URL: {
       message: "URL inválida",
-      description: "La URL que intentas acceder no es válida",
+      statusMessage: "La URL que intentas acceder no es válida",
     },
     EXPIRED: {
       message: "Resumen expirado",
-      description: "El tiempo para ver el resumen de tu anuncio ha expirado",
+      statusMessage: "El tiempo para ver el resumen de tu anuncio ha expirado",
     },
     NOT_FOUND: {
       message: "Anuncio no encontrado",
-      description: "No pudimos encontrar el anuncio que buscas",
+      statusMessage: "No pudimos encontrar el anuncio que buscas",
     },
   };
 
@@ -78,7 +78,7 @@ const { data, pending, error } = await useAsyncData(
     let response;
 
     try {
-      response = await adsStore.loadAdById(route.query.ad);
+      response = await adsStore.loadAdById(route.query.ad as string);
     } catch {
       return { error: "NOT_FOUND" };
     }
@@ -93,20 +93,24 @@ const { data, pending, error } = await useAsyncData(
       throw createError({
         statusCode: 403,
         message: "Resumen expirado",
-        description: "El tiempo para ver el resumen de tu anuncio ha expirado",
+        statusMessage:
+          "El tiempo para ver el resumen de tu anuncio ha expirado",
       });
     }
 
     // Verificar el tiempo transcurrido basado en la última actualización
     const updatedAt = new Date(response.updatedAt);
     const now = new Date();
-    const diffInMinutes = Math.floor((now - updatedAt) / (1000 * 60));
+    const diffInMinutes = Math.floor(
+      (now.getTime() - updatedAt.getTime()) / (1000 * 60),
+    );
 
     if (diffInMinutes > 10) {
       throw createError({
         statusCode: 403,
         message: "Resumen expirado",
-        description: "El tiempo para ver el resumen de tu anuncio ha expirado",
+        statusMessage:
+          "El tiempo para ver el resumen de tu anuncio ha expirado",
       });
     }
 
@@ -125,65 +129,69 @@ watchEffect(() => {
     showError({
       statusCode: error.value.statusCode || 500,
       message: error.value.message || "Error inesperado",
-      description:
-        error.value.description ||
+      statusMessage:
+        error.value.statusMessage ||
         error.value.message ||
         "Lo sentimos, ha ocurrido un error.",
     });
     return;
   }
 
-  if (data.value?.error) {
-    handleError(data.value.error, data.value.updatedAt);
+  if (data.value && "error" in data.value) {
+    handleError(
+      data.value.error as "INVALID_URL" | "EXPIRED" | "NOT_FOUND",
+      null,
+    );
     return; // Salir temprano para evitar procesar datos con error
-  } else if (data.value && !pending.value && !data.value.error) {
+  } else if (data.value && !pending.value && !("error" in data.value)) {
     // Limpiar el store solo cuando los datos se hayan cargado exitosamente
     adStore.clearAll();
 
     // Enviar evento de purchase
+    const adData = data.value as any;
     const items = [];
-    if (data.value.details.pack) {
+    if (adData.details.pack) {
       items.push({
-        item_id: data.value.details.pack,
-        item_name: `Pack ${data.value.details.pack}`,
+        item_id: adData.details.pack,
+        item_name: `Pack ${adData.details.pack}`,
         item_category: "Pack",
-        price:
-          data.value.details.pack === "free"
-            ? 0
-            : data.value.details.pack_price,
+        price: adData.details.pack === "free" ? 0 : adData.details.pack_price,
         currency: "CLP",
       });
     }
-    if (data.value.details.featured) {
+    if (adData.details.featured) {
       items.push({
-        item_id: data.value.details.featured ? "featured" : "not_featured",
-        item_name: data.value.details.featured ? "Destacado" : "Sin destacar",
+        item_id: adData.details.featured ? "featured" : "not_featured",
+        item_name: adData.details.featured ? "Destacado" : "Sin destacar",
         item_category: "Destacado",
-        price: data.value.details.featured ? 10000 : 0,
+        price: adData.details.featured ? 10000 : 0,
         currency: "CLP",
       });
     }
 
     adAnalytics.pushEvent("purchase", items, {
-      transaction_id: data.value.id,
-      value: items.reduce((total, item) => total + (item.price || 0), 0),
+      transaction_id: adData.id,
+      value: items.reduce(
+        (total: number, item: any) => total + (item.price || 0),
+        0,
+      ),
       currency: "CLP",
     });
   }
 });
 
 const galleryData = computed(() => {
-  if (!data.value?.gallery) return [];
+  if (!data.value || "error" in data.value || !data.value.gallery) return [];
 
-  return data.value.gallery.map((image) => ({
+  return data.value.gallery.map((image: any) => ({
     id: image.id,
     url: `${apiUrl}${image.formats?.thumbnail?.url}`,
   }));
 });
 
 // Función para preparar el summary
-const prepareSummary = (data) => {
-  if (!data) return null;
+const prepareSummary = (data: any): Record<string, any> | undefined => {
+  if (!data) return undefined;
 
   return {
     showEditLinks: false,
