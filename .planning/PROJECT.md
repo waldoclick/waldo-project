@@ -34,35 +34,38 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ El email de baneo notifica al usuario que sus créditos fueron devueltos (condicional) — v1.5
 - ✓ Todos los segmentos de URL del dashboard están en inglés — v1.4
 - ✓ Las URLs españolas antiguas redirigen a sus equivalentes en inglés (301) — v1.4
-  - ✓ Todos los links de navegación y referencias internas usan URLs en inglés — v1.4
-  - ✓ `pages/preguntas-frecuentes.vue` no hace double-fetch al cargar — v1.6
-  - ✓ `pages/cuenta/mis-anuncios.vue` no dispara 6 llamadas en cada carga — v1.6
-  - ✓ `packs.store.ts` tiene cache guard para evitar llamadas redundantes — v1.6
-  - ✓ `conditions.store.ts` tiene cache guard — v1.6
-  - ✓ `regions.store.ts` tiene cache guard — v1.6
-  - ✓ `FormCreateThree.vue` no repite la llamada a communes que ya hizo el plugin — v1.6
+- ✓ Todos los links de navegación y referencias internas usan URLs en inglés — v1.4
+- ✓ `pages/preguntas-frecuentes.vue` no hace double-fetch al cargar — v1.6
+- ✓ `pages/cuenta/mis-anuncios.vue` no dispara 6 llamadas en cada carga — v1.6
+- ✓ `packs.store.ts` tiene cache guard para evitar llamadas redundantes — v1.6
+- ✓ `conditions.store.ts` tiene cache guard — v1.6
+- ✓ `regions.store.ts` tiene cache guard — v1.6
+- ✓ `FormCreateThree.vue` no repite la llamada a communes que ya hizo el plugin — v1.6
+- ✓ Todos los cron jobs (userCron, backupCron, cleanupCron, adCron) funcionales y documentados en inglés — v1.7
+- ✓ `cron-runner` API committed (controller + routes para ejecución manual de crons) — v1.8
+- ✓ `ad-free-reservation-restore.cron.ts` garantiza 3 free ad-reservation slots por usuario con lógica correcta — v1.8
 
 ### Active
 
-- [ ] Every user always has 3 free available `ad-featured-reservation` slots (`price=0`, `ad=null` or `ad.active=false`) — `featuredCron` top-up guarantee
-- [ ] `cron-runner` API files committed to repository (currently untracked)
-
-## Current Milestone: v1.8 Free Featured Reservation Guarantee
-
-**Goal:** Guarantee that every user always has 3 free `ad-featured-reservation` records with `price = 0` that are not linked to an active ad. A new `featuredCron` scans all users daily at 2:30 AM Santiago and creates missing slots. The existing `cron-runner` API is also committed as part of this milestone.
-
-**Target features:**
-- `featured.cron.ts` — `FeaturedCronService.restoreFreeFeaturedReservations()` with correct free-available query
-- `featuredCron` registered in `cron-tasks.ts` at 2:30 AM America/Santiago
-- `cron-runner` API committed (controller + routes, already authored)
+(None — planning next milestone)
 
 ## Previous State
 
-Shipped **v1.7 Cron Reliability** on 2026-03-06.
+Shipped **v1.8 Free Featured Reservation Guarantee** on 2026-03-07.
+- **`ad-free-reservation-restore.cron.ts` logic fix**: Reservations now stay permanently linked to expired ads (history); `restoreUserFreeReservations` counts by `ad.active=true` not `remaining_days>0`; cron simplified to single responsibility — guarantee 3 free reservations per user.
+- **Parallel batch processing**: `Promise.all` in batches of 50 users to avoid DB connection pool exhaustion.
+- **`cron-runner` API committed**: Controller + routes for manual cron job execution via `POST /api/cron-runner/:name`.
+- **`featured.cron.ts` reverted**: Implemented and then removed by business decision — the free-slot guarantee is covered by `ad-free-reservation-restore.cron.ts`.
+
+<details>
+<summary>v1.7 Cron Reliability (shipped 2026-03-06)</summary>
+
 - **user.cron Bug Fix**: Fixed multi-ad-per-user deactivation loop; removed unused `PaymentUtils` import; added English JSDoc throughout.
 - **backup.cron Bug Fix**: Corrected Strapi v5 config path; redacted DB password from logged shell command; added English docs.
 - **cleanup.cron Bug Fix**: Replaced incompatible relation sub-filter with two-step folderPath resolution via `db.query('plugin::upload.folder').findOne`; translated all Spanish to English.
 - **ad.cron + cron-tasks Docs**: English JSDoc on all job entries and service methods.
+
+</details>
 
 ## Context
 
@@ -72,7 +75,8 @@ Shipped **v1.7 Cron Reliability** on 2026-03-06.
 - El sistema valida disponibilidad de créditos según PackType y FeaturedType antes de procesar el pago
 - Deploy independiente por app vía Laravel Forge con git sparse-checkout
 - Dashboard (apps/dashboard): Nuxt 4, Pinia, @nuxtjs/strapi v2, SCSS custom; ~65 componentes, 3 stores, 14 plugins
-  - v1.6 shipped: `GET /api/ads/me/counts` aggregate endpoint in Strapi; website stores have 30-min timestamp cache guards; `preguntas-frecuentes.vue` and `mis-anuncios.vue` API calls minimized
+- 4 cron jobs activos en Strapi: `adCron` (1 AM), `userCron` (2 AM), `backupCron` (3 AM), `cleanupCron` (domingo 4 AM)
+- `cron-runner` API disponible en `POST /api/cron-runner/:name` para ejecución manual de cualquier cron
 
 ## Constraints
 
@@ -107,9 +111,12 @@ Shipped **v1.7 Cron Reliability** on 2026-03-06.
   | Aggregate `GET /ads/me/counts` endpoint vs. 5 parallel client calls | Server-side `Promise.all` with 5 `entityService.count()` calls; client sees 1 HTTP request instead of 5 — v1.6 | ✓ Good |
   | Cache guard: array-length + timestamp (not timestamp-only) | Timestamp-only guard produces false cache hit on empty state after TTL reset; length check ensures data actually exists — v1.6 | ✓ Good |
   | `packs.store.ts` gained localStorage `persist` | Without persist the cache guard is useless on page refresh (store always empty); aligns packs with conditions/regions stores — v1.6 | ✓ Good |
-  | `featuredCron` "free available" = price=0 AND (ad=null OR ad.active=false) | An occupied slot must mean the ad is currently active; an inactive ad's slot is reclaimable — v1.8 | Pending |
-  | `featuredCron` creates slots with no `total_days` | Featured reservations have no expiry concept; omitting total_days matches schema intent (field is optional) — v1.8 | Pending |
-  | `featuredCron` schedule at 2:30 AM (not 2:00 AM) | Slots between existing userCron (2:00 AM) and backupCron (3:00 AM); 30-min gap prevents overlap — v1.8 | Pending |
+  | `featuredCron` "free available" = price=0 AND (ad=null OR ad.active=false) | An occupied slot must mean the ad is currently active; an inactive ad's slot is reclaimable — v1.8 | ✓ Good |
+  | `featuredCron` creates slots with no `total_days` | Featured reservations have no expiry concept; omitting total_days matches schema intent (field is optional) — v1.8 | ✓ Good |
+  | `featuredCron` schedule at 2:30 AM (not 2:00 AM) | Slots between existing userCron (2:00 AM) and backupCron (3:00 AM); 30-min gap prevents overlap — v1.8 | ✓ Good |
+  | `featured.cron.ts` reverted post-implementation | Business decision: free-slot guarantee already covered by `ad-free-reservation-restore.cron.ts`; duplicate cron removed — v1.8 | ✓ Good |
+  | `ad-free-reservation-restore.cron.ts` counts by `ad.active=true` | Reservations linked to inactive/expired ads are consumed history, not available pool — v1.8 | ✓ Good |
+  | Batch size of 50 users for parallel processing | Avoids DB connection pool exhaustion; `Promise.all` per batch for throughput — v1.8 | ✓ Good |
 
 ## Future Requirements
 
@@ -126,4 +133,4 @@ Shipped **v1.7 Cron Reliability** on 2026-03-06.
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-06 after v1.8 milestone started*
+*Last updated: 2026-03-07 after v1.8 milestone*

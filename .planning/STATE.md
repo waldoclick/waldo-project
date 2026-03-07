@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.8
 milestone_name: Free Featured Reservation Guarantee
-status: complete
-stopped_at: Closed milestone v1.8 — all fixes shipped
-last_updated: "2026-03-07T01:30:00.000Z"
-last_activity: 2026-03-07 — Milestone v1.8 closed
+status: Milestone closed
+stopped_at: Closed milestone v1.8
+last_updated: "2026-03-07T01:30:21.292Z"
+last_activity: 2026-03-07 — Milestone v1.8 closed, all fixes shipped
 progress:
   total_phases: 1
   completed_phases: 1
