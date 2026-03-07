@@ -62,11 +62,9 @@ function closeLightbox() {
 function acceptCookies() {
   window.dataLayer = window.dataLayer || [];
   window.dataLayer.push({
-    event: "accept_cookies",
-    consent: {
-      ad_storage: "granted",
-      analytics_storage: "granted",
-    },
+    consent: "update",
+    analytics_storage: "granted",
+    ad_storage: "granted",
   });
 
   $cookies.set(cookieName, true, {
