@@ -47,7 +47,27 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 
 ### Active
 
-(None — planning next milestone)
+<!-- v1.9 Website Technical Debt -->
+- [ ] `$setStructuredData` plugin implementado — structured data (JSON-LD) aplicado en todas las páginas
+- [ ] Keys de `useAsyncData` únicas y dinámicas — sin colisión entre páginas
+- [ ] `console.error`/`warn` restaurados en producción — errores visibles vía Sentry
+- [ ] `useAsyncData` con `await` y key explícita en `mis-anuncios` y `mis-ordenes`
+- [ ] 17 páginas migradas a `lang="ts"` y `typeCheck: true` habilitado en el build
+- [ ] Data fetching movido de `onMounted` a `useAsyncData` en componentes del flujo de creación
+- [ ] Auditoría de `persist` en stores — documentado qué debe y qué no debe persistir
+
+## Current Milestone: v1.9 Website Technical Debt
+
+**Goal:** Eliminar los bugs de correctness críticos del website (structured data rota, key collisions en useAsyncData, errores suprimidos en producción) y establecer una base TypeScript sólida con typeCheck habilitado.
+
+**Target features:**
+- Fix `$setStructuredData` (structured data nunca se ha aplicado en ninguna página)
+- Corregir key collisions en `useAsyncData` (`"packs"` duplicado, `"adData"` estático)
+- Restaurar `console.error`/`warn`/`info` en producción
+- Corregir `useAsyncData` sin `await`/key en `mis-anuncios` y `mis-ordenes`
+- Migrar 17 páginas a `lang="ts"` y habilitar `typeCheck: true`
+- Mover data fetching de `onMounted` a `useAsyncData` en componentes del flujo de creación
+- Auditar y documentar `persist` en los 14 stores con localStorage
 
 ## Previous State
 
@@ -133,4 +153,4 @@ Shipped **v1.8 Free Featured Reservation Guarantee** on 2026-03-07.
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-07 after v1.8 milestone*
+*Last updated: 2026-03-07 after v1.9 milestone started*
