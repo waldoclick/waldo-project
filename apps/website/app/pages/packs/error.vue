@@ -14,7 +14,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const { $setSEO, $setStructuredData } = useNuxtApp();
 
 import HeaderDefault from "@/components/HeaderDefault.vue";

@@ -4,7 +4,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import AccountMain from "@/components/AccountMain.vue";
 
 const { $setSEO, $setStructuredData } = useNuxtApp();

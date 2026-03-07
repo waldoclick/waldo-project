@@ -4,7 +4,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import AccountProfile from "@/components/AccountProfile.vue";
 
 const { $setSEO, $setStructuredData } = useNuxtApp();
