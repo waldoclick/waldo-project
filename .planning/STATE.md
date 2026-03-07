@@ -1,16 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.12
-milestone_name: Ad Creation Analytics Gaps
-status: complete
-stopped_at: Phase 32 complete — v1.12 shipped
-last_updated: "2026-03-07T14:30:00.000Z"
-last_activity: 2026-03-07 — v1.12 complete, all 5 analytics gaps closed
+milestone: v1.13
+milestone_name: GTM Module Migration
+status: planned
+stopped_at: Phase 33 planned — ready to execute
+last_updated: "2026-03-07T15:00:00.000Z"
+last_activity: 2026-03-07 — v1.12 complete, v1.13 planned (GTM module migration)
 progress:
   total_phases: 1
-  completed_phases: 1
+  completed_phases: 0
   total_plans: 1
-  completed_plans: 1
+  completed_plans: 0
 ---
 
 # Project State
@@ -20,23 +20,23 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-07)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.12 — Ad Creation Analytics Gaps (COMPLETE)
+**Current focus:** v1.13 — GTM Module Migration (PLANNED)
 
 ## Current Position
 
-Phase: 32 — Analytics Gaps Cleanup (complete)
-Plan: 1 of 1 complete
-Status: complete — all 5 gaps closed, nuxt typecheck passes, tagged v1.12
+Phase: 33 — GTM Module Migration (planned)
+Plan: 0 of 1 complete
+Status: planned — ready to execute
 
 ```
-[██████████] 100% — 1/1 phases complete (v1.12)
+[░░░░░░░░░░]   0% — 0/1 phases complete (v1.13)
 ```
 
 ## Accumulated Context
 
 ### Decisions
 
-All decisions from v1.1–v1.11 are logged in PROJECT.md Key Decisions table.
+All decisions from v1.1–v1.12 are logged in PROJECT.md Key Decisions table.
 
 Key patterns established (carry forward):
 - `watch({ immediate: true })` as sole data-loading trigger — never pair with onMounted
@@ -78,5 +78,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-07
-Stopped at: v1.12 complete — tagged v1.12
-Resume with: Start next milestone
+Stopped at: v1.12 complete — tagged v1.12; v1.13 GTM Module Migration planned
+Resume with: `/gsd-execute-phase 33-gtm-module-migration`

@@ -14,6 +14,7 @@
 - ✅ **v1.10 Dashboard Orders Dropdown UI** — Phase 30 (shipped 2026-03-07)
 - ✅ **v1.11 GTM / GA4 Tracking Fix** — Phase 31 (shipped 2026-03-07)
 - ✅ **v1.12 Ad Creation Analytics Gaps** — Phase 32 (shipped 2026-03-07)
+- 🚧 **v1.13 GTM Module Migration** — Phase 33 (in progress)
 
 ## Phases
 
@@ -117,9 +118,12 @@ Phase 31 completed in v1.11: removed broken `gtag()` shim from `gtm.client.ts`; 
 
 </details>
 
-### v1.12 Ad Creation Analytics Gaps (SHIPPED 2026-03-07)
+<details>
+<summary>✅ v1.12 Ad Creation Analytics Gaps (Phase 32) — SHIPPED 2026-03-07</summary>
 
-- [x] **Phase 32: Analytics Gaps Cleanup** — Remove dead import in CreateAd.vue; fix step_view overcounting; add redirect_to_payment event; guard purchase event; type window.dataLayer
+Phase 32 completed in v1.12: dead `useAdAnalytics` import removed from `CreateAd.vue`; `step_view` overcounting fixed (no `immediate: true` on step watcher); `redirect_to_payment` event added before Webpay redirect; `purchase` event guarded with `fired` ref; `DataLayerEvent` exported and `window.dataLayer` fully typed.
+
+</details>
 
 ## Phase Details
 
@@ -155,6 +159,21 @@ Plans:
 Plans:
 - [x] 32-01-PLAN.md — ANA-01 through ANA-05 implementation
 
+### Phase 33: GTM Module Migration
+**Goal:** Replace the broken `gtm.client.ts` plugin with `@saslavik/nuxt-gtm` so GTM script injection is handled natively by a Nuxt 4-compatible module and GA4 receives real-time hits
+**Depends on:** Nothing (self-contained change in `apps/website`)
+**Requirements:** GTM-MOD-01, GTM-MOD-02, GTM-MOD-03, GTM-MOD-04
+**Success criteria:**
+1. `apps/website/app/plugins/gtm.client.ts` does not exist
+2. `@saslavik/nuxt-gtm@0.1.3` in `apps/website` devDependencies; present in `modules` array of `nuxt.config.ts`
+3. Module configured with `enableRouterSync: true`; GTM ID from `runtimeConfig.public.gtm.id`; manual `gtmId` runtimeConfig field removed
+4. `useAppConfiguration` feature flag reads `!!config.public.gtm?.id`
+5. `npx nuxt typecheck` passes with zero errors
+**Plans:** 1 plan
+
+Plans:
+- [ ] 33-01-PLAN.md — Install @saslavik/nuxt-gtm, delete gtm.client.ts, update config and feature flag
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -167,3 +186,4 @@ Plans:
 | 30. Dropdown Display Fix | v1.10 | 1/1 | Complete | 2026-03-07 |
 | 31. GTM Plugin + Consent Mode v2 | v1.11 | 1/1 | Complete | 2026-03-07 |
 | 32. Analytics Gaps Cleanup | v1.12 | 1/1 | Complete | 2026-03-07 |
+| 33. GTM Module Migration | v1.13 | 0/1 | In Progress | — |
