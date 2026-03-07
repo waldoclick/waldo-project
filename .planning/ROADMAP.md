@@ -105,7 +105,7 @@ Archive: `.planning/milestones/v1.8-ROADMAP.md`
 **Milestone Goal:** Eliminar los bugs de correctness críticos del website (structured data rota, key collisions en useAsyncData, errores suprimidos en producción) y establecer una base TypeScript sólida con typeCheck habilitado.
 
 - [x] **Phase 25: Critical Correctness Bugs** — Fixed Strapi route shadowing (/ads/me/* routes), useAsyncData key collisions, $setStructuredData type augmentation, production console filter (completed 2026-03-06)
-- [ ] **Phase 26: Data Fetching Cleanup** — Move onMounted fetch to useAsyncData in 7 creation-flow components; audit all 62 onMounted calls
+- [ ] **Phase 26: Data Fetching Cleanup** — Move onMounted(async) data-fetching to useAsyncData in parent pages for 7 components; audit all 33 onMounted calls *(planned)*
 - [ ] **Phase 27: TypeScript Migration** — Migrate 17 pages to lang="ts"; eliminate any in critical stores and composables
 - [ ] **Phase 28: TypeScript Strict + Store Audit** — Enable typeCheck: true in nuxt.config.ts; audit persist in all 14 stores
 
@@ -133,8 +133,10 @@ Plans:
   1. Refreshing any page in the ad creation flow (`/crear/paso-1`, `/crear/paso-2`, `/crear/paso-3`) renders form data immediately without a loading flash — server-rendered content is hydrated
   2. `FormProfile.vue` renders user profile data without a client-side flash when the page is accessed directly via URL
   3. A codebase search for `onMounted(async` in website components returns zero results for data-fetching patterns (only UI-only onMounted remain, documented with a comment)
-  4. The FETCH-08 audit comment or commit message classifies all 62 `onMounted` usages as: UI-only (allowed), fetch-moved (fixed), or already-correct
-**Plans**: TBD
+  4. The FETCH-08 audit comment or commit message classifies all 33 `onMounted` usages as: UI-only (allowed), analytics-only (client-only by nature), fetch-moved (fixed), or client-only-intentional
+**Plans**: 1 plan
+Plans:
+- [ ] 26-01-PLAN.md — Move onMounted(async) data-fetching to parent page useAsyncData (7 tasks, 1 wave)
 
 ### Phase 27: TypeScript Migration
 **Goal**: All website pages and the critical stores/composables are fully typed — no page uses `lang="js"` and no `any` type escapes exist in the data layer
@@ -163,6 +165,6 @@ Plans:
 |-------|-----------|----------------|--------|-----------|
 | 24. featuredCron Implementation | v1.8 | 1/1 | Complete | 2026-03-07 |
 | 25. Critical Correctness Bugs | v1.9 | 1/1 | Complete | 2026-03-06 |
-| 26. Data Fetching Cleanup | v1.9 | 0/? | Not started | — |
+| 26. Data Fetching Cleanup | v1.9 | 0/1 | Planned | — |
 | 27. TypeScript Migration | v1.9 | 0/? | Not started | — |
 | 28. TypeScript Strict + Store Audit | v1.9 | 0/? | Not started | — |
