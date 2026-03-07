@@ -1,67 +1,656 @@
-# Features Research: Payment Gateway Abstraction
+# Feature Research — Website Meta Copy Audit
 
-## What the Codebase Reveals
-
-**Two gateways already exist with zero shared interface:**
-- `TransbankService` — handles ad + pack one-time payments
-- `FlowService` — handles Pro subscriptions (separate domain, separate lifecycle)
-
-**Single coupling point:** `ad.service.ts` and `pack.service.ts` directly import `TransbankServices`.
-
-**Payment lifecycle (both gateways):** Redirect-based
-1. `initiatePayment` → returns `{url, token}` → user redirected to gateway
-2. User completes payment on gateway
-3. Gateway calls back → `confirmPayment(token)` → commits transaction → returns authorized/rejected
-
-**Note:** `FlowService.getPaymentStatus()` is a placeholder returning dummy data — incomplete.
+**Domain:** Classified ads platform (Waldo.click® — industrial equipment, Chile)
+**Researched:** 2026-03-07
+**Confidence:** HIGH — every page file read directly from source; no inference
 
 ---
 
-## Table Stakes (Must-Have for Abstraction to Work)
+## Audit Scope
 
-| Feature | Complexity | Notes |
-|---------|-----------|-------|
-| `IPaymentGateway` interface | Low | `initiatePayment` + `confirmPayment` |
-| Normalized result envelopes | Low | `PaymentInitResponse`, `PaymentConfirmResponse`, `PaymentError` |
-| `TransbankAdapter` implementing the interface | Low | Zero behavioral change — wrap existing service |
-| `PaymentGatewayFactory` / registry | Low | Reads `PAYMENT_GATEWAY` env var, returns correct adapter |
-| Wire `ad.service.ts` and `pack.service.ts` to use factory | Low | Remove direct Transbank import, call via factory |
+This document is a **verbatim inventory** of all `<title>` and `<meta description>` values
+currently set across `apps/website/app/pages/`. It is the primary input for the copy rewrite
+scope of the "Website Meta Copy Audit" milestone.
 
-**Minimal interface (derived from existing Transbank behavior):**
+### How titles render in the browser
 
-```typescript
-interface IPaymentGateway {
-  initiatePayment(request: PaymentInitRequest): Promise<PaymentInitResponse>;
-  confirmPayment(token: string): Promise<PaymentConfirmResponse>;
-}
+`$setSEO` calls `useSeoMeta({ title: ... })` — no suffix is applied by the plugin itself.
+The `@nuxtjs/seo` module (configured with `site.name: "Waldo.click®"` in `nuxt.config.ts`)
+applies a default `titleTemplate` of `%s %separator %siteName`, so the final browser
+tab title is: **`<title value> | Waldo.click®`** — *except* where a page already embeds
+`| Waldo.click®` or `| Waldo.click` in its title string (those pages would render double).
+
+> **Critical finding:** Several pages embed `| Waldo.click®` or `| Venta de Equipo en Waldo.click`
+> in the raw title string passed to `$setSEO`. With `@nuxtjs/seo`'s `titleTemplate` active, these
+> render as duplicated suffixes (e.g. `"… | Waldo.click® | Waldo.click®"`). These are marked
+> ⚠️ DUPE SUFFIX in the table.
+
+---
+
+## Complete Page Inventory
+
+### Visibility Legend
+- **PUBLIC** — indexable; no `noindex` directive on this page
+- **PRIVATE** — `useSeoMeta({ robots: "noindex, nofollow" })` present on this page
+- **PUBLIC (no explicit robots)** — no robots meta set; defaults to indexable
+
+### Dynamism Legend
+- **STATIC** — title/description is a fixed string literal
+- **DYNAMIC** — contains template literals, reactive variables, computed values, or conditional expressions that change at runtime
+
+---
+
+### 1. `pages/index.vue` — Homepage
+
+| Field | Value |
+|-------|-------|
+| **File** | `apps/website/app/pages/index.vue` |
+| **Title** | `Compra y Venta de Equipo en Chile` |
+| **Description** | `Publica y encuentra equipo industrial en Chile. Waldo.click® conecta vendedores y compradores de equipos nuevos o usados en todo el país.` |
+| **Title type** | STATIC |
+| **Description type** | STATIC |
+| **Visibility** | PUBLIC (no explicit robots meta) |
+| **Notes** | Clean — no suffix duplication. No noindex. |
+
+---
+
+### 2. `pages/[slug].vue` — Public User Profile
+
+| Field | Value |
+|-------|-------|
+| **File** | `apps/website/app/pages/[slug].vue` |
+| **Title** | `` `Perfil de ${newData.user.username} \| Waldo.click®` `` |
+| **Description** | `` `Explora los ${totalAds} anuncios publicados por ${newData.user.username} ${location}. Encuentra los mejores precios en equipamiento industrial en Waldo.click®.` `` |
+| **Title type** | DYNAMIC (username variable, hardcoded ` \| Waldo.click®` suffix) |
+| **Description type** | DYNAMIC (totalAds counter, username, location from user.commune.name) |
+| **Visibility** | PUBLIC (no explicit robots meta) |
+| **Notes** | ⚠️ DUPE SUFFIX — title embeds `\| Waldo.click®` which will duplicate with `@nuxtjs/seo` template. `totalAds` reflects `adsData.ads.length` (page-size slice of 12, not the user's total). `location` = `"en ${commune.name}"` or `"en Chile"`. Set inside `watch(() => adsData.value, ..., { immediate: true })`. |
+
+---
+
+### 3. `pages/anuncios/index.vue` — Ad Archive / Search Results
+
+| Field | Value |
+|-------|-------|
+| **File** | `apps/website/app/pages/anuncios/index.vue` |
+| **Title** | See dynamic logic below |
+| **Description** | See dynamic logic below |
+| **Title type** | DYNAMIC (generated by `generateSEOTitle()`) |
+| **Description type** | DYNAMIC (generated by `generateSEODescription()`) |
+| **Visibility** | PUBLIC (no explicit robots meta) |
+| **Notes** | Set inside `watch([adsData, route.query], ..., { immediate: true })`. |
+
+**Title logic (`generateSEOTitle()`):**
+```
+if searchQuery:
+  title = `Buscando "${searchQuery}"`
+  if categoryName && categoryName !== "Anuncios": title += ` en ${categoryName}`
+  if communeNameStr: title += ` en ${communeNameStr}`
+  return title
+
+if categoryName === "Anuncios":
+  return communeNameStr ? `Activos industriales en ${communeNameStr}` : "Activos industriales en Chile"
+
+if categoryName && communeNameStr: return `Activos industriales de ${categoryName} en ${communeNameStr}`
+if categoryName: return `Activos industriales de ${categoryName}`
+if communeNameStr: return `Activos industriales en ${communeNameStr}`
+return "Activos industriales en Chile"   ← default (no filters)
+```
+
+**Description logic (`generateSEODescription()`):**
+```
+if searchQuery:
+  description = `Resultados de búsqueda para "${searchQuery}"`
+  if categoryName: description += ` en la categoría ${categoryName}`
+  if communeName: description += ` en ${communeName}`
+else:
+  description = `Explora ${totalAds} anuncios de activos industriales`
+  if categoryName: description += ` en la categoría ${categoryName}`
+  if communeName: description += ` en ${communeName}`
+return `${description}. Encuentra los mejores precios en equipamiento industrial en Waldo.click`
+← NOTE: trailing "Waldo.click" has no ®
 ```
 
 ---
 
-## Differentiators (Nice-to-Have, Future)
+### 4. `pages/anuncios/[slug].vue` — Single Ad Detail
 
-| Feature | Complexity | Notes |
-|---------|-----------|-------|
-| Concrete adapter for a second gateway (e.g., MercadoPago) | Medium | Proves the abstraction works |
-| Gateway health-check / fallback | Medium | Auto-switch if primary fails |
-| Per-user/per-region gateway routing | High | Complex orchestration |
-
----
-
-## Anti-Features (Explicitly DO NOT Build in This Pass)
-
-| Feature | Reason |
-|---------|--------|
-| UI for gateway selection | Not required — transparent to users |
-| Abstract Pro subscription lifecycle (Flow) | Separate domain — subscriptions ≠ one-time payments |
-| Async webhook pipeline | Current redirect-based flow works, no need to redesign |
-| Flow one-time payment adapter | `FlowService.getPaymentStatus()` is an incomplete placeholder |
-| Concrete Flow adapter for abstraction layer | Out of scope — add when a second gateway is actually needed |
+| Field | Value |
+|-------|-------|
+| **File** | `apps/website/app/pages/anuncios/[slug].vue` |
+| **Title** | `` `${newData.name} en ${newData.commune?.name \|\| "Chile"} \| Venta de Equipo en Waldo.click` `` |
+| **Description** | `` `¡Oportunidad! ${newData.name} en ${newData.commune?.name \|\| "Chile"}. ${newData.description ? newData.description.slice(0, 150) + "..." : ""} Encuentra más equipo industrial en Waldo.click` `` |
+| **Title type** | DYNAMIC (ad name, commune name, hardcoded ` \| Venta de Equipo en Waldo.click` suffix) |
+| **Description type** | DYNAMIC (ad name, commune name, first 150 chars of ad description + `"..."`) |
+| **Visibility** | PUBLIC (no explicit robots meta) |
+| **Notes** | ⚠️ DUPE SUFFIX — title embeds `\| Venta de Equipo en Waldo.click` which duplicates with `@nuxtjs/seo` template. Description appended with `"Waldo.click"` (no ®). If `newData.description` is empty/null, the middle part is omitted, producing a double-space. Set inside `watch(() => adData.value, ..., { immediate: true })`. |
 
 ---
 
-## Scope Summary
+### 5. `pages/packs/index.vue` — Packs Listing
 
-**This milestone:** Interface + TransbankAdapter + factory + wire existing services. Zero behavior change.
+| Field | Value |
+|-------|-------|
+| **File** | `apps/website/app/pages/packs/index.vue` |
+| **Title** | `Packs de Avisos` |
+| **Description** | `Elige el pack de avisos que mejor se adapte a tus necesidades. Publica más anuncios y llega a más compradores en Waldo.click®.` |
+| **Title type** | STATIC |
+| **Description type** | STATIC |
+| **Visibility** | PRIVATE (`middleware: "auth"` but **no `useSeoMeta({ robots })`**) |
+| **Notes** | Auth-gated but no noindex call — technically indexable. `robots.txt` disallows `/packs/**` (subpaths) but `/packs` itself may be crawled. |
 
-**Not this milestone:** Subscription abstraction, second concrete adapter, UI changes.
+---
+
+### 6. `pages/packs/comprar.vue` — Buy Pack Checkout
+
+| Field | Value |
+|-------|-------|
+| **File** | `apps/website/app/pages/packs/comprar.vue` |
+| **Title** | `Comprar Pack` |
+| **Description** | `Adquiere un pack de avisos en Waldo.click®.` |
+| **Title type** | STATIC |
+| **Description type** | STATIC |
+| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
+| **Notes** | Description is extremely thin (44 chars). |
+
+---
+
+### 7. `pages/packs/gracias.vue` — Pack Purchase Confirmation
+
+| Field | Value |
+|-------|-------|
+| **File** | `apps/website/app/pages/packs/gracias.vue` |
+| **Title** | `` `Gracias por tu Compra - ${pack.name}` `` |
+| **Description** | `` `Has comprado el pack ${pack.name} por ${formatPrice(pack.price)}. Este pack incluye ${pack.ads_count} anuncios.` `` |
+| **Title type** | DYNAMIC (pack.name) |
+| **Description type** | DYNAMIC (pack.name, formatted CLP price, ads_count) |
+| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
+| **Notes** | Set inside `watch(data, ...)`. Title uses ` - ` separator (not ` \| `). `formatPrice` uses `Intl.NumberFormat("es-CL", { style: "currency", currency: "CLP" })`. |
+
+---
+
+### 8. `pages/packs/error.vue` — Pack Payment Error
+
+| Field | Value |
+|-------|-------|
+| **File** | `apps/website/app/pages/packs/error.vue` |
+| **Title** | `Error en el Pago` |
+| **Description** | `Hubo un problema al procesar tu pago. Por favor, intenta nuevamente.` |
+| **Title type** | STATIC |
+| **Description type** | STATIC |
+| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
+| **Notes** | — |
+
+---
+
+### 9. `pages/anunciar/index.vue` — Create Ad Wizard
+
+| Field | Value |
+|-------|-------|
+| **File** | `apps/website/app/pages/anunciar/index.vue` |
+| **Title** | `Crear Anuncio` |
+| **Description** | `Publica tus activos industriales de manera rápida y sencilla en Waldo.click®. Aumenta tu visibilidad y encuentra compradores fácilmente.` |
+| **Title type** | STATIC |
+| **Description type** | STATIC |
+| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
+| **Notes** | — |
+
+---
+
+### 10. `pages/anunciar/resumen.vue` — Ad Submission Review
+
+| Field | Value |
+|-------|-------|
+| **File** | `apps/website/app/pages/anunciar/resumen.vue` |
+| **Title** | `Resumen del Anuncio` |
+| **Description** | `Consulta los detalles de tu anuncio antes de publicarlo en Waldo.click®. Asegúrate de que todo esté perfecto para destacar en el mercado de activos industriales.` |
+| **Title type** | STATIC |
+| **Description type** | STATIC |
+| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
+| **Notes** | — |
+
+---
+
+### 11. `pages/anunciar/gracias.vue` — Ad Creation Success
+
+| Field | Value |
+|-------|-------|
+| **File** | `apps/website/app/pages/anunciar/gracias.vue` |
+| **Title** | `Gracias por Publicar` |
+| **Description** | `Tu anuncio ha sido publicado con éxito en Waldo.click®. Gracias por confiar en nosotros para conectar con compradores de activos industriales.` |
+| **Title type** | STATIC |
+| **Description type** | STATIC |
+| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
+| **Notes** | — |
+
+---
+
+### 12. `pages/anunciar/error.vue` — Ad Creation Error
+
+| Field | Value |
+|-------|-------|
+| **File** | `apps/website/app/pages/anunciar/error.vue` |
+| **Title** | `Error al Crear Anuncio` |
+| **Description** | `Hubo un problema al intentar crear tu anuncio en Waldo.click®. Por favor, revisa los datos e inténtalo nuevamente.` |
+| **Title type** | STATIC |
+| **Description type** | STATIC |
+| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
+| **Notes** | — |
+
+---
+
+### 13. `pages/cuenta/index.vue` — Account Dashboard
+
+| Field | Value |
+|-------|-------|
+| **File** | `apps/website/app/pages/cuenta/index.vue` |
+| **Title** | `Mi Cuenta` |
+| **Description** | `Accede a tu cuenta en Waldo.click®. Administra tus datos, anuncios y más desde un solo lugar.` |
+| **Title type** | STATIC |
+| **Description type** | STATIC |
+| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
+| **Notes** | — |
+
+---
+
+### 14. `pages/cuenta/mis-anuncios.vue` — My Ads
+
+| Field | Value |
+|-------|-------|
+| **File** | `apps/website/app/pages/cuenta/mis-anuncios.vue` |
+| **Title** | `Mis Anuncios` |
+| **Description** | `Gestiona tus anuncios activos y archivados en Waldo.click®.` |
+| **Title type** | STATIC |
+| **Description type** | STATIC |
+| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
+| **Notes** | — |
+
+---
+
+### 15. `pages/cuenta/mis-ordenes.vue` — My Orders
+
+| Field | Value |
+|-------|-------|
+| **File** | `apps/website/app/pages/cuenta/mis-ordenes.vue` |
+| **Title** | `Mis Órdenes` |
+| **Description** | `Consulta el historial de tus órdenes en Waldo.click®.` |
+| **Title type** | STATIC |
+| **Description type** | STATIC |
+| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
+| **Notes** | Description is very short (54 chars). |
+
+---
+
+### 16. `pages/cuenta/perfil/index.vue` — My Profile View
+
+| Field | Value |
+|-------|-------|
+| **File** | `apps/website/app/pages/cuenta/perfil/index.vue` |
+| **Title** | `Perfil` |
+| **Description** | `Gestiona tu perfil en Waldo.click®. Actualiza tu información personal y mantén tus datos al día.` |
+| **Title type** | STATIC |
+| **Description type** | STATIC |
+| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
+| **Notes** | Title is a single generic word. |
+
+---
+
+### 17. `pages/cuenta/perfil/editar.vue` — Edit Profile
+
+| Field | Value |
+|-------|-------|
+| **File** | `apps/website/app/pages/cuenta/perfil/editar.vue` |
+| **Title** | `Editar Perfil` |
+| **Description** | `Edita tu perfil en Waldo.click®. Actualiza tu información personal y mantén tus datos al día.` |
+| **Title type** | STATIC |
+| **Description type** | STATIC |
+| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
+| **Notes** | Description near-identical to `perfil/index.vue` (only first verb differs: `Gestiona` → `Edita`). |
+
+---
+
+### 18. `pages/cuenta/avatar.vue` — Customize Avatar (PRO)
+
+| Field | Value |
+|-------|-------|
+| **File** | `apps/website/app/pages/cuenta/avatar.vue` |
+| **Title** | `Personalizar Avatar` |
+| **Description** | `Personaliza tu avatar en Waldo.click®. Crea una presencia única y profesional en la plataforma.` |
+| **Title type** | STATIC |
+| **Description type** | STATIC |
+| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
+| **Notes** | PRO-gated — non-PRO users receive 403. |
+
+---
+
+### 19. `pages/cuenta/cover.vue` — Customize Cover (PRO)
+
+| Field | Value |
+|-------|-------|
+| **File** | `apps/website/app/pages/cuenta/cover.vue` |
+| **Title** | `Personalizar Portada` |
+| **Description** | `Personaliza tu portada en Waldo.click®. Dale un toque único a tu perfil y destaca tus anuncios.` |
+| **Title type** | STATIC |
+| **Description type** | STATIC |
+| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
+| **Notes** | PRO-gated. |
+
+---
+
+### 20. `pages/cuenta/username.vue` — Customize Username (PRO)
+
+| Field | Value |
+|-------|-------|
+| **File** | `apps/website/app/pages/cuenta/username.vue` |
+| **Title** | `Personalizar Nombre de Usuario` |
+| **Description** | `Personaliza tu nombre de usuario en Waldo.click®. Crea una identidad única y memorable para tu negocio.` |
+| **Title type** | STATIC |
+| **Description type** | STATIC |
+| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
+| **Notes** | PRO-gated. |
+
+---
+
+### 21. `pages/cuenta/cambiar-contrasena.vue` — Change Password
+
+| Field | Value |
+|-------|-------|
+| **File** | `apps/website/app/pages/cuenta/cambiar-contrasena.vue` |
+| **Title** | `Cambiar Contraseña` |
+| **Description** | `Cambia tu contraseña en Waldo.click®. Mantén tu cuenta segura actualizando tus credenciales.` |
+| **Title type** | STATIC |
+| **Description type** | STATIC |
+| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
+| **Notes** | Only accessible to `provider === "email"` users (Google SSO users get 403). |
+
+---
+
+### 22. `pages/login/index.vue` — Login
+
+| Field | Value |
+|-------|-------|
+| **File** | `apps/website/app/pages/login/index.vue` |
+| **Title** | `Iniciar sesión` |
+| **Description** | `Accede a tu cuenta en Waldo.click® para gestionar tus anuncios, ver contactos y disfrutar de todos los beneficios de nuestra plataforma.` |
+| **Title type** | STATIC |
+| **Description type** | STATIC |
+| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
+| **Notes** | ⚠️ Lowercase `s` in `sesión` — inconsistent casing vs all other pages (which use Title Case). `middleware: ["guest"]`. |
+
+---
+
+### 23. `pages/registro.vue` — Register
+
+| Field | Value |
+|-------|-------|
+| **File** | `apps/website/app/pages/registro.vue` |
+| **Title** | `Regístrate` |
+| **Description** | `Crea tu cuenta en Waldo.click® y comienza a comprar y vender activos industriales de manera rápida y sencilla.` |
+| **Title type** | STATIC |
+| **Description type** | STATIC |
+| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
+| **Notes** | `middleware: ["guest"]`. |
+
+---
+
+### 24. `pages/recuperar-contrasena.vue` — Forgot Password
+
+| Field | Value |
+|-------|-------|
+| **File** | `apps/website/app/pages/recuperar-contrasena.vue` |
+| **Title** | `Recuperar Contraseña` |
+| **Description** | `Recupera el acceso a tu cuenta en Waldo.click®. Sigue unos simples pasos para restablecer tu contraseña de forma segura.` |
+| **Title type** | STATIC |
+| **Description type** | STATIC |
+| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
+| **Notes** | `middleware: ["guest"]`. Also disallowed in `robots.txt`. |
+
+---
+
+### 25. `pages/restablecer-contrasena.vue` — Reset Password
+
+| Field | Value |
+|-------|-------|
+| **File** | `apps/website/app/pages/restablecer-contrasena.vue` |
+| **Title** | `Restablecer Contraseña` |
+| **Description** | `Estás en el último paso para recuperar el acceso a tu cuenta en Waldo.click®. Ingresa tu nueva contraseña para completar el proceso.` |
+| **Title type** | STATIC |
+| **Description type** | STATIC |
+| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
+| **Notes** | Disallowed in `robots.txt`. `middleware: ["guest"]`. |
+
+---
+
+### 26. `pages/contacto/index.vue` — Contact
+
+| Field | Value |
+|-------|-------|
+| **File** | `apps/website/app/pages/contacto/index.vue` |
+| **Title** | `Contacto` |
+| **Description** | `¿Tienes preguntas o necesitas ayuda? Contáctanos en Waldo.click® y nuestro equipo te responderá lo antes posible.` |
+| **Title type** | STATIC |
+| **Description type** | STATIC |
+| **Visibility** | PUBLIC (no explicit robots meta) |
+| **Notes** | `layout: "about"`. Title is one generic word. No noindex despite `robots.txt` disallowing `/contacto/**` (the root `/contacto` may still be crawled). |
+
+---
+
+### 27. `pages/contacto/gracias.vue` — Contact Thank You
+
+| Field | Value |
+|-------|-------|
+| **File** | `apps/website/app/pages/contacto/gracias.vue` |
+| **Title** | `Gracias por contactarnos` |
+| **Description** | `Hemos recibido tu mensaje. Te responderemos lo antes posible. Gracias por confiar en Waldo.click®.` |
+| **Title type** | STATIC |
+| **Description type** | STATIC |
+| **Visibility** | PUBLIC (no explicit `noindex`) |
+| **Notes** | Access-guarded by `appStore.getContactFormSent` — direct navigation throws 404, so bots cannot reach it. `layout: "about"`. |
+
+---
+
+### 28. `pages/preguntas-frecuentes.vue` — FAQ
+
+| Field | Value |
+|-------|-------|
+| **File** | `apps/website/app/pages/preguntas-frecuentes.vue` |
+| **Title** | `Preguntas Frecuentes` |
+| **Description** | `Resuelve tus dudas sobre cómo funciona Waldo.click®, la plataforma para comprar y vender activos industriales.` |
+| **Title type** | STATIC |
+| **Description type** | STATIC |
+| **Visibility** | PUBLIC (no explicit robots meta) |
+| **Notes** | `layout: "about"`. Structured data uses `@type: FAQPage` — strong SEO signal. |
+
+---
+
+### 29. `pages/politicas-de-privacidad.vue` — Privacy Policy
+
+| Field | Value |
+|-------|-------|
+| **File** | `apps/website/app/pages/politicas-de-privacidad.vue` |
+| **Title** | `Políticas de Privacidad` |
+| **Description** | `Conoce cómo Waldo.click® protege tu información personal y asegura la privacidad en tus transacciones.` |
+| **Title type** | STATIC |
+| **Description type** | STATIC |
+| **Visibility** | PUBLIC (no explicit robots meta) |
+| **Notes** | `layout: "about"`. |
+
+---
+
+### 30. `pages/sitemap.vue` — HTML Sitemap
+
+| Field | Value |
+|-------|-------|
+| **File** | `apps/website/app/pages/sitemap.vue` |
+| **Title** | `Mapa del Sitio` |
+| **Description** | `Explora la estructura de nuestro sitio y encuentra fácilmente lo que buscas en Waldo.click.` |
+| **Title type** | STATIC |
+| **Description type** | STATIC |
+| **Visibility** | PUBLIC (no explicit robots meta) |
+| **Notes** | `layout: "about"`. Description uses `"Waldo.click"` — no ® symbol (inconsistency vs other pages). |
+
+---
+
+### 31. `pages/dev.vue` — Dev Mode Gate
+
+| Field | Value |
+|-------|-------|
+| **File** | `apps/website/app/pages/dev.vue` |
+| **Title** | `Acceso Restringido - Modo Desarrollo` |
+| **Description** | `El sitio Waldo.click® está en modo desarrollo. El acceso está restringido temporalmente y solo usuarios autorizados pueden navegar por el sitio.` |
+| **Title type** | STATIC |
+| **Description type** | STATIC |
+| **Visibility** | PUBLIC (no explicit robots meta; `middleware: ["guest"]`) |
+| **Notes** | Maintenance/dev gate page. Title uses ` - ` separator. No noindex despite being dev-only. |
+
+---
+
+## Summary Table
+
+| # | Page file | Title (raw string passed to `$setSEO`) | Description (raw string passed to `$setSEO`) | Title | Desc | Visibility |
+|---|-----------|----------------------------------------|----------------------------------------------|-------|------|------------|
+| 1 | `index.vue` | `Compra y Venta de Equipo en Chile` | `Publica y encuentra equipo industrial en Chile. Waldo.click® conecta vendedores y compradores de equipos nuevos o usados en todo el país.` | STATIC | STATIC | PUBLIC |
+| 2 | `[slug].vue` | `Perfil de {username} \| Waldo.click®` ⚠️ | `Explora los {N} anuncios publicados por {username} {location}. Encuentra los mejores precios en equipamiento industrial en Waldo.click®.` | DYNAMIC | DYNAMIC | PUBLIC |
+| 3 | `anuncios/index.vue` | Computed — see logic section | Computed — see logic section | DYNAMIC | DYNAMIC | PUBLIC |
+| 4 | `anuncios/[slug].vue` | `{ad.name} en {commune\|Chile} \| Venta de Equipo en Waldo.click` ⚠️ | `¡Oportunidad! {ad.name} en {commune\|Chile}. {description[0..150]}... Encuentra más equipo industrial en Waldo.click` | DYNAMIC | DYNAMIC | PUBLIC |
+| 5 | `packs/index.vue` | `Packs de Avisos` | `Elige el pack de avisos que mejor se adapte a tus necesidades. Publica más anuncios y llega a más compradores en Waldo.click®.` | STATIC | STATIC | PRIVATE* |
+| 6 | `packs/comprar.vue` | `Comprar Pack` | `Adquiere un pack de avisos en Waldo.click®.` | STATIC | STATIC | PRIVATE |
+| 7 | `packs/gracias.vue` | `Gracias por tu Compra - {pack.name}` | `Has comprado el pack {pack.name} por {price}. Este pack incluye {N} anuncios.` | DYNAMIC | DYNAMIC | PRIVATE |
+| 8 | `packs/error.vue` | `Error en el Pago` | `Hubo un problema al procesar tu pago. Por favor, intenta nuevamente.` | STATIC | STATIC | PRIVATE |
+| 9 | `anunciar/index.vue` | `Crear Anuncio` | `Publica tus activos industriales de manera rápida y sencilla en Waldo.click®. Aumenta tu visibilidad y encuentra compradores fácilmente.` | STATIC | STATIC | PRIVATE |
+| 10 | `anunciar/resumen.vue` | `Resumen del Anuncio` | `Consulta los detalles de tu anuncio antes de publicarlo en Waldo.click®. Asegúrate de que todo esté perfecto para destacar en el mercado de activos industriales.` | STATIC | STATIC | PRIVATE |
+| 11 | `anunciar/gracias.vue` | `Gracias por Publicar` | `Tu anuncio ha sido publicado con éxito en Waldo.click®. Gracias por confiar en nosotros para conectar con compradores de activos industriales.` | STATIC | STATIC | PRIVATE |
+| 12 | `anunciar/error.vue` | `Error al Crear Anuncio` | `Hubo un problema al intentar crear tu anuncio en Waldo.click®. Por favor, revisa los datos e inténtalo nuevamente.` | STATIC | STATIC | PRIVATE |
+| 13 | `cuenta/index.vue` | `Mi Cuenta` | `Accede a tu cuenta en Waldo.click®. Administra tus datos, anuncios y más desde un solo lugar.` | STATIC | STATIC | PRIVATE |
+| 14 | `cuenta/mis-anuncios.vue` | `Mis Anuncios` | `Gestiona tus anuncios activos y archivados en Waldo.click®.` | STATIC | STATIC | PRIVATE |
+| 15 | `cuenta/mis-ordenes.vue` | `Mis Órdenes` | `Consulta el historial de tus órdenes en Waldo.click®.` | STATIC | STATIC | PRIVATE |
+| 16 | `cuenta/perfil/index.vue` | `Perfil` | `Gestiona tu perfil en Waldo.click®. Actualiza tu información personal y mantén tus datos al día.` | STATIC | STATIC | PRIVATE |
+| 17 | `cuenta/perfil/editar.vue` | `Editar Perfil` | `Edita tu perfil en Waldo.click®. Actualiza tu información personal y mantén tus datos al día.` | STATIC | STATIC | PRIVATE |
+| 18 | `cuenta/avatar.vue` | `Personalizar Avatar` | `Personaliza tu avatar en Waldo.click®. Crea una presencia única y profesional en la plataforma.` | STATIC | STATIC | PRIVATE |
+| 19 | `cuenta/cover.vue` | `Personalizar Portada` | `Personaliza tu portada en Waldo.click®. Dale un toque único a tu perfil y destaca tus anuncios.` | STATIC | STATIC | PRIVATE |
+| 20 | `cuenta/username.vue` | `Personalizar Nombre de Usuario` | `Personaliza tu nombre de usuario en Waldo.click®. Crea una identidad única y memorable para tu negocio.` | STATIC | STATIC | PRIVATE |
+| 21 | `cuenta/cambiar-contrasena.vue` | `Cambiar Contraseña` | `Cambia tu contraseña en Waldo.click®. Mantén tu cuenta segura actualizando tus credenciales.` | STATIC | STATIC | PRIVATE |
+| 22 | `login/index.vue` | `Iniciar sesión` ⚠️ casing | `Accede a tu cuenta en Waldo.click® para gestionar tus anuncios, ver contactos y disfrutar de todos los beneficios de nuestra plataforma.` | STATIC | STATIC | PRIVATE |
+| 23 | `registro.vue` | `Regístrate` | `Crea tu cuenta en Waldo.click® y comienza a comprar y vender activos industriales de manera rápida y sencilla.` | STATIC | STATIC | PRIVATE |
+| 24 | `recuperar-contrasena.vue` | `Recuperar Contraseña` | `Recupera el acceso a tu cuenta en Waldo.click®. Sigue unos simples pasos para restablecer tu contraseña de forma segura.` | STATIC | STATIC | PRIVATE |
+| 25 | `restablecer-contrasena.vue` | `Restablecer Contraseña` | `Estás en el último paso para recuperar el acceso a tu cuenta en Waldo.click®. Ingresa tu nueva contraseña para completar el proceso.` | STATIC | STATIC | PRIVATE |
+| 26 | `contacto/index.vue` | `Contacto` | `¿Tienes preguntas o necesitas ayuda? Contáctanos en Waldo.click® y nuestro equipo te responderá lo antes posible.` | STATIC | STATIC | PUBLIC |
+| 27 | `contacto/gracias.vue` | `Gracias por contactarnos` | `Hemos recibido tu mensaje. Te responderemos lo antes posible. Gracias por confiar en Waldo.click®.` | STATIC | STATIC | PUBLIC† |
+| 28 | `preguntas-frecuentes.vue` | `Preguntas Frecuentes` | `Resuelve tus dudas sobre cómo funciona Waldo.click®, la plataforma para comprar y vender activos industriales.` | STATIC | STATIC | PUBLIC |
+| 29 | `politicas-de-privacidad.vue` | `Políticas de Privacidad` | `Conoce cómo Waldo.click® protege tu información personal y asegura la privacidad en tus transacciones.` | STATIC | STATIC | PUBLIC |
+| 30 | `sitemap.vue` | `Mapa del Sitio` | `Explora la estructura de nuestro sitio y encuentra fácilmente lo que buscas en Waldo.click.` ⚠️ no ® | STATIC | STATIC | PUBLIC |
+| 31 | `dev.vue` | `Acceso Restringido - Modo Desarrollo` | `El sitio Waldo.click® está en modo desarrollo. El acceso está restringido temporalmente y solo usuarios autorizados pueden navegar por el sitio.` | STATIC | STATIC | PUBLIC |
+
+\* `packs/index.vue` has `middleware: "auth"` but **no `useSeoMeta({ robots: "noindex" })`** — technically crawlable.
+† `contacto/gracias.vue` has no noindex but is app-state-guarded; direct bot access would 404.
+
+---
+
+## Cross-Cutting Issues Found
+
+### Issue 1: Duplicate Title Suffixes — 2 pages ⚠️ CRITICAL (affects indexed public pages)
+
+Pages that embed a brand suffix in the raw title string. With `@nuxtjs/seo`'s default
+`titleTemplate` (`%s | Waldo.click®`), these render double in the browser tab and in SERP snippets:
+
+| Page | Raw title passed to `$setSEO` | Rendered browser title (WRONG) |
+|------|-------------------------------|--------------------------------|
+| `[slug].vue` | `Perfil de {user} \| Waldo.click®` | `Perfil de {user} \| Waldo.click® \| Waldo.click®` |
+| `anuncios/[slug].vue` | `{ad} en {commune} \| Venta de Equipo en Waldo.click` | `{ad} en {commune} \| Venta de Equipo en Waldo.click \| Waldo.click®` |
+
+**Fix:** Strip the embedded suffix from the raw title string. Let `@nuxtjs/seo` apply the separator.
+
+### Issue 2: Inconsistent Brand String — 3 locations
+
+| Page | Field | Brand string used |
+|------|-------|-------------------|
+| Most pages | title / description | `Waldo.click®` ✓ |
+| `anuncios/index.vue` | description (trailing) | `Waldo.click` (no ®) |
+| `anuncios/[slug].vue` | title + description (trailing) | `Waldo.click` (no ®) |
+| `sitemap.vue` | description (trailing) | `Waldo.click` (no ®) |
+
+### Issue 3: Inconsistent Title Separators — 4 pages
+
+| Page | Separator in raw title string | Expected behavior |
+|------|-------------------------------|-------------------|
+| Most pages | none (clean title, relies on `@nuxtjs/seo`) | ✓ correct |
+| `[slug].vue` | ` \| ` embedded | should be removed |
+| `anuncios/[slug].vue` | ` \| ` embedded | should be removed |
+| `packs/gracias.vue` | ` - ` embedded | inconsistent style |
+| `dev.vue` | ` - ` embedded | inconsistent style |
+
+### Issue 4: Extremely Short Descriptions — 2 pages
+
+| Page | Description | Char count | Recommended |
+|------|-------------|-----------|-------------|
+| `packs/comprar.vue` | `Adquiere un pack de avisos en Waldo.click®.` | 44 | 120–160 |
+| `cuenta/mis-ordenes.vue` | `Consulta el historial de tus órdenes en Waldo.click®.` | 54 | 120–160 |
+
+### Issue 5: Title Casing Inconsistency — 1 page
+
+| Page | Title | Issue |
+|------|-------|-------|
+| `login/index.vue` | `Iniciar sesión` | Lowercase `s` — all other pages use Title Case (`Iniciar Sesión`) |
+
+### Issue 6: Misleading `totalAds` Counter in Profile Descriptions
+
+`[slug].vue` description: `"Explora los ${totalAds} anuncios publicados por..."`.
+`totalAds` = `newData.ads?.length || 0` — this is the **current page slice** (up to 12 items),
+not the user's total ad count. A user with 50 ads is described as having 12.
+
+### Issue 7: Dynamic Description Empty-State Bug in `anuncios/[slug].vue`
+
+When `newData.description` is `null` or `""`, the middle segment is replaced with an empty
+string `""`, producing: `"¡Oportunidad! {name} en {commune}.  Encuentra más..."` (double space).
+
+### Issue 8: `packs/index.vue` Missing `noindex`
+
+This page is auth-gated but has no `useSeoMeta({ robots: "noindex" })` call.
+`robots.txt` disallows `/packs/**` (subpaths) but `/packs` (no trailing slash) may still be
+crawled and indexed. Needs explicit `useSeoMeta({ robots: "noindex, nofollow" })`.
+
+---
+
+## Pages by Priority for Copy Rewrite
+
+### Priority 1 — PUBLIC + indexed (SEO impact)
+
+| Page | Key rewrite need |
+|------|-----------------|
+| `index.vue` | Review keyword strategy; current copy is functional |
+| `anuncios/[slug].vue` | Fix DUPE SUFFIX; fix no ®; fix empty-description double-space |
+| `[slug].vue` (profile) | Fix DUPE SUFFIX; fix misleading `totalAds` |
+| `anuncios/index.vue` | Audit all dynamic branches; fix no ® in trailing text |
+| `preguntas-frecuentes.vue` | Title/description usable; minor polish |
+| `contacto/index.vue` | Title is one generic word — expand |
+| `sitemap.vue` | Fix missing ® |
+| `politicas-de-privacidad.vue` | Low priority — legal page; minor polish only |
+
+### Priority 2 — PRIVATE pages (noindex; brand voice / UX)
+
+All `cuenta/**`, `anunciar/**`, `packs/**`, `login/**`, `registro.vue`,
+`recuperar-contrasena.vue`, `restablecer-contrasena.vue`.
+
+Key items: fix `login/index.vue` casing; pad `packs/comprar.vue` and `cuenta/mis-ordenes.vue` descriptions.
+
+### Priority 3 — Edge cases
+
+| Page | Action |
+|------|--------|
+| `packs/index.vue` | Add missing `useSeoMeta({ robots: "noindex, nofollow" })` |
+| `dev.vue` | Consider adding noindex for dev-only page |
+| `contacto/gracias.vue` | Confirm intentional PUBLIC status |
+
+---
+
+## Sources
+
+- Direct source read of all 31 page files in `apps/website/app/pages/`
+- `apps/website/app/plugins/seo.ts` — `$setSEO` implementation (confirms no suffix appended by plugin)
+- `apps/website/nuxt.config.ts` — `site.name: "Waldo.click®"`, `robots` config, `sitemap.exclude`
+- `apps/website/app/app.vue` — confirms no global `titleTemplate` override
+
+---
+*Code audit for: Website Meta Copy Audit milestone*
+*Audited: 2026-03-07*
+*Confidence: HIGH — all values extracted verbatim from source files*
