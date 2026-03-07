@@ -1,55 +1,50 @@
-# Roadmap — v1.14 GTM Module: Dashboard
+# Roadmap: Waldo Project
 
-## Milestone Goal
+## Milestones
 
-Install `@saslavik/nuxt-gtm@0.1.3` in `apps/dashboard`, configure it identically to the v1.13 website implementation, and remove the legacy `gtmId` flat field. Dashboard GTM tracking fires on every SPA route change via `enableRouterSync: true`. TypeScript typecheck passes with zero errors.
+- ✅ **v1.1 Dashboard Technical Debt Reduction** — Phases 3-6 (shipped 2026-03-05)
+- ✅ **v1.2 Double-Fetch Cleanup** — Phases 7-8 (shipped 2026-03-05)
+- ✅ **v1.3 Utility Extraction** — Phases 9-11 (shipped 2026-03-06)
+- ✅ **v1.4 URL Localization** — Phases 12-15 (shipped 2026-03-06)
+- ✅ **v1.5 Ad Credit Refund** — Phases 16-17 (shipped 2026-03-06)
+- ✅ **v1.6 Website API Optimization** — Phases 18-19 (shipped 2026-03-06)
+- ✅ **v1.7 Cron Reliability** — Phases 20-23 (shipped 2026-03-06)
+- ✅ **v1.8 Free Featured Reservation Guarantee** — Phase 24 (shipped 2026-03-07)
+- ✅ **v1.9 Website Technical Debt** — Phases 25-29 (shipped 2026-03-07)
+- ✅ **v1.10 Dashboard Orders Dropdown UI** — Phase 30 (shipped 2026-03-07)
+- ✅ **v1.11 GTM / GA4 Tracking Fix** — Phase 31 (shipped 2026-03-07)
+- ✅ **v1.12 Ad Creation Analytics Gaps** — Phase 32 (shipped 2026-03-07)
+- ✅ **v1.13 GTM Module Migration** — Phase 33 (shipped 2026-03-07)
+- 🔄 **v1.14 GTM Module: Dashboard** — Phase 34 (in progress)
 
-**Success definition:** Opening the dashboard in a browser with GTM Preview Mode confirms tags fire on page load and on every navigation.
+## Phases
 
----
+<details>
+<summary>✅ v1.1–v1.13 (Phases 3-33) — SHIPPED</summary>
 
-## Requirements Coverage
+All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 
-| Requirement | Phase | Status |
-|-------------|-------|--------|
-| GTM-DASH-01 | 34 | pending |
-| GTM-DASH-02 | 34 | pending |
-| GTM-DASH-03 | 34 | pending |
+</details>
 
----
+## Phase Details
 
-## Phase 34 — GTM Module: Dashboard
-
-**Goal:** `apps/dashboard` has `@saslavik/nuxt-gtm@0.1.3` installed, configured, and fully typed — identical behaviour to `apps/website` post-v1.13.
-
+### Phase 34: GTM Module: Dashboard
+**Goal:** `apps/dashboard` has `@saslavik/nuxt-gtm@0.1.3` installed, configured with `enableRouterSync: true`, and GTM ID from `runtimeConfig.public.gtm.id`; the legacy `gtmId` flat field is removed; `nuxt typecheck` passes with zero errors
+**Depends on:** Nothing (self-contained change in `apps/dashboard`)
 **Requirements:** GTM-DASH-01, GTM-DASH-02, GTM-DASH-03
-
+**Success criteria:**
+1. `@saslavik/nuxt-gtm@0.1.3` in `apps/dashboard` devDependencies; present in `modules` array of `nuxt.config.ts`
+2. Module configured with `enableRouterSync: true`; GTM ID from `runtimeConfig.public.gtm.id`; legacy `gtmId` runtimeConfig field removed
+3. No other file in `apps/dashboard` references `gtmId`
+4. `nuxt typecheck` passes with zero errors
 **Plans:** 1 plan
 
 Plans:
-- [ ] 34-01-PLAN.md — Install + configure @saslavik/nuxt-gtm in apps/dashboard; remove gtmId; typecheck passes
+- [ ] 34-01-PLAN.md — Install @saslavik/nuxt-gtm, configure with enableRouterSync, remove gtmId
 
-**Files:**
-- `apps/dashboard/package.json`
-- `apps/dashboard/nuxt.config.ts`
+## Progress
 
-**Estimated effort:** ~15 min Claude execution time
-
----
-
-## Execution Order
-
-```
-Wave 1: Phase 34 (no dependencies — single phase milestone)
-```
-
----
-
-## Constraints
-
-- No changes to `apps/website` — it was done in v1.13
-- No changes to `apps/strapi` — backend is not involved
-- No CSP changes needed — `https://www.googletagmanager.com` already present in dashboard CSP
-- No `useAppConfiguration` composable in dashboard — no feature flag to update
-- No `gtm.client.ts` plugin in dashboard — nothing to delete
-- Package manager: Yarn (never npm)
+| Phase | Milestone | Plans Complete | Status | Completed |
+|-------|-----------|----------------|--------|-----------|
+| 25-33 | v1.9–v1.13 | All | Complete | 2026-03-07 |
+| 34. GTM Module: Dashboard | v1.14 | 0/1 | In Progress | — |
