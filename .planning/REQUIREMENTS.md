@@ -14,10 +14,10 @@
 
 ### Copy
 
-- [ ] **COPY-01**: `index.vue` (home) — título y descripción usan vocabulario canónico (`anuncios`, `activos industriales`, `Waldo.click®`); descripción entre 120–155 chars; título ≤ 45 chars
-- [ ] **COPY-02**: `anuncios/index.vue` — copy base (estado sin filtros) reescrito con vocabulario canónico; ramas dinámicas (por categoría, por comuna) ajustadas para mantener consistencia; título ≤ 45 chars; descripción entre 120–155 chars
-- [ ] **COPY-03**: `anuncios/[slug].vue` — plantilla de título y descripción reescrita con vocabulario canónico (después de BUG-01); título ≤ 45 chars; descripción entre 120–155 chars
-- [ ] **COPY-04**: `[slug].vue` (perfil público) — título y descripción reescritos con vocabulario canónico (después de BUG-02); título ≤ 45 chars; descripción entre 120–155 chars
+- [x] **COPY-01**: `index.vue` (home) — título y descripción usan vocabulario canónico (`anuncios`, `activos industriales`, `Waldo.click®`); descripción entre 120–155 chars; título ≤ 45 chars
+- [x] **COPY-02**: `anuncios/index.vue` — copy base (estado sin filtros) reescrito con vocabulario canónico; ramas dinámicas (por categoría, por comuna) ajustadas para mantener consistencia; título ≤ 45 chars; descripción entre 120–155 chars
+- [x] **COPY-03**: `anuncios/[slug].vue` — plantilla de título y descripción reescrita con vocabulario canónico (después de BUG-01); título ≤ 45 chars; descripción entre 120–155 chars
+- [x] **COPY-04**: `[slug].vue` (perfil público) — título y descripción reescritos con vocabulario canónico (después de BUG-02); título ≤ 45 chars; descripción entre 120–155 chars
 - [ ] **COPY-05**: `preguntas-frecuentes.vue` — vocabulario revisado y ajustado a términos canónicos; título ≤ 45 chars; descripción entre 120–155 chars
 - [ ] **COPY-06**: `contacto/index.vue` — título expandido (actualmente una sola palabra genérica); descripción revisada; título ≤ 45 chars; descripción entre 120–155 chars
 - [ ] **COPY-07**: `sitemap.vue` — `Waldo.click` reemplazado por `Waldo.click®`; descripción revisada; título ≤ 45 chars; descripción entre 120–155 chars
@@ -43,10 +43,10 @@
 | BUG-02 | Phase 36 | Complete |
 | BUG-03 | Phase 36 | Complete |
 | BUG-04 | Phase 36 | Complete |
-| COPY-01 | Phase 37 | Pending |
-| COPY-02 | Phase 37 | Pending |
-| COPY-03 | Phase 37 | Pending |
-| COPY-04 | Phase 37 | Pending |
+| COPY-01 | Phase 37 | Complete |
+| COPY-02 | Phase 37 | Complete |
+| COPY-03 | Phase 37 | Complete |
+| COPY-04 | Phase 37 | Complete |
 | COPY-05 | Phase 38 | Pending |
 | COPY-06 | Phase 38 | Pending |
 | COPY-07 | Phase 38 | Pending |
