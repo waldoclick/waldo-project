@@ -158,7 +158,7 @@ watch(
 
     $setSEO({
       title: `Perfil de ${newData.user.username}`,
-      description: `Vendedor verificado en Waldo.click®. Explora los anuncios de ${newData.user.username} ${location} y encuentra equipamiento industrial al mejor precio.`,
+      description: `Vendedor verificado en Waldo.click®. Explora los anuncios de activos industriales de ${newData.user.username} ${location} y compra directo al vendedor.`,
       imageUrl:
         newData.user.avatar?.url || `${config.public.baseUrl}/share.jpg`,
       url: `${config.public.baseUrl}/${route.params.slug}`,
