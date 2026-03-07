@@ -1,7 +1,12 @@
 import * as Sentry from "@sentry/nuxt";
+
+// Only initialize Sentry in production. Passing dsn: undefined is the official
+// way to disable the SDK — it skips all instrumentation with zero overhead.
+const isProduction = process.env.NODE_ENV === "production";
+
 const config = useRuntimeConfig();
 
-const dsn = config.public.sentryDsn;
+const dsn = isProduction ? config.public.sentryDsn : undefined;
 const enableFeedback = config.public.sentryFeedback;
 const enableDebug = config.public.sentryDebug;
 
