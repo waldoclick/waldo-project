@@ -146,6 +146,8 @@ export default class UserCronService {
   private async restoreUserFreeReservations(userId: string) {
     try {
       // Count this user's current free reservations: available (ad = null) and active (ad has remaining days > 0).
+      // Note: { ad: { id: { $null: true } } } is the correct Strapi v5 entityService syntax
+      // for a null-relation check — plain { ad: null } silently returns zero results.
       const currentReservations = (await strapi.entityService.findMany(
         "api::ad-reservation.ad-reservation",
         {
@@ -153,7 +155,7 @@ export default class UserCronService {
             user: { id: { $eq: userId } },
             price: 0,
             $or: [
-              { ad: null }, // Available
+              { ad: { id: { $null: true } } }, // Available
               {
                 ad: {
                   remaining_days: { $gt: 0 },
