@@ -1,17 +1,17 @@
 ---
 gsd_state_version: 1.0
-milestone: between-milestones
-milestone_name: ~
-status: between-milestones
-stopped_at: Milestone v1.9 archived — no active milestone
-last_updated: "2026-03-07T18:30:00.000Z"
-last_activity: "2026-03-07 — v1.9 milestone archived (5 phases, 6 plans, 18/18 requirements, typeCheck: true)"
+milestone: v1.10
+milestone_name: Dashboard Orders Dropdown UI
+status: defining-requirements
+stopped_at: Defining requirements for v1.10
+last_updated: "2026-03-07T19:00:00.000Z"
+last_activity: "2026-03-07 — Milestone v1.10 started"
 progress:
-  total_phases: 5
-  completed_phases: 4
-  total_plans: 6
-  completed_plans: 5
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -21,26 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-07)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** No active milestone — v1.9 complete. Next milestone to be defined.
+**Current focus:** Defining requirements for v1.10 — Dashboard Orders Dropdown UI
 
 ## Current Position
 
-Phase: — (no active phase)
-Plan: — (no active plan)
-Status: Between milestones — v1.9 archived
-Last activity: 2026-03-07 — v1.9 archived (5 phases, 6 plans, 18/18 requirements, typeCheck: true)
-
-Progress: [██████████] 100% (5/5 phases complete)
-
-### v1.9 Phases
-
-| Phase | Name | Requirements | Status |
-|-------|------|--------------|--------|
-| 25 | Critical Correctness Bugs | BUG-01..05 (5) | ✅ Complete |
-| 26 | Data Fetching Cleanup | FETCH-01..08 (8) | ✅ Complete |
-| 27 | TypeScript Migration | TS-01..03 (3) | ✅ Complete |
-| 28 | TypeScript Strict + Store Audit | TS-04 (deferred), STORE-01 (done) | ✅ Complete |
-| 29 | TypeScript Strict Errors | TS-04 | ✅ Complete |
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-03-07 — Milestone v1.10 started
 
 ## Accumulated Context
 
@@ -108,6 +96,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-07T18:30:00.000Z
-Stopped at: Milestone v1.9 archived — no active milestone
-Resume with: Define next milestone (`/gsd-new-milestone`) or begin v2.0 planning
+Last session: 2026-03-07T19:00:00.000Z
+Stopped at: Defining requirements for v1.10
+Resume with: `/gsd-new-milestone` — continue to requirements and roadmap
