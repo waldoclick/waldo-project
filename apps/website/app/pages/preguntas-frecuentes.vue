@@ -46,7 +46,7 @@ $setSEO({
 $setStructuredData({
   "@context": "https://schema.org",
   "@type": "FAQPage",
-  name: "Preguntas Frecuentes",
+  name: "Preguntas Frecuentes sobre Anuncios",
   description:
     "Resuelve tus dudas sobre cómo publicar y comprar anuncios de activos industriales en Waldo.click®. Respuestas rápidas sobre packs, pagos y más.",
   url: `${config.public.baseUrl}/preguntas-frecuentes`,

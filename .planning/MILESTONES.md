@@ -2,19 +2,33 @@
 
 ## v1.17 Security & Stability (Shipped: 2026-03-07)
 
-**Phases completed:** 2 phases, 3 plans, 0 tasks
+**Phases completed:** 2 phases (40-41), 3 plans
+**Files changed:** ~10 source files (apps/website, apps/dashboard, apps/strapi)
+**Timeline:** 2026-03-07
+**Requirements:** 4/4 complete ✓
 
 **Key accomplishments:**
-- (none recorded)
+1. **Users Filter Authenticated (Phase 40)**: `GET /api/users` now filters server-side via `strapi.db.query` (bypasses content-API sanitizer that strips `filters[role]` for regular JWTs); N+1 eliminated (inline sanitize replaces `getDetailedUserData`); Rol column removed from dashboard users table.
+2. **Sentry Production-Only (Phase 41)**: All 7 Sentry entry points across website, dashboard, and strapi gated to `NODE_ENV === 'production'`; `dsn: undefined` pattern used in `sentry.*.config.ts` files; `enabled: process.env.NODE_ENV === 'production'` in Strapi Sentry plugin config.
+
+**Archive:** `.planning/milestones/v1.17-ROADMAP.md` | `.planning/milestones/v1.17-REQUIREMENTS.md`
 
 ---
 
 ## v1.16 Website Meta Copy Audit (Shipped: 2026-03-07)
 
-**Phases completed:** 3 phases, 4 plans, 4 tasks
+**Phases completed:** 3 phases (36-38), 4 plans
+**Files changed:** 28 files, +2,504 / -188 lines (apps/website)
+**Timeline:** 2026-03-07 (~1 hour)
+**Requirements:** 12/12 complete ✓
 
 **Key accomplishments:**
-- (none recorded)
+1. **SEO Bug Fixes (Phase 36)**: Eliminated double-suffix titles in `anuncios/[slug].vue` and `[slug].vue`; made `anuncios/index.vue` SSR-safe (synchronous `$setSEO` before `watch`); added `noindex, nofollow` to `packs/index.vue`, `login/facebook.vue`, `login/google.vue`, `dev.vue`.
+2. **Dynamic Page Copy (Phase 37)**: Rewrote meta copy for 4 dynamic pages (home, ad listing, ad detail, user profile) with canonical vocabulary (`anuncios`, `activos industriales`, `Waldo.click®`); budget-aware description slice formula (`descPrefix`/`descSuffix`) eliminates overflow; all titles ≤ 45 chars, descriptions 120–155 chars.
+3. **Static Page Copy (Phase 38)**: Rewrote meta copy for 4 static pages (FAQ, contact, sitemap, privacy policy) with canonical vocabulary; `preguntas-frecuentes.vue` title expanded with keyword; `contacto/index.vue` expanded from bare "Contacto"; `sitemap.vue` `Waldo.click` → `Waldo.click®`.
+4. **Integration Audit Fixes**: Integration checker found and fixed BUG-04 regression (`packs/index.vue` noindex was reverted) and COPY-05 name drift (`$setStructuredData.name` mismatch).
+
+**Archive:** `.planning/milestones/v1.16-ROADMAP.md` | `.planning/milestones/v1.16-REQUIREMENTS.md` | `.planning/milestones/v1.16-MILESTONE-AUDIT.md`
 
 ---
 
