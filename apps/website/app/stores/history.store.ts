@@ -73,6 +73,7 @@ export const useHistoryStore = defineStore("history", {
     },
   },
 
+  // persist: CORRECT — explicit user browsing history feature; must survive reload to show recently viewed ads
   persist: {
     storage: persistedState.localStorage,
   },
