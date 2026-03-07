@@ -30,7 +30,7 @@ export default defineNuxtConfig({
 
   // Security configuration - using nuxt-security defaults with customizations
   security: {
-    nonce: true,
+    nonce: false,
     rateLimiter: {
       tokensPerInterval: 500,
       interval: 300000,
@@ -264,7 +264,7 @@ export default defineNuxtConfig({
 
   // Google Tag Manager Configuration
   gtm: {
-    id: process.env.GTM_ID || "GTM-N4B8LDKS",
+    id: process.env.GTM_ID || "GTM-TC8LS8NQ",
     enableRouterSync: true,
     debug: false,
   },
@@ -292,7 +292,7 @@ export default defineNuxtConfig({
       recaptchaSiteKey: process.env.RECAPTCHA_SITE_KEY,
       googleClientId: process.env.GOOGLE_CLIENT_ID,
       gtm: {
-        id: process.env.GTM_ID || "GTM-N4B8LDKS",
+        id: process.env.GTM_ID || "GTM-TC8LS8NQ",
       },
       sentryDsn: process.env.SENTRY_DSN,
       sentryFeedback: process.env.SENTRY_FEEDBACK === "true",

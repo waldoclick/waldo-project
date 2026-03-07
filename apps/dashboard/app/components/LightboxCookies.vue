@@ -44,7 +44,7 @@ import { X as IconX } from "lucide-vue-next";
 const { $cookies } = useNuxtApp();
 
 const isOpen = ref(false);
-const cookieName = "site-cookies-accepted";
+const cookieName = "site-cookies-accepted-v2";
 
 onMounted(() => {
   const cookieAccepted = $cookies.get(cookieName);
@@ -60,13 +60,15 @@ function closeLightbox() {
 
 function acceptCookies() {
   window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push({
-    event: "accept_cookies",
-    consent: {
-      ad_storage: "granted",
+  // Consent Mode v2 update: array-command format required by GTM
+  window.dataLayer.push([
+    "consent",
+    "update",
+    {
       analytics_storage: "granted",
+      ad_storage: "granted",
     },
-  });
+  ]);
 
   $cookies.set(cookieName, true, {
     path: "/",
