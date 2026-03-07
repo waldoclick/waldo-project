@@ -12,6 +12,10 @@
     background-color: white;
     z-index: 3;
 
+    @include screen-small {
+      position: relative;
+    }
+
     &__percent {
       position: absolute;
       height: 4px;
