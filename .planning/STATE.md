@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.9
 milestone_name: Website Technical Debt
 status: Phase 25 complete — ready to plan Phase 26
-stopped_at: Completed 25-01-PLAN.md — Phase 25 Critical Correctness Bugs done, ready for Phase 26 planning
+Stopped at: Phase 26 plan written (26-01-PLAN.md) — ready to execute
 last_updated: "2026-03-07T02:49:58.745Z"
 last_activity: 2026-03-06 — Phase 25 complete (5 bugs fixed; Strapi route ordering, useAsyncData keys, plugin types, console filter)
 progress:
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-03-07)
 ## Current Position
 
 Phase: 26 — Data Fetching Cleanup
-Plan: TBD (planning next)
-Status: Phase 25 complete — ready to plan Phase 26
-Last activity: 2026-03-06 — Phase 25 executed and verified (5 bugs fixed)
+Plan: 26-01-PLAN.md (1 wave, 7 tasks — 6 auto + 1 human-verify checkpoint)
+Status: Phase 26 planned — ready to execute
+Last activity: 2026-03-07 — Phase 26 planned (7 tasks, 8 requirements, 33 onMounted calls audited)
 
 Progress: [██░░░░░░░░] 25% (1/4 phases)
 
@@ -37,7 +37,7 @@ Progress: [██░░░░░░░░] 25% (1/4 phases)
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
 | 25 | Critical Correctness Bugs | BUG-01..05 (5) | ✅ Complete |
-| 26 | Data Fetching Cleanup | FETCH-01..08 (8) | Not started |
+| 26 | Data Fetching Cleanup | FETCH-01..08 (8) | 🗂 Planned |
 | 27 | TypeScript Migration | TS-01..03 (3) | Not started |
 | 28 | TypeScript Strict + Store Audit | TS-04, STORE-01 (2) | Not started |
 
@@ -66,7 +66,8 @@ Key patterns established (carry forward):
 - **Phase 25 DONE** — correct `useAsyncData` key pattern now established; Strapi route ordering bug fixed; `$setStructuredData` types clean
 - Phase 26 (FETCH) must precede Phase 27 (TS migration) — pages being refactored should not have `lang="ts"` added mid-refactor
 - Phase 27 (TS types clean) is prerequisite for Phase 28 (`typeCheck: true`) — enabling strict build before types are clean = build failure
-- `mis-anuncios.vue` and `mis-ordenes.vue` are in original state (no await/key) — Phase 26 will address their data-fetching as part of the onMounted audit
+- `mis-anuncios.vue` and `mis-ordenes.vue` are in original state (no await/key) — their `onMounted` calls are in scope for Phase 26 FETCH-08 audit
+- **Phase 26 PLANNED** — 26-01-PLAN.md written; 7 components to fix, 5 parent pages to update, 33 onMounted calls to audit and classify
 
 ### Pending Todos
 
