@@ -49,7 +49,8 @@ export const useUserStore = defineStore("user", () => {
         populate: "*",
       });
 
-      user.value = response.data ? (response.data[0] as unknown as User) : null;
+      const list = (response.data ?? response) as unknown as User[];
+      user.value = list?.[0] ?? null;
     } catch {
       user.value = null;
     }

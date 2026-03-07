@@ -17,25 +17,9 @@
           link="/cuenta"
         /> -->
 
-        <!-- Memo para el propietario del perfil -->
-        <MemoDefault
-          v-if="isProfileOwner"
-          :icon="IconLock"
-          text="Tu perfil es privado. Solo tú puedes ver tus anuncios."
-          link="#"
-        />
-
-        <!-- Memo para visitantes -->
-        <MemoDefault
-          v-if="!isProfileOwner"
-          :icon="IconLock"
-          text="Este perfil es privado. Los anuncios solo son visibles para el propietario."
-          link="#"
-        />
-
         <!-- List -->
         <div
-          v-if="isProfileOwner && ads && ads.length > 0"
+          v-if="ads && ads.length > 0"
           class="profile--default__content__list"
         >
           <template v-for="ad in ads" :key="ad.id">
@@ -44,10 +28,7 @@
         </div>
 
         <!-- Empty state -->
-        <div
-          v-else-if="isProfileOwner"
-          class="profile--default__content__emptystate"
-        >
+        <div v-else class="profile--default__content__emptystate">
           <EmptyState>
             <template #message> No hay anuncios </template>
           </EmptyState>
@@ -55,7 +36,7 @@
 
         <!-- Pagination -->
         <div
-          v-if="isProfileOwner && pagination && pagination.pageCount > 1"
+          v-if="pagination && pagination.pageCount > 1"
           class="profile--default__content__paginate"
         >
           <client-only>

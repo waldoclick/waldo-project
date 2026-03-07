@@ -139,11 +139,6 @@ if (import.meta.client) {
   watchEffect(() => {
     if (pending.value) return;
     if (adsData.value && adsData.value.user) return;
-    showError({
-      statusCode: 404,
-      message: "Página no encontrada",
-      statusMessage: "Lo sentimos, la página que buscas no existe.",
-    });
   });
 }
 
