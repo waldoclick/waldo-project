@@ -52,10 +52,20 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 
 ### Active
 
-- [ ] **GTM-01**: La integración de GTM no pushea arrays al dataLayer — el shim local de gtag() eliminado; page_view del SPA usa un objeto dataLayer válido
-- [ ] **GTM-02**: Consent Mode v2 implementado — denegación por defecto antes de que cargue GTM; LightboxCookies pushea el consent update correcto al aceptar
+- [ ] **ANA-01**: El import muerto de `useAdAnalytics` en `CreateAd.vue` está eliminado — `adAnalytics` no se instancia si no se usa
+- [ ] **ANA-02**: El overcounting de `step_view` está corregido — `watch(adStore.step)` no usa `immediate: true`; step 1 se dispara explícitamente en `onMounted` después de restaurar el URL param
+- [ ] **ANA-03**: El evento `redirect_to_payment` se emite antes del redirect a Webpay en `resumen.vue`
+- [ ] **ANA-04**: El evento `purchase` en `gracias.vue` está guardado con un ref `fired` para asegurar que se emite exactamente una vez
+- [ ] **ANA-05**: `DataLayerEvent` exportado desde `useAdAnalytics.ts` y tipado en `window.d.ts`; `window.dataLayer` tipado como `DataLayerEvent[]`
 
 ## Previous State
+
+<details>
+<summary>v1.11 GTM / GA4 Tracking Fix (shipped 2026-03-07)</summary>
+
+- **Phase 31 — GTM Plugin + Consent Mode v2**: Removed broken `gtag()` shim from `gtm.client.ts`; SPA `page_view` now pushes plain objects; Consent Mode v2 default denial pushed before GTM loads; `LightboxCookies.vue` pushes correct consent update command on accept.
+
+</details>
 
 <details>
 <summary>v1.10 Dashboard Orders Dropdown UI (shipped 2026-03-07)</summary>
@@ -96,8 +106,8 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - Website (apps/website): Nuxt 4, Pinia, @nuxtjs/strapi v2; 29 páginas lang="ts", 14 stores con persist audit, typeCheck: true (since v1.9)
 - 4 cron jobs activos en Strapi: `adCron` (1 AM), `userCron` (2 AM), `backupCron` (3 AM), `cleanupCron` (domingo 4 AM)
 - `cron-runner` API disponible en `POST /api/cron-runner/:name` para ejecución manual de cualquier cron
-- GTM plugin (`gtm.client.ts`): client-only, loads `gtm.js` dynamically; currently has broken gtag() shim pushing arrays to dataLayer instead of objects (v1.11 fix target)
-- Consent Mode v2 required by Google since March 2024; currently not implemented — no default denial before GTM loads (v1.11 fix target)
+- GTM plugin (`gtm.client.ts`): client-only, loads `gtm.js` dynamically; fixed in v1.11 — no broken shim, Consent Mode v2 in place
+- Ad creation analytics (`useAdAnalytics.ts`): most events already tracked (view_item_list, step_view, begin_checkout, purchase); gaps identified in v1.12 — dead import in CreateAd.vue, step_view overcounting, missing redirect_to_payment event, purchase event fragility, window.dataLayer typed as unknown[]
 
 ## Constraints
 
@@ -144,8 +154,8 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
   | `createError statusMessage` not `description` | `NuxtError` extends `H3Error`; `statusMessage` is the correct field — v1.9 | ✓ Good |
   | `useAsyncData` default option eliminates `T \| undefined` | Removes undefined from type without changing runtime behavior; props receive `T` cleanly — v1.9 | ✓ Good |
   | `typeCheck: true` permanently enabled in website | Every future build enforces TypeScript; TS-04 goal achieved; no more deferred type errors — v1.9 | ✓ Good |
-  | dataLayer push approach (no separate gtag.js) for Consent Mode v2 | GTM reads dataLayer natively; loading gtag.js separately would create two competing tag systems — v1.11 | Pending |
-  | Default consent denial pushed before GTM script loads | Consent Mode v2 requires denial-first; GTM processes dataLayer in order so pre-load push ensures compliance — v1.11 | Pending |
+  | dataLayer push approach (no separate gtag.js) for Consent Mode v2 | GTM reads dataLayer natively; loading gtag.js separately would create two competing tag systems — v1.11 | ✓ Good |
+  | Default consent denial pushed before GTM script loads | Consent Mode v2 requires denial-first; GTM processes dataLayer in order so pre-load push ensures compliance — v1.11 | ✓ Good |
 
 ## Future Requirements
 
@@ -162,4 +172,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-07 after v1.11 milestone started (GTM / GA4 Tracking Fix)*
+*Last updated: 2026-03-07 after v1.12 milestone started (Ad Creation Analytics Gaps)*

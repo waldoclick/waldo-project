@@ -1,16 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.11
-milestone_name: GTM / GA4 Tracking Fix
-status: completed
-stopped_at: Completed 31-01-PLAN.md
-last_updated: "2026-03-07T13:38:57.810Z"
-last_activity: 2026-03-07 — Phase 31 plan 01 executed, Consent Mode v2 implemented
+milestone: v1.12
+milestone_name: Ad Creation Analytics Gaps
+status: defining-requirements
+stopped_at: REQUIREMENTS.md defined — ready for Phase 32 plan
+last_updated: "2026-03-07T14:00:00.000Z"
+last_activity: 2026-03-07 — v1.12 milestone started, requirements ANA-01 to ANA-05 defined
 progress:
   total_phases: 1
-  completed_phases: 1
+  completed_phases: 0
   total_plans: 1
-  completed_plans: 1
+  completed_plans: 0
 ---
 
 # Project State
@@ -20,24 +20,24 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-07)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.11 — GTM / GA4 Tracking Fix
+**Current focus:** v1.12 — Ad Creation Analytics Gaps
 
 ## Current Position
 
-Phase: 31 — GTM Plugin + Consent Mode v2 (complete)
-Plan: 01 of 01 complete
-Status: v1.11 milestone complete — GTM-01 and GTM-02 implemented
-Last activity: 2026-03-07 — Phase 31 plan 01 executed, Consent Mode v2 implemented
+Phase: 32 — Analytics Gaps Cleanup (not yet started)
+Plan: 0 of 1 complete
+Status: defining-requirements — requirements defined, Phase 32 plan not yet created
+Last activity: 2026-03-07 — v1.12 milestone started, requirements ANA-01 to ANA-05 defined
 
 ```
-[█████████░] 88% — 1/1 phases complete (v1.11)
+[░░░░░░░░░░] 0% — 0/1 phases complete (v1.12)
 ```
 
 ## Accumulated Context
 
 ### Decisions
 
-All decisions from v1.1–v1.10 are logged in PROJECT.md Key Decisions table.
+All decisions from v1.1–v1.11 are logged in PROJECT.md Key Decisions table.
 
 Key patterns established (carry forward):
 - `watch({ immediate: true })` as sole data-loading trigger — never pair with onMounted
@@ -65,16 +65,25 @@ Key patterns established (carry forward):
 - [Phase 31-gtm-plugin-consent-mode-v2]: Removed gtag() shim entirely — all dataLayer interactions use direct window.dataLayer.push() with plain objects
 - [Phase 31-gtm-plugin-consent-mode-v2]: Consent Mode v2: push default denial before GTM script injection; LightboxCookies pushes update command (flat structure) on user acceptance
 
-### v1.11 Requirements
+### v1.12 Requirements
 
-- **GTM-01**: Fix broken gtag() shim in `gtm.client.ts` — remove local `gtag()` function and dead pre-load calls; SPA page_view uses `window.dataLayer.push({ event: "page_view", ... })` directly
-- **GTM-02**: Implement Consent Mode v2 — push default denial before GTM loads; `LightboxCookies.vue` pushes consent update on accept
+- **ANA-01**: Remove dead `useAdAnalytics` import and instantiation from `CreateAd.vue` (lines 60–63) — imported and instantiated but never called
+- **ANA-02**: Fix `step_view` overcounting in `index.vue` — remove `immediate: true` from `watch(adStore.step)`; fire step 1 explicitly in `onMounted` after URL param is applied (currently in `CreateAd.vue`)
+- **ANA-03**: Add `redirect_to_payment` event in `resumen.vue` `handlePayClick` — push `pushEvent("redirect_to_payment", [], { payment_method: "webpay" })` just before `handleRedirect()` when Webpay URL is present
+- **ANA-04**: Guard `purchase` event in `gracias.vue` `watchEffect` with a `fired` ref — ensure event fires exactly once even if `watchEffect` re-runs
+- **ANA-05**: Export `DataLayerEvent` interface from `useAdAnalytics.ts`; declare it in `window.d.ts`; type `window.dataLayer` as `DataLayerEvent[]` instead of `unknown[]`
 
-### Root cause analysis (carried into Phase 31 plan)
+### Codebase Context (v1.12 scope)
 
-**gtm.client.ts bug:** The local `gtag()` shim does `window.dataLayer.push(args)` where `args` is the arguments array-like. This pushes arrays (`["js", Date]`, `["config", "GTM-...", {...}]`) into dataLayer. GTM ignores non-object entries — only the dynamically-injected `gtm.js` script matters. The SPA `router.afterEach` also calls the broken shim with `gtag("config", ...)`.
+Key files:
+- `apps/website/app/components/CreateAd.vue` — dead import at lines 60–63 (ANA-01)
+- `apps/website/app/pages/anunciar/index.vue` — `watch(adStore.step, ..., { immediate: true })` at line 194 (ANA-02); note: URL param restoration happens in `CreateAd.vue` `onMounted`, not in index.vue
+- `apps/website/app/pages/anunciar/resumen.vue` — `handlePayClick` at line 146; Webpay branch at line 163 (ANA-03)
+- `apps/website/app/pages/anunciar/gracias.vue` — `watchEffect` at line 126; purchase push at line 172 (ANA-04)
+- `apps/website/app/composables/useAdAnalytics.ts` — `DataLayerEvent` interface at line 37, currently local (ANA-05)
+- `apps/website/app/types/window.d.ts` — `window.dataLayer: unknown[]` at line 5 (ANA-05)
 
-**Consent Mode v2 bug:** No default denial push before GTM loads — Google blocks GA4 collection in EU/EEA without it. Current `acceptCookies()` pushes `{ event: "accept_cookies", consent: { ... } }` — a custom event object, not a Consent Mode v2 update command. GTM consent update format is `{ "consent": "update", analytics_storage: "granted", ad_storage: "granted" }`.
+ANA-02 clarification: `CreateAd.vue` is the component that reads `?step=` from URL in its `onMounted`. The `watch(adStore.step)` that overcounts is in `index.vue` (the parent page). Removing `immediate: true` from `index.vue` and firing step 1 explicitly via a new `onMounted` call in `index.vue` (after `CreateAd.vue` mounts and applies the URL param) is the correct fix. However, since `index.vue` mounts before `CreateAd.vue` processes the URL param, the explicit step 1 call in `index.vue` `onMounted` must happen after `nextTick` to allow `CreateAd.vue`'s `onMounted` to run first. Alternative: fire step 1 in `CreateAd.vue`'s `onMounted` directly after the URL param logic, when `stepFromUrl` is NaN (meaning no URL param → fresh flow starting at step 1).
 
 ### Pending Todos
 
@@ -86,6 +95,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-07T13:34:20Z
-Stopped at: Completed 31-01-PLAN.md
-Resume with: v1.11 complete — run `/gsd-complete-milestone` or `/gsd-verify-work`
+Last session: 2026-03-07
+Stopped at: REQUIREMENTS.md defined — ready for Phase 32 plan
+Resume with: Create `.planning/phases/32-01-PLAN.md` covering ANA-01 through ANA-05
