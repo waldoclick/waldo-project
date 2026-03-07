@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.14
 milestone_name: GTM Module Dashboard
 status: planning
-stopped_at: milestone started — requirements defined, roadmap pending
+stopped_at: roadmap written — ready for /gsd-plan-phase 34
 last_updated: "2026-03-07T16:30:00.000Z"
 last_activity: 2026-03-07 — v1.14 started, requirements confirmed
 progress:
@@ -67,5 +67,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-07
-Stopped at: v1.14 requirements confirmed — writing roadmap next
-Next: write ROADMAP.md, then `/gsd-plan-phase 34`
+Stopped at: roadmap written — ready for `/gsd-plan-phase 34`
+Next: `/gsd-plan-phase 34`
