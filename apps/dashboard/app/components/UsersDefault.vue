@@ -38,11 +38,6 @@
                 {{ formatName(user.firstname, user.lastname) }}
               </div>
             </TableCell>
-            <TableCell>
-              <div class="users--default__role">
-                {{ user.role?.name || "-" }}
-              </div>
-            </TableCell>
             <TableCell>{{ formatDate(user.createdAt) }}</TableCell>
             <TableCell align="right">
               <button
@@ -132,11 +127,6 @@ const fetchUsers = async () => {
         pageSize: settingsStore.users.pageSize,
       },
       sort: settingsStore.users.sortBy,
-      populate: {
-        role: {
-          fields: ["name"],
-        },
-      },
     };
 
     // Agregar búsqueda si existe
@@ -210,7 +200,6 @@ const tableColumns = [
   { label: "Usuario" },
   { label: "Correo electrónico" },
   { label: "Nombre" },
-  { label: "Rol" },
   { label: "Fecha" },
   { label: "Acciones", align: "right" as const },
 ];
