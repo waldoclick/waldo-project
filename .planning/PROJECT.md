@@ -52,7 +52,8 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 
 ### Active
 
-None — v1.9 shipped. Next milestone to be defined.
+- [ ] El dropdown "Últimas órdenes" muestra el nombre completo del usuario (no el ID de la orden)
+- [ ] El dropdown "Últimas órdenes" muestra la fecha completa y hora de la transacción (no solo la hora)
 
 ## Previous State
 
@@ -150,4 +151,4 @@ None — v1.9 shipped. Next milestone to be defined.
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-07 after v1.9 milestone archived (website now fully TypeScript with typeCheck: true)*
+*Last updated: 2026-03-07 after v1.10 milestone started (Dashboard Orders Dropdown UI fix)*
