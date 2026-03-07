@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.12
 milestone_name: Ad Creation Analytics Gaps
-status: defining-requirements
-stopped_at: REQUIREMENTS.md defined — ready for Phase 32 plan
-last_updated: "2026-03-07T14:00:00.000Z"
-last_activity: 2026-03-07 — v1.12 milestone started, requirements ANA-01 to ANA-05 defined
+status: complete
+stopped_at: Phase 32 complete — v1.12 shipped
+last_updated: "2026-03-07T14:30:00.000Z"
+last_activity: 2026-03-07 — v1.12 complete, all 5 analytics gaps closed
 progress:
   total_phases: 1
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 1
-  completed_plans: 0
+  completed_plans: 1
 ---
 
 # Project State
@@ -20,17 +20,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-07)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.12 — Ad Creation Analytics Gaps
+**Current focus:** v1.12 — Ad Creation Analytics Gaps (COMPLETE)
 
 ## Current Position
 
-Phase: 32 — Analytics Gaps Cleanup (not yet started)
-Plan: 0 of 1 complete
-Status: defining-requirements — requirements defined, Phase 32 plan not yet created
-Last activity: 2026-03-07 — v1.12 milestone started, requirements ANA-01 to ANA-05 defined
+Phase: 32 — Analytics Gaps Cleanup (complete)
+Plan: 1 of 1 complete
+Status: complete — all 5 gaps closed, nuxt typecheck passes, tagged v1.12
 
 ```
-[░░░░░░░░░░] 0% — 0/1 phases complete (v1.12)
+[██████████] 100% — 1/1 phases complete (v1.12)
 ```
 
 ## Accumulated Context
@@ -64,26 +63,9 @@ Key patterns established (carry forward):
 - [Phase 30]: getBuyerName wrapper pattern — formatFullName takes (firstname, lastname) separately; wrapper adds username/email fallback chain for OrderUser objects
 - [Phase 31-gtm-plugin-consent-mode-v2]: Removed gtag() shim entirely — all dataLayer interactions use direct window.dataLayer.push() with plain objects
 - [Phase 31-gtm-plugin-consent-mode-v2]: Consent Mode v2: push default denial before GTM script injection; LightboxCookies pushes update command (flat structure) on user acceptance
-
-### v1.12 Requirements
-
-- **ANA-01**: Remove dead `useAdAnalytics` import and instantiation from `CreateAd.vue` (lines 60–63) — imported and instantiated but never called
-- **ANA-02**: Fix `step_view` overcounting in `index.vue` — remove `immediate: true` from `watch(adStore.step)`; fire step 1 explicitly in `onMounted` after URL param is applied (currently in `CreateAd.vue`)
-- **ANA-03**: Add `redirect_to_payment` event in `resumen.vue` `handlePayClick` — push `pushEvent("redirect_to_payment", [], { payment_method: "webpay" })` just before `handleRedirect()` when Webpay URL is present
-- **ANA-04**: Guard `purchase` event in `gracias.vue` `watchEffect` with a `fired` ref — ensure event fires exactly once even if `watchEffect` re-runs
-- **ANA-05**: Export `DataLayerEvent` interface from `useAdAnalytics.ts`; declare it in `window.d.ts`; type `window.dataLayer` as `DataLayerEvent[]` instead of `unknown[]`
-
-### Codebase Context (v1.12 scope)
-
-Key files:
-- `apps/website/app/components/CreateAd.vue` — dead import at lines 60–63 (ANA-01)
-- `apps/website/app/pages/anunciar/index.vue` — `watch(adStore.step, ..., { immediate: true })` at line 194 (ANA-02); note: URL param restoration happens in `CreateAd.vue` `onMounted`, not in index.vue
-- `apps/website/app/pages/anunciar/resumen.vue` — `handlePayClick` at line 146; Webpay branch at line 163 (ANA-03)
-- `apps/website/app/pages/anunciar/gracias.vue` — `watchEffect` at line 126; purchase push at line 172 (ANA-04)
-- `apps/website/app/composables/useAdAnalytics.ts` — `DataLayerEvent` interface at line 37, currently local (ANA-05)
-- `apps/website/app/types/window.d.ts` — `window.dataLayer: unknown[]` at line 5 (ANA-05)
-
-ANA-02 clarification: `CreateAd.vue` is the component that reads `?step=` from URL in its `onMounted`. The `watch(adStore.step)` that overcounts is in `index.vue` (the parent page). Removing `immediate: true` from `index.vue` and firing step 1 explicitly via a new `onMounted` call in `index.vue` (after `CreateAd.vue` mounts and applies the URL param) is the correct fix. However, since `index.vue` mounts before `CreateAd.vue` processes the URL param, the explicit step 1 call in `index.vue` `onMounted` must happen after `nextTick` to allow `CreateAd.vue`'s `onMounted` to run first. Alternative: fire step 1 in `CreateAd.vue`'s `onMounted` directly after the URL param logic, when `stepFromUrl` is NaN (meaning no URL param → fresh flow starting at step 1).
+- [Phase 32-analytics-gaps]: window.dataLayer typed as (DataLayerEvent | Record<string, unknown>)[] — union covers GA4 events and GTM consent commands
+- [Phase 32-analytics-gaps]: DataLayerEvent.ecommerce accepts null to support GTM ecommerce clear pattern
+- [Phase 32-analytics-gaps]: step_view fires from onMounted (step 1, once) + watcher (steps 2-5 on change); no immediate:true on step watcher
 
 ### Pending Todos
 
@@ -96,5 +78,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-07
-Stopped at: REQUIREMENTS.md defined — ready for Phase 32 plan
-Resume with: Create `.planning/phases/32-01-PLAN.md` covering ANA-01 through ANA-05
+Stopped at: v1.12 complete — tagged v1.12
+Resume with: Start next milestone
