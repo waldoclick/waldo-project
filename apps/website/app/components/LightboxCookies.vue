@@ -61,11 +61,15 @@ function closeLightbox() {
 
 function acceptCookies() {
   window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push({
-    consent: "update",
-    analytics_storage: "granted",
-    ad_storage: "granted",
-  });
+  // Consent Mode v2 update: array-command format required by GTM
+  window.dataLayer.push([
+    "consent",
+    "update",
+    {
+      analytics_storage: "granted",
+      ad_storage: "granted",
+    },
+  ]);
 
   $cookies.set(cookieName, true, {
     path: "/",

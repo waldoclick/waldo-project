@@ -4,8 +4,8 @@ import type { DataLayerEvent } from "~/composables/useAdAnalytics";
 
 declare global {
   interface Window {
-    // dataLayer accepts both GA4 analytics events (DataLayerEvent) and GTM consent commands
-    dataLayer: (DataLayerEvent | Record<string, unknown>)[];
+    // dataLayer accepts GA4 analytics events, GTM consent commands (array format), and plain objects
+    dataLayer: (DataLayerEvent | Record<string, unknown> | unknown[])[];
     google: {
       accounts: {
         id: {
