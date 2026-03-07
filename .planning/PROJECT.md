@@ -44,6 +44,11 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ Todos los cron jobs (userCron, backupCron, cleanupCron, adCron) funcionales y documentados en inglés — v1.7
 - ✓ `cron-runner` API committed (controller + routes para ejecución manual de crons) — v1.8
 - ✓ `ad-free-reservation-restore.cron.ts` garantiza 3 free ad-reservation slots por usuario con lógica correcta — v1.8
+- ✓ El sitio web no tiene silent failures — structured data aplicado en todas las páginas, useAsyncData keys únicas, console.error/warn visibles en producción — v1.9
+- ✓ Todos los componentes de data-fetching del website usan useAsyncData (SSR-compatible) — onMounted(async) eliminado de 7 componentes — v1.9
+- ✓ Todas las páginas del website tienen lang="ts"; any eliminado en stores y composables críticos — v1.9
+- ✓ Los 14 stores con persist tienen comentarios de auditoría inline (CORRECT/REVIEW/RISK) — v1.9
+- ✓ typeCheck: true habilitado en nuxt.config.ts del website; nuxt typecheck pasa con zero errores — v1.9
 
 ### Active
 
@@ -51,12 +56,16 @@ None — v1.9 shipped. Next milestone to be defined.
 
 ## Previous State
 
-Shipped **v1.9 Website Technical Debt** on 2026-03-07 (Phases 25-29).
+<details>
+<summary>v1.9 Website Technical Debt (shipped 2026-03-07)</summary>
+
 - **Phase 25 — Critical Correctness Bugs**: Fixed `$setStructuredData` type augmentation; corrected `useAsyncData` key collisions; restored `console.error`/`warn` in production; fixed SSR/CSR hydration in `mis-anuncios` and `mis-ordenes`; fixed Strapi `/ads/me` route ordering.
 - **Phase 26 — Data Fetching Cleanup**: Moved `onMounted(async)` data-fetching to `useAsyncData` in 7 components; all 33 `onMounted` calls documented with classification comments.
 - **Phase 27 — TypeScript Migration**: Migrated all 17 pages to `lang="ts"`; eliminated `any` in 3 stores and 3 composables.
-- **Phase 28 — TypeScript Strict + Store Audit**: Added persist audit comments to all 14 stores (STORE-01); deferred `typeCheck: true` after discovering 183 errors.
+- **Phase 28 — TypeScript Strict + Store Audit**: Added persist audit comments to all 14 stores (STORE-01); Strapi SDK filter casts in 4 stores.
 - **Phase 29 — TypeScript Strict Errors**: Fixed all 183 typecheck errors across 55 files via type declarations and call-site corrections; enabled `typeCheck: true`; `nuxt typecheck` passes with zero errors.
+
+</details>
 
 <details>
 <summary>v1.8 Free Featured Reservation Guarantee (shipped 2026-03-07)</summary>
@@ -75,7 +84,8 @@ Shipped **v1.9 Website Technical Debt** on 2026-03-07 (Phases 25-29).
 - Transbank integrado en el flujo de creación de aviso en Strapi, abstraído detrás de IPaymentGateway (v1.0)
 - El sistema valida disponibilidad de créditos según PackType y FeaturedType antes de procesar el pago
 - Deploy independiente por app vía Laravel Forge con git sparse-checkout
-- Dashboard (apps/dashboard): Nuxt 4, Pinia, @nuxtjs/strapi v2, SCSS custom; ~65 componentes, 3 stores, 14 plugins
+- Dashboard (apps/dashboard): Nuxt 4, Pinia, @nuxtjs/strapi v2, SCSS custom; ~65 componentes, 3 stores, 14 plugins; typeCheck: true (since v1.1)
+- Website (apps/website): Nuxt 4, Pinia, @nuxtjs/strapi v2; 29 páginas lang="ts", 14 stores con persist audit, typeCheck: true (since v1.9)
 - 4 cron jobs activos en Strapi: `adCron` (1 AM), `userCron` (2 AM), `backupCron` (3 AM), `cleanupCron` (domingo 4 AM)
 - `cron-runner` API disponible en `POST /api/cron-runner/:name` para ejecución manual de cualquier cron
 
@@ -140,4 +150,4 @@ Shipped **v1.9 Website Technical Debt** on 2026-03-07 (Phases 25-29).
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-07 after v1.9 milestone closed (Phase 29 complete — typeCheck: true enabled, zero errors)*
+*Last updated: 2026-03-07 after v1.9 milestone archived (website now fully TypeScript with typeCheck: true)*

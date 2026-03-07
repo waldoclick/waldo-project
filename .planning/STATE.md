@@ -1,17 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.9
-milestone_name: Website Technical Debt
-status: COMPLETE — milestone v1.9 shipped
-Stopped at: Phase 29 closed (TS-04 complete — typeCheck: true enabled, zero typecheck errors)
-last_updated: "2026-03-07T18:00:00.000Z"
-last_activity: 2026-03-07 — Phase 29 closed; TS-04 complete; typeCheck: true enabled; nuxt typecheck passes with zero errors; milestone v1.9 fully shipped
+milestone: between-milestones
+milestone_name: ~
+status: between-milestones
+stopped_at: Milestone v1.9 archived — no active milestone
+last_updated: "2026-03-07T18:30:00.000Z"
+last_activity: "2026-03-07 — v1.9 milestone archived (5 phases, 6 plans, 18/18 requirements, typeCheck: true)"
 progress:
   total_phases: 5
-  completed_phases: 5
-  partial_phases: 0
+  completed_phases: 4
   total_plans: 6
-  completed_plans: 6
+  completed_plans: 5
   percent: 100
 ---
 
@@ -28,8 +27,8 @@ See: .planning/PROJECT.md (updated 2026-03-07)
 
 Phase: — (no active phase)
 Plan: — (no active plan)
-Status: Milestone v1.9 COMPLETE
-Last activity: 2026-03-07 — Phase 29 closed (183 typecheck errors fixed; typeCheck: true enabled; nuxt typecheck = 0 errors)
+Status: Between milestones — v1.9 archived
+Last activity: 2026-03-07 — v1.9 archived (5 phases, 6 plans, 18/18 requirements, typeCheck: true)
 
 Progress: [██████████] 100% (5/5 phases complete)
 
@@ -109,6 +108,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-07T18:00:00.000Z
-Stopped at: Milestone v1.9 complete — no active phase
-Resume with: Define next milestone or begin v2.0 planning
+Last session: 2026-03-07T18:30:00.000Z
+Stopped at: Milestone v1.9 archived — no active milestone
+Resume with: Define next milestone (`/gsd-new-milestone`) or begin v2.0 planning
