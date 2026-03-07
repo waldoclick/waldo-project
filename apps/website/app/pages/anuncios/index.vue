@@ -311,7 +311,7 @@ const generateSEODescription = () => {
     if (communeName) description += ` en ${communeName}`;
   }
 
-  return `${description}. Encuentra los mejores precios en equipamiento industrial en Waldo.click®`;
+  return `${description}. Encuentra los mejores precios en equipamiento industrial en Waldo.click`;
 };
 
 // Actualizar el SEO cuando cambian los datos
