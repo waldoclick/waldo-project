@@ -1,7 +1,7 @@
-import UserCronService from "../src/cron/user.cron";
-import { AdService } from "../src/cron/ad.cron";
-import { CleanupService } from "../src/cron/cleanup.cron";
-import { BackupService } from "../src/cron/backup.cron";
+import UserCronService from "../src/cron/ad-free-reservation-restore.cron";
+import { AdService } from "../src/cron/ad-expiry.cron";
+import { CleanupService } from "../src/cron/media-cleanup.cron";
+import { BackupService } from "../src/cron/bbdd-backup.cron";
 
 export default {
   /**

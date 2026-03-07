@@ -1,5 +1,14 @@
 # Milestones
 
+## v1.8 Free Featured Reservation Guarantee (Shipped: 2026-03-07)
+
+**Phases completed:** 1 phases, 1 plans, 0 tasks
+
+**Key accomplishments:**
+- (none recorded)
+
+---
+
 ## v1.8 Free Featured Reservation Guarantee (Started: 2026-03-06)
 
 **Status:** In progress — Phase 24

@@ -195,8 +195,84 @@
 
 ### Cost Observations
 - Model mix: ~100% sonnet (balanced profile)
-- Sessions: 3 (plan-phase, execute-phase, milestone close)
-- Notable: Smallest milestone by scope — 2 plans, 3 files, ~4 min execution. Demonstrates the value of tight milestone scoping.
+- Sessions: 4 (plan-phase × 2, execute-phase × 2, milestone close split across 2 sessions)
+- Notable: Fastest milestone by execution time — 3 plans, ~7 min. The patterns were fully established; this was pure application.
+
+---
+
+## Milestone: v1.7 — Cron Reliability
+
+**Shipped:** 2026-03-06
+**Phases:** 4 (20-23) | **Plans:** 4 | **Timeline:** ~35 minutes
+**Files changed:** 5 source files modified | **Requirements:** 10/10 complete
+
+### What Was Built
+- `ad-free-reservation-restore.cron.ts` (`user.cron.ts` renamed): fixed multi-ad deactivation loop (`for...of` over all expired ads per user); removed unused `PaymentUtils` import; added English JSDoc throughout
+- `bbdd-backup.cron.ts` (`backup.cron.ts` renamed): corrected Strapi v5 config path to `strapi.config.get('database') as { connection: any }`; redacted DB password from logged shell command; added English docs
+- `media-cleanup.cron.ts` (`cleanup.cron.ts` renamed): replaced incompatible relation sub-filter with two-step folderPath resolution via `db.query('plugin::upload.folder').findOne`; translated all Spanish comments to English
+- `ad-expiry.cron.ts` (`ad.cron.ts` renamed): English JSDoc on class, method, and key inline steps
+- `cron-tasks.ts`: English JSDoc comment block for all four job entries documenting purpose, schedule expression, timezone, and service method
+
+### What Worked
+- All four cron phases were independent — could have been executed in parallel; instead streamed sequentially with no blocking
+- The established class-based cron service pattern (from v1.8 planning) made each fix mechanical: find the bug, fix it, add English comments, verify
+- Plan quality was high — each plan had a single clear bug to fix with no ambiguity
+
+### What Was Inefficient
+- Cron files were renamed (ad.cron → ad-expiry.cron, etc.) but the import paths in `cron-tasks.ts` were not updated in the same session, causing a broken state that was only caught later. File renames should always be followed by a grep of all import references.
+
+### Patterns Established
+- Strapi v5 config access pattern: `strapi.config.get('database') as { connection: { host, port, database, user, password } }`
+- Two-step folder filter for Cloudinary/Strapi upload folder: `db.query('plugin::upload.folder').findOne({ where: { path: '/ads' } })` then filter files by `folderId`
+- English JSDoc in all cron files: class-level (what the cron does), method-level (algorithm), inline on non-obvious steps
+- Cron service naming convention after v1.7: files named `{domain}-{function}.cron.ts` (e.g. `ad-expiry`, `ad-free-reservation-restore`, `bbdd-backup`, `media-cleanup`)
+
+### Key Lessons
+1. **Rename + update imports atomically.** When renaming a file, always update all import references in the same commit. A file rename without import updates leaves the codebase in a broken state.
+2. **Strapi v5 config path differs from v4.** The `strapi.config.database` pattern from Strapi v4 docs does not work in v5 — use `strapi.config.get('database')` with a type cast.
+3. **Two-step queries beat nested relation filters for folder lookups.** Strapi's `entityService` does not support filtering by nested relation fields on `plugin::upload.file` — resolve the folder ID first, then filter files by ID.
+
+### Cost Observations
+- Model mix: ~100% sonnet (balanced profile)
+- Sessions: ~5 (one per plan + milestone close)
+- Notable: 4 independent bug-fix plans in ~35 min — fast because each plan had a single, isolated bug with no cross-cutting changes
+
+---
+
+## Milestone: v1.8 — Free Featured Reservation Guarantee
+
+**Shipped:** 2026-03-07
+**Phases:** 1 (24) | **Plans:** 1 | **Timeline:** ~2 hours (including debug + revert cycle)
+**Files changed:** ~7 source files | **Requirements:** 9/9 complete (with post-ship revision)
+
+### What Was Built
+- `cron-runner` API committed (controller + routes) — `POST /api/cron-runner/:name` for manual cron execution
+- `ad-free-reservation-restore.cron.ts` logic corrected: reservations linked to expired ads stay linked (history); "available pool" now counts `ad=null` + `ad.active=true` (not `remaining_days>0`); cron simplified to single-responsibility guarantee of 3 free slots per user
+- Parallel batch processing: `Promise.all` over batches of 50 users — avoids DB connection pool exhaustion
+- `featured.cron.ts` implemented, registered, then **reverted by business decision** — the guarantee is already satisfied by `ad-free-reservation-restore.cron.ts`
+
+### What Worked
+- The debug cycle (v18-free-featured-reservation-bugs.md) correctly identified that the original cron logic was counting reservations incorrectly — fixing the counting logic fixed the root cause
+- Parallel batching pattern transferred cleanly from the featured cron design into the existing cron
+
+### What Was Inefficient
+- `featured.cron.ts` was fully implemented, documented, committed, and then removed in the same milestone — a pre-implementation audit of what `ad-free-reservation-restore.cron.ts` already does would have prevented the redundant implementation
+- Import paths in `cron-tasks.ts` were not updated when cron files were renamed in v1.7 — this carried forward as broken imports into v1.8 and had to be fixed as a separate cleanup commit
+
+### Patterns Established
+- `ad-free-reservation-restore.cron.ts` "available pool" definition: `ad=null` (unused) + `ad.active=true` (currently in use). Reservations linked to `ad.active=false` are consumed history — not counted as available.
+- Parallel batch pattern for cron jobs with many users: `Promise.all` in chunks of 50 — balances throughput vs connection pool pressure
+- Before implementing a new cron: check if an existing cron already handles the same domain — avoid duplicate responsibility
+
+### Key Lessons
+1. **Before writing a new cron, audit existing ones for overlapping responsibility.** `featured.cron.ts` was fully built before realizing `ad-free-reservation-restore.cron.ts` already covered the same guarantee. A 5-minute read of the existing cron would have prevented ~1 hour of redundant work.
+2. **File renames require atomic import updates.** The v1.7 cron file renames left `cron-tasks.ts` importing from old paths — this carried into v1.8 as a silent breakage. Any file rename must be followed by a global import grep in the same commit.
+3. **Counting logic bugs are invisible without explicit test cases.** The `remaining_days>0` vs `ad.active=true` distinction was a real correctness bug that required a debug session to surface. Explicit unit tests on the counting logic would have caught it at write time.
+
+### Cost Observations
+- Model mix: ~100% sonnet (balanced profile)
+- Sessions: ~6 (plan, execute, debug × 2, revert, milestone close)
+- Notable: The revert of `featured.cron.ts` was the biggest inefficiency — 1 full implementation cycle wasted. The lesson (audit before implementing) is now in the patterns.
 
 ---
 
@@ -213,6 +289,8 @@
 | v1.4 | 4 | 9 | URL localization: all routes in English, 301 redirects for legacy Spanish URLs |
 | v1.5 | 2 | 2 | Backend credit refund + conditional email notifications in Strapi |
 | v1.6 | 2 | 3 | Website API optimization: aggregate endpoint + store cache guards |
+| v1.7 | 4 | 4 | Cron bug fixes + English docs; all 4 cron jobs now functional |
+| v1.8 | 1 | 1 | Free reservation guarantee + debug cycle; featured.cron reverted |
 
 ### Cumulative Quality
 
@@ -225,6 +303,8 @@
 | v1.4 | utils (100% coverage) | true | 0 |
 | v1.5 | utils (100% coverage) | true | 0 |
 | v1.6 | utils (100% coverage) | true | 0 |
+| v1.7 | utils (100% coverage) | true | 0 |
+| v1.8 | utils (100% coverage) | true | 0 |
 
 ### Top Lessons (Verified Across Milestones)
 
@@ -238,6 +318,8 @@
 8. Verify non-TypeScript file commits explicitly — MJML, SQL, config files may be silently skipped by executor agents
 9. `useAsyncData` is the sole correct data-loading trigger in Nuxt pages — bare `await` before it causes double-fetch on SSR + hydration
 10. Cache guards need both data-length check and timestamp — and always verify the store has `persist` or the guard is useless
+11. Rename + update imports atomically — a file rename without updating imports leaves the codebase silently broken
+12. Before implementing a new cron, audit existing ones for overlapping responsibility — duplicate crons waste a full implementation cycle
 
 ---
 
