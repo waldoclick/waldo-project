@@ -13,12 +13,23 @@ export default defineNuxtPlugin({
       // Initialize dataLayer first
       window.dataLayer = window.dataLayer || [];
 
-      // Consent Mode v2: push default denial BEFORE GTM script loads
-      window.dataLayer.push({
-        consent: "default",
-        analytics_storage: "denied",
-        ad_storage: "denied",
-      });
+      // Check if user has already accepted cookies in a previous session
+      const cookieAccepted = document.cookie
+        .split(";")
+        .some((c) => c.trim().startsWith("site-cookies-accepted="));
+
+      // Consent Mode v2: push default state BEFORE GTM script loads.
+      // Format: array-command ["consent", "default"|"update", {...}]
+      // If user already accepted cookies, grant immediately to avoid blocking GA4.
+      window.dataLayer.push([
+        "consent",
+        "default",
+        {
+          analytics_storage: cookieAccepted ? "granted" : "denied",
+          ad_storage: cookieAccepted ? "granted" : "denied",
+          wait_for_update: 500,
+        },
+      ]);
 
       // Load GTM script
       const script = document.createElement("script");
