@@ -3,6 +3,7 @@ export interface Category {
   name: string;
   slug: string;
   color?: string;
+  icon?: { url: string };
   createdAt: string;
   updatedAt: string;
   publishedAt: string;

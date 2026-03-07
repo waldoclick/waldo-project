@@ -8,7 +8,12 @@ export default defineNuxtPlugin((nuxtApp) => {
   // Define a global function for setting SEO meta tags
   nuxtApp.provide(
     "setSEO",
-    (params: { title: string; description: string; imageUrl?: string }) => {
+    (params: {
+      title: string;
+      description: string;
+      imageUrl?: string;
+      url?: string;
+    }) => {
       useSeoMeta({
         title: params.title,
         description: params.description,
@@ -25,6 +30,7 @@ declare module "#app" {
       title: string;
       description: string;
       imageUrl?: string;
+      url?: string;
     }) => void;
   }
 }

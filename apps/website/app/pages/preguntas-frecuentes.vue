@@ -13,7 +13,7 @@
 const { $setSEO, $setStructuredData } = useNuxtApp();
 
 // Components
-import FaqDefault from "@/components/FaqDefault";
+import FaqDefault from "@/components/FaqDefault.vue";
 
 // Definir layout
 definePageMeta({

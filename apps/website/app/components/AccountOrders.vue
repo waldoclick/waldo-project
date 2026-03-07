@@ -65,6 +65,8 @@ interface Order {
   id: number;
   status: string;
   total: number;
+  amount: number;
+  is_invoice: boolean;
   createdAt: string;
   updatedAt: string;
   [key: string]: any; // Permitir cualquier propiedad adicional

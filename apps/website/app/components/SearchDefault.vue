@@ -84,7 +84,7 @@ const getTypeClass = computed(() => `search--${props.type || "default"}`);
 
 watch(
   () => route.query.category,
-  (newCategory: LocationQueryValue | LocationQueryValue[]) => {
+  (newCategory) => {
     form.value.category = String(newCategory || "");
   },
 );

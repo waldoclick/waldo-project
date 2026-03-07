@@ -22,10 +22,10 @@ import { useRoute } from "nuxt/app";
 import { useAdsStore } from "@/stores/ads.store";
 import { useUserStore } from "~/stores/user.store";
 // components
-import HeaderDefault from "@/components/HeaderDefault";
-import HeroProfile from "@/components/HeroProfile";
-import ProfileDefault from "@/components/ProfileDefault";
-import FooterDefault from "@/components/FooterDefault";
+import HeaderDefault from "@/components/HeaderDefault.vue";
+import HeroProfile from "@/components/HeroProfile.vue";
+import ProfileDefault from "@/components/ProfileDefault.vue";
+import FooterDefault from "@/components/FooterDefault.vue";
 
 interface ProfileData {
   user: User;
@@ -60,7 +60,7 @@ if (excludedRoutes.includes(slug)) {
   throw createError({
     statusCode: 404,
     message: "Página no encontrada",
-    description: "Lo sentimos, la página que buscas no existe.",
+    statusMessage: "Lo sentimos, la página que buscas no existe.",
   });
 }
 
@@ -93,7 +93,7 @@ const {
         throw createError({
           statusCode: 404,
           message: "Página no encontrada",
-          description: "Lo sentimos, la página que buscas no existe.",
+          statusMessage: "Lo sentimos, la página que buscas no existe.",
         });
       }
 
@@ -114,7 +114,7 @@ const {
       };
     } catch (err) {
       // Si el error ya es un createError, lo relanzamos
-      if (err?.statusCode) {
+      if ((err as any)?.statusCode) {
         throw err;
       }
       // Si es otro tipo de error, lanzamos un 404 genérico
@@ -122,7 +122,7 @@ const {
       throw createError({
         statusCode: 404,
         message: "Página no encontrada",
-        description: "Lo sentimos, la página que buscas no existe.",
+        statusMessage: "Lo sentimos, la página que buscas no existe.",
       });
     }
   },
@@ -141,7 +141,7 @@ if (import.meta.client) {
     showError({
       statusCode: 404,
       message: "Página no encontrada",
-      description: "Lo sentimos, la página que buscas no existe.",
+      statusMessage: "Lo sentimos, la página que buscas no existe.",
     });
   });
 }

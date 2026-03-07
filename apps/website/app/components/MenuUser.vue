@@ -100,7 +100,7 @@ import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 const { Swal } = useSweetAlert2();
 import AvatarDefault from "@/components/AvatarDefault.vue";
-import type { User } from "@/interfaces/user.interface";
+import type { User } from "@/types/user";
 import { Menu as IconMenu, X as IconX } from "lucide-vue-next";
 
 // Obtener el usuario de Strapi
@@ -157,8 +157,8 @@ const handleLogout = async () => {
     showCancelButton: true,
     confirmButtonText: "Sí, quiero salir",
     cancelButtonText: "No",
-  }).then(async (result) => {
-    if (result.isConfirmed) {
+  }).then(async ({ isConfirmed }: { isConfirmed: boolean }) => {
+    if (isConfirmed) {
       try {
         await logout();
         router.push("/");

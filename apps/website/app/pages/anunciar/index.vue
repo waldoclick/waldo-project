@@ -17,13 +17,14 @@ import { useAdAnalytics } from "~/composables/useAdAnalytics";
 import { usePacksStore } from "@/stores/packs.store";
 import { useAdStore } from "@/stores/ad.store";
 import type { AnalyticsItem } from "@/stores/ad.store";
+import type { User } from "@/types/user";
 import { useMeStore } from "@/stores/me.store";
 import { useCategoriesStore } from "@/stores/categories.store";
 
 // Analytics
 const adAnalytics = useAdAnalytics();
 const packsStore = usePacksStore();
-const user = useStrapiUser();
+const user = useStrapiUser<User>();
 const adStore = useAdStore();
 
 const meStore = useMeStore();
@@ -56,7 +57,7 @@ onMounted(() => {
   }
 
   // Add free ad option if available
-  if (user.value && user.value.freeAdReservationsCount > 0) {
+  if (user.value && (user.value.freeAdReservationsCount ?? 0) > 0) {
     analyticsItems.push({
       item_id: "free",
       item_name: "Anuncio gratuito",
@@ -67,7 +68,7 @@ onMounted(() => {
   }
 
   // Add paid reservation option if available
-  if (user.value && user.value.paidAdReservationsCount > 0) {
+  if (user.value && (user.value.paidAdReservationsCount ?? 0) > 0) {
     analyticsItems.push({
       item_id: "paid",
       item_name: "Anuncio de pago (reserva)",
@@ -78,7 +79,7 @@ onMounted(() => {
   }
 
   // Add featured options
-  if (user.value && user.value.adFeaturedReservationsCount > 0) {
+  if (user.value && (user.value.adFeaturedReservationsCount ?? 0) > 0) {
     analyticsItems.push({
       item_id: "featured_free",
       item_name: "Destacado gratuito",
@@ -180,7 +181,7 @@ watch(
 watch(
   () => adStore.step,
   (newStep) => {
-    const stepNames = {
+    const stepNames: Record<number, string> = {
       1: "Payment Method",
       2: "General",
       3: "Personal Information",
@@ -188,7 +189,7 @@ watch(
       5: "Image Gallery",
     };
 
-    adAnalytics.stepView(newStep, stepNames[newStep]);
+    adAnalytics.stepView(newStep, stepNames[newStep] ?? "");
   },
   { immediate: true },
 );

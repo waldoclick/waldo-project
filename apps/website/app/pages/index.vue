@@ -16,6 +16,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 // Define SEO
 const { $setSEO } = useNuxtApp();
 
@@ -30,7 +31,7 @@ import FaqDefault from "~/components/FaqDefault.vue";
 import FooterDefault from "@/components/FooterDefault.vue";
 
 // Load categories
-const { data: categories } = await useAsyncData("categories", async () => {
+const { data: categoriesData } = await useAsyncData("categories", async () => {
   const filterStore = useFilterStore();
   try {
     await filterStore.loadFilterCategories();
@@ -40,9 +41,10 @@ const { data: categories } = await useAsyncData("categories", async () => {
     return [];
   }
 });
+const categories = computed(() => categoriesData.value ?? []);
 
 // Load packs
-const { data: packs } = await useAsyncData("home-packs", async () => {
+const { data: packsData } = await useAsyncData("home-packs", async () => {
   const packsStore = usePacksStore();
   try {
     await packsStore.loadPacks();
@@ -52,9 +54,10 @@ const { data: packs } = await useAsyncData("home-packs", async () => {
     return [];
   }
 });
+const packs = computed(() => packsData.value ?? []);
 
 // Load featured FAQs for the home page
-const { data: faqs } = await useAsyncData("featured-faqs", async () => {
+const { data: faqsData } = await useAsyncData("featured-faqs", async () => {
   const faqsStore = useFaqsStore();
   try {
     await faqsStore.loadFaqs();
@@ -64,6 +67,7 @@ const { data: faqs } = await useAsyncData("featured-faqs", async () => {
     return [];
   }
 });
+const faqs = computed(() => faqsData.value ?? []);
 
 $setSEO({
   title: "Compra y Venta de Equipo en Chile",

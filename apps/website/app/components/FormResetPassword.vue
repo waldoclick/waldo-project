@@ -87,7 +87,7 @@ onMounted(() => {
     showError({
       statusCode: 404,
       message: "Token no válido",
-      description: "El enlace para restablecer la contraseña no es válido",
+      statusMessage: "El enlace para restablecer la contraseña no es válido",
     });
   }
 });
@@ -115,7 +115,7 @@ const onSubmit = async (values: any) => {
       password: values.password,
       passwordConfirmation: values.password,
       recaptchaToken: token,
-    });
+    } as any);
 
     Swal.fire("Éxito", "Contraseña restablecida con éxito.", "success");
     router.push("/");

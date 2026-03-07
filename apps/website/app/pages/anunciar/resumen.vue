@@ -153,9 +153,12 @@ const handlePayClick = async () => {
 
   try {
     // Enviar evento de add_payment_info antes de procesar el pago
-    adAnalytics.addPaymentInfo(allData);
+    adAnalytics.addPaymentInfo();
 
-    const response = await create("payments/ad", allData);
+    const response = await create<{
+      webpay?: { url: string; gatewayRef: string };
+      ad?: { id: number };
+    }>("payments/ad", allData as any);
 
     if (response.data && response.data.webpay) {
       // Get ad_id from response and update store if exists
@@ -169,13 +172,14 @@ const handlePayClick = async () => {
       await fetchUser();
       router.push("/anunciar/gracias?ad=" + response.data.ad?.id);
     }
-  } catch (error) {
+  } catch (error: unknown) {
     let errorMessage =
       "Hubo un problema al procesar el pago. Por favor, inténtalo de nuevo.";
 
     if (
-      error.response?.data?.message === "No free featured credits available" ||
-      error.message === "No free featured credits available"
+      (error as any).response?.data?.message ===
+        "No free featured credits available" ||
+      (error as any).message === "No free featured credits available"
     ) {
       errorMessage = "No tienes créditos destacados gratuitos disponibles";
     }
@@ -189,7 +193,7 @@ const handlePayClick = async () => {
   }
 };
 
-const handleRedirect = (response) => {
+const handleRedirect = (response: { url: string; gatewayRef: string }) => {
   // Crear un formulario dinámicamente
   const form = document.createElement("form");
   form.method = "POST";

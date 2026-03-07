@@ -80,12 +80,13 @@ import {
   UserCog as IconUserCog,
   ShoppingCart as IconShoppingCart,
 } from "lucide-vue-next";
+import type { User } from "@/types/user";
 import CardShortcut from "@/components/CardShortcut.vue";
 import { useSanitize } from "@/composables/useSanitize";
 
 // Usar la función del composable
 const { getAdReservationsText } = useUser();
-const user = useStrapiUser();
+const user = useStrapiUser<User>();
 const { sanitizeText } = useSanitize();
 
 // Computed property para el texto de reservas

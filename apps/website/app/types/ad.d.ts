@@ -40,17 +40,21 @@ export interface Ad {
   description: string;
   name: string;
   slug: string;
-  category: number;
+  category: number | Category;
   user: User;
   gallery: GalleryItem[];
   ad_reservation: boolean;
+  ad_featured_reservation?: boolean | object;
   price: number;
   currency: string;
   remaining_days: number;
   email: string;
   phone: string;
   region: number | null;
-  commune: number | null;
+  commune:
+    | number
+    | { id: number; name: string; region?: { id: number; name: string } }
+    | null;
   address: string;
   address_number: string;
   condition: number | null;

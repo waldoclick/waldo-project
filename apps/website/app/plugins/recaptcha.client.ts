@@ -15,8 +15,8 @@ export default defineNuxtPlugin((nuxtApp) => {
   const siteKey = config.public.recaptchaSiteKey;
 
   // Function to dynamically load the reCAPTCHA script
-  function loadRecaptchaScript() {
-    return new Promise((resolve, reject) => {
+  function loadRecaptchaScript(): Promise<Window["grecaptcha"]> {
+    return new Promise<Window["grecaptcha"]>((resolve, reject) => {
       // Check if the script is already present
       if (document.getElementById("recaptcha-script")) {
         return resolve(window.grecaptcha);
@@ -47,7 +47,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   // Initialize the reCAPTCHA
   loadRecaptchaScript()
-    .then((grecaptcha: Window["grecaptcha"]) => {
+    .then((grecaptcha) => {
       // Provide a function to use reCAPTCHA
       nuxtApp.provide("recaptcha", {
         execute: async (action: string) => {

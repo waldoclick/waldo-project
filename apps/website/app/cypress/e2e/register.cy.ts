@@ -31,7 +31,7 @@ describe("Register Test", () => {
 
     // Esperar a que la solicitud de registro sea enviada y verificar la respuesta
     cy.wait("@registerRequest").then((interception) => {
-      assert.isNotNull(interception.response.body, "API call has data");
+      assert.isNotNull(interception.response?.body, "API call has data");
     });
   });
 });

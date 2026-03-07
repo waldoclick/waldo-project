@@ -24,7 +24,7 @@ if (!appStore.getContactFormSent) {
   showError({
     statusCode: 404,
     message: "Página no encontrada",
-    description: "La página que intentas acceder no existe",
+    statusMessage: "La página que intentas acceder no existe",
   });
 }
 

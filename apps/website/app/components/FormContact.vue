@@ -226,7 +226,7 @@ const onSubmit = handleSubmit(async (values) => {
   try {
     // Execute reCAPTCHA v3
     const token = await $recaptcha.execute("submit");
-    await submitToStrapi(values, token);
+    await submitToStrapi(values, token ?? "");
   } catch (error) {
     sending.value = false;
     console.error(error);

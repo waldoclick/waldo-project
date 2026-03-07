@@ -4,15 +4,15 @@
     <HeroFake />
     <!-- <pre>{{ data }}</pre> -->
     <MessageDefault
-      v-if="data"
+      v-if="data && !('error' in data)"
       type="success"
       title="¡Gracias por tu compra!"
       :description="`Has comprado el pack <strong>${
-        data.name
+        (data as any).name
       }</strong> por <strong>${formatPrice(
-        data.price,
+        (data as any).price,
       )}</strong>. Este pack incluye <strong>${
-        data.total_ads
+        (data as any).total_ads
       }</strong> anuncios.`"
       button_label="Crear un anuncio"
       button_link="/anunciar"
@@ -33,6 +33,7 @@ import HeroFake from "@/components/HeroFake.vue";
 import MessageDefault from "@/components/MessageDefault.vue";
 import FooterDefault from "@/components/FooterDefault.vue";
 import { usePacksStore } from "@/stores/packs.store";
+import type { Pack } from "@/types/pack";
 
 const formatPrice = (price: number) => {
   return new Intl.NumberFormat("es-CL", {
@@ -63,7 +64,7 @@ const handleError = (type: "INVALID_URL" | "NOT_FOUND") => {
   });
 };
 
-const { data, pending, error } = await useAsyncData(
+const { data, pending, error } = await useAsyncData<Pack | { error: string }>(
   "packData",
   async () => {
     if (!route.query.pack) {
@@ -71,13 +72,13 @@ const { data, pending, error } = await useAsyncData(
     }
 
     const packsStore = usePacksStore();
-    const pack = await packsStore.getPackById(route.query.pack);
+    const pack = await packsStore.getPackById(route.query.pack as string);
 
     if (!pack) {
       return { error: "NOT_FOUND" };
     }
 
-    return pack;
+    return pack as unknown as Pack;
   },
   {
     server: true,
@@ -87,30 +88,31 @@ const { data, pending, error } = await useAsyncData(
 
 // Manejar errores con watchEffect
 watchEffect(() => {
-  if (data.value?.error) {
-    handleError(data.value.error);
+  if (data.value && "error" in data.value) {
+    handleError(data.value.error as "INVALID_URL" | "NOT_FOUND");
   }
 });
 
 watch(data, (newData) => {
-  if (newData) {
+  if (newData && !("error" in newData)) {
+    const pack = newData as Pack;
     $setSEO({
-      title: `Gracias por tu Compra - ${newData.name}`,
-      description: `Has comprado el pack ${newData.name} por ${formatPrice(
-        newData.price,
-      )}. Este pack incluye ${newData.ads_count} anuncios.`,
+      title: `Gracias por tu Compra - ${pack.name}`,
+      description: `Has comprado el pack ${pack.name} por ${formatPrice(
+        pack.price,
+      )}. Este pack incluye ${(pack as any).ads_count} anuncios.`,
       imageUrl: "https://waldo.click/share.jpg",
-      url: `https://waldo.click/packs/gracias?pack=${newData.id}`,
+      url: `https://waldo.click/packs/gracias?pack=${pack.id}`,
     });
 
     $setStructuredData({
       "@context": "https://schema.org",
       "@type": "WebPage",
-      name: `Gracias por tu Compra - ${newData.name} - Waldo.click®`,
-      url: `https://waldo.click/packs/gracias?pack=${newData.id}`,
-      description: `Has comprado el pack ${newData.name} por ${formatPrice(
-        newData.price,
-      )}. Este pack incluye ${newData.ads_count} anuncios.`,
+      name: `Gracias por tu Compra - ${pack.name} - Waldo.click®`,
+      url: `https://waldo.click/packs/gracias?pack=${pack.id}`,
+      description: `Has comprado el pack ${pack.name} por ${formatPrice(
+        pack.price,
+      )}. Este pack incluye ${(pack as any).ads_count} anuncios.`,
     });
   }
 });
