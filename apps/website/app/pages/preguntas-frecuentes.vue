@@ -36,9 +36,9 @@ const { data: faqs } = await useAsyncData(
 
 // Datos para SEO
 $setSEO({
-  title: "Preguntas Frecuentes",
+  title: "Preguntas Frecuentes sobre Anuncios",
   description:
-    "Resuelve tus dudas sobre cómo funciona Waldo.click®, la plataforma para comprar y vender activos industriales.",
+    "Resuelve tus dudas sobre cómo publicar y comprar anuncios de activos industriales en Waldo.click®. Respuestas rápidas sobre packs, pagos y más.",
   imageUrl: `${config.public.baseUrl}/share.jpg`,
   url: `${config.public.baseUrl}/preguntas-frecuentes`,
 });
@@ -48,7 +48,7 @@ $setStructuredData({
   "@type": "FAQPage",
   name: "Preguntas Frecuentes",
   description:
-    "Resuelve tus dudas sobre cómo funciona Waldo.click®, la plataforma para comprar y vender activos industriales.",
+    "Resuelve tus dudas sobre cómo publicar y comprar anuncios de activos industriales en Waldo.click®. Respuestas rápidas sobre packs, pagos y más.",
   url: `${config.public.baseUrl}/preguntas-frecuentes`,
   mainEntity: (faqs.value || []).map((faq) => ({
     "@type": "Question",
