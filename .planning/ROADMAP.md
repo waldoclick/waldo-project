@@ -66,7 +66,11 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
   2. `contacto/index.vue` title expands beyond the single word `Contacto` (≤ 45 chars), description is 120–155 chars; the rendered title `{new title} | Waldo.click®` is unique across all indexed pages
   3. `sitemap.vue` description contains `Waldo.click®` (with ®, replacing bare `Waldo.click`); title is ≤ 45 chars; description is 120–155 chars
   4. `politicas-de-privacidad.vue` title is ≤ 45 chars, description is 120–155 chars, copy uses canonical vocabulary throughout
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 38-01-PLAN.md — Update FAQ and Contact page SEO copy (COPY-05, COPY-06)
+- [ ] 38-02-PLAN.md — Update Sitemap and Privacy Policy SEO copy (COPY-07, COPY-08)
 
 </details>
 
@@ -78,4 +82,4 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 | 35. Website SEO Audit | v1.15 | 3/3 | Complete | 2026-03-07 |
 | 36. SEO Bug Fixes | 1/1 | Complete   | 2026-03-07 | - |
 | 37. Dynamic Page Copy | 1/1 | Complete   | 2026-03-07 | - |
-| 38. Static Page Copy | v1.16 | 0/? | Not started | - |
+| 38. Static Page Copy | v1.16 | 0/2 | Not started | - |
