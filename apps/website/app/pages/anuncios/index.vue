@@ -311,8 +311,26 @@ const generateSEODescription = () => {
     if (communeName) description += ` en ${communeName}`;
   }
 
-  return `${description}. Encuentra los mejores precios en equipamiento industrial en Waldo.click`;
+  return `${description}. Encuentra los mejores precios en equipamiento industrial en Waldo.click®`;
 };
+
+// SSR-safe initial SEO call — ensures server-rendered HTML has correct title/description
+if (adsData.value) {
+  $setSEO({
+    title: generateSEOTitle(),
+    description: generateSEODescription(),
+    imageUrl: `${config.public.baseUrl}/share.jpg`,
+    url: `${config.public.baseUrl}${route.fullPath}`,
+  });
+
+  $setStructuredData({
+    "@context": "https://schema.org",
+    "@type": "SearchResultsPage",
+    name: generateSEOTitle(),
+    description: generateSEODescription(),
+    url: `${config.public.baseUrl}${route.fullPath}`,
+  });
+}
 
 // Actualizar el SEO cuando cambian los datos
 watch(

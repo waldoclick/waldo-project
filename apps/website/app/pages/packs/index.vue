@@ -53,6 +53,8 @@ $setStructuredData({
   url: `${config.public.baseUrl}/packs`,
 });
 
+useSeoMeta({ robots: "noindex, nofollow" });
+
 // Middleware
 definePageMeta({
   middleware: "auth",
