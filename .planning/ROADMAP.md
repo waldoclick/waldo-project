@@ -12,6 +12,7 @@
 - ✅ **v1.8 Free Featured Reservation Guarantee** — Phase 24 (shipped 2026-03-07)
 - ✅ **v1.9 Website Technical Debt** — Phases 25-29 (shipped 2026-03-07)
 - ✅ **v1.10 Dashboard Orders Dropdown UI** — Phase 30 (shipped 2026-03-07)
+- 🔄 **v1.11 GTM / GA4 Tracking Fix** — Phase 31 (in progress)
 
 ## Phases
 
@@ -100,25 +101,32 @@ Archive: `.planning/milestones/v1.9-ROADMAP.md`
 
 </details>
 
-### v1.10 Dashboard Orders Dropdown UI (COMPLETE — 2026-03-07)
+<details>
+<summary>✅ v1.10 Dashboard Orders Dropdown UI (Phase 30) — SHIPPED 2026-03-07</summary>
 
-- [x] **Phase 30: Dropdown Display Fix** — Surface buyer full name and full timestamp in `DropdownSales.vue`
+Phase 30 completed in v1.10: `DropdownSales.vue` surfaces buyer full name and full timestamp.
+Archive: `.planning/milestones/v1.10-ROADMAP.md`
+
+</details>
+
+### v1.11 GTM / GA4 Tracking Fix (IN PROGRESS)
+
+- [ ] **Phase 31: GTM Plugin + Consent Mode v2** — Fix broken gtag() shim; implement Consent Mode v2 default denial and update flow
 
 ## Phase Details
 
-### Phase 30: Dropdown Display Fix
-**Goal:** The "Últimas órdenes" dropdown shows who bought (full name) and when (date + time) for every order entry
-**Depends on:** Nothing (self-contained component change in `apps/dashboard`)
-**Requirements:** DROP-01, DROP-02
+### Phase 31: GTM Plugin + Consent Mode v2
+**Goal:** GA4 receives page_view events for all SPA navigations; Consent Mode v2 default denial is in place before GTM loads; cookie accept pushes the correct consent update
+**Depends on:** Nothing (self-contained changes in `apps/website`)
+**Requirements:** GTM-01, GTM-02
 **Success criteria:**
-1. Each order row displays the buyer's full name (`firstname + lastname`), falling back to `username`, then `email` — never a raw `buy_order` ID
-2. Each order row displays date and time in the format `"7 mar 2026 • 01:08 a. m."` — never time-only
-3. `nuxt typecheck` passes with zero errors after the changes (no type regressions introduced)
-4. Dropdown layout, styling, and navigation behavior are unchanged — only the text content of the two fields differs
+1. `gtm.client.ts` has no local `gtag()` function — the broken shim is gone
+2. `window.dataLayer` receives a `{ "consent": "default", analytics_storage: "denied", ad_storage: "denied" }` push **before** the GTM `<script>` tag is injected
+3. SPA navigation pushes `{ event: "page_view", page_path: to.fullPath, page_title: ... }` as a plain object (not an array)
+4. `LightboxCookies.vue` `acceptCookies()` pushes `{ "consent": "update", analytics_storage: "granted", ad_storage: "granted" }` instead of the `accept_cookies` event
+5. `nuxt typecheck` passes with zero errors after the changes
+6. No behavior changes to the cookie banner UI — only the dataLayer payload differs
 **Plans:** 1 plan
-
-Plans:
-- [x] 30-01-PLAN.md — Fix DropdownSales.vue: buyer full name (DROP-01) and full timestamp (DROP-02)
 
 ## Progress
 
@@ -130,3 +138,4 @@ Plans:
 | 28. TypeScript Strict + Store Audit | v1.9 | 2/2 | Complete | 2026-03-07 |
 | 29. TypeScript Strict Errors | v1.9 | 1/1 | Complete | 2026-03-07 |
 | 30. Dropdown Display Fix | v1.10 | 1/1 | Complete | 2026-03-07 |
+| 31. GTM Plugin + Consent Mode v2 | v1.11 | 0/1 | In Progress | — |
