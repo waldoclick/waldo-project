@@ -44,7 +44,7 @@ export default defineNuxtConfig({
       },
       headers: {
         permissionsPolicy: {
-          "display-capture": [],
+          "display-capture": ["self"],
         },
         contentSecurityPolicy: {
           "default-src": ["'self'"],
