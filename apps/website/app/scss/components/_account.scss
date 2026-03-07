@@ -557,6 +557,10 @@
   }
 
   &--password {
+    &__memo {
+      max-width: 700px;
+    }
+
     &__form {
       max-width: 500px;
     }
