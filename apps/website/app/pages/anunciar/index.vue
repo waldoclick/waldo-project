@@ -108,6 +108,9 @@ onMounted(() => {
 
   // Fire view_item_list analytics event
   adAnalytics.viewItemList(analyticsItems);
+
+  // Fire step 1 once on initial mount (not via watcher — avoids overcounting on back-navigation)
+  adAnalytics.stepView(1, "Payment Method");
 });
 
 // Observar cambios en el pack seleccionado
@@ -191,7 +194,6 @@ watch(
 
     adAnalytics.stepView(newStep, stepNames[newStep] ?? "");
   },
-  { immediate: true },
 );
 
 $setSEO({

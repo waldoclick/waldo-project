@@ -34,10 +34,10 @@ const createFeaturedAnalyticsItem = (featuredValue: boolean) => {
   } as AnalyticsItem;
 };
 
-interface DataLayerEvent {
+export interface DataLayerEvent {
   event: string;
   flow: string;
-  ecommerce?: Record<string, unknown>;
+  ecommerce?: Record<string, unknown> | null;
   [key: string]: unknown;
 }
 

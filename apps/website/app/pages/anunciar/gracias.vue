@@ -18,7 +18,7 @@
 // Define SEO
 const { $setSEO, $setStructuredData } = useNuxtApp();
 
-import { computed, watchEffect } from "vue";
+import { computed, watchEffect, ref } from "vue";
 import { useAdsStore } from "@/stores/ads.store";
 import { useRoute } from "vue-router";
 import { useAdStore } from "@/stores/ad.store";
@@ -37,6 +37,7 @@ const adStore = useAdStore();
 
 // Analytics
 const adAnalytics = useAdAnalytics();
+const purchaseFired = ref(false);
 
 // Función auxiliar para manejar errores
 const handleError = (
@@ -147,36 +148,39 @@ watchEffect(() => {
     // Limpiar el store solo cuando los datos se hayan cargado exitosamente
     adStore.clearAll();
 
-    // Enviar evento de purchase
-    const adData = data.value as any;
-    const items = [];
-    if (adData.details.pack) {
-      items.push({
-        item_id: adData.details.pack,
-        item_name: `Pack ${adData.details.pack}`,
-        item_category: "Pack",
-        price: adData.details.pack === "free" ? 0 : adData.details.pack_price,
-        currency: "CLP",
-      });
-    }
-    if (adData.details.featured) {
-      items.push({
-        item_id: adData.details.featured ? "featured" : "not_featured",
-        item_name: adData.details.featured ? "Destacado" : "Sin destacar",
-        item_category: "Destacado",
-        price: adData.details.featured ? 10000 : 0,
-        currency: "CLP",
-      });
-    }
+    // Enviar evento de purchase (guarded — fires exactly once even on watchEffect re-runs)
+    if (!purchaseFired.value) {
+      purchaseFired.value = true;
+      const adData = data.value as any;
+      const items = [];
+      if (adData.details.pack) {
+        items.push({
+          item_id: adData.details.pack,
+          item_name: `Pack ${adData.details.pack}`,
+          item_category: "Pack",
+          price: adData.details.pack === "free" ? 0 : adData.details.pack_price,
+          currency: "CLP",
+        });
+      }
+      if (adData.details.featured) {
+        items.push({
+          item_id: adData.details.featured ? "featured" : "not_featured",
+          item_name: adData.details.featured ? "Destacado" : "Sin destacar",
+          item_category: "Destacado",
+          price: adData.details.featured ? 10000 : 0,
+          currency: "CLP",
+        });
+      }
 
-    adAnalytics.pushEvent("purchase", items, {
-      transaction_id: adData.id,
-      value: items.reduce(
-        (total: number, item: any) => total + (item.price || 0),
-        0,
-      ),
-      currency: "CLP",
-    });
+      adAnalytics.pushEvent("purchase", items, {
+        transaction_id: adData.id,
+        value: items.reduce(
+          (total: number, item: any) => total + (item.price || 0),
+          0,
+        ),
+        currency: "CLP",
+      });
+    }
   }
 });
 

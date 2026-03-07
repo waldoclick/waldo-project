@@ -57,10 +57,8 @@ import FormCreateFive from "@/components/FormCreateFive.vue";
 // import AlertDefault from '@/components/AlertDefault.vue'
 import { useAdStore } from "@/stores/ad.store";
 import { useMeStore } from "@/stores/me.store";
-import { useAdAnalytics } from "@/composables/useAdAnalytics";
 
 const adStore = useAdStore();
-const adAnalytics = useAdAnalytics();
 const step = computed(() => adStore.step);
 const router = useRouter(); // Inicializar useRouter
 const route = useRoute(); // Inicializar useRoute
