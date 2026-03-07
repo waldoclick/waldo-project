@@ -121,7 +121,9 @@ Archive: `.planning/milestones/v1.8-ROADMAP.md`
   3. Browsing the website in production with DevTools open shows `console.error` and `console.warn` output — only `console.log` and `console.debug` are suppressed
   4. Loading `/cuenta/mis-anuncios` directly (SSR) renders the same ad counts as a client-side navigation to the same page
   5. Loading `/cuenta/mis-ordenes` directly (SSR) renders the same order data as a client-side navigation to the same page
-**Plans**: 25-PLAN-01 (1 plan, 5 tasks, 1 wave)
+**Plans**: 1 plan
+Plans:
+- [ ] 25-01-PLAN.md — Fix 5 correctness bugs: $setStructuredData types, useAsyncData key collisions, console suppression, SSR hydration on mis-anuncios/mis-ordenes
 
 ### Phase 26: Data Fetching Cleanup
 **Goal**: All data fetching in creation-flow and profile components uses useAsyncData (SSR-compatible) — no component silently skips rendering on first SSR load due to onMounted-only fetch
