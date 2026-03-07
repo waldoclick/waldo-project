@@ -1,17 +1,17 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.10
-milestone_name: Dashboard Orders Dropdown UI
-status: complete
-stopped_at: v1.10 complete — all requirements shipped
-last_updated: "2026-03-07T20:30:00.000Z"
-last_activity: "2026-03-07 — Phase 30 complete, milestone v1.10 shipped"
+milestone: v1.11
+milestone_name: GTM / GA4 Tracking Fix
+status: defining-requirements
+stopped_at: requirements defined — ready to plan Phase 31
+last_updated: "2026-03-07T21:00:00.000Z"
+last_activity: "2026-03-07 — v1.11 milestone started, requirements GTM-01 and GTM-02 defined"
 progress:
   total_phases: 1
-  completed_phases: 1
+  completed_phases: 0
   total_plans: 1
-  completed_plans: 1
-  percent: 100
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -21,24 +21,24 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-07)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.10 — Dashboard Orders Dropdown UI (COMPLETE)
+**Current focus:** v1.11 — GTM / GA4 Tracking Fix
 
 ## Current Position
 
-Phase: 30 — Dropdown Display Fix (complete)
-Plan: 30-01 (complete)
-Status: Milestone v1.10 shipped
-Last activity: 2026-03-07 — Phase 30 complete
+Phase: 31 — GTM Plugin + Consent Mode v2 (not started)
+Plan: none yet
+Status: Milestone v1.11 requirements defined — awaiting Phase 31 plan
+Last activity: 2026-03-07 — requirements defined (GTM-01, GTM-02)
 
 ```
-[██████████] 100% — 1/1 phases complete
+[__________] 0% — 0/1 phases complete
 ```
 
 ## Accumulated Context
 
 ### Decisions
 
-All decisions from v1.1–v1.8 are logged in PROJECT.md Key Decisions table.
+All decisions from v1.1–v1.10 are logged in PROJECT.md Key Decisions table.
 
 Key patterns established (carry forward):
 - `watch({ immediate: true })` as sole data-loading trigger — never pair with onMounted
@@ -49,49 +49,35 @@ Key patterns established (carry forward):
 - **v1.8**: Free ad reservations stay permanently linked to their ad when it expires — never unlinked
 - **v1.8**: `restoreUserFreeReservations` counts pool as: `ad=null` + `ad.active=true`
 - **v1.8**: Cron parallelization pattern — `Promise.all` in batches of 50
-- [Phase 25]: BUG-04/05 root cause was Strapi route ordering — /ads/me routes shadowed by wildcard :id; frontend files restored to original state after backend fix confirmed
-- [Phase 25]: useAsyncData key naming pattern: '<page>-<data>' for static pages, 'page-${param}' for dynamic routes — established as project convention
-- [Phase 25]: Strapi route ordering: specific paths (e.g. /ads/me) must always be registered BEFORE wildcard param routes (:id) in the same route array
-- [Phase 26]: Parent-page preload pattern: useAsyncData at page level fills stores before child components mount — child reads stores synchronously in onMounted
-- [Phase 26]: watch({ immediate: true }) for multi-parent components — avoids duplicating fetch logic when a component is used in multiple parent pages
-- [Phase 26]: onMounted classification format: `// onMounted: UI-only|analytics-only|client-only fetch — [reason]` — standardized across all website components
-- [Phase 26]: ResumeDefault.vue uses watch({ immediate: true }) not page-level useAsyncData — component used in both resumen.vue and gracias.vue; moving to both parents would duplicate logic
-- [Phase 26]: FooterDefault economic indicator fetch intentionally client-only — non-critical footer content; onMounted(async) acceptable here
-- [Phase 27]: AdWithPriceData extends Omit<Ad, fields> pattern for page-level API response types that differ from store/form types
-- [Phase 27]: Inline interface pattern for useAsyncData return shapes (ProfileData, AdWithPriceData) — defined locally in page file, not in shared types
-- [Phase 27]: String() cast for route.params.slug (string | string[] → string) in typed pages
-- [Phase 27]: DataLayerEvent requires [key: string]: unknown index signature to allow extraData spread
-- [Phase 27]: prepareSummary() refactored to zero-param — uses store already in scope, avoids typing Pinia store parameter
-- [Phase 27]: AnalyticsItem exported from ad.store.ts (co-located with store logic, importable by pages)
-- [Phase 28]: TS-04 deferred to Phase 29 — running typeCheck revealed 183 errors across 55 files (18x scope increase from the 10 known pre-existing errors)
-- [Phase 28]: persist audit comment classification finalized: 9 CORRECT (static ref data with TTL or wizard state), 3 REVIEW (volatile UI or missing TTL), 2 RISK (query results or view-specific data that survives reload)
-- [Phase 28]: Strapi SDK filter type cast pattern locked in: `filters: { ... } as unknown as Record<string, unknown>` — applied to ads.store, packs.store, categories.store, communes.store
-- [Phase 29]: window.d.ts consolidates all Window globals — TypeScript merges all declare global blocks; one file avoids per-file duplication
-- [Phase 29]: StrapiUser augmented in strapi.d.ts — one declaration makes custom fields available everywhere useStrapiUser() is called without a generic
-- [Phase 29]: Ad.category and Ad.commune widened to union types (number | object) — models populated vs. unpopulated Strapi responses
-- [Phase 29]: createError statusMessage not description — NuxtError has no description property; statusMessage is the correct H3Error field
-- [Phase 29]: useAsyncData default option eliminates T | undefined without changing runtime behavior
-- [Phase 29]: typeCheck: true is now the permanent setting — all future builds enforce TypeScript
-- [Phase 30]: getBuyerName wrapper pattern — formatFullName takes (firstname, lastname) separately and returns "--" when both empty; wrapper adds username/email fallback chain for OrderUser objects
+- [Phase 25]: useAsyncData key naming pattern: '<page>-<data>' for static pages, 'page-${param}' for dynamic routes
+- [Phase 25]: Strapi route ordering: specific paths must always be registered BEFORE wildcard param routes
+- [Phase 26]: Parent-page preload pattern: useAsyncData at page level fills stores before child components mount
+- [Phase 26]: watch({ immediate: true }) for multi-parent components — avoids duplicating fetch logic
+- [Phase 26]: onMounted classification format: `// onMounted: UI-only|analytics-only|client-only fetch — [reason]`
+- [Phase 27]: AdWithPriceData extends Omit<Ad, fields> pattern for page-level API response types
+- [Phase 27]: Inline interface pattern for useAsyncData return shapes — defined locally in page file
+- [Phase 28]: persist audit comment classification: 9 CORRECT, 3 REVIEW, 2 RISK
+- [Phase 28]: Strapi SDK filter type cast pattern: `filters: { ... } as unknown as Record<string, unknown>`
+- [Phase 29]: window.d.ts consolidates all Window globals
+- [Phase 29]: StrapiUser augmented in strapi.d.ts
+- [Phase 29]: useAsyncData default option eliminates T | undefined
+- [Phase 29]: typeCheck: true is now the permanent setting
+- [Phase 30]: getBuyerName wrapper pattern — formatFullName takes (firstname, lastname) separately; wrapper adds username/email fallback chain for OrderUser objects
 
-### Milestone v1.10 — COMPLETE
+### v1.11 Requirements
 
-All 2 requirements satisfied:
-- DROP-01: Buyer full name in dropdown title (Phase 30)
-- DROP-02: Full date + time in dropdown meta (Phase 30)
+- **GTM-01**: Fix broken gtag() shim in `gtm.client.ts` — remove local `gtag()` function and dead pre-load calls; SPA page_view uses `window.dataLayer.push({ event: "page_view", ... })` directly
+- **GTM-02**: Implement Consent Mode v2 — push default denial before GTM loads; `LightboxCookies.vue` pushes consent update on accept
 
-### Milestone v1.9 — COMPLETE
+### Root cause analysis (carried into Phase 31 plan)
 
-All 18 requirements satisfied:
-- BUG-01..05: Critical correctness bugs (Phase 25)
-- FETCH-01..08: Data fetching cleanup (Phase 26)
-- TS-01..03: TypeScript migration (Phase 27)
-- STORE-01: Store persist audit (Phase 28)
-- TS-04: typeCheck: true enabled (Phase 29)
+**gtm.client.ts bug:** The local `gtag()` shim does `window.dataLayer.push(args)` where `args` is the arguments array-like. This pushes arrays (`["js", Date]`, `["config", "GTM-...", {...}]`) into dataLayer. GTM ignores non-object entries — only the dynamically-injected `gtm.js` script matters. The SPA `router.afterEach` also calls the broken shim with `gtag("config", ...)`.
+
+**Consent Mode v2 bug:** No default denial push before GTM loads — Google blocks GA4 collection in EU/EEA without it. Current `acceptCookies()` pushes `{ event: "accept_cookies", consent: { ... } }` — a custom event object, not a Consent Mode v2 update command. GTM consent update format is `{ "consent": "update", analytics_storage: "granted", ad_storage: "granted" }`.
 
 ### Pending Todos
 
-None.
+- Phase 31 plan to be created
 
 ### Blockers/Concerns
 
@@ -99,6 +85,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-07T20:30:00.000Z
-Stopped at: v1.10 milestone complete — Phase 30 shipped
-Resume with: `/gsd-new-milestone` for next milestone
+Last session: 2026-03-07T21:00:00.000Z
+Stopped at: v1.11 requirements defined — Phase 31 not yet planned
+Resume with: create Phase 31 plan in `.planning/phases/31-gtm-plugin-consent-mode-v2/`
