@@ -6,6 +6,16 @@ export default {
   routes: [
     {
       method: "GET",
+      path: "/ads/me/counts",
+      handler: "ad.meCounts",
+    },
+    {
+      method: "GET",
+      path: "/ads/me",
+      handler: "ad.me",
+    },
+    {
+      method: "GET",
       path: "/ads/actives",
       handler: "ad.actives",
     },
@@ -43,16 +53,6 @@ export default {
       method: "PUT",
       path: "/ads/:id/reject",
       handler: "ad.rejectAd",
-    },
-    {
-      method: "GET",
-      path: "/ads/me/counts",
-      handler: "ad.meCounts",
-    },
-    {
-      method: "GET",
-      path: "/ads/me",
-      handler: "ad.me",
     },
     {
       method: "POST",
