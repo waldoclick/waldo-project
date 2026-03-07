@@ -1,4 +1,4 @@
-// Google Tag Manager plugin for Nuxt 4 with optimizations
+// Google Tag Manager plugin for Nuxt 4 with Consent Mode v2
 export default defineNuxtPlugin({
   name: "gtm",
   parallel: true, // Run in parallel with other plugins
@@ -13,26 +13,14 @@ export default defineNuxtPlugin({
       // Initialize dataLayer first
       window.dataLayer = window.dataLayer || [];
 
-      // GTM function with better error handling
-      function gtag(...args: any[]) {
-        try {
-          window.dataLayer.push(args);
-        } catch (error) {
-          console.warn("GTM error:", error);
-        }
-      }
-
-      // Configure GTM
-      gtag("js", new Date());
-      gtag("config", gtmId, {
-        // Optimize for Nuxt 4
-        send_page_view: false, // We'll handle this manually
-        custom_map: {
-          custom_parameter: "custom_value",
-        },
+      // Consent Mode v2: push default denial BEFORE GTM script loads
+      window.dataLayer.push({
+        consent: "default",
+        analytics_storage: "denied",
+        ad_storage: "denied",
       });
 
-      // Load GTM script with better error handling
+      // Load GTM script
       const script = document.createElement("script");
       script.async = true;
       script.src = `https://www.googletagmanager.com/gtm.js?id=${gtmId}`;
@@ -55,9 +43,10 @@ export default defineNuxtPlugin({
       // Track page views for SPA navigation
       const router = useRouter();
       router.afterEach((to) => {
-        gtag("config", gtmId, {
+        window.dataLayer.push({
+          event: "page_view",
           page_path: to.fullPath,
-          page_title: to.meta.title || document.title,
+          page_title: (to.meta.title as string | undefined) || document.title,
         });
       });
     }
