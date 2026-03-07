@@ -2,16 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.11
 milestone_name: GTM / GA4 Tracking Fix
-status: defining-requirements
-stopped_at: requirements defined — ready to plan Phase 31
-last_updated: "2026-03-07T21:00:00.000Z"
-last_activity: "2026-03-07 — v1.11 milestone started, requirements GTM-01 and GTM-02 defined"
+status: Phase 31 complete — v1.11 milestone complete
+stopped_at: Completed 31-01-PLAN.md
+last_updated: "2026-03-07T13:34:20Z"
+last_activity: 2026-03-07 — Phase 31 complete (GTM-01, GTM-02 done)
 progress:
   total_phases: 1
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 1
-  completed_plans: 0
-  percent: 0
+  completed_plans: 1
 ---
 
 # Project State
@@ -25,13 +24,13 @@ See: .planning/PROJECT.md (updated 2026-03-07)
 
 ## Current Position
 
-Phase: 31 — GTM Plugin + Consent Mode v2 (not started)
-Plan: none yet
-Status: Milestone v1.11 requirements defined — awaiting Phase 31 plan
-Last activity: 2026-03-07 — requirements defined (GTM-01, GTM-02)
+Phase: 31 — GTM Plugin + Consent Mode v2 (complete)
+Plan: 01 of 01 complete
+Status: v1.11 milestone complete — GTM-01 and GTM-02 implemented
+Last activity: 2026-03-07 — Phase 31 plan 01 executed, Consent Mode v2 implemented
 
 ```
-[__________] 0% — 0/1 phases complete
+[█████████░] 88% — 1/1 phases complete (v1.11)
 ```
 
 ## Accumulated Context
@@ -63,6 +62,8 @@ Key patterns established (carry forward):
 - [Phase 29]: useAsyncData default option eliminates T | undefined
 - [Phase 29]: typeCheck: true is now the permanent setting
 - [Phase 30]: getBuyerName wrapper pattern — formatFullName takes (firstname, lastname) separately; wrapper adds username/email fallback chain for OrderUser objects
+- [Phase 31-gtm-plugin-consent-mode-v2]: Removed gtag() shim entirely — all dataLayer interactions use direct window.dataLayer.push() with plain objects
+- [Phase 31-gtm-plugin-consent-mode-v2]: Consent Mode v2: push default denial before GTM script injection; LightboxCookies pushes update command (flat structure) on user acceptance
 
 ### v1.11 Requirements
 
@@ -77,7 +78,7 @@ Key patterns established (carry forward):
 
 ### Pending Todos
 
-- Phase 31 plan to be created
+None.
 
 ### Blockers/Concerns
 
@@ -85,6 +86,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-07T21:00:00.000Z
-Stopped at: v1.11 requirements defined — Phase 31 not yet planned
-Resume with: create Phase 31 plan in `.planning/phases/31-gtm-plugin-consent-mode-v2/`
+Last session: 2026-03-07T13:34:20Z
+Stopped at: Completed 31-01-PLAN.md
+Resume with: v1.11 complete — run `/gsd-complete-milestone` or `/gsd-verify-work`
