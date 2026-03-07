@@ -2,7 +2,6 @@ import UserCronService from "../src/cron/user.cron";
 import { AdService } from "../src/cron/ad.cron";
 import { CleanupService } from "../src/cron/cleanup.cron";
 import { BackupService } from "../src/cron/backup.cron";
-import FeaturedCronService from "../src/cron/featured.cron";
 
 export default {
   /**
@@ -82,26 +81,6 @@ export default {
     options: {
       rule: "0 3 * * *", // Every day at 3:00 AM (America/Santiago)
       // rule: "* * * * *", // Test - cada 1 minuto
-      tz: "America/Santiago",
-    },
-  },
-
-  /**
-   * Ensures every user has exactly 3 free available ad-featured-reservation records
-   * (price = 0, ad = null or ad.active = false). Creates missing slots for any user
-   * who has fewer than 3. Runs daily at 2:30 AM Santiago time (America/Santiago).
-   * Calls FeaturedCronService.restoreFreeFeaturedReservations() — see featured.cron.ts for full logic.
-   */
-  featuredCron: {
-    task: async ({ strapi }) => {
-      strapi.log.info("=== STARTING FREE FEATURED RESERVATION RESTORE ===");
-      const featuredCronService = new FeaturedCronService();
-      await featuredCronService.restoreFreeFeaturedReservations();
-      strapi.log.info("=== FREE FEATURED RESERVATION RESTORE COMPLETE ===");
-    },
-    options: {
-      rule: "30 2 * * *", // Every day at 2:30 AM (America/Santiago)
-      // rule: "* * * * *", // Test
       tz: "America/Santiago",
     },
   },
