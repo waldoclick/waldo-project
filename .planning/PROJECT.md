@@ -64,17 +64,15 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ El sitemap tiene `changefreq` y `priority` en entradas estáticas; función async `urls()` unificada — v1.15
 - ✓ `typeCheck: true` pasa con zero errores después de todos los cambios SEO — v1.15
 
+  - ✓ Todas las páginas dinámicas (home, anuncios listing, ad detail, perfil de usuario) tienen títulos ≤ 45 chars y descripciones 120–155 chars con vocabulario canónico — v1.16
+  - ✓ Todas las páginas estáticas (FAQ, contacto, sitemap, políticas) tienen descripciones en budget con `anuncios`, `activos industriales`, `Waldo.click®` — v1.16
+  - ✓ `generateSEODescription()` en `anuncios/index.vue` eliminó el contador dinámico `${totalAds}` — v1.16
+  - ✓ `sitemap.vue` corregido: `Waldo.click` → `Waldo.click®` en `$setSEO` y `$setStructuredData` — v1.16
+  - ✓ Páginas `login/facebook.vue`, `login/google.vue`, `dev.vue` tienen `noindex, nofollow` — v1.16
+
 ### Active
 
-**Milestone v1.16 — Website Meta Copy Audit**
-
-**Goal:** Audit and rewrite all `<title>` and `<meta description>` tags across apps/website — replace dynamic/counter-based values with static, keyword-rich copy that is semantically correct and consistent.
-
-**Target features:**
-- Inventory all page titles and meta descriptions (static and dynamic)
-- Replace any titles/descriptions that include counters or dynamic data (e.g. ad counts, user counts) with static copy
-- Ensure all copy uses semantically correct keywords for the classified ads domain (Chile)
-- Validate that every page has both a title and description defined
+*(No active milestone — planning next)*
 
 ## Previous State
 
@@ -212,6 +210,9 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
   | `config.public.baseUrl` for all absolute SEO URLs | Environment-agnostic; single source of truth already present in runtimeConfig — v1.15 | ✓ Good |
   | `useHead` key on JSON-LD script entry prevents accumulation | Nuxt merges `useHead` calls with matching keys; no custom dedup logic needed — v1.15 | ✓ Good |
   | `noindex` via `useSeoMeta` as defense-in-depth | robots.txt already disallows private paths; inline noindex survives misconfiguration or direct deep-links — v1.15 | ✓ Good |
+  | Static copy for all `$setSEO` calls — no dynamic counters | Counters like `${totalAds}` go stale on SSR; static keyword-rich copy is more durable and SERP-accurate — v1.16 | ✓ Good |
+  | Title budget enforced at ≤ 45 chars (excluding `\| Waldo.click®` suffix) | `@nuxtjs/seo` appends the suffix automatically; including it manually causes double-brand in rendered title — v1.16 | ✓ Good |
+  | `$setStructuredData` description always mirrors `$setSEO` description | Structured data must be consistent with visible meta; kept as verbatim copy in same edit — v1.16 | ✓ Good |
 
 ## Future Requirements
 
@@ -228,4 +229,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-07 after v1.16 milestone started (Website Meta Copy Audit)*
+*Last updated: 2026-03-07 after v1.16 milestone — Website Meta Copy Audit*

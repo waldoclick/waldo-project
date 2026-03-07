@@ -1,5 +1,14 @@
 # Milestones
 
+## v1.16 Website Meta Copy Audit (Shipped: 2026-03-07)
+
+**Phases completed:** 3 phases, 4 plans, 4 tasks
+
+**Key accomplishments:**
+- (none recorded)
+
+---
+
 ## v1.15 Website SEO Audit (Shipped: 2026-03-07)
 
 **Phases completed:** 1 phase (35), 3 plans

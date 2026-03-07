@@ -534,6 +534,45 @@
 
 ---
 
+## Milestone: v1.16 — Website Meta Copy Audit
+
+**Shipped:** 2026-03-07
+**Phases:** 3 (36–38) | **Plans:** 4
+
+### What Was Built
+- 4 SEO bug fixes (Phase 36): double-suffix titles eliminated in `anuncios/[slug].vue` and `[slug].vue`; SSR-safe `$setSEO` placement fixed in `anuncios/index.vue`; `noindex, nofollow` added to `packs/index.vue`, `login/facebook.vue`, `login/google.vue`, and `dev.vue`; `descPart` leading-space guard eliminates double-space when ad description is null
+- Canonical vocabulary enforced across all 4 dynamic pages (Phase 37): `anuncios` / `activos industriales` / `Waldo.click®` replace all forbidden terms (`avisos`, `maquinaria industrial`, `clasificados`); all dynamic `$setSEO` titles ≤ 45 chars; all descriptions 120–155 chars; stale `${totalAds}` counter removed
+- 4 static pages rewritten with distinct, keyword-rich SERP copy (Phase 38): FAQ, Contact, Sitemap, Privacy Policy all carry canonical vocabulary, correct budgets, and unique title+description combinations
+- Budget-aware slice formula `(155 - prefix.length - suffix.length - 4)` for ad descriptions — replaces hardcoded 150-char limit, enabling exact budget calculation regardless of ad name length
+
+### What Worked
+- Phase 36 (bug fixes) as prerequisite for Phases 37–38 ensured vocabulary conventions were confirmed before copy was authored — no copy rework needed after bug fixes
+- Two-plan split in Phase 38 (FAQ+Contact vs. Sitemap+Privacy) gave clean execution boundaries with no cross-plan bleed
+- `descPrefix`/`descSuffix` pattern for dynamic ad pages isolates variable content from fixed brand suffix — budget math is exact and maintainable
+
+### What Was Inefficient
+- STATE.md carried stale data from milestone start (milestone shown as `v1.1`, status `ROADMAP_DEFINED`) through the entire execution cycle — it was never updated to reflect phase progress. STATE.md should be updated at each phase completion, not only at milestone close.
+- The `gsd-tools milestone complete` CLI archives ROADMAP and REQUIREMENTS correctly but does not zero-out STATE.md — manual cleanup is always required at milestone close.
+
+### Patterns Established
+- `descPart` leading-space variable pattern: `const descPart = ad.description ? ` ${ad.description.slice(...)}` : ''` — eliminates double-space when dynamic content is null
+- `descPrefix`/`descSuffix` split for budget-aware ad description slicing: `slice(0, 155 - descPrefix.length - descSuffix.length - 4)`
+- SSR-safe `$setSEO` must be called at top-level synchronous scope in a page — not inside `watch()` only (watch doesn't fire on first SSR pass)
+- `noindex, nofollow` via `useSeoMeta` is a per-page concern: apply to every non-indexable page, not just categories
+
+### Key Lessons
+1. **Fix structural bugs before authoring copy.** Phase 36 caught title double-suffix and SSR deferral bugs that would have made Phase 37 copy partially invisible to crawlers. Prerequisite phases pay off immediately.
+2. **Budget-aware formulas beat hardcoded limits.** The `descPrefix.length + descSuffix.length` formula makes description budgets self-correcting as surrounding copy changes — hardcoded slice offsets require re-auditing every time surrounding text is edited.
+3. **STATE.md is the developer's checkpoint, not just the agent's.** A stale STATE.md (wrong milestone, 0% progress) is a silent correctness hazard for any agent resuming mid-session. Update it at each phase boundary, not only at open and close.
+4. **Canonical vocabulary enforcement is a constraint, not a preference.** Forbidden terms (`avisos`, `maquinaria industrial`, `clasificados`) were found on high-traffic pages. A vocabulary audit as a dedicated milestone phase (not a review item in a larger milestone) catches all occurrences before they compound.
+
+### Cost Observations
+- Model mix: ~100% sonnet (balanced profile)
+- Sessions: 1
+- Notable: 3-phase milestone with tight scope — all 12 requirements completed in a single session. Phase 36 bug fixes were the highest-leverage work (SSR correctness + structural title fixes).
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -556,6 +595,7 @@
 | v1.13 | 1 | 1 | GTM hand-rolled plugin replaced with @saslavik/nuxt-gtm module |
 | v1.14 | 1 | 1 | Dashboard GTM module installed; website + dashboard now consistent |
 | v1.15 | 1 | 3 | Website SEO audit: OG/Twitter tags, 74+ URL replacements, noindex sweep, JSON-LD dedup, sitemap restructure |
+| v1.16 | 3 | 4 | Website meta copy audit: 4 SEO bug fixes, canonical vocabulary enforced across all public pages, SERP copy rewritten |
 
 ### Cumulative Quality
 
@@ -577,6 +617,7 @@
 | v1.13 | utils (100% coverage) | true | 1 (@saslavik/nuxt-gtm) |
 | v1.14 | utils (100% coverage) | true | 0 |
 | v1.15 | utils (100% coverage) | true | 0 |
+| v1.16 | utils (100% coverage) | true | 0 |
 
 ### Top Lessons (Verified Across Milestones)
 
@@ -593,3 +634,4 @@
 11. Rename + update imports atomically — a file rename without updating imports leaves the codebase silently broken
 12. Before implementing a new cron, audit existing ones for overlapping responsibility — duplicate crons waste a full implementation cycle
 13. Verify the Nuxt ecosystem before hand-rolling a plugin — a maintained Nuxt 4-compatible module exists for most common integrations (GTM, analytics, etc.)
+14. Fix structural/SSR bugs before authoring copy — a title double-suffix or SSR deferral bug makes copy partially invisible to crawlers regardless of content quality
