@@ -20,21 +20,17 @@
 
 ## v1.8 Free Featured Reservation Guarantee (Shipped: 2026-03-07)
 
-**Phases completed:** 1 phases, 1 plans, 0 tasks
+**Phases completed:** 1 phase (24), 1 plan
+**Files changed:** ~6 source files (cron-tasks, cron-runner, ad-free-reservation-restore, featured.cron reverted)
+**Timeline:** 2026-03-06 → 2026-03-07
+**Requirements:** 3/3 complete ✓
 
 **Key accomplishments:**
-- (none recorded)
+1. **ad-free-reservation-restore Logic Fix**: Reservations stay permanently linked to expired ads (history); `restoreUserFreeReservations` counts pool as `ad=null` OR `ad.active=true` (not `remaining_days>0`); simplified to single responsibility — guarantee 3 free reservations per user.
+2. **Parallel Batch Processing**: `Promise.all` in batches of 50 users to avoid DB connection pool exhaustion; scalable cron pattern established.
+3. **cron-runner API committed**: Controller + routes for manual cron execution via `POST /api/cron-runner/:name`; all 4 crons registerable.
 
----
-
-## v1.8 Free Featured Reservation Guarantee (Started: 2026-03-06)
-
-**Status:** In progress — Phase 24
-
-**Target features:**
-- `featured.cron.ts` — daily cron guaranteeing every user has 3 free available featured reservation slots
-- Commit `cron-runner` API (controller + routes) already authored
-- Register `featuredCron` in `cron-tasks.ts` at 2:30 AM America/Santiago
+**Archive:** `.planning/milestones/v1.8-ROADMAP.md` | `.planning/milestones/v1.8-REQUIREMENTS.md`
 
 ---
 
@@ -55,12 +51,19 @@
 
 ---
 
-## v1.6 v1.6 (Shipped: 2026-03-06)
+## v1.6 Website API Optimization (Shipped: 2026-03-06)
 
-**Phases completed:** 2 phases, 3 plans, 0 tasks
+**Phases completed:** 2 phases (18-19), 3 plans
+**Files changed:** ~10 source files (pages, stores, new Strapi endpoint)
+**Timeline:** 2026-03-06
+**Requirements:** 6/6 complete ✓
 
 **Key accomplishments:**
-- (none recorded)
+1. **Page Double-Fetch Fixes**: Fixed `preguntas-frecuentes.vue` (2 calls → 1); added `GET /api/ads/me/counts` Strapi endpoint; `mis-anuncios.vue` reduced from 6 API calls → 2 using aggregate endpoint.
+2. **Store Cache Guards**: 30-min timestamp-based cache guards added to `packs.store.ts`, `conditions.store.ts`, `regions.store.ts`; `packs.store` gained localStorage `persist` to survive page refresh.
+3. **Component Cleanup**: Removed redundant `loadCommunes()` call from `FormCreateThree.vue` — communes already loaded by plugin.
+
+**Archive:** `.planning/milestones/v1.6-ROADMAP.md` | `.planning/milestones/v1.6-REQUIREMENTS.md`
 
 ---
 
