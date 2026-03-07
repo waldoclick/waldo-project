@@ -10,7 +10,6 @@
 import { Context } from "koa";
 
 const CRON_NAME_MAP: Record<string, string> = {
-  "featured-cron": "featuredCron",
   "user-cron": "userCron",
   "ad-cron": "adCron",
   "cleanup-cron": "cleanupCron",
