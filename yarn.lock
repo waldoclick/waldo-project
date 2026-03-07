@@ -1671,6 +1671,20 @@
   resolved "https://registry.npmjs.org/@gar/promisify/-/promisify-1.1.3.tgz"
   integrity sha512-k2Ty1JcVojjJFwrg/ThKi2ujJ7XNLYaFGNB/bWT9wGR+oSMJHMa5w+CUq6p/pVrKeNNgA7pCqEcjSnHVoqJQFw==
 
+"@gtm-support/core@^2.0.0":
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/@gtm-support/core/-/core-2.3.1.tgz#e802f1d60256583d468cf4ccef391f85e33c766d"
+  integrity sha512-eD0hndQjhgKm5f/7IA9fZYujmHiVMY+fnYv4mdZSmz5XJQlS4TiTmpdZx2l7I2A9rI9J6Ysz8LpXYYNo/Xq4LQ==
+
+"@gtm-support/vue-gtm@^2.0.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@gtm-support/vue-gtm/-/vue-gtm-2.2.0.tgz#b6b17da2f27ff186aae731c8c32fdcb8a6738f25"
+  integrity sha512-7nhBTRkTG0mD+7r7JvNalJz++YwszZk0oP1HIY6fCgz6wNKxT6LuiXCqdPrZmNPe/WbPIKuqxGZN5s+i6NZqow==
+  dependencies:
+    "@gtm-support/core" "^2.0.0"
+  optionalDependencies:
+    vue-router ">= 4.1.0 < 5.0.0"
+
 "@hapi/bourne@^3.0.0":
   version "3.0.0"
   resolved "https://registry.npmjs.org/@hapi/bourne/-/bourne-3.0.0.tgz"
@@ -5088,6 +5102,15 @@
     "@types/argparse" "1.0.38"
     argparse "~1.0.9"
     string-argv "~0.3.1"
+
+"@saslavik/nuxt-gtm@0.1.3":
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/@saslavik/nuxt-gtm/-/nuxt-gtm-0.1.3.tgz#4ff3c46515a03f3f417b79438c32bea0d48ffc57"
+  integrity sha512-tL0k9R/1H0JhOCa9gJInaKWUAym4Y+aIBRdUF+r1xcjvTkcGaJpVERescA+TPhlOof7mjp02xAzrR0vt9TLy7g==
+  dependencies:
+    "@gtm-support/vue-gtm" "^2.0.0"
+    defu "^6.1.2"
+    sirv "^2.0.3"
 
 "@sec-ant/readable-stream@^0.4.1":
   version "0.4.1"
@@ -14472,10 +14495,10 @@ jose@^4.14.6:
   resolved "https://registry.npmjs.org/jose/-/jose-4.15.9.tgz"
   integrity sha512-1vUQX+IdDMVPj4k8kOxgUqlcK518yluMuGZwqlr44FS1ppZB/5GWh4rZG89erpOBOJjU/OBsnCVFfapsRz6nEA==
 
-jpeg-js@^0.3.4:
-  version "0.3.7"
-  resolved "https://registry.yarnpkg.com/jpeg-js/-/jpeg-js-0.3.7.tgz#471a89d06011640592d314158608690172b1028d"
-  integrity sha512-9IXdWudL61npZjvLuVe/ktHiA41iE8qFyLB+4VDTblEsWBzeg8WQTlktdUK4CdncUqtUgUg0bbOmTE2bKBKaBQ==
+jpeg-js@^0.3.4, jpeg-js@^0.4.4:
+  version "0.4.4"
+  resolved "https://registry.yarnpkg.com/jpeg-js/-/jpeg-js-0.4.4.tgz#a9f1c6f1f9f0fa80cdb3484ed9635054d28936aa"
+  integrity sha512-WZzeDOEtTOBK4Mdsar0IqEU5sMr3vSV2RqkAIzUEV2BHnUfKGyswWFPFwK5EeDo93K3FohSHbLAjj0s1Wzd+dg==
 
 js-beautify@^1.14.9, js-beautify@^1.6.14:
   version "1.15.4"
@@ -16224,12 +16247,7 @@ minimatch@^9.0.0, minimatch@^9.0.3, minimatch@^9.0.4, minimatch@^9.0.5:
   dependencies:
     "@isaacs/brace-expansion" "^5.0.0"
 
-minimist@0.0.8:
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/minimist/-/minimist-0.0.8.tgz#857fcabfc3397d2625b8228262e86aa7a011b05d"
-  integrity sha512-miQKw5Hv4NS1Psg2517mV4e4dYNaO3++hjAvLOAzKqZ61rH8NS1SK+vbfBWZ5PY/Me/bEWhUwqMghEW5Fb9T7Q==
-
-minimist@^1.2.0, minimist@^1.2.3, minimist@^1.2.5, minimist@^1.2.8:
+minimist@0.0.8, minimist@^1.2.0, minimist@^1.2.3, minimist@^1.2.5, minimist@^1.2.8:
   version "1.2.8"
   resolved "https://registry.npmjs.org/minimist/-/minimist-1.2.8.tgz"
   integrity sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==
@@ -17465,7 +17483,7 @@ obug@^2.0.0:
   resolved "https://registry.npmjs.org/obug/-/obug-2.1.1.tgz"
   integrity sha512-uTqF9MuPraAQ+IsnPf366RG4cP9RtUi7MLO1N3KEc+wb0a6yKpeL0lmk2IB1jY5KHPAlTc6T/JRdC/YqxHNwkQ==
 
-ofetch@^1.3.3, ofetch@^1.4.1, ofetch@^1.5.0, ofetch@^1.5.1:
+ofetch@^1.3.3, ofetch@^1.4.0, ofetch@^1.4.1, ofetch@^1.5.0, ofetch@^1.5.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/ofetch/-/ofetch-1.5.1.tgz#5c43cc56e03398b273014957060344254505c5c7"
   integrity sha512-2W4oUZlVaqAPAil6FUg/difl6YhqhUR7x2eZY4bQCko22UXg3hptq9KLQdqFClV+Wu85UX7hNtdGTngi/1BxcA==
@@ -18209,12 +18227,7 @@ pgpass@1.0.5:
   dependencies:
     split2 "^4.1.0"
 
-phin@^2.9.1:
-  version "2.9.3"
-  resolved "https://registry.yarnpkg.com/phin/-/phin-2.9.3.tgz#f9b6ac10a035636fb65dfc576aaaa17b8743125c"
-  integrity sha512-CzFr90qM24ju5f88quFC/6qohjC144rehe5n6DH900lgXmUe86+xCKc10ev56gRKC4/BkHUoG4uSiQgBiIXwDA==
-
-phin@^3.7.1:
+phin@^2.9.1, phin@^3.7.1:
   version "3.7.1"
   resolved "https://registry.npmjs.org/phin/-/phin-3.7.1.tgz"
   integrity sha512-GEazpTWwTZaEQ9RhL7Nyz0WwqilbqgLahDM3D0hxWwmVDI52nXEybHqiN6/elwpkJBhcuj+WbBu+QfT0uhPGfQ==
@@ -22351,6 +22364,13 @@ vue-router@4.6.3, vue-router@^4.5.1, vue-router@^4.6.3, vue-router@latest:
   version "4.6.3"
   resolved "https://registry.npmjs.org/vue-router/-/vue-router-4.6.3.tgz"
   integrity sha512-ARBedLm9YlbvQomnmq91Os7ck6efydTSpRP3nuOKCvgJOHNrhRoJDSKtee8kcL1Vf7nz6U+PMBL+hTvR3bTVQg==
+  dependencies:
+    "@vue/devtools-api" "^6.6.4"
+
+"vue-router@>= 4.1.0 < 5.0.0":
+  version "4.6.4"
+  resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-4.6.4.tgz#a0a9cb9ef811a106d249e4bb9313d286718020d8"
+  integrity sha512-Hz9q5sa33Yhduglwz6g9skT8OBPii+4bFn88w6J+J4MfEo4KRRpmiNG/hHHkdbRFlLBOqxN8y8gf2Fb0MTUgVg==
   dependencies:
     "@vue/devtools-api" "^6.6.4"
 

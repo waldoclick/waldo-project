@@ -14,7 +14,7 @@ export const useAppConfiguration = () => {
 
     // Features
     features: {
-      gtm: !!config.public.gtmId,
+      gtm: !!config.public.gtm?.id,
       sentry: !!config.public.sentryDsn,
       recaptcha: !!config.public.recaptchaSiteKey,
       logRocket: !!config.public.logRocketAppId,
