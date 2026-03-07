@@ -65,21 +65,13 @@ export default class UserCronService {
       // their free reservation pool to the guaranteed minimum of 3.
       for (const [userId, { user, ads }] of userAdMap) {
         try {
-          // Deactivate every expired ad for this user. Each ad must be set inactive
-          // and its reservation unlinked so it re-enters the available pool.
+          // Deactivate every expired ad for this user. The ad is set inactive but
+          // its reservation is intentionally left linked — it stays as permanent history.
+          // restoreUserFreeReservations will create a new free reservation to replace it.
           for (const ad of ads) {
             await strapi.entityService.update("api::ad.ad", ad.id, {
               data: { active: false },
             });
-
-            // Unlink the reservation from the ad so it becomes available again.
-            await strapi.entityService.update(
-              "api::ad-reservation.ad-reservation",
-              ad.ad_reservation.id,
-              {
-                data: { ad: null },
-              }
-            );
 
             logger.info("Expired free ad deactivated", {
               adId: ad.id,
@@ -140,12 +132,18 @@ export default class UserCronService {
   }
 
   /**
-   * Restore free reservations for a specific user
-   * Ensures user always has 3 free reservations available
+   * Restore free reservations for a specific user.
+   * Ensures the user always has 3 free reservations in the "active pool":
+   *   - available: price=0 reservations with no ad linked (ad = null)
+   *   - in-use:    price=0 reservations linked to an ad that is still active (ad.active = true)
+   *
+   * Reservations linked to an expired ad (ad.active = false) are permanent history
+   * and are NOT counted — a new free reservation must be created to replace them.
    */
   private async restoreUserFreeReservations(userId: string) {
     try {
-      // Count this user's current free reservations: available (ad = null) and active (ad has remaining days > 0).
+      // Count this user's current free reservations: available (ad = null) and
+      // in active use (linked ad has active = true).
       // Note: { ad: { id: { $null: true } } } is the correct Strapi v5 entityService syntax
       // for a null-relation check — plain { ad: null } silently returns zero results.
       const currentReservations = (await strapi.entityService.findMany(
@@ -155,12 +153,12 @@ export default class UserCronService {
             user: { id: { $eq: userId } },
             price: 0,
             $or: [
-              { ad: { id: { $null: true } } }, // Available
+              { ad: { id: { $null: true } } }, // Available (not yet used)
               {
                 ad: {
-                  remaining_days: { $gt: 0 },
+                  active: { $eq: true },
                 },
-              }, // Active
+              }, // In use by an active ad
             ],
           },
           populate: {
@@ -173,7 +171,7 @@ export default class UserCronService {
         (r) => !r.ad
       ).length;
       const activeReservations = currentReservations.filter(
-        (r) => r.ad && r.ad.remaining_days > 0
+        (r) => r.ad && r.ad.active === true
       ).length;
       const totalReservations = availableReservations + activeReservations;
 
