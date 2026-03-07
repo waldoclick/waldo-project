@@ -77,7 +77,7 @@ watch([currentFilter, currentPage], () => {
   loadAds();
 });
 
-useAsyncData(async () => {
+await useAsyncData("mis-anuncios", async () => {
   const counts = await userStore.loadUserAdCounts();
   // Populate all tab counts at once from the single response
   for (const tab of tabs.value) {

@@ -58,7 +58,7 @@ const handlePageChange = (page: number) => {
   loadOrders();
 };
 
-useAsyncData(async () => {
+await useAsyncData("mis-ordenes", async () => {
   await loadOrders();
 });
 
