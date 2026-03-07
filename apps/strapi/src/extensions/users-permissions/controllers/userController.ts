@@ -158,6 +158,16 @@ export const getUserDataById = async (ctx) => {
 };
 
 /**
+ * Parses a sort string like "createdAt:desc" into { createdAt: "desc" }
+ * as required by strapi.db.query orderBy.
+ */
+const parseSortParam = (sort?: string): Record<string, "asc" | "desc"> => {
+  if (!sort) return { createdAt: "desc" };
+  const [field, direction] = sort.split(":");
+  return { [field]: direction === "asc" ? "asc" : "desc" };
+};
+
+/**
  * Retrieves users with server-enforced Authenticated role filter, pagination, sort, and client filters.
  * Does NOT call getDetailedUserData — no N+1 query problem.
  * @param {Object} ctx - The Koa context object.
@@ -195,7 +205,7 @@ export const getUserDataWithFilters = async (ctx) => {
       },
       offset: (page - 1) * pageSize,
       limit: pageSize,
-      orderBy: (sort as string) || { createdAt: "desc" },
+      orderBy: parseSortParam(sort as string | undefined),
     });
 
   // Sanitize sensitive fields without calling getDetailedUserData (avoids N+1)

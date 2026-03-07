@@ -45,7 +45,9 @@ describe("getUserDataWithFilters", () => {
       };
 
       // Act
-      await getUserDataWithFilters(ctx as unknown as Parameters<typeof getUserDataWithFilters>[0]);
+      await getUserDataWithFilters(
+        ctx as unknown as Parameters<typeof getUserDataWithFilters>[0]
+      );
 
       // Assert: role filter enforced server-side
       expect(mockFindWithCount).toHaveBeenCalledWith(
@@ -72,7 +74,9 @@ describe("getUserDataWithFilters", () => {
       };
 
       // Act
-      await getUserDataWithFilters(ctx as unknown as Parameters<typeof getUserDataWithFilters>[0]);
+      await getUserDataWithFilters(
+        ctx as unknown as Parameters<typeof getUserDataWithFilters>[0]
+      );
 
       // Assert: offset = (2-1)*10 = 10, limit = 10
       expect(mockFindWithCount).toHaveBeenCalledWith(
@@ -84,7 +88,14 @@ describe("getUserDataWithFilters", () => {
 
       // Assert: meta.pagination reflects correct values
       const body = ctx.body as unknown as {
-        meta: { pagination: { page: number; pageSize: number; pageCount: number; total: number } };
+        meta: {
+          pagination: {
+            page: number;
+            pageSize: number;
+            pageCount: number;
+            total: number;
+          };
+        };
       };
       expect(body.meta.pagination).toEqual({
         page: 2,
@@ -108,12 +119,14 @@ describe("getUserDataWithFilters", () => {
       };
 
       // Act
-      await getUserDataWithFilters(ctx as unknown as Parameters<typeof getUserDataWithFilters>[0]);
+      await getUserDataWithFilters(
+        ctx as unknown as Parameters<typeof getUserDataWithFilters>[0]
+      );
 
-      // Assert: sort forwarded as orderBy
+      // Assert: sort parsed into { field: direction } object for strapi.db.query
       expect(mockFindWithCount).toHaveBeenCalledWith(
         expect.objectContaining({
-          orderBy: "createdAt:asc",
+          orderBy: { createdAt: "asc" },
         })
       );
 
