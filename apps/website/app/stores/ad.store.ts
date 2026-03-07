@@ -7,7 +7,7 @@ import type {
   AdState,
 } from "@/types/ad";
 
-interface AnalyticsItem {
+export interface AnalyticsItem {
   item_id?: number | string;
   item_name: string;
   item_category: string;
@@ -46,7 +46,7 @@ const initialState = structuredClone({
     currency: "CLP",
   },
   analytics: {
-    view_item_list: [] as any[],
+    view_item_list: [] as AnalyticsItem[],
     pack_selected: null as AnalyticsItem | null,
     featured_selected: null as AnalyticsItem | null,
   },
@@ -181,7 +181,7 @@ export const useAdStore = defineStore("ad", {
       this.ad.price = price;
     },
 
-    updateViewItemList(items: any[]) {
+    updateViewItemList(items: AnalyticsItem[]) {
       this.analytics.view_item_list = items;
     },
 
