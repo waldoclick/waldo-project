@@ -14,6 +14,7 @@
 <script setup lang="ts">
 // Define SEO
 const { $setSEO, $setStructuredData } = useNuxtApp();
+const config = useRuntimeConfig();
 
 import HeaderDefault from "@/components/HeaderDefault.vue";
 import HeroFake from "@/components/HeroFake.vue";
@@ -26,15 +27,16 @@ $setSEO({
   title: "Error al Crear Anuncio",
   description:
     "Hubo un problema al intentar crear tu anuncio en Waldo.click®. Por favor, revisa los datos e inténtalo nuevamente.",
-  imageUrl: "https://waldo.click/share.jpg",
-  url: "https://waldo.click/error-crear-anuncio",
+  imageUrl: `${config.public.baseUrl}/share.jpg`,
+  url: `${config.public.baseUrl}/error-crear-anuncio`,
 });
+useSeoMeta({ robots: "noindex, nofollow" });
 
 $setStructuredData({
   "@context": "https://schema.org",
   "@type": "WebPage",
   name: "Error al Crear Anuncio - Waldo.click®",
-  url: "https://waldo.click/error-crear-anuncio",
+  url: `${config.public.baseUrl}/error-crear-anuncio`,
   description:
     "Hubo un problema al intentar crear tu anuncio en Waldo.click®. Por favor, revisa los datos e inténtalo nuevamente.",
 });

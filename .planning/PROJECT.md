@@ -54,12 +54,28 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ Dead import `useAdAnalytics` eliminado de `CreateAd.vue`; overcounting de `step_view` corregido; eventos `redirect_to_payment` y `purchase` (guarded) implementados; `DataLayerEvent` exportado y `window.dataLayer` tipado — v1.12
 - ✓ `gtm.client.ts` eliminado; `@saslavik/nuxt-gtm@0.1.3` instalado y configurado con `enableRouterSync: true`; GA4 Realtime confirmado funcionando — v1.13
 - ✓ `@saslavik/nuxt-gtm@0.1.3` instalado en `apps/dashboard`; módulo configurado con `enableRouterSync: true`; `runtimeConfig.public.gtm.id` reemplaza campo plano `gtmId`; plugin hand-rolled eliminado — v1.14
+- ✓ `$setSEO` plugin emite el set completo de OG + Twitter Card tags (`ogTitle`, `ogDescription`, `ogUrl`, `ogType`, `twitterCard`, `twitterTitle`, `twitterDescription`) — v1.15
+- ✓ Todos los `https://waldo.click` hardcodeados en páginas reemplazados con `config.public.baseUrl` — v1.15
+- ✓ `packs/index.vue`, `packs/comprar.vue`, `cuenta/mis-ordenes.vue`, `cuenta/mis-anuncios.vue` tienen `$setSEO` + `$setStructuredData` — v1.15
+- ✓ La página de perfil de usuario `[slug].vue` tiene SEO y datos estructurados restaurados (`ProfilePage` + `Person` schema) — v1.15
+- ✓ La home `index.vue` tiene `WebSite` + `Organization` JSON-LD — v1.15
+- ✓ `microdata.ts` reemplaza el JSON-LD en lugar de acumularlo en cada navegación SPA — v1.15
+- ✓ Páginas privadas/transaccionales declaran `noindex, nofollow` vía `useSeoMeta` (18 páginas) — v1.15
+- ✓ El sitemap tiene `changefreq` y `priority` en entradas estáticas; función async `urls()` unificada — v1.15
+- ✓ `typeCheck: true` pasa con zero errores después de todos los cambios SEO — v1.15
 
 ### Active
 
-None — v1.14 shipped. Next milestone to be defined.
+(None — see Future Requirements for next milestone candidates)
 
 ## Previous State
+
+<details>
+<summary>v1.15 Website SEO Audit (shipped 2026-03-07)</summary>
+
+- **Phase 35 — Website SEO Audit**: Extended `$setSEO` plugin to emit full OG + Twitter Card tag set; replaced 74+ hardcoded `https://waldo.click` URLs with `config.public.baseUrl`; added missing SEO to `packs/index.vue`, `mis-ordenes.vue`, `mis-anuncios.vue`; restored user profile page SEO with `ProfilePage` + `Person` schema; added `WebSite` + `Organization` JSON-LD to home page; fixed `$setStructuredData` accumulation bug; added `noindex` to private/transactional pages; improved sitemap static entries with `changefreq` and `priority`.
+
+</details>
 
 <details>
 <summary>v1.14 GTM Module: Dashboard (shipped 2026-03-07)</summary>
@@ -128,8 +144,9 @@ None — v1.14 shipped. Next milestone to be defined.
 - Website (apps/website): Nuxt 4, Pinia, @nuxtjs/strapi v2; 29 páginas lang="ts", 14 stores con persist audit, typeCheck: true (since v1.9)
 - 4 cron jobs activos en Strapi: `adCron` (1 AM), `userCron` (2 AM), `backupCron` (3 AM), `cleanupCron` (domingo 4 AM)
 - `cron-runner` API disponible en `POST /api/cron-runner/:name` para ejecución manual de cualquier cron
-- GTM handled via `@saslavik/nuxt-gtm@0.1.3` module in both website (since v1.13) and dashboard (since v1.14) — `enableRouterSync: true` fires page_view on every SPA route change; GTM ID from `runtimeConfig.public.gtm.id`; hand-rolled `gtm.client.ts` plugins deleted in both apps
+  - GTM handled via `@saslavik/nuxt-gtm@0.1.3` module in both website (since v1.13) and dashboard (since v1.14) — `enableRouterSync: true` fires page_view on every SPA route change; GTM ID from `runtimeConfig.public.gtm.id`; hand-rolled `gtm.client.ts` plugins deleted in both apps
 - Ad creation analytics (`useAdAnalytics.ts`): all events tracked — view_item_list, step_view (exact, no overcounting), begin_checkout, redirect_to_payment, purchase (guarded); `DataLayerEvent` fully typed in `window.d.ts` (since v1.12)
+- SEO infrastructure (v1.15): `$setSEO` plugin in `seo.ts` emits full OG + Twitter Card set; `$setStructuredData` in `microdata.ts` with key-based deduplication; `@nuxtjs/seo` provides sitemap (with static entries having `changefreq`/`priority`), robots, OG defaults; all page URLs use `config.public.baseUrl`; 18 private pages have `noindex`; home has WebSite + Organization JSON-LD; user profile `[slug].vue` has ProfilePage + Person schema
 
 ## Constraints
 
@@ -183,6 +200,10 @@ None — v1.14 shipped. Next milestone to be defined.
   | `@saslavik/nuxt-gtm` over `@nuxtjs/gtm` or `@zadigetvoltaire/nuxt-gtm` | `@nuxtjs/gtm` is Nuxt 2 only; `@zadigetvoltaire/nuxt-gtm` not Nuxt 4 compatible; `@saslavik` is the only maintained Nuxt 4 option — v1.13 | ✓ Good |
   | GTM module `enableRouterSync: true` replaces manual `router.afterEach` push | Module handles SPA page_view natively; eliminates hand-rolled plugin entirely — v1.13 | ✓ Good |
   | `runtimeConfig.public.gtm.id` replaces `gtmId` flat field | Nested object keeps GTM config grouped; optional chaining `?.id` in feature flag avoids runtime errors if not set — v1.13 | ✓ Good |
+  | `$setSEO` extended to emit full OG + Twitter tag set | `useSeoMeta` is the canonical Nuxt 4 way; deriving `ogTitle` from `title` prevents call-site changes — v1.15 | ✓ Good |
+  | `config.public.baseUrl` for all absolute SEO URLs | Environment-agnostic; single source of truth already present in runtimeConfig — v1.15 | ✓ Good |
+  | `useHead` key on JSON-LD script entry prevents accumulation | Nuxt merges `useHead` calls with matching keys; no custom dedup logic needed — v1.15 | ✓ Good |
+  | `noindex` via `useSeoMeta` as defense-in-depth | robots.txt already disallows private paths; inline noindex survives misconfiguration or direct deep-links — v1.15 | ✓ Good |
 
 ## Future Requirements
 
@@ -199,4 +220,4 @@ None — v1.14 shipped. Next milestone to be defined.
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-07 after v1.14 milestone shipped (GTM Module: Dashboard)*
+*Last updated: 2026-03-07 after v1.15 milestone shipped (Website SEO Audit)*

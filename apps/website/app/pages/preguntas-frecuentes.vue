@@ -11,6 +11,7 @@
 <script setup lang="ts">
 // Define SEO
 const { $setSEO, $setStructuredData } = useNuxtApp();
+const config = useRuntimeConfig();
 
 // Components
 import FaqDefault from "@/components/FaqDefault.vue";
@@ -38,8 +39,8 @@ $setSEO({
   title: "Preguntas Frecuentes",
   description:
     "Resuelve tus dudas sobre cómo funciona Waldo.click®, la plataforma para comprar y vender activos industriales.",
-  imageUrl: "https://waldo.click/share.jpg",
-  url: "https://waldo.click/preguntas-frecuentes",
+  imageUrl: `${config.public.baseUrl}/share.jpg`,
+  url: `${config.public.baseUrl}/preguntas-frecuentes`,
 });
 
 $setStructuredData({
@@ -48,7 +49,7 @@ $setStructuredData({
   name: "Preguntas Frecuentes",
   description:
     "Resuelve tus dudas sobre cómo funciona Waldo.click®, la plataforma para comprar y vender activos industriales.",
-  url: "https://waldo.click/preguntas-frecuentes",
+  url: `${config.public.baseUrl}/preguntas-frecuentes`,
   mainEntity: (faqs.value || []).map((faq) => ({
     "@type": "Question",
     name: faq.title,

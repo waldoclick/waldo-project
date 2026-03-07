@@ -16,6 +16,7 @@
 
 <script setup lang="ts">
 const { $setSEO, $setStructuredData } = useNuxtApp();
+const config = useRuntimeConfig();
 
 import HeaderDefault from "@/components/HeaderDefault.vue";
 import HeroFake from "@/components/HeroFake.vue";
@@ -26,15 +27,16 @@ $setSEO({
   title: "Error en el Pago",
   description:
     "Hubo un problema al procesar tu pago. Por favor, intenta nuevamente.",
-  imageUrl: "https://waldo.click/share.jpg",
-  url: "https://waldo.click/packs/error",
+  imageUrl: `${config.public.baseUrl}/share.jpg`,
+  url: `${config.public.baseUrl}/packs/error`,
 });
+useSeoMeta({ robots: "noindex, nofollow" });
 
 $setStructuredData({
   "@context": "https://schema.org",
   "@type": "WebPage",
   name: "Error en el Pago - Waldo.click®",
-  url: "https://waldo.click/packs/error",
+  url: `${config.public.baseUrl}/packs/error`,
   description:
     "Hubo un problema al procesar tu pago. Por favor, intenta nuevamente.",
 });

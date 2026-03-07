@@ -56,6 +56,7 @@ const { $setSEO, $setStructuredData } = useNuxtApp() as unknown as {
   }) => void;
   $setStructuredData: (data: object) => void;
 };
+const config = useRuntimeConfig();
 
 import { ref, watch, computed } from "vue";
 import { useRoute } from "nuxt/app";
@@ -321,8 +322,8 @@ watch(
       $setSEO({
         title: generateSEOTitle(),
         description: generateSEODescription(),
-        imageUrl: "https://waldo.click/share.jpg",
-        url: `https://waldo.click${route.fullPath}`,
+        imageUrl: `${config.public.baseUrl}/share.jpg`,
+        url: `${config.public.baseUrl}${route.fullPath}`,
       });
 
       $setStructuredData({
@@ -330,7 +331,7 @@ watch(
         "@type": "SearchResultsPage",
         name: generateSEOTitle(),
         description: generateSEODescription(),
-        url: `https://waldo.click${route.fullPath}`,
+        url: `${config.public.baseUrl}${route.fullPath}`,
       });
     }
   },

@@ -21,6 +21,7 @@ if (!user.value?.pro) {
 }
 
 const { $setSEO, $setStructuredData } = useNuxtApp();
+const config = useRuntimeConfig();
 
 definePageMeta({
   layout: "account",
@@ -31,15 +32,16 @@ $setSEO({
   title: "Personalizar Avatar",
   description:
     "Personaliza tu avatar en Waldo.click®. Crea una presencia única y profesional en la plataforma.",
-  imageUrl: "https://waldo.click/share.jpg",
-  url: "https://waldo.click/cuenta/avatar",
+  imageUrl: `${config.public.baseUrl}/share.jpg`,
+  url: `${config.public.baseUrl}/cuenta/avatar`,
 });
+useSeoMeta({ robots: "noindex, nofollow" });
 
 $setStructuredData({
   "@context": "https://schema.org",
   "@type": "WebPage",
   name: "Personalizar Avatar",
-  url: "https://waldo.click/cuenta/avatar",
+  url: `${config.public.baseUrl}/cuenta/avatar`,
   description:
     "Personaliza tu avatar en Waldo.click®. Crea una presencia única y profesional en la plataforma.",
 });

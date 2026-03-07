@@ -339,20 +339,8 @@ export default defineNuxtConfig({
   // 6. Performance Optimizations
   // (Nitro config moved above to avoid duplication)
 
-  // Sitemap Configuration - Basic setup
+  // Sitemap Configuration - Static + dynamic URLs merged in single async function
   sitemap: {
-    sources: [
-      "/",
-      "/anuncios",
-      "/preguntas-frecuentes",
-      "/politicas-de-privacidad",
-      "/recuperar-contrasena",
-      "/contacto",
-      "/login",
-      "/registro",
-      "/anunciar",
-      "/packs",
-    ],
     exclude: [
       "/404",
       "/500",
@@ -365,29 +353,47 @@ export default defineNuxtConfig({
       "/packs/**",
       "/contacto/**",
     ],
-    // Dynamic URLs for ads
     urls: async () => {
+      const staticUrls = [
+        { loc: "/", changefreq: "daily" as const, priority: 1 },
+        { loc: "/anuncios", changefreq: "hourly" as const, priority: 0.9 },
+        {
+          loc: "/preguntas-frecuentes",
+          changefreq: "monthly" as const,
+          priority: 0.5,
+        },
+        {
+          loc: "/politicas-de-privacidad",
+          changefreq: "yearly" as const,
+          priority: 0.3,
+        },
+        { loc: "/contacto", changefreq: "yearly" as const, priority: 0.4 },
+        { loc: "/packs", changefreq: "monthly" as const, priority: 0.6 },
+      ];
+
       try {
         const apiUrl = process.env.API_URL || "http://localhost:1337";
         const response = await fetch(`${apiUrl}/api/ads/actives`);
 
         if (!response.ok) {
           console.warn("Error fetching ads for sitemap:", response.status);
-          return [];
+          return staticUrls;
         }
 
         const data = await response.json();
         const ads = data.data || [];
 
-        return ads.map((ad: any) => ({
+        const dynamicUrls = ads.map((ad: any) => ({
           loc: `/anuncios/${ad.slug}`,
           lastmod: new Date(ad.updatedAt || ad.createdAt).toISOString(),
-          changefreq: "weekly",
+          changefreq: "weekly" as const,
           priority: ad.details?.featured ? 0.8 : 0.6,
         }));
+
+        return [...staticUrls, ...dynamicUrls];
       } catch (error) {
         console.warn("Error generating dynamic sitemap URLs:", error);
-        return [];
+        return staticUrls;
       }
     },
   },

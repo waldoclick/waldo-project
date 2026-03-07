@@ -8,6 +8,7 @@
 import AccountMain from "@/components/AccountMain.vue";
 
 const { $setSEO, $setStructuredData } = useNuxtApp();
+const config = useRuntimeConfig();
 
 definePageMeta({
   layout: "account",
@@ -18,15 +19,16 @@ $setSEO({
   title: "Mi Cuenta",
   description:
     "Accede a tu cuenta en Waldo.click®. Administra tus datos, anuncios y más desde un solo lugar.",
-  imageUrl: "https://waldo.click/share.jpg",
-  url: "https://waldo.click/cuenta",
+  imageUrl: `${config.public.baseUrl}/share.jpg`,
+  url: `${config.public.baseUrl}/cuenta`,
 });
+useSeoMeta({ robots: "noindex, nofollow" });
 
 $setStructuredData({
   "@context": "https://schema.org",
   "@type": "WebPage",
   name: "Mi Cuenta",
-  url: "https://waldo.click/cuenta",
+  url: `${config.public.baseUrl}/cuenta`,
   description:
     "Accede a tu cuenta en Waldo.click®. Administra tus datos, anuncios y más desde un solo lugar.",
 });

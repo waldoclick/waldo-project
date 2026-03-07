@@ -66,4 +66,12 @@ definePageMeta({
   layout: "account",
   middleware: "auth",
 });
+
+const { $setSEO } = useNuxtApp();
+
+$setSEO({
+  title: "Mis Órdenes",
+  description: "Consulta el historial de tus órdenes en Waldo.click®.",
+});
+useSeoMeta({ robots: "noindex, nofollow" });
 </script>

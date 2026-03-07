@@ -8,6 +8,7 @@
 <script setup lang="ts">
 // Define SEO
 const { $setSEO, $setStructuredData } = useNuxtApp();
+const config = useRuntimeConfig();
 
 // components
 import HeaderDefault from "@/components/HeaderDefault.vue";
@@ -201,15 +202,16 @@ $setSEO({
   title: "Crear Anuncio",
   description:
     "Publica tus activos industriales de manera rápida y sencilla en Waldo.click®. Aumenta tu visibilidad y encuentra compradores fácilmente.",
-  imageUrl: "https://waldo.click/share.jpg",
-  url: "https://waldo.click/crear-anuncio",
+  imageUrl: `${config.public.baseUrl}/share.jpg`,
+  url: `${config.public.baseUrl}/crear-anuncio`,
 });
+useSeoMeta({ robots: "noindex, nofollow" });
 
 $setStructuredData({
   "@context": "https://schema.org",
   "@type": "WebPage",
   name: "Crear Anuncio - Waldo.click®",
-  url: "https://waldo.click/crear-anuncio",
+  url: `${config.public.baseUrl}/crear-anuncio`,
   description:
     "Publica tus activos industriales de manera rápida y sencilla en Waldo.click®. Aumenta tu visibilidad y encuentra compradores fácilmente.",
 });

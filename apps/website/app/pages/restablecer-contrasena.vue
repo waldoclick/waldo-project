@@ -46,6 +46,7 @@ import mobileMenuClose from "/images/mobile-menu-close.svg";
 
 // Define SEO y structured data
 const { $setSEO, $setStructuredData } = useNuxtApp();
+const config = useRuntimeConfig();
 
 // Página de datos
 const page = {
@@ -67,9 +68,10 @@ $setSEO({
   title: "Restablecer Contraseña",
   description:
     "Estás en el último paso para recuperar el acceso a tu cuenta en Waldo.click®. Ingresa tu nueva contraseña para completar el proceso.",
-  imageUrl: "https://waldo.click/share.jpg",
-  url: "https://waldo.click/restablecer-contrasena",
+  imageUrl: `${config.public.baseUrl}/share.jpg`,
+  url: `${config.public.baseUrl}/restablecer-contrasena`,
 });
+useSeoMeta({ robots: "noindex, nofollow" });
 
 // Set Structured Data
 $setStructuredData({
@@ -78,7 +80,7 @@ $setStructuredData({
   name: "Restablecer Contraseña",
   description:
     "Estás en el último paso para recuperar el acceso a tu cuenta en Waldo.click®. Ingresa tu nueva contraseña para completar el proceso.",
-  url: "https://waldo.click/restablecer-contrasena",
+  url: `${config.public.baseUrl}/restablecer-contrasena`,
 });
 
 definePageMeta({

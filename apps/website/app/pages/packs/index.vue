@@ -34,6 +34,25 @@ const { data: packsData } = await useAsyncData<Pack[]>(
 );
 const packs = computed(() => packsData.value ?? []);
 
+const config = useRuntimeConfig();
+const { $setSEO, $setStructuredData } = useNuxtApp();
+
+$setSEO({
+  title: "Packs de Avisos",
+  description:
+    "Elige el pack de avisos que mejor se adapte a tus necesidades. Publica más anuncios y llega a más compradores en Waldo.click®.",
+  imageUrl: `${config.public.baseUrl}/share.jpg`,
+  url: `${config.public.baseUrl}/packs`,
+});
+
+$setStructuredData({
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: "Packs de Avisos — Waldo.click®",
+  description: "Elige el pack de avisos que mejor se adapte a tus necesidades.",
+  url: `${config.public.baseUrl}/packs`,
+});
+
 // Middleware
 definePageMeta({
   middleware: "auth",

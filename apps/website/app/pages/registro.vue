@@ -94,9 +94,10 @@ $setSEO({
   title: "Regístrate",
   description:
     "Crea tu cuenta en Waldo.click® y comienza a comprar y vender activos industriales de manera rápida y sencilla.",
-  imageUrl: "https://waldo.click/share.jpg",
-  url: "https://waldo.click/registro",
+  imageUrl: `${config.public.baseUrl}/share.jpg`,
+  url: `${config.public.baseUrl}/registro`,
 });
+useSeoMeta({ robots: "noindex, nofollow" });
 
 $setStructuredData({
   "@context": "https://schema.org",
@@ -104,7 +105,7 @@ $setStructuredData({
   name: "Regístrate",
   description:
     "Crea tu cuenta en Waldo.click® y comienza a comprar y vender activos industriales de manera rápida y sencilla.",
-  url: "https://waldo.click/registro",
+  url: `${config.public.baseUrl}/registro`,
 });
 
 definePageMeta({
