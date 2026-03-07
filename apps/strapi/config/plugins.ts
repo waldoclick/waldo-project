@@ -53,7 +53,9 @@ export default ({ env }) => ({
   },
 
   sentry: {
-    enabled: true,
+    // Only enable Sentry in production to prevent dev/staging errors from
+    // reaching Sentry. Setting enabled: false unloads the plugin entirely.
+    enabled: process.env.NODE_ENV === "production",
     config: {
       dsn: env("SENTRY_DSN"),
       sendMetadata: true,
