@@ -56,7 +56,9 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 
 ### Active
 
-None — all v1.13 requirements shipped. See Future Requirements for upcoming work.
+- GTM-DASH-01: `@saslavik/nuxt-gtm@0.1.3` instalado en `apps/dashboard` y agregado a modules — v1.14
+- GTM-DASH-02: Módulo configurado con `enableRouterSync: true`; GTM ID leído desde `runtimeConfig.public.gtm.id`; campo plano `gtmId` eliminado — v1.14
+- GTM-DASH-03: `nuxt typecheck` pasa con zero errores en `apps/dashboard` — v1.14
 
 ## Previous State
 
@@ -191,4 +193,4 @@ None — all v1.13 requirements shipped. See Future Requirements for upcoming wo
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-07 after v1.13 milestone complete (GTM Module Migration)*
+*Last updated: 2026-03-07 after v1.14 milestone start (GTM Module: Dashboard)*
