@@ -248,6 +248,10 @@
     background-color: white;
     z-index: 3;
 
+    @include screen-small {
+      position: relative;
+    }
+
     &__container {
       @extend .container;
       padding: 15px;
