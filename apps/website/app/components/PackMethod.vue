@@ -48,14 +48,12 @@ const packsStore = usePacksStore();
 const packs = computed(() => packsStore.packs);
 const selectedPack = ref(null);
 
-onMounted(async () => {
-  // Cargar los packs
-  await packsStore.loadPacks();
+// onMounted: UI-only — initializes local selectedPack ref from store; packs pre-loaded by parent page
+onMounted(() => {
+  // Get initial pack value from store
+  selectedPack.value = packStore.pack || null;
 
-  // Obtener el valor inicial del pack desde el store
-  selectedPack.value = packStore.pack || null; // Asigna un valor por defecto si no hay pack seleccionado
-
-  // Actualizar el pack en el store
+  // Update store with initial selection
   packStore.updatePack(selectedPack.value);
 });
 
