@@ -128,6 +128,9 @@ Archive: `.planning/milestones/v1.10-ROADMAP.md`
 6. No behavior changes to the cookie banner UI — only the dataLayer payload differs
 **Plans:** 1 plan
 
+Plans:
+- [ ] 31-01-PLAN.md — Fix gtag shim + Consent Mode v2 default/update in gtm.client.ts and LightboxCookies.vue
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
