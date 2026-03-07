@@ -21,7 +21,7 @@
     <td style="padding: 8px">{{ user.neededReservations }}</td>
     <td style="padding: 8px">{{ user.activeReservations }}</td>
     <td style="padding: 8px">{{ user.availableReservations }}</td>
-    <td style="padding: 8px">{{ user.totalAds }}</td>
+    <td style="padding: 8px">{{ user.totalAfterRestore }}</td>
   </tr>
   {% endfor %}
 </mj-table>
