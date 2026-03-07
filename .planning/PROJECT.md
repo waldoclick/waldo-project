@@ -52,10 +52,17 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 
 ### Active
 
-- [ ] El dropdown "Últimas órdenes" muestra el nombre completo del usuario (no el ID de la orden)
-- [ ] El dropdown "Últimas órdenes" muestra la fecha completa y hora de la transacción (no solo la hora)
+- [ ] **GTM-01**: La integración de GTM no pushea arrays al dataLayer — el shim local de gtag() eliminado; page_view del SPA usa un objeto dataLayer válido
+- [ ] **GTM-02**: Consent Mode v2 implementado — denegación por defecto antes de que cargue GTM; LightboxCookies pushea el consent update correcto al aceptar
 
 ## Previous State
+
+<details>
+<summary>v1.10 Dashboard Orders Dropdown UI (shipped 2026-03-07)</summary>
+
+- **Phase 30 — Dropdown Display Fix**: `DropdownSales.vue` now shows buyer full name (`firstname + lastname`, fallback to `username` then `email`) and full date + time (`"7 mar 2026 • 01:08 a. m."`) for every order row.
+
+</details>
 
 <details>
 <summary>v1.9 Website Technical Debt (shipped 2026-03-07)</summary>
@@ -89,6 +96,8 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - Website (apps/website): Nuxt 4, Pinia, @nuxtjs/strapi v2; 29 páginas lang="ts", 14 stores con persist audit, typeCheck: true (since v1.9)
 - 4 cron jobs activos en Strapi: `adCron` (1 AM), `userCron` (2 AM), `backupCron` (3 AM), `cleanupCron` (domingo 4 AM)
 - `cron-runner` API disponible en `POST /api/cron-runner/:name` para ejecución manual de cualquier cron
+- GTM plugin (`gtm.client.ts`): client-only, loads `gtm.js` dynamically; currently has broken gtag() shim pushing arrays to dataLayer instead of objects (v1.11 fix target)
+- Consent Mode v2 required by Google since March 2024; currently not implemented — no default denial before GTM loads (v1.11 fix target)
 
 ## Constraints
 
@@ -135,6 +144,8 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
   | `createError statusMessage` not `description` | `NuxtError` extends `H3Error`; `statusMessage` is the correct field — v1.9 | ✓ Good |
   | `useAsyncData` default option eliminates `T \| undefined` | Removes undefined from type without changing runtime behavior; props receive `T` cleanly — v1.9 | ✓ Good |
   | `typeCheck: true` permanently enabled in website | Every future build enforces TypeScript; TS-04 goal achieved; no more deferred type errors — v1.9 | ✓ Good |
+  | dataLayer push approach (no separate gtag.js) for Consent Mode v2 | GTM reads dataLayer natively; loading gtag.js separately would create two competing tag systems — v1.11 | Pending |
+  | Default consent denial pushed before GTM script loads | Consent Mode v2 requires denial-first; GTM processes dataLayer in order so pre-load push ensures compliance — v1.11 | Pending |
 
 ## Future Requirements
 
@@ -151,4 +162,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-07 after v1.10 milestone started (Dashboard Orders Dropdown UI fix)*
+*Last updated: 2026-03-07 after v1.11 milestone started (GTM / GA4 Tracking Fix)*
