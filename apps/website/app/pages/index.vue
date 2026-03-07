@@ -70,9 +70,9 @@ const { data: faqsData } = await useAsyncData("featured-faqs", async () => {
 const faqs = computed(() => faqsData.value ?? []);
 
 $setSEO({
-  title: "Compra y Venta de Equipo en Chile",
+  title: "Anuncios de Activos Industriales en Chile",
   description:
-    "Publica y encuentra equipo industrial en Chile. Waldo.click® conecta vendedores y compradores de equipos nuevos o usados en todo el país.",
+    "Compra y vende activos industriales en Chile. Waldo.click® conecta vendedores y compradores de equipos nuevos y usados en todo el país.",
 });
 
 const config = useRuntimeConfig();

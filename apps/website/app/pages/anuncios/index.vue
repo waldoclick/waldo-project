@@ -256,29 +256,24 @@ const generateSEOTitle = () => {
     let title = `Buscando "${searchQuery}"`;
     if (categoryName && categoryName !== "Anuncios")
       title += ` en ${categoryName}`;
-    if (communeNameStr) title += ` en ${communeNameStr}`;
-    return `${title}`;
+    return title;
   }
 
-  if (categoryName === "Anuncios") {
+  if (!categoryName || categoryName === "Anuncios") {
     return communeNameStr
-      ? `Activos industriales en ${communeNameStr}`
-      : "Activos industriales en Chile";
+      ? `Activos Industriales en ${communeNameStr}`
+      : "Anuncios de Activos Industriales";
   }
 
   if (categoryName && communeNameStr) {
-    return `Activos industriales de ${categoryName} en ${communeNameStr}`;
+    return `Anuncios de ${categoryName} en ${communeNameStr}`;
   }
 
   if (categoryName) {
-    return `Activos industriales de ${categoryName}`;
+    return `Anuncios de ${categoryName} en Chile`;
   }
 
-  if (communeNameStr) {
-    return `Activos industriales en ${communeNameStr}`;
-  }
-
-  return "Activos industriales en Chile";
+  return "Anuncios de Activos Industriales";
 };
 
 // Función para generar la descripción SEO
@@ -297,21 +292,27 @@ const generateSEODescription = () => {
     typeof communeObj === "object" && communeObj !== null
       ? communeObj.name
       : undefined;
-  const totalAds = adsData.value?.pagination?.total || 0;
-
-  let description = "";
 
   if (searchQuery) {
-    description = `Resultados de búsqueda para "${searchQuery}"`;
-    if (categoryName) description += ` en la categoría ${categoryName}`;
-    if (communeName) description += ` en ${communeName}`;
-  } else {
-    description = `Explora ${totalAds} anuncios de activos industriales`;
-    if (categoryName) description += ` en la categoría ${categoryName}`;
-    if (communeName) description += ` en ${communeName}`;
+    let desc = `Resultados para "${searchQuery}" en Waldo.click®. Activos industriales en Chile`;
+    if (categoryName && categoryName !== "Anuncios")
+      desc += `: ${categoryName}`;
+    if (communeName) desc += `, ${communeName}`;
+    return `${desc}. Equipos nuevos y usados a los mejores precios.`;
   }
 
-  return `${description}. Encuentra los mejores precios en equipamiento industrial en Waldo.click®`;
+  if (!categoryName || categoryName === "Anuncios") {
+    if (!communeName) {
+      return "Encuentra anuncios de activos industriales en todo Chile. Equipos nuevos y usados de todas las categorías disponibles en Waldo.click®.";
+    }
+    return `Encuentra anuncios de activos industriales en ${communeName}. Equipos industriales nuevos y usados disponibles en Waldo.click®.`;
+  }
+
+  if (categoryName && communeName) {
+    return `Explora anuncios de ${categoryName} en ${communeName}. Activos industriales disponibles en Waldo.click®. Contacta al vendedor directamente.`;
+  }
+
+  return `Explora anuncios de ${categoryName} en Chile. Activos industriales nuevos y usados disponibles en Waldo.click®. Compra y vende en minutos.`;
 };
 
 // SSR-safe initial SEO call — ensures server-rendered HTML has correct title/description
