@@ -25,6 +25,7 @@ export default defineNuxtConfig({
     "@nuxtjs/seo",
     "@nuxt/image",
     "@nuxtjs/google-fonts",
+    "@saslavik/nuxt-gtm",
   ],
 
   // Security configuration - using nuxt-security defaults with customizations
@@ -261,6 +262,13 @@ export default defineNuxtConfig({
     },
   },
 
+  // Google Tag Manager Configuration
+  gtm: {
+    id: process.env.GTM_ID || "GTM-N4B8LDKS",
+    enableRouterSync: true,
+    debug: false,
+  },
+
   // Google Fonts configuration (serve locally)
   googleFonts: {
     display: "swap",
@@ -283,7 +291,9 @@ export default defineNuxtConfig({
       blockSearchEngines: process.env.BLOCK_SEARCH_ENGINES === "true",
       recaptchaSiteKey: process.env.RECAPTCHA_SITE_KEY,
       googleClientId: process.env.GOOGLE_CLIENT_ID,
-      gtmId: process.env.GTM_ID || "GTM-N4B8LDKS", // GTM ID for Nuxt 4 compatibility
+      gtm: {
+        id: process.env.GTM_ID || "GTM-N4B8LDKS",
+      },
       sentryDsn: process.env.SENTRY_DSN,
       sentryFeedback: process.env.SENTRY_FEEDBACK === "true",
       sentryDebug: process.env.SENTRY_DEBUG === "true",
