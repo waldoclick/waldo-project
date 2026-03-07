@@ -37,6 +37,21 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 
 </details>
 
+## Standalone Phases
+
+### Phase 39: Spanish Default Language
+
+**Goal:** Set Spanish (`es`) as the declared default language in both Nuxt apps by enabling the already-installed `@nuxtjs/i18n` module, fixing `html[lang]` and `og:locale` SEO attributes.
+
+**Closes:** GitHub issue #22
+
+**Requirements:** LANG-01 (website i18n enabled), LANG-02 (dashboard i18n enabled)
+
+**Plans:** 1 plan
+
+Plans:
+- [ ] 39-01-PLAN.md — Enable @nuxtjs/i18n in website and dashboard
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -46,3 +61,4 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 | 36. SEO Bug Fixes | v1.16 | 1/1 | Complete | 2026-03-07 |
 | 37. Dynamic Page Copy | v1.16 | 1/1 | Complete | 2026-03-07 |
 | 38. Static Page Copy | v1.16 | 2/2 | Complete | 2026-03-07 |
+| 39. Spanish Default Language | standalone | 0/1 | In Progress | — |
