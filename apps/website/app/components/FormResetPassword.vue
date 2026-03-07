@@ -81,6 +81,7 @@ const schema = yup.object({
 const route = useRoute();
 const { $recaptcha } = useNuxtApp();
 
+// onMounted: UI-only — validates presence of reset token from URL query param; shows 404 if missing
 onMounted(() => {
   if (!route.query.token) {
     showError({

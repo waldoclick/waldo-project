@@ -41,6 +41,7 @@ const user = useStrapiUser();
 
 const { $cookies } = useNuxtApp();
 
+// onMounted: client-only — reads cookie to decide whether to show register prompt; requires browser cookie access
 onMounted(() => {
   const state = $cookies.get(cookieName);
   if (!state && !user.value) {

@@ -66,6 +66,7 @@ const formattedQuestions = computed(() => {
 });
 
 // Inicializar con el primer elemento abierto
+// onMounted: UI-only — sets initial active accordion index from props
 onMounted(() => {
   // Verificar si hay elementos antes de establecer el valor
   if (props.questions && props.questions.length > 0) {

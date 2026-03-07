@@ -118,6 +118,6 @@ watch(() => getCategory.value?.color, updateBackgroundColor, {
   immediate: true,
 });
 
-// También actualizar en onMounted
+// onMounted: UI-only — applies category background color CSS after initial DOM paint (watch handles reactive updates)
 onMounted(updateBackgroundColor);
 </script>

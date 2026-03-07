@@ -71,7 +71,7 @@ const handleKeydown = (event: KeyboardEvent) => {
   }
 };
 
-// Agregar y remover el event listener para la tecla ESC
+// onMounted: UI-only — attaches keyboard ESC listener to close search lightbox
 onMounted(() => {
   document.addEventListener("keydown", handleKeydown);
 });

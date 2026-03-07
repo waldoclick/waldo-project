@@ -47,7 +47,7 @@ definePageMeta({
 // Analytics
 const adAnalytics = useAdAnalytics();
 
-// Enviar evento de error
+// onMounted: analytics-only — fires ad creation error event; client-side only, non-blocking
 onMounted(() => {
   adAnalytics.sendErrorEvent(
     "ad_creation_error",

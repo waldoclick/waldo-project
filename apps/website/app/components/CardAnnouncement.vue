@@ -197,6 +197,7 @@ const galleryCount = computed(() => {
 const cardElement = ref(null);
 
 // Establecer variables CSS iniciales
+// onMounted: UI-only — sets CSS custom property for category color on DOM element
 onMounted(() => {
   if (cardElement.value && cardElement.value.style) {
     cardElement.value.style.setProperty(

@@ -103,6 +103,7 @@ const getShortName = (code: string) => {
 };
 
 // Cargar los indicadores al montar el componente
+// onMounted: client-only fetch — economic indicators are non-critical footer content; intentionally client-side
 onMounted(async () => {
   await indicatorStore.fetchIndicators();
 });

@@ -143,6 +143,7 @@ const form = ref({
 });
 
 // Prellenar el formulario si el usuario está logueado
+// onMounted: UI-only — pre-fills email/name from already-loaded auth user (no API call)
 onMounted(() => {
   if (user.value) {
     form.value.email = user.value.email || "";

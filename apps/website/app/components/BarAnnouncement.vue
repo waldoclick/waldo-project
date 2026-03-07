@@ -91,6 +91,7 @@ const updateProgress = () => {
   }
 };
 
+// onMounted: UI-only — updates progress bar width from prop value
 onMounted(updateProgress);
 
 watch(

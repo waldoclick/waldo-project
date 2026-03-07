@@ -58,7 +58,7 @@ const categoryIcon = computed(() => {
 // Referencia al elemento hero
 const heroElement = ref(null);
 
-// Establecer variables CSS iniciales
+// onMounted: UI-only — sets initial CSS custom properties for background and icon colors on DOM element
 onMounted(() => {
   if (heroElement.value && heroElement.value.style) {
     heroElement.value.style.setProperty(

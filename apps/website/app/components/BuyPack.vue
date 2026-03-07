@@ -36,6 +36,7 @@ const isProfileComplete = await meStore.isProfileComplete();
 const maxStep = 1; // Solo un paso
 
 // Leer el parámetro step de la URL cuando se monte el componente
+// onMounted: UI-only — reads URL ?step query param to set wizard step
 onMounted(() => {
   const stepFromUrl = Number.parseInt(route.query.step, 10);
   if (

@@ -72,7 +72,7 @@ const shouldShowInvoice = computed(() => {
   return adStore.featured === true || typeof adStore.pack === "number";
 });
 
-// Obtener el valor inicial del store cuando el componente se monta
+// onMounted: UI-only — reads invoice preference from store and enforces boleta if user cannot request invoice
 onMounted(() => {
   isInvoice.value = adStore.is_invoice;
 

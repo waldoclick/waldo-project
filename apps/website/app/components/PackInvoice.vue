@@ -69,7 +69,7 @@ const { canRequestInvoice } = useUser(user.value);
 const packStore = usePackStore();
 const isInvoice = ref(false); // Por defecto, boleta (false)
 
-// Obtener el valor inicial del store cuando el componente se monta
+// onMounted: UI-only — reads invoice preference from store and enforces boleta if user cannot request invoice
 onMounted(() => {
   isInvoice.value = packStore.is_invoice;
 

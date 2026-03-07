@@ -249,6 +249,7 @@ const handleformBack = async () => {
   emit("formBack");
 };
 
+// onMounted: UI-only — loads regions for commune select (fire-and-forget; non-critical for SSR)
 onMounted(() => {
   regionsStore.loadRegions();
 });

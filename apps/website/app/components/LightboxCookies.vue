@@ -46,6 +46,7 @@ const { $cookies } = useNuxtApp();
 const isOpen = ref(false);
 const cookieName = "site-cookies-accepted";
 
+// onMounted: client-only — reads cookie to decide whether to show consent banner; requires browser cookie access
 onMounted(() => {
   const cookieAccepted = $cookies.get(cookieName);
   if (!cookieAccepted) {
