@@ -318,6 +318,149 @@
 
 ---
 
+---
+
+## Milestone: v1.10 — Dashboard Orders Dropdown UI
+
+**Shipped:** 2026-03-07
+**Phases:** 1 (30) | **Plans:** 1 | **Timeline:** ~5 minutes
+**Files changed:** 1 source file (apps/dashboard) | **Requirements:** 2/2 complete
+
+### What Was Built
+- `DropdownSales.vue` title line: `getBuyerName(order.user)` — `formatFullName(firstname, lastname)` with fallback chain to `username`, `email`, then `"Usuario"` — replaces raw `buy_order` order ID
+- `DropdownSales.vue` meta line: `formatDateShort(createdAt) • formatTime(createdAt)` — full date + time, replaces time-only display
+
+### What Worked
+- Existing utility functions (`formatFullName`, `formatDateShort`) covered the requirement exactly — zero new code needed beyond the wrapper helper
+- Single-file plan: no dependencies, no waves, instant execution
+- The `getBuyerName` wrapper pattern (destructure + fallback chain) was an obvious extension of the existing `formatFullName` utility
+
+### What Was Inefficient
+- Nothing — this was a textbook minimal-change fix. ~5 min wall time.
+
+### Patterns Established
+- `getBuyerName(user?: OrderUser): string` — wrapper pattern for API user objects that separates field extraction from formatting; reusable for any component showing buyer identity
+
+### Key Lessons
+1. **Utility functions age well.** The `formatFullName` and `formatDateShort` utilities defined in v1.3 were immediately applicable here with zero modification — consistent utility design pays dividends.
+
+### Cost Observations
+- Model mix: ~100% sonnet (balanced profile)
+- Sessions: 1
+- Notable: Smallest milestone by file count — 1 file, 2 requirements, ~5 min. Pure value.
+
+---
+
+## Milestone: v1.11 — GTM / GA4 Tracking Fix
+
+**Shipped:** 2026-03-07
+**Phases:** 1 (31) | **Plans:** 1 | **Timeline:** ~2 minutes
+**Files changed:** 2 source files (apps/website) | **Requirements:** 2/2 complete
+
+### What Was Built
+- `gtm.client.ts`: deleted local `gtag()` shim (was pushing arrays, not objects); SPA `page_view` now pushes `{ event: "page_view", page_path, page_title }` as a plain object via `window.dataLayer.push()`
+- `gtm.client.ts`: Consent Mode v2 default denial (`analytics_storage: "denied"`, `ad_storage: "denied"`) pushed after `window.dataLayer` init and before GTM script `async = true`
+- `LightboxCookies.vue`: `acceptCookies()` replaced `accept_cookies` custom event with correct Consent Mode v2 update command (`{ "consent": "update", analytics_storage: "granted", ad_storage: "granted" }`)
+
+### What Worked
+- Root cause was clear and isolated — the broken `gtag()` shim was a single function responsible for all the failures; deleting it was simpler than fixing it
+- `window.dataLayer.push()` is a direct, unambiguous replacement — no new abstraction needed
+- Both tasks were independent files (plugin + component) → executed in 2 minutes total
+
+### What Was Inefficient
+- The broken shim had been in place since v1.0 — it was never noticed because GA4 silently ignores malformed pushes. A basic GA4 Realtime check at the end of any analytics-touching phase would have caught this months earlier.
+
+### Patterns Established
+- No `gtag()` helper anywhere in the codebase — `window.dataLayer.push()` is the sole push mechanism
+- Consent Mode v2 command structure: `{ "consent": "default"|"update", analytics_storage: "denied"|"granted", ad_storage: "denied"|"granted" }` — flat structure, quoted `consent` key
+- Consent Mode v2 timing: default denial push MUST precede GTM script injection
+
+### Key Lessons
+1. **GA4 Realtime is the cheapest regression test for analytics.** A 30-second check in Realtime after any plugin change confirms events are arriving. The broken shim would have been caught at v1.0 with this check.
+2. **Delete broken abstractions, don't fix them.** The `gtag()` shim was wrong at its foundation (arrays vs objects). Deleting it and using the native API was cleaner and less risky than patching it.
+
+### Cost Observations
+- Model mix: ~100% sonnet (balanced profile)
+- Sessions: 1
+- Notable: Fastest milestone ever — 1 plan, 2 files, 2 minutes. The problem was well-defined and the solution was deletion + direct replacement.
+
+---
+
+## Milestone: v1.12 — Ad Creation Analytics Gaps
+
+**Shipped:** 2026-03-07
+**Phases:** 1 (32) | **Plans:** 1 | **Timeline:** ~10 minutes
+**Files changed:** 6 source files (apps/website) | **Requirements:** 5/5 complete
+
+### What Was Built
+- `CreateAd.vue`: removed dead `useAdAnalytics` import + instantiation (ANA-01)
+- `index.vue`: removed `{ immediate: true }` from `watch(adStore.step)`; added explicit `stepView(1, ...)` in `onMounted` — step 1 fires exactly once per flow entry (ANA-02)
+- `resumen.vue`: `pushEvent("redirect_to_payment", [], { payment_method: "webpay" })` before `handleRedirect()` (ANA-03)
+- `gracias.vue`: `purchaseFired = ref(false)` guard prevents duplicate `purchase` events on `watchEffect` re-runs (ANA-04)
+- `useAdAnalytics.ts`: `DataLayerEvent` exported; `ecommerce` widened to `| null`; `window.d.ts` types `window.dataLayer` as `(DataLayerEvent | Record<string, unknown>)[]` union (ANA-05)
+
+### What Worked
+- All 5 gaps were isolated, surgical changes — no cross-cutting concerns
+- The union type for `window.dataLayer` (`DataLayerEvent | Record<string, unknown>`) was the right call: avoids forcing non-analytics files (gtm plugin, LightboxCookies) to cast to `DataLayerEvent`
+- Single-plan phase: all 5 fixes are in one atomic commit — easy to verify, easy to revert
+
+### What Was Inefficient
+- ANA-02 (step_view overcounting) required understanding the two-location firing pattern (onMounted for step 1 + watcher for steps 2-5) before implementing. A brief pre-read of `index.vue` and `CreateAd.vue` together would have surfaced this immediately.
+
+### Patterns Established
+- `purchaseFired = ref(false)` guard pattern for `watchEffect`-triggered one-time events — set flag immediately before the push, not after
+- `DataLayerEvent.ecommerce` typed as `Record<string, unknown> | null` — supports GTM's recommended null-flush pattern before each ecommerce event
+- Union type `(DataLayerEvent | Record<string, unknown>)[]` for `window.dataLayer` — accurate model for mixed analytics + consent command payloads
+
+### Key Lessons
+1. **`watchEffect` can re-run on any reactive dependency change.** Any one-time action inside `watchEffect` needs an explicit fired guard — `ref(false)` is the simplest and most readable pattern.
+2. **Dead imports in analytics composables have silent side effects.** The dead `useAdAnalytics` instantiation in `CreateAd.vue` was harmless at runtime, but it was setting up a composable that tracked nothing. Removing it made the ownership model explicit: analytics belong to the page, not the sub-component.
+
+### Cost Observations
+- Model mix: ~100% sonnet (balanced profile)
+- Sessions: 1
+- Notable: 5 requirements in 1 plan in ~10 minutes — well-scoped, targeted fixes with clear success criteria per requirement.
+
+---
+
+## Milestone: v1.13 — GTM Module Migration
+
+**Shipped:** 2026-03-07
+**Phases:** 1 (33) | **Plans:** 1 | **Timeline:** ~15 minutes
+**Files changed:** 3 modified, 1 deleted (apps/website) | **Requirements:** 4/4 complete
+
+### What Was Built
+- `apps/website/app/plugins/gtm.client.ts` — **DELETED** (the broken hand-rolled plugin that never actually injected the GTM script in production)
+- `apps/website/package.json` — `@saslavik/nuxt-gtm@0.1.3` added to devDependencies
+- `apps/website/nuxt.config.ts` — module added to `modules[]`; top-level `gtm: { id, enableRouterSync: true, debug: false }` config block; `runtimeConfig.public.gtm: { id }` replaces flat `gtmId` field
+- `apps/website/app/composables/useAppConfig.ts` — feature flag updated to `!!config.public.gtm?.id`
+
+### What Worked
+- `@saslavik/nuxt-gtm` was immediately identifiable as the correct module — it's the only one with explicit Nuxt 4 support; `@nuxtjs/gtm` is Nuxt 2 only
+- `enableRouterSync: true` replaces the manual `router.afterEach` page_view push entirely — the module handles it natively
+- The Nuxt 4 type system auto-generates `runtimeConfig` types from `nuxt.config.ts` — no manual `runtime-config.d.ts` needed
+- GA4 Realtime confirmed working locally with 1 active user immediately after testing
+
+### What Was Inefficient
+- v1.11 fixed the broken plugin internals and v1.13 replaced the plugin entirely — these could have been one milestone if the module had been researched at the outset. The `gtm.client.ts` plugin was always fragile; a module was always the correct long-term solution.
+
+### Patterns Established
+- GTM module config: top-level `gtm: {}` block in `nuxt.config.ts`, NOT nested inside the `modules` array entry
+- Feature flag pattern: `!!config.public.gtm?.id` — optional chaining handles the case where `gtm` is not set in config
+- Nuxt module research order: check `@nuxtjs/` namespace first, but verify Nuxt version compatibility — many official modules are still Nuxt 2
+
+### Key Lessons
+1. **Check the Nuxt module ecosystem before writing any plugin.** `@saslavik/nuxt-gtm` handles GTM injection, router sync, and SSR correctly in 3 config lines. The hand-rolled plugin took 65+ lines and was still broken. Modules exist for most common integrations.
+2. **GA4 Realtime is a fast integration test.** After installing the module and running `nuxt dev`, GA4 Realtime showed 1 active user within seconds — confirming end-to-end delivery without needing a staging deploy.
+3. **`runtimeConfig` typing is automatic in Nuxt 4.** Adding a new field to `runtimeConfig.public` in `nuxt.config.ts` is immediately type-safe — no declaration file needed.
+
+### Cost Observations
+- Model mix: ~100% sonnet (balanced profile)
+- Sessions: 1
+- Notable: Clean execution — zero deviations, zero issues. The module API was straightforward and the `nuxt typecheck` passed on the first attempt.
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -334,6 +477,10 @@
 | v1.7 | 4 | 4 | Cron bug fixes + English docs; all 4 cron jobs now functional |
 | v1.8 | 1 | 1 | Free reservation guarantee + debug cycle; featured.cron reverted |
 | v1.9 | 5 | 6 | Website TypeScript strict mode + 5 correctness bugs fixed |
+| v1.10 | 1 | 1 | Dashboard UX: buyer name + full timestamp in orders dropdown |
+| v1.11 | 1 | 1 | GTM plugin fixed: broken gtag() shim removed, Consent Mode v2 added |
+| v1.12 | 1 | 1 | Ad creation analytics gaps closed: 5 targeted fixes across 6 files |
+| v1.13 | 1 | 1 | GTM hand-rolled plugin replaced with @saslavik/nuxt-gtm module |
 
 ### Cumulative Quality
 
@@ -349,6 +496,10 @@
 | v1.7 | utils (100% coverage) | true | 0 |
 | v1.8 | utils (100% coverage) | true | 0 |
 | v1.9 | utils (100% coverage) | true (website + dashboard) | 1 (vue-tsc for website) |
+| v1.10 | utils (100% coverage) | true | 0 |
+| v1.11 | utils (100% coverage) | true | 0 |
+| v1.12 | utils (100% coverage) | true | 0 |
+| v1.13 | utils (100% coverage) | true | 1 (@saslavik/nuxt-gtm) |
 
 ### Top Lessons (Verified Across Milestones)
 
@@ -364,46 +515,4 @@
 10. Cache guards need both data-length check and timestamp — and always verify the store has `persist` or the guard is useless
 11. Rename + update imports atomically — a file rename without updating imports leaves the codebase silently broken
 12. Before implementing a new cron, audit existing ones for overlapping responsibility — duplicate crons waste a full implementation cycle
-
----
-
-## Milestone: v1.6 — Website API Optimization
-
-**Shipped:** 2026-03-06
-**Phases:** 2 (18-19) | **Plans:** 3 | **Timeline:** ~7 minutes
-**Files changed:** 27 files, +1,648/-82 lines | **Requirements:** 6/6 complete
-
-### What Was Built
-- `preguntas-frecuentes.vue`: bare `await faqsStore.loadFaqs()` before `useAsyncData` removed — 2 HTTP calls → 1 (SSR-integrated `useAsyncData` only)
-- New `GET /api/ads/me/counts` Strapi endpoint: runs 5 `entityService.count()` calls in parallel via `Promise.all`, returns `{ published, review, expired, rejected, banned }` in a single response
-- `user.store.ts`: new `loadUserAdCounts()` action consuming the counts endpoint
-- `mis-anuncios.vue`: `loadTabCounts()` (5 parallel requests) replaced with `loadUserAdCounts()` (1 request) + `loadAds()` — 6 HTTP calls → 2 on mount; stale `tabToUpdate` block removed
-- 30-min timestamp-based cache guard (`lastFetch: 0` + array-length check) added to `packs.store.ts`, `conditions.store.ts`, `regions.store.ts`; `ConditionState` / `RegionState` type interfaces updated with `lastFetch: number`
-- `packs.store.ts` gained `persist` with localStorage — previously missing, making a cache guard useless on page refresh
-- `FormCreateThree.vue` no longer calls `loadCommunes()` on mount — commune data from `communes.client.ts` plugin is used directly
-
-### What Worked
-- The `useAsyncData`-only pattern was already established (v1.1); applying it to website pages was mechanical and fast
-- Server-side `Promise.all` for count queries is a clean extension of the aggregate endpoint pattern from v1.1
-- Splitting Phase 18 into 2 plans (endpoint first, consumer second) made each plan trivially verifiable
-- Phase 19 had zero deviations — the plan was accurate and the implementation matched exactly
-- Fastest 3-plan milestone: all 3 plans executed in ~7 minutes total wall time
-
-### What Was Inefficient
-- The milestone completion commit was created by the CLI tool but left ROADMAP.md, PROJECT.md, and RETROSPECTIVE.md in their pre-completion state — the workflow had to resume in a new session. Full workflow completion should be a single atomic session.
-
-### Patterns Established
-- `useAsyncData`-only in website pages: never pair bare `await storeAction()` with `useAsyncData` in the same page — the bare await runs twice (SSR + client hydration)
-- Aggregate counts endpoint: `GET /resource/me/counts` returns all N status counts in one `Promise.all`; client gets 1 request instead of N
-- Options API store cache guard: `lastFetch: 0` in `state()`, guard at top of load action, set `lastFetch = Date.now()` after fetch
-- Always add `persist` when adding a cache guard — a cache guard without persistence is useless after page refresh
-
-### Key Lessons
-1. **`useAsyncData` is SSR-aware; bare `await` is not.** A bare `await storeAction()` before `useAsyncData` fires once on SSR and once on client hydration — always use `useAsyncData` as the sole trigger in website pages.
-2. **Cache guard needs both length check AND timestamp.** Timestamp-only guard gives a false cache hit when the store is empty but `lastFetch` was previously set. The combined check (`length > 0 && age < TTL`) is always correct.
-3. **Verify `persist` when adding cache guards to stores.** If the store lacks persistence, the cache guard is redundant — data is lost on every page refresh.
-
-### Cost Observations
-- Model mix: ~100% sonnet (balanced profile)
-- Sessions: 4 (plan-phase × 2, execute-phase × 2, milestone close split across 2 sessions)
-- Notable: Fastest milestone by execution time — 3 plans, ~7 min. The patterns were fully established; this was pure application.
+13. Verify the Nuxt ecosystem before hand-rolling a plugin — a maintained Nuxt 4-compatible module exists for most common integrations (GTM, analytics, etc.)

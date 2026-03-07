@@ -49,16 +49,30 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ Todas las páginas del website tienen lang="ts"; any eliminado en stores y composables críticos — v1.9
 - ✓ Los 14 stores con persist tienen comentarios de auditoría inline (CORRECT/REVIEW/RISK) — v1.9
 - ✓ typeCheck: true habilitado en nuxt.config.ts del website; nuxt typecheck pasa con zero errores — v1.9
+- ✓ El plugin GTM `gtm.client.ts` no pushea arrays al dataLayer; Consent Mode v2 implementado — v1.11
+- ✓ El dropdown de últimas órdenes muestra nombre completo del comprador y fecha+hora completa — v1.10
+- ✓ Dead import `useAdAnalytics` eliminado de `CreateAd.vue`; overcounting de `step_view` corregido; eventos `redirect_to_payment` y `purchase` (guarded) implementados; `DataLayerEvent` exportado y `window.dataLayer` tipado — v1.12
+- ✓ `gtm.client.ts` eliminado; `@saslavik/nuxt-gtm@0.1.3` instalado y configurado con `enableRouterSync: true`; GA4 Realtime confirmado funcionando — v1.13
 
 ### Active
 
-- [ ] **ANA-01**: El import muerto de `useAdAnalytics` en `CreateAd.vue` está eliminado — `adAnalytics` no se instancia si no se usa
-- [ ] **ANA-02**: El overcounting de `step_view` está corregido — `watch(adStore.step)` no usa `immediate: true`; step 1 se dispara explícitamente en `onMounted` después de restaurar el URL param
-- [ ] **ANA-03**: El evento `redirect_to_payment` se emite antes del redirect a Webpay en `resumen.vue`
-- [ ] **ANA-04**: El evento `purchase` en `gracias.vue` está guardado con un ref `fired` para asegurar que se emite exactamente una vez
-- [ ] **ANA-05**: `DataLayerEvent` exportado desde `useAdAnalytics.ts` y tipado en `window.d.ts`; `window.dataLayer` tipado como `DataLayerEvent[]`
+None — all v1.13 requirements shipped. See Future Requirements for upcoming work.
 
 ## Previous State
+
+<details>
+<summary>v1.13 GTM Module Migration (shipped 2026-03-07)</summary>
+
+- **Phase 33 — GTM Module Migration**: Deleted `gtm.client.ts`; installed `@saslavik/nuxt-gtm@0.1.3`; configured with `enableRouterSync: true` and `runtimeConfig.public.gtm.id`; feature flag updated to `!!config.public.gtm?.id`; GA4 Realtime confirmed working locally.
+
+</details>
+
+<details>
+<summary>v1.12 Ad Creation Analytics Gaps (shipped 2026-03-07)</summary>
+
+- **Phase 32 — Analytics Gaps Cleanup**: Dead `useAdAnalytics` import removed from `CreateAd.vue`; `step_view` overcounting fixed (no `immediate: true` on step watcher, explicit step 1 in `onMounted`); `redirect_to_payment` event added before Webpay redirect in `resumen.vue`; `purchase` event guarded with `fired` ref in `gracias.vue`; `DataLayerEvent` exported from `useAdAnalytics.ts` and `window.dataLayer` typed as `(DataLayerEvent | Record<string, unknown>)[]`.
+
+</details>
 
 <details>
 <summary>v1.11 GTM / GA4 Tracking Fix (shipped 2026-03-07)</summary>
@@ -106,8 +120,8 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - Website (apps/website): Nuxt 4, Pinia, @nuxtjs/strapi v2; 29 páginas lang="ts", 14 stores con persist audit, typeCheck: true (since v1.9)
 - 4 cron jobs activos en Strapi: `adCron` (1 AM), `userCron` (2 AM), `backupCron` (3 AM), `cleanupCron` (domingo 4 AM)
 - `cron-runner` API disponible en `POST /api/cron-runner/:name` para ejecución manual de cualquier cron
-- GTM plugin (`gtm.client.ts`): client-only, loads `gtm.js` dynamically; fixed in v1.11 — no broken shim, Consent Mode v2 in place
-- Ad creation analytics (`useAdAnalytics.ts`): most events already tracked (view_item_list, step_view, begin_checkout, purchase); gaps identified in v1.12 — dead import in CreateAd.vue, step_view overcounting, missing redirect_to_payment event, purchase event fragility, window.dataLayer typed as unknown[]
+- GTM handled via `@saslavik/nuxt-gtm@0.1.3` module (since v1.13) — `enableRouterSync: true` fires page_view on every SPA route change; GTM ID from `runtimeConfig.public.gtm.id`; hand-rolled `gtm.client.ts` plugin deleted
+- Ad creation analytics (`useAdAnalytics.ts`): all events tracked — view_item_list, step_view (exact, no overcounting), begin_checkout, redirect_to_payment, purchase (guarded); `DataLayerEvent` fully typed in `window.d.ts` (since v1.12)
 
 ## Constraints
 
@@ -156,6 +170,11 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
   | `typeCheck: true` permanently enabled in website | Every future build enforces TypeScript; TS-04 goal achieved; no more deferred type errors — v1.9 | ✓ Good |
   | dataLayer push approach (no separate gtag.js) for Consent Mode v2 | GTM reads dataLayer natively; loading gtag.js separately would create two competing tag systems — v1.11 | ✓ Good |
   | Default consent denial pushed before GTM script loads | Consent Mode v2 requires denial-first; GTM processes dataLayer in order so pre-load push ensures compliance — v1.11 | ✓ Good |
+  | `window.dataLayer` typed as `(DataLayerEvent \| Record<string, unknown>)[]` union | Covers both GA4 analytics events and GTM consent commands (plain objects without event/flow fields) — v1.12 | ✓ Good |
+  | `purchaseFired` ref guard on `gracias.vue` purchase event | `watchEffect` can re-run; ref guard ensures exactly one purchase event regardless of re-render — v1.12 | ✓ Good |
+  | `@saslavik/nuxt-gtm` over `@nuxtjs/gtm` or `@zadigetvoltaire/nuxt-gtm` | `@nuxtjs/gtm` is Nuxt 2 only; `@zadigetvoltaire/nuxt-gtm` not Nuxt 4 compatible; `@saslavik` is the only maintained Nuxt 4 option — v1.13 | ✓ Good |
+  | GTM module `enableRouterSync: true` replaces manual `router.afterEach` push | Module handles SPA page_view natively; eliminates hand-rolled plugin entirely — v1.13 | ✓ Good |
+  | `runtimeConfig.public.gtm.id` replaces `gtmId` flat field | Nested object keeps GTM config grouped; optional chaining `?.id` in feature flag avoids runtime errors if not set — v1.13 | ✓ Good |
 
 ## Future Requirements
 
@@ -172,4 +191,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-07 after v1.12 milestone started (Ad Creation Analytics Gaps)*
+*Last updated: 2026-03-07 after v1.13 milestone complete (GTM Module Migration)*
