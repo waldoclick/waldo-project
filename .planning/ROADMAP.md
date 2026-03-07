@@ -39,6 +39,20 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 
 ## Standalone Phases
 
+### Phase 40: Users Filter Authenticated
+
+**Goal:** Show only Authenticated users in the dashboard users table and remove the "Rol" column. Fix is server-side: wire `getUserDataWithFilters` controller in `strapi-server.ts` with a non-forgeable authenticated role filter via `strapi.db.query`.
+
+**Requirements:** FILTER-01 (authenticated filter enforced server-side), FILTER-02 (pagination respected), FILTER-03 (sort and client filters forwarded), FILTER-04 (Rol column removed from dashboard)
+
+**Plans:** 2 plans
+
+Plans:
+- [ ] 40-01-PLAN.md — Strapi: harden getUserDataWithFilters + wire strapi-server.ts (TDD)
+- [ ] 40-02-PLAN.md — Dashboard: remove populate:role from searchParams and drop Rol column
+
+---
+
 ### Phase 39: Spanish Default Language
 
 **Goal:** Set Spanish (`es`) as the declared default language in both Nuxt apps by enabling the already-installed `@nuxtjs/i18n` module, fixing `html[lang]` and `og:locale` SEO attributes.
@@ -62,3 +76,4 @@ Plans:
 | 37. Dynamic Page Copy | v1.16 | 1/1 | Complete | 2026-03-07 |
 | 38. Static Page Copy | v1.16 | 2/2 | Complete | 2026-03-07 |
 | 39. Spanish Default Language | standalone | 0/1 | In Progress | — |
+| 40. Users Filter Authenticated | standalone | 0/2 | In Progress | — |
