@@ -1,11 +1,7 @@
 export default defineNuxtPlugin(() => {
-  if (import.meta.dev) {
-    // console.log("🔧 Console plugin initialized in development mode");
-  } else {
-    // console.log = () => {};
+  if (!import.meta.dev) {
+    console.log = () => {};
     console.debug = () => {};
-    console.warn = () => {};
-    console.error = () => {};
-    console.info = () => {};
+    // console.warn, console.error, console.info intentionally NOT suppressed
   }
 });
