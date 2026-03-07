@@ -104,7 +104,7 @@ Archive: `.planning/milestones/v1.8-ROADMAP.md`
 
 **Milestone Goal:** Eliminar los bugs de correctness críticos del website (structured data rota, key collisions en useAsyncData, errores suprimidos en producción) y establecer una base TypeScript sólida con typeCheck habilitado.
 
-- [ ] **Phase 25: Critical Correctness Bugs** — Fix structured data plugin, useAsyncData key collisions, console restoration, mis-anuncios/mis-ordenes await/key fixes *(planned)*
+- [x] **Phase 25: Critical Correctness Bugs** — Fixed Strapi route shadowing (/ads/me/* routes), useAsyncData key collisions, $setStructuredData type augmentation, production console filter (completed 2026-03-06)
 - [ ] **Phase 26: Data Fetching Cleanup** — Move onMounted fetch to useAsyncData in 7 creation-flow components; audit all 62 onMounted calls
 - [ ] **Phase 27: TypeScript Migration** — Migrate 17 pages to lang="ts"; eliminate any in critical stores and composables
 - [ ] **Phase 28: TypeScript Strict + Store Audit** — Enable typeCheck: true in nuxt.config.ts; audit persist in all 14 stores
@@ -123,7 +123,7 @@ Archive: `.planning/milestones/v1.8-ROADMAP.md`
   5. Loading `/cuenta/mis-ordenes` directly (SSR) renders the same order data as a client-side navigation to the same page
 **Plans**: 1 plan
 Plans:
-- [ ] 25-01-PLAN.md — Fix 5 correctness bugs: $setStructuredData types, useAsyncData key collisions, console suppression, SSR hydration on mis-anuncios/mis-ordenes
+- [x] 25-01-PLAN.md — Fixed 5 correctness bugs: $setStructuredData types, useAsyncData key collisions, console suppression, Strapi /ads/me route ordering
 
 ### Phase 26: Data Fetching Cleanup
 **Goal**: All data fetching in creation-flow and profile components uses useAsyncData (SSR-compatible) — no component silently skips rendering on first SSR load due to onMounted-only fetch
@@ -162,7 +162,7 @@ Plans:
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 24. featuredCron Implementation | v1.8 | 1/1 | Complete | 2026-03-07 |
-| 25. Critical Correctness Bugs | v1.9 | 1/1 | Planned | — |
+| 25. Critical Correctness Bugs | v1.9 | 1/1 | Complete | 2026-03-06 |
 | 26. Data Fetching Cleanup | v1.9 | 0/? | Not started | — |
 | 27. TypeScript Migration | v1.9 | 0/? | Not started | — |
 | 28. TypeScript Strict + Store Audit | v1.9 | 0/? | Not started | — |
