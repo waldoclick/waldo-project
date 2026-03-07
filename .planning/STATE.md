@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: ROADMAP_DEFINED — awaiting `/gsd-plan-phase 36`
-stopped_at: Completed 37-1-PLAN.md — Dynamic Page Copy
-last_updated: "2026-03-07T18:36:33.605Z"
+stopped_at: Completed 38-02-PLAN.md — Static Page Copy (sitemap + privacy policy)
+last_updated: "2026-03-07T18:54:52.176Z"
 progress:
   total_phases: 3
   completed_phases: 2
-  total_plans: 2
-  completed_plans: 2
+  total_plans: 4
+  completed_plans: 3
   percent: 0
 ---
 
@@ -107,6 +107,7 @@ Key patterns established (carry forward):
 - [Phase 36]: useSeoMeta({ robots: noindex, nofollow }) added to packs/index.vue, login/facebook.vue, login/google.vue, dev.vue
 - [Phase 37]: Budget-aware slice formula (155 - prefix.length - suffix.length - 4) eliminates hardcoded 150-char limit for ad descriptions
 - [Phase 37]: descPrefix/descSuffix pattern isolates variable ad name/commune from fixed brand suffix, enabling exact budget calculation
+- [Phase 38-static-page-copy]: sitemap: 'Navega fácilmente por Waldo.click®' prefix front-loads trademark fix
 
 ### v1.16 Canonical Vocabulary (hard constraints)
 - ✅ `anuncios` — NEVER `avisos`, NEVER `clasificados`
@@ -126,6 +127,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-07T18:36:33.603Z
-Stopped at: Completed 37-1-PLAN.md — Dynamic Page Copy
+Last session: 2026-03-07T18:54:48.330Z
+Stopped at: Completed 38-02-PLAN.md — Static Page Copy (sitemap + privacy policy)
 Resume with: `/gsd-plan-phase 36`

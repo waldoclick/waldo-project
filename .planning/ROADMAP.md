@@ -82,4 +82,4 @@ Plans:
 | 35. Website SEO Audit | v1.15 | 3/3 | Complete | 2026-03-07 |
 | 36. SEO Bug Fixes | 1/1 | Complete   | 2026-03-07 | - |
 | 37. Dynamic Page Copy | 1/1 | Complete   | 2026-03-07 | - |
-| 38. Static Page Copy | v1.16 | 0/2 | Not started | - |
+| 38. Static Page Copy | 1/2 | In Progress|  | - |
