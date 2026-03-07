@@ -66,7 +66,15 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 
 ### Active
 
-(None — see Future Requirements for next milestone candidates)
+**Milestone v1.16 — Website Meta Copy Audit**
+
+**Goal:** Audit and rewrite all `<title>` and `<meta description>` tags across apps/website — replace dynamic/counter-based values with static, keyword-rich copy that is semantically correct and consistent.
+
+**Target features:**
+- Inventory all page titles and meta descriptions (static and dynamic)
+- Replace any titles/descriptions that include counters or dynamic data (e.g. ad counts, user counts) with static copy
+- Ensure all copy uses semantically correct keywords for the classified ads domain (Chile)
+- Validate that every page has both a title and description defined
 
 ## Previous State
 
@@ -220,4 +228,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-07 after v1.15 milestone shipped (Website SEO Audit)*
+*Last updated: 2026-03-07 after v1.16 milestone started (Website Meta Copy Audit)*
