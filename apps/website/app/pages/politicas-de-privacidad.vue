@@ -5,6 +5,7 @@
 <script setup lang="ts">
 // Define SEO
 const { $setSEO, $setStructuredData } = useNuxtApp();
+const config = useRuntimeConfig();
 
 // Componente principal
 import PoliciesDefault from "@/components/PoliciesDefault.vue";
@@ -18,8 +19,8 @@ $setSEO({
   title: "Políticas de Privacidad",
   description:
     "Conoce cómo Waldo.click® protege tu información personal y asegura la privacidad en tus transacciones.",
-  imageUrl: "https://waldo.click/share.jpg",
-  url: "https://www.waldo.click/politicas-de-privacidad",
+  imageUrl: `${config.public.baseUrl}/share.jpg`,
+  url: `${config.public.baseUrl}/politicas-de-privacidad`,
 });
 
 $setStructuredData({
@@ -28,6 +29,6 @@ $setStructuredData({
   name: "Políticas de Privacidad",
   description:
     "Conoce cómo Waldo.click® protege tu información personal y asegura la privacidad en tus transacciones.",
-  url: "https://waldo.click/politicas-de-privacidad",
+  url: `${config.public.baseUrl}/politicas-de-privacidad`,
 });
 </script>

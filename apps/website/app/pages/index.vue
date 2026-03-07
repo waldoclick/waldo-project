@@ -18,7 +18,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 // Define SEO
-const { $setSEO } = useNuxtApp();
+const { $setSEO, $setStructuredData } = useNuxtApp();
 
 // Components
 import HeaderDefault from "@/components/HeaderDefault.vue";
@@ -74,4 +74,33 @@ $setSEO({
   description:
     "Publica y encuentra equipo industrial en Chile. Waldo.click® conecta vendedores y compradores de equipos nuevos o usados en todo el país.",
 });
+
+const config = useRuntimeConfig();
+
+$setStructuredData([
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    url: config.public.baseUrl,
+    name: "Waldo.click®",
+    description:
+      "Plataforma de compra y venta de activos industriales en Chile. Encuentra equipos nuevos o usados de todo el país.",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${config.public.baseUrl}/anuncios?s={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    url: config.public.baseUrl,
+    name: "Waldo.click®",
+    logo: `${config.public.baseUrl}/images/share.jpg`,
+    sameAs: [],
+  },
+]);
 </script>

@@ -39,6 +39,7 @@ const { fetchUser } = useStrapiAuth();
 
 // Define SEO
 const { $setSEO, $setStructuredData } = useNuxtApp();
+const config = useRuntimeConfig();
 
 // Inicializar stores
 const adStore = useAdStore();
@@ -105,15 +106,16 @@ $setSEO({
   title: "Resumen del Anuncio",
   description:
     "Consulta los detalles de tu anuncio antes de publicarlo en Waldo.click®. Asegúrate de que todo esté perfecto para destacar en el mercado de activos industriales.",
-  imageUrl: "https://waldo.click/share.jpg",
-  url: "https://waldo.click/resumen-anuncio",
+  imageUrl: `${config.public.baseUrl}/share.jpg`,
+  url: `${config.public.baseUrl}/resumen-anuncio`,
 });
+useSeoMeta({ robots: "noindex, nofollow" });
 
 $setStructuredData({
   "@context": "https://schema.org",
   "@type": "WebPage",
   name: "Resumen del Anuncio - Waldo.click®",
-  url: "https://waldo.click/resumen-anuncio",
+  url: `${config.public.baseUrl}/resumen-anuncio`,
   description:
     "Consulta los detalles de tu anuncio antes de publicarlo en Waldo.click®. Asegúrate de que todo esté perfecto para destacar en el mercado de activos industriales.",
 });

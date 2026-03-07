@@ -35,12 +35,13 @@ const list = [
 
 // Define SEO
 const { $setSEO, $setStructuredData } = useNuxtApp();
+const config = useRuntimeConfig();
 
 $setSEO({
   title: "Acceso Restringido - Modo Desarrollo",
   description:
     "El sitio Waldo.click® está en modo desarrollo. El acceso está restringido temporalmente y solo usuarios autorizados pueden navegar por el sitio.",
-  imageUrl: "https://waldo.click/share.jpg",
+  imageUrl: `${config.public.baseUrl}/share.jpg`,
 });
 
 $setStructuredData({
@@ -49,7 +50,7 @@ $setStructuredData({
   name: "Acceso Restringido - Modo Desarrollo",
   description:
     "El sitio Waldo.click® está en modo desarrollo. El acceso está restringido temporalmente y solo usuarios autorizados pueden navegar por el sitio.",
-  url: "https://waldo.click/dev",
+  url: `${config.public.baseUrl}/dev`,
 });
 
 definePageMeta({

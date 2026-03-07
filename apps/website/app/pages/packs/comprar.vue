@@ -22,4 +22,14 @@ await useAsyncData("packs-comprar", async () => {
 definePageMeta({
   middleware: "auth",
 });
+
+const { $setSEO } = useNuxtApp();
+const config = useRuntimeConfig();
+
+$setSEO({
+  title: "Comprar Pack",
+  description: "Adquiere un pack de avisos en Waldo.click®.",
+  imageUrl: `${config.public.baseUrl}/share.jpg`,
+});
+useSeoMeta({ robots: "noindex, nofollow" });
 </script>

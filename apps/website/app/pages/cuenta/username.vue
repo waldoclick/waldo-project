@@ -21,6 +21,7 @@ if (!user.value?.pro) {
 }
 
 const { $setSEO, $setStructuredData } = useNuxtApp();
+const config = useRuntimeConfig();
 
 definePageMeta({
   layout: "account",
@@ -31,15 +32,16 @@ $setSEO({
   title: "Personalizar Nombre de Usuario",
   description:
     "Personaliza tu nombre de usuario en Waldo.click®. Crea una identidad única y memorable para tu negocio.",
-  imageUrl: "https://waldo.click/share.jpg",
-  url: "https://waldo.click/cuenta/username",
+  imageUrl: `${config.public.baseUrl}/share.jpg`,
+  url: `${config.public.baseUrl}/cuenta/username`,
 });
+useSeoMeta({ robots: "noindex, nofollow" });
 
 $setStructuredData({
   "@context": "https://schema.org",
   "@type": "WebPage",
   name: "Personalizar Nombre de Usuario",
-  url: "https://waldo.click/cuenta/username",
+  url: `${config.public.baseUrl}/cuenta/username`,
   description:
     "Personaliza tu nombre de usuario en Waldo.click®. Crea una identidad única y memorable para tu negocio.",
 });

@@ -97,12 +97,13 @@ if (pageData.value?.communes && pageData.value.communes.length > 0) {
 
 // Define SEO
 const { $setSEO, $setStructuredData } = useNuxtApp();
+const config = useRuntimeConfig();
 
 $setSEO({
   title: "Mapa del Sitio",
   description:
     "Explora la estructura de nuestro sitio y encuentra fácilmente lo que buscas en Waldo.click.",
-  imageUrl: "https://waldo.click/share.jpg",
+  imageUrl: `${config.public.baseUrl}/share.jpg`,
 });
 
 $setStructuredData({
@@ -111,6 +112,6 @@ $setStructuredData({
   name: "Mapa del Sitio",
   description:
     "Explora la estructura de nuestro sitio y encuentra fácilmente lo que buscas en Waldo.click.",
-  url: "https://waldo.click/sitemap",
+  url: `${config.public.baseUrl}/sitemap`,
 });
 </script>

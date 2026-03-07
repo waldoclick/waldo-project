@@ -25,6 +25,7 @@
 <script setup lang="ts">
 const { $setSEO, $setStructuredData } = useNuxtApp();
 const route = useRoute();
+const config = useRuntimeConfig();
 const packsStore = usePacksStore();
 const router = useRouter();
 
@@ -93,6 +94,8 @@ watchEffect(() => {
   }
 });
 
+useSeoMeta({ robots: "noindex, nofollow" });
+
 watch(data, (newData) => {
   if (newData && !("error" in newData)) {
     const pack = newData as Pack;
@@ -101,15 +104,15 @@ watch(data, (newData) => {
       description: `Has comprado el pack ${pack.name} por ${formatPrice(
         pack.price,
       )}. Este pack incluye ${(pack as any).ads_count} anuncios.`,
-      imageUrl: "https://waldo.click/share.jpg",
-      url: `https://waldo.click/packs/gracias?pack=${pack.id}`,
+      imageUrl: `${config.public.baseUrl}/share.jpg`,
+      url: `${config.public.baseUrl}/packs/gracias?pack=${pack.id}`,
     });
 
     $setStructuredData({
       "@context": "https://schema.org",
       "@type": "WebPage",
       name: `Gracias por tu Compra - ${pack.name} - Waldo.click®`,
-      url: `https://waldo.click/packs/gracias?pack=${pack.id}`,
+      url: `${config.public.baseUrl}/packs/gracias?pack=${pack.id}`,
       description: `Has comprado el pack ${pack.name} por ${formatPrice(
         pack.price,
       )}. Este pack incluye ${(pack as any).ads_count} anuncios.`,

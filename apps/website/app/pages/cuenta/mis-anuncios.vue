@@ -89,4 +89,12 @@ definePageMeta({
   layout: "account",
   middleware: "auth",
 });
+
+const { $setSEO } = useNuxtApp();
+
+$setSEO({
+  title: "Mis Anuncios",
+  description: "Gestiona tus anuncios activos y archivados en Waldo.click®.",
+});
+useSeoMeta({ robots: "noindex, nofollow" });
 </script>

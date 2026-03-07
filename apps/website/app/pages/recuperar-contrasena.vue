@@ -46,6 +46,7 @@
 <script setup lang="ts">
 // Define SEO
 const { $setSEO, $setStructuredData } = useNuxtApp();
+const config = useRuntimeConfig();
 
 // Components
 import IntroduceAuth from "@/components/IntroduceAuth.vue";
@@ -69,9 +70,10 @@ $setSEO({
   title: "Recuperar Contraseña",
   description:
     "Recupera el acceso a tu cuenta en Waldo.click®. Sigue unos simples pasos para restablecer tu contraseña de forma segura.",
-  imageUrl: "https://waldo.click/share.jpg",
-  url: "https://waldo.click/recuperar-contrasena",
+  imageUrl: `${config.public.baseUrl}/share.jpg`,
+  url: `${config.public.baseUrl}/recuperar-contrasena`,
 });
+useSeoMeta({ robots: "noindex, nofollow" });
 
 $setStructuredData({
   "@context": "https://schema.org",
@@ -79,7 +81,7 @@ $setStructuredData({
   name: "Recuperar Contraseña",
   description:
     "Recupera el acceso a tu cuenta en Waldo.click®. Sigue unos simples pasos para restablecer tu contraseña de forma segura.",
-  url: "https://waldo.click/recuperar-contrasena",
+  url: `${config.public.baseUrl}/recuperar-contrasena`,
 });
 
 definePageMeta({

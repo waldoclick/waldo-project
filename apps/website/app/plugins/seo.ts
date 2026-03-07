@@ -13,11 +13,28 @@ export default defineNuxtPlugin((nuxtApp) => {
       description: string;
       imageUrl?: string;
       url?: string;
+      ogType?: string;
+      twitterCard?: string;
     }) => {
       useSeoMeta({
         title: params.title,
         description: params.description,
+        ogTitle: params.title,
+        ogDescription: params.description,
         ogImage: params.imageUrl || DEFAULT_IMAGE,
+        ogUrl: params.url,
+        ogType: (params.ogType || "website") as
+          | "website"
+          | "article"
+          | "book"
+          | "profile",
+        twitterCard: (params.twitterCard || "summary_large_image") as
+          | "summary"
+          | "summary_large_image"
+          | "app"
+          | "player",
+        twitterTitle: params.title,
+        twitterDescription: params.description,
       });
     },
   );
@@ -31,6 +48,8 @@ declare module "#app" {
       description: string;
       imageUrl?: string;
       url?: string;
+      ogType?: string;
+      twitterCard?: string;
     }) => void;
   }
 }

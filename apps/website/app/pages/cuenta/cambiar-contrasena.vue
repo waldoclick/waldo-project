@@ -19,6 +19,7 @@ if (user.value?.provider !== "email") {
 }
 
 const { $setSEO, $setStructuredData } = useNuxtApp();
+const config = useRuntimeConfig();
 
 definePageMeta({
   layout: "account",
@@ -29,15 +30,16 @@ $setSEO({
   title: "Cambiar Contraseña",
   description:
     "Cambia tu contraseña en Waldo.click®. Mantén tu cuenta segura actualizando tus credenciales.",
-  imageUrl: "https://waldo.click/share.jpg",
-  url: "https://waldo.click/cuenta/cambiar-contrasena",
+  imageUrl: `${config.public.baseUrl}/share.jpg`,
+  url: `${config.public.baseUrl}/cuenta/cambiar-contrasena`,
 });
+useSeoMeta({ robots: "noindex, nofollow" });
 
 $setStructuredData({
   "@context": "https://schema.org",
   "@type": "WebPage",
   name: "Cambiar Contraseña",
-  url: "https://waldo.click/cuenta/cambiar-contrasena",
+  url: `${config.public.baseUrl}/cuenta/cambiar-contrasena`,
   description:
     "Cambia tu contraseña en Waldo.click®. Mantén tu cuenta segura actualizando tus credenciales.",
 });

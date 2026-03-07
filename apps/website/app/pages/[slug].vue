@@ -37,6 +37,7 @@ interface ProfileData {
 const { $setSEO, $setStructuredData } = useNuxtApp();
 
 const route = useRoute();
+const config = useRuntimeConfig();
 
 // Excluir rutas que no son perfiles de usuario
 // Estas rutas deben ser manejadas por sus propias páginas específicas
@@ -146,46 +147,43 @@ if (import.meta.client) {
   });
 }
 
-// Configurar SEO solo cuando hay datos válidos (EJECUTAR DESPUÉS)
-// Deshabilitado temporalmente para evitar errores 500
-// watch(
-//   () => adsData.value,
-//   (newData) => {
-//     if (pending.value || !newData || !newData.user || !newData.ads || !Array.isArray(newData.ads) || !newData.user.username) return;
-//     try {
-//       const totalAds = newData.ads.length || 0;
-//       const location = newData.user.commune?.name ? `en ${newData.user.commune.name}` : "en Chile";
-//       const categories = [...new Set(newData.ads.map((ad) => ad?.category?.name).filter(Boolean))].slice(0, 3).join(", ");
-//       $setSEO({
-//         title: `Perfil de ${newData.user.username}`,
-//         description: `Explora los ${totalAds} anuncios de publicados por ${newData.user.username} ${location}. Encuentra los mejores precios en equipamiento industrial en Waldo.click`,
-//         imageUrl: newData.user.avatar?.url || "https://waldo.click/share.jpg",
-//         url: `https://waldo.click/${route.params.slug}`,
-//       });
-//       $setStructuredData({
-//         "@context": "https://schema.org",
-//         "@type": "ProfilePage",
-//         name: newData.user.username,
-//         description: `Perfil comercial de ${newData.user.username} - Vendedor especializado en ${categories || "equipo industrial"} ${location}`,
-//         url: `https://waldo.click/${route.params.slug}`,
-//         mainEntity: {
-//           "@type": "Person",
-//           name: newData.user.username,
-//           image: newData.user.avatar?.url || "https://waldo.click/share.jpg",
-//           description: `Vendedor con ${totalAds} anuncios activos en Waldo.click`,
-//           url: `https://waldo.click/${route.params.slug}`,
-//           memberOf: {
-//             "@type": "Organization",
-//             name: "Waldo.click",
-//             url: "https://waldo.click",
-//           },
-//         },
-//       });
-//     } catch (err) {
-//       console.error("Error setting SEO:", err);
-//     }
-//   },
-// );
+// Set SEO and structured data when profile data is available
+watch(
+  () => adsData.value,
+  (newData) => {
+    if (!newData || !newData.user) return;
+    const totalAds = newData.ads?.length || 0;
+    const location = newData.user.commune?.name
+      ? `en ${newData.user.commune.name}`
+      : "en Chile";
+
+    $setSEO({
+      title: `Perfil de ${newData.user.username} | Waldo.click®`,
+      description: `Explora los ${totalAds} anuncios publicados por ${newData.user.username} ${location}. Encuentra los mejores precios en equipamiento industrial en Waldo.click®.`,
+      imageUrl:
+        newData.user.avatar?.url || `${config.public.baseUrl}/share.jpg`,
+      url: `${config.public.baseUrl}/${route.params.slug}`,
+    });
+
+    $setStructuredData({
+      "@context": "https://schema.org",
+      "@type": "ProfilePage",
+      name: `Perfil de ${newData.user.username}`,
+      description: `Perfil de vendedor de ${newData.user.username} ${location}`,
+      url: `${config.public.baseUrl}/${route.params.slug}`,
+      mainEntity: {
+        "@type": newData.user.is_company ? "Organization" : "Person",
+        name: newData.user.is_company
+          ? newData.user.business_name || newData.user.username
+          : `${newData.user.firstname || ""} ${newData.user.lastname || ""}`.trim() ||
+            newData.user.username,
+        image: newData.user.avatar?.url || `${config.public.baseUrl}/share.jpg`,
+        url: `${config.public.baseUrl}/${route.params.slug}`,
+      },
+    });
+  },
+  { immediate: true },
+);
 
 // Observar cambios en la URL y actualizar la página actual
 watch(

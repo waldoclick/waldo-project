@@ -7,6 +7,7 @@ export default defineNuxtPlugin(() => {
     useHead({
       script: [
         {
+          key: "structured-data",
           type: "application/ld+json",
           innerHTML: JSON.stringify(data),
         },

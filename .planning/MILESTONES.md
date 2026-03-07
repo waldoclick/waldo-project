@@ -1,5 +1,24 @@
 # Milestones
 
+## v1.15 Website SEO Audit (Shipped: 2026-03-07)
+
+**Phases completed:** 1 phase (35), 3 plans
+**Files changed:** ~27 files (apps/website — plugins, pages, nuxt.config.ts)
+**Timeline:** 2026-03-07 (~1.5 hours)
+**Requirements:** 9/9 complete ✓
+
+**Key accomplishments:**
+1. **$setSEO Plugin Extension (SEO-01)**: `seo.ts` plugin extended to emit full OG + Twitter Card tag set via `useSeoMeta` — `ogTitle`, `ogDescription`, `ogUrl`, `ogType` (default `"website"`), `twitterCard` (default `"summary_large_image"`), `twitterTitle`, `twitterDescription` — all derived from existing `title`/`description` params with zero call-site changes required.
+2. **Hardcoded URL Cleanup (SEO-02)**: All 74+ hardcoded `https://waldo.click` strings across 21 page files replaced with `config.public.baseUrl` template expressions — correct across local/staging/production environments.
+3. **Missing SEO Coverage (SEO-03, SEO-04, SEO-05)**: `$setSEO` + structured data added to `packs/index.vue`, `packs/comprar.vue`, `cuenta/mis-ordenes.vue`, `cuenta/mis-anuncios.vue`; commented-out SEO block in `[slug].vue` restored with `ProfilePage`/`Person` schema; `index.vue` gained `WebSite` + `Organization` JSON-LD with `SearchAction`.
+4. **Noindex Defense-in-Depth (SEO-07)**: `useSeoMeta({ robots: "noindex, nofollow" })` applied to all 18 private/transactional pages as complement to existing `robots.txt` rules.
+5. **JSON-LD Accumulation Fix (SEO-06)**: `microdata.ts` plugin uses `key: "structured-data"` on `useHead` script entry — SPA navigation now replaces rather than appends JSON-LD `<script>` tags.
+6. **Sitemap Restructure (SEO-08)**: Replaced `sources` array with single `async urls()` function combining 6 static entries (with `changefreq`/`priority`) and dynamic ad URLs.
+
+**Archive:** `.planning/milestones/v1.15-ROADMAP.md` | `.planning/milestones/v1.15-REQUIREMENTS.md`
+
+---
+
 ## v1.14 GTM Module: Dashboard (Shipped: 2026-03-07)
 
 **Phases completed:** 1 phase (34), 1 plan

@@ -21,6 +21,7 @@ if (!user.value?.pro) {
 }
 
 const { $setSEO, $setStructuredData } = useNuxtApp();
+const config = useRuntimeConfig();
 
 definePageMeta({
   layout: "account",
@@ -31,15 +32,16 @@ $setSEO({
   title: "Personalizar Portada",
   description:
     "Personaliza tu portada en Waldo.click®. Dale un toque único a tu perfil y destaca tus anuncios.",
-  imageUrl: "https://waldo.click/share.jpg",
-  url: "https://waldo.click/cuenta/cover",
+  imageUrl: `${config.public.baseUrl}/share.jpg`,
+  url: `${config.public.baseUrl}/cuenta/cover`,
 });
+useSeoMeta({ robots: "noindex, nofollow" });
 
 $setStructuredData({
   "@context": "https://schema.org",
   "@type": "WebPage",
   name: "Personalizar Portada",
-  url: "https://waldo.click/cuenta/cover",
+  url: `${config.public.baseUrl}/cuenta/cover`,
   description:
     "Personaliza tu portada en Waldo.click®. Dale un toque único a tu perfil y destaca tus anuncios.",
 });

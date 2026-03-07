@@ -119,8 +119,9 @@ $setSEO({
   title: "Iniciar sesión",
   description:
     "Accede a tu cuenta en Waldo.click® para gestionar tus anuncios, ver contactos y disfrutar de todos los beneficios de nuestra plataforma.",
-  imageUrl: "https://waldo.click/share.jpg",
+  imageUrl: `${config.public.baseUrl}/share.jpg`,
 });
+useSeoMeta({ robots: "noindex, nofollow" });
 
 $setStructuredData({
   "@context": "https://schema.org",
@@ -128,7 +129,7 @@ $setStructuredData({
   name: "Iniciar sesión",
   description:
     "Accede a tu cuenta en Waldo.click® para gestionar tus anuncios, ver contactos y disfrutar de todos los beneficios de nuestra plataforma.",
-  url: "https://waldo.click/login",
+  url: `${config.public.baseUrl}/login`,
 });
 
 definePageMeta({

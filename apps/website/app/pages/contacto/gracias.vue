@@ -17,6 +17,7 @@ definePageMeta({
 });
 
 const { $setSEO, $setStructuredData } = useNuxtApp();
+const config = useRuntimeConfig();
 const appStore = useAppStore();
 
 // Verificar si el formulario fue enviado
@@ -39,15 +40,15 @@ $setSEO({
   title: "Gracias por contactarnos",
   description:
     "Hemos recibido tu mensaje. Te responderemos lo antes posible. Gracias por confiar en Waldo.click®.",
-  imageUrl: "https://waldo.click/thanks-share.jpg",
-  url: "https://waldo.click/gracias",
+  imageUrl: `${config.public.baseUrl}/thanks-share.jpg`,
+  url: `${config.public.baseUrl}/gracias`,
 });
 
 $setStructuredData({
   "@context": "https://schema.org",
   "@type": "WebPage",
   name: "Gracias por contactarnos",
-  url: "https://waldo.click/gracias",
+  url: `${config.public.baseUrl}/gracias`,
   description: "Hemos recibido tu mensaje. Gracias por confiar en nosotros.",
 });
 </script>

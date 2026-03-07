@@ -493,6 +493,47 @@
 
 ---
 
+## Milestone: v1.15 — Website SEO Audit
+
+**Shipped:** 2026-03-07
+**Phases:** 1 (35) | **Plans:** 3
+
+### What Was Built
+- `$setSEO` plugin extended with full OG + Twitter Card tag set (`ogTitle`, `ogDescription`, `ogUrl`, `ogType`, `twitterCard`, `twitterTitle`, `twitterDescription`) — zero call-site changes needed
+- 74+ hardcoded `https://waldo.click` strings replaced with `config.public.baseUrl` across 21 page files
+- `$setSEO` + structured data added to 4 pages that had none (`packs/index.vue`, `packs/comprar.vue`, `mis-ordenes.vue`, `mis-anuncios.vue`); profile page `[slug].vue` SEO restored with `ProfilePage`/`Person` schema; home page gained `WebSite` + `Organization` JSON-LD with `SearchAction`
+- `noindex, nofollow` applied to all 18 private/transactional pages via `useSeoMeta` — defense-in-depth alongside `robots.txt`
+- `microdata.ts` fixed: `key: "structured-data"` on `useHead` script entry prevents JSON-LD accumulation on SPA navigation
+- Sitemap restructured: `sources` array replaced with single `async urls()` function combining static entries (with `changefreq`/`priority`) and dynamic ad URLs
+
+### What Worked
+- Extending the plugin to derive all new OG/Twitter fields from existing `title`/`description` params meant zero call-site updates were needed — the extension was fully backward-compatible
+- Breaking into 3 plans by responsibility (plugin + URLs / coverage + noindex / dedup + sitemap) gave clean execution boundaries; no plan bled into another's concerns
+- The `useHead` key pattern for JSON-LD deduplication was a one-line fix with high impact — Nuxt handles merging natively
+
+### What Was Inefficient
+- Plan 35-01 SUMMARY.md was not created during execution — required creation at milestone close. SUMMARY.md should be generated immediately after each plan completes.
+- The pre-existing `v1.15-ROADMAP.md` and `v1.15-REQUIREMENTS.md` archives in milestones/ still showed "In Progress" status; the gsd-tools CLI doesn't update previously created archives on `milestone complete` — manual update required.
+
+### Patterns Established
+- `useSeoMeta({ robots: "noindex, nofollow" })` pattern for private page noindex defense-in-depth
+- `key: "structured-data"` on `useHead` script entry prevents JSON-LD accumulation on SPA navigation
+- Sitemap pattern: single `async urls()` function — static entries as `const staticUrls` prepended, dynamic entries spread-appended
+- `$setSEO` plugin extension pattern: derive new tag fields from existing params to preserve backward compatibility
+
+### Key Lessons
+1. **Always write SUMMARY.md immediately after a plan completes.** The summary is the canonical record of what was done. Missing summaries block milestone completion tooling and require reconstruction from plan + commit history.
+2. **Pre-existing milestone archives need manual status update.** The `milestone complete` CLI tool creates new archive files but doesn't update previously-created ones; if archives were pre-created during milestone start, review and update them at close.
+3. **One-line fixes with high impact:** The `key: "structured-data"` fix eliminated a structural SEO bug that would have confused Google's structured data crawler — a trivial code change with outsized SEO consequence.
+4. **Backward compatibility in plugin extension is a design constraint, not an accident.** Deriving `ogTitle` from `title` means existing `$setSEO` callers automatically get correct social sharing — no migration sweep needed.
+
+### Cost Observations
+- Model mix: ~100% sonnet (balanced profile)
+- Sessions: 1
+- Notable: Compact milestone — 3 focused plans, ~1.5 hours total. Highest file-touch count (27+ files for SEO-07 noindex sweep) was mechanical and fast.
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -514,6 +555,7 @@
 | v1.12 | 1 | 1 | Ad creation analytics gaps closed: 5 targeted fixes across 6 files |
 | v1.13 | 1 | 1 | GTM hand-rolled plugin replaced with @saslavik/nuxt-gtm module |
 | v1.14 | 1 | 1 | Dashboard GTM module installed; website + dashboard now consistent |
+| v1.15 | 1 | 3 | Website SEO audit: OG/Twitter tags, 74+ URL replacements, noindex sweep, JSON-LD dedup, sitemap restructure |
 
 ### Cumulative Quality
 
@@ -534,6 +576,7 @@
 | v1.12 | utils (100% coverage) | true | 0 |
 | v1.13 | utils (100% coverage) | true | 1 (@saslavik/nuxt-gtm) |
 | v1.14 | utils (100% coverage) | true | 0 |
+| v1.15 | utils (100% coverage) | true | 0 |
 
 ### Top Lessons (Verified Across Milestones)
 
