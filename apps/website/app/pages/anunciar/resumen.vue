@@ -123,7 +123,7 @@ definePageMeta({
   middleware: "auth",
 });
 
-// Enviar evento de begin_checkout cuando se monte el componente
+// onMounted: analytics-only — fires begin_checkout event; client-side only, non-blocking
 onMounted(() => {
   adAnalytics.beginCheckout();
 });

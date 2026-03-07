@@ -78,7 +78,7 @@ const fileInput = ref(null);
 const isProcessing = ref(false);
 const cover = ref(null);
 
-// Cargar el cover inicial cuando el componente se monta
+// onMounted: UI-only — derives initial cover preview URL from already-loaded user data (no API call)
 onMounted(() => {
   if (user.value?.cover) {
     cover.value = transformUrl(user.value.cover.url);

@@ -76,7 +76,7 @@ const fileInput = ref(null);
 const isProcessing = ref(false);
 const avatar = ref(null);
 
-// Cargar el avatar inicial cuando el componente se monta
+// onMounted: UI-only — derives initial avatar preview URL from already-loaded user data; sets up file input CSS
 onMounted(() => {
   if (user.value?.avatar) {
     avatar.value = transformUrl(user.value.avatar.url);

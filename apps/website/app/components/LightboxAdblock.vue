@@ -41,6 +41,7 @@ let countdownInterval: ReturnType<typeof setInterval> | null = null;
 
 const { $checkSiteHealth } = useNuxtApp();
 
+// onMounted: client-only — runs adblock detection via plugin; must run client-side after DOM is ready
 onMounted(() => {
   checkAdBlock();
 });

@@ -139,7 +139,7 @@ const handleClickOutside = (event: MouseEvent) => {
   }
 };
 
-// Event listeners
+// onMounted: UI-only — attaches click-outside listener to close user menu dropdown
 onMounted(() => {
   document.addEventListener("click", handleClickOutside);
 });

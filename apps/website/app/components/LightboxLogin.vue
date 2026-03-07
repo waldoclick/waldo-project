@@ -86,6 +86,7 @@ const handleKeydown = (event: KeyboardEvent) => {
   }
 };
 
+// onMounted: UI-only — closes login lightbox if user is already authenticated; attaches keyboard ESC listener
 onMounted(() => {
   if (user.value) {
     appStore.closeLoginLightbox();

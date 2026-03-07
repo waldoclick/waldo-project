@@ -61,6 +61,7 @@ function applyColor(color?: string) {
   else root.value.style.removeProperty("--category-bg-color");
 }
 
+// onMounted: UI-only — applies category color CSS after nextTick DOM paint
 onMounted(async () => {
   await nextTick();
   applyColor(props.color);

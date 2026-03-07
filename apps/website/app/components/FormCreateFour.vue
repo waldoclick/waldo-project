@@ -309,6 +309,7 @@ const handleformBack = async () => {
   emit("formBack");
 };
 
+// onMounted: UI-only — loads conditions for select (fire-and-forget; non-critical for SSR)
 onMounted(() => {
   conditionsStore.loadConditions();
 });

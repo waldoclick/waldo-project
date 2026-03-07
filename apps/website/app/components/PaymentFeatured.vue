@@ -54,7 +54,7 @@ const user = useStrapiUser();
 const { getAdFeaturedReservations } = useUser();
 const value = ref(false);
 
-// Obtener el valor inicial del store cuando el componente se monta
+// onMounted: UI-only — reads featured selection from store and sets default if not yet chosen
 onMounted(() => {
   // Obtener valor del store, si existe
   value.value = adStore.featured;
