@@ -229,6 +229,7 @@ export const useAdStore = defineStore("ad", {
     },
   },
 
+  // persist: CORRECT — multi-step ad creation wizard; form data must survive page refresh between steps
   persist: {
     storage: typeof window !== "undefined" ? localStorage : undefined,
   },

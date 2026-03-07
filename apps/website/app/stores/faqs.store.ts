@@ -71,6 +71,7 @@ export const useFaqsStore = defineStore(
     };
   },
   {
+    // persist: CORRECT — static reference data with 1-hour cache TTL (lastFetchTimestamp); safe to reuse across sessions
     persist: {
       storage: typeof window !== "undefined" ? localStorage : undefined,
     },

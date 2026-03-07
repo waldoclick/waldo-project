@@ -22,6 +22,7 @@ export const usePackStore = defineStore("pack", {
     },
   },
 
+  // persist: REVIEW — pack selection and invoice flag are ad creation wizard state; overlaps with ad.store; persisting separately risks inconsistency
   persist: {
     storage: typeof window !== "undefined" ? localStorage : undefined,
   },

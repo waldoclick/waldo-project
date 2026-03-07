@@ -105,6 +105,7 @@ export const useIndicatorStore = defineStore(
     };
   },
   {
+    // persist: CORRECT — daily economic indicators with date-based cache (lastFetchDate); valid to reuse on same calendar day
     persist: true,
   },
 );
