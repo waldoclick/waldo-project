@@ -158,46 +158,65 @@ export const getUserDataById = async (ctx) => {
 };
 
 /**
- * Retrieves detailed data for users with filters and pagination.
+ * Retrieves users with server-enforced Authenticated role filter, pagination, sort, and client filters.
+ * Does NOT call getDetailedUserData — no N+1 query problem.
  * @param {Object} ctx - The Koa context object.
  */
 export const getUserDataWithFilters = async (ctx) => {
-  const { filters, pagination = {} } = ctx.query;
+  const { filters: clientFilters = {}, pagination = {}, sort } = ctx.query;
 
-  // Extract pagination parameters correctly
-  const page = parseInt(pagination.page || "1", 10);
-  const pageSize = parseInt(pagination.pageSize || "25", 10);
+  const page = parseInt((pagination as Record<string, string>).page || "1", 10);
+  const pageSize = parseInt(
+    (pagination as Record<string, string>).pageSize || "25",
+    10
+  );
 
-  // Call the original controller
+  // Server-enforced: only return Authenticated users — non-forgeable from client.
+  // The content-API sanitizer strips `filters[role]` for regular JWTs, so this
+  // controller uses strapi.db.query directly to bypass that restriction.
+  const authenticatedRole = await strapi.db
+    .query("plugin::users-permissions.role")
+    .findOne({ where: { type: "authenticated" } });
+
+  const where = {
+    ...(clientFilters as Record<string, unknown>),
+    ...(authenticatedRole ? { role: { id: authenticatedRole.id } } : {}),
+  };
+
   const [users, total] = await strapi.db
     .query("plugin::users-permissions.user")
     .findWithCount({
-      where: filters,
+      where,
       populate: {
         role: true,
-        commune: {
-          populate: ["region"], // Ensure to include the 'region' relation within 'commune'
-        },
+        commune: { populate: ["region"] },
         avatar: true,
         cover: true,
       },
       offset: (page - 1) * pageSize,
       limit: pageSize,
+      orderBy: (sort as string) || { createdAt: "desc" },
     });
 
-  const detailedUsers = await Promise.all(
-    users.map(async (user) => {
-      return await getDetailedUserData(user);
-    })
-  );
+  // Sanitize sensitive fields without calling getDetailedUserData (avoids N+1)
+  const sanitizedUsers = (users as Record<string, unknown>[]).map((user) => {
+    const { password, resetPasswordToken, confirmationToken, ...safe } =
+      user as {
+        password?: unknown;
+        resetPasswordToken?: unknown;
+        confirmationToken?: unknown;
+        [key: string]: unknown;
+      };
+    return safe;
+  });
 
   ctx.body = {
-    data: detailedUsers,
+    data: sanitizedUsers,
     meta: {
       pagination: {
-        page: Number(page),
-        pageSize: Number(pageSize),
-        pageCount: Math.ceil(total / Number(pageSize)),
+        page,
+        pageSize,
+        pageCount: Math.ceil(total / pageSize),
         total,
       },
     },
