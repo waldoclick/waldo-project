@@ -10,15 +10,16 @@
         </p>
       </div>
     </div>
-    <div class="account--password__form">
+    <div v-if="isExternalProvider" class="account--password__memo">
       <MemoDefault
-        v-if="isExternalProvider"
         :icon="ShieldOff"
         text="No puedes cambiar tu contraseña porque iniciaste sesión con Google u otro proveedor externo."
         link="/cuenta"
         button-text="Volver a mi cuenta"
       />
-      <FormPassword v-else />
+    </div>
+    <div v-else class="account--password__form">
+      <FormPassword />
     </div>
   </section>
 </template>
