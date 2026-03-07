@@ -55,6 +55,7 @@ export default defineNuxtConfig({
             process.env.BASE_URL || "http://localhost:3000",
             process.env.API_URL || "http://localhost:1337",
             "https://static.hotjar.com",
+            "https://script.hotjar.com",
             "https://cdn.logrocket.io",
             "https://cdn.lr-ingest.io",
             "https://cdn.lgrckt-in.com",
@@ -87,6 +88,7 @@ export default defineNuxtConfig({
           "connect-src": [
             "'self'",
             "https:",
+            "wss://*.hotjar.com",
             process.env.BASE_URL || "http://localhost:3000",
             process.env.API_URL || "http://localhost:1337",
             "https://*.logrocket.io",
