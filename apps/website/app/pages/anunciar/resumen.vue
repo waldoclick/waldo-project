@@ -9,7 +9,7 @@
       v-else
       :show-icon="false"
       title="Revisa y confirma tu publicación"
-      :summary="prepareSummary(adStore)"
+      :summary="prepareSummary()"
     />
     <BarAnnouncement
       :percentage="100"
@@ -22,7 +22,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 const { Swal } = useSweetAlert2();
@@ -48,36 +48,36 @@ const { packPart, hasToPay, totalAmount, paymentSummaryText } =
   useAdPaymentSummary();
 
 // Función para preparar el summary
-const prepareSummary = (store) => {
+const prepareSummary = () => {
   return {
     showEditLinks: true,
-    pack: store.pack,
-    featured: store.featured,
-    isInvoice: store.is_invoice,
+    pack: adStore.pack,
+    featured: adStore.featured,
+    isInvoice: adStore.is_invoice,
     paymentSummary: paymentSummaryText.value,
     paymentMethod: packPart.value?.label || null,
     totalAmount: totalAmount.value,
     hasToPay: hasToPay.value,
-    title: store.ad.name,
-    category: store.ad.category,
-    price: store.ad.price,
-    currency: store.ad.currency,
-    description: store.ad.description,
-    email: store.ad.email,
-    phone: store.ad.phone,
-    commune: store.ad.commune,
-    address: store.ad.address,
-    addressNumber: store.ad.address_number,
-    condition: store.ad.condition,
-    manufacturer: store.ad.manufacturer,
-    model: store.ad.model,
-    serialNumber: store.ad.serial_number,
-    year: store.ad.year,
-    weight: store.ad.weight,
-    width: store.ad.width,
-    height: store.ad.height,
-    depth: store.ad.depth,
-    gallery: store.ad.gallery,
+    title: adStore.ad.name,
+    category: adStore.ad.category,
+    price: adStore.ad.price,
+    currency: adStore.ad.currency,
+    description: adStore.ad.description,
+    email: adStore.ad.email,
+    phone: adStore.ad.phone,
+    commune: adStore.ad.commune,
+    address: adStore.ad.address,
+    addressNumber: adStore.ad.address_number,
+    condition: adStore.ad.condition,
+    manufacturer: adStore.ad.manufacturer,
+    model: adStore.ad.model,
+    serialNumber: adStore.ad.serial_number,
+    year: adStore.ad.year,
+    weight: adStore.ad.weight,
+    width: adStore.ad.width,
+    height: adStore.ad.height,
+    depth: adStore.ad.depth,
+    gallery: adStore.ad.gallery,
   };
 };
 

@@ -5,7 +5,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // Define SEO
 const { $setSEO, $setStructuredData } = useNuxtApp();
 
@@ -16,6 +16,7 @@ import { onMounted, watch } from "vue";
 import { useAdAnalytics } from "~/composables/useAdAnalytics";
 import { usePacksStore } from "@/stores/packs.store";
 import { useAdStore } from "@/stores/ad.store";
+import type { AnalyticsItem } from "@/stores/ad.store";
 import { useMeStore } from "@/stores/me.store";
 import { useCategoriesStore } from "@/stores/categories.store";
 
@@ -41,7 +42,7 @@ await useAsyncData("anunciar-init", async () => {
 // onMounted: analytics-only — GA4 view_item_list event must fire client-side
 onMounted(() => {
   // Build analytics item list from pre-loaded packs store
-  const analyticsItems = [];
+  const analyticsItems: AnalyticsItem[] = [];
 
   // Add paid packs
   for (const pack of packsStore.packs) {

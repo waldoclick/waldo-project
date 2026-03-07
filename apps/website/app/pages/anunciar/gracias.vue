@@ -14,7 +14,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // Define SEO
 const { $setSEO, $setStructuredData } = useNuxtApp();
 
@@ -39,7 +39,10 @@ const adStore = useAdStore();
 const adAnalytics = useAdAnalytics();
 
 // Función auxiliar para manejar errores
-const handleError = (type, updatedAt = null) => {
+const handleError = (
+  type: "INVALID_URL" | "EXPIRED" | "NOT_FOUND",
+  updatedAt: string | null = null,
+) => {
   const errorMessages = {
     INVALID_URL: {
       message: "URL inválida",
