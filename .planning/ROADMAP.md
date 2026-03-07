@@ -1,196 +1,55 @@
-# Roadmap: Waldo Project
+# Roadmap — v1.14 GTM Module: Dashboard
 
-## Milestones
+## Milestone Goal
 
-- ✅ **v1.1 Dashboard Technical Debt Reduction** — Phases 3-6 (shipped 2026-03-05)
-- ✅ **v1.2 Double-Fetch Cleanup** — Phases 7-8 (shipped 2026-03-05)
-- ✅ **v1.3 Utility Extraction** — Phases 9-11 (shipped 2026-03-06)
-- ✅ **v1.4 URL Localization** — Phases 12-15 (shipped 2026-03-06)
-- ✅ **v1.5 Ad Credit Refund** — Phases 16-17 (shipped 2026-03-06)
-- ✅ **v1.6 Website API Optimization** — Phases 18-19 (shipped 2026-03-06)
-- ✅ **v1.7 Cron Reliability** — Phases 20-23 (shipped 2026-03-06)
-- ✅ **v1.8 Free Featured Reservation Guarantee** — Phase 24 (shipped 2026-03-07)
-- ✅ **v1.9 Website Technical Debt** — Phases 25-29 (shipped 2026-03-07)
-- ✅ **v1.10 Dashboard Orders Dropdown UI** — Phase 30 (shipped 2026-03-07)
-- ✅ **v1.11 GTM / GA4 Tracking Fix** — Phase 31 (shipped 2026-03-07)
-- ✅ **v1.12 Ad Creation Analytics Gaps** — Phase 32 (shipped 2026-03-07)
-  - ✅ **v1.13 GTM Module Migration** — Phase 33 (shipped 2026-03-07)
+Install `@saslavik/nuxt-gtm@0.1.3` in `apps/dashboard`, configure it identically to the v1.13 website implementation, and remove the legacy `gtmId` flat field. Dashboard GTM tracking fires on every SPA route change via `enableRouterSync: true`. TypeScript typecheck passes with zero errors.
 
-## Phases
+**Success definition:** Opening the dashboard in a browser with GTM Preview Mode confirms tags fire on page load and on every navigation.
 
-<details>
-<summary>✅ v1.1 Dashboard Technical Debt Reduction (Phases 3-6) — SHIPPED 2026-03-05</summary>
+---
 
-Phases 3-6 completed in v1.1: double-fetch + pagination isolation, Sentry/dead-code cleanup,
-AdsTable generic component, canonical domain types + typeCheck, Strapi aggregate endpoints.
-Archive: `.planning/milestones/v1.1-ROADMAP.md`
+## Requirements Coverage
 
-</details>
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| GTM-DASH-01 | 34 | pending |
+| GTM-DASH-02 | 34 | pending |
+| GTM-DASH-03 | 34 | pending |
 
-<details>
-<summary>✅ v1.2 Double-Fetch Cleanup (Phases 7-8) — SHIPPED 2026-03-05</summary>
+---
 
-Phases 7-8 completed in v1.2: eliminated redundant `onMounted` from all 10 non-ads dashboard
-components; `watch({ immediate: true })` is now sole data-loading trigger across the entire dashboard.
-Archive: `.planning/milestones/v1.2-ROADMAP.md`
+## Phase 34 — GTM Module: Dashboard
 
-</details>
+**Goal:** `apps/dashboard` has `@saslavik/nuxt-gtm@0.1.3` installed, configured, and fully typed — identical behaviour to `apps/website` post-v1.13.
 
-<details>
-<summary>✅ v1.3 Utility Extraction (Phases 9-11) — SHIPPED 2026-03-06</summary>
+**Requirements:** GTM-DASH-01, GTM-DASH-02, GTM-DASH-03
 
-Phases 9-11 completed in v1.3: date, price, and string utilities extracted into `app/utils/`; all
-51 inline duplicate function definitions eliminated across the dashboard.
-Archive: `.planning/milestones/v1.3-ROADMAP.md`
-
-</details>
-
-<details>
-<summary>✅ v1.4 URL Localization (Phases 12-15) — SHIPPED 2026-03-06</summary>
-
-Phases 12-15 completed in v1.4: all dashboard URL segments renamed to English; 301 redirects added
-for legacy Spanish paths; `nuxt typecheck` passes with zero errors.
-Archive: `.planning/milestones/v1.4-ROADMAP.md`
-
-</details>
-
-<details>
-<summary>✅ v1.5 Ad Credit Refund (Phases 16-17) — SHIPPED 2026-03-06</summary>
-
-Phases 16-17 completed in v1.5: reservation-freeing wired into `rejectAd()` and `bannedAd()`; email
-templates updated with conditional credit-return messaging.
-Archive: `.planning/milestones/v1.5-ROADMAP.md`
-
-</details>
-
-<details>
-<summary>✅ v1.6 Website API Optimization (Phases 18-19) — SHIPPED 2026-03-06</summary>
-
-Phases 18-19 completed in v1.6: eliminated double-fetches in website pages; added `GET /api/ads/me/counts`
-aggregate endpoint; timestamp-based cache guards added to 3 stores.
-Archive: `.planning/milestones/v1.6-ROADMAP.md`
-
-</details>
-
-<details>
-<summary>✅ v1.7 Cron Reliability (Phases 20-23) — SHIPPED 2026-03-06</summary>
-
-Phases 20-23 completed in v1.7: fixed userCron multi-ad loop, backupCron Strapi v5 config path,
-cleanupCron folder filter query; English docs added throughout all cron files.
-Archive: `.planning/milestones/v1.7-ROADMAP.md`
-
-</details>
-
-<details>
-<summary>✅ v1.8 Free Featured Reservation Guarantee (Phase 24) — SHIPPED 2026-03-07</summary>
-
-Phase 24 completed in v1.8: fixed `ad-free-reservation-restore.cron.ts` logic; parallel batch
-processing; `cron-runner` API committed.
-Archive: `.planning/milestones/v1.8-ROADMAP.md`
-
-</details>
-
-<details>
-<summary>✅ v1.9 Website Technical Debt (Phases 25-29) — SHIPPED 2026-03-07</summary>
-
-- [x] **Phase 25: Critical Correctness Bugs** — Fixed Strapi route shadowing, useAsyncData key collisions, $setStructuredData types, production console filter (completed 2026-03-06)
-- [x] **Phase 26: Data Fetching Cleanup** — Moved onMounted(async) data-fetching to useAsyncData in 7 components; all 33 onMounted calls documented with classification comments (completed 2026-03-07)
-- [x] **Phase 27: TypeScript Migration** — Migrated all 17 pages to lang="ts"; eliminated any in 3 stores and 3 composables (completed 2026-03-07)
-- [x] **Phase 28: TypeScript Strict + Store Audit** — STORE-01 complete (persist comments on all 14 stores); Strapi SDK filter casts in 4 stores (completed 2026-03-07)
-- [x] **Phase 29: TypeScript Strict Errors** — Fixed all 183 typecheck errors across 55 files; enabled typeCheck: true; nuxt typecheck passes with zero errors (completed 2026-03-07)
-
-Archive: `.planning/milestones/v1.9-ROADMAP.md`
-
-</details>
-
-<details>
-<summary>✅ v1.10 Dashboard Orders Dropdown UI (Phase 30) — SHIPPED 2026-03-07</summary>
-
-Phase 30 completed in v1.10: `DropdownSales.vue` surfaces buyer full name and full timestamp.
-Archive: `.planning/milestones/v1.10-ROADMAP.md`
-
-</details>
-
-<details>
-<summary>✅ v1.11 GTM / GA4 Tracking Fix (Phase 31) — SHIPPED 2026-03-07</summary>
-
-Phase 31 completed in v1.11: removed broken `gtag()` shim from `gtm.client.ts`; SPA `page_view` now pushes plain objects to dataLayer; Consent Mode v2 default denial pushed before GTM loads; `LightboxCookies.vue` pushes correct consent update command on accept.
-
-</details>
-
-<details>
-<summary>✅ v1.12 Ad Creation Analytics Gaps (Phase 32) — SHIPPED 2026-03-07</summary>
-
-Phase 32 completed in v1.12: dead `useAdAnalytics` import removed from `CreateAd.vue`; `step_view` overcounting fixed (no `immediate: true` on step watcher); `redirect_to_payment` event added before Webpay redirect; `purchase` event guarded with `fired` ref; `DataLayerEvent` exported and `window.dataLayer` fully typed.
-
-</details>
-
-<details>
-<summary>✅ v1.13 GTM Module Migration (Phase 33) — SHIPPED 2026-03-07</summary>
-
-Phase 33 completed in v1.13: replaced broken `gtm.client.ts` hand-rolled plugin with `@saslavik/nuxt-gtm@0.1.3`; GTM script now injected natively by the module; SPA page_view events fire on every route change via `enableRouterSync: true`; GA4 Realtime confirmed working locally.
-
-</details>
-
-## Phase Details
-
-### Phase 31: GTM Plugin + Consent Mode v2
-**Goal:** GA4 receives page_view events for all SPA navigations; Consent Mode v2 default denial is in place before GTM loads; cookie accept pushes the correct consent update
-**Depends on:** Nothing (self-contained changes in `apps/website`)
-**Requirements:** GTM-01, GTM-02
-**Success criteria:**
-1. `gtm.client.ts` has no local `gtag()` function — the broken shim is gone
-2. `window.dataLayer` receives a `{ "consent": "default", analytics_storage: "denied", ad_storage: "denied" }` push **before** the GTM `<script>` tag is injected
-3. SPA navigation pushes `{ event: "page_view", page_path: to.fullPath, page_title: ... }` as a plain object (not an array)
-4. `LightboxCookies.vue` `acceptCookies()` pushes `{ "consent": "update", analytics_storage: "granted", ad_storage: "granted" }` instead of the `accept_cookies` event
-5. `nuxt typecheck` passes with zero errors after the changes
-6. No behavior changes to the cookie banner UI — only the dataLayer payload differs
-**Plans:** 1/1 plans complete
-
-Plans:
-- [x] 31-01-PLAN.md — Fix gtag shim + Consent Mode v2 default/update in gtm.client.ts and LightboxCookies.vue
-
-### Phase 32: Analytics Gaps Cleanup
-**Goal:** Close all five identified gaps in the ad creation analytics flow — dead code removed, step_view fires exactly once per step, redirect_to_payment tracked before Webpay leaves the SPA, purchase fires exactly once, dataLayer fully typed
-**Depends on:** Phase 31 (window.d.ts patterns established in v1.9/v1.11)
-**Requirements:** ANA-01, ANA-02, ANA-03, ANA-04, ANA-05
-**Success criteria:**
-1. `CreateAd.vue` has no `useAdAnalytics` import or `adAnalytics` instantiation — dead code gone
-2. `watch(adStore.step)` in `index.vue` has no `immediate: true`; step 1 fires exactly once per fresh flow entry
-3. `resumen.vue` pushes `redirect_to_payment` with `payment_method: "webpay"` before `handleRedirect()` is called
-4. `gracias.vue` `purchase` event is guarded by a `fired` ref — fires exactly once even on watchEffect re-runs
-5. `DataLayerEvent` is exported from `useAdAnalytics.ts` and declared in `window.d.ts`; `window.dataLayer` typed as `DataLayerEvent[]`
-6. `nuxt typecheck` passes with zero errors after the changes
-**Plans:** 1/1 plans complete
-
-Plans:
-- [x] 32-01-PLAN.md — ANA-01 through ANA-05 implementation
-
-### Phase 33: GTM Module Migration
-**Goal:** Replace the broken `gtm.client.ts` plugin with `@saslavik/nuxt-gtm` so GTM script injection is handled natively by a Nuxt 4-compatible module and GA4 receives real-time hits
-**Depends on:** Nothing (self-contained change in `apps/website`)
-**Requirements:** GTM-MOD-01, GTM-MOD-02, GTM-MOD-03, GTM-MOD-04
-**Success criteria:**
-1. `apps/website/app/plugins/gtm.client.ts` does not exist
-2. `@saslavik/nuxt-gtm@0.1.3` in `apps/website` devDependencies; present in `modules` array of `nuxt.config.ts`
-3. Module configured with `enableRouterSync: true`; GTM ID from `runtimeConfig.public.gtm.id`; manual `gtmId` runtimeConfig field removed
-4. `useAppConfiguration` feature flag reads `!!config.public.gtm?.id`
-5. `npx nuxt typecheck` passes with zero errors
 **Plans:** 1 plan
 
 Plans:
-    - [x] 33-01-PLAN.md — Install @saslavik/nuxt-gtm, delete gtm.client.ts, update config and feature flag
+- [ ] 34-01-PLAN.md — Install + configure @saslavik/nuxt-gtm in apps/dashboard; remove gtmId; typecheck passes
 
-## Progress
+**Files:**
+- `apps/dashboard/package.json`
+- `apps/dashboard/nuxt.config.ts`
 
-| Phase | Milestone | Plans Complete | Status | Completed |
-|-------|-----------|----------------|--------|-----------|
-| 25. Critical Correctness Bugs | v1.9 | 1/1 | Complete | 2026-03-06 |
-| 26. Data Fetching Cleanup | v1.9 | 1/1 | Complete | 2026-03-07 |
-| 27. TypeScript Migration | v1.9 | 1/1 | Complete | 2026-03-07 |
-| 28. TypeScript Strict + Store Audit | v1.9 | 2/2 | Complete | 2026-03-07 |
-| 29. TypeScript Strict Errors | v1.9 | 1/1 | Complete | 2026-03-07 |
-| 30. Dropdown Display Fix | v1.10 | 1/1 | Complete | 2026-03-07 |
-| 31. GTM Plugin + Consent Mode v2 | v1.11 | 1/1 | Complete | 2026-03-07 |
-| 32. Analytics Gaps Cleanup | v1.12 | 1/1 | Complete | 2026-03-07 |
-| 33. GTM Module Migration | v1.13 | 1/1 | Complete | 2026-03-07 |
+**Estimated effort:** ~15 min Claude execution time
+
+---
+
+## Execution Order
+
+```
+Wave 1: Phase 34 (no dependencies — single phase milestone)
+```
+
+---
+
+## Constraints
+
+- No changes to `apps/website` — it was done in v1.13
+- No changes to `apps/strapi` — backend is not involved
+- No CSP changes needed — `https://www.googletagmanager.com` already present in dashboard CSP
+- No `useAppConfiguration` composable in dashboard — no feature flag to update
+- No `gtm.client.ts` plugin in dashboard — nothing to delete
+- Package manager: Yarn (never npm)

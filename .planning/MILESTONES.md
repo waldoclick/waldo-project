@@ -1,5 +1,14 @@
 # Milestones
 
+## v1.14 GTM Module: Dashboard (In Progress)
+
+**Phases planned:** 1 phase (34), 1 plan
+**Requirements:** 3 pending (GTM-DASH-01, GTM-DASH-02, GTM-DASH-03)
+
+**Goal:** Install `@saslavik/nuxt-gtm@0.1.3` in `apps/dashboard`; configure with `enableRouterSync: true`; remove legacy `gtmId` field; `nuxt typecheck` passes with zero errors.
+
+---
+
 ## v1.13 GTM Module Migration (Shipped: 2026-03-07)
 
 **Phases completed:** 1 phase (33), 1 plan
