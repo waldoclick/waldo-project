@@ -118,7 +118,7 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 | 40. Users Filter Authenticated | v1.17 | 2/2 | Complete | 2026-03-07 |
 | 41. Sentry Production-Only | v1.17 | 1/1 | Complete | 2026-03-07 |
 | 42. Ad Creation URL Refactor | v1.18 | 3/3 | Complete | 2026-03-08 |
-| 43. Zoho Service Reliability | v1.19 | 0/2 | Not started | — |
+| 43. Zoho Service Reliability | 1/2 | In Progress|  | — |
 | 44. Zoho Service Layer | v1.19 | 0/? | Not started | — |
 | 45. Payment Event Wiring | v1.19 | 0/? | Not started | — |
 | 46. Ad Published Event Wiring | v1.19 | 0/? | Not started | — |

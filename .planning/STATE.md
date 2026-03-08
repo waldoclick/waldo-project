@@ -1,11 +1,11 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.19
-milestone_name: Zoho CRM Sync Model
-status: active
-stopped_at: roadmap created — Phase 43 is next
-last_updated: "2026-03-08T04:00:00.000Z"
-last_activity: 2026-03-08 — v1.19 roadmap created (Phases 43-46)
+milestone: v1.1
+milestone_name: milestone
+status: active — roadmap ready, no plans written yet
+stopped_at: Completed 43-01-PLAN.md
+last_updated: "2026-03-08T02:32:14.153Z"
+last_activity: 2026-03-08 — roadmap created; Phases 43-46 defined; 13/13 requirements mapped
 progress:
   total_phases: 4
   completed_phases: 0
@@ -60,6 +60,8 @@ Key patterns established (carry forward):
 - **v1.18**: Per-page analytics — each wizard step page owns its own `stepView` in `onMounted`; no centralized watcher
 - **v1.18**: `if (import.meta.server) return;` is mandatory first line of any client-only middleware reading a localStorage-backed store
 - **v1.18**: `wizard-guard.ts` — step-skip prevention middleware; client-only; redirects to first incomplete step
+- [Phase 43-zoho-service-reliability]: Use Zoho-oauthtoken header prefix (not Bearer) — Zoho CRM API requirement — Required by Zoho API spec; Bearer is wrong scheme and causes all requests to fail
+- [Phase 43-zoho-service-reliability]: Inject AxiosAdapter via optional constructor param for test isolation — Preserves production path unchanged while enabling axios-mock-adapter injection in tests
 
 ### v1.19 Key Decisions (from research)
 
@@ -81,6 +83,6 @@ Key patterns established (carry forward):
 
 ## Session Continuity
 
-Last session: 2026-03-08
-Stopped at: roadmap created (Phases 43-46)
+Last session: 2026-03-08T02:32:14.152Z
+Stopped at: Completed 43-01-PLAN.md
 Resume with: `/gsd-plan-phase 43`
