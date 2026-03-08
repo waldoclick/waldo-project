@@ -47,10 +47,12 @@ onMounted(() => {
 });
 
 function handleFormSubmitted() {
+  adStore.updateStep(5);
   router.push("/anunciar/resumen");
 }
 
 function handleFormBack() {
+  adStore.updateStep(4);
   router.push("/anunciar/ficha-de-producto");
 }
 </script>
