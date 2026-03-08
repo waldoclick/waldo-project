@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.23
 milestone_name: Unified Payment Flow
-status: planning
-stopped_at: Completed 057-01-PLAN.md
-last_updated: "2026-03-08T23:49:35.434Z"
-last_activity: 2026-03-08 — Roadmap created (Phases 55-57)
+status: shipped
+stopped_at: v1.23 closed — all 3 phases complete
+last_updated: "2026-03-08T23:59:00.000Z"
+last_activity: 2026-03-08 — Phase 57 verified, v1.23 closed
 progress:
   total_phases: 3
   completed_phases: 3
@@ -17,20 +17,18 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-08 after v1.23 start)
+See: .planning/PROJECT.md (updated 2026-03-08 after v1.23 close)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.23 Unified Payment Flow — Phase 55: Store Unification
+**Current focus:** v1.23 Unified Payment Flow — SHIPPED
 
 ## Current Position
 
-Phase: 55 — Store Unification (not started)
-Plan: —
-Status: Ready to plan
-Last activity: 2026-03-08 — Roadmap created (Phases 55-57)
+Milestone: v1.23 — SHIPPED 2026-03-08
+All phases complete. Ready to start next milestone.
 
 ```
-Progress: [░░░░░░░░░░] 0/3 phases complete
+Progress: [██████████] 3/3 phases complete
 ```
 
 ## Accumulated Context
@@ -76,33 +74,16 @@ Key patterns established (carry forward):
 - [Phase 57]: adStore.ad.ad_id === null sentinel for pack-only flow — checked before mutations; reliable as draft call is only in ad+pack branch
 - [Phase 57]: v-if not v-show for ad sections in FormCheckout — pack-only flow should not mount PaymentAd or Destacado at all
 
-### v1.23 Phase Map
-
-| Phase | Goal | Requirements | Status |
-|-------|------|--------------|--------|
-| 55. Store Unification | `packs.store.ts` eliminated; pack data loaded directly where needed | PAY-04, CLN-02 | Not started |
-| 56. Pack Purchase Flow | `/packs` "Comprar" → `adStore` write + navigate to `/pagar`; `/packs/comprar` + `BuyPack.vue` removed | PACK-01, PACK-02, PACK-03, CLN-01 | Not started |
-| 57. Payment Hub Adaptation | `/pagar` works for pack-only and pack+ad; `FormCheckout` hides reservation options in pack-only | PAY-01, PAY-02, PAY-03 | Not started |
-
-### Key Context for v1.23 Implementation
-
-- `packs.store.ts` is currently used by: `PaymentMethod.vue` (FormCheckout), `packs/index.vue`, `packs/comprar.vue`
-- `BuyPack.vue` is the component inside `packs/comprar.vue` that handles pack purchase — both deleted together
-- `/pagar` currently only handles the ad+pack flow (expects `adStore.ad.ad_id`); pack-only requires adapting `CheckoutDefault.vue`
-- `adStore` already has `pack` field (PackType) — pack selection from `/packs` writes to `adStore.pack`
-- `FormCheckout` already passes `:hide-free="true"` to `PaymentMethod` — pack-only flow needs similar condition to hide reservation sections
-- `publishAd()` in `CheckoutDefault.vue` must be guarded: call only when `adStore.ad.ad_id` is set
-
 ### Pending Todos
 
 None.
 
 ### Blockers/Concerns
 
-- Whether the Strapi `payments/ad` endpoint requires `ad` in the payload for pack-only calls — may need to verify at implementation time (PAY-01). Endpoint signature changes are out of scope unless strictly required (per REQUIREMENTS.md Out of Scope).
+None.
 
 ## Session Continuity
 
-Last session: 2026-03-08T23:49:35.433Z
-Stopped at: Completed 057-01-PLAN.md
-Resume with: `/gsd-plan-phase 55`
+Last session: 2026-03-08T23:59:00.000Z
+Stopped at: v1.23 closed — ready to start next milestone
+Resume with: `/gsd-new-milestone`

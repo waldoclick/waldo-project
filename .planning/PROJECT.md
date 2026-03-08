@@ -116,6 +116,7 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - Ad creation wizard (v1.18): 5 dedicated routes (`/anunciar`, `/anunciar/datos-del-producto`, `/datos-personales`, `/ficha-de-producto`, `/galeria-de-imagenes`); `wizard-guard.ts` middleware prevents step skipping (SSR-safe); `stepRoutes` Record map in `CreateAd.vue`; per-page `stepView` analytics
 - Ad draft flow (v1.21): `draft: boolean` field on Ad schema (`default: true`); `POST /api/ads/save-draft` creates/updates draft before payment; `publishAd()` sets `draft: false` on payment confirmation; `computeAdStatus()` checks draft first; dashboard Borradores section uses `/ads/drafts` endpoint; free ad flow skips draft call entirely
 - Checkout flow (v1.22): `/pagar` page as central payment hub; `CheckoutDefault.vue` owns full payment logic (draft + webpay + free path); `PaymentAd.vue` previews ad; `PaymentGateway.vue` shows WebPay decoratively; `FormCheckout.vue` accordion with 5 sections; `BarCheckout.vue` action bar; SCSS `payment--ad`, `payment--gateway`, `form--checkout__field__title`
+- Unified payment flow (v1.23): `packs.store.ts` eliminated — `usePacksList` composable (module-level cache) replaces it; `/packs` "Comprar" writes `adStore.pack` and navigates directly to `/pagar`; `/packs/comprar` and `BuyPack.vue` deleted; `CheckoutDefault.vue` branches on `adStore.ad.ad_id === null` — pack-only calls `POST payments/pack`, ad+pack calls `POST payments/ad`; `FormCheckout.vue` hides `PaymentAd` and Destacado via `v-if="!isPackFlow"` in pack-only context
 - 4 cron jobs activos en Strapi: `adCron` (1 AM), `userCron` (2 AM), `backupCron` (3 AM), `cleanupCron` (domingo 4 AM)
 - `cron-runner` API disponible en `POST /api/cron-runner/:name` para ejecución manual de cualquier cron
 - GTM handled via `@saslavik/nuxt-gtm@0.1.3` module in both website (since v1.13) and dashboard (since v1.14) — `enableRouterSync: true` fires page_view on every SPA route change; GTM ID from `runtimeConfig.public.gtm.id`; hand-rolled `gtm.client.ts` plugins deleted in both apps
@@ -215,12 +216,16 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
    | `PaymentAd` pattern — ad preview first in checkout | Gives user context before paying; reduces abandonment by confirming they're paying for the right thing — v1.22 | ✓ Good |
    | `CheckoutDefault.vue` owns full payment logic | `resumen.vue` becomes a review/redirect step only; no payment duplication across pages — v1.22 | ✓ Good |
    | `BarCheckout.vue` separated from `BarAnnouncement.vue` | Checkout action bar has different semantics (no back button, step count); clean separation avoids prop flag soup — v1.22 | ✓ Good |
+   | Module-level ref + lastFetch pattern for composable-level caching (no Pinia) | Avoids Pinia overhead when state is non-persistent; same TTL/length guard semantics as packs.store — v1.23 | ✓ Good |
+   | `adStore.ad.ad_id === null` as pack-only sentinel | Checked before any mutations in `handlePayClick()`; reliable because draft call only exists in ad+pack branch — v1.23 | ✓ Good |
+   | `v-if` (not `v-show`) for ad-specific sections in FormCheckout | Pack-only flow must not mount `PaymentAd` or Destacado at all; `v-show` would still run lifecycle hooks — v1.23 | ✓ Good |
+   | `POST payments/pack` for pack-only; `POST payments/ad` unchanged for ad+pack | Backend already had separate endpoints; frontend branch mirrors this split cleanly — v1.23 | ✓ Good |
 
-## Current Milestone: v1.23 Unified Payment Flow
+## Shipped: v1.23 Unified Payment Flow
 
 **Goal:** Unify all paid flows through `/pagar` — eliminate `/packs/comprar`, wire `/packs` directly to `/pagar` via `adStore`, and make `/pagar` work correctly with or without an associated ad.
 
-**Target features:**
+**Shipped 2026-03-08:**
 - Pack purchase from `/packs` navigates directly to `/pagar` (no intermediate page)
 - `/pagar` handles pack-only payment (no `ad_id`) and pack+ad payment (`ad_id` present)
 - `packs.store.ts` eliminated — pack selection lives in `adStore`
