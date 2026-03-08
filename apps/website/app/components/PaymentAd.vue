@@ -52,7 +52,7 @@ import type { GalleryItem } from "@/types/ad";
 const adStore = useAdStore();
 const { transformUrl } = useImageProxy();
 
-const goToEdit = () => navigateTo("/anunciar");
+const goToEdit = () => navigateTo("/anunciar/datos-del-producto");
 
 const lastFiveImages = computed(() => {
   const gallery: GalleryItem[] = adStore.ad.gallery || [];
