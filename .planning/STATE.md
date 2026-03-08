@@ -4,7 +4,7 @@ milestone: v1.21
 milestone_name: Ad Draft Decoupling
 status: planning
 stopped_at: Completed 52-03-PLAN.md
-last_updated: "2026-03-08T18:25:50.635Z"
+last_updated: "2026-03-08T18:26:04.491Z"
 last_activity: 2026-03-08 — Roadmap committed, ready to plan Phase 52
 progress:
   total_phases: 6
@@ -72,6 +72,7 @@ Key patterns established (carry forward):
 - [Phase 51]: (global as unknown as { strapi: MockStrapi }) cast for test global mock — avoids @strapi/types global redeclaration conflict
 - [Phase 51]: controller.packResponse direct access with ctx as unknown as Context — public property, Koa partial mock needs Context cast
 - [Phase 52-ad-draft-decoupling]: draft field required=true/default=true so every new ad starts as a draft — Ensures no ad is ever published without explicit promotion out of draft state
+- [Phase 52-ad-draft-decoupling]: Intersection type cast for draft/is_paid fields not in AdData — Avoids modifying the core AdData interface for fields only relevant to the draft flow
 
 ### Pending Todos
 
