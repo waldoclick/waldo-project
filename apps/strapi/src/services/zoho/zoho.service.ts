@@ -3,7 +3,13 @@
  * Handles interactions with Zoho CRM API for leads and contacts management
  */
 
-import { IZohoService, ZohoLead, ZohoDeal, IContactStats } from "./interfaces";
+import {
+  IZohoService,
+  ZohoLead,
+  ZohoDeal,
+  IContactStats,
+  IZohoContact,
+} from "./interfaces";
 import { ZohoHttpClient } from "./http-client";
 
 export class ZohoService implements IZohoService {
@@ -15,9 +21,9 @@ export class ZohoService implements IZohoService {
    * @returns Promise with the created lead data
    * @throws Error if the lead creation fails
    */
-  async createLead(lead: ZohoLead): Promise<any[]> {
+  async createLead(lead: ZohoLead): Promise<unknown[]> {
     try {
-      const response = await this.httpClient.post<{ data: any[] }>(
+      const response = await this.httpClient.post<{ data: unknown[] }>(
         "/crm/v5/Leads",
         {
           data: [
@@ -62,9 +68,9 @@ export class ZohoService implements IZohoService {
     Other_Zip?: string;
     Other_State?: string;
     Other_City?: string;
-  }): Promise<any> {
+  }): Promise<IZohoContact> {
     try {
-      const response = await this.httpClient.post<{ data: any[] }>(
+      const response = await this.httpClient.post<{ data: unknown[] }>(
         "/crm/v5/Contacts",
         {
           data: [
@@ -91,7 +97,7 @@ export class ZohoService implements IZohoService {
           ],
         }
       );
-      return response.data[0];
+      return response.data[0] as IZohoContact;
     } catch (error) {
       console.error("Zoho API Error:", error.response?.data || error.message);
       throw new Error(`Failed to create contact: ${error.message}`);
@@ -104,9 +110,9 @@ export class ZohoService implements IZohoService {
    * @returns Promise with the found contact data or null if not found
    * @throws Error if the contact search fails
    */
-  async findContact(email: string): Promise<any | null> {
+  async findContact(email: string): Promise<IZohoContact | null> {
     try {
-      const response = await this.httpClient.get<{ data?: any[] }>(
+      const response = await this.httpClient.get<{ data?: unknown[] }>(
         "/crm/v5/Contacts/search",
         {
           criteria: `(Email:equals:${email})`,
@@ -117,7 +123,7 @@ export class ZohoService implements IZohoService {
         Array.isArray(response.data) &&
         response.data.length > 0
       ) {
-        return response.data[0];
+        return response.data[0] as IZohoContact;
       }
       return null;
     } catch (error) {
@@ -151,9 +157,9 @@ export class ZohoService implements IZohoService {
       Other_State?: string;
       Other_City?: string;
     }
-  ): Promise<any> {
+  ): Promise<IZohoContact> {
     try {
-      const response = await this.httpClient.put<{ data: any[] }>(
+      const response = await this.httpClient.put<{ data: unknown[] }>(
         `/crm/v5/Contacts/${id}`,
         {
           data: [
@@ -176,7 +182,7 @@ export class ZohoService implements IZohoService {
           ],
         }
       );
-      return response.data[0];
+      return response.data[0] as IZohoContact;
     } catch (error) {
       console.error("Zoho API Error:", error.response?.data || error.message);
       throw new Error(`Failed to update contact: ${error.message}`);
@@ -228,7 +234,7 @@ export class ZohoService implements IZohoService {
       const cleanStats = Object.fromEntries(
         Object.entries(stats).filter(([, v]) => v !== undefined)
       );
-      await this.httpClient.put<{ data: any[] }>(
+      await this.httpClient.put<{ data: unknown[] }>(
         `/crm/v5/Contacts/${contactId}`,
         { data: [cleanStats] }
       );
