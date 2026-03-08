@@ -93,7 +93,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useAdStore } from "@/stores/ad.store";
 import type { PackType } from "@/types/ad";
 

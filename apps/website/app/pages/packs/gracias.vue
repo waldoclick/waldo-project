@@ -26,14 +26,12 @@
 const { $setSEO, $setStructuredData } = useNuxtApp();
 const route = useRoute();
 const config = useRuntimeConfig();
-const packsStore = usePacksStore();
 const router = useRouter();
 
 import HeaderDefault from "@/components/HeaderDefault.vue";
 import HeroFake from "@/components/HeroFake.vue";
 import MessageDefault from "@/components/MessageDefault.vue";
 import FooterDefault from "@/components/FooterDefault.vue";
-import { usePacksStore } from "@/stores/packs.store";
 import type { Pack } from "@/types/pack";
 
 const formatPrice = (price: number) => {
@@ -65,15 +63,22 @@ const handleError = (type: "INVALID_URL" | "NOT_FOUND") => {
   });
 };
 
+const strapi = useStrapi();
 const { data, pending, error } = await useAsyncData<Pack | { error: string }>(
-  "packData",
+  "packs-gracias-pack",
   async () => {
     if (!route.query.pack) {
       return { error: "INVALID_URL" };
     }
 
-    const packsStore = usePacksStore();
-    const pack = await packsStore.getPackById(route.query.pack as string);
+    const response = await strapi.find("ad-packs", {
+      filters: { id: { $eq: route.query.pack } } as unknown as Record<
+        string,
+        unknown
+      >,
+      populate: "*",
+    } as unknown as Record<string, unknown>);
+    const pack = response.data?.[0] as unknown as Pack | undefined;
 
     if (!pack) {
       return { error: "NOT_FOUND" };
