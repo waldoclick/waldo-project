@@ -1,6 +1,7 @@
 import PaymentUtils from "../utils";
 import { getPaymentGateway } from "../../../services/payment-gateway";
 import logger from "../../../utils/logtail";
+import { zohoService } from "../../../services/zoho";
 
 class PackService {
   /**
@@ -161,6 +162,45 @@ class PackService {
           packId: adId,
         },
       });
+
+      // Zoho CRM sync — await is safe here (this method is called before a redirect, not from one)
+      try {
+        const user = await strapi.entityService.findOne(
+          "plugin::users-permissions.user",
+          userId
+        );
+        const contact = user?.email
+          ? await zohoService.findContact(user.email)
+          : null;
+        if (contact) {
+          const closingDate = new Date().toISOString().split("T")[0];
+          await zohoService.createDeal({
+            dealName: packData.data.name,
+            amount: wepbayResponse.response.amount,
+            contactId: contact.id,
+            type: "Pack Purchase",
+            closingDate,
+            leadSource: "Website",
+          });
+          await zohoService.updateContactStats(contact.id, {
+            Total_Spent__c: wepbayResponse.response.amount,
+            Packs_Purchased__c: 1,
+          });
+        } else {
+          logger.info(
+            "Zoho contact not found for pack purchase — skipping CRM sync",
+            { userId }
+          );
+        }
+      } catch (zohoError) {
+        logger.error(
+          "Zoho sync failed for pack purchase — payment flow unaffected",
+          {
+            userId,
+            error: zohoError.message,
+          }
+        );
+      }
 
       return {
         success: true,
