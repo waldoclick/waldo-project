@@ -163,7 +163,7 @@ describe("ZohoService", () => {
         mock.history.post.find((r) => r.url?.includes("/Deals"))!.data
       );
       expect(body.data[0].Deal_Name).toBe("Pack Premium - juan@example.com");
-      expect(body.data[0].Stage).toBe("Closed Won");
+      expect(body.data[0].Stage).toBe("Cerrado ganado");
       expect(body.data[0].Amount).toBe(9990);
       expect(body.data[0].Contact_Name).toEqual({ id: "contact-001" });
       expect(body.data[0].Type).toBe("Pack Purchase");

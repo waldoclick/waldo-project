@@ -128,4 +128,4 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 | 43. Zoho Service Reliability | 2/2 | Complete    | 2026-03-08 | — |
 | 44. Zoho Service Layer | 2/2 | Complete    | 2026-03-08 | — |
 | 45. Payment Event Wiring | 2/2 | Complete   | 2026-03-08 | — |
-| 46. Ad Published Event Wiring | 1/1 | Complete   | 2026-03-08 | — |
+| 46. Ad Published Event Wiring | 1/1 | Complete    | 2026-03-08 | — |
