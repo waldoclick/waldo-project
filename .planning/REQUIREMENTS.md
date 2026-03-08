@@ -30,23 +30,23 @@ TypeScript `any` elimination across Strapi services, controllers, type files, fa
 
 ### Zoho Service
 
-- [ ] **TSANY-13**: `zoho.service.ts` — `Promise<any[]>`, `Promise<any>`, `Promise<any | null>` return types → `Promise<unknown[]>`, `Promise<unknown>`, `Promise<unknown | null>`
-- [ ] **TSANY-14**: `zoho.service.ts` — `httpClient.post/get/put<{ data: any[] }>` generics → `<{ data: unknown[] }>`
-- [ ] **TSANY-15**: `zoho/interfaces.ts` — interface method return types `Promise<any[]>`, `Promise<any>` → `Promise<unknown[]>`, `Promise<unknown>`
-- [ ] **TSANY-16**: `zoho/http-client.ts` — `params?: any`, `data: any` params → `unknown`
+- [x] **TSANY-13**: `zoho.service.ts` — `Promise<any[]>`, `Promise<any>`, `Promise<any | null>` return types → `Promise<unknown[]>`, `Promise<unknown>`, `Promise<unknown | null>`
+- [x] **TSANY-14**: `zoho.service.ts` — `httpClient.post/get/put<{ data: any[] }>` generics → `<{ data: unknown[] }>`
+- [x] **TSANY-15**: `zoho/interfaces.ts` — interface method return types `Promise<any[]>`, `Promise<any>` → `Promise<unknown[]>`, `Promise<unknown>`
+- [x] **TSANY-16**: `zoho/http-client.ts` — `params?: any`, `data: any` params → `unknown`
 
 ### Facto / Electronic Documents
 
-- [ ] **TSANY-17**: `facto.factory.ts` — `datos: any` param → `unknown`
-- [ ] **TSANY-18**: `electronic-ticket.service.ts` + `electronic-invoice.service.ts` — SOAP callback `(err: any, result: any)` → `(err: unknown, result: unknown)`
-- [ ] **TSANY-19**: `facto.config.ts` — `private client: any` and `getClient(): any` → `unknown` with cast at call sites
+- [x] **TSANY-17**: `facto.factory.ts` — `datos: any` param → `unknown`
+- [x] **TSANY-18**: `electronic-ticket.service.ts` + `electronic-invoice.service.ts` — SOAP callback `(err: any, result: any)` → `(err: unknown, result: unknown)`
+- [x] **TSANY-19**: `facto.config.ts` — `private client: any` and `getClient(): any` → `unknown` with cast at call sites
 
 ### Other Services
 
-- [ ] **TSANY-20**: `indicador.service.ts` — `transformToEnglishFormat(data: any)` → `data: unknown` with narrowing
-- [ ] **TSANY-21**: `google.types.ts` + `google-sheets.service.ts` — `appendToSheet(data: any[])` → `data: unknown[]`
-- [ ] **TSANY-22**: `transbank` types + service — `error?: any`, `response?: any` in result interfaces → `unknown`; `handleError(error: any)` → `unknown`
-- [ ] **TSANY-23**: `payment-gateway/types/gateway.interface.ts` — `error?: any`, `response?: any` → `unknown`
+- [x] **TSANY-20**: `indicador.service.ts` — `transformToEnglishFormat(data: any)` → `data: unknown` with narrowing
+- [x] **TSANY-21**: `google.types.ts` + `google-sheets.service.ts` — `appendToSheet(data: any[])` → `data: unknown[]`
+- [x] **TSANY-22**: `transbank` types + service — `error?: any`, `response?: any` in result interfaces → `unknown`; `handleError(error: any)` → `unknown`
+- [x] **TSANY-23**: `payment-gateway/types/gateway.interface.ts` — `error?: any`, `response?: any` → `unknown`
 
 ### Payment Types & Utils
 
@@ -99,17 +99,17 @@ TypeScript `any` elimination across Strapi services, controllers, type files, fa
 | TSANY-10 | Phase 48 | Complete |
 | TSANY-11 | Phase 48 | Complete |
 | TSANY-12 | Phase 48 | Complete |
-| TSANY-13 | Phase 49 | Pending |
-| TSANY-14 | Phase 49 | Pending |
-| TSANY-15 | Phase 49 | Pending |
-| TSANY-16 | Phase 49 | Pending |
-| TSANY-17 | Phase 49 | Pending |
-| TSANY-18 | Phase 49 | Pending |
-| TSANY-19 | Phase 49 | Pending |
-| TSANY-20 | Phase 49 | Pending |
-| TSANY-21 | Phase 49 | Pending |
-| TSANY-22 | Phase 49 | Pending |
-| TSANY-23 | Phase 49 | Pending |
+| TSANY-13 | Phase 49 | Complete |
+| TSANY-14 | Phase 49 | Complete |
+| TSANY-15 | Phase 49 | Complete |
+| TSANY-16 | Phase 49 | Complete |
+| TSANY-17 | Phase 49 | Complete |
+| TSANY-18 | Phase 49 | Complete |
+| TSANY-19 | Phase 49 | Complete |
+| TSANY-20 | Phase 49 | Complete |
+| TSANY-21 | Phase 49 | Complete |
+| TSANY-22 | Phase 49 | Complete |
+| TSANY-23 | Phase 49 | Complete |
 | TSANY-24 | Phase 50 | Pending |
 | TSANY-25 | Phase 50 | Pending |
 | TSANY-26 | Phase 50 | Pending |
