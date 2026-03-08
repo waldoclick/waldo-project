@@ -38,7 +38,9 @@
         <SearchIcon :white="isTrasparent && isTop" />
       </div>
       <div
-        v-if="user && route.path !== '/anunciar'"
+        v-if="
+          user && !route.path.startsWith('/anunciar') && route.path !== '/pagar'
+        "
         class="header--default__announcement"
       >
         <nuxt-link
