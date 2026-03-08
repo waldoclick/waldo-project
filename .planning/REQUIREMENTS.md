@@ -3,9 +3,9 @@
 ## v1 Requirements
 
 ### Pack Purchase Flow
-- [ ] **PACK-01**: User can purchase a pack from `/packs` without going through `/packs/comprar`
-- [ ] **PACK-02**: Clicking "Comprar" on `/packs` writes the selected pack to `adStore` and navigates directly to `/pagar`
-- [ ] **PACK-03**: `/packs/comprar` page is removed from the codebase
+- [x] **PACK-01**: User can purchase a pack from `/packs` without going through `/packs/comprar`
+- [x] **PACK-02**: Clicking "Comprar" on `/packs` writes the selected pack to `adStore` and navigates directly to `/pagar`
+- [x] **PACK-03**: `/packs/comprar` page is removed from the codebase
 
 ### Payment Hub
 - [ ] **PAY-01**: `/pagar` processes payment when only a pack is selected (no `adStore.ad.ad_id`)
@@ -14,7 +14,7 @@
 - [x] **PAY-04**: `packs.store.ts` is eliminated — pack data loaded directly where needed
 
 ### Cleanup
-- [ ] **CLN-01**: `BuyPack.vue` is removed or replaced with the new flow
+- [x] **CLN-01**: `BuyPack.vue` is removed or replaced with the new flow
 - [x] **CLN-02**: All imports and references to `packs.store.ts` are removed from the codebase
 
 ## Future Requirements
@@ -31,12 +31,12 @@ None identified for this milestone.
 
 | REQ-ID  | Phase | Status  |
 |---------|-------|---------|
-| PACK-01 | 56    | Pending |
-| PACK-02 | 56    | Pending |
-| PACK-03 | 56    | Pending |
+| PACK-01 | 56    | Complete |
+| PACK-02 | 56    | Complete |
+| PACK-03 | 56    | Complete |
 | PAY-01  | 57    | Pending |
 | PAY-02  | 57    | Pending |
 | PAY-03  | 57    | Pending |
 | PAY-04  | 55    | Complete |
-| CLN-01  | 56    | Pending |
+| CLN-01  | 56    | Complete |
 | CLN-02  | 55    | Complete |
