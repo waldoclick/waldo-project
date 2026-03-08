@@ -4,7 +4,7 @@ milestone: v1.21
 milestone_name: Ad Draft Decoupling
 status: planning
 stopped_at: Completed 52-04-PLAN.md
-last_updated: "2026-03-08T18:35:37.649Z"
+last_updated: "2026-03-08T18:41:47.420Z"
 last_activity: 2026-03-08 — Roadmap committed, ready to plan Phase 52
 progress:
   total_phases: 6
