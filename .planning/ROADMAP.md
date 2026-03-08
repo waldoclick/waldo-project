@@ -44,7 +44,7 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 
 ### v1.23 — Unified Payment Flow
 
-- [ ] **Phase 55: Store Unification** — Eliminate `packs.store.ts`; pack data loaded directly in components that need it; all `packs.store` imports removed
+- [x] **Phase 55: Store Unification** — Eliminate `packs.store.ts`; pack data loaded directly in components that need it; all `packs.store` imports removed
 - [ ] **Phase 56: Pack Purchase Flow** — `/packs` "Comprar" writes to `adStore` and navigates to `/pagar`; `/packs/comprar` page and `BuyPack.vue` removed
 - [ ] **Phase 57: Payment Hub Adaptation** — `/pagar` handles pack-only (no `ad_id`) and pack+ad flows; `FormCheckout` hides reservation options in pack-only context
 
@@ -59,7 +59,11 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
   2. `packs/index.vue` loads pack data directly (e.g. via `useAsyncData` + Strapi call) without importing `packs.store`
   3. `PaymentMethod.vue` (inside `FormCheckout`) loads or receives pack data without importing `packs.store`
   4. `nuxt typecheck` passes with zero errors after store removal
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 055-01-PLAN.md — Create usePacksList composable + migrate components and composables
+- [ ] 055-02-PLAN.md — Migrate pages to direct Strapi calls
+- [ ] 055-03-PLAN.md — Delete packs.store.ts and verify typecheck
 
 ### Phase 56: Pack Purchase Flow
 **Goal**: Clicking "Comprar" on `/packs` takes the user directly to `/pagar` — no intermediate page
@@ -106,6 +110,6 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 | 51. Seeders + Test Files any Elimination | v1.20 | 1/1 | Complete | 2026-03-08 |
 | 52. Ad Draft Decoupling | v1.21 | 4/4 | Complete | 2026-03-08 |
 | 53. Checkout Page & Components | v1.22 | 1/1 | Complete | 2026-03-08 |
-| 55. Store Unification | v1.23 | 0/1 | Not started | — |
+| 55. Store Unification | v1.23 | 0/3 | Not started | — |
 | 56. Pack Purchase Flow | v1.23 | 0/1 | Not started | — |
 | 57. Payment Hub Adaptation | v1.23 | 0/1 | Not started | — |
