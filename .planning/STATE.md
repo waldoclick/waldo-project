@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.23
 milestone_name: Unified Payment Flow
 status: planning
-stopped_at: Completed 055-02-PLAN.md
-last_updated: "2026-03-08T22:54:47.473Z"
+stopped_at: Completed 055-03-PLAN.md
+last_updated: "2026-03-08T22:58:54.596Z"
 last_activity: 2026-03-08 — Roadmap created (Phases 55-57)
 progress:
   total_phases: 3
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 3
-  completed_plans: 2
+  completed_plans: 3
 ---
 
 # Project State
@@ -71,6 +71,7 @@ Key patterns established (carry forward):
 - [Phase 055-01]: Module-level ref + lastFetch pattern for composable-level caching (no Pinia) — Avoids Pinia overhead when state is non-persistent; same TTL semantics as packs.store
 - [Phase 55-store-unification]: anunciar/index.vue returns packs from useAsyncData as initData for SSR hydration — initData.value?.packs safe in onMounted
 - [Phase 55-store-unification]: gracias.vue: useAsyncData key renamed to 'packs-gracias-pack'; packData computed eliminates (as any) template casts; ads_count field corrected to total_ads
+- [Phase 55-store-unification]: Stub-then-delete pattern: remove store imports from last consumer (comprar.vue) before deleting packs.store.ts to keep nuxt typecheck passing — the file is deleted in Phase 56 anyway
 
 ### v1.23 Phase Map
 
@@ -99,6 +100,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-08T22:54:37.869Z
-Stopped at: Completed 055-02-PLAN.md
+Last session: 2026-03-08T22:58:49.267Z
+Stopped at: Completed 055-03-PLAN.md
 Resume with: `/gsd-plan-phase 55`
