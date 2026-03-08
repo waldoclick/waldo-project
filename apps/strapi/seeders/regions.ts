@@ -1,5 +1,5 @@
 // /seeders/regions.ts
-
+import type { Core } from "@strapi/strapi";
 import slugify from "slugify";
 
 const regionsData = [
@@ -426,7 +426,7 @@ const regionsData = [
   },
 ];
 
-const populateRegions = async (strapi: any) => {
+const populateRegions = async (strapi: Core.Strapi): Promise<void> => {
   console.log("Poblando regiones y comunas...");
 
   let totalCommunes = 0;
