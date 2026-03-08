@@ -19,6 +19,7 @@
 - ✅ **v1.15 Website SEO Audit** — Phase 35 (shipped 2026-03-07)
 - ✅ **v1.16 Website Meta Copy Audit** — Phases 36-38 (shipped 2026-03-07)
 - ✅ **v1.17 Security & Stability** — Phases 40-41 (shipped 2026-03-07)
+- 🔄 **v1.18 Ad Creation URL Refactor** — Phase 42 (in progress)
 
 ## Phases
 
@@ -37,6 +38,10 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 
 </details>
 
+### v1.18 — Ad Creation URL Refactor
+
+- [ ] **Phase 42: Ad Creation URL Refactor** — Replace `?step=N` query-param navigation with dedicated per-step Spanish routes; preserve analytics and store state
+
 ## Active Phases
 
 ### Phase 39: Spanish Default Language
@@ -52,6 +57,25 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 Plans:
 - [ ] 39-01-PLAN.md — Enable @nuxtjs/i18n in website and dashboard
 
+## Phase Details
+
+### Phase 42: Ad Creation URL Refactor
+
+**Goal:** Each wizard step is reachable via its own dedicated Spanish URL; `?step=N` query-param navigation is fully eliminated.
+
+**Depends on:** Nothing (self-contained website refactor)
+
+**Requirements:** ROUTE-01, ROUTE-02, ROUTE-03, ROUTE-04, ROUTE-05, STATE-01, STATE-02, ANA-01, ANA-02, QUAL-01, QUAL-02
+
+**Success Criteria** (what must be TRUE):
+  1. Navigating to `/anunciar` opens Step 1 (Pack + Featured selection) — no query param in the URL
+  2. Each of `/anunciar/datos-del-producto`, `/anunciar/datos-personales`, `/anunciar/ficha-de-producto`, `/anunciar/galeria-de-imagenes` renders the correct step form when accessed directly
+  3. Clicking Next/Back between steps changes the URL to the next step's dedicated route and `adStore.step` reflects the current step number
+  4. Form data entered in earlier steps is still present when navigating forward and backward through the wizard
+  5. `nuxt typecheck` passes with zero errors and no `?step=` references remain in any component or composable
+
+**Plans:** TBD
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -64,3 +88,4 @@ Plans:
 | 39. Spanish Default Language | v1.18 | 0/1 | Not started | — |
 | 40. Users Filter Authenticated | v1.17 | 2/2 | Complete | 2026-03-07 |
 | 41. Sentry Production-Only | v1.17 | 1/1 | Complete | 2026-03-07 |
+| 42. Ad Creation URL Refactor | v1.18 | 0/? | Not started | — |

@@ -3,10 +3,10 @@ gsd_state_version: 1.0
 milestone: v1.18
 milestone_name: Ad Creation URL Refactor
 status: in_progress
-stopped_at: Defining requirements
+stopped_at: Roadmap created — ready to plan Phase 42
 last_updated: "2026-03-07T00:00:00.000Z"
 progress:
-  total_phases: 0
+  total_phases: 1
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -24,10 +24,14 @@ See: .planning/PROJECT.md (updated 2026-03-07)
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: 42 — Ad Creation URL Refactor
 Plan: —
-Status: Defining requirements
-Last activity: 2026-03-07 — Milestone v1.18 started
+Status: Roadmap created — awaiting phase plan
+Last activity: 2026-03-07 — Roadmap created for v1.18
+
+```
+Progress: [░░░░░░░░░░] 0% — Phase 42 not started
+```
 
 ## Accumulated Context
 
@@ -54,18 +58,31 @@ Key patterns established (carry forward):
 - **Current wizard:** `/anunciar` (index.vue) hosts all 5 steps via `?step=N` query params
 - **Step routing:** adStore.step synced manually to `route.query.step` on mount; `router.push({ query: { step: N } })` on next/back
 - **Step components:** FormCreateOne (step 1), FormCreateTwo (2), FormCreateThree (3), FormCreateFour (4), FormCreateFive (5) — all `v-if="step === N"` inside `<ClientOnly>`
-- **Target routes:** `/anunciar/tipo-de-anuncio`, `/anunciar/datos-del-producto`, `/anunciar/datos-personales`, `/anunciar/ficha-de-producto`, `/anunciar/galeria-de-imagenes`
+- **Target routes:**
+  - `/anunciar` → Step 1 (FormCreateOne) — index.vue stays as entry point
+  - `/anunciar/datos-del-producto` → Step 2 (FormCreateTwo) — new page
+  - `/anunciar/datos-personales` → Step 3 (FormCreateThree) — new page
+  - `/anunciar/ficha-de-producto` → Step 4 (FormCreateFour) — new page
+  - `/anunciar/galeria-de-imagenes` → Step 5 (FormCreateFive) — new page
 - **Store:** adStore.step stays as number (1–5) for internal ordering; URL is navigation source of truth
-- **Analytics:** Keep Google Ecommerce-compatible English step names (`"Payment Method"`, `"General"`, etc.)
+- **Analytics:** Keep Google Ecommerce-compatible English step names (`"Payment Method"`, `"General"`, `"Personal Information"`, `"Product Sheet"`, `"Image Gallery"`)
 - **resumen.vue back:** Currently `/anunciar?step=5` → must update to `/anunciar/galeria-de-imagenes`
 - **Untouched:** `/anunciar/resumen`, `/anunciar/gracias`, `/anunciar/error`
 - **Rendering:** All step pages are client-only (`<ClientOnly>` or `definePageMeta` client-side)
 - **AGENTS.md rule:** `git mv` for all Nuxt page directory and file renames (preserves Git rename history)
-- **Existing phase 39** in roadmap (Spanish Default Language) is already there — v1.18 phases continue from 42
+- **Key files changing:**
+  - `apps/website/app/pages/anunciar/index.vue` (step 1 shell, simplify to only host FormCreateOne)
+  - NEW: `apps/website/app/pages/anunciar/datos-del-producto.vue`
+  - NEW: `apps/website/app/pages/anunciar/datos-personales.vue`
+  - NEW: `apps/website/app/pages/anunciar/ficha-de-producto.vue`
+  - NEW: `apps/website/app/pages/anunciar/galeria-de-imagenes.vue`
+  - `apps/website/app/pages/anunciar/resumen.vue` (back button fix only)
+  - `apps/website/app/stores/ad.store.ts` (step sync logic: route path → step number)
+  - `apps/website/app/components/CreateAd.vue` (navigation: `router.push` to named routes, not `?step=N`)
 
 ### Pending Todos
 
-None — milestone just started.
+None — roadmap created, ready for `/gsd-plan-phase 42`.
 
 ### Blockers/Concerns
 
@@ -74,5 +91,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-07
-Stopped at: Milestone v1.18 started — requirements being defined
-Resume with: `/gsd-plan-phase 42` after roadmap is created
+Stopped at: Roadmap created for v1.18 — Phase 42 defined
+Resume with: `/gsd-plan-phase 42`
