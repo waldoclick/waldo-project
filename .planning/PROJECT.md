@@ -75,7 +75,26 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 
 ### Active
 
-*(No active milestone — planning v1.18)*
+<!-- Current scope for v1.18 Ad Creation URL Refactor -->
+
+- [ ] Each ad creation wizard step has its own dedicated route (5 Spanish URLs)
+- [ ] `?step=N` query parameter navigation eliminated
+- [ ] Wizard state (store step number) stays as internal ordering reference; URL is source of truth
+- [ ] resumen.vue back button updated to point to /galeria-de-imagenes
+- [ ] Analytics step tracking preserved with Google Ecommerce-compatible step names
+- [ ] `typeCheck: true` passes with zero errors after all changes
+
+## Current Milestone: v1.18 Ad Creation URL Refactor
+
+**Goal:** Replace query-parameter step navigation in the ad creation wizard with dedicated per-step routes using descriptive Spanish URLs.
+
+**Target features:**
+- `/anunciar/tipo-de-anuncio` — Step 1: Pack + Featured selection
+- `/anunciar/datos-del-producto` — Step 2: Title, Category, Price, Description
+- `/anunciar/datos-personales` — Step 3: Contact info, Region, Commune
+- `/anunciar/ficha-de-producto` — Step 4: Condition, Specs
+- `/anunciar/galeria-de-imagenes` — Step 5: Image upload
+- resumen.vue back button updated to /galeria-de-imagenes
 
 ## Previous State
 
@@ -236,4 +255,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-07 after v1.17 milestone — Security & Stability*
+*Last updated: 2026-03-07 after v1.18 milestone start — Ad Creation URL Refactor*
