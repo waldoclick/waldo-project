@@ -21,6 +21,7 @@
 - ✅ **v1.17 Security & Stability** — Phases 40-41 (shipped 2026-03-07)
 - ✅ **v1.18 Ad Creation URL Refactor** — Phase 42 (shipped 2026-03-08)
 - ✅ **v1.19 Zoho CRM Sync Model** — Phases 43-46 (shipped 2026-03-08)
+- 🔄 **v1.20 TypeScript any Elimination** — Phases 47-51 (in progress)
 
 ## Phases
 
@@ -56,6 +57,76 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 
 </details>
 
+<details>
+<summary>🔄 v1.20 — TypeScript any Elimination (Phases 47-51) — IN PROGRESS</summary>
+
+- [ ] **Phase 47: Ad API any Elimination** — Replace all `any` in `ad.ts` service + controller: `options: any`, `computeAdStatus(ad: any)`, `transformSortParameter`, `ctx: any` → `Context`, filters + sort + populate locals
+- [ ] **Phase 48: Type Files + Flow Service any Elimination** — Replace `any` in `order.types.ts`, `filter.types.ts`, `flow.factory.ts`, `flow.types.ts`, `flow.service.ts`
+- [ ] **Phase 49: Zoho + Facto + Other Services any Elimination** — Replace `any` in Zoho service/interfaces/http-client, Facto factory/SOAP/config, Indicador, Google, Transbank, payment-gateway
+- [ ] **Phase 50: Payment Utils + Middlewares any Elimination** — Replace `any` in `payment.type.ts`, order/user/ad/general utils, `payment.ts` controller, `image-uploader.ts`, `cache.ts`, `user-registration.ts`
+- [ ] **Phase 51: Seeders + Test Files any Elimination** — Replace `strapi: any` in all 5 seeders; replace `as any` casts in 4 test files
+
+</details>
+
+## Phase Details
+
+### Phase 47: Ad API any Elimination
+**Goal**: The ad.ts service and controller are free of `any` types — all parameters and return values use `Context`, typed interfaces, or `unknown` with narrowing
+**Depends on**: Nothing (first v1.20 phase)
+**Requirements**: TSANY-01, TSANY-02, TSANY-03, TSANY-04, TSANY-05, TSANY-06, TSANY-07
+**Success Criteria** (what must be TRUE):
+  1. `tsc --noEmit` (or `strapi ts:generate-types`) reports zero `any`-related errors in `ad.ts` service
+  2. `ctx` params in ad controller accept `Context` from `@strapi/strapi` — IDE shows proper type autocomplete on `ctx.request`, `ctx.response`, `ctx.state`
+  3. `computeAdStatus` and `transformSortParameter` accept `unknown` and use type narrowing — no runtime behavior changes
+  4. `options`, `filterClause`, `filters`, `sort`, `populate` locals in ad service + controller carry typed or `unknown` signatures, not bare `any`
+**Plans**: TBD
+
+### Phase 48: Type Files + Flow Service any Elimination
+**Goal**: Shared type definition files and the Flow payment service layer carry no `any` — all data shapes are expressed as `unknown`, stub interfaces, or proper imports
+**Depends on**: Phase 47
+**Requirements**: TSANY-08, TSANY-09, TSANY-10, TSANY-11, TSANY-12
+**Success Criteria** (what must be TRUE):
+  1. `order.types.ts` has no `any` — `payment_response`, `document_details`, `filters`, `sort`, `populate` are `unknown`
+  2. `filter.types.ts` filter operator fields (`$eq`, `$ne`, `$lt`, `$lte`, `$gt`, `$gte`, `$in`, `$nin`, `$contains`, etc.) and `icon` are `unknown`, not `any`
+  3. `flow.factory.ts` does not contain `type Strapi = any` — uses `Core.Strapi` import or `unknown`
+  4. `flow.types.ts` discount, invoices, items, chargeAttempts fields are typed as `unknown` or stub interfaces
+  5. `flow.service.ts` message extraction uses proper narrowing — no `(x as any).message` casts remain
+**Plans**: TBD
+
+### Phase 49: Zoho + Facto + Other Services any Elimination
+**Goal**: All third-party integration services (Zoho CRM, Facto electronic documents, Indicador, Google Sheets, Transbank, payment gateway) are free of `any` in their public interfaces and internal implementations
+**Depends on**: Phase 47
+**Requirements**: TSANY-13, TSANY-14, TSANY-15, TSANY-16, TSANY-17, TSANY-18, TSANY-19, TSANY-20, TSANY-21, TSANY-22, TSANY-23
+**Success Criteria** (what must be TRUE):
+  1. Zoho service (`zoho.service.ts`) and interfaces (`zoho/interfaces.ts`) return `Promise<unknown>` / `Promise<unknown[]>` — no `Promise<any>` remains
+  2. Zoho HTTP client (`http-client.ts`) `params` and `data` params are `unknown`, not `any`
+  3. Facto files (`facto.factory.ts`, `facto.config.ts`, SOAP callbacks) have no `any` — `datos`, `client`, callback `err`/`result` params are `unknown` or properly typed
+  4. `indicador.service.ts`, `google.types.ts`, `google-sheets.service.ts` have no `any` in their data parameters or return types
+  5. Transbank types/service and `gateway.interface.ts` have no `any` in error/response fields — all use `unknown`
+**Plans**: TBD
+
+### Phase 50: Payment Utils + Middlewares any Elimination
+**Goal**: All payment utility files, the payment controller, and all Strapi middlewares are free of `any` — data shapes use `unknown` with narrowing or typed interfaces
+**Depends on**: Phase 48, Phase 49
+**Requirements**: TSANY-24, TSANY-25, TSANY-26, TSANY-27, TSANY-28, TSANY-29, TSANY-30, TSANY-31, TSANY-32
+**Success Criteria** (what must be TRUE):
+  1. `payment.type.ts` has no `any` fields — `ad`, reservation fields, `[key: string]` index, `order` are typed or `unknown`
+  2. All payment utils (`order.utils.ts`, `user.utils.ts`, `ad.utils.ts`, `general.utils.ts`) have no `any` params — all data-in/data-out params are `unknown` with narrowing
+  3. `payment.ts` controller `errorHandler` accepts `unknown` (not `any`); all `(result as any)` casts replaced with typed access
+  4. Middlewares `image-uploader.ts`, `cache.ts`, `user-registration.ts` have no `any` — `file`, operation return, index signatures, `strapi` params properly typed or `unknown`
+**Plans**: TBD
+
+### Phase 51: Seeders + Test Files any Elimination
+**Goal**: All seeder files and test files are free of non-scaffolding `any` — seeders use the proper Strapi type for their parameter; test files access properties through typed interfaces
+**Depends on**: Phase 50
+**Requirements**: TSANY-33, TSANY-34, TSANY-35, TSANY-36
+**Success Criteria** (what must be TRUE):
+  1. All 5 seeder files (`categories.ts`, `packs.ts`, `regions.ts`, `faqs.ts`, `conditions.ts`) have `strapi: Core.Strapi` (or equivalent) — no `strapi: any` remains
+  2. `pack.zoho.test.ts` accesses `global.strapi` through a typed mock interface — no `(global as any).strapi`; `result.success` is accessed through a typed return, not `(result as any).success`
+  3. `pack.service.test.ts` and `ad.service.test.ts` use typed interfaces for awaited results — no `(await ...) as any` casts
+  4. `payment.controller.test.ts` accesses `packResponse` via typed accessor and `body` stub is properly typed — no `as any` casts remain
+**Plans**: TBD
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -72,3 +143,8 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 | 44. Zoho Service Layer | v1.19 | 2/2 | Complete | 2026-03-08 |
 | 45. Payment Event Wiring | v1.19 | 2/2 | Complete | 2026-03-08 |
 | 46. Ad Published Event Wiring | v1.19 | 1/1 | Complete | 2026-03-08 |
+| 47. Ad API any Elimination | v1.20 | 0/? | Not started | - |
+| 48. Type Files + Flow Service any Elimination | v1.20 | 0/? | Not started | - |
+| 49. Zoho + Facto + Other Services any Elimination | v1.20 | 0/? | Not started | - |
+| 50. Payment Utils + Middlewares any Elimination | v1.20 | 0/? | Not started | - |
+| 51. Seeders + Test Files any Elimination | v1.20 | 0/? | Not started | - |

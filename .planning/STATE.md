@@ -2,12 +2,12 @@
 gsd_state_version: 1.0
 milestone: v1.20
 milestone_name: TypeScript any Elimination
-status: defining requirements
+status: roadmap ready
 stopped_at: —
 last_updated: "2026-03-08"
-last_activity: 2026-03-08 — Milestone v1.20 started; requirements defined; roadmap pending
+last_activity: 2026-03-08 — Roadmap created; 5 phases (47-51) defined; ready to plan Phase 47
 progress:
-  total_phases: 0
+  total_phases: 5
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -21,14 +21,24 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-08)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.20 — TypeScript any Elimination — defining requirements
+**Current focus:** v1.20 — TypeScript any Elimination — Phase 47 next
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: 47 (not started)
 Plan: —
-Status: Defining requirements
-Last activity: 2026-03-08 — Milestone v1.20 started
+Status: Roadmap ready — planning Phase 47
+Last activity: 2026-03-08 — Roadmap created
+
+### v1.20 Phase List
+
+| Phase | Name | Requirements | Status |
+|-------|------|--------------|--------|
+| 47 | Ad API any Elimination | TSANY-01–07 | Not started |
+| 48 | Type Files + Flow Service any Elimination | TSANY-08–12 | Not started |
+| 49 | Zoho + Facto + Other Services any Elimination | TSANY-13–23 | Not started |
+| 50 | Payment Utils + Middlewares any Elimination | TSANY-24–32 | Not started |
+| 51 | Seeders + Test Files any Elimination | TSANY-33–36 | Not started |
 
 ## Accumulated Context
 
@@ -67,5 +77,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-08
-Stopped at: Requirements defined, roadmap pending
+Stopped at: Roadmap created — Phase 47 ready to plan
 Resume with: `/gsd-plan-phase 47`
