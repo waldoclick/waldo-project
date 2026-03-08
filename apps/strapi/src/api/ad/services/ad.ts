@@ -842,4 +842,73 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
       throw error;
     }
   },
+
+  /**
+   * Save an ad as a draft (create or update with draft: true).
+   * Used before payment processing to persist the ad data.
+   *
+   * @param ad - The ad payload from the frontend
+   * @param userId - The authenticated user ID
+   * @returns Object with success status and the draft ad ID
+   */
+  async saveDraft(ad: Record<string, unknown>, userId: string) {
+    try {
+      const adId = ad.ad_id as number | undefined;
+
+      if (!adId) {
+        const timestamp = Date.now();
+        const baseName = typeof ad.name === "string" ? ad.name : "borrador";
+        const slug = `${baseName}-${timestamp}`
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/[^a-z0-9\s-]/g, "")
+          .replace(/\s+/g, "-")
+          .replace(/-+/g, "-")
+          .replace(/^-+/, "")
+          .replace(/-+$/, "");
+
+        const newAd = await strapi.service("api::ad.ad").create({
+          data: {
+            ...ad,
+            slug,
+            user: userId,
+            draft: true,
+            duration_days: 15,
+            remaining_days: 15,
+          },
+        });
+
+        logger.info("Borrador de anuncio creado", {
+          userId,
+          adId: newAd.id,
+        });
+
+        return { success: true, id: newAd.id };
+      }
+
+      await strapi.entityService.update("api::ad.ad", adId, {
+        data: {
+          ...ad,
+          draft: true,
+          currency: ad.currency as "CLP" | "USD",
+        } as unknown as Parameters<
+          typeof strapi.entityService.update
+        >[2]["data"],
+      });
+
+      logger.info("Borrador de anuncio actualizado", {
+        userId,
+        adId,
+      });
+
+      return { success: true, id: adId };
+    } catch (error) {
+      logger.error("Error al guardar borrador de anuncio", {
+        userId,
+        error: (error as Error).message,
+      });
+      return { success: false, message: (error as Error).message };
+    }
+  },
 }));

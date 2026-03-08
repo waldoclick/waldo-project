@@ -115,60 +115,6 @@ class AdService {
    * @param id The ad ID to process
    * @returns The processed ad
    */
-  /**
-   * Save an ad as a draft without validating credits or initiating payment.
-   * Creates a new ad record if ad_id is absent; updates the existing one otherwise.
-   *
-   * @param ad - The ad form data from the wizard (may include ad_id for update)
-   * @param userId - The authenticated user's ID
-   * @returns { success: true, id: number } on success; { success: false, message: string } on error
-   */
-  public async saveDraft(
-    ad: AdData,
-    userId: string
-  ): Promise<{ success: boolean; id?: number; message?: string }> {
-    try {
-      if (!ad.ad_id) {
-        // Create new draft ad — draft:true, is_paid:false
-        const adData = await PaymentUtils.ad.createdAd(userId, {
-          ...ad,
-          draft: true,
-          is_paid: false,
-        } as Partial<AdData> & {
-          details?: unknown;
-          slug?: string;
-          user?: unknown;
-          draft: boolean;
-          is_paid: boolean;
-        });
-        logger.info(
-          `Borrador creado con ID ${adData.id} por el usuario ${userId}`
-        );
-        return { success: true, id: Number(adData.id) };
-      }
-
-      // Update existing draft ad
-      const updatedAd = await PaymentUtils.ad.updateAd(userId, ad.ad_id, {
-        ...ad,
-        draft: true,
-      } as Partial<AdData> & { details?: unknown; draft: boolean });
-      logger.info(`Borrador ${ad.ad_id} actualizado por el usuario ${userId}`);
-      return { success: true, id: Number(ad.ad_id) };
-    } catch (error) {
-      const e = error as { message?: string };
-      logger.error(`Error al guardar borrador: ${e.message ?? "unknown"}`, {
-        userId,
-        adId: ad.ad_id,
-      });
-      return { success: false, message: e.message ?? "Error saving draft" };
-    }
-  }
-
-  /**
-   * Process a free payment for an ad
-   * @param id The ad ID to process
-   * @returns The processed ad
-   */
   public async processFreePayment(id: number) {
     try {
       const result = await PaymentUtils.ad.getAdById(id);
