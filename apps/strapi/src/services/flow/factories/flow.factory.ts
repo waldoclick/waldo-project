@@ -1,12 +1,10 @@
+import type { Core } from "@strapi/strapi";
 import { FlowService } from "../services/flow.service";
 import { FLOW_DEFAULT_CONFIG } from "../config/flow.config";
 import { IFlowConfig } from "../types/flow.types";
 
-// Use 'any' for Strapi type if the specific import is causing issues
-type Strapi = any;
-
 export function flowServiceFactory(
-  strapi: Strapi,
+  strapi: Core.Strapi,
   customConfig?: Partial<IFlowConfig>
 ): FlowService {
   const config = { ...FLOW_DEFAULT_CONFIG, ...customConfig };

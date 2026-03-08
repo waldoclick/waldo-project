@@ -1,3 +1,4 @@
+import type { Core } from "@strapi/strapi";
 import {
   IFlowConfig,
   IFlowPaymentOrderRequest,
@@ -13,19 +14,16 @@ import {
 import axios from "axios";
 import crypto from "crypto";
 
-// Use 'any' for Strapi type if the specific import is causing issues
-type Strapi = any;
-
 export class FlowService {
   private config: IFlowConfig;
-  private strapi: Strapi;
+  private strapi: Core.Strapi;
 
-  constructor(config: IFlowConfig, strapi: Strapi) {
+  constructor(config: IFlowConfig, strapi: Core.Strapi) {
     this.config = config;
     this.strapi = strapi;
   }
 
-  private signRequest(params: Record<string, any>): string {
+  private signRequest(params: Record<string, string>): string {
     const sortedKeys = Object.keys(params).sort();
     const stringToSign = sortedKeys
       .map((key) => `${key}${params[key]}`)
@@ -43,11 +41,11 @@ export class FlowService {
     orderData: IFlowPaymentOrderRequest
   ): Promise<IFlowPaymentOrderResponse> {
     const endpoint = `${this.config.apiBaseUrl}/payment/create`;
-    const params: Record<string, any> = {
+    const params: Record<string, string> = {
       apiKey: this.config.apiKey,
       commerceOrder: orderData.commerceOrder,
       subject: orderData.subject,
-      amount: Math.round(orderData.amount),
+      amount: String(Math.round(orderData.amount)),
       email: orderData.email,
       urlConfirmation: orderData.urlConfirmacion,
       urlReturn: orderData.urlRetorno,
@@ -88,12 +86,11 @@ export class FlowService {
           responseData.toLowerCase().includes("<html")
         ) {
           errorDetail = "Flow returned an HTML error page.";
-        } else if (
-          typeof responseData === "object" &&
-          responseData !== null &&
-          (responseData as any).message
-        ) {
-          errorDetail = `Flow error message: ${(responseData as any).message}`;
+        } else if (typeof responseData === "object" && responseData !== null) {
+          const responseObj = responseData as Record<string, unknown>;
+          if (typeof responseObj.message === "string") {
+            errorDetail = `Flow error message: ${responseObj.message}`;
+          }
         } else if (typeof responseData === "string") {
           errorDetail = `Unexpected string response: ${responseData.substring(
             0,
@@ -139,7 +136,7 @@ export class FlowService {
 
   async getPaymentStatus(token: string): Promise<IFlowPaymentStatusResponse> {
     const endpoint = `${this.config.apiBaseUrl}/payment/getStatus`;
-    const params: Record<string, any> = {
+    const params: Record<string, string> = {
       apiKey: this.config.apiKey,
       token: token,
     };
@@ -209,7 +206,7 @@ export class FlowService {
     subscriptionData: IFlowSubscriptionRequest
   ): Promise<IFlowSubscriptionResponse> {
     const endpoint = `${this.config.apiBaseUrl}/subscription/create`;
-    const params: Record<string, any> = {
+    const params: Record<string, string> = {
       apiKey: this.config.apiKey,
       planId: subscriptionData.planId,
       customerId: subscriptionData.customerId,
@@ -217,12 +214,14 @@ export class FlowService {
       ...(subscriptionData.subscription_start && {
         subscription_start: subscriptionData.subscription_start,
       }),
-      ...(subscriptionData.couponId && { couponId: subscriptionData.couponId }),
-      ...(subscriptionData.trial_period_days && {
-        trial_period_days: subscriptionData.trial_period_days,
+      ...(subscriptionData.couponId !== undefined && {
+        couponId: String(subscriptionData.couponId),
       }),
-      ...(subscriptionData.periods_number && {
-        periods_number: subscriptionData.periods_number,
+      ...(subscriptionData.trial_period_days !== undefined && {
+        trial_period_days: String(subscriptionData.trial_period_days),
+      }),
+      ...(subscriptionData.periods_number !== undefined && {
+        periods_number: String(subscriptionData.periods_number),
       }),
     };
     params.s = this.signRequest(params);
@@ -275,12 +274,11 @@ export class FlowService {
         if (data) {
           detail = JSON.stringify(data);
           // Use Flow's error message if available (assuming structure { code, message })
-          if (
-            typeof data === "object" &&
-            data !== null &&
-            (data as any).message
-          ) {
-            detail = (data as any).message;
+          if (typeof data === "object" && data !== null) {
+            const dataObj = data as Record<string, unknown>;
+            if (typeof dataObj.message === "string") {
+              detail = dataObj.message;
+            }
           }
         }
         console.error(
@@ -304,7 +302,7 @@ export class FlowService {
     customerData: IFlowCustomerCreateRequest
   ): Promise<IFlowCustomerCreateResponse> {
     const endpoint = `${this.config.apiBaseUrl}/customer/create`;
-    const params: Record<string, any> = {
+    const params: Record<string, string> = {
       apiKey: this.config.apiKey,
       name: customerData.name,
       email: customerData.email,
@@ -356,12 +354,11 @@ export class FlowService {
         let detail = error.message;
         if (data) {
           detail = JSON.stringify(data);
-          if (
-            typeof data === "object" &&
-            data !== null &&
-            (data as any).message
-          ) {
-            detail = (data as any).message;
+          if (typeof data === "object" && data !== null) {
+            const dataObj = data as Record<string, unknown>;
+            if (typeof dataObj.message === "string") {
+              detail = dataObj.message;
+            }
           }
         }
         // Special handling for 'customer already exists' error?
@@ -384,9 +381,9 @@ export class FlowService {
 
   async getInvoice(invoiceId: number): Promise<IFlowInvoice> {
     const endpoint = `${this.config.apiBaseUrl}/invoice/get`;
-    const params: Record<string, any> = {
+    const params: Record<string, string> = {
       apiKey: this.config.apiKey,
-      invoiceId: invoiceId,
+      invoiceId: String(invoiceId),
     };
     params.s = this.signRequest(params);
 
@@ -427,12 +424,11 @@ export class FlowService {
         let detail = error.message;
         if (data) {
           detail = JSON.stringify(data);
-          if (
-            typeof data === "object" &&
-            data !== null &&
-            (data as any).message
-          ) {
-            detail = (data as any).message;
+          if (typeof data === "object" && data !== null) {
+            const dataObj = data as Record<string, unknown>;
+            if (typeof dataObj.message === "string") {
+              detail = dataObj.message;
+            }
           }
         }
         console.error(
@@ -457,11 +453,11 @@ export class FlowService {
     limit: number = 10
   ): Promise<IFlowPaginatedResponse<IFlowSubscriptionResponse>> {
     const endpoint = `${this.config.apiBaseUrl}/customer/getSubscriptions`;
-    const params: Record<string, any> = {
+    const params: Record<string, string> = {
       apiKey: this.config.apiKey,
       customerId: customerId,
-      start: start,
-      limit: limit,
+      start: String(start),
+      limit: String(limit),
       // Add filter parameters if needed, e.g., filter: planId
     };
     params.s = this.signRequest(params);
@@ -510,12 +506,11 @@ export class FlowService {
         let detail = error.message;
         if (data) {
           detail = JSON.stringify(data);
-          if (
-            typeof data === "object" &&
-            data !== null &&
-            (data as any).message
-          ) {
-            detail = (data as any).message;
+          if (typeof data === "object" && data !== null) {
+            const dataObj = data as Record<string, unknown>;
+            if (typeof dataObj.message === "string") {
+              detail = dataObj.message;
+            }
           }
         }
         console.error(
