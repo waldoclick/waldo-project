@@ -3,7 +3,7 @@
  * Handles interactions with Zoho CRM API for leads and contacts management
  */
 
-import { IZohoService, ZohoLead } from "./interfaces";
+import { IZohoService, ZohoLead, ZohoDeal, IContactStats } from "./interfaces";
 import { ZohoHttpClient } from "./http-client";
 
 export class ZohoService implements IZohoService {
@@ -180,6 +180,60 @@ export class ZohoService implements IZohoService {
     } catch (error) {
       console.error("Zoho API Error:", error.response?.data || error.message);
       throw new Error(`Failed to update contact: ${error.message}`);
+    }
+  }
+
+  /**
+   * Creates a new deal in Zoho CRM
+   * @param deal - The deal data to create
+   * @returns Promise with the created Deal's Zoho ID string
+   * @throws Error if the deal creation fails
+   */
+  async createDeal(deal: ZohoDeal): Promise<string> {
+    try {
+      const response = await this.httpClient.post<{
+        data: Array<{ details: { id: string } }>;
+      }>("/crm/v5/Deals", {
+        data: [
+          {
+            Deal_Name: deal.dealName,
+            Stage: "Closed Won",
+            Amount: deal.amount,
+            Contact_Name: { id: deal.contactId },
+            Type: deal.type,
+            Closing_Date: deal.closingDate,
+            Description: deal.description,
+            Lead_Source: deal.leadSource,
+          },
+        ],
+      });
+      return response.data[0].details.id;
+    } catch (error) {
+      throw new Error(`Failed to create deal: ${error.message}`);
+    }
+  }
+
+  /**
+   * Updates only the provided stat fields on a Zoho CRM Contact
+   * Undefined keys are NOT included in the payload (selective update)
+   * @param contactId - The contact ID to update
+   * @param stats - The stat fields to update (only provided keys are sent)
+   * @throws Error if the update fails
+   */
+  async updateContactStats(
+    contactId: string,
+    stats: IContactStats
+  ): Promise<void> {
+    try {
+      const cleanStats = Object.fromEntries(
+        Object.entries(stats).filter(([, v]) => v !== undefined)
+      );
+      await this.httpClient.put<{ data: any[] }>(
+        `/crm/v5/Contacts/${contactId}`,
+        { data: [cleanStats] }
+      );
+    } catch (error) {
+      throw new Error(`Failed to update contact stats: ${error.message}`);
     }
   }
 }
