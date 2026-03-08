@@ -45,7 +45,47 @@
 
 ---
 
-## Milestone: v1.2 — Double-Fetch Cleanup
+## Milestone: v1.19 — Zoho CRM Sync Model
+
+**Shipped:** 2026-03-08
+**Phases:** 4 (43-46) | **Plans:** 8 | **Timeline:** 1 day
+
+### What Was Built
+- ZohoHttpClient fixed: `Zoho-oauthtoken` header prefix, 401 response interceptor with `_retry` guard for automatic token refresh
+- Test isolation via `axios-mock-adapter` injected through optional constructor param — production path unchanged
+- ZohoService extended: `createDeal()`, `updateContactStats()` (selective payload, no undefined keys), `createLead()` (Lead_Status: New), `createContact()` (counters init to 0)
+- `pack_purchased` → Zoho Deal + Contact stats wired in `pack.service.ts` with `await` (safe, not a redirect handler)
+- `ad_paid` → Zoho Deal + Contact stats wired in `ad.service.ts` as floating promise (redirect must not be blocked)
+- `approveAd()` → `Ads_Published__c` + `Last_Ad_Posted_At__c` with first-publish guard (re-approval never double-counts)
+- Post-ship fix: `"Closed Won"` → `"Cerrado ganado"` after CRM pipeline validation revealed stage name mismatch
+
+### What Worked
+- TDD (RED → GREEN) discipline caught integration issues early — mock path depth bug and missing `contentType` mock surfaced in test run before commit
+- Floating promise pattern from Phase 45 carried directly into Phase 46 design with zero rework
+- Capturing `_zohoEmail` / `_zohoAmount` before the floating promise prevents closure-over-mutable-variable bugs — pattern should be used in all future floating Zoho calls
+- Phase ordering (reliability → service layer → wiring) was correct: all new calls inherited the fixed auth header automatically
+
+### What Was Inefficient
+- `"Closed Won"` stage name was hardcoded based on Zoho English default without validating the CRM pipeline — required a post-ship fix after manual testing revealed the mismatch. A quick CRM API call to list Deal stages during Phase 44 planning would have caught this
+- STATE.md was not updated correctly across sessions — the `gsd-tools phase complete` CLI was not called consistently, causing the state to show 0% progress despite phases being complete
+
+### Patterns Established
+- **Floating promise for any Zoho sync in a redirect handler**: capture `_zohoEmail`, `_zohoAmount` before `Promise.resolve().then(async () => { ... }).catch(...)` — never `await` inside a method that triggers `ctx.redirect()`
+- **`await` is safe for Zoho in non-redirect service methods**: `processPaidWebpay` for packs does not redirect; blocking is simpler and easier to test
+- **First-publish guard pattern**: `const isPending = ad.status !== 'published'` checked before firing any "ad published" side effects — prevents double-counting on re-approval
+- **Zoho stage names must match CRM pipeline exactly**: validate stage values against the actual CRM pipeline (Configuración → Módulos → Tratos → Fase) before hardcoding
+
+### Key Lessons
+1. **External API field names and picklist values must be validated against the live system before hardcoding.** `"Closed Won"` was wrong for a Spanish-configured CRM. Any hardcoded enum value from a third-party API needs a one-time verification step.
+2. **Floating promises need pre-captured variables.** All variables used inside `.then()` must be captured before the `Promise.resolve()` call — not just for correctness but for readability and testability.
+3. **axios-mock-adapter via optional constructor injection is the cleanest test isolation pattern.** It avoids module-level mocking complexity and keeps the production path untouched.
+
+### Cost Observations
+- Model mix: ~100% sonnet
+- Sessions: ~2 (planning session + execution session)
+- Notable: Post-ship fix (`"Cerrado ganado"`) was a one-line change discovered through manual CRM testing — not caught by automated tests since tests mock the HTTP layer. Integration tests against a real Zoho sandbox would catch this class of error.
+
+---
 
 **Shipped:** 2026-03-05
 **Phases:** 2 (7-8) | **Plans:** 2 | **Timeline:** ~28 minutes

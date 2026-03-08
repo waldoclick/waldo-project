@@ -79,20 +79,6 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
    - ✓ `typeCheck: true` pasa con zero errores después de todos los cambios del URL refactor — v1.18
    - ✓ `wizard-guard.ts` middleware previene saltar pasos del wizard; SSR-safe — v1.18
 
-## Current Milestone: v1.19 Zoho CRM Sync Model
-
-**Goal:** Implement a complete Zoho CRM synchronization model based on commercial events and user activity — fixing existing reliability gaps first, then adding Deals for monetary transactions and Contact stats for behavioral tracking.
-
-**Target features:**
-- Fix existing Zoho service reliability: token expiry (401 refresh), wrong auth header, test isolation, .env.example docs
-- Contact sync model: init custom stats fields to 0 on registration; `updateContactStats()` for activity tracking
-- Deal sync model: `createDeal()` for `pack_purchase` and `single_ad_payment` events
-- Event wiring: `pack_purchased` + `ad_paid` → Deal + stats; `ad_published` → Contact stats only
-
-### Active
-
-<!-- Current scope — v1.19 Zoho CRM Sync Model -->
-
 ## Context
 
 - Monorepo con Turbo para orquestación de tareas
@@ -177,6 +163,22 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
    | Removed multi-step watcher from `index.vue` — per-page analytics only | Each dedicated step page owns its own `stepView`; centralized watcher caused double-counting — v1.18 | ✓ Good |
    | `wizard-guard.ts` middleware added post-verification as step-skip prevention | Out of original scope but low-risk addition; improves UX by redirecting to first incomplete step — v1.18 | ✓ Good |
    | `if (import.meta.server) return;` in `wizard-guard.ts` | `adStore` uses `storage: localStorage` → `storage: undefined` on server → empty initial state → always redirected; SSR guard prevents false redirects — v1.18 | ✓ Good |
+   | `Zoho-oauthtoken` header prefix (not `Bearer`) in ZohoHttpClient | Zoho CRM API rejects `Bearer` scheme; correct prefix required for all outbound requests — v1.19 | ✓ Good |
+   | 401 interceptor with `_retry` guard in ZohoHttpClient | Token refresh loop prevention; single retry after re-auth; calling code never sees expired token errors — v1.19 | ✓ Good |
+   | `axios-mock-adapter` injected via optional constructor param | Test isolation without touching production path; real env vars never needed in unit tests — v1.19 | ✓ Good |
+   | `Stage: "Cerrado ganado"` hardcoded in `createDeal()` | All Waldo deals are immediately closed; callers never pass Stage; Spanish value matches CRM pipeline — v1.19 | ✓ Good |
+   | Floating promise (`.then().catch()`) for `ad_paid` Zoho sync | `adResponse` controller issues `ctx.redirect()` immediately after; awaiting Zoho would block the redirect — v1.19 | ✓ Good |
+   | `await` (blocking) for `pack_purchased` Zoho sync | `processPaidWebpay` for packs is not a redirect handler; blocking is safe and simpler — v1.19 | ✓ Good |
+   | First-publish guard (`isPending` check) in `approveAd()` | Re-approving an already-published ad must not double-increment `Ads_Published__c` — v1.19 | ✓ Good |
+
+## Current State: v1.19 Shipped
+
+**Zoho CRM Sync Model** — Phases 43–46 complete (2026-03-08)
+
+- ZohoHttpClient: correct auth header (`Zoho-oauthtoken`), 401 token refresh interceptor, test isolation via `axios-mock-adapter`
+- ZohoService: `createDeal()`, `updateContactStats()`, `createLead()` (Lead_Status: New), `createContact()` (counters init to 0)
+- Payment wiring: `pack_purchased` → Deal + Contact stats (await); `ad_paid` → Deal + Contact stats (floating promise)
+- Ad publish wiring: `approveAd()` → `Ads_Published__c` + `Last_Ad_Posted_At__c` (first-publish guard)
 
 ## Future Requirements
 
@@ -193,4 +195,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-08 after v1.19 milestone initialized — Zoho CRM Sync Model*
+*Last updated: 2026-03-08 after v1.19 milestone — Zoho CRM Sync Model shipped*
