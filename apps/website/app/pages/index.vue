@@ -45,16 +45,20 @@ const { data: categoriesData } = await useAsyncData("categories", async () => {
 const categories = computed(() => categoriesData.value ?? []);
 
 // Load packs
-const { data: packsData } = await useAsyncData("home-packs", async () => {
-  const packsStore = usePacksStore();
-  try {
-    await packsStore.loadPacks();
-    return packsStore.packs;
-  } catch (error) {
-    console.error("Error loading packs:", error);
-    return [];
-  }
-});
+const strapi = useStrapi();
+const { data: packsData } = await useAsyncData<Pack[]>(
+  "home-packs",
+  async () => {
+    try {
+      const response = await strapi.find("ad-packs", { populate: "*" });
+      return response.data as unknown as Pack[];
+    } catch (error) {
+      console.error("Error loading packs:", error);
+      return [];
+    }
+  },
+  { default: () => [] as Pack[] },
+);
 const packs = computed(() => packsData.value ?? []);
 
 // Load featured FAQs for the home page
