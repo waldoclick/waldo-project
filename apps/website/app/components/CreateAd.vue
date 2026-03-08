@@ -45,9 +45,9 @@
   </section>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
-import { useRouter, useRoute } from "vue-router"; // Importar useRouter y useRoute
+import { useRouter } from "vue-router";
 // Importa los componentes
 import FormCreateOne from "@/components/FormCreateOne.vue";
 import FormCreateTwo from "@/components/FormCreateTwo.vue";
@@ -60,37 +60,34 @@ import { useMeStore } from "@/stores/me.store";
 
 const adStore = useAdStore();
 const step = computed(() => adStore.step);
-const router = useRouter(); // Inicializar useRouter
-const route = useRoute(); // Inicializar useRoute
+const router = useRouter();
 
 const meStore = useMeStore();
 const isProfileComplete = ref(false);
 
 const maxStep = 5;
 
-// onMounted: UI-only — reads URL query param to set wizard step; meStore pre-loaded by parent page
+const stepRoutes: Record<number, string> = {
+  1: "/anunciar",
+  2: "/anunciar/datos-del-producto",
+  3: "/anunciar/datos-personales",
+  4: "/anunciar/ficha-de-producto",
+  5: "/anunciar/galeria-de-imagenes",
+};
+
+// onMounted: UI-only — verifies profile completeness; meStore pre-loaded by parent page
 onMounted(async () => {
   // Verify profile completeness from pre-loaded me data
   isProfileComplete.value = await meStore.isProfileComplete();
-
-  // Read step param from URL
-  const stepFromUrl = Number.parseInt(route.query.step, 10);
-  if (
-    !Number.isNaN(stepFromUrl) &&
-    stepFromUrl >= 1 &&
-    stepFromUrl <= maxStep
-  ) {
-    adStore.updateStep(stepFromUrl);
-  }
 });
 
-function handleFormBack(values) {
-  const newStep = adStore.step > 1 ? adStore.step - 1 : adStore.step;
+function handleFormBack(_values?: unknown) {
+  const newStep = adStore.step > 1 ? adStore.step - 1 : 1;
   adStore.updateStep(newStep);
-  router.push({ query: { ...route.query, step: newStep } }); // Actualizar la URL con el nuevo step
+  router.push(stepRoutes[newStep] ?? "/anunciar");
 }
 
-function handleFormSubmitted(values) {
+function handleFormSubmitted(_values?: unknown) {
   const newStep = adStore.step + 1;
 
   if (newStep > maxStep) {
@@ -98,7 +95,7 @@ function handleFormSubmitted(values) {
     router.push("/anunciar/resumen");
   } else {
     adStore.updateStep(newStep);
-    router.push({ query: { ...route.query, step: newStep } });
+    router.push(stepRoutes[newStep] ?? "/anunciar");
   }
 }
 </script>
