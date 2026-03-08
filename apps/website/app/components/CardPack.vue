@@ -29,25 +29,24 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRouter } from "vue-router";
-import { usePackStore } from "@/stores/pack.store";
+import type { Pack } from "@/types/pack";
+import { useAdStore } from "@/stores/ad.store";
 import { useSanitize } from "@/composables/useSanitize";
 
 // Define las propiedades del componente
 const props = defineProps<{
-  pack: any;
+  pack: Pack;
 }>();
 
 const router = useRouter();
-const packStore = usePackStore();
+const adStore = useAdStore();
 const { sanitizeText } = useSanitize();
 
 // Método para comprar el pack
 const buyPack = async (packId: number) => {
   if (import.meta.client) {
-    // Actualizar el valor de pack en pack.store.ts
-    packStore.updatePack(packId);
-    // Redirigir a /packs/comprar
-    router.push("/packs/comprar");
+    adStore.updatePack(packId);
+    router.push("/pagar");
   }
 };
 
