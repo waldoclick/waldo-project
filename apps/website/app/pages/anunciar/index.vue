@@ -182,22 +182,6 @@ watch(
   { immediate: true },
 );
 
-// Observar cambios en el step
-watch(
-  () => adStore.step,
-  (newStep) => {
-    const stepNames: Record<number, string> = {
-      1: "Payment Method",
-      2: "General",
-      3: "Personal Information",
-      4: "Product Sheet",
-      5: "Image Gallery",
-    };
-
-    adAnalytics.stepView(newStep, stepNames[newStep] ?? "");
-  },
-);
-
 $setSEO({
   title: "Crear Anuncio",
   description:
