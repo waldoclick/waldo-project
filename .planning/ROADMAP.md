@@ -58,7 +58,7 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
   **Plans:** 2 plans
   - [ ] 44-01-PLAN.md — Fix createLead() (add Lead_Status) and createContact() (add zero-initialized counters) with TDD
   - [ ] 44-02-PLAN.md — Add ZohoDeal + IContactStats types; implement createDeal() and updateContactStats() with TDD
-- [ ] **Phase 45: Payment Event Wiring** — Wire `pack_purchased` and `ad_paid` events to `createDeal()` + `updateContactStats()`; resolve Contact ID via `findContact()` before every deal creation
+- [x] **Phase 45: Payment Event Wiring** — Wire `pack_purchased` and `ad_paid` events to `createDeal()` + `updateContactStats()`; resolve Contact ID via `findContact()` before every deal creation (completed 2026-03-08)
   **Plans:** 2 plans
   Plans:
   - [ ] 45-01-PLAN.md — TDD: Wire pack_purchased → Zoho createDeal + updateContactStats in pack.service.ts (await pattern)
@@ -127,5 +127,5 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 | 42. Ad Creation URL Refactor | v1.18 | 3/3 | Complete | 2026-03-08 |
 | 43. Zoho Service Reliability | 2/2 | Complete    | 2026-03-08 | — |
 | 44. Zoho Service Layer | 2/2 | Complete    | 2026-03-08 | — |
-| 45. Payment Event Wiring | 1/2 | In Progress|  | — |
+| 45. Payment Event Wiring | 2/2 | Complete   | 2026-03-08 | — |
 | 46. Ad Published Event Wiring | v1.19 | 0/? | Not started | — |
