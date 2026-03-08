@@ -93,4 +93,4 @@ Plans:
 | 39. Spanish Default Language | v1.18 | 0/1 | Not started | — |
 | 40. Users Filter Authenticated | v1.17 | 2/2 | Complete | 2026-03-07 |
 | 41. Sentry Production-Only | v1.17 | 1/1 | Complete | 2026-03-07 |
-| 42. Ad Creation URL Refactor | 3/3 | Complete   | 2026-03-08 | — |
+| 42. Ad Creation URL Refactor | 3/3 | Complete    | 2026-03-08 | — |
