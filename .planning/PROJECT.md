@@ -71,95 +71,17 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
   - ✓ Páginas `login/facebook.vue`, `login/google.vue`, `dev.vue` tienen `noindex, nofollow` — v1.16
 
    - ✓ Sentry restringido a producción en los 3 apps — 7 entry points con `NODE_ENV === 'production'` guard; dev/staging generan cero tráfico a Sentry — v1.17
-   - ✓ `GET /api/users` filtra server-side solo usuarios Authenticated vía `strapi.db.query` (no forgeable por clientes); N+1 eliminado; columna "Rol" removida del dashboard — v1.17
+   - ✓ `strapi.db.query` filtra server-side solo usuarios Authenticated vía `strapi.db.query` (no forgeable por clientes); N+1 eliminado; columna "Rol" removida del dashboard — v1.17
+   - ✓ Cada paso del wizard de creación de avisos tiene su propia ruta dedicada (5 URLs en español) — v1.18
+   - ✓ Navegación por `?step=N` query param eliminada — v1.18
+   - ✓ `resumen.vue` back button apunta a `/anunciar/galeria-de-imagenes` — v1.18
+   - ✓ Analytics de pasos del wizard preservados con nombres compatibles con Google Ecommerce — v1.18
+   - ✓ `typeCheck: true` pasa con zero errores después de todos los cambios del URL refactor — v1.18
+   - ✓ `wizard-guard.ts` middleware previene saltar pasos del wizard; SSR-safe — v1.18
 
 ### Active
 
-<!-- Current scope for v1.18 Ad Creation URL Refactor -->
-
-- [ ] Each ad creation wizard step has its own dedicated route (5 Spanish URLs)
-- [ ] `?step=N` query parameter navigation eliminated
-- [ ] Wizard state (store step number) stays as internal ordering reference; URL is source of truth
-- [ ] resumen.vue back button updated to point to /galeria-de-imagenes
-- [ ] Analytics step tracking preserved with Google Ecommerce-compatible step names
-- [ ] `typeCheck: true` passes with zero errors after all changes
-
-## Current Milestone: v1.18 Ad Creation URL Refactor
-
-**Goal:** Replace query-parameter step navigation in the ad creation wizard with dedicated per-step routes using descriptive Spanish URLs.
-
-**Target features:**
-- `/anunciar/tipo-de-anuncio` — Step 1: Pack + Featured selection
-- `/anunciar/datos-del-producto` — Step 2: Title, Category, Price, Description
-- `/anunciar/datos-personales` — Step 3: Contact info, Region, Commune
-- `/anunciar/ficha-de-producto` — Step 4: Condition, Specs
-- `/anunciar/galeria-de-imagenes` — Step 5: Image upload
-- resumen.vue back button updated to /galeria-de-imagenes
-
-## Previous State
-
-<details>
-<summary>v1.15 Website SEO Audit (shipped 2026-03-07)</summary>
-
-- **Phase 35 — Website SEO Audit**: Extended `$setSEO` plugin to emit full OG + Twitter Card tag set; replaced 74+ hardcoded `https://waldo.click` URLs with `config.public.baseUrl`; added missing SEO to `packs/index.vue`, `mis-ordenes.vue`, `mis-anuncios.vue`; restored user profile page SEO with `ProfilePage` + `Person` schema; added `WebSite` + `Organization` JSON-LD to home page; fixed `$setStructuredData` accumulation bug; added `noindex` to private/transactional pages; improved sitemap static entries with `changefreq` and `priority`.
-
-</details>
-
-<details>
-<summary>v1.14 GTM Module: Dashboard (shipped 2026-03-07)</summary>
-
-- **Phase 34 — GTM Module Dashboard**: Installed `@saslavik/nuxt-gtm@0.1.3` in `apps/dashboard`; registered in `modules[]`; top-level `gtm: { id, enableRouterSync: true, debug: false }` config; `runtimeConfig.public.gtm.id` replaces flat `gtmId` field; hand-rolled `gtm.client.ts` deleted.
-
-</details>
-
-<details>
-<summary>v1.13 GTM Module Migration (shipped 2026-03-07)</summary>
-
-- **Phase 33 — GTM Module Migration**: Deleted `gtm.client.ts`; installed `@saslavik/nuxt-gtm@0.1.3`; configured with `enableRouterSync: true` and `runtimeConfig.public.gtm.id`; feature flag updated to `!!config.public.gtm?.id`; GA4 Realtime confirmed working locally.
-
-</details>
-
-<details>
-<summary>v1.12 Ad Creation Analytics Gaps (shipped 2026-03-07)</summary>
-
-- **Phase 32 — Analytics Gaps Cleanup**: Dead `useAdAnalytics` import removed from `CreateAd.vue`; `step_view` overcounting fixed (no `immediate: true` on step watcher, explicit step 1 in `onMounted`); `redirect_to_payment` event added before Webpay redirect in `resumen.vue`; `purchase` event guarded with `fired` ref in `gracias.vue`; `DataLayerEvent` exported from `useAdAnalytics.ts` and `window.dataLayer` typed as `(DataLayerEvent | Record<string, unknown>)[]`.
-
-</details>
-
-<details>
-<summary>v1.11 GTM / GA4 Tracking Fix (shipped 2026-03-07)</summary>
-
-- **Phase 31 — GTM Plugin + Consent Mode v2**: Removed broken `gtag()` shim from `gtm.client.ts`; SPA `page_view` now pushes plain objects; Consent Mode v2 default denial pushed before GTM loads; `LightboxCookies.vue` pushes correct consent update command on accept.
-
-</details>
-
-<details>
-<summary>v1.10 Dashboard Orders Dropdown UI (shipped 2026-03-07)</summary>
-
-- **Phase 30 — Dropdown Display Fix**: `DropdownSales.vue` now shows buyer full name (`firstname + lastname`, fallback to `username` then `email`) and full date + time (`"7 mar 2026 • 01:08 a. m."`) for every order row.
-
-</details>
-
-<details>
-<summary>v1.9 Website Technical Debt (shipped 2026-03-07)</summary>
-
-- **Phase 25 — Critical Correctness Bugs**: Fixed `$setStructuredData` type augmentation; corrected `useAsyncData` key collisions; restored `console.error`/`warn` in production; fixed SSR/CSR hydration in `mis-anuncios` and `mis-ordenes`; fixed Strapi `/ads/me` route ordering.
-- **Phase 26 — Data Fetching Cleanup**: Moved `onMounted(async)` data-fetching to `useAsyncData` in 7 components; all 33 `onMounted` calls documented with classification comments.
-- **Phase 27 — TypeScript Migration**: Migrated all 17 pages to `lang="ts"`; eliminated `any` in 3 stores and 3 composables.
-- **Phase 28 — TypeScript Strict + Store Audit**: Added persist audit comments to all 14 stores (STORE-01); Strapi SDK filter casts in 4 stores.
-- **Phase 29 — TypeScript Strict Errors**: Fixed all 183 typecheck errors across 55 files via type declarations and call-site corrections; enabled `typeCheck: true`; `nuxt typecheck` passes with zero errors.
-
-</details>
-
-<details>
-<summary>v1.8 Free Featured Reservation Guarantee (shipped 2026-03-07)</summary>
-
-- **`ad-free-reservation-restore.cron.ts` logic fix**: Reservations stay permanently linked to expired ads (history); `restoreUserFreeReservations` counts by `ad.active=true` not `remaining_days>0`; cron simplified to single responsibility — guarantee 3 free reservations per user.
-- **Parallel batch processing**: `Promise.all` in batches of 50 users to avoid DB connection pool exhaustion.
-- **`cron-runner` API committed**: Controller + routes for manual cron job execution via `POST /api/cron-runner/:name`.
-- **`featured.cron.ts` reverted**: Implemented and then removed by business decision — the free-slot guarantee is covered by `ad-free-reservation-restore.cron.ts`.
-
-</details>
+<!-- No active milestone — planning next milestone -->
 
 ## Context
 
@@ -169,12 +91,13 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - El sistema valida disponibilidad de créditos según PackType y FeaturedType antes de procesar el pago
 - Deploy independiente por app vía Laravel Forge con git sparse-checkout
 - Dashboard (apps/dashboard): Nuxt 4, Pinia, @nuxtjs/strapi v2, SCSS custom; ~65 componentes, 3 stores, 14 plugins; typeCheck: true (since v1.1)
-- Website (apps/website): Nuxt 4, Pinia, @nuxtjs/strapi v2; 29 páginas lang="ts", 14 stores con persist audit, typeCheck: true (since v1.9)
+- Website (apps/website): Nuxt 4, Pinia, @nuxtjs/strapi v2; 34 páginas lang="ts" (5 new step pages added in v1.18), 14 stores con persist audit, typeCheck: true (since v1.9)
+- Ad creation wizard (v1.18): 5 dedicated routes (`/anunciar`, `/anunciar/datos-del-producto`, `/datos-personales`, `/ficha-de-producto`, `/galeria-de-imagenes`); `wizard-guard.ts` middleware prevents step skipping (SSR-safe); `stepRoutes` Record map in `CreateAd.vue`; per-page `stepView` analytics
 - 4 cron jobs activos en Strapi: `adCron` (1 AM), `userCron` (2 AM), `backupCron` (3 AM), `cleanupCron` (domingo 4 AM)
 - `cron-runner` API disponible en `POST /api/cron-runner/:name` para ejecución manual de cualquier cron
-  - GTM handled via `@saslavik/nuxt-gtm@0.1.3` module in both website (since v1.13) and dashboard (since v1.14) — `enableRouterSync: true` fires page_view on every SPA route change; GTM ID from `runtimeConfig.public.gtm.id`; hand-rolled `gtm.client.ts` plugins deleted in both apps
-- Ad creation analytics (`useAdAnalytics.ts`): all events tracked — view_item_list, step_view (exact, no overcounting), begin_checkout, redirect_to_payment, purchase (guarded); `DataLayerEvent` fully typed in `window.d.ts` (since v1.12)
-- SEO infrastructure (v1.15): `$setSEO` plugin in `seo.ts` emits full OG + Twitter Card set; `$setStructuredData` in `microdata.ts` with key-based deduplication; `@nuxtjs/seo` provides sitemap (with static entries having `changefreq`/`priority`), robots, OG defaults; all page URLs use `config.public.baseUrl`; 18 private pages have `noindex`; home has WebSite + Organization JSON-LD; user profile `[slug].vue` has ProfilePage + Person schema
+- GTM handled via `@saslavik/nuxt-gtm@0.1.3` module in both website (since v1.13) and dashboard (since v1.14) — `enableRouterSync: true` fires page_view on every SPA route change; GTM ID from `runtimeConfig.public.gtm.id`; hand-rolled `gtm.client.ts` plugins deleted in both apps
+- Ad creation analytics (`useAdAnalytics.ts`): all events tracked — view_item_list, step_view (exact, no overcounting, per-page), begin_checkout, redirect_to_payment, purchase (guarded); `DataLayerEvent` fully typed in `window.d.ts` (since v1.12)
+- SEO infrastructure (v1.15): `$setSEO` plugin in `seo.ts` emits full OG + Twitter Card set; `$setStructuredData` in `microdata.ts` with key-based deduplication; `@nuxtjs/seo` provides sitemap (with static entries having `changefreq`/`priority`), robots, OG defaults; all page URLs use `config.public.baseUrl`; 18+ private pages have `noindex`; home has WebSite + Organization JSON-LD; user profile `[slug].vue` has ProfilePage + Person schema
 
 ## Constraints
 
@@ -239,6 +162,11 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
    | Inline sanitize (spread + omit) replaces `getDetailedUserData` on users list | N+1 eliminated: `Promise.all(users.map(getDetailedUserData))` replaced with field-spread; no loss of list functionality — v1.17 | ✓ Good |
    | `dsn: undefined` for production-only Sentry (not conditional init) | SDK-supported pattern; skips all instrumentation with zero overhead; consistent with existing correct files in repo — v1.17 | ✓ Good |
    | `enabled: process.env.NODE_ENV === 'production'` in Strapi Sentry plugin | Unloads plugin entirely in dev/staging; `enabled: true` was shipping dev/staging noise to Sentry — v1.17 | ✓ Good |
+   | `stepRoutes` Record map in `CreateAd.vue` for step-to-path routing | Explicit Record avoids magic strings; route-push is cleaner than query-param mutation — v1.18 | ✓ Good |
+   | `onMounted` (not watcher) for analytics + step sync in each step page | Each page mounts fresh on navigation; mount is the correct trigger; avoids overcounting — v1.18 | ✓ Good |
+   | Removed multi-step watcher from `index.vue` — per-page analytics only | Each dedicated step page owns its own `stepView`; centralized watcher caused double-counting — v1.18 | ✓ Good |
+   | `wizard-guard.ts` middleware added post-verification as step-skip prevention | Out of original scope but low-risk addition; improves UX by redirecting to first incomplete step — v1.18 | ✓ Good |
+   | `if (import.meta.server) return;` in `wizard-guard.ts` | `adStore` uses `storage: localStorage` → `storage: undefined` on server → empty initial state → always redirected; SSR guard prevents false redirects — v1.18 | ✓ Good |
 
 ## Future Requirements
 
@@ -255,4 +183,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-07 after v1.18 milestone start — Ad Creation URL Refactor*
+*Last updated: 2026-03-08 after v1.18 milestone — Ad Creation URL Refactor*

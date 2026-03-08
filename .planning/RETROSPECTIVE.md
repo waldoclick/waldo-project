@@ -596,6 +596,8 @@
 | v1.14 | 1 | 1 | Dashboard GTM module installed; website + dashboard now consistent |
 | v1.15 | 1 | 3 | Website SEO audit: OG/Twitter tags, 74+ URL replacements, noindex sweep, JSON-LD dedup, sitemap restructure |
 | v1.16 | 3 | 4 | Website meta copy audit: 4 SEO bug fixes, canonical vocabulary enforced across all public pages, SERP copy rewritten |
+| v1.17 | 2 | 3 | Security & Stability: server-enforced user role filter via strapi.db.query; production-only Sentry guard in all 7 entry points |
+| v1.18 | 1 | 3 | Ad creation URL refactor: 5 dedicated wizard routes; wizard-guard middleware; per-page analytics; `?step=N` eliminated |
 
 ### Cumulative Quality
 
@@ -619,6 +621,7 @@
 | v1.15 | utils (100% coverage) | true | 0 |
 | v1.16 | utils (100% coverage) | true | 0 |
 | v1.17 | utils + jest (strapi role controller) | true | 0 |
+| v1.18 | utils + jest (strapi) | true | 1 (wizard-guard middleware) |
 
 ### Top Lessons (Verified Across Milestones)
 
@@ -638,6 +641,7 @@
 14. Fix structural/SSR bugs before authoring copy — a title double-suffix or SSR deferral bug makes copy partially invisible to crawlers regardless of content quality
 15. Use `strapi.db.query` for server-enforced filters — the content-API sanitizer strips `filters[role]` for regular JWTs, making client-enforced role filtering bypassable
 16. Gate Sentry (and all observability tools) on `NODE_ENV === 'production'` from day one — staging noise pollutes dashboards and costs money
+17. Any middleware reading a localStorage-backed Pinia store must bail out on server with `if (import.meta.server) return;` — store is always empty on server (storage: undefined), causing false redirects
 
 ## Milestone: v1.17 — Security & Stability
 
@@ -675,3 +679,47 @@
 - Model mix: ~100% sonnet
 - Sessions: 2 (one per phase)
 - Notable: Phase 41 was the fastest plan in the project (2 min, 4 files, purely mechanical)
+
+---
+
+## Milestone: v1.18 — Ad Creation URL Refactor
+
+**Shipped:** 2026-03-08
+**Phases:** 1 (42) | **Plans:** 3 | **Timeline:** ~1.5 hours
+**Files changed:** 21 files, +1,525/-112 lines (apps/website) | **Requirements:** 11/11 complete ✓
+
+### What Was Built
+- 4 dedicated Nuxt pages (`datos-del-producto`, `datos-personales`, `ficha-de-producto`, `galeria-de-imagenes`) replacing `?step=N` query-param navigation — each page fires its own `stepView` analytics on mount
+- `CreateAd.vue` converted from `router.push({ query: { step: N } })` to `stepRoutes` Record map + `router.push(path)`
+- `index.vue` simplified — multi-step analytics watcher removed; step 1 analytics fire once on mount only
+- `resumen.vue` back button corrected to `/anunciar/galeria-de-imagenes`
+- `FormCreateThree.vue` debug `<pre>{{ user.value }}</pre>` PII leak removed
+- `wizard-guard.ts` middleware added post-verification — prevents step skipping; client-only (`if (import.meta.server) return;`) to avoid SSR localStorage miss
+
+### What Worked
+- Phase split into 3 atomic plans (step pages / isolated fixes / CreateAd + index wiring) was exactly right — each plan was independently verifiable and had no cross-plan bleed
+- Keeping `adStore.step` as an internal ordering reference (not the source of truth) while making URL the navigation source of truth created a clean separation of concerns
+- The `stepRoutes` Record map pattern is explicit, type-safe, and avoids magic strings — replaces scattered `router.push({ query })` calls throughout `CreateAd.vue`
+- `onMounted` (not a watcher) for analytics + step sync was the correct trigger — each page mounts fresh on navigation, so mount fires exactly once per step entry
+
+### What Was Inefficient
+- The `wizard-guard.ts` middleware was not in the original requirements (REQUIREMENTS.md explicitly said "Step access guard — Not requested") but was correctly added post-verification as a UX improvement. The scope expansion was small and low-risk, but surfaced an SSR bug that required a second commit (`if (import.meta.server) return;`). Had the guard been in scope from the start, the SSR edge case would have been part of the plan's interface spec.
+- The SSR bug in the guard (`adStore` uses `localStorage` → storage is `undefined` on server → store always empty → guard always redirected) is a class of bug that applies to any client-only middleware using a persisted store. This pattern should be in the plan template for any middleware that reads a localStorage-backed store.
+
+### Patterns Established
+- **`stepRoutes` Record map pattern**: `const stepRoutes: Record<number, string> = { 2: '/anunciar/datos-del-producto', ... }` — explicit, type-safe, no magic strings; use this for any wizard with numbered steps
+- **Per-page analytics**: each wizard step page owns its own `stepView` in `onMounted` — no centralized watcher; avoids overcounting and couples analytics to the correct page boundary
+- **`if (import.meta.server) return;` as first line of any client-only middleware** that reads a localStorage-backed store — server-side the store is always empty (storage: undefined), so any guard based on store state must be client-only
+- **Step page structure**: `<ClientOnly> > div.step--N > FormCreateN` — consistent structure, `middleware: ["auth", "wizard-guard"]`, `useSeoMeta({ robots: "noindex, nofollow" })`
+
+### Key Lessons
+1. **SSR guard is mandatory for any middleware reading a localStorage-backed store.** The `adStore` uses `persist` with `storage: localStorage`, which means `typeof window !== "undefined"` guard returns `undefined` storage on server — the store initializes empty. Any middleware checking store state must bail out immediately on server with `if (import.meta.server) return;`.
+2. **Post-verification scope additions need their own plan.** The `wizard-guard.ts` was added after phase verification — it was the right decision, but it discovered an SSR edge case not in the original plan. Scope additions mid-flow benefit from a lightweight "addendum plan" with explicit interface spec to catch these edge cases upfront.
+3. **URL-as-source-of-truth + store-as-internal-reference is the cleanest wizard pattern.** The store step number syncs on mount (what page am I on?) rather than driving navigation (where do I go next?). This eliminates the `route.query.step` sync complexity entirely.
+
+### Cost Observations
+- Model mix: ~100% sonnet
+- Sessions: ~4 (plan-phase × 1, execute-phase × 3 plans, post-verification wizard-guard)
+- Notable: One of the cleanest executions — zero deviations in Plans 01 and 02; Plan 03 had a minor lang="ts" addition. Only friction was the wizard-guard SSR bug found post-verification.
+
+---
