@@ -59,6 +59,10 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
   - [ ] 44-01-PLAN.md — Fix createLead() (add Lead_Status) and createContact() (add zero-initialized counters) with TDD
   - [ ] 44-02-PLAN.md — Add ZohoDeal + IContactStats types; implement createDeal() and updateContactStats() with TDD
 - [ ] **Phase 45: Payment Event Wiring** — Wire `pack_purchased` and `ad_paid` events to `createDeal()` + `updateContactStats()`; resolve Contact ID via `findContact()` before every deal creation
+  **Plans:** 2 plans
+  Plans:
+  - [ ] 45-01-PLAN.md — TDD: Wire pack_purchased → Zoho createDeal + updateContactStats in pack.service.ts (await pattern)
+  - [ ] 45-02-PLAN.md — TDD: Wire ad_paid → Zoho createDeal + updateContactStats in ad.service.ts (floating promise pattern)
 - [ ] **Phase 46: Ad Published Event Wiring** — Wire `ad_published` event to `updateContactStats()`; guard with status-transition check to prevent double-counting
 
 ## Phase Details
