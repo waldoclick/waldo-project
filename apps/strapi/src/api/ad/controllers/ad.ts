@@ -653,7 +653,10 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    */
   async saveDraft(ctx: Context) {
     try {
-      const { ad } = ctx.request.body as { ad?: Record<string, unknown> };
+      const { data } = ctx.request.body as {
+        data?: { ad?: Record<string, unknown> };
+      };
+      const ad = data?.ad;
       const userId = ctx.state.user?.id;
 
       if (!userId) {
