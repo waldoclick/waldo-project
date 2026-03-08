@@ -2,6 +2,7 @@ import { PackType, FeaturedType, AdReservation } from "../types/payment.type";
 import adPackUtils from "./pack.utils";
 import featuredUtils from "./featured.utils";
 import { factoService } from "../../../services/facto";
+import { BillingDetails } from "./user.utils";
 
 interface TaxItem {
   name: string;
@@ -19,7 +20,7 @@ interface TaxDetails {
 
 interface FactoDocumentData {
   isInvoice: boolean;
-  userDetails: any;
+  userDetails: BillingDetails;
   items: TaxItem[];
 }
 
@@ -154,7 +155,7 @@ class GeneralUtils {
 
       const availableReservations = reservations.filter((r) => !r.ad).length;
       const activeReservations = reservations.filter(
-        (r) => r.ad && r.ad.remaining_days
+        (r) => r.ad && (r.ad as { remaining_days?: number }).remaining_days
       ).length;
       const totalReservations = availableReservations + activeReservations;
       const neededReservations = 3 - totalReservations;

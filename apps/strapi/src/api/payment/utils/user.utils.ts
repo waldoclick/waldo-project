@@ -11,7 +11,7 @@ interface UserData {
   address?: string;
   address_number?: number;
   postal_code?: string;
-  commune?: any;
+  commune?: unknown;
   is_company?: boolean;
   business_name?: string;
   business_type?: string;
@@ -19,16 +19,16 @@ interface UserData {
   business_address?: string;
   business_address_number?: number;
   business_postal_code?: string;
-  business_commune?: any;
+  business_commune?: unknown;
 }
 
-interface BillingDetails {
+export interface BillingDetails {
   name: string;
   rut: string;
   address: string;
   address_number: number;
   postal_code: string;
-  commune?: any;
+  commune?: unknown;
   region?: string;
   email?: string;
   phone?: string;
@@ -71,7 +71,7 @@ export const getCurrentUser = async (ctx: Context): Promise<UserData> => {
  */
 export const updateUserFlowData = async (
   userId: number | string,
-  flowData: any
+  flowData: unknown
 ): Promise<UserData> => {
   try {
     const updatedUser = await strapi.entityService.update(
@@ -80,7 +80,9 @@ export const updateUserFlowData = async (
       {
         data: {
           flow_customer_data: flowData, // Assuming field name is flow_customer_data (type json)
-        },
+        } as unknown as Parameters<
+          typeof strapi.entityService.update
+        >[2]["data"],
         // Optional: Populate fields if you need more than just the ID returned
         // populate: { ... }
       }
@@ -139,8 +141,14 @@ export const documentDetails = async (
         address: user.business_address,
         address_number: user.business_address_number,
         postal_code: user.business_postal_code,
-        commune: user.business_commune?.name,
-        region: user.business_commune?.region?.name,
+        commune: (user.business_commune as { name?: string } | null | undefined)
+          ?.name,
+        region: (
+          user.business_commune as
+            | { region?: { name?: string } }
+            | null
+            | undefined
+        )?.region?.name,
       };
     } else {
       // Datos personales para boleta
@@ -152,8 +160,10 @@ export const documentDetails = async (
         address: user.address,
         address_number: user.address_number,
         postal_code: user.postal_code,
-        commune: user.commune?.name,
-        region: user.commune?.region?.name,
+        commune: (user.commune as { name?: string } | null | undefined)?.name,
+        region: (
+          user.commune as { region?: { name?: string } } | null | undefined
+        )?.region?.name,
       };
     }
   } catch (error) {
