@@ -71,10 +71,14 @@ export class TransbankService {
     }
   }
 
-  private handleError(error: any): IWebpayError {
+  private handleError(error: unknown): IWebpayError {
+    const e = error as Record<string, unknown>;
     return {
-      code: error.code || "UNKNOWN_ERROR",
-      message: error.message || "An unknown error occurred",
+      code: typeof e?.code === "string" ? e.code : "UNKNOWN_ERROR",
+      message:
+        typeof e?.message === "string"
+          ? e.message
+          : "An unknown error occurred",
     };
   }
 }

@@ -10,7 +10,7 @@ export interface IGoogleAuthService {
 }
 
 export interface IGoogleSheetsService {
-  appendToSheet(data: any[]): Promise<void>;
+  appendToSheet(data: unknown[]): Promise<void>;
 }
 
 export interface IGoogleRecaptchaService {

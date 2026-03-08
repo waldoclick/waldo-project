@@ -5,7 +5,7 @@ import { GoogleAuthService } from "./google-auth.service";
 export class GoogleSheetsService implements IGoogleSheetsService {
   constructor(private readonly authService: GoogleAuthService) {}
 
-  async appendToSheet(data: any[]): Promise<void> {
+  async appendToSheet(data: unknown[]): Promise<void> {
     try {
       const auth = await this.authService.authenticate();
       const sheets = google.sheets({ version: "v4", auth });
