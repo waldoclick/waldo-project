@@ -16,16 +16,16 @@ export const factoService = {
    */
   createDocument: async (
     is_invoice: boolean,
-    datos: any
+    datos: unknown
   ): Promise<IFactoLegacyResponse> => {
     // Determinar el tipo de documento según el parámetro booleano
     const tipo_dte = is_invoice ? DocumentType.INVOICE : DocumentType.TICKET;
 
     // Asegurar que el tipo esté establecido en los datos
     const documento = {
-      ...datos,
+      ...(datos as IFactoDocument),
       encabezado: {
-        ...datos.encabezado,
+        ...(datos as IFactoDocument).encabezado,
         tipo_dte,
       },
     };
