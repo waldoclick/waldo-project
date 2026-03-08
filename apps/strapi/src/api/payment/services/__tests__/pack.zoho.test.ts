@@ -13,7 +13,13 @@
 
 // ─── Mock strapi global before imports ───────────────────────────────────────
 
-(global as any).strapi = {
+interface MockStrapi {
+  entityService: {
+    findOne: jest.Mock;
+  };
+}
+
+(global as unknown as { strapi: MockStrapi }).strapi = {
   entityService: {
     findOne: jest.fn().mockResolvedValue({ email: "user@example.com" }),
   },
@@ -94,7 +100,9 @@ beforeEach(() => {
   ).mockResolvedValue({ success: true });
 
   // Reset strapi global mock
-  (global as any).strapi.entityService.findOne.mockResolvedValue({
+  (
+    global as unknown as { strapi: MockStrapi }
+  ).strapi.entityService.findOne.mockResolvedValue({
     email: "user@example.com",
   });
 
@@ -107,6 +115,12 @@ beforeEach(() => {
 });
 
 // ─── DEAL-02 / EVT-03: Zoho wiring in processPaidWebpay ──────────────────────
+
+interface ProcessPaidWebpayResult {
+  success: boolean;
+  message?: string;
+  error?: unknown;
+}
 
 describe("processPaidWebpay — Zoho CRM wiring", () => {
   it("Test 1 — Contact found: calls createDeal with correct payload", async () => {
@@ -137,10 +151,12 @@ describe("processPaidWebpay — Zoho CRM wiring", () => {
   it("Test 3 — Contact not found: skips createDeal and returns success:true", async () => {
     (zohoService.findContact as jest.Mock).mockResolvedValue(null);
 
-    const result = await packService.processPaidWebpay("pack-token");
+    const result = (await packService.processPaidWebpay(
+      "pack-token"
+    )) as ProcessPaidWebpayResult;
 
     expect(zohoService.createDeal).not.toHaveBeenCalled();
-    expect((result as any).success).toBe(true);
+    expect(result.success).toBe(true);
   });
 
   it("Test 4 — findContact throws: processPaidWebpay still returns success:true", async () => {
@@ -148,8 +164,10 @@ describe("processPaidWebpay — Zoho CRM wiring", () => {
       new Error("Zoho unavailable")
     );
 
-    const result = await packService.processPaidWebpay("pack-token");
+    const result = (await packService.processPaidWebpay(
+      "pack-token"
+    )) as ProcessPaidWebpayResult;
 
-    expect((result as any).success).toBe(true);
+    expect(result.success).toBe(true);
   });
 });

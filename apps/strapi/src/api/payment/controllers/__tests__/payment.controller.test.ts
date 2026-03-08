@@ -26,16 +26,17 @@ import OrderUtils from "../../utils/order.utils";
 import { documentDetails } from "../../utils/user.utils";
 import generalUtils from "../../utils/general.utils";
 import controller from "../payment";
+import type { Context } from "koa";
 
 // ─── Minimal Koa context factory ─────────────────────────────────────────────
 
-function makeCtx(overrides: Record<string, any> = {}) {
+function makeCtx(overrides: Record<string, unknown> = {}) {
   return {
     query: { token_ws: "test-token" },
     state: { user: { id: "user-1" } },
     request: { body: { data: {} } },
     redirect: jest.fn(),
-    body: undefined as any,
+    body: undefined as unknown,
     status: 200,
     ...overrides,
   };
@@ -60,7 +61,7 @@ describe("packResponse — WIRE-04", () => {
     const ctx = makeCtx();
 
     // Act: call the packResponse handler
-    await (controller as any).packResponse(ctx);
+    await controller.packResponse(ctx as unknown as Context);
 
     // Assert: should redirect to error page
     expect(ctx.redirect).toHaveBeenCalledWith(
@@ -108,7 +109,7 @@ describe("packResponse — WIRE-03", () => {
     const ctx = makeCtx();
 
     // Act
-    await (controller as any).packResponse(ctx);
+    await controller.packResponse(ctx as unknown as Context);
 
     // Assert: createAdOrder should be called with env var value, NOT "webpay"
     // This will FAIL in RED state because payment_method is hardcoded as "webpay"
@@ -155,7 +156,7 @@ describe("packResponse — WIRE-03", () => {
     const ctx = makeCtx();
 
     // Act
-    await (controller as any).packResponse(ctx);
+    await controller.packResponse(ctx as unknown as Context);
 
     // Assert: should use "transbank" as default, NOT "webpay"
     // This will FAIL in RED state because payment_method is hardcoded as "webpay"

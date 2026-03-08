@@ -92,6 +92,16 @@ beforeEach(() => {
 
 // ─── WIRE-02: packPurchase ────────────────────────────────────────────────────
 
+interface PackPurchaseResult {
+  success: boolean;
+  message?: string;
+  webpay?: {
+    success: boolean;
+    gatewayRef: string;
+    url: string;
+  };
+}
+
 describe("packPurchase — WIRE-02", () => {
   it("calls getPaymentGateway().createTransaction with correct args", async () => {
     await packService.packPurchase(1, "user-1", false);
@@ -110,7 +120,11 @@ describe("packPurchase — WIRE-02", () => {
   });
 
   it("returns webpay response from gateway", async () => {
-    const result = (await packService.packPurchase(1, "user-1", false)) as any;
+    const result = (await packService.packPurchase(
+      1,
+      "user-1",
+      false
+    )) as PackPurchaseResult;
 
     // Will FAIL in RED state: current code uses TransbankServices, not gateway
     // The webpay field won't have gatewayRef because the gateway mock isn't called
