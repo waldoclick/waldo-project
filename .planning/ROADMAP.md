@@ -74,7 +74,9 @@ Plans:
   2. The selected pack is reflected in the checkout UI at `/pagar` (user sees what they're buying)
   3. `/packs/comprar` returns 404 — the route no longer exists
   4. `BuyPack.vue` file does not exist in the codebase
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+- [ ] 056-01-PLAN.md — Rewrite CardPack.vue to use adStore + delete comprar.vue/BuyPack.vue dead-code tree
 
 ### Phase 57: Payment Hub Adaptation
 **Goal**: `/pagar` correctly processes payment whether or not an ad is associated — pack-only purchase works end-to-end
