@@ -2,12 +2,12 @@
 gsd_state_version: 1.0
 milestone: v1.21
 milestone_name: Ad Draft Decoupling
-status: Defining requirements
-stopped_at: v1.21 milestone started — defining requirements
+status: Planning
+stopped_at: v1.21 roadmap committed — ready to plan Phase 52
 last_updated: "2026-03-08T17:27:52.096Z"
 last_activity: 2026-03-08 — v1.21 started
 progress:
-  total_phases: 0
+  total_phases: 1
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -20,20 +20,20 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-08)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.21 — Ad Draft Decoupling (defining requirements)
+**Current focus:** v1.21 — Ad Draft Decoupling (planning Phase 52)
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: Phase 52 (pending plan)
 Plan: —
-Status: Defining requirements
-Last activity: 2026-03-08 — Milestone v1.21 started
+Status: Planning
+Last activity: 2026-03-08 — Roadmap committed, ready to plan Phase 52
 
 ### v1.21 Phase List
 
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
-| TBD   | TBD  | TBD          | Pending |
+| 52 | Ad Draft Decoupling | SCHEMA-01, BACK-01–06, FRONT-01–03, DASH-01 | Pending |
 
 ## Accumulated Context
 
@@ -83,5 +83,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-08
-Stopped at: v1.21 started — requirements and roadmap pending
+Stopped at: v1.21 roadmap committed — ready to plan Phase 52
 Resume with: `/gsd-plan-phase 52` once roadmap is committed

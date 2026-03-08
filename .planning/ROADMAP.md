@@ -22,6 +22,7 @@
 - ✅ **v1.18 Ad Creation URL Refactor** — Phase 42 (shipped 2026-03-08)
 - ✅ **v1.19 Zoho CRM Sync Model** — Phases 43-46 (shipped 2026-03-08)
 - ✅ **v1.20 TypeScript any Elimination** — Phases 47-51 (shipped 2026-03-08)
+- 🚧 **v1.21 Ad Draft Decoupling** — Phase 52 (in progress)
 
 ## Phases
 
@@ -65,6 +66,13 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 - [x] **Phase 49: Zoho + Facto + Other Services any Elimination** — Replace `any` in Zoho service/interfaces/http-client, Facto factory/SOAP/config, Indicador, Google, Transbank, payment-gateway (completed 2026-03-08)
 - [x] **Phase 50: Payment Utils + Middlewares any Elimination** — Replace `any` in `payment.type.ts`, order/user/ad/general utils, `payment.ts` controller, `image-uploader.ts`, `cache.ts`, `user-registration.ts` (completed 2026-03-08)
 - [x] **Phase 51: Seeders + Test Files any Elimination** — Replace `strapi: any` in all 5 seeders; replace `as any` casts in 4 test files (completed 2026-03-08)
+
+</details>
+
+<details>
+<summary>🚧 v1.21 — Ad Draft Decoupling (Phase 52) — IN PROGRESS</summary>
+
+- [ ] **Phase 52: Ad Draft Decoupling** — Save ad as draft (`draft: true`) on "Pagar/Confirmar" press, before payment; migrate abandoned ads to draft; rename dashboard section
 
 </details>
 
@@ -127,6 +135,19 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
   4. `payment.controller.test.ts` accesses `packResponse` via typed accessor and `body` stub is properly typed — no `as any` casts remain
 **Plans**: TBD
 
+### Phase 52: Ad Draft Decoupling
+**Goal**: When a user presses "Pagar/Confirmar" on `/anunciar/resumen`, the ad is saved as a draft in the database before payment is initiated; existing abandoned ads are migrated to draft status; the dashboard reflects the new state
+**Depends on**: Nothing (independent feature)
+**Requirements**: SCHEMA-01, BACK-01, BACK-02, BACK-03, BACK-04, BACK-05, BACK-06, FRONT-01, FRONT-02, FRONT-03, DASH-01
+**Success Criteria** (what must be TRUE):
+  1. Pressing "Pagar/Confirmar" on `/anunciar/resumen` creates (or updates) an ad record with `draft: true` before any payment logic runs
+  2. `adStore.ad.ad_id` is populated from the draft endpoint response — subsequent payment calls use this `ad_id`
+  3. `computeAdStatus()` returns `"draft"` for ads with `draft: true` — evaluated before all other status checks
+  4. The `abandoned` status no longer appears in the codebase — all callers use `"draft"` instead
+  5. Dashboard section previously labelled "Abandonados" now shows "Borradores" and filters on `draft: true`
+  6. All existing ads with abandoned condition (`active=false`, `ad_reservation=null`, `is_paid=true`) have `draft: true` after migration
+**Plans**: TBD
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -148,3 +169,4 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 | 49. Zoho + Facto + Other Services any Elimination | v1.20 | 1/1 | Complete | 2026-03-08 |
 | 50. Payment Utils + Middlewares any Elimination | v1.20 | 1/1 | Complete | 2026-03-08 |
 | 51. Seeders + Test Files any Elimination | v1.20 | 1/1 | Complete | 2026-03-08 |
+| 52. Ad Draft Decoupling | v1.21 | 0/TBD | In Progress | — |
