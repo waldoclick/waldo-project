@@ -34,8 +34,27 @@ export interface ZohoConfig {
   apiUrl: string;
 }
 
+export interface ZohoDeal {
+  dealName: string;
+  amount: number;
+  contactId: string;
+  type: string;
+  closingDate: string;
+  description?: string;
+  leadSource?: string;
+}
+
+export interface IContactStats {
+  Ads_Published__c?: number;
+  Total_Spent__c?: number;
+  Last_Ad_Posted_At__c?: string;
+  Packs_Purchased__c?: number;
+}
+
 export interface IZohoService {
   createLead(lead: ZohoLead): Promise<any[]>;
+  createDeal(deal: ZohoDeal): Promise<string>;
+  updateContactStats(contactId: string, stats: IContactStats): Promise<void>;
   createContact(contact: {
     First_Name: string;
     Last_Name: string;
