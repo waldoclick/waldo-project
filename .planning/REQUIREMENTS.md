@@ -19,14 +19,14 @@ TypeScript `any` elimination across Strapi services, controllers, type files, fa
 
 ### Type Files
 
-- [ ] **TSANY-08**: `order.types.ts` — `filters?: any`, `sort?: any`, `populate?: any`, `payment_response: any`, `document_details: any` → `unknown`
-- [ ] **TSANY-09**: `filter.types.ts` — all filter operator fields (`$eq`, `$ne`, `$lt`, `$lte`, `$gt`, `$gte`, `$in`, `$nin`, `$contains`, `$notContains`, `$containsi`, `$notContainsi`) and `icon?: any` → `unknown`
+- [x] **TSANY-08**: `order.types.ts` — `filters?: any`, `sort?: any`, `populate?: any`, `payment_response: any`, `document_details: any` → `unknown`
+- [x] **TSANY-09**: `filter.types.ts` — all filter operator fields (`$eq`, `$ne`, `$lt`, `$lte`, `$gt`, `$gte`, `$in`, `$nin`, `$contains`, `$notContains`, `$containsi`, `$notContainsi`) and `icon?: any` → `unknown`
 
 ### Flow Service
 
-- [ ] **TSANY-10**: `flow.factory.ts` — `type Strapi = any` → import `Core.Strapi` from `@strapi/strapi` or use `unknown`
-- [ ] **TSANY-11**: `flow.types.ts` — `discount?: any`, `invoices?: any[]`, `items?: any[]`, `chargeAttemps?: any[]` → `unknown` or stub interfaces
-- [ ] **TSANY-12**: `flow.service.ts` — `(responseData as any).message` and `(data as any).message` casts → typed with proper narrowing
+- [x] **TSANY-10**: `flow.factory.ts` — `type Strapi = any` → import `Core.Strapi` from `@strapi/strapi` or use `unknown`
+- [x] **TSANY-11**: `flow.types.ts` — `discount?: any`, `invoices?: any[]`, `items?: any[]`, `chargeAttemps?: any[]` → `unknown` or stub interfaces
+- [x] **TSANY-12**: `flow.service.ts` — `(responseData as any).message` and `(data as any).message` casts → typed with proper narrowing
 
 ### Zoho Service
 
@@ -94,11 +94,11 @@ TypeScript `any` elimination across Strapi services, controllers, type files, fa
 | TSANY-05 | Phase 47 | Complete |
 | TSANY-06 | Phase 47 | Complete |
 | TSANY-07 | Phase 47 | Complete |
-| TSANY-08 | Phase 48 | Pending |
-| TSANY-09 | Phase 48 | Pending |
-| TSANY-10 | Phase 48 | Pending |
-| TSANY-11 | Phase 48 | Pending |
-| TSANY-12 | Phase 48 | Pending |
+| TSANY-08 | Phase 48 | Complete |
+| TSANY-09 | Phase 48 | Complete |
+| TSANY-10 | Phase 48 | Complete |
+| TSANY-11 | Phase 48 | Complete |
+| TSANY-12 | Phase 48 | Complete |
 | TSANY-13 | Phase 49 | Pending |
 | TSANY-14 | Phase 49 | Pending |
 | TSANY-15 | Phase 49 | Pending |
