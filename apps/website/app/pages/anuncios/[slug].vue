@@ -149,7 +149,6 @@ const {
   {
     server: true,
     lazy: false,
-    watch: [() => route.params.slug], // watch for slug changes
   },
 );
 
