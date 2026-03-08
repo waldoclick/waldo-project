@@ -3,7 +3,8 @@
 @use "../base/container";
 
 .bar {
-  &--announcement {
+  &--announcement,
+  &--checkout {
     position: fixed;
     bottom: 0;
     left: 0;

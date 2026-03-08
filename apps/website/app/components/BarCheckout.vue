@@ -1,0 +1,103 @@
+<template>
+  <div class="bar bar--checkout">
+    <div ref="progressElement" class="bar--checkout__percent" />
+    <div class="container container--fluid">
+      <div class="bar--checkout__container">
+        <div class="bar--checkout__col bar--checkout__col--left">
+          <button
+            v-show="showBack"
+            type="button"
+            class="btn btn--secondary btn--block"
+            :disabled="backDisabled"
+            @click="emit('back')"
+          >
+            <span>Volver</span>
+          </button>
+        </div>
+
+        <div
+          v-if="showSteps && totalSteps"
+          class="bar--checkout__col bar--checkout__col--center"
+        >
+          <div class="bar--checkout__steps">
+            <b>{{ currentStep }}</b> de {{ totalSteps }}
+          </div>
+        </div>
+
+        <div class="bar--checkout__col bar--checkout__col--right">
+          <div class="bar--checkout__actions">
+            <SummaryDefault
+              v-if="summaryText"
+              title="Tipo de anuncio"
+              :text="summaryText"
+            />
+
+            <button
+              type="submit"
+              class="btn btn--primary btn--block"
+              :disabled="primaryDisabled"
+              :title="primaryLabel"
+              @click="emit('primary')"
+            >
+              <span>{{ primaryLabel }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, watch, onMounted } from "vue";
+import SummaryDefault from "@/components/SummaryDefault.vue";
+
+const props = withDefaults(
+  defineProps<{
+    percentage?: number;
+    currentStep?: number;
+    totalSteps?: number;
+    showSteps?: boolean;
+    summaryText?: string;
+    primaryLabel: string;
+    primaryDisabled?: boolean;
+    backDisabled?: boolean;
+    showBack?: boolean;
+  }>(),
+  {
+    percentage: 0,
+    currentStep: 1,
+    totalSteps: undefined,
+    showSteps: true,
+    summaryText: "",
+    primaryDisabled: false,
+    backDisabled: false,
+    showBack: true,
+  },
+);
+
+const emit = defineEmits<{
+  (e: "back" | "primary"): void;
+}>();
+
+const progressElement = ref<HTMLElement | null>(null);
+
+const updateProgress = () => {
+  if (progressElement.value) {
+    progressElement.value.style.setProperty(
+      "--progress-width",
+      `${props.percentage}%`,
+    );
+  }
+};
+
+// onMounted: UI-only — updates progress bar width from prop value
+onMounted(updateProgress);
+
+watch(
+  () => props.percentage,
+  () => {
+    updateProgress();
+  },
+);
+</script>
