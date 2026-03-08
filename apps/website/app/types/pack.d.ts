@@ -11,6 +11,8 @@ export interface Pack {
   createdAt: string;
   updatedAt: string;
   publishedAt: string;
+  recommended?: boolean;
+  quantity?: number;
 }
 
 export interface PackResponse {
