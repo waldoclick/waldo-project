@@ -1,5 +1,21 @@
 # Milestones
 
+## v1.22 Checkout Flow UI (Shipped: 2026-03-08)
+
+**Phases completed:** 1 phase (53), 1 plan
+**Files changed:** 8 files, +676 / -41 lines (apps/website)
+**Timeline:** 2026-03-08 (single day)
+**Requirements:** Phase 53 complete; Phase 54 (redirect wiring) deferred
+
+**Key accomplishments:**
+1. **Checkout Page (Phase 53)**: Created `pages/pagar/index.vue` as the central payment page — auth-gated, renders `CheckoutDefault` which orchestrates the full payment UI; established the pattern that all flows with `hasToPay === true` must redirect here.
+2. **PaymentAd Component**: New `PaymentAd.vue` — shows ad preview (title, price, category, condition, commune) as the first element of the checkout UI to give the user context before paying; includes edit navigation link.
+3. **PaymentGateway Component**: New `PaymentGateway.vue` — decorative WebPay gateway selector card with Transbank WebPay label.
+4. **FormCheckout Restructure**: `FormCheckout.vue` rewritten with typed `<script setup lang="ts">`, section titles and context text, toggle sections for featured and payment method, dead code eliminated.
+5. **SCSS Blocks**: `_payment.scss` — `payment--ad` and `payment--gateway` blocks (203 lines added); `_form.scss` — `form--checkout` modifier block (116 lines added); BEM modifier encapsulation maintained throughout.
+
+---
+
 ## v1.21 Ad Draft Decoupling (Shipped: 2026-03-08)
 
 **Phases completed:** 1 phase (52), 4 plans

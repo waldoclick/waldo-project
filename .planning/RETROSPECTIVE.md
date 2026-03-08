@@ -698,6 +698,46 @@
 
 ---
 
+## Milestone: v1.22 — Checkout Flow UI
+
+**Shipped:** 2026-03-08
+**Phases:** 1 (53) | **Plans:** 1 | **Timeline:** 1 day
+**Files changed:** 13 files, +867/-110 lines (apps/website) | **Requirements:** 20/23 complete (REDIR-01–03 deferred to next milestone)
+
+### What Was Built
+- `pages/pagar/index.vue` — auth middleware, `noindex`, renders `CheckoutDefault`; established as the single payment execution page
+- `PaymentAd.vue` — ad preview card (image, name, price, Edit button) shown as the first checkout element for context before paying
+- `PaymentGateway.vue` — WebPay checkbox (decorative, disabled); structured for future gateway additions without layout changes
+- `CheckoutDefault.vue` — owns the full payment logic (draft call, `payments/ad`, WebPay redirect, free path, error handling); eliminates logic duplication from `resumen.vue`
+- `FormCheckout.vue` — reestructurado: `lang="ts"`, 5 accordion sections in correct order (ad → method → featured → invoice → gateway), dead code removed
+- `BarCheckout.vue` — checkout-specific action bar (no back button, no step display); separated from `BarAnnouncement` to avoid prop flag soup
+- SCSS: `payment--ad`, `payment--gateway` blocks; `form--checkout__field__title` for section headings
+
+### What Worked
+- The component decomposition (PaymentAd, PaymentGateway, FormCheckout, CheckoutDefault, BarCheckout) gave clear single-responsibility boundaries — each component has one job
+- Building `CheckoutDefault` as the payment logic owner upfront means the redirect wiring in phase 54 is purely mechanical: point flows to `/pagar` and `CheckoutDefault` handles the rest
+- Separating `BarCheckout` from `BarAnnouncement` avoided a growing list of conditional props to hide/show elements that don't belong in the wizard context
+
+### What Was Inefficient
+- Phase 54 (redirect wiring from `resumen.vue` and pack flow) was scoped but not executed — the milestone was closed with 3 requirements pending. The checkout page exists but isn't reachable from the ad creation wizard yet. This means the feature is built but not connected.
+- No SUMMARY.md was created for Phase 53 — the phase directory was never created, making it invisible to gsd-tools roadmap analysis. Future phases should always create the directory even if working directly from commits.
+
+### Patterns Established
+- **`/pagar` as payment hub**: all paid flows redirect here; `CheckoutDefault` owns execution; no payment logic in pages that precede it
+- **PaymentAd pattern**: show the user what they're paying for as the very first checkout element — reduces abandonment and support requests about "wrong ad"
+- **Payment component separation**: `PaymentGateway` is decorative today but structured for real gateway selection without layout changes — the slot is there
+
+### Key Lessons
+1. **Ship the connection, not just the destination.** Building the `/pagar` page without wiring the redirect from `resumen.vue` leaves the feature in a half-shipped state. The next milestone must complete REDIR-01–03 before this is usable.
+2. **Always create the phase directory, even for single-plan phases.** Phase 53 has no directory → no SUMMARY.md → gsd-tools can't see it. Two commands (`mkdir` + writing the summary) would have kept the planning state consistent.
+
+### Cost Observations
+- Model mix: ~100% sonnet
+- Sessions: ~3 (build + fixes + milestone close)
+- Notable: Milestone closed with known gaps (REDIR-01–03) by explicit user decision — context integrity was prioritized over feature completeness
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution

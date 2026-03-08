@@ -2,32 +2,32 @@
 gsd_state_version: 1.0
 milestone: v1.22
 milestone_name: Checkout Flow UI
-status: completed
-stopped_at: Phase 54 context gathered
-last_updated: "2026-03-08T21:19:59.807Z"
-last_activity: 2026-03-08 — Phase 53 (Checkout Page & Components) shipped
+status: shipped
+stopped_at: Milestone closed
+last_updated: "2026-03-08T22:00:00.000Z"
+last_activity: 2026-03-08 — v1.22 milestone closed (Phase 53 shipped; Phase 54 deferred)
 progress:
-  total_phases: 22
-  completed_phases: 21
-  total_plans: 30
-  completed_plans: 30
+  total_phases: 1
+  completed_phases: 1
+  total_plans: 1
+  completed_plans: 1
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-08 after v1.21)
+See: .planning/PROJECT.md (updated 2026-03-08 after v1.22)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.22 Checkout Flow UI — Phase 54 next
+**Current focus:** v1.22 shipped — ready to start next milestone
 
 ## Current Position
 
-Phase: 54 (Redirección desde Flujos Existentes) — not started
+Phase: — (no active phase)
 Plan: —
-Status: Phase 53 complete — ready to begin Phase 54
-Last activity: 2026-03-08 — Phase 53 (Checkout Page & Components) shipped
+Status: v1.22 closed — Phase 53 shipped, Phase 54 (redirect wiring from resumen.vue / BuyPack.vue) deferred to next milestone
+Last activity: 2026-03-08 — v1.22 Checkout Flow UI milestone closed
 
 ## Accumulated Context
 
@@ -60,12 +60,12 @@ Key patterns established (carry forward):
 - **v1.21**: Endpoint domain belongs with the entity, not the trigger — `/api/ads/save-draft` not `/api/payments/ad-draft`
 - **v1.21**: Plan the full lifecycle of a new boolean field — `default: true` requires explicitly planning the flip to `false`
 - **v1.21**: New Strapi endpoints require manual permission setup in admin panel — document as deploy step in plan
-  - **v1.22**: `/pagar` es la página central de pago — todos los flujos con `hasToPay === true` deben redirigir aquí
-  - **v1.22**: `PaymentAd` pattern — preview del ad como primer elemento del checkout para dar contexto al usuario antes de pagar
+- **v1.22**: `/pagar` is the central payment page — all flows with `hasToPay === true` must redirect here
+- **v1.22**: `PaymentAd` pattern — ad preview as first checkout element gives user context before paying
 
 ### Pending Todos
 
-None.
+- Phase 54 (redirect wiring): `resumen.vue` and `BuyPack.vue` must redirect to `/pagar` when `hasToPay === true`; payment logic to move into `CheckoutDefault`
 
 ### Blockers/Concerns
 
@@ -73,6 +73,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-08T21:19:59.806Z
-Stopped at: Phase 54 context gathered
-Resume with: `/gsd-plan-phase` to plan Phase 54
+Last session: 2026-03-08
+Stopped at: Milestone v1.22 closed
+Resume with: `/gsd-progress` to assess next milestone
