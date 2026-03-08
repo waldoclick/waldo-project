@@ -157,10 +157,29 @@ const handlePayClick = async () => {
     // Enviar evento de add_payment_info antes de procesar el pago
     adAnalytics.addPaymentInfo();
 
+    // Save draft before payment — skip for free ads (pack=free not touched)
+    if (adStore.pack !== "free") {
+      const draftPayload = {
+        ad: adStore.ad,
+      };
+
+      const draftResponse = await create<{ id: number }>(
+        "payments/ad-draft",
+        draftPayload as unknown as Parameters<typeof create>[1],
+      );
+
+      const draftId = draftResponse.data?.id;
+      if (draftId) {
+        adStore.updateAdId(draftId);
+        // Update allData.ad with the persisted ad_id so payments/ad receives it
+        allData.ad = { ...allData.ad, ad_id: draftId };
+      }
+    }
+
     const response = await create<{
       webpay?: { url: string; gatewayRef: string };
       ad?: { id: number };
-    }>("payments/ad", allData as any);
+    }>("payments/ad", allData as unknown as Parameters<typeof create>[1]);
 
     if (response.data && response.data.webpay) {
       // Get ad_id from response and update store if exists
@@ -183,9 +202,10 @@ const handlePayClick = async () => {
       "Hubo un problema al procesar el pago. Por favor, inténtalo de nuevo.";
 
     if (
-      (error as any).response?.data?.message ===
-        "No free featured credits available" ||
-      (error as any).message === "No free featured credits available"
+      (error as { response?: { data?: { message?: string } } }).response?.data
+        ?.message === "No free featured credits available" ||
+      (error as { message?: string }).message ===
+        "No free featured credits available"
     ) {
       errorMessage = "No tienes créditos destacados gratuitos disponibles";
     }
