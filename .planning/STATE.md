@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: planning
-stopped_at: Completed 47-01-PLAN.md
-last_updated: "2026-03-08T14:28:38.046Z"
+stopped_at: Completed 48-01-PLAN.md
+last_updated: "2026-03-08T14:31:22.613Z"
 last_activity: 2026-03-08 — Roadmap created
 progress:
   total_phases: 5
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 2
-  completed_plans: 1
+  completed_plans: 2
 ---
 
 # Project State
@@ -66,6 +66,8 @@ Key patterns established (carry forward):
 - **v1.19**: Zoho stage names must match CRM pipeline exactly — validate before hardcoding
 - [Phase 47-ad-api-any-elimination]: Use AdQueryOptions interface for ad service methods replacing options: any — Expresses intent for query shape; allows typed access to page, pageSize, filters, sort, populate, orderBy, pagination fields
 - [Phase 47-ad-api-any-elimination]: Strapi SDK v5 cast pattern for entityService filter params — filters as unknown as Record<string, unknown> — matches AGENTS.md Strapi SDK v5 cast pattern; used in meCounts controller for all 5 entityService.count calls
+- [Phase 48]: IFlowSubscriptionResponse.invoices typed as IFlowInvoice[] (not unknown[]) — IFlowInvoice already existed and pro.service.ts accesses .id on items
+- [Phase 48]: Record<string,string> for Flow API param bags with String() casts — required by URLSearchParams and removes Record<string,any>
 
 ### Pending Todos
 
@@ -77,6 +79,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-08T14:25:04.030Z
-Stopped at: Completed 47-01-PLAN.md
+Last session: 2026-03-08T14:31:22.610Z
+Stopped at: Completed 48-01-PLAN.md
 Resume with: `/gsd-plan-phase 47`
