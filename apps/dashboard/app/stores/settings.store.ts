@@ -16,6 +16,7 @@ interface SettingsState {
   adsBanned: SectionSettings;
   adsRejected: SectionSettings;
   adsAbandoned: SectionSettings;
+  adsDraft: SectionSettings;
   users: SectionSettings;
   reservations: SectionSettings;
   featured: SectionSettings;
@@ -45,6 +46,7 @@ export const useSettingsStore = defineStore(
     const adsBanned = ref<SectionSettings>({ ...defaultSectionSettings });
     const adsRejected = ref<SectionSettings>({ ...defaultSectionSettings });
     const adsAbandoned = ref<SectionSettings>({ ...defaultSectionSettings });
+    const adsDraft = ref<SectionSettings>({ ...defaultSectionSettings });
     const users = ref<SectionSettings>({ ...defaultSectionSettings });
     const reservations = ref<SectionSettings>({ ...defaultSectionSettings });
     const featured = ref<SectionSettings>({ ...defaultSectionSettings });
@@ -89,6 +91,11 @@ export const useSettingsStore = defineStore(
     const getAdsAbandonedFilters = computed(() => ({
       sortBy: adsAbandoned.value.sortBy,
       pageSize: adsAbandoned.value.pageSize,
+    }));
+
+    const getAdsDraftFilters = computed(() => ({
+      sortBy: adsDraft.value.sortBy,
+      pageSize: adsDraft.value.pageSize,
     }));
 
     const getUsersFilters = computed(() => ({
@@ -192,6 +199,8 @@ export const useSettingsStore = defineStore(
           return adsRejected;
         case "adsAbandoned":
           return adsAbandoned;
+        case "adsDraft":
+          return adsDraft;
         case "users":
           return users;
         case "reservations":
@@ -224,6 +233,7 @@ export const useSettingsStore = defineStore(
       adsBanned,
       adsRejected,
       adsAbandoned,
+      adsDraft,
       users,
       reservations,
       featured,
@@ -241,6 +251,7 @@ export const useSettingsStore = defineStore(
       getAdsBannedFilters,
       getAdsRejectedFilters,
       getAdsAbandonedFilters,
+      getAdsDraftFilters,
       getUsersFilters,
       getReservationsFilters,
       getFeaturedFilters,
