@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.21
 milestone_name: Ad Draft Decoupling
-status: Planning
-stopped_at: v1.21 roadmap committed — ready to plan Phase 52
-last_updated: "2026-03-08T17:27:52.096Z"
-last_activity: 2026-03-08 — v1.21 started
+status: planning
+stopped_at: Completed 52-03-PLAN.md
+last_updated: "2026-03-08T18:25:50.635Z"
+last_activity: 2026-03-08 — Roadmap committed, ready to plan Phase 52
 progress:
-  total_phases: 1
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_phases: 6
+  completed_phases: 5
+  total_plans: 9
+  completed_plans: 7
 ---
 
 # Project State
@@ -71,6 +71,7 @@ Key patterns established (carry forward):
 - [Phase 50]: BillingDetails exported from user.utils.ts for use in FactoDocumentData.userDetails — eliminates userDetails: any in general.utils.ts
 - [Phase 51]: (global as unknown as { strapi: MockStrapi }) cast for test global mock — avoids @strapi/types global redeclaration conflict
 - [Phase 51]: controller.packResponse direct access with ctx as unknown as Context — public property, Koa partial mock needs Context cast
+- [Phase 52-ad-draft-decoupling]: draft field required=true/default=true so every new ad starts as a draft — Ensures no ad is ever published without explicit promotion out of draft state
 
 ### Pending Todos
 
@@ -82,6 +83,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-08
-Stopped at: v1.21 roadmap committed — ready to plan Phase 52
+Last session: 2026-03-08T18:25:50.633Z
+Stopped at: Completed 52-03-PLAN.md
 Resume with: `/gsd-plan-phase 52` once roadmap is committed
