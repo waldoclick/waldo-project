@@ -6,7 +6,7 @@
  *   - draft: true + active: true → "draft" still wins
  *   - existing conditions (active, archived, etc.) → unchanged
  *   - old "abandoned" path → now falls through to "unknown"
- *   - AdStatus type has "draft", does NOT have "abandoned"
+ *   - draftAds() method exists / abandonedAds() method is gone
  *
  * Phase 52, Plan 02 — BACK-03, BACK-04, BACK-05
  */
@@ -57,22 +57,27 @@ jest.mock("../../../../utils/logtail", () => ({
   },
 }));
 
+// ─── Import factory ──────────────────────────────────────────────────────────
+
+import adServiceFactory from "../ad";
+
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
-// We test computeAdStatus indirectly via findOne which calls it
-// But the function is not exported — we'll test via the service's findOne
-// to verify the observable behaviour of the status field.
+// We test computeAdStatus indirectly via findOne which calls it.
+// The function is not exported — we verify observable behaviour via the
+// status field added to the returned ad.
+// Pattern mirrors ad.approve.zoho.test.ts: adServiceFactory({ strapi })
 
-// However, since computeAdStatus is a module-level function, we need
-// to test it through the service. We do this by mocking strapi.db.query
-// to return the ad object and calling findOne on the service.
+type MockStrapi = {
+  db: {
+    query: jest.Mock;
+  };
+  contentType: jest.Mock;
+  query: jest.Mock;
+};
 
 describe("computeAdStatus — draft status", () => {
-  // We import the service module and use its exported factory
-  // Since the service uses factories.createCoreService we need to test
-  // via the service object itself.
-
-  let adService: {
+  type AdService = {
     findOne: (
       id: string | number,
       options?: object
@@ -81,38 +86,24 @@ describe("computeAdStatus — draft status", () => {
     abandonedAds?: (options?: object) => Promise<unknown>;
   };
 
+  const mockStrapi = (global as unknown as { strapi: MockStrapi }).strapi;
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  beforeAll(() => {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const serviceModule = require("../ad");
-    // factories.createCoreService returns the service factory result
-    // In Strapi, the module.default is the factory call result
-    // We need to call the factory with a mock strapi
-    const factory = serviceModule.default;
-    // Invoke with mock strapi — Strapi factories accept ({ strapi }) => ({...})
-    // The export is already the result of factories.createCoreService(...)
-    // which at test time just returns the methods object
-    adService = factory;
-  });
-
   test("computeAdStatus returns 'draft' when draft === true (no other fields set)", async () => {
-    const mockFindOne = jest.fn().mockResolvedValue({
-      id: 1,
-      draft: true,
-      active: false,
-      banned: false,
-      rejected: false,
-      remaining_days: 0,
-      ad_reservation: null,
-    });
-    (
-      (global as unknown as { strapi: { db: { query: jest.Mock } } }).strapi.db
-        .query as jest.Mock
-    ).mockReturnValue({
-      findOne: mockFindOne,
+    const adService = adServiceFactory({ strapi }) as unknown as AdService;
+    mockStrapi.db.query.mockReturnValue({
+      findOne: jest.fn().mockResolvedValue({
+        id: 1,
+        draft: true,
+        active: false,
+        banned: false,
+        rejected: false,
+        remaining_days: 0,
+        ad_reservation: null,
+      }),
       findMany: jest.fn().mockResolvedValue([]),
       count: jest.fn().mockResolvedValue(0),
     });
@@ -122,20 +113,17 @@ describe("computeAdStatus — draft status", () => {
   });
 
   test("computeAdStatus returns 'draft' when draft === true AND active === true (draft wins)", async () => {
-    const mockFindOne = jest.fn().mockResolvedValue({
-      id: 2,
-      draft: true,
-      active: true,
-      banned: false,
-      rejected: false,
-      remaining_days: 5,
-      ad_reservation: null,
-    });
-    (
-      (global as unknown as { strapi: { db: { query: jest.Mock } } }).strapi.db
-        .query as jest.Mock
-    ).mockReturnValue({
-      findOne: mockFindOne,
+    const adService = adServiceFactory({ strapi }) as unknown as AdService;
+    mockStrapi.db.query.mockReturnValue({
+      findOne: jest.fn().mockResolvedValue({
+        id: 2,
+        draft: true,
+        active: true,
+        banned: false,
+        rejected: false,
+        remaining_days: 5,
+        ad_reservation: null,
+      }),
       findMany: jest.fn().mockResolvedValue([]),
       count: jest.fn().mockResolvedValue(0),
     });
@@ -145,20 +133,17 @@ describe("computeAdStatus — draft status", () => {
   });
 
   test("computeAdStatus still returns 'active' when draft is false/absent and conditions match", async () => {
-    const mockFindOne = jest.fn().mockResolvedValue({
-      id: 3,
-      draft: false,
-      active: true,
-      banned: false,
-      rejected: false,
-      remaining_days: 5,
-      ad_reservation: { id: 1 },
-    });
-    (
-      (global as unknown as { strapi: { db: { query: jest.Mock } } }).strapi.db
-        .query as jest.Mock
-    ).mockReturnValue({
-      findOne: mockFindOne,
+    const adService = adServiceFactory({ strapi }) as unknown as AdService;
+    mockStrapi.db.query.mockReturnValue({
+      findOne: jest.fn().mockResolvedValue({
+        id: 3,
+        draft: false,
+        active: true,
+        banned: false,
+        rejected: false,
+        remaining_days: 5,
+        ad_reservation: { id: 1 },
+      }),
       findMany: jest.fn().mockResolvedValue([]),
       count: jest.fn().mockResolvedValue(0),
     });
@@ -168,35 +153,34 @@ describe("computeAdStatus — draft status", () => {
   });
 
   test("computeAdStatus returns 'unknown' for old 'abandoned' scenario (active=false, is_paid=true, no reservation, remaining_days>0)", async () => {
-    const mockFindOne = jest.fn().mockResolvedValue({
-      id: 4,
-      draft: false,
-      active: false,
-      banned: false,
-      rejected: false,
-      remaining_days: 5,
-      ad_reservation: null,
-      is_paid: true,
-    });
-    (
-      (global as unknown as { strapi: { db: { query: jest.Mock } } }).strapi.db
-        .query as jest.Mock
-    ).mockReturnValue({
-      findOne: mockFindOne,
+    const adService = adServiceFactory({ strapi }) as unknown as AdService;
+    mockStrapi.db.query.mockReturnValue({
+      findOne: jest.fn().mockResolvedValue({
+        id: 4,
+        draft: false,
+        active: false,
+        banned: false,
+        rejected: false,
+        remaining_days: 5,
+        ad_reservation: null,
+        is_paid: true,
+      }),
       findMany: jest.fn().mockResolvedValue([]),
       count: jest.fn().mockResolvedValue(0),
     });
 
     const result = await adService.findOne(4);
-    // The old "abandoned" branch is removed — this should fall through to "unknown"
+    // The old "abandoned" branch is removed — this falls through to "unknown"
     expect(result?.status).toBe("unknown");
   });
 
   test("draftAds() method exists on the service", () => {
+    const adService = adServiceFactory({ strapi }) as unknown as AdService;
     expect(typeof adService.draftAds).toBe("function");
   });
 
   test("abandonedAds() method does NOT exist on the service", () => {
+    const adService = adServiceFactory({ strapi }) as unknown as AdService;
     expect(adService.abandonedAds).toBeUndefined();
   });
 });
