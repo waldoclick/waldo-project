@@ -159,6 +159,11 @@
       "required": true,
       "default": false
     },
+    "draft": {
+      "type": "boolean",
+      "required": true,
+      "default": true
+    },
     "actived_at": {
       "type": "datetime"
     },
