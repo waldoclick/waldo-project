@@ -53,12 +53,16 @@ onMounted(async () => {
   // Get initial pack value from store
   selectedPack.value = packStore.pack || null;
 
-  // Update store with initial selection
-  packStore.updatePack(selectedPack.value);
+  // Update store with initial selection (only when a pack is actually selected)
+  if (selectedPack.value !== null) {
+    packStore.updatePack(selectedPack.value);
+  }
 });
 
 const changePayment = () => {
-  packStore.updatePack(selectedPack.value);
+  if (selectedPack.value !== null) {
+    packStore.updatePack(selectedPack.value);
+  }
 };
 
 // Function to format price to Chilean Pesos

@@ -36,11 +36,13 @@ const strapi = useStrapi();
 const { data: initData } = await useAsyncData(
   "anunciar-init",
   async () => {
-    const packsResponse = (await Promise.all([
-      meStore.loadMe(),
-      categoriesStore.loadCategories(),
-      strapi.find("ad-packs", { populate: "*" }),
-    ]))[2];
+    const packsResponse = (
+      await Promise.all([
+        meStore.loadMe(),
+        categoriesStore.loadCategories(),
+        strapi.find("ad-packs", { populate: "*" }),
+      ])
+    )[2];
     return {
       packs: (packsResponse.data as unknown as Pack[]) ?? [],
     };
