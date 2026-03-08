@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: active — roadmap ready, no plans written yet
-stopped_at: Completed 45-01-PLAN.md
-last_updated: "2026-03-08T03:51:09.193Z"
+stopped_at: Completed 46-01-PLAN.md
+last_updated: "2026-03-08T04:07:58.567Z"
 last_activity: 2026-03-08 — roadmap created; Phases 43-46 defined; 13/13 requirements mapped
 progress:
   total_phases: 4
-  completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
+  completed_phases: 2
+  total_plans: 3
+  completed_plans: 3
   percent: 0
 ---
 
@@ -69,6 +69,9 @@ Key patterns established (carry forward):
 - [Phase 44-zoho-service-layer]: Object.fromEntries filter pattern for selective updateContactStats() payload — strips undefined keys without extra library
 - [Phase 45-payment-event-wiring]: Floating promise (.then().catch()) for ad_paid Zoho sync — adResponse controller issues ctx.redirect() right after processPaidWebpay; awaiting would block the redirect — Confirmed by STATE.md design decision: 'ad_paid wiring MUST use .then().catch() floating promise'
 - [Phase 45-payment-event-wiring]: Zoho sync in processPaidWebpay wrapped in top-level try/catch — CRM errors never propagate to payment flow — await used (not floating promise) for Zoho calls in processPaidWebpay — safe because this method is not a redirect handler
+- [Phase 46]: Floating promise (not await) in approveAd() — CRM sync must never block ad approval; consistent with Phase 45 ad_paid pattern
+- [Phase 46]: No createDeal for ad_published (EVT-01) — only updateContactStats with Ads_Published__c + Last_Ad_Posted_At__c
+- [Phase 46]: isFirstPublish guard retained despite isPending redundancy — explicit EVT-02 documentation and forward-safety
 
 ### v1.19 Key Decisions (from research)
 
@@ -90,6 +93,6 @@ Key patterns established (carry forward):
 
 ## Session Continuity
 
-Last session: 2026-03-08T03:51:02.068Z
-Stopped at: Completed 45-01-PLAN.md
+Last session: 2026-03-08T04:07:58.566Z
+Stopped at: Completed 46-01-PLAN.md
 Resume with: `/gsd-plan-phase 43`
