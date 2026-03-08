@@ -9,25 +9,110 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
 import FormCheckout from "@/components/FormCheckout.vue";
 import { useAdStore } from "@/stores/ad.store";
-import { useMeStore } from "@/stores/me.store";
+import { useAdAnalytics } from "@/composables/useAdAnalytics";
+import { useAdPaymentSummary } from "@/composables/useAdPaymentSummary";
+
+const { Swal } = useSweetAlert2();
+const { create } = useStrapi();
+const { fetchUser } = useStrapiAuth();
 
 const adStore = useAdStore();
-const router = useRouter();
+const adAnalytics = useAdAnalytics();
+const { hasToPay } = useAdPaymentSummary();
 
-const meStore = useMeStore();
-const isProfileComplete = ref(false);
+const handleFormSubmitted = async (_values?: unknown) => {
+  const result = await Swal.fire({
+    title: "¿Estás seguro?",
+    text: "Tras realizar el pago, no será posible modificar el anuncio.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Sí, proceder al pago",
+    cancelButtonText: "Cancelar",
+  });
 
-// onMounted: UI-only — verifies profile completeness; meStore pre-loaded by parent page
-onMounted(async () => {
-  isProfileComplete.value = await meStore.isProfileComplete();
-});
+  if (result.isConfirmed) {
+    await handlePayClick();
+  }
+};
 
-function handleFormSubmitted(_values?: unknown) {
-  adStore.updateStep(2);
-  router.push("/anunciar/datos-del-producto");
-}
+const handlePayClick = async () => {
+  const allData = {
+    pack: adStore.pack,
+    featured: adStore.featured,
+    is_invoice: adStore.is_invoice,
+    ad: adStore.ad,
+  };
+
+  try {
+    adAnalytics.addPaymentInfo();
+
+    if (adStore.pack !== "free") {
+      const draftPayload = { ad: adStore.ad };
+      const draftResponse = await create<{ id: number }>(
+        "ads/draft",
+        draftPayload as unknown as Parameters<typeof create>[1],
+      );
+      const draftId = draftResponse.data?.id;
+      if (draftId) {
+        adStore.updateAdId(draftId);
+        allData.ad = { ...allData.ad, ad_id: draftId };
+      }
+    }
+
+    const response = await create<{
+      webpay?: { url: string; gatewayRef: string };
+      ad?: { id: number };
+    }>("payments/ad", allData as unknown as Parameters<typeof create>[1]);
+
+    if (response.data?.webpay) {
+      const ad_id = response.data.ad?.id;
+      if (ad_id) {
+        adStore.updateAdId(ad_id);
+      }
+      adAnalytics.pushEvent("redirect_to_payment", [], {
+        payment_method: "webpay",
+      });
+      handleRedirect(response.data.webpay);
+    } else {
+      await fetchUser();
+      await navigateTo("/anunciar/gracias?ad=" + response.data?.ad?.id);
+    }
+  } catch (error: unknown) {
+    let errorMessage =
+      "Hubo un problema al procesar el pago. Por favor, inténtalo de nuevo.";
+
+    if (
+      (error as { response?: { data?: { message?: string } } }).response?.data
+        ?.message === "No free featured credits available" ||
+      (error as { message?: string }).message ===
+        "No free featured credits available"
+    ) {
+      errorMessage = "No tienes créditos destacados gratuitos disponibles";
+    }
+
+    Swal.fire({
+      title: "Error",
+      text: errorMessage,
+      icon: "error",
+      confirmButtonText: "Aceptar",
+    });
+  }
+};
+
+const handleRedirect = (response: { url: string; gatewayRef: string }) => {
+  const form = document.createElement("form");
+  form.method = "POST";
+  form.action = response.url;
+
+  const tokenField = document.createElement("input");
+  tokenField.type = "hidden";
+  tokenField.name = "token_ws";
+  tokenField.value = response.gatewayRef;
+  form.appendChild(tokenField);
+
+  document.body.appendChild(form);
+  form.submit();
+};
 </script>

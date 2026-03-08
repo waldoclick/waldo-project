@@ -9,4 +9,10 @@
 // components
 import HeaderDefault from "@/components/HeaderDefault.vue";
 import CheckoutDefault from "@/components/CheckoutDefault.vue";
+
+definePageMeta({
+  middleware: "auth",
+});
+
+useSeoMeta({ robots: "noindex, nofollow" });
 </script>

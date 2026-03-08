@@ -127,6 +127,15 @@ Each service directory must have an `index.ts` that re-exports everything. Other
 - Keep transitions simple — no scale transforms on hover
 - Do not create new CSS files unless the component does not already have one
 
+#### BEM Modifier Encapsulation
+- A block modifier (`block--modifier`) is its **own namespace** — all its children must be prefixed with the modifier, not the base block
+  - Correct: `form--checkout__field`, `form--checkout__field__title`
+  - Wrong: `form__field`, `form__section-title` inside a `form--checkout` context
+- Never use hyphenated words as BEM element names — use a single noun or compound written without hyphens
+  - Correct: `form--checkout__field__title`
+  - Wrong: `form--checkout__field__section-title`
+- Do not invent new base-block element classes (e.g. `form__section-title`) when the component already has a modifier — scope everything under the modifier instead
+
 ---
 
 ## Strapi-Specific Rules
