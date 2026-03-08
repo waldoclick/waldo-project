@@ -96,7 +96,7 @@ const shouldNotCache = (url: string): boolean => {
   return fileExtensions.test(url);
 };
 
-const handleRedisOperation = async (operation: () => Promise<any>) => {
+const handleRedisOperation = async (operation: () => Promise<unknown>) => {
   if (!redis) {
     await initRedis();
   }
@@ -177,7 +177,7 @@ export default () => {
     console.log("cachedResponse", cachedResponse);
 
     if (cachedResponse) {
-      ctx.body = JSON.parse(cachedResponse);
+      ctx.body = JSON.parse(cachedResponse as string);
       const ttl = getCacheTTL(ctx.url);
       ctx.response.set(
         "Cache-Control",

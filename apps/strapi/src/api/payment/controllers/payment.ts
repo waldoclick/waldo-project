@@ -6,11 +6,25 @@ import { ProService } from "../services/pro.service";
 import { documentDetails } from "../utils/user.utils";
 import generalUtils from "../utils/general.utils";
 import logger from "../../../utils/logtail";
+import { IWebpayCommitData } from "../../../services/transbank/types";
+import { PackType, FeaturedType } from "../types/payment.type";
+
+interface WebpayAdResult {
+  success: boolean;
+  ad: {
+    id: number | string;
+    user: { id: number | string; email?: string };
+    details: { is_invoice: boolean; pack: PackType; featured: FeaturedType };
+  };
+  webpay: IWebpayCommitData;
+  message?: string;
+}
 
 class PaymentController {
-  private errorHandler = (ctx: Context, error: any) => {
+  private errorHandler = (ctx: Context, error: unknown) => {
+    const e = error as { message?: string };
     ctx.status = 400;
-    ctx.body = { success: false, message: error.message };
+    ctx.body = { success: false, message: e?.message };
   };
 
   private controllerWrapper = (handler: Function) => async (ctx: Context) => {
@@ -145,7 +159,9 @@ class PaymentController {
     }
 
     // Webpay Plus
-    const result = (await adService.processPaidWebpay(token)) as any;
+    const result = (await adService.processPaidWebpay(
+      token
+    )) as unknown as WebpayAdResult;
 
     logger.info("Respuesta de Webpay procesada", {
       userId,
@@ -179,8 +195,8 @@ class PaymentController {
     const paymentDetails = await generalUtils.PaymentDetails(
       result.ad.details.pack,
       result.ad.details.featured,
-      result.ad.user.id,
-      result.ad.id
+      String(result.ad.user.id),
+      String(result.ad.id)
     );
 
     // Emitir boleta o factura usando Facto
@@ -208,18 +224,18 @@ class PaymentController {
     const order = await OrderUtils.createAdOrder({
       amount: result.webpay.amount,
       buy_order: result.webpay.buy_order,
-      userId: result.ad.user.id,
+      userId: Number(result.ad.user.id),
       is_invoice: result.ad.details.is_invoice,
       payment_method: process.env.PAYMENT_GATEWAY ?? "transbank",
       payment_response: result.webpay,
-      adId: result.ad.id,
+      adId: Number(result.ad.id),
       document_details: userDocumentDetails,
       items: paymentDetails.items,
       document_response: documentResponse,
     });
 
     logger.info("Orden creada exitosamente", {
-      orderId: order?.order?.id,
+      orderId: (order?.order as { id?: unknown })?.id,
       adId: result.ad.id,
       userId: result.ad.user.id,
       amount: result.webpay.amount,
