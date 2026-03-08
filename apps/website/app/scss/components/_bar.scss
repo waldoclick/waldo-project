@@ -4,7 +4,8 @@
 
 .bar {
   &--announcement,
-  &--checkout {
+  &--checkout,
+  &--packs {
     position: fixed;
     bottom: 0;
     left: 0;
@@ -79,107 +80,6 @@
         @include screen-small {
           order: 2;
           justify-content: center;
-        }
-      }
-    }
-
-    &__actions {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 16px;
-      width: 100%;
-
-      .summary-default {
-        flex: 1 1 auto;
-        min-width: 0;
-      }
-
-      .btn {
-        flex: 0 0 auto;
-      }
-
-      @include screen-small {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
-        width: 100%;
-
-        .summary-default {
-          text-align: center;
-          align-items: center;
-        }
-
-        .btn {
-          width: 100%;
-          max-width: none;
-        }
-      }
-    }
-
-    a,
-    button {
-      max-width: 200px;
-
-      @include screen-small {
-        width: 100%;
-        max-width: none;
-      }
-    }
-  }
-
-  &--packs {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    border-top: 4px solid rgba($silver, 0.4);
-    background-color: white;
-    z-index: 3;
-
-    @include screen-small {
-      position: relative;
-    }
-
-    &__container {
-      @extend .container;
-      padding: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      @include screen-small {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
-      }
-    }
-
-    &__col {
-      flex: 1;
-      display: flex;
-      align-items: center;
-
-      @include screen-small {
-        flex: 0 0 auto;
-        width: 100%;
-      }
-
-      &--left {
-        justify-content: flex-start;
-
-        @include screen-small {
-          order: 4;
-          justify-content: center;
-        }
-      }
-
-      &--right {
-        justify-content: flex-end;
-
-        @include screen-small {
-          order: 2;
-          justify-content: flex-start;
         }
       }
     }
