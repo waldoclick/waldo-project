@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: active — roadmap ready, no plans written yet
-stopped_at: Completed 44-02-PLAN.md
-last_updated: "2026-03-08T03:29:24.720Z"
+stopped_at: Completed 45-02-PLAN.md
+last_updated: "2026-03-08T03:49:37.649Z"
 last_activity: 2026-03-08 — roadmap created; Phases 43-46 defined; 13/13 requirements mapped
 progress:
   total_phases: 4
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_plans: 2
+  completed_plans: 1
   percent: 0
 ---
 
@@ -67,6 +67,7 @@ Key patterns established (carry forward):
 - [Phase 44-zoho-service-layer]: Counter fields (Ads_Published__c, Total_Spent__c, Packs_Purchased__c) hardcoded to 0 in createContact() — initialization values, not passed-in params
 - [Phase 44-zoho-service-layer]: Stage: 'Closed Won' hardcoded in createDeal() — all deals at Waldo are immediately closed; callers never pass Stage
 - [Phase 44-zoho-service-layer]: Object.fromEntries filter pattern for selective updateContactStats() payload — strips undefined keys without extra library
+- [Phase 45-payment-event-wiring]: Floating promise (.then().catch()) for ad_paid Zoho sync — adResponse controller issues ctx.redirect() right after processPaidWebpay; awaiting would block the redirect — Confirmed by STATE.md design decision: 'ad_paid wiring MUST use .then().catch() floating promise'
 
 ### v1.19 Key Decisions (from research)
 
@@ -88,6 +89,6 @@ Key patterns established (carry forward):
 
 ## Session Continuity
 
-Last session: 2026-03-08T03:01:59.144Z
-Stopped at: Completed 44-02-PLAN.md
+Last session: 2026-03-08T03:49:31.764Z
+Stopped at: Completed 45-02-PLAN.md
 Resume with: `/gsd-plan-phase 43`
