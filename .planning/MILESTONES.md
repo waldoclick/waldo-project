@@ -1,5 +1,23 @@
 # Milestones
 
+## v1.20 TypeScript any Elimination (Shipped: 2026-03-08)
+
+**Phases completed:** 5 phases (47-51), 5 plans
+**Files changed:** ~60 files (apps/strapi)
+**Timeline:** 2026-03-08 (single day)
+**Requirements:** 36/36 complete ✓
+
+**Key accomplishments:**
+1. **Ad API any Elimination (Phase 47)**: `AdQueryOptions` interface replaces `options: any` in 8 service methods; `computeAdStatus`/`transformSortParameter` use `unknown` with narrowing; all controller methods use `ctx: Context` (koa); Strapi SDK v5 cast pattern applied to `meCounts` — zero `any` in ad service and controller.
+2. **Type Files + Flow Service any Elimination (Phase 48)**: `order.types.ts`, `filter.types.ts` field operators → `unknown`; `flow.factory.ts` + `flow.service.ts` use `Core.Strapi` for DI typing; `Record<string, string>` with `String()` casts for Flow API param bags; `IFlowInvoice[]` typed array preserves `.id` access in `pro.service.ts`.
+3. **Zoho + Facto + Other Services any Elimination (Phase 49)**: `IZohoContact` interface (id + index signature) for typed contact method returns; `IWebpayCommitData` with optional fields for partial test mock compatibility; SOAP callbacks use `(err: unknown, result: unknown)` with inline casts — 13 files across 6 services cleaned.
+4. **Payment Utils + Middlewares any Elimination (Phase 50)**: `payment.type.ts`, `order/user/ad/general.utils.ts` → `unknown` with data double-cast for `entityService` JSON fields; `WebpayAdResult` local interface for `processPaidWebpay` union narrowing; `BillingDetails` exported from `user.utils.ts`; `image-uploader.ts`, `cache.ts`, `user-registration.ts` middlewares fully typed.
+5. **Seeders + Test Files any Elimination (Phase 51)**: `Core.Strapi` type in all 5 seeder files; `(global as unknown as { strapi: MockStrapi })` double-cast avoids `@strapi/types` global redeclaration conflict; local result interfaces (`ProcessPaidWebpayResult`, `PackPurchaseResult`) for test assertions; `ctx as unknown as Context` replaces `controller as any`.
+
+**Archive:** `.planning/milestones/v1.20-ROADMAP.md` | `.planning/milestones/v1.20-REQUIREMENTS.md`
+
+---
+
 ## v1.19 Zoho CRM Sync Model (Shipped: 2026-03-08)
 
 **Phases completed:** 2 phases, 3 plans, 0 tasks
