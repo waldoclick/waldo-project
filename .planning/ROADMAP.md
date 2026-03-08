@@ -40,7 +40,7 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 
 ### v1.18 — Ad Creation URL Refactor
 
-- [ ] **Phase 42: Ad Creation URL Refactor** — Replace `?step=N` query-param navigation with dedicated per-step Spanish routes; preserve analytics and store state
+- [x] **Phase 42: Ad Creation URL Refactor** — Replace `?step=N` query-param navigation with dedicated per-step Spanish routes; preserve analytics and store state (completed 2026-03-08)
 
 ## Active Phases
 
@@ -74,7 +74,7 @@ Plans:
   4. Form data entered in earlier steps is still present when navigating forward and backward through the wizard
   5. `nuxt typecheck` passes with zero errors and no `?step=` references remain in any component or composable
 
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 - [ ] 42-01-PLAN.md — Create 4 new dedicated step pages (steps 2–5)
@@ -93,4 +93,4 @@ Plans:
 | 39. Spanish Default Language | v1.18 | 0/1 | Not started | — |
 | 40. Users Filter Authenticated | v1.17 | 2/2 | Complete | 2026-03-07 |
 | 41. Sentry Production-Only | v1.17 | 1/1 | Complete | 2026-03-07 |
-| 42. Ad Creation URL Refactor | 2/3 | In Progress|  | — |
+| 42. Ad Creation URL Refactor | 3/3 | Complete   | 2026-03-08 | — |

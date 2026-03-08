@@ -9,9 +9,9 @@ Requirements for the Ad Creation URL Refactor milestone.
 
 ### Routing
 
-- [ ] **ROUTE-01**: Step 1 remains at `/anunciar` (index.vue is the entry point for the wizard)
+- [x] **ROUTE-01**: Step 1 remains at `/anunciar` (index.vue is the entry point for the wizard)
 - [x] **ROUTE-02**: Steps 2–5 each have a dedicated Nuxt page route: `/anunciar/datos-del-producto`, `/anunciar/datos-personales`, `/anunciar/ficha-de-producto`, `/anunciar/galeria-de-imagenes`
-- [ ] **ROUTE-03**: `?step=N` query parameter navigation is fully removed from the wizard flow
+- [x] **ROUTE-03**: `?step=N` query parameter navigation is fully removed from the wizard flow
 - [x] **ROUTE-04**: Navigating directly to a step URL (2–5) loads the correct step form
 - [x] **ROUTE-05**: `resumen.vue` back button navigates to `/anunciar/galeria-de-imagenes` instead of `/anunciar?step=5`
 
@@ -27,7 +27,7 @@ Requirements for the Ad Creation URL Refactor milestone.
 
 ### Code Quality
 
-- [ ] **QUAL-01**: `nuxt typecheck` passes with zero errors after all changes
+- [x] **QUAL-01**: `nuxt typecheck` passes with zero errors after all changes
 - [x] **QUAL-02**: `?step=` query param references removed from all components and composables
 
 ## Out of Scope
@@ -45,16 +45,16 @@ Requirements for the Ad Creation URL Refactor milestone.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ROUTE-01 | Phase 42 | Pending |
+| ROUTE-01 | Phase 42 | Complete |
 | ROUTE-02 | Phase 42 | Complete |
-| ROUTE-03 | Phase 42 | Pending |
+| ROUTE-03 | Phase 42 | Complete |
 | ROUTE-04 | Phase 42 | Complete |
 | ROUTE-05 | Phase 42 | Complete |
 | STATE-01 | Phase 42 | Complete |
 | STATE-02 | Phase 42 | Complete |
 | ANA-01 | Phase 42 | Complete |
 | ANA-02 | Phase 42 | Complete |
-| QUAL-01 | Phase 42 | Pending |
+| QUAL-01 | Phase 42 | Complete |
 | QUAL-02 | Phase 42 | Complete |
 
 **Coverage:**
