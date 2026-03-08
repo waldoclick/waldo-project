@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: planning
-stopped_at: Completed 48-01-PLAN.md
-last_updated: "2026-03-08T14:31:22.613Z"
+stopped_at: Completed 49-01-PLAN.md
+last_updated: "2026-03-08T14:49:49.673Z"
 last_activity: 2026-03-08 — Roadmap created
 progress:
   total_phases: 5
-  completed_phases: 2
-  total_plans: 2
-  completed_plans: 2
+  completed_phases: 3
+  total_plans: 3
+  completed_plans: 3
 ---
 
 # Project State
@@ -68,6 +68,8 @@ Key patterns established (carry forward):
 - [Phase 47-ad-api-any-elimination]: Strapi SDK v5 cast pattern for entityService filter params — filters as unknown as Record<string, unknown> — matches AGENTS.md Strapi SDK v5 cast pattern; used in meCounts controller for all 5 entityService.count calls
 - [Phase 48]: IFlowSubscriptionResponse.invoices typed as IFlowInvoice[] (not unknown[]) — IFlowInvoice already existed and pro.service.ts accesses .id on items
 - [Phase 48]: Record<string,string> for Flow API param bags with String() casts — required by URLSearchParams and removes Record<string,any>
+- [Phase 49]: IZohoContact interface (id:string + index signature) instead of plain unknown — callers access .id on findContact/createContact/updateContact results
+- [Phase 49]: IWebpayCommitData interface with optional fields (status?/buy_order?/amount?) + index signature — allows partial test mock objects while removing any from transbank and gateway interfaces
 
 ### Pending Todos
 
@@ -79,6 +81,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-08T14:31:22.610Z
-Stopped at: Completed 48-01-PLAN.md
+Last session: 2026-03-08T14:49:49.672Z
+Stopped at: Completed 49-01-PLAN.md
 Resume with: `/gsd-plan-phase 47`
