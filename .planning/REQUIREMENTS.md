@@ -1,0 +1,67 @@
+# Requirements: Waldo Project — v1.18
+
+**Defined:** 2026-03-07
+**Core Value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
+
+## v1.18 Requirements
+
+Requirements for the Ad Creation URL Refactor milestone.
+
+### Routing
+
+- [ ] **ROUTE-01**: Step 1 remains at `/anunciar` (index.vue is the entry point for the wizard)
+- [ ] **ROUTE-02**: Steps 2–5 each have a dedicated Nuxt page route: `/anunciar/datos-del-producto`, `/anunciar/datos-personales`, `/anunciar/ficha-de-producto`, `/anunciar/galeria-de-imagenes`
+- [ ] **ROUTE-03**: `?step=N` query parameter navigation is fully removed from the wizard flow
+- [ ] **ROUTE-04**: Navigating directly to a step URL (2–5) loads the correct step form
+- [ ] **ROUTE-05**: `resumen.vue` back button navigates to `/anunciar/galeria-de-imagenes` instead of `/anunciar?step=5`
+
+### State Management
+
+- [ ] **STATE-01**: `adStore.step` (number 1–5) is updated to reflect the current step when navigating between step routes
+- [ ] **STATE-02**: Form data accumulated across steps is preserved in the store as the user navigates between step pages
+
+### Analytics
+
+- [ ] **ANA-01**: `step_view` events continue to fire with Google Ecommerce-compatible step names (`"Payment Method"`, `"General"`, `"Personal Information"`, `"Product Sheet"`, `"Image Gallery"`)
+- [ ] **ANA-02**: Step 1 fires exactly once on entry (no overcounting); steps 2–5 fire on route navigation
+
+### Code Quality
+
+- [ ] **QUAL-01**: `nuxt typecheck` passes with zero errors after all changes
+- [ ] **QUAL-02**: `?step=` query param references removed from all components and composables
+
+## Out of Scope
+
+| Feature | Reason |
+|---------|--------|
+| `/anunciar/resumen` route change | Already has its own dedicated route — untouched |
+| `/anunciar/gracias` route change | Outside wizard flow — untouched |
+| `/anunciar/error` route change | Outside wizard flow — untouched |
+| Step access guard (redirect if step skipped) | Not requested; store persistence handles data continuity |
+| Step URL names in English | User explicitly requested Spanish slugs |
+| `adStore.step` type change to slug | User confirmed keep as number for internal ordering |
+
+## Traceability
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| ROUTE-01 | Phase 42 | Pending |
+| ROUTE-02 | Phase 42 | Pending |
+| ROUTE-03 | Phase 42 | Pending |
+| ROUTE-04 | Phase 42 | Pending |
+| ROUTE-05 | Phase 42 | Pending |
+| STATE-01 | Phase 42 | Pending |
+| STATE-02 | Phase 42 | Pending |
+| ANA-01 | Phase 42 | Pending |
+| ANA-02 | Phase 42 | Pending |
+| QUAL-01 | Phase 42 | Pending |
+| QUAL-02 | Phase 42 | Pending |
+
+**Coverage:**
+- v1.18 requirements: 11 total
+- Mapped to phases: 11
+- Unmapped: 0 ✓
+
+---
+*Requirements defined: 2026-03-07*
+*Last updated: 2026-03-07 after initial definition*
