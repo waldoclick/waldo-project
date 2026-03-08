@@ -79,9 +79,19 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
    - ✓ `typeCheck: true` pasa con zero errores después de todos los cambios del URL refactor — v1.18
    - ✓ `wizard-guard.ts` middleware previene saltar pasos del wizard; SSR-safe — v1.18
 
+## Current Milestone: v1.19 Zoho CRM Sync Model
+
+**Goal:** Implement a complete Zoho CRM synchronization model based on commercial events and user activity — fixing existing reliability gaps first, then adding Deals for monetary transactions and Contact stats for behavioral tracking.
+
+**Target features:**
+- Fix existing Zoho service reliability: token expiry (401 refresh), wrong auth header, test isolation, .env.example docs
+- Contact sync model: init custom stats fields to 0 on registration; `updateContactStats()` for activity tracking
+- Deal sync model: `createDeal()` for `pack_purchase` and `single_ad_payment` events
+- Event wiring: `pack_purchased` + `ad_paid` → Deal + stats; `ad_published` → Contact stats only
+
 ### Active
 
-<!-- No active milestone — planning next milestone -->
+<!-- Current scope — v1.19 Zoho CRM Sync Model -->
 
 ## Context
 
@@ -183,4 +193,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-08 after v1.18 milestone — Ad Creation URL Refactor*
+*Last updated: 2026-03-08 after v1.19 milestone initialized — Zoho CRM Sync Model*

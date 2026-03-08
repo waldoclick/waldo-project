@@ -1,306 +1,403 @@
 # Pitfalls Research
 
-**Domain:** SEO Meta Copy Audit — Classified Ads Platform (Chile)
-**Milestone:** v1.16 Website Meta Copy Audit
+**Domain:** Zoho CRM Sync — Classified Ads / E-commerce Platform (Strapi v5 Backend)
+**Milestone:** Zoho CRM Sync Model Integration
 **Researched:** 2026-03-07
-**Confidence:** HIGH (official Google docs + @nuxtjs/seo module docs + direct codebase inspection)
+**Confidence:** HIGH (official Zoho API docs + direct codebase inspection + confirmed bugs in existing code)
 
 ---
 
 ## Critical Pitfalls
 
-### Pitfall 1: Title Too Long After `@nuxtjs/seo` Appends Site Name
+### Pitfall 1: No 401 Retry → Silent Token Expiry Kills All Subsequent CRM Calls
 
 **What goes wrong:**
-Every title written in `$setSEO({ title: "..." })` gets the suffix `| Waldo.click®` automatically appended by the SEO Utils default title template (`'%s %separator %siteName'`). If a developer writes a title of 52 characters, the rendered `<title>` in the DOM is ~67 characters, which Google truncates in SERPs. The suffix `" | Waldo.click®"` is **15 characters** including the separator space.
+Zoho access tokens expire after exactly **3600 seconds (1 hour)** (confirmed: official docs `expires_in: 3600`). The current `ZohoHttpClient` (`http-client.ts`) fetches a fresh token only when `this.accessToken` is `null`. After the first token fetch, `accessToken` is set and never cleared — so once it expires, every subsequent API call returns an HTTP 401, which the client neither catches nor retries. The service throws a generic `"Failed to create contact"` error with no token-renewal attempt.
 
-**Why it happens:**
-`@nuxtjs/seo` (SEO Utils v7) silently injects `useHead({ titleTemplate: '%s %separator %siteName' })` at the module level. The `site.name: "Waldo.click®"` from `nuxt.config.ts` is the `%siteName`. Developers see the short string in code and don't realize the final output is longer. The current codebase already has this issue:
-- `"Compra y Venta de Equipo en Chile"` → `"Compra y Venta de Equipo en Chile | Waldo.click®"` = **48 chars** ✓ (safe)
-- `"Restablecer Contraseña"` → `"Restablecer Contraseña | Waldo.click®"` = **37 chars** ✓ (safe, but noindexed)
-- A title like `"Tornos CNC usados en Antofagasta | Venta de Equipo"` = 50 chars → `"Tornos CNC usados en Antofagasta | Venta de Equipo | Waldo.click®"` = **66 chars** ✗ (truncated)
-
-**How to avoid:**
-- **The budget per `title:` param is 45 characters maximum** (60 chars target − 15 for " | Waldo.click®")
-- For any page that manually includes `| Waldo.click®` inside the `title:` param (e.g., `[slug].vue` currently does this: `"${name} en ${commune} | Venta de Equipo en Waldo.click"`) the suffix is added twice — remove the manual branding from the title param entirely and let the template handle it
-- Run a character count check on every `title:` value before committing
-
-**Warning signs:**
-- Any `title:` param containing `| Waldo.click` → guaranteed double-suffix
-- Any `title:` param longer than 45 characters
-- The `[slug].vue` ad detail title: `"Tornos en Santiago | Venta de Equipo en Waldo.click"` is 50+ chars AND has manual branding → double violation
-
-**Phase to address:** Inventory phase (Phase 36 or equivalent) — measure all titles before rewriting any.
-
----
-
-### Pitfall 2: Dynamic Titles That Include Stale Counters or User Data
-
-**What goes wrong:**
-The user profile page `[slug].vue` currently builds its title as:
-```
-`Perfil de ${newData.user.username} | Waldo.click®`
-```
-and its description as:
-```
-`Explora los ${totalAds} anuncios publicados por ${username} en ${commune}...`
-```
-The counter `totalAds` is the count of ads from the current page's paginated response — it reflects only the current page, not all user ads. If a user has 47 ads but page 1 shows 12, the description says "Explora los 12 anuncios". Additionally, if the user has 0 ads, the description says "Explora los 0 anuncios", which reads as broken copy in Google SERPs.
-
-**Why it happens:**
-Developers naturally interpolate available data into copy. Page-scoped data (paginated results) gets confused with entity-level data (total count). The count looks dynamic and "relevant" but it's actually stale and variable.
-
-**How to avoid:**
-- For the profile page: use a static template like `"Vendedor de equipo industrial en [ciudad]"` — no counters, no pagination-dependent data
-- For ad listing `anuncios/index.vue`: the `generateSEODescription()` embeds `${totalAds}` which changes on every filter change. For SEO (SSR render), use a static canonical description instead, not query-dependent. Dynamic descriptions are fine for OG/social, but the static description is what search engines crawl
-- Rule: SSR-rendered meta must be deterministic from the canonical URL alone. If the value changes with filters/pagination, it is not safe for the `<meta name="description">` tag
-
-**Warning signs:**
-- Any `title:` or `description:` value using `${count}`, `${total}`, `${length}`, or any numeric interpolation
-- Any `watch()` or `watchEffect()` that sets SEO based on reactive query params (route.query)
-
-**Phase to address:** Rewrite phase — before writing new copy, establish a rule: no counters in meta tags.
-
----
-
-### Pitfall 3: Description Too Short or Too Long — Both Fail Differently
-
-**What goes wrong:**
-Google truncates descriptions at ~155 characters on desktop (and ~120 on mobile). Descriptions under ~120 characters leave valuable SERP real estate empty. Descriptions over ~155 characters get cut mid-sentence, which can make the copy look broken.
-
-Current examples from the codebase:
-- `"Adquiere un pack de avisos en Waldo.click®."` — only 43 chars. **Too short.** Google will substitute with page content instead, which may be worse.
-- `"Elige el pack de avisos que mejor se adapte a tus necesidades. Publica más anuncios y llega a más compradores en Waldo.click®."` — 127 chars. **Good length.**
-- The ad detail description template: `"¡Oportunidad! ${name} en ${commune}. ${description.slice(0, 150)}... Encuentra más equipo industrial en Waldo.click"` — the slice at 150 chars + the prefix and suffix means this regularly exceeds 180+ chars.
-
-**How to avoid:**
-- Target 130–150 characters per description (safely under mobile and desktop limits)
-- The ad detail page description should slice `ad.description` at **80–90 chars** maximum (not 150) to leave room for the surrounding template text
-- For static pages: write descriptions that land in the 130–150 char range. Write the copy, count it, adjust.
-- Never leave a description at under 50 characters — it signals low effort and Google will override it
-
-**Warning signs:**
-- `description.slice(0, 150)` in a template that also has prefix and suffix text (currently in `anuncios/[slug].vue`)
-- Descriptions under 80 characters on any public indexable page
-
-**Phase to address:** All phases — apply length validation as a quality gate on every description written.
-
----
-
-### Pitfall 4: SSR Hydration Mismatch from Client-Only SEO Updates
-
-**What goes wrong:**
-When `$setSEO()` is called inside a `watch()` callback that fires **only on client** (missing `{ immediate: true }` with `server: false`, or wrapped in `if (import.meta.client)`), the SSR-rendered HTML has either no title or a stale default, while the client hydrates with the correct title. This creates:
-1. A Nuxt hydration mismatch warning in the console
-2. Search engines seeing an empty or wrong title (Googlebot may not execute client-side JS)
-3. Social share cards showing wrong titles when the URL is shared
-
-Current risky pattern in `[slug].vue`:
+**Root cause in existing code:**
 ```ts
-// Set SEO and structured data when ad data is available
-watch(
-  () => adData.value,
-  (newData) => {
-    if (newData) {
-      $setSEO({ title: `${newData.name} en ${newData.commune?.name || 'Chile'} | ...` })
-    }
-  }
-)
+// http-client.ts — setupInterceptors()
+if (!this.accessToken) {
+  await this.refreshAccessToken();  // Only refreshes when null
+}
+// No response interceptor to catch 401 and retry
 ```
-The `watch()` has **no `immediate: true`** and fires after hydration only when data changes. During SSR, `adData.value` is populated (because `useAsyncData` runs server-side), but the watch callback fires differently on SSR vs. client. In practice, `$setSEO` calling `useSeoMeta()` inside a `watch` in a Nuxt 4 SSR setup is safe **only if** the composable executes during the synchronous setup phase — calling `useSeoMeta()` inside an async callback (post-`await`) may not work as expected.
 
-**Why it happens:**
-Developers assume `useSeoMeta()` works anywhere. In Nuxt 4, `useSeoMeta()` must be called within the synchronous component setup context for SSR to capture it. Calling it inside a `watch` callback defers it to after setup, which may work on client but is unreliable on server.
+**Consequences:**
+- Any operation attempted more than 1 hour after server start (or last successful token refresh) silently fails
+- `createDeal()`, `updateContactStats()`, and all new event-wired calls will fail with opaque errors on long-running servers
+- Because the Zoho calls are wrapped in `try/catch` that don't re-throw (by design), the failure is invisible to the user — the Strapi operation succeeds but no CRM record is created/updated. Data goes out of sync with zero alert.
 
-**How to avoid:**
-- For pages with dynamic data from `useAsyncData`, use a **computed getter** pattern instead of a watch:
-  ```ts
-  const { data: adData } = await useAsyncData(...)
-  useSeoMeta({
-    title: () => adData.value ? `${adData.value.name} en ...` : 'Equipo industrial en Chile',
-    description: () => adData.value?.description?.slice(0, 90) || '...',
-  })
-  ```
-  The getter `() => ...` is reactive and re-evaluates on client, but the initial string is resolved during SSR.
-- Never call `$setSEO` / `useSeoMeta()` inside `watch()`, `watchEffect()`, or `onMounted()`
+**Prevention:**
+Add an Axios **response interceptor** that:
+1. Catches `error.response?.status === 401`
+2. Clears `this.accessToken = null`
+3. Retries the original request exactly once
+4. Throws if the retry also fails
 
-**Warning signs:**
-- `$setSEO` called inside a `watch()` or `watchEffect()` callback
-- `if (import.meta.client) { $setSEO(...) }` — client-only SEO is invisible to Googlebot
-- Missing fallback title when `data.value` is `null` on first SSR render
+```ts
+this.client.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      this.accessToken = null;
+      await this.refreshAccessToken();
+      originalRequest.headers.Authorization = `Bearer ${this.accessToken}`;
+      return this.client(originalRequest);
+    }
+    throw error;
+  }
+);
+```
 
-**Phase to address:** Inventory phase — identify all `$setSEO` calls that are not in the synchronous setup context. Fix in rewrite phase.
+**Detection:**
+- Zoho calls succeed on fresh server start, fail ~1 hour later
+- Errors logged as `"Failed to create lead/contact"` without any 401 reference
+- CRM records stop appearing in Zoho after sustained server uptime
+
+**Phase to address:** Fix before any new Zoho methods are added. Every new method (`createDeal`, `updateContactStats`) inherits this bug.
 
 ---
 
-### Pitfall 5: Duplicate or Near-Duplicate Titles Across Pages
+### Pitfall 2: `createDeal()` Requires Contact Association — Missing Link Causes Orphaned Deals
 
 **What goes wrong:**
-Google's duplicate title warning fires when multiple pages share identical (or near-identical) `<title>` tags. This dilutes authority across pages and confuses Googlebot about which page to rank for a given keyword.
+Zoho Deals must have a `Deal_Name` (mandatory), `Stage` (mandatory), and ideally a `Contact_Name` lookup to be useful. If `createDeal()` is implemented without linking the deal to an existing Zoho Contact, the deal appears in CRM with no related contact — sales staff cannot trace it back to the user who purchased. On `pack_purchased` or `ad_paid` events, the trigger has the Strapi `userId` but the Zoho `contactId` must be resolved via `findContact(email)` first.
 
-Current risky patterns in the codebase:
-- `"Contacto"` → final title: `"Contacto | Waldo.click®"` — extremely generic, likely to be rewritten by Google
-- `"Preguntas Frecuentes"` → final title: `"Preguntas Frecuentes | Waldo.click®"` — generic but unique
-- `"Comprar Pack"` (noindexed) and `"Packs de Avisos"` are fine since packs/comprar is noindexed
-- For `anuncios/index.vue`, the `generateSEOTitle()` can return `"Activos industriales en Chile"` as the fallback — if 80% of visits hit the unfiltered listing, that fallback is the effective title for the most important page after home
+**Root cause pattern:**
+```ts
+// Wrong: creates an unlinked deal
+await zohoService.createDeal({ Deal_Name: "Pack Purchase", Amount: 9900, Stage: "Closed Won" });
 
-**How to avoid:**
-- Every indexed page must have a unique title — no two indexable pages can share the same string after template expansion
-- The most dangerous case: `anuncios/index.vue` with no filters active → its static "canonical" title must be written as if that's the only title that matters for that URL, because it is
-- Audit with `grep -rn "title:" apps/website/app/pages/ | sort` after writing all copy to spot duplicates
+// Correct: look up contact first, link the deal
+const contact = await zohoService.findContact(user.email);
+if (contact) {
+  await zohoService.createDeal({
+    Deal_Name: "Pack Purchase",
+    Amount: 9900,
+    Stage: "Closed Won",
+    Contact_Name: { id: contact.id }  // Lookup field — must be JSON object with id
+  });
+}
+```
 
-**Warning signs:**
-- Two pages with the same `title:` string before the module appends `| Waldo.click®`
-- Generic words as titles: `"Contacto"`, `"Error"`, `"Gracias"` — all need more specificity
+**Consequences:**
+- Orphaned deals cluttering CRM with no owner
+- `updateContactStats()` increment won't correlate with the deal if contacts aren't linked
+- Reporting and segmentation in Zoho CRM becomes unusable
 
-**Phase to address:** Final review phase — check all titles as a unified list before shipping.
+**Prevention:**
+- `createDeal()` signature must require a `contactId: string` parameter — never allow creation without it
+- The event handler for `pack_purchased`/`ad_paid` must: (1) fetch user email, (2) `findContact(email)`, (3) only then `createDeal()` with the contact lookup
+- If `findContact()` returns null (contact doesn't exist in Zoho yet), create the contact first or skip the deal creation and log a warning — never create an orphaned deal
 
----
-
-## Technical Debt Patterns
-
-| Shortcut | Immediate Benefit | Long-term Cost | When Acceptable |
-|----------|-------------------|----------------|-----------------|
-| Using `ad.description` directly as meta description | No work required | Ad descriptions are user-generated, can be 1,000+ chars, contain markdown/HTML, no keywords | Never — always slice + sanitize |
-| Generating description from query params (filters) | Feels "relevant" | Different URL → different description = Google treats each filter combination as unique content | Never for `<meta name="description">`, OK for OG tags |
-| Including counters (`${total} anuncios`) in description | Seems informative | Counter changes as ads are added/removed → stale description in Google's cache | Never — use "cientos de" or "miles de" instead |
-| Skipping description on noindexed pages | Saves time | If noindex is ever removed by mistake, page surfaces with no description | Low risk, acceptable since noindex is defense-in-depth |
-| Writing `title: "Tornos CNC en Chile | Waldo.click®"` manually | Feels complete | Module appends `| Waldo.click®` again → double branding | Never — remove manual branding from title param |
-
----
-
-## Integration Gotchas
-
-| Integration | Common Mistake | Correct Approach |
-|-------------|----------------|------------------|
-| `@nuxtjs/seo` (SEO Utils v7) | Writing 60-char titles and assuming that's the limit | Budget is 45 chars max for the `title:` param — module adds `| Waldo.click®` (15 chars) |
-| `@nuxtjs/seo` title template | Calling `useSeoMeta({ title })` — no template applied to `ogTitle` | `useSeoMeta` sets `title` (template applied) but `ogTitle` gets the raw value. `$setSEO` sets both simultaneously, so `ogTitle` is the raw title without the suffix — this is correct per platform expectations |
-| `useSeoMeta()` in `watch()` | Works on client, unreliable on SSR | Call with computed getter syntax `title: () => data.value?.name` in synchronous setup |
-| `$setSEO` plugin + `useSeoMeta` in same page | `$setSEO` calls `useSeoMeta` internally — calling both overrides whichever ran last | Use only `$setSEO` for consistency across all pages |
-| Nuxt 4 `import.meta.client` guard | Wrapping `$setSEO` in `if (import.meta.client)` means SSR emits no meta | Always call `$setSEO` at the top level of `<script setup>` or use reactive getter |
+**Detection:**
+- Deals visible in Zoho Deals module with no Contact Name populated
+- "Unassigned" deals in CRM pipeline
 
 ---
 
-## Performance Traps
+### Pitfall 3: `updateContact()` Uses Zoho's Internal Numeric `id` — Must Use `id` from Search Response
 
-| Trap | Symptoms | Prevention | When It Breaks |
-|------|----------|------------|----------------|
-| `watch` on `adsData` + `route.query` calling `$setSEO` on every filter change | `useSeoMeta` fires on every keystroke in search box, causing unnecessary Unhead updates | Use computed getter pattern; or make the watch non-immediate with a debounce | On first SSR render (missing title in initial HTML) |
-| Descriptions built from `ads.find()` on every watch cycle | O(n) scan of the ads array on every filter change just to find commune name | Store commune name separately from the ads array | When ads array is large (100+ items per page) |
+**What goes wrong:**
+`userUpdateController.ts` calls `zohoService.updateContact(contact.id, data)` where `contact.id` comes from `findContact()`. The Zoho CRM v5 search API (`/Contacts/search`) returns records with a string-format numeric `id` like `"5725767000000524157"`. The `updateContact()` method then hits `PUT /crm/v5/Contacts/{id}` with this ID embedded in the URL path. This is correct **as long as** `findContact()` always returns the raw Zoho record. However:
+
+1. The `findContact()` response uses `response.data` (the raw array), so `contact.id` is Zoho's internal `id` field — this is valid for v5
+2. **The real risk**: if `findContact()` is ever refactored to return a mapped/normalized object and the `id` field is renamed or dropped, all updates break silently (no TypeScript error because the return type is `Promise<any>`)
+
+**Secondary risk — `updateContact` patches ALL fields:**
+The current implementation sends every field in the update payload, including `undefined` values:
+```ts
+data: [{
+  First_Name: contact.First_Name,  // could be undefined if not in payload
+  ...
+}]
+```
+Zoho ignores `undefined` JSON values in the body, but if `contact.First_Name` is explicitly `undefined`, it may arrive as a JSON key with no value depending on the serializer. Safe in practice with `axios` (omits `undefined`), but fragile.
+
+**Prevention:**
+- Type the return value of `findContact()` strictly: `Promise<{ id: string; Email: string; [key: string]: any } | null>`
+- Never pass `undefined`-valued keys to Zoho update — filter them out: `Object.fromEntries(Object.entries(payload).filter(([, v]) => v !== undefined))`
+- Add a unit test asserting that `findContact()` always returns an object with a non-empty `id` string
+
+---
+
+### Pitfall 4: `updateContactStats()` Read-Modify-Write Race Condition
+
+**What goes wrong:**
+"Increment a custom field" in Zoho CRM has no native atomic increment API for Contact fields. The only way is:
+1. `GET /crm/v5/Contacts/{id}` — read current value of custom counter field
+2. `PUT /crm/v5/Contacts/{id}` — write `current + 1`
+
+If two events fire concurrently (e.g., `ad_published` and `ad_paid` for the same user within milliseconds), both reads see `current = 5`, both write `6` — the final value is `6` instead of `7`. Lost increment.
+
+**Why it's likely:**
+Strapi lifecycle hooks and payment webhooks can fire nearly simultaneously. The `pack_purchased` → Webpay callback and the `ad_published` event are separate async flows with no coordination.
+
+**Consequences:**
+- Contact stats counters (`total_ads_published`, `total_packs_purchased`) undercount, slowly drifting from reality
+- Silent — no error, no log entry, just a wrong number in CRM
+
+**Prevention options (ordered by preference):**
+1. **Queue all CRM stat updates through a Strapi service with in-memory locking per-user** — simple, effective for a single-instance server
+2. **Accept eventual inconsistency and use periodic reconciliation** — a cron job compares Strapi counts vs. Zoho fields nightly and corrects drift
+3. **If Zoho introduces atomic increments via PATCH or scripting** — check Zoho Functions/Webhooks for server-side increment support (not available in REST API v5 as of research date)
+
+**Detection:**
+- CRM stats lower than Strapi actual counts
+- Discrepancy grows over time proportional to user activity
+
+---
+
+### Pitfall 5: Test File Hits Production Zoho CRM
+
+**What goes wrong:**
+`zoho.test.ts` imports `zohoService` directly from `./index`, which reads real env vars (`ZOHO_CLIENT_ID`, etc.) and makes live HTTP calls to `https://www.zohoapis.com`. Running `yarn test` or CI creates real leads in production Zoho CRM and searches for personal email `geo2019ab@gmail.com`.
+
+**Confirmed in existing code:**
+```ts
+// zoho.test.ts — runs against production
+import { zohoService } from "./index";
+it("should create a real lead in Zoho CRM", async () => { ... });
+it("should find a contact by email", async () => {
+  const contact = await zohoService.findContact("geo2019ab@gmail.com"); // personal email hardcoded
+```
+
+**Consequences:**
+- Production CRM polluted with test leads on every CI run
+- Personal email hardcoded — any contributor running tests queries a private account
+- New methods (`createDeal`, `updateContactStats`) added without mocking will also hit production on CI
+- Tests fail if Zoho is down or token is expired in CI environment
+
+**Prevention:**
+- Replace test file entirely with Jest mocks:
+  ```ts
+  jest.mock("./http-client");
+  const mockPost = jest.fn().mockResolvedValue({ data: [{ code: "SUCCESS", details: { id: "123" } }] });
+  ```
+- Use `jest.spyOn(zohoService, 'createLead')` pattern for integration-level tests
+- Add a `.env.test` file (gitignored) with `ZOHO_CLIENT_ID=""` to prevent accidental live calls
+- If real integration tests are needed, use Zoho's Sandbox environment (`sandbox.zohoapis.com`) and a dedicated test account
+
+**Detection:**
+- `grep -r "real" apps/strapi/src/services/zoho/` finds "Real Integration" test description
+- `grep -r "geo2019ab"` finds hardcoded personal email
+
+---
+
+### Pitfall 6: `userUpdateController` Is Imported But Never Routed
+
+**What goes wrong:**
+`userUpdateController.ts` exports `updateUser` and it imports `zohoService`, but `strapi-server.ts` only registers `getUserDataWithFilters` for the `plugin.controllers.user.find` slot. The `updateUser` function is never wired to any route. Any call to update user profile (which should sync Zoho) never invokes this controller.
+
+**Confirmed:**
+```ts
+// strapi-server.ts — only one controller registered
+plugin.controllers.user.find = getUserDataWithFilters;
+// updateUser is imported nowhere in strapi-server.ts
+return plugin;
+```
+
+**Per AGENTS.md**: Custom controllers in plugin extensions are **not supported** in Strapi v5. The correct pattern is middlewares, which is already what `user-registration.ts` uses for the registration flow.
+
+**Consequences:**
+- The Zoho contact sync on user profile update (address, phone, etc.) never fires
+- Contact data in Zoho stays stale after user fills their profile
+- Dead code and dead imports that mislead developers about what's active
+
+**Prevention:**
+- Move the Zoho sync logic from `userUpdateController.ts` into the existing `user-registration.ts` middleware (which already handles multiple `path` conditions)
+- Add a new condition for `PUT /api/users/{id}` path in the middleware
+- Delete `userUpdateController.ts` or rename it clearly as non-functional pending refactor
+- Never add new routes to `strapi-server.ts` controllers for users-permissions plugin (Strapi v5 restriction)
+
+---
+
+## Moderate Pitfalls
+
+### Pitfall 7: Hardcoded `"Waldo API"` Company Fallback in Leads
+
+**What goes wrong:**
+`zoho.service.ts` line 29: `Company: lead.company || "Waldo API"`. Company is mandatory for a Zoho Lead (`Company` field is required). When contact form submissions have no company (individual users), the CRM shows "Waldo API" as company for all of them — internal-looking placeholder visible to any sales person reviewing leads.
+
+**Prevention:**
+- For contact form leads with no company, use `"Particular"` or `"No especificado"` (matching the Chilean market context)
+- Or configure the Zoho Lead layout to make Company optional (requires Zoho Admin access, not code change)
+- At minimum, change the fallback to a non-internal-sounding value: `lead.company || "Particular"`
+
+---
+
+### Pitfall 8: `ZohoFollowUp` Interface Is Dead Code — Don't Implement Against It
+
+**What goes wrong:**
+`interfaces.ts` defines `ZohoFollowUp` and `IZohoService` omits any `createFollowUp()` method. The README shows a usage example for `createFollowUp()` that doesn't exist. If a developer reads the README and tries to implement `createFollowUp()`, they'll implement against phantom requirements.
+
+**Prevention:**
+- Delete `ZohoFollowUp` from `interfaces.ts` entirely if not being implemented in this milestone
+- Do not add `createFollowUp()` to the scope of the new milestone without explicit product requirement
+- README should be updated to remove the dead code example before new code is written
+
+---
+
+### Pitfall 9: `ZOHO_*` Env Vars Missing from `.env.example`
+
+**What goes wrong:**
+The `.env.example` (confirmed by inspection) has no `ZOHO_CLIENT_ID`, `ZOHO_CLIENT_SECRET`, `ZOHO_REFRESH_TOKEN`, or `ZOHO_API_URL` entries. New developers cloning the repo won't know these vars exist. The `index.ts` silently falls back to empty strings:
+```ts
+clientId: process.env.ZOHO_CLIENT_ID || "",
+```
+Empty string client ID causes the token refresh to fail with `invalid_client` — but since `ZohoHttpClient` only fetches the token on first API call, the server starts fine and the error only appears at runtime when a Zoho call is triggered.
+
+**Prevention:**
+- Add to `.env.example`:
+  ```env
+  # Zoho CRM configuration
+  ZOHO_CLIENT_ID=your_zoho_client_id
+  ZOHO_CLIENT_SECRET=your_zoho_client_secret
+  ZOHO_REFRESH_TOKEN=your_zoho_refresh_token
+  ZOHO_API_URL=https://www.zohoapis.com
+  ```
+- Add a startup validation in `index.ts` (or Strapi's `register()` hook) that warns if any `ZOHO_*` var is missing
+
+---
+
+### Pitfall 10: `console.error` Mixed With Structured Logger
+
+**What goes wrong:**
+Three files use `console.error` alongside the structured `logtail` logger:
+- `zoho.service.ts`: `console.error("Zoho API Error:", ...)` in `createContact`, `findContact`, `updateContact`
+- `contact.service.ts`: `console.error("Error saving to Zoho CRM:", ...)` after `logger.error(...)`
+- `userUpdateController.ts`: no `console.error` (already uses only `logger`)
+
+`console.error` writes to raw stdout/stderr, bypassing Logtail's structured format. On production (Heroku/PM2/Docker), these messages land in the process log without metadata (`userId`, `stacktrace`, `service`) — making them hard to correlate with user activity or trace in log management tools.
+
+**Prevention:**
+- Replace all `console.error` in Zoho-related code with `logger.error("...", { context })`
+- New methods (`createDeal`, `updateContactStats`) must use only `logger` — no `console.*`
+- The `console.log` statements in `userUpdateController.ts` (lines 14-25) are debug-only — remove before shipping
+
+---
+
+### Pitfall 11: Zoho API Domain Is Region-Specific — Hardcoded `zohoapis.com` May Wrong Region
+
+**What goes wrong:**
+Zoho CRM has different API domains per data center region:
+- US: `https://www.zohoapis.com`
+- EU: `https://www.zohoapis.eu`
+- IN: `https://www.zohoapis.in`
+- AU: `https://www.zohoapis.com.au`
+
+The `ZOHO_API_URL` env var defaults to `"https://www.zohoapis.com"` (US). If the Waldo Zoho account was created in the EU or a non-US region (common for Chilean businesses which may use EU data centers), all API calls return `INVALID_URL_PATTERN` or auth errors because the token was issued for a different domain.
+
+**Prevention:**
+- Confirm the exact API domain from Zoho Admin → Setup → Developer Hub → API Domain
+- The `access-refresh.html` doc confirms: "Use the value in the 'api_domain' key" returned by the token exchange response — store this dynamically rather than hardcoding a default
+- For safety, log the effective `ZOHO_API_URL` at startup
+
+---
+
+### Pitfall 12: `findContact()` Returns First Match — Duplicate Contacts Cause Wrong Updates
+
+**What goes wrong:**
+`findContact(email)` uses `criteria: (Email:equals:${email})` and returns `response.data[0]` — always the first result. If a Zoho contact was duplicated (common when both the registration middleware and the contact form create contacts for the same email), `updateContact()` and stats increments always target only one of the duplicates, leaving the other stale.
+
+**Consequences:**
+- User updates their profile → one duplicate updated, one unchanged
+- Deal created → linked to the "wrong" duplicate contact
+- CRM data appears inconsistent to sales staff
+
+**Prevention:**
+- After `createContact()`, check for `DUPLICATE_DATA` in the Zoho API response (the v5 API returns `"code": "DUPLICATE_DATA"` with the existing record's ID in `details`)
+- In `createContact()`, handle the duplicate response by returning the existing record's ID rather than throwing
+- Consider using Zoho's **upsert** endpoint (`/crm/v5/Contacts/upsert`) which handles create-or-update atomically based on duplicate-check fields
+
+---
+
+## Minor Pitfalls
+
+### Pitfall 13: Zoho Response Shape Not Validated — `data[0]` Assumption
+
+**What goes wrong:**
+`createContact()` returns `response.data[0]` and `updateContact()` returns `response.data[0]` without checking if `data` is a non-empty array. If Zoho returns `{ data: [] }` (which can happen if the record was rejected by a workflow), `data[0]` is `undefined` and callers receive `undefined` as a "created contact" — then `contact.id` throws `TypeError: Cannot read property 'id' of undefined`.
+
+**Prevention:**
+```ts
+const record = response.data?.[0];
+if (!record || record.code !== "SUCCESS") {
+  throw new Error(`Zoho rejected record: ${record?.message || "unknown"}`);
+}
+return record.details;
+```
+
+---
+
+### Pitfall 14: `Deal_Name` Must Be Unique-Enough to Be Searchable
+
+**What goes wrong:**
+Creating all deals with generic names like `"Pack Purchase"` or `"Ad Payment"` makes Zoho's internal search and de-duplication useless. When troubleshooting a specific transaction, there's no way to find it without the Zoho record ID.
+
+**Prevention:**
+Include the Strapi entity ID and date in `Deal_Name`: `"Pack #${packId} — User ${userId} — ${new Date().toISOString().slice(0,10)}"`. This is searchable and unique without being cryptic.
+
+---
+
+### Pitfall 15: Event Wiring Has No Idempotency Guard
+
+**What goes wrong:**
+Strapi lifecycle hooks or payment webhooks can fire more than once (Webpay retries, double-click form submissions, server retry on timeout). Without an idempotency check, `createDeal()` creates duplicate deals and `updateContactStats()` increments twice.
+
+**Prevention:**
+- For `createDeal()`: before creating, search for an existing deal with the same `buyOrder` reference in the `Description` or a custom external ID field — skip creation if found
+- For `updateContactStats()`: accept that minor over-counting is tolerable OR track the last event processed (store `lastZohoSync` timestamp per user in Strapi and skip if event is older than the last sync)
+
+---
+
+## Phase-Specific Warnings
+
+| Phase Topic | Likely Pitfall | Mitigation |
+|-------------|---------------|------------|
+| Fix 401 token refresh | Pitfall 1 | Add response interceptor with single retry before any new methods |
+| Implement `createDeal()` | Pitfall 2, 13, 14, 15 | Require contactId param; validate response; use meaningful Deal_Name; add idempotency |
+| Implement `updateContactStats()` | Pitfall 4, 13 | Accept race risk + add nightly reconciliation cron; validate response |
+| Wire `pack_purchased` event | Pitfall 2, 15 | `findContact()` → `createDeal()` chain; idempotency guard via buyOrder |
+| Wire `ad_paid` event | Pitfall 2, 15 | Same chain; different amount field |
+| Wire `ad_published` event | Pitfall 4, 15 | Increment counter; accept eventual consistency |
+| Mock tests for new methods | Pitfall 5 | New test file must mock `ZohoHttpClient`; no live calls |
+| Route `userUpdateController` sync | Pitfall 6 | Move logic to `user-registration.ts` middleware; delete dead controller |
+| Clean up console.error | Pitfall 10 | Replace with logger before each feature is marked done |
+| Add env vars to `.env.example` | Pitfall 9 | Do it in first commit, not as a cleanup task at the end |
 
 ---
 
 ## "Looks Done But Isn't" Checklist
 
-- [ ] **Title length:** Counted against 45-char budget (not 60) because `| Waldo.click®` is appended — verify with `"${title} | Waldo.click®".length <= 60`
-- [ ] **No manual branding in title:** Confirm `title:` param contains no `| Waldo.click` substring — module handles branding
-- [ ] **Description length:** 130–150 chars, not 155+ and not under 80
-- [ ] **Dynamic description slicing:** `ad.description.slice(0, N)` uses a budget that accounts for surrounding template text (prefix + suffix consume chars too)
-- [ ] **SSR-safe SEO call:** `$setSEO` called in synchronous setup, not inside `watch()` / `watchEffect()` / `onMounted()` — or uses reactive getter syntax
-- [ ] **No counters in descriptions:** Zero occurrences of `${total}`, `${count}`, `${length}` in any indexed page's description
-- [ ] **No duplicate titles:** After writing all pages, sort all `title:` params — no two indexable pages share the same value
-- [ ] **Noindexed pages excluded from SEO effort:** Don't spend effort on copy quality for the 20 pages with `useSeoMeta({ robots: "noindex, nofollow" })` — but ensure they have a minimal title for the browser tab
-- [ ] **Profile page — no ad count:** `[slug].vue` description does not use `${totalAds}` or `${ads.length}`
-- [ ] **Contact page — not generic:** `"Contacto | Waldo.click®"` is likely to be rewritten by Google; must be more specific (e.g., `"Contacta con Waldo.click® — Clasificados de equipo industrial"`)
-
----
-
-## Chile-Specific Keyword Pitfalls
-
-### Pitfall 6: Using Wrong Domain Vocabulary for Chilean Classified Ads
-
-**What goes wrong:**
-Writing copy that uses vocabulary from other Spanish-language markets or generic e-commerce phrasing that Chileans don't search for. The platform deals in industrial equipment, not general consumer goods.
-
-**Key vocabulary for this domain in Chile:**
-- ✅ **"avisos"** — the Chilean word for classified ads (not "anuncios" which is more generic/Spain)
-- ✅ **"clasificados"** — still used, especially in compound phrases
-- ✅ **"compra y venta"** — the go-to phrase (not "compraventa" as one word)
-- ✅ **"equipo industrial"**, **"maquinaria"**, **"activos industriales"** — correct for this vertical
-- ✅ **"segunda mano"** vs **"usado"** — both used in Chile; "usado" is more technical
-- ❌ **"anuncios"** — this is the word in the URLs (`/anuncios`) which is fine, but in copy, Chileans more often say "avisos clasificados"
-- ❌ **"productos"** — wrong abstraction; these are machines/assets, not consumer products
-- ❌ **"marketplace"** — English; avoid in Spanish meta copy
-
-**Regional keyword value:**
-- City-level keywords are high-value for the detail/listing pages: "Santiago", "Valparaíso", "Concepción", "Antofagasta" — these appear in dynamic titles (`${commune?.name}`) which is correct
-- For static pages (home, FAQ, contact), use "en Chile" without a specific city
-- Avoid "todo Chile" — it sounds like ad copy, not informational
-
-**How to avoid:**
-Write all meta copy in a document first, review for Chilean vocabulary, then implement. Vocabulary review before any `title:`/`description:` strings are committed.
-
-**Phase to address:** Rewrite phase.
-
----
-
-### Pitfall 7: Keyword Stuffing Disguised as Thorough Coverage
-
-**What goes wrong:**
-Writing descriptions like: `"Avisos clasificados de equipo industrial en Chile. Compra y venta de maquinaria industrial nueva y usada. Activos industriales en Santiago, Valparaíso, Concepción."` This reads as a keyword list, not natural copy. Google's spam policies explicitly flag this and may suppress the page.
-
-The temptation is high because the domain has many relevant terms (avisos, clasificados, equipo, maquinaria, activos, industrial, Chile, etc.) and it seems wasteful not to use them all in a single description.
-
-**How to avoid:**
-The correct balance: use 1–2 primary keywords naturally in a sentence that describes what the user gets. The description's job is click-through rate, not ranking. Natural copy converts better than keyword lists.
-
-**Good template:** `"[What you find] [where] — [why it's valuable to you]. [Call to action]"`
-
-Example: `"Encuentra tornos, fresadoras y equipo CNC de segunda mano en Chile. Conecta con vendedores verificados en Waldo.click®."` (121 chars — good length, natural copy)
-- Primary keyword: "equipo CNC de segunda mano en Chile"
-- Value prop: "vendedores verificados"
-- CTA: implicit (find, connect)
-
-**Warning signs:**
-- More than 3 distinct product/category nouns in a single description sentence
-- Same keyword appearing twice in one description
-- Comma-separated city list in description
-
-**Phase to address:** Rewrite phase — review all descriptions for keyword density before committing.
-
----
-
-## Recovery Strategies
-
-| Pitfall | Recovery Cost | Recovery Steps |
-|---------|---------------|----------------|
-| Titles too long (post-suffix) | LOW | Edit `title:` param, shorten to <45 chars, re-deploy |
-| Double-branding (`| Waldo.click®` in param + module) | LOW | Remove manual branding from `title:` param |
-| Counter in description goes stale | LOW–MEDIUM | Replace with static alternative copy; cache may persist 1–2 weeks in Google |
-| `$setSEO` in `watch()` → SSR missing title | MEDIUM | Refactor to computed getter pattern; requires SSR output testing |
-| Duplicate titles discovered post-deploy | MEDIUM | Google consolidates signals over ~2 weeks after fix; no penalty but lost time |
-| Keyword stuffing flagged by Google | HIGH | Page may be demoted in spam update; requires rewrite + recrawl request + weeks of recovery |
-| User-generated `ad.description` passed directly → 1,000-char description | LOW | Fix the slice, re-deploy; Google re-crawls within days |
-
----
-
-## Pitfall-to-Phase Mapping
-
-| Pitfall | Prevention Phase | Verification |
-|---------|------------------|--------------|
-| Title too long (suffix not counted) | Inventory — measure all effective lengths | `"${title} | Waldo.click®".length <= 60` for every page |
-| Double branding in title | Inventory — grep for `\| Waldo` in title params | Zero matches in `title:` params |
-| Dynamic counter in description | Inventory — identify all interpolated descriptions | Zero `${total}`, `${count}` in indexed page descriptions |
-| `$setSEO` in `watch()` → SSR unsafe | Inventory — identify non-setup-context calls | All `$setSEO` calls outside sync setup flagged for refactor |
-| Description too short (<80 chars) | Rewrite — enforce length target during copy writing | `description.length >= 120 && description.length <= 155` |
-| Description too long (>155 chars) | Rewrite — same | Same check |
-| Dynamic ad description overflowing | Rewrite — fix slice budget | `slice(0, N)` where N = 155 − prefix.length − suffix.length − safety margin |
-| Duplicate titles | Final review — unified title list check | Sort all `title:` params; no duplicates among indexed pages |
-| Chilean vocabulary errors | Rewrite — vocabulary review | Vocabulary review checklist sign-off |
-| Keyword stuffing | Rewrite — copy review | Max 3 distinct nouns per description sentence |
-| `noindex` pages without any title | Low priority | All 20 noindex pages have at least a minimal browser-tab title |
+- [ ] **Token refresh on 401**: Response interceptor with `_retry` flag added to `ZohoHttpClient`
+- [ ] **`createDeal()` has contactId param**: No deal created without a linked Contact
+- [ ] **No orphaned deals**: `findContact()` called before every `createDeal()`; null case handled
+- [ ] **Tests are mocked**: `zoho.test.ts` uses `jest.mock('./http-client')`, no live calls
+- [ ] **No hardcoded personal emails**: `grep -r "geo2019ab" apps/strapi/src/` returns nothing
+- [ ] **No `console.error` in Zoho code**: All logging uses `logger.error()`
+- [ ] **No debug `console.log`**: `userUpdateController.ts` debug block removed
+- [ ] **`ZohoFollowUp` dead code removed**: Interface deleted or clearly marked as unimplemented
+- [ ] **`.env.example` updated**: All four `ZOHO_*` vars present
+- [ ] **`"Waldo API"` fallback replaced**: `lead.company || "Particular"` or similar
+- [ ] **`createContact()` handles DUPLICATE_DATA**: Returns existing ID rather than throwing
+- [ ] **`data[0]` calls guarded**: `response.data?.[0]` with `code === "SUCCESS"` check
+- [ ] **`userUpdateController` routing confirmed**: Either properly wired via middleware or deleted
 
 ---
 
 ## Sources
 
-- Google Search Central — Influencing Title Links: https://developers.google.com/search/docs/appearance/title-link (updated 2025-12-10, HIGH confidence)
-- Google Search Central — Control Snippets (meta descriptions): https://developers.google.com/search/docs/appearance/snippet (updated 2026-02-04, HIGH confidence)
-- Nuxt SEO Utils — Enhanced Titles (titleTemplate behavior): https://nuxtseo.com/docs/seo-utils/guides/fallback-title (updated 2026-01-27, HIGH confidence)
-- Nuxt SEO — Mastering Meta / Titles: https://nuxtseo.com/learn-seo/nuxt/mastering-meta/titles (updated 2026-01-04, HIGH confidence)
-- Direct codebase inspection: `apps/website/nuxt.config.ts`, `apps/website/app/plugins/seo.ts`, all `apps/website/app/pages/**/*.vue` (HIGH confidence)
-- Project history: `.planning/PROJECT.md` v1.15 and v1.16 milestones
+- Zoho CRM API v5 — OAuth Overview: https://www.zoho.com/crm/developer/docs/api/v5/oauth-overview.html (HIGH confidence — official, confirms 1h token expiry)
+- Zoho CRM API v5 — Access & Refresh Tokens: https://www.zoho.com/crm/developer/docs/api/v5/access-refresh.html (HIGH confidence — official, confirms `expires_in: 3600`)
+- Zoho CRM API v5 — Insert Records (Deals mandatory fields): https://www.zoho.com/crm/developer/docs/api/v5/insert-records.html (HIGH confidence — official, confirms `Deal_Name` + `Stage` mandatory, DUPLICATE_DATA error format)
+- Zoho CRM API v5 — Update Records: https://www.zoho.com/crm/developer/docs/api/v5/update-records.html (HIGH confidence — official, confirms `id` required in body for bulk update)
+- Direct codebase inspection: `apps/strapi/src/services/zoho/` (all files), `apps/strapi/src/extensions/users-permissions/`, `apps/strapi/src/middlewares/user-registration.ts`, `apps/strapi/src/api/payment/services/` (HIGH confidence — confirmed bugs)
+- AGENTS.md: Strapi v5 — "Custom controllers in plugin extensions are not supported" (HIGH confidence)
 
 ---
-*Pitfalls research for: SEO Meta Copy Audit — Classified Ads Platform (waldo.click, Chile)*
+*Pitfalls research for: Zoho CRM Sync Model — Strapi v5 Backend (waldo.click, Chile)*
 *Researched: 2026-03-07*

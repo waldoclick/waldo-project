@@ -1,656 +1,536 @@
-# Feature Research — Website Meta Copy Audit
+# Features Research: Zoho CRM Sync Model
 
-**Domain:** Classified ads platform (Waldo.click® — industrial equipment, Chile)
-**Researched:** 2026-03-07
-**Confidence:** HIGH — every page file read directly from source; no inference
-
----
-
-## Audit Scope
-
-This document is a **verbatim inventory** of all `<title>` and `<meta description>` values
-currently set across `apps/website/app/pages/`. It is the primary input for the copy rewrite
-scope of the "Website Meta Copy Audit" milestone.
-
-### How titles render in the browser
-
-`$setSEO` calls `useSeoMeta({ title: ... })` — no suffix is applied by the plugin itself.
-The `@nuxtjs/seo` module (configured with `site.name: "Waldo.click®"` in `nuxt.config.ts`)
-applies a default `titleTemplate` of `%s %separator %siteName`, so the final browser
-tab title is: **`<title value> | Waldo.click®`** — *except* where a page already embeds
-`| Waldo.click®` or `| Waldo.click` in its title string (those pages would render double).
-
-> **Critical finding:** Several pages embed `| Waldo.click®` or `| Venta de Equipo en Waldo.click`
-> in the raw title string passed to `$setSEO`. With `@nuxtjs/seo`'s `titleTemplate` active, these
-> render as duplicated suffixes (e.g. `"… | Waldo.click® | Waldo.click®"`). These are marked
-> ⚠️ DUPE SUFFIX in the table.
+**Domain:** CRM sync — Zoho CRM v5 API integration from Strapi v5 backend  
+**Researched:** 2026-03-07  
+**Overall confidence:** HIGH (primary sources: official Zoho CRM v5 API documentation)
 
 ---
 
-## Complete Page Inventory
+## Zoho Objects: Contact vs Lead vs Deal
 
-### Visibility Legend
-- **PUBLIC** — indexable; no `noindex` directive on this page
-- **PRIVATE** — `useSeoMeta({ robots: "noindex, nofollow" })` present on this page
-- **PUBLIC (no explicit robots)** — no robots meta set; defaults to indexable
+### Contact
 
-### Dynamism Legend
-- **STATIC** — title/description is a fixed string literal
-- **DYNAMIC** — contains template literals, reactive variables, computed values, or conditional expressions that change at runtime
+- **When to use:** A known, registered user of the platform. In Waldo's model, every user who creates an account is a Contact from the moment of registration.
+- **Relationship:** Contacts belong to an Account. In B2C setups (no Account required), Contact is used standalone — Account can be omitted entirely.
+- **Deduplication:** The system-defined duplicate-check field for Contacts is `Email`. Upsert by email using `POST /crm/v5/Contacts/upsert` is idempotent. The existing `findContact(email)` + conditional create/update pattern is also correct.
+- **Existing service support:** `createContact()`, `findContact(email)`, `updateContact(id, data)` — all implemented and correct for the Contact lifecycle.
+- **Key API name:** `Contacts`
+- **Mandatory fields for creation:** `Last_Name` only (system-defined). Email is not technically mandatory but essential for deduplication.
 
----
+### Lead
 
-### 1. `pages/index.vue` — Homepage
+- **When to use:** An unqualified prospect whose identity is unknown or who has not yet registered. In Waldo's model, a **contact form submission** from a visitor maps to a Lead — it represents marketing interest, not a transacting user.
+- **Critical distinction vs Contact:** Leads do NOT have financial history, Deals, or pack associations. They exist in a separate CRM pipeline and can be "converted" into Contact + Account + Deal via the Zoho UI.
+- **Separation of concerns:** A Contact is someone who *has an account* (identity confirmed). A Lead is someone who *filled a form* (intent only, identity unconfirmed). Never create a Contact for a contact form submission — that would pollute the Contact database with unverified people.
+- **Lead_Status field:** Required for meaningful CRM segmentation. **Currently missing** in the existing `createLead()` implementation — this is a v1.19 bug to fix.
+- **Contact linkage:** When the contact-form submitter already exists as a Zoho Contact (found via `findContact(email)`), the Lead creation can be skipped; instead create a Note or Task against the existing Contact. Leads themselves have no direct `Contact_Name` lookup field.
+- **Key API name:** `Leads`
+- **Mandatory fields for creation:** `Last_Name` only (system-defined). `Company` is conventionally set to avoid empty state.
 
-| Field | Value |
-|-------|-------|
-| **File** | `apps/website/app/pages/index.vue` |
-| **Title** | `Compra y Venta de Equipo en Chile` |
-| **Description** | `Publica y encuentra equipo industrial en Chile. Waldo.click® conecta vendedores y compradores de equipos nuevos o usados en todo el país.` |
-| **Title type** | STATIC |
-| **Description type** | STATIC |
-| **Visibility** | PUBLIC (no explicit robots meta) |
-| **Notes** | Clean — no suffix duplication. No noindex. |
+### Deal
 
----
-
-### 2. `pages/[slug].vue` — Public User Profile
-
-| Field | Value |
-|-------|-------|
-| **File** | `apps/website/app/pages/[slug].vue` |
-| **Title** | `` `Perfil de ${newData.user.username} \| Waldo.click®` `` |
-| **Description** | `` `Explora los ${totalAds} anuncios publicados por ${newData.user.username} ${location}. Encuentra los mejores precios en equipamiento industrial en Waldo.click®.` `` |
-| **Title type** | DYNAMIC (username variable, hardcoded ` \| Waldo.click®` suffix) |
-| **Description type** | DYNAMIC (totalAds counter, username, location from user.commune.name) |
-| **Visibility** | PUBLIC (no explicit robots meta) |
-| **Notes** | ⚠️ DUPE SUFFIX — title embeds `\| Waldo.click®` which will duplicate with `@nuxtjs/seo` template. `totalAds` reflects `adsData.ads.length` (page-size slice of 12, not the user's total). `location` = `"en ${commune.name}"` or `"en Chile"`. Set inside `watch(() => adsData.value, ..., { immediate: true })`. |
+- **When to use:** A revenue transaction. In Waldo's model: a **pack purchase** (user buys a bundle of ad credits) or a **single ad payment** (user pays for one ad). One financial event = one Deal.
+- **Relationship to Contact:** Deals are linked to a Contact via the `Contact_Name` field — a standard Lookup field in the Deals module. Pass it as `{ "id": "<zoho_contact_id>" }`.
+- **Relationship to Account:** Optional in B2C flows. If the Waldo org has no Accounts, omit `Account_Name` entirely.
+- **Key API name:** `Deals`
+- **Mandatory fields for creation:** `Deal_Name` (string) + `Stage` (picklist) — both system-defined mandatory.
 
 ---
 
-### 3. `pages/anuncios/index.vue` — Ad Archive / Search Results
+## Deal API v5
 
-| Field | Value |
-|-------|-------|
-| **File** | `apps/website/app/pages/anuncios/index.vue` |
-| **Title** | See dynamic logic below |
-| **Description** | See dynamic logic below |
-| **Title type** | DYNAMIC (generated by `generateSEOTitle()`) |
-| **Description type** | DYNAMIC (generated by `generateSEODescription()`) |
-| **Visibility** | PUBLIC (no explicit robots meta) |
-| **Notes** | Set inside `watch([adsData, route.query], ..., { immediate: true })`. |
+### Endpoint
 
-**Title logic (`generateSEOTitle()`):**
 ```
-if searchQuery:
-  title = `Buscando "${searchQuery}"`
-  if categoryName && categoryName !== "Anuncios": title += ` en ${categoryName}`
-  if communeNameStr: title += ` en ${communeNameStr}`
-  return title
-
-if categoryName === "Anuncios":
-  return communeNameStr ? `Activos industriales en ${communeNameStr}` : "Activos industriales en Chile"
-
-if categoryName && communeNameStr: return `Activos industriales de ${categoryName} en ${communeNameStr}`
-if categoryName: return `Activos industriales de ${categoryName}`
-if communeNameStr: return `Activos industriales en ${communeNameStr}`
-return "Activos industriales en Chile"   ← default (no filters)
+POST https://www.zohoapis.com/crm/v5/Deals
 ```
 
-**Description logic (`generateSEODescription()`):**
+Authorization header must be: `Zoho-oauthtoken <access_token>` (not `Bearer`).
+
+### Mandatory Fields (system-defined)
+
+| Field API Name | Type | Notes |
+|---|---|---|
+| `Deal_Name` | String (≤255 chars) | Human-readable name. Use pattern: `"Pack Purchase — {username} — {date}"` or `"Ad Payment — {adTitle} — {date}"`. Truncate `adTitle` to stay within 255 chars. |
+| `Stage` | Picklist | Must be a valid stage from the configured pipeline. For payment-confirmed deals, use `"Closed Won"` directly — payment already succeeded before the Deal is created. |
+
+**Source:** Official Zoho CRM v5 Insert Records API — "System-defined mandatory fields" section. HIGH confidence.
+
+### Important: Pipeline field
+
+When the Zoho org has multiple pipelines enabled for the Deals module, `Pipeline` also becomes mandatory. If only the default "Standard" pipeline exists, it can be omitted. **Safe practice:** always include `"Pipeline": "Standard"` to future-proof against a sales team adding more pipelines.
+
+### Strongly Recommended Fields
+
+| Field API Name | Type | Notes |
+|---|---|---|
+| `Amount` | Currency (double) | The transaction amount in CLP. Pass as a JavaScript `number` (e.g., `15000`). Accepts up to 16 digits before decimal. |
+| `Contact_Name` | Lookup JSON object | Links the Deal to a Contact. Pass `{ "id": "<zoho_contact_id>" }`. This is the primary association mechanism. |
+| `Type` | Picklist | Categorises the deal type. Recommended: `"New Business"` for first-time purchases, `"Existing Business"` for repeat purchases. |
+| `Description` | Multi-line string (≤2000 chars) | Embed Strapi Order ID and context for cross-referencing. |
+| `Lead_Source` | Picklist | Where the deal originated. Use `"Web Site"` for all Waldo-originated deals. |
+| `Closing_Date` | Date (`yyyy-MM-dd`) | The date payment was confirmed. Some pipeline views require it. Safe to always include as today's date. |
+
+### Standard Deal Stages (Default "Standard" Pipeline)
+
+From the official Get Pipelines API response (HIGH confidence):
+
+| Stage (actual_value) | Forecast Type | When to Use in Waldo |
+|---|---|---|
+| `Qualification` | Open | Not applicable (pre-sale) |
+| `Needs Analysis` | Open | Not applicable |
+| `Value Proposition` | Open | Not applicable |
+| `Id. Decision Makers` | Open | Not applicable |
+| `Proposal/Price Quote` | Open | Not applicable |
+| `Negotiation/Review` | Open | Not applicable |
+| **`Closed Won`** | Closed Won | ✅ **Use this for all payment-confirmed deals** |
+| `Closed Lost` | Closed Lost | For failed payments (optional future use) |
+| `Closed Lost to Competition` | Closed Lost | Not applicable |
+
+**For Waldo's model:** All Deals should be created directly at `"Closed Won"` because they are only created *after* Transbank confirms payment success. There is no pre-payment pipeline to manage.
+
+### Associating a Deal to a Contact
+
+The `Contact_Name` field is a **Lookup** type. Pass it as a JSON object containing the Contact's Zoho ID:
+
+```json
+{
+  "data": [
+    {
+      "Deal_Name": "Pack Purchase — johndoe — 2026-03-07",
+      "Stage": "Closed Won",
+      "Amount": 15000,
+      "Contact_Name": {
+        "id": "4150868000000376008"
+      },
+      "Type": "New Business",
+      "Closing_Date": "2026-03-07",
+      "Description": "Strapi Order #1234 — Pack: 5 ads"
+    }
+  ]
+}
 ```
-if searchQuery:
-  description = `Resultados de búsqueda para "${searchQuery}"`
-  if categoryName: description += ` en la categoría ${categoryName}`
-  if communeName: description += ` en ${communeName}`
-else:
-  description = `Explora ${totalAds} anuncios de activos industriales`
-  if categoryName: description += ` en la categoría ${categoryName}`
-  if communeName: description += ` en ${communeName}`
-return `${description}. Encuentra los mejores precios en equipamiento industrial en Waldo.click`
-← NOTE: trailing "Waldo.click" has no ®
+
+**Source:** Zoho CRM v5 Insert Records API, "Lookup" field type definition: *"Accepts unique ID of the record"*. HIGH confidence.
+
+**Important nuances:**
+- `Contact_Name` is a **standard field** in Zoho CRM Deals — it does NOT need a `__c` suffix.
+- The value is the Contact's numeric Zoho record ID (the `id` field returned by `createContact()` or `findContact()`), not the Contact's name string.
+- `Contact_Name` accepts `{ "id": "..." }` only — no `"name"` key is required at write time.
+
+### Response Pattern
+
+```json
+{
+  "data": [
+    {
+      "code": "SUCCESS",
+      "details": {
+        "id": "4150868000003194003",
+        "Modified_Time": "2026-03-07T10:00:00+00:00",
+        "Created_Time": "2026-03-07T10:00:00+00:00"
+      },
+      "message": "record added",
+      "status": "success"
+    }
+  ]
+}
 ```
 
----
-
-### 4. `pages/anuncios/[slug].vue` — Single Ad Detail
-
-| Field | Value |
-|-------|-------|
-| **File** | `apps/website/app/pages/anuncios/[slug].vue` |
-| **Title** | `` `${newData.name} en ${newData.commune?.name \|\| "Chile"} \| Venta de Equipo en Waldo.click` `` |
-| **Description** | `` `¡Oportunidad! ${newData.name} en ${newData.commune?.name \|\| "Chile"}. ${newData.description ? newData.description.slice(0, 150) + "..." : ""} Encuentra más equipo industrial en Waldo.click` `` |
-| **Title type** | DYNAMIC (ad name, commune name, hardcoded ` \| Venta de Equipo en Waldo.click` suffix) |
-| **Description type** | DYNAMIC (ad name, commune name, first 150 chars of ad description + `"..."`) |
-| **Visibility** | PUBLIC (no explicit robots meta) |
-| **Notes** | ⚠️ DUPE SUFFIX — title embeds `\| Venta de Equipo en Waldo.click` which duplicates with `@nuxtjs/seo` template. Description appended with `"Waldo.click"` (no ®). If `newData.description` is empty/null, the middle part is omitted, producing a double-space. Set inside `watch(() => adData.value, ..., { immediate: true })`. |
+The Deal's Zoho ID is at `response.data[0].details.id`. The `createDeal()` method should return this ID as a `string`.
 
 ---
 
-### 5. `pages/packs/index.vue` — Packs Listing
+## Custom Fields on Contact
 
-| Field | Value |
-|-------|-------|
-| **File** | `apps/website/app/pages/packs/index.vue` |
-| **Title** | `Packs de Avisos` |
-| **Description** | `Elige el pack de avisos que mejor se adapte a tus necesidades. Publica más anuncios y llega a más compradores en Waldo.click®.` |
-| **Title type** | STATIC |
-| **Description type** | STATIC |
-| **Visibility** | PRIVATE (`middleware: "auth"` but **no `useSeoMeta({ robots })`**) |
-| **Notes** | Auth-gated but no noindex call — technically indexable. `robots.txt` disallows `/packs/**` (subpaths) but `/packs` itself may be crawled. |
+### How Zoho Names Custom Fields
 
----
+Zoho CRM appends `__c` to all **custom field API names** automatically when created via the UI or API.
 
-### 6. `pages/packs/comprar.vue` — Buy Pack Checkout
+| Display Label | API Name (auto-generated) |
+|---|---|
+| Ads Published | `Ads_Published__c` |
+| Total Spent | `Total_Spent__c` |
+| Last Ad Posted At | `Last_Ad_Posted_At__c` |
+| Packs Purchased | `Packs_Purchased__c` |
 
-| Field | Value |
-|-------|-------|
-| **File** | `apps/website/app/pages/packs/comprar.vue` |
-| **Title** | `Comprar Pack` |
-| **Description** | `Adquiere un pack de avisos en Waldo.click®.` |
-| **Title type** | STATIC |
-| **Description type** | STATIC |
-| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
-| **Notes** | Description is extremely thin (44 chars). |
+**Source:** Zoho CRM Module API docs: *"The Zoho CRM generates an API name internally while creating a custom module, custom field, or related list label."* The `__c` suffix is the universally documented convention. HIGH confidence.
 
----
+**Naming rules enforced by Zoho:**
+- API name must start with a letter
+- Only alphanumerics and underscores allowed
+- Cannot have two consecutive underscores (except the `__c` suffix itself)
+- Cannot end with an underscore (the `__c` suffix satisfies this)
 
-### 7. `pages/packs/gracias.vue` — Pack Purchase Confirmation
+**Pre-creation requirement:** These custom fields must be created in the **Contacts** module in the Zoho CRM UI (Setup → Modules → Contacts → Fields → Add Field) **before** the sync code runs. The API cannot write to fields that do not exist.
 
-| Field | Value |
-|-------|-------|
-| **File** | `apps/website/app/pages/packs/gracias.vue` |
-| **Title** | `` `Gracias por tu Compra - ${pack.name}` `` |
-| **Description** | `` `Has comprado el pack ${pack.name} por ${formatPrice(pack.price)}. Este pack incluye ${pack.ads_count} anuncios.` `` |
-| **Title type** | DYNAMIC (pack.name) |
-| **Description type** | DYNAMIC (pack.name, formatted CLP price, ads_count) |
-| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
-| **Notes** | Set inside `watch(data, ...)`. Title uses ` - ` separator (not ` \| `). `formatPrice` uses `Intl.NumberFormat("es-CL", { style: "currency", currency: "CLP" })`. |
+### Required Custom Fields to Create in Zoho CRM UI
 
----
+| Display Label | API Name | Type | Notes |
+|---|---|---|---|
+| Ads Published | `Ads_Published__c` | Number (Integer) | Count of all published ads by the user |
+| Total Spent | `Total_Spent__c` | Currency | Sum of all payments by the user in CLP |
+| Last Ad Posted At | `Last_Ad_Posted_At__c` | Date/Time | ISO8601: `yyyy-MM-ddTHH:mm:ss+HH:mm` |
+| Packs Purchased | `Packs_Purchased__c` | Number (Integer) | Count of pack purchases |
 
-### 8. `pages/packs/error.vue` — Pack Payment Error
+### How to SET Custom Fields via API
 
-| Field | Value |
-|-------|-------|
-| **File** | `apps/website/app/pages/packs/error.vue` |
-| **Title** | `Error en el Pago` |
-| **Description** | `Hubo un problema al procesar tu pago. Por favor, intenta nuevamente.` |
-| **Title type** | STATIC |
-| **Description type** | STATIC |
-| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
-| **Notes** | — |
+Custom fields are set and updated exactly like standard fields — include them in the `data` array with their API name:
 
----
+**On Contact update (`PUT /crm/v5/Contacts/{id}`):**
 
-### 9. `pages/anunciar/index.vue` — Create Ad Wizard
+```json
+{
+  "data": [
+    {
+      "id": "4150868000000376008",
+      "Ads_Published__c": 6,
+      "Total_Spent__c": 60000,
+      "Last_Ad_Posted_At__c": "2026-03-07T10:30:00+00:00"
+    }
+  ]
+}
+```
 
-| Field | Value |
-|-------|-------|
-| **File** | `apps/website/app/pages/anunciar/index.vue` |
-| **Title** | `Crear Anuncio` |
-| **Description** | `Publica tus activos industriales de manera rápida y sencilla en Waldo.click®. Aumenta tu visibilidad y encuentra compradores fácilmente.` |
-| **Title type** | STATIC |
-| **Description type** | STATIC |
-| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
-| **Notes** | — |
+**On Contact creation (`POST /crm/v5/Contacts`) — initialise to zero:**
 
----
+```json
+{
+  "data": [
+    {
+      "First_Name": "Juan",
+      "Last_Name": "Pérez",
+      "Email": "juan@example.com",
+      "Lead_Source": "Web Site",
+      "Ads_Published__c": 0,
+      "Total_Spent__c": 0,
+      "Packs_Purchased__c": 0
+    }
+  ]
+}
+```
 
-### 10. `pages/anunciar/resumen.vue` — Ad Submission Review
+### Date/Time Format for Custom DateTime Fields
 
-| Field | Value |
-|-------|-------|
-| **File** | `apps/website/app/pages/anunciar/resumen.vue` |
-| **Title** | `Resumen del Anuncio` |
-| **Description** | `Consulta los detalles de tu anuncio antes de publicarlo en Waldo.click®. Asegúrate de que todo esté perfecto para destacar en el mercado de activos industriales.` |
-| **Title type** | STATIC |
-| **Description type** | STATIC |
-| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
-| **Notes** | — |
+```
+"2026-03-07T10:30:00+00:00"
+```
 
----
+ISO8601 format. Use `new Date().toISOString().replace('Z', '+00:00')` to produce the correct format. The CRM stores it in the org's configured timezone.
 
-### 11. `pages/anunciar/gracias.vue` — Ad Creation Success
+### Incrementing Counters — No Atomic Increment in Zoho API
 
-| Field | Value |
-|-------|-------|
-| **File** | `apps/website/app/pages/anunciar/gracias.vue` |
-| **Title** | `Gracias por Publicar` |
-| **Description** | `Tu anuncio ha sido publicado con éxito en Waldo.click®. Gracias por confiar en nosotros para conectar con compradores de activos industriales.` |
-| **Title type** | STATIC |
-| **Description type** | STATIC |
-| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
-| **Notes** | — |
+Zoho CRM has no atomic increment operation. The `updateContactStats` flow must use read-modify-write:
+
+1. `findContact(email)` — read current values of `Ads_Published__c`, `Total_Spent__c`, etc. from the response
+2. Compute new values in Strapi
+3. `updateContact(id, { Ads_Published__c: currentValue + 1, ... })` — write back
+
+**Race condition:** If two events fire simultaneously (e.g., two concurrent ad publications), the counter increment may be lost. At Waldo's expected traffic volume, this is an acceptable known limitation. Document it; address in a future reliability milestone.
 
 ---
 
-### 12. `pages/anunciar/error.vue` — Ad Creation Error
+## Event-to-Action Mapping
 
-| Field | Value |
-|-------|-------|
-| **File** | `apps/website/app/pages/anunciar/error.vue` |
-| **Title** | `Error al Crear Anuncio` |
-| **Description** | `Hubo un problema al intentar crear tu anuncio en Waldo.click®. Por favor, revisa los datos e inténtalo nuevamente.` |
-| **Title type** | STATIC |
-| **Description type** | STATIC |
-| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
-| **Notes** | — |
+### Event 1: `user_created` → Contact
 
----
+**Trigger:** Strapi lifecycle hook `afterCreate` on `plugin::users-permissions.user`  
+**API calls:** 1–2  
+**Sequence:**
 
-### 13. `pages/cuenta/index.vue` — Account Dashboard
+```
+1. findContact(email)           → check for existing Contact (deduplication guard)
+2a. if no Contact found:
+     POST /crm/v5/Contacts      → create Contact with stats initialised to 0
+2b. if Contact found:
+     PUT /crm/v5/Contacts/{id}  → update fields if needed (name, phone)
+```
 
-| Field | Value |
-|-------|-------|
-| **File** | `apps/website/app/pages/cuenta/index.vue` |
-| **Title** | `Mi Cuenta` |
-| **Description** | `Accede a tu cuenta en Waldo.click®. Administra tus datos, anuncios y más desde un solo lugar.` |
-| **Title type** | STATIC |
-| **Description type** | STATIC |
-| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
-| **Notes** | — |
+**Payload for step 2a:**
 
----
+```typescript
+{
+  First_Name: user.firstName || "",
+  Last_Name: user.lastName || "Unknown",  // Last_Name is mandatory
+  Email: user.email,
+  Phone: user.phone ?? undefined,
+  Lead_Source: "Web Site",
+  Ads_Published__c: 0,
+  Total_Spent__c: 0,
+  Packs_Purchased__c: 0,
+  // Last_Ad_Posted_At__c omitted — null by default in Zoho
+}
+```
 
-### 14. `pages/cuenta/mis-anuncios.vue` — My Ads
-
-| Field | Value |
-|-------|-------|
-| **File** | `apps/website/app/pages/cuenta/mis-anuncios.vue` |
-| **Title** | `Mis Anuncios` |
-| **Description** | `Gestiona tus anuncios activos y archivados en Waldo.click®.` |
-| **Title type** | STATIC |
-| **Description type** | STATIC |
-| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
-| **Notes** | — |
+**Complexity:** LOW — 1–2 API calls, no dependencies on other services.  
+**Failure mode:** If the Zoho call fails, log the error. Do NOT block user registration — Zoho sync is a side effect.
 
 ---
 
-### 15. `pages/cuenta/mis-ordenes.vue` — My Orders
+### Event 2: `pack_purchased` → Deal + updateContactStats
 
-| Field | Value |
-|-------|-------|
-| **File** | `apps/website/app/pages/cuenta/mis-ordenes.vue` |
-| **Title** | `Mis Órdenes` |
-| **Description** | `Consulta el historial de tus órdenes en Waldo.click®.` |
-| **Title type** | STATIC |
-| **Description type** | STATIC |
-| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
-| **Notes** | Description is very short (54 chars). |
+**Trigger:** Strapi payment confirmation handler (after Transbank confirms pack payment success)  
+**API calls:** 3 sequential
 
----
+```
+1. findContact(email)               → get Zoho Contact ID + current stats
+2. POST /crm/v5/Deals               → create Deal linked to Contact
+3. PUT /crm/v5/Contacts/{contactId} → increment Total_Spent__c and Packs_Purchased__c
+```
 
-### 16. `pages/cuenta/perfil/index.vue` — My Profile View
+**Deal payload (step 2):**
 
-| Field | Value |
-|-------|-------|
-| **File** | `apps/website/app/pages/cuenta/perfil/index.vue` |
-| **Title** | `Perfil` |
-| **Description** | `Gestiona tu perfil en Waldo.click®. Actualiza tu información personal y mantén tus datos al día.` |
-| **Title type** | STATIC |
-| **Description type** | STATIC |
-| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
-| **Notes** | Title is a single generic word. |
+```typescript
+{
+  Deal_Name: `Pack Purchase — ${username} — ${isoDate}`,  // ≤255 chars
+  Stage: "Closed Won",
+  Amount: order.totalAmount,          // number, CLP
+  Contact_Name: { id: zohoContactId },
+  Type: packsCount === 0 ? "New Business" : "Existing Business",
+  Closing_Date: new Date().toISOString().split("T")[0],  // "yyyy-MM-dd"
+  Description: `Strapi Order #${order.id} — Pack: ${packName}`,
+  Lead_Source: "Web Site",
+}
+```
 
----
+**Contact update payload (step 3):**
 
-### 17. `pages/cuenta/perfil/editar.vue` — Edit Profile
+```typescript
+{
+  id: zohoContactId,
+  Total_Spent__c: currentTotalSpent + order.totalAmount,
+  Packs_Purchased__c: currentPacksPurchased + 1,
+}
+```
 
-| Field | Value |
-|-------|-------|
-| **File** | `apps/website/app/pages/cuenta/perfil/editar.vue` |
-| **Title** | `Editar Perfil` |
-| **Description** | `Edita tu perfil en Waldo.click®. Actualiza tu información personal y mantén tus datos al día.` |
-| **Title type** | STATIC |
-| **Description type** | STATIC |
-| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
-| **Notes** | Description near-identical to `perfil/index.vue` (only first verb differs: `Gestiona` → `Edita`). |
-
----
-
-### 18. `pages/cuenta/avatar.vue` — Customize Avatar (PRO)
-
-| Field | Value |
-|-------|-------|
-| **File** | `apps/website/app/pages/cuenta/avatar.vue` |
-| **Title** | `Personalizar Avatar` |
-| **Description** | `Personaliza tu avatar en Waldo.click®. Crea una presencia única y profesional en la plataforma.` |
-| **Title type** | STATIC |
-| **Description type** | STATIC |
-| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
-| **Notes** | PRO-gated — non-PRO users receive 403. |
+**Complexity:** MEDIUM — 3 sequential API calls, read-modify-write for stats, requires Contact ID lookup first.  
+**Failure handling:** Deal creation is the primary value. If step 3 (contact stats update) fails, log the error but do not roll back the Deal. Contact stats inconsistency is recoverable; a missing Deal record is not.
 
 ---
 
-### 19. `pages/cuenta/cover.vue` — Customize Cover (PRO)
+### Event 3: `ad_paid` → Deal + updateContactStats
 
-| Field | Value |
-|-------|-------|
-| **File** | `apps/website/app/pages/cuenta/cover.vue` |
-| **Title** | `Personalizar Portada` |
-| **Description** | `Personaliza tu portada en Waldo.click®. Dale un toque único a tu perfil y destaca tus anuncios.` |
-| **Title type** | STATIC |
-| **Description type** | STATIC |
-| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
-| **Notes** | PRO-gated. |
+**Trigger:** Strapi payment confirmation handler (after Transbank confirms ad payment success)  
+**API calls:** 3 sequential (same pattern as `pack_purchased`)
 
----
+```
+1. findContact(email)               → get Zoho Contact ID + current Total_Spent__c
+2. POST /crm/v5/Deals               → create Deal for ad payment
+3. PUT /crm/v5/Contacts/{contactId} → increment Total_Spent__c only
+```
 
-### 20. `pages/cuenta/username.vue` — Customize Username (PRO)
+**Deal payload (step 2):**
 
-| Field | Value |
-|-------|-------|
-| **File** | `apps/website/app/pages/cuenta/username.vue` |
-| **Title** | `Personalizar Nombre de Usuario` |
-| **Description** | `Personaliza tu nombre de usuario en Waldo.click®. Crea una identidad única y memorable para tu negocio.` |
-| **Title type** | STATIC |
-| **Description type** | STATIC |
-| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
-| **Notes** | PRO-gated. |
+```typescript
+{
+  Deal_Name: `Ad Payment — ${adTitle.slice(0, 40)} — ${isoDate}`,  // truncate adTitle
+  Stage: "Closed Won",
+  Amount: order.totalAmount,
+  Contact_Name: { id: zohoContactId },
+  Type: "Existing Business",   // paying for an ad implies existing account
+  Closing_Date: new Date().toISOString().split("T")[0],
+  Description: `Strapi Order #${order.id} — Ad ID: ${adId} — "${adTitle}"`,
+  Lead_Source: "Web Site",
+}
+```
 
----
+**Contact update payload (step 3):** Only `Total_Spent__c` is incremented (no pack counter change).
 
-### 21. `pages/cuenta/cambiar-contrasena.vue` — Change Password
-
-| Field | Value |
-|-------|-------|
-| **File** | `apps/website/app/pages/cuenta/cambiar-contrasena.vue` |
-| **Title** | `Cambiar Contraseña` |
-| **Description** | `Cambia tu contraseña en Waldo.click®. Mantén tu cuenta segura actualizando tus credenciales.` |
-| **Title type** | STATIC |
-| **Description type** | STATIC |
-| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
-| **Notes** | Only accessible to `provider === "email"` users (Google SSO users get 403). |
+**Complexity:** MEDIUM — identical pattern to `pack_purchased`.
 
 ---
 
-### 22. `pages/login/index.vue` — Login
+### Event 4: `ad_published` → updateContactStats (no Deal)
 
-| Field | Value |
-|-------|-------|
-| **File** | `apps/website/app/pages/login/index.vue` |
-| **Title** | `Iniciar sesión` |
-| **Description** | `Accede a tu cuenta en Waldo.click® para gestionar tus anuncios, ver contactos y disfrutar de todos los beneficios de nuestra plataforma.` |
-| **Title type** | STATIC |
-| **Description type** | STATIC |
-| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
-| **Notes** | ⚠️ Lowercase `s` in `sesión` — inconsistent casing vs all other pages (which use Title Case). `middleware: ["guest"]`. |
+**Trigger:** Strapi lifecycle hook `afterUpdate` on Ad, when `status` transitions to `"active"` or `"published"`  
+**API calls:** 2 sequential
 
----
+```
+1. findContact(email)               → get Zoho Contact ID + current Ads_Published__c
+2. PUT /crm/v5/Contacts/{contactId} → increment Ads_Published__c + set Last_Ad_Posted_At__c
+```
 
-### 23. `pages/registro.vue` — Register
+**Contact update payload (step 2):**
 
-| Field | Value |
-|-------|-------|
-| **File** | `apps/website/app/pages/registro.vue` |
-| **Title** | `Regístrate` |
-| **Description** | `Crea tu cuenta en Waldo.click® y comienza a comprar y vender activos industriales de manera rápida y sencilla.` |
-| **Title type** | STATIC |
-| **Description type** | STATIC |
-| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
-| **Notes** | `middleware: ["guest"]`. |
+```typescript
+{
+  id: zohoContactId,
+  Ads_Published__c: currentAdsPublished + 1,
+  Last_Ad_Posted_At__c: new Date().toISOString().replace("Z", "+00:00"),
+}
+```
+
+**Complexity:** LOW — 2 API calls. No Deal involved.  
+**Edge case:** If `findContact` returns null (user not yet synced to Zoho), log a warning and skip silently. Do NOT create a Contact here — Contact creation belongs exclusively in `user_created`.  
+**Idempotency risk:** If the lifecycle hook fires twice for the same status transition (e.g., due to a re-publish after an admin action), the counter will be incremented twice. Guard with a status diff check in the hook: only trigger if `previousData.status !== "published"` and `currentData.status === "published"`.
 
 ---
 
-### 24. `pages/recuperar-contrasena.vue` — Forgot Password
+### Event 5: `contact_form_submitted` → Lead (+ Contact linkage check)
 
-| Field | Value |
-|-------|-------|
-| **File** | `apps/website/app/pages/recuperar-contrasena.vue` |
-| **Title** | `Recuperar Contraseña` |
-| **Description** | `Recupera el acceso a tu cuenta en Waldo.click®. Sigue unos simples pasos para restablecer tu contraseña de forma segura.` |
-| **Title type** | STATIC |
-| **Description type** | STATIC |
-| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
-| **Notes** | `middleware: ["guest"]`. Also disallowed in `robots.txt`. |
+**Trigger:** Contact form submission handler in Strapi  
+**API calls:** 1–2
 
----
+```
+1. findContact(email)             → check if submitter is a known registered user
+2a. If Contact found:
+     skip Lead creation; optionally create a Note/Task against the Contact
+2b. If no Contact found:
+     POST /crm/v5/Leads           → create Lead
+```
 
-### 25. `pages/restablecer-contrasena.vue` — Reset Password
+**Lead payload (step 2b):**
 
-| Field | Value |
-|-------|-------|
-| **File** | `apps/website/app/pages/restablecer-contrasena.vue` |
-| **Title** | `Restablecer Contraseña` |
-| **Description** | `Estás en el último paso para recuperar el acceso a tu cuenta en Waldo.click®. Ingresa tu nueva contraseña para completar el proceso.` |
-| **Title type** | STATIC |
-| **Description type** | STATIC |
-| **Visibility** | PRIVATE (`useSeoMeta({ robots: "noindex, nofollow" })`) |
-| **Notes** | Disallowed in `robots.txt`. `middleware: ["guest"]`. |
+```typescript
+{
+  First_Name: form.firstName || "",
+  Last_Name: form.lastName,       // mandatory
+  Email: form.email,
+  Phone: form.phone ?? undefined,
+  Company: form.company || "Waldo API",
+  Description: form.message,
+  Lead_Source: "Web Form",
+  Lead_Status: "New",             // ← CURRENTLY MISSING — must add in v1.19
+}
+```
 
----
-
-### 26. `pages/contacto/index.vue` — Contact
-
-| Field | Value |
-|-------|-------|
-| **File** | `apps/website/app/pages/contacto/index.vue` |
-| **Title** | `Contacto` |
-| **Description** | `¿Tienes preguntas o necesitas ayuda? Contáctanos en Waldo.click® y nuestro equipo te responderá lo antes posible.` |
-| **Title type** | STATIC |
-| **Description type** | STATIC |
-| **Visibility** | PUBLIC (no explicit robots meta) |
-| **Notes** | `layout: "about"`. Title is one generic word. No noindex despite `robots.txt` disallowing `/contacto/**` (the root `/contacto` may still be crawled). |
+**Complexity:** LOW-MEDIUM — the Contact-check-first logic adds one API call but prevents duplicate person records in CRM.
 
 ---
 
-### 27. `pages/contacto/gracias.vue` — Contact Thank You
+## Table Stakes vs Differentiators
 
-| Field | Value |
-|-------|-------|
-| **File** | `apps/website/app/pages/contacto/gracias.vue` |
-| **Title** | `Gracias por contactarnos` |
-| **Description** | `Hemos recibido tu mensaje. Te responderemos lo antes posible. Gracias por confiar en Waldo.click®.` |
-| **Title type** | STATIC |
-| **Description type** | STATIC |
-| **Visibility** | PUBLIC (no explicit `noindex`) |
-| **Notes** | Access-guarded by `appStore.getContactFormSent` — direct navigation throws 404, so bots cannot reach it. `layout: "about"`. |
+### Table Stakes (Essential — missing any = incomplete integration)
 
----
+| Feature | Why Essential | Complexity |
+|---|---|---|
+| `createContact()` on user registration | Every registered user must exist in CRM from day one | LOW |
+| Deduplication guard (`findContact` before `createContact`) | Without it, re-registration or race conditions create duplicate Contacts | LOW |
+| `createDeal()` on payment confirmation | Core CRM value — revenue visibility per Contact | MEDIUM |
+| `Contact_Name` lookup in Deal | Without it, Deals are orphaned with no Contact linkage in Zoho UI | LOW |
+| `Amount` field in Deal | Without it, revenue reporting in Zoho is impossible | LOW |
+| `Stage: "Closed Won"` on Deal creation | Required field — `POST /crm/v5/Deals` returns `MANDATORY_NOT_FOUND` without it | LOW |
+| `Ads_Published__c` counter on Contact | Core user activity metric | LOW |
+| `Total_Spent__c` counter on Contact | Core revenue metric per user | LOW |
+| Fix `Lead_Status` missing from `createLead()` | Current bug — leads created without status break CRM workflows | LOW |
+| Fix `Authorization: Bearer` → `Zoho-oauthtoken` in `ZohoHttpClient` | Current bug — all API calls use wrong auth header; may work on some requests by accident | HIGH |
+| Fix token-expiry handling in `ZohoHttpClient` | Current bug — token only refreshes on startup; all calls fail silently after 1 hour | HIGH |
 
-### 28. `pages/preguntas-frecuentes.vue` — FAQ
+### Differentiators (Valuable but deferrable)
 
-| Field | Value |
-|-------|-------|
-| **File** | `apps/website/app/pages/preguntas-frecuentes.vue` |
-| **Title** | `Preguntas Frecuentes` |
-| **Description** | `Resuelve tus dudas sobre cómo funciona Waldo.click®, la plataforma para comprar y vender activos industriales.` |
-| **Title type** | STATIC |
-| **Description type** | STATIC |
-| **Visibility** | PUBLIC (no explicit robots meta) |
-| **Notes** | `layout: "about"`. Structured data uses `@type: FAQPage` — strong SEO signal. |
+| Feature | Value | Complexity | Recommendation |
+|---|---|---|---|
+| `Type: "New Business"` vs `"Existing Business"` on Deal | Better CRM segmentation, identifies repeat buyers | LOW | Include in v1.19 (trivial) |
+| `Packs_Purchased__c` counter on Contact | Identifies power users; enables targeted offers | LOW | Include in v1.19 |
+| `Last_Ad_Posted_At__c` field | Recency segmentation in CRM | LOW | Include in v1.19 |
+| `Description` field in Deal with Strapi Order ID | Cross-reference Zoho Deal → Strapi Order | LOW | Include in v1.19 |
+| `Closing_Date` on Deal | Required by some pipeline views; best practice | LOW | Include in v1.19 |
+| Contact-first check before Lead creation | Prevents duplicate person records | LOW | Include in v1.19 |
 
----
+### Anti-Features (Explicitly Do NOT Build in v1.19)
 
-### 29. `pages/politicas-de-privacidad.vue` — Privacy Policy
-
-| Field | Value |
-|-------|-------|
-| **File** | `apps/website/app/pages/politicas-de-privacidad.vue` |
-| **Title** | `Políticas de Privacidad` |
-| **Description** | `Conoce cómo Waldo.click® protege tu información personal y asegura la privacidad en tus transacciones.` |
-| **Title type** | STATIC |
-| **Description type** | STATIC |
-| **Visibility** | PUBLIC (no explicit robots meta) |
-| **Notes** | `layout: "about"`. |
-
----
-
-### 30. `pages/sitemap.vue` — HTML Sitemap
-
-| Field | Value |
-|-------|-------|
-| **File** | `apps/website/app/pages/sitemap.vue` |
-| **Title** | `Mapa del Sitio` |
-| **Description** | `Explora la estructura de nuestro sitio y encuentra fácilmente lo que buscas en Waldo.click.` |
-| **Title type** | STATIC |
-| **Description type** | STATIC |
-| **Visibility** | PUBLIC (no explicit robots meta) |
-| **Notes** | `layout: "about"`. Description uses `"Waldo.click"` — no ® symbol (inconsistency vs other pages). |
+| Anti-Feature | Why Avoid | What to Do Instead |
+|---|---|---|
+| Inbound Zoho webhooks (Zoho → Strapi) | Bidirectional sync requires a public endpoint, authentication, and conflict resolution — out of scope | One-way push from Strapi only |
+| Storing Zoho Contact/Deal IDs in Strapi DB | Requires schema changes on `User` model — out of scope for this milestone | Pass Zoho IDs only in-memory during event handler |
+| Retry queue for failed Zoho calls | Valid for production hardening, but adds significant complexity (job queue, idempotency keys) | Log failures to Strapi error log; address in a dedicated reliability milestone |
+| Bulk backfill of existing users | Potentially thousands of API calls; rate-limit risk; risky on live data | One-time migration script in a separate milestone |
+| `Account_Name` association on Deals | Zoho Accounts are for B2B (company records); Waldo is B2C — no Account model needed | Omit entirely |
 
 ---
 
-### 31. `pages/dev.vue` — Dev Mode Gate
+## Critical Existing Bugs to Fix in v1.19
 
-| Field | Value |
-|-------|-------|
-| **File** | `apps/website/app/pages/dev.vue` |
-| **Title** | `Acceso Restringido - Modo Desarrollo` |
-| **Description** | `El sitio Waldo.click® está en modo desarrollo. El acceso está restringido temporalmente y solo usuarios autorizados pueden navegar por el sitio.` |
-| **Title type** | STATIC |
-| **Description type** | STATIC |
-| **Visibility** | PUBLIC (no explicit robots meta; `middleware: ["guest"]`) |
-| **Notes** | Maintenance/dev gate page. Title uses ` - ` separator. No noindex despite being dev-only. |
+### Bug 1: Wrong Authorization Header Format
 
----
+**File:** `apps/strapi/src/services/zoho/http-client.ts`, line 28  
+**Current code:** `config.headers.Authorization = \`Bearer ${this.accessToken}\``  
+**Correct code:** `config.headers.Authorization = \`Zoho-oauthtoken ${this.accessToken}\``  
+**Source:** All Zoho CRM v5 API documentation uses `Zoho-oauthtoken` as the auth header prefix. HIGH confidence.  
+**Impact:** All API calls may fail with 401 in production depending on how Zoho validates the scheme prefix.
 
-## Summary Table
+### Bug 2: Token Not Refreshed on Expiry
 
-| # | Page file | Title (raw string passed to `$setSEO`) | Description (raw string passed to `$setSEO`) | Title | Desc | Visibility |
-|---|-----------|----------------------------------------|----------------------------------------------|-------|------|------------|
-| 1 | `index.vue` | `Compra y Venta de Equipo en Chile` | `Publica y encuentra equipo industrial en Chile. Waldo.click® conecta vendedores y compradores de equipos nuevos o usados en todo el país.` | STATIC | STATIC | PUBLIC |
-| 2 | `[slug].vue` | `Perfil de {username} \| Waldo.click®` ⚠️ | `Explora los {N} anuncios publicados por {username} {location}. Encuentra los mejores precios en equipamiento industrial en Waldo.click®.` | DYNAMIC | DYNAMIC | PUBLIC |
-| 3 | `anuncios/index.vue` | Computed — see logic section | Computed — see logic section | DYNAMIC | DYNAMIC | PUBLIC |
-| 4 | `anuncios/[slug].vue` | `{ad.name} en {commune\|Chile} \| Venta de Equipo en Waldo.click` ⚠️ | `¡Oportunidad! {ad.name} en {commune\|Chile}. {description[0..150]}... Encuentra más equipo industrial en Waldo.click` | DYNAMIC | DYNAMIC | PUBLIC |
-| 5 | `packs/index.vue` | `Packs de Avisos` | `Elige el pack de avisos que mejor se adapte a tus necesidades. Publica más anuncios y llega a más compradores en Waldo.click®.` | STATIC | STATIC | PRIVATE* |
-| 6 | `packs/comprar.vue` | `Comprar Pack` | `Adquiere un pack de avisos en Waldo.click®.` | STATIC | STATIC | PRIVATE |
-| 7 | `packs/gracias.vue` | `Gracias por tu Compra - {pack.name}` | `Has comprado el pack {pack.name} por {price}. Este pack incluye {N} anuncios.` | DYNAMIC | DYNAMIC | PRIVATE |
-| 8 | `packs/error.vue` | `Error en el Pago` | `Hubo un problema al procesar tu pago. Por favor, intenta nuevamente.` | STATIC | STATIC | PRIVATE |
-| 9 | `anunciar/index.vue` | `Crear Anuncio` | `Publica tus activos industriales de manera rápida y sencilla en Waldo.click®. Aumenta tu visibilidad y encuentra compradores fácilmente.` | STATIC | STATIC | PRIVATE |
-| 10 | `anunciar/resumen.vue` | `Resumen del Anuncio` | `Consulta los detalles de tu anuncio antes de publicarlo en Waldo.click®. Asegúrate de que todo esté perfecto para destacar en el mercado de activos industriales.` | STATIC | STATIC | PRIVATE |
-| 11 | `anunciar/gracias.vue` | `Gracias por Publicar` | `Tu anuncio ha sido publicado con éxito en Waldo.click®. Gracias por confiar en nosotros para conectar con compradores de activos industriales.` | STATIC | STATIC | PRIVATE |
-| 12 | `anunciar/error.vue` | `Error al Crear Anuncio` | `Hubo un problema al intentar crear tu anuncio en Waldo.click®. Por favor, revisa los datos e inténtalo nuevamente.` | STATIC | STATIC | PRIVATE |
-| 13 | `cuenta/index.vue` | `Mi Cuenta` | `Accede a tu cuenta en Waldo.click®. Administra tus datos, anuncios y más desde un solo lugar.` | STATIC | STATIC | PRIVATE |
-| 14 | `cuenta/mis-anuncios.vue` | `Mis Anuncios` | `Gestiona tus anuncios activos y archivados en Waldo.click®.` | STATIC | STATIC | PRIVATE |
-| 15 | `cuenta/mis-ordenes.vue` | `Mis Órdenes` | `Consulta el historial de tus órdenes en Waldo.click®.` | STATIC | STATIC | PRIVATE |
-| 16 | `cuenta/perfil/index.vue` | `Perfil` | `Gestiona tu perfil en Waldo.click®. Actualiza tu información personal y mantén tus datos al día.` | STATIC | STATIC | PRIVATE |
-| 17 | `cuenta/perfil/editar.vue` | `Editar Perfil` | `Edita tu perfil en Waldo.click®. Actualiza tu información personal y mantén tus datos al día.` | STATIC | STATIC | PRIVATE |
-| 18 | `cuenta/avatar.vue` | `Personalizar Avatar` | `Personaliza tu avatar en Waldo.click®. Crea una presencia única y profesional en la plataforma.` | STATIC | STATIC | PRIVATE |
-| 19 | `cuenta/cover.vue` | `Personalizar Portada` | `Personaliza tu portada en Waldo.click®. Dale un toque único a tu perfil y destaca tus anuncios.` | STATIC | STATIC | PRIVATE |
-| 20 | `cuenta/username.vue` | `Personalizar Nombre de Usuario` | `Personaliza tu nombre de usuario en Waldo.click®. Crea una identidad única y memorable para tu negocio.` | STATIC | STATIC | PRIVATE |
-| 21 | `cuenta/cambiar-contrasena.vue` | `Cambiar Contraseña` | `Cambia tu contraseña en Waldo.click®. Mantén tu cuenta segura actualizando tus credenciales.` | STATIC | STATIC | PRIVATE |
-| 22 | `login/index.vue` | `Iniciar sesión` ⚠️ casing | `Accede a tu cuenta en Waldo.click® para gestionar tus anuncios, ver contactos y disfrutar de todos los beneficios de nuestra plataforma.` | STATIC | STATIC | PRIVATE |
-| 23 | `registro.vue` | `Regístrate` | `Crea tu cuenta en Waldo.click® y comienza a comprar y vender activos industriales de manera rápida y sencilla.` | STATIC | STATIC | PRIVATE |
-| 24 | `recuperar-contrasena.vue` | `Recuperar Contraseña` | `Recupera el acceso a tu cuenta en Waldo.click®. Sigue unos simples pasos para restablecer tu contraseña de forma segura.` | STATIC | STATIC | PRIVATE |
-| 25 | `restablecer-contrasena.vue` | `Restablecer Contraseña` | `Estás en el último paso para recuperar el acceso a tu cuenta en Waldo.click®. Ingresa tu nueva contraseña para completar el proceso.` | STATIC | STATIC | PRIVATE |
-| 26 | `contacto/index.vue` | `Contacto` | `¿Tienes preguntas o necesitas ayuda? Contáctanos en Waldo.click® y nuestro equipo te responderá lo antes posible.` | STATIC | STATIC | PUBLIC |
-| 27 | `contacto/gracias.vue` | `Gracias por contactarnos` | `Hemos recibido tu mensaje. Te responderemos lo antes posible. Gracias por confiar en Waldo.click®.` | STATIC | STATIC | PUBLIC† |
-| 28 | `preguntas-frecuentes.vue` | `Preguntas Frecuentes` | `Resuelve tus dudas sobre cómo funciona Waldo.click®, la plataforma para comprar y vender activos industriales.` | STATIC | STATIC | PUBLIC |
-| 29 | `politicas-de-privacidad.vue` | `Políticas de Privacidad` | `Conoce cómo Waldo.click® protege tu información personal y asegura la privacidad en tus transacciones.` | STATIC | STATIC | PUBLIC |
-| 30 | `sitemap.vue` | `Mapa del Sitio` | `Explora la estructura de nuestro sitio y encuentra fácilmente lo que buscas en Waldo.click.` ⚠️ no ® | STATIC | STATIC | PUBLIC |
-| 31 | `dev.vue` | `Acceso Restringido - Modo Desarrollo` | `El sitio Waldo.click® está en modo desarrollo. El acceso está restringido temporalmente y solo usuarios autorizados pueden navegar por el sitio.` | STATIC | STATIC | PUBLIC |
+**File:** `apps/strapi/src/services/zoho/http-client.ts`  
+**Problem:** `this.accessToken` is only null on startup. Zoho OAuth tokens expire in 1 hour. After expiry, all calls fail with 401, but the client will NOT attempt a refresh because `this.accessToken !== null`.  
+**Fix:** Add a response interceptor that detects 401 status, clears `this.accessToken`, refreshes, and retries the original request with `_retry` flag to prevent infinite loops:
 
-\* `packs/index.vue` has `middleware: "auth"` but **no `useSeoMeta({ robots: "noindex" })`** — technically crawlable.
-† `contacto/gracias.vue` has no noindex but is app-state-guarded; direct bot access would 404.
+```typescript
+this.client.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response?.status === 401 && !error.config._retry) {
+      error.config._retry = true;
+      this.accessToken = null;
+      await this.refreshAccessToken();
+      error.config.headers.Authorization = `Zoho-oauthtoken ${this.accessToken}`;
+      return this.client(error.config);
+    }
+    throw error;
+  }
+);
+```
+
+### Bug 3: `createLead()` Missing `Lead_Status` Field
+
+**File:** `apps/strapi/src/services/zoho/zoho.service.ts`  
+**Fix:** Add `Lead_Status: lead.status || "New"` to the lead creation payload.
+
+### Bug 4: Test File Hits Live Production Zoho API
+
+**File:** `apps/strapi/src/services/zoho/zoho.test.ts`  
+**Problem:** Tests use the live `zohoService` singleton, creating real records in the production Zoho CRM org.  
+**Fix:** Mock `ZohoHttpClient` in all tests. The factory pattern already supports this — `new ZohoService(mockHttpClient)`.
 
 ---
 
-## Cross-Cutting Issues Found
+## Interface Additions Required
 
-### Issue 1: Duplicate Title Suffixes — 2 pages ⚠️ CRITICAL (affects indexed public pages)
+The current `interfaces.ts` requires the following additions for v1.19:
 
-Pages that embed a brand suffix in the raw title string. With `@nuxtjs/seo`'s default
-`titleTemplate` (`%s | Waldo.click®`), these render double in the browser tab and in SERP snippets:
+```typescript
+// New: Deal creation DTO
+export interface ZohoDeal {
+  Deal_Name: string;
+  Stage: "Closed Won" | "Closed Lost" | "Qualification" | string;
+  Amount?: number;
+  Contact_Name?: { id: string };
+  Type?: "New Business" | "Existing Business";
+  Closing_Date?: string;      // "yyyy-MM-dd"
+  Description?: string;
+  Lead_Source?: string;
+  Pipeline?: string;
+}
 
-| Page | Raw title passed to `$setSEO` | Rendered browser title (WRONG) |
-|------|-------------------------------|--------------------------------|
-| `[slug].vue` | `Perfil de {user} \| Waldo.click®` | `Perfil de {user} \| Waldo.click® \| Waldo.click®` |
-| `anuncios/[slug].vue` | `{ad} en {commune} \| Venta de Equipo en Waldo.click` | `{ad} en {commune} \| Venta de Equipo en Waldo.click \| Waldo.click®` |
+// New: Contact stats update DTO
+export interface ZohoContactStats {
+  Ads_Published__c?: number;
+  Total_Spent__c?: number;
+  Last_Ad_Posted_At__c?: string;   // ISO8601 datetime
+  Packs_Purchased__c?: number;
+}
+```
 
-**Fix:** Strip the embedded suffix from the raw title string. Let `@nuxtjs/seo` apply the separator.
-
-### Issue 2: Inconsistent Brand String — 3 locations
-
-| Page | Field | Brand string used |
-|------|-------|-------------------|
-| Most pages | title / description | `Waldo.click®` ✓ |
-| `anuncios/index.vue` | description (trailing) | `Waldo.click` (no ®) |
-| `anuncios/[slug].vue` | title + description (trailing) | `Waldo.click` (no ®) |
-| `sitemap.vue` | description (trailing) | `Waldo.click` (no ®) |
-
-### Issue 3: Inconsistent Title Separators — 4 pages
-
-| Page | Separator in raw title string | Expected behavior |
-|------|-------------------------------|-------------------|
-| Most pages | none (clean title, relies on `@nuxtjs/seo`) | ✓ correct |
-| `[slug].vue` | ` \| ` embedded | should be removed |
-| `anuncios/[slug].vue` | ` \| ` embedded | should be removed |
-| `packs/gracias.vue` | ` - ` embedded | inconsistent style |
-| `dev.vue` | ` - ` embedded | inconsistent style |
-
-### Issue 4: Extremely Short Descriptions — 2 pages
-
-| Page | Description | Char count | Recommended |
-|------|-------------|-----------|-------------|
-| `packs/comprar.vue` | `Adquiere un pack de avisos en Waldo.click®.` | 44 | 120–160 |
-| `cuenta/mis-ordenes.vue` | `Consulta el historial de tus órdenes en Waldo.click®.` | 54 | 120–160 |
-
-### Issue 5: Title Casing Inconsistency — 1 page
-
-| Page | Title | Issue |
-|------|-------|-------|
-| `login/index.vue` | `Iniciar sesión` | Lowercase `s` — all other pages use Title Case (`Iniciar Sesión`) |
-
-### Issue 6: Misleading `totalAds` Counter in Profile Descriptions
-
-`[slug].vue` description: `"Explora los ${totalAds} anuncios publicados por..."`.
-`totalAds` = `newData.ads?.length || 0` — this is the **current page slice** (up to 12 items),
-not the user's total ad count. A user with 50 ads is described as having 12.
-
-### Issue 7: Dynamic Description Empty-State Bug in `anuncios/[slug].vue`
-
-When `newData.description` is `null` or `""`, the middle segment is replaced with an empty
-string `""`, producing: `"¡Oportunidad! {name} en {commune}.  Encuentra más..."` (double space).
-
-### Issue 8: `packs/index.vue` Missing `noindex`
-
-This page is auth-gated but has no `useSeoMeta({ robots: "noindex" })` call.
-`robots.txt` disallows `/packs/**` (subpaths) but `/packs` (no trailing slash) may still be
-crawled and indexed. Needs explicit `useSeoMeta({ robots: "noindex, nofollow" })`.
-
----
-
-## Pages by Priority for Copy Rewrite
-
-### Priority 1 — PUBLIC + indexed (SEO impact)
-
-| Page | Key rewrite need |
-|------|-----------------|
-| `index.vue` | Review keyword strategy; current copy is functional |
-| `anuncios/[slug].vue` | Fix DUPE SUFFIX; fix no ®; fix empty-description double-space |
-| `[slug].vue` (profile) | Fix DUPE SUFFIX; fix misleading `totalAds` |
-| `anuncios/index.vue` | Audit all dynamic branches; fix no ® in trailing text |
-| `preguntas-frecuentes.vue` | Title/description usable; minor polish |
-| `contacto/index.vue` | Title is one generic word — expand |
-| `sitemap.vue` | Fix missing ® |
-| `politicas-de-privacidad.vue` | Low priority — legal page; minor polish only |
-
-### Priority 2 — PRIVATE pages (noindex; brand voice / UX)
-
-All `cuenta/**`, `anunciar/**`, `packs/**`, `login/**`, `registro.vue`,
-`recuperar-contrasena.vue`, `restablecer-contrasena.vue`.
-
-Key items: fix `login/index.vue` casing; pad `packs/comprar.vue` and `cuenta/mis-ordenes.vue` descriptions.
-
-### Priority 3 — Edge cases
-
-| Page | Action |
-|------|--------|
-| `packs/index.vue` | Add missing `useSeoMeta({ robots: "noindex, nofollow" })` |
-| `dev.vue` | Consider adding noindex for dev-only page |
-| `contacto/gracias.vue` | Confirm intentional PUBLIC status |
+`IZohoService` requires two new method signatures:
+- `createDeal(deal: ZohoDeal): Promise<string>` — returns the created Deal's Zoho record ID
+- `updateContactStats(contactId: string, stats: ZohoContactStats): Promise<void>`
 
 ---
 
 ## Sources
 
-- Direct source read of all 31 page files in `apps/website/app/pages/`
-- `apps/website/app/plugins/seo.ts` — `$setSEO` implementation (confirms no suffix appended by plugin)
-- `apps/website/nuxt.config.ts` — `site.name: "Waldo.click®"`, `robots` config, `sitemap.exclude`
-- `apps/website/app/app.vue` — confirms no global `titleTemplate` override
+| Source | Confidence | URL |
+|---|---|---|
+| Zoho CRM v5 Insert Records API | HIGH | https://www.zoho.com/crm/developer/docs/api/v5/insert-records.html |
+| Zoho CRM v5 Update Records API | HIGH | https://www.zoho.com/crm/developer/docs/api/v5/update-records.html |
+| Zoho CRM v5 Upsert Records API | HIGH | https://www.zoho.com/crm/developer/docs/api/v5/upsert-records.html |
+| Zoho CRM v5 Get Pipelines API (incl. standard stages) | HIGH | https://www.zoho.com/crm/developer/docs/api/v5/get-pipelines.html |
+| Zoho CRM v5 Fields Metadata API | HIGH | https://www.zoho.com/crm/developer/docs/api/v5/field-meta.html |
+| Zoho CRM v5 Module Metadata API | HIGH | https://www.zoho.com/crm/developer/docs/api/v5/module-meta.html |
+| Zoho CRM v5 Get Related Records API | HIGH | https://www.zoho.com/crm/developer/docs/api/v5/get-related-records.html |
+| Existing Zoho service implementation | — | `apps/strapi/src/services/zoho/` |
 
 ---
-*Code audit for: Website Meta Copy Audit milestone*
-*Audited: 2026-03-07*
-*Confidence: HIGH — all values extracted verbatim from source files*
+*Research for: v1.19 Zoho CRM Integration milestone*  
+*Researched: 2026-03-07*  
+*Confidence: HIGH — all Zoho API mechanics verified against official v5 docs*
