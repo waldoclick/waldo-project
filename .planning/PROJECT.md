@@ -216,6 +216,16 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
    | `CheckoutDefault.vue` owns full payment logic | `resumen.vue` becomes a review/redirect step only; no payment duplication across pages — v1.22 | ✓ Good |
    | `BarCheckout.vue` separated from `BarAnnouncement.vue` | Checkout action bar has different semantics (no back button, step count); clean separation avoids prop flag soup — v1.22 | ✓ Good |
 
+## Current Milestone: v1.23 Unified Payment Flow
+
+**Goal:** Unify all paid flows through `/pagar` — eliminate `/packs/comprar`, wire `/packs` directly to `/pagar` via `adStore`, and make `/pagar` work correctly with or without an associated ad.
+
+**Target features:**
+- Pack purchase from `/packs` navigates directly to `/pagar` (no intermediate page)
+- `/pagar` handles pack-only payment (no `ad_id`) and pack+ad payment (`ad_id` present)
+- `packs.store.ts` eliminated — pack selection lives in `adStore`
+- `/packs/comprar` and `BuyPack.vue` removed
+
 ## Future Requirements
 
 ### Testing (next dedicated milestone)
@@ -231,4 +241,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-08 after v1.22 milestone — Checkout Flow UI*
+*Last updated: 2026-03-08 after v1.23 milestone start — Unified Payment Flow
