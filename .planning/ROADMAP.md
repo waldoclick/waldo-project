@@ -51,6 +51,9 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 <!-- v1.19 Zoho CRM Sync Model — Phases 43-46 -->
 
 - [ ] **Phase 43: Zoho Service Reliability** — Fix token refresh (401 interceptor), fix auth header prefix, isolate tests with axios-mock-adapter, add env vars to .env.example
+  **Plans:** 2 plans
+  - [ ] 43-01-PLAN.md — Fix ZohoHttpClient: correct auth header (`Zoho-oauthtoken`) and 401 response interceptor with `_retry` guard
+  - [ ] 43-02-PLAN.md — Rewrite zoho.test.ts with axios-mock-adapter; add ZOHO_* vars to .env.example
 - [ ] **Phase 44: Zoho Service Layer** — Initialize Contact custom fields to 0 on creation; implement `updateContactStats()` and `createDeal()` on service; fix Lead_Status missing field
 - [ ] **Phase 45: Payment Event Wiring** — Wire `pack_purchased` and `ad_paid` events to `createDeal()` + `updateContactStats()`; resolve Contact ID via `findContact()` before every deal creation
 - [ ] **Phase 46: Ad Published Event Wiring** — Wire `ad_published` event to `updateContactStats()`; guard with status-transition check to prevent double-counting
@@ -66,7 +69,7 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
   2. The authorization header on every outbound Zoho request reads `Zoho-oauthtoken <token>` (not `Bearer <token>`)
   3. Running `yarn test` in `apps/strapi` makes zero network calls to `zohoapis.com` — all Zoho HTTP calls are intercepted by `axios-mock-adapter`
   4. `apps/strapi/.env.example` contains all four `ZOHO_*` variables (`ZOHO_CLIENT_ID`, `ZOHO_CLIENT_SECRET`, `ZOHO_REFRESH_TOKEN`, `ZOHO_API_URL`)
-**Plans**: TBD
+**Plans**: 2 plans — 43-01-PLAN.md (ZohoHttpClient fix), 43-02-PLAN.md (test isolation + .env.example)
 
 ### Phase 44: Zoho Service Layer
 **Goal**: The Zoho service exposes `createDeal()` and `updateContactStats()`, Contact creation initializes counters to zero, and Leads are created with a status
@@ -115,7 +118,7 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 | 40. Users Filter Authenticated | v1.17 | 2/2 | Complete | 2026-03-07 |
 | 41. Sentry Production-Only | v1.17 | 1/1 | Complete | 2026-03-07 |
 | 42. Ad Creation URL Refactor | v1.18 | 3/3 | Complete | 2026-03-08 |
-| 43. Zoho Service Reliability | v1.19 | 0/? | Not started | — |
+| 43. Zoho Service Reliability | v1.19 | 0/2 | Not started | — |
 | 44. Zoho Service Layer | v1.19 | 0/? | Not started | — |
 | 45. Payment Event Wiring | v1.19 | 0/? | Not started | — |
 | 46. Ad Published Event Wiring | v1.19 | 0/? | Not started | — |
