@@ -3,6 +3,7 @@ import populateConditions from "../seeders/conditions";
 import populateFaqs from "../seeders/faqs";
 import populatePacks from "../seeders/packs";
 import populateRegions from "../seeders/regions";
+import populateAdDraftMigration from "../seeders/ad-draft-migration";
 
 export default {
   /**
@@ -37,6 +38,7 @@ export default {
       await populateFaqs(strapi);
       await populatePacks(strapi);
       await populateRegions(strapi);
+      await populateAdDraftMigration(strapi);
       console.log("✅ Seeders completados exitosamente");
     } catch (error) {
       console.error("❌ Error ejecutando seeders:", error);
