@@ -17,7 +17,7 @@
       :summary-text="paymentSummaryText"
       :primary-label="primaryButtonLabel"
       @primary="confirmPay"
-      @back="router.push('/anunciar?step=5')"
+      @back="router.push('/anunciar/galeria-de-imagenes')"
     />
   </div>
 </template>
