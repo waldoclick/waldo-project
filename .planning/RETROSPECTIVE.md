@@ -613,6 +613,47 @@
 
 ---
 
+## Milestone: v1.20 — TypeScript any Elimination
+
+**Shipped:** 2026-03-08
+**Phases:** 5 (47-51) | **Plans:** 5 | **Timeline:** 1 day
+
+### What Was Built
+- Ad service + controller: `AdQueryOptions` interface, `computeAdStatus(unknown)`, `ctx: Context` (koa) — zero `any` in the highest-traffic Strapi API file
+- Type files: `order.types.ts`, `filter.types.ts`, `flow.types.ts` operator fields → `unknown`; `flow.factory.ts` + `flow.service.ts` → `Core.Strapi` DI typing + `Record<string, string>` param bags
+- 13 integration service files (Zoho, Facto, Indicador, Google Sheets, Transbank, payment-gateway): `IZohoContact` + `IWebpayCommitData` interfaces with index signatures for backward compatibility
+- 9 payment util + middleware files: data double-cast pattern for entityService JSON fields; `WebpayAdResult` local interface; `BillingDetails` exported from `user.utils.ts`
+- 5 seeders: `Core.Strapi` replaces `strapi: any`; 4 test files: typed result interfaces + `(global as unknown as { strapi: MockStrapi })` cast avoiding `@strapi/types` conflict
+- `tsc --noEmit` exits 0 and all Jest tests pass after every phase commit
+
+### What Worked
+- Phase ordering (ad API → type files → services → utils/middlewares → seeders/tests) was correct — each phase built on a stable foundation; no rework required
+- Research phase before each plan surfaced the real call-site impact before touching code — the `IZohoContact` and `IWebpayCommitData` auto-fixes came from pre-reading callers, not from TSC failures post-edit
+- Single-plan phases kept each execution focused and fast — average 8 minutes per phase
+- The `unknown` + inline narrowing pattern is now consistent across the entire Strapi codebase — one pattern, no exceptions
+
+### What Was Inefficient
+- Phase 39 (Spanish default language / i18n) had been stubbed/deferred with a placeholder summary since v1.17 — it occupied a slot in the phase numbering but produced nothing. Deferred phases should be explicitly cancelled or extracted to a backlog item, not left as stubs.
+- The MILESTONES.md entry created by `gsd-tools milestone complete` was empty ("none recorded") because the CLI couldn't parse one-liners from markdown bold (`**One-liner:**`) vs YAML fields — required manual enrichment afterward. The CLI tool should support the actual summary format.
+
+### Patterns Established
+- **`Core.Strapi` for all DI parameters in Strapi service factories and seeders**: `import type { Core } from "@strapi/strapi"` → `strapi: Core.Strapi`; official Strapi-provided type, no casting needed
+- **Data double-cast for entityService JSON fields**: `{ ...data } as unknown as Parameters<typeof strapi.entityService.create>[1]["data"]` — Strapi's `JSONValue` type is stricter than `unknown`; this cast is the canonical AGENTS.md-aligned approach
+- **Index signature interfaces for third-party API results**: `IZohoContact { id: string; [key: string]: unknown }` — typed primary fields + index signature allows callers to access specific properties without losing flexibility for unknown fields
+- **`(global as unknown as { strapi: MockStrapi })` for Jest global mocks**: avoids `@strapi/types` global `var strapi: Strapi` conflict; double-cast via `unknown` is narrower than `(global as any).strapi`
+
+### Key Lessons
+1. **Pre-read callers before changing a return type to `unknown`.** Changing `Promise<any>` to `Promise<unknown>` in an interface will break every call site that accesses a named property on the result. A 2-minute grep of all call sites before committing saves a round-trip through TSC error messages.
+2. **TypeScript union narrowing doesn't work on optional property absence.** `if (!result.webpay)` does not narrow a complex union type — TypeScript needs a discriminant property or explicit type guard. When callers need to branch on shape, introduce a local interface + cast at the branching point.
+3. **`@strapi/types` owns the `global var strapi` declaration.** Never `declare global { var strapi: ... }` in test files — it conflicts with Strapi's own types. Use `(global as unknown as { strapi: MockStrapi })` instead.
+
+### Cost Observations
+- Model mix: ~100% sonnet
+- Sessions: ~6 (one per phase plan + milestone close)
+- Notable: Fastest multi-phase milestone per plan — 5 plans in 1 day averaging ~8 min each. The `any` elimination pattern was mechanical once established in Phase 47; Phases 48-51 were primarily application of the same patterns.
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -638,6 +679,8 @@
 | v1.16 | 3 | 4 | Website meta copy audit: 4 SEO bug fixes, canonical vocabulary enforced across all public pages, SERP copy rewritten |
 | v1.17 | 2 | 3 | Security & Stability: server-enforced user role filter via strapi.db.query; production-only Sentry guard in all 7 entry points |
 | v1.18 | 1 | 3 | Ad creation URL refactor: 5 dedicated wizard routes; wizard-guard middleware; per-page analytics; `?step=N` eliminated |
+| v1.19 | 4 | 8 | Zoho CRM sync model: reliable HTTP client, 4 service methods, payment + publish event wiring |
+| v1.20 | 5 | 5 | TypeScript any elimination: zero `any` across all Strapi services, utils, middlewares, seeders, and test files |
 
 ### Cumulative Quality
 
@@ -662,6 +705,8 @@
 | v1.16 | utils (100% coverage) | true | 0 |
 | v1.17 | utils + jest (strapi role controller) | true | 0 |
 | v1.18 | utils + jest (strapi) | true | 1 (wizard-guard middleware) |
+| v1.19 | utils + jest (zoho, pack, ad) | true | 0 |
+| v1.20 | utils + jest (all payment tests) | true | 0 |
 
 ### Top Lessons (Verified Across Milestones)
 
@@ -682,6 +727,9 @@
 15. Use `strapi.db.query` for server-enforced filters — the content-API sanitizer strips `filters[role]` for regular JWTs, making client-enforced role filtering bypassable
 16. Gate Sentry (and all observability tools) on `NODE_ENV === 'production'` from day one — staging noise pollutes dashboards and costs money
 17. Any middleware reading a localStorage-backed Pinia store must bail out on server with `if (import.meta.server) return;` — store is always empty on server (storage: undefined), causing false redirects
+18. Pre-read all callers before changing a return type to `unknown` — every call site accessing a named property will break; a 2-min grep is cheaper than a TSC round-trip
+19. TypeScript union narrowing doesn't work on optional property absence — when callers branch on shape, introduce a local interface + cast at the guard site rather than relying on union inference
+20. `(global as unknown as { strapi: MockStrapi })` for Jest global mocks avoids conflict with `@strapi/types` global `var strapi: Strapi` declaration
 
 ## Milestone: v1.17 — Security & Stability
 

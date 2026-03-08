@@ -79,6 +79,15 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
    - ✓ `typeCheck: true` pasa con zero errores después de todos los cambios del URL refactor — v1.18
    - ✓ `wizard-guard.ts` middleware previene saltar pasos del wizard; SSR-safe — v1.18
 
+   - ✓ `ad.ts` service: `AdQueryOptions` interface, `computeAdStatus(unknown)`, `transformSortParameter(unknown: unknown)`, all methods typed — zero `any` in ad service — v1.20
+   - ✓ `ad.ts` controller: `ctx: Context` (koa) in all methods, `QueryParams` fields `unknown`, `filterClause: Record<string, unknown>` — zero `any` in ad controller — v1.20
+   - ✓ `order.types.ts`, `filter.types.ts`, `flow.types.ts` — `payment_response`, `document_details`, `filters`/`sort`/`populate`, all `StrapiFilter` operators → `unknown` — v1.20
+   - ✓ `flow.factory.ts` + `flow.service.ts` — `Core.Strapi` DI typing; `Record<string, string>` with `String()` casts for URL param bags — v1.20
+   - ✓ Zoho service/interfaces (`IZohoContact` interface with index signature), HTTP client (`params: unknown`, `data: unknown`), Facto SOAP callbacks (`unknown`), Indicador, Google, Transbank, payment-gateway — zero `any` across all integration services — v1.20
+   - ✓ `payment.type.ts`, `order/user/ad/general.utils.ts`, `payment.ts` controller, `image-uploader.ts`, `cache.ts`, `user-registration.ts` — all `any` eliminated; `BillingDetails` exported for `FactoDocumentData.userDetails` — v1.20
+   - ✓ All 5 seeder files use `Core.Strapi` (not `strapi: any`); 4 payment test files use typed result interfaces + `(global as unknown as { strapi: MockStrapi })` cast — v1.20
+   - ✓ `tsc --noEmit` exits 0 and all Jest tests pass after every phase — v1.20
+
 ## Context
 
 - Monorepo con Turbo para orquestación de tareas
@@ -94,6 +103,7 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - GTM handled via `@saslavik/nuxt-gtm@0.1.3` module in both website (since v1.13) and dashboard (since v1.14) — `enableRouterSync: true` fires page_view on every SPA route change; GTM ID from `runtimeConfig.public.gtm.id`; hand-rolled `gtm.client.ts` plugins deleted in both apps
 - Ad creation analytics (`useAdAnalytics.ts`): all events tracked — view_item_list, step_view (exact, no overcounting, per-page), begin_checkout, redirect_to_payment, purchase (guarded); `DataLayerEvent` fully typed in `window.d.ts` (since v1.12)
 - SEO infrastructure (v1.15): `$setSEO` plugin in `seo.ts` emits full OG + Twitter Card set; `$setStructuredData` in `microdata.ts` with key-based deduplication; `@nuxtjs/seo` provides sitemap (with static entries having `changefreq`/`priority`), robots, OG defaults; all page URLs use `config.public.baseUrl`; 18+ private pages have `noindex`; home has WebSite + Organization JSON-LD; user profile `[slug].vue` has ProfilePage + Person schema
+- Strapi TypeScript (v1.20): zero `any` in ad service/controller, all type files, all integration services (Zoho, Facto, Indicador, Google, Transbank, payment-gateway), all payment utils/middlewares, all seeders, and all payment test files; `tsc --noEmit` exits 0; established patterns: `AdQueryOptions`, `IZohoContact`, `IWebpayCommitData`, data double-cast for entityService JSON fields, `Core.Strapi` for DI typing
 
 ## Constraints
 
@@ -170,27 +180,14 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
    | Floating promise (`.then().catch()`) for `ad_paid` Zoho sync | `adResponse` controller issues `ctx.redirect()` immediately after; awaiting Zoho would block the redirect — v1.19 | ✓ Good |
    | `await` (blocking) for `pack_purchased` Zoho sync | `processPaidWebpay` for packs is not a redirect handler; blocking is safe and simpler — v1.19 | ✓ Good |
    | First-publish guard (`isPending` check) in `approveAd()` | Re-approving an already-published ad must not double-increment `Ads_Published__c` — v1.19 | ✓ Good |
-
-## Current State: v1.20 Shipped
-
-**TypeScript any Elimination** — Phases 47–51 complete (2026-03-08)
-
-- Ad API: `ctx: any` → `Context`; `AdQueryOptions` interface; `computeAdStatus`/`transformSortParameter` → `unknown`
-- Type files: `order.types.ts`, `filter.types.ts`, `flow.types.ts` → `unknown`; `flow.factory.ts` + `flow.service.ts` → `Core.Strapi`, `Record<string,string>` param bags
-- Services (Zoho, Facto, Indicador, Google, Transbank, payment-gateway): `any` → `unknown` with `IZohoContact`, `IWebpayCommitData` interfaces
-- Payment utils + middlewares: `payment.type.ts`, `order/user/ad/general.utils.ts`, `payment.ts`, `image-uploader.ts`, `cache.ts`, `user-registration.ts` — all `any` eliminated
-- Seeders (5 files): `strapi: any` → `Core.Strapi`
-- Test files (4 files): typed result interfaces, `MockStrapi`, direct controller access without `as any`
-- `tsc --noEmit` zero errors; all 60 tests passing throughout
-
-## Current State: v1.19 Shipped
-
-**Zoho CRM Sync Model** — Phases 43–46 complete (2026-03-08)
-
-- ZohoHttpClient: correct auth header (`Zoho-oauthtoken`), 401 token refresh interceptor, test isolation via `axios-mock-adapter`
-- ZohoService: `createDeal()`, `updateContactStats()`, `createLead()` (Lead_Status: New), `createContact()` (counters init to 0)
-- Payment wiring: `pack_purchased` → Deal + Contact stats (await); `ad_paid` → Deal + Contact stats (floating promise)
-- Ad publish wiring: `approveAd()` → `Ads_Published__c` + `Last_Ad_Posted_At__c` (first-publish guard)
+   | `AdQueryOptions` interface for ad service method params | Expresses intent for query shape (page, pageSize, filters, sort, populate); avoids bare `Record<string, unknown>` which loses semantics — v1.20 | ✓ Good |
+   | `ad: unknown` → `Record<string, unknown>` narrowing for `computeAdStatus` | Safe access to Strapi entity fields without runtime risk; avoids `any` while preserving flexibility — v1.20 | ✓ Good |
+   | `IZohoContact { id: string; [key: string]: unknown }` interface | Callers access `.id` on contact results; plain `unknown` would break 9 call sites; index signature preserves flexibility — v1.20 | ✓ Good |
+   | `IWebpayCommitData` with optional fields + index signature | Optional fields allow partial test mock objects (`{ buy_order: "x" }`) to compile; index signature allows callers to access arbitrary fields — v1.20 | ✓ Good |
+   | Data double-cast `as unknown as Parameters<...>[N]["data"]` for entityService JSON fields | Strapi's `entityService` expects `JSONValue` (stricter than `unknown`); double-cast is the AGENTS.md-aligned way to pass typed data — v1.20 | ✓ Good |
+   | `WebpayAdResult` local interface for `processPaidWebpay` | TypeScript union narrowing doesn't work on optional property absence; local interface gives exact type safety at the guard site — v1.20 | ✓ Good |
+   | `(global as unknown as { strapi: MockStrapi })` for test global | `@strapi/types` already declares `global var strapi: Strapi`; redeclaring with narrower type causes TS conflict; double-cast via `unknown` bypasses without touching global scope — v1.20 | ✓ Good |
+   | `Core.Strapi` (imported from `@strapi/strapi`) for seeder + factory DI params | Official Strapi-provided type for the full Strapi instance; replaces `strapi: any` in all seeder functions and service factories — v1.20 | ✓ Good |
 
 ## Future Requirements
 
@@ -207,4 +204,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-08 — v1.20 shipped: TypeScript any Elimination complete*
+*Last updated: 2026-03-08 after v1.20 milestone — TypeScript any Elimination complete*
