@@ -140,4 +140,55 @@ describe("ZohoService", () => {
       expect(result.id).toBe("contact-001");
     });
   });
+
+  describe("createDeal()", () => {
+    it("should post all required Deal fields and return the created Deal ID", async () => {
+      mock
+        .onPost("https://www.zohoapis.com/crm/v5/Deals")
+        .reply(200, { data: [{ details: { id: "deal-001" } }] });
+
+      const result = await service.createDeal({
+        dealName: "Pack Premium - juan@example.com",
+        amount: 9990,
+        contactId: "contact-001",
+        type: "Pack Purchase",
+        closingDate: "2026-03-08",
+        description: "Pack Premium purchase",
+        leadSource: "Website",
+      });
+
+      expect(result).toBe("deal-001");
+
+      const body = JSON.parse(
+        mock.history.post.find((r) => r.url?.includes("/Deals"))!.data
+      );
+      expect(body.data[0].Deal_Name).toBe("Pack Premium - juan@example.com");
+      expect(body.data[0].Stage).toBe("Closed Won");
+      expect(body.data[0].Amount).toBe(9990);
+      expect(body.data[0].Contact_Name).toEqual({ id: "contact-001" });
+      expect(body.data[0].Type).toBe("Pack Purchase");
+      expect(body.data[0].Closing_Date).toBe("2026-03-08");
+      expect(body.data[0].Description).toBe("Pack Premium purchase");
+      expect(body.data[0].Lead_Source).toBe("Website");
+    });
+  });
+
+  describe("updateContactStats()", () => {
+    it("should PUT only the provided stats fields — no undefined keys in payload", async () => {
+      mock
+        .onPut("https://www.zohoapis.com/crm/v5/Contacts/contact-001")
+        .reply(200, { data: [{ id: "contact-001" }] });
+
+      await service.updateContactStats("contact-001", { Total_Spent__c: 9990 });
+
+      const body = JSON.parse(
+        mock.history.put.find((r) => r.url?.includes("/Contacts/contact-001"))!
+          .data
+      );
+      expect(body.data[0].Total_Spent__c).toBe(9990);
+      expect(body.data[0]).not.toHaveProperty("Ads_Published__c");
+      expect(body.data[0]).not.toHaveProperty("Last_Ad_Posted_At__c");
+      expect(body.data[0]).not.toHaveProperty("Packs_Purchased__c");
+    });
+  });
 });
