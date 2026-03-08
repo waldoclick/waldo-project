@@ -97,6 +97,16 @@ beforeEach(() => {
 
 // ─── WIRE-01: processPaidPayment ─────────────────────────────────────────────
 
+interface ProcessPaidPaymentResult {
+  success: boolean;
+  message?: string;
+  webpay?: {
+    success: boolean;
+    gatewayRef: string;
+    url: string;
+  };
+}
+
 describe("processPaidPayment — WIRE-01", () => {
   it("calls getPaymentGateway().createTransaction with correct args", async () => {
     await adService.processPaidPayment(1);
@@ -115,7 +125,9 @@ describe("processPaidPayment — WIRE-01", () => {
   });
 
   it("returns success:true with webpay data when transaction succeeds", async () => {
-    const result = (await adService.processPaidPayment(1)) as any;
+    const result = (await adService.processPaidPayment(
+      1
+    )) as ProcessPaidPaymentResult;
 
     // Will FAIL in RED state: current code uses TransbankServices, not gateway
     // The shape won't match because the gateway mock isn't called
