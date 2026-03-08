@@ -4,13 +4,13 @@ milestone: v1.1
 milestone_name: milestone
 status: planning
 stopped_at: Completed 50-01-PLAN.md
-last_updated: "2026-03-08T15:30:00.000Z"
+last_updated: "2026-03-08T15:10:44.207Z"
 last_activity: 2026-03-08 — Roadmap created
 progress:
   total_phases: 5
-  completed_phases: 3
-  total_plans: 3
-  completed_plans: 3
+  completed_phases: 4
+  total_plans: 4
+  completed_plans: 4
 ---
 
 # Project State
@@ -70,6 +70,9 @@ Key patterns established (carry forward):
 - [Phase 48]: Record<string,string> for Flow API param bags with String() casts — required by URLSearchParams and removes Record<string,any>
 - [Phase 49]: IZohoContact interface (id:string + index signature) instead of plain unknown — callers access .id on findContact/createContact/updateContact results
 - [Phase 49]: IWebpayCommitData interface with optional fields (status?/buy_order?/amount?) + index signature — allows partial test mock objects while removing any from transbank and gateway interfaces
+- [Phase 50]: data double-cast pattern (as unknown as Parameters<...>[1]['data']) for entityService JSON fields — JSONValue stricter than unknown
+- [Phase 50]: WebpayAdResult local interface for processPaidWebpay — TypeScript union can't narrow on optional property absence; local interface gives type safety without changing inferred return type
+- [Phase 50]: BillingDetails exported from user.utils.ts for use in FactoDocumentData.userDetails — eliminates userDetails: any in general.utils.ts
 
 ### Pending Todos
 
@@ -81,6 +84,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-08T14:49:49.672Z
-Stopped at: Completed 49-01-PLAN.md
+Last session: 2026-03-08T15:10:44.205Z
+Stopped at: Completed 50-01-PLAN.md
 Resume with: `/gsd-implement-plan 50-01`
