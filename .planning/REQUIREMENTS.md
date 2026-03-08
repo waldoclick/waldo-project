@@ -9,8 +9,8 @@ Requirements for the Zoho CRM Sync Model milestone.
 
 ### Service Reliability
 
-- [ ] **RELY-01**: El cliente HTTP de Zoho refresca el access token automáticamente cuando recibe un 401 (response interceptor con `_retry` guard para evitar loops infinitos)
-- [ ] **RELY-02**: El header de autorización en `ZohoHttpClient` usa `Zoho-oauthtoken` en lugar de `Bearer`
+- [x] **RELY-01**: El cliente HTTP de Zoho refresca el access token automáticamente cuando recibe un 401 (response interceptor con `_retry` guard para evitar loops infinitos)
+- [x] **RELY-02**: El header de autorización en `ZohoHttpClient` usa `Zoho-oauthtoken` en lugar de `Bearer`
 - [ ] **RELY-03**: `createLead()` incluye `Lead_Status: "New"` en el payload enviado a Zoho
 - [ ] **RELY-04**: Los tests de Zoho (`zoho.test.ts`) no hacen llamadas a la API real de Zoho — usan `axios-mock-adapter` para aislar el servicio
 - [ ] **RELY-05**: Las variables `ZOHO_CLIENT_ID`, `ZOHO_CLIENT_SECRET`, `ZOHO_REFRESH_TOKEN`, `ZOHO_API_URL` están declaradas en `.env.example`
@@ -56,8 +56,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| RELY-01 | Phase 43 | Pending |
-| RELY-02 | Phase 43 | Pending |
+| RELY-01 | Phase 43 | Complete |
+| RELY-02 | Phase 43 | Complete |
 | RELY-03 | Phase 44 | Pending |
 | RELY-04 | Phase 43 | Pending |
 | RELY-05 | Phase 43 | Pending |
