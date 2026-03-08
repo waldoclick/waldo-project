@@ -9,13 +9,13 @@ TypeScript `any` elimination across Strapi services, controllers, type files, fa
 
 ### Ad API (Strapi)
 
-- [ ] **TSANY-01**: All method `options: any` params in `ad.ts` service → `unknown`
-- [ ] **TSANY-02**: `computeAdStatus(ad: any)` in `ad.ts` service → `ad: unknown` with type narrowing
-- [ ] **TSANY-03**: `transformSortParameter(sort: any): any` in `ad.ts` service → `sort: unknown`, return `unknown`
-- [ ] **TSANY-04**: Internal `filters?: any` and `postProcessFilter` params in `ad.ts` service → typed or `unknown`
-- [ ] **TSANY-05**: All `ctx: any` params in `ad.ts` controller → `Context` (from `@strapi/strapi`)
-- [ ] **TSANY-06**: `options: any`, `filterClause: any`, `ads.map((ad: any) =>)` in `ad.ts` controller → `unknown` with narrowing
-- [ ] **TSANY-07**: Inline `filters?: any`, `sort?: any`, `populate?: any` locals in `ad.ts` controller → typed or `unknown`
+- [x] **TSANY-01**: All method `options: any` params in `ad.ts` service → `unknown`
+- [x] **TSANY-02**: `computeAdStatus(ad: any)` in `ad.ts` service → `ad: unknown` with type narrowing
+- [x] **TSANY-03**: `transformSortParameter(sort: any): any` in `ad.ts` service → `sort: unknown`, return `unknown`
+- [x] **TSANY-04**: Internal `filters?: any` and `postProcessFilter` params in `ad.ts` service → typed or `unknown`
+- [x] **TSANY-05**: All `ctx: any` params in `ad.ts` controller → `Context` (from `@strapi/strapi`)
+- [x] **TSANY-06**: `options: any`, `filterClause: any`, `ads.map((ad: any) =>)` in `ad.ts` controller → `unknown` with narrowing
+- [x] **TSANY-07**: Inline `filters?: any`, `sort?: any`, `populate?: any` locals in `ad.ts` controller → typed or `unknown`
 
 ### Type Files
 
@@ -87,13 +87,13 @@ TypeScript `any` elimination across Strapi services, controllers, type files, fa
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| TSANY-01 | Phase 47 | Pending |
-| TSANY-02 | Phase 47 | Pending |
-| TSANY-03 | Phase 47 | Pending |
-| TSANY-04 | Phase 47 | Pending |
-| TSANY-05 | Phase 47 | Pending |
-| TSANY-06 | Phase 47 | Pending |
-| TSANY-07 | Phase 47 | Pending |
+| TSANY-01 | Phase 47 | Complete |
+| TSANY-02 | Phase 47 | Complete |
+| TSANY-03 | Phase 47 | Complete |
+| TSANY-04 | Phase 47 | Complete |
+| TSANY-05 | Phase 47 | Complete |
+| TSANY-06 | Phase 47 | Complete |
+| TSANY-07 | Phase 47 | Complete |
 | TSANY-08 | Phase 48 | Pending |
 | TSANY-09 | Phase 48 | Pending |
 | TSANY-10 | Phase 48 | Pending |
