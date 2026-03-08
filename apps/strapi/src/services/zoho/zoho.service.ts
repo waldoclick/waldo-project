@@ -29,6 +29,7 @@ export class ZohoService implements IZohoService {
               Company: lead.company || "Waldo API",
               Description: lead.description,
               Lead_Source: lead.source,
+              Lead_Status: "New",
             },
           ],
         }
@@ -83,6 +84,9 @@ export class ZohoService implements IZohoService {
               Other_Zip: contact.Other_Zip,
               Other_State: contact.Other_State,
               Other_City: contact.Other_City,
+              Ads_Published__c: 0,
+              Total_Spent__c: 0,
+              Packs_Purchased__c: 0,
             },
           ],
         }
