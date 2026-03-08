@@ -10,20 +10,20 @@ Requirements for the Ad Creation URL Refactor milestone.
 ### Routing
 
 - [ ] **ROUTE-01**: Step 1 remains at `/anunciar` (index.vue is the entry point for the wizard)
-- [ ] **ROUTE-02**: Steps 2–5 each have a dedicated Nuxt page route: `/anunciar/datos-del-producto`, `/anunciar/datos-personales`, `/anunciar/ficha-de-producto`, `/anunciar/galeria-de-imagenes`
+- [x] **ROUTE-02**: Steps 2–5 each have a dedicated Nuxt page route: `/anunciar/datos-del-producto`, `/anunciar/datos-personales`, `/anunciar/ficha-de-producto`, `/anunciar/galeria-de-imagenes`
 - [ ] **ROUTE-03**: `?step=N` query parameter navigation is fully removed from the wizard flow
-- [ ] **ROUTE-04**: Navigating directly to a step URL (2–5) loads the correct step form
+- [x] **ROUTE-04**: Navigating directly to a step URL (2–5) loads the correct step form
 - [ ] **ROUTE-05**: `resumen.vue` back button navigates to `/anunciar/galeria-de-imagenes` instead of `/anunciar?step=5`
 
 ### State Management
 
-- [ ] **STATE-01**: `adStore.step` (number 1–5) is updated to reflect the current step when navigating between step routes
-- [ ] **STATE-02**: Form data accumulated across steps is preserved in the store as the user navigates between step pages
+- [x] **STATE-01**: `adStore.step` (number 1–5) is updated to reflect the current step when navigating between step routes
+- [x] **STATE-02**: Form data accumulated across steps is preserved in the store as the user navigates between step pages
 
 ### Analytics
 
-- [ ] **ANA-01**: `step_view` events continue to fire with Google Ecommerce-compatible step names (`"Payment Method"`, `"General"`, `"Personal Information"`, `"Product Sheet"`, `"Image Gallery"`)
-- [ ] **ANA-02**: Step 1 fires exactly once on entry (no overcounting); steps 2–5 fire on route navigation
+- [x] **ANA-01**: `step_view` events continue to fire with Google Ecommerce-compatible step names (`"Payment Method"`, `"General"`, `"Personal Information"`, `"Product Sheet"`, `"Image Gallery"`)
+- [x] **ANA-02**: Step 1 fires exactly once on entry (no overcounting); steps 2–5 fire on route navigation
 
 ### Code Quality
 
@@ -46,14 +46,14 @@ Requirements for the Ad Creation URL Refactor milestone.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | ROUTE-01 | Phase 42 | Pending |
-| ROUTE-02 | Phase 42 | Pending |
+| ROUTE-02 | Phase 42 | Complete |
 | ROUTE-03 | Phase 42 | Pending |
-| ROUTE-04 | Phase 42 | Pending |
+| ROUTE-04 | Phase 42 | Complete |
 | ROUTE-05 | Phase 42 | Pending |
-| STATE-01 | Phase 42 | Pending |
-| STATE-02 | Phase 42 | Pending |
-| ANA-01 | Phase 42 | Pending |
-| ANA-02 | Phase 42 | Pending |
+| STATE-01 | Phase 42 | Complete |
+| STATE-02 | Phase 42 | Complete |
+| ANA-01 | Phase 42 | Complete |
+| ANA-02 | Phase 42 | Complete |
 | QUAL-01 | Phase 42 | Pending |
 | QUAL-02 | Phase 42 | Pending |
 
