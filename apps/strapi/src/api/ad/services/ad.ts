@@ -11,6 +11,8 @@
 
 import { factories } from "@strapi/strapi";
 import { sendMjmlEmail } from "../../../services/mjml";
+import logger from "../../../utils/logtail";
+import { zohoService } from "../../../services/zoho";
 
 type AdStatus =
   | "active"
@@ -471,6 +473,12 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
         throw new Error("Advertisement is not pending approval");
       }
 
+      // ── EVT-02 guard: capture first-publish state before update ──────────────────
+      // ad.active is the pre-update value. isPending already ensures active===false,
+      // so isFirstPublish is always true here. Guard is explicit for EVT-02 clarity
+      // and to protect against future changes to the isPending check.
+      const isFirstPublish = ad.active !== true;
+
       // Approve the advertisement by updating its status
       await strapi.query("api::ad.ad").update({
         where: { id: adId },
@@ -500,6 +508,36 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
         }
       } catch (emailError) {
         console.error("Error sending approval email:", emailError);
+      }
+
+      // ── EVT-01: Zoho CRM sync — floating promise (non-blocking) ──────────────────
+      // Fires only on first-publish transition (EVT-02 guard).
+      // No Deal created — only Contact stats updated.
+      if (isFirstPublish) {
+        const _zohoEmail = ad.user?.email;
+        Promise.resolve()
+          .then(async () => {
+            if (!_zohoEmail) return;
+            const contact = await zohoService.findContact(_zohoEmail);
+            if (!contact) {
+              logger.info(
+                "Zoho contact not found for ad approval — skipping CRM sync",
+                { adId }
+              );
+              return;
+            }
+            const lastAdPostedAt = new Date().toISOString().split("T")[0];
+            await zohoService.updateContactStats(contact.id, {
+              Ads_Published__c: 1,
+              Last_Ad_Posted_At__c: lastAdPostedAt,
+            });
+          })
+          .catch((zohoError) => {
+            logger.error(
+              "Zoho sync failed for ad approval — approval flow unaffected",
+              { adId, error: zohoError.message }
+            );
+          });
       }
 
       // Return success response
