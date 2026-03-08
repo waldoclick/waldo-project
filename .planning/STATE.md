@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: active — roadmap ready, no plans written yet
-stopped_at: Completed 43-01-PLAN.md
-last_updated: "2026-03-08T02:32:14.153Z"
+stopped_at: Completed 43-02-PLAN.md
+last_updated: "2026-03-08T02:35:46.021Z"
 last_activity: 2026-03-08 — roadmap created; Phases 43-46 defined; 13/13 requirements mapped
 progress:
   total_phases: 4
@@ -62,6 +62,7 @@ Key patterns established (carry forward):
 - **v1.18**: `wizard-guard.ts` — step-skip prevention middleware; client-only; redirects to first incomplete step
 - [Phase 43-zoho-service-reliability]: Use Zoho-oauthtoken header prefix (not Bearer) — Zoho CRM API requirement — Required by Zoho API spec; Bearer is wrong scheme and causes all requests to fail
 - [Phase 43-zoho-service-reliability]: Inject AxiosAdapter via optional constructor param for test isolation — Preserves production path unchanged while enabling axios-mock-adapter injection in tests
+- [Phase 43-zoho-service-reliability]: Do not import from ./index in ZohoService tests — that singleton reads real env vars; test creates its own ZohoHttpClient and ZohoService with dummy config
 
 ### v1.19 Key Decisions (from research)
 
@@ -83,6 +84,6 @@ Key patterns established (carry forward):
 
 ## Session Continuity
 
-Last session: 2026-03-08T02:32:14.152Z
-Stopped at: Completed 43-01-PLAN.md
+Last session: 2026-03-08T02:35:46.020Z
+Stopped at: Completed 43-02-PLAN.md
 Resume with: `/gsd-plan-phase 43`
