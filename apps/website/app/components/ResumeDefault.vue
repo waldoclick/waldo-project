@@ -30,7 +30,7 @@
               <ButtonEdit
                 v-if="summary.showEditLinks"
                 :show-edit-links="summary.showEditLinks"
-                to="/anunciar?step=1"
+                to="/anunciar"
                 title="Editar Información general"
                 :icon-edit="iconEdit"
               />
@@ -67,7 +67,7 @@
               <ButtonEdit
                 v-if="summary.showEditLinks"
                 :show-edit-links="summary.showEditLinks"
-                to="/anunciar?step=2"
+                to="/anunciar/datos-del-producto"
                 title="Editar General"
                 :icon-edit="iconEdit"
               />
@@ -99,7 +99,7 @@
               <ButtonEdit
                 v-if="summary.showEditLinks"
                 :show-edit-links="summary.showEditLinks"
-                to="/anunciar?step=3"
+                to="/anunciar/datos-personales"
                 title="Editar Información personal"
                 :icon-edit="iconEdit"
               />
@@ -131,7 +131,7 @@
               <ButtonEdit
                 v-if="summary.showEditLinks"
                 :show-edit-links="summary.showEditLinks"
-                to="/anunciar?step=4"
+                to="/anunciar/ficha-de-producto"
                 title="Editar Ficha del producto"
                 :icon-edit="iconEdit"
               />
@@ -170,7 +170,7 @@
               <ButtonEdit
                 v-if="summary.showEditLinks"
                 :show-edit-links="summary.showEditLinks"
-                to="/anunciar?step=5"
+                to="/anunciar/galeria-de-imagenes"
                 title="Editar Galería de imágenes"
                 :icon-edit="iconEdit"
               />
