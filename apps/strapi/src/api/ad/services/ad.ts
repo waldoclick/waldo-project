@@ -23,48 +23,72 @@ type AdStatus =
   | "abandoned"
   | "unknown";
 
-function computeAdStatus(ad: any): AdStatus {
-  if (!ad) return "unknown";
+interface AdQueryOptions {
+  filters?: unknown;
+  populate?: unknown;
+  page?: string | number;
+  pageSize?: string | number;
+  sort?: unknown;
+  orderBy?: unknown;
+  pagination?: {
+    page?: string;
+    pageSize?: string;
+  };
+}
+
+function computeAdStatus(ad: unknown): AdStatus {
+  if (!ad || typeof ad !== "object") return "unknown";
+  const adObj = ad as Record<string, unknown>;
 
   const hasReservationKey = Object.prototype.hasOwnProperty.call(
-    ad,
+    adObj,
     "ad_reservation"
   );
 
-  if (ad.rejected) {
+  if (adObj.rejected) {
     return "rejected";
   }
 
-  if (ad.banned) {
+  if (adObj.banned) {
     return "banned";
   }
 
-  if (ad.active && !ad.banned && !ad.rejected && ad.remaining_days > 0) {
+  if (
+    adObj.active &&
+    !adObj.banned &&
+    !adObj.rejected &&
+    (adObj.remaining_days as number) > 0
+  ) {
     return "active";
   }
 
-  if (!ad.active && !ad.banned && !ad.rejected && ad.remaining_days === 0) {
+  if (
+    !adObj.active &&
+    !adObj.banned &&
+    !adObj.rejected &&
+    adObj.remaining_days === 0
+  ) {
     return "archived";
   }
 
   if (
-    !ad.active &&
-    !ad.banned &&
-    !ad.rejected &&
-    ad.remaining_days > 0 &&
+    !adObj.active &&
+    !adObj.banned &&
+    !adObj.rejected &&
+    (adObj.remaining_days as number) > 0 &&
     hasReservationKey &&
-    (ad.ad_reservation == null || ad.ad_reservation === undefined) &&
-    ad.is_paid
+    (adObj.ad_reservation == null || adObj.ad_reservation === undefined) &&
+    adObj.is_paid
   ) {
     return "abandoned";
   }
 
   if (
-    !ad.active &&
-    !ad.banned &&
-    !ad.rejected &&
-    ad.remaining_days > 0 &&
-    (!hasReservationKey || ad.ad_reservation != null)
+    !adObj.active &&
+    !adObj.banned &&
+    !adObj.rejected &&
+    (adObj.remaining_days as number) > 0 &&
+    (!hasReservationKey || adObj.ad_reservation != null)
   ) {
     return "pending";
   }
@@ -77,7 +101,7 @@ function computeAdStatus(ad: any): AdStatus {
  * @param {string|object} sort - Sort parameter (e.g., "createdAt:asc" or {createdAt: "asc"})
  * @returns {object} Transformed sort object for Strapi query
  */
-function transformSortParameter(sort: any): any {
+function transformSortParameter(sort: unknown): unknown {
   if (!sort) return { createdAt: "desc" };
 
   // If already an object, return as is
@@ -109,16 +133,16 @@ function transformSortParameter(sort: any): any {
  * @returns {Promise<Object>} Paginated list of advertisements
  */
 async function getAdvertisements(
-  options: any,
-  defaultFilters: any,
+  options: AdQueryOptions,
+  defaultFilters: Record<string, unknown>,
   status: string,
-  postProcessFilter?: (ads: any[]) => any[]
+  postProcessFilter?: (ads: unknown[]) => unknown[]
 ) {
   try {
     // Merge default filters with any additional filters provided
     const filters = {
       ...defaultFilters,
-      ...(options.filters || {}),
+      ...((options.filters as Record<string, unknown>) || {}),
     };
 
     // Define default relations to populate
@@ -137,12 +161,12 @@ async function getAdvertisements(
     // Merge custom populates with defaults
     const populate = {
       ...defaultPopulate,
-      ...(options.populate || {}),
+      ...((options.populate as Record<string, unknown>) || {}),
     };
 
     // Set up pagination parameters
-    const page = options.page ? parseInt(options.page) : 1;
-    const pageSize = options.pageSize ? parseInt(options.pageSize) : 25;
+    const page = options.page ? parseInt(String(options.page)) : 1;
+    const pageSize = options.pageSize ? parseInt(String(options.pageSize)) : 25;
     const start = (page - 1) * pageSize;
 
     // Build the database query
@@ -151,7 +175,7 @@ async function getAdvertisements(
       populate,
       limit: pageSize,
       offset: start,
-      orderBy: transformSortParameter(options.sort),
+      orderBy: transformSortParameter(options.sort) as Record<string, string>,
     };
 
     // Execute query and count in parallel for better performance
@@ -228,11 +252,11 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
    * @param {Object} options - Query options
    * @returns {Promise<Object>} Advertisement with status field
    */
-  async findOne(id: string | number, options: any = {}) {
+  async findOne(id: string | number, options: AdQueryOptions = {}) {
     // Call the original findOne method
     const ad = await strapi.db.query("api::ad.ad").findOne({
       where: { id },
-      ...options,
+      ...(options as Record<string, unknown>),
     });
 
     if (!ad) return null;
@@ -252,12 +276,12 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
    * @param {Object} options - Query options
    * @returns {Promise<Object>} Advertisements with status field
    */
-  async findMany(options: any = {}) {
+  async findMany(options: AdQueryOptions = {}) {
     // Set default sorting by name if no sort is provided
     const queryOptions = {
       ...options,
       orderBy: options.orderBy || { name: "asc" },
-    };
+    } as Record<string, unknown>;
 
     // Call the original findMany method with all options (including orderBy)
     const ads = await strapi.db.query("api::ad.ad").findMany(queryOptions);
@@ -300,7 +324,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
    *   pageSize: 10
    * });
    */
-  async activeAds(options: any = {}) {
+  async activeAds(options: AdQueryOptions = {}) {
     const defaultFilters = {
       active: { $eq: true },
       banned: { $eq: false },
@@ -331,7 +355,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
    * // Get all pending ads for approval
    * const pendingAds = await strapi.service("api::ad.ad").pendingAds();
    */
-  async pendingAds(options: any = {}) {
+  async pendingAds(options: AdQueryOptions = {}) {
     const defaultFilters = {
       active: { $eq: false },
       banned: { $eq: false },
@@ -363,7 +387,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
    * // Get all archived ads
    * const archivedAds = await strapi.service("api::ad.ad").archivedAds();
    */
-  async archivedAds(options: any = {}) {
+  async archivedAds(options: AdQueryOptions = {}) {
     const defaultFilters = {
       active: { $eq: false },
       banned: { $eq: false },
@@ -382,7 +406,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
    * @param {Object} options - Query options for filtering and pagination
    * @returns {Promise<Object>} Paginated list of banned advertisements
    */
-  async bannedAds(options: any = {}) {
+  async bannedAds(options: AdQueryOptions = {}) {
     const defaultFilters = {
       banned: { $eq: true },
     };
@@ -408,7 +432,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
    * // Get all rejected ads
    * const rejectedAds = await strapi.service("api::ad.ad").rejectedAds();
    */
-  async rejectedAds(options: any = {}) {
+  async rejectedAds(options: AdQueryOptions = {}) {
     const defaultFilters = {
       rejected: { $eq: true },
     };
@@ -421,7 +445,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
    *
    * Ads that required payment but never completed it (no ad_reservation assigned).
    */
-  async abandonedAds(options: any = {}) {
+  async abandonedAds(options: AdQueryOptions = {}) {
     const defaultFilters = {
       active: { $eq: false },
       banned: { $eq: false },

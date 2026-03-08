@@ -8,6 +8,7 @@
  */
 
 import { factories } from "@strapi/strapi";
+import { Context } from "koa";
 
 interface PaginationMeta {
   pagination: {
@@ -19,13 +20,13 @@ interface PaginationMeta {
 }
 
 interface QueryParams {
-  filters?: any;
+  filters?: unknown;
   pagination?: {
     page?: string;
     pageSize?: string;
   };
-  sort?: any;
-  populate?: any;
+  sort?: unknown;
+  populate?: unknown;
 }
 
 /**
@@ -46,7 +47,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    *
    * @route GET /api/ads/:id
    */
-  async findOne(ctx: any) {
+  async findOne(ctx: Context) {
     // Delegate to the core controller to keep default behavior (sanitization, etc.)
     const response = await super.findOne(ctx);
 
@@ -68,19 +69,20 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    *
    * @route GET /api/ads/actives
    */
-  async actives(ctx: any) {
+  async actives(ctx: Context) {
     try {
-      const { query } = ctx;
+      const query = ctx.query as Record<string, unknown>;
+      const pagination = query.pagination as Record<string, string> | undefined;
 
       // Extract pagination parameters from query.pagination
-      const options: any = {
+      const options: Record<string, unknown> = {
         ...query,
-        page: query.pagination?.page
-          ? parseInt(query.pagination.page, 10)
-          : query.page || 1,
-        pageSize: query.pagination?.pageSize
-          ? parseInt(query.pagination.pageSize, 10)
-          : query.pageSize || 25,
+        page: pagination?.page
+          ? parseInt(pagination.page, 10)
+          : (query.page as number) || 1,
+        pageSize: pagination?.pageSize
+          ? parseInt(pagination.pageSize, 10)
+          : (query.pageSize as number) || 25,
       };
 
       // Remove pagination object if it exists to avoid conflicts
@@ -103,19 +105,20 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    *
    * @route GET /api/ads/pendings
    */
-  async pendings(ctx: any) {
+  async pendings(ctx: Context) {
     try {
-      const { query } = ctx;
+      const query = ctx.query as Record<string, unknown>;
+      const pagination = query.pagination as Record<string, string> | undefined;
 
       // Extract pagination parameters from query.pagination
-      const options: any = {
+      const options: Record<string, unknown> = {
         ...query,
-        page: query.pagination?.page
-          ? parseInt(query.pagination.page, 10)
-          : query.page || 1,
-        pageSize: query.pagination?.pageSize
-          ? parseInt(query.pagination.pageSize, 10)
-          : query.pageSize || 25,
+        page: pagination?.page
+          ? parseInt(pagination.page, 10)
+          : (query.page as number) || 1,
+        pageSize: pagination?.pageSize
+          ? parseInt(pagination.pageSize, 10)
+          : (query.pageSize as number) || 25,
       };
 
       // Remove pagination object if it exists to avoid conflicts
@@ -138,19 +141,20 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    *
    * @route GET /api/ads/archiveds
    */
-  async archiveds(ctx: any) {
+  async archiveds(ctx: Context) {
     try {
-      const { query } = ctx;
+      const query = ctx.query as Record<string, unknown>;
+      const pagination = query.pagination as Record<string, string> | undefined;
 
       // Extract pagination parameters from query.pagination
-      const options: any = {
+      const options: Record<string, unknown> = {
         ...query,
-        page: query.pagination?.page
-          ? parseInt(query.pagination.page, 10)
-          : query.page || 1,
-        pageSize: query.pagination?.pageSize
-          ? parseInt(query.pagination.pageSize, 10)
-          : query.pageSize || 25,
+        page: pagination?.page
+          ? parseInt(pagination.page, 10)
+          : (query.page as number) || 1,
+        pageSize: pagination?.pageSize
+          ? parseInt(pagination.pageSize, 10)
+          : (query.pageSize as number) || 25,
       };
 
       // Remove pagination object if it exists to avoid conflicts
@@ -174,18 +178,19 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    *
    * @route GET /api/ads/banneds
    */
-  async banneds(ctx: any) {
+  async banneds(ctx: Context) {
     try {
-      const { query } = ctx;
+      const query = ctx.query as Record<string, unknown>;
+      const pagination = query.pagination as Record<string, string> | undefined;
 
-      const options: any = {
+      const options: Record<string, unknown> = {
         ...query,
-        page: query.pagination?.page
-          ? parseInt(query.pagination.page, 10)
-          : query.page || 1,
-        pageSize: query.pagination?.pageSize
-          ? parseInt(query.pagination.pageSize, 10)
-          : query.pageSize || 25,
+        page: pagination?.page
+          ? parseInt(pagination.page, 10)
+          : (query.page as number) || 1,
+        pageSize: pagination?.pageSize
+          ? parseInt(pagination.pageSize, 10)
+          : (query.pageSize as number) || 25,
       };
 
       if (options.pagination) {
@@ -207,19 +212,20 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    *
    * @route GET /api/ads/rejecteds
    */
-  async rejecteds(ctx: any) {
+  async rejecteds(ctx: Context) {
     try {
-      const { query } = ctx;
+      const query = ctx.query as Record<string, unknown>;
+      const pagination = query.pagination as Record<string, string> | undefined;
 
       // Extract pagination parameters from query.pagination
-      const options: any = {
+      const options: Record<string, unknown> = {
         ...query,
-        page: query.pagination?.page
-          ? parseInt(query.pagination.page, 10)
-          : query.page || 1,
-        pageSize: query.pagination?.pageSize
-          ? parseInt(query.pagination.pageSize, 10)
-          : query.pageSize || 25,
+        page: pagination?.page
+          ? parseInt(pagination.page, 10)
+          : (query.page as number) || 1,
+        pageSize: pagination?.pageSize
+          ? parseInt(pagination.pageSize, 10)
+          : (query.pageSize as number) || 25,
       };
 
       // Remove pagination object if it exists to avoid conflicts
@@ -241,18 +247,19 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    *
    * @route GET /api/ads/abandoneds
    */
-  async abandoneds(ctx: any) {
+  async abandoneds(ctx: Context) {
     try {
-      const { query } = ctx;
+      const query = ctx.query as Record<string, unknown>;
+      const pagination = query.pagination as Record<string, string> | undefined;
 
-      const options: any = {
+      const options: Record<string, unknown> = {
         ...query,
-        page: query.pagination?.page
-          ? parseInt(query.pagination.page, 10)
-          : query.page || 1,
-        pageSize: query.pagination?.pageSize
-          ? parseInt(query.pagination.pageSize, 10)
-          : query.pageSize || 25,
+        page: pagination?.page
+          ? parseInt(pagination.page, 10)
+          : (query.page as number) || 1,
+        pageSize: pagination?.pageSize
+          ? parseInt(pagination.pageSize, 10)
+          : (query.pageSize as number) || 25,
       };
 
       if (options.pagination) {
@@ -276,7 +283,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    *
    * @route PUT /api/ads/:id/approve
    */
-  async approveAd(ctx: any) {
+  async approveAd(ctx: Context) {
     try {
       const { id } = ctx.params;
       const userId = ctx.state.user.id;
@@ -303,7 +310,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    *
    * @route PUT /api/ads/:id/reject
    */
-  async rejectAd(ctx: any) {
+  async rejectAd(ctx: Context) {
     try {
       const { id } = ctx.params;
       const { reason_rejected } = ctx.request.body;
@@ -333,7 +340,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    *
    * @route GET /api/ads/me/counts
    */
-  async meCounts(ctx: any) {
+  async meCounts(ctx: Context) {
     try {
       if (!ctx.state.user?.id) {
         return ctx.unauthorized(
@@ -350,7 +357,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
             banned: false,
             rejected: false,
             remaining_days: { $gt: 0 },
-          } as any,
+          } as unknown as Record<string, unknown>,
         }),
         strapi.entityService.count("api::ad.ad", {
           filters: {
@@ -360,7 +367,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
             rejected: false,
             remaining_days: { $gt: 0 },
             $or: [{ is_paid: true, order: { $ne: null } }, { is_paid: false }],
-          } as any,
+          } as unknown as Record<string, unknown>,
         }),
         strapi.entityService.count("api::ad.ad", {
           filters: {
@@ -369,13 +376,19 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
             banned: false,
             rejected: false,
             remaining_days: 0,
-          } as any,
+          } as unknown as Record<string, unknown>,
         }),
         strapi.entityService.count("api::ad.ad", {
-          filters: { user: userId, rejected: true } as any,
+          filters: { user: userId, rejected: true } as unknown as Record<
+            string,
+            unknown
+          >,
         }),
         strapi.entityService.count("api::ad.ad", {
-          filters: { user: userId, banned: true } as any,
+          filters: { user: userId, banned: true } as unknown as Record<
+            string,
+            unknown
+          >,
         }),
       ]);
 
@@ -393,7 +406,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    *
    * @route GET /api/ads/me
    */
-  async me(ctx: any) {
+  async me(ctx: Context) {
     try {
       // Ensure ctx.state.user is defined
       if (!ctx.state.user || !ctx.state.user.id) {
@@ -407,15 +420,17 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
 
       // Extract Strapi query parameters from ctx.query
       const {
-        filters = {},
+        filters: rawFilters = {},
         pagination = {},
         sort = {},
         populate = "*",
       } = ctx.query as QueryParams;
 
+      const filters = rawFilters as Record<string, unknown>;
+
       // Validate pagination
-      const page = parseInt(pagination.page, 10) || 1;
-      const pageSize = parseInt(pagination.pageSize, 10) || 10;
+      const page = parseInt(pagination.page as string, 10) || 1;
+      const pageSize = parseInt(pagination.pageSize as string, 10) || 10;
 
       if (page <= 0 || pageSize <= 0) {
         return ctx.badRequest(
@@ -424,7 +439,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
       }
 
       // Extract status from filters
-      const status = filters?.status;
+      const status = filters?.status as string | undefined;
 
       // Validate status is required
       if (!status) {
@@ -449,12 +464,12 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
       }
 
       // Ensure filters is an object
-      const filterClause: any = {
+      const filterClause: Record<string, unknown> = {
         user: userId, // Filter by user ID
       };
 
       // Remove status from filters if it exists
-      const { status: _, ...restFilters } = filters;
+      const { status: _, ...restFilters } = filters as Record<string, unknown>;
 
       // Add any other valid filters
       if (typeof restFilters === "object") {
@@ -519,7 +534,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
       });
 
       // Add status from filters to each ad
-      const adsWithStatus = ads.map((ad: any) => ({
+      const adsWithStatus = ads.map((ad) => ({
         ...ad,
         status: status || "unknown",
       }));
@@ -554,9 +569,9 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    *
    * @route POST /api/ads/upload
    */
-  async upload(ctx: any) {
+  async upload(ctx: Context) {
     try {
-      const { files } = ctx.request.files;
+      const { files } = ctx.request.files as Record<string, unknown>;
 
       if (!files) {
         return ctx.badRequest("No files provided");
@@ -564,11 +579,13 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
 
       // Agregar "ad_" al principio del nombre de cada archivo
       if (Array.isArray(files)) {
-        files.forEach((file) => {
+        (files as Record<string, unknown>[]).forEach((file) => {
           file.name = `ad_${file.name}`;
         });
       } else {
-        files.name = `ad_${files.name}`;
+        (files as Record<string, unknown>).name = `ad_${
+          (files as Record<string, unknown>).name
+        }`;
       }
 
       const uploaded = await strapi.plugin("upload").service("upload").upload({
@@ -590,7 +607,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    *
    * @route PUT /api/ads/:id/banned
    */
-  async bannedAd(ctx: any) {
+  async bannedAd(ctx: Context) {
     try {
       const { id } = ctx.params;
       const reasonForBan = ctx.request.body?.reason_for_ban;
@@ -627,7 +644,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    *
    * @route PUT /api/ads/:id/deactivate
    */
-  async deactivateAd(ctx: any) {
+  async deactivateAd(ctx: Context) {
     try {
       const { id } = ctx.params;
       const reasonForDeactivation = ctx.request.body?.reason_for_deactivation;
