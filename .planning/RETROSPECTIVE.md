@@ -654,6 +654,50 @@
 
 ---
 
+## Milestone: v1.21 — Ad Draft Decoupling
+
+**Shipped:** 2026-03-08
+**Phases:** 1 (52) | **Plans:** 4 | **Timeline:** 1 day
+**Files changed:** 25 files, +2,186/-61 lines (apps/strapi, apps/website, apps/dashboard) | **Requirements:** 11/11 complete ✓
+
+### What Was Built
+- `draft: boolean` field added to Ad content-type schema (`required: true`, `default: true`) — every new ad is a draft from creation
+- Idempotent migration seeder sets `draft: true` on all existing ads with abandoned condition (`active=false`, `ad_reservation=null`)
+- `computeAdStatus()` returns `"draft"` as the first status check; `"abandoned"` status eliminated from the codebase
+- `POST /api/ads/save-draft` (moved from payment domain to ad domain): creates or updates draft ad before payment; returns `{ data: { id } }`
+- `publishAd()` method in `ad.utils.ts` sets `draft: false`; called in both `processPaidWebpay()` and `processFreePayment()` after payment confirmed
+- `resumen.vue` calls draft endpoint before payment for all non-free packs; `ad_id` returned and stored in `adStore`
+- Dashboard `abandoned.vue` repurposed as Borradores — label, endpoint (`/ads/drafts`), and filter all updated
+
+### What Worked
+- The `draft` field as a single boolean source of truth was immediately simpler than the multi-condition `abandoned` check it replaced — one field to set, one field to check, one migration path
+- Phase split into 4 atomic plans (schema → service/route → draft endpoint → frontend) gave clean execution boundaries with no cross-plan bleed
+- Post-verification bug discovery (`draft: false` never being set on paid ads) was caught through manual testing of the full payment flow — the test coverage gap was real but the fix was clear and isolated
+- Moving the endpoint from payment domain to ad domain was the right call when found: `saveDraft` is an ad concern, co-located with `draftAds()`, `computeAdStatus()`, and the schema
+
+### What Was Inefficient
+- The original plan had `POST /api/payments/ad-draft` in the payment domain — the domain assignment was wrong and required a mid-session move. A brief ownership audit (what domain does this belong to?) before naming the endpoint would have caught this
+- `draft: false` on payment confirmation was not in the original requirements — it was discovered as a critical data integrity bug during UAT. The requirement "ads with `draft: true` after payment" was a logical consequence of adding the field but not explicitly planned. Future `draft`-touching endpoints should always ask: "what sets this back to false?"
+- The Strapi permission for `GET /api/ads/drafts` had to be inserted manually into the SQLite DB — Strapi's admin permission UI is required but out of scope for automated execution. This class of permission setup should be documented as a manual deploy step in the plan
+
+### Patterns Established
+- **`publishAd(adId)` helper pattern**: any payment confirmation path (Transbank callback or free payment) MUST call `publishAd()` to set `draft: false` — never rely on the default value alone
+- **Endpoint domain assignment**: route location should match the primary entity, not the triggering flow. `save-draft` lives in `/api/ads/`, not `/api/payments/`, because the result is an `Ad` record
+- **"What sets this back?" audit**: when adding a boolean field with `default: true`, always explicitly plan the flip to `false` before considering the feature complete
+- **Strapi permission as manual deploy step**: any new public endpoint needs a permission entry in the Strapi admin. Document this as an explicit post-deploy step in the plan, not an afterthought
+
+### Key Lessons
+1. **Plan the full lifecycle of a new boolean field.** Adding `draft: true` as default is not complete until you also plan `draft: false` (when, where, by whom). The missing `publishAd()` call was a critical data integrity bug that required a hotfix — it should have been in the original requirements.
+2. **Endpoint domain belongs with the entity, not the trigger.** The payment flow triggers the draft save, but the result is an Ad — `POST /api/ads/save-draft` is correct; `POST /api/payments/ad-draft` mixes concerns. Apply this to any new endpoint: where does the resulting record live?
+3. **Strapi permission setup is a deploy-time manual step.** New endpoints (especially non-standard routes) require explicit permission setup in the Strapi admin panel. This should be documented in the plan as a manual step, not treated as automatically granted.
+
+### Cost Observations
+- Model mix: ~100% sonnet
+- Sessions: ~5 (one per plan + UAT + hotfixes + milestone close)
+- Notable: The `publishAd()` hotfix was discovered through manual UAT (reservation flow test), not through automated tests — a strong argument for a Jest test covering the full payment confirmation path that asserts `draft: false` on the resulting ad
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -681,6 +725,7 @@
 | v1.18 | 1 | 3 | Ad creation URL refactor: 5 dedicated wizard routes; wizard-guard middleware; per-page analytics; `?step=N` eliminated |
 | v1.19 | 4 | 8 | Zoho CRM sync model: reliable HTTP client, 4 service methods, payment + publish event wiring |
 | v1.20 | 5 | 5 | TypeScript any elimination: zero `any` across all Strapi services, utils, middlewares, seeders, and test files |
+| v1.21 | 1 | 4 | Ad draft decoupling: `draft` field lifecycle, `publishAd()` helper, endpoint domain assignment, Strapi permission deploy step |
 
 ### Cumulative Quality
 
@@ -707,6 +752,7 @@
 | v1.18 | utils + jest (strapi) | true | 1 (wizard-guard middleware) |
 | v1.19 | utils + jest (zoho, pack, ad) | true | 0 |
 | v1.20 | utils + jest (all payment tests) | true | 0 |
+| v1.21 | utils + jest (payment + draft) | true | 0 |
 
 ### Top Lessons (Verified Across Milestones)
 
@@ -730,6 +776,9 @@
 18. Pre-read all callers before changing a return type to `unknown` — every call site accessing a named property will break; a 2-min grep is cheaper than a TSC round-trip
 19. TypeScript union narrowing doesn't work on optional property absence — when callers branch on shape, introduce a local interface + cast at the guard site rather than relying on union inference
 20. `(global as unknown as { strapi: MockStrapi })` for Jest global mocks avoids conflict with `@strapi/types` global `var strapi: Strapi` declaration
+21. Plan the full lifecycle of a new boolean field — adding `default: true` is not complete until the flip to `false` is also planned (who, when, where)
+22. Endpoint domain belongs with the entity, not the trigger — `POST /api/ads/save-draft` (not `/api/payments/ad-draft`) because the result is an Ad
+23. Strapi permission setup for new non-standard routes is a manual deploy-time step — document it explicitly in the plan
 
 ## Milestone: v1.17 — Security & Stability
 

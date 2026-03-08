@@ -215,6 +215,9 @@ class AdService {
         await PaymentUtils.ad.updateAdReservation(adId, adReservationId);
       }
 
+      // Publish the ad — clear draft flag now that payment/reservation is confirmed
+      await PaymentUtils.ad.publishAd(Number(adId));
+
       // Enviar emails con MJML
       try {
         // Email de confirmación al usuario
@@ -470,6 +473,9 @@ class AdService {
       // Capture values before any potential reassignment in the method above
       const _zohoEmail = adData.ad?.user?.email;
       const _zohoAmount = wepbayResponse.response?.amount;
+
+      // Publish the ad — clear draft flag now that payment is confirmed
+      await PaymentUtils.ad.publishAd(Number(adId));
       Promise.resolve()
         .then(async () => {
           if (!_zohoEmail) return;

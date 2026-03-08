@@ -1,5 +1,24 @@
 # Milestones
 
+## v1.21 Ad Draft Decoupling (Shipped: 2026-03-08)
+
+**Phases completed:** 1 phase (52), 4 plans
+**Files changed:** 25 files, +2,186 / -61 lines (apps/strapi, apps/website, apps/dashboard)
+**Timeline:** 2026-03-08 (single day)
+**Requirements:** 11/11 complete ✓
+
+**Key accomplishments:**
+1. **Schema + Migration (Plan 52-01)**: Added `draft: boolean` field (`required: true`, `default: true`) to Ad content-type — every new ad is born as a draft; idempotent migration seeder sets `draft: true` on all existing ads with abandoned condition (`active=false`, `ad_reservation=null`).
+2. **Service + Route Layer (Plan 52-02)**: `computeAdStatus()` returns `"draft"` as the first check before all other statuses; `AdStatus` union updated to include `"draft"` and exclude `"abandoned"`; `draftAds()` service method + `drafts()` controller handler + `GET /ads/drafts` route replace the old `abandonedAds`/`abandoneds` stack.
+3. **Draft Endpoint (Plan 52-03)**: `POST /api/ads/save-draft` (moved from payment domain to ad domain) — `saveDraft()` branches on incoming `ad_id`: updates existing draft or creates new one with `draft: true`; returns `{ data: { id } }` for frontend consumption.
+4. **Frontend Wiring (Plan 52-04)**: `resumen.vue` calls draft endpoint before payment initiation for all non-free packs; returned `ad_id` stored in `adStore` and passed to subsequent payment calls; dashboard `abandoned.vue` repurposed as Borradores — label, endpoint, and filter all updated to use `ads/drafts`.
+
+**Runtime fixes (post-verification)**: `publishAd()` method added to `ad.utils.ts` — sets `draft: false` on confirmed payment; called in both `processPaidWebpay()` and `processFreePayment()` in `ad.service.ts`. Strapi permission for `api::ad.ad.drafts` inserted into DB for Manager role. Existing dirty ads (ids 41, 42) manually cleaned in SQLite.
+
+**Archive:** `.planning/milestones/v1.21-ROADMAP.md` | `.planning/milestones/v1.21-REQUIREMENTS.md`
+
+---
+
 ## v1.20 TypeScript any Elimination (Shipped: 2026-03-08)
 
 **Phases completed:** 5 phases (47-51), 5 plans

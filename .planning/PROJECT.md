@@ -88,6 +88,14 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
    - ✓ All 5 seeder files use `Core.Strapi` (not `strapi: any`); 4 payment test files use typed result interfaces + `(global as unknown as { strapi: MockStrapi })` cast — v1.20
    - ✓ `tsc --noEmit` exits 0 and all Jest tests pass after every phase — v1.20
 
+   - ✓ `draft: boolean` field (`required: true`, `default: true`) added to Ad schema — every new ad is born as a draft until payment is confirmed — v1.21
+   - ✓ `computeAdStatus()` returns `"draft"` as the first check; `"abandoned"` status eliminated from codebase — v1.21
+   - ✓ `POST /api/ads/save-draft` endpoint — creates/updates ad draft before payment initiation; returns `{ data: { id } }` — v1.21
+   - ✓ `resumen.vue` calls draft endpoint before payment for all non-free packs; `ad_id` stored in `adStore` and passed to subsequent payment calls — v1.21
+   - ✓ `publishAd()` sets `draft: false` on payment confirmation; called in both `processPaidWebpay()` and `processFreePayment()` — v1.21
+   - ✓ Dashboard "Abandonados" → "Borradores": label, endpoint, and filter all use `ads/drafts` — v1.21
+   - ✓ Migration seeder sets `draft: true` on all existing ads with abandoned condition (`active=false`, `ad_reservation=null`) — v1.21
+
 ## Context
 
 - Monorepo con Turbo para orquestación de tareas
@@ -98,6 +106,7 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - Dashboard (apps/dashboard): Nuxt 4, Pinia, @nuxtjs/strapi v2, SCSS custom; ~65 componentes, 3 stores, 14 plugins; typeCheck: true (since v1.1)
 - Website (apps/website): Nuxt 4, Pinia, @nuxtjs/strapi v2; 34 páginas lang="ts" (5 new step pages added in v1.18), 14 stores con persist audit, typeCheck: true (since v1.9)
 - Ad creation wizard (v1.18): 5 dedicated routes (`/anunciar`, `/anunciar/datos-del-producto`, `/datos-personales`, `/ficha-de-producto`, `/galeria-de-imagenes`); `wizard-guard.ts` middleware prevents step skipping (SSR-safe); `stepRoutes` Record map in `CreateAd.vue`; per-page `stepView` analytics
+- Ad draft flow (v1.21): `draft: boolean` field on Ad schema (`default: true`); `POST /api/ads/save-draft` creates/updates draft before payment; `publishAd()` sets `draft: false` on payment confirmation; `computeAdStatus()` checks draft first; dashboard Borradores section uses `/ads/drafts` endpoint; free ad flow skips draft call entirely
 - 4 cron jobs activos en Strapi: `adCron` (1 AM), `userCron` (2 AM), `backupCron` (3 AM), `cleanupCron` (domingo 4 AM)
 - `cron-runner` API disponible en `POST /api/cron-runner/:name` para ejecución manual de cualquier cron
 - GTM handled via `@saslavik/nuxt-gtm@0.1.3` module in both website (since v1.13) and dashboard (since v1.14) — `enableRouterSync: true` fires page_view on every SPA route change; GTM ID from `runtimeConfig.public.gtm.id`; hand-rolled `gtm.client.ts` plugins deleted in both apps
@@ -188,17 +197,11 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
    | `WebpayAdResult` local interface for `processPaidWebpay` | TypeScript union narrowing doesn't work on optional property absence; local interface gives exact type safety at the guard site — v1.20 | ✓ Good |
    | `(global as unknown as { strapi: MockStrapi })` for test global | `@strapi/types` already declares `global var strapi: Strapi`; redeclaring with narrower type causes TS conflict; double-cast via `unknown` bypasses without touching global scope — v1.20 | ✓ Good |
    | `Core.Strapi` (imported from `@strapi/strapi`) for seeder + factory DI params | Official Strapi-provided type for the full Strapi instance; replaces `strapi: any` in all seeder functions and service factories — v1.20 | ✓ Good |
-
-## Current Milestone: v1.21 Ad Draft Decoupling
-
-**Goal:** Desacoplar la creación del aviso del flujo de pago — el aviso se guarda como borrador (`draft: true`) al presionar "Pagar/Confirmar", independiente del proceso de pago. Los avisos gratuitos no se tocan.
-
-**Target features:**
-- Campo `draft` en el modelo de aviso (Strapi schema)
-- Endpoint `POST /api/payments/ad-draft` para persistir el borrador sin iniciar pago
-- Frontend llama el endpoint de borrador antes de iniciar flujo de pago existente
-- `computeAdStatus` y filtros de `pending`/`abandoned` excluyen borradores
-- Flujo de avisos gratuitos (`pack=free`) sin cambios
+   | `draft: boolean` field as single source of truth for draft state | Replaces complex multi-condition `abandoned` check; one field, one check, one migration path — v1.21 | ✓ Good |
+   | Intersection type cast `(adData as AdData & { draft: boolean; is_paid: boolean })` | Avoids modifying shared `AdData` interface for fields only relevant to draft/payment flow — v1.21 | ✓ Good |
+   | `publishAd()` called in both Transbank and free payment paths | Ensures every payment confirmation flips `draft: false`; no ad stays in draft state after successful payment — v1.21 | ✓ Good |
+   | `POST /api/ads/save-draft` in ad domain (not payment domain) | Draft is an ad concern, not a payment concern; co-located with `draftAds()`, `computeAdStatus()`, and ad schema — v1.21 | ✓ Good |
+   | Free ad flow (`pack=free`) skips draft call entirely | Free pack ads don't go through payment; draft pre-call would be orphaned; no `draft: false` flip needed for free packs — v1.21 | ✓ Good |
 
 ## Future Requirements
 
@@ -215,4 +218,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-08 after v1.21 milestone start — Ad Draft Decoupling*
+*Last updated: 2026-03-08 after v1.21 milestone — Ad Draft Decoupling*

@@ -591,6 +591,9 @@ export interface ApiAdAd extends Struct.CollectionTypeSchema {
     depth: Schema.Attribute.BigInteger;
     description: Schema.Attribute.Text;
     details: Schema.Attribute.JSON;
+    draft: Schema.Attribute.Boolean &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<true>;
     duration_days: Schema.Attribute.Integer &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<0>;

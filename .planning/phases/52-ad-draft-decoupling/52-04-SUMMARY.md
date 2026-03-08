@@ -71,7 +71,7 @@ Each task was committed atomically:
 1. **Task 1: Add pre-payment draft save to handlePayClick in resumen.vue** - `95a009a` (feat)
 2. **Task 2: Update dashboard abandoned.vue to show Borradores** - `addb105` (feat)
 
-**Plan metadata:** (docs commit — pending)
+**Plan metadata:** `a424e4a` (docs: complete plan)
 
 ## Files Created/Modified
 
@@ -120,3 +120,12 @@ None - no external service configuration required.
 ---
 *Phase: 52-ad-draft-decoupling*
 *Completed: 2026-03-08*
+
+## Self-Check: PASSED
+
+- `apps/website/app/pages/anunciar/resumen.vue` — FOUND ✓
+- `apps/dashboard/app/pages/ads/abandoned.vue` — FOUND ✓
+- `.planning/phases/52-ad-draft-decoupling/52-04-SUMMARY.md` — FOUND ✓
+- Commit `95a009a` (Task 1) — FOUND ✓
+- Commit `addb105` (Task 2) — FOUND ✓
+- Commit `a424e4a` (docs metadata) — FOUND ✓
