@@ -4,6 +4,11 @@ import { useAdStore } from "@/stores/ad.store";
  * Wizard step guard — redirects to the first incomplete step.
  * Each step page declares this middleware via definePageMeta.
  *
+ * Must run client-side only: adStore is persisted in localStorage,
+ * which is unavailable during SSR. Running on the server would always
+ * see the empty initial state and redirect every direct URL navigation
+ * back to /anunciar.
+ *
  * Completion criteria per step:
  *   Step 1: adStore.step >= 2 (pack always has a default; advancing is the signal)
  *   Step 2: ad.name, ad.category > 0, ad.price > 0, ad.description
@@ -12,6 +17,8 @@ import { useAdStore } from "@/stores/ad.store";
  *   Step 5: ad.gallery.length > 0
  */
 export default defineNuxtRouteMiddleware((to) => {
+  if (import.meta.server) return;
+
   const adStore = useAdStore();
   const ad = adStore.ad;
 
