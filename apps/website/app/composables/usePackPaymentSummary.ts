@@ -13,7 +13,7 @@ export const usePackPaymentSummary = () => {
     }).format(price);
 
   const selectedPack = computed(() => {
-    return packsStore.packs.find((p) => p.id === packStore.pack) || null;
+    return packs.value.find((p) => p.id === packStore.pack) || null;
   });
 
   const summaryText = computed(() => {

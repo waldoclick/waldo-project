@@ -15,16 +15,15 @@ import HeaderDefault from "@/components/HeaderDefault.vue";
 import CreateAd from "@/components/CreateAd.vue";
 import { onMounted, watch } from "vue";
 import { useAdAnalytics } from "~/composables/useAdAnalytics";
-import { usePacksStore } from "@/stores/packs.store";
 import { useAdStore } from "@/stores/ad.store";
 import type { AnalyticsItem } from "@/stores/ad.store";
+import type { Pack } from "@/types/pack";
 import type { User } from "@/types/user";
 import { useMeStore } from "@/stores/me.store";
 import { useCategoriesStore } from "@/stores/categories.store";
 
 // Analytics
 const adAnalytics = useAdAnalytics();
-const packsStore = usePacksStore();
 const user = useStrapiUser<User>();
 const adStore = useAdStore();
 
