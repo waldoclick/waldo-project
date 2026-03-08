@@ -113,5 +113,5 @@ Plans:
 | 52. Ad Draft Decoupling | v1.21 | 4/4 | Complete | 2026-03-08 |
 | 53. Checkout Page & Components | v1.22 | 1/1 | Complete | 2026-03-08 |
 | 55. Store Unification | 3/3 | Complete    | 2026-03-08 | — |
-| 56. Pack Purchase Flow | 1/1 | Complete   | 2026-03-08 | — |
+| 56. Pack Purchase Flow | 1/1 | Complete    | 2026-03-08 | — |
 | 57. Payment Hub Adaptation | v1.23 | 0/1 | Not started | — |
