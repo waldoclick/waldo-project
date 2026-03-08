@@ -197,7 +197,7 @@ export class ZohoService implements IZohoService {
         data: [
           {
             Deal_Name: deal.dealName,
-            Stage: "Closed Won",
+            Stage: "Cerrado ganado",
             Amount: deal.amount,
             Contact_Name: { id: deal.contactId },
             Type: deal.type,
