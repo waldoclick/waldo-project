@@ -47,6 +47,7 @@ class AdUtils {
           ...adData,
           duration_days: 15,
           remaining_days: 15,
+          draft: false,
         },
       });
 
@@ -155,6 +156,27 @@ class AdUtils {
       const ad = await strapi.entityService.update("api::ad.ad", adId, {
         data: {
           ad_featured_reservation: adFeaturedReservationId,
+        },
+      });
+
+      return { success: true, ad };
+    } catch (error) {
+      console.log(error);
+      return { success: false, message: error.message };
+    }
+  }
+
+  /**
+   * Publish an ad by clearing the draft flag.
+   * Must be called after a successful payment or free ad creation.
+   * @param adId - The ad ID
+   * @returns Object with success status and updated ad
+   */
+  public async publishAd(adId: number) {
+    try {
+      const ad = await strapi.entityService.update("api::ad.ad", adId, {
+        data: {
+          draft: false,
         },
       });
 

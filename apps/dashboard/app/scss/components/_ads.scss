@@ -6,9 +6,9 @@
   &--adsPendings,
   &--adsActives,
   &--adsArchived,
-  &--adsAbandoned,
   &--adsBanned,
-  &--adsRejected {
+  &--adsRejected,
+  &--adsDraft {
     padding: 50px 0;
 
     &__container {

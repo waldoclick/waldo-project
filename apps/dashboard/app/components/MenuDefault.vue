@@ -115,7 +115,7 @@
           >
             <NuxtLink to="/ads/abandoned" class="menu--default__sublink">
               <XOctagon class="menu--default__subicon" />
-              <span>Abandonados</span>
+              <span>Borradores</span>
             </NuxtLink>
           </li>
         </ul>

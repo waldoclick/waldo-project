@@ -237,7 +237,7 @@ const statusBreadcrumbMap: Record<AdStatus, { label: string; to: string }> = {
   archived: { label: "Expirados", to: "/ads/expired" },
   banned: { label: "Baneados", to: "/ads/banned" },
   rejected: { label: "Rechazados", to: "/ads/rejected" },
-  abandoned: { label: "Abandonados", to: "/ads/abandoned" },
+  abandoned: { label: "Borradores", to: "/ads/abandoned" },
 };
 
 const breadcrumbs = computed(() => {
