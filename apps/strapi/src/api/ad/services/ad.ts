@@ -15,12 +15,12 @@ import logger from "../../../utils/logtail";
 import { zohoService } from "../../../services/zoho";
 
 type AdStatus =
+  | "draft"
   | "active"
   | "pending"
   | "archived"
   | "banned"
   | "rejected"
-  | "abandoned"
   | "unknown";
 
 interface AdQueryOptions {
@@ -44,6 +44,10 @@ function computeAdStatus(ad: unknown): AdStatus {
     adObj,
     "ad_reservation"
   );
+
+  if (adObj.draft === true) {
+    return "draft";
+  }
 
   if (adObj.rejected) {
     return "rejected";
@@ -69,18 +73,6 @@ function computeAdStatus(ad: unknown): AdStatus {
     adObj.remaining_days === 0
   ) {
     return "archived";
-  }
-
-  if (
-    !adObj.active &&
-    !adObj.banned &&
-    !adObj.rejected &&
-    (adObj.remaining_days as number) > 0 &&
-    hasReservationKey &&
-    (adObj.ad_reservation == null || adObj.ad_reservation === undefined) &&
-    adObj.is_paid
-  ) {
-    return "abandoned";
   }
 
   if (
@@ -441,19 +433,17 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
   },
 
   /**
-   * Retrieve abandoned advertisements
+   * Retrieve draft advertisements
    *
-   * Ads that required payment but never completed it (no ad_reservation assigned).
+   * Ads that have draft === true. The draft field is the authoritative
+   * source of truth for draft state.
    */
-  async abandonedAds(options: AdQueryOptions = {}) {
+  async draftAds(options: AdQueryOptions = {}) {
     const defaultFilters = {
-      active: { $eq: false },
-      banned: { $eq: false },
-      rejected: { $eq: false },
-      ad_reservation: { $null: true },
+      draft: { $eq: true },
     };
 
-    return getAdvertisements(options, defaultFilters, "abandoned");
+    return getAdvertisements(options, defaultFilters, "draft");
   },
 
   /**
