@@ -74,7 +74,12 @@ Plans:
   4. Form data entered in earlier steps is still present when navigating forward and backward through the wizard
   5. `nuxt typecheck` passes with zero errors and no `?step=` references remain in any component or composable
 
-**Plans:** TBD
+**Plans:** 3 plans
+
+Plans:
+- [ ] 42-01-PLAN.md — Create 4 new dedicated step pages (steps 2–5)
+- [ ] 42-02-PLAN.md — Fix resumen.vue back button + remove FormCreateThree debug leak
+- [ ] 42-03-PLAN.md — Refactor index.vue and CreateAd.vue (remove query param navigation)
 
 ## Progress
 
