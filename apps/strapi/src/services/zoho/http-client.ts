@@ -2,19 +2,20 @@
  * HTTP client for Zoho CRM API
  */
 
-import axios, { AxiosInstance } from "axios";
+import axios, { AxiosAdapter, AxiosInstance } from "axios";
 import { ZohoConfig } from "./interfaces";
 
 export class ZohoHttpClient {
   private client: AxiosInstance;
   private accessToken: string | null = null;
 
-  constructor(private config: ZohoConfig) {
+  constructor(private config: ZohoConfig, adapter?: AxiosAdapter) {
     this.client = axios.create({
       baseURL: config.apiUrl,
       headers: {
         "Content-Type": "application/json",
       },
+      ...(adapter ? { adapter } : {}),
     });
 
     this.setupInterceptors();
@@ -25,9 +26,26 @@ export class ZohoHttpClient {
       if (!this.accessToken) {
         await this.refreshAccessToken();
       }
-      config.headers.Authorization = `Bearer ${this.accessToken}`;
+      config.headers.Authorization = `Zoho-oauthtoken ${this.accessToken}`;
       return config;
     });
+
+    this.client.interceptors.response.use(
+      (response) => response,
+      async (error) => {
+        const originalRequest = error.config;
+        if (error.response?.status === 401 && !originalRequest._retry) {
+          originalRequest._retry = true;
+          this.accessToken = null;
+          await this.refreshAccessToken();
+          originalRequest.headers[
+            "Authorization"
+          ] = `Zoho-oauthtoken ${this.accessToken}`;
+          return this.client(originalRequest);
+        }
+        return Promise.reject(error);
+      }
+    );
   }
 
   private async refreshAccessToken() {
