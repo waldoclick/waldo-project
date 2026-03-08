@@ -5,7 +5,7 @@
         class="payment--gateway__options__item payment--gateway__options__item--active"
       >
         <input type="checkbox" name="gateway" value="webpay" checked disabled />
-        <span>WebPay</span>
+        <span>Transbank WebPay</span>
       </label>
     </div>
   </div>

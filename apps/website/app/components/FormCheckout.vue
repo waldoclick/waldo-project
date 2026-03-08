@@ -17,32 +17,6 @@
       <PaymentAd />
     </div>
 
-    <!-- Tipo de publicación -->
-    <div class="form--checkout__field">
-      <button
-        type="button"
-        class="form--checkout__field__toggle"
-        @click="toggle('method')"
-      >
-        <div class="form--checkout__field__toggle__left">
-          <h3 class="form--checkout__field__title">Tipo de publicación</h3>
-          <span class="form--checkout__field__summary">{{
-            methodSummary
-          }}</span>
-        </div>
-        <ChevronDownIcon
-          :size="20"
-          :class="[
-            'form--checkout__field__chevron',
-            { 'form--checkout__field__chevron--open': open.method },
-          ]"
-        />
-      </button>
-      <div v-show="open.method" class="form--checkout__field__content">
-        <PaymentMethod />
-      </div>
-    </div>
-
     <!-- Destacado -->
     <div class="form--checkout__field">
       <button
@@ -66,6 +40,32 @@
       </button>
       <div v-show="open.featured" class="form--checkout__field__content">
         <PaymentFeatured />
+      </div>
+    </div>
+
+    <!-- Tipo de publicación -->
+    <div class="form--checkout__field">
+      <button
+        type="button"
+        class="form--checkout__field__toggle"
+        @click="toggle('method')"
+      >
+        <div class="form--checkout__field__toggle__left">
+          <h3 class="form--checkout__field__title">Tipo de publicación</h3>
+          <span class="form--checkout__field__summary">{{
+            methodSummary
+          }}</span>
+        </div>
+        <ChevronDownIcon
+          :size="20"
+          :class="[
+            'form--checkout__field__chevron',
+            { 'form--checkout__field__chevron--open': open.method },
+          ]"
+        />
+      </button>
+      <div v-show="open.method" class="form--checkout__field__content">
+        <PaymentMethod />
       </div>
     </div>
 
