@@ -9,14 +9,9 @@
 // components
 import HeaderDefault from "@/components/HeaderDefault.vue";
 import BuyPack from "@/components/BuyPack.vue";
-import { usePacksStore } from "@/stores/packs.store";
 
-const packsStore = usePacksStore();
-
-// Pre-load packs for SSR — PackMethod reads from packsStore
-await useAsyncData("packs-comprar", async () => {
-  await packsStore.loadPacks();
-});
+// TODO(Phase 56): comprar.vue and BuyPack.vue are deleted in Phase 56.
+// Pack loading stub removed here to unblock typecheck after store deletion.
 
 // Middleware
 definePageMeta({
