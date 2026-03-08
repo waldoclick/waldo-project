@@ -4,6 +4,7 @@ import { Context } from "koa";
 import PaymentUtils from "../api/payment/utils";
 import { zohoService } from "../services/zoho";
 import logger from "../utils/logtail";
+import type { Core } from "@strapi/strapi";
 
 interface User {
   id: number;
@@ -12,7 +13,7 @@ interface User {
   firstname?: string;
   lastname?: string;
   is_company?: boolean;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface RegisterResponse {
@@ -25,7 +26,7 @@ const processedTokens = new Set<string>();
 
 export default (
   config: Record<string, unknown>,
-  { strapi }: { strapi: any }
+  { strapi }: { strapi: Core.Strapi }
 ) => {
   return async (ctx: Context, next: () => Promise<void>) => {
     await next();
@@ -189,7 +190,9 @@ export default (
         const providerResponse = response.body as RegisterResponse;
         if (providerResponse?.user) {
           // Verificar si el usuario fue creado recientemente (en los últimos 10 segundos)
-          const userCreatedAt = new Date(providerResponse.user.createdAt);
+          const userCreatedAt = new Date(
+            providerResponse.user.createdAt as string
+          );
           const now = new Date();
           const timeDiff = now.getTime() - userCreatedAt.getTime();
 
