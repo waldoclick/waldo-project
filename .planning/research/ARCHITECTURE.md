@@ -1,403 +1,533 @@
-# Architecture Research
+# Architecture Research: Zoho CRM Sync Model
 
-**Domain:** Meta copy (title + description) audit — apps/website (Nuxt 4)
-**Researched:** 2026-03-07
-**Confidence:** HIGH — based on direct source inspection of all 33 pages
-
----
-
-## Standard Architecture
-
-### SEO Meta Pipeline
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                         Page (.vue)                              │
-│                                                                  │
-│  Static page              │   Dynamic page                       │
-│  ─────────────────        │   ─────────────────────────────      │
-│  $setSEO({ ... })         │   useAsyncData() ──► data ref        │
-│  (called inline,          │       │                              │
-│   before template)        │   watch(data, (newData) => {         │
-│                           │     $setSEO({ ... })                 │
-│                           │   }, { immediate: true })            │
-│                           │                                      │
-│  + useSeoMeta({           │   + useSeoMeta({                     │
-│      robots: "noindex"    │       robots: "noindex"              │
-│    })  ← separate call    │     }) ← separate call               │
-└──────────────┬────────────┴──────────────────────────────────────┘
-               │
-               ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                  $setSEO plugin (seo.ts)                         │
-│                                                                  │
-│  calls useSeoMeta({                                              │
-│    title, description,                                           │
-│    ogTitle, ogDescription, ogImage, ogUrl, ogType,              │
-│    twitterCard, twitterTitle, twitterDescription                 │
-│  })                                                              │
-└──────────────────────────────────────────────────────────────────┘
-               │
-               ▼
-┌─────────────────────────────────────────────────────────────────┐
-│             @nuxtjs/seo module + site config                     │
-│                                                                  │
-│  site.name = "Waldo.click®"  (nuxt.config.ts line 136)          │
-│  No titleTemplate defined — NO automatic suffix appended         │
-└──────────────────────────────────────────────────────────────────┘
-```
-
-### Component Responsibilities
-
-| Component | Responsibility | Implementation |
-|-----------|----------------|----------------|
-| `seo.ts` plugin | Set all meta tags (title, description, OG, Twitter) atomically | `nuxtApp.provide("setSEO", ...)` wrapping `useSeoMeta` |
-| Individual page | Own its title string + description string | Call `$setSEO` inline (static) or inside `watch` (dynamic) |
-| `nuxt.config.ts` `site` block | `@nuxtjs/seo` site identity (`site.name`, `site.url`) | NOT a title template — does not auto-append to every page |
-| `useSeoMeta` (direct) | `robots` meta only — used on top of `$setSEO` for noindex pages | Called separately; does not conflict with `$setSEO` output |
+**Project:** Waldo — v1.19 Zoho CRM Integration  
+**Researched:** 2026-03-07  
+**Confidence:** HIGH — All findings sourced from reading actual codebase + Strapi v5 official docs
 
 ---
 
-## $setSEO Plugin — Exact Signature
+## Existing Architecture (relevant)
+
+### 1. User Registration → Zoho Contact
+
+**Trigger:** Koa middleware `src/middlewares/user-registration.ts`  
+**Pattern:** Post-response (`await next()` first, then inspect `response.body`)  
+**Covered paths:**
+- `POST /api/auth/local/register` (local)
+- `GET /api/auth/:provider/callback` (Google; deduped via `processedTokens` Set)
+
+**Current call:** `zohoService.createContact({ First_Name, Last_Name, Email, User_ID, Lead_Source })`  
+**Fire-and-forget:** ✅ try/catch around Zoho call, never throws to caller
+
+**Gap identified:** Google registration uses `email.split('@')[0]` for both First and Last name — low data quality. Local registration correctly uses `firstname`/`lastname`.
+
+---
+
+### 2. User Profile Update → Zoho Contact upsert
+
+**Trigger:** Custom controller `src/extensions/users-permissions/controllers/userUpdateController.ts`  
+**Pattern:** Called directly after `strapi.entityService.update()`  
+**Current call:** `findContact(email)` → if found: `updateContact(id, data)`, if not: `createContact(data)` — rich address/phone fields  
+**Fire-and-forget:** ✅ try/catch, never throws  
+**Route status:** Exists and is routed — used for profile completion endpoint in the website wizard.
+
+---
+
+### 3. Contact Form → Zoho Lead
+
+**Trigger:** `src/api/contact/services/contact.service.ts` — `createContact()` method  
+**Pattern:** Called directly inline after DB write  
+**Current call:** `zohoService.createLead({ firstName, lastName, email, phone, company, description, source })`  
+**Fire-and-forget:** ✅ try/catch, never throws  
+**Gap identified:** `status` field not set on lead creation; lead not linked to existing Contact if user is already registered.
+
+---
+
+### 4. Pack Purchase → (nothing today)
+
+**Trigger:** `src/api/payment/controllers/payment.ts` → `packResponse` handler  
+**Flow:** `packService.processPaidWebpay(token)` → on AUTHORIZED → create ad/featured reservations → `generalUtils.generateFactoDocument()` → `OrderUtils.createAdOrder()` → `ctx.redirect(...)`  
+**No Zoho call today.** The `processPaidWebpay` method in `pack.service.ts` returns `{ success, userId, pack, webpay, isInvoice }` — `userId` is a plain string extracted from `buy_order` meta.
+
+---
+
+### 5. Paid Ad Activation → (nothing today)
+
+**Trigger:** `src/api/payment/controllers/payment.ts` → `adResponse` handler  
+**Flow:** `adService.processPaidWebpay(token)` → on AUTHORIZED → create/assign reservations → `generateFactoDocument()` → `OrderUtils.createAdOrder()` → `ctx.redirect(...)`  
+**No Zoho call today.** `result.ad.user.id`, `result.ad.user.email`, `result.ad.user.firstname/lastname`, `result.webpay.amount` are all available at this point.
+
+---
+
+### 6. Ad Approved → "ad_published"
+
+**Trigger:** `src/api/ad/services/ad.ts` → `approveAd()` method  
+**Pattern:** Called by admin dashboard action; sets `active: true`, sends approval email via `sendMjmlEmail`  
+**No Zoho call today.** `ad.user` is populated via `strapi.query("api::ad.ad").findOne({ where: { id: adId }, populate: ["user"] })` — email is available.
+
+---
+
+### 7. Existing Ad Lifecycle Hook
+
+`src/api/ad/content-types/ad/lifecycles.ts` — only has `afterCreate`, sends Slack notification.  
+**No update or approve hooks exist.** This is relevant: the `approveAd()` method does NOT go through a lifecycle hook — it is a direct service call.
+
+---
+
+## New Components
+
+### 1. `ZohoDeal` interface — `interfaces.ts`
 
 ```typescript
-// apps/website/app/plugins/seo.ts
-
-$setSEO(params: {
-  title: string;         // required — sets <title>, og:title, twitter:title
-  description: string;   // required — sets meta description, og:description, twitter:description
-  imageUrl?: string;     // optional — sets og:image; falls back to /images/share.jpg
-  url?: string;          // optional — sets og:url
-  ogType?: string;       // optional — defaults to "website"
-  twitterCard?: string;  // optional — defaults to "summary_large_image"
-}) => void
-```
-
-Internally calls `useSeoMeta` with 9 fields. Does **not** call `useHead`. Does **not** append
-`site.name` or any suffix — the title string passed in is used verbatim.
-
-**DEFAULT_IMAGE fallback:** `process.env.BASE_URL + "/images/share.jpg"` (note: path is
-`/images/share.jpg` in the plugin, but some pages pass `config.public.baseUrl + "/share.jpg"`
-— there is an inconsistency; the plugin default is `/images/share.jpg`).
-
----
-
-## Title Template / Suffix
-
-**No `titleTemplate` is configured.** `nuxt.config.ts` has:
-
-```typescript
-site: {
-  name: "Waldo.click®",
-  url: process.env.BASE_URL,
+export interface ZohoDeal {
+  contactId: string;        // Zoho Contact ID (looked up by email via findContact)
+  dealName: string;         // e.g. "Pack Starter — Juan Pérez" or "Anuncio Pagado — slug"
+  stage: string;            // e.g. "Closed Won"
+  amount: number;           // purchase amount in CLP
+  closeDate: string;        // ISO date string YYYY-MM-DD
+  description?: string;     // pack name or ad slug
+  type: 'pack_purchase' | 'ad_paid';
 }
 ```
 
-`@nuxtjs/seo`'s `site.name` can enable an auto-suffix through `useSeoMeta` defaults in some
-configurations, but **no `titleTemplate` key is present** in this project. All existing page
-titles that include "Waldo.click®" do so by embedding it manually in the string passed to
-`$setSEO`. **Every title is fully self-contained.**
-
-> ⚠️ Implication for requirements: The requirements writer must specify the full title string
-> including any suffix for each page. There is no template that auto-appends " | Waldo.click®".
-
----
-
-## Page Inventory by SEO Pattern
-
-### Pattern A — Static inline call (most pages)
-`$setSEO` called directly in `<script setup>`, synchronously, before any `await`.
-Title is a hardcoded string. Runs on SSR and client identically.
-
-| Page | Has title | Has description |
-|------|-----------|----------------|
-| `index.vue` | ✅ | ✅ |
-| `preguntas-frecuentes.vue` | ✅ | ✅ |
-| `politicas-de-privacidad.vue` | ✅ | ✅ |
-| `contacto/index.vue` | ✅ | ✅ |
-| `contacto/gracias.vue` | ✅ | ✅ |
-| `packs/index.vue` | ✅ | ✅ |
-| `sitemap.vue` | ✅ | ✅ |
-| `dev.vue` | ✅ | ✅ |
-| `login/index.vue` | ✅ | ✅ |
-| `registro.vue` | ✅ | ✅ |
-| `recuperar-contrasena.vue` | ✅ | ✅ |
-| `restablecer-contrasena.vue` | ✅ | ✅ |
-| `cuenta/index.vue` | ✅ | ✅ |
-| `cuenta/perfil/index.vue` | ✅ | ✅ |
-| `cuenta/perfil/editar.vue` | ✅ | ✅ |
-| `cuenta/mis-anuncios.vue` | ✅ | ✅ |
-| `cuenta/mis-ordenes.vue` | ✅ | ✅ |
-| `cuenta/cambiar-contrasena.vue` | ✅ | ✅ |
-| `cuenta/username.vue` | ✅ | ✅ |
-| `cuenta/cover.vue` | ✅ | ✅ |
-| `cuenta/avatar.vue` | ✅ | ✅ |
-| `anunciar/index.vue` | ✅ | ✅ |
-| `anunciar/resumen.vue` | ✅ | ✅ |
-| `anunciar/gracias.vue` | ✅ | ✅ |
-| `anunciar/error.vue` | ✅ | ✅ |
-| `packs/comprar.vue` | ✅ | ✅ |
-| `packs/error.vue` | ✅ | ✅ |
-
-### Pattern B — Dynamic watch call (data-dependent)
-`$setSEO` called inside `watch(data, handler, { immediate: true })` — title depends on API data.
-
-| Page | When SEO is set | SSR risk? |
-|------|----------------|-----------|
-| `anuncios/[slug].vue` | After `useAsyncData` resolves (`{ server: true, lazy: false }`) | ✅ Safe — `immediate: true` fires synchronously on SSR because `useAsyncData` awaits before watch runs |
-| `[slug].vue` (profile) | After `useAsyncData` resolves (`{ server: true, lazy: false }`) | ✅ Safe — same reason |
-| `anuncios/index.vue` | After `useAsyncData` resolves (watch on `[adsData, route.query]`) | ✅ Safe — `immediate: true` |
-| `packs/gracias.vue` | After `useAsyncData` resolves (plain `watch`, no `immediate`) | ⚠️ See SSR gap note below |
-
-### Pattern C — No $setSEO at all
-Pages that do NOT call `$setSEO`:
-
-| Page | Reason |
-|------|--------|
-| `login/facebook.vue` | Redirect-only page, no visible content |
-| `login/google.vue` | Redirect-only page, no visible content |
-
-These pages are excluded from robots (`/login/facebook`, `/login/google` in `robots.disallow`).
-No SEO copy needed.
-
----
-
-## SSR Timing Analysis
-
-### Key fact: `useAsyncData` with `{ server: true, lazy: false }` + `watch({ immediate: true })`
-
-For `anuncios/[slug].vue` and `[slug].vue`:
-
-```
-SSR execution order:
-1. await useAsyncData(...) — resolves on server before rendering
-2. watch(data, handler, { immediate: true }) — fires synchronously with resolved data
-3. $setSEO(...) — called with real data before HTML is rendered
-4. <title> and <meta> are present in SSR HTML output ✅
-```
-
-**There is NO window of missing title during SSR** for these pages, because:
-- `server: true` — the fetch runs on the server
-- `lazy: false` — the page `await`s the fetch before proceeding
-- `immediate: true` — the watcher fires immediately with the already-resolved ref value
-
-### ⚠️ `packs/gracias.vue` — SSR gap
+### 2. `ZohoContactStats` interface — `interfaces.ts`
 
 ```typescript
-useSeoMeta({ robots: "noindex, nofollow" });  // line 97 — fires on SSR
+export interface ZohoContactStats {
+  ads_published?: number;       // new total (fetch current + 1, then set)
+  total_spent?: number;         // new total (fetch current + amount, then set)
+  last_ad_posted_at?: string;   // ISO date string
+  packs_purchased?: number;     // new total (fetch current + 1, then set)
+}
+```
 
-watch(data, (newData) => {                     // line 99 — NO { immediate: true }
-  $setSEO({ title: ..., description: ... });   // only fires on subsequent data change
+> **Note on increments:** Field values in `ZohoContactStats` are **totals**, not deltas. Callers must fetch the current contact values (already done via `findContact()`) and compute the new total before passing it here.
+
+### 3. `IZohoService` extension — `interfaces.ts`
+
+Add to the existing `IZohoService` interface:
+
+```typescript
+createDeal(deal: ZohoDeal): Promise<any>;
+updateContactStats(contactId: string, stats: ZohoContactStats): Promise<any>;
+```
+
+---
+
+## Modified Components
+
+### 1. `zoho.service.ts` — add `createDeal()` and `updateContactStats()`
+
+**`createDeal(deal: ZohoDeal)`**
+
+Mirrors `createContact` pattern exactly: POST to `/crm/v5/Deals`, return `response.data[0]`, rethrow on failure (caller wraps in fire-and-forget try/catch).
+
+```typescript
+async createDeal(deal: ZohoDeal): Promise<any> {
+  try {
+    const response = await this.httpClient.post<{ data: any[] }>(
+      '/crm/v5/Deals',
+      {
+        data: [{
+          Deal_Name: deal.dealName,
+          Stage: deal.stage,
+          Amount: deal.amount,
+          Closing_Date: deal.closeDate,
+          Contact_Name: { id: deal.contactId },
+          Description: deal.description ?? '',
+          Deal_Type: deal.type,
+        }],
+      }
+    );
+    return response.data[0];
+  } catch (error) {
+    console.error('Zoho API Error (createDeal):', error.response?.data || error.message);
+    throw new Error(`Failed to create deal: ${error.message}`);
+  }
+}
+```
+
+**`updateContactStats(contactId, stats)`**
+
+Maps to `PUT /crm/v5/Contacts/:id` with only the non-undefined stat fields. Uses same endpoint as `updateContact` but accepts only stats fields.
+
+```typescript
+async updateContactStats(contactId: string, stats: ZohoContactStats): Promise<any> {
+  try {
+    const fields: Record<string, any> = {};
+    if (stats.ads_published !== undefined) fields.Ads_Published = stats.ads_published;
+    if (stats.total_spent !== undefined) fields.Total_Spent = stats.total_spent;
+    if (stats.last_ad_posted_at !== undefined) fields.Last_Ad_Posted_At = stats.last_ad_posted_at;
+    if (stats.packs_purchased !== undefined) fields.Packs_Purchased = stats.packs_purchased;
+
+    const response = await this.httpClient.put<{ data: any[] }>(
+      `/crm/v5/Contacts/${contactId}`,
+      { data: [fields] }
+    );
+    return response.data[0];
+  } catch (error) {
+    console.error('Zoho API Error (updateContactStats):', error.response?.data || error.message);
+    throw new Error(`Failed to update contact stats: ${error.message}`);
+  }
+}
+```
+
+> **⚠️ External dependency:** The Zoho field API names (`Ads_Published`, `Total_Spent`, etc.) are set when custom fields are created in the Zoho CRM admin panel. The placeholders above are illustrative. The actual API names must be confirmed from the Zoho CRM schema before this method can work end-to-end. Add a `// TODO: confirm Zoho field API names` comment until resolved.
+
+---
+
+### 2. `http-client.ts` — add 401 response interceptor
+
+See [Token Refresh Enhancement](#token-refresh-enhancement) section below.
+
+---
+
+### 3. `interfaces.ts` — add new interfaces and extend `IZohoService`
+
+Add `ZohoDeal`, `ZohoContactStats`, and extend `IZohoService` as described in New Components above. All additions go at the bottom of the file to minimize diff.
+
+---
+
+### 4. `pack.service.ts` — wire `pack_purchased` event
+
+In `PackService.processPaidWebpay()`, after reservations are created and before `return { success: true, ... }`.
+
+**Data available at that point:**
+- `userId` (string) — extracted from `buyOrder` via `extractIdsFromMeta`
+- `packData.data` — `{ price, total_ads, total_days, total_features, name }`
+- `wepbayResponse.response.amount` — actual charged amount
+
+**Pattern (fire-and-forget):**
+```typescript
+// Sync to Zoho CRM (fire-and-forget)
+try {
+  const userRecord = await strapi.entityService.findOne(
+    'plugin::users-permissions.user',
+    Number(userId),
+    { fields: ['email', 'firstname', 'lastname'] }
+  );
+  if (userRecord?.email) {
+    const zohoContact = await zohoService.findContact(userRecord.email);
+    if (zohoContact) {
+      const currentPacks = zohoContact.Packs_Purchased ?? 0;
+      const currentSpent = zohoContact.Total_Spent ?? 0;
+      await Promise.all([
+        zohoService.createDeal({
+          contactId: zohoContact.id,
+          dealName: `Pack ${packData.data.name} — ${userRecord.firstname} ${userRecord.lastname}`,
+          stage: 'Closed Won',
+          amount: wepbayResponse.response.amount,
+          closeDate: new Date().toISOString().split('T')[0],
+          description: packData.data.name,
+          type: 'pack_purchase',
+        }),
+        zohoService.updateContactStats(zohoContact.id, {
+          total_spent: currentSpent + wepbayResponse.response.amount,
+          packs_purchased: currentPacks + 1,
+        }),
+      ]);
+    }
+  }
+} catch (error) {
+  logger.error('Error syncing pack purchase to Zoho CRM:', {
+    userId,
+    error: error.message,
+  });
+}
+```
+
+**Import needed:** `import { zohoService } from '../../../services/zoho';` at the top of `pack.service.ts`.
+
+---
+
+### 5. `payment.ts` controller — wire `ad_paid` event in `adResponse`
+
+After `OrderUtils.createAdOrder()` and before `ctx.redirect(...)`.
+
+**Data available:**
+- `result.ad.user.email`, `result.ad.user.firstname`, `result.ad.user.lastname`
+- `result.ad.id`, `result.ad.slug`
+- `result.webpay.amount`
+
+**Pattern (truly non-blocking — do not await before redirect):**
+```typescript
+// Sync to Zoho CRM (truly non-blocking: .then/.catch, not await)
+zohoService.findContact(result.ad.user.email).then(async (zohoContact) => {
+  if (!zohoContact) return;
+  const currentSpent = zohoContact.Total_Spent ?? 0;
+  await Promise.all([
+    zohoService.createDeal({
+      contactId: zohoContact.id,
+      dealName: `Anuncio Pagado — ${result.ad.slug}`,
+      stage: 'Closed Won',
+      amount: result.webpay.amount,
+      closeDate: new Date().toISOString().split('T')[0],
+      description: result.ad.slug,
+      type: 'ad_paid',
+    }),
+    zohoService.updateContactStats(zohoContact.id, {
+      total_spent: currentSpent + result.webpay.amount,
+    }),
+  ]);
+}).catch((error) => {
+  logger.error('Error syncing ad payment to Zoho CRM:', {
+    adId: result.ad.id,
+    error: error.message,
+  });
 });
+// (no await — redirect proceeds immediately)
 ```
 
-This page **does NOT set title/description on SSR** — the `watch` without `immediate: true`
-only fires when `data` changes after mount. The `robots: noindex` is set, so search engines
-won't index it, but the `<title>` will be empty/undefined on first SSR render.
+**Why `.then().catch()` not `try/await`:** `adResponse` is a browser redirect endpoint. The `ctx.redirect(...)` must execute without any delay introduced by async Zoho calls. Using a floating promise (`.then().catch()` with no `await`) means Zoho sync happens concurrently with the redirect.
 
-This is an **existing bug** acceptable as-is (page is noindex), but requirements should note
-whether to fix it (add `{ immediate: true }`) or leave it.
+**Import needed:** `import { zohoService } from '../../../services/zoho';` at the top of `payment.ts` controller.
 
 ---
 
-## Correct Pattern for Static Copy
+### 6. `ad/services/ad.ts` — wire `ad_published` event in `approveAd()`
 
-Based on the dominant pattern across 28 pages:
+After `strapi.query().update()` (the `active: true` write) and after the approval email, before `return { success: true, ... }`.
 
+**Data available:**
+- `ad.user.email` — from `findOne({ populate: ['user'] })` already called at the start of `approveAd`
+- `ad.id`, `ad.name`, `ad.slug`
+
+**Pattern (fire-and-forget):**
 ```typescript
-// In <script setup> — synchronous, before any await
-const { $setSEO } = useNuxtApp();
-
-$setSEO({
-  title: "Page Title | Waldo.click®",      // full title, suffix is manual
-  description: "Page description here.",
-});
-
-// If the page must also be noindex:
-useSeoMeta({ robots: "noindex, nofollow" });
-```
-
-**Rules:**
-1. Call `$setSEO` **synchronously in `<script setup>`**, not inside lifecycle hooks or watchers
-2. The title must include the " | Waldo.click®" suffix **manually** — there is no template
-3. `robots` is set separately via `useSeoMeta` — `$setSEO` does not accept a `robots` param
-4. Do NOT use `useHead` or `useSeoMeta` directly for `title`/`description` — use `$setSEO`
-5. Do NOT use `definePageMeta` for SEO meta — it only supports route-level config
-
-**Do NOT do this:**
-```typescript
-// ❌ Wrong — bypasses $setSEO and misses OG/Twitter tags
-useHead({ title: "My Page" });
-useSeoMeta({ title: "My Page", description: "..." });
-
-// ❌ Wrong — $setSEO inside onMounted (misses SSR)
-onMounted(() => { $setSEO({ ... }); });
-```
-
----
-
-## Architectural Patterns
-
-### Pattern 1: Synchronous Static SEO
-
-**What:** Call `$setSEO` directly in `<script setup>` body before any `await`.
-**When to use:** Any page where title and description are known at compile time (no API data needed).
-**Trade-offs:** Simplest, always safe for SSR. Title cannot reference live data.
-
-```typescript
-const { $setSEO } = useNuxtApp();
-
-$setSEO({
-  title: "Compra y Venta de Equipo en Chile | Waldo.click®",
-  description: "Publica y encuentra equipo industrial en Chile...",
-});
-```
-
-### Pattern 2: Watch with `immediate: true` (Dynamic SEO)
-
-**What:** Set SEO inside a `watch` on the `useAsyncData` ref with `{ immediate: true }`.
-**When to use:** Pages where title/description include API data (ad name, username, category).
-**Trade-offs:** Safe for SSR when `useAsyncData` uses `{ server: true, lazy: false }`.
-The `immediate: true` fires synchronously with the already-resolved data on server.
-
-```typescript
-const { $setSEO } = useNuxtApp();
-
-const { data } = await useAsyncData("key", fetchFn, { server: true, lazy: false });
-
-watch(
-  () => data.value,
-  (newData) => {
-    if (!newData) return;
-    $setSEO({
-      title: `${newData.name} | Waldo.click®`,
-      description: `Descripción de ${newData.name}...`,
+// Sync to Zoho CRM (fire-and-forget)
+try {
+  const zohoContact = await zohoService.findContact(ad.user.email);
+  if (zohoContact) {
+    const currentPublished = zohoContact.Ads_Published ?? 0;
+    await zohoService.updateContactStats(zohoContact.id, {
+      ads_published: currentPublished + 1,
+      last_ad_posted_at: new Date().toISOString(),
     });
-  },
-  { immediate: true },
-);
+  }
+} catch (error) {
+  console.error('Error syncing ad approval to Zoho CRM:', error.message);
+}
 ```
 
-### Pattern 3: Noindex + SEO combined
+**Import needed:** `import { zohoService } from '../../../services/zoho';` at the top of `ad.ts`. This file uses `factories.createCoreService` and currently imports `sendMjmlEmail` — add `zohoService` to the same import block.
 
-**What:** Call `$setSEO` for title/description, then `useSeoMeta` separately for `robots`.
-**When to use:** All `cuenta/`, `anunciar/`, `packs/` pages (private/transactional flows).
-**Trade-offs:** Two composable calls, but clean separation of concerns.
+---
+
+## Event Wiring Strategy
+
+### Decision: Direct service calls (not lifecycle hooks, not Strapi event hub)
+
+**Verdict:** Call `zohoService` directly from payment services and the `approveAd` service method.
+
+| Approach | Verdict | Reason |
+|---|---|---|
+| **`afterUpdate` lifecycle hook on Ad** | ❌ Avoid | Fires on every ad update: name change, cron decrementing `remaining_days`, ban, reject. Filtering "is this an approval?" requires `beforeUpdate` state passing — fragile and non-obvious. |
+| **`afterCreate` lifecycle hook on Order** | ❌ Avoid | Fires for pack orders, ad orders, and potentially future order types. Would require inspecting order `items` to determine which Zoho call to make. Creates hidden coupling. |
+| **`strapi.eventHub.emit()` + subscriber** | ⚠️ Possible but unnecessary | Adds indirection without benefit. The callers already have all needed context. Pub/sub is appropriate when decoupling is required (e.g., multiple consumers). Here there's one consumer. |
+| **Direct call at payment commit point** | ✅ Recommended | Context is fully populated (user email, amount, pack/ad data). Explicit causality. Consistent with existing fire-and-forget pattern in `contact.service.ts` and `userUpdateController.ts`. |
+| **Direct call in `approveAd()`** | ✅ Recommended | Service already populates user. Same location as email send. Same reasoning. Consistent with pattern. |
+
+### Confirmed by official Strapi v5 docs
+
+Lifecycle hooks via `lifecycles.ts` are triggered declaratively on DB-layer operations. For `approveAd()`, the operation is `strapi.query().update()` — this WOULD trigger `afterUpdate` on the `ad` model. However, the `event.params.data` in that context only contains `{ active: true, actived_at, actived_by }` — not the user email. A second query would be needed inside the lifecycle, duplicating the work already done in `approveAd()`. Direct call is strictly better.
+
+### Event → Call Mapping
+
+| Event | Trigger Location | Zoho Calls Made |
+|---|---|---|
+| `pack_purchased` | `PackService.processPaidWebpay()` — after reservations created | `findContact()` → `createDeal()` + `updateContactStats({ total_spent, packs_purchased })` |
+| `ad_paid` | `PaymentController.adResponse` — after order created, before redirect | `findContact()` → `createDeal()` + `updateContactStats({ total_spent })` |
+| `ad_published` | `AdService.approveAd()` — after `active: true` written | `findContact()` → `updateContactStats({ ads_published, last_ad_posted_at })` |
+
+### Increment strategy for stats
+
+Zoho CRM REST API v5 does NOT support atomic numeric increments. The approach:
+
+1. `findContact(email)` is already called to get the Zoho Contact ID — also read current stat values from the same response object (e.g., `zohoContact.Ads_Published`)
+2. Compute new total locally: `current + delta`
+3. PUT new total via `updateContactStats()`
+
+No extra HTTP round-trip needed. Concurrency risk is accepted as LOW for this platform.
+
+---
+
+## Token Refresh Enhancement
+
+### Current behavior (gap)
+
+`setupInterceptors()` adds a **request interceptor** that fetches a token if `this.accessToken` is null. This means:
+- Token fetched lazily on first request ✅
+- Token **never refreshed after expiry** — Zoho access tokens expire in 1 hour ❌
+- Any request after expiry returns 401 and the stale token stays cached ❌
+
+### Enhancement: Response interceptor with one-retry-on-401
+
+Add a response interceptor to `setupInterceptors()`:
 
 ```typescript
-$setSEO({ title: "Mi Cuenta | Waldo.click®", description: "..." });
-useSeoMeta({ robots: "noindex, nofollow" });
+private setupInterceptors() {
+  // Existing request interceptor — UNCHANGED
+  this.client.interceptors.request.use(async (config) => {
+    if (!this.accessToken) {
+      await this.refreshAccessToken();
+    }
+    config.headers.Authorization = `Bearer ${this.accessToken}`;
+    return config;
+  });
+
+  // NEW: response interceptor — retry once on 401 (expired token)
+  this.client.interceptors.response.use(
+    (response) => response,                        // pass-through on success
+    async (error) => {
+      const originalRequest = error.config as any; // 'as any' — minimal, justified cast
+
+      if (error.response?.status === 401 && !originalRequest._zohoRetried) {
+        originalRequest._zohoRetried = true;       // prevent infinite loop
+        this.accessToken = null;                   // invalidate stale token
+        await this.refreshAccessToken();           // fetch fresh token
+        originalRequest.headers.Authorization = `Bearer ${this.accessToken}`;
+        return this.client(originalRequest);       // replay original request
+      }
+
+      return Promise.reject(error);               // any other error — propagate
+    }
+  );
+}
 ```
+
+**Implementation details:**
+- `_zohoRetried` flag on the config object: prevents the retry from itself triggering a second retry (one-shot pattern)
+- `this.accessToken = null` before `refreshAccessToken()`: forces a fresh fetch (the existing `refreshAccessToken()` implementation doesn't check for an existing token — it always fetches)
+- `this.client(originalRequest)`: replays using the same axios instance (preserves `baseURL`, default headers)
+- `error.config as any`: minimal cast to add `_zohoRetried` — consistent with project cast patterns ("cast is strictly necessary and documented")
+- If `refreshAccessToken()` itself fails (e.g., bad credentials), the error propagates to the caller's try/catch — no silent swallowing
+- Existing `get`, `post`, `put` method signatures are unchanged — no callers need updating
+
+**No changes needed in:**
+- `refreshAccessToken()` method (works as-is)
+- `get()`, `post()`, `put()` methods
+- `ZohoFactory` or `index.ts`
 
 ---
 
-## Integration Points
+## Build Order
 
-### External Services
+### Phase 1 — Foundation: Interfaces + 401 retry
 
-| Service | Integration Pattern | Notes |
-|---------|---------------------|-------|
-| `@nuxtjs/seo` module | `site.name` + `site.url` config only | Does not auto-append title suffix in this config |
-| Strapi API | Ad/user data fetched via store actions inside `useAsyncData` | Feeds dynamic page titles in `[slug].vue` and `anuncios/[slug].vue` |
+**Files:** `interfaces.ts`, `http-client.ts`
 
-### Internal Boundaries
+1. Add `ZohoDeal` interface
+2. Add `ZohoContactStats` interface
+3. Extend `IZohoService` with `createDeal()` and `updateContactStats()` signatures
+4. Add response interceptor to `ZohoHttpClient.setupInterceptors()`
 
-| Boundary | Communication | Notes |
-|----------|---------------|-------|
-| `seo.ts` plugin ↔ pages | `useNuxtApp().$setSEO(...)` | All pages must import via `useNuxtApp()`, not direct import |
-| `$setSEO` ↔ `useSeoMeta` | `$setSEO` calls `useSeoMeta` internally | Never call both for the same tags; they will conflict |
-| `site.name` ↔ page title | No automatic relationship | Title suffix is the page author's responsibility |
+**Why first:** Everything else depends on these interfaces. Token reliability must be solid before new methods add more API calls.
 
-### New vs Modified Components (for this milestone)
-
-| File | Change Type | What Changes |
-|------|-------------|--------------|
-| `app/plugins/seo.ts` | **No change** — plugin signature stays as-is | Nothing |
-| `nuxt.config.ts` | **No change** — no titleTemplate to add | Nothing |
-| `app/pages/*.vue` (28 pages) | **Modified** — title/description strings only | String values passed to `$setSEO` |
-| `app/pages/packs/gracias.vue` | **Modified** — optional fix | Add `{ immediate: true }` to watch if gap is in scope |
-
-**Build order:** No compilation dependencies between page changes. All edits are independent string
-replacements within existing `$setSEO(...)` calls. TypeScript `typeCheck: true` will pass as long
-as `title` and `description` remain `string` (not `undefined`).
+**External prerequisite to resolve in this phase:** Confirm Zoho CRM custom field API names for stats fields. Without these, `updateContactStats()` cannot be correctly implemented.
 
 ---
 
-## Data Flow
+### Phase 2 — Service Methods: `createDeal()` + `updateContactStats()`
 
-### Static Page SEO Flow
+**Files:** `zoho.service.ts`
 
-```
-Page script setup starts
-      ↓
-$setSEO({ title, description }) called synchronously
-      ↓
-useSeoMeta({ title, ogTitle, ... }) called inside plugin
-      ↓
-Nuxt SSR renders <head> with populated tags
-      ↓
-HTML sent to client with correct <title> and <meta>
-```
+1. Implement `createDeal()` — mirrors `createContact` pattern
+2. Implement `updateContactStats()` — uses `PUT /crm/v5/Contacts/:id` with confirmed field names
 
-### Dynamic Page SEO Flow
+**Why second:** All three event wirings depend on these methods existing.
 
-```
-Page script setup starts
-      ↓
-await useAsyncData("key", fetchFn, { server: true, lazy: false })
-      ↓  (server fetches and resolves before continuing)
-data ref has resolved value
-      ↓
-watch(data, handler, { immediate: true }) — fires NOW with resolved data
-      ↓
-$setSEO({ title: `${data.name} | ...` }) called
-      ↓
-useSeoMeta sets <head> tags
-      ↓
-SSR renders HTML with correct dynamic <title>
-```
+**Gate:** Zoho custom field names from Phase 1 prerequisite must be resolved.
 
 ---
 
-## Anti-Patterns
+### Phase 3 — `pack_purchased` wiring
 
-### Anti-Pattern 1: Calling `useSeoMeta` for title/description directly
+**Files:** `pack.service.ts`
 
-**What people do:** `useSeoMeta({ title: "...", description: "..." })` in a page.
-**Why it's wrong:** Skips OG and Twitter tags. Creates dual source-of-truth with `$setSEO`.
-**Do this instead:** Always use `$setSEO`. Use `useSeoMeta` **only** for `robots`.
+1. Add `zohoService` import
+2. Add `strapi.entityService.findOne` to resolve user email from `userId` string
+3. Add `findContact` → `createDeal` + `updateContactStats` fire-and-forget block
 
-### Anti-Pattern 2: Setting SEO inside `onMounted` or a non-immediate watcher
+**Why third:** Pack service has simpler wiring (not a redirect endpoint; full `await` is fine). Good first real-world validation of the new methods against live Zoho API.
 
-**What people do:** `onMounted(() => $setSEO(...))` or `watch(data, handler)` without `immediate: true`.
-**Why it's wrong:** `onMounted` is client-only. A watcher without `immediate` does not fire on SSR.
-The `<title>` and `<meta description>` will be absent from the SSR HTML — invisible to crawlers.
-**Do this instead:** For static pages, call `$setSEO` synchronously. For dynamic pages, use
-`watch(data, handler, { immediate: true })`.
+---
 
-### Anti-Pattern 3: Assuming `site.name` appends a suffix
+### Phase 4 — `ad_paid` wiring
 
-**What people do:** Write a short title like `"Preguntas Frecuentes"` expecting `" | Waldo.click®"` to be appended.
-**Why it's wrong:** No `titleTemplate` is configured. The title renders exactly as passed.
-**Do this instead:** Always write the complete title string: `"Preguntas Frecuentes | Waldo.click®"`.
+**Files:** `src/api/payment/controllers/payment.ts`
 
-### Anti-Pattern 4: Inconsistent OG image path (`/share.jpg` vs `/images/share.jpg`)
+1. Add `zohoService` import
+2. Add `.then().catch()` truly-non-blocking block after `OrderUtils.createAdOrder()`, before `ctx.redirect(...)`
 
-**What people do:** Some pages pass `config.public.baseUrl + "/share.jpg"` (no `/images/` prefix),
-while the plugin default is `BASE_URL + "/images/share.jpg"`.
-**Why it's wrong:** Creates inconsistent OG image paths — some may 404.
-**Do this instead:** Standardize to `config.public.baseUrl + "/images/share.jpg"` across all pages,
-matching the plugin default.
+**Why fourth:** Uses same methods as Phase 3 but with a different async pattern (no `await`). Validate separately.
+
+---
+
+### Phase 5 — `ad_published` wiring
+
+**Files:** `src/api/ad/services/ad.ts`
+
+1. Add `zohoService` import
+2. In `approveAd()`, after approval write and email, add `findContact` → `updateContactStats` block
+
+**Why fifth:** Only uses `updateContactStats` (no deal). Cleanest addition — user email already populated.
+
+---
+
+### Summary Table
+
+| Phase | Scope | Files Modified | Depends On |
+|---|---|---|---|
+| 1 | Interfaces + 401 retry | `interfaces.ts`, `http-client.ts` | Nothing (external: confirm Zoho field names) |
+| 2 | New service methods | `zoho.service.ts` | Phase 1 + Zoho field names confirmed |
+| 3 | `pack_purchased` event | `pack.service.ts` | Phase 2 |
+| 4 | `ad_paid` event | `controllers/payment.ts` | Phase 2 |
+| 5 | `ad_published` event | `api/ad/services/ad.ts` | Phase 2 |
+
+Phases 3, 4, 5 are independent of each other and can be completed in any order once Phase 2 is done.
+
+---
+
+## Cross-Cutting Concerns
+
+### Fire-and-forget discipline — preserved
+
+All new Zoho calls maintain the existing pattern established in `contact.service.ts` and `user-registration.ts`:
+
+```
+try {
+  // Zoho calls (awaited internally)
+} catch (error) {
+  logger.error('...', { error: error.message });
+  // NO rethrow — main request never fails due to CRM sync
+}
+```
+
+Exception: `adResponse` uses `.then().catch()` (floating promise) to avoid any `await` before the redirect.
+
+### Contact lookup overhead
+
+Every new event requires one `findContact(email)` call (~200–500ms) to resolve the Zoho Contact ID. Since all calls are fire-and-forget, this does not affect user-facing response time. If `findContact` returns `null` (user not yet in Zoho), the sync is silently skipped — correct behavior to avoid orphaned records.
+
+### Zoho custom fields are an external dependency
+
+`updateContactStats()` cannot be tested end-to-end until the custom fields exist in Zoho CRM and their exact API names are confirmed. This is the only external dependency in the entire milestone. Resolving it is prerequisite to Phase 2.
+
+### No lifecycle hooks added
+
+Confirmed against Strapi v5 docs: lifecycle hooks (`lifecycles.ts`) fire on DB-layer operations but lack the business context (user email, amount, pack name) available at the service/controller level. Direct calls are unambiguously superior here.
 
 ---
 
 ## Sources
 
-- Direct inspection of `apps/website/app/plugins/seo.ts`
-- Direct inspection of `apps/website/nuxt.config.ts`
-- Direct inspection of all 33 pages in `apps/website/app/pages/`
-- Confirmed: no `titleTemplate` in nuxt.config.ts (grep across all `.ts` files found 0 matches for `titleTemplate|titleSeparator|ogSiteName`)
+- Direct code inspection: `zoho.service.ts`, `http-client.ts`, `interfaces.ts`, `factory.ts`, `index.ts`
+- Direct code inspection: `user-registration.ts`, `userUpdateController.ts`, `contact.service.ts`
+- Direct code inspection: `pack.service.ts`, `ad.service.ts`, `payment.ts` controller
+- Direct code inspection: `ad/services/ad.ts`, `ad/content-types/ad/lifecycles.ts`
+- Strapi v5 official docs: https://docs.strapi.io/dev-docs/backend-customization/models#lifecycle-hooks (verified: lifecycle hooks fire on DB operations; `afterUpdate` event params do not include pre-update values)
+- Axios interceptor pattern: HIGH confidence from training data (standard pattern, unchanged for years)
 
 ---
-*Architecture research for: Website Meta Copy Audit (apps/website — Nuxt 4)*
+*Architecture research for: Zoho CRM Sync Model — Strapi v5 backend (v1.19)*  
 *Researched: 2026-03-07*
