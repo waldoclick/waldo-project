@@ -37,7 +37,7 @@ export interface AdReservation {
   price?: string | number;
   total_days?: number;
   user?: string | number;
-  ad?: any;
+  ad?: unknown;
   createdAt?: string | Date;
   updatedAt?: string | Date;
   publishedAt?: string | Date;
@@ -55,8 +55,8 @@ export interface AdFeaturedReservationData {
 
 export interface ReservationResponse {
   success: boolean;
-  availableAdFeaturedReservation?: any;
-  adFeaturedReservation?: any;
+  availableAdFeaturedReservation?: unknown;
+  adFeaturedReservation?: unknown;
   message?: string;
 }
 
@@ -67,13 +67,13 @@ export interface OrderData {
   amount?: number;
   payment_method?: string;
   payment_id?: string;
-  metadata?: Record<string, any>;
-  [key: string]: any;
+  metadata?: Record<string, unknown>;
+  [key: string]: unknown;
 }
 
 export interface OrderResponse {
   success: boolean;
-  order?: any;
+  order?: unknown;
   message?: string;
 }
 
@@ -86,7 +86,7 @@ export interface PackData {
   total_days?: number;
   total_features?: number;
   is_active?: boolean;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface PackResponse {

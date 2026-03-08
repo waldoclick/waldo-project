@@ -28,7 +28,11 @@ class AdUtils {
    */
   public async createdAd(
     userId: string,
-    adData: Partial<AdData> & { details?: any; slug?: string; user?: any }
+    adData: Partial<AdData> & {
+      details?: unknown;
+      slug?: string;
+      user?: unknown;
+    }
   ) {
     try {
       const adService = strapi.service("api::ad.ad");
@@ -63,14 +67,16 @@ class AdUtils {
   public async updateAd(
     userId: string,
     adId: number,
-    adData: Partial<AdData> & { details?: any }
+    adData: Partial<AdData> & { details?: unknown }
   ) {
     try {
       const updatedAd = await strapi.entityService.update("api::ad.ad", adId, {
         data: {
           ...adData,
           currency: adData.currency as "CLP" | "USD",
-        },
+        } as unknown as Parameters<
+          typeof strapi.entityService.update
+        >[2]["data"],
       });
       return updatedAd;
     } catch (error) {

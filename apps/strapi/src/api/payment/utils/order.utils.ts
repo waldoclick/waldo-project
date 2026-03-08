@@ -6,11 +6,11 @@ interface CreateOrderParams {
   userId: number;
   is_invoice: boolean;
   payment_method: string;
-  payment_response?: any;
-  document_details?: any;
+  payment_response?: unknown;
+  document_details?: unknown;
   adId?: number;
-  items?: any[];
-  document_response?: any;
+  items?: unknown[];
+  document_response?: unknown;
 }
 
 class OrderUtils {
@@ -49,7 +49,9 @@ class OrderUtils {
       // console.log("orderData", orderData);
 
       const order = await strapi.entityService.create("api::order.order", {
-        data: orderData,
+        data: orderData as unknown as Parameters<
+          typeof strapi.entityService.create
+        >[1]["data"],
       });
 
       return {
@@ -104,7 +106,7 @@ class OrderUtils {
    */
   public async updateOrderDocumentResponse(
     orderId: number,
-    documentResponse: any
+    documentResponse: unknown
   ): Promise<OrderResponse> {
     try {
       const order = await strapi.entityService.update(
@@ -113,7 +115,9 @@ class OrderUtils {
         {
           data: {
             document_response: documentResponse,
-          },
+          } as unknown as Parameters<
+            typeof strapi.entityService.update
+          >[2]["data"],
         }
       );
 
