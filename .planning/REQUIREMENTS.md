@@ -11,13 +11,13 @@ Requirements for the Zoho CRM Sync Model milestone.
 
 - [x] **RELY-01**: El cliente HTTP de Zoho refresca el access token automáticamente cuando recibe un 401 (response interceptor con `_retry` guard para evitar loops infinitos)
 - [x] **RELY-02**: El header de autorización en `ZohoHttpClient` usa `Zoho-oauthtoken` en lugar de `Bearer`
-- [ ] **RELY-03**: `createLead()` incluye `Lead_Status: "New"` en el payload enviado a Zoho
+- [x] **RELY-03**: `createLead()` incluye `Lead_Status: "New"` en el payload enviado a Zoho
 - [x] **RELY-04**: Los tests de Zoho (`zoho.test.ts`) no hacen llamadas a la API real de Zoho — usan `axios-mock-adapter` para aislar el servicio
 - [x] **RELY-05**: Las variables `ZOHO_CLIENT_ID`, `ZOHO_CLIENT_SECRET`, `ZOHO_REFRESH_TOKEN`, `ZOHO_API_URL` están declaradas en `.env.example`
 
 ### Contact Sync Model
 
-- [ ] **CONT-01**: Al crear un Contact en Zoho, los campos custom se inicializan en 0: `Ads_Published__c: 0`, `Total_Spent__c: 0`, `Packs_Purchased__c: 0`
+- [x] **CONT-01**: Al crear un Contact en Zoho, los campos custom se inicializan en 0: `Ads_Published__c: 0`, `Total_Spent__c: 0`, `Packs_Purchased__c: 0`
 - [ ] **CONT-02**: El servicio Zoho expone `updateContactStats(contactId, stats)` que actualiza selectivamente `Ads_Published__c`, `Total_Spent__c`, `Last_Ad_Posted_At__c` y/o `Packs_Purchased__c` vía `PUT /crm/v5/Contacts/{id}`
 
 ### Deal Sync Model
@@ -58,10 +58,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 |-------------|-------|--------|
 | RELY-01 | Phase 43 | Complete |
 | RELY-02 | Phase 43 | Complete |
-| RELY-03 | Phase 44 | Pending |
+| RELY-03 | Phase 44 | Complete |
 | RELY-04 | Phase 43 | Complete |
 | RELY-05 | Phase 43 | Complete |
-| CONT-01 | Phase 44 | Pending |
+| CONT-01 | Phase 44 | Complete |
 | CONT-02 | Phase 44 | Pending |
 | DEAL-01 | Phase 44 | Pending |
 | DEAL-02 | Phase 45 | Pending |
