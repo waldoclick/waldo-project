@@ -132,8 +132,6 @@
       :primary-disabled="!meta.valid"
       @back="handleformBack"
     />
-
-    <pre>{{ user.value }}</pre>
   </Form>
 </template>
 
