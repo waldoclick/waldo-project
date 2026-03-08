@@ -855,6 +855,39 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
     try {
       const adId = ad.ad_id as number | undefined;
 
+      // Extract only schema-known fields, normalizing gallery to ID array
+      const galleryRaw = ad.gallery;
+      const gallery = Array.isArray(galleryRaw)
+        ? (galleryRaw as Array<{ id?: number | string } | number>).map((item) =>
+            typeof item === "object" && item !== null && "id" in item
+              ? Number(item.id)
+              : Number(item)
+          )
+        : [];
+
+      const adPayload = {
+        name: ad.name,
+        description: ad.description,
+        address: ad.address,
+        address_number: ad.address_number,
+        phone: ad.phone,
+        email: ad.email,
+        year: ad.year,
+        manufacturer: ad.manufacturer,
+        model: ad.model,
+        serial_number: ad.serial_number,
+        weight: ad.weight,
+        width: ad.width,
+        height: ad.height,
+        depth: ad.depth,
+        commune: ad.commune,
+        condition: ad.condition,
+        category: ad.category,
+        currency: ad.currency as "CLP" | "USD",
+        price: ad.price,
+        gallery,
+      };
+
       if (!adId) {
         const timestamp = Date.now();
         const baseName = typeof ad.name === "string" ? ad.name : "borrador";
@@ -870,7 +903,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
 
         const newAd = await strapi.service("api::ad.ad").create({
           data: {
-            ...ad,
+            ...adPayload,
             slug,
             user: userId,
             draft: true,
@@ -889,9 +922,8 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
 
       await strapi.entityService.update("api::ad.ad", adId, {
         data: {
-          ...ad,
+          ...adPayload,
           draft: true,
-          currency: ad.currency as "CLP" | "USD",
         } as unknown as Parameters<
           typeof strapi.entityService.update
         >[2]["data"],
@@ -904,6 +936,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
 
       return { success: true, id: adId };
     } catch (error) {
+      console.error("Error al guardar borrador de anuncio:", error);
       logger.error("Error al guardar borrador de anuncio", {
         userId,
         error: (error as Error).message,
