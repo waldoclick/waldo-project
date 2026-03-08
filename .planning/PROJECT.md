@@ -96,6 +96,14 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
    - ✓ Dashboard "Abandonados" → "Borradores": label, endpoint, and filter all use `ads/drafts` — v1.21
    - ✓ Migration seeder sets `draft: true` on all existing ads with abandoned condition (`active=false`, `ad_reservation=null`) — v1.21
 
+   - ✓ `/pagar/index.vue` con `middleware: "auth"` y `noindex` — página central de pago — v1.22
+   - ✓ `PaymentAd.vue` — preview del anuncio (imagen, nombre, precio, botón Editar) como primer elemento del checkout — v1.22
+   - ✓ `PaymentGateway.vue` — checkbox WebPay decorativo, preparado para pasarelas futuras — v1.22
+   - ✓ `FormCheckout.vue` reestructurado con `lang="ts"`, títulos por sección, orden correcto, dead code eliminado — v1.22
+   - ✓ `CheckoutDefault.vue` contiene la lógica de pago completa (draft + webpay redirect + free path + error handling) — v1.22
+   - ✓ `BarCheckout.vue` — barra de acción del checkout con botón "Ir a pagar" — v1.22
+   - ✓ SCSS `payment--ad` y `payment--gateway` implementados; `form--checkout__field__title` para títulos de sección — v1.22
+
 ## Context
 
 - Monorepo con Turbo para orquestación de tareas
@@ -107,6 +115,7 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - Website (apps/website): Nuxt 4, Pinia, @nuxtjs/strapi v2; 34 páginas lang="ts" (5 new step pages added in v1.18), 14 stores con persist audit, typeCheck: true (since v1.9)
 - Ad creation wizard (v1.18): 5 dedicated routes (`/anunciar`, `/anunciar/datos-del-producto`, `/datos-personales`, `/ficha-de-producto`, `/galeria-de-imagenes`); `wizard-guard.ts` middleware prevents step skipping (SSR-safe); `stepRoutes` Record map in `CreateAd.vue`; per-page `stepView` analytics
 - Ad draft flow (v1.21): `draft: boolean` field on Ad schema (`default: true`); `POST /api/ads/save-draft` creates/updates draft before payment; `publishAd()` sets `draft: false` on payment confirmation; `computeAdStatus()` checks draft first; dashboard Borradores section uses `/ads/drafts` endpoint; free ad flow skips draft call entirely
+- Checkout flow (v1.22): `/pagar` page as central payment hub; `CheckoutDefault.vue` owns full payment logic (draft + webpay + free path); `PaymentAd.vue` previews ad; `PaymentGateway.vue` shows WebPay decoratively; `FormCheckout.vue` accordion with 5 sections; `BarCheckout.vue` action bar; SCSS `payment--ad`, `payment--gateway`, `form--checkout__field__title`
 - 4 cron jobs activos en Strapi: `adCron` (1 AM), `userCron` (2 AM), `backupCron` (3 AM), `cleanupCron` (domingo 4 AM)
 - `cron-runner` API disponible en `POST /api/cron-runner/:name` para ejecución manual de cualquier cron
 - GTM handled via `@saslavik/nuxt-gtm@0.1.3` module in both website (since v1.13) and dashboard (since v1.14) — `enableRouterSync: true` fires page_view on every SPA route change; GTM ID from `runtimeConfig.public.gtm.id`; hand-rolled `gtm.client.ts` plugins deleted in both apps
@@ -202,6 +211,10 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
    | `publishAd()` called in both Transbank and free payment paths | Ensures every payment confirmation flips `draft: false`; no ad stays in draft state after successful payment — v1.21 | ✓ Good |
    | `POST /api/ads/save-draft` in ad domain (not payment domain) | Draft is an ad concern, not a payment concern; co-located with `draftAds()`, `computeAdStatus()`, and ad schema — v1.21 | ✓ Good |
    | Free ad flow (`pack=free`) skips draft call entirely | Free pack ads don't go through payment; draft pre-call would be orphaned; no `draft: false` flip needed for free packs — v1.21 | ✓ Good |
+   | `/pagar` as single payment execution page | All `hasToPay === true` flows redirect here; payment logic centralized in `CheckoutDefault.vue` — v1.22 | ✓ Good |
+   | `PaymentAd` pattern — ad preview first in checkout | Gives user context before paying; reduces abandonment by confirming they're paying for the right thing — v1.22 | ✓ Good |
+   | `CheckoutDefault.vue` owns full payment logic | `resumen.vue` becomes a review/redirect step only; no payment duplication across pages — v1.22 | ✓ Good |
+   | `BarCheckout.vue` separated from `BarAnnouncement.vue` | Checkout action bar has different semantics (no back button, step count); clean separation avoids prop flag soup — v1.22 | ✓ Good |
 
 ## Future Requirements
 
@@ -218,4 +231,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-08 after v1.21 milestone — Ad Draft Decoupling*
+*Last updated: 2026-03-08 after v1.22 milestone — Checkout Flow UI*

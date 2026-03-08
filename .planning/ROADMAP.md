@@ -23,29 +23,21 @@
 - ✅ **v1.19 Zoho CRM Sync Model** — Phases 43-46 (shipped 2026-03-08)
 - ✅ **v1.20 TypeScript any Elimination** — Phases 47-51 (shipped 2026-03-08)
 - ✅ **v1.21 Ad Draft Decoupling** — Phase 52 (shipped 2026-03-08)
-- 🚧 **v1.22 Checkout Flow UI** — Phases 53-54 (in progress)
+- ✅ **v1.22 Checkout Flow UI** — Phase 53 (shipped 2026-03-08)
 
 ## Phases
 
 <details>
-<summary>✅ v1.1–v1.20 (Phases 3-51) — SHIPPED</summary>
+<summary>✅ v1.1–v1.21 (Phases 3-52) — SHIPPED</summary>
 
 All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 
 </details>
 
 <details>
-<summary>✅ v1.21 — Ad Draft Decoupling (Phase 52) — SHIPPED 2026-03-08</summary>
+<summary>✅ v1.22 — Checkout Flow UI (Phase 53) — SHIPPED 2026-03-08</summary>
 
-- [x] **Phase 52: Ad Draft Decoupling** — `draft` boolean field added to Ad schema (`default: true`); migration seeder marks existing abandoned ads as draft; `computeAdStatus()` returns `"draft"` first; `POST /api/ads/save-draft` endpoint; `resumen.vue` calls draft endpoint before payment; dashboard Borradores label + filter updated; `publishAd()` sets `draft: false` on payment confirmation (completed 2026-03-08)
-
-</details>
-
-<details>
-<summary>🚧 v1.22 — Checkout Flow UI (Phases 53-54) — IN PROGRESS</summary>
-
-- [x] **Phase 53: Checkout Page & Components** — `pages/pagar/index.vue` con auth middleware; `PaymentAd.vue` (preview aviso); `PaymentGateway.vue` (WebPay decorativo); `FormCheckout.vue` reestructurado con títulos por sección, textos de contexto, `lang="ts"`, dead code eliminado; SCSS para `payment--ad` y `payment--gateway` (completed 2026-03-08)
-- [ ] **Phase 54: Redirección desde Flujos Existentes** — `resumen.vue` redirige a `/pagar` cuando `hasToPay === true`; flujo de compra de packs redirige a `/pagar`; lógica de pago movida a `CheckoutDefault`
+- [x] **Phase 53: Checkout Page & Components** — `pages/pagar/index.vue` con auth middleware; `PaymentAd.vue` (preview aviso); `PaymentGateway.vue` (WebPay decorativo); `CheckoutDefault.vue` con lógica de pago completa; `FormCheckout.vue` reestructurado con títulos por sección, textos de contexto, `lang="ts"`, dead code eliminado; `BarCheckout.vue`; SCSS para `payment--ad` y `payment--gateway` (completed 2026-03-08)
 
 </details>
 
@@ -72,4 +64,3 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 | 51. Seeders + Test Files any Elimination | v1.20 | 1/1 | Complete | 2026-03-08 |
 | 52. Ad Draft Decoupling | v1.21 | 4/4 | Complete | 2026-03-08 |
 | 53. Checkout Page & Components | v1.22 | 1/1 | Complete | 2026-03-08 |
-| 54. Redirección desde Flujos | v1.22 | 0/TBD | Pending | — |
