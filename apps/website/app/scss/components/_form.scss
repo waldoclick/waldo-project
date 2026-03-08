@@ -40,6 +40,33 @@ input:-webkit-autofill {
     margin-bottom: 30px;
   }
 
+  &--checkout {
+    &__field {
+      margin-bottom: 30px;
+
+      &__title {
+        font-style: normal;
+        font-weight: bold;
+        font-size: 16px;
+        color: $charcoal;
+        margin-bottom: 12px;
+        letter-spacing: 0.25px;
+      }
+
+      &__description {
+        font-style: normal;
+        font-weight: normal;
+        font-size: 16px;
+        color: rgba($charcoal, 0.7);
+        margin-bottom: 20px;
+
+        p {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+
   &__description {
     font-style: normal;
     font-weight: normal;

@@ -1,16 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.21
-milestone_name: Ad Draft Decoupling
-status: complete
-stopped_at: Milestone v1.21 complete
-last_updated: "2026-03-08T20:00:00.000Z"
-last_activity: 2026-03-08 — v1.21 Ad Draft Decoupling shipped
+milestone: v1.22
+milestone_name: Checkout Flow UI
+status: in_progress
+stopped_at: Phase 53 complete — Phase 54 next
+last_updated: "2026-03-08T21:30:00.000Z"
+last_activity: 2026-03-08 — Phase 53 (Checkout Page & Components) shipped
 progress:
-  total_phases: 1
+  total_phases: 2
   completed_phases: 1
-  total_plans: 4
-  completed_plans: 4
+  total_plans: 1
+  completed_plans: 1
 ---
 
 # Project State
@@ -20,20 +20,20 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-08 after v1.21)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Planning next milestone — run `/gsd-new-milestone` to begin
+**Current focus:** v1.22 Checkout Flow UI — Phase 54 next
 
 ## Current Position
 
-Phase: —
+Phase: 54 (Redirección desde Flujos Existentes) — not started
 Plan: —
-Status: Milestone v1.21 complete — ready for next milestone
-Last activity: 2026-03-08 — v1.21 Ad Draft Decoupling shipped
+Status: Phase 53 complete — ready to begin Phase 54
+Last activity: 2026-03-08 — Phase 53 (Checkout Page & Components) shipped
 
 ## Accumulated Context
 
 ### Decisions
 
-All decisions from v1.1–v1.21 are logged in PROJECT.md Key Decisions table.
+All decisions from v1.1–v1.22 planning are logged in PROJECT.md Key Decisions table.
 
 Key patterns established (carry forward):
 - `watch({ immediate: true })` as sole data-loading trigger — never pair with onMounted
@@ -60,6 +60,8 @@ Key patterns established (carry forward):
 - **v1.21**: Endpoint domain belongs with the entity, not the trigger — `/api/ads/save-draft` not `/api/payments/ad-draft`
 - **v1.21**: Plan the full lifecycle of a new boolean field — `default: true` requires explicitly planning the flip to `false`
 - **v1.21**: New Strapi endpoints require manual permission setup in admin panel — document as deploy step in plan
+  - **v1.22**: `/pagar` es la página central de pago — todos los flujos con `hasToPay === true` deben redirigir aquí
+  - **v1.22**: `PaymentAd` pattern — preview del ad como primer elemento del checkout para dar contexto al usuario antes de pagar
 
 ### Pending Todos
 
@@ -72,5 +74,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-08
-Stopped at: Milestone v1.21 complete
-Resume with: `/gsd-new-milestone` to begin v1.22 planning
+Stopped at: Phase 53 complete — Phase 54 (Redirección desde Flujos) pending
+Resume with: `/gsd-plan-phase` to plan Phase 54

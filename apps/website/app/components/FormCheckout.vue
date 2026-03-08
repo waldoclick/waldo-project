@@ -1,22 +1,44 @@
 <template>
-  <Form v-slot="{ meta }" class="form form--create" @submit="handleSubmit">
+  <Form v-slot="{ meta }" class="form form--checkout" @submit="handleSubmit">
     <!-- Introduce -->
-    <div class="form__field">
-      <h2 class="form__title">¿Cómo quieres publicar tu anuncio?</h2>
-      <div class="form__description">
+    <div class="form--checkout__field">
+      <h2 class="form--checkout__field__title">Confirma tu pago</h2>
+      <div class="form--checkout__field__description">
         <p>
-          Elige la forma como quieres publicar, si tienes anuncios úsalos, si no
-          tienes compra uno individual o un Pack, a todos los puedes adjuntar un
-          destacado.
+          Revisa los detalles de tu anuncio, elige cómo quieres publicarlo y
+          completa el pago de forma segura.
         </p>
       </div>
     </div>
 
-    <!-- Tipos de anuncio -->
-    <div class="form__field">
+    <!-- Anuncio -->
+    <div class="form--checkout__field">
+      <h3 class="form--checkout__field__title">Tu anuncio</h3>
+      <PaymentAd />
+    </div>
+
+    <!-- Tipo de publicación -->
+    <div class="form--checkout__field">
+      <h3 class="form--checkout__field__title">Tipo de publicación</h3>
       <PaymentMethod />
+    </div>
+
+    <!-- Destacado -->
+    <div class="form--checkout__field">
+      <h3 class="form--checkout__field__title">Destacado</h3>
       <PaymentFeatured />
+    </div>
+
+    <!-- Boleta o factura -->
+    <div class="form--checkout__field">
+      <h3 class="form--checkout__field__title">Boleta o factura</h3>
       <PaymentInvoice />
+    </div>
+
+    <!-- Pasarela de pago -->
+    <div class="form--checkout__field">
+      <h3 class="form--checkout__field__title">Pasarela de pago</h3>
+      <PaymentGateway />
     </div>
 
     <BarCheckout
@@ -25,31 +47,21 @@
       :total-steps="5"
       :show-steps="true"
       :summary-text="paymentSummaryText"
-      primary-label="Continuar"
+      primary-label="Ir a pagar"
       :primary-disabled="!meta.valid"
       :show-back="false"
-      @back="handleformBack"
     />
   </Form>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { Form } from "vee-validate";
 import { useAdPaymentSummary } from "@/composables/useAdPaymentSummary";
-import PaymentMethod from "@/components/PaymentMethod.vue";
-import PaymentFeatured from "@/components/PaymentFeatured.vue";
-import PaymentInvoice from "@/components/PaymentInvoice.vue";
-import BarCheckout from "@/components/BarCheckout.vue";
 
-const emit = defineEmits(["formSubmitted", "formBack"]);
+const emit = defineEmits(["formSubmitted"]);
 const { paymentSummaryText } = useAdPaymentSummary();
 
-const handleSubmit = async (values) => {
-  // Emitir el evento 'formSubmitted'
+const handleSubmit = (values: Record<string, unknown>) => {
   emit("formSubmitted", values);
-};
-
-const handleformBack = async () => {
-  emit("formBack");
 };
 </script>
