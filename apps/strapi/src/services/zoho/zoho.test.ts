@@ -52,6 +52,21 @@ describe("ZohoService", () => {
       expect(Array.isArray(result)).toBe(true);
       expect(result.length).toBeGreaterThan(0);
     });
+
+    it("should include Lead_Status: 'New' in the payload", async () => {
+      mock
+        .onPost("https://www.zohoapis.com/crm/v5/Leads")
+        .reply(200, { data: [{ Details: { id: "lead-001" } }] });
+      await service.createLead({
+        firstName: "John",
+        lastName: "Doe",
+        email: "john@example.com",
+      });
+      const body = JSON.parse(
+        mock.history.post.find((r) => r.url?.includes("/Leads"))!.data
+      );
+      expect(body.data[0].Lead_Status).toBe("New");
+    });
   });
 
   describe("createContact()", () => {
@@ -68,6 +83,23 @@ describe("ZohoService", () => {
 
       expect(result).toBeDefined();
       expect(result.id).toBe("contact-001");
+    });
+
+    it("should initialize custom counter fields to zero", async () => {
+      mock
+        .onPost("https://www.zohoapis.com/crm/v5/Contacts")
+        .reply(200, { data: [{ id: "contact-001" }] });
+      await service.createContact({
+        First_Name: "Jane",
+        Last_Name: "Smith",
+        Email: "test@example.com",
+      });
+      const body = JSON.parse(
+        mock.history.post.find((r) => r.url?.includes("/Contacts"))!.data
+      );
+      expect(body.data[0].Ads_Published__c).toBe(0);
+      expect(body.data[0].Total_Spent__c).toBe(0);
+      expect(body.data[0].Packs_Purchased__c).toBe(0);
     });
   });
 
