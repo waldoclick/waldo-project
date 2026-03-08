@@ -1,7 +1,7 @@
 <template>
   <div>
-    <HeroDefault title="Abandonados" :breadcrumbs="breadcrumbs" />
-    <AdsTable endpoint="ads/abandoneds" section="adsAbandoned" />
+    <HeroDefault title="Borradores" :breadcrumbs="breadcrumbs" />
+    <AdsTable endpoint="ads/drafts" section="adsDraft" />
   </div>
 </template>
 
@@ -15,6 +15,6 @@ definePageMeta({
 
 const breadcrumbs = [
   { label: "Anuncios", to: "/ads/pending" },
-  { label: "Abandonados" },
+  { label: "Borradores" },
 ];
 </script>

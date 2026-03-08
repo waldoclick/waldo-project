@@ -128,6 +128,7 @@ type SettingsSection =
   | "adsBanned"
   | "adsRejected"
   | "adsAbandoned"
+  | "adsDraft"
   | "users"
   | "reservations"
   | "featured"
