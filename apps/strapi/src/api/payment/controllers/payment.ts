@@ -277,7 +277,7 @@ class PaymentController {
     const token = ctx.query.token_ws;
 
     if (typeof token !== "string") {
-      ctx.redirect(`${process.env.FRONTEND_URL}/packs/comprar`);
+      ctx.redirect(`${process.env.FRONTEND_URL}/pagar`);
       return;
     }
 
