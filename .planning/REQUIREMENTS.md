@@ -56,24 +56,24 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| RELY-01 | — | Pending |
-| RELY-02 | — | Pending |
-| RELY-03 | — | Pending |
-| RELY-04 | — | Pending |
-| RELY-05 | — | Pending |
-| CONT-01 | — | Pending |
-| CONT-02 | — | Pending |
-| DEAL-01 | — | Pending |
-| DEAL-02 | — | Pending |
-| DEAL-03 | — | Pending |
-| EVT-01 | — | Pending |
-| EVT-02 | — | Pending |
-| EVT-03 | — | Pending |
+| RELY-01 | Phase 43 | Pending |
+| RELY-02 | Phase 43 | Pending |
+| RELY-03 | Phase 44 | Pending |
+| RELY-04 | Phase 43 | Pending |
+| RELY-05 | Phase 43 | Pending |
+| CONT-01 | Phase 44 | Pending |
+| CONT-02 | Phase 44 | Pending |
+| DEAL-01 | Phase 44 | Pending |
+| DEAL-02 | Phase 45 | Pending |
+| DEAL-03 | Phase 45 | Pending |
+| EVT-01 | Phase 46 | Pending |
+| EVT-02 | Phase 46 | Pending |
+| EVT-03 | Phase 45 | Pending |
 
 **Coverage:**
 - v1.19 requirements: 13 total
-- Mapped to phases: 0 (pending roadmap)
-- Unmapped: 13 ⚠️
+- Mapped to phases: 13 ✓
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-08*

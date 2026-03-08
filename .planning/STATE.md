@@ -1,13 +1,13 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.19
-milestone_name: — Next Milestone (TBD)
-status: planning
-stopped_at: v1.18 milestone complete
-last_updated: "2026-03-08T03:00:00.000Z"
-last_activity: 2026-03-08 — v1.18 milestone archived
+milestone_name: Zoho CRM Sync Model
+status: active
+stopped_at: roadmap created — Phase 43 is next
+last_updated: "2026-03-08T04:00:00.000Z"
+last_activity: 2026-03-08 — v1.19 roadmap created (Phases 43-46)
 progress:
-  total_phases: 0
+  total_phases: 4
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -21,16 +21,20 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-08)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Planning v1.19 — next milestone TBD
+**Current focus:** v1.19 — Zoho CRM Sync Model — Phase 43: Zoho Service Reliability
 
 ## Current Position
 
-Status: v1.18 complete — ready for next milestone
+Status: active — roadmap ready, no plans written yet
 Plan: —
-Last activity: 2026-03-08 — v1.18 archived (Phase 42 complete, wizard-guard added, milestone committed + tagged)
+Last activity: 2026-03-08 — roadmap created; Phases 43-46 defined; 13/13 requirements mapped
 
 ```
-Progress: [░░░░░░░░░░] 0% — no active milestone
+Progress: [░░░░░░░░░░] 0% — 0/4 phases complete
+Phase 43: Zoho Service Reliability   [ ] Not started
+Phase 44: Zoho Service Layer         [ ] Not started
+Phase 45: Payment Event Wiring       [ ] Not started
+Phase 46: Ad Published Event Wiring  [ ] Not started
 ```
 
 ## Accumulated Context
@@ -57,16 +61,26 @@ Key patterns established (carry forward):
 - **v1.18**: `if (import.meta.server) return;` is mandatory first line of any client-only middleware reading a localStorage-backed store
 - **v1.18**: `wizard-guard.ts` — step-skip prevention middleware; client-only; redirects to first incomplete step
 
+### v1.19 Key Decisions (from research)
+
+- **Zoho event wiring**: Direct service calls (not lifecycle hooks, not Strapi event hub) — callers have full context; explicit causality; consistent with existing fire-and-forget pattern
+- **Phase 43 must come first**: Token refresh (RELY-01) and auth header fix (RELY-02) must be in place before any new Zoho methods are added — all new calls inherit the bug otherwise
+- **Test isolation (RELY-04)**: `axios-mock-adapter` injected via optional constructor param on `ZohoHttpClient` — enables mocking without touching production path
+- **`pack_purchased` wiring**: Async `await` is safe (not a redirect endpoint); `ad_paid` wiring must use `.then().catch()` floating promise (redirect must not be blocked)
+- **No lifecycle hooks for CRM events**: `afterUpdate` on Ad lacks business context (user email, amount); direct call in `approveAd()` is unambiguously better
+- **Race condition on counter increments**: Read-modify-write accepted as known limitation at Waldo's traffic volume; reconciliation cron deferred to future reliability milestone
+
 ### Pending Todos
 
-None — v1.18 complete and archived. Ready for `/gsd-new-milestone`.
+- Confirm Zoho CRM custom field API names (`Ads_Published__c`, `Total_Spent__c`, etc.) in Zoho Admin UI before Phase 44 can be completed end-to-end
+- Install `axios-retry@^4.5.0` (prod) and `axios-mock-adapter@^2.1.0` (dev) in Phase 43
 
 ### Blockers/Concerns
 
-None.
+- **External dependency**: Zoho custom field API names must be confirmed from Zoho CRM Admin → Modules → Contacts → Fields before `updateContactStats()` can be verified end-to-end. This is the only blocker for Phase 44 completion.
 
 ## Session Continuity
 
 Last session: 2026-03-08
-Stopped at: v1.18 milestone archived
-Resume with: `/gsd-new-milestone`
+Stopped at: roadmap created (Phases 43-46)
+Resume with: `/gsd-plan-phase 43`
