@@ -164,7 +164,7 @@ const handlePayClick = async () => {
       };
 
       const draftResponse = await create<{ id: number }>(
-        "payments/ad-draft",
+        "ads/draft",
         draftPayload as unknown as Parameters<typeof create>[1],
       );
 

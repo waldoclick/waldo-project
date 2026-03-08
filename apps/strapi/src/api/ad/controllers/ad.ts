@@ -645,6 +645,43 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    *
    * @route PUT /api/ads/:id/deactivate
    */
+  /**
+   * Save an ad as a draft before payment processing.
+   * Creates a new draft ad or updates an existing one with draft: true.
+   *
+   * @route POST /api/ads/draft
+   */
+  async saveDraft(ctx: Context) {
+    try {
+      const { ad } = ctx.request.body as { ad?: Record<string, unknown> };
+      const userId = ctx.state.user?.id;
+
+      if (!userId) {
+        return ctx.unauthorized(
+          "You must be authenticated to save a draft advertisement"
+        );
+      }
+
+      if (!ad || typeof ad !== "object") {
+        return ctx.badRequest("Missing or invalid ad payload");
+      }
+
+      const result = await strapi
+        .service("api::ad.ad")
+        .saveDraft(ad, String(userId));
+
+      if (!result.success) {
+        ctx.status = 400;
+        ctx.body = { success: false, message: result.message };
+        return;
+      }
+
+      ctx.body = { data: { id: result.id } };
+    } catch (error) {
+      ctx.throw(500, error);
+    }
+  },
+
   async deactivateAd(ctx: Context) {
     try {
       const { id } = ctx.params;

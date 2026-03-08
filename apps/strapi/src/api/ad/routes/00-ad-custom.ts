@@ -45,6 +45,11 @@ export default {
       handler: "ad.drafts",
     },
     {
+      method: "POST",
+      path: "/ads/draft",
+      handler: "ad.saveDraft",
+    },
+    {
       method: "PUT",
       path: "/ads/:id/approve",
       handler: "ad.approveAd",
