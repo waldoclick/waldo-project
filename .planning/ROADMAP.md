@@ -127,5 +127,5 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 | 42. Ad Creation URL Refactor | v1.18 | 3/3 | Complete | 2026-03-08 |
 | 43. Zoho Service Reliability | 2/2 | Complete    | 2026-03-08 | — |
 | 44. Zoho Service Layer | 2/2 | Complete    | 2026-03-08 | — |
-| 45. Payment Event Wiring | v1.19 | 0/? | Not started | — |
+| 45. Payment Event Wiring | 1/2 | In Progress|  | — |
 | 46. Ad Published Event Wiring | v1.19 | 0/? | Not started | — |
