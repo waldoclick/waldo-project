@@ -47,10 +47,12 @@ onMounted(() => {
 });
 
 function handleFormSubmitted() {
+  adStore.updateStep(3);
   router.push("/anunciar/datos-personales");
 }
 
 function handleFormBack() {
+  adStore.updateStep(1);
   router.push("/anunciar");
 }
 </script>
