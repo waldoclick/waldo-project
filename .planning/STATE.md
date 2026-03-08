@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: planning
-stopped_at: Completed 50-01-PLAN.md
-last_updated: "2026-03-08T15:10:44.207Z"
+stopped_at: Completed 51-01-PLAN.md
+last_updated: "2026-03-08T15:26:24.529Z"
 last_activity: 2026-03-08 — Roadmap created
 progress:
   total_phases: 5
-  completed_phases: 4
-  total_plans: 4
-  completed_plans: 4
+  completed_phases: 5
+  total_plans: 5
+  completed_plans: 5
 ---
 
 # Project State
@@ -73,6 +73,8 @@ Key patterns established (carry forward):
 - [Phase 50]: data double-cast pattern (as unknown as Parameters<...>[1]['data']) for entityService JSON fields — JSONValue stricter than unknown
 - [Phase 50]: WebpayAdResult local interface for processPaidWebpay — TypeScript union can't narrow on optional property absence; local interface gives type safety without changing inferred return type
 - [Phase 50]: BillingDetails exported from user.utils.ts for use in FactoDocumentData.userDetails — eliminates userDetails: any in general.utils.ts
+- [Phase 51]: (global as unknown as { strapi: MockStrapi }) cast for test global mock — avoids @strapi/types global redeclaration conflict
+- [Phase 51]: controller.packResponse direct access with ctx as unknown as Context — public property, Koa partial mock needs Context cast
 
 ### Pending Todos
 
@@ -84,6 +86,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-08T15:10:44.205Z
-Stopped at: Completed 50-01-PLAN.md
+Last session: 2026-03-08T15:26:24.528Z
+Stopped at: Completed 51-01-PLAN.md
 Resume with: `/gsd-implement-plan 50-01`

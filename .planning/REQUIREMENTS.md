@@ -65,13 +65,13 @@ TypeScript `any` elimination across Strapi services, controllers, type files, fa
 
 ### Seeders
 
-- [ ] **TSANY-33**: All 5 seeder files (`categories.ts`, `packs.ts`, `regions.ts`, `faqs.ts`, `conditions.ts`) — `strapi: any` param → proper Strapi type
+- [x] **TSANY-33**: All 5 seeder files (`categories.ts`, `packs.ts`, `regions.ts`, `faqs.ts`, `conditions.ts`) — `strapi: any` param → proper Strapi type
 
 ### Test Files
 
-- [ ] **TSANY-34**: `pack.zoho.test.ts` — `(global as any).strapi` → typed mock; `(result as any).success` → typed
-- [ ] **TSANY-35**: `pack.service.test.ts` + `ad.service.test.ts` — `(await ...) as any` casts → typed with proper interfaces
-- [ ] **TSANY-36**: `payment.controller.test.ts` — `(controller as any).packResponse` → typed accessor; `body: undefined as any` → typed stub
+- [x] **TSANY-34**: `pack.zoho.test.ts` — `(global as any).strapi` → typed mock; `(result as any).success` → typed
+- [x] **TSANY-35**: `pack.service.test.ts` + `ad.service.test.ts` — `(await ...) as any` casts → typed with proper interfaces
+- [x] **TSANY-36**: `payment.controller.test.ts` — `(controller as any).packResponse` → typed accessor; `body: undefined as any` → typed stub
 
 ## Out of Scope
 
@@ -119,10 +119,10 @@ TypeScript `any` elimination across Strapi services, controllers, type files, fa
 | TSANY-30 | Phase 50 | Complete |
 | TSANY-31 | Phase 50 | Complete |
 | TSANY-32 | Phase 50 | Complete |
-| TSANY-33 | Phase 51 | Pending |
-| TSANY-34 | Phase 51 | Pending |
-| TSANY-35 | Phase 51 | Pending |
-| TSANY-36 | Phase 51 | Pending |
+| TSANY-33 | Phase 51 | Complete |
+| TSANY-34 | Phase 51 | Complete |
+| TSANY-35 | Phase 51 | Complete |
+| TSANY-36 | Phase 51 | Complete |
 
 **Coverage:**
 - v1.20 requirements: 36 total
