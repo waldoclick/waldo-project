@@ -143,7 +143,7 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 | 44. Zoho Service Layer | v1.19 | 2/2 | Complete | 2026-03-08 |
 | 45. Payment Event Wiring | v1.19 | 2/2 | Complete | 2026-03-08 |
 | 46. Ad Published Event Wiring | v1.19 | 1/1 | Complete | 2026-03-08 |
-| 47. Ad API any Elimination | v1.20 | 1/1 | Complete | 2026-03-08 |
+| 47. Ad API any Elimination | 1/1 | Complete   | 2026-03-08 | 2026-03-08 |
 | 48. Type Files + Flow Service any Elimination | v1.20 | 1/1 | Not started | - |
 | 49. Zoho + Facto + Other Services any Elimination | v1.20 | 0/? | Not started | - |
 | 50. Payment Utils + Middlewares any Elimination | v1.20 | 0/? | Not started | - |

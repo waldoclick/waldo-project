@@ -1,17 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.20
-milestone_name: TypeScript any Elimination
-status: roadmap ready
-stopped_at: —
-last_updated: "2026-03-08"
-last_activity: 2026-03-08 — Roadmap created; 5 phases (47-51) defined; ready to plan Phase 47
+milestone: v1.1
+milestone_name: milestone
+status: planning
+stopped_at: Completed 47-01-PLAN.md
+last_updated: "2026-03-08T14:25:15.033Z"
+last_activity: 2026-03-08 — Roadmap created
 progress:
   total_phases: 5
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
-  percent: 0
+  completed_phases: 1
+  total_plans: 2
+  completed_plans: 1
 ---
 
 # Project State
@@ -65,6 +64,8 @@ Key patterns established (carry forward):
 - **v1.19**: Floating promise pattern for any Zoho sync inside a redirect handler — capture variables before `Promise.resolve().then()`
 - **v1.19**: First-publish guard pattern: `isPending` check before firing any "ad published" side effects
 - **v1.19**: Zoho stage names must match CRM pipeline exactly — validate before hardcoding
+- [Phase 47-ad-api-any-elimination]: Use AdQueryOptions interface for ad service methods replacing options: any — Expresses intent for query shape; allows typed access to page, pageSize, filters, sort, populate, orderBy, pagination fields
+- [Phase 47-ad-api-any-elimination]: Strapi SDK v5 cast pattern for entityService filter params — filters as unknown as Record<string, unknown> — matches AGENTS.md Strapi SDK v5 cast pattern; used in meCounts controller for all 5 entityService.count calls
 
 ### Pending Todos
 
@@ -76,6 +77,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-08
-Stopped at: Roadmap created — Phase 47 ready to plan
+Last session: 2026-03-08T14:25:04.030Z
+Stopped at: Completed 47-01-PLAN.md
 Resume with: `/gsd-plan-phase 47`
