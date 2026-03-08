@@ -15,13 +15,13 @@ export interface PaginationMeta {
 }
 
 export interface QueryParams {
-  filters?: any;
+  filters?: unknown;
   pagination?: {
     page?: string;
     pageSize?: string;
   };
-  sort?: any;
-  populate?: any;
+  sort?: unknown;
+  populate?: unknown;
 }
 
 export interface Order {
@@ -31,10 +31,10 @@ export interface Order {
   buy_order: string;
   is_invoice: boolean;
   payment_method: string;
-  payment_response: any;
+  payment_response: unknown;
   createdAt: string;
   updatedAt: string;
-  document_details: any;
+  document_details: unknown;
   locale: string | null;
   publishedAt: string;
 }

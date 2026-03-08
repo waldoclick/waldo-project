@@ -22,7 +22,7 @@ export interface Category extends BaseEntity {
   name: string;
   slug: string;
   color: string;
-  icon?: any;
+  icon?: unknown;
   count?: number;
 }
 
@@ -32,17 +32,17 @@ export interface FilterResponse<T> {
 
 export interface StrapiFilter {
   [key: string]: {
-    $eq?: any;
-    $ne?: any;
-    $lt?: any;
-    $lte?: any;
-    $gt?: any;
-    $gte?: any;
-    $in?: any[];
-    $nin?: any[];
-    $contains?: any;
-    $notContains?: any;
-    $containsi?: any;
-    $notContainsi?: any;
+    $eq?: unknown;
+    $ne?: unknown;
+    $lt?: unknown;
+    $lte?: unknown;
+    $gt?: unknown;
+    $gte?: unknown;
+    $in?: unknown[];
+    $nin?: unknown[];
+    $contains?: unknown;
+    $notContains?: unknown;
+    $containsi?: unknown;
+    $notContainsi?: unknown;
   };
 }

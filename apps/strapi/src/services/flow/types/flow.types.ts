@@ -35,7 +35,7 @@ export interface IFlowPaymentStatusResponse {
   currency: string;
   amount: string; // Amount as string
   payer: string; // Payer's email
-  optional?: Record<string, any>;
+  optional?: Record<string, unknown>;
   pending_info?: {
     media: string;
     date: string;
@@ -90,8 +90,8 @@ export interface IFlowSubscriptionResponse {
   new_plan_scheduled_change_date: string | null;
   in_new_plan_next_attempt_date: string | null;
   morose: 0 | 1 | 2; // 0: Pagados, 1: Vencidos, 2: Pendientes
-  discount?: any; // Define Discount interface if needed
-  invoices?: any[]; // Define Invoice interface if needed
+  discount?: unknown; // Define Discount interface if needed
+  invoices?: IFlowInvoice[]; // Typed as IFlowInvoice — interface defined below
 }
 
 // --- Customer Interfaces ---
@@ -137,14 +137,14 @@ export interface IFlowInvoice {
   error: number | null;
   errorDate: string | null; // yyyy-mm-dd hh:mm:ss or null
   errorDescription: string | null;
-  items?: any[]; // Define Item interface if needed
+  items?: unknown[]; // Define Item interface if needed
   payment?: IFlowPaymentStatusResponse | null; // Reusing payment status interface, needs verification
   outsidePayment?: {
     date: string; // yyyy-mm-dd
     comment: string | null;
   } | null;
   paymentLink: string | null; // The crucial link we need!
-  chargeAttemps?: any[]; // Define ChargeAttempt interface if needed
+  chargeAttemps?: unknown[]; // Define ChargeAttempt interface if needed
 }
 
 // --- Generic Paginated Response ---
