@@ -3,7 +3,7 @@ import { IFactoConfig } from "../types";
 
 export class FactoConfig {
   private static instance: FactoConfig;
-  private client: any;
+  private client: soap.Client | undefined;
   private config: IFactoConfig;
 
   private constructor() {
@@ -51,7 +51,7 @@ export class FactoConfig {
     }
   }
 
-  public getClient(): any {
+  public getClient(): soap.Client {
     if (!this.client) {
       throw new Error(
         "Cliente SOAP no inicializado. Llame a initializeClient primero."

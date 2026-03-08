@@ -59,31 +59,37 @@ export class ElectronicTicketService {
     console.log("Enviando documento a Facto:", JSON.stringify(params, null, 2));
 
     return new Promise((resolve, reject) => {
-      client.emitirDocumento(params, (err: any, result: any) => {
+      client.emitirDocumento(params, (err: unknown, result: unknown) => {
         if (err) {
           console.error("Error en la llamada SOAP:", err);
-          reject(err);
+          reject(err instanceof Error ? err : new Error(String(err)));
           return;
         }
 
         console.log("Respuesta de Facto:", JSON.stringify(result, null, 2));
 
-        if (!result || !result.return || !result.return.resultado) {
+        const soapResult = result as {
+          return?: {
+            resultado?: { status?: string; mensaje_error?: string | null };
+          };
+        };
+
+        if (!soapResult || !soapResult.return || !soapResult.return.resultado) {
           reject(new Error("Respuesta inválida del servicio"));
           return;
         }
 
-        if (result.return.resultado.status !== "0") {
+        if (soapResult.return.resultado.status !== "0") {
           reject(
             new Error(
-              result.return.resultado.mensaje_error ||
+              soapResult.return.resultado.mensaje_error ||
                 "Error al emitir documento"
             )
           );
           return;
         }
 
-        resolve(result);
+        resolve(result as IFactoLegacyResponse);
       });
     });
   }
