@@ -1,16 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.20
-milestone_name: TypeScript any Elimination
-status: Shipped
-stopped_at: v1.20 milestone complete — all planning docs archived
+milestone: v1.21
+milestone_name: Ad Draft Decoupling
+status: Defining requirements
+stopped_at: v1.21 milestone started — defining requirements
 last_updated: "2026-03-08T17:27:52.096Z"
-last_activity: 2026-03-08 — v1.20 shipped
+last_activity: 2026-03-08 — v1.21 started
 progress:
-  total_phases: 5
-  completed_phases: 5
-  total_plans: 5
-  completed_plans: 5
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
 ---
 
 # Project State
@@ -20,24 +20,20 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-08)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.20 shipped — next milestone TBD
+**Current focus:** v1.21 — Ad Draft Decoupling (defining requirements)
 
 ## Current Position
 
-Phase: — (all 5 phases complete)
+Phase: Not started (defining requirements)
 Plan: —
-Status: Shipped
-Last activity: 2026-03-08 — v1.20 shipped
+Status: Defining requirements
+Last activity: 2026-03-08 — Milestone v1.21 started
 
-### v1.20 Phase List
+### v1.21 Phase List
 
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
-| 47 | Ad API any Elimination | TSANY-01–07 | Shipped |
-| 48 | Type Files + Flow Service any Elimination | TSANY-08–12 | Shipped |
-| 49 | Zoho + Facto + Other Services any Elimination | TSANY-13–23 | Shipped |
-| 50 | Payment Utils + Middlewares any Elimination | TSANY-24–32 | Shipped |
-| 51 | Seeders + Test Files any Elimination | TSANY-33–36 | Shipped |
+| TBD   | TBD  | TBD          | Pending |
 
 ## Accumulated Context
 
@@ -87,5 +83,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-08
-Stopped at: v1.20 milestone complete — all planning docs archived
-Resume with: `/gsd-new-milestone` to start v1.21
+Stopped at: v1.21 started — requirements and roadmap pending
+Resume with: `/gsd-plan-phase 52` once roadmap is committed

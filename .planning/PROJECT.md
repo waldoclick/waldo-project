@@ -189,6 +189,17 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
    | `(global as unknown as { strapi: MockStrapi })` for test global | `@strapi/types` already declares `global var strapi: Strapi`; redeclaring with narrower type causes TS conflict; double-cast via `unknown` bypasses without touching global scope — v1.20 | ✓ Good |
    | `Core.Strapi` (imported from `@strapi/strapi`) for seeder + factory DI params | Official Strapi-provided type for the full Strapi instance; replaces `strapi: any` in all seeder functions and service factories — v1.20 | ✓ Good |
 
+## Current Milestone: v1.21 Ad Draft Decoupling
+
+**Goal:** Desacoplar la creación del aviso del flujo de pago — el aviso se guarda como borrador (`draft: true`) al presionar "Pagar/Confirmar", independiente del proceso de pago. Los avisos gratuitos no se tocan.
+
+**Target features:**
+- Campo `draft` en el modelo de aviso (Strapi schema)
+- Endpoint `POST /api/payments/ad-draft` para persistir el borrador sin iniciar pago
+- Frontend llama el endpoint de borrador antes de iniciar flujo de pago existente
+- `computeAdStatus` y filtros de `pending`/`abandoned` excluyen borradores
+- Flujo de avisos gratuitos (`pack=free`) sin cambios
+
 ## Future Requirements
 
 ### Testing (next dedicated milestone)
@@ -204,4 +215,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-08 after v1.20 milestone — TypeScript any Elimination complete*
+*Last updated: 2026-03-08 after v1.21 milestone start — Ad Draft Decoupling*
