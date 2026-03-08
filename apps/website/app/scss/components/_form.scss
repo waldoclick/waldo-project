@@ -69,8 +69,25 @@ input:-webkit-autofill {
       }
     }
 
-    &__field {
+    &__ad {
       margin-bottom: 30px;
+
+      &__title {
+        font-style: normal;
+        font-weight: bold;
+        font-size: 20px;
+        color: $charcoal;
+        margin-bottom: 15px;
+      }
+    }
+
+    &__field {
+      margin: 0;
+      padding: 20px 0;
+      border-bottom: 2px dashed $platinum;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
 
       &__title {
         font-style: normal;
@@ -102,7 +119,6 @@ input:-webkit-autofill {
         border: none;
         padding: 0;
         cursor: pointer;
-        margin-bottom: 12px;
         gap: 12px;
 
         &__left {

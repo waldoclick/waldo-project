@@ -12,8 +12,8 @@
     </div>
 
     <!-- Anuncio (siempre visible, sin accordion) -->
-    <div class="form--checkout__field">
-      <h3 class="form--checkout__field__title">Tu anuncio</h3>
+    <div class="form--checkout__ad">
+      <h3 class="form--checkout__ad__title">Tu anuncio</h3>
       <PaymentAd />
     </div>
 
