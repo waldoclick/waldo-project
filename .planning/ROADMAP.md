@@ -64,7 +64,7 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 - [x] **Phase 48: Type Files + Flow Service any Elimination** — Replace `any` in `order.types.ts`, `filter.types.ts`, `flow.factory.ts`, `flow.types.ts`, `flow.service.ts` (completed 2026-03-08)
 - [x] **Phase 49: Zoho + Facto + Other Services any Elimination** — Replace `any` in Zoho service/interfaces/http-client, Facto factory/SOAP/config, Indicador, Google, Transbank, payment-gateway (completed 2026-03-08)
 - [x] **Phase 50: Payment Utils + Middlewares any Elimination** — Replace `any` in `payment.type.ts`, order/user/ad/general utils, `payment.ts` controller, `image-uploader.ts`, `cache.ts`, `user-registration.ts` (completed 2026-03-08)
-- [ ] **Phase 51: Seeders + Test Files any Elimination** — Replace `strapi: any` in all 5 seeders; replace `as any` casts in 4 test files
+- [x] **Phase 51: Seeders + Test Files any Elimination** — Replace `strapi: any` in all 5 seeders; replace `as any` casts in 4 test files (completed 2026-03-08)
 
 </details>
 
@@ -147,4 +147,4 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 | 48. Type Files + Flow Service any Elimination | 1/1 | Complete   | 2026-03-08 | - |
 | 49. Zoho + Facto + Other Services any Elimination | 1/1 | Complete   | 2026-03-08 | - |
 | 50. Payment Utils + Middlewares any Elimination | 1/1 | Complete   | 2026-03-08 | - |
-| 51. Seeders + Test Files any Elimination | v1.20 | 0/? | Not started | - |
+| 51. Seeders + Test Files any Elimination | 1/1 | Complete   | 2026-03-08 | - |
