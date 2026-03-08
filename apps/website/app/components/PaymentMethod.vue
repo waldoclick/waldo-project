@@ -5,7 +5,7 @@
 
       <!-- free -->
       <li
-        v-if="adReservations.unusedFreeCount > 0"
+        v-if="!props.hideFree && adReservations.unusedFreeCount > 0"
         :class="[
           'payment--method__item',
           { 'payment--method__item--active': payment === 'free' },
@@ -31,7 +31,7 @@
 
       <!-- anuncios pago -->
       <li
-        v-if="adReservations.unusedPaidCount > 0"
+        v-if="!props.hideFree && adReservations.unusedPaidCount > 0"
         :class="[
           'payment--method__item',
           { 'payment--method__item--active': payment === 'paid' },
@@ -92,17 +92,27 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import { useAdStore } from "@/stores/ad.store";
 import { usePacksStore } from "@/stores/packs.store";
+import type { PackType } from "@/types/ad";
+
+const props = withDefaults(
+  defineProps<{
+    hideFree?: boolean;
+  }>(),
+  {
+    hideFree: false,
+  },
+);
 
 const adStore = useAdStore();
 const packsStore = usePacksStore();
 const user = useStrapiUser();
 const { getAdReservations } = useUser();
 const packs = computed(() => packsStore.packs);
-const payment = ref(null);
+const payment = ref<string | number | null>(null);
 
 // onMounted: UI-only — initializes local payment ref from store; packs pre-loaded by parent page
 onMounted(() => {
@@ -111,13 +121,14 @@ onMounted(() => {
 
   // Set default pack in store if not yet selected
   if (!adStore.isPackSelected) {
-    adStore.updatePack(payment.value);
+    adStore.updatePack(payment.value as PackType);
   }
 });
 
 const changePayment = () => {
-  // Solo actualizar el pack en el store (los eventos se manejan desde el watcher central)
-  adStore.updatePack(payment.value);
+  if (payment.value !== null) {
+    adStore.updatePack(payment.value as PackType);
+  }
 };
 
 // Computed property para las reservas
@@ -140,7 +151,7 @@ const paidAdText = computed(() => {
 });
 
 // Function to format price to Chilean Pesos
-const formatPrice = (price) => {
+const formatPrice = (price: number) => {
   return new Intl.NumberFormat("es-CL", {
     style: "currency",
     currency: "CLP",

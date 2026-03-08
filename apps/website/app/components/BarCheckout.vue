@@ -37,7 +37,6 @@
               class="btn btn--primary btn--block"
               :disabled="primaryDisabled"
               :title="primaryLabel"
-              @click="emit('primary')"
             >
               <span>{{ primaryLabel }}</span>
             </button>
@@ -77,7 +76,7 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-  (e: "back" | "primary"): void;
+  (e: "back"): void;
 }>();
 
 const progressElement = ref<HTMLElement | null>(null);

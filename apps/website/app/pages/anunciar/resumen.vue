@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue";
+import { onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 const { Swal } = useSweetAlert2();
 import { useAdStore } from "@/stores/ad.store";
@@ -141,11 +141,15 @@ const confirmPay = async () => {
   });
 
   if (result.isConfirmed) {
-    await handlePayClick();
+    if (hasToPay.value) {
+      router.push("/pagar");
+    } else {
+      await handleFreeCreation();
+    }
   }
 };
 
-const handlePayClick = async () => {
+const handleFreeCreation = async () => {
   const allData = {
     pack: adStore.pack,
     featured: adStore.featured,
@@ -154,49 +158,15 @@ const handlePayClick = async () => {
   };
 
   try {
-    // Enviar evento de add_payment_info antes de procesar el pago
     adAnalytics.addPaymentInfo();
-
-    // Save draft before payment — skip for free ads (pack=free not touched)
-    if (adStore.pack !== "free") {
-      const draftPayload = {
-        ad: adStore.ad,
-      };
-
-      const draftResponse = await create<{ id: number }>(
-        "ads/draft",
-        draftPayload as unknown as Parameters<typeof create>[1],
-      );
-
-      const draftId = draftResponse.data?.id;
-      if (draftId) {
-        adStore.updateAdId(draftId);
-        // Update allData.ad with the persisted ad_id so payments/ad receives it
-        allData.ad = { ...allData.ad, ad_id: draftId };
-      }
-    }
 
     const response = await create<{
       webpay?: { url: string; gatewayRef: string };
       ad?: { id: number };
     }>("payments/ad", allData as unknown as Parameters<typeof create>[1]);
 
-    if (response.data && response.data.webpay) {
-      // Get ad_id from response and update store if exists
-      const ad_id = response.data.ad?.id;
-      if (ad_id) {
-        adStore.updateAdId(ad_id);
-      }
-      // Track redirect to payment gateway before leaving SPA
-      adAnalytics.pushEvent("redirect_to_payment", [], {
-        payment_method: "webpay",
-      });
-      handleRedirect(response.data.webpay);
-    } else {
-      // If no webpay, refresh user data and redirect to success page
-      await fetchUser();
-      router.push("/anunciar/gracias?ad=" + response.data.ad?.id);
-    }
+    await fetchUser();
+    router.push("/anunciar/gracias?ad=" + response.data.ad?.id);
   } catch (error: unknown) {
     let errorMessage =
       "Hubo un problema al procesar el pago. Por favor, inténtalo de nuevo.";
@@ -217,23 +187,5 @@ const handlePayClick = async () => {
       confirmButtonText: "Aceptar",
     });
   }
-};
-
-const handleRedirect = (response: { url: string; gatewayRef: string }) => {
-  // Crear un formulario dinámicamente
-  const form = document.createElement("form");
-  form.method = "POST";
-  form.action = response.url;
-
-  // Crear un campo de entrada para el token
-  const tokenField = document.createElement("input");
-  tokenField.type = "hidden";
-  tokenField.name = "token_ws";
-  tokenField.value = response.gatewayRef;
-  form.appendChild(tokenField);
-
-  // Añadir el formulario al cuerpo del documento y enviarlo
-  document.body.appendChild(form);
-  form.submit();
 };
 </script>

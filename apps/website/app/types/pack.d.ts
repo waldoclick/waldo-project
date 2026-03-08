@@ -6,6 +6,8 @@ export interface Pack {
   duration: number; // en días
   features: string[];
   total_ads: number;
+  total_days: number;
+  text: string | null;
   createdAt: string;
   updatedAt: string;
   publishedAt: string;
