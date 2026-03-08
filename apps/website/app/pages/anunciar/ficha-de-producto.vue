@@ -38,7 +38,7 @@ $setSEO({
 useSeoMeta({ robots: "noindex, nofollow" });
 
 definePageMeta({
-  middleware: "auth",
+  middleware: ["auth", "wizard-guard"],
 });
 
 onMounted(() => {
