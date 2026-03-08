@@ -32,14 +32,21 @@ const categoriesStore = useCategoriesStore();
 
 // Pre-load creation flow data for SSR — categories, packs, and me data
 // must be available before components mount to avoid client-side flash
-await useAsyncData("anunciar-init", async () => {
-  await Promise.all([
-    meStore.loadMe(),
-    categoriesStore.loadCategories(),
-    packsStore.loadPacks(),
-  ]);
-  return true;
-});
+const strapi = useStrapi();
+const { data: initData } = await useAsyncData(
+  "anunciar-init",
+  async () => {
+    const packsResponse = (await Promise.all([
+      meStore.loadMe(),
+      categoriesStore.loadCategories(),
+      strapi.find("ad-packs", { populate: "*" }),
+    ]))[2];
+    return {
+      packs: (packsResponse.data as unknown as Pack[]) ?? [],
+    };
+  },
+  { default: () => ({ packs: [] as Pack[] }) },
+);
 
 // onMounted: analytics-only — GA4 view_item_list event must fire client-side
 onMounted(() => {
@@ -47,7 +54,7 @@ onMounted(() => {
   const analyticsItems: AnalyticsItem[] = [];
 
   // Add paid packs
-  for (const pack of packsStore.packs) {
+  for (const pack of initData.value?.packs ?? []) {
     analyticsItems.push({
       item_id: pack.id,
       item_name: `Pack ${pack.total_ads} anuncios`,
@@ -135,7 +142,9 @@ watch(
       analyticsData.item_name = "Anuncio de pago (reserva)";
     } else {
       // Es un pack de los que vienen del store
-      const selectedPack = packsStore.packs.find((p) => p.id === newPack);
+      const selectedPack = (initData.value?.packs ?? []).find(
+        (p) => p.id === newPack,
+      );
       if (selectedPack) {
         analyticsData.item_name = `Pack ${selectedPack.total_ads} anuncios`;
         analyticsData.price = selectedPack.price;
