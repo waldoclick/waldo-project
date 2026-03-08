@@ -46,7 +46,7 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 
 - [x] **Phase 55: Store Unification** — Eliminate `packs.store.ts`; pack data loaded directly in components that need it; all `packs.store` imports removed
 - [x] **Phase 56: Pack Purchase Flow** — `/packs` "Comprar" writes to `adStore` and navigates to `/pagar`; `/packs/comprar` page and `BuyPack.vue` removed (completed 2026-03-08)
-- [ ] **Phase 57: Payment Hub Adaptation** — `/pagar` handles pack-only (no `ad_id`) and pack+ad flows; `FormCheckout` hides reservation options in pack-only context
+- [x] **Phase 57: Payment Hub Adaptation** — `/pagar` handles pack-only (no `ad_id`) and pack+ad flows; `FormCheckout` hides reservation options in pack-only context (completed 2026-03-08)
 
 ## Phase Details
 
@@ -114,4 +114,4 @@ Plans:
 | 53. Checkout Page & Components | v1.22 | 1/1 | Complete | 2026-03-08 |
 | 55. Store Unification | 3/3 | Complete    | 2026-03-08 | — |
 | 56. Pack Purchase Flow | 1/1 | Complete    | 2026-03-08 | — |
-| 57. Payment Hub Adaptation | v1.23 | 0/1 | Not started | — |
+| 57. Payment Hub Adaptation | 1/1 | Complete   | 2026-03-08 | — |
