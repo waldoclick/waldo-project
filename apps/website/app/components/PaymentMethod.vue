@@ -93,9 +93,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import { useAdStore } from "@/stores/ad.store";
-import { usePacksStore } from "@/stores/packs.store";
 import type { PackType } from "@/types/ad";
 
 const props = withDefaults(
@@ -108,14 +107,15 @@ const props = withDefaults(
 );
 
 const adStore = useAdStore();
-const packsStore = usePacksStore();
+const { packs, loadPacks } = usePacksList();
 const user = useStrapiUser();
 const { getAdReservations } = useUser();
-const packs = computed(() => packsStore.packs);
 const payment = ref<string | number | null>(null);
 
-// onMounted: UI-only — initializes local payment ref from store; packs pre-loaded by parent page
-onMounted(() => {
+// onMounted: initializes local payment ref from store and loads packs via usePacksList (TTL-cached)
+onMounted(async () => {
+  await loadPacks();
+
   // Set initial payment value from store
   payment.value = adStore.pack || 1;
 
