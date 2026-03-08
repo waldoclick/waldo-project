@@ -12,13 +12,13 @@
     </div>
 
     <!-- Anuncio (siempre visible, sin accordion) -->
-    <div class="form--checkout__ad">
+    <div v-if="!isPackFlow" class="form--checkout__ad">
       <h3 class="form--checkout__ad__title">Tu anuncio</h3>
       <PaymentAd />
     </div>
 
     <!-- Destacado -->
-    <div class="form--checkout__field">
+    <div v-if="!isPackFlow" class="form--checkout__field">
       <button
         type="button"
         class="form--checkout__field__toggle"
