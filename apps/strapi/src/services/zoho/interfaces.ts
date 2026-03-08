@@ -51,8 +51,13 @@ export interface IContactStats {
   Packs_Purchased__c?: number;
 }
 
+export interface IZohoContact {
+  id: string;
+  [key: string]: unknown;
+}
+
 export interface IZohoService {
-  createLead(lead: ZohoLead): Promise<any[]>;
+  createLead(lead: ZohoLead): Promise<unknown[]>;
   createDeal(deal: ZohoDeal): Promise<string>;
   updateContactStats(contactId: string, stats: IContactStats): Promise<void>;
   createContact(contact: {
@@ -71,8 +76,8 @@ export interface IZohoService {
     Other_Zip?: string;
     Other_State?: string;
     Other_City?: string;
-  }): Promise<any>;
-  findContact(email: string): Promise<any>;
+  }): Promise<IZohoContact>;
+  findContact(email: string): Promise<IZohoContact | null>;
   updateContact(
     id: string,
     contact: {
@@ -91,5 +96,5 @@ export interface IZohoService {
       Other_State?: string;
       Other_City?: string;
     }
-  ): Promise<any>;
+  ): Promise<IZohoContact>;
 }
