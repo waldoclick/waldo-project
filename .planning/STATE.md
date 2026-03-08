@@ -1,11 +1,11 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.1
-milestone_name: milestone
-status: planning
-stopped_at: Completed 51-01-PLAN.md
-last_updated: "2026-03-08T15:26:24.529Z"
-last_activity: 2026-03-08 — Roadmap created
+milestone: v1.20
+milestone_name: TypeScript any Elimination
+status: shipped
+stopped_at: Phase 51 verified — milestone complete
+last_updated: "2026-03-08"
+last_activity: 2026-03-08 — v1.20 shipped
 progress:
   total_phases: 5
   completed_phases: 5
@@ -20,24 +20,24 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-08)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.20 — TypeScript any Elimination — Phase 47 next
+**Current focus:** v1.20 shipped — next milestone TBD
 
 ## Current Position
 
-Phase: 47 (not started)
+Phase: — (all 5 phases complete)
 Plan: —
-Status: Roadmap ready — planning Phase 47
-Last activity: 2026-03-08 — Roadmap created
+Status: Shipped
+Last activity: 2026-03-08 — v1.20 shipped
 
 ### v1.20 Phase List
 
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
-| 47 | Ad API any Elimination | TSANY-01–07 | Not started |
-| 48 | Type Files + Flow Service any Elimination | TSANY-08–12 | Not started |
-| 49 | Zoho + Facto + Other Services any Elimination | TSANY-13–23 | Not started |
-| 50 | Payment Utils + Middlewares any Elimination | TSANY-24–32 | Planning complete |
-| 51 | Seeders + Test Files any Elimination | TSANY-33–36 | Not started |
+| 47 | Ad API any Elimination | TSANY-01–07 | Shipped |
+| 48 | Type Files + Flow Service any Elimination | TSANY-08–12 | Shipped |
+| 49 | Zoho + Facto + Other Services any Elimination | TSANY-13–23 | Shipped |
+| 50 | Payment Utils + Middlewares any Elimination | TSANY-24–32 | Shipped |
+| 51 | Seeders + Test Files any Elimination | TSANY-33–36 | Shipped |
 
 ## Accumulated Context
 
@@ -86,6 +86,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-08T15:26:24.528Z
-Stopped at: Completed 51-01-PLAN.md
-Resume with: `/gsd-implement-plan 50-01`
+Last session: 2026-03-08
+Stopped at: v1.20 shipped — all 5 phases verified
+Resume with: `/gsd-new-milestone` to start v1.21
