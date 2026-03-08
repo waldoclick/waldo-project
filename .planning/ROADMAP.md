@@ -74,6 +74,14 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 
 - [ ] **Phase 52: Ad Draft Decoupling** — Save ad as draft (`draft: true`) on "Pagar/Confirmar" press, before payment; migrate abandoned ads to draft; rename dashboard section
 
+**Plans:** 4 plans
+
+Plans:
+- [ ] 52-01-PLAN.md — Schema `draft` field + abandoned→draft migration seeder
+- [ ] 52-02-PLAN.md — Ad service/controller/route: `computeAdStatus` draft check + `draftAds` + `/ads/drafts` endpoint
+- [ ] 52-03-PLAN.md — New `POST /payments/ad-draft` endpoint (route + controller + service)
+- [ ] 52-04-PLAN.md — Frontend resumen.vue draft pre-call + dashboard Borradores label
+
 </details>
 
 ## Phase Details
@@ -146,7 +154,7 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
   4. The `abandoned` status no longer appears in the codebase — all callers use `"draft"` instead
   5. Dashboard section previously labelled "Abandonados" now shows "Borradores" and filters on `draft: true`
   6. All existing ads with abandoned condition (`active=false`, `ad_reservation=null`, `is_paid=true`) have `draft: true` after migration
-**Plans**: TBD
+**Plans**: 4 plans (52-01 through 52-04)
 
 ## Progress
 
