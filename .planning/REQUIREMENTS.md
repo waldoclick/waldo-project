@@ -31,12 +31,12 @@ None identified for this milestone.
 
 | REQ-ID  | Phase | Status  |
 |---------|-------|---------|
-| PACK-01 | —     | Pending |
-| PACK-02 | —     | Pending |
-| PACK-03 | —     | Pending |
-| PAY-01  | —     | Pending |
-| PAY-02  | —     | Pending |
-| PAY-03  | —     | Pending |
-| PAY-04  | —     | Pending |
-| CLN-01  | —     | Pending |
-| CLN-02  | —     | Pending |
+| PACK-01 | 56    | Pending |
+| PACK-02 | 56    | Pending |
+| PACK-03 | 56    | Pending |
+| PAY-01  | 57    | Pending |
+| PAY-02  | 57    | Pending |
+| PAY-03  | 57    | Pending |
+| PAY-04  | 55    | Pending |
+| CLN-01  | 56    | Pending |
+| CLN-02  | 55    | Pending |

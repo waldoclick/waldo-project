@@ -24,6 +24,7 @@
 - ✅ **v1.20 TypeScript any Elimination** — Phases 47-51 (shipped 2026-03-08)
 - ✅ **v1.21 Ad Draft Decoupling** — Phase 52 (shipped 2026-03-08)
 - ✅ **v1.22 Checkout Flow UI** — Phase 53 (shipped 2026-03-08)
+- 🚧 **v1.23 Unified Payment Flow** — Phases 55-57 (in progress)
 
 ## Phases
 
@@ -40,6 +41,47 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 - [x] **Phase 53: Checkout Page & Components** — `pages/pagar/index.vue` con auth middleware; `PaymentAd.vue` (preview aviso); `PaymentGateway.vue` (WebPay decorativo); `CheckoutDefault.vue` con lógica de pago completa; `FormCheckout.vue` reestructurado con títulos por sección, textos de contexto, `lang="ts"`, dead code eliminado; `BarCheckout.vue`; SCSS para `payment--ad` y `payment--gateway` (completed 2026-03-08)
 
 </details>
+
+### v1.23 — Unified Payment Flow
+
+- [ ] **Phase 55: Store Unification** — Eliminate `packs.store.ts`; pack data loaded directly in components that need it; all `packs.store` imports removed
+- [ ] **Phase 56: Pack Purchase Flow** — `/packs` "Comprar" writes to `adStore` and navigates to `/pagar`; `/packs/comprar` page and `BuyPack.vue` removed
+- [ ] **Phase 57: Payment Hub Adaptation** — `/pagar` handles pack-only (no `ad_id`) and pack+ad flows; `FormCheckout` hides reservation options in pack-only context
+
+## Phase Details
+
+### Phase 55: Store Unification
+**Goal**: Pack data lives in `adStore` — `packs.store.ts` is gone and nothing misses it
+**Depends on**: Phase 53 (checkout flow established)
+**Requirements**: PAY-04, CLN-02
+**Success Criteria** (what must be TRUE):
+  1. `packs.store.ts` file does not exist in the codebase
+  2. `packs/index.vue` loads pack data directly (e.g. via `useAsyncData` + Strapi call) without importing `packs.store`
+  3. `PaymentMethod.vue` (inside `FormCheckout`) loads or receives pack data without importing `packs.store`
+  4. `nuxt typecheck` passes with zero errors after store removal
+**Plans**: TBD
+
+### Phase 56: Pack Purchase Flow
+**Goal**: Clicking "Comprar" on `/packs` takes the user directly to `/pagar` — no intermediate page
+**Depends on**: Phase 55
+**Requirements**: PACK-01, PACK-02, PACK-03, CLN-01
+**Success Criteria** (what must be TRUE):
+  1. User on `/packs` clicks "Comprar" on any pack and is immediately redirected to `/pagar`
+  2. The selected pack is reflected in the checkout UI at `/pagar` (user sees what they're buying)
+  3. `/packs/comprar` returns 404 — the route no longer exists
+  4. `BuyPack.vue` file does not exist in the codebase
+**Plans**: TBD
+
+### Phase 57: Payment Hub Adaptation
+**Goal**: `/pagar` correctly processes payment whether or not an ad is associated — pack-only purchase works end-to-end
+**Depends on**: Phase 56
+**Requirements**: PAY-01, PAY-02, PAY-03
+**Success Criteria** (what must be TRUE):
+  1. User arriving at `/pagar` from `/packs` (no `adStore.ad.ad_id`) can complete a pack purchase successfully
+  2. User arriving at `/pagar` from `resumen.vue` (with `adStore.ad.ad_id`) can complete an ad+pack purchase successfully (existing flow unbroken)
+  3. `FormCheckout` does not show free/paid ad reservation options when `adStore.ad.ad_id` is absent
+  4. Both payment paths (pack-only and pack+ad) call `publishAd()` only when an ad draft is present
+**Plans**: TBD
 
 ## Progress
 
@@ -64,3 +106,6 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 | 51. Seeders + Test Files any Elimination | v1.20 | 1/1 | Complete | 2026-03-08 |
 | 52. Ad Draft Decoupling | v1.21 | 4/4 | Complete | 2026-03-08 |
 | 53. Checkout Page & Components | v1.22 | 1/1 | Complete | 2026-03-08 |
+| 55. Store Unification | v1.23 | 0/1 | Not started | — |
+| 56. Pack Purchase Flow | v1.23 | 0/1 | Not started | — |
+| 57. Payment Hub Adaptation | v1.23 | 0/1 | Not started | — |
