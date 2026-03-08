@@ -25,15 +25,37 @@ const handleFormSubmitted = async (_values?: unknown) => {
 };
 
 const handlePayClick = async () => {
-  const allData = {
-    pack: adStore.pack,
-    featured: adStore.featured,
-    is_invoice: adStore.is_invoice,
-    ad: adStore.ad,
-  };
+  // Determine flow before any mutations
+  const isPackOnly = adStore.ad.ad_id === null;
 
   try {
     adAnalytics.addPaymentInfo();
+
+    // --- Pack-only flow (user came from /packs, no ad data) ---
+    if (isPackOnly) {
+      const response = await create<{
+        webpay?: { url: string; gatewayRef: string };
+      }>("payments/pack", {
+        pack: adStore.pack,
+        is_invoice: adStore.is_invoice,
+      } as unknown as Parameters<typeof create>[1]);
+
+      if (response.data?.webpay) {
+        adAnalytics.pushEvent("redirect_to_payment", [], {
+          payment_method: "webpay",
+        });
+        handleRedirect(response.data.webpay);
+      }
+      return;
+    }
+
+    // --- Ad+pack flow (user came from /anunciar/resumen) ---
+    const allData = {
+      pack: adStore.pack,
+      featured: adStore.featured,
+      is_invoice: adStore.is_invoice,
+      ad: adStore.ad,
+    };
 
     if (adStore.pack !== "free") {
       const draftPayload = { ad: adStore.ad };
