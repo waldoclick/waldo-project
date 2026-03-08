@@ -6,26 +6,33 @@ const MAX_WIDTH = 1024;
 const WATERMARK_MARGIN = 30;
 const WATERMARK_PATH = path.join(process.cwd(), "public/images/watermark.png");
 
+interface UploadFile {
+  mimetype: string;
+  filepath: string;
+  originalFilename: string;
+}
+
 /**
  * Base function to convert any image to WebP
  * @param file - File object from user upload
  */
-const convertToWebP = async (file: any): Promise<void> => {
+const convertToWebP = async (file: unknown): Promise<void> => {
+  const f = file as UploadFile;
   try {
     if (
-      file.mimetype.includes("jpeg") ||
-      file.mimetype.includes("jpg") ||
-      file.mimetype.includes("png")
+      f.mimetype.includes("jpeg") ||
+      f.mimetype.includes("jpg") ||
+      f.mimetype.includes("png")
     ) {
-      const imageBuffer = fs.readFileSync(file.filepath);
+      const imageBuffer = fs.readFileSync(f.filepath);
 
       const webpBuffer = await sharp(imageBuffer)
         .webp({ quality: 100 })
         .toBuffer();
 
-      fs.writeFileSync(file.filepath, webpBuffer);
-      file.mimetype = "image/webp";
-      file.originalFilename = file.originalFilename.replace(
+      fs.writeFileSync(f.filepath, webpBuffer);
+      f.mimetype = "image/webp";
+      f.originalFilename = f.originalFilename.replace(
         /\.(jpg|jpeg|png)$/i,
         ".webp"
       );
@@ -39,9 +46,10 @@ const convertToWebP = async (file: any): Promise<void> => {
  * Process gallery images - resize to max width and add watermark
  * @param file - File object from user upload
  */
-const processGalleryImage = async (file: any): Promise<void> => {
+const processGalleryImage = async (file: unknown): Promise<void> => {
+  const f = file as UploadFile;
   try {
-    const imageBuffer = fs.readFileSync(file.filepath);
+    const imageBuffer = fs.readFileSync(f.filepath);
     const metadata = await sharp(imageBuffer).metadata();
 
     let processedImage = sharp(imageBuffer);
@@ -77,7 +85,7 @@ const processGalleryImage = async (file: any): Promise<void> => {
       .webp({ quality: 100, lossless: true })
       .toBuffer();
 
-    fs.writeFileSync(file.filepath, finalBuffer);
+    fs.writeFileSync(f.filepath, finalBuffer);
   } catch (error) {
     console.error("Error processing gallery image:", error);
   }
@@ -87,9 +95,10 @@ const processGalleryImage = async (file: any): Promise<void> => {
  * Process avatar images - resize to 300x300px
  * @param file - File object from user upload
  */
-const processAvatarImage = async (file: any): Promise<void> => {
+const processAvatarImage = async (file: unknown): Promise<void> => {
+  const f = file as UploadFile;
   try {
-    const imageBuffer = fs.readFileSync(file.filepath);
+    const imageBuffer = fs.readFileSync(f.filepath);
     const processedBuffer = await sharp(imageBuffer)
       .resize(300, 300, {
         fit: "cover",
@@ -99,7 +108,7 @@ const processAvatarImage = async (file: any): Promise<void> => {
       .webp({ quality: 100, lossless: true })
       .toBuffer();
 
-    fs.writeFileSync(file.filepath, processedBuffer);
+    fs.writeFileSync(f.filepath, processedBuffer);
   } catch (error) {
     console.error("Error processing avatar image:", error);
   }
@@ -121,7 +130,7 @@ export default () => {
     const uploadType = ctx.request.body?.type;
 
     if (files) {
-      const processFile = async (file: any) => {
+      const processFile = async (file: unknown) => {
         // First, convert to WebP (applies to all images)
         await convertToWebP(file);
 
