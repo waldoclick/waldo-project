@@ -29,6 +29,7 @@ import HowtoDefault from "@/components/HowtoDefault.vue";
 import PacksDefault from "~/components/PacksDefault.vue";
 import FaqDefault from "~/components/FaqDefault.vue";
 import FooterDefault from "@/components/FooterDefault.vue";
+import type { Pack } from "@/types/pack";
 
 // Load categories
 const { data: categoriesData } = await useAsyncData("categories", async () => {
