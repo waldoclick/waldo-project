@@ -131,6 +131,36 @@ class PaymentController {
     ctx.body = { data: payment };
   });
 
+  adDraft = this.controllerWrapper(async (ctx: Context) => {
+    const { data } = ctx.request.body;
+    const userId = ctx.state.user.id;
+    const { ad } = data;
+
+    logger.info("Guardando borrador de anuncio", {
+      userId,
+      adId: ad?.ad_id ?? null,
+    });
+
+    const result = await adService.saveDraft(ad, String(userId));
+
+    if (!result.success) {
+      logger.warn("Error al guardar borrador", {
+        userId,
+        message: result.message,
+      });
+      ctx.status = 400;
+      ctx.body = { success: false, message: result.message };
+      return;
+    }
+
+    logger.info("Borrador guardado exitosamente", {
+      userId,
+      adId: result.id,
+    });
+
+    ctx.body = { data: { id: result.id } };
+  });
+
   adResponse = this.controllerWrapper(async (ctx: Context) => {
     const token = ctx.query.token_ws;
     const userId = ctx.state.user?.id || null;
