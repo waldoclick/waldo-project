@@ -18,11 +18,11 @@ Requirements for the Zoho CRM Sync Model milestone.
 ### Contact Sync Model
 
 - [x] **CONT-01**: Al crear un Contact en Zoho, los campos custom se inicializan en 0: `Ads_Published__c: 0`, `Total_Spent__c: 0`, `Packs_Purchased__c: 0`
-- [ ] **CONT-02**: El servicio Zoho expone `updateContactStats(contactId, stats)` que actualiza selectivamente `Ads_Published__c`, `Total_Spent__c`, `Last_Ad_Posted_At__c` y/o `Packs_Purchased__c` vía `PUT /crm/v5/Contacts/{id}`
+- [x] **CONT-02**: El servicio Zoho expone `updateContactStats(contactId, stats)` que actualiza selectivamente `Ads_Published__c`, `Total_Spent__c`, `Last_Ad_Posted_At__c` y/o `Packs_Purchased__c` vía `PUT /crm/v5/Contacts/{id}`
 
 ### Deal Sync Model
 
-- [ ] **DEAL-01**: El servicio Zoho expone `createDeal(deal)` que crea un Deal con los campos: `Deal_Name`, `Stage: "Closed Won"`, `Amount`, `Contact_Name: { id }`, `Type`, `Closing_Date`, `Description`, `Lead_Source`
+- [x] **DEAL-01**: El servicio Zoho expone `createDeal(deal)` que crea un Deal con los campos: `Deal_Name`, `Stage: "Closed Won"`, `Amount`, `Contact_Name: { id }`, `Type`, `Closing_Date`, `Description`, `Lead_Source`
 - [ ] **DEAL-02**: La confirmación de pago de un pack (`pack_purchased`) crea un Deal en Zoho y actualiza `Total_Spent__c` + `Packs_Purchased__c` en el Contact asociado
 - [ ] **DEAL-03**: La confirmación de pago de un aviso (`ad_paid`) crea un Deal en Zoho y actualiza `Total_Spent__c` en el Contact asociado
 
@@ -62,8 +62,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | RELY-04 | Phase 43 | Complete |
 | RELY-05 | Phase 43 | Complete |
 | CONT-01 | Phase 44 | Complete |
-| CONT-02 | Phase 44 | Pending |
-| DEAL-01 | Phase 44 | Pending |
+| CONT-02 | Phase 44 | Complete |
+| DEAL-01 | Phase 44 | Complete |
 | DEAL-02 | Phase 45 | Pending |
 | DEAL-03 | Phase 45 | Pending |
 | EVT-01 | Phase 46 | Pending |

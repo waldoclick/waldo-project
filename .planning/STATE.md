@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: active — roadmap ready, no plans written yet
-stopped_at: Completed 44-01-PLAN.md
-last_updated: "2026-03-08T02:55:35.783Z"
+stopped_at: Completed 44-02-PLAN.md
+last_updated: "2026-03-08T03:02:05.721Z"
 last_activity: 2026-03-08 — roadmap created; Phases 43-46 defined; 13/13 requirements mapped
 progress:
   total_phases: 4
@@ -65,6 +65,8 @@ Key patterns established (carry forward):
 - [Phase 43-zoho-service-reliability]: Do not import from ./index in ZohoService tests — that singleton reads real env vars; test creates its own ZohoHttpClient and ZohoService with dummy config
 - [Phase 44-zoho-service-layer]: Lead_Status hardcoded to 'New' in createLead() payload — initialization value, not a caller param
 - [Phase 44-zoho-service-layer]: Counter fields (Ads_Published__c, Total_Spent__c, Packs_Purchased__c) hardcoded to 0 in createContact() — initialization values, not passed-in params
+- [Phase 44-zoho-service-layer]: Stage: 'Closed Won' hardcoded in createDeal() — all deals at Waldo are immediately closed; callers never pass Stage
+- [Phase 44-zoho-service-layer]: Object.fromEntries filter pattern for selective updateContactStats() payload — strips undefined keys without extra library
 
 ### v1.19 Key Decisions (from research)
 
@@ -86,6 +88,6 @@ Key patterns established (carry forward):
 
 ## Session Continuity
 
-Last session: 2026-03-08T02:55:28.315Z
-Stopped at: Completed 44-01-PLAN.md
+Last session: 2026-03-08T03:01:59.144Z
+Stopped at: Completed 44-02-PLAN.md
 Resume with: `/gsd-plan-phase 43`
