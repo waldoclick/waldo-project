@@ -171,6 +171,20 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
    | `await` (blocking) for `pack_purchased` Zoho sync | `processPaidWebpay` for packs is not a redirect handler; blocking is safe and simpler — v1.19 | ✓ Good |
    | First-publish guard (`isPending` check) in `approveAd()` | Re-approving an already-published ad must not double-increment `Ads_Published__c` — v1.19 | ✓ Good |
 
+## Current Milestone: v1.20 TypeScript any Elimination
+
+**Goal:** Replace all non-justified `any` types in Strapi services, controllers, type files, factories, middlewares, seeders, and test files with `unknown` or proper interfaces, using the Strapi `Context` type where appropriate.
+
+**Target features:**
+- Ad API controllers + services: `ctx: any` → `Context`; `options: any`, `computeAdStatus(ad: any)`, `transformSortParameter` → typed
+- Type files: `order.types.ts`, `filter.types.ts` filter operators → `unknown`
+- Services: Zoho, Facto, Indicador, Google, Transbank, payment-gateway → `unknown`
+- Flow service: `flow.factory.ts`, `flow.types.ts`, `flow.service.ts` message casts → typed
+- Payment utils (excl. pro.service.ts, suscription.utils.ts): payment.type.ts, order/user/ad/general utils → `unknown`
+- Middlewares: `image-uploader.ts`, `cache.ts`, `user-registration.ts` → `unknown`
+- Seeders: all 5 seeder `strapi: any` params → proper Strapi type
+- Test files: payment + Zoho test `as any` casts → typed
+
 ## Current State: v1.19 Shipped
 
 **Zoho CRM Sync Model** — Phases 43–46 complete (2026-03-08)
@@ -195,4 +209,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-08 after v1.19 milestone — Zoho CRM Sync Model shipped*
+*Last updated: 2026-03-08 after v1.20 milestone start — TypeScript any Elimination*
