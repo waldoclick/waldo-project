@@ -65,7 +65,7 @@
         />
       </button>
       <div v-show="open.method" class="form--checkout__field__content">
-        <PaymentMethod />
+        <PaymentMethod :hide-free="true" />
       </div>
     </div>
 

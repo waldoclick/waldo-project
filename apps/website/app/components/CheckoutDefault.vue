@@ -12,7 +12,6 @@
 import FormCheckout from "@/components/FormCheckout.vue";
 import { useAdStore } from "@/stores/ad.store";
 import { useAdAnalytics } from "@/composables/useAdAnalytics";
-import { useAdPaymentSummary } from "@/composables/useAdPaymentSummary";
 
 const { Swal } = useSweetAlert2();
 const { create } = useStrapi();
@@ -20,21 +19,9 @@ const { fetchUser } = useStrapiAuth();
 
 const adStore = useAdStore();
 const adAnalytics = useAdAnalytics();
-const { hasToPay } = useAdPaymentSummary();
 
 const handleFormSubmitted = async (_values?: unknown) => {
-  const result = await Swal.fire({
-    title: "¿Estás seguro?",
-    text: "Tras realizar el pago, no será posible modificar el anuncio.",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonText: "Sí, proceder al pago",
-    cancelButtonText: "Cancelar",
-  });
-
-  if (result.isConfirmed) {
-    await handlePayClick();
-  }
+  await handlePayClick();
 };
 
 const handlePayClick = async () => {
