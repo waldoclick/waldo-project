@@ -127,13 +127,15 @@
       :summary-text="paymentSummaryText"
       primary-label="Ir a pagar"
       :primary-disabled="!meta.valid"
-      :show-back="false"
+      :show-back="true"
+      @back="handleBack"
     />
   </Form>
 </template>
 
 <script setup lang="ts">
 import { reactive, computed } from "vue";
+import { useRouter } from "vue-router";
 import { Form } from "vee-validate";
 import { ChevronDownIcon } from "lucide-vue-next";
 import { useAdStore } from "@/stores/ad.store";
@@ -141,10 +143,13 @@ import { useAdPaymentSummary } from "@/composables/useAdPaymentSummary";
 
 const emit = defineEmits(["formSubmitted"]);
 const adStore = useAdStore();
+const router = useRouter();
 const { paymentSummaryText, packPart } = useAdPaymentSummary();
 
+const isPackFlow = adStore.ad.ad_id === null;
+
 const open = reactive({
-  method: false,
+  method: isPackFlow,
   featured: false,
   invoice: false,
   gateway: false,
@@ -165,6 +170,10 @@ const featuredSummary = computed(() => {
 const invoiceSummary = computed(() =>
   adStore.is_invoice ? "Factura" : "Boleta",
 );
+
+const handleBack = () => {
+  router.push(isPackFlow ? "/packs" : "/anunciar/resumen");
+};
 
 const handleSubmit = (values: Record<string, unknown>) => {
   emit("formSubmitted", values);
