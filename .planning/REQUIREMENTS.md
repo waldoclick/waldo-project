@@ -13,9 +13,9 @@
 
 - [x] **BACK-01**: Existe el endpoint `POST /api/payments/ad-draft` que persiste el aviso como borrador (`draft: true`) sin validar créditos ni iniciar pago
 - [x] **BACK-02**: Si el aviso ya tiene `ad_id` (re-envío), el endpoint actualiza el borrador existente en lugar de crear uno nuevo
-- [ ] **BACK-03**: `computeAdStatus()` evalúa `draft: true` primero — retorna `"draft"` antes de evaluar cualquier otro estado (incluyendo `abandoned`)
-- [ ] **BACK-04**: El estado `abandoned` deja de existir como estado separado — los avisos que hoy son `abandoned` pasan a ser `draft`
-- [ ] **BACK-05**: Los filtros de admin que hoy listan `abandonedAds` pasan a listar `draftAds`
+- [x] **BACK-03**: `computeAdStatus()` evalúa `draft: true` primero — retorna `"draft"` antes de evaluar cualquier otro estado (incluyendo `abandoned`)
+- [x] **BACK-04**: El estado `abandoned` deja de existir como estado separado — los avisos que hoy son `abandoned` pasan a ser `draft`
+- [x] **BACK-05**: Los filtros de admin que hoy listan `abandonedAds` pasan a listar `draftAds`
 - [x] **BACK-06**: Migración: los avisos existentes con condición de `abandoned` (`active=false`, `ad_reservation=null`) reciben `draft: true` vía seeder o cron
 
 ### Frontend
@@ -52,9 +52,9 @@
 | SCHEMA-01 | Phase 52 | Complete |
 | BACK-01 | Phase 52 | Complete |
 | BACK-02 | Phase 52 | Complete |
-| BACK-03 | Phase 52 | Pending |
-| BACK-04 | Phase 52 | Pending |
-| BACK-05 | Phase 52 | Pending |
+| BACK-03 | Phase 52 | Complete |
+| BACK-04 | Phase 52 | Complete |
+| BACK-05 | Phase 52 | Complete |
 | BACK-06 | Phase 52 | Complete |
 | FRONT-01 | Phase 52 | Pending |
 | FRONT-02 | Phase 52 | Pending |
