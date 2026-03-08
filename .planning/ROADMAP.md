@@ -72,7 +72,7 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 <details>
 <summary>🚧 v1.21 — Ad Draft Decoupling (Phase 52) — IN PROGRESS</summary>
 
-- [ ] **Phase 52: Ad Draft Decoupling** — Save ad as draft (`draft: true`) on "Pagar/Confirmar" press, before payment; migrate abandoned ads to draft; rename dashboard section
+- [x] **Phase 52: Ad Draft Decoupling** — Save ad as draft (`draft: true`) on "Pagar/Confirmar" press, before payment; migrate abandoned ads to draft; rename dashboard section (completed 2026-03-08)
 
 **Plans:** 4 plans
 
@@ -177,4 +177,4 @@ Plans:
 | 49. Zoho + Facto + Other Services any Elimination | v1.20 | 1/1 | Complete | 2026-03-08 |
 | 50. Payment Utils + Middlewares any Elimination | v1.20 | 1/1 | Complete | 2026-03-08 |
 | 51. Seeders + Test Files any Elimination | v1.20 | 1/1 | Complete | 2026-03-08 |
-| 52. Ad Draft Decoupling | 3/4 | In Progress|  | — |
+| 52. Ad Draft Decoupling | 4/4 | Complete   | 2026-03-08 | — |

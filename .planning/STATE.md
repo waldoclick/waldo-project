@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.21
 milestone_name: Ad Draft Decoupling
 status: planning
-stopped_at: Completed 52-02-PLAN.md
-last_updated: "2026-03-08T18:29:30.836Z"
+stopped_at: Completed 52-04-PLAN.md
+last_updated: "2026-03-08T18:35:37.649Z"
 last_activity: 2026-03-08 — Roadmap committed, ready to plan Phase 52
 progress:
   total_phases: 6
-  completed_phases: 5
+  completed_phases: 6
   total_plans: 9
-  completed_plans: 8
+  completed_plans: 9
 ---
 
 # Project State
@@ -74,6 +74,8 @@ Key patterns established (carry forward):
 - [Phase 52-ad-draft-decoupling]: draft field required=true/default=true so every new ad starts as a draft — Ensures no ad is ever published without explicit promotion out of draft state
 - [Phase 52-ad-draft-decoupling]: Intersection type cast for draft/is_paid fields not in AdData — Avoids modifying the core AdData interface for fields only relevant to the draft flow
 - [Phase 52-ad-draft-decoupling]: draft field is single source of truth for draft state — replaced complex abandoned conditions — Simplifies computeAdStatus and eliminates abandoned concept from the service layer
+- [Phase 52-ad-draft-decoupling]: Free ad flow (pack=free) skips draft call entirely — no draft saved for free packs
+- [Phase 52-ad-draft-decoupling]: adsDraft added to AdsTable SettingsSection type and settings.store.ts — required by type-safe section prop system
 
 ### Pending Todos
 
@@ -85,6 +87,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-08T18:29:30.834Z
-Stopped at: Completed 52-02-PLAN.md
+Last session: 2026-03-08T18:35:29.094Z
+Stopped at: Completed 52-04-PLAN.md
 Resume with: `/gsd-plan-phase 52` once roadmap is committed

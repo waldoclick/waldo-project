@@ -20,13 +20,13 @@
 
 ### Frontend
 
-- [ ] **FRONT-01**: Al presionar "Pagar/Confirmar" en `/anunciar/resumen`, se llama primero `POST /api/payments/ad-draft` y el `ad_id` retornado se guarda en `adStore`
-- [ ] **FRONT-02**: Si `adStore.ad.ad_id` ya existe, el endpoint recibe el `ad_id` para actualizar el borrador (no crear uno nuevo)
-- [ ] **FRONT-03**: El flujo de pago existente (Transbank y gratuito) continúa con el `ad_id` del borrador ya guardado
+- [x] **FRONT-01**: Al presionar "Pagar/Confirmar" en `/anunciar/resumen`, se llama primero `POST /api/payments/ad-draft` y el `ad_id` retornado se guarda en `adStore`
+- [x] **FRONT-02**: Si `adStore.ad.ad_id` ya existe, el endpoint recibe el `ad_id` para actualizar el borrador (no crear uno nuevo)
+- [x] **FRONT-03**: El flujo de pago existente (Transbank y gratuito) continúa con el `ad_id` del borrador ya guardado
 
 ### Dashboard
 
-- [ ] **DASH-01**: La sección que hoy muestra "Abandonados" pasa a mostrar "Borradores" (label y filtro de estado)
+- [x] **DASH-01**: La sección que hoy muestra "Abandonados" pasa a mostrar "Borradores" (label y filtro de estado)
 
 ## Future Requirements
 
@@ -56,10 +56,10 @@
 | BACK-04 | Phase 52 | Complete |
 | BACK-05 | Phase 52 | Complete |
 | BACK-06 | Phase 52 | Complete |
-| FRONT-01 | Phase 52 | Pending |
-| FRONT-02 | Phase 52 | Pending |
-| FRONT-03 | Phase 52 | Pending |
-| DASH-01 | Phase 52 | Pending |
+| FRONT-01 | Phase 52 | Complete |
+| FRONT-02 | Phase 52 | Complete |
+| FRONT-03 | Phase 52 | Complete |
+| DASH-01 | Phase 52 | Complete |
 
 **Coverage:**
 - v1.21 requirements: 11 total
