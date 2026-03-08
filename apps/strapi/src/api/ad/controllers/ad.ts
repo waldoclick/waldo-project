@@ -243,11 +243,14 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
   },
 
   /**
-   * Get abandoned advertisements (created with paid option but payment never completed).
+   * Get draft advertisements
    *
-   * @route GET /api/ads/abandoneds
+   * Retrieves a paginated list of draft advertisements (draft === true).
+   * Delegates to the advertisement service for business logic.
+   *
+   * @route GET /api/ads/drafts
    */
-  async abandoneds(ctx: Context) {
+  async drafts(ctx: Context) {
     try {
       const query = ctx.query as Record<string, unknown>;
       const pagination = query.pagination as Record<string, string> | undefined;
@@ -266,10 +269,8 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
         delete options.pagination;
       }
 
-      const abandonedAds = await strapi
-        .service("api::ad.ad")
-        .abandonedAds(options);
-      return abandonedAds;
+      const draftAds = await strapi.service("api::ad.ad").draftAds(options);
+      return draftAds;
     } catch (error) {
       ctx.throw(500, error);
     }

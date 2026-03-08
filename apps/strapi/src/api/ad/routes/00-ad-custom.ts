@@ -41,8 +41,8 @@ export default {
     },
     {
       method: "GET",
-      path: "/ads/abandoneds",
-      handler: "ad.abandoneds",
+      path: "/ads/drafts",
+      handler: "ad.drafts",
     },
     {
       method: "PUT",
