@@ -38,18 +38,18 @@
   </div>
 </template>
 
-<script setup>
-import { ref, computed, onMounted } from "vue";
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
 import { usePackStore } from "@/stores/pack.store";
-import { usePacksStore } from "@/stores/packs.store";
 
 const packStore = usePackStore();
-const packsStore = usePacksStore();
-const packs = computed(() => packsStore.packs);
-const selectedPack = ref(null);
+const { packs, loadPacks } = usePacksList();
+const selectedPack = ref<number | null>(null);
 
-// onMounted: UI-only — initializes local selectedPack ref from store; packs pre-loaded by parent page
-onMounted(() => {
+// onMounted: loads packs via usePacksList (TTL-cached), then initializes local selectedPack ref from store
+onMounted(async () => {
+  await loadPacks();
+
   // Get initial pack value from store
   selectedPack.value = packStore.pack || null;
 
@@ -62,7 +62,7 @@ const changePayment = () => {
 };
 
 // Function to format price to Chilean Pesos
-const formatPrice = (price) => {
+const formatPrice = (price: number): string => {
   return new Intl.NumberFormat("es-CL", {
     style: "currency",
     currency: "CLP",

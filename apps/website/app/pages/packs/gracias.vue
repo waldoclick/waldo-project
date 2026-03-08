@@ -4,15 +4,15 @@
     <HeroFake />
     <!-- <pre>{{ data }}</pre> -->
     <MessageDefault
-      v-if="data && !('error' in data)"
+      v-if="packData"
       type="success"
       title="¡Gracias por tu compra!"
       :description="`Has comprado el pack <strong>${
-        (data as any).name
+        packData.name
       }</strong> por <strong>${formatPrice(
-        (data as any).price,
+        packData.price,
       )}</strong>. Este pack incluye <strong>${
-        (data as any).total_ads
+        packData.total_ads
       }</strong> anuncios.`"
       button_label="Crear un anuncio"
       button_link="/anunciar"
@@ -99,6 +99,11 @@ watchEffect(() => {
   }
 });
 
+const packData = computed(() => {
+  if (!data.value || "error" in data.value) return null;
+  return data.value as Pack;
+});
+
 useSeoMeta({ robots: "noindex, nofollow" });
 
 watch(data, (newData) => {
@@ -108,7 +113,7 @@ watch(data, (newData) => {
       title: `Gracias por tu Compra - ${pack.name}`,
       description: `Has comprado el pack ${pack.name} por ${formatPrice(
         pack.price,
-      )}. Este pack incluye ${(pack as any).ads_count} anuncios.`,
+      )}. Este pack incluye ${pack.total_ads} anuncios.`,
       imageUrl: `${config.public.baseUrl}/share.jpg`,
       url: `${config.public.baseUrl}/packs/gracias?pack=${pack.id}`,
     });
@@ -120,7 +125,7 @@ watch(data, (newData) => {
       url: `${config.public.baseUrl}/packs/gracias?pack=${pack.id}`,
       description: `Has comprado el pack ${pack.name} por ${formatPrice(
         pack.price,
-      )}. Este pack incluye ${(pack as any).ads_count} anuncios.`,
+      )}. Este pack incluye ${pack.total_ads} anuncios.`,
     });
   }
 });
