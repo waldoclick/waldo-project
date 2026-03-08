@@ -20,7 +20,7 @@
 - ✅ **v1.16 Website Meta Copy Audit** — Phases 36-38 (shipped 2026-03-07)
 - ✅ **v1.17 Security & Stability** — Phases 40-41 (shipped 2026-03-07)
 - ✅ **v1.18 Ad Creation URL Refactor** — Phase 42 (shipped 2026-03-08)
-- 📋 **v1.19** — Next milestone (planned)
+- 🔄 **v1.19 Zoho CRM Sync Model** — Phases 43-46 (in progress)
 
 ## Phases
 
@@ -48,18 +48,59 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 
 ## Active Phases
 
-### Phase 39: Spanish Default Language
+<!-- v1.19 Zoho CRM Sync Model — Phases 43-46 -->
 
-**Goal:** Set Spanish (`es`) as the declared default language in both Nuxt apps by enabling the already-installed `@nuxtjs/i18n` module, fixing `html[lang]` and `og:locale` SEO attributes.
+- [ ] **Phase 43: Zoho Service Reliability** — Fix token refresh (401 interceptor), fix auth header prefix, isolate tests with axios-mock-adapter, add env vars to .env.example
+- [ ] **Phase 44: Zoho Service Layer** — Initialize Contact custom fields to 0 on creation; implement `updateContactStats()` and `createDeal()` on service; fix Lead_Status missing field
+- [ ] **Phase 45: Payment Event Wiring** — Wire `pack_purchased` and `ad_paid` events to `createDeal()` + `updateContactStats()`; resolve Contact ID via `findContact()` before every deal creation
+- [ ] **Phase 46: Ad Published Event Wiring** — Wire `ad_published` event to `updateContactStats()`; guard with status-transition check to prevent double-counting
 
-**Closes:** GitHub issue #22
+## Phase Details
 
-**Requirements:** LANG-01 (website i18n enabled), LANG-02 (dashboard i18n enabled)
+### Phase 43: Zoho Service Reliability
+**Goal**: The Zoho HTTP client handles token expiry correctly and tests never hit the live API
+**Depends on**: Nothing (foundation phase)
+**Requirements**: RELY-01, RELY-02, RELY-04, RELY-05
+**Success Criteria** (what must be TRUE):
+  1. A Zoho API call made after token expiry (simulated 401 response) automatically refreshes the token and retries — the calling code receives the successful result, not an error
+  2. The authorization header on every outbound Zoho request reads `Zoho-oauthtoken <token>` (not `Bearer <token>`)
+  3. Running `yarn test` in `apps/strapi` makes zero network calls to `zohoapis.com` — all Zoho HTTP calls are intercepted by `axios-mock-adapter`
+  4. `apps/strapi/.env.example` contains all four `ZOHO_*` variables (`ZOHO_CLIENT_ID`, `ZOHO_CLIENT_SECRET`, `ZOHO_REFRESH_TOKEN`, `ZOHO_API_URL`)
+**Plans**: TBD
 
-**Plans:** 1 plan
+### Phase 44: Zoho Service Layer
+**Goal**: The Zoho service exposes `createDeal()` and `updateContactStats()`, Contact creation initializes counters to zero, and Leads are created with a status
+**Depends on**: Phase 43
+**Requirements**: CONT-01, CONT-02, DEAL-01, RELY-03
+**Success Criteria** (what must be TRUE):
+  1. A Contact created via `createContact()` always has `Ads_Published__c: 0`, `Total_Spent__c: 0`, and `Packs_Purchased__c: 0` in the Zoho API payload
+  2. `zohoService.createDeal(deal)` posts a Deal payload with `Deal_Name`, `Stage: "Closed Won"`, `Amount`, `Contact_Name: { id }`, `Type`, `Closing_Date`, `Description`, and `Lead_Source` — and returns the created Deal's Zoho ID
+  3. `zohoService.updateContactStats(contactId, stats)` issues a `PUT /crm/v5/Contacts/{id}` with only the provided stat fields (no undefined keys sent)
+  4. `zohoService.createLead()` includes `Lead_Status: "New"` in the payload sent to Zoho
+**Plans**: TBD
 
-Plans:
-- [ ] 39-01-PLAN.md — Enable @nuxtjs/i18n in website and dashboard
+### Phase 45: Payment Event Wiring
+**Goal**: Every confirmed pack purchase and paid ad activation creates a Deal in Zoho and updates the Contact's spend stats
+**Depends on**: Phase 44
+**Requirements**: DEAL-02, DEAL-03, EVT-03
+**Success Criteria** (what must be TRUE):
+  1. After Transbank confirms a pack payment (`pack_purchased`), a Deal appears in Zoho linked to the buyer's Contact, with `Amount` matching the charged amount and `Stage: "Closed Won"`
+  2. After Transbank confirms an ad payment (`ad_paid`), a Deal appears in Zoho linked to the buyer's Contact, with `Amount` matching the charged amount
+  3. The `Total_Spent__c` field on the Zoho Contact is incremented by the payment amount after each confirmed payment event
+  4. `Packs_Purchased__c` is incremented on the Contact after a pack purchase (but not after an ad payment)
+  5. If `findContact(email)` returns null (user not yet in Zoho), no Deal is created and no error is thrown — the failure is logged and the payment flow completes normally
+**Plans**: TBD
+
+### Phase 46: Ad Published Event Wiring
+**Goal**: Every ad approval increments the Contact's published-ads counter in Zoho, firing exactly once per genuine first-publish transition
+**Depends on**: Phase 44
+**Requirements**: EVT-01, EVT-02
+**Success Criteria** (what must be TRUE):
+  1. When an admin approves an ad (`approveAd()` called), the Zoho Contact for that user has `Ads_Published__c` incremented by 1 and `Last_Ad_Posted_At__c` updated to the current timestamp
+  2. The sync only fires when the ad's status transitions to `"published"` for the first time — re-approving an already-published ad does not increment the counter a second time
+  3. No Deal is created for the `ad_published` event (only Contact stats are updated)
+  4. If `findContact(email)` returns null for the ad's owner, the sync is silently skipped and `approveAd()` completes successfully
+**Plans**: TBD
 
 ## Progress
 
@@ -70,7 +111,11 @@ Plans:
 | 36. SEO Bug Fixes | v1.16 | 1/1 | Complete | 2026-03-07 |
 | 37. Dynamic Page Copy | v1.16 | 1/1 | Complete | 2026-03-07 |
 | 38. Static Page Copy | v1.16 | 2/2 | Complete | 2026-03-07 |
-| 39. Spanish Default Language | v1.19 | 0/1 | Not started | — |
+| 39. Spanish Default Language | — | 0/1 | Not started | — |
 | 40. Users Filter Authenticated | v1.17 | 2/2 | Complete | 2026-03-07 |
 | 41. Sentry Production-Only | v1.17 | 1/1 | Complete | 2026-03-07 |
 | 42. Ad Creation URL Refactor | v1.18 | 3/3 | Complete | 2026-03-08 |
+| 43. Zoho Service Reliability | v1.19 | 0/? | Not started | — |
+| 44. Zoho Service Layer | v1.19 | 0/? | Not started | — |
+| 45. Payment Event Wiring | v1.19 | 0/? | Not started | — |
+| 46. Ad Published Event Wiring | v1.19 | 0/? | Not started | — |
