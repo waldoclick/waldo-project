@@ -1,15 +1,16 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.18
-milestone_name: Ad Creation URL Refactor
-status: in_progress
-stopped_at: Roadmap created — ready to plan Phase 42
-last_updated: "2026-03-07T00:00:00.000Z"
+milestone_name: — Ad Creation URL Refactor
+status: Roadmap created — awaiting phase plan
+stopped_at: Completed 42-01-PLAN.md
+last_updated: "2026-03-08T00:33:43.903Z"
+last_activity: 2026-03-07 — Roadmap created for v1.18
 progress:
-  total_phases: 1
+  total_phases: 2
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_plans: 4
+  completed_plans: 1
   percent: 0
 ---
 
@@ -52,6 +53,7 @@ Key patterns established (carry forward):
 - **v1.16**: `descPrefix`/`descSuffix` split for budget-aware ad description slicing
 - **v1.17**: Use `strapi.db.query` to bypass content-API sanitizer for server-enforced role filtering
 - **v1.17**: Use `dsn: undefined` pattern (not conditional init) in sentry.*.config.ts
+- [Phase 42-ad-creation-url-refactor]: Used onMounted (not watcher) for updateStep + stepView in each new step page — mount is the correct trigger since each page mounts on navigation — Consistent with index.vue step 1 pattern; avoids overcounting on back-navigation
 
 ### v1.18 Context
 
@@ -90,6 +92,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-07
-Stopped at: Roadmap created for v1.18 — Phase 42 defined
+Last session: 2026-03-08T00:33:38.384Z
+Stopped at: Completed 42-01-PLAN.md
 Resume with: `/gsd-plan-phase 42`
