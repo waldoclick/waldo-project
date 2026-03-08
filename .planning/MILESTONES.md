@@ -1,5 +1,22 @@
 # Milestones
 
+## v1.18 Ad Creation URL Refactor (Shipped: 2026-03-08)
+
+**Phases completed:** 1 phase (42), 3 plans
+**Files changed:** 21 files, +1,525 / -112 lines (apps/website)
+**Timeline:** 2026-03-07 → 2026-03-08 (~1.5 hours)
+**Requirements:** 11/11 complete ✓
+
+**Key accomplishments:**
+1. **Step Pages (Plan 42-01)**: Created 4 dedicated Nuxt pages (`datos-del-producto`, `datos-personales`, `ficha-de-producto`, `galeria-de-imagenes`) — each syncs `adStore.step` and fires Google Ecommerce `stepView` analytics on mount; full wizard navigation chain established via URL routing.
+2. **Isolated Fixes (Plan 42-02)**: Fixed `resumen.vue` back button to `/anunciar/galeria-de-imagenes`; removed debug `<pre>{{ user.value }}</pre>` PII leak from `FormCreateThree.vue`.
+3. **CreateAd.vue + index.vue Wiring (Plan 42-03)**: Replaced all `?step=N` query-param navigation with `stepRoutes` Record map + `router.push(path)`; removed multi-step analytics watcher from `index.vue` (each step page now fires its own analytics); `nuxt typecheck` passes with zero errors.
+4. **Wizard Guard (post-verification)**: Added `wizard-guard.ts` middleware to prevent step skipping; SSR-safe via `if (import.meta.server) return;` guard (localStorage-backed store is empty on server); all 4 step pages use `middleware: ["auth", "wizard-guard"]`.
+
+**Archive:** `.planning/milestones/v1.18-ROADMAP.md` | `.planning/milestones/v1.18-REQUIREMENTS.md`
+
+---
+
 ## v1.17 Security & Stability (Shipped: 2026-03-07)
 
 **Phases completed:** 2 phases (40-41), 3 plans

@@ -1,44 +1,43 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.18
-milestone_name: — Ad Creation URL Refactor
-status: Phase 42 complete — wizard-guard added post-verification
-stopped_at: wizard-guard middleware committed (79e274f)
-last_updated: "2026-03-08T02:00:00.000Z"
-last_activity: 2026-03-08 — wizard-guard middleware wired to all 4 step pages
+milestone: v1.19
+milestone_name: — Next Milestone (TBD)
+status: planning
+stopped_at: v1.18 milestone complete
+last_updated: "2026-03-08T03:00:00.000Z"
+last_activity: 2026-03-08 — v1.18 milestone archived
 progress:
-  total_phases: 2
-  completed_phases: 1
-  total_plans: 4
-  completed_plans: 4
-  percent: 50
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-07)
+See: .planning/PROJECT.md (updated 2026-03-08)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.18 — Ad Creation URL Refactor
+**Current focus:** Planning v1.19 — next milestone TBD
 
 ## Current Position
 
-Status: Phase 42 complete (verified + wizard-guard added)
+Status: v1.18 complete — ready for next milestone
 Plan: —
-Status: All plans complete
-Last activity: 2026-03-08 — wizard-guard middleware added post-verification
+Last activity: 2026-03-08 — v1.18 archived (Phase 42 complete, wizard-guard added, milestone committed + tagged)
 
 ```
-Progress: [█████░░░░░] 50% — Phase 42 complete, phase 43 pending
+Progress: [░░░░░░░░░░] 0% — no active milestone
 ```
 
 ## Accumulated Context
 
 ### Decisions
 
-All decisions from v1.1–v1.17 are logged in PROJECT.md Key Decisions table.
+All decisions from v1.1–v1.18 are logged in PROJECT.md Key Decisions table.
 
 Key patterns established (carry forward):
 - `watch({ immediate: true })` as sole data-loading trigger — never pair with onMounted
@@ -53,40 +52,14 @@ Key patterns established (carry forward):
 - **v1.16**: `descPrefix`/`descSuffix` split for budget-aware ad description slicing
 - **v1.17**: Use `strapi.db.query` to bypass content-API sanitizer for server-enforced role filtering
 - **v1.17**: Use `dsn: undefined` pattern (not conditional init) in sentry.*.config.ts
-- [Phase 42-ad-creation-url-refactor]: wizard-guard middleware added post-verification — each step page (2–5) now uses `middleware: ["auth", "wizard-guard"]`; guard redirects to first incomplete step, allows free backward navigation
-- [Phase 42-ad-creation-url-refactor]: No architectural changes needed — both fixes were single-line edits to existing files
-- [Phase 42-ad-creation-url-refactor]: stepRoutes map for route-based navigation in CreateAd.vue (step-to-path Record mapping)
-
-### v1.18 Context
-
-- **Current wizard:** `/anunciar` (index.vue) hosts all 5 steps via `?step=N` query params
-- **Step routing:** adStore.step synced manually to `route.query.step` on mount; `router.push({ query: { step: N } })` on next/back
-- **Step components:** FormCreateOne (step 1), FormCreateTwo (2), FormCreateThree (3), FormCreateFour (4), FormCreateFive (5) — all `v-if="step === N"` inside `<ClientOnly>`
-- **Target routes:**
-  - `/anunciar` → Step 1 (FormCreateOne) — index.vue stays as entry point
-  - `/anunciar/datos-del-producto` → Step 2 (FormCreateTwo) — new page
-  - `/anunciar/datos-personales` → Step 3 (FormCreateThree) — new page
-  - `/anunciar/ficha-de-producto` → Step 4 (FormCreateFour) — new page
-  - `/anunciar/galeria-de-imagenes` → Step 5 (FormCreateFive) — new page
-- **Store:** adStore.step stays as number (1–5) for internal ordering; URL is navigation source of truth
-- **Analytics:** Keep Google Ecommerce-compatible English step names (`"Payment Method"`, `"General"`, `"Personal Information"`, `"Product Sheet"`, `"Image Gallery"`)
-- **resumen.vue back:** Currently `/anunciar?step=5` → must update to `/anunciar/galeria-de-imagenes`
-- **Untouched:** `/anunciar/resumen`, `/anunciar/gracias`, `/anunciar/error`
-- **Rendering:** All step pages are client-only (`<ClientOnly>` or `definePageMeta` client-side)
-- **AGENTS.md rule:** `git mv` for all Nuxt page directory and file renames (preserves Git rename history)
-- **Key files changing:**
-  - `apps/website/app/pages/anunciar/index.vue` (step 1 shell, simplify to only host FormCreateOne)
-  - NEW: `apps/website/app/pages/anunciar/datos-del-producto.vue`
-  - NEW: `apps/website/app/pages/anunciar/datos-personales.vue`
-  - NEW: `apps/website/app/pages/anunciar/ficha-de-producto.vue`
-  - NEW: `apps/website/app/pages/anunciar/galeria-de-imagenes.vue`
-  - `apps/website/app/pages/anunciar/resumen.vue` (back button fix only)
-  - `apps/website/app/stores/ad.store.ts` (step sync logic: route path → step number)
-  - `apps/website/app/components/CreateAd.vue` (navigation: `router.push` to named routes, not `?step=N`)
+- **v1.18**: `stepRoutes` Record map pattern for wizard step-to-URL routing in `CreateAd.vue`
+- **v1.18**: Per-page analytics — each wizard step page owns its own `stepView` in `onMounted`; no centralized watcher
+- **v1.18**: `if (import.meta.server) return;` is mandatory first line of any client-only middleware reading a localStorage-backed store
+- **v1.18**: `wizard-guard.ts` — step-skip prevention middleware; client-only; redirects to first incomplete step
 
 ### Pending Todos
 
-None — Phase 42 complete including post-verification wizard-guard. Ready for Phase 43.
+None — v1.18 complete and archived. Ready for `/gsd-new-milestone`.
 
 ### Blockers/Concerns
 
@@ -94,6 +67,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-08T02:00:00.000Z
-Stopped at: wizard-guard middleware committed (79e274f)
-Resume with: `/gsd-plan-phase 43`
+Last session: 2026-03-08
+Stopped at: v1.18 milestone archived
+Resume with: `/gsd-new-milestone`
