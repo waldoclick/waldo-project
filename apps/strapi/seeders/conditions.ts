@@ -1,4 +1,5 @@
 // /seeders/conditions.ts
+import type { Core } from "@strapi/strapi";
 
 const conditionsData = [
   {
@@ -17,7 +18,7 @@ const conditionsData = [
   },
 ];
 
-const populateConditions = async (strapi: any) => {
+const populateConditions = async (strapi: Core.Strapi): Promise<void> => {
   console.log("Poblando condiciones...");
 
   console.log(`Procesando ${conditionsData.length} condiciones...`);

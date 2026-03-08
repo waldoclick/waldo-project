@@ -1,4 +1,5 @@
 // /seeders/categories.ts
+import type { Core } from "@strapi/strapi";
 
 const categoriesData = [
   {
@@ -99,7 +100,7 @@ const categoriesData = [
   },
 ];
 
-const populateCategories = async (strapi: any) => {
+const populateCategories = async (strapi: Core.Strapi): Promise<void> => {
   console.log("Poblando categorías...");
 
   console.log(`Procesando ${categoriesData.length} categorías...`);

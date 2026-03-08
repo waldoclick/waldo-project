@@ -1,4 +1,5 @@
 // /seeders/packs.ts
+import type { Core } from "@strapi/strapi";
 
 const packsData = [
   {
@@ -42,7 +43,7 @@ const packsData = [
   },
 ];
 
-const populatePacks = async (strapi: any) => {
+const populatePacks = async (strapi: Core.Strapi): Promise<void> => {
   console.log("Poblando packs...");
 
   console.log(`Procesando ${packsData.length} packs...`);
