@@ -1,16 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.1
-milestone_name: milestone
-status: active — roadmap ready, no plans written yet
-stopped_at: Completed 46-01-PLAN.md
-last_updated: "2026-03-08T13:18:03.443Z"
-last_activity: 2026-03-08 — roadmap created; Phases 43-46 defined; 13/13 requirements mapped
+milestone: v1.20
+milestone_name: TypeScript any Elimination
+status: defining requirements
+stopped_at: —
+last_updated: "2026-03-08"
+last_activity: 2026-03-08 — Milestone v1.20 started; requirements defined; roadmap pending
 progress:
-  total_phases: 4
-  completed_phases: 2
-  total_plans: 3
-  completed_plans: 3
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
   percent: 0
 ---
 
@@ -21,27 +21,20 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-08)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.19 — Zoho CRM Sync Model — Phase 43: Zoho Service Reliability
+**Current focus:** v1.20 — TypeScript any Elimination — defining requirements
 
 ## Current Position
 
-Status: active — roadmap ready, no plans written yet
+Phase: Not started (defining requirements)
 Plan: —
-Last activity: 2026-03-08 — roadmap created; Phases 43-46 defined; 13/13 requirements mapped
-
-```
-Progress: [░░░░░░░░░░] 0% — 0/4 phases complete
-Phase 43: Zoho Service Reliability   [ ] Not started
-Phase 44: Zoho Service Layer         [ ] Not started
-Phase 45: Payment Event Wiring       [ ] Not started
-Phase 46: Ad Published Event Wiring  [ ] Not started
-```
+Status: Defining requirements
+Last activity: 2026-03-08 — Milestone v1.20 started
 
 ## Accumulated Context
 
 ### Decisions
 
-All decisions from v1.1–v1.18 are logged in PROJECT.md Key Decisions table.
+All decisions from v1.1–v1.19 are logged in PROJECT.md Key Decisions table.
 
 Key patterns established (carry forward):
 - `watch({ immediate: true })` as sole data-loading trigger — never pair with onMounted
@@ -59,40 +52,20 @@ Key patterns established (carry forward):
 - **v1.18**: `stepRoutes` Record map pattern for wizard step-to-URL routing in `CreateAd.vue`
 - **v1.18**: Per-page analytics — each wizard step page owns its own `stepView` in `onMounted`; no centralized watcher
 - **v1.18**: `if (import.meta.server) return;` is mandatory first line of any client-only middleware reading a localStorage-backed store
-- **v1.18**: `wizard-guard.ts` — step-skip prevention middleware; client-only; redirects to first incomplete step
-- [Phase 43-zoho-service-reliability]: Use Zoho-oauthtoken header prefix (not Bearer) — Zoho CRM API requirement — Required by Zoho API spec; Bearer is wrong scheme and causes all requests to fail
-- [Phase 43-zoho-service-reliability]: Inject AxiosAdapter via optional constructor param for test isolation — Preserves production path unchanged while enabling axios-mock-adapter injection in tests
-- [Phase 43-zoho-service-reliability]: Do not import from ./index in ZohoService tests — that singleton reads real env vars; test creates its own ZohoHttpClient and ZohoService with dummy config
-- [Phase 44-zoho-service-layer]: Lead_Status hardcoded to 'New' in createLead() payload — initialization value, not a caller param
-- [Phase 44-zoho-service-layer]: Counter fields (Ads_Published__c, Total_Spent__c, Packs_Purchased__c) hardcoded to 0 in createContact() — initialization values, not passed-in params
-- [Phase 44-zoho-service-layer]: Stage: 'Closed Won' hardcoded in createDeal() — all deals at Waldo are immediately closed; callers never pass Stage
-- [Phase 44-zoho-service-layer]: Object.fromEntries filter pattern for selective updateContactStats() payload — strips undefined keys without extra library
-- [Phase 45-payment-event-wiring]: Floating promise (.then().catch()) for ad_paid Zoho sync — adResponse controller issues ctx.redirect() right after processPaidWebpay; awaiting would block the redirect — Confirmed by STATE.md design decision: 'ad_paid wiring MUST use .then().catch() floating promise'
-- [Phase 45-payment-event-wiring]: Zoho sync in processPaidWebpay wrapped in top-level try/catch — CRM errors never propagate to payment flow — await used (not floating promise) for Zoho calls in processPaidWebpay — safe because this method is not a redirect handler
-- [Phase 46]: Floating promise (not await) in approveAd() — CRM sync must never block ad approval; consistent with Phase 45 ad_paid pattern
-- [Phase 46]: No createDeal for ad_published (EVT-01) — only updateContactStats with Ads_Published__c + Last_Ad_Posted_At__c
-- [Phase 46]: isFirstPublish guard retained despite isPending redundancy — explicit EVT-02 documentation and forward-safety
-
-### v1.19 Key Decisions (from research)
-
-- **Zoho event wiring**: Direct service calls (not lifecycle hooks, not Strapi event hub) — callers have full context; explicit causality; consistent with existing fire-and-forget pattern
-- **Phase 43 must come first**: Token refresh (RELY-01) and auth header fix (RELY-02) must be in place before any new Zoho methods are added — all new calls inherit the bug otherwise
-- **Test isolation (RELY-04)**: `axios-mock-adapter` injected via optional constructor param on `ZohoHttpClient` — enables mocking without touching production path
-- **`pack_purchased` wiring**: Async `await` is safe (not a redirect endpoint); `ad_paid` wiring must use `.then().catch()` floating promise (redirect must not be blocked)
-- **No lifecycle hooks for CRM events**: `afterUpdate` on Ad lacks business context (user email, amount); direct call in `approveAd()` is unambiguously better
-- **Race condition on counter increments**: Read-modify-write accepted as known limitation at Waldo's traffic volume; reconciliation cron deferred to future reliability milestone
+- **v1.19**: Floating promise pattern for any Zoho sync inside a redirect handler — capture variables before `Promise.resolve().then()`
+- **v1.19**: First-publish guard pattern: `isPending` check before firing any "ad published" side effects
+- **v1.19**: Zoho stage names must match CRM pipeline exactly — validate before hardcoding
 
 ### Pending Todos
 
-- Confirm Zoho CRM custom field API names (`Ads_Published__c`, `Total_Spent__c`, etc.) in Zoho Admin UI before Phase 44 can be completed end-to-end
-- Install `axios-retry@^4.5.0` (prod) and `axios-mock-adapter@^2.1.0` (dev) in Phase 43
+None.
 
 ### Blockers/Concerns
 
-- **External dependency**: Zoho custom field API names must be confirmed from Zoho CRM Admin → Modules → Contacts → Fields before `updateContactStats()` can be verified end-to-end. This is the only blocker for Phase 44 completion.
+None.
 
 ## Session Continuity
 
-Last session: 2026-03-08T04:07:58.566Z
-Stopped at: Completed 46-01-PLAN.md
-Resume with: `/gsd-plan-phase 43`
+Last session: 2026-03-08
+Stopped at: Requirements defined, roadmap pending
+Resume with: `/gsd-plan-phase 47`
