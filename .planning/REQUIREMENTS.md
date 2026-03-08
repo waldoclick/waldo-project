@@ -50,18 +50,18 @@ TypeScript `any` elimination across Strapi services, controllers, type files, fa
 
 ### Payment Types & Utils
 
-- [ ] **TSANY-24**: `payment.type.ts` — `ad?: any`, `availableAdFeaturedReservation?: any`, `adFeaturedReservation?: any`, `[key: string]: any`, `order?: any` → typed or `unknown`
-- [ ] **TSANY-25**: `order.utils.ts` — `payment_response?: any`, `document_details?: any`, `items?: any[]`, `document_response?: any`, `documentResponse: any` → `unknown`
-- [ ] **TSANY-26**: `user.utils.ts` — `commune?: any`, `business_commune?: any`, `flowData: any` → `unknown`
-- [ ] **TSANY-27**: `ad.utils.ts` — `details?: any` in `adData` union → `unknown`
-- [ ] **TSANY-28**: `general.utils.ts` — `userDetails: any` → `unknown`
-- [ ] **TSANY-29**: `payment.ts` controller — `error: any` in `errorHandler` → `unknown`; `(result as any)` cast → typed
+- [x] **TSANY-24**: `payment.type.ts` — `ad?: any`, `availableAdFeaturedReservation?: any`, `adFeaturedReservation?: any`, `[key: string]: any`, `order?: any` → typed or `unknown`
+- [x] **TSANY-25**: `order.utils.ts` — `payment_response?: any`, `document_details?: any`, `items?: any[]`, `document_response?: any`, `documentResponse: any` → `unknown`
+- [x] **TSANY-26**: `user.utils.ts` — `commune?: any`, `business_commune?: any`, `flowData: any` → `unknown`
+- [x] **TSANY-27**: `ad.utils.ts` — `details?: any` in `adData` union → `unknown`
+- [x] **TSANY-28**: `general.utils.ts` — `userDetails: any` → `unknown`
+- [x] **TSANY-29**: `payment.ts` controller — `error: any` in `errorHandler` → `unknown`; `(result as any)` cast → typed
 
 ### Middlewares
 
-- [ ] **TSANY-30**: `image-uploader.ts` — `file: any` params → `unknown` with narrowing
-- [ ] **TSANY-31**: `cache.ts` — `operation: () => Promise<any>` → `Promise<unknown>`
-- [ ] **TSANY-32**: `user-registration.ts` — `[key: string]: any` index signature → `unknown`; `strapi: any` → typed
+- [x] **TSANY-30**: `image-uploader.ts` — `file: any` params → `unknown` with narrowing
+- [x] **TSANY-31**: `cache.ts` — `operation: () => Promise<any>` → `Promise<unknown>`
+- [x] **TSANY-32**: `user-registration.ts` — `[key: string]: any` index signature → `unknown`; `strapi: any` → typed
 
 ### Seeders
 
@@ -110,15 +110,15 @@ TypeScript `any` elimination across Strapi services, controllers, type files, fa
 | TSANY-21 | Phase 49 | Complete |
 | TSANY-22 | Phase 49 | Complete |
 | TSANY-23 | Phase 49 | Complete |
-| TSANY-24 | Phase 50 | Pending |
-| TSANY-25 | Phase 50 | Pending |
-| TSANY-26 | Phase 50 | Pending |
-| TSANY-27 | Phase 50 | Pending |
-| TSANY-28 | Phase 50 | Pending |
-| TSANY-29 | Phase 50 | Pending |
-| TSANY-30 | Phase 50 | Pending |
-| TSANY-31 | Phase 50 | Pending |
-| TSANY-32 | Phase 50 | Pending |
+| TSANY-24 | Phase 50 | Complete |
+| TSANY-25 | Phase 50 | Complete |
+| TSANY-26 | Phase 50 | Complete |
+| TSANY-27 | Phase 50 | Complete |
+| TSANY-28 | Phase 50 | Complete |
+| TSANY-29 | Phase 50 | Complete |
+| TSANY-30 | Phase 50 | Complete |
+| TSANY-31 | Phase 50 | Complete |
+| TSANY-32 | Phase 50 | Complete |
 | TSANY-33 | Phase 51 | Pending |
 | TSANY-34 | Phase 51 | Pending |
 | TSANY-35 | Phase 51 | Pending |
