@@ -63,7 +63,7 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
   Plans:
   - [ ] 45-01-PLAN.md — TDD: Wire pack_purchased → Zoho createDeal + updateContactStats in pack.service.ts (await pattern)
   - [ ] 45-02-PLAN.md — TDD: Wire ad_paid → Zoho createDeal + updateContactStats in ad.service.ts (floating promise pattern)
-- [ ] **Phase 46: Ad Published Event Wiring** — Wire `ad_published` event to `updateContactStats()`; guard with status-transition check to prevent double-counting
+- [x] **Phase 46: Ad Published Event Wiring** — Wire `ad_published` event to `updateContactStats()`; guard with status-transition check to prevent double-counting (completed 2026-03-08)
 
 ## Phase Details
 
@@ -128,4 +128,4 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 | 43. Zoho Service Reliability | 2/2 | Complete    | 2026-03-08 | — |
 | 44. Zoho Service Layer | 2/2 | Complete    | 2026-03-08 | — |
 | 45. Payment Event Wiring | 2/2 | Complete   | 2026-03-08 | — |
-| 46. Ad Published Event Wiring | v1.19 | 0/? | Not started | — |
+| 46. Ad Published Event Wiring | 1/1 | Complete   | 2026-03-08 | — |

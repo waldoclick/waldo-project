@@ -28,8 +28,8 @@ Requirements for the Zoho CRM Sync Model milestone.
 
 ### Event Wiring
 
-- [ ] **EVT-01**: La publicación de un aviso (`ad_published`) actualiza `Ads_Published__c` y `Last_Ad_Posted_At__c` en el Contact de Zoho — sin crear un Deal
-- [ ] **EVT-02**: El evento `ad_published` solo dispara el sync Zoho cuando el status transiciona a `"published"` por primera vez (guard: `previousData.status !== "published" && currentData.status === "published"`)
+- [x] **EVT-01**: La publicación de un aviso (`ad_published`) actualiza `Ads_Published__c` y `Last_Ad_Posted_At__c` en el Contact de Zoho — sin crear un Deal
+- [x] **EVT-02**: El evento `ad_published` solo dispara el sync Zoho cuando el status transiciona a `"published"` por primera vez (guard: `previousData.status !== "published" && currentData.status === "published"`)
 - [x] **EVT-03**: Los eventos de pago (`pack_purchased`, `ad_paid`) resuelven el Zoho Contact ID vía `findContact(email)` antes de llamar a `createDeal()`
 
 ## Future Requirements
@@ -66,8 +66,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DEAL-01 | Phase 44 | Complete |
 | DEAL-02 | Phase 45 | Complete |
 | DEAL-03 | Phase 45 | Complete |
-| EVT-01 | Phase 46 | Pending |
-| EVT-02 | Phase 46 | Pending |
+| EVT-01 | Phase 46 | Complete |
+| EVT-02 | Phase 46 | Complete |
 | EVT-03 | Phase 45 | Complete |
 
 **Coverage:**
