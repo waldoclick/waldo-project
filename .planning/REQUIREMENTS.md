@@ -23,7 +23,7 @@ Requirements for the Zoho CRM Sync Model milestone.
 ### Deal Sync Model
 
 - [x] **DEAL-01**: El servicio Zoho expone `createDeal(deal)` que crea un Deal con los campos: `Deal_Name`, `Stage: "Closed Won"`, `Amount`, `Contact_Name: { id }`, `Type`, `Closing_Date`, `Description`, `Lead_Source`
-- [ ] **DEAL-02**: La confirmación de pago de un pack (`pack_purchased`) crea un Deal en Zoho y actualiza `Total_Spent__c` + `Packs_Purchased__c` en el Contact asociado
+- [x] **DEAL-02**: La confirmación de pago de un pack (`pack_purchased`) crea un Deal en Zoho y actualiza `Total_Spent__c` + `Packs_Purchased__c` en el Contact asociado
 - [x] **DEAL-03**: La confirmación de pago de un aviso (`ad_paid`) crea un Deal en Zoho y actualiza `Total_Spent__c` en el Contact asociado
 
 ### Event Wiring
@@ -64,7 +64,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CONT-01 | Phase 44 | Complete |
 | CONT-02 | Phase 44 | Complete |
 | DEAL-01 | Phase 44 | Complete |
-| DEAL-02 | Phase 45 | Pending |
+| DEAL-02 | Phase 45 | Complete |
 | DEAL-03 | Phase 45 | Complete |
 | EVT-01 | Phase 46 | Pending |
 | EVT-02 | Phase 46 | Pending |
