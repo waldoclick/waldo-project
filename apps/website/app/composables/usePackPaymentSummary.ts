@@ -1,10 +1,9 @@
 import { computed } from "vue";
 import { usePackStore } from "@/stores/pack.store";
-import { usePacksStore } from "@/stores/packs.store";
 
 export const usePackPaymentSummary = () => {
   const packStore = usePackStore();
-  const packsStore = usePacksStore();
+  const { packs } = usePacksList();
 
   const formatPrice = (price: number) =>
     new Intl.NumberFormat("es-CL", {

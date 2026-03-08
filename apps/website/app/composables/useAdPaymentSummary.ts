@@ -1,10 +1,9 @@
 import { computed } from "vue";
 import { useAdStore } from "@/stores/ad.store";
-import { usePacksStore } from "@/stores/packs.store";
 
 export const useAdPaymentSummary = () => {
   const adStore = useAdStore();
-  const packsStore = usePacksStore();
+  const { packs } = usePacksList();
 
   const FEATURED_PRICE = 10000;
 
@@ -17,7 +16,7 @@ export const useAdPaymentSummary = () => {
 
   const selectedPack = computed(() => {
     if (typeof adStore.pack !== "number") return null;
-    return packsStore.packs.find((p) => p.id === adStore.pack) || null;
+    return packs.value.find((p) => p.id === adStore.pack) || null;
   });
 
   const packPart = computed(() => {
