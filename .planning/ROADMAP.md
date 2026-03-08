@@ -55,6 +55,9 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
   - [ ] 43-01-PLAN.md — Fix ZohoHttpClient: correct auth header (`Zoho-oauthtoken`) and 401 response interceptor with `_retry` guard
   - [ ] 43-02-PLAN.md — Rewrite zoho.test.ts with axios-mock-adapter; add ZOHO_* vars to .env.example
 - [ ] **Phase 44: Zoho Service Layer** — Initialize Contact custom fields to 0 on creation; implement `updateContactStats()` and `createDeal()` on service; fix Lead_Status missing field
+  **Plans:** 2 plans
+  - [ ] 44-01-PLAN.md — Fix createLead() (add Lead_Status) and createContact() (add zero-initialized counters) with TDD
+  - [ ] 44-02-PLAN.md — Add ZohoDeal + IContactStats types; implement createDeal() and updateContactStats() with TDD
 - [ ] **Phase 45: Payment Event Wiring** — Wire `pack_purchased` and `ad_paid` events to `createDeal()` + `updateContactStats()`; resolve Contact ID via `findContact()` before every deal creation
 - [ ] **Phase 46: Ad Published Event Wiring** — Wire `ad_published` event to `updateContactStats()`; guard with status-transition check to prevent double-counting
 
