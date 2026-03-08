@@ -1,14 +1,16 @@
+import { IWebpayCommitData } from "../../transbank/types";
+
 export interface IGatewayInitResponse {
   success: boolean;
   gatewayRef?: string;
   url?: string;
-  error?: any;
+  error?: unknown;
 }
 
 export interface IGatewayCommitResponse {
   success: boolean;
-  response?: any;
-  error?: any;
+  response?: IWebpayCommitData;
+  error?: unknown;
 }
 
 export interface IPaymentGateway {

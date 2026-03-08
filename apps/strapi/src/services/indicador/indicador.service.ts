@@ -2,6 +2,7 @@ import {
   IHttpClient,
   IIndicadorService,
   IndicadorResponse,
+  Indicador,
   Indicator,
   IndicatorsResponse,
   Currency,
@@ -195,7 +196,7 @@ export class IndicadorService implements IIndicadorService {
    * @param data Indicador en formato original
    * @returns Indicador en formato estandarizado
    */
-  private transformToEnglishFormat(data: any): Indicator {
+  private transformToEnglishFormat(data: Indicador): Indicator {
     return {
       code: data.codigo,
       name: data.nombre,
