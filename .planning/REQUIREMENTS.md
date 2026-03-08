@@ -8,9 +8,9 @@
 - [x] **PACK-03**: `/packs/comprar` page is removed from the codebase
 
 ### Payment Hub
-- [ ] **PAY-01**: `/pagar` processes payment when only a pack is selected (no `adStore.ad.ad_id`)
-- [ ] **PAY-02**: `/pagar` processes payment when both a pack and an ad are present (`adStore.ad.ad_id` set)
-- [ ] **PAY-03**: `FormCheckout` does not show free/paid reservation options when arriving from `/packs` (pack-only flow)
+- [x] **PAY-01**: `/pagar` processes payment when only a pack is selected (no `adStore.ad.ad_id`)
+- [x] **PAY-02**: `/pagar` processes payment when both a pack and an ad are present (`adStore.ad.ad_id` set)
+- [x] **PAY-03**: `FormCheckout` does not show free/paid reservation options when arriving from `/packs` (pack-only flow)
 - [x] **PAY-04**: `packs.store.ts` is eliminated — pack data loaded directly where needed
 
 ### Cleanup
@@ -34,9 +34,9 @@ None identified for this milestone.
 | PACK-01 | 56    | Complete |
 | PACK-02 | 56    | Complete |
 | PACK-03 | 56    | Complete |
-| PAY-01  | 57    | Pending |
-| PAY-02  | 57    | Pending |
-| PAY-03  | 57    | Pending |
+| PAY-01  | 57    | Complete |
+| PAY-02  | 57    | Complete |
+| PAY-03  | 57    | Complete |
 | PAY-04  | 55    | Complete |
 | CLN-01  | 56    | Complete |
 | CLN-02  | 55    | Complete |
