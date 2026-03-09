@@ -27,17 +27,17 @@ None identified for this milestone.
 
 | REQ-ID  | Phase | Status  |
 |---------|-------|---------|
-| FREE-01 | TBD   | Pending |
-| FREE-02 | TBD   | Pending |
-| FREE-03 | TBD   | Pending |
-| FREE-04 | TBD   | Pending |
-| FREE-05 | TBD   | Pending |
-| FREE-06 | TBD   | Pending |
+| FREE-01 | Phase 58 | Pending |
+| FREE-02 | Phase 58 | Pending |
+| FREE-03 | Phase 58 | Pending |
+| FREE-04 | Phase 58 | Pending |
+| FREE-05 | Phase 59 | Pending |
+| FREE-06 | Phase 58 | Pending |
 
 **Coverage:**
 - v1 requirements: 6 total
-- Mapped to phases: 0
-- Unmapped: 6 ⚠️
+- Mapped to phases: 6
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-08*

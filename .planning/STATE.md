@@ -2,12 +2,12 @@
 gsd_state_version: 1.0
 milestone: v1.24
 milestone_name: Free Ad Submission
-status: planning
-stopped_at: Milestone v1.24 started — defining requirements
-last_updated: "2026-03-08T23:59:30.000Z"
-last_activity: 2026-03-08 — Milestone v1.24 started
+status: roadmapped
+stopped_at: Roadmap created — Phase 58 next
+last_updated: "2026-03-08T23:59:59.000Z"
+last_activity: 2026-03-08 — Roadmap created for v1.24 (Phases 58-59)
 progress:
-  total_phases: 0
+  total_phases: 2
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -20,18 +20,25 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-08 after v1.24 start)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.24 Free Ad Submission — Phase not started (defining requirements)
+**Current focus:** v1.24 Free Ad Submission — Phase 58: Free Ad Endpoint
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: 58 — Free Ad Endpoint
 Plan: —
-Status: Defining requirements
-Last activity: 2026-03-08 — Milestone v1.24 started
+Status: Not started
+Last activity: 2026-03-08 — Roadmap created (Phases 58-59)
 
 ```
-Progress: [░░░░░░░░░░] 0/? phases complete
+Progress: [░░░░░░░░░░] 0/2 phases complete
 ```
+
+### Phase Map
+
+| Phase | Name | Requirements | Status |
+|-------|------|--------------|--------|
+| 58 | Free Ad Endpoint | FREE-01, FREE-02, FREE-03, FREE-04, FREE-06 | Not started |
+| 59 | Frontend Wiring + Deploy | FREE-05 | Not started |
 
 ## Accumulated Context
 
@@ -60,6 +67,7 @@ Key patterns established (carry forward):
 - **What stays**: `POST /api/payments/ad` and all of `ad.service.ts` — untouched
 - **Credit validation**: `getReservationByUser(userId, true)` already exists — new endpoint reuses same check
 - **Strapi permissions**: new endpoint needs manual permission setup in admin panel (deploy step)
+- **New service file**: endpoint lives in `api/payment/` — new file, not modifying existing payment service
 
 ### Pending Todos
 
@@ -71,6 +79,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-08T23:59:30.000Z
-Stopped at: Milestone v1.24 started — requirements and roadmap next
-Resume with: `/gsd-plan-phase <N>`
+Last session: 2026-03-08T23:59:59.000Z
+Stopped at: Roadmap created — Phase 58 next
+Resume with: `/gsd-plan-phase 58`
