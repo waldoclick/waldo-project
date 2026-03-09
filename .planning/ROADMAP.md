@@ -26,6 +26,7 @@
 - ✅ **v1.22 Checkout Flow UI** — Phase 53 (shipped 2026-03-08)
 - ✅ **v1.23 Unified Payment Flow** — Phases 55-57 (shipped 2026-03-08)
 - ✅ **v1.24 Free Ad Submission** — Phases 58-59 (shipped 2026-03-09)
+- 🔄 **v1.25 Unified Checkout** — Phases 60-61 (in progress)
 
 ## Phases
 
@@ -57,6 +58,14 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 
 - [x] **Phase 58: Free Ad Endpoint** — `POST /api/payments/free-ad` in Strapi: validates free credit (`pack="free"` uses free reservation, `pack="paid"` uses purchased reservation), links ad-reservation, sets `draft: false`, sends user confirmation + admin alert emails; new `free-ad.service.ts` + route + controller method; `ad.service.ts` untouched (completed 2026-03-08)
 - [x] **Phase 59: Frontend Wiring + Deploy** — `handleFreeCreation()` in `resumen.vue` rewritten: `POST ads/save-draft` (get `ad_id`) → `adStore.updateAdId()` → `POST payments/free-ad` with `{ ad_id, pack }`; old `payments/ad` reference removed; `nuxt typecheck` exits 0 (completed 2026-03-09)
+
+</details>
+
+<details>
+<summary>🔄 v1.25 — Unified Checkout (Phases 60-61) — IN PROGRESS</summary>
+
+- [ ] **Phase 60: Unified Checkout Endpoint** — `POST /api/payments/checkout` + `GET /api/payments/webpay` in Strapi; new `checkout.service.ts`; `recaptcha.ts` updated; `tsc --noEmit` exits 0
+- [ ] **Phase 61: Frontend Migration** — `CheckoutDefault.vue` uses `payments/checkout` for both branches; `nuxt typecheck` exits 0
 
 </details>
 
@@ -92,6 +101,21 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 
 </details>
 
+<details>
+<summary>🔄 v1.25 Phase Details — IN PROGRESS</summary>
+
+### Phase 60: Unified Checkout Endpoint
+**Goal**: `POST /api/payments/checkout` and `GET /api/payments/webpay` exist in Strapi, backed by `checkout.service.ts`, covering all three purchase cases (pack-only, pack+ad, pack+featured+ad); `recaptcha.ts` updated; `tsc --noEmit` exits 0; zero `any` in new service
+**Requirements**: CHK-01, CHK-02, CHK-03, CHK-04, CHK-05, CHK-07
+**Status**: Pending
+
+### Phase 61: Frontend Migration
+**Goal**: `CheckoutDefault.vue` calls `POST payments/checkout` for both pack-only and pack+ad branches; old `payments/pack` and `payments/ad` calls removed; `nuxt typecheck` exits 0
+**Requirements**: CHK-06, CHK-08
+**Status**: Pending
+
+</details>
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -120,3 +144,5 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 | 57. Payment Hub Adaptation | v1.23 | 1/1 | Complete | 2026-03-08 |
 | 58. Free Ad Endpoint | v1.24 | 1/1 | Complete | 2026-03-08 |
 | 59. Frontend Wiring + Deploy | v1.24 | 1/1 | Complete | 2026-03-09 |
+| 60. Unified Checkout Endpoint | v1.25 | 0/1 | Pending | — |
+| 61. Frontend Migration | v1.25 | 0/1 | Pending | — |
