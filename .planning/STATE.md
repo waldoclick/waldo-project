@@ -1,16 +1,17 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.25
-milestone_name: Unified Checkout
-status: In Progress
-stopped_at: Milestone v1.25 started — requirements and roadmap being written
-last_updated: "2026-03-08T00:00:00.000Z"
-last_activity: 2026-03-08 — Milestone v1.25 started; planning in progress
+milestone: v1.1
+milestone_name: milestone
+status: planning
+stopped_at: Completed 060-01-PLAN.md
+last_updated: "2026-03-09T02:37:04.871Z"
+last_activity: 2026-03-08 — Milestone started
 progress:
-  total_phases: 0
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_phases: 7
+  completed_phases: 5
+  total_plans: 9
+  completed_plans: 8
+  percent: 0
 ---
 
 # Project State
@@ -60,6 +61,8 @@ Key patterns established (carry forward):
 - **v1.23**: Pack purchase uses `adStore` — `packs.store.ts` eliminated; `adStore.ad.ad_id` presence determines if ad is part of the payment
 - **v1.24**: Email failures are non-fatal in free-ad flow — wrapped in try/catch
 - **v1.24**: Free ad creation uses two-step pattern: POST ads/save-draft → adStore.updateAdId() → POST payments/free-ad with { ad_id, pack }
+- [Phase 060-01]: Use gatewayRef (not token) from IGatewayInitResponse — aligns with TransbankAdapter contract
+- [Phase 060-01]: buy_order format for checkout: order-checkout-{userId}-{packId}-{adId}-{featured}-{timestamp}
 
 ### v1.25 Key Context
 
@@ -80,6 +83,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-08
-Stopped at: Planning phase — writing requirements and roadmap
+Last session: 2026-03-09T02:36:54.013Z
+Stopped at: Completed 060-01-PLAN.md
 Resume with: Execute Phase 60 once roadmap is approved
