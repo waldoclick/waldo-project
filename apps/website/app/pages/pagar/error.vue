@@ -4,8 +4,8 @@
     <HeroFake />
     <MessageDefault
       type="fail"
-      title="Ha ocurrido un error"
-      description="Ocurrió un problema al procesar tu solicitud. Estamos trabajando para solucionarlo. Por favor, intenta de nuevo más tarde."
+      :title="errorTitle"
+      :description="errorDescription"
     />
     <FooterDefault />
   </div>
@@ -21,7 +21,7 @@ import HeroFake from "@/components/HeroFake.vue";
 import MessageDefault from "@/components/MessageDefault.vue";
 import FooterDefault from "@/components/FooterDefault.vue";
 import { useAdAnalytics } from "~/composables/useAdAnalytics";
-import { onMounted } from "vue";
+import { computed, onMounted } from "vue";
 
 $setSEO({
   title: "Error al Crear Anuncio",
@@ -46,14 +46,29 @@ definePageMeta({
   middleware: "auth",
 });
 
+// Reason-specific messaging
+const route = useRoute();
+const reason = computed(() => route.query.reason as string | undefined);
+
+const errorTitle = computed(() => {
+  if (reason.value === "cancelled") return "Pago cancelado";
+  if (reason.value === "rejected") return "Pago rechazado";
+  return "Ha ocurrido un error";
+});
+
+const errorDescription = computed(() => {
+  if (reason.value === "cancelled")
+    return "Cancelaste el proceso de pago. Puedes intentarlo nuevamente cuando quieras.";
+  if (reason.value === "rejected")
+    return "Tu pago fue rechazado por Webpay. Verifica los datos de tu tarjeta e intenta nuevamente.";
+  return "Ocurrió un problema al procesar tu solicitud. Estamos trabajando para solucionarlo. Por favor, intenta de nuevo más tarde.";
+});
+
 // Analytics
 const adAnalytics = useAdAnalytics();
 
 // onMounted: analytics-only — fires ad creation error event; client-side only, non-blocking
 onMounted(() => {
-  adAnalytics.sendErrorEvent(
-    "ad_creation_error",
-    "Ocurrió un problema al procesar tu solicitud",
-  );
+  adAnalytics.sendErrorEvent("ad_creation_error", errorDescription.value);
 });
 </script>
