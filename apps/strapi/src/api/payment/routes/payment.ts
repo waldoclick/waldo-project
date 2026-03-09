@@ -36,22 +36,6 @@ const routes: RouteConfig[] = [
   },
   {
     method: "POST",
-    path: "/payments/pack",
-    handler: "payment.packCreate",
-    config: {
-      policies: [],
-    },
-  },
-  {
-    method: "GET",
-    path: "/payments/pack-response",
-    handler: "payment.packResponse",
-    config: {
-      policies: [],
-    },
-  },
-  {
-    method: "POST",
     path: "/payments/pro",
     handler: "payment.proCreate",
     config: {

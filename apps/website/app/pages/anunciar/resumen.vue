@@ -169,7 +169,7 @@ const handleFreeCreation = async () => {
     );
 
     await fetchUser();
-    router.push("/anunciar/gracias?ad=" + (freeAdResponse.data.ad?.id ?? adId));
+    router.push("/pagar/gracias?ad=" + (freeAdResponse.data.ad?.id ?? adId));
   } catch (error: unknown) {
     let errorMessage =
       "Hubo un problema al procesar tu anuncio. Por favor, inténtalo de nuevo.";
