@@ -19,6 +19,14 @@ const routes: RouteConfig[] = [
     },
   },
   {
+    method: "POST",
+    path: "/payments/free-ad",
+    handler: "payment.freeAdCreate",
+    config: {
+      policies: [],
+    },
+  },
+  {
     method: "GET",
     path: "/payments/ad-response",
     handler: "payment.adResponse",
