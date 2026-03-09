@@ -104,6 +104,14 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
    - ✓ `BarCheckout.vue` — barra de acción del checkout con botón "Ir a pagar" — v1.22
    - ✓ SCSS `payment--ad` y `payment--gateway` implementados; `form--checkout__field__title` para títulos de sección — v1.22
 
+   - ✓ `packs.store.ts` eliminado — `usePacksList` composable con module-level cache lo reemplaza; `/packs` "Comprar" escribe `adStore.pack` y navega directo a `/pagar`; `/packs/comprar` y `BuyPack.vue` eliminados — v1.23
+   - ✓ `/pagar` maneja pack-only (sin `ad_id`) y pack+ad (con `ad_id`); `CheckoutDefault.vue` brancha en `adStore.ad.ad_id === null` — v1.23
+   - ✓ `FormCheckout.vue` oculta `PaymentAd` y Destacado con `v-if="!isPackFlow"` en flujo pack-only — v1.23
+
+   - ✓ `POST /api/payments/free-ad` endpoint en Strapi: valida crédito por pack type, vincula ad-reservation, `draft: false`, emails no-fatales — v1.24
+   - ✓ `resumen.vue` `handleFreeCreation()`: `save-draft` → `adStore.updateAdId()` → `payments/free-ad` con `{ ad_id, pack }`; referencia a `payments/ad` eliminada del flujo free — v1.24
+   - ✓ `POST /api/payments/ad` y `ad.service.ts` intactos — v1.24
+
 ## Context
 
 - Monorepo con Turbo para orquestación de tareas
@@ -117,6 +125,7 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - Ad draft flow (v1.21): `draft: boolean` field on Ad schema (`default: true`); `POST /api/ads/save-draft` creates/updates draft before payment; `publishAd()` sets `draft: false` on payment confirmation; `computeAdStatus()` checks draft first; dashboard Borradores section uses `/ads/drafts` endpoint; free ad flow skips draft call entirely
 - Checkout flow (v1.22): `/pagar` page as central payment hub; `CheckoutDefault.vue` owns full payment logic (draft + webpay + free path); `PaymentAd.vue` previews ad; `PaymentGateway.vue` shows WebPay decoratively; `FormCheckout.vue` accordion with 5 sections; `BarCheckout.vue` action bar; SCSS `payment--ad`, `payment--gateway`, `form--checkout__field__title`
 - Unified payment flow (v1.23): `packs.store.ts` eliminated — `usePacksList` composable (module-level cache) replaces it; `/packs` "Comprar" writes `adStore.pack` and navigates directly to `/pagar`; `/packs/comprar` and `BuyPack.vue` deleted; `CheckoutDefault.vue` branches on `adStore.ad.ad_id === null` — pack-only calls `POST payments/pack`, ad+pack calls `POST payments/ad`; `FormCheckout.vue` hides `PaymentAd` and Destacado via `v-if="!isPackFlow"` in pack-only context
+- Free ad submission (v1.24): `POST /api/payments/free-ad` endpoint in Strapi validates credit by pack type (`pack="free"` → free reservation with `price: "0"`; `pack="paid"` → purchased reservation with `price != "0"`), links ad-reservation, sets `draft: false`, sends emails (non-fatal); `resumen.vue` `handleFreeCreation()` calls `save-draft` first (gets `ad_id`), stores in `adStore`, then calls `payments/free-ad` with `{ ad_id, pack }`; `POST /api/payments/ad` and `ad.service.ts` untouched; `freeAdCreate` permission must be granted to Authenticated role in Strapi admin
 - 4 cron jobs activos en Strapi: `adCron` (1 AM), `userCron` (2 AM), `backupCron` (3 AM), `cleanupCron` (domingo 4 AM)
 - `cron-runner` API disponible en `POST /api/cron-runner/:name` para ejecución manual de cualquier cron
 - GTM handled via `@saslavik/nuxt-gtm@0.1.3` module in both website (since v1.13) and dashboard (since v1.14) — `enableRouterSync: true` fires page_view on every SPA route change; GTM ID from `runtimeConfig.public.gtm.id`; hand-rolled `gtm.client.ts` plugins deleted in both apps
@@ -220,23 +229,13 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
    | `adStore.ad.ad_id === null` as pack-only sentinel | Checked before any mutations in `handlePayClick()`; reliable because draft call only exists in ad+pack branch — v1.23 | ✓ Good |
    | `v-if` (not `v-show`) for ad-specific sections in FormCheckout | Pack-only flow must not mount `PaymentAd` or Destacado at all; `v-show` would still run lifecycle hooks — v1.23 | ✓ Good |
    | `POST payments/pack` for pack-only; `POST payments/ad` unchanged for ad+pack | Backend already had separate endpoints; frontend branch mirrors this split cleanly — v1.23 | ✓ Good |
+   | `free-ad.service.ts` handles both `pack="free"` and `pack="paid"` branches | Free reservation uses `price: "0"` guard; paid reservation uses inverse; single service covers both valid pack values — v1.24 | ✓ Good |
+   | Email failures non-fatal in free-ad flow (wrapped in try/catch) | Reservation + publication are the critical operations; a broken email template must not roll back a successful ad submission — v1.24 | ✓ Good |
+   | Two-step free creation: `save-draft` then `free-ad` (same as paid flow) | `free-ad` requires an existing `ad_id`; draft must exist before the payment endpoint is called — v1.24 | ✓ Good |
 
-## Current Milestone: v1.24 Free Ad Submission
+## Current Milestone: —
 
-**Goal:** Replace the free ad path in `resumen.vue` with a clean two-step flow — save draft first, then call a dedicated `POST /api/payments/free-ad` endpoint — without removing any existing service code.
-
-**Target features:**
-- `POST /api/payments/free-ad` endpoint in Strapi: validates free credit, links reservation, sets `draft: false`, sends emails
-- `resumen.vue` free path calls `save-draft` then `payments/free-ad` instead of `payments/ad`
-- Existing `POST /api/payments/ad` and `ad.service.ts` untouched
-
-**Goal:** Unify all paid flows through `/pagar` — eliminate `/packs/comprar`, wire `/packs` directly to `/pagar` via `adStore`, and make `/pagar` work correctly with or without an associated ad.
-
-**Shipped 2026-03-08:**
-- Pack purchase from `/packs` navigates directly to `/pagar` (no intermediate page)
-- `/pagar` handles pack-only payment (no `ad_id`) and pack+ad payment (`ad_id` present)
-- `packs.store.ts` eliminated — pack selection lives in `adStore`
-- `/packs/comprar` and `BuyPack.vue` removed
+No active milestone. v1.24 Free Ad Submission shipped 2026-03-09.
 
 ## Future Requirements
 
@@ -253,4 +252,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-08 after v1.24 milestone start — Free Ad Submission
+*Last updated: 2026-03-09 after v1.24 milestone close — Free Ad Submission shipped
