@@ -60,7 +60,7 @@ const handlePayClick = async () => {
     if (adStore.pack !== "free") {
       const draftPayload = { ad: adStore.ad };
       const draftResponse = await create<{ id: number }>(
-        "ads/draft",
+        "ads/save-draft",
         draftPayload as unknown as Parameters<typeof create>[1],
       );
       const draftId = draftResponse.data?.id;
