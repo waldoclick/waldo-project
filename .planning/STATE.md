@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.24
 milestone_name: Free Ad Submission
-status: roadmapped
-stopped_at: Roadmap created — Phase 58 next
-last_updated: "2026-03-08T23:59:59.000Z"
-last_activity: 2026-03-08 — Roadmap created for v1.24 (Phases 58-59)
+status: Not started
+stopped_at: Completed 058-01-PLAN.md
+last_updated: "2026-03-09T00:56:38.919Z"
+last_activity: 2026-03-08 — Roadmap created (Phases 58-59)
 progress:
-  total_phases: 2
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_phases: 5
+  completed_phases: 4
+  total_plans: 6
+  completed_plans: 6
 ---
 
 # Project State
@@ -58,6 +58,7 @@ Key patterns established (carry forward):
 - **v1.22**: `/pagar` is the central payment page — all flows with `hasToPay === true` must redirect here
 - **v1.22**: `CheckoutDefault.vue` owns full payment logic — `resumen.vue` is review/redirect only
 - **v1.23**: Pack purchase uses `adStore` — `packs.store.ts` eliminated; `adStore.ad.ad_id` presence determines if ad is part of the payment
+- [Phase 058-free-ad-endpoint]: Email failures are non-fatal in free-ad flow — wrapped in try/catch
 
 ### v1.24 Key Context
 
@@ -79,6 +80,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-08T23:59:59.000Z
-Stopped at: Roadmap created — Phase 58 next
+Last session: 2026-03-09T00:56:38.918Z
+Stopped at: Completed 058-01-PLAN.md
 Resume with: `/gsd-plan-phase 58`
