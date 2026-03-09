@@ -59,6 +59,8 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
   Plans:
   - [ ] 058-01-PLAN.md — New free-ad.service.ts + route + controller method
 - [ ] **Phase 59: Frontend Wiring + Deploy** — `resumen.vue` free path calls `save-draft` then `payments/free-ad`; `ad_id` stored in `adStore`; Strapi admin permission configured; `nuxt typecheck` passes
+  Plans:
+  - [ ] 059-01-PLAN.md — Rewrite handleFreeCreation() in resumen.vue
 
 </details>
 
