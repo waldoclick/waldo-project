@@ -5,7 +5,8 @@ import logger from "../../../utils/logtail";
 class FreeAdService {
   async processFreeAd(
     adId: number,
-    userId: string
+    userId: string,
+    pack: "free" | "paid"
   ): Promise<{ success: boolean; ad?: unknown; message?: string }> {
     try {
       // 1. Load the ad
@@ -14,14 +15,21 @@ class FreeAdService {
         return { success: false, message: "Ad not found" };
       }
 
-      // 2. Validate free credit
+      // 2. Validate credit — free pack uses a free reservation (price: "0"),
+      //    paid pack uses a previously purchased reservation (price != "0")
+      const isFreeReservation = pack === "free";
       const creditResult =
         await PaymentUtils.adReservation.getAdReservationAvailable(
           userId,
-          true
+          isFreeReservation
         );
       if (!creditResult.success || !creditResult.adReservation) {
-        return { success: false, message: "No free reservation available" };
+        return {
+          success: false,
+          message: isFreeReservation
+            ? "No free reservation available"
+            : "No paid reservation available",
+        };
       }
 
       // 3. Link reservation
@@ -29,6 +37,14 @@ class FreeAdService {
         adId,
         creditResult.adReservation.id
       );
+
+      // 3b. For paid reservations, update ad duration from the reservation's total_days
+      if (pack === "paid" && creditResult.adReservation.total_days) {
+        await PaymentUtils.ad.updateAdDates(
+          adId,
+          creditResult.adReservation.total_days
+        );
+      }
 
       // 4. Publish the ad
       await PaymentUtils.ad.publishAd(adId);

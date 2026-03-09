@@ -136,6 +136,7 @@ class PaymentController {
     const { data } = ctx.request.body;
     const userId = ctx.state.user.id;
     const adId = Number(data?.ad_id);
+    const pack = data?.pack as string;
 
     if (!adId) {
       ctx.status = 400;
@@ -143,7 +144,17 @@ class PaymentController {
       return;
     }
 
-    const result = await freeAdService.processFreeAd(adId, String(userId));
+    if (pack !== "free" && pack !== "paid") {
+      ctx.status = 400;
+      ctx.body = { success: false, message: "pack must be 'free' or 'paid'" };
+      return;
+    }
+
+    const result = await freeAdService.processFreeAd(
+      adId,
+      String(userId),
+      pack
+    );
 
     if (!result.success) {
       ctx.status = 400;
