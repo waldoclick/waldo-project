@@ -358,7 +358,11 @@ class PaymentController {
       return;
     }
 
-    ctx.redirect(`${process.env.FRONTEND_URL}/pagar/gracias?ad=${result.adId}`);
+    ctx.redirect(
+      `${process.env.FRONTEND_URL}/pagar/gracias?ad=${result.adId}${
+        result.orderId ? `&order=${result.orderId}` : ""
+      }`
+    );
   });
 
   proCreate = this.controllerWrapper(async (ctx: Context) => {
