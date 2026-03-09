@@ -65,6 +65,10 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 <summary>🔄 v1.25 — Unified Checkout (Phases 60-61) — IN PROGRESS</summary>
 
 - [ ] **Phase 60: Unified Checkout Endpoint** — `POST /api/payments/checkout` + `GET /api/payments/webpay` in Strapi; new `checkout.service.ts`; `recaptcha.ts` updated; `tsc --noEmit` exits 0
+  **Plans:** 2 plans
+  Plans:
+  - [ ] 060-01-PLAN.md — Create checkout.service.ts (initiateCheckout + processWebpayReturn) + update recaptcha.ts
+  - [ ] 060-02-PLAN.md — Wire controller handlers + routes + tsc verification + admin permissions
 - [ ] **Phase 61: Frontend Migration** — `CheckoutDefault.vue` uses `payments/checkout` for both branches; `nuxt typecheck` exits 0
 
 </details>
