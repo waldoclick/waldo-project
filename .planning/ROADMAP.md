@@ -25,6 +25,7 @@
 - ✅ **v1.21 Ad Draft Decoupling** — Phase 52 (shipped 2026-03-08)
 - ✅ **v1.22 Checkout Flow UI** — Phase 53 (shipped 2026-03-08)
 - ✅ **v1.23 Unified Payment Flow** — Phases 55-57 (shipped 2026-03-08)
+- 🚧 **v1.24 Free Ad Submission** — Phases 58-59 (in progress)
 
 ## Phases
 
@@ -51,6 +52,14 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 
 </details>
 
+<details open>
+<summary>🚧 v1.24 — Free Ad Submission (Phases 58-59) — IN PROGRESS</summary>
+
+- [ ] **Phase 58: Free Ad Endpoint** — `POST /api/payments/free-ad` in Strapi: validates free credit, links ad-reservation, sets `draft: false`, sends user confirmation + admin alert emails; new route/controller/service file; `ad.service.ts` untouched
+- [ ] **Phase 59: Frontend Wiring + Deploy** — `resumen.vue` free path calls `save-draft` then `payments/free-ad`; `ad_id` stored in `adStore`; Strapi admin permission configured; `nuxt typecheck` passes
+
+</details>
+
 ## Phase Details
 
 <details>
@@ -67,6 +76,34 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 ### Phase 57: Payment Hub Adaptation
 **Goal**: `/pagar` correctly processes payment whether or not an ad is associated — pack-only purchase works end-to-end
 **Status**: Complete (2026-03-08)
+
+</details>
+
+<details>
+<summary>🚧 v1.24 Phase Details — IN PROGRESS</summary>
+
+### Phase 58: Free Ad Endpoint
+**Goal**: A dedicated `POST /api/payments/free-ad` endpoint exists in Strapi that fully processes a free ad submission — validating credit, linking reservation, publishing, and notifying — without touching existing code
+**Depends on**: Nothing (Strapi-only, independent of frontend)
+**Requirements**: FREE-01, FREE-02, FREE-03, FREE-04, FREE-06
+**Success Criteria** (what must be TRUE):
+  1. `POST /api/payments/free-ad` with a valid `ad_id` and a user with free credit returns 200 and the ad transitions from draft to pending (active)
+  2. `POST /api/payments/free-ad` with a user who has no free credit returns a 4xx error — no ad is published
+  3. After a successful call, the user's free ad-reservation is linked to the ad (no longer available in the pool)
+  4. User receives a confirmation email and admin receives a validation alert email after successful submission
+  5. `POST /api/payments/ad` and `ad.service.ts` are byte-for-byte identical to their pre-v1.24 state
+**Plans**: TBD
+
+### Phase 59: Frontend Wiring + Deploy
+**Goal**: `resumen.vue` free path calls `save-draft` then `payments/free-ad`, the new endpoint is permissioned in Strapi admin, and `nuxt typecheck` passes with zero errors
+**Depends on**: Phase 58
+**Requirements**: FREE-05
+**Success Criteria** (what must be TRUE):
+  1. On `resumen.vue` with a free pack, clicking submit first creates/updates the draft (obtaining `ad_id`) and then calls `POST /api/payments/free-ad` — a single user action triggers both calls in sequence
+  2. The `ad_id` returned by `save-draft` is stored in `adStore` before the `payments/free-ad` call
+  3. `nuxt typecheck` exits 0 with zero errors after the `resumen.vue` change
+  4. `POST /api/payments/free-ad` is accessible to authenticated users (Strapi admin panel permission configured) — the endpoint returns 200 in a live environment, not 403
+**Plans**: TBD
 
 </details>
 
@@ -96,3 +133,5 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 | 55. Store Unification | v1.23 | 3/3 | Complete | 2026-03-08 |
 | 56. Pack Purchase Flow | v1.23 | 1/1 | Complete | 2026-03-08 |
 | 57. Payment Hub Adaptation | v1.23 | 1/1 | Complete | 2026-03-08 |
+| 58. Free Ad Endpoint | v1.24 | 0/1 | Not started | - |
+| 59. Frontend Wiring + Deploy | v1.24 | 0/1 | Not started | - |
