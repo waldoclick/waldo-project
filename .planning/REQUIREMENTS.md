@@ -8,7 +8,7 @@
 - [x] **FREE-02**: `POST /api/payments/free-ad` receives an `ad_id` (existing draft) and links the free ad-reservation to the ad
 - [x] **FREE-03**: `POST /api/payments/free-ad` sets `draft: false` on the ad, transitioning it from draft to pending
 - [x] **FREE-04**: `POST /api/payments/free-ad` sends confirmation email to the user and validation alert email to admin
-- [ ] **FREE-05**: `resumen.vue` free path calls `POST /api/ads/save-draft` first to obtain/update `ad_id`, then calls `POST /api/payments/free-ad`
+- [x] **FREE-05**: `resumen.vue` free path calls `POST /api/ads/save-draft` first to obtain/update `ad_id`, then calls `POST /api/payments/free-ad`
 - [x] **FREE-06**: Existing free flow in `POST /api/payments/ad` and `ad.service.ts` remains untouched
 
 ## Future Requirements
@@ -31,7 +31,7 @@ None identified for this milestone.
 | FREE-02 | Phase 58 | Complete |
 | FREE-03 | Phase 58 | Complete |
 | FREE-04 | Phase 58 | Complete |
-| FREE-05 | Phase 59 | Pending |
+| FREE-05 | Phase 59 | Complete |
 | FREE-06 | Phase 58 | Complete |
 
 **Coverage:**
