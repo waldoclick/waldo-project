@@ -221,7 +221,14 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
    | `v-if` (not `v-show`) for ad-specific sections in FormCheckout | Pack-only flow must not mount `PaymentAd` or Destacado at all; `v-show` would still run lifecycle hooks — v1.23 | ✓ Good |
    | `POST payments/pack` for pack-only; `POST payments/ad` unchanged for ad+pack | Backend already had separate endpoints; frontend branch mirrors this split cleanly — v1.23 | ✓ Good |
 
-## Shipped: v1.23 Unified Payment Flow
+## Current Milestone: v1.24 Free Ad Submission
+
+**Goal:** Replace the free ad path in `resumen.vue` with a clean two-step flow — save draft first, then call a dedicated `POST /api/payments/free-ad` endpoint — without removing any existing service code.
+
+**Target features:**
+- `POST /api/payments/free-ad` endpoint in Strapi: validates free credit, links reservation, sets `draft: false`, sends emails
+- `resumen.vue` free path calls `save-draft` then `payments/free-ad` instead of `payments/ad`
+- Existing `POST /api/payments/ad` and `ad.service.ts` untouched
 
 **Goal:** Unify all paid flows through `/pagar` — eliminate `/packs/comprar`, wire `/packs` directly to `/pagar` via `adStore`, and make `/pagar` work correctly with or without an associated ad.
 
@@ -246,4 +253,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-08 after v1.23 milestone start — Unified Payment Flow
+*Last updated: 2026-03-08 after v1.24 milestone start — Free Ad Submission
