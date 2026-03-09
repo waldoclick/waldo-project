@@ -46,7 +46,7 @@ export default {
     },
     {
       method: "POST",
-      path: "/ads/draft",
+      path: "/ads/save-draft",
       handler: "ad.saveDraft",
     },
     {
