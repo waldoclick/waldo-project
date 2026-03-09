@@ -69,7 +69,7 @@ const handleError = (
 
 // Cargar los datos del anuncio de forma asíncrona
 const { data, pending, error } = await useAsyncData(
-  "adData",
+  `gracias-${route.query.ad}`,
   async () => {
     if (!route.query.ad) {
       return { error: "INVALID_URL" };
@@ -153,7 +153,7 @@ watchEffect(() => {
       purchaseFired.value = true;
       const adData = data.value as any;
       const items = [];
-      if (adData.details.pack) {
+      if (adData.details?.pack) {
         items.push({
           item_id: adData.details.pack,
           item_name: `Pack ${adData.details.pack}`,
@@ -162,7 +162,7 @@ watchEffect(() => {
           currency: "CLP",
         });
       }
-      if (adData.details.featured) {
+      if (adData.details?.featured) {
         items.push({
           item_id: adData.details.featured ? "featured" : "not_featured",
           item_name: adData.details.featured ? "Destacado" : "Sin destacar",
@@ -199,20 +199,20 @@ const prepareSummary = (data: any): Record<string, any> | undefined => {
 
   return {
     showEditLinks: false,
-    pack: data.details.pack,
-    featured: data.details.featured,
-    isInvoice: data.details.is_invoice,
+    pack: data.details?.pack,
+    featured: data.details?.featured,
+    isInvoice: data.details?.is_invoice,
     title: data.name,
-    category: data.category.id,
+    category: data.category?.id,
     price: data.price,
     currency: data.currency,
     description: data.description,
     email: data.email,
     phone: data.phone,
-    commune: data.commune.id,
+    commune: data.commune?.id,
     address: data.address,
     addressNumber: data.address_number,
-    condition: data.condition.id,
+    condition: data.condition?.id,
     manufacturer: data.manufacturer,
     model: data.model,
     serialNumber: data.serial_number,

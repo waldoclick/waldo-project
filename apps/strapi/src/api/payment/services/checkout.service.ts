@@ -18,6 +18,7 @@ interface InitiateResult {
 
 interface ProcessResult {
   success: boolean;
+  adId?: number;
   message?: string;
 }
 
@@ -62,13 +63,12 @@ class CheckoutService {
       amount += Number(process.env.AD_FEATURED_PRICE) || 10000;
     }
 
-    // 6. Encode buy_order and sessionId
+    // 6. Encode buy_order — same style as pack.service.ts
+    // Format: "order-{userId}-{packId}-{adId}-{featured}"
     const adId = payload.ad_id ?? 0;
     const featuredFlag = payload.featured ? 1 : 0;
-    const buyOrder = `order-checkout-${userId}-${
-      packData.id
-    }-${adId}-${featuredFlag}-${Date.now()}`;
-    const sessionId = `session-checkout-${userId}-${Date.now()}`;
+    const buyOrder = `order-${userId}-${packData.id}-${adId}-${featuredFlag}`;
+    const sessionId = `session-${packData.id}`;
 
     // 7. Build return URL
     const returnUrl = `${process.env.APP_URL}/api/payments/webpay`;
@@ -111,27 +111,35 @@ class CheckoutService {
       }
 
       // 3. Parse buy_order
-      // Format: order-checkout-{userId}-{packId}-{adId}-{featured}-{timestamp}
+      // Format: "order-{userId}-{packId}-{adId}-{featured}"
       const buyOrder = wepbayResponse.response.buy_order as string;
       const parts = buyOrder.split("-");
-      // parts: [0]="order", [1]="checkout", [2]=userId, [3]=packId, [4]=adId, [5]=featured, [6]=timestamp
-      const userId = parts[2];
-      const packId = Number(parts[3]);
-      const adId = Number(parts[4]); // 0 means no ad
-      const featured = parts[5] === "1";
+      const userId = parts[1];
+      const packId = Number(parts[2]);
+      const adId = Number(parts[3]); // 0 means no ad
+      const featured = parts[4] === "1";
 
-      // 4. Look up pack
-      const packResult = await PaymentUtils.adPack.getAdPack(packId);
-      if (!packResult.success || !packResult.data) {
+      // 4. Look up pack by id
+      const packRecord = await strapi.db
+        .query("api::ad-pack.ad-pack")
+        .findOne({ where: { id: packId } });
+
+      if (!packRecord) {
         return { success: false, message: "Pack not found" };
       }
 
+      const packData = packRecord as {
+        price?: string | number;
+        total_ads?: number;
+        total_days?: number;
+        total_features?: number;
+      };
+
       // 5. Destructure pack data with defaults
-      const { price, total_ads, total_days, total_features } = packResult.data;
-      const resolvedTotalAds = total_ads ?? 1;
-      const resolvedTotalDays = total_days ?? 30;
-      const resolvedTotalFeatures = total_features ?? 0;
-      const resolvedPrice = price ?? 0;
+      const resolvedTotalAds = packData.total_ads ?? 1;
+      const resolvedTotalDays = packData.total_days ?? 30;
+      const resolvedTotalFeatures = packData.total_features ?? 0;
+      const resolvedPrice = packData.price ?? 0;
 
       // 6. Calculate unit price per ad reservation
       const unitPrice = Number(resolvedPrice) / resolvedTotalAds;
@@ -240,7 +248,11 @@ class CheckoutService {
         });
 
       // 12. Return success
-      return { success: true, message: "Checkout processed successfully" };
+      return {
+        success: true,
+        adId,
+        message: "Checkout processed successfully",
+      };
     } catch (error) {
       const e = error as { message?: string };
       return { success: false, message: e.message };

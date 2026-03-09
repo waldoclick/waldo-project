@@ -141,6 +141,21 @@ const confirmPay = async () => {
   });
 
   if (result.isConfirmed) {
+    try {
+      const draftResponse = await create<{ id: number }>("ads/save-draft", {
+        ad: adStore.ad,
+      } as unknown as Parameters<typeof create>[1]);
+      adStore.updateAdId(draftResponse.data.id);
+    } catch {
+      Swal.fire({
+        title: "Error",
+        text: "Hubo un problema al guardar el anuncio. Por favor, inténtalo de nuevo.",
+        icon: "error",
+        confirmButtonText: "Aceptar",
+      });
+      return;
+    }
+
     if (hasToPay.value) {
       router.push("/pagar");
     } else {
@@ -153,23 +168,18 @@ const handleFreeCreation = async () => {
   try {
     adAnalytics.addPaymentInfo();
 
-    // Step 1: Save draft to get/update ad_id
-    const draftResponse = await create<{ id: number }>("ads/save-draft", {
-      ad: adStore.ad,
-    } as unknown as Parameters<typeof create>[1]);
-    const adId = draftResponse.data.id;
-    adStore.updateAdId(adId);
-
-    // Step 2: Process free ad using the dedicated endpoint
+    // Process free ad using the dedicated endpoint
     const freeAdResponse = await create<{ ad?: { id: number } }>(
       "payments/free-ad",
-      { ad_id: adId, pack: adStore.pack } as unknown as Parameters<
+      { ad_id: adStore.ad.ad_id, pack: adStore.pack } as unknown as Parameters<
         typeof create
       >[1],
     );
 
     await fetchUser();
-    router.push("/pagar/gracias?ad=" + (freeAdResponse.data.ad?.id ?? adId));
+    router.push(
+      "/pagar/gracias?ad=" + (freeAdResponse.data.ad?.id ?? adStore.ad.ad_id),
+    );
   } catch (error: unknown) {
     let errorMessage =
       "Hubo un problema al procesar tu anuncio. Por favor, inténtalo de nuevo.";

@@ -344,7 +344,7 @@ class PaymentController {
         tbkToken: ctx.query.TBK_TOKEN,
         sessionId: ctx.query.TBK_ID_SESION,
       });
-      ctx.redirect(`${process.env.FRONTEND_URL}/pagar/error`);
+      ctx.redirect(`${process.env.FRONTEND_URL}/pagar/error?reason=cancelled`);
       return;
     }
 
@@ -354,11 +354,11 @@ class PaymentController {
       logger.error("Checkout Webpay return failed", {
         message: result.message,
       });
-      ctx.redirect(`${process.env.FRONTEND_URL}/pagar/error`);
+      ctx.redirect(`${process.env.FRONTEND_URL}/pagar/error?reason=rejected`);
       return;
     }
 
-    ctx.redirect(`${process.env.FRONTEND_URL}/pagar/gracias`);
+    ctx.redirect(`${process.env.FRONTEND_URL}/pagar/gracias?ad=${result.adId}`);
   });
 
   proCreate = this.controllerWrapper(async (ctx: Context) => {

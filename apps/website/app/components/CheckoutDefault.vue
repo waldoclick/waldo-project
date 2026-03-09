@@ -12,82 +12,53 @@
 import FormCheckout from "@/components/FormCheckout.vue";
 import { useAdStore } from "@/stores/ad.store";
 import { useAdAnalytics } from "@/composables/useAdAnalytics";
+import { usePacksList } from "@/composables/usePacksList";
 
 const { Swal } = useSweetAlert2();
 const { create } = useStrapi();
-const { fetchUser } = useStrapiAuth();
 
 const adStore = useAdStore();
 const adAnalytics = useAdAnalytics();
+const { packs, loadPacks } = usePacksList();
 
 const handleFormSubmitted = async (_values?: unknown) => {
   await handlePayClick();
 };
 
 const handlePayClick = async () => {
-  // Determine flow before any mutations
-  const isPackOnly = adStore.ad.ad_id === null;
-
   try {
     adAnalytics.addPaymentInfo();
 
-    // --- Pack-only flow (user came from /packs, no ad data) ---
-    if (isPackOnly) {
-      const response = await create<{
-        webpay?: { url: string; gatewayRef: string };
-      }>("payments/pack", {
-        pack: adStore.pack,
-        is_invoice: adStore.is_invoice,
-      } as unknown as Parameters<typeof create>[1]);
+    await loadPacks();
+    const selectedPack =
+      typeof adStore.pack === "number"
+        ? packs.value.find((p) => p.id === adStore.pack)
+        : null;
 
-      if (response.data?.webpay) {
-        adAnalytics.pushEvent("redirect_to_payment", [], {
-          payment_method: "webpay",
-        });
-        handleRedirect(response.data.webpay);
-      }
-      return;
+    if (!selectedPack) {
+      throw new Error("Pack not found");
     }
 
-    // --- Ad+pack flow (user came from /anunciar/resumen) ---
-    const allData = {
-      pack: adStore.pack,
-      featured: adStore.featured,
-      is_invoice: adStore.is_invoice,
-      ad: adStore.ad,
-    };
+    const response = await create<{ url: string; token: string }>(
+      "payments/checkout",
+      {
+        pack: selectedPack.name,
+        ad_id: adStore.ad.ad_id,
+        featured: adStore.featured,
+      } as unknown as Parameters<typeof create>[1],
+    );
 
-    if (adStore.pack !== "free") {
-      const draftPayload = { ad: adStore.ad };
-      const draftResponse = await create<{ id: number }>(
-        "ads/save-draft",
-        draftPayload as unknown as Parameters<typeof create>[1],
-      );
-      const draftId = draftResponse.data?.id;
-      if (draftId) {
-        adStore.updateAdId(draftId);
-        allData.ad = { ...allData.ad, ad_id: draftId };
-      }
+    const { url, token } = response.data ?? {};
+
+    if (!url || !token) {
+      throw new Error("Invalid payment response");
     }
 
-    const response = await create<{
-      webpay?: { url: string; gatewayRef: string };
-      ad?: { id: number };
-    }>("payments/ad", allData as unknown as Parameters<typeof create>[1]);
+    adAnalytics.pushEvent("redirect_to_payment", [], {
+      payment_method: "webpay",
+    });
 
-    if (response.data?.webpay) {
-      const ad_id = response.data.ad?.id;
-      if (ad_id) {
-        adStore.updateAdId(ad_id);
-      }
-      adAnalytics.pushEvent("redirect_to_payment", [], {
-        payment_method: "webpay",
-      });
-      handleRedirect(response.data.webpay);
-    } else {
-      await fetchUser();
-      await navigateTo("/pagar/gracias?ad=" + response.data?.ad?.id);
-    }
+    handleRedirect({ url, gatewayRef: token });
   } catch (error: unknown) {
     let errorMessage =
       "Hubo un problema al procesar el pago. Por favor, inténtalo de nuevo.";
