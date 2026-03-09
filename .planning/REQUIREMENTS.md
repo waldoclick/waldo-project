@@ -4,12 +4,12 @@
 
 ### Free Ad Submission
 
-- [ ] **FREE-01**: `POST /api/payments/free-ad` validates that the authenticated user has a free ad credit available
-- [ ] **FREE-02**: `POST /api/payments/free-ad` receives an `ad_id` (existing draft) and links the free ad-reservation to the ad
-- [ ] **FREE-03**: `POST /api/payments/free-ad` sets `draft: false` on the ad, transitioning it from draft to pending
-- [ ] **FREE-04**: `POST /api/payments/free-ad` sends confirmation email to the user and validation alert email to admin
+- [x] **FREE-01**: `POST /api/payments/free-ad` validates that the authenticated user has a free ad credit available
+- [x] **FREE-02**: `POST /api/payments/free-ad` receives an `ad_id` (existing draft) and links the free ad-reservation to the ad
+- [x] **FREE-03**: `POST /api/payments/free-ad` sets `draft: false` on the ad, transitioning it from draft to pending
+- [x] **FREE-04**: `POST /api/payments/free-ad` sends confirmation email to the user and validation alert email to admin
 - [ ] **FREE-05**: `resumen.vue` free path calls `POST /api/ads/save-draft` first to obtain/update `ad_id`, then calls `POST /api/payments/free-ad`
-- [ ] **FREE-06**: Existing free flow in `POST /api/payments/ad` and `ad.service.ts` remains untouched
+- [x] **FREE-06**: Existing free flow in `POST /api/payments/ad` and `ad.service.ts` remains untouched
 
 ## Future Requirements
 
@@ -27,12 +27,12 @@ None identified for this milestone.
 
 | REQ-ID  | Phase | Status  |
 |---------|-------|---------|
-| FREE-01 | Phase 58 | Pending |
-| FREE-02 | Phase 58 | Pending |
-| FREE-03 | Phase 58 | Pending |
-| FREE-04 | Phase 58 | Pending |
+| FREE-01 | Phase 58 | Complete |
+| FREE-02 | Phase 58 | Complete |
+| FREE-03 | Phase 58 | Complete |
+| FREE-04 | Phase 58 | Complete |
 | FREE-05 | Phase 59 | Pending |
-| FREE-06 | Phase 58 | Pending |
+| FREE-06 | Phase 58 | Complete |
 
 **Coverage:**
 - v1 requirements: 6 total
