@@ -56,6 +56,8 @@ All prior phases shipped. See `.planning/milestones/` for archived roadmaps.
 <summary>🚧 v1.24 — Free Ad Submission (Phases 58-59) — IN PROGRESS</summary>
 
 - [ ] **Phase 58: Free Ad Endpoint** — `POST /api/payments/free-ad` in Strapi: validates free credit, links ad-reservation, sets `draft: false`, sends user confirmation + admin alert emails; new route/controller/service file; `ad.service.ts` untouched
+  Plans:
+  - [ ] 058-01-PLAN.md — New free-ad.service.ts + route + controller method
 - [ ] **Phase 59: Frontend Wiring + Deploy** — `resumen.vue` free path calls `save-draft` then `payments/free-ad`; `ad_id` stored in `adStore`; Strapi admin permission configured; `nuxt typecheck` passes
 
 </details>
