@@ -86,7 +86,7 @@ const handlePayClick = async () => {
       handleRedirect(response.data.webpay);
     } else {
       await fetchUser();
-      await navigateTo("/anunciar/gracias?ad=" + response.data?.ad?.id);
+      await navigateTo("/pagar/gracias?ad=" + response.data?.ad?.id);
     }
   } catch (error: unknown) {
     let errorMessage =

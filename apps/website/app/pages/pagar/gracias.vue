@@ -230,7 +230,7 @@ $setSEO({
   description:
     "Tu anuncio ha sido publicado con éxito en Waldo.click®. Gracias por confiar en nosotros para conectar con compradores de activos industriales.",
   imageUrl: `${config.public.baseUrl}/share.jpg`,
-  url: `${config.public.baseUrl}/gracias`,
+  url: `${config.public.baseUrl}/pagar/gracias`,
 });
 useSeoMeta({ robots: "noindex, nofollow" });
 
@@ -238,7 +238,7 @@ $setStructuredData({
   "@context": "https://schema.org",
   "@type": "WebPage",
   name: "Gracias por Publicar - Waldo.click®",
-  url: `${config.public.baseUrl}/gracias`,
+  url: `${config.public.baseUrl}/pagar/gracias`,
   description:
     "Tu anuncio ha sido publicado con éxito en Waldo.click®. Gracias por confiar en nosotros para conectar con compradores de activos industriales.",
 });

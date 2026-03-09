@@ -1,7 +1,6 @@
 import { Context } from "koa";
 import adService from "../services/ad.service";
 import freeAdService from "../services/free-ad.service";
-import packService from "../services/pack.service";
 import OrderUtils from "../utils/order.utils";
 import { ProService } from "../services/pro.service";
 import { documentDetails } from "../utils/user.utils";
@@ -210,7 +209,7 @@ class PaymentController {
         token,
         result,
       });
-      ctx.redirect(`${process.env.FRONTEND_URL}/anunciar/error`);
+      ctx.redirect(`${process.env.FRONTEND_URL}/pagar/error`);
       return;
     }
 
@@ -281,87 +280,19 @@ class PaymentController {
         adId: result?.ad?.id,
         userId: result?.ad?.user?.id,
       });
-      ctx.redirect(`${process.env.FRONTEND_URL}/anunciar/error`);
+      ctx.redirect(`${process.env.FRONTEND_URL}/pagar/error`);
     } else {
       logger.info("Proceso de pago completado exitosamente", {
         adId: result?.ad?.id,
         userId: result?.ad?.user?.id,
-        redirectUrl: `${process.env.FRONTEND_URL}/anunciar/gracias?ad=${result?.ad?.id}`,
+        redirectUrl: `${process.env.FRONTEND_URL}/pagar/gracias?ad=${result?.ad?.id}`,
       });
       ctx.redirect(
-        `${process.env.FRONTEND_URL}/anunciar/gracias?ad=${result?.ad?.id}`
+        `${process.env.FRONTEND_URL}/pagar/gracias?ad=${result?.ad?.id}`
       );
     }
 
     ctx.body = { data: result };
-  });
-
-  packCreate = this.controllerWrapper(async (ctx: Context) => {
-    const { data } = ctx.request.body;
-    const userId = ctx.state.user.id;
-    const packId = data.pack;
-    const isInvoice = data.is_invoice;
-
-    const result = await packService.packPurchase(packId, userId, isInvoice);
-
-    ctx.body = { data: result };
-  });
-
-  packResponse = this.controllerWrapper(async (ctx: Context) => {
-    const token = ctx.query.token_ws;
-
-    if (typeof token !== "string") {
-      ctx.redirect(`${process.env.FRONTEND_URL}/pagar`);
-      return;
-    }
-
-    const result = await packService.processPaidWebpay(token);
-    console.log("result", result);
-
-    if (!result.success) {
-      ctx.redirect(`${process.env.FRONTEND_URL}/packs/error`);
-      return;
-    }
-
-    // Obtener los detalles de facturación del usuario
-    const userDocumentDetails = await documentDetails(
-      result?.userId,
-      result?.isInvoice
-    );
-    // console.log("userDocumentDetails", userDocumentDetails);
-
-    const items = [
-      {
-        name: result?.pack?.name,
-        price: result?.pack?.price,
-        quantity: 1,
-      },
-    ];
-
-    // Emitir boleta aquí
-    const documentResponse = await generalUtils.generateFactoDocument({
-      isInvoice: result?.isInvoice,
-      userDetails: userDocumentDetails,
-      items: items,
-    });
-
-    // Create order
-    const order = await OrderUtils.createAdOrder({
-      amount: result.webpay.amount,
-      buy_order: result.webpay.buy_order,
-      userId: Number(result?.userId),
-      is_invoice: result?.isInvoice,
-      payment_method: process.env.PAYMENT_GATEWAY ?? "transbank",
-      payment_response: result.webpay,
-      document_details: userDocumentDetails,
-      items,
-      document_response: documentResponse,
-    });
-    // console.log("order", order);
-
-    ctx.redirect(
-      `${process.env.FRONTEND_URL}/packs/gracias?pack=${result?.pack?.id}`
-    );
   });
 
   proCreate = this.controllerWrapper(async (ctx: Context) => {

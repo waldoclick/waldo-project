@@ -28,7 +28,7 @@ $setSEO({
   description:
     "Hubo un problema al intentar crear tu anuncio en Waldo.click®. Por favor, revisa los datos e inténtalo nuevamente.",
   imageUrl: `${config.public.baseUrl}/share.jpg`,
-  url: `${config.public.baseUrl}/error-crear-anuncio`,
+  url: `${config.public.baseUrl}/pagar/error`,
 });
 useSeoMeta({ robots: "noindex, nofollow" });
 
@@ -36,7 +36,7 @@ $setStructuredData({
   "@context": "https://schema.org",
   "@type": "WebPage",
   name: "Error al Crear Anuncio - Waldo.click®",
-  url: `${config.public.baseUrl}/error-crear-anuncio`,
+  url: `${config.public.baseUrl}/pagar/error`,
   description:
     "Hubo un problema al intentar crear tu anuncio en Waldo.click®. Por favor, revisa los datos e inténtalo nuevamente.",
 });
