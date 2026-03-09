@@ -1,21 +1,15 @@
-# Requirements: v1.23 Unified Payment Flow
+# Requirements: v1.24 Free Ad Submission
 
 ## v1 Requirements
 
-### Pack Purchase Flow
-- [x] **PACK-01**: User can purchase a pack from `/packs` without going through `/packs/comprar`
-- [x] **PACK-02**: Clicking "Comprar" on `/packs` writes the selected pack to `adStore` and navigates directly to `/pagar`
-- [x] **PACK-03**: `/packs/comprar` page is removed from the codebase
+### Free Ad Submission
 
-### Payment Hub
-- [x] **PAY-01**: `/pagar` processes payment when only a pack is selected (no `adStore.ad.ad_id`)
-- [x] **PAY-02**: `/pagar` processes payment when both a pack and an ad are present (`adStore.ad.ad_id` set)
-- [x] **PAY-03**: `FormCheckout` does not show free/paid reservation options when arriving from `/packs` (pack-only flow)
-- [x] **PAY-04**: `packs.store.ts` is eliminated — pack data loaded directly where needed
-
-### Cleanup
-- [x] **CLN-01**: `BuyPack.vue` is removed or replaced with the new flow
-- [x] **CLN-02**: All imports and references to `packs.store.ts` are removed from the codebase
+- [ ] **FREE-01**: `POST /api/payments/free-ad` validates that the authenticated user has a free ad credit available
+- [ ] **FREE-02**: `POST /api/payments/free-ad` receives an `ad_id` (existing draft) and links the free ad-reservation to the ad
+- [ ] **FREE-03**: `POST /api/payments/free-ad` sets `draft: false` on the ad, transitioning it from draft to pending
+- [ ] **FREE-04**: `POST /api/payments/free-ad` sends confirmation email to the user and validation alert email to admin
+- [ ] **FREE-05**: `resumen.vue` free path calls `POST /api/ads/save-draft` first to obtain/update `ad_id`, then calls `POST /api/payments/free-ad`
+- [ ] **FREE-06**: Existing free flow in `POST /api/payments/ad` and `ad.service.ts` remains untouched
 
 ## Future Requirements
 
@@ -23,20 +17,28 @@ None identified for this milestone.
 
 ## Out of Scope
 
-- **Featured standalone purchase** — buying a featured slot without an ad is not in scope for this milestone
-- **Multiple packs in a single payment** — cart with multiple items deferred
-- **Strapi payment endpoint changes** — backend payment logic for pack-only flow may need adjustment, but endpoint signature changes are out of scope unless strictly required
+| Feature | Reason |
+|---------|--------|
+| Removing `ad.service.ts` or `POST /api/payments/ad` | Explicit goal of this milestone is to add the new endpoint only — removal is a future milestone |
+| Featured free flow changes | Only the free ad (pack=free) submission path is in scope |
+| Dashboard changes | No dashboard UI changes required for this milestone |
 
 ## Traceability
 
 | REQ-ID  | Phase | Status  |
 |---------|-------|---------|
-| PACK-01 | 56    | Complete |
-| PACK-02 | 56    | Complete |
-| PACK-03 | 56    | Complete |
-| PAY-01  | 57    | Complete |
-| PAY-02  | 57    | Complete |
-| PAY-03  | 57    | Complete |
-| PAY-04  | 55    | Complete |
-| CLN-01  | 56    | Complete |
-| CLN-02  | 55    | Complete |
+| FREE-01 | TBD   | Pending |
+| FREE-02 | TBD   | Pending |
+| FREE-03 | TBD   | Pending |
+| FREE-04 | TBD   | Pending |
+| FREE-05 | TBD   | Pending |
+| FREE-06 | TBD   | Pending |
+
+**Coverage:**
+- v1 requirements: 6 total
+- Mapped to phases: 0
+- Unmapped: 6 ⚠️
+
+---
+*Requirements defined: 2026-03-08*
+*Last updated: 2026-03-08 after initial definition*
