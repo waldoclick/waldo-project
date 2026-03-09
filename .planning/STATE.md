@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.24
 milestone_name: Free Ad Submission
-status: Not started
-stopped_at: Completed 058-01-PLAN.md
-last_updated: "2026-03-09T00:59:56.515Z"
+status: Complete
+stopped_at: Completed 059-01-PLAN.md
+last_updated: "2026-03-09T01:19:53.386Z"
 last_activity: 2026-03-08 — Roadmap created (Phases 58-59)
 progress:
   total_phases: 5
-  completed_phases: 4
-  total_plans: 6
-  completed_plans: 6
+  completed_phases: 5
+  total_plans: 7
+  completed_plans: 7
 ---
 
 # Project State
@@ -20,25 +20,25 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-08 after v1.24 start)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.24 Free Ad Submission — Phase 58: Free Ad Endpoint
+**Current focus:** v1.24 Free Ad Submission — COMPLETE
 
 ## Current Position
 
-Phase: 58 — Free Ad Endpoint
-Plan: —
-Status: Not started
-Last activity: 2026-03-08 — Roadmap created (Phases 58-59)
+Phase: 59 — Frontend Wiring + Deploy
+Plan: 01
+Status: Complete
+Last activity: 2026-03-09 — Phase 059 Plan 01 complete (handleFreeCreation rewritten)
 
 ```
-Progress: [░░░░░░░░░░] 0/2 phases complete
+Progress: [██████████] 100%
 ```
 
 ### Phase Map
 
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
-| 58 | Free Ad Endpoint | FREE-01, FREE-02, FREE-03, FREE-04, FREE-06 | Not started |
-| 59 | Frontend Wiring + Deploy | FREE-05 | Not started |
+| 58 | Free Ad Endpoint | FREE-01, FREE-02, FREE-03, FREE-04, FREE-06 | Complete |
+| 59 | Frontend Wiring + Deploy | FREE-05 | Complete |
 
 ## Accumulated Context
 
@@ -59,6 +59,7 @@ Key patterns established (carry forward):
 - **v1.22**: `CheckoutDefault.vue` owns full payment logic — `resumen.vue` is review/redirect only
 - **v1.23**: Pack purchase uses `adStore` — `packs.store.ts` eliminated; `adStore.ad.ad_id` presence determines if ad is part of the payment
 - [Phase 058-free-ad-endpoint]: Email failures are non-fatal in free-ad flow — wrapped in try/catch
+- [Phase 059-frontend-wiring-deploy]: Free ad creation uses two-step pattern: POST ads/save-draft → adStore.updateAdId() → POST payments/free-ad with { ad_id, pack }
 
 ### v1.24 Key Context
 
@@ -80,6 +81,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-09T00:56:38.918Z
-Stopped at: Completed 058-01-PLAN.md
+Last session: 2026-03-09T01:19:53.384Z
+Stopped at: Completed 059-01-PLAN.md
 Resume with: `/gsd-plan-phase 58`
