@@ -1,5 +1,6 @@
 import { Context } from "koa";
 import adService from "../services/ad.service";
+import freeAdService from "../services/free-ad.service";
 import packService from "../services/pack.service";
 import OrderUtils from "../utils/order.utils";
 import { ProService } from "../services/pro.service";
@@ -129,6 +130,28 @@ class PaymentController {
     });
 
     ctx.body = { data: payment };
+  });
+
+  freeAdCreate = this.controllerWrapper(async (ctx: Context) => {
+    const { data } = ctx.request.body;
+    const userId = ctx.state.user.id;
+    const adId = Number(data?.ad_id);
+
+    if (!adId) {
+      ctx.status = 400;
+      ctx.body = { success: false, message: "ad_id is required" };
+      return;
+    }
+
+    const result = await freeAdService.processFreeAd(adId, String(userId));
+
+    if (!result.success) {
+      ctx.status = 400;
+      ctx.body = { success: false, message: result.message };
+      return;
+    }
+
+    ctx.body = { data: result };
   });
 
   adResponse = this.controllerWrapper(async (ctx: Context) => {
