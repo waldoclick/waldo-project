@@ -20,6 +20,7 @@ interface ProcessResult {
   success: boolean;
   adId?: number;
   message?: string;
+  orderId?: string;
 }
 
 class CheckoutService {
@@ -252,6 +253,7 @@ class CheckoutService {
         success: true,
         adId,
         message: "Checkout processed successfully",
+        orderId: buyOrder,
       };
     } catch (error) {
       const e = error as { message?: string };
