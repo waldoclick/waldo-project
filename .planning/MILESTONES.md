@@ -1,5 +1,21 @@
 # Milestones
 
+## v1.24 Free Ad Submission (Shipped: 2026-03-09)
+
+**Phases completed:** 2 phases (58-59), 2 plans
+**Files changed:** ~18 files (apps/strapi, apps/website), +476 / -450 lines
+**Timeline:** 2026-03-08 → 2026-03-09
+**Requirements:** 6/6 complete ✓
+
+**Key accomplishments:**
+1. **Free Ad Endpoint (Phase 58)**: `POST /api/payments/free-ad` in Strapi — validates free credit by pack type (`pack="free"` → free reservation with `price: "0"`; `pack="paid"` → purchased reservation), links ad-reservation, sets `draft: false`, sends user confirmation + admin alert emails (non-fatal); new `free-ad.service.ts` + route + controller method; `ad.service.ts` and `POST /api/payments/ad` byte-for-byte untouched.
+2. **Frontend Wiring (Phase 59)**: `handleFreeCreation()` in `resumen.vue` rewritten — two-step pattern: `POST /api/ads/save-draft` (get `ad_id`) → `adStore.updateAdId()` → `POST /api/payments/free-ad` with `{ ad_id, pack }`; old `payments/ad` reference eliminated from free path; `nuxt typecheck` exits 0.
+3. **Route Cleanup (post-milestone, same tag)**: `anunciar/gracias.vue` + `anunciar/error.vue` moved to `pagar/`; `packs/gracias.vue` + `packs/error.vue` deleted; `packCreate`/`packResponse` dead handlers removed from payment controller; pack routes removed; `payment.controller.test.ts` deleted; all frontend + Strapi references updated to `/pagar/gracias` and `/pagar/error`.
+
+**Archive:** `.planning/milestones/v1.24-ROADMAP.md` | `.planning/milestones/v1.24-REQUIREMENTS.md`
+
+---
+
 ## v1.22 Checkout Flow UI (Shipped: 2026-03-08)
 
 **Phases completed:** 1 phase (53), 1 plan
