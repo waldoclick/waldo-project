@@ -150,34 +150,38 @@ const confirmPay = async () => {
 };
 
 const handleFreeCreation = async () => {
-  const allData = {
-    pack: adStore.pack,
-    featured: adStore.featured,
-    is_invoice: adStore.is_invoice,
-    ad: adStore.ad,
-  };
-
   try {
     adAnalytics.addPaymentInfo();
 
-    const response = await create<{
-      webpay?: { url: string; gatewayRef: string };
-      ad?: { id: number };
-    }>("payments/ad", allData as unknown as Parameters<typeof create>[1]);
+    // Step 1: Save draft to get/update ad_id
+    const draftResponse = await create<{ id: number }>("ads/save-draft", {
+      data: { ad: adStore.ad },
+    } as unknown as Parameters<typeof create>[1]);
+    const adId = draftResponse.data.id;
+    adStore.updateAdId(adId);
+
+    // Step 2: Process free ad using the dedicated endpoint
+    const freeAdResponse = await create<{ ad?: { id: number } }>(
+      "payments/free-ad",
+      {
+        data: { ad_id: adId, pack: adStore.pack },
+      } as unknown as Parameters<typeof create>[1],
+    );
 
     await fetchUser();
-    router.push("/anunciar/gracias?ad=" + response.data.ad?.id);
+    router.push("/anunciar/gracias?ad=" + (freeAdResponse.data.ad?.id ?? adId));
   } catch (error: unknown) {
     let errorMessage =
-      "Hubo un problema al procesar el pago. Por favor, inténtalo de nuevo.";
+      "Hubo un problema al procesar tu anuncio. Por favor, inténtalo de nuevo.";
 
-    if (
+    const apiMessage =
       (error as { response?: { data?: { message?: string } } }).response?.data
-        ?.message === "No free featured credits available" ||
-      (error as { message?: string }).message ===
-        "No free featured credits available"
-    ) {
-      errorMessage = "No tienes créditos destacados gratuitos disponibles";
+        ?.message || (error as { message?: string }).message;
+
+    if (apiMessage === "No free reservation available") {
+      errorMessage = "No tienes créditos gratuitos disponibles";
+    } else if (apiMessage === "No paid reservation available") {
+      errorMessage = "No tienes reservas pagadas disponibles";
     }
 
     Swal.fire({
