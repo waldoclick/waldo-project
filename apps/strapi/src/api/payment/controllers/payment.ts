@@ -1,6 +1,7 @@
 import { Context } from "koa";
 import adService from "../services/ad.service";
 import freeAdService from "../services/free-ad.service";
+import checkoutService from "../services/checkout.service";
 import OrderUtils from "../utils/order.utils";
 import { ProService } from "../services/pro.service";
 import { documentDetails } from "../utils/user.utils";
@@ -293,6 +294,71 @@ class PaymentController {
     }
 
     ctx.body = { data: result };
+  });
+
+  checkoutCreate = this.controllerWrapper(async (ctx: Context) => {
+    const { data } = ctx.request.body as {
+      data?: { pack?: string; ad_id?: number; featured?: boolean };
+    };
+    const userId = String(ctx.state.user.id);
+
+    if (!data?.pack) {
+      ctx.status = 400;
+      ctx.body = { success: false, message: "pack is required" };
+      return;
+    }
+
+    if (data.pack === "free" || data.pack === "paid") {
+      ctx.status = 400;
+      ctx.body = {
+        success: false,
+        message: "pack must be a valid paid pack name, not 'free' or 'paid'",
+      };
+      return;
+    }
+
+    const result = await checkoutService.initiateCheckout(
+      {
+        pack: data.pack,
+        ad_id: data.ad_id,
+        featured: data.featured,
+      },
+      userId
+    );
+
+    if (!result.success) {
+      ctx.status = 400;
+      ctx.body = { success: false, message: result.message };
+      return;
+    }
+
+    ctx.body = { data: { url: result.url, token: result.token } };
+  });
+
+  webpayResponse = this.controllerWrapper(async (ctx: Context) => {
+    const token = ctx.query.token_ws;
+
+    if (typeof token !== "string") {
+      // User cancelled (Webpay sends TBK_TOKEN instead of token_ws on cancellation)
+      logger.warn("Webpay checkout cancelled or invalid token", {
+        tbkToken: ctx.query.TBK_TOKEN,
+        sessionId: ctx.query.TBK_ID_SESION,
+      });
+      ctx.redirect(`${process.env.FRONTEND_URL}/pagar/error`);
+      return;
+    }
+
+    const result = await checkoutService.processWebpayReturn(token);
+
+    if (!result.success) {
+      logger.error("Checkout Webpay return failed", {
+        message: result.message,
+      });
+      ctx.redirect(`${process.env.FRONTEND_URL}/pagar/error`);
+      return;
+    }
+
+    ctx.redirect(`${process.env.FRONTEND_URL}/pagar/gracias`);
   });
 
   proCreate = this.controllerWrapper(async (ctx: Context) => {
