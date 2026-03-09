@@ -154,7 +154,7 @@ const handleFreeCreation = async () => {
     adAnalytics.addPaymentInfo();
 
     // Step 1: Save draft to get/update ad_id
-    const draftResponse = await create<{ id: number }>("ads/save-draft", {
+    const draftResponse = await create<{ id: number }>("ads/draft", {
       data: { ad: adStore.ad },
     } as unknown as Parameters<typeof create>[1]);
     const adId = draftResponse.data.id;
