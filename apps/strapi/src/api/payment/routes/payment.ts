@@ -27,9 +27,17 @@ const routes: RouteConfig[] = [
     },
   },
   {
+    method: "POST",
+    path: "/payments/checkout",
+    handler: "payment.checkoutCreate",
+    config: {
+      policies: [],
+    },
+  },
+  {
     method: "GET",
-    path: "/payments/ad-response",
-    handler: "payment.adResponse",
+    path: "/payments/webpay",
+    handler: "payment.webpayResponse",
     config: {
       policies: [],
     },
