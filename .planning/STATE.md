@@ -1,50 +1,50 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.24
-milestone_name: Free Ad Submission
-status: Complete
-stopped_at: Milestone v1.24 closed
-last_updated: "2026-03-09T02:00:00.000Z"
-last_activity: 2026-03-09 — Phase 059 verified and milestone v1.24 closed
+milestone: v1.25
+milestone_name: Unified Checkout
+status: In Progress
+stopped_at: Milestone v1.25 started — requirements and roadmap being written
+last_updated: "2026-03-08T00:00:00.000Z"
+last_activity: 2026-03-08 — Milestone v1.25 started; planning in progress
 progress:
-  total_phases: 5
-  completed_phases: 5
-  total_plans: 7
-  completed_plans: 7
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-08 after v1.24 start)
+See: .planning/PROJECT.md (updated 2026-03-08 for v1.25 start)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.24 Free Ad Submission — COMPLETE
+**Current focus:** v1.25 Unified Checkout — IN PROGRESS
 
 ## Current Position
 
-Phase: 59 — Frontend Wiring + Deploy
-Plan: 01
-Status: Complete
-Last activity: 2026-03-09 — Phase 059 Plan 01 verified; milestone v1.24 closed
+Phase: TBD — Roadmap being written
+Plan: —
+Status: Planning
+Last activity: 2026-03-08 — Milestone started
 
 ```
-Progress: [██████████] 100%
+Progress: [----------] 0%
 ```
 
 ### Phase Map
 
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
-| 58 | Free Ad Endpoint | FREE-01, FREE-02, FREE-03, FREE-04, FREE-06 | Complete |
-| 59 | Frontend Wiring + Deploy | FREE-05 | Complete |
+| TBD | Unified Checkout Endpoint (Strapi) | CHK-01 – CHK-05 | Pending |
+| TBD | Frontend Migration | CHK-06 – CHK-08 | Pending |
 
 ## Accumulated Context
 
 ### Decisions
 
-All decisions from v1.1–v1.23 planning are logged in PROJECT.md Key Decisions table.
+All decisions from v1.1–v1.24 planning are logged in PROJECT.md Key Decisions table.
 
 Key patterns established (carry forward):
 - `watch({ immediate: true })` as sole data-loading trigger — never pair with onMounted
@@ -58,18 +58,17 @@ Key patterns established (carry forward):
 - **v1.22**: `/pagar` is the central payment page — all flows with `hasToPay === true` must redirect here
 - **v1.22**: `CheckoutDefault.vue` owns full payment logic — `resumen.vue` is review/redirect only
 - **v1.23**: Pack purchase uses `adStore` — `packs.store.ts` eliminated; `adStore.ad.ad_id` presence determines if ad is part of the payment
-- [Phase 058-free-ad-endpoint]: Email failures are non-fatal in free-ad flow — wrapped in try/catch
-- [Phase 059-frontend-wiring-deploy]: Free ad creation uses two-step pattern: POST ads/save-draft → adStore.updateAdId() → POST payments/free-ad with { ad_id, pack }
+- **v1.24**: Email failures are non-fatal in free-ad flow — wrapped in try/catch
+- **v1.24**: Free ad creation uses two-step pattern: POST ads/save-draft → adStore.updateAdId() → POST payments/free-ad with { ad_id, pack }
 
-### v1.24 Key Context
+### v1.25 Key Context
 
-- **Current free flow**: `resumen.vue` → `POST /api/payments/ad` (with full ad data) → `adService.processFreePayment()` handles validation + reservation + draft: false + emails
-- **New free flow**: `resumen.vue` → `POST /api/ads/save-draft` (get/update ad_id) → `POST /api/payments/free-ad` (validates credit, links reservation, draft: false, emails)
-- **What changes**: `handleFreeCreation()` in `resumen.vue` gains a save-draft step before calling the new endpoint; new endpoint in Strapi routes/controllers; new service method (does NOT touch `ad.service.ts`)
-- **What stays**: `POST /api/payments/ad` and all of `ad.service.ts` — untouched
-- **Credit validation**: `getReservationByUser(userId, true)` already exists — new endpoint reuses same check
-- **Strapi permissions**: new endpoint needs manual permission setup in admin panel (deploy step)
-- **New service file**: endpoint lives in `api/payment/` — new file, not modifying existing payment service
+- **Broken flow (pre-v1.25)**: `CheckoutDefault.vue` line 38 calls `POST payments/pack` — handler was removed in v1.24 route cleanup; pack-only purchases are broken
+- **New endpoint `POST /payments/checkout`**: receives `{ pack?, ad_id?, featured? }` — at least one required; 3 cases: pack-only, pack+ad, featured+ad; only initiates Webpay transaction — does NOT create reservations here
+- **New endpoint `GET /payments/webpay`**: Webpay returns here after payment; executes all post-payment logic: read pack → create paid ad-reservations → create featured reservations (if total_features > 0) → publish ad (if ad_id present) → apply featured (if featured present)
+- **Replaces**: `POST payments/ad` and `POST payments/pack` (both now dead) for all paid flows
+- **Untouched**: `POST payments/free-ad` + `free-ad.service.ts` (free flow stays as-is)
+- **Middleware**: `recaptcha.ts` has `/api/payments/pack` hardcoded — must be updated to `/api/payments/checkout`
 
 ### Pending Todos
 
@@ -81,6 +80,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-09T01:19:53.384Z
-Stopped at: Completed 059-01-PLAN.md
-Resume with: Next milestone TBD
+Last session: 2026-03-08
+Stopped at: Planning phase — writing requirements and roadmap
+Resume with: Execute Phase 60 once roadmap is approved
