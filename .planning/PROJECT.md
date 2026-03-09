@@ -233,9 +233,13 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
    | Email failures non-fatal in free-ad flow (wrapped in try/catch) | Reservation + publication are the critical operations; a broken email template must not roll back a successful ad submission — v1.24 | ✓ Good |
    | Two-step free creation: `save-draft` then `free-ad` (same as paid flow) | `free-ad` requires an existing `ad_id`; draft must exist before the payment endpoint is called — v1.24 | ✓ Good |
 
-## Current Milestone: —
+## Current Milestone: v1.25 Unified Checkout
 
-No active milestone. v1.24 Free Ad Submission shipped 2026-03-09.
+**Goal:** Replace fragmented payment endpoints (`payments/ad`, `payments/pack`) with a single `POST /payments/checkout` + `GET /payments/webpay` pair that handles all paid flows (pack-only, pack+ad, featured+ad).
+
+**Active requirements:** CHK-01 through CHK-08 (see REQUIREMENTS.md)
+
+**Started:** 2026-03-08
 
 ## Future Requirements
 
@@ -252,4 +256,4 @@ No active milestone. v1.24 Free Ad Submission shipped 2026-03-09.
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-09 after v1.24 milestone close — Free Ad Submission shipped
+*Last updated: 2026-03-08 — v1.25 Unified Checkout started*
