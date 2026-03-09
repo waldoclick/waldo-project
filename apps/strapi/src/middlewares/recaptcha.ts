@@ -8,7 +8,7 @@ const protectedPostPaths = [
   "/api/auth/local/register", // Ruta de registro de Strapi
   "/api/auth/forgot-password", // Ruta de recuperación de contraseña
   "/api/auth/reset-password", // Ruta de reset de contraseña
-  "/api/payments/pack", // Ruta de pago de packs
+  "/api/payments/checkout", // Ruta de pago unificado
 ];
 
 const protectedPutPaths = [
