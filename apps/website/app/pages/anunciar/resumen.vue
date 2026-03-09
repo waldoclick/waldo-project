@@ -163,9 +163,9 @@ const handleFreeCreation = async () => {
     // Step 2: Process free ad using the dedicated endpoint
     const freeAdResponse = await create<{ ad?: { id: number } }>(
       "payments/free-ad",
-      {
-        data: { ad_id: adId, pack: adStore.pack },
-      } as unknown as Parameters<typeof create>[1],
+      { ad_id: adId, pack: adStore.pack } as unknown as Parameters<
+        typeof create
+      >[1],
     );
 
     await fetchUser();
