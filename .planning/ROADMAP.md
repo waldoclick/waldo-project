@@ -22,6 +22,6 @@
 **Plans:** 3 plans
 
 Plans:
-- [ ] 060-00-PLAN.md — Create test scaffolds (Wave 0)
-- [ ] 060-01-PLAN.md — Create IWebpayReceipt type, ComprobanteWebpay component, Webpay logo asset (Wave 1)
-- [ ] 060-02-PLAN.md — Style component with BEM SCSS, integrate into gracias.vue page (Wave 2)
+- [ ] 060-00-PLAN.md — Create test scaffolds for ResumeOrder and gracias.vue (Wave 0)
+- [ ] 060-01-PLAN.md — Extend prepareSummary() and add CardInfo fields to ResumeOrder (Wave 1)
+- [ ] 060-02-PLAN.md — Fix backend redirect to use order.documentId (Wave 1)
