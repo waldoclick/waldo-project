@@ -11,12 +11,17 @@
 **Status:** Planning → Execution
 
 **Requirements:** See `.planning/REQUIREMENTS.md`
+- **RCP-01:** Display all 8 required receipt fields (amount, authorization code, date/time, payment type, last 4 card digits, order number, merchant code, status)
+- **RCP-02:** All labels in Spanish, "No disponible" placeholders for missing data
+- **RCP-03:** Webpay branding (logo) present, receipt only visible after successful payment
 
 ### Phase 060: Mostrar comprobante Webpay
 
 **Goal:** Implement on-screen Webpay receipt component with all mandatory fields (amount, authorization code, date/time, payment type, last 4 card digits, order number, merchant info, Webpay branding) using Spanish labels and handling missing data gracefully.
 
-**Plans:** 1 plan
+**Plans:** 3 plans
 
 Plans:
-- [ ] 060-01-PLAN.md — Create IWebpayReceipt type, ComprobanteWebpay component with BEM styling, integrate into gracias.vue page
+- [ ] 060-00-PLAN.md — Create test scaffolds (Wave 0)
+- [ ] 060-01-PLAN.md — Create IWebpayReceipt type, ComprobanteWebpay component, Webpay logo asset (Wave 1)
+- [ ] 060-02-PLAN.md — Style component with BEM SCSS, integrate into gracias.vue page (Wave 2)
