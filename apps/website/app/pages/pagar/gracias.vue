@@ -2,13 +2,12 @@
   <div class="page">
     <HeaderDefault :show-search="true" />
     <HeroFake />
-    <ResumeDefault
+    <ResumeOrder
       v-if="data"
-      title="¡Listo!, Creaste tu anuncio con éxito."
-      description="Ahora debes esperar que tu anuncio pase por nuestra revisión, te avisaremos a tu correo electrónico cuando sea publicado."
+      title="¡Pago recibido!"
+      :description="`Tu pago Webpay fue procesado correctamente. Más abajo verás el comprobante de tu pago y los datos de tu orden (#${data.documentId || data.id || '--'}). Guarda este comprobante.`"
       :show-icon="true"
       :summary="prepareSummary(data)"
-      :hide-payment-section="true"
     />
     <FooterDefault />
   </div>
@@ -26,7 +25,7 @@ import { useAdAnalytics } from "~/composables/useAdAnalytics";
 
 import HeaderDefault from "@/components/HeaderDefault.vue";
 import HeroFake from "@/components/HeroFake.vue";
-import ResumeDefault from "@/components/ResumeDefault.vue";
+import ResumeOrder from "@/components/ResumeOrder.vue";
 import FooterDefault from "@/components/FooterDefault.vue";
 
 // Inicializar stores y route
@@ -40,82 +39,41 @@ const adAnalytics = useAdAnalytics();
 const purchaseFired = ref(false);
 
 // Función auxiliar para manejar errores
-const handleError = (
-  type: "INVALID_URL" | "EXPIRED" | "NOT_FOUND",
-  updatedAt: string | null = null,
-) => {
+const handleError = (type: "INVALID_URL" | "NOT_FOUND") => {
   const errorMessages = {
     INVALID_URL: {
-      message: "URL inválida",
-      statusMessage: "La URL que intentas acceder no es válida",
-    },
-    EXPIRED: {
-      message: "Resumen expirado",
-      statusMessage: "El tiempo para ver el resumen de tu anuncio ha expirado",
+      message: "Orden inválida",
+      statusMessage:
+        "No se recibió un ID de orden válido en la URL. Por favor vuelve a la tienda e intenta nuevamente.",
     },
     NOT_FOUND: {
-      message: "Anuncio no encontrado",
-      statusMessage: "No pudimos encontrar el anuncio que buscas",
+      message: "Orden no encontrada",
+      statusMessage:
+        "No pudimos encontrar la información de tu pago en nuestro sistema. Es posible que el pago no se haya completado correctamente. Si tienes dudas, contacta a soporte con tu comprobante Webpay.",
     },
   };
-
   const errorConfig = errorMessages[type] || errorMessages.NOT_FOUND;
-
   showError({
     statusCode: 404,
     ...errorConfig,
   });
 };
 
-// Cargar los datos del anuncio de forma asíncrona
+// Cargar los datos del pedido (orden) de forma asíncrona
+import { useOrderById } from "@/composables/useOrderById";
 const { data, pending, error } = await useAsyncData(
-  `gracias-${route.query.ad}`,
+  () => `gracias-${route.query.order}`,
   async () => {
-    if (!route.query.ad) {
+    const documentId = route.query.order as string;
+    if (!documentId) {
       return { error: "INVALID_URL" };
     }
-
-    const adsStore = useAdsStore();
-    let response;
-
     try {
-      response = await adsStore.loadAdById(route.query.ad as string);
+      const order = await useOrderById(documentId);
+      return order;
     } catch {
       return { error: "NOT_FOUND" };
     }
-
-    if (!response || !response.updatedAt) {
-      return { error: "NOT_FOUND" };
-    }
-
-    // Verificar si el anuncio está expirado (remaining_days === 0)
-    // Esto debe hacerse ANTES de procesar los datos para evitar errores de serialización en Pinia
-    if (response.remaining_days === 0) {
-      throw createError({
-        statusCode: 403,
-        message: "Resumen expirado",
-        statusMessage:
-          "El tiempo para ver el resumen de tu anuncio ha expirado",
-      });
-    }
-
-    // Verificar el tiempo transcurrido basado en la última actualización
-    const updatedAt = new Date(response.updatedAt);
-    const now = new Date();
-    const diffInMinutes = Math.floor(
-      (now.getTime() - updatedAt.getTime()) / (1000 * 60),
-    );
-
-    if (diffInMinutes > 10) {
-      throw createError({
-        statusCode: 403,
-        message: "Resumen expirado",
-        statusMessage:
-          "El tiempo para ver el resumen de tu anuncio ha expirado",
-      });
-    }
-
-    return response;
   },
   {
     server: true,
@@ -145,42 +103,9 @@ watchEffect(() => {
     );
     return; // Salir temprano para evitar procesar datos con error
   } else if (data.value && !pending.value && !("error" in data.value)) {
-    // Limpiar el store solo cuando los datos se hayan cargado exitosamente
-    adStore.clearAll();
-
-    // Enviar evento de purchase (guarded — fires exactly once even on watchEffect re-runs)
-    if (!purchaseFired.value) {
-      purchaseFired.value = true;
-      const adData = data.value as any;
-      const items = [];
-      if (adData.details?.pack) {
-        items.push({
-          item_id: adData.details.pack,
-          item_name: `Pack ${adData.details.pack}`,
-          item_category: "Pack",
-          price: adData.details.pack === "free" ? 0 : adData.details.pack_price,
-          currency: "CLP",
-        });
-      }
-      if (adData.details?.featured) {
-        items.push({
-          item_id: adData.details.featured ? "featured" : "not_featured",
-          item_name: adData.details.featured ? "Destacado" : "Sin destacar",
-          item_category: "Destacado",
-          price: adData.details.featured ? 10000 : 0,
-          currency: "CLP",
-        });
-      }
-
-      adAnalytics.pushEvent("purchase", items, {
-        transaction_id: adData.id,
-        value: items.reduce(
-          (total: number, item: any) => total + (item.price || 0),
-          0,
-        ),
-        currency: "CLP",
-      });
-    }
+    // No ad store to clean; order data loaded
+    // TODO: If purchase analytics desired, use order/payment data here and update the event for order-centric analytics
+    // (Left blank for now)
   }
 });
 
@@ -193,35 +118,23 @@ const galleryData = computed(() => {
   }));
 });
 
-// Función para preparar el summary
+// Prepara los campos requeridos por ResumeOrder.vue
 const prepareSummary = (data: any): Record<string, any> | undefined => {
   if (!data) return undefined;
-
   return {
-    showEditLinks: false,
-    pack: data.details?.pack,
-    featured: data.details?.featured,
-    isInvoice: data.details?.is_invoice,
-    title: data.name,
-    category: data.category?.id,
-    price: data.price,
+    documentId: data.documentId,
+    amount: data.amount || data.totalAmount,
     currency: data.currency,
-    description: data.description,
-    email: data.email,
-    phone: data.phone,
-    commune: data.commune?.id,
-    address: data.address,
-    addressNumber: data.address_number,
-    condition: data.condition?.id,
-    manufacturer: data.manufacturer,
-    model: data.model,
-    serialNumber: data.serial_number,
-    year: data.year,
-    weight: data.weight,
-    width: data.width,
-    height: data.height,
-    depth: data.depth,
-    gallery: data.gallery,
+    status: data.status,
+    paymentMethod: data.payment_type || data.paymentMethod,
+    createdAt: data.paidAt || data.createdAt,
+    receiptNumber:
+      data.payment_metadata?.buy_order ||
+      data.payment_metadata?.authorization_code ||
+      "",
+    email: data.user?.email || "",
+    fullName: data.user?.fullName || data.user?.username || "",
+    // Otros campos relevantes si ResumeOrder los necesita
   };
 };
 

@@ -3,7 +3,8 @@
 @use "../base/container";
 
 .resume {
-  &--default {
+  &--default,
+  &--order {
     &__container {
       @extend .container;
       margin-bottom: 90px;
