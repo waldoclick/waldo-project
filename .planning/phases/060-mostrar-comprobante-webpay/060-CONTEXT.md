@@ -29,9 +29,11 @@ Display compliant Webpay receipt fields on `/pagar/gracias` after payment succes
 - NO logo de Webpay (removed from requirements)
 
 ### Backend Fix Required
-- Fix `adResponse` controller (line 292) to redirect with `order` documentId instead of `ad` id
-- `webpayResponse` already correct (line 361-365)
-- Ensure Order entity has payment_metadata populated from Webpay response
+- Fix `adResponse` controller (line 292) to redirect with Order **documentId** (not numeric id) in query param `?order=xxx`
+- Currently redirects with `?ad=${result.ad.id}` → must change to `?order=${order.documentId}`
+- `webpayResponse` already correct (line 361-365) — already sends `?order=${result.orderId}`
+- Order is created at line 258-269, returns object with `documentId` field (Strapi v5 auto-generated)
+- CRITICAL: Use `order.documentId` NOT `order.id` — gracias.vue expects documentId string
 
 ### Data Mapping
 - Update `prepareSummary()` in `gracias.vue` to extract all fields from `payment_metadata`
