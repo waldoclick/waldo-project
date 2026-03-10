@@ -13,7 +13,7 @@
 **Requirements:** See `.planning/REQUIREMENTS.md`
 - **RCP-01:** Display all 8 required receipt fields (amount, authorization code, date/time, payment type, last 4 card digits, order number, merchant code, status)
 - **RCP-02:** All labels in Spanish, "No disponible" placeholders for missing data
-- **RCP-03:** Webpay branding (logo) present, receipt only visible after successful payment
+- **RCP-03:** ~~Webpay branding (logo)~~ — Removed per user decision (CONTEXT.md line 29)
 
 ### Phase 060: Mostrar comprobante Webpay
 
