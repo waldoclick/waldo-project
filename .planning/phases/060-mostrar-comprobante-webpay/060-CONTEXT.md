@@ -36,13 +36,14 @@ Display compliant Webpay receipt fields on `/pagar/gracias` after payment succes
 - CRITICAL: Use `order.documentId` NOT `order.id` — gracias.vue expects documentId string
 
 ### Data Mapping
-- Update `prepareSummary()` in `gracias.vue` to extract all fields from `payment_metadata`
+- Update `prepareSummary()` in `gracias.vue` to extract all fields from `payment_response`
 - Use nullish coalescing (`??`) for missing fields, show "No disponible"
-- Map `payment_metadata` structure:
+- Map `payment_response` structure:
   - `authorization_code` → Código de autorización
   - `payment_type_code` → Tipo de pago
   - `card_detail.card_number` → Últimos 4 dígitos
   - `commerce_code` → Código de comercio
+  - `status` (optional) → Estado (if not already in Order.status)
 
 ### Spanish Labels
 - All labels in Spanish (already established pattern)
@@ -62,7 +63,7 @@ Display compliant Webpay receipt fields on `/pagar/gracias` after payment succes
 - `ResumeOrder.vue` — Already displays payment receipt with CardInfo grid pattern
 - `CardInfo` component — Displays title/description pairs
 - `prepareSummary()` function in `gracias.vue` — Maps Order data to ResumeOrder props
-- `payment_metadata` field in Order entity — Contains full Webpay response
+- `payment_response` field in Order entity — Contains full Webpay response (JSON field)
 
 ### Established Patterns
 - BEM SCSS with `.resume--order__*` classes

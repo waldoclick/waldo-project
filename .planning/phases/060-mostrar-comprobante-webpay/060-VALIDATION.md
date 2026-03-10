@@ -5,7 +5,7 @@ status: ready
 nyquist_compliant: true
 wave_0_complete: true
 created: 2026-03-09
-updated: 2026-03-09
+updated: 2026-03-10
 ---
 
 # Phase 060 — Validation Strategy
@@ -39,13 +39,11 @@ updated: 2026-03-09
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 060-00-01 | 00 | 0 | Create component unit test scaffold | unit | `yarn test tests/components/ComprobanteWebpay.test.ts` | ✅ W0 | ⬜ pending |
-| 060-00-02 | 00 | 0 | Create e2e test scaffold | e2e | `yarn test tests/e2e/comprobante.spec.ts` | ✅ W0 | ⬜ pending |
-| 060-01-01 | 01 | 1 | Define IWebpayReceipt interface | unit | `tsc --noEmit app/types/webpay-receipt.d.ts` | ✅ W0 | ⬜ pending |
-| 060-01-02 | 01 | 1 | Create ComprobanteWebpay component | unit | `yarn test tests/components/ComprobanteWebpay.test.ts` | ✅ W0 | ⬜ pending |
-| 060-01-03 | 01 | 1 | Add Webpay logo asset | unit | `yarn test tests/components/ComprobanteWebpay.test.ts` | ✅ W0 | ⬜ pending |
-| 060-02-01 | 02 | 2 | Style component with BEM SCSS | unit | `yarn test tests/components/ComprobanteWebpay.test.ts` | ✅ W0 | ⬜ pending |
-| 060-02-02 | 02 | 2 | Integrate into gracias.vue | unit | `yarn nuxt typecheck` | ✅ W0 | ⬜ pending |
+| 060-00-01 | 00 | 0 | Create ResumeOrder test scaffold | unit | `yarn test tests/components/ResumeOrder.test.ts` | ✅ W0 | ⬜ pending |
+| 060-00-02 | 00 | 0 | Create gracias.vue test scaffold | unit | `yarn test tests/pages/gracias.test.ts` | ✅ W0 | ⬜ pending |
+| 060-01-01 | 01 | 1 | Extend prepareSummary() | unit | `yarn test tests/pages/gracias.test.ts && yarn nuxt typecheck` | ✅ W0 | ⬜ pending |
+| 060-01-02 | 01 | 1 | Add CardInfo for Webpay fields | unit | `yarn test tests/components/ResumeOrder.test.ts && yarn nuxt typecheck` | ✅ W0 | ⬜ pending |
+| 060-02-01 | 02 | 1 | Fix adResponse redirect | unit | `yarn workspace @waldo/strapi tsc --noEmit` | N/A | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -53,9 +51,8 @@ updated: 2026-03-09
 
 ## Wave 0 Requirements
 
-- [x] `apps/website/tests/components/ComprobanteWebpay.test.ts` — unit tests for receipt component (created in 060-00)
-- [x] `apps/website/tests/e2e/comprobante.spec.ts` — e2e tests for receipt visibility (created in 060-00)
-- [ ] `apps/website/assets/webpay-logo.svg` — Webpay logo asset for receipt (created in 060-01)
+- [x] `apps/website/tests/components/ResumeOrder.test.ts` — unit tests for ResumeOrder Webpay fields (created in 060-00)
+- [x] `apps/website/tests/pages/gracias.test.ts` — unit tests for gracias prepareSummary() (created in 060-00)
 
 ---
 
@@ -63,8 +60,9 @@ updated: 2026-03-09
 
 | Behavior | Requirement | Why Manual | Test Instructions |
 |----------|-------------|------------|-------------------|
-| Webpay logo displays correctly | Visual branding | Manual visual check | Run app, complete Webpay flow, verify logo appears |
-| Spanish labels rendered correctly | i18n display | Manual verification needed for font/spacing | Run app, check all labels display correctly in Spanish |
+| Spanish labels render correctly | RCP-02 | Visual verification of UI | Run dev server, complete payment, verify Spanish labels display |
+| "No disponible" placeholders work | RCP-02 | Visual check with missing data | Mock payment_response with missing fields, verify placeholders |
+| All 8 fields display after payment | RCP-01 | End-to-end flow | Complete Webpay payment, verify all fields visible on /pagar/gracias |
 
 ---
 
@@ -77,4 +75,4 @@ updated: 2026-03-09
 - [x] Feedback latency < 30s
 - [x] `nyquist_compliant: true` set in frontmatter
 
-**Approval:** ✅ approved (revision complete 2026-03-09)
+**Approval:** ✅ approved (revision complete 2026-03-10)
