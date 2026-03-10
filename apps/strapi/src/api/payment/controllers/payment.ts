@@ -286,10 +286,15 @@ class PaymentController {
       logger.info("Proceso de pago completado exitosamente", {
         adId: result?.ad?.id,
         userId: result?.ad?.user?.id,
-        redirectUrl: `${process.env.FRONTEND_URL}/pagar/gracias?ad=${result?.ad?.id}`,
+        orderId: (order?.order as { documentId?: string })?.documentId,
+        redirectUrl: `${process.env.FRONTEND_URL}/pagar/gracias?order=${
+          (order?.order as { documentId?: string })?.documentId
+        }`,
       });
       ctx.redirect(
-        `${process.env.FRONTEND_URL}/pagar/gracias?ad=${result?.ad?.id}`
+        `${process.env.FRONTEND_URL}/pagar/gracias?order=${
+          (order?.order as { documentId?: string })?.documentId
+        }`
       );
     }
 
