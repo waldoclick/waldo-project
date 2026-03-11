@@ -1,6 +1,49 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mount } from "@vue/test-utils";
 import ResumeOrder from "@/components/ResumeOrder.vue";
+
+// Mock useRuntimeConfig globally
+global.useRuntimeConfig = vi.fn(() => ({
+  public: {
+    baseUrl: "http://localhost:3000",
+    apiUrl: "http://localhost:1337",
+  },
+}));
+
+// Mock CardInfo component
+const CardInfoStub = {
+  name: "CardInfo",
+  props: ["title", "description"],
+  template:
+    '<div class="card--info"><div class="card--info__title">{{ title }}</div><div class="card--info__description">{{ description }}</div></div>',
+};
+
+// Mock other components
+const IconCheckCircleStub = {
+  name: "IconCheckCircle",
+  props: ["size"],
+  template: "<div></div>",
+};
+
+// Mock composables
+vi.mock("@/composables/useImage", () => ({
+  useImageProxy: vi.fn(() => ({
+    transformUrl: vi.fn((url) => url),
+  })),
+}));
+
+// Mock stores (return empty functions for unused stores)
+vi.mock("@/stores/categories.store", () => ({
+  useCategoriesStore: vi.fn(() => ({})),
+}));
+
+vi.mock("@/stores/communes.store", () => ({
+  useCommunesStore: vi.fn(() => ({})),
+}));
+
+vi.mock("@/stores/conditions.store", () => ({
+  useConditionsStore: vi.fn(() => ({})),
+}));
 
 describe("ResumeOrder.vue - Webpay receipt fields", () => {
   it("renders all Webpay receipt fields when summary includes payment_response data", () => {
@@ -22,6 +65,15 @@ describe("ResumeOrder.vue - Webpay receipt fields", () => {
       props: {
         title: "Test Title",
         summary: mockSummary,
+      },
+      global: {
+        components: {
+          CardInfo: CardInfoStub,
+          IconCheckCircle: IconCheckCircleStub,
+          "client-only": {
+            template: "<div><slot /></div>",
+          },
+        },
       },
     });
 
@@ -69,6 +121,15 @@ describe("ResumeOrder.vue - Webpay receipt fields", () => {
         title: "Test Title",
         summary: mockSummary,
       },
+      global: {
+        components: {
+          CardInfo: CardInfoStub,
+          IconCheckCircle: IconCheckCircleStub,
+          "client-only": {
+            template: "<div><slot /></div>",
+          },
+        },
+      },
     });
 
     const text = wrapper.text();
@@ -99,6 +160,15 @@ describe("ResumeOrder.vue - Webpay receipt fields", () => {
       props: {
         title: "Test Title",
         summary: mockSummary,
+      },
+      global: {
+        components: {
+          CardInfo: CardInfoStub,
+          IconCheckCircle: IconCheckCircleStub,
+          "client-only": {
+            template: "<div><slot /></div>",
+          },
+        },
       },
     });
 
