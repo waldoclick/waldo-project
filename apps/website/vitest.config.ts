@@ -1,8 +1,18 @@
-import { defineVitestConfig } from "@nuxt/test-utils/config";
+import { defineConfig } from "vitest/config";
+import vue from "@vitejs/plugin-vue";
+import { fileURLToPath } from "node:url";
 
-export default defineVitestConfig({
+export default defineConfig({
+  plugins: [vue()],
   test: {
-    environment: "happy-dom", // Use happy-dom instead of nuxt environment for better Vitest 3 compatibility
+    environment: "happy-dom",
     globals: true,
+  },
+  resolve: {
+    alias: {
+      "@": fileURLToPath(new URL("./app", import.meta.url)),
+      "~": fileURLToPath(new URL("./", import.meta.url)),
+      "#app": fileURLToPath(new URL("./.nuxt", import.meta.url)),
+    },
   },
 });
