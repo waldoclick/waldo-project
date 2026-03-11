@@ -102,6 +102,7 @@ const {
       const sortParams = ["createdAt:desc"];
       const filtersParams = {
         active: { $eq: true },
+        remaining_days: { $gt: 0 },
         user: { username: { $eq: username } },
       };
 
