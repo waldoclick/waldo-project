@@ -98,6 +98,7 @@
             name="year"
             type="number"
             class="form-control"
+            min="0"
             maxlength="4"
             inputmode="numeric"
             @keydown="handleIntegerKeydown"
@@ -121,6 +122,7 @@
             maxlength="7"
             inputmode="decimal"
             @keydown="handleDecimalKeydown"
+            @input="handleDecimalInput"
           />
           <ErrorMessage name="weight" />
         </div>
@@ -139,6 +141,7 @@
             maxlength="4"
             inputmode="decimal"
             @keydown="handleDecimalKeydown"
+            @input="handleDecimalInput"
           />
           <ErrorMessage name="width" />
         </div>
@@ -157,6 +160,7 @@
             maxlength="4"
             inputmode="decimal"
             @keydown="handleDecimalKeydown"
+            @input="handleDecimalInput"
           />
           <ErrorMessage name="height" />
         </div>
@@ -175,6 +179,7 @@
             maxlength="4"
             inputmode="decimal"
             @keydown="handleDecimalKeydown"
+            @input="handleDecimalInput"
           />
           <ErrorMessage name="depth" />
         </div>
@@ -230,6 +235,7 @@ const schema = yup.object({
       return Number(originalValue);
     })
     .nullable()
+    .min(0, "El año no puede ser negativo")
     .integer("El año debe ser un número entero")
     .max(
       new Date().getFullYear(),
@@ -333,6 +339,15 @@ const handleDecimalKeydown = (event: KeyboardEvent) => {
   const blocked = ["e", "E", "+", "-"];
   if (blocked.includes(event.key)) {
     event.preventDefault();
+  }
+};
+
+// Sanitize paste/autofill for decimal fields — remove leading minus sign
+const handleDecimalInput = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  if (input.value.startsWith("-")) {
+    input.value = input.value.replace(/^-+/, "");
+    // Trigger Vue reactivity — vee-validate reads from DOM on input event
   }
 };
 
