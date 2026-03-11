@@ -59,18 +59,46 @@ const handleError = (type: "INVALID_URL" | "NOT_FOUND") => {
   });
 };
 
+// Tipo temporal para la orden hasta que se defina en types/
+interface OrderData {
+  documentId?: string;
+  id?: string;
+  amount?: number;
+  totalAmount?: number;
+  currency?: string;
+  status?: string;
+  payment_type?: string;
+  paymentMethod?: string;
+  paidAt?: string;
+  createdAt?: string;
+  payment_response?: {
+    buy_order?: string;
+    authorization_code?: string;
+    payment_type_code?: string;
+    card_detail?: {
+      card_number?: string;
+    };
+    commerce_code?: string;
+  };
+  user?: {
+    email?: string;
+    fullName?: string;
+    username?: string;
+  };
+}
+
 // Cargar los datos del pedido (orden) de forma asíncrona
 import { useOrderById } from "@/composables/useOrderById";
 const { data, pending, error } = await useAsyncData(
   () => `gracias-${route.query.order}`,
-  async () => {
+  async (): Promise<OrderData | { error: string }> => {
     const documentId = route.query.order as string;
     if (!documentId) {
       return { error: "INVALID_URL" };
     }
     try {
       const order = await useOrderById(documentId);
-      return order;
+      return order as OrderData;
     } catch {
       return { error: "NOT_FOUND" };
     }
@@ -82,9 +110,9 @@ const { data, pending, error } = await useAsyncData(
 );
 
 // Computed para obtener los datos de la orden con el tipo correcto
-const orderData = computed(() => {
+const orderData = computed((): OrderData | null => {
   if (!data.value || "error" in data.value) return null;
-  return data.value;
+  return data.value as OrderData;
 });
 
 // Manejar errores y limpiar store cuando los datos estén disponibles
@@ -116,7 +144,9 @@ watchEffect(() => {
 // If you need to show ad gallery, you would need to populate the ad relation in the order
 
 // Prepara los campos requeridos por ResumeOrder.vue
-const prepareSummary = (orderData: any): Record<string, any> | undefined => {
+const prepareSummary = (
+  orderData: OrderData | null,
+): Record<string, any> | undefined => {
   if (!orderData) return undefined;
   return {
     documentId: orderData.documentId,
