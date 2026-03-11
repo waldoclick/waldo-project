@@ -59,6 +59,22 @@
                   title="Fecha de pago"
                   :description="summary.createdAt"
                 />
+                <CardInfo
+                  title="Código de autorización"
+                  :description="summary.authorizationCode ?? 'No disponible'"
+                />
+                <CardInfo
+                  title="Tipo de pago"
+                  :description="summary.paymentType ?? 'No disponible'"
+                />
+                <CardInfo
+                  title="Últimos 4 dígitos"
+                  :description="summary.cardLast4 ?? 'No disponible'"
+                />
+                <CardInfo
+                  title="Código de comercio"
+                  :description="summary.commerceCode ?? 'No disponible'"
+                />
               </div>
             </div>
           </div>
