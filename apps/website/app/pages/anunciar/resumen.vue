@@ -125,8 +125,9 @@ definePageMeta({
   middleware: "auth",
 });
 
-// onMounted: analytics-only — fires begin_checkout event; client-side only, non-blocking
+// onMounted: validate store state and fire begin_checkout event; client-side only, non-blocking
 onMounted(() => {
+  adStore.validateState();
   adAnalytics.beginCheckout();
 });
 

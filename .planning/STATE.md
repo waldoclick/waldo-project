@@ -2,15 +2,31 @@
 gsd_state_version: 1.0
 milestone: v1.26
 milestone_name: Mostrar comprobante Webpay en /pagar/gracias
-current_phase: (determining...)
-status: Resuming
-last_updated: "2026-03-11T02:41:18.838Z"
+current_phase: Initial Planning
+status: Not Started
+last_updated: "2026-03-10T00:00:00Z"
 progress:
-  total_phases: 1
+  total_phases: 0
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
 ---
+
+# Session State
+
+## Project Reference
+
+See: .planning/PROJECT.md
+
+## Position
+
+**Milestone:** v1.26 Mostrar comprobante Webpay en /pagar/gracias
+**Current phase:** Initial Planning
+**Status:** Not Started
+
+## Session Log
+
+- 2026-03-10: STATE.md initialized for v1.26.
 
 # Session State
 

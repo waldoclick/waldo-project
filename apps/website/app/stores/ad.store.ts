@@ -73,6 +73,13 @@ export const useAdStore = defineStore("ad", {
   },
 
   actions: {
+    validateState() {
+      // Ensure critical fields persist correctly
+      if (this.pack === null) this.pack = initialState.pack;
+      if (this.featured === null) this.featured = initialState.featured;
+      if (this.ad.price === null || this.ad.price === undefined)
+        this.ad.price = initialState.ad.price;
+    },
     updateStep(step: number) {
       this.step = step;
     },
