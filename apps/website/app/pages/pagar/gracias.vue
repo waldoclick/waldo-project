@@ -129,12 +129,20 @@ const prepareSummary = (data: any): Record<string, any> | undefined => {
     paymentMethod: data.payment_type || data.paymentMethod,
     createdAt: data.paidAt || data.createdAt,
     receiptNumber:
-      data.payment_metadata?.buy_order ||
-      data.payment_metadata?.authorization_code ||
+      data.payment_response?.buy_order ||
+      data.payment_response?.authorization_code ||
       "",
     email: data.user?.email || "",
     fullName: data.user?.fullName || data.user?.username || "",
-    // Otros campos relevantes si ResumeOrder los necesita
+    // New Webpay fields extracted from payment_response
+    authorizationCode: data.payment_response?.authorization_code ?? undefined,
+    paymentType:
+      data.payment_response?.payment_type_code ??
+      data.payment_type ??
+      data.paymentMethod ??
+      undefined,
+    cardLast4: data.payment_response?.card_detail?.card_number ?? undefined,
+    commerceCode: data.payment_response?.commerce_code ?? undefined,
   };
 };
 

@@ -2,14 +2,7 @@ import { defineVitestConfig } from "@nuxt/test-utils/config";
 
 export default defineVitestConfig({
   test: {
-    environment: "nuxt", // Asegura que el entorno es el de Nuxt
-    environmentOptions: {
-      nuxt: {
-        mock: {
-          intersectionObserver: true,
-          indexedDb: true,
-        },
-      },
-    },
+    environment: "happy-dom", // Use happy-dom instead of nuxt environment for better Vitest 3 compatibility
+    globals: true,
   },
 });
