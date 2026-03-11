@@ -359,7 +359,9 @@ const handleDecimalInput = (event: Event) => {
   // Keep only the first dot: split into [integer, decimals...] and rejoin with one dot
   const parts = stripped.split(".");
   const sanitized =
-    parts.length > 1 ? parts[0] + "." + parts.slice(1).join("") : parts[0];
+    parts.length > 1
+      ? parts[0] + "." + parts.slice(1).join("")
+      : (parts[0] ?? "");
   input.value = sanitized;
   // Sync v-model so vee-validate sees the sanitized value
   const fieldName = input.name as keyof typeof form.value;
