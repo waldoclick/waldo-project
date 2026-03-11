@@ -40,7 +40,7 @@ definePageMeta({
 useSeoMeta({ robots: "noindex, nofollow" });
 
 const { data, error } = await useAsyncData(
-  () => `anunciar-gracias-${route.query.ad}`,
+  "anunciar-gracias",
   async (): Promise<Record<string, unknown> | { error: string }> => {
     const documentId = route.query.ad as string;
     if (!documentId) {
