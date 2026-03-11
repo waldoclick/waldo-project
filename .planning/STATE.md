@@ -63,8 +63,9 @@ None.
 | 10 | Add min="0" HTML attrs, Yup .min(0) for year, and paste sanitizer to seal all negative-number gaps in ad creation form | 2026-03-11 | a60c014 | [10-prevent-negative-numbers-in-numeric-fiel](./quick/10-prevent-negative-numbers-in-numeric-fiel/) |
 | 11 | Add handleYearInput (integer-only paste sanitizer) and upgrade handleDecimalInput to strip e/E/+/- and collapse multiple dots in FormCreateFour | 2026-03-11 | c2c5da8 | [11-sanitize-paste-input-in-numeric-fields-o](./quick/11-sanitize-paste-input-in-numeric-fields-o/) |
 | 12 | Add getFeaturedAdReservationsText() to useUser and render conditional featured reservation count in AccountMain.vue | 2026-03-11 | 75c05a5 | [12-show-featured-ad-reservations-in-mi-cuen](./quick/12-show-featured-ad-reservations-in-mi-cuen/) |
+| 13 | Fix phantom 404 errors on navigation away from /pagar/gracias and /anunciar/gracias by switching reactive useAsyncData keys to static strings | 2026-03-11 | 562adee | [13-fix-404-error-triggered-when-leaving-pag](./quick/13-fix-404-error-triggered-when-leaving-pag/) |
 
-**Last activity:** 2026-03-11 - Completed quick task 12: show featured ad reservations in mi-cuenta
+**Last activity:** 2026-03-11 - Completed quick task 13: fix 404 error triggered when leaving gracias pages
 
 ## Decisions
 
