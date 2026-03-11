@@ -18,11 +18,14 @@
 // Define SEO
 const { $setSEO, $setStructuredData } = useNuxtApp();
 
-import { computed, watchEffect, ref, onMounted } from "vue";
+import { computed, watchEffect, ref, watch, onMounted } from "vue";
 import { useAdsStore } from "@/stores/ads.store";
 import { useRoute } from "vue-router";
 import { useAdStore } from "@/stores/ad.store";
-import { useAdAnalytics } from "~/composables/useAdAnalytics";
+import {
+  useAdAnalytics,
+  type PurchaseOrderData,
+} from "~/composables/useAdAnalytics";
 
 import HeaderDefault from "@/components/HeaderDefault.vue";
 import HeroFake from "@/components/HeroFake.vue";
@@ -119,6 +122,20 @@ const orderData = computed((): OrderData | null => {
   if (!data.value || "error" in data.value) return null;
   return data.value as OrderData;
 });
+
+// Fire purchase event once when order data is available, BEFORE clearing store.
+// Using watch with { immediate: true } handles both SSR hydration (data already populated)
+// and lazy-loaded cases (data arrives after mount). purchaseFired guard prevents double-fire.
+watch(
+  orderData,
+  (order) => {
+    if (order && !purchaseFired.value) {
+      purchaseFired.value = true;
+      adAnalytics.purchase(order as PurchaseOrderData);
+    }
+  },
+  { immediate: true },
+);
 
 // Manejar errores cuando los datos estén disponibles
 watchEffect(() => {
