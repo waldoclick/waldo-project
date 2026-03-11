@@ -93,6 +93,15 @@ export const useUser = () => {
     };
   };
 
+  const getFeaturedAdReservationsText = () => {
+    const { unusedCount } = getAdFeaturedReservations();
+
+    if (unusedCount === 0) return "";
+    if (unusedCount === 1)
+      return "Tienes <strong>1</strong> anuncio destacado.";
+    return `Tienes <strong>${unusedCount}</strong> anuncios destacados.`;
+  };
+
   const getUserAds = () => {
     return user.value?.ads || [];
   };
@@ -106,6 +115,7 @@ export const useUser = () => {
     getAdReservations,
     getAdReservationsText,
     getAdFeaturedReservations,
+    getFeaturedAdReservationsText,
     getUserAds,
     getUserOrders,
   };
