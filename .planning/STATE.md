@@ -57,7 +57,6 @@ None.
 | 4 | Fix Strapi ad service findOne to query by documentId (string) not id (number) | 2026-03-11 | 5939419 | [4-fix-anunciar-gracias-vue-to-not-crash-on](./quick/4-fix-anunciar-gracias-vue-to-not-crash-on/) |
 | 5 | Fix pagar/gracias redirect: remove ad param, create order in checkout webpay return, use order documentId | 2026-03-11 | bdaaafa | [5-fix-pagar-gracias-redirect-remove-ad-par](./quick/5-fix-pagar-gracias-redirect-remove-ad-par/) |
 | 6 | Clean up ResumeOrder: remove N comprobante and Codigo comercio, show Pagado as payment status | 2026-03-11 | d96606e | [6-clean-up-resumeorder-remove-n-comprobant](./quick/6-clean-up-resumeorder-remove-n-comprobant/) |
-
 | 7 | Clear ad store on both /gracias pages after successful ad creation or payment | 2026-03-11 | b68f412 | [7-clear-ad-store-after-successful-payment-](./quick/7-clear-ad-store-after-successful-payment-/) |
 
 **Last activity:** 2026-03-11 - Completed quick task 7: Clear ad store on both /gracias pages after successful ad creation or payment
