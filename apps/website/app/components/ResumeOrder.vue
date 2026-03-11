@@ -50,7 +50,7 @@
                 <CardInfo
                   v-if="summary.createdAt"
                   title="Fecha de pago"
-                  :description="summary.createdAt"
+                  :description="formatDate(summary.createdAt)"
                 />
                 <CardInfo
                   title="Código de autorización"
@@ -95,18 +95,9 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from "vue";
-import { useCategoriesStore } from "@/stores/categories.store";
-import { useCommunesStore } from "@/stores/communes.store";
-import { useConditionsStore } from "@/stores/conditions.store";
 import { CheckCircle as IconCheckCircle } from "lucide-vue-next";
-import iconEdit from "/images/icon-edit.svg";
-import { useImageProxy } from "@/composables/useImage";
 
-const config = useRuntimeConfig();
-const { transformUrl } = useImageProxy();
-
-const props = defineProps({
+defineProps({
   showIcon: {
     type: Boolean,
     default: true,
@@ -129,9 +120,7 @@ const props = defineProps({
   },
 });
 
-// No ad-related stores needed for pure order receipt
-
-// Utilidad para formato moneda CLP
+// Format currency amount as CLP
 const getFormattedPrice = (price, currency = "CLP") => {
   if (!price && price !== 0) return "No especificado";
   return new Intl.NumberFormat("es-CL", {
@@ -140,49 +129,15 @@ const getFormattedPrice = (price, currency = "CLP") => {
   }).format(price || 0);
 };
 
-// Load resolved names when summary prop becomes available (or immediately if already set).
-// Uses watch({ immediate: true }) instead of onMounted so it also re-runs if parent
-// passes a new summary (e.g., after ad creation redirect).
-watch(
-  () => props.summary,
-  async (summary) => {
-    if (!summary) return;
-    try {
-      if (summary.category) {
-        categoryName.value = "Cargando categoría...";
-        const categoryData = await adCategory.getCategoryById(summary.category);
-        categoryName.value = categoryData?.name || "Categoría no encontrada";
-      }
-
-      if (summary.commune) {
-        communeInfo.value = "Cargando ubicación...";
-        const communeData = await communesStore.getCommuneById(summary.commune);
-        const regionData = communeData?.region;
-        communeInfo.value = regionData
-          ? `${communeData.name}, ${regionData.name}`
-          : communeData?.name || "Ubicación no encontrada";
-      }
-
-      if (summary.condition) {
-        conditionName.value = "Cargando condición...";
-        const conditionData = await conditionsStore.getConditionById(
-          summary.condition,
-        );
-        conditionName.value = conditionData?.name || "Condición no encontrada";
-      }
-    } catch (error) {
-      console.error("Error loading summary data:", error);
-      if (categoryName.value === "Cargando categoría...") {
-        categoryName.value = "Error al cargar categoría";
-      }
-      if (communeInfo.value === "Cargando ubicación...") {
-        communeInfo.value = "Error al cargar ubicación";
-      }
-      if (conditionName.value === "Cargando condición...") {
-        conditionName.value = "Error al cargar condición";
-      }
-    }
-  },
-  { immediate: true },
-);
+// Format ISO date string to human-readable Spanish date+time
+const formatDate = (isoString) => {
+  if (!isoString) return "-";
+  return new Intl.DateTimeFormat("es-CL", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(isoString));
+};
 </script>
