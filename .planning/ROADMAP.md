@@ -27,3 +27,28 @@ Plans:
 - [x] 060-00-PLAN.md — Create test scaffolds for ResumeOrder and gracias.vue (Wave 0) — ✅ 2026-03-11
 - [x] 060-01-PLAN.md — Extend prepareSummary() and add CardInfo fields to ResumeOrder (Wave 1) — ✅ 2026-03-11
 - [x] 060-02-PLAN.md — Fix backend redirect to use order.documentId (Wave 1) — ✅ 2026-03-10 (completed earlier)
+
+---
+
+## Milestone: v1.27 Reparar eventos GA4 ecommerce en flujo de pago unificado
+
+**Goal:** Fix GA4 ecommerce tracking after the unified payment flow consolidation so that purchase events fire correctly on /pagar/gracias, begin_checkout fires for the pack-only flow, and all event values (total, items, transaction_id) are non-undefined.
+
+**Status:** 🔄 In Progress
+
+**Requirements:**
+- **GA-01:** `purchase` event fires on `/pagar/gracias` with correct `transaction_id`, `value`, `currency`, and `items` from order data
+- **GA-02:** `begin_checkout` fires when entering `/pagar` from the packs flow (currently only fires from `/anunciar/resumen`)
+- **GA-03:** All GA4 ecommerce events send non-undefined `value`/`total` — order `amount` field used correctly
+- **GA-04:** Event `flow` discriminator distinguishes `ad_creation` vs `pack_purchase` flows correctly
+
+### Phase 061: Fix GA4 ecommerce events
+
+**Goal:** Repair GA4 ecommerce event tracking after unified checkout: fire `purchase` on /pagar/gracias using order data, fire `begin_checkout` on /pagar entry for the pack-only flow, and ensure no undefined values in any event payload.
+
+**Plans:** 2 plans
+**Status:** ○ Pending
+
+Plans:
+- [ ] 061-01-PLAN.md — Extend useAdAnalytics with purchase() method and flow discriminator (Wave 1)
+- [ ] 061-02-PLAN.md — Wire purchase event in gracias.vue and begin_checkout in pagar/index.vue (Wave 2)
