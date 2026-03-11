@@ -125,9 +125,12 @@ definePageMeta({
   middleware: "auth",
 });
 
-// onMounted: validate store state and fire begin_checkout event; client-side only, non-blocking
-onMounted(() => {
-  adStore.validateState();
+// onMounted: load packs for price calculation and fire begin_checkout event; client-side only, non-blocking
+onMounted(async () => {
+  // Load packs if needed for price calculation
+  const { loadPacks } = usePacksList();
+  await loadPacks();
+
   adAnalytics.beginCheckout();
 });
 
