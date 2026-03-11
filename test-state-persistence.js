@@ -1,35 +1,49 @@
-// Test script to verify ad store persistence
+// Test script to verify payment totals calculation
 // Run this in the browser console on /anunciar/resumen page
 
-// Step 1: Check current state
-console.log('=== Current Ad Store State ===');
-const adStore = useNuxtApp().$pinia._s.get('ad');
-console.log('Step:', adStore.step);
-console.log('Pack:', adStore.pack);
-console.log('Featured:', adStore.featured);
-console.log('Ad name:', adStore.ad?.name);
-console.log('Ad price:', adStore.ad?.price);
+console.log('=== Testing Payment Summary Calculation ===');
 
-// Step 2: Check localStorage
-console.log('\n=== LocalStorage Content ===');
+// Get the store and composables
+const { $pinia } = useNuxtApp();
+const adStore = $pinia._s.get('ad');
+
+// Check current state
+console.log('\n1. Current Store State:');
+console.log('   Pack:', adStore.pack, typeof adStore.pack);
+console.log('   Featured:', adStore.featured, typeof adStore.featured);
+console.log('   Is Invoice:', adStore.is_invoice);
+
+// Check localStorage
+console.log('\n2. LocalStorage Content:');
 const storedData = localStorage.getItem('ad');
 if (storedData) {
   const parsed = JSON.parse(storedData);
-  console.log('Stored data:', parsed);
-} else {
-  console.log('No data in localStorage!');
+  console.log('   Pack from storage:', parsed.pack);
+  console.log('   Featured from storage:', parsed.featured);
 }
 
-// Step 3: Simulate page reload test
-console.log('\n=== To test persistence ===');
-console.log('1. Fill the ad creation form with test data');
-console.log('2. Navigate to /anunciar/resumen');
-console.log('3. Reload the page (F5)');
-console.log('4. Run this script again to check if data persists');
+// Check if packs are loaded
+console.log('\n3. Packs List Status:');
+const { packs, loadPacks } = usePacksList();
+console.log('   Packs loaded:', packs.value.length > 0);
+console.log('   Packs count:', packs.value.length);
+if (packs.value.length > 0 && typeof adStore.pack === 'number') {
+  const selectedPack = packs.value.find(p => p.id === adStore.pack);
+  console.log('   Selected pack:', selectedPack ? selectedPack.name : 'NOT FOUND');
+}
 
-// Step 4: Test validateState method
-console.log('\n=== Testing validateState ===');
-adStore.validateState();
-console.log('After validation - Pack:', adStore.pack);
-console.log('After validation - Featured:', adStore.featured);
-console.log('After validation - Price:', adStore.ad?.price);
+// Calculate totals
+console.log('\n4. Payment Summary Calculation:');
+const { packPart, featuredPart, totalAmount, hasToPay } = useAdPaymentSummary();
+console.log('   Pack part:', packPart.value);
+console.log('   Featured part:', featuredPart.value);
+console.log('   Total amount:', totalAmount.value);
+console.log('   Has to pay:', hasToPay.value);
+
+// Test after loading packs
+console.log('\n5. Testing after loading packs...');
+await loadPacks();
+console.log('   Packs now loaded:', packs.value.length);
+console.log('   Recalculating totals...');
+console.log('   Total amount after loading:', totalAmount.value);
+console.log('   Has to pay after loading:', hasToPay.value);
