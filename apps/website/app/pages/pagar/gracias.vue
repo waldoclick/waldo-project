@@ -98,7 +98,7 @@ interface OrderData {
 // Cargar los datos del pedido (orden) de forma asíncrona
 import { useOrderById } from "@/composables/useOrderById";
 const { data, pending, error } = await useAsyncData(
-  () => `gracias-${route.query.order}`,
+  "pagar-gracias",
   async (): Promise<OrderData | { error: string }> => {
     const documentId = route.query.order as string;
     if (!documentId) {
