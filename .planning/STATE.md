@@ -62,7 +62,7 @@ None.
 | 9 | Block non-numeric keys (e, E, +, -, .) in price, year, weight, width, height, depth fields of ad creation form | 2026-03-11 | b2b30bb | [9-restrict-numeric-fields-in-ad-creation-f](./quick/9-restrict-numeric-fields-in-ad-creation-f/) |
 | 10 | Add min="0" HTML attrs, Yup .min(0) for year, and paste sanitizer to seal all negative-number gaps in ad creation form | 2026-03-11 | a60c014 | [10-prevent-negative-numbers-in-numeric-fiel](./quick/10-prevent-negative-numbers-in-numeric-fiel/) |
 
-**Last activity:** 2026-03-11 - Completed quick task 10: prevent negative numbers in numeric fields (FormCreateTwo, FormCreateFour)
+**Last activity:** 2026-03-11 - Completed quick task 10: prevent negative numbers in numeric fields of ad creation form
 
 ## Decisions
 
