@@ -1,4 +1,5 @@
 import PaymentUtils from "../utils";
+import OrderUtils from "../utils/order.utils";
 import { getPaymentGateway } from "../../../services/payment-gateway";
 import { zohoService } from "../../../services/zoho";
 import logger from "../../../utils/logtail";
@@ -21,6 +22,7 @@ interface ProcessResult {
   adId?: number;
   message?: string;
   orderId?: string;
+  orderDocumentId?: string;
 }
 
 class CheckoutService {
@@ -216,7 +218,29 @@ class CheckoutService {
         await PaymentUtils.ad.publishAd(adId);
       }
 
-      // 11. Zoho CRM sync — floating promise, non-blocking
+      // 11. Create order record for /pagar/gracias receipt
+      let orderDocumentId: string | undefined;
+      try {
+        const orderResult = await OrderUtils.createAdOrder({
+          amount: wepbayResponse.response?.amount ?? 0,
+          buy_order: buyOrder,
+          userId: Number(userId),
+          is_invoice: false,
+          payment_method: process.env.PAYMENT_GATEWAY ?? "transbank",
+          payment_response: wepbayResponse.response,
+          adId: adId > 0 ? adId : undefined,
+        });
+        if (orderResult.success && orderResult.order) {
+          orderDocumentId = (orderResult.order as { documentId?: string })
+            .documentId;
+        }
+      } catch (orderError) {
+        logger.error("Failed to create order record for checkout", {
+          error: (orderError as { message?: string }).message,
+        });
+      }
+
+      // 12. Zoho CRM sync — floating promise, non-blocking
       const _amount = wepbayResponse.response?.amount;
       Promise.resolve()
         .then(async () => {
@@ -248,12 +272,13 @@ class CheckoutService {
           });
         });
 
-      // 12. Return success
+      // 13. Return success
       return {
         success: true,
         adId,
         message: "Checkout processed successfully",
         orderId: buyOrder,
+        orderDocumentId,
       };
     } catch (error) {
       const e = error as { message?: string };
