@@ -245,9 +245,15 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
    * @returns {Promise<Object>} Advertisement with status field
    */
   async findOne(id: string | number, options: AdQueryOptions = {}) {
+    // In Strapi v5 the REST API passes documentId (string) as the id parameter.
+    // Use documentId for string lookups, numeric id for number lookups.
+    const where =
+      typeof id === "string" && isNaN(Number(id))
+        ? { documentId: id }
+        : { id: Number(id) };
     // Call the original findOne method
     const ad = await strapi.db.query("api::ad.ad").findOne({
-      where: { id },
+      where,
       ...(options as Record<string, unknown>),
     });
 
