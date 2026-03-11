@@ -3,11 +3,11 @@
     <HeaderDefault :show-search="true" />
     <HeroFake />
     <ResumeOrder
-      v-if="data && !('error' in data)"
+      v-if="orderData"
       title="¡Pago recibido!"
-      :description="`Tu pago Webpay fue procesado correctamente. Más abajo verás el comprobante de tu pago y los datos de tu orden (#${data.documentId || '--'}). Guarda este comprobante.`"
+      :description="`Tu pago Webpay fue procesado correctamente. Más abajo verás el comprobante de tu pago y los datos de tu orden (#${orderData.documentId || '--'}). Guarda este comprobante.`"
       :show-icon="true"
-      :summary="prepareSummary(data)"
+      :summary="prepareSummary(orderData)"
     />
     <FooterDefault />
   </div>
@@ -81,6 +81,12 @@ const { data, pending, error } = await useAsyncData(
   },
 );
 
+// Computed para obtener los datos de la orden con el tipo correcto
+const orderData = computed(() => {
+  if (!data.value || "error" in data.value) return null;
+  return data.value;
+});
+
 // Manejar errores y limpiar store cuando los datos estén disponibles
 watchEffect(() => {
   // Si hay un error de useAsyncData (lanzado con createError)
@@ -110,30 +116,32 @@ watchEffect(() => {
 // If you need to show ad gallery, you would need to populate the ad relation in the order
 
 // Prepara los campos requeridos por ResumeOrder.vue
-const prepareSummary = (data: any): Record<string, any> | undefined => {
-  if (!data) return undefined;
+const prepareSummary = (orderData: any): Record<string, any> | undefined => {
+  if (!orderData) return undefined;
   return {
-    documentId: data.documentId,
-    amount: data.amount || data.totalAmount,
-    currency: data.currency,
-    status: data.status,
-    paymentMethod: data.payment_type || data.paymentMethod,
-    createdAt: data.paidAt || data.createdAt,
+    documentId: orderData.documentId,
+    amount: orderData.amount || orderData.totalAmount,
+    currency: orderData.currency,
+    status: orderData.status,
+    paymentMethod: orderData.payment_type || orderData.paymentMethod,
+    createdAt: orderData.paidAt || orderData.createdAt,
     receiptNumber:
-      data.payment_response?.buy_order ||
-      data.payment_response?.authorization_code ||
+      orderData.payment_response?.buy_order ||
+      orderData.payment_response?.authorization_code ||
       "",
-    email: data.user?.email || "",
-    fullName: data.user?.fullName || data.user?.username || "",
+    email: orderData.user?.email || "",
+    fullName: orderData.user?.fullName || orderData.user?.username || "",
     // New Webpay fields extracted from payment_response
-    authorizationCode: data.payment_response?.authorization_code ?? undefined,
+    authorizationCode:
+      orderData.payment_response?.authorization_code ?? undefined,
     paymentType:
-      data.payment_response?.payment_type_code ??
-      data.payment_type ??
-      data.paymentMethod ??
+      orderData.payment_response?.payment_type_code ??
+      orderData.payment_type ??
+      orderData.paymentMethod ??
       undefined,
-    cardLast4: data.payment_response?.card_detail?.card_number ?? undefined,
-    commerceCode: data.payment_response?.commerce_code ?? undefined,
+    cardLast4:
+      orderData.payment_response?.card_detail?.card_number ?? undefined,
+    commerceCode: orderData.payment_response?.commerce_code ?? undefined,
   };
 };
 
