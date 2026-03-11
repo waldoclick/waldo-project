@@ -83,7 +83,7 @@ const prepareSummary = () => {
 };
 
 const primaryButtonLabel = computed(() =>
-  hasToPay.value ? "Ir a pagar" : "Crear anuncio",
+  hasToPay.value ? "Continuar al pago" : "Crear anuncio",
 );
 
 // Solo se usa para anuncios gratuitos ahora
