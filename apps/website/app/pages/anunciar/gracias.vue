@@ -24,6 +24,7 @@ import ResumeDefault from "@/components/ResumeDefault.vue";
 import FooterDefault from "@/components/FooterDefault.vue";
 
 const route = useRoute();
+const strapi = useStrapi();
 
 // Middleware
 definePageMeta({
@@ -40,7 +41,6 @@ const { data, error } = await useAsyncData(
       return { error: "INVALID_URL" };
     }
     try {
-      const strapi = useStrapi();
       const { data: ad } = await strapi.findOne("ads", documentId, {
         populate: "*",
       } as unknown as Parameters<typeof strapi.findOne>[2]);
