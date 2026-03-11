@@ -61,7 +61,7 @@ None.
 | 7 | Clear ad store on both /gracias pages after successful ad creation or payment | 2026-03-11 | b68f412 | [7-clear-ad-store-after-successful-payment-](./quick/7-clear-ad-store-after-successful-payment-/) |
 | 9 | Block non-numeric keys (e, E, +, -, .) in price, year, weight, width, height, depth fields of ad creation form | 2026-03-11 | b2b30bb | [9-restrict-numeric-fields-in-ad-creation-f](./quick/9-restrict-numeric-fields-in-ad-creation-f/) |
 
-**Last activity:** 2026-03-11 - Completed quick-9: numeric field restriction in FormCreateTwo and FormCreateFour
+**Last activity:** 2026-03-11 - Completed quick task 9: restrict numeric fields in ad creation form
 
 ## Decisions
 
