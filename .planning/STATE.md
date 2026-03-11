@@ -59,8 +59,9 @@ None.
 | 5 | Fix pagar/gracias redirect: remove ad param, create order in checkout webpay return, use order documentId | 2026-03-11 | bdaaafa | [5-fix-pagar-gracias-redirect-remove-ad-par](./quick/5-fix-pagar-gracias-redirect-remove-ad-par/) |
 | 6 | Clean up ResumeOrder: remove N comprobante and Codigo comercio, show Pagado as payment status | 2026-03-11 | d96606e | [6-clean-up-resumeorder-remove-n-comprobant](./quick/6-clean-up-resumeorder-remove-n-comprobant/) |
 | 7 | Clear ad store on both /gracias pages after successful ad creation or payment | 2026-03-11 | b68f412 | [7-clear-ad-store-after-successful-payment-](./quick/7-clear-ad-store-after-successful-payment-/) |
+| 9 | Block non-numeric keys (e, E, +, -, .) in price, year, weight, width, height, depth fields of ad creation form | 2026-03-11 | b2b30bb | [9-restrict-numeric-fields-in-ad-creation-f](./quick/9-restrict-numeric-fields-in-ad-creation-f/) |
 
-**Last activity:** 2026-03-11 - Completed 061-01: purchase() method and flow param added to useAdAnalytics composable
+**Last activity:** 2026-03-11 - Completed quick-9: numeric field restriction in FormCreateTwo and FormCreateFour
 
 ## Decisions
 
