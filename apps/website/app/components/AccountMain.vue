@@ -19,6 +19,10 @@
     <div class="account--main__announcements">
       <div class="account--main__announcements__own">
         <span v-html="adReservationsText" />
+        <span
+          v-if="featuredAdReservationsText"
+          v-html="featuredAdReservationsText"
+        />
       </div>
       <div class="account--main__announcements__pack">
         <div class="account--main__announcements__pack__info">
@@ -85,12 +89,15 @@ import CardShortcut from "@/components/CardShortcut.vue";
 import { useSanitize } from "@/composables/useSanitize";
 
 // Usar la función del composable
-const { getAdReservationsText } = useUser();
+const { getAdReservationsText, getFeaturedAdReservationsText } = useUser();
 const user = useStrapiUser<User>();
 const { sanitizeText } = useSanitize();
 
 // Computed property para el texto de reservas
 const adReservationsText = computed(() =>
   sanitizeText(getAdReservationsText()),
+);
+const featuredAdReservationsText = computed(() =>
+  sanitizeText(getFeaturedAdReservationsText()),
 );
 </script>
