@@ -15,8 +15,9 @@
 </template>
 
 <script setup lang="ts">
-import { watchEffect } from "vue";
+import { watchEffect, onMounted } from "vue";
 import { useRoute } from "vue-router";
+import { useAdStore } from "@/stores/ad.store";
 
 import HeaderDefault from "@/components/HeaderDefault.vue";
 import HeroFake from "@/components/HeroFake.vue";
@@ -25,6 +26,11 @@ import FooterDefault from "@/components/FooterDefault.vue";
 
 const route = useRoute();
 const strapi = useStrapi();
+const adStore = useAdStore();
+
+onMounted(() => {
+  adStore.clearAll();
+});
 
 // Middleware
 definePageMeta({
