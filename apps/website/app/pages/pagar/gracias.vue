@@ -18,7 +18,7 @@
 // Define SEO
 const { $setSEO, $setStructuredData } = useNuxtApp();
 
-import { computed, watchEffect, ref } from "vue";
+import { computed, watchEffect, ref, onMounted } from "vue";
 import { useAdsStore } from "@/stores/ads.store";
 import { useRoute } from "vue-router";
 import { useAdStore } from "@/stores/ad.store";
@@ -38,6 +38,10 @@ const adStore = useAdStore();
 // Analytics
 const adAnalytics = useAdAnalytics();
 const purchaseFired = ref(false);
+
+onMounted(() => {
+  adStore.clearAll();
+});
 
 // Función auxiliar para manejar errores
 const handleError = (type: "INVALID_URL" | "NOT_FOUND") => {
@@ -116,9 +120,8 @@ const orderData = computed((): OrderData | null => {
   return data.value as OrderData;
 });
 
-// Manejar errores y limpiar store cuando los datos estén disponibles
+// Manejar errores cuando los datos estén disponibles
 watchEffect(() => {
-  // Si hay un error de useAsyncData (lanzado con createError)
   if (error.value) {
     showError({
       statusCode: error.value.statusCode || 500,
@@ -133,11 +136,6 @@ watchEffect(() => {
 
   if (data.value && "error" in data.value) {
     handleError(data.value.error as "INVALID_URL" | "NOT_FOUND");
-    return; // Salir temprano para evitar procesar datos con error
-  } else if (data.value && !pending.value && !("error" in data.value)) {
-    // No ad store to clean; order data loaded
-    // TODO: If purchase analytics desired, use order/payment data here and update the event for order-centric analytics
-    // (Left blank for now)
   }
 });
 
