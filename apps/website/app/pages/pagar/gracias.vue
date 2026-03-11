@@ -2,6 +2,7 @@
   <div class="page">
     <HeaderDefault :show-search="true" />
     <HeroFake />
+    <!-- Para anuncios de pago: mostrar comprobante de orden -->
     <ResumeOrder
       v-if="orderData"
       title="¡Pago recibido!"
