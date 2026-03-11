@@ -6,7 +6,7 @@
     <ResumeOrder
       v-if="orderData"
       title="¡Pago recibido!"
-      :description="`Tu pago Webpay fue procesado correctamente. Más abajo verás el comprobante de tu pago y los datos de tu orden (#${orderData.documentId || '--'}). Guarda este comprobante.`"
+      description="Tu pago Webpay fue procesado correctamente. Más abajo verás el comprobante de tu pago. Guarda esta información."
       :show-icon="true"
       :summary="prepareSummary(orderData)"
     />
