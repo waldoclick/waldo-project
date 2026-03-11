@@ -58,7 +58,11 @@ export const useAdsStore = defineStore(
 
       try {
         const response = await strapi.find("ads", {
-          filters: { slug: { $eq: slug } },
+          filters: {
+            slug: { $eq: slug },
+            active: { $eq: true },
+            remaining_days: { $gt: 0 },
+          },
           populate: {
             commune: {
               populate: "*",
