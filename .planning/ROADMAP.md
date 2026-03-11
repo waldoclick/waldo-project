@@ -22,6 +22,6 @@
 **Plans:** 3 plans
 
 Plans:
-- [ ] 060-00-PLAN.md — Create test scaffolds for ResumeOrder and gracias.vue (Wave 0)
+- [x] 060-00-PLAN.md — Create test scaffolds for ResumeOrder and gracias.vue (Wave 0) — ✅ 2026-03-11
 - [ ] 060-01-PLAN.md — Extend prepareSummary() and add CardInfo fields to ResumeOrder (Wave 1)
-- [ ] 060-02-PLAN.md — Fix backend redirect to use order.documentId (Wave 1)
+- [x] 060-02-PLAN.md — Fix backend redirect to use order.documentId (Wave 1) — ✅ 2026-03-10 (completed earlier)
