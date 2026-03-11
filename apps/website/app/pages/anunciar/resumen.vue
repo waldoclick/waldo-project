@@ -180,17 +180,18 @@ const handleFreeCreation = async () => {
     adAnalytics.addPaymentInfo();
 
     // Process free ad using the dedicated endpoint
-    const freeAdResponse = await create<{ ad?: { id: number } }>(
-      "payments/free-ad",
-      { ad_id: adStore.ad.ad_id, pack: adStore.pack } as unknown as Parameters<
-        typeof create
-      >[1],
-    );
+    const freeAdResponse = await create<{
+      ad?: { documentId?: string; id?: number };
+    }>("payments/free-ad", {
+      ad_id: adStore.ad.ad_id,
+      pack: adStore.pack,
+    } as unknown as Parameters<typeof create>[1]);
 
     await fetchUser();
-    router.push(
-      "/pagar/gracias?order=" + (adStore.ad.documentId || adStore.ad.ad_id),
-    );
+    const adDocumentId = (
+      freeAdResponse as unknown as { data?: { ad?: { documentId?: string } } }
+    ).data?.ad?.documentId;
+    router.push("/anunciar/gracias?ad=" + (adDocumentId || adStore.ad.ad_id));
   } catch (error: unknown) {
     let errorMessage =
       "Hubo un problema al procesar tu anuncio. Por favor, inténtalo de nuevo.";
