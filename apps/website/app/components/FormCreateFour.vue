@@ -102,6 +102,7 @@
             maxlength="4"
             inputmode="numeric"
             @keydown="handleIntegerKeydown"
+            @input="handleYearInput"
           />
           <ErrorMessage name="year" />
         </div>
@@ -332,6 +333,14 @@ const handleIntegerKeydown = (event: KeyboardEvent) => {
   if (blocked.includes(event.key)) {
     event.preventDefault();
   }
+};
+
+// Sanitize paste/autofill for the year field — integer only, no decimals
+const handleYearInput = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  const sanitized = input.value.replace(/\D/g, "");
+  input.value = sanitized;
+  form.value.year = sanitized === "" ? 0 : Number(sanitized);
 };
 
 // Block non-numeric keys for decimal fields (weight, width, height, depth — decimal allowed)
