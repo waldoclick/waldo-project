@@ -1,12 +1,3 @@
-exclude_paths:
-    - '**/node_modules/**'
-    - '**/.nuxt/**'
-    - '**/.output/**'
-    - '**/.turbo/**'
-    - '**/dist/**'
-    - '**/build/**'
-    - '**/coverage/**'
-    - '**/.cache/**'
 runtimes:
     - dart@3.7.2
     - go@1.22.3

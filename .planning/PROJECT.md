@@ -233,13 +233,13 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
    | Email failures non-fatal in free-ad flow (wrapped in try/catch) | Reservation + publication are the critical operations; a broken email template must not roll back a successful ad submission — v1.24 | ✓ Good |
    | Two-step free creation: `save-draft` then `free-ad` (same as paid flow) | `free-ad` requires an existing `ad_id`; draft must exist before the payment endpoint is called — v1.24 | ✓ Good |
 
-## Current Milestone: v1.25 Unified Checkout
+## Current Milestone: v1.26 Mostrar comprobante Webpay en /pagar/gracias
 
-**Goal:** Replace fragmented payment endpoints (`payments/ad`, `payments/pack`) with a single `POST /payments/checkout` + `GET /payments/webpay` pair that handles all paid flows (pack-only, pack+ad, featured+ad).
+**Goal:** Show a Webpay receipt in the thank-you page after successful payment.
 
-**Active requirements:** CHK-01 through CHK-08 (see REQUIREMENTS.md)
+**Active requirements:** No requirements defined yet (see REQUIREMENTS.md).
 
-**Started:** 2026-03-08
+**Started:** 2026-03-10
 
 ## Future Requirements
 
