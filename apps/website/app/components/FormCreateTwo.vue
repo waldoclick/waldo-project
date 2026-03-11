@@ -76,6 +76,7 @@
               name="price"
               type="number"
               class="form-control"
+              min="0"
               maxlength="10"
               inputmode="numeric"
               @keydown="handlePriceKeydown"
