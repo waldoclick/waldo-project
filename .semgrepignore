@@ -1,0 +1,16 @@
+node_modules/
+.nuxt/
+.output/
+.turbo/
+dist/
+build/
+coverage/
+.cache/
+
+# Ignore in the dashboard
+apps/dashboard/.nuxt
+apps/dashboard/node_modules/
+
+# Ignore in the website
+apps/website/.nuxt
+apps/website/node_modules/
