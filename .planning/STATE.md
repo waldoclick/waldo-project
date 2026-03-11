@@ -64,8 +64,9 @@ None.
 | 11 | Add handleYearInput (integer-only paste sanitizer) and upgrade handleDecimalInput to strip e/E/+/- and collapse multiple dots in FormCreateFour | 2026-03-11 | c2c5da8 | [11-sanitize-paste-input-in-numeric-fields-o](./quick/11-sanitize-paste-input-in-numeric-fields-o/) |
 | 12 | Add getFeaturedAdReservationsText() to useUser and render conditional featured reservation count in AccountMain.vue | 2026-03-11 | 75c05a5 | [12-show-featured-ad-reservations-in-mi-cuen](./quick/12-show-featured-ad-reservations-in-mi-cuen/) |
 | 13 | Fix phantom 404 errors on navigation away from /pagar/gracias and /anunciar/gracias by switching reactive useAsyncData keys to static strings | 2026-03-11 | 562adee | [13-fix-404-error-triggered-when-leaving-pag](./quick/13-fix-404-error-triggered-when-leaving-pag/) |
+| 14 | Filter expired ads (remaining_days <= 0) from user profile listing by adding remaining_days: { $gt: 0 } to [slug].vue filtersParams | 2026-03-11 | 12398f4 | [14-filter-expired-ads-from-user-profile-lis](./quick/14-filter-expired-ads-from-user-profile-lis/) |
 
-**Last activity:** 2026-03-11 - Completed quick task 13: fix 404 error triggered when leaving gracias pages
+**Last activity:** 2026-03-11 - Completed quick task 14: filter expired ads from user profile listing
 
 ## Decisions
 
