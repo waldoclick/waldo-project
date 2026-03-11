@@ -99,6 +99,8 @@
             type="number"
             class="form-control"
             maxlength="4"
+            inputmode="numeric"
+            @keydown="handleIntegerKeydown"
           />
           <ErrorMessage name="year" />
         </div>
@@ -117,6 +119,8 @@
             class="form-control"
             min="0"
             maxlength="7"
+            inputmode="decimal"
+            @keydown="handleDecimalKeydown"
           />
           <ErrorMessage name="weight" />
         </div>
@@ -133,6 +137,8 @@
             class="form-control"
             min="0"
             maxlength="4"
+            inputmode="decimal"
+            @keydown="handleDecimalKeydown"
           />
           <ErrorMessage name="width" />
         </div>
@@ -149,6 +155,8 @@
             class="form-control"
             min="0"
             maxlength="4"
+            inputmode="decimal"
+            @keydown="handleDecimalKeydown"
           />
           <ErrorMessage name="height" />
         </div>
@@ -165,6 +173,8 @@
             class="form-control"
             min="0"
             maxlength="4"
+            inputmode="decimal"
+            @keydown="handleDecimalKeydown"
           />
           <ErrorMessage name="depth" />
         </div>
@@ -184,7 +194,7 @@
   </Form>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import { Field, Form, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
@@ -220,6 +230,7 @@ const schema = yup.object({
       return Number(originalValue);
     })
     .nullable()
+    .integer("El año debe ser un número entero")
     .max(
       new Date().getFullYear(),
       `El año no puede ser mayor a ${new Date().getFullYear()}`,
@@ -291,22 +302,38 @@ const form = ref({
 
 const conditions = computed(() => conditionsStore.conditions);
 
-const handleSubmit = async (values) => {
-  adStore.updateCondition(values.condition);
-  adStore.updateManufacturer(values.manufacturer);
-  adStore.updateModel(values.model);
-  adStore.updateYear(values.year);
-  adStore.updateSerialNumber(values.serial_number);
-  adStore.updateWeight(values.weight);
-  adStore.updateWidth(values.width);
-  adStore.updateHeight(values.height);
-  adStore.updateDepth(values.depth);
+const handleSubmit = async (values: Record<string, unknown>) => {
+  adStore.updateCondition(values.condition as number | null);
+  adStore.updateManufacturer(values.manufacturer as string);
+  adStore.updateModel(values.model as string);
+  adStore.updateYear(values.year as number);
+  adStore.updateSerialNumber(values.serial_number as string);
+  adStore.updateWeight(values.weight as number);
+  adStore.updateWidth(values.width as number);
+  adStore.updateHeight(values.height as number);
+  adStore.updateDepth(values.depth as number);
 
   emit("formSubmitted", values);
 };
 
 const handleformBack = async () => {
   emit("formBack");
+};
+
+// Block non-numeric keys for integer fields (year — no decimals allowed)
+const handleIntegerKeydown = (event: KeyboardEvent) => {
+  const blocked = ["e", "E", "+", "-", "."];
+  if (blocked.includes(event.key)) {
+    event.preventDefault();
+  }
+};
+
+// Block non-numeric keys for decimal fields (weight, width, height, depth — decimal allowed)
+const handleDecimalKeydown = (event: KeyboardEvent) => {
+  const blocked = ["e", "E", "+", "-"];
+  if (blocked.includes(event.key)) {
+    event.preventDefault();
+  }
 };
 
 // onMounted: UI-only — loads conditions for select (fire-and-forget; non-critical for SSR)
