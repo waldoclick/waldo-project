@@ -2,14 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.26
 milestone_name: Mostrar comprobante Webpay en /pagar/gracias
-current_phase: Initial Planning
-status: Not Started
-last_updated: "2026-03-10T00:00:00Z"
-progress:
-  total_phases: 0
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  current_phase: 061-fix-ga4-ecommerce-events
+  status: In Progress
+  last_updated: "2026-03-11T13:10:08Z"
+  last_activity: "2026-03-11 - Completed 061-01: purchase() method and flow param in useAdAnalytics"
+  progress:
+    total_phases: 2
+    completed_phases: 0
+    total_plans: 2
+    completed_plans: 1
 ---
 
 # Session State
@@ -59,4 +60,10 @@ None.
 | 6 | Clean up ResumeOrder: remove N comprobante and Codigo comercio, show Pagado as payment status | 2026-03-11 | d96606e | [6-clean-up-resumeorder-remove-n-comprobant](./quick/6-clean-up-resumeorder-remove-n-comprobant/) |
 | 7 | Clear ad store on both /gracias pages after successful ad creation or payment | 2026-03-11 | b68f412 | [7-clear-ad-store-after-successful-payment-](./quick/7-clear-ad-store-after-successful-payment-/) |
 
-**Last activity:** 2026-03-11 - Completed quick task 7: Clear ad store on both /gracias pages after successful ad creation or payment
+**Last activity:** 2026-03-11 - Completed 061-01: purchase() method and flow param added to useAdAnalytics composable
+
+## Decisions
+
+- **061-01:** purchase() passes `[]` as items to pushEvent to avoid ecommerce payload overwrite; full payload lives in extraData.ecommerce
+- **061-01:** PurchaseOrderData interface exported for page-level type-checking
+- **061-01:** flow param defaults to 'ad_creation' as 4th positional arg — fully backward compatible
