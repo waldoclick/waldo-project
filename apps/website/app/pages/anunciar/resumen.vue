@@ -189,7 +189,7 @@ const handleFreeCreation = async () => {
 
     await fetchUser();
     router.push(
-      "/pagar/gracias?ad=" + (freeAdResponse.data.ad?.id ?? adStore.ad.ad_id),
+      "/pagar/gracias?order=" + (adStore.ad.documentId || adStore.ad.ad_id),
     );
   } catch (error: unknown) {
     let errorMessage =
