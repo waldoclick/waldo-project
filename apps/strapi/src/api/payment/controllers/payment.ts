@@ -364,8 +364,8 @@ class PaymentController {
     }
 
     ctx.redirect(
-      `${process.env.FRONTEND_URL}/pagar/gracias?ad=${result.adId}${
-        result.orderId ? `&order=${result.orderId}` : ""
+      `${process.env.FRONTEND_URL}/pagar/gracias?order=${
+        result.orderDocumentId ?? result.orderId
       }`
     );
   });
