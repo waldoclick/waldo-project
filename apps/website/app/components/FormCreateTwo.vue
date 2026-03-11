@@ -77,6 +77,8 @@
               type="number"
               class="form-control"
               maxlength="10"
+              inputmode="numeric"
+              @keydown="handlePriceKeydown"
               @input="handlePriceInput"
             />
             <ErrorMessage name="price" />
@@ -114,7 +116,7 @@
   </Form>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted, watch } from "vue";
 import { Field, Form, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
@@ -160,9 +162,15 @@ const adStore = useAdStore();
 const categoriesStore = useCategoriesStore();
 const step = computed(() => adStore.step);
 
-const form = ref({
+const form = ref<{
+  name: string;
+  category: number | string;
+  price: number | string;
+  currency: string;
+  description: string;
+}>({
   name: "",
-  category: "",
+  category: adStore.ad.category || "",
   price: adStore.ad.price || "",
   currency: adStore.ad.currency || "CLP",
   description: adStore.ad.description || "",
@@ -189,10 +197,24 @@ const handleNameInput = () => {
   }
 };
 
-// Handle price input
-const handlePriceInput = () => {
-  if (form.value.price > 9999999999) {
-    form.value.price = 9999999999;
+// Handle price input — sanitizes paste/autofill edge cases
+const handlePriceInput = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  // Remove any non-digit characters (handles paste/autofill edge cases)
+  const sanitized = input.value.replace(/\D/g, "");
+  if (sanitized === "") {
+    form.value.price = "";
+  } else {
+    const numeric = Number(sanitized);
+    form.value.price = numeric > 9999999999 ? 9999999999 : numeric;
+  }
+};
+
+// Block non-numeric keys: e, E, +, -, . (price is integer-only)
+const handlePriceKeydown = (event: KeyboardEvent) => {
+  const blocked = ["e", "E", "+", "-", "."];
+  if (blocked.includes(event.key)) {
+    event.preventDefault();
   }
 };
 
@@ -223,12 +245,12 @@ watch(
 const emit = defineEmits(["formSubmitted", "formBack"]);
 
 // Manejo del envío del formulario
-const handleSubmit = async (values) => {
-  adStore.updateName(values.name);
-  adStore.updateCategory(values.category);
-  adStore.updatePrice(values.price);
-  adStore.updateCurrency(values.currency);
-  adStore.updateDescription(values.description);
+const handleSubmit = async (values: Record<string, unknown>) => {
+  adStore.updateName(values.name as string);
+  adStore.updateCategory(values.category as number);
+  adStore.updatePrice(values.price as number);
+  adStore.updateCurrency(values.currency as string);
+  adStore.updateDescription(values.description as string);
   // avanzar
   emit("formSubmitted", values);
 };
