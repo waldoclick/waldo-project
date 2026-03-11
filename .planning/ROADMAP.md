@@ -19,7 +19,7 @@
 
 **Goal:** Implement on-screen Webpay receipt component with all mandatory fields (amount, authorization code, date/time, payment type, last 4 card digits, order number, merchant info, Webpay branding) using Spanish labels and handling missing data gracefully.
 
-**Plans:** 3 plans
+**Plans:** 3/3 plans complete
 
 Plans:
 - [x] 060-00-PLAN.md — Create test scaffolds for ResumeOrder and gracias.vue (Wave 0) — ✅ 2026-03-11
