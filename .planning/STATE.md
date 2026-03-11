@@ -53,5 +53,6 @@ None.
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 1 | Fix free ad redirect to /anunciar/gracias with ad summary, webpay redirect to /pagar/gracias with documentId, and TypeScript errors in pagar/gracias.vue | 2026-03-11 | fab13b8 | [1-fix-free-ad-redirect-to-anunciar-gracias](./quick/1-fix-free-ad-redirect-to-anunciar-gracias/) |
+| 3 | Fix anunciar/gracias.vue fetching ad by documentId - move useStrapi outside useAsyncData callback | 2026-03-11 | 8147801 | [3-fix-anunciar-gracias-vue-fetching-ad-by-](./quick/3-fix-anunciar-gracias-vue-fetching-ad-by-/) |
 
-**Last activity:** 2026-03-11 - Completed quick task 1: Fix free ad redirect to /anunciar/gracias with ad summary, webpay redirect to /pagar/gracias with documentId, and TypeScript errors in pagar/gracias.vue
+**Last activity:** 2026-03-11 - Completed quick task 3: Fix anunciar/gracias.vue fetching ad by documentId - move useStrapi outside useAsyncData callback
