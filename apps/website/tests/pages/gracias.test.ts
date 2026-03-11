@@ -10,8 +10,8 @@ import { describe, it, expect } from "vitest";
  * The actual implementation in gracias.vue will be updated to match these specs.
  */
 
-// Current prepareSummary function from gracias.vue (line 122-139)
-// This will be updated in GREEN phase to add the new Webpay fields
+// Current prepareSummary function from gracias.vue (line 122-147)
+// Updated in GREEN phase to add the new Webpay fields
 function prepareSummary(data: any): Record<string, any> | undefined {
   if (!data) return undefined;
   return {
@@ -27,6 +27,15 @@ function prepareSummary(data: any): Record<string, any> | undefined {
       "",
     email: data.user?.email || "",
     fullName: data.user?.fullName || data.user?.username || "",
+    // New Webpay fields extracted from payment_response
+    authorizationCode: data.payment_response?.authorization_code ?? undefined,
+    paymentType:
+      data.payment_response?.payment_type_code ??
+      data.payment_type ??
+      data.paymentMethod ??
+      undefined,
+    cardLast4: data.payment_response?.card_detail?.card_number ?? undefined,
+    commerceCode: data.payment_response?.commerce_code ?? undefined,
   };
 }
 
