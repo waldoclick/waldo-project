@@ -98,8 +98,8 @@ export const useUser = () => {
 
     if (unusedCount === 0) return "";
     if (unusedCount === 1)
-      return "Tienes <strong>1</strong> anuncio destacado.";
-    return `Tienes <strong>${unusedCount}</strong> anuncios destacados.`;
+      return "Además, tienes <strong>1</strong> destacado gratuito.";
+    return `Además, tienes <strong>${unusedCount}</strong> destacados gratuitos.`;
   };
 
   const getUserAds = () => {
