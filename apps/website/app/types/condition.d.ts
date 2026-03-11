@@ -1,13 +1,10 @@
 export interface Condition {
   id: number;
-  attributes: {
-    name: string;
-    slug: string;
-    createdAt: string;
-    updatedAt: string;
-    publishedAt: string;
-    [key: string]: any;
-  };
+  name: string;
+  slug: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
 }
 
 export interface ConditionResponse {
