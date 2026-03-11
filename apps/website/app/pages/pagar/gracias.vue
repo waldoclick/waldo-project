@@ -3,9 +3,9 @@
     <HeaderDefault :show-search="true" />
     <HeroFake />
     <ResumeOrder
-      v-if="data"
+      v-if="data && !('error' in data)"
       title="¡Pago recibido!"
-      :description="`Tu pago Webpay fue procesado correctamente. Más abajo verás el comprobante de tu pago y los datos de tu orden (#${data.documentId || data.id || '--'}). Guarda este comprobante.`"
+      :description="`Tu pago Webpay fue procesado correctamente. Más abajo verás el comprobante de tu pago y los datos de tu orden (#${data.documentId || '--'}). Guarda este comprobante.`"
       :show-icon="true"
       :summary="prepareSummary(data)"
     />
@@ -97,10 +97,7 @@ watchEffect(() => {
   }
 
   if (data.value && "error" in data.value) {
-    handleError(
-      data.value.error as "INVALID_URL" | "EXPIRED" | "NOT_FOUND",
-      null,
-    );
+    handleError(data.value.error as "INVALID_URL" | "NOT_FOUND");
     return; // Salir temprano para evitar procesar datos con error
   } else if (data.value && !pending.value && !("error" in data.value)) {
     // No ad store to clean; order data loaded
@@ -109,14 +106,8 @@ watchEffect(() => {
   }
 });
 
-const galleryData = computed(() => {
-  if (!data.value || "error" in data.value || !data.value.gallery) return [];
-
-  return data.value.gallery.map((image: any) => ({
-    id: image.id,
-    url: `${apiUrl}${image.formats?.thumbnail?.url}`,
-  }));
-});
+// Orders don't have gallery - that was from the ad
+// If you need to show ad gallery, you would need to populate the ad relation in the order
 
 // Prepara los campos requeridos por ResumeOrder.vue
 const prepareSummary = (data: any): Record<string, any> | undefined => {
