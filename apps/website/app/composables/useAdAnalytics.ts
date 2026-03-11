@@ -13,6 +13,17 @@ interface AnalyticsItem {
   currency?: string;
 }
 
+export interface PurchaseOrderData {
+  documentId?: string;
+  amount?: number;
+  totalAmount?: number;
+  currency?: string;
+  payment_response?: {
+    buy_order?: string;
+    authorization_code?: string;
+  };
+}
+
 // Crear objetos de análisis a partir de los datos del store
 const createPackAnalyticsItem = (packId: number | string) => {
   return {
@@ -47,7 +58,8 @@ export const useAdAnalytics = () => {
   const pushEvent = (
     eventName: string,
     items: AnalyticsItem[],
-    extraData = {},
+    extraData: Record<string, unknown> = {},
+    flow = "ad_creation",
   ) => {
     if (typeof window === "undefined") return;
 
@@ -56,7 +68,7 @@ export const useAdAnalytics = () => {
 
     const eventData: DataLayerEvent = {
       event: eventName,
-      flow: "ad_creation",
+      flow,
       ...extraData,
     };
 
@@ -142,6 +154,38 @@ export const useAdAnalytics = () => {
     });
   };
 
+  const purchase = (order: PurchaseOrderData) => {
+    const transactionId =
+      order.payment_response?.buy_order ?? order.documentId ?? "";
+    const value = order.amount ?? order.totalAmount ?? 0;
+    const currency = order.currency ?? "CLP";
+
+    const items: AnalyticsItem[] = [
+      {
+        item_id: order.documentId ?? "",
+        item_name: "Orden de pago",
+        item_category: "Order",
+        price: value,
+        quantity: 1,
+        currency,
+      },
+    ];
+
+    pushEvent(
+      "purchase",
+      [],
+      {
+        ecommerce: {
+          transaction_id: transactionId,
+          value,
+          currency,
+          items,
+        },
+      },
+      "pack_purchase",
+    );
+  };
+
   return {
     viewItemList,
     addToCartPack,
@@ -152,5 +196,6 @@ export const useAdAnalytics = () => {
     sendErrorEvent,
     stepView,
     pushEvent,
+    purchase,
   };
 };
