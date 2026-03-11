@@ -31,19 +31,12 @@
             <div class="resume--order__details">
               <div class="resume--order__grid">
                 <CardInfo
-                  title="N° de comprobante"
-                  :description="summary.documentId || '-'"
-                />
-                <CardInfo
                   title="Monto pagado"
                   :description="
                     getFormattedPrice(summary.amount, summary.currency)
                   "
                 />
-                <CardInfo
-                  title="Estado del pago"
-                  :description="summary.status || '-'"
-                />
+                <CardInfo title="Estado del pago" description="Pagado" />
                 <CardInfo
                   v-if="summary.paymentMethod"
                   title="Método de pago"
@@ -70,10 +63,6 @@
                 <CardInfo
                   title="Últimos 4 dígitos"
                   :description="summary.cardLast4 ?? 'No disponible'"
-                />
-                <CardInfo
-                  title="Código de comercio"
-                  :description="summary.commerceCode ?? 'No disponible'"
                 />
               </div>
             </div>
