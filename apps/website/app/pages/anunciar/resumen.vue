@@ -86,15 +86,8 @@ const primaryButtonLabel = computed(() =>
   hasToPay.value ? "Ir a pagar" : "Crear anuncio",
 );
 
+// Solo se usa para anuncios gratuitos ahora
 const swalCopy = computed(() => {
-  if (hasToPay.value) {
-    return {
-      title: "¿Estás seguro?",
-      text: "Tras realizar el pago, no será posible modificar el anuncio.",
-      confirm: "Sí, proceder al pago",
-    };
-  }
-
   return {
     title: "¿Quieres crear el anuncio?",
     text: "Una vez creado el anuncio, no podrás modificarlo.",
@@ -135,6 +128,26 @@ onMounted(async () => {
 });
 
 const confirmPay = async () => {
+  // Si hay que pagar, guardar draft y navegar directo a pagar sin confirmación
+  if (hasToPay.value) {
+    try {
+      const draftResponse = await create<{ id: number }>("ads/save-draft", {
+        ad: adStore.ad,
+      } as unknown as Parameters<typeof create>[1]);
+      adStore.updateAdId(draftResponse.data.id);
+      router.push("/pagar");
+    } catch {
+      Swal.fire({
+        title: "Error",
+        text: "Hubo un problema al guardar el anuncio. Por favor, inténtalo de nuevo.",
+        icon: "error",
+        confirmButtonText: "Aceptar",
+      });
+    }
+    return;
+  }
+
+  // Si es gratuito, mostrar confirmación antes de crear
   const result = await Swal.fire({
     title: swalCopy.value.title,
     text: swalCopy.value.text,
@@ -150,6 +163,7 @@ const confirmPay = async () => {
         ad: adStore.ad,
       } as unknown as Parameters<typeof create>[1]);
       adStore.updateAdId(draftResponse.data.id);
+      await handleFreeCreation();
     } catch {
       Swal.fire({
         title: "Error",
@@ -157,13 +171,6 @@ const confirmPay = async () => {
         icon: "error",
         confirmButtonText: "Aceptar",
       });
-      return;
-    }
-
-    if (hasToPay.value) {
-      router.push("/pagar");
-    } else {
-      await handleFreeCreation();
     }
   }
 };

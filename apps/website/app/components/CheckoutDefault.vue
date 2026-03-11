@@ -26,6 +26,20 @@ const handleFormSubmitted = async (_values?: unknown) => {
 };
 
 const handlePayClick = async () => {
+  // Mostrar confirmación antes de proceder al pago
+  const result = await Swal.fire({
+    title: "¿Estás seguro?",
+    text: "Tras realizar el pago, no será posible modificar el anuncio.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Sí, proceder al pago",
+    cancelButtonText: "Cancelar",
+  });
+
+  if (!result.isConfirmed) {
+    return;
+  }
+
   try {
     adAnalytics.addPaymentInfo();
 
