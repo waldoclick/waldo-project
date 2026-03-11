@@ -351,12 +351,21 @@ const handleDecimalKeydown = (event: KeyboardEvent) => {
   }
 };
 
-// Sanitize paste/autofill for decimal fields — remove leading minus sign
+// Sanitize paste/autofill for decimal fields — allow digits and at most one dot
 const handleDecimalInput = (event: Event) => {
   const input = event.target as HTMLInputElement;
-  if (input.value.startsWith("-")) {
-    input.value = input.value.replace(/^-+/, "");
-    // Trigger Vue reactivity — vee-validate reads from DOM on input event
+  // Strip non-numeric non-dot chars
+  const stripped = input.value.replace(/[^\d.]/g, "");
+  // Keep only the first dot: split into [integer, decimals...] and rejoin with one dot
+  const parts = stripped.split(".");
+  const sanitized =
+    parts.length > 1 ? parts[0] + "." + parts.slice(1).join("") : parts[0];
+  input.value = sanitized;
+  // Sync v-model so vee-validate sees the sanitized value
+  const fieldName = input.name as keyof typeof form.value;
+  if (fieldName in form.value) {
+    (form.value as Record<string, unknown>)[fieldName] =
+      sanitized === "" ? 0 : Number(sanitized);
   }
 };
 
