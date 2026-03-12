@@ -88,12 +88,17 @@ export default defineNuxtConfig({
             "https://www.google-analytics.com",
           ],
 
-          "font-src": ["'self'"],
+          "font-src": [
+            "'self'",
+            "https://fonts.zohocdn.com",
+            "https://static.zohocdn.com",
+          ],
 
           "connect-src": [
             "'self'",
             "https:",
             "wss://*.hotjar.com",
+            "wss://ws.hotjar.com",
             process.env.BASE_URL || "http://localhost:3000",
             process.env.API_URL || "http://localhost:1337",
             "https://*.logrocket.io",
@@ -105,6 +110,8 @@ export default defineNuxtConfig({
             "https://salesiq.zoho.com",
             "wss://salesiq.zohopublic.com",
             "wss://salesiq.zoho.com",
+            "https://*.zohocdn.com",
+            "wss://*.zohocdn.com",
           ],
 
           "frame-src": [
