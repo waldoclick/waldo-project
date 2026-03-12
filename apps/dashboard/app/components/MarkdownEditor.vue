@@ -71,3 +71,7 @@ onBeforeUnmount(() => {
   easyMDE = null;
 });
 </script>
+
+<style>
+@import "easymde/dist/easymde.min.css";
+</style>
