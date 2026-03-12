@@ -2,11 +2,10 @@
   <div class="page">
     <HeaderDefault :show-search="true" />
     <HeroResults
-      v-if="adsData && adsData.category"
-      :bg-color="adsData.category.color || '#f0f0f0'"
-      :color="adsData.category.color || '#f0f0f0'"
-      :title="adsData.category.name"
-      :icon="getCategoryIcon(adsData.category)"
+      :bg-color="categoryData?.color || '#f0f0f0'"
+      :color="categoryData?.color || '#f0f0f0'"
+      :title="categoryData?.name || 'Anuncios'"
+      :category-icon="categoryIconComponent"
     />
     <FilterResults v-if="adsData && adsData.ads && adsData.ads.length > 0" />
     <AdArchive
@@ -58,11 +57,12 @@ const { $setSEO, $setStructuredData } = useNuxtApp() as unknown as {
 };
 const config = useRuntimeConfig();
 
-import { ref, watch, computed } from "vue";
+import { watch, computed } from "vue";
 import { useRoute } from "nuxt/app";
 import { useCategoriesStore } from "@/stores/categories.store";
 import { useAdsStore } from "@/stores/ads.store";
 import { useFilterStore } from "@/stores/filter.store";
+import { useIcons } from "@/composables/useIcons";
 
 // components
 import HeaderDefault from "@/components/HeaderDefault.vue";
@@ -81,15 +81,9 @@ import type { Pagination } from "@/types/pagination";
 interface AdsData {
   ads: Ad[];
   pagination: Pagination;
-  category: Category;
   relatedAds: Ad[];
   relatedLoading: boolean;
   relatedError: string | null;
-}
-
-interface Commune {
-  id: number;
-  name: string;
 }
 
 // Obtener la categoría por category
@@ -97,35 +91,36 @@ const route = useRoute();
 const categoriesStore = useCategoriesStore();
 const adsStore = useAdsStore();
 const filterStore = useFilterStore();
-const media = useStrapiMedia("");
+const { getCategoryIcon: getCategoryIconComponent } = useIcons();
 
-const defaultCategory = ref<Category>({
-  id: 0,
-  name: "Anuncios",
-  slug: "",
-  color: "#f0f0f0",
-  icon: {
-    url: "",
+// Icono de la categoría como componente Lucide (para el hero)
+const categoryIconComponent = computed(() =>
+  categorySlug.value ? getCategoryIconComponent(categorySlug.value) : undefined,
+);
+
+// Carga de categoría separada — key estable por slug, independiente del resto de filtros
+const categorySlug = computed(() => route.query.category?.toString() || "");
+
+const { data: categoryData } = await useAsyncData<Category | null>(
+  () => `category-${categorySlug.value}`,
+  async () => {
+    if (!categorySlug.value) return null;
+    await categoriesStore.loadCategory(categorySlug.value);
+    return categoriesStore.category ?? null;
   },
-  createdAt: "",
-  updatedAt: "",
-  publishedAt: "",
-});
+  {
+    watch: [categorySlug],
+    server: true,
+    default: () => null,
+  },
+);
 
-// Función para obtener el icono de la categoría
-const getCategoryIcon = (category: Category) => {
-  if (category && category.icon) {
-    return media + category.icon.url;
-  }
-  return "";
-};
-
-// Usar useAsyncData para cargar anuncios y categorías
-const { data: adsData, refresh } = await useAsyncData<AdsData>(
+// Usar useAsyncData para cargar anuncios
+const { data: adsData } = await useAsyncData<AdsData>(
   () =>
     `adsData-${route.query.category || "all"}-${route.query.page || "1"}-${
       route.query.order || "default"
-    }-${route.query.commune || "all"}-${route.query.s || ""}`, // Clave dinámica basada en query params
+    }-${route.query.commune || "all"}-${route.query.s || ""}`,
   async () => {
     // Pre-load filter communes for FilterResults component
     await filterStore.loadFilterCommunes();
@@ -147,32 +142,17 @@ const { data: adsData, refresh } = await useAsyncData<AdsData>(
         : ["createdAt:desc"];
 
     const filtersParams = {
-      ...(name && { name: { $containsi: name } }), // Búsqueda parcial, insensible a mayúsculas
-      ...(category && { category: { slug: { $eq: category } } }), // Filtro por categoría
-      ...(commune && { commune: { id: { $eq: commune } } }), // Filtro por comuna
+      ...(name && { name: { $containsi: name } }),
+      ...(category && { category: { slug: { $eq: category } } }),
+      ...(commune && { commune: { id: { $eq: commune } } }),
       active: { $eq: true },
-      remaining_days: { $gt: 0 }, // Filtro para remaining_days mayor a 0
+      remaining_days: { $gt: 0 },
     };
-
-    let categoryData: Category;
-    if (category) {
-      try {
-        await categoriesStore.loadCategory(category);
-        categoryData = categoriesStore.category || defaultCategory.value;
-      } catch (error) {
-        console.error("Error loading category:", error);
-        categoryData = defaultCategory.value;
-      }
-    } else {
-      categoryData = defaultCategory.value;
-    }
 
     await adsStore.loadAds(filtersParams, paginationParams, sortParams);
     const mainAds = adsStore.ads;
     const mainPagination = adsStore.pagination;
 
-    // Si no hay resultados, cargar anuncios relacionados
-    // Verificar tanto el array como el total para evitar ejecutar related ads cuando hay resultados
     let relatedAds: Ad[] = [];
     let relatedLoading = false;
     let relatedError = null;
@@ -195,7 +175,6 @@ const { data: adsData, refresh } = await useAsyncData<AdsData>(
     return {
       ads: mainAds,
       pagination: mainPagination,
-      category: categoryData,
       relatedAds,
       relatedLoading,
       relatedError,
@@ -213,7 +192,6 @@ const { data: adsData, refresh } = await useAsyncData<AdsData>(
     default: () => ({
       ads: [],
       pagination: { page: 1, pageSize: 20, pageCount: 0, total: 0 },
-      category: defaultCategory.value,
       relatedAds: [],
       relatedLoading: false,
       relatedError: null,
@@ -238,7 +216,7 @@ const { data: adsData, refresh } = await useAsyncData<AdsData>(
 // Función para generar el título SEO según los parámetros de búsqueda
 const generateSEOTitle = () => {
   const searchQuery = route.query.s?.toString();
-  const categoryName = adsData.value?.category?.name;
+  const categoryName = categoryData.value?.name;
   const communeId = route.query.commune?.toString();
   // Buscar la comuna en los anuncios para obtener su nombre
   const communeName = adsData.value?.ads.find(
@@ -279,7 +257,7 @@ const generateSEOTitle = () => {
 // Función para generar la descripción SEO
 const generateSEODescription = () => {
   const searchQuery = route.query.s?.toString();
-  const categoryName = adsData.value?.category?.name;
+  const categoryName = categoryData.value?.name;
   const communeId = route.query.commune?.toString();
   // Buscar la comuna en los anuncios para obtener su nombre
   const communeObj = adsData.value?.ads.find(
