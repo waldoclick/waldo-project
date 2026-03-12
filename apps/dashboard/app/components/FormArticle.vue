@@ -24,16 +24,11 @@
         <ErrorMessage name="header" />
       </div>
 
-      <div class="form__group">
-        <label class="form__label" for="body">Cuerpo</label>
-        <Field
-          v-model="form.body"
-          as="textarea"
-          name="body"
-          class="form__control"
-          rows="8"
-        />
-        <ErrorMessage name="body" />
+      <div class="form__group form__group--editor">
+        <label class="form__label">Cuerpo</label>
+        <ClientOnly>
+          <MarkdownEditor v-model="form.body" />
+        </ClientOnly>
       </div>
 
       <div class="form__group">
