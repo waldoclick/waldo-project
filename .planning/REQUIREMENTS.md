@@ -45,20 +45,20 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| NEWS-01 | TBD | Pending |
-| NEWS-02 | TBD | Pending |
-| NEWS-03 | TBD | Pending |
-| NEWS-04 | TBD | Pending |
-| NEWS-05 | TBD | Pending |
-| NEWS-06 | TBD | Pending |
-| NEWS-07 | TBD | Pending |
-| NEWS-08 | TBD | Pending |
-| NEWS-09 | TBD | Pending |
+| NEWS-01 | Phase 063 | Pending |
+| NEWS-02 | Phase 063 | Pending |
+| NEWS-03 | Phase 063 | Pending |
+| NEWS-04 | Phase 064 | Pending |
+| NEWS-05 | Phase 064 | Pending |
+| NEWS-06 | Phase 064 | Pending |
+| NEWS-07 | Phase 064 | Pending |
+| NEWS-08 | Phase 063 | Pending |
+| NEWS-09 | Phase 064 | Pending |
 
 **Coverage:**
 - v1.29 requirements: 9 total
-- Mapped to phases: 0 (pending roadmap)
-- Unmapped: 9 ⚠
+- Mapped to phases: 9 ✓
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-12*
