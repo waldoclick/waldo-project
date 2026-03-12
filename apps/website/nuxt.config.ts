@@ -69,6 +69,8 @@ export default defineNuxtConfig({
             "https://www.gstatic.com",
             "https://*.sentry.io",
             "https://*.ingest.sentry.io",
+            "https://salesiq.zohopublic.com",
+            "https://salesiq.zoho.com",
           ],
 
           "style-src": ["'self'", "'unsafe-inline'"],
@@ -96,6 +98,10 @@ export default defineNuxtConfig({
             "https://*.sentry.io",
             "https://*.ingest.sentry.io",
             "https://www.google-analytics.com",
+            "https://salesiq.zohopublic.com",
+            "https://salesiq.zoho.com",
+            "wss://salesiq.zohopublic.com",
+            "wss://salesiq.zoho.com",
           ],
 
           "frame-src": [
@@ -321,6 +327,8 @@ export default defineNuxtConfig({
       sentryDebug: process.env.SENTRY_DEBUG === "true",
       logRocketAppId: process.env.LOGROCKET_APP_ID || "myogth/waldo",
       devMode: process.env.DEV_MODE === "true",
+      zohoChat: process.env.ZOHO_CHAT === "true",
+      zohoWidgetCode: process.env.ZOHO_WIDGET_CODE || "",
     },
     // Variables privadas del servidor
     devUsername: process.env.DEV_USERNAME,
