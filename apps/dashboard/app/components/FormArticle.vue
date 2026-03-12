@@ -24,11 +24,9 @@
         <ErrorMessage name="header" />
       </div>
 
-      <div class="form__group form__group--editor">
+      <div class="form__group">
         <label class="form__label">Cuerpo</label>
-        <ClientOnly>
-          <MarkdownEditor v-model="form.body" />
-        </ClientOnly>
+        <TextareaArticle v-model="form.body" />
       </div>
 
       <div class="form__group">

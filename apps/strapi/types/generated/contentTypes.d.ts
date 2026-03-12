@@ -640,6 +640,45 @@ export interface ApiAdAd extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
+  collectionName: "articles";
+  info: {
+    description: "News articles for the platform";
+    displayName: "Article";
+    pluralName: "articles";
+    singularName: "article";
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    body: Schema.Attribute.RichText;
+    categories: Schema.Attribute.Relation<
+      "manyToMany",
+      "api::category.category"
+    >;
+    cover: Schema.Attribute.Media<"images", true>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private;
+    gallery: Schema.Attribute.Media<"images", true>;
+    header: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::article.article"
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    seo_description: Schema.Attribute.String;
+    seo_title: Schema.Attribute.String;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
   collectionName: "categories";
   info: {
@@ -1499,6 +1538,7 @@ declare module "@strapi/strapi" {
       "api::ad-pack.ad-pack": ApiAdPackAdPack;
       "api::ad-reservation.ad-reservation": ApiAdReservationAdReservation;
       "api::ad.ad": ApiAdAd;
+      "api::article.article": ApiArticleArticle;
       "api::category.category": ApiCategoryCategory;
       "api::commune.commune": ApiCommuneCommune;
       "api::condition.condition": ApiConditionCondition;

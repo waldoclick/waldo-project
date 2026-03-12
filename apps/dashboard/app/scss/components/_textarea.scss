@@ -1,0 +1,54 @@
+@use "../abstracts/variables" as *;
+
+.textarea-article {
+  border: 2px solid $platinum;
+  border-radius: 4px;
+  background: white;
+  width: 100%;
+  transition: border-color 0.3s;
+
+  &:focus-within {
+    border-color: $charcoal;
+  }
+
+  &__toolbar {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 8px;
+    border-bottom: 1px solid $platinum;
+
+    &__btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: none;
+      border-radius: 3px;
+      color: $charcoal;
+      cursor: pointer;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: rgba($charcoal, 0.08);
+      }
+    }
+  }
+
+  &__editor {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 200px;
+    box-sizing: border-box;
+    color: $charcoal;
+  }
+}
