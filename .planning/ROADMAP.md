@@ -39,7 +39,10 @@
   3. Un usuario que hace logout no ve el perfil del usuario anterior (nombre, email, datos de `useMeStore`/`useUserStore`) al navegar a la cuenta
   4. El `referer`, `contactFormSent` e `isMobileMenuOpen` de `useAppStore` vuelven a sus valores iniciales después del logout
   5. Los tres puntos de logout (`MenuUser.vue`, `MobileBar.vue`, `SidebarAccount.vue`) usan `useLogout()` — no hay código de logout duplicado; `nuxt typecheck` pasa con zero errores
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 062-01-PLAN.md — Add reset() to Composition API stores + create useLogout composable with tests
+- [ ] 062-02-PLAN.md — Replace inline logout in 3 components + typecheck
 
 ## Progress
 
