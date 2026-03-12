@@ -90,6 +90,7 @@ export default defineNuxtConfig({
 
           "font-src": [
             "'self'",
+            "https://css.zohocdn.com",
             "https://fonts.zohocdn.com",
             "https://static.zohocdn.com",
           ],
