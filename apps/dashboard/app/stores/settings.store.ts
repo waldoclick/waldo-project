@@ -26,6 +26,7 @@ interface SettingsState {
   packs: SectionSettings;
   regions: SectionSettings;
   communes: SectionSettings;
+  articles: SectionSettings;
 }
 
 const defaultSectionSettings: SectionSettings = {
@@ -56,6 +57,7 @@ export const useSettingsStore = defineStore(
     const packs = ref<SectionSettings>({ ...defaultSectionSettings });
     const regions = ref<SectionSettings>({ ...defaultSectionSettings });
     const communes = ref<SectionSettings>({ ...defaultSectionSettings });
+    const articles = ref<SectionSettings>({ ...defaultSectionSettings });
 
     // Getters para cada sección
     const getOrdersFilters = computed(() => ({
@@ -143,6 +145,11 @@ export const useSettingsStore = defineStore(
       pageSize: communes.value.pageSize,
     }));
 
+    const getArticlesFilters = computed(() => ({
+      sortBy: articles.value.sortBy,
+      pageSize: articles.value.pageSize,
+    }));
+
     // Actions genéricas para cualquier sección
     function setSearchTerm(section: keyof SettingsState, term: string): void {
       const sectionSettings = getSectionSettings(section);
@@ -219,6 +226,8 @@ export const useSettingsStore = defineStore(
           return regions;
         case "communes":
           return communes;
+        case "articles":
+          return articles;
         default:
           throw new Error(`Unknown section: ${section}`);
       }
@@ -243,6 +252,7 @@ export const useSettingsStore = defineStore(
       packs,
       regions,
       communes,
+      articles,
       // Getters
       getOrdersFilters,
       getAdsPendingsFilters,
@@ -261,6 +271,7 @@ export const useSettingsStore = defineStore(
       getPacksFilters,
       getRegionsFilters,
       getCommunesFilters,
+      getArticlesFilters,
       // Actions
       setSearchTerm,
       setSortBy,
