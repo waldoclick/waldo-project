@@ -313,6 +313,17 @@
               <span>Comunas</span>
             </NuxtLink>
           </li>
+          <li
+            class="menu--default__subitem"
+            :class="{
+              'menu--default__subitem--active': isRouteActive('/articles'),
+            }"
+          >
+            <NuxtLink to="/articles" class="menu--default__sublink">
+              <Newspaper class="menu--default__subicon" />
+              <span>Artículos</span>
+            </NuxtLink>
+          </li>
         </ul>
       </li>
     </ul>
@@ -345,6 +356,7 @@ import {
   Box,
   MapPin,
   Building,
+  Newspaper,
 } from "lucide-vue-next";
 
 const route = useRoute();
@@ -366,7 +378,8 @@ const isMantenedoresActive = computed(() => {
     isRouteActive("/faqs") ||
     isRouteActive("/packs") ||
     isRouteActive("/regions") ||
-    isRouteActive("/communes")
+    isRouteActive("/communes") ||
+    isRouteActive("/articles")
   );
 });
 
@@ -391,7 +404,8 @@ watch(
       path.startsWith("/faqs") ||
       path.startsWith("/packs") ||
       path.startsWith("/regions") ||
-      path.startsWith("/communes")
+      path.startsWith("/communes") ||
+      path.startsWith("/articles")
     ) {
       openMenu.value = "mantenedores";
     } else {
