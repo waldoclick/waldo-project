@@ -67,8 +67,9 @@ None.
 | 14 | Filter expired ads (remaining_days <= 0) from user profile listing by adding remaining_days: { $gt: 0 } to [slug].vue filtersParams | 2026-03-11 | 12398f4 | [14-filter-expired-ads-from-user-profile-lis](./quick/14-filter-expired-ads-from-user-profile-lis/) |
 | 15 | Filter expired/inactive ads from ad detail page — add active.$eq:true and remaining_days.$gt:0 to loadAdBySlug filters so expired ads return 404 | 2026-03-11 | 787b13d | [15-filter-expired-ads-from-ad-detail-page](./quick/15-filter-expired-ads-from-ad-detail-page/) |
 | 16 | Implement Zoho SalesIQ chat widget plugin: runtimeConfig flags, CSP origins, zoho.client.ts, Window.$zoho type | 2026-03-12 | 36b6e58 | [16-implement-zoho-salesiq-chat-widget-plugi](./quick/16-implement-zoho-salesiq-chat-widget-plugi/) |
+| 17 | Fix Zoho chat not showing: add js/css/static.zohocdn.com to CSP script-src/style-src, trim ZOHO_CHAT env var trailing space | 2026-03-12 | 3904fbb | [16-implement-zoho-salesiq-chat-widget-plugi](./quick/16-implement-zoho-salesiq-chat-widget-plugi/) |
 
-**Last activity:** 2026-03-12 - Completed quick task 16: Implement Zoho SalesIQ chat widget plugin
+**Last activity:** 2026-03-12 - Completed quick task 17: Fix Zoho chat CSP and env var trailing space
 
 ## Decisions
 
