@@ -15,15 +15,15 @@ Requirements for this milestone. Each maps to roadmap phases.
 
 ### Dashboard — Gestión
 
-- [ ] **NEWS-04**: El administrador puede ver el listado de noticias en el dashboard (título, estado published/draft, fecha)
-- [ ] **NEWS-05**: El administrador puede crear una noticia con todos sus campos desde el dashboard
-- [ ] **NEWS-06**: El administrador puede editar una noticia existente
-- [ ] **NEWS-07**: El administrador puede eliminar una noticia
+- [x] **NEWS-04**: El administrador puede ver el listado de noticias en el dashboard (título, estado published/draft, fecha)
+- [x] **NEWS-05**: El administrador puede crear una noticia con todos sus campos desde el dashboard
+- [x] **NEWS-06**: El administrador puede editar una noticia existente
+- [x] **NEWS-07**: El administrador puede eliminar una noticia
 
 ### SEO
 
 - [ ] **NEWS-08**: La noticia tiene campos SEO: `seo_title` (texto corto) y `seo_description` (texto corto), ambos opcionales
-- [ ] **NEWS-09**: El administrador puede completar los campos SEO al crear o editar una noticia desde el dashboard
+- [x] **NEWS-09**: El administrador puede completar los campos SEO al crear o editar una noticia desde el dashboard
 
 ## Future Requirements
 
@@ -48,12 +48,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | NEWS-01 | Phase 063 | Pending |
 | NEWS-02 | Phase 063 | Pending |
 | NEWS-03 | Phase 063 | Pending |
-| NEWS-04 | Phase 064 | Pending |
-| NEWS-05 | Phase 064 | Pending |
-| NEWS-06 | Phase 064 | Pending |
-| NEWS-07 | Phase 064 | Pending |
+| NEWS-04 | Phase 064 | Complete |
+| NEWS-05 | Phase 064 | Complete |
+| NEWS-06 | Phase 064 | Complete |
+| NEWS-07 | Phase 064 | Complete |
 | NEWS-08 | Phase 063 | Pending |
-| NEWS-09 | Phase 064 | Pending |
+| NEWS-09 | Phase 064 | Complete |
 
 **Coverage:**
 - v1.29 requirements: 9 total

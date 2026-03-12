@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.29
 milestone_name: News Manager
-status: in_progress
-stopped_at: Phase 063 complete — ready to plan Phase 064
-last_updated: "2026-03-12T01:00:00.000Z"
+status: planning
+stopped_at: Completed 064-01-PLAN.md
+last_updated: "2026-03-12T23:16:56.134Z"
 progress:
   total_phases: 2
   completed_phases: 1
-  total_plans: 1
-  completed_plans: 1
-  percent: 50
+  total_plans: 3
+  completed_plans: 2
+  percent: 71
 ---
 
 # Session State
@@ -25,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-03-12 after v1.29 milestone start)
 ## Position
 
 **Milestone:** v1.29 — IN PROGRESS
-**Phase:** 064 — Dashboard News UI (not started)
-**Status:** Phase 063 complete — ready to plan Phase 064
+**Phase:** 064 — Dashboard Articles UI (Plan 01 complete, Plan 02 pending)
+**Status:** In progress — 064-01 done; ready for 064-02 (pages)
 
-**Progress:** [█████░░░░░] 50%
+**Progress:** [███████░░░] 71%
 
-**Stopped at:** Phase 063 complete — next step: `/gsd-plan-phase 064`
+**Stopped at:** Completed 064-01-PLAN.md
 
 ## Session Log
 
@@ -44,6 +44,8 @@ See: .planning/PROJECT.md (updated 2026-03-12 after v1.29 milestone start)
 - Phase 063 groups all Strapi backend work (NEWS-01, 02, 03, 08) — content type schema + SEO fields + native draft/publish
 - Phase 064 groups all dashboard frontend work (NEWS-04, 05, 06, 07, 09) — list/create/edit/delete + SEO input
 - Granularity: coarse — 2 phases is the natural delivery boundary for backend-then-frontend
+- 064-01: strapi.delete in Strapi v5 SDK requires string documentId, not numeric id — use `documentId || String(id)` pattern
+- 064-01: FormArticle defers body/cover/gallery/categories to Strapi admin; form covers text fields + SEO only
 
 ### Blockers/Concerns
 
