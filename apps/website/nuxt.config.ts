@@ -127,6 +127,8 @@ export default defineNuxtConfig({
 
           "script-src-attr": ["'unsafe-inline'"],
 
+          "media-src": ["'self'", "https://static.zohocdn.com"],
+
           "child-src": ["'self'", "blob:"],
           "worker-src": ["'self'", "blob:"],
           "object-src": ["'none'"],
