@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.29
 milestone_name: News Manager
 status: in_progress
-stopped_at: Roadmap created — ready to plan Phase 063
-last_updated: "2026-03-12T00:00:00.000Z"
+stopped_at: Phase 063 complete — ready to plan Phase 064
+last_updated: "2026-03-12T01:00:00.000Z"
 progress:
   total_phases: 2
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
-  percent: 0
+  completed_phases: 1
+  total_plans: 1
+  completed_plans: 1
+  percent: 50
 ---
 
 # Session State
@@ -25,18 +25,19 @@ See: .planning/PROJECT.md (updated 2026-03-12 after v1.29 milestone start)
 ## Position
 
 **Milestone:** v1.29 — IN PROGRESS
-**Phase:** 063 — News Content Type (not started)
-**Status:** Roadmap created — ready to plan Phase 063
+**Phase:** 064 — Dashboard News UI (not started)
+**Status:** Phase 063 complete — ready to plan Phase 064
 
-**Progress:** [░░░░░░░░░░] 0%
+**Progress:** [█████░░░░░] 50%
 
-**Stopped at:** Roadmap created — next step: `/gsd-plan-phase 063`
+**Stopped at:** Phase 063 complete — next step: `/gsd-plan-phase 064`
 
 ## Session Log
 
 - 2026-03-12: Milestone v1.28 complete — Logout Store Cleanup shipped
 - 2026-03-12: Milestone v1.29 started — News Manager
 - 2026-03-12: Roadmap created — Phases 063 (Strapi schema) + 064 (Dashboard UI) defined; 9/9 requirements mapped
+- 2026-03-12: Phase 063 complete — News content type created in Strapi (schema.json + controller + routes + service); /api/news endpoint ready
 
 ### Key Decisions
 
