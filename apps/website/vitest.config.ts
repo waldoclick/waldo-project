@@ -13,6 +13,9 @@ export default defineConfig({
       "@": fileURLToPath(new URL("./app", import.meta.url)),
       "~": fileURLToPath(new URL("./", import.meta.url)),
       "#app": fileURLToPath(new URL("./.nuxt", import.meta.url)),
+      "#imports": fileURLToPath(
+        new URL("./tests/stubs/imports.stub.ts", import.meta.url),
+      ),
     },
   },
 });
