@@ -3,11 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.26
 milestone_name: Mostrar comprobante Webpay en /pagar/gracias
 current_phase: 061-fix-ga4-ecommerce-events
-status: Complete
-last_updated: "2026-03-12T20:57:38Z"
-last_activity: "2026-03-12 - Completed 061-02: purchase and begin_checkout events wired in pagar pages"
+status: completed
+stopped_at: Completed 061-02-PLAN.md
+last_updated: "2026-03-12T21:02:34.596Z"
+last_activity: "2026-03-12 - Completed 061-02: GA4 ecommerce events wired in /pagar pages"
 progress:
-  total_phases: 1
+  total_phases: 2
   completed_phases: 1
   total_plans: 2
   completed_plans: 2
@@ -23,7 +24,7 @@ See: .planning/PROJECT.md
 
 **Milestone:** v1.26 Mostrar comprobante Webpay en /pagar/gracias
 **Current phase:** 061-fix-ga4-ecommerce-events
-**Status:** Complete — both plans executed
+**Status:** Milestone complete
 
 **Stopped at:** Completed 061-02-PLAN.md
 
