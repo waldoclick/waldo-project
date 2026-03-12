@@ -44,7 +44,6 @@
     "chart.js": "^4.5.1",
     "chartjs-plugin-annotation": "^3.1.0",
     "dompurify": "^3.3.0",
-    "easymde": "^2.20.0",
     "esbuild": "^0.25.2",
     "eslint": "^9.0.0",
     "floating-vue": "^5.2.2",
