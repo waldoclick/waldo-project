@@ -51,10 +51,15 @@ export const useMeStore = defineStore("me", () => {
     }
   };
 
+  const reset = () => {
+    me.value = null;
+  };
+
   return {
     me,
     loadMe,
     isProfileComplete,
     saveUsername,
+    reset,
   };
 });

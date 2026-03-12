@@ -171,6 +171,12 @@ export const useUserStore = defineStore("user", () => {
     }
   };
 
+  const reset = () => {
+    users.value = [];
+    user.value = null;
+    ads.value = [];
+  };
+
   return {
     users,
     user,
@@ -182,5 +188,6 @@ export const useUserStore = defineStore("user", () => {
     loadUserOrders,
     updateUserProfile,
     deactivateAd,
+    reset,
   };
 });
