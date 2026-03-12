@@ -1,8 +1,8 @@
 <template>
   <Form v-slot="{ meta }" :validation-schema="schema" @submit="handleSubmit">
     <div class="form form--article">
-      <div class="form--article__field">
-        <label class="form--article__field__title" for="title">Título</label>
+      <div class="form__group">
+        <label class="form__label" for="title">Título</label>
         <Field
           v-model="form.title"
           name="title"
@@ -12,10 +12,8 @@
         <ErrorMessage name="title" />
       </div>
 
-      <div class="form--article__field">
-        <label class="form--article__field__title" for="header"
-          >Cabecera / Bajada</label
-        >
+      <div class="form__group">
+        <label class="form__label" for="header">Cabecera / Bajada</label>
         <Field
           v-model="form.header"
           as="textarea"
@@ -26,10 +24,8 @@
         <ErrorMessage name="header" />
       </div>
 
-      <div class="form--article__field">
-        <label class="form--article__field__title" for="seo_title"
-          >Título SEO</label
-        >
+      <div class="form__group">
+        <label class="form__label" for="seo_title">Título SEO</label>
         <Field
           v-model="form.seo_title"
           name="seo_title"
@@ -39,10 +35,8 @@
         <ErrorMessage name="seo_title" />
       </div>
 
-      <div class="form--article__field">
-        <label class="form--article__field__title" for="seo_description"
-          >Descripción SEO</label
-        >
+      <div class="form__group">
+        <label class="form__label" for="seo_description">Descripción SEO</label>
         <Field
           v-model="form.seo_description"
           as="textarea"
