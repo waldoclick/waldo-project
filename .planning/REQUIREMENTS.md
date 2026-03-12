@@ -9,15 +9,15 @@ Requirements for this milestone. Each maps to roadmap phases.
 
 ### Logout Behavior
 
-- [ ] **LGOUT-01**: Al hacer logout, `useAdStore` se resetea — el wizard de creación de aviso (datos personales: email, teléfono, dirección; y datos del aviso) queda limpio para el próximo usuario
-- [ ] **LGOUT-02**: Al hacer logout, `useHistoryStore` se resetea — el historial de avisos vistos no se traspasa al siguiente usuario
-- [ ] **LGOUT-03**: Al hacer logout, `useMeStore` y `useUserStore` se resetean — los datos de perfil en memoria quedan limpios
-- [ ] **LGOUT-04**: Al hacer logout, `useAdsStore` se resetea — la caché de listados (marcada RISK) no persiste entre sesiones de usuarios distintos
-- [ ] **LGOUT-05**: Al hacer logout, `useAppStore` se resetea — `referer`, `contactFormSent` e `isMobileMenuOpen` vuelven a su estado inicial
+- [x] **LGOUT-01**: Al hacer logout, `useAdStore` se resetea — el wizard de creación de aviso (datos personales: email, teléfono, dirección; y datos del aviso) queda limpio para el próximo usuario
+- [x] **LGOUT-02**: Al hacer logout, `useHistoryStore` se resetea — el historial de avisos vistos no se traspasa al siguiente usuario
+- [x] **LGOUT-03**: Al hacer logout, `useMeStore` y `useUserStore` se resetean — los datos de perfil en memoria quedan limpios
+- [x] **LGOUT-04**: Al hacer logout, `useAdsStore` se resetea — la caché de listados (marcada RISK) no persiste entre sesiones de usuarios distintos
+- [x] **LGOUT-05**: Al hacer logout, `useAppStore` se resetea — `referer`, `contactFormSent` e `isMobileMenuOpen` vuelven a su estado inicial
 
 ### Code Quality
 
-- [ ] **QUAL-01**: La lógica de logout está centralizada en un composable `useLogout` reutilizable; los tres componentes de logout (`MenuUser.vue`, `MobileBar.vue`, `SidebarAccount.vue`) usan el composable en lugar de código duplicado
+- [x] **QUAL-01**: La lógica de logout está centralizada en un composable `useLogout` reutilizable; los tres componentes de logout (`MenuUser.vue`, `MobileBar.vue`, `SidebarAccount.vue`) usan el composable en lugar de código duplicado
 
 ## Future Requirements
 
@@ -37,12 +37,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| LGOUT-01 | Phase 062 | Pending |
-| LGOUT-02 | Phase 062 | Pending |
-| LGOUT-03 | Phase 062 | Pending |
-| LGOUT-04 | Phase 062 | Pending |
-| LGOUT-05 | Phase 062 | Pending |
-| QUAL-01 | Phase 062 | Pending |
+| LGOUT-01 | Phase 062 | Complete |
+| LGOUT-02 | Phase 062 | Complete |
+| LGOUT-03 | Phase 062 | Complete |
+| LGOUT-04 | Phase 062 | Complete |
+| LGOUT-05 | Phase 062 | Complete |
+| QUAL-01 | Phase 062 | Complete |
 
 **Coverage:**
 - v1.28 requirements: 6 total
