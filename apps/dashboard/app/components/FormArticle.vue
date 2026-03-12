@@ -25,6 +25,18 @@
       </div>
 
       <div class="form__group">
+        <label class="form__label" for="body">Cuerpo</label>
+        <Field
+          v-model="form.body"
+          as="textarea"
+          name="body"
+          class="form__control"
+          rows="8"
+        />
+        <ErrorMessage name="body" />
+      </div>
+
+      <div class="form__group">
         <label class="form__label" for="seo_title">Título SEO</label>
         <Field
           v-model="form.seo_title"
@@ -71,6 +83,7 @@ interface ArticleData {
   documentId?: string;
   title?: string;
   header?: string;
+  body?: string;
   seo_title?: string;
   seo_description?: string;
 }
@@ -94,6 +107,7 @@ const lastHydratedId = ref<string | number | null>(null);
 const schema = yup.object({
   title: yup.string().required("Título es requerido"),
   header: yup.string().optional(),
+  body: yup.string().optional(),
   seo_title: yup.string().optional(),
   seo_description: yup.string().optional(),
 });
@@ -101,6 +115,7 @@ const schema = yup.object({
 const form = ref({
   title: "",
   header: "",
+  body: "",
   seo_title: "",
   seo_description: "",
 });
@@ -117,6 +132,7 @@ const hydrateForm = () => {
   form.value = {
     title: props.article?.title || "",
     header: props.article?.header || "",
+    body: props.article?.body || "",
     seo_title: props.article?.seo_title || "",
     seo_description: props.article?.seo_description || "",
   };
@@ -130,6 +146,7 @@ const handleSubmit = async (values: Record<string, unknown>) => {
     const payload = {
       title: (values.title as string).trim(),
       header: (values.header as string)?.trim() || null,
+      body: (values.body as string)?.trim() || null,
       seo_title: (values.seo_title as string)?.trim() || null,
       seo_description: (values.seo_description as string)?.trim() || null,
     };
@@ -179,6 +196,7 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       form.value = {
         title: payload.title,
         header: payload.header || "",
+        body: payload.body || "",
         seo_title: payload.seo_title || "",
         seo_description: payload.seo_description || "",
       };
