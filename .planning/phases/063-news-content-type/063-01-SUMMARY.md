@@ -60,6 +60,7 @@ Created the `News` collection type in Strapi v5 with all required fields, catego
 
 ## What Phase 064 Can Use
 
-- Endpoint: `/api/news` (GET list, GET single, POST, PUT, DELETE)
+- Endpoint: `/api/news-articles` (GET list, GET single, POST, PUT, DELETE)
 - Content type UID: `api::news.news`
 - All standard Strapi CRUD routes available via core router
+- Note: `pluralName` is `"news-articles"` (not `"news"`) — Strapi's validator puts singularName and pluralName in the same uniqueness array, so `"news"/"news"` would collide with itself
