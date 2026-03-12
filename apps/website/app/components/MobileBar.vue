@@ -164,7 +164,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 const { Swal } = useSweetAlert2();
-import { useRouter, useRoute } from "vue-router";
+import { useRoute } from "vue-router";
 import {
   Menu as IconMenu,
   X as IconX,
@@ -185,11 +185,10 @@ import SearchIcon from "@/components/SearchIcon.vue";
 import LogoBlack from "@/components/LogoBlack.vue";
 
 const me = useStrapiUser();
-const { logout } = useStrapiAuth();
+const { logout } = useLogout();
 const appStore = useAppStore();
 const { isMobileMenuOpen } = storeToRefs(appStore);
 
-const router = useRouter();
 const route = useRoute();
 
 const handleLogout = async () => {
@@ -202,9 +201,7 @@ const handleLogout = async () => {
   }).then(async ({ isConfirmed }: { isConfirmed: boolean }) => {
     if (isConfirmed) {
       try {
-        appStore.closeMobileMenu();
         await logout();
-        router.push("/");
       } catch (error) {
         console.error("Error al cerrar sesión:", error);
       }
