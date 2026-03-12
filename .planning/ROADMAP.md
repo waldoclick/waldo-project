@@ -50,7 +50,10 @@
   2. A `News` entry can be related to one or more `categorias` entries (optional relation)
   3. A `News` entry can be saved as draft or published using Strapi's native draft/publish toggle — no custom status field exists on the schema
   4. A `News` entry has optional `seo_title` and `seo_description` short-text fields visible in Strapi admin
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 063-01-PLAN.md — Create News content type (schema + controller + routes + service)
 
 ### Phase 064: Dashboard News UI
 **Goal**: Dashboard administrators can list, create, edit, and delete news entries through the dashboard UI, including filling in SEO fields.
