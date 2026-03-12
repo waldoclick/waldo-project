@@ -3,6 +3,13 @@
     <DropdownApps />
     <DropdownSales />
     <DropdownPendings />
+    <NuxtLink
+      to="/articles"
+      class="toolbar--default__trigger"
+      title="Artículos"
+    >
+      <Newspaper :size="20" class="toolbar--default__trigger__icon" />
+    </NuxtLink>
     <button
       v-if="fullscreenAllowed"
       type="button"
@@ -22,7 +29,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue";
-import { Maximize2, Minimize2 } from "lucide-vue-next";
+import { Maximize2, Minimize2, Newspaper } from "lucide-vue-next";
 import DropdownApps from "@/components/DropdownApps.vue";
 import DropdownSales from "@/components/DropdownSales.vue";
 import DropdownPendings from "@/components/DropdownPendings.vue";
