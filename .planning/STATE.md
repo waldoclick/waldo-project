@@ -64,10 +64,11 @@ None.
 | 11 | Add handleYearInput (integer-only paste sanitizer) and upgrade handleDecimalInput to strip e/E/+/- and collapse multiple dots in FormCreateFour | 2026-03-11 | c2c5da8 | [11-sanitize-paste-input-in-numeric-fields-o](./quick/11-sanitize-paste-input-in-numeric-fields-o/) |
 | 12 | Add getFeaturedAdReservationsText() to useUser and render conditional featured reservation count in AccountMain.vue | 2026-03-11 | 75c05a5 | [12-show-featured-ad-reservations-in-mi-cuen](./quick/12-show-featured-ad-reservations-in-mi-cuen/) |
 | 13 | Fix phantom 404 errors on navigation away from /pagar/gracias and /anunciar/gracias by switching reactive useAsyncData keys to static strings | 2026-03-11 | 562adee | [13-fix-404-error-triggered-when-leaving-pag](./quick/13-fix-404-error-triggered-when-leaving-pag/) |
+| 14 | Filter expired ads (remaining_days <= 0) from user profile listing by adding remaining_days: { $gt: 0 } to [slug].vue filtersParams | 2026-03-11 | 12398f4 | [14-filter-expired-ads-from-user-profile-lis](./quick/14-filter-expired-ads-from-user-profile-lis/) |
+| 15 | Filter expired/inactive ads from ad detail page — add active.$eq:true and remaining_days.$gt:0 to loadAdBySlug filters so expired ads return 404 | 2026-03-11 | 787b13d | [15-filter-expired-ads-from-ad-detail-page](./quick/15-filter-expired-ads-from-ad-detail-page/) |
+| 16 | Implement Zoho SalesIQ chat widget plugin: runtimeConfig flags, CSP origins, zoho.client.ts, Window.$zoho type | 2026-03-12 | 36b6e58 | [16-implement-zoho-salesiq-chat-widget-plugi](./quick/16-implement-zoho-salesiq-chat-widget-plugi/) |
 
-| 16 | Implement Zoho SalesIQ chat widget plugin: runtimeConfig flags, CSP origins, zoho.client.ts, Window.$zoho type | 2026-03-11 | 36b6e58 | [16-implement-zoho-salesiq-chat-widget-plugi](./quick/16-implement-zoho-salesiq-chat-widget-plugi/) |
-
-**Last activity:** 2026-03-11 - Completed quick task 16: Zoho SalesIQ chat widget plugin with runtimeConfig, CSP, and Window type
+**Last activity:** 2026-03-12 - Completed quick task 16: Implement Zoho SalesIQ chat widget plugin
 
 ## Decisions
 
