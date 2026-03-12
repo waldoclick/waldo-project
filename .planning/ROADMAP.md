@@ -25,7 +25,7 @@
 
 ### v1.28 Logout Store Cleanup
 
-- [ ] **Phase 062: Logout Store Cleanup** — Composable `useLogout` centraliza el logout y resetea los 5 stores de usuario; los 3 componentes de entrada usan el composable; typecheck pasa sin errores
+- [x] **Phase 062: Logout Store Cleanup** — Composable `useLogout` centraliza el logout y resetea los 5 stores de usuario; los 3 componentes de entrada usan el composable; typecheck pasa sin errores (completed 2026-03-12)
 
 ## Phase Details
 
@@ -50,4 +50,4 @@ Plans:
 |-------|-----------|----------------|-------------|------------|
 | 060   | v1.26     | 3/3            | Complete    | 2026-03-11 |
 | 061   | v1.27     | 2/2            | Complete    | 2026-03-12 |
-| 062   | 1/2 | In Progress|  | -          |
+| 062   | 2/2 | Complete   | 2026-03-12 | -          |

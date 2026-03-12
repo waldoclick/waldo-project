@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.28
 milestone_name: Logout Store Cleanup
-status: Roadmap created ▸ awaiting `/gsd-plan-phase 062`
-stopped_at: Completed 062-01-PLAN.md
-last_updated: "2026-03-12T22:10:43.442Z"
+status: completed
+stopped_at: Completed 062-02-PLAN.md
+last_updated: "2026-03-12T22:16:28.130Z"
 progress:
   total_phases: 1
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 2
-  completed_plans: 1
-  percent: 50
+  completed_plans: 2
+  percent: 75
 ---
 
 # Session State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-03-12 after v1.28 milestone start)
 
 **Milestone:** v1.28 — IN PROGRESS
 **Phase:** 062 — Logout Store Cleanup
-**Status:** Roadmap created ▸ awaiting `/gsd-plan-phase 062`
+**Status:** Phase 062 complete — all plans executed
 
-**Progress:** [█████░░░░░] 50%
+**Progress:** [████████░░] 75%
 
-**Stopped at:** Completed 062-01-PLAN.md
+**Stopped at:** Completed 062-02-PLAN.md
 
 ## Session Log
 
@@ -40,6 +40,7 @@ See: .planning/PROJECT.md (updated 2026-03-12 after v1.28 milestone start)
 ### Key Decisions
 
 - **062-01:** Explicitly import `useStrapiAuth`/`navigateTo` from `#imports` in `useLogout.ts` for Vitest testability. Added `#imports` alias in vitest.config.ts → `tests/stubs/imports.stub.ts`.
+- **062-02:** Remove `router.push('/')` from all three logout handlers — navigation handled inside `useLogout` composable. Remove `appStore.closeMobileMenu()` from MobileBar logout handler — `useAppStore.$reset()` handles it.
 
 ### Blockers/Concerns
 
