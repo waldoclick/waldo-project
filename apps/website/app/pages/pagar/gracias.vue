@@ -43,7 +43,7 @@ const adAnalytics = useAdAnalytics();
 const purchaseFired = ref(false);
 
 onMounted(() => {
-  adStore.clearAll();
+  adStore.reset();
 });
 
 // Función auxiliar para manejar errores

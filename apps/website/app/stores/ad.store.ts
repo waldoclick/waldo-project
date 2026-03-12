@@ -193,7 +193,7 @@ export const useAdStore = defineStore("ad", {
       this.analytics.featured_selected = item;
     },
 
-    clearAll() {
+    reset() {
       this.pack = 1;
       this.featured = false;
       this.is_invoice = false;

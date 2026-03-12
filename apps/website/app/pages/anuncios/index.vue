@@ -126,7 +126,7 @@ const { data: adsData } = await useAsyncData<AdsData>(
     await filterStore.loadFilterCommunes();
 
     // Limpiar el store antes de cargar nuevos datos para evitar datos obsoletos de navegaciones anteriores
-    adsStore.clearAll();
+    adsStore.reset();
 
     const category = route.query.category?.toString() || null;
     const page = Number.parseInt(route.query.page?.toString() || "1", 10);

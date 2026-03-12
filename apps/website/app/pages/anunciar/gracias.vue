@@ -29,7 +29,7 @@ const strapi = useStrapi();
 const adStore = useAdStore();
 
 onMounted(() => {
-  adStore.clearAll();
+  adStore.reset();
 });
 
 // Middleware
