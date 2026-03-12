@@ -1,0 +1,54 @@
+# Requirements: Waldo Project — v1.28 Logout Store Cleanup
+
+**Defined:** 2026-03-12
+**Core Value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
+
+## v1.28 Requirements
+
+Requirements for this milestone. Each maps to roadmap phases.
+
+### Logout Behavior
+
+- [ ] **LGOUT-01**: Al hacer logout, `useAdStore` se resetea — el wizard de creación de aviso (datos personales: email, teléfono, dirección; y datos del aviso) queda limpio para el próximo usuario
+- [ ] **LGOUT-02**: Al hacer logout, `useHistoryStore` se resetea — el historial de avisos vistos no se traspasa al siguiente usuario
+- [ ] **LGOUT-03**: Al hacer logout, `useMeStore` y `useUserStore` se resetean — los datos de perfil en memoria quedan limpios
+- [ ] **LGOUT-04**: Al hacer logout, `useAdsStore` se resetea — la caché de listados (marcada RISK) no persiste entre sesiones de usuarios distintos
+- [ ] **LGOUT-05**: Al hacer logout, `useAppStore` se resetea — `referer`, `contactFormSent` e `isMobileMenuOpen` vuelven a su estado inicial
+
+### Code Quality
+
+- [ ] **QUAL-01**: La lógica de logout está centralizada en un composable `useLogout` reutilizable; los tres componentes de logout (`MenuUser.vue`, `MobileBar.vue`, `SidebarAccount.vue`) usan el composable en lugar de código duplicado
+
+## Future Requirements
+
+_(No requirements deferred — this milestone is fully scoped)_
+
+## Out of Scope
+
+| Feature | Reason |
+|---------|--------|
+| Dashboard logout cleanup | El problema reportado ocurre solo en el website; dashboard fuera de scope |
+| `useRelatedStore` cleanup | Store RISK-labeled pero contiene solo datos públicos de avisos; no hay riesgo de privacidad entre usuarios |
+| `useCategoriesStore`, `useFilterStore`, `useRegionsStore`, `useCommunesStore`, `useConditionsStore`, `useFaqsStore`, `useIndicatorStore` | Datos públicos de referencia (no son del usuario); seguro compartirlos entre sesiones |
+
+## Traceability
+
+Which phases cover which requirements. Updated during roadmap creation.
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| LGOUT-01 | — | Pending |
+| LGOUT-02 | — | Pending |
+| LGOUT-03 | — | Pending |
+| LGOUT-04 | — | Pending |
+| LGOUT-05 | — | Pending |
+| QUAL-01 | — | Pending |
+
+**Coverage:**
+- v1.28 requirements: 6 total
+- Mapped to phases: 0
+- Unmapped: 6 ⚠️ (roadmap pending)
+
+---
+*Requirements defined: 2026-03-12*
+*Last updated: 2026-03-12 after initial definition*
