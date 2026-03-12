@@ -79,4 +79,4 @@ Plans:
 | 061   | v1.27     | 2/2            | Complete    | 2026-03-12 |
 | 062   | v1.28     | 2/2            | Complete    | 2026-03-12 |
 | 063   | v1.29     | 0/TBD          | Not started | -          |
-| 064   | v1.29     | 0/TBD          | Not started | -          |
+| 064   | 1/2 | In Progress|  | -          |
