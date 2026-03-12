@@ -55,17 +55,21 @@
 Plans:
 - [ ] 063-01-PLAN.md — Create News content type (schema + controller + routes + service)
 
-### Phase 064: Dashboard News UI
-**Goal**: Dashboard administrators can list, create, edit, and delete news entries through the dashboard UI, including filling in SEO fields.
-**Depends on**: Phase 063 (News content type API must exist)
+### Phase 064: Dashboard Articles UI
+**Goal**: Dashboard administrators can list, create, edit, and delete article entries through the dashboard UI, including filling in SEO fields.
+**Depends on**: Phase 063 (Article content type API at /api/articles must exist)
 **Requirements**: NEWS-04, NEWS-05, NEWS-06, NEWS-07, NEWS-09
 **Success Criteria** (what must be TRUE):
-  1. Admin can navigate to a News section in the dashboard and see a list of news items showing title, published/draft status, and date
-  2. Admin can create a new news entry filling in all fields (title, header, body, cover, gallery, category, seo_title, seo_description) and save it
-  3. Admin can open an existing news entry and edit any of its fields, then save the update
-  4. Admin can delete a news entry from the list or detail view
-  5. Admin can fill in `seo_title` and `seo_description` fields when creating or editing a news entry
-**Plans**: TBD
+  1. Admin can navigate to an Artículos section under Mantenedores in the menu and see a list of articles showing title, published/draft status, and date
+  2. Admin can create a new article filling in title, header, seo_title, seo_description and save it
+  3. Admin can open an existing article and edit any of its fields, then save the update
+  4. Admin can delete an article from the list with a confirmation dialog
+  5. Admin can fill in `seo_title` and `seo_description` fields when creating or editing an article
+**Plans**: 2 plans
+
+Plans:
+- [ ] 064-01-PLAN.md — Settings store + ArticlesDefault.vue + FormArticle.vue (data layer and components)
+- [ ] 064-02-PLAN.md — Article pages (index, new, [id], [id]/edit) + MenuDefault entry
 
 ## Progress
 
