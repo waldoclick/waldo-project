@@ -253,6 +253,15 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
     | `purchaseFired` ref guard prevents double-firing in reactive context | `watch` with `immediate: true` can re-evaluate; boolean guard ensures exactly one purchase event per page visit — v1.27 | ✓ Good |
     | `adStore.ad.ad_id === null` as `beginCheckout` guard in `/pagar/index.vue` | Reliable sentinel for pack-only flow; ad-creation always has a numeric `ad_id` from the draft call — v1.27 | ✓ Good |
 
+## Current Milestone: v1.29 News Manager
+
+**Goal:** Permitir a los administradores crear y gestionar noticias desde el dashboard, con soporte de rich text, galerías de imágenes y categorización opcional.
+
+**Target features:**
+- Content type `News` en Strapi (title, header, body rich text, cover gallery, image gallery, category relation)
+- Draft/publish nativo de Strapi (sin campo custom)
+- UI de gestión en el dashboard: listar, crear, editar, eliminar noticias
+
 ## Current State
 
 **Last shipped:** v1.28 (2026-03-12) — Logout store cleanup: `useLogout` composable resets all 6 user stores in locked order before auth logout; 3 entry points migrated; `clearAll()` renamed to `reset()` consistently across all stores
@@ -279,4 +288,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-12 after v1.28 milestone*
+*Last updated: 2026-03-12 — Milestone v1.29 started*
