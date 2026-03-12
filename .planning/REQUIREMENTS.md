@@ -37,17 +37,17 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| LGOUT-01 | — | Pending |
-| LGOUT-02 | — | Pending |
-| LGOUT-03 | — | Pending |
-| LGOUT-04 | — | Pending |
-| LGOUT-05 | — | Pending |
-| QUAL-01 | — | Pending |
+| LGOUT-01 | Phase 062 | Pending |
+| LGOUT-02 | Phase 062 | Pending |
+| LGOUT-03 | Phase 062 | Pending |
+| LGOUT-04 | Phase 062 | Pending |
+| LGOUT-05 | Phase 062 | Pending |
+| QUAL-01 | Phase 062 | Pending |
 
 **Coverage:**
 - v1.28 requirements: 6 total
-- Mapped to phases: 0
-- Unmapped: 6 ⚠️ (roadmap pending)
+- Mapped to phases: 6 ✓
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-12*
