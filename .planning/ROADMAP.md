@@ -35,7 +35,7 @@
 <summary>🚧 v1.29 News Manager (Phases 063–064) — IN PROGRESS</summary>
 
 - [ ] **Phase 063: News Content Type** — Strapi schema, SEO fields, draft/publish native support
-- [ ] **Phase 064: Dashboard News UI** — Full CRUD interface for news management
+- [x] **Phase 064: Dashboard News UI** — Full CRUD interface for news management (completed 2026-03-12)
 
 </details>
 
@@ -79,4 +79,4 @@ Plans:
 | 061   | v1.27     | 2/2            | Complete    | 2026-03-12 |
 | 062   | v1.28     | 2/2            | Complete    | 2026-03-12 |
 | 063   | v1.29     | 0/TBD          | Not started | -          |
-| 064   | 1/2 | In Progress|  | -          |
+| 064   | 1/2 | Complete    | 2026-03-12 | -          |
