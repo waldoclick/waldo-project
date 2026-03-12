@@ -1,5 +1,14 @@
 ## v1.27 Reparar eventos GA4 ecommerce en flujo de pago unificado (Shipped: 2026-03-12)
 
+## v1.28 Logout Store Cleanup (Shipped: 2026-03-12)
+
+**Phases completed:** 1 phases, 2 plans, 0 tasks
+
+**Key accomplishments:**
+- (none recorded)
+
+---
+
 **Phases completed:** 1 phase (061), 2 plans
 **Timeline:** 2026-03-11 → 2026-03-12 (2 days)
 **Git range:** `5e4da12` → `b1de40b`

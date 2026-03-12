@@ -4,7 +4,7 @@ milestone: v1.28
 milestone_name: Logout Store Cleanup
 status: completed
 stopped_at: Completed 062-02-PLAN.md
-last_updated: "2026-03-12T22:19:51.427Z"
+last_updated: "2026-03-12T22:39:10.440Z"
 progress:
   total_phases: 1
   completed_phases: 1
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-03-12 after v1.28 milestone start)
 
 **Milestone:** v1.28 — IN PROGRESS
 **Phase:** 062 — Logout Store Cleanup
-**Status:** Milestone complete
+**Status:** v1.28 milestone complete
 
 **Progress:** [████████░░] 75%
 
