@@ -71,9 +71,12 @@ export default defineNuxtConfig({
             "https://*.ingest.sentry.io",
             "https://salesiq.zohopublic.com",
             "https://salesiq.zoho.com",
+            "https://js.zohocdn.com",
+            "https://css.zohocdn.com",
+            "https://static.zohocdn.com",
           ],
 
-          "style-src": ["'self'", "'unsafe-inline'"],
+          "style-src": ["'self'", "'unsafe-inline'", "https://css.zohocdn.com"],
 
           "img-src": [
             "'self'",
@@ -327,7 +330,7 @@ export default defineNuxtConfig({
       sentryDebug: process.env.SENTRY_DEBUG === "true",
       logRocketAppId: process.env.LOGROCKET_APP_ID || "myogth/waldo",
       devMode: process.env.DEV_MODE === "true",
-      zohoChat: process.env.ZOHO_CHAT === "true",
+      zohoChat: process.env.ZOHO_CHAT?.trim() === "true",
       zohoWidgetCode: process.env.ZOHO_WIDGET_CODE || "",
     },
     // Variables privadas del servidor
