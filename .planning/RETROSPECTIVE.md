@@ -817,6 +817,46 @@
 
 ---
 
+## Milestone: v1.28 — Logout Store Cleanup
+
+**Shipped:** 2026-03-12
+**Phases:** 1 (062) | **Plans:** 2 | **Timeline:** 1 day (2026-03-12)
+**Git range:** `c71e437` → `33cf4ec`
+
+### What Was Built
+- `reset()` action added to `useAdsStore`, `useMeStore`, `useUserStore` (Composition API stores that lack built-in `$reset()`)
+- `useLogout` composable orchestrating 6-store reset sequence in locked order: `useAdStore.$reset()` → `useHistoryStore.$reset()` → `useMeStore.reset()` → `useUserStore.reset()` → `useAdsStore.reset()` → `useAppStore.$reset()` → `strapiAuth.logout()` → `navigateTo('/')`
+- 4 Vitest tests with TDD cycle; `#imports` alias infrastructure in `vitest.config.ts` for Nuxt auto-import mocking
+- `MenuUser.vue`, `MobileBar.vue`, `SidebarAccount.vue` migrated from inline `useStrapiAuth().logout()` + `router.push('/')` to `useLogout().logout()`
+- `clearAll()` renamed to `reset()` in `ad.store.ts` and all 4 call sites — consistent naming across all stores
+
+### What Worked
+- Purely subtractive refactor mindset: the executor correctly identified that `clearAll` was duplicate and the rename + call-site update was the right completion step
+- Wave structure was correct — composable infrastructure first (Wave 1), component wiring second (Wave 2); Wave 2 was entirely mechanical once `useLogout` existed
+- TDD cycle for the composable surfaced the `#imports` vitest alias gap early — fixing it in the RED phase meant GREEN was clean
+
+### What Was Inefficient
+- Plan 062-01 added `reset()` without removing the pre-existing `clearAll()` — the duplicate was caught post-execution by the user reviewing the code, not during planning or verification. A code search for duplicates should be part of the plan action.
+- The `clearAll()` → `reset()` rename across call sites was done as a separate unplanned commit after milestone execution — it should have been part of Plan 062-01's action.
+- SUMMARY.md one-liner field not populated (gsd-tools returns `null`) — format inconsistency in the summary template, affects milestone stats.
+
+### Patterns Established
+- **Composition API store reset**: `const reset = () => { field.value = initialValue; ... }; return { ..., reset };` — canonical pattern for setup stores that can't use `$reset()`
+- **`#imports` vitest alias**: for any Nuxt composable that imports from `#imports`, add alias in `vitest.config.ts` pointing to `tests/stubs/imports.stub.ts` — enables `vi.mock("#imports")` interception
+- **Component logout handler**: `const { logout } = useLogout(); await logout();` — no post-logout navigation, no store calls, no router imports in the component
+
+### Key Lessons
+1. **When adding a new function that duplicates an existing one, search for the old one first.** Plan 062-01 added `reset()` without checking that `clearAll()` existed with identical logic. A one-line grep before implementing would have caught it, and the plan action could have been "rename clearAll to reset" instead of "add reset."
+2. **Rename tasks should include call-site updates atomically.** When renaming a function, the plan must also grep for all call sites and update them in the same commit. Leaving call sites to be discovered post-execution creates follow-up work that falls outside the plan.
+3. **Post-execution code review by the user is a valuable gap-catching step.** The `clearAll` duplicate and the missing call-site updates were caught by the user reviewing the code after execution — a fast, low-cost review that caught what automated verification missed.
+
+### Cost Observations
+- Model mix: ~100% sonnet (balanced profile)
+- Sessions: 2 (execute, milestone close)
+- Notable: Fastest milestone in recent history — 1 day, 10 commits; the refactor was well-scoped and the composable pattern was straightforward
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
