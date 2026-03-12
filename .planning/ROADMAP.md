@@ -34,7 +34,7 @@ Plans:
 
 **Goal:** Fix GA4 ecommerce tracking after the unified payment flow consolidation so that purchase events fire correctly on /pagar/gracias, begin_checkout fires for the pack-only flow, and all event values (total, items, transaction_id) are non-undefined.
 
-**Status:** 🔄 In Progress
+**Status:** ✅ Complete (2026-03-12)
 
 **Requirements:**
 - **GA-01:** `purchase` event fires on `/pagar/gracias` with correct `transaction_id`, `value`, `currency`, and `items` from order data
@@ -46,9 +46,9 @@ Plans:
 
 **Goal:** Repair GA4 ecommerce event tracking after unified checkout: fire `purchase` on /pagar/gracias using order data, fire `begin_checkout` on /pagar entry for the pack-only flow, and ensure no undefined values in any event payload.
 
-**Plans:** 2 plans
-**Status:** ○ Pending
+**Plans:** 2/2 plans complete
+**Status:** ✅ Complete (2026-03-12)
 
 Plans:
-- [ ] 061-01-PLAN.md — Extend useAdAnalytics with purchase() method and flow discriminator (Wave 1)
-- [ ] 061-02-PLAN.md — Wire purchase event in gracias.vue and begin_checkout in pagar/index.vue (Wave 2)
+- [x] 061-01-PLAN.md — Extend useAdAnalytics with purchase() method and flow discriminator (Wave 1) — ✅ 2026-03-11
+- [x] 061-02-PLAN.md — Wire purchase event in gracias.vue and begin_checkout in pagar/index.vue (Wave 2) — ✅ 2026-03-12
