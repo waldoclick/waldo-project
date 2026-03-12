@@ -120,7 +120,12 @@ export default defineNuxtConfig({
             "https://www.google.com",
             "https://www.gstatic.com",
             "https://www.googletagmanager.com",
+            "https://salesiq.zohopublic.com",
+            "https://salesiq.zoho.com",
+            "https://*.zohocdn.com",
           ],
+
+          "script-src-attr": ["'unsafe-inline'"],
 
           "child-src": ["'self'", "blob:"],
           "worker-src": ["'self'", "blob:"],
