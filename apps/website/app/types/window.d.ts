@@ -18,6 +18,15 @@ declare global {
     };
     googleOneTapInitialized?: boolean;
     handleCredentialResponse?: (response: { credential: string }) => void;
+    $zoho?: {
+      salesiq?: {
+        widgetcode: string;
+        values: Record<string, unknown>;
+        ready: () => void;
+        [key: string]: unknown;
+      };
+      [key: string]: unknown;
+    };
   }
 }
 
