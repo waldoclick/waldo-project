@@ -121,6 +121,9 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
    - ✓ `pushEvent()` flow discriminator (4th param, default `"ad_creation"`) distingue `ad_creation` vs `pack_purchase` — backward compatible — v1.27
    - ✓ `begin_checkout` wired en `/pagar/index.vue` para flujo pack-only (`adStore.ad.ad_id === null`); flujo ad-creation no afectado — v1.27
    - ✓ `purchaseFired` ref guard en `/pagar/gracias.vue` asegura exactamente un evento purchase por visita; `adStore.clearAll()` preservado sin interferir (purchase lee del order object) — v1.27
+   - ✓ Al hacer logout, los 6 stores de usuario se resetean en orden: `useAdStore`, `useHistoryStore`, `useMeStore`, `useUserStore`, `useAdsStore`, `useAppStore` — el siguiente usuario ve estado limpio — v1.28
+   - ✓ `useLogout` composable centraliza la lógica de logout; `MenuUser.vue`, `MobileBar.vue`, `SidebarAccount.vue` usan el composable — cero código de logout duplicado — v1.28
+   - ✓ `reset()` action consistente en todos los stores (Composition API); `clearAll()` eliminado — v1.28
 
 ## Context
 
@@ -250,19 +253,12 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
     | `purchaseFired` ref guard prevents double-firing in reactive context | `watch` with `immediate: true` can re-evaluate; boolean guard ensures exactly one purchase event per page visit — v1.27 | ✓ Good |
     | `adStore.ad.ad_id === null` as `beginCheckout` guard in `/pagar/index.vue` | Reliable sentinel for pack-only flow; ad-creation always has a numeric `ad_id` from the draft call — v1.27 | ✓ Good |
 
-## Current Milestone: v1.28 Logout Store Cleanup
-
-**Goal:** Al hacer logout en el website, todos los datos de usuario almacenados en localStorage son eliminados para que el siguiente usuario que inicie sesión vea un estado limpio.
-
-**Target features:**
-- Limpiar stores de usuario en logout (`useAdStore`, `useAdsStore`, `useMeStore`, `useHistoryStore`, `useAppStore`)
-- Centralizar la lógica de logout en un composable `useLogout` reutilizable
-- Actualizar los tres puntos de entrada de logout (`MenuUser.vue`, `MobileBar.vue`, `SidebarAccount.vue`)
-
 ## Current State
 
-**Last shipped:** v1.27 (2026-03-12) — GA4 ecommerce events fully wired across unified checkout flow
-**Current focus:** v1.28 — Logout store cleanup
+**Last shipped:** v1.28 (2026-03-12) — Logout store cleanup: `useLogout` composable resets all 6 user stores in locked order before auth logout; 3 entry points migrated; `clearAll()` renamed to `reset()` consistently across all stores
+**Current focus:** Planning next milestone
+
+**Logout infrastructure (since v1.28):** `useLogout` composable in `apps/website/app/composables/`; reset order: `useAdStore.$reset()` → `useHistoryStore.$reset()` → `useMeStore.reset()` → `useUserStore.reset()` → `useAdsStore.reset()` → `useAppStore.$reset()` → `strapiAuth.logout()` → `navigateTo('/')`; 4 Vitest tests with `#imports` alias infrastructure for Nuxt auto-import mocking.
 
 **GA4 analytics (since v1.27):** Full ecommerce event chain — `view_item_list` → `step_view` (per wizard page) → `begin_checkout` (pack-only: `/pagar`; ad-creation: `/anunciar/resumen`) → `redirect_to_payment` → `purchase` (guarded, one-shot, order data only); `pushEvent` flow discriminator (`ad_creation` | `pack_purchase`) ensures correct attribution; 12 Vitest tests covering composable logic.
 
@@ -283,4 +279,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-12 — Milestone v1.28 started*
+*Last updated: 2026-03-12 after v1.28 milestone*
