@@ -235,7 +235,7 @@ const handleRepublish = async () => {
   const fillAdStore = async () => {
     if (!ad) return;
 
-    adStore.clearAll();
+    adStore.reset();
     // Actualizamos solo con los campos necesarios y sus IDs cuando corresponda
     adStore.updatePrice(Number(ad.price));
     adStore.updateName(ad.name);

@@ -124,18 +124,6 @@ export const useAdsStore = defineStore(
       }
     };
 
-    const clearAll = () => {
-      ads.value = [];
-      pagination.value = {
-        page: 1,
-        pageSize: 20,
-        pageCount: 0,
-        total: 0,
-      };
-      loading.value = false;
-      error.value = null;
-    };
-
     const reset = () => {
       ads.value = [];
       pagination.value = { page: 1, pageSize: 20, pageCount: 0, total: 0 };
@@ -151,7 +139,6 @@ export const useAdsStore = defineStore(
       loadAds,
       loadAdBySlug,
       loadAdById,
-      clearAll,
       reset,
     };
   },
