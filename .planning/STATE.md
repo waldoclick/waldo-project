@@ -65,7 +65,9 @@ None.
 | 12 | Add getFeaturedAdReservationsText() to useUser and render conditional featured reservation count in AccountMain.vue | 2026-03-11 | 75c05a5 | [12-show-featured-ad-reservations-in-mi-cuen](./quick/12-show-featured-ad-reservations-in-mi-cuen/) |
 | 13 | Fix phantom 404 errors on navigation away from /pagar/gracias and /anunciar/gracias by switching reactive useAsyncData keys to static strings | 2026-03-11 | 562adee | [13-fix-404-error-triggered-when-leaving-pag](./quick/13-fix-404-error-triggered-when-leaving-pag/) |
 
-**Last activity:** 2026-03-11 - Completed quick task 13: fix 404 error triggered when leaving gracias pages
+| 16 | Implement Zoho SalesIQ chat widget plugin: runtimeConfig flags, CSP origins, zoho.client.ts, Window.$zoho type | 2026-03-11 | 36b6e58 | [16-implement-zoho-salesiq-chat-widget-plugi](./quick/16-implement-zoho-salesiq-chat-widget-plugi/) |
+
+**Last activity:** 2026-03-11 - Completed quick task 16: Zoho SalesIQ chat widget plugin with runtimeConfig, CSP, and Window type
 
 ## Decisions
 
