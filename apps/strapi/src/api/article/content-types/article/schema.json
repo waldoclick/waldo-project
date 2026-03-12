@@ -1,10 +1,10 @@
 {
   "kind": "collectionType",
-  "collectionName": "news_items",
+  "collectionName": "articles",
   "info": {
-    "singularName": "news",
-    "pluralName": "news-articles",
-    "displayName": "News",
+    "singularName": "article",
+    "pluralName": "articles",
+    "displayName": "Article",
     "description": "News articles for the platform"
   },
   "options": {

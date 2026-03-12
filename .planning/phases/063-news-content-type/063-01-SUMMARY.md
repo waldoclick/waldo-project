@@ -18,17 +18,17 @@ Created the `News` collection type in Strapi v5 with all required fields, catego
 
 ## Files Created
 
-- `apps/strapi/src/api/news/content-types/news/schema.json` — Content type schema with 8 attributes
-- `apps/strapi/src/api/news/controllers/news.ts` — Core controller factory
-- `apps/strapi/src/api/news/routes/news.ts` — Core router factory
-- `apps/strapi/src/api/news/services/news.ts` — Core service factory
+- `apps/strapi/src/api/article/content-types/article/schema.json` — Content type schema with 8 attributes
+- `apps/strapi/src/api/article/controllers/article.ts` — Core controller factory
+- `apps/strapi/src/api/article/routes/article.ts` — Core router factory
+- `apps/strapi/src/api/article/services/article.ts` — Core service factory
 
 ## Schema Details
 
 ```json
 {
   "kind": "collectionType",
-  "collectionName": "news_items",
+  "collectionName": "articles",
   "options": { "draftAndPublish": true },
   "attributes": {
     "title":           { "type": "string",   "required": true },
@@ -45,9 +45,10 @@ Created the `News` collection type in Strapi v5 with all required fields, catego
 
 ## Key Decisions
 
-- `collectionName: "news_items"` — avoids SQL reserved word collision with `news`
+- `singularName: "article"`, `pluralName: "articles"` — clean conventional naming; Strapi's uniqueness check puts both in the same array so they must differ
+- `collectionName: "articles"` — matches the API naming
 - `draftAndPublish: true` — uses Strapi's native toggle, no custom `status` field
-- `categories` is `manyToMany` (not `manyToOne`) — allows a news entry to belong to multiple categories
+- `categories` is `manyToMany` (not `manyToOne`) — allows an article to belong to multiple categories
 - Both `cover` and `gallery` are `multiple: true` media fields with `allowedTypes: ["images"]`
 - All TypeScript errors from `tsc --noEmit` are exclusively the Strapi `ContentType` union — these auto-resolve when Strapi restarts and regenerates its type registry
 
@@ -60,7 +61,6 @@ Created the `News` collection type in Strapi v5 with all required fields, catego
 
 ## What Phase 064 Can Use
 
-- Endpoint: `/api/news-articles` (GET list, GET single, POST, PUT, DELETE)
-- Content type UID: `api::news.news`
+- Endpoint: `/api/articles` (GET list, GET single, POST, PUT, DELETE)
+- Content type UID: `api::article.article`
 - All standard Strapi CRUD routes available via core router
-- Note: `pluralName` is `"news-articles"` (not `"news"`) — Strapi's validator puts singularName and pluralName in the same uniqueness array, so `"news"/"news"` would collide with itself
