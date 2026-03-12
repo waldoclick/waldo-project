@@ -108,9 +108,19 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
    - ✓ `/pagar` maneja pack-only (sin `ad_id`) y pack+ad (con `ad_id`); `CheckoutDefault.vue` brancha en `adStore.ad.ad_id === null` — v1.23
    - ✓ `FormCheckout.vue` oculta `PaymentAd` y Destacado con `v-if="!isPackFlow"` en flujo pack-only — v1.23
 
-   - ✓ `POST /api/payments/free-ad` endpoint en Strapi: valida crédito por pack type, vincula ad-reservation, `draft: false`, emails no-fatales — v1.24
-   - ✓ `resumen.vue` `handleFreeCreation()`: `save-draft` → `adStore.updateAdId()` → `payments/free-ad` con `{ ad_id, pack }`; referencia a `payments/ad` eliminada del flujo free — v1.24
-   - ✓ `POST /api/payments/ad` y `ad.service.ts` intactos — v1.24
+    - ✓ `POST /api/payments/free-ad` endpoint en Strapi: valida crédito por pack type, vincula ad-reservation, `draft: false`, emails no-fatales — v1.24
+    - ✓ `resumen.vue` `handleFreeCreation()`: `save-draft` → `adStore.updateAdId()` → `payments/free-ad` con `{ ad_id, pack }`; referencia a `payments/ad` eliminada del flujo free — v1.24
+    - ✓ `POST /api/payments/ad` y `ad.service.ts` intactos — v1.24
+
+   - ✓ `/pagar/gracias` muestra comprobante Webpay completo con 8 campos obligatorios (monto, código autorización, fecha/hora, tipo pago, últimos 4 dígitos, número orden, info comercio, estado) — v1.26
+   - ✓ `prepareSummary()` extrae todos los campos Webpay del response de `order.payment_response`; `ResumeOrder.vue` con `CardInfo` components y labels en español; fallback "No disponible" — v1.26
+   - ✓ Strapi `findOne()` consulta por `documentId` (string); redirect de Webpay usa `order.documentId` — v1.26
+   - ✓ Test scaffolds para `ResumeOrder` y `gracias.vue` creados con Vitest; 7/7 tests passing — v1.26
+
+   - ✓ `purchase()` method + `PurchaseOrderData` interface en `useAdAnalytics` — event fires en `/pagar/gracias` con `transaction_id`, `value`, `currency`, `items` no-undefined desde datos del order — v1.27
+   - ✓ `pushEvent()` flow discriminator (4th param, default `"ad_creation"`) distingue `ad_creation` vs `pack_purchase` — backward compatible — v1.27
+   - ✓ `begin_checkout` wired en `/pagar/index.vue` para flujo pack-only (`adStore.ad.ad_id === null`); flujo ad-creation no afectado — v1.27
+   - ✓ `purchaseFired` ref guard en `/pagar/gracias.vue` asegura exactamente un evento purchase por visita; `adStore.clearAll()` preservado sin interferir (purchase lee del order object) — v1.27
 
 ## Context
 
@@ -129,7 +139,8 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - 4 cron jobs activos en Strapi: `adCron` (1 AM), `userCron` (2 AM), `backupCron` (3 AM), `cleanupCron` (domingo 4 AM)
 - `cron-runner` API disponible en `POST /api/cron-runner/:name` para ejecución manual de cualquier cron
 - GTM handled via `@saslavik/nuxt-gtm@0.1.3` module in both website (since v1.13) and dashboard (since v1.14) — `enableRouterSync: true` fires page_view on every SPA route change; GTM ID from `runtimeConfig.public.gtm.id`; hand-rolled `gtm.client.ts` plugins deleted in both apps
-- Ad creation analytics (`useAdAnalytics.ts`): all events tracked — view_item_list, step_view (exact, no overcounting, per-page), begin_checkout, redirect_to_payment, purchase (guarded); `DataLayerEvent` fully typed in `window.d.ts` (since v1.12)
+- Ad creation analytics (`useAdAnalytics.ts`): full ecommerce event chain — view_item_list, step_view (per wizard page), begin_checkout, redirect_to_payment, purchase (one-shot guard); `PurchaseOrderData` interface + flow discriminator param in pushEvent (4th positional, default "ad_creation"); 12 Vitest tests covering composable logic (since v1.27); `DataLayerEvent` fully typed in `window.d.ts` (since v1.12)
+- Webpay receipt (since v1.26): `/pagar/gracias` shows full 8-field Webpay receipt via `ResumeOrder.vue`; `prepareSummary()` extracts from `order.payment_response`; Spanish labels, "No disponible" fallbacks; fetches by `order.documentId`
 - SEO infrastructure (v1.15): `$setSEO` plugin in `seo.ts` emits full OG + Twitter Card set; `$setStructuredData` in `microdata.ts` with key-based deduplication; `@nuxtjs/seo` provides sitemap (with static entries having `changefreq`/`priority`), robots, OG defaults; all page URLs use `config.public.baseUrl`; 18+ private pages have `noindex`; home has WebSite + Organization JSON-LD; user profile `[slug].vue` has ProfilePage + Person schema
 - Strapi TypeScript (v1.20): zero `any` in ad service/controller, all type files, all integration services (Zoho, Facto, Indicador, Google, Transbank, payment-gateway), all payment utils/middlewares, all seeders, and all payment test files; `tsc --noEmit` exits 0; established patterns: `AdQueryOptions`, `IZohoContact`, `IWebpayCommitData`, data double-cast for entityService JSON fields, `Core.Strapi` for DI typing
 
@@ -229,17 +240,24 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
    | `adStore.ad.ad_id === null` as pack-only sentinel | Checked before any mutations in `handlePayClick()`; reliable because draft call only exists in ad+pack branch — v1.23 | ✓ Good |
    | `v-if` (not `v-show`) for ad-specific sections in FormCheckout | Pack-only flow must not mount `PaymentAd` or Destacado at all; `v-show` would still run lifecycle hooks — v1.23 | ✓ Good |
    | `POST payments/pack` for pack-only; `POST payments/ad` unchanged for ad+pack | Backend already had separate endpoints; frontend branch mirrors this split cleanly — v1.23 | ✓ Good |
-   | `free-ad.service.ts` handles both `pack="free"` and `pack="paid"` branches | Free reservation uses `price: "0"` guard; paid reservation uses inverse; single service covers both valid pack values — v1.24 | ✓ Good |
-   | Email failures non-fatal in free-ad flow (wrapped in try/catch) | Reservation + publication are the critical operations; a broken email template must not roll back a successful ad submission — v1.24 | ✓ Good |
-   | Two-step free creation: `save-draft` then `free-ad` (same as paid flow) | `free-ad` requires an existing `ad_id`; draft must exist before the payment endpoint is called — v1.24 | ✓ Good |
+    | `free-ad.service.ts` handles both `pack="free"` and `pack="paid"` branches | Free reservation uses `price: "0"` guard; paid reservation uses inverse; single service covers both valid pack values — v1.24 | ✓ Good |
+    | Email failures non-fatal in free-ad flow (wrapped in try/catch) | Reservation + publication are the critical operations; a broken email template must not roll back a successful ad submission — v1.24 | ✓ Good |
+    | Two-step free creation: `save-draft` then `free-ad` (same as paid flow) | `free-ad` requires an existing `ad_id`; draft must exist before the payment endpoint is called — v1.24 | ✓ Good |
+    | Webpay redirect uses `order.documentId` (not `adId`) | Thank-you flow is order-centric; `adId` unavailable in Transbank callback; `documentId` is the stable Strapi v5 identifier — v1.26 | ✓ Good |
+    | `prepareSummary()` extracts Webpay fields from `order.payment_response` | Single extraction point; page stays thin; all field mapping and fallback logic centralized — v1.26 | ✓ Good |
+    | `purchase()` passes `[]` as items to `pushEvent`, full payload in `extraData.ecommerce` | `pushEvent` internal `ecommerce` object would overwrite real items if passed normally; `extraData` route preserves full payload — v1.27 | ✓ Good |
+    | `watch(orderData, ..., { immediate: true })` for purchase event in `gracias.vue` | Handles SSR hydration case where async data is already populated before mount; `onMounted` fires too late — v1.27 | ✓ Good |
+    | `purchaseFired` ref guard prevents double-firing in reactive context | `watch` with `immediate: true` can re-evaluate; boolean guard ensures exactly one purchase event per page visit — v1.27 | ✓ Good |
+    | `adStore.ad.ad_id === null` as `beginCheckout` guard in `/pagar/index.vue` | Reliable sentinel for pack-only flow; ad-creation always has a numeric `ad_id` from the draft call — v1.27 | ✓ Good |
 
-## Current Milestone: v1.26 Mostrar comprobante Webpay en /pagar/gracias
+## Current State
 
-**Goal:** Show a Webpay receipt in the thank-you page after successful payment.
+**Last shipped:** v1.27 (2026-03-12) — GA4 ecommerce events fully wired across unified checkout flow
+**Current focus:** Planning next milestone
 
-**Active requirements:** No requirements defined yet (see REQUIREMENTS.md).
+**GA4 analytics (since v1.27):** Full ecommerce event chain — `view_item_list` → `step_view` (per wizard page) → `begin_checkout` (pack-only: `/pagar`; ad-creation: `/anunciar/resumen`) → `redirect_to_payment` → `purchase` (guarded, one-shot, order data only); `pushEvent` flow discriminator (`ad_creation` | `pack_purchase`) ensures correct attribution; 12 Vitest tests covering composable logic.
 
-**Started:** 2026-03-10
+**Webpay receipt (since v1.26):** `/pagar/gracias` shows full Webpay receipt — 8 mandatory fields (amount, auth code, date/time, payment type, last 4 digits, order number, merchant info, status), Spanish labels, "No disponible" fallbacks; fetches by `order.documentId`.
 
 ## Future Requirements
 
@@ -256,4 +274,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-08 — v1.25 Unified Checkout started*
+*Last updated: 2026-03-12 — after v1.27 milestone*

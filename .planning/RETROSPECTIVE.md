@@ -738,6 +738,85 @@
 
 ---
 
+## Milestone: v1.26 — Mostrar comprobante Webpay en /pagar/gracias
+
+**Shipped:** 2026-03-11
+**Phases:** 1 (060) | **Plans:** 3 | **Timeline:** ~2 days (2026-03-09 → 2026-03-11)
+
+### What Was Built
+- `prepareSummary()` extended to extract all 8 mandatory Webpay fields (`amount`, `authorizationCode`, `transactionDate`, `paymentTypeCode`, `cardDetail`, `buyOrder`, `commerceCode`, `status`) from `order.payment_response`
+- `ResumeOrder.vue` with `CardInfo` components — Spanish labels, "No disponible" fallbacks for missing data, conditional display based on payment type
+- Strapi `findOne()` fixed to query by `documentId` (string) not numeric `id` — resolves Strapi v5 migration regression
+- Webpay redirect updated to use `order.documentId` — thank-you flow is now order-centric, not ad-centric
+- Test scaffolds for `ResumeOrder` and `gracias.vue` created with Vitest; 7/7 tests passing at phase close
+
+### What Worked
+- Order-centric approach (redirecting with `documentId` instead of `adId`) was the right foundation — Transbank callback doesn't have `adId` anyway
+- Test scaffolds in Wave 0 gave confidence for the implementation phases — verified behavior before and after
+- The 3-plan split (test scaffolds / receipt fields / backend redirect) was clean; no cross-plan dependencies
+
+### What Was Inefficient
+- Several quick tasks were executed in parallel with this milestone (fixes 1-17 in STATE.md) — while efficient for velocity, mixing milestone plans with quick tasks creates noisy git history and makes milestone-specific stats harder to isolate
+- MILESTONES.md entry was auto-generated with "TBD" values because the milestone was started before completion — the `gsd-tools milestone complete` CLI updates the entry at close, but prior manual edits to the entry caused a merge conflict in the file structure
+
+### Patterns Established
+- `order.documentId` as the redirect parameter for all post-payment thank-you pages — never `adId` (unavailable in Transbank callback)
+- `prepareSummary()` as the extraction point for all payment response fields — page stays thin, all field mapping centralized
+- Vitest test scaffolds as Wave 0 for any visual component with conditional display logic
+
+### Key Lessons
+1. **Strapi v5 uses `documentId` everywhere for entity lookup.** `findOne({ where: { id: numericId } })` silently returns no results in Strapi v5 — always query by `documentId` (string) for public-facing lookups.
+2. **Thank-you pages should be order-centric, not ad-centric.** The payment gateway callback carries order data, not ad data; designing around `documentId` makes the page correct by default.
+3. **Test scaffolds before implementation reduce rework.** Wave 0 tests caught the missing "No disponible" fallback case before the component was fully built.
+
+### Cost Observations
+- Model mix: ~100% sonnet (balanced profile)
+- Sessions: ~5 (quick tasks interspersed with milestone plans)
+- Notable: Parallel quick task execution during milestone phases is efficient but complicates attribution and git history clarity
+
+---
+
+## Milestone: v1.27 — Reparar eventos GA4 ecommerce en flujo de pago unificado
+
+**Shipped:** 2026-03-12
+**Phases:** 1 (061) | **Plans:** 2 | **Timeline:** 2 days (2026-03-11 → 2026-03-12)
+**Git range:** `5e4da12` → `b1de40b`
+
+### What Was Built
+- `purchase(order: PurchaseOrderData)` method added to `useAdAnalytics` composable — fires GA4 ecommerce `purchase` event with all required fields (`transaction_id`, `value`, `currency`, `items`) from order data, not cleared ad store
+- `PurchaseOrderData` interface exported from composable for page-level type-checking
+- `pushEvent()` flow discriminator: optional 4th param `flow = "ad_creation"` — fully backward-compatible; distinguishes `ad_creation` vs `pack_purchase` in all downstream events
+- 12 Vitest tests covering `purchase()` behavior and flow discriminator — TDD (RED then GREEN)
+- `/pagar/gracias.vue`: `watch(orderData, handler, { immediate: true })` + `purchaseFired` ref guard — fires exactly once per visit; `adStore.clearAll()` retained in `onMounted` without interfering
+- `/pagar/index.vue`: `onMounted` with `adStore.ad.ad_id === null` guard — `beginCheckout()` fires for pack-only flow only; ad-creation flow unaffected
+
+### What Worked
+- TDD discipline (12 failing tests committed before implementation) surfaced the `extraData.ecommerce` vs `items` payload design question early — the decision to pass `[]` as items and put the full ecommerce payload in `extraData` came out of the test-writing phase, not after a runtime failure
+- Wave structure (composable first, page wiring second) was correct — Plan 02 was purely mechanical once the composable API was stable
+- `watch(orderData, { immediate: true })` was the right trigger for SSR hydration safety — the page is visited after a Transbank redirect, so `orderData` may already be populated before mount
+
+### What Was Inefficient
+- Plan 02's implementation was already partially present from a prior session (commits `41836a2` and `be85762` pre-dated the formal plan execution) — the executor correctly identified and documented this but it added confusion about what was "new" vs "pre-existing"
+- The verifier reported 0 tasks counted (gsd-tools milestone complete shows `"tasks": 0`) because tasks are extracted from SUMMARY.md YAML fields that were not populated — a format inconsistency in the summary template
+
+### Patterns Established
+- **`purchase()` payload pattern**: pass `items: []` to `pushEvent`; put full ecommerce object in `extraData.ecommerce` — avoids internal overwrite in `pushEvent` while preserving full GTM payload
+- **`purchaseFired` ref guard**: one-shot boolean on any analytics event that fires inside `watch` or `watchEffect` — set immediately before the push, never after
+- **`watch(computed, cb, { immediate: true })` for post-async event firing**: correct trigger when data arrives asynchronously after page load (e.g., post-redirect fetch); `onMounted` is too early if the data is not yet fetched
+- **Flow discriminator as 4th positional arg with default**: `pushEvent(event, items, extra, flow = "ad_creation")` — backward-compatible extension; new flows pass explicitly, existing calls unchanged
+
+### Key Lessons
+1. **Analytics composable logic benefits most from TDD.** The purchase/pushEvent interaction has subtle payload behavior (overwrite risk). Writing tests before implementation forced the design question to be answered explicitly. Runtime debugging of GTM payload structure is slow and hard; test failures are fast and precise.
+2. **Pre-existing commits from prior sessions should be audited before executing a plan.** If key files are already partially modified, the plan should be adjusted to "verify and complete" rather than "implement from scratch." The executor handled this correctly but it created confusion in the summary.
+3. **`watch({ immediate: true })` is the correct trigger for post-redirect analytics events.** On `/pagar/gracias`, `orderData` is fetched via `useAsyncData`. If the user navigates directly (not through Transbank callback), `immediate: true` ensures the event fires when data becomes available — not on a stale `onMounted` that runs before the fetch resolves.
+
+### Cost Observations
+- Model mix: ~100% sonnet (balanced profile)
+- Sessions: 3 (plan, execute, verify + milestone close)
+- Notable: Fastest two-plan execution in recent milestones — 2 days total including prior session work; the composable was the only design-heavy part; page wiring was mechanical once API was clear
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -766,6 +845,8 @@
 | v1.19 | 4 | 8 | Zoho CRM sync model: reliable HTTP client, 4 service methods, payment + publish event wiring |
 | v1.20 | 5 | 5 | TypeScript any elimination: zero `any` across all Strapi services, utils, middlewares, seeders, and test files |
 | v1.21 | 1 | 4 | Ad draft decoupling: `draft` field lifecycle, `publishAd()` helper, endpoint domain assignment, Strapi permission deploy step |
+| v1.26 | 1 | 3 | Webpay receipt: 8-field on-screen receipt in /pagar/gracias; order-centric redirect; test scaffolds |
+| v1.27 | 1 | 2 | GA4 ecommerce event chain completed: purchase() method + page wiring; flow discriminator; 12 Vitest tests |
 
 ### Cumulative Quality
 
@@ -793,6 +874,8 @@
 | v1.19 | utils + jest (zoho, pack, ad) | true | 0 |
 | v1.20 | utils + jest (all payment tests) | true | 0 |
 | v1.21 | utils + jest (payment + draft) | true | 0 |
+| v1.26 | utils + jest (vitest for ResumeOrder + gracias.vue) | true | 0 |
+| v1.27 | utils + vitest (useAdAnalytics — 12 tests) | true | 0 |
 
 ### Top Lessons (Verified Across Milestones)
 
