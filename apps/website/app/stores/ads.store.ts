@@ -136,6 +136,13 @@ export const useAdsStore = defineStore(
       error.value = null;
     };
 
+    const reset = () => {
+      ads.value = [];
+      pagination.value = { page: 1, pageSize: 20, pageCount: 0, total: 0 };
+      loading.value = false;
+      error.value = null;
+    };
+
     return {
       ads,
       pagination,
@@ -145,6 +152,7 @@ export const useAdsStore = defineStore(
       loadAdBySlug,
       loadAdById,
       clearAll,
+      reset,
     };
   },
   {
