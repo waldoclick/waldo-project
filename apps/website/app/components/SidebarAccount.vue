@@ -120,8 +120,7 @@ import AvatarDefault from "@/components/AvatarDefault.vue";
 
 // Obtener el usuario desde Strapi
 const user = useStrapiUser<User>();
-const { logout } = useStrapiAuth();
-const router = useRouter();
+const { logout } = useLogout();
 
 // Computed property para la ubicación
 const getUbication = computed(() => {
@@ -142,7 +141,6 @@ const confirmation = async () => {
     if (isConfirmed) {
       try {
         await logout();
-        router.push("/");
       } catch (error) {
         console.error("Error al cerrar sesión:", error);
       }
