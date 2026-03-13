@@ -84,6 +84,7 @@ None.
 | 17 | fix article body not rendering and add date to hero | 2026-03-13 | 95fc566 | [17-fix-article-body-not-rendering-and-add-d](./quick/17-fix-article-body-not-rendering-and-add-d/) |
 | 18 | fix dashboard article edit and preview pages showing blank | 2026-03-13 | 2648345 | [18-fix-dashboard-article-edit-and-preview-p](./quick/18-fix-dashboard-article-edit-and-preview-p/) |
 | 19 | fix article body not showing in dashboard edit and preview pages | 2026-03-13 | 68f4746 | [19-fix-article-body-not-showing-in-dashboar](./quick/19-fix-article-body-not-showing-in-dashboar/) |
+| 20 | fix article body being reset to null on save in edit page | 2026-03-13 | 217d3fb | [20-fix-article-body-being-reset-to-null-on-](./quick/20-fix-article-body-being-reset-to-null-on-/) |
 
 ### Accumulated Context
 
