@@ -138,7 +138,13 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
      - ✓ `source_url: string | null` added to website `Article` TypeScript interface — v1.31
      - ✓ FormArticle.vue: draft/publish toggle sends `publishedAt: null` (draft) or ISO timestamp (published) on create and update; toggle hydrates correctly from existing `publishedAt` on edit — v1.31
      - ✓ FormArticle.vue: `source_url` URL field with validation — saves on create, pre-fills on edit, sends null when empty — v1.31
-     - ✓ Article detail page (`/articles/:id`) sidebar shows `source_url` as a clickable `<a target="_blank" rel="noopener noreferrer">` link when non-empty; hidden when absent — v1.31
+      - ✓ Article detail page (`/articles/:id`) sidebar shows `source_url` as a clickable `<a target="_blank" rel="noopener noreferrer">` link when non-empty; hidden when absent — v1.31
+
+      - ✓ `GeminiService` in `apps/strapi/src/services/gemini/` encapsulates all Gemini API calls; exposes `generateText(prompt: string): Promise<string>`; uses `gemini-1.5-flash` model — v1.32
+      - ✓ `GEMINI_API_KEY` read from `process.env`; missing key throws at Strapi startup (intentional, same as SlackService) — v1.32
+      - ✓ `POST /api/ia/gemini` with `{ prompt }` returns `{ text }` — validates prompt presence, delegates to `GeminiService`, catches errors as `ApplicationError` — v1.32
+      - ✓ `apps/strapi/.env.example` documents `GEMINI_API_KEY` — v1.32
+      - ✓ `services/gemini/index.ts` exports singleton + `generateText` named export; controller imports only from `index.ts` (no direct `@google/generative-ai` in API layer) — v1.32
 
 ## Context
 
@@ -163,6 +169,7 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - Strapi TypeScript (v1.20): zero `any` in ad service/controller, all type files, all integration services (Zoho, Facto, Indicador, Google, Transbank, payment-gateway), all payment utils/middlewares, all seeders, and all payment test files; `tsc --noEmit` exits 0; established patterns: `AdQueryOptions`, `IZohoContact`, `IWebpayCommitData`, data double-cast for entityService JSON fields, `Core.Strapi` for DI typing
 - Blog public views (since v1.30): `slug` uid field on Article with lifecycle hooks; `Article` TS interface (13 fields); 7 blog-specific components (`HeroArticles`, `FilterArticles`, `ArticleArchive`, `CardArticle`, `RelatedArticles`, `HeroArticle`, `ArticleSingle`); `useArticlesStore` (no persist, pageSize 12); `blog/index.vue` + `blog/[slug].vue` with full SSR, SEO, structured data; Markdown rendered via `marked`; related articles: same-category first, fill with most-recent, deduplicate, slice to 6
 - Article Manager Improvements (since v1.31): `source_url` string field in Strapi Article schema (optional, no constraints); `source_url: string | null` in website `Article` TS interface; `FormArticle.vue` has draft/publish boolean toggle mapping to `publishedAt: null` / ISO string on submit; `source_url` URL field with Yup validation saves on create and pre-fills on edit; article detail page (`/articles/:id`) sidebar renders `source_url` as `<a target="_blank" rel="noopener noreferrer">` when non-empty
+- Gemini AI Service (since v1.32): `apps/strapi/src/services/gemini/` — `GeminiService` class (`gemini.service.ts`) wraps `@google/generative-ai`, uses `gemini-1.5-flash` model, reads `GEMINI_API_KEY` from `process.env`, throws at startup if missing (same pattern as SlackService); `index.ts` exports singleton + `generateText` named export; `POST /api/ia/gemini` endpoint (`apps/strapi/src/api/ia/`) accepts `{ prompt }`, returns `{ text }`, wraps Gemini errors in `ApplicationError`; `GEMINI_API_KEY` documented in `.env.example`
 
 ## Constraints
 
@@ -282,21 +289,16 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
      | No unique/maxLength constraints on `source_url` in Article schema | Kept minimal like `seo_title`/`seo_description`; URL validation lives in the form (Yup), not the schema — v1.31 | ✓ Good |
      | `source_url` typed as `string \| null` (not `string \| undefined`) in Article interface | Strapi returns `null` for unset optional string fields, not `undefined`; matches existing nullable field conventions — v1.31 | ✓ Good |
      | `form.published` boolean → `publishedAt: null / ISO string` mapping on submit (not direct v-model on `publishedAt`) | Avoids storing ISO strings in form state; boolean is cleaner to bind to checkbox; single mapping point on submit — v1.31 | ✓ Good |
-     | `source_url` uses existing `card--info` pattern in detail sidebar (not `CardInfo` component) | `CardInfo` only accepts plain string descriptions; `card--info` allows custom `<a>` element inside — v1.31 | ✓ Good |
-
-## Current Milestone: v1.32 Gemini AI Service
-
-**Goal:** Crear un servicio Gemini en Strapi y un endpoint genérico que reciba un prompt y devuelva el texto generado por la API de Gemini.
-
-**Target features:**
-- `GeminiService` en `apps/strapi/src/services/` que encapsula la conexión a la API de Gemini
-- Endpoint `POST /api/ia/gemini` que recibe `{ prompt }` y devuelve `{ text }`
-- Variables de entorno para la API key de Gemini en `.env` de Strapi
+      | `source_url` uses existing `card--info` pattern in detail sidebar (not `CardInfo` component) | `CardInfo` only accepts plain string descriptions; `card--info` allows custom `<a>` element inside — v1.31 | ✓ Good |
+      | `GeminiService` uses module-level singleton (same as `SlackService`) | Throws at startup if `GEMINI_API_KEY` missing — same intentional behavior as SlackService; no silent failures — v1.32 | ✓ Good |
+      | `process.env.GEMINI_API_KEY` (not `strapi.config.get`) | Follows SlackService pattern; env var access is consistent across all integration services — v1.32 | ✓ Good |
+      | Controller imports only from `services/gemini/index.ts` | No direct `@google/generative-ai` in the API layer; all Gemini calls encapsulated in the service — v1.32 | ✓ Good |
+      | `ApplicationError` over `ctx.internalServerError` for Gemini runtime failures | Strapi-idiomatic error surfacing; `try/catch` in controller → `ApplicationError` keeps Strapi running on Gemini API errors — v1.32 | ✓ Good |
 
 ## Current State
 
-**Last shipped:** v1.31 (2026-03-13) — Article Manager Improvements: draft/publish toggle and `source_url` field in FormArticle, `source_url` clickable link on article detail sidebar
-**Current focus:** v1.32 — Gemini AI Service
+**Last shipped:** v1.32 (2026-03-13) — Gemini AI Service: `GeminiService` + `POST /api/ia/gemini` endpoint
+**Current focus:** Planning next milestone
 
 **Blog Public Views (since v1.30):** `slug` uid field on Article with lifecycle hooks (beforeCreate/beforeUpdate via `slugify strict:true`); 6 Jest tests for slug generation; `Article` TypeScript interface (13 fields) in `app/types/article.d.ts`; SCSS scaffolding (`_article.scss`, `_hero.scss`, `_filter.scss`, `_related.scss`, `_card.scss` blog blocks, `app.scss` import); `HeroArticles.vue` (static, zero props), `FilterArticles.vue` (client-only, updates `?category=`/`?order=` URL params), `ArticleArchive.vue` (4-col grid + `vue-awesome-paginate`), `CardArticle.vue`, `RelatedArticles.vue`; `useArticlesStore` (Pinia, no persist, pageSize 12); `blog/index.vue` (SSR `useAsyncData`, empty-state + RelatedArticles fallback, `@type:"Blog"` structured data); `HeroArticle.vue` (breadcrumbs + H1 + date), `ArticleSingle.vue` (two-column body/sidebar, `marked` Markdown rendering, GalleryDefault from `article.gallery`); `blog/[slug].vue` (SSR `useAsyncData(() => 'article-${slug}')`, 404 guard, `$setSEO`, `@type:"BlogPosting"` structured data).
 
@@ -321,4 +323,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-13 after v1.32 milestone started*
+*Last updated: 2026-03-13 after v1.32 milestone shipped*
