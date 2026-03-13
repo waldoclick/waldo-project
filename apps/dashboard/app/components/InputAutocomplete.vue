@@ -50,8 +50,8 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: "update:modelValue", value: string): void;
-  (e: "search", query: string): void;
+  "update:modelValue": [value: string];
+  search: [query: string];
 }>();
 
 const query = ref("");
