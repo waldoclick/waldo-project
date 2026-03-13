@@ -91,7 +91,12 @@ Plans:
   3. Selecting "Más recientes" or "Más antiguos" updates the `?order=` URL param and the list re-sorts accordingly
   4. When no articles match the active filters, a `MessageDefault` empty state is shown alongside a `RelatedArticles` fallback block (most recent 12)
   5. The page has SSR-correct `$setSEO` title and description; `nuxt typecheck` passes with zero errors
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 067-01-PLAN.md — CardArticle.vue + RelatedArticles.vue (leaf display components)
+- [ ] 067-02-PLAN.md — articles.store.ts + HeroArticles.vue (data layer + hero)
+- [ ] 067-03-PLAN.md — FilterArticles.vue + ArticleArchive.vue + blog/index.vue (full page assembly)
 
 ### Phase 068: Blog Detail Page
 **Goal**: Visitors can read a full article at `/blog/[slug]` with rendered Markdown body, cover gallery, sidebar, and related articles at the bottom
