@@ -29,18 +29,6 @@
           <NuxtLink to="/account/profile" title="Mi perfil">Mi perfil</NuxtLink>
         </li>
         <li @click="toggleOpen">
-          <NuxtLink to="/account/profile/edit" title="Editar perfil">
-            <span>Editar perfil</span>
-          </NuxtLink>
-        </li>
-        <li @click="toggleOpen">
-          <NuxtLink to="/account/change-password" title="Cambiar contraseña">
-            <span>Cambiar contraseña</span>
-          </NuxtLink>
-        </li>
-      </ul>
-      <ul class="dropdown--user__menu__links">
-        <li @click="toggleOpen">
           <button
             title="Cerrar sesión"
             type="button"
