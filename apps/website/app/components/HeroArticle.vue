@@ -22,7 +22,6 @@ const props = defineProps<{
 }>();
 
 const breadcrumbItems = computed(() => [
-  { label: "Inicio", to: "/" },
   { label: "Blog", to: "/blog" },
   { label: props.title },
 ]);
