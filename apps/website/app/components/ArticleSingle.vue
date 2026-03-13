@@ -9,7 +9,7 @@
         <div class="article--single__body__description">
           <div
             class="article--single__body__description__text"
-            v-html="sanitizeRich(props.article.body)"
+            v-html="parseMarkdown(props.article.body)"
           />
         </div>
       </div>
@@ -45,5 +45,5 @@ import { useSanitize } from "@/composables/useSanitize";
 
 const props = defineProps<{ article: Article }>();
 
-const { sanitizeRich } = useSanitize();
+const { parseMarkdown } = useSanitize();
 </script>
