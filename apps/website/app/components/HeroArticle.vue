@@ -7,6 +7,9 @@
       <div class="hero--article__title">
         <h1>{{ props.title }}</h1>
       </div>
+      <div v-if="formattedDate" class="hero--article__date">
+        <time :datetime="props.publishedAt ?? ''">{{ formattedDate }}</time>
+      </div>
     </div>
   </section>
 </template>
@@ -19,10 +22,20 @@ const props = defineProps<{
   title: string;
   categoryName: string;
   categorySlug: string;
+  publishedAt: string | null;
 }>();
 
 const breadcrumbItems = computed(() => [
   { label: "Blog", to: "/blog" },
   { label: props.title },
 ]);
+
+const formattedDate = computed(() => {
+  if (!props.publishedAt) return null;
+  return new Intl.DateTimeFormat("es-CL", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }).format(new Date(props.publishedAt));
+});
 </script>
