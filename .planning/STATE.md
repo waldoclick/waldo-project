@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.25
 milestone_name: milestone
 current_phase: 070
-status: ready_to_execute
-last_updated: "2026-03-13T11:25:00.000Z"
-last_activity: "2026-03-13 — 070-01 planned: FormArticle draft/publish toggle + source_url + detail page link"
+status: executing
+last_updated: "2026-03-13T11:27:30.636Z"
+last_activity: "2026-03-13 — 069-01 complete: source_url field added to Article Strapi schema and website TypeScript interface"
 progress:
   total_phases: 2
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 2
-  completed_plans: 1
+  completed_plans: 2
 ---
 
 # Session State
@@ -26,14 +26,14 @@ See: .planning/PROJECT.md (updated 2026-03-13 after v1.31 milestone started)
 
 **Milestone:** v1.31 — Article Manager Improvements
 **Current Phase:** 070
-**Status:** Ready to execute
+**Status:** Awaiting human verification (070-01 checkpoint)
 
 ```
 Phase 069 [█] ██████████ 1/1 plans complete
-Phase 070 [ ] ░░░░░░░░░░
+Phase 070 [█] ██████████ 1/1 plans complete
 ```
 
-Last activity: 2026-03-13 — 069-01 complete: source_url field added to Article Strapi schema and website TypeScript interface
+Last activity: 2026-03-13 — 070-01 complete: FormArticle draft/publish toggle + source_url field + detail page link
 
 ## Session Log
 
@@ -42,10 +42,12 @@ Last activity: 2026-03-13 — 069-01 complete: source_url field added to Article
 - 2026-03-13: Roadmap created — 2 phases (069–070), 6/6 requirements mapped
 - 2026-03-13: 069-01 complete — source_url added to Article schema (Strapi + TypeScript)
 - 2026-03-13: 070-01 planned — FormArticle draft/publish toggle + source_url field + detail page link
+- 2026-03-13: 070-01 complete — draft/publish toggle + source_url field in FormArticle, source_url link in detail sidebar
 
 ### Key Decisions
 
 - **069-01:** `source_url` uses no constraints (no unique/maxLength) — kept minimal like seo_title/seo_description. TypeScript interface uses `string | null` (not `string | undefined`) because Strapi returns null for unset optional fields.
+- **070-01:** Toggle uses boolean `form.published` mapped to `publishedAt` on submit (null vs ISO string) — cleaner than binding directly to ISO string in form state. source_url uses existing card--info pattern in detail page (same as body block) to support `<a>` element vs plain string CardInfo.
 
 ### Blockers/Concerns
 
