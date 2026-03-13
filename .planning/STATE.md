@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.25
 milestone_name: milestone
 status: executing
-last_updated: "2026-03-13T01:23:20.164Z"
+last_updated: "2026-03-13T01:28:12.803Z"
 progress:
   total_phases: 4
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 6
-  completed_plans: 5
-  percent: 85
+  completed_plans: 6
+  percent: 92
 ---
 
 # Session State
@@ -24,10 +24,10 @@ See: .planning/PROJECT.md (updated 2026-03-12 after v1.30 milestone started)
 ## Position
 
 **Milestone:** v1.30 — Blog Public Views
-**Phase:** 067 Plan 02 — complete
+**Phase:** 067 Plan 03 — complete
 **Status:** In progress
 
-**Progress:** [█████████░] 85%
+**Progress:** [█████████░] 92%
 
 ## Session Log
 
@@ -39,6 +39,7 @@ See: .planning/PROJECT.md (updated 2026-03-12 after v1.30 milestone started)
 - 2026-03-13: Phase 066-02 complete — SCSS scaffolding: _article.scss + 4 files extended, 7 BEM blocks ready for Phase 067
 - 2026-03-13: Phase 067-01 complete — CardArticle.vue + RelatedArticles.vue leaf display components, zero TypeScript errors
 - 2026-03-13: Phase 067-02 complete — articles.store.ts (useArticlesStore, pageSize 12, no persist) + HeroArticles.vue (static blog hero, BreadcrumbsDefault, h1 "Blog")
+- 2026-03-13: Phase 067-03 complete — FilterArticles.vue + ArticleArchive.vue + blog/index.vue (full listing page with useAsyncData, SEO @type:Blog, empty state)
 
 ### Key Decisions
 
@@ -61,6 +62,9 @@ See: .planning/PROJECT.md (updated 2026-03-12 after v1.30 milestone started)
 - Media type (ad.d.ts) has no direct url field — cover images use formats.medium?.url || formats.thumbnail.url (GalleryItem extends Media adds url, but cover is Media[])
 - articles.store.ts uses no persist block — articles list is volatile (changes with filters)
 - HeroArticles accepts zero props — blog index hero breadcrumbs and title are always static
+- @type: "Blog" for blog listing structured data — correct schema.org collection type (not BlogPosting or SearchResultsPage)
+- FilterArticles receives categories as prop from useAsyncData result — no independent fetch
+- blog/index.vue definePageMeta({}) with empty object — no alias needed unlike /anuncios
 
 ### Blockers/Concerns
 
