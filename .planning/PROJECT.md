@@ -146,6 +146,13 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
       - ✓ `apps/strapi/.env.example` documents `GEMINI_API_KEY` — v1.32
       - ✓ `services/gemini/index.ts` exports singleton + `generateText` named export; controller imports only from `index.ts` (no direct `@google/generative-ai` in API layer) — v1.32
 
+      - ✓ `TavilyService` in `apps/strapi/src/services/tavily/` encapsulates all Tavily API calls; `POST /api/search/tavily` returns `{ news: [{ title, link, snippet, date, source }] }` — v1.34
+      - ✓ `LightBoxArticles.vue` 3-step dashboard lightbox: search news (Tavily) → edit Gemini prompt → generate + create article draft via Groq — v1.34
+      - ✓ `search.store.ts` caches Tavily results by query; Swal prompts reuse-or-refresh on cache hit — v1.34
+      - ✓ `articles.store.ts` caches AI responses by source URL (session-only, no persist); duplicate article guard via `source_url` filter before Strapi POST — v1.34
+      - ✓ Groq `llama-3.3-70b-versatile` via `POST /api/ia/groq` with `response_format: json_object` replaces Gemini for article generation (rate limit workaround) — v1.34
+      - ✓ DeepSeek service + `POST /api/ia/deepseek` endpoint scaffolded (requires paid credits) — v1.34
+
 ## Context
 
 - Monorepo con Turbo para orquestación de tareas
@@ -299,21 +306,19 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
        | Native `fetch` (Node 20+) for Brave Search HTTP calls | `axios` is not in strapi's `dependencies`; Node 20 has stable native fetch — no new dependency needed — v1.33 | ✓ Good |
        | Tool loop uses `stop_reason === "end_turn"` as termination condition | SDK-idiomatic; `end_turn` means Claude is done and returned text; guards against infinite loops from bad tool results — v1.33 | ✓ Good |
        | `web_search` returns top-5 results to Claude (count=5) | Balances context window usage vs. search coverage; matches Brave Search API free tier expectations — v1.33 | ✓ Good |
-
-## Current Milestone: v1.34 LightBoxArticles
-
-**Goal:** Permitir al administrador generar artículos desde noticias web usando IA, directamente desde el dashboard.
-
-**Target features:**
-- Endpoint `POST /api/search/tavily` en Strapi para búsqueda de noticias
-- `LightBoxArticles.vue` en dashboard con 3 pasos: buscar noticia → generar artículo con Gemini → ver resultado
-- Botón "Generar artículo" (`btn--announcement` + icono `Wand2`) en `pages/articles/index.vue`
+       | `TavilyService` singleton + `POST /api/search/tavily` | Follows SerperService/GeminiService singleton pattern; controller contains no direct HTTP calls — v1.34 | ✓ Good |
+       | `LightBoxArticles` uses controlled pattern (isOpen prop + @close emit) | Matches `LightboxRazon.vue` pattern; parent controls open/close state — v1.34 | ✓ Good |
+       | Groq `response_format: { type: "json_object" }` for structured AI output | Forces valid JSON — eliminates markdown code fence wrapping that breaks `JSON.parse` — v1.34 | ✓ Good |
+       | `articles.store.ts` caches AI responses by source URL (session-only, no persist) | Avoids redundant Groq calls; session cache sufficient — AI responses don't need to survive page refresh — v1.34 | ✓ Good |
+       | Duplicate article guard via `source_url` filter before Strapi POST | Prevents duplicate articles from same news source; navigates to existing article edit on conflict — v1.34 | ✓ Good |
 
 ## Current State
 
-**Last shipped:** v1.33 (2026-03-13) — Anthropic Claude AI Service: `AnthropicService` + `POST /api/ia/claude` endpoint
-**Current milestone:** v1.34 — LightBoxArticles (in progress)
-**Current focus:** Implementar endpoint search/tavily + lightbox de 3 pasos en dashboard
+**Last shipped:** v1.34 (2026-03-13) — LightBoxArticles: Tavily search backend + 3-step AI article generation lightbox in dashboard
+**Current milestone:** None — planning next milestone
+**Current focus:** `/gsd-new-milestone`
+
+**AI Article Generation (since v1.34):** `LightBoxArticles.vue` 3-step dashboard lightbox — Step 1: search news via `POST /api/search/tavily`; Step 2: edit Groq prompt (prefilled with Tavily `snippet` as content); Step 3: generate + create Strapi article draft via `POST /api/ia/groq`; Swal guards for empty content, AI errors, and duplicate `source_url`; `search.store.ts` caches Tavily results by query; `articles.store.ts` caches AI responses by source URL (session-only); Groq `llama-3.3-70b-versatile` with `response_format: json_object` ensures parseable JSON output; DeepSeek + Gemini endpoints also available.
 
 **Blog Public Views (since v1.30):** `slug` uid field on Article with lifecycle hooks (beforeCreate/beforeUpdate via `slugify strict:true`); 6 Jest tests for slug generation; `Article` TypeScript interface (13 fields) in `app/types/article.d.ts`; SCSS scaffolding (`_article.scss`, `_hero.scss`, `_filter.scss`, `_related.scss`, `_card.scss` blog blocks, `app.scss` import); `HeroArticles.vue` (static, zero props), `FilterArticles.vue` (client-only, updates `?category=`/`?order=` URL params), `ArticleArchive.vue` (4-col grid + `vue-awesome-paginate`), `CardArticle.vue`, `RelatedArticles.vue`; `useArticlesStore` (Pinia, no persist, pageSize 12); `blog/index.vue` (SSR `useAsyncData`, empty-state + RelatedArticles fallback, `@type:"Blog"` structured data); `HeroArticle.vue` (breadcrumbs + H1 + date), `ArticleSingle.vue` (two-column body/sidebar, `marked` Markdown rendering, GalleryDefault from `article.gallery`); `blog/[slug].vue` (SSR `useAsyncData(() => 'article-${slug}')`, 404 guard, `$setSEO`, `@type:"BlogPosting"` structured data).
 
@@ -338,4 +343,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-13 after v1.34 milestone started*
+*Last updated: 2026-03-13 after v1.34 milestone complete*
