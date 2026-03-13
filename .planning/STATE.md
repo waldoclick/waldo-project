@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-03-13 after v1.34 milestone started)
 **Current Phase:** 074
 **Status:** Phase 074 complete — all 2 plans done
 
-Last activity: 2026-03-13 — Completed quick task 27: fix article creation and listing
+Last activity: 2026-03-13 — Completed quick task 28: improve articles store with AI response cache and duplicate detection
 
 ## Session Log
 
@@ -73,3 +73,4 @@ None.
 | 25 | make article body textarea auto-resize | 2026-03-13 | 5936945 | [25-make-article-body-textarea-auto-resize-i](./quick/25-make-article-body-textarea-auto-resize-i/) |
 | 26 | create profile view with edit profile and change password | 2026-03-13 | 7f96a69 | [26-create-profile-view-with-edit-profile-an](./quick/26-create-profile-view-with-edit-profile-an/) |
 | 27 | fix article creation and listing | 2026-03-13 | f506f27 | [27-fix-article-creation-and-listing](./quick/27-fix-article-creation-and-listing/) |
+| 28 | improve articles store with AI response cache and duplicate detection | 2026-03-13 | f05e75e | [28-mejorar-store-de-articles-con-cache-de-r](./quick/28-mejorar-store-de-articles-con-cache-de-r/) |
