@@ -1,9 +1,10 @@
-/**
- * ad-featured-reservation router
- */
-
-import { factories } from "@strapi/strapi";
-
-export default factories.createCoreRouter(
-  "api::ad-featured-reservation.ad-featured-reservation"
-);
+export default {
+  routes: [
+    {
+      method: "POST",
+      path: "/ad-featured-reservations/gift",
+      handler: "ad-featured-reservation.gift",
+      config: { policies: [] },
+    },
+  ],
+};
