@@ -1,9 +1,3 @@
-export interface WebSearchResult {
-  title: string;
-  url: string;
-  description: string;
-}
-
 export interface AnthropicRequest {
   prompt: string;
 }

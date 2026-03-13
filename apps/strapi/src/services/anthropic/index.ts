@@ -10,5 +10,4 @@ export type {
   IAnthropicService,
   AnthropicRequest,
   AnthropicResponse,
-  WebSearchResult,
 } from "./anthropic.types";
