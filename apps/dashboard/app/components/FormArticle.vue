@@ -149,20 +149,8 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       const documentId =
         props.article?.documentId ||
         (typeof routeId === "string" ? routeId : undefined);
-      let articleId = props.article?.id;
 
-      if (!articleId && documentId) {
-        const lookupResponse = await strapi.find("articles", {
-          filters: { documentId: { $eq: documentId } },
-          pagination: { pageSize: 1 },
-        } as Record<string, unknown>);
-        const lookupData = Array.isArray(lookupResponse.data)
-          ? (lookupResponse.data as Array<{ id: number }>)
-          : [];
-        articleId = lookupData[0]?.id;
-      }
-
-      if (!articleId) {
+      if (!documentId) {
         await Swal.fire(
           "Error",
           "No se pudo identificar el artículo para actualizar.",
@@ -174,7 +162,7 @@ const handleSubmit = async (values: Record<string, unknown>) => {
 
       const response = await strapi.update(
         "articles",
-        articleId,
+        documentId,
         payload as unknown as Parameters<typeof strapi.update>[2],
       );
       const responseData = response.data as unknown as {
