@@ -32,7 +32,7 @@
             :disabled="loading || !query.trim()"
             @click="handleSearch"
           >
-            {{ loading ? "Buscando..." : "Siguiente →" }}
+            {{ loading ? "Buscando…" : "Siguiente →" }}
           </button>
         </div>
       </template>
@@ -106,7 +106,7 @@
             :disabled="loading || selectedIndexes.size === 0"
             @click="handleCreate"
           >
-            {{ loading ? "Creando..." : `Crear (${selectedIndexes.size})` }}
+            {{ loading ? "Creando…" : `Crear (${selectedIndexes.size})` }}
           </button>
         </div>
       </template>
