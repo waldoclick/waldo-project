@@ -1,6 +1,7 @@
 import { Context } from "koa";
 import { errors } from "@strapi/utils";
 import { generateText } from "../../../services/gemini";
+import { generateWithSearch } from "../../../services/anthropic";
 
 const { ApplicationError } = errors;
 
@@ -21,6 +22,25 @@ export default {
       const message = error instanceof Error ? error.message : String(error);
       strapi.log.error(`[ia/gemini] Gemini API error: ${message}`);
       throw new ApplicationError(`Gemini API error: ${message}`);
+    }
+  },
+
+  async claude(ctx: Context): Promise<void> {
+    const body = ctx.request.body as { prompt?: string };
+    const prompt = body?.prompt?.trim();
+
+    if (!prompt) {
+      ctx.badRequest("Missing required field: prompt");
+      return;
+    }
+
+    try {
+      const result = await generateWithSearch(prompt);
+      ctx.body = { text: result.text };
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      strapi.log.error(`[ia/claude] Anthropic API error: ${message}`);
+      throw new ApplicationError(`Anthropic API error: ${message}`);
     }
   },
 };
