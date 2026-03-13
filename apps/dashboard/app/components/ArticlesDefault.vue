@@ -150,8 +150,6 @@ const fetchArticles = async () => {
         pageSize: settingsStore.articles.pageSize,
       },
       sort: settingsStore.articles.sortBy,
-      // preview returns both published and draft entries (Strapi v5)
-      status: "preview",
     };
 
     if (settingsStore.articles.searchTerm) {
