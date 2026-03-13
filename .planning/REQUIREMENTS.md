@@ -49,30 +49,30 @@ Requirements for milestone v1.36. Each maps to roadmap phases.
 
 ## Traceability
 
-| Requirement | Phase | Status |
-|-------------|-------|--------|
-| VSTEP-01 | — | Pending |
-| VSTEP-02 | — | Pending |
-| VSTEP-03 | — | Pending |
-| VSTEP-04 | — | Pending |
-| VSTEP-05 | — | Pending |
-| VSTEP-06 | — | Pending |
-| VSTEP-07 | — | Pending |
-| VSTEP-08 | — | Pending |
-| VSTEP-09 | — | Pending |
-| VSTEP-10 | — | Pending |
-| VSTEP-11 | — | Pending |
-| VSTEP-12 | — | Pending |
-| VSTEP-13 | — | Pending |
-| VSTEP-14 | — | Pending |
-| VSTEP-15 | — | Pending |
-| VSTEP-16 | — | Pending |
+| Requirement | Phase | Status  |
+|-------------|-------|---------|
+| VSTEP-01    | 077   | Pending |
+| VSTEP-02    | 077   | Pending |
+| VSTEP-03    | 077   | Pending |
+| VSTEP-04    | 077   | Pending |
+| VSTEP-05    | 077   | Pending |
+| VSTEP-06    | 077   | Pending |
+| VSTEP-07    | 077   | Pending |
+| VSTEP-08    | 077   | Pending |
+| VSTEP-09    | 078   | Pending |
+| VSTEP-10    | 078   | Pending |
+| VSTEP-11    | 078   | Pending |
+| VSTEP-12    | 078   | Pending |
+| VSTEP-13    | 079   | Pending |
+| VSTEP-14    | 079   | Pending |
+| VSTEP-15    | 079   | Pending |
+| VSTEP-16    | 079   | Pending |
 
 **Coverage:**
 - v1.36 requirements: 16 total
-- Mapped to phases: 0 (roadmap pending)
-- Unmapped: 16 ⚠
+- Mapped to phases: 16 ✓
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-13*
-*Last updated: 2026-03-13 after initial definition*
+*Last updated: 2026-03-13 — traceability filled after roadmap creation*
