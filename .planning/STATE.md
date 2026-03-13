@@ -2,8 +2,8 @@
 gsd_state_version: 1.0
 milestone: v1.25
 milestone_name: milestone
-status: executing
-last_updated: "2026-03-13T01:04:23.355Z"
+status: planning
+last_updated: "2026-03-13T01:08:36.225Z"
 progress:
   total_phases: 4
   completed_phases: 2
@@ -25,7 +25,7 @@ See: .planning/PROJECT.md (updated 2026-03-12 after v1.30 milestone started)
 
 **Milestone:** v1.30 — Blog Public Views
 **Phase:** 066 Plan 02 — complete
-**Status:** Ready to plan (next: Phase 067)
+**Status:** Ready to plan
 
 **Progress:** [█████████░] 90%
 
