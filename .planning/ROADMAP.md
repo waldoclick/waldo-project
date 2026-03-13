@@ -92,7 +92,10 @@
   2. The `TAVILY_API_KEY` environment variable in Strapi `.env` is the sole location of the API key — never hardcoded in any service or controller file
   3. `TavilyService` in `apps/strapi/src/services/tavily/` encapsulates all Tavily API calls; the controller contains no direct HTTP calls
   4. When the Tavily API is unreachable or returns an error, `POST /api/search/tavily` responds with an appropriate HTTP error (4xx/5xx) and Strapi does not crash
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 073-01-PLAN.md — Create POST /api/search/tavily controller and route
+- [ ] 073-02-PLAN.md — Jest unit tests for TavilyService (constructor guard + happy path + error path)
 
 ### Phase 074: LightBoxArticles Dashboard
 **Goal**: The dashboard administrator can search for news articles, generate an article draft using Gemini AI, and review the result — all within a 3-step lightbox modal accessible from the articles index page.
