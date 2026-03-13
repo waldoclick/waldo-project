@@ -1,52 +1,69 @@
-# Requirements: Waldo Project — v1.33 Anthropic Claude AI Service
+# Requirements: Waldo Project — v1.34 LightBoxArticles
 
 **Defined:** 2026-03-13
 **Core Value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
 
-## v1 Requirements
+## v1.34 Requirements
 
-### Anthropic Claude Service
+### Backend
 
-- [ ] **CLAUDE-01**: El `AnthropicService` en `apps/strapi/src/services/anthropic/` se conecta a la API de Anthropic usando `@anthropic-ai/sdk` con el modelo `claude-sonnet-4-5`
-- [ ] **CLAUDE-02**: La `ANTHROPIC_API_KEY` y la `BRAVE_SEARCH_API_KEY` se leen desde `process.env` en Strapi; el servicio lanza error al iniciar si alguna de las dos falta
-- [ ] **CLAUDE-03**: El `AnthropicService` implementa tool use con una herramienta `web_search` — cuando Claude solicita una búsqueda, Strapi ejecuta `GET https://api.search.brave.com/res/v1/web/search` y devuelve los resultados a Claude; el loop continúa hasta que Claude retorna texto final
-- [ ] **CLAUDE-04**: `apps/strapi/src/services/anthropic/index.ts` exporta un singleton y la función nombrada `generateWithSearch(prompt): Promise<string>`; otros módulos importan únicamente desde `index.ts`
+- [ ] **BACK-01**: El administrador puede buscar noticias vía `POST /api/search/tavily` enviando `{ query, num? }` y recibir `{ news: [{ title, link, snippet, date, source }] }`
 
-### Anthropic Endpoint
+### Dashboard — Lightbox Component
 
-- [ ] **CLAUDE-05**: El endpoint `POST /api/ia/claude` recibe `{ prompt: string }` y devuelve `{ text: string }` con la respuesta generada por Claude (incluyendo resultados de búsqueda web si los usó)
-- [ ] **CLAUDE-06**: Si la API de Anthropic o Brave Search falla, el endpoint responde con un error HTTP apropiado (4xx/5xx) via `ApplicationError` sin crashear Strapi
+- [ ] **LB-01**: `LightBoxArticles.vue` existe con estructura BEM `lightbox lightbox--articles`, siguiendo el mismo patrón HTML que `LightboxRazon.vue`
+- [ ] **LB-02**: El lightbox tiene 3 pasos con navegación adelante/atrás; el estado persiste mientras el lightbox está abierto
+- [ ] **LB-03**: Step 1 muestra un textarea con query predefinida y un botón "Buscar"; al presionar llama a `POST /api/search/tavily` y muestra los resultados (title, url, date)
+- [ ] **LB-04**: El usuario puede seleccionar una noticia del Step 1; al seleccionar se hace fetch del HTML completo de la URL y avanza al Step 2
+- [ ] **LB-05**: Step 2 muestra la info de la noticia seleccionada (title, url, date) y un textarea con el prompt predefinido de generación de artículo
+- [ ] **LB-06**: Step 2 tiene un botón "Generar artículo"; al presionar llama a `POST /api/ia/gemini` con prompt + HTML + url + date y avanza al Step 3
+- [ ] **LB-07**: Step 3 muestra el resultado JSON retornado por Gemini: title, header, body (Markdown renderizado), keywords, source_url, source_date
+- [ ] **LB-08**: El usuario puede volver del Step 3 al Step 2, y del Step 2 al Step 1
 
-## v2 Requirements
+### Dashboard — SCSS
 
-(None identified)
+- [ ] **SCSS-01**: `_lightbox.scss` tiene el modifier `&--articles` con todos sus elementos BEM, siguiendo la estructura de `&--razon`
+
+### Dashboard — Integración
+
+- [ ] **INT-01**: `pages/articles/index.vue` tiene un botón "Generar artículo" con clase `btn--announcement` e icono `Wand2` (lucide) junto al botón "Agregar artículo"; al presionar abre `LightBoxArticles`
+
+## Future Requirements
+
+### Mejoras al generador de artículos
+
+- **GEN-01**: El usuario puede editar el artículo generado antes de guardarlo
+- **GEN-02**: El artículo generado se puede guardar directamente como borrador en Strapi desde el Step 3
+- **GEN-03**: El sistema recuerda las últimas queries de búsqueda usadas
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| Streaming responses | Complejidad adicional — `POST → text` es suficiente para v1 |
-| Historial de conversación / contexto multi-turno | Out of scope por decisión del usuario |
-| Selección de modelo desde el endpoint | `claude-sonnet-4-5` fijo por decisión del usuario |
-| UI en dashboard o website | El usuario gestiona esto por separado |
-| Rate limiting / throttling | Gestionado a nivel de roles/permisos en Strapi |
-| Más de una herramienta (tool) | Solo `web_search` via Brave en v1 |
+| Guardar artículo directamente desde el lightbox | Complejidad de integración con FormArticle; se hace en milestone posterior |
+| Múltiples selecciones de noticias | Un artículo = una fuente; simplifica el prompt y el flujo |
+| Soporte para otros modelos de IA (Claude, etc.) | Gemini es suficiente para este caso; generalización en milestone posterior |
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CLAUDE-01 | Phase 072 | Pending |
-| CLAUDE-02 | Phase 072 | Pending |
-| CLAUDE-03 | Phase 072 | Pending |
-| CLAUDE-04 | Phase 072 | Pending |
-| CLAUDE-05 | Phase 072 | Pending |
-| CLAUDE-06 | Phase 072 | Pending |
+| BACK-01 | Phase 073 | Pending |
+| LB-01 | Phase 074 | Pending |
+| LB-02 | Phase 074 | Pending |
+| LB-03 | Phase 074 | Pending |
+| LB-04 | Phase 074 | Pending |
+| LB-05 | Phase 074 | Pending |
+| LB-06 | Phase 074 | Pending |
+| LB-07 | Phase 074 | Pending |
+| LB-08 | Phase 074 | Pending |
+| SCSS-01 | Phase 074 | Pending |
+| INT-01 | Phase 074 | Pending |
 
 **Coverage:**
-- v1 requirements: 6 total
-- Mapped to phases: 6/6 ✓
-- Unmapped: 0
+- v1.34 requirements: 11 total
+- Mapped to phases: 11
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-13*
