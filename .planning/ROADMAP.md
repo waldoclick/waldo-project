@@ -78,7 +78,7 @@
 
 ### v1.34 LightBoxArticles (Phases 073–074) — IN PROGRESS
 
-- [ ] **Phase 073: Tavily Search Backend** - Strapi `TavilyService` + `POST /api/search/tavily` endpoint
+- [x] **Phase 073: Tavily Search Backend** - Strapi `TavilyService` + `POST /api/search/tavily` endpoint (completed 2026-03-13)
 - [ ] **Phase 074: LightBoxArticles Dashboard** - `LightBoxArticles.vue` component (3-step flow) + SCSS + integration in articles page
 
 ## Phase Details
@@ -113,7 +113,7 @@ Plans:
 
 | Phase | Milestone | Plans Complete | Status      | Completed  |
 |-------|-----------|----------------|-------------|------------|
-| 073   | v1.34     | 0/2            | Not started | -          |
+| 073   | 2/2 | Complete   | 2026-03-13 | -          |
 | 074   | v1.34     | 0/TBD          | Not started | -          |
 | 072   | v1.33     | 1/1            | Complete    | 2026-03-13 |
 | 071   | v1.32     | 1/1            | Complete    | 2026-03-13 |

@@ -7,7 +7,7 @@
 
 ### Backend
 
-- [ ] **BACK-01**: El administrador puede buscar noticias vía `POST /api/search/tavily` enviando `{ query, num? }` y recibir `{ news: [{ title, link, snippet, date, source }] }`
+- [x] **BACK-01**: El administrador puede buscar noticias vía `POST /api/search/tavily` enviando `{ query, num? }` y recibir `{ news: [{ title, link, snippet, date, source }] }`
 
 ### Dashboard — Lightbox Component
 
@@ -48,7 +48,7 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| BACK-01 | Phase 073 | Pending |
+| BACK-01 | Phase 073 | Complete |
 | LB-01 | Phase 074 | Pending |
 | LB-02 | Phase 074 | Pending |
 | LB-03 | Phase 074 | Pending |
