@@ -18,11 +18,13 @@ export default function (plugin) {
   plugin.controllers.user.find = getUserDataWithFilters;
 
   // Add GET /api/users/authenticated — server-side role filter, minimal fields (GIFT-08)
+  // info.pluginName required so getAction() resolves "user.authenticated" via plugin controller
   plugin.controllers.user.authenticated = getAuthenticatedUsers;
   plugin.routes["content-api"].routes.push({
     method: "GET",
     path: "/users/authenticated",
     handler: "user.authenticated",
+    info: { pluginName: "users-permissions" },
     config: { policies: [] },
   });
 
@@ -42,11 +44,15 @@ export default function (plugin) {
   );
 
   // --- NEW: Verify code endpoint ---
+  // NOTE: info.pluginName must be set explicitly here — registerPluginRoutes sets info on
+  // existing routes during bootstrap, but routes pushed after that never get pluginName injected.
+  // Without it, getAction() cannot resolve "auth.verifyCode" to plugin('users-permissions').controller('auth').
   plugin.controllers.auth.verifyCode = verifyCode;
   plugin.routes["content-api"].routes.push({
     method: "POST",
     path: "/auth/verify-code",
     handler: "auth.verifyCode",
+    info: { pluginName: "users-permissions" },
     config: { policies: [], middlewares: [] },
   });
 
@@ -56,6 +62,7 @@ export default function (plugin) {
     method: "POST",
     path: "/auth/resend-code",
     handler: "auth.resendCode",
+    info: { pluginName: "users-permissions" },
     config: { policies: [], middlewares: [] },
   });
 
