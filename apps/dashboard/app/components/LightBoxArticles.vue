@@ -37,14 +37,14 @@
         </div>
       </template>
 
-      <!-- Step 2: Results table + multi-select -->
+      <!-- Step 2: Results table + single select -->
       <template v-else-if="currentStep === 2">
         <div class="lightbox--articles__header">
           <div class="lightbox--articles__header__title">
-            Seleccionar noticias
+            Seleccionar noticia
           </div>
           <div class="lightbox--articles__header__subtitle">
-            Selecciona una o más noticias para crear borradores de artículo
+            Selecciona la noticia que quieres convertir en artículo
           </div>
         </div>
 
@@ -103,10 +103,60 @@
             v-if="searchResults.length > 0"
             class="btn btn--primary"
             type="button"
-            :disabled="loading || selectedIndexes.size === 0"
-            @click="handleCreate"
+            :disabled="selectedIndexes.size === 0"
+            @click="goToPrompt"
           >
-            {{ loading ? "Creando…" : `Crear (${selectedIndexes.size})` }}
+            Siguiente →
+          </button>
+        </div>
+      </template>
+
+      <!-- Step 3: Prompt editable + generate -->
+      <template v-else-if="currentStep === 3">
+        <div class="lightbox--articles__header">
+          <div class="lightbox--articles__header__title">Generar artículo</div>
+          <div class="lightbox--articles__header__subtitle">
+            Edita el prompt si es necesario y genera el artículo con IA
+          </div>
+        </div>
+
+        <div v-if="selectedItem" class="lightbox--articles__selected">
+          <span class="lightbox--articles__selected__title">{{
+            selectedItem.title
+          }}</span>
+          <a
+            :href="selectedItem.link"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="lightbox--articles__selected__url"
+            >{{ selectedItem.link }}</a
+          >
+        </div>
+
+        <div class="lightbox--articles__field">
+          <label for="lightbox-articles-prompt">Prompt</label>
+          <textarea
+            id="lightbox-articles-prompt"
+            v-model="geminiPrompt"
+            rows="12"
+          />
+        </div>
+
+        <div class="lightbox--articles__actions">
+          <button
+            class="btn btn--secondary"
+            type="button"
+            @click="currentStep = 2"
+          >
+            ← Volver
+          </button>
+          <button
+            class="btn btn--primary"
+            type="button"
+            :disabled="loading || !geminiPrompt.trim()"
+            @click="handleGenerate"
+          >
+            {{ loading ? "Generando…" : "Generar artículo" }}
           </button>
         </div>
       </template>
@@ -118,6 +168,17 @@
 import { ref, computed, watch } from "vue";
 import { X as IconX } from "lucide-vue-next";
 import { useSearchStore, type ITavilyResult } from "@/stores/search.store";
+
+const DEFAULT_GEMINI_PROMPT = `You are an expert copywriter specializing in industrial machinery in Chile. Based on the following news article, generate a professional article in Spanish with this exact JSON format:
+{
+  "title": "article title (max 80 chars)",
+  "header": "executive summary in 2-3 sentences",
+  "body": "full body in Markdown (minimum 300 words)",
+  "keywords": ["keyword1", "keyword2", "keyword3"],
+  "source_url": "source URL",
+  "source_date": "source date"
+}
+Do not include anything outside the JSON.`;
 
 const props = withDefaults(
   defineProps<{
@@ -138,11 +199,18 @@ const searchStore = useSearchStore();
 // Kept low during AI testing — increase when ready for bulk creation.
 const SELECTION_LIMIT = 1;
 
-const currentStep = ref<1 | 2>(1);
+const currentStep = ref<1 | 2 | 3>(1);
 const query = ref("maquinaria industrial Chile noticias");
 const searchResults = ref<ITavilyResult[]>([]);
 const selectedIndexes = ref<Set<number>>(new Set());
+const geminiPrompt = ref(DEFAULT_GEMINI_PROMPT);
 const loading = ref(false);
+
+const selectedItem = computed<ITavilyResult | null>(() => {
+  const [idx] = selectedIndexes.value;
+  if (idx === undefined) return null;
+  return searchResults.value[idx] ?? null;
+});
 
 // Lock body scroll when open, restore on close
 watch(
@@ -153,6 +221,7 @@ watch(
       currentStep.value = 1;
       searchResults.value = [];
       selectedIndexes.value = new Set();
+      geminiPrompt.value = DEFAULT_GEMINI_PROMPT;
     } else {
       document.body.style.overflow = "";
     }
@@ -165,13 +234,21 @@ function toggleRow(index: number) {
     next.delete(index);
   } else {
     if (next.size >= SELECTION_LIMIT) {
-      // At limit: deselect oldest, select new one
       const [first] = next;
       if (first !== undefined) next.delete(first);
     }
     next.add(index);
   }
   selectedIndexes.value = next;
+}
+
+function goToPrompt() {
+  const item = selectedItem.value;
+  if (!item) return;
+  // Append article context to the base prompt
+  const context = `\n\nSource: ${item.link}\nDate: ${item.date}\nTitle: ${item.title}`;
+  geminiPrompt.value = DEFAULT_GEMINI_PROMPT + context;
+  currentStep.value = 3;
 }
 
 async function fetchFromApi(q: string) {
@@ -201,16 +278,14 @@ async function handleSearch() {
       denyButtonText: "Nueva búsqueda",
     });
 
-    if (isDismissed) return; // clicked outside — do nothing
+    if (isDismissed) return;
 
     if (isConfirmed) {
-      // Use cached results
       searchResults.value = searchStore.getTavily(q)?.results ?? [];
       selectedIndexes.value = new Set();
       currentStep.value = 2;
       return;
     }
-    // isDenied → fall through to re-fetch
   }
 
   loading.value = true;
@@ -227,30 +302,45 @@ async function handleSearch() {
   }
 }
 
-async function handleCreate() {
-  if (selectedIndexes.value.size === 0 || loading.value) return;
+async function handleGenerate() {
+  const item = selectedItem.value;
+  if (!item || !geminiPrompt.value.trim() || loading.value) return;
   loading.value = true;
   try {
-    const selected = [...selectedIndexes.value]
-      .map((i) => searchResults.value[i])
-      .filter((item): item is ITavilyResult => item !== undefined);
-    await Promise.all(
-      selected.map((item) =>
-        client("/articles?status=draft", {
-          method: "POST",
-          body: {
-            data: {
-              title: item.title,
-              source_url: item.link,
-            },
-          },
-        }),
-      ),
-    );
+    // Ask Gemini to rewrite the article using the prompt (which includes the source URL/title)
+    const result = await client<{ text: string }>("/ia/gemini", {
+      method: "POST",
+      body: { prompt: geminiPrompt.value },
+    });
+
+    const parsed = JSON.parse(result.text) as {
+      title: string;
+      header: string;
+      body: string;
+      keywords: string[];
+      source_url: string;
+      source_date: string;
+    };
+
+    // Create the article draft in Strapi with all generated fields
+    await client("/articles?status=draft", {
+      method: "POST",
+      body: {
+        data: {
+          title: parsed.title,
+          header: parsed.header,
+          body: parsed.body,
+          seo_title: parsed.title,
+          seo_description: parsed.header,
+          source_url: parsed.source_url || item.link,
+        },
+      },
+    });
+
     emit("created");
     handleClose();
   } catch (e) {
-    console.error("[LightBoxArticles] Create error:", e);
+    console.error("[LightBoxArticles] Generate error:", e);
   } finally {
     loading.value = false;
   }
