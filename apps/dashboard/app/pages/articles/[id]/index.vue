@@ -61,6 +61,30 @@
             :description="article.publishedAt ? 'Publicado' : 'Borrador'"
           />
         </BoxInformation>
+        <BoxInformation
+          v-if="coverImages.length > 0"
+          title="Portada"
+          :columns="1"
+        >
+          <GalleryDefault
+            :images="coverImages"
+            alt-prefix="Portada"
+            :columns="1"
+            @image-delete="() => {}"
+          />
+        </BoxInformation>
+        <BoxInformation
+          v-if="galleryImages.length > 0"
+          title="Galería"
+          :columns="1"
+        >
+          <GalleryDefault
+            :images="galleryImages"
+            alt-prefix="Galería"
+            :columns="2"
+            @image-delete="() => {}"
+          />
+        </BoxInformation>
       </template>
     </BoxContent>
   </div>
@@ -73,6 +97,18 @@ import HeroDefault from "@/components/HeroDefault.vue";
 import BoxContent from "@/components/BoxContent.vue";
 import BoxInformation from "@/components/BoxInformation.vue";
 import CardInfo from "@/components/CardInfo.vue";
+import GalleryDefault from "@/components/GalleryDefault.vue";
+
+interface MediaItem {
+  id?: number;
+  url: string;
+  formats?: {
+    thumbnail?: { url: string };
+    small?: { url: string };
+    medium?: { url: string };
+    large?: { url: string };
+  };
+}
 
 interface ArticleData {
   id?: number;
@@ -85,6 +121,8 @@ interface ArticleData {
   publishedAt?: string | null;
   createdAt?: string;
   updatedAt?: string;
+  cover?: MediaItem | MediaItem[] | null;
+  gallery?: MediaItem[];
 }
 
 definePageMeta({
@@ -109,16 +147,31 @@ const { data: articleData } = await useAsyncData(
     const strapi = useStrapi();
     const response = await strapi.find("articles", {
       filters: { documentId: { $eq: id } },
+      populate: ["cover", "gallery"],
     } as Record<string, unknown>);
     const data = Array.isArray(response.data) ? response.data[0] : null;
     if (data) return data as ArticleData;
 
-    const fallbackResponse = await strapi.findOne("articles", id as string);
+    const fallbackResponse = await strapi.findOne(
+      "articles",
+      id as string,
+      {
+        populate: ["cover", "gallery"],
+      } as Record<string, unknown>,
+    );
     return (fallbackResponse.data as unknown as ArticleData) || null;
   },
 );
 
 article.value = (articleData.value as ArticleData) ?? null;
+
+const coverImages = computed<MediaItem[]>(() => {
+  const cover = article.value?.cover;
+  if (!cover) return [];
+  return Array.isArray(cover) ? cover : [cover];
+});
+
+const galleryImages = computed<MediaItem[]>(() => article.value?.gallery ?? []);
 </script>
 
 <style scoped>
