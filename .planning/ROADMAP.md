@@ -107,7 +107,10 @@ Plans:
   3. Clicking a news result in Step 1 fetches the full HTML of that URL and advances to Step 2 with the selected article's title, URL, and date displayed
   4. Step 2 shows a pre-filled Gemini prompt textarea; pressing "Generar artículo" calls `POST /api/ia/gemini` and advances to Step 3 showing the generated result (title, header, Markdown body, keywords, source_url, source_date)
   5. The user can navigate back from Step 3 → Step 2 → Step 1 without losing state; the lightbox can be closed at any step
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 074-01-PLAN.md — LightBoxArticles.vue component (3-step flow) + _lightbox.scss `&--articles` modifier
+- [ ] 074-02-PLAN.md — Wire "Generar artículo" button + LightBoxArticles modal in articles index page
 
 ## Progress
 
