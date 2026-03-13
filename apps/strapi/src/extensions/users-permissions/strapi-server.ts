@@ -2,8 +2,16 @@ import {
   getUserDataWithFilters,
   getAuthenticatedUsers,
 } from "./controllers/userController";
+import {
+  registerUserLocal,
+  registerUserAuth,
+  overrideAuthLocal,
+  verifyCode,
+  resendCode,
+} from "./controllers/authController";
 
 export default function (plugin) {
+  // --- Existing: User list endpoints ---
   // Override GET /api/users to apply server-side Authenticated role filter.
   // The content-API sanitizer strips `filters[role]` for regular JWTs — this
   // controller uses strapi.db.query directly, which bypasses that restriction.
@@ -16,6 +24,39 @@ export default function (plugin) {
     path: "/users/authenticated",
     handler: "user.authenticated",
     config: { policies: [] },
+  });
+
+  // --- Existing: Registration with ad-reservation creation ---
+  plugin.controllers.auth.register = registerUserLocal(
+    plugin.controllers.auth.register
+  );
+
+  // --- Existing: Google OAuth callback with ad-reservation creation ---
+  plugin.controllers.auth.connect = registerUserAuth(
+    plugin.controllers.auth.connect
+  );
+
+  // --- NEW: 2-Step login — override POST /api/auth/local ---
+  plugin.controllers.auth.callback = overrideAuthLocal(
+    plugin.controllers.auth.callback
+  );
+
+  // --- NEW: Verify code endpoint ---
+  plugin.controllers.auth.verifyCode = verifyCode;
+  plugin.routes["content-api"].routes.push({
+    method: "POST",
+    path: "/auth/verify-code",
+    handler: "auth.verifyCode",
+    config: { policies: [], middlewares: [] },
+  });
+
+  // --- NEW: Resend code endpoint ---
+  plugin.controllers.auth.resendCode = resendCode;
+  plugin.routes["content-api"].routes.push({
+    method: "POST",
+    path: "/auth/resend-code",
+    handler: "auth.resendCode",
+    config: { policies: [], middlewares: [] },
   });
 
   return plugin;
