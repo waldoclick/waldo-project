@@ -13,6 +13,7 @@ export interface Article {
   categories: Category[];
   seo_title: string | null;
   seo_description: string | null;
+  source_url: string | null;
   publishedAt: string | null;
   createdAt: string;
 }
