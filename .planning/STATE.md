@@ -4,14 +4,14 @@ milestone: v1.36
 milestone_name: Two-Step Login Verification
 current_phase: 077 — Strapi 2-Step Backend
 status: executing
-last_updated: "2026-03-13T22:36:26.637Z"
-last_activity: 2026-03-13 — Executed 077-03 (2-step auth controllers: overrideAuthLocal, verifyCode, resendCode)
+last_updated: "2026-03-13T22:40:42.492Z"
+last_activity: "2026-03-13 — Executed 077-04 (verification-code cleanup cron)"
 progress:
   total_phases: 3
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 4
-  completed_plans: 3
-  percent: 75
+  completed_plans: 4
+  percent: 100
 ---
 
 # Session State
@@ -21,19 +21,19 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-13 after v1.36 milestone started)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 077 — Strapi 2-Step Backend (3/4 plans complete — plan 04 remaining)
+**Current focus:** Phase 077 — Strapi 2-Step Backend (4/4 plans complete — phase complete)
 
 ## Position
 
 **Milestone:** v1.36 — Two-Step Login Verification
 **Current Phase:** 077 — Strapi 2-Step Backend
-**Status:** In Progress — Plans 01, 02, and 03/04 complete
+**Status:** Complete — All 4 plans executed
 
 ```
-Progress: [████████░░] 75%
+Progress: [██████████] 100%
 ```
 
-Last activity: 2026-03-13 — Executed 077-03 (2-step auth controllers: overrideAuthLocal, verifyCode, resendCode)
+Last activity: 2026-03-13 — Executed 077-04 (verification-code cleanup cron)
 
 ## Accumulated Context
 
@@ -52,6 +52,8 @@ Last activity: 2026-03-13 — Executed 077-03 (2-step auth controllers: override
 - `plugin.controllers.auth.callback` is the Strapi v5 hook for `POST /api/auth/local` (not `auth.local`)
 - Existing pending verification-code record for same userId is deleted before creating a new one on re-login
 - `resendCode` cooldown uses `record.updatedAt` timestamp for the 60-second rate-limit window
+- `verificationCodeCleanupCron` scheduled `0 4 * * *` (daily 4 AM Santiago) — same hour as cleanupCron (Sundays-only), no real conflict since they operate on different collections
+- `deleteMany` used for bulk deletion of expired verification-code records (single DB round-trip)
 
 ### Phase Dependency
 
