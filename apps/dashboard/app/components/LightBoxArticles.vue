@@ -49,24 +49,6 @@
         </div>
 
         <div v-if="searchResults.length > 0" class="lightbox--articles__table">
-          <div class="lightbox--articles__table__head">
-            <div
-              class="lightbox--articles__table__cell lightbox--articles__table__cell--check"
-            >
-              <input
-                type="checkbox"
-                :checked="allSelected"
-                :indeterminate="someSelected && !allSelected"
-                @change="toggleAll"
-              />
-            </div>
-            <div class="lightbox--articles__table__cell">Título</div>
-            <div
-              class="lightbox--articles__table__cell lightbox--articles__table__cell--date"
-            >
-              Fecha
-            </div>
-          </div>
           <div
             v-for="(item, index) in searchResults"
             :key="index"
@@ -98,11 +80,9 @@
                 @click.stop
                 >{{ item.link }}</a
               >
-            </div>
-            <div
-              class="lightbox--articles__table__cell lightbox--articles__table__cell--date"
-            >
-              {{ item.date }}
+              <span class="lightbox--articles__table__date">{{
+                item.date
+              }}</span>
             </div>
           </div>
         </div>
@@ -154,6 +134,10 @@ const client = useStrapiClient();
 const { Swal } = useSweetAlert2();
 const searchStore = useSearchStore();
 
+// Max articles that can be selected at once.
+// Kept low during AI testing — increase when ready for bulk creation.
+const SELECTION_LIMIT = 1;
+
 const currentStep = ref<1 | 2>(1);
 const query = ref("maquinaria industrial Chile noticias");
 const searchResults = ref<ITavilyResult[]>([]);
@@ -175,25 +159,16 @@ watch(
   },
 );
 
-const allSelected = computed(
-  () =>
-    searchResults.value.length > 0 &&
-    selectedIndexes.value.size === searchResults.value.length,
-);
-
-const someSelected = computed(() => selectedIndexes.value.size > 0);
-
-function toggleAll() {
-  selectedIndexes.value = allSelected.value
-    ? new Set()
-    : new Set(searchResults.value.map((_, i) => i));
-}
-
 function toggleRow(index: number) {
   const next = new Set(selectedIndexes.value);
   if (next.has(index)) {
     next.delete(index);
   } else {
+    if (next.size >= SELECTION_LIMIT) {
+      // At limit: deselect oldest, select new one
+      const [first] = next;
+      if (first !== undefined) next.delete(first);
+    }
     next.add(index);
   }
   selectedIndexes.value = next;
