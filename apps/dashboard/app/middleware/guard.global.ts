@@ -5,6 +5,7 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
     "/auth/login",
     "/auth/forgot-password",
     "/auth/reset-password",
+    "/auth/verify-code",
     "/dev",
   ];
 
