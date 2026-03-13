@@ -988,6 +988,48 @@
 
 ---
 
+## Milestone: v1.32 — Gemini AI Service
+
+**Shipped:** 2026-03-13
+**Phases:** 1 (071) | **Plans:** 1 | **Timeline:** ~4 minutes (2026-03-13)
+**Files changed:** 6 files (apps/strapi) | **Requirements:** 5/5 complete ✓
+
+### What Was Built
+- `apps/strapi/src/services/gemini/gemini.types.ts` — `IGeminiService`, `GeminiRequest`, `GeminiResponse` interfaces
+- `apps/strapi/src/services/gemini/gemini.service.ts` — `GeminiService` class; reads `GEMINI_API_KEY` from `process.env`; uses `gemini-1.5-flash` model; throws at startup if key missing (same as SlackService)
+- `apps/strapi/src/services/gemini/index.ts` — module-level singleton + `generateText` named export
+- `apps/strapi/src/api/ia/controllers/ia.ts` — validates prompt presence, delegates to `generateText`, wraps errors in `ApplicationError`
+- `apps/strapi/src/api/ia/routes/ia.ts` — `POST /api/ia/gemini` route
+- `apps/strapi/.env.example` — `GEMINI_API_KEY` documented
+
+### What Worked
+- Pattern clarity: SlackService was the exact blueprint (module-level singleton, `process.env` key, startup throw) — zero design decisions needed
+- Controller imports only from `services/gemini/index.ts` — no `@google/generative-ai` leakage into the API layer; encapsulation was clean by design
+- `ApplicationError` over `ctx.internalServerError` was the correct Strapi-idiomatic choice — keeps Strapi running on Gemini failures while returning proper HTTP error responses
+- Single-phase, single-plan execution took 4 minutes — the tightest phase in the project history
+- All 5 requirements verified by the user at first UAT pass — no deviations, no hotfixes
+
+### What Was Inefficient
+- Nothing material — this was one of the cleanest executions to date. The SlackService pattern was fully established and the implementation was purely mechanical.
+- MILESTONES.md auto-generated with "none recorded" accomplishments (known CLI parser limitation with SUMMARY.md YAML format) — required manual enrichment at milestone close; recurring issue
+
+### Patterns Established
+- **Gemini service pattern**: `GeminiService` in `apps/strapi/src/services/gemini/`; module-level singleton; `process.env.GEMINI_API_KEY` (not `strapi.config.get`); throws at startup if missing; controller imports only from `index.ts`
+- **`ApplicationError` for third-party API failures in Strapi controllers**: `try { ... } catch (err) { throw new ApplicationError(message) }` — keeps Strapi running, returns structured error response
+- **AI service domain isolation**: `apps/strapi/src/api/ia/` as the namespace for all AI-facing endpoints — `ia` is the stable name regardless of which model provider is behind it
+
+### Key Lessons
+1. **When a clear pattern already exists in the codebase, use it exactly.** SlackService was the perfect blueprint for GeminiService — same singleton model, same env var access, same startup guard. There was no value in inventing a different approach.
+2. **Keep the AI service name stable (`ia/`), not the provider name.** The route is `POST /api/ia/gemini` today; a future Claude or OpenAI endpoint would be `POST /api/ia/claude`. The `ia` domain is the stable abstraction layer, not `gemini`.
+3. **`process.env` for API keys, not `strapi.config.get`.** All integration services in this codebase use `process.env` directly (Slack, now Gemini). `strapi.config.get` is for structured config blocks, not secrets.
+
+### Cost Observations
+- Model mix: ~100% sonnet (balanced profile)
+- Sessions: 1 (single execute-phase session + milestone close)
+- Notable: Fastest milestone by wall time — 1 phase, 1 plan, ~4 min execution; the pattern was fully established before implementation began
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -1022,6 +1064,7 @@
 | v1.29 | 2 | 3 | News Manager: Strapi article content type + dashboard CRUD UI; custom Markdown textarea with lucide icons |
 | v1.30 | 4 | 8 | Blog Public Views: slug field, Article TS type, SCSS scaffolding, 7 blog components, /blog listing + detail pages, full SEO |
 | v1.31 | 2 | 2 | Article Manager Improvements: source_url Strapi field, draft/publish toggle in FormArticle, source_url link on detail page |
+| v1.32 | 1 | 1 | Gemini AI Service: GeminiService + POST /api/ia/gemini endpoint; SlackService pattern reused exactly; 4-min execution |
 
 ### Cumulative Quality
 
@@ -1055,6 +1098,7 @@
 | v1.29 | utils + vitest (unchanged) | true | 0 |
 | v1.30 | utils + jest (slug lifecycle hooks — 6 tests) + vitest (unchanged) | true | 1 (marked for Markdown rendering) |
 | v1.31 | utils + jest + vitest (unchanged) | true | 0 |
+| v1.32 | utils + jest + vitest (unchanged) | true | 1 (@google/generative-ai) |
 
 ### Top Lessons (Verified Across Milestones)
 
@@ -1090,6 +1134,7 @@
 30. Always ask "what happens after save?" when adding a form field — `source_url` re-sync after update was a correctness requirement that was missed in planning
 31. Check component signatures before choosing a display pattern — `CardInfo` only accepts plain strings; use the `card--info` CSS pattern directly when a sidebar block needs custom HTML (e.g., an `<a>` element)
 32. Strapi v5 optional string fields return `null`, not `undefined` — type them as `string | null`; using `string | undefined` causes false positives on optional chaining guards
+33. Name API routes by domain, not by provider — `POST /api/ia/gemini` today, `POST /api/ia/claude` tomorrow; the `ia` namespace is the stable abstraction layer regardless of which model powers it
 
 ## Milestone: v1.17 — Security & Stability
 

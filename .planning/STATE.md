@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.32
 milestone_name: Gemini AI Service
 current_phase: 071
-status: completed
-last_updated: "2026-03-13T14:39:01.202Z"
-last_activity: 2026-03-13 — 071-01 complete — GeminiService + POST /api/ia/gemini endpoint
+status: archived
+last_updated: "2026-03-13"
+last_activity: 2026-03-13 — v1.32 archived — Gemini AI Service shipped
 progress:
   total_phases: 1
   completed_phases: 1
@@ -17,16 +17,16 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-13 after v1.32 milestone started)
+See: .planning/PROJECT.md (updated 2026-03-13 after v1.32 milestone shipped)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.32 — Gemini AI Service
+**Current focus:** Planning next milestone
 
 ## Position
 
-**Milestone:** v1.32 — Gemini AI Service
-**Current Phase:** 071
-**Status:** Milestone complete
+**Milestone:** v1.32 — Gemini AI Service (archived)
+**Current Phase:** 071 (complete)
+**Status:** v1.32 archived — ready for next milestone
 
 Last activity: 2026-03-13 — 071-01 complete — GeminiService + POST /api/ia/gemini endpoint
 
@@ -43,6 +43,7 @@ Last activity: 2026-03-13 — 071-01 complete — GeminiService + POST /api/ia/g
 - 2026-03-13: Milestone v1.32 started — Gemini AI Service
 - 2026-03-13: Roadmap created — 1 phase (071), 5/5 requirements mapped (GEMINI-01 through GEMINI-05 → Phase 071)
 - 2026-03-13: 071-01 complete — GeminiService wrapping @google/generative-ai + POST /api/ia/gemini endpoint (4 min)
+- 2026-03-13: Milestone v1.32 archived — Gemini AI Service shipped
 
 ### Key Decisions
 
