@@ -30,6 +30,24 @@
       </div>
 
       <div class="form__group">
+        <label class="form__label">Imagen de portada</label>
+        <UploadMedia
+          v-model="form.cover"
+          :max-files="1"
+          hint="Imagen principal del artículo (1 imagen)"
+        />
+      </div>
+
+      <div class="form__group">
+        <label class="form__label">Galería</label>
+        <UploadMedia
+          v-model="form.gallery"
+          :max-files="10"
+          hint="Imágenes adicionales del artículo (máximo 10)"
+        />
+      </div>
+
+      <div class="form__group">
         <label class="form__label" for="seo_title">Título SEO</label>
         <Field
           v-model="form.seo_title"
@@ -71,6 +89,16 @@ import { Field, Form, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 import { useRoute, useRouter } from "vue-router";
 
+interface MediaItem {
+  id?: number;
+  url?: string;
+  formats?: {
+    thumbnail?: { url: string };
+    small?: { url: string };
+    medium?: { url: string };
+  };
+}
+
 interface ArticleData {
   id?: number;
   documentId?: string;
@@ -79,6 +107,8 @@ interface ArticleData {
   body?: string;
   seo_title?: string;
   seo_description?: string;
+  cover?: MediaItem[];
+  gallery?: MediaItem[];
 }
 
 const props = defineProps<{
@@ -105,12 +135,22 @@ const schema = yup.object({
   seo_description: yup.string().optional(),
 });
 
-const form = ref({
+const form = ref<{
+  title: string;
+  header: string;
+  body: string;
+  seo_title: string;
+  seo_description: string;
+  cover: MediaItem[];
+  gallery: MediaItem[];
+}>({
   title: "",
   header: "",
   body: "",
   seo_title: "",
   seo_description: "",
+  cover: [],
+  gallery: [],
 });
 
 const isEditMode = computed(() =>
@@ -128,6 +168,8 @@ const hydrateForm = () => {
     body: props.article?.body || "",
     seo_title: props.article?.seo_title || "",
     seo_description: props.article?.seo_description || "",
+    cover: props.article?.cover || [],
+    gallery: props.article?.gallery || [],
   };
   lastHydratedId.value = props.article?.id || props.article?.documentId || null;
 };
@@ -136,12 +178,21 @@ const handleSubmit = async (values: Record<string, unknown>) => {
   sending.value = true;
 
   try {
+    const coverIds = form.value.cover
+      .map((m) => m.id)
+      .filter((id): id is number => id !== undefined);
+    const galleryIds = form.value.gallery
+      .map((m) => m.id)
+      .filter((id): id is number => id !== undefined);
+
     const payload = {
       title: (values.title as string).trim(),
       header: (values.header as string)?.trim() || null,
       body: form.value.body?.trim() || null,
       seo_title: (values.seo_title as string)?.trim() || null,
       seo_description: (values.seo_description as string)?.trim() || null,
+      cover: coverIds.length > 0 ? coverIds : null,
+      gallery: galleryIds.length > 0 ? galleryIds : null,
     };
 
     if (isEditMode.value) {
@@ -180,6 +231,8 @@ const handleSubmit = async (values: Record<string, unknown>) => {
         body: payload.body || "",
         seo_title: payload.seo_title || "",
         seo_description: payload.seo_description || "",
+        cover: form.value.cover,
+        gallery: form.value.gallery,
       };
       emit("saved", updatedArticle as ArticleData);
       await Swal.fire(

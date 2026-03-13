@@ -34,6 +34,16 @@ import BoxInformation from "@/components/BoxInformation.vue";
 import CardInfo from "@/components/CardInfo.vue";
 import FormArticle from "@/components/FormArticle.vue";
 
+interface MediaItem {
+  id?: number;
+  url?: string;
+  formats?: {
+    thumbnail?: { url: string };
+    small?: { url: string };
+    medium?: { url: string };
+  };
+}
+
 interface ArticleData {
   id?: number;
   documentId?: string;
@@ -45,6 +55,8 @@ interface ArticleData {
   publishedAt?: string | null;
   createdAt?: string;
   updatedAt?: string;
+  cover?: MediaItem[];
+  gallery?: MediaItem[];
 }
 
 definePageMeta({
@@ -78,11 +90,18 @@ const { data: articleData } = await useAsyncData(
     const strapi = useStrapi();
     const response = await strapi.find("articles", {
       filters: { documentId: { $eq: id } },
+      populate: ["cover", "gallery"],
     } as Record<string, unknown>);
     const data = Array.isArray(response.data) ? response.data[0] : null;
     if (data) return data as ArticleData;
 
-    const fallbackResponse = await strapi.findOne("articles", id as string);
+    const fallbackResponse = await strapi.findOne(
+      "articles",
+      id as string,
+      {
+        populate: ["cover", "gallery"],
+      } as Record<string, unknown>,
+    );
     return (fallbackResponse.data as unknown as ArticleData) || null;
   },
 );
