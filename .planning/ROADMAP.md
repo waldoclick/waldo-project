@@ -161,6 +161,6 @@ Plans:
 | 074   | v1.34     | 2/2            | Complete    | 2026-03-13 |
 | 075   | v1.35     | 2/2            | Complete    | 2026-03-13 |
 | 076   | v1.35     | 2/2            | Complete    | 2026-03-13 |
-| 077   | 2/4 | In Progress|  | —          |
+| 077   | 3/4 | In Progress|  | —          |
 | 078   | v1.36     | 0/TBD          | Not started | —          |
 | 079   | v1.36     | 0/TBD          | Not started | —          |

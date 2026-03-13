@@ -4,14 +4,14 @@ milestone: v1.36
 milestone_name: Two-Step Login Verification
 current_phase: 077 — Strapi 2-Step Backend
 status: executing
-last_updated: "2026-03-13T22:29:11.196Z"
-last_activity: 2026-03-13 — Executed 077-01 (verification-code Strapi content type schema + scaffold)
+last_updated: "2026-03-13T22:36:26.637Z"
+last_activity: 2026-03-13 — Executed 077-03 (2-step auth controllers: overrideAuthLocal, verifyCode, resendCode)
 progress:
   total_phases: 3
   completed_phases: 0
   total_plans: 4
-  completed_plans: 2
-  percent: 50
+  completed_plans: 3
+  percent: 75
 ---
 
 # Session State
@@ -21,19 +21,19 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-13 after v1.36 milestone started)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 077 — Strapi 2-Step Backend (ready to plan)
+**Current focus:** Phase 077 — Strapi 2-Step Backend (3/4 plans complete — plan 04 remaining)
 
 ## Position
 
 **Milestone:** v1.36 — Two-Step Login Verification
 **Current Phase:** 077 — Strapi 2-Step Backend
-**Status:** In Progress — Plans 01 and 02/04 complete
+**Status:** In Progress — Plans 01, 02, and 03/04 complete
 
 ```
-Progress: [█████░░░░░] 50%
+Progress: [████████░░] 75%
 ```
 
-Last activity: 2026-03-13 — Executed 077-01 (verification-code Strapi content type schema + scaffold)
+Last activity: 2026-03-13 — Executed 077-03 (2-step auth controllers: overrideAuthLocal, verifyCode, resendCode)
 
 ## Accumulated Context
 
@@ -49,6 +49,9 @@ Last activity: 2026-03-13 — Executed 077-01 (verification-code Strapi content 
 - `pendingToken` carried in transient state (not URL) between login → verify pages in both frontend apps
 - Swal for user-facing errors (code expired, max attempts reached) in both apps
 - AGENTS.md BEM convention applies to all new SCSS components
+- `plugin.controllers.auth.callback` is the Strapi v5 hook for `POST /api/auth/local` (not `auth.local`)
+- Existing pending verification-code record for same userId is deleted before creating a new one on re-login
+- `resendCode` cooldown uses `record.updatedAt` timestamp for the 60-second rate-limit window
 
 ### Phase Dependency
 
