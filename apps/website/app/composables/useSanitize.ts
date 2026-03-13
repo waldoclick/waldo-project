@@ -1,3 +1,5 @@
+import { marked } from "marked";
+
 export const useSanitize = () => {
   // Función para sanitizar HTML de forma segura
   const sanitizeHTML = (
@@ -107,10 +109,20 @@ export const useSanitize = () => {
     return sanitizeHTML(html, ["strong", "em", "br"], []);
   };
 
+  /**
+   * Converts Markdown (from Strapi richtext fields) to sanitized HTML.
+   */
+  const parseMarkdown = (markdown: string): string => {
+    if (!markdown) return "";
+    const html = marked.parse(markdown, { async: false }) as string;
+    return sanitizeRich(html);
+  };
+
   return {
     sanitizeText,
     sanitizeRich,
     sanitizeStrict,
     sanitizeBasic,
+    parseMarkdown,
   };
 };
