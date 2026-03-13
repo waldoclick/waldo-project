@@ -16,7 +16,7 @@
 <details>
 <summary>🚧 v1.32 Gemini AI Service (Phase 071) — IN PROGRESS</summary>
 
-- [ ] **Phase 071: Gemini AI Service** - GeminiService + POST /api/ia/gemini endpoint end-to-end
+- [x] **Phase 071: Gemini AI Service** - GeminiService + POST /api/ia/gemini endpoint end-to-end (completed 2026-03-13)
   - [ ] 071-01-PLAN.md — Install @google/generative-ai, GeminiService, and POST /api/ia/gemini controller+route
 
 </details>
@@ -85,7 +85,7 @@
 
 | Phase | Milestone | Plans Complete | Status      | Completed  |
 |-------|-----------|----------------|-------------|------------|
-| 071   | v1.32     | 0/1            | Not started | -          |
+| 071   | 1/1 | Complete   | 2026-03-13 | -          |
 | 060   | v1.26     | 3/3            | Complete    | 2026-03-11 |
 | 061   | v1.27     | 2/2            | Complete    | 2026-03-12 |
 | 062   | v1.28     | 2/2            | Complete    | 2026-03-12 |

@@ -7,14 +7,14 @@
 
 ### Gemini Service
 
-- [ ] **GEMINI-01**: El `GeminiService` en `apps/strapi/src/services/` se conecta a la API de Gemini usando la API key configurada en variables de entorno
-- [ ] **GEMINI-02**: La API key de Gemini se configura en `.env` de Strapi (`GEMINI_API_KEY`) y se accede desde el servicio de forma segura (no hardcodeada)
+- [x] **GEMINI-01**: El `GeminiService` en `apps/strapi/src/services/` se conecta a la API de Gemini usando la API key configurada en variables de entorno
+- [x] **GEMINI-02**: La API key de Gemini se configura en `.env` de Strapi (`GEMINI_API_KEY`) y se accede desde el servicio de forma segura (no hardcodeada)
 
 ### Gemini Endpoint
 
-- [ ] **GEMINI-03**: El endpoint `POST /api/ia/gemini` recibe `{ prompt: string }` y devuelve `{ text: string }` con la respuesta generada por Gemini
-- [ ] **GEMINI-04**: El endpoint delega la llamada a la API de Gemini al `GeminiService` (separación de responsabilidades controller/service)
-- [ ] **GEMINI-05**: Si la API de Gemini falla o devuelve error, el endpoint responde con un error HTTP apropiado (4xx/5xx) sin crashear Strapi
+- [x] **GEMINI-03**: El endpoint `POST /api/ia/gemini` recibe `{ prompt: string }` y devuelve `{ text: string }` con la respuesta generada por Gemini
+- [x] **GEMINI-04**: El endpoint delega la llamada a la API de Gemini al `GeminiService` (separación de responsabilidades controller/service)
+- [x] **GEMINI-05**: Si la API de Gemini falla o devuelve error, el endpoint responde con un error HTTP apropiado (4xx/5xx) sin crashear Strapi
 
 ## v2 Requirements
 
@@ -34,11 +34,11 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| GEMINI-01 | Phase 071 | Pending |
-| GEMINI-02 | Phase 071 | Pending |
-| GEMINI-03 | Phase 071 | Pending |
-| GEMINI-04 | Phase 071 | Pending |
-| GEMINI-05 | Phase 071 | Pending |
+| GEMINI-01 | Phase 071 | Complete |
+| GEMINI-02 | Phase 071 | Complete |
+| GEMINI-03 | Phase 071 | Complete |
+| GEMINI-04 | Phase 071 | Complete |
+| GEMINI-05 | Phase 071 | Complete |
 
 **Coverage:**
 - v1 requirements: 5 total

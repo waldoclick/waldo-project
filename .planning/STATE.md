@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.32
 milestone_name: Gemini AI Service
 current_phase: 071
-status: roadmap
-last_updated: "2026-03-13T00:00:00.000Z"
-last_activity: "2026-03-13 — Roadmap created — 1 phase (071), 5/5 requirements mapped"
+status: complete
+last_updated: "2026-03-13T14:22:37.757Z"
+last_activity: 2026-03-13 — Roadmap created — 1 phase (071), 5/5 requirements mapped
 progress:
   total_phases: 1
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  completed_phases: 1
+  total_plans: 1
+  completed_plans: 1
 ---
 
 # Session State
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-03-13 after v1.32 milestone started)
 ## Position
 
 **Milestone:** v1.32 — Gemini AI Service
-**Current Phase:** 071 (not started)
-**Status:** Roadmap defined — ready for planning
+**Current Phase:** 071 — Complete
+**Status:** Phase complete — milestone v1.32 Gemini AI Service delivered
 
-Last activity: 2026-03-13 — Roadmap created — 1 phase (071), 5/5 requirements mapped
+Last activity: 2026-03-13 — 071-01 complete — GeminiService + POST /api/ia/gemini endpoint
 
 ## Session Log
 
@@ -42,10 +42,14 @@ Last activity: 2026-03-13 — Roadmap created — 1 phase (071), 5/5 requirement
 - 2026-03-13: Milestone v1.31 archived — Article Manager Improvements shipped
 - 2026-03-13: Milestone v1.32 started — Gemini AI Service
 - 2026-03-13: Roadmap created — 1 phase (071), 5/5 requirements mapped (GEMINI-01 through GEMINI-05 → Phase 071)
+- 2026-03-13: 071-01 complete — GeminiService wrapping @google/generative-ai + POST /api/ia/gemini endpoint (4 min)
 
 ### Key Decisions
 
 - All 5 GEMINI requirements map to single phase 071 — coarse granularity + tight coupling (one service + one endpoint) makes splitting artificial
+- GeminiService uses module-level singleton (same as SlackService) — throws at startup if GEMINI_API_KEY missing
+- Controller imports only from services/gemini/index.ts — no direct @google/generative-ai in API layer
+- ApplicationError chosen over ctx.internalServerError for Strapi-idiomatic error surfacing
 
 ### Blockers/Concerns
 
