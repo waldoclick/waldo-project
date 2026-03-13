@@ -15,10 +15,11 @@
         </NuxtLink>
       </template>
     </HeroDefault>
-    <ArticlesDefault />
+    <ArticlesDefault ref="articlesRef" />
     <LightBoxArticles
       :is-open="isLightboxOpen"
       @close="isLightboxOpen = false"
+      @created="handleCreated"
     />
   </div>
 </template>
@@ -36,4 +37,9 @@ definePageMeta({
 
 const breadcrumbs = [{ label: "Artículos" }];
 const isLightboxOpen = ref(false);
+const articlesRef = ref<InstanceType<typeof ArticlesDefault> | null>(null);
+
+function handleCreated() {
+  articlesRef.value?.fetchArticles();
+}
 </script>
