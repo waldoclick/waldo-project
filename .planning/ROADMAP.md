@@ -125,4 +125,4 @@ Plans:
 | 065   | 1/1 | Complete    | 2026-03-13 | —          |
 | 066   | 2/2 | Complete    | 2026-03-13 | —          |
 | 067   | 3/3 | Complete    | 2026-03-13 | —          |
-| 068   | v1.30     | 0/TBD          | Not started | —          |
+| 068   | 1/2 | In Progress|  | —          |

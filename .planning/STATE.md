@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.25
 milestone_name: milestone
 status: planning
-last_updated: "2026-03-13T01:33:36.415Z"
+last_updated: "2026-03-13T01:53:25Z"
 progress:
   total_phases: 4
   completed_phases: 3
@@ -24,8 +24,8 @@ See: .planning/PROJECT.md (updated 2026-03-12 after v1.30 milestone started)
 ## Position
 
 **Milestone:** v1.30 — Blog Public Views
-**Phase:** 067 Plan 03 — complete
-**Status:** Ready to plan
+**Phase:** 068 Plan 01 — complete
+**Status:** Ready to execute
 
 **Progress:** [█████████░] 92%
 
@@ -40,6 +40,7 @@ See: .planning/PROJECT.md (updated 2026-03-12 after v1.30 milestone started)
 - 2026-03-13: Phase 067-01 complete — CardArticle.vue + RelatedArticles.vue leaf display components, zero TypeScript errors
 - 2026-03-13: Phase 067-02 complete — articles.store.ts (useArticlesStore, pageSize 12, no persist) + HeroArticles.vue (static blog hero, BreadcrumbsDefault, h1 "Blog")
 - 2026-03-13: Phase 067-03 complete — FilterArticles.vue + ArticleArchive.vue + blog/index.vue (full listing page with useAsyncData, SEO @type:Blog, empty state)
+- 2026-03-13: Phase 068-01 complete — HeroArticle.vue + ArticleSingle.vue leaf display components, zero TypeScript errors
 
 ### Key Decisions
 
@@ -65,6 +66,8 @@ See: .planning/PROJECT.md (updated 2026-03-12 after v1.30 milestone started)
 - @type: "Blog" for blog listing structured data — correct schema.org collection type (not BlogPosting or SearchResultsPage)
 - FilterArticles receives categories as prop from useAsyncData result — no independent fetch
 - blog/index.vue definePageMeta({}) with empty object — no alias needed unlike /anuncios
+- HeroArticle breadcrumbs link to /blog (unfiltered) — categoryName/categorySlug props accepted for flexibility but not rendered in hero
+- ArticleSingle passes article.gallery (GalleryItem[] with .url) to GalleryDefault — not article.cover (Media[], no .url)
 
 ### Blockers/Concerns
 
