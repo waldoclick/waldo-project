@@ -32,7 +32,7 @@
 
 ### Blog-Specific Components
 
-- [ ] **BLOG-14**: `HeroArticles` component exists — renders hero section with white background, breadcrumbs (Inicio → Blog), and "Blog" title; no category color tint
+- [x] **BLOG-14**: `HeroArticles` component exists — renders hero section with white background, breadcrumbs (Inicio → Blog), and "Blog" title; no category color tint
 - [ ] **BLOG-15**: `FilterArticles` component exists — category dropdown + sort order dropdown; updates `?category=` and `?order=` URL params; client-only rendered (SSR-safe loading state)
 - [ ] **BLOG-16**: `ArticleArchive` component exists — responsive 4-column grid of `CardArticle` with `vue-awesome-paginate` pagination updating `?page=` query param
 - [x] **BLOG-17**: `CardArticle` component exists — displays: cover image (NuxtImg, webp/lazy), category badge, title (truncated to 60 chars), header/excerpt (truncated to 120 chars), formatted `publishedAt` date, and "Leer más" NuxtLink to `/blog/[slug]`
@@ -87,7 +87,7 @@
 | BLOG-11 | Phase 068 | Pending |
 | BLOG-12 | Phase 068 | Pending |
 | BLOG-13 | Phase 068 | Pending |
-| BLOG-14 | Phase 067 | Pending |
+| BLOG-14 | Phase 067 | Complete |
 | BLOG-15 | Phase 067 | Pending |
 | BLOG-16 | Phase 067 | Pending |
 | BLOG-17 | Phase 067 | Complete |
