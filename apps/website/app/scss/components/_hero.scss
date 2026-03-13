@@ -354,4 +354,42 @@
       margin-bottom: 10px;
     }
   }
+
+  &--articles {
+    background-color: $white_smoke;
+
+    &__container {
+      @extend .container;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    &__breadcrumbs {
+      display: flex;
+    }
+
+    &__title {
+      margin-bottom: 0;
+    }
+  }
+
+  &--article {
+    background-color: $white_smoke;
+
+    &__container {
+      @extend .container;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    &__breadcrumbs {
+      display: flex;
+    }
+
+    &__title {
+      margin-bottom: 0;
+    }
+  }
 }
