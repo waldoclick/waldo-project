@@ -4,10 +4,10 @@
     <BoxContent>
       <template #content>
         <BoxInformation title="Editar perfil" :columns="1">
-          <FormProfileEdit />
+          <FormEdit />
         </BoxInformation>
         <BoxInformation title="Cambiar contraseña" :columns="1">
-          <FormProfilePassword />
+          <FormPassword />
         </BoxInformation>
       </template>
     </BoxContent>
@@ -18,8 +18,8 @@
 import HeroDefault from "@/components/HeroDefault.vue";
 import BoxContent from "@/components/BoxContent.vue";
 import BoxInformation from "@/components/BoxInformation.vue";
-import FormProfileEdit from "@/components/FormProfileEdit.vue";
-import FormProfilePassword from "@/components/FormProfilePassword.vue";
+import FormEdit from "@/components/FormEdit.vue";
+import FormPassword from "@/components/FormPassword.vue";
 
 definePageMeta({
   layout: "dashboard",
