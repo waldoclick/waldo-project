@@ -32,7 +32,10 @@
   2. `POST /api/ad-reservations/gift` with `{ userId, quantity }` creates N ad-reservation records assigned to the specified user
   3. `POST /api/ad-featured-reservations/gift` with `{ userId, quantity }` creates N featured-reservation records assigned to the specified user
   4. Recipient receives an email notification after a successful gift creation
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 075-01-PLAN.md — GET /api/users/authenticated endpoint (server-side role filter)
+- [ ] 075-02-PLAN.md — POST gift endpoints for ad-reservations + ad-featured-reservations + email template
 
 ### Phase 076: Dashboard Gift Lightbox
 **Goal**: Administrators can gift reservations to users from the reservation detail pages in the dashboard
