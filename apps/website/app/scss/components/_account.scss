@@ -565,17 +565,4 @@
       max-width: 500px;
     }
   }
-
-  &--miperfil {
-    display: flex;
-    flex-direction: column;
-    gap: 60px;
-
-    &__block {
-      &--password {
-        padding-top: 60px;
-        border-top: 1px solid $gainsboro;
-      }
-    }
-  }
 }
