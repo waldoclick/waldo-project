@@ -47,7 +47,10 @@ Plans:
   3. The lightbox contains a numeric quantity input (min: 1) and a searchable user select showing only Authenticated users (first name + last name)
   4. A Swal confirmation dialog appears before the gift is submitted, requiring explicit admin approval
   5. On confirmation, the appropriate gift endpoint is called and the lightbox closes on success
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 076-01-PLAN.md — LightboxGift component + SCSS modifier
+- [ ] 076-02-PLAN.md — Wire LightboxGift into reservation + featured detail pages
 
 <details>
 <summary>✅ v1.34 LightBoxArticles (Phases 073–074) — SHIPPED 2026-03-13</summary>
