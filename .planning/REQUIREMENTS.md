@@ -1,69 +1,61 @@
-# Requirements: Waldo Project — v1.34 LightBoxArticles
+# Requirements: Waldo Project — v1.35 Gift Reservations to Users
 
 **Defined:** 2026-03-13
 **Core Value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
 
-## v1.34 Requirements
+## v1.35 Requirements
 
-### Backend
+Requirements for milestone v1.35. Each maps to roadmap phases.
 
-- [x] **BACK-01**: El administrador puede buscar noticias vía `POST /api/search/tavily` enviando `{ query, num? }` y recibir `{ news: [{ title, link, snippet, date, source }] }`
+### Gift UI (Dashboard)
 
-### Dashboard — Lightbox Component
+- [ ] **GIFT-01**: Administrator can open a "Gift Reservations" lightbox from the ad-reservation detail page
+- [ ] **GIFT-02**: Administrator can open a "Gift Featured Reservations" lightbox from the featured-reservation detail page
+- [ ] **GIFT-03**: Gift lightbox contains a numeric input to specify the number of reservations to gift (min: 1)
+- [ ] **GIFT-04**: Gift lightbox contains a searchable user select showing only Authenticated-role users, displaying first name + last name per option
+- [ ] **GIFT-05**: A Swal confirmation dialog appears before the gift is created asking the admin to confirm
 
-- [x] **LB-01**: `LightBoxArticles.vue` existe con estructura BEM `lightbox lightbox--articles`, siguiendo el mismo patrón HTML que `LightboxRazon.vue`
-- [x] **LB-02**: El lightbox tiene 3 pasos con navegación adelante/atrás; el estado persiste mientras el lightbox está abierto
-- [x] **LB-03**: Step 1 muestra un textarea con query predefinida y un botón "Buscar"; al presionar llama a `POST /api/search/tavily` y muestra los resultados (title, url, date)
-- [x] **LB-04**: El usuario puede seleccionar una noticia del Step 1; al seleccionar se captura el título, URL y fecha de la noticia y avanza al Step 2 (el fetch del HTML completo queda diferido a una fase futura cuando exista el endpoint proxy)
-- [x] **LB-05**: Step 2 muestra la info de la noticia seleccionada (title, url, date) y un textarea con el prompt predefinido de generación de artículo
-- [x] **LB-06**: Step 2 tiene un botón "Generar artículo"; al presionar llama a `POST /api/ia/gemini` con prompt + HTML + url + date y avanza al Step 3
-- [x] **LB-07**: Step 3 muestra el resultado JSON retornado por Gemini: title, header, body (Markdown renderizado), keywords, source_url, source_date
-- [x] **LB-08**: El usuario puede volver del Step 3 al Step 2, y del Step 2 al Step 1
+### Gift Backend (Strapi)
 
-### Dashboard — SCSS
+- [ ] **GIFT-06**: `POST /api/ad-reservations/gift` endpoint creates N ad-reservation records assigned to the selected user
+- [ ] **GIFT-07**: `POST /api/ad-featured-reservations/gift` endpoint creates N featured-reservation records assigned to the selected user
+- [ ] **GIFT-08**: `GET /api/users/authenticated` endpoint returns all users with the Authenticated role (id, firstName, lastName) — server-side filtered via `strapi.db.query`
 
-- [x] **SCSS-01**: `_lightbox.scss` tiene el modifier `&--articles` con todos sus elementos BEM, siguiendo la estructura de `&--razon`
+### Gift Email (Strapi)
 
-### Dashboard — Integración
-
-- [x] **INT-01**: `pages/articles/index.vue` tiene un botón "Generar artículo" con clase `btn--announcement` e icono `Wand2` (lucide) junto al botón "Agregar artículo"; al presionar abre `LightBoxArticles`
+- [ ] **GIFT-09**: After successful gift creation, an email is sent to the recipient informing them they received gifted ad reservations or featured ad reservations
 
 ## Future Requirements
 
-### Mejoras al generador de artículos
-
-- **GEN-01**: El usuario puede editar el artículo generado antes de guardarlo
-- **GEN-02**: El artículo generado se puede guardar directamente como borrador en Strapi desde el Step 3
-- **GEN-03**: El sistema recuerda las últimas queries de búsqueda usadas
+*(None identified for this milestone)*
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| Guardar artículo directamente desde el lightbox | Complejidad de integración con FormArticle; se hace en milestone posterior |
-| Múltiples selecciones de noticias | Un artículo = una fuente; simplifica el prompt y el flujo |
-| Soporte para otros modelos de IA (Claude, etc.) | Gemini es suficiente para este caso; generalización en milestone posterior |
+| Gifting to non-Authenticated users (e.g. Public role) | Admin-only tool; gifting to unregistered users has no business value |
+| Gift history / audit log | Not requested; can be added in a future milestone |
+| User notification in-app (bell/badge) | No in-app notification system exists yet |
+| Bulk gift from list view (not detail page) | Deferred; detail-page-only scope confirmed |
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| BACK-01 | Phase 073 | Complete |
-| LB-01 | Phase 074 | Complete |
-| LB-02 | Phase 074 | Complete |
-| LB-03 | Phase 074 | Complete |
-| LB-04 | Phase 074 | Complete |
-| LB-05 | Phase 074 | Complete |
-| LB-06 | Phase 074 | Complete |
-| LB-07 | Phase 074 | Complete |
-| LB-08 | Phase 074 | Complete |
-| SCSS-01 | Phase 074 | Complete |
-| INT-01 | Phase 074 | Complete |
+| GIFT-01 | TBD | Pending |
+| GIFT-02 | TBD | Pending |
+| GIFT-03 | TBD | Pending |
+| GIFT-04 | TBD | Pending |
+| GIFT-05 | TBD | Pending |
+| GIFT-06 | TBD | Pending |
+| GIFT-07 | TBD | Pending |
+| GIFT-08 | TBD | Pending |
+| GIFT-09 | TBD | Pending |
 
 **Coverage:**
-- v1.34 requirements: 11 total
-- Mapped to phases: 11
-- Unmapped: 0 ✓
+- v1.35 requirements: 9 total
+- Mapped to phases: 0
+- Unmapped: 9 ⚠️
 
 ---
 *Requirements defined: 2026-03-13*
