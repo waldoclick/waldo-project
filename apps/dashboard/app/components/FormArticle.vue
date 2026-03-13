@@ -139,7 +139,7 @@ const handleSubmit = async (values: Record<string, unknown>) => {
     const payload = {
       title: (values.title as string).trim(),
       header: (values.header as string)?.trim() || null,
-      body: (values.body as string)?.trim() || null,
+      body: form.value.body?.trim() || null,
       seo_title: (values.seo_title as string)?.trim() || null,
       seo_description: (values.seo_description as string)?.trim() || null,
     };

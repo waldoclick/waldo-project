@@ -23,6 +23,7 @@
             title="Encabezado"
             :description="article.header"
           />
+          <CardInfo v-if="article" title="Cuerpo" :description="article.body" />
           <CardInfo
             v-if="article"
             title="Título SEO"
@@ -71,6 +72,7 @@ interface ArticleData {
   documentId?: string;
   title?: string;
   header?: string;
+  body?: string;
   seo_title?: string;
   seo_description?: string;
   publishedAt?: string | null;
