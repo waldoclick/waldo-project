@@ -1,50 +1,44 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.35
-milestone_name: Gift Reservations to Users
+milestone: v1.36
+milestone_name: Two-Step Login Verification
 current_phase: null
-status: milestone_archived
-last_updated: "2026-03-13T21:35:00.000Z"
-last_activity: "2026-03-13 — Archived milestone v1.35 (Gift Reservations to Users)"
+status: defining_requirements
+last_updated: "2026-03-13T22:00:00.000Z"
+last_activity: "2026-03-13 — Milestone v1.36 started"
 progress:
-  total_phases: 2
-  completed_phases: 2
-  total_plans: 4
-  completed_plans: 4
+  total_phases: null
+  completed_phases: 0
+  total_plans: null
+  completed_plans: 0
 ---
 
 # Session State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-13 after v1.35 milestone)
+See: .planning/PROJECT.md (updated 2026-03-13 after v1.36 milestone started)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Planning next milestone (`/gsd-new-milestone`)
+**Current focus:** Phase: Not started (defining requirements)
 
 ## Position
 
-**Milestone:** v1.35 — Gift Reservations to Users ✅ SHIPPED 2026-03-13
-**Status:** Archived — ready for next milestone
+**Milestone:** v1.36 — Two-Step Login Verification
+**Current Phase:** Not started
+**Status:** Defining requirements
 
-```
-Phase 075 [██████████] 100%  Strapi Gift Endpoints (2/2 plans)
-Phase 076 [██████████] 100%  Dashboard Gift Lightbox (2/2 plans)
-Overall   [██████████] 100%  (4/4 plans) — SHIPPED
-```
-
-Last activity: 2026-03-13 — Archived milestone v1.35 (Gift Reservations to Users)
+Last activity: 2026-03-13 — Milestone v1.36 started
 
 ## Accumulated Context
 
 ### Key Decisions (carry forward)
 
 - All business logic lives in Strapi; dashboard is a stateless HTTP client
-- Controlled lightbox pattern: `isOpen` prop + `@close`/`@gifted` emits — `LightboxGift.vue` is the latest reference
-- Swal confirmation used in dashboard for destructive/irreversible admin actions
+- Auth extension pattern: override plugin controllers in `src/extensions/users-permissions/strapi-server.ts`
+- `recaptcha.ts` middleware already intercepts `POST /api/auth/local` — 2-step interception must be at controller level (after recaptcha passes)
+- Swal for user-facing errors in both frontend apps
 - sendMjmlEmail() for all email notifications; email failures wrapped in try/catch (non-fatal)
-- `strapi.db.query` for server-side role filtering (not forgeable by clients)
-- `endpoint` prop pattern for reusable action lightboxes across multiple entity types
 - AGENTS.md BEM convention: block + modifier namespace for all SCSS
 
 ### Blockers/Concerns

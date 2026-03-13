@@ -324,11 +324,23 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
         | `LightboxGift.vue` accepts `endpoint` prop for reuse | Single component handles both `ad-reservations` and `ad-featured-reservations` gift flows — v1.35 | ✓ Good |
         | `loadUsers()` called on every open without caching | Gift lightbox is used infrequently by admins; fresh user list preferred over stale cache — v1.35 | ✓ Good |
 
+## Current Milestone: v1.36 — Two-Step Login Verification
+
+**Goal:** All email/password logins (website + dashboard) require a 6-digit verification code sent by email before a JWT is issued — Google OAuth is unaffected.
+
+**Target features:**
+- Strapi overrides `POST /api/auth/local` to intercept credentials, generate and store a 6-digit code, send it by email, and return a `pendingToken` (no JWT yet)
+- New `POST /api/auth/verify-code` endpoint validates the code (5-min expiry, max 3 attempts, single-use) and issues the JWT on success
+- New `POST /api/auth/resend-code` endpoint regenerates and resends the code (rate-limited)
+- Dashboard: `/auth/verify-code` page with code input + resend button
+- Website: `/login/verificar` page with same UX
+- Google OAuth flow fully bypassed
+
 ## Current State
 
 **Last shipped:** v1.35 (2026-03-13) — Gift Reservations to Users: gift endpoints (Strapi) + LightboxGift lightbox (Dashboard)
-**Current milestone:** Planning next milestone
-**Current focus:** `/gsd-new-milestone`
+**Current milestone:** v1.36 — Two-Step Login Verification
+**Current focus:** Phase planning
 
 **Gift Reservations (since v1.35):** `GET /api/users/authenticated` (users-permissions plugin extension) — `strapi.db.query` role filter, returns `{ id, firstName, lastName }` only; `POST /api/ad-reservations/gift` and `POST /api/ad-featured-reservations/gift` — create N reservation records for any authenticated user + `gift-reservation.mjml` email (non-fatal); `LightboxGift.vue` controlled lightbox (`isOpen/endpoint/label` props + `close/gifted` emits) — quantity input + searchable Authenticated user select + Swal confirm; wired into `reservations/[id].vue` and `featured/[id].vue` with `giftOpen` ref pattern.
 
@@ -357,4 +369,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-13 after v1.35 milestone*
+*Last updated: 2026-03-13 after v1.36 milestone started*
