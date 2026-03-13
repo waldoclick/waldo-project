@@ -903,6 +903,52 @@
 
 ---
 
+## Milestone: v1.30 — Blog Public Views
+
+**Shipped:** 2026-03-13
+**Phases:** 4 (065–068) | **Plans:** 8 | **Timeline:** 1 day (2026-03-13)
+
+### What Was Built
+- `slug` uid field added to Strapi Article schema with `beforeCreate`/`beforeUpdate` lifecycle hooks; `slugify strict:true`; 6 Jest tests covering generation and uniqueness
+- `Article` TypeScript interface in `app/types/article.d.ts` (13 fields); `typeCheck: true` passes with zero errors
+- SCSS scaffolding: `_article.scss` (article--archive, article--single), blog-specific blocks added to `_hero.scss`, `_filter.scss`, `_related.scss`, `_card.scss`; `app.scss` import added
+- `useArticlesStore` (Pinia, no persist, `pageSize: 12`) with `loadArticles(filters, pagination, sort)`
+- 7 blog-specific components: `HeroArticles`, `FilterArticles`, `ArticleArchive`, `CardArticle`, `RelatedArticles`, `HeroArticle`, `ArticleSingle`
+- `blog/index.vue` — SSR `useAsyncData`, `?category=`/`?order=`/`?page=` URL param reactivity, `MessageDefault` empty state, `RelatedArticles` fallback, `$setSEO` + `@type:"Blog"` structured data
+- `blog/[slug].vue` — `useAsyncData(() => 'article-${slug}')`, 404 guard, Markdown via `marked`, `$setSEO` + `@type:"BlogPosting"` structured data, `RelatedArticles` with same-category-first logic
+
+### What Worked
+- Phase ordering (schema → infrastructure → listing → detail) had no rework — each phase had stable prerequisites
+- Replicating the `anuncios/` pattern for blog pages was mostly mechanical — adapting field names (no price, no seller, `header` instead of `description`) was the only design work
+- Infrastructure-first approach (Phase 066: types + SCSS before any component) eliminated undefined-field TypeScript errors in later phases
+- `article.gallery` vs `article.cover` distinction was caught early by reading the TypeScript interface — cover is `Media[]` (no `.url`); gallery is `GalleryItem[]` (has `.url`)
+- All 4 phases passed verification (4/4, 7/7, 9/9, 8/8 must-haves)
+
+### What Was Inefficient
+- Several quick fixes were executed in parallel with this milestone (body rendering, paragraph spacing, dashboard edit pages, image upload) — correct for velocity but makes phase stats (plans vs commits) harder to read in retrospect
+- `FilterArticles` BEM class mismatch (`selector__select` → `select`) was caught in phase verification, not during planning — pre-reading the SCSS file before plan execution would have caught it
+- The `fix-state-persistence` phase was an out-of-band fix that appeared as `in_progress` in gsd-tools — required a retroactive summary to close it cleanly
+
+### Patterns Established
+- **Blog component pattern**: replicate from ads equivalent with blog-specific BEM modifier (`article--archive` mirrors `announcement--archive`, `card--article` mirrors `card--announcement`); do not share components between ads and blog namespaces
+- **`cover: Media[]` vs `gallery: GalleryItem[]`**: cover has no `.url` (use `formats.medium?.url || formats.thumbnail.url`); gallery items extend Media and add `.url` — always pass gallery to `GalleryDefault`
+- **`useArticlesStore` without persist**: article lists are volatile (filter/pagination-dependent); persist would stale-cache filtered views across sessions
+- **Related articles pattern**: load same-category (filtered by category IDs), merge with most-recent, deduplicate by `id`, slice to target count
+- **`useAsyncData(() => 'article-${slug}')` lambda key**: required for SSR cache isolation on dynamic routes — string interpolation inside lambda captures SSR-safe reactive value
+
+### Key Lessons
+1. **Infrastructure phases pay off immediately.** Phase 066 (types + SCSS) with no user-visible output made Phases 067–068 strictly additive. Every component in Phase 067 had accurate TypeScript types from day one — zero rework for type mismatches.
+2. **Read the SCSS file before writing component markup.** The `FilterArticles` BEM mismatch (`selector__select` vs the SCSS selector `.filter--articles__select`) was caught in verification. A 30-second read of `_filter.scss` during plan research would have aligned the class name before writing code.
+3. **`cover: Media[]` has no `.url` — always use `gallery: GalleryItem[]` for display.** The `Media` type represents a Strapi media entity (has `formats` with nested URL); `GalleryItem` extends it to add a top-level `.url`. This distinction matters for every component that renders images.
+4. **Out-of-band phases should be closed immediately.** The `fix-state-persistence` phase appeared as `in_progress` because the work was done without the GSD workflow. Creating the SUMMARY.md retroactively closed it cleanly — but doing so at the time of the work would be cleaner.
+
+### Cost Observations
+- Model mix: ~100% sonnet (balanced profile)
+- Sessions: ~8 (execute-phase per phase-plan, quick tasks interspersed, milestone close)
+- Notable: Highest component count in a single milestone — 7 new Vue components + 2 new pages + 1 Pinia store + 1 TypeScript interface + SCSS scaffolding; velocity was high because the ads pattern was established and mechanical to replicate
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -935,6 +981,7 @@
 | v1.27 | 1 | 2 | GA4 ecommerce event chain completed: purchase() method + page wiring; flow discriminator; 12 Vitest tests |
 | v1.28 | 1 | 2 | Logout store cleanup: `reset()` pattern for Composition API stores; `useLogout` composable; `clearAll` renamed |
 | v1.29 | 2 | 3 | News Manager: Strapi article content type + dashboard CRUD UI; custom Markdown textarea with lucide icons |
+| v1.30 | 4 | 8 | Blog Public Views: slug field, Article TS type, SCSS scaffolding, 7 blog components, /blog listing + detail pages, full SEO |
 
 ### Cumulative Quality
 
@@ -966,6 +1013,7 @@
 | v1.27 | utils + vitest (useAdAnalytics — 12 tests) | true | 0 |
 | v1.28 | utils + vitest (useLogout — 4 tests) | true | 0 |
 | v1.29 | utils + vitest (unchanged) | true | 0 |
+| v1.30 | utils + jest (slug lifecycle hooks — 6 tests) + vitest (unchanged) | true | 1 (marked for Markdown rendering) |
 
 ### Top Lessons (Verified Across Milestones)
 
@@ -995,6 +1043,9 @@
 24. Check installed packages before adding new ones — `lucide-vue-next` was already present; EasyMDE was installed and immediately removed
 25. Read AGENTS.md BEM rules and a peer component before writing form markup — modifier-scoped element classes (`form--x__field`) are wrong; use `form__group`, `form__label`, `form__control`
 26. Enumerate all form fields explicitly in the plan — fields implied by the schema but not listed are frequently omitted in the first implementation pass
+27. Infrastructure phases (types + SCSS) with no user-visible output unlock faster downstream phases — invest upfront, they pay off immediately
+28. `cover: Media[]` has no direct `.url`; `gallery: GalleryItem[]` does — always pass gallery to display components; cover is for OG image metadata only
+29. `useAsyncData(() => 'key-${param}')` lambda key is required for SSR cache isolation on dynamic routes — without the lambda, the key is evaluated once and all slug pages share the same cache entry
 
 ## Milestone: v1.17 — Security & Stability
 

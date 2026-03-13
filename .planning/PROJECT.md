@@ -124,9 +124,15 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
    - ✓ Al hacer logout, los 6 stores de usuario se resetean en orden: `useAdStore`, `useHistoryStore`, `useMeStore`, `useUserStore`, `useAdsStore`, `useAppStore` — el siguiente usuario ve estado limpio — v1.28
    - ✓ `useLogout` composable centraliza la lógica de logout; `MenuUser.vue`, `MobileBar.vue`, `SidebarAccount.vue` usan el composable — cero código de logout duplicado — v1.28
     - ✓ `reset()` action consistente en todos los stores (Composition API); `clearAll()` eliminado — v1.28
-   - ✓ Content type `Article` en Strapi con todos los campos (title, header, body richtext, cover/gallery media, categories manyToMany, seo_title, seo_description) y `draftAndPublish: true` — v1.29
-   - ✓ El administrador puede listar, crear, editar y eliminar artículos desde el dashboard — v1.29
-   - ✓ El administrador puede completar los campos SEO al crear o editar un artículo — v1.29
+    - ✓ Content type `Article` en Strapi con todos los campos (title, header, body richtext, cover/gallery media, categories manyToMany, seo_title, seo_description) y `draftAndPublish: true` — v1.29
+    - ✓ El administrador puede listar, crear, editar y eliminar artículos desde el dashboard — v1.29
+    - ✓ El administrador puede completar los campos SEO al crear o editar un artículo — v1.29
+    - ✓ `slug` field (uid type, unique, required) added to Article schema; auto-generated via `slugify strict:true` in beforeCreate/beforeUpdate lifecycle hooks; `GET /api/articles` returns slug + categories + cover + gallery — v1.30
+    - ✓ `Article` TypeScript interface in `app/types/article.d.ts` with all 13 fields; `typeCheck: true` passes with zero errors — v1.30
+    - ✓ SCSS scaffolding: `_article.scss` (article--archive, article--single), `_hero.scss` (hero--articles, hero--article), `_filter.scss` (filter--articles), `_related.scss` (related--articles), `_card.scss` (card--article), `app.scss` import — v1.30
+    - ✓ `blog/index.vue` — paginated article listing (12/page), category filter, sort order, empty-state + RelatedArticles fallback, SSR-correct `$setSEO` + `@type:"Blog"` structured data — v1.30
+    - ✓ `blog/[slug].vue` — article detail with hero (breadcrumbs + H1 + date), GalleryDefault, Markdown body via `marked`, sidebar (categories + ShareDefault), RelatedArticles, 404 guard, `$setSEO` + `@type:"BlogPosting"` structured data — v1.30
+    - ✓ Blog-specific components: `HeroArticles`, `FilterArticles`, `ArticleArchive`, `CardArticle`, `RelatedArticles`, `HeroArticle`, `ArticleSingle` — v1.30
 
 ## Context
 
@@ -149,6 +155,7 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - Webpay receipt (since v1.26): `/pagar/gracias` shows full 8-field Webpay receipt via `ResumeOrder.vue`; `prepareSummary()` extracts from `order.payment_response`; Spanish labels, "No disponible" fallbacks; fetches by `order.documentId`
 - SEO infrastructure (v1.15): `$setSEO` plugin in `seo.ts` emits full OG + Twitter Card set; `$setStructuredData` in `microdata.ts` with key-based deduplication; `@nuxtjs/seo` provides sitemap (with static entries having `changefreq`/`priority`), robots, OG defaults; all page URLs use `config.public.baseUrl`; 18+ private pages have `noindex`; home has WebSite + Organization JSON-LD; user profile `[slug].vue` has ProfilePage + Person schema
 - Strapi TypeScript (v1.20): zero `any` in ad service/controller, all type files, all integration services (Zoho, Facto, Indicador, Google, Transbank, payment-gateway), all payment utils/middlewares, all seeders, and all payment test files; `tsc --noEmit` exits 0; established patterns: `AdQueryOptions`, `IZohoContact`, `IWebpayCommitData`, data double-cast for entityService JSON fields, `Core.Strapi` for DI typing
+- Blog public views (since v1.30): `slug` uid field on Article with lifecycle hooks; `Article` TS interface (13 fields); 7 blog-specific components (`HeroArticles`, `FilterArticles`, `ArticleArchive`, `CardArticle`, `RelatedArticles`, `HeroArticle`, `ArticleSingle`); `useArticlesStore` (no persist, pageSize 12); `blog/index.vue` + `blog/[slug].vue` with full SSR, SEO, structured data; Markdown rendered via `marked`; related articles: same-category first, fill with most-recent, deduplicate, slice to 6
 
 ## Constraints
 
@@ -258,27 +265,20 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
    | `singularName: "article"` / `pluralName: "articles"` for News content type | Strapi uniqueness check includes both in same array; using "news"/"news" would conflict — v1.29 | ✓ Good |
    | `categories` as `manyToMany` (not `manyToOne`) in Article schema | An article can belong to multiple categories; reuses existing `api::category.category` — v1.29 | ✓ Good |
    | `strapi.delete` requires string `documentId` in Strapi v5 SDK | Numeric `id` not accepted for delete in v5; use `documentId \|\| String(id)` fallback — v1.29 | ✓ Good |
-   | `TextareaArticle.vue` custom component over EasyMDE/fontawesome | No external font dependencies; lucide already installed; full control over styling within BEM system — v1.29 | ✓ Good |
-
-## Current Milestone: v1.30 — Blog Public Views
-
-**Goal:** Expose the Article content type as a public blog on the website with a listing page and individual article view, visually consistent with the ads pages but with blog-specific components.
-
-**Target features:**
-- `slug` field added to Strapi Article schema (auto-generated via lifecycle hook from title)
-- `blog/index.vue` — article listing with category filter, sort order, pagination (12/page)
-- `blog/[slug].vue` — individual article view with full body, cover gallery, sidebar (share + categories)
-- Blog-specific components replicated from ads equivalents: `HeroArticles`, `FilterArticles`, `ArticleArchive`, `CardArticle`, `ArticleSingle`, `HeroArticle`, `RelatedArticles`
-- Shared components reused without duplication: `HeaderDefault`, `FooterDefault`, `MessageDefault`, `BreadcrumbsDefault`, `ShareDefault`, `GalleryDefault`
-- SEO: `$setSEO` + `$setStructuredData` on both pages (BlogPosting schema on article detail)
-- `Article` TypeScript type defined in `app/types/article.d.ts`
+    | `TextareaArticle.vue` custom component over EasyMDE/fontawesome | No external font dependencies; lucide already installed; full control over styling within BEM system — v1.29 | ✓ Good |
+    | Blog components replicated (not reused) from ads equivalents | User requirement: blog-specific BEM namespaces; shared components (`HeaderDefault`, `GalleryDefault`, etc.) still reused — v1.30 | ✓ Good |
+    | `slug` as `uid` type (not `string`) in Strapi Article schema | Admin gets auto-generation UI + uniqueness enforcement; matches category pattern in codebase — v1.30 | ✓ Good |
+    | `article.gallery` (GalleryItem[]) for GalleryDefault, not `article.cover` (Media[]) | `cover: Media[]` has no direct `.url`; GalleryItem extends Media and adds `.url` — v1.30 | ✓ Good |
+    | `@type: "Blog"` for listing, `@type: "BlogPosting"` for detail | Correct schema.org types for collection vs. individual article structured data — v1.30 | ✓ Good |
+    | `useArticlesStore` has no persist | Article list is volatile (changes with filters/pagination); persist would stale-cache filtered views — v1.30 | ✓ Good |
+    | Related articles: same-category first, fill with most-recent, deduplicate, slice to 6 | Maximizes relevance while guaranteeing 6 items; dedup prevents duplicates when same-category and recent overlap — v1.30 | ✓ Good |
 
 ## Current State
 
-**Last shipped:** v1.29 (2026-03-12) — News Manager: `Article` content type in Strapi with all fields + full dashboard CRUD UI (list, create, edit, delete, SEO fields, Markdown body via `TextareaArticle`)
-**Current focus:** v1.30 — Blog Public Views
+**Last shipped:** v1.30 (2026-03-13) — Blog Public Views: `slug` field on Article, `blog/index.vue` listing page with filtering/pagination, `blog/[slug].vue` article detail with Markdown rendering, SEO, and structured data; 7 new blog-specific components
+**Current focus:** Planning next milestone
 
-**News Manager (since v1.29):** `Article` collection type (`title`, `header`, `body` richtext, `cover`/`gallery` media, `categories` manyToMany to `api::category.category`, `seo_title`, `seo_description`, `draftAndPublish: true`); dashboard: `ArticlesDefault.vue` (table with search/sort/pagination/delete + Swal confirm), `FormArticle.vue` (create/edit with vee-validate + yup, `TextareaArticle` markdown editor), 4 pages (`/articles`, `/articles/new`, `/articles/[id]`, `/articles/[id]/edit`), Artículos entry under Mantenedores in `MenuDefault.vue`, Newspaper shortcut icon in `ToolbarDefault.vue`; `TextareaArticle.vue` custom component with lucide toolbar (Bold, Italic, Heading2, List, ListOrdered, Link, Quote, Code), `_textarea.scss`.
+**Blog Public Views (since v1.30):** `slug` uid field on Article with lifecycle hooks (beforeCreate/beforeUpdate via `slugify strict:true`); 6 Jest tests for slug generation; `Article` TypeScript interface (13 fields) in `app/types/article.d.ts`; SCSS scaffolding (`_article.scss`, `_hero.scss`, `_filter.scss`, `_related.scss`, `_card.scss` blog blocks, `app.scss` import); `HeroArticles.vue` (static, zero props), `FilterArticles.vue` (client-only, updates `?category=`/`?order=` URL params), `ArticleArchive.vue` (4-col grid + `vue-awesome-paginate`), `CardArticle.vue`, `RelatedArticles.vue`; `useArticlesStore` (Pinia, no persist, pageSize 12); `blog/index.vue` (SSR `useAsyncData`, empty-state + RelatedArticles fallback, `@type:"Blog"` structured data); `HeroArticle.vue` (breadcrumbs + H1 + date), `ArticleSingle.vue` (two-column body/sidebar, `marked` Markdown rendering, GalleryDefault from `article.gallery`); `blog/[slug].vue` (SSR `useAsyncData(() => 'article-${slug}')`, 404 guard, `$setSEO`, `@type:"BlogPosting"` structured data).
 
 **Logout infrastructure (since v1.28):** `useLogout` composable in `apps/website/app/composables/`; reset order: `useAdStore.$reset()` → `useHistoryStore.$reset()` → `useMeStore.reset()` → `useUserStore.reset()` → `useAdsStore.reset()` → `useAppStore.$reset()` → `strapiAuth.logout()` → `navigateTo('/')`; 4 Vitest tests with `#imports` alias infrastructure for Nuxt auto-import mocking.
 
@@ -301,4 +301,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-12 after v1.29 milestone*
+*Last updated: 2026-03-13 after v1.30 milestone*

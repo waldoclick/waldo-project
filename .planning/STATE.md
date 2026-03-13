@@ -1,9 +1,9 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.25
-milestone_name: milestone
+milestone: v1.30
+milestone_name: Blog Public Views
 status: completed
-last_updated: "2026-03-13T02:20:25.966Z"
+last_updated: "2026-03-13"
 progress:
   total_phases: 4
   completed_phases: 4
@@ -16,18 +16,15 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-12 after v1.30 milestone started)
+See: .planning/PROJECT.md (updated 2026-03-13 after v1.30 milestone)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.30 — Blog Public Views (Phase 065 next)
+**Current focus:** Planning next milestone
 
 ## Position
 
-**Milestone:** v1.30 — Blog Public Views
-**Phase:** 068 Plan 02 — complete
-**Status:** Milestone complete
-
-**Progress:** [██████████] 100%
+**Milestone:** v1.30 — Blog Public Views — ✅ COMPLETE AND ARCHIVED
+**Status:** Archived to .planning/milestones/v1.30-ROADMAP.md
 
 ## Session Log
 
@@ -42,36 +39,11 @@ See: .planning/PROJECT.md (updated 2026-03-12 after v1.30 milestone started)
 - 2026-03-13: Phase 067-03 complete — FilterArticles.vue + ArticleArchive.vue + blog/index.vue (full listing page with useAsyncData, SEO @type:Blog, empty state)
 - 2026-03-13: Phase 068-01 complete — HeroArticle.vue + ArticleSingle.vue leaf display components, zero TypeScript errors
 - 2026-03-13: Phase 068-02 complete — blog/[slug].vue full article detail page (useAsyncData, 404, BlogPosting SEO, RelatedArticles)
+- 2026-03-13: Milestone v1.30 archived — Blog Public Views shipped
 
 ### Key Decisions
 
-- Blog components replicated from ads equivalents — not reused directly (user requirement)
-- `slug` field must be added to Strapi Article schema (missing — required for `blog/[slug].vue` routing)
-- Slug auto-generated from title via Strapi lifecycle hook (beforeCreate/beforeUpdate)
-- Blog hero: white background, breadcrumbs kept — no category color tint
-- Article card fields: cover image, category badge, title, header/excerpt, publishedAt, read more link
-- Blog index filters: category dropdown + sort order (recent/oldest)
-- Article sidebar: ShareDefault + categories list (no seller/price)
-- Related articles: same-category first, fill with most recent if not enough
-- 12 articles per page
-- SCSS requirements (BLOG-21–26) bundled with infrastructure phase (066), not standalone — they are implementation details of component/page work
-- Article slug: uid type (not string) — gives admin auto-generation UI, uniqueness, matches category pattern
-- Article slug beforeUpdate: fetches existing title via entityService.findOne before overwriting — prevents unnecessary regeneration
-- slugify with strict:true: strips accents/special chars (¡Artículo Español! → articulo-espanol) for clean URL slugs
-- Article type imports Category/Media/GalleryItem from existing types — no duplication; cover:Media[], publishedAt:string|null for draft state
-- article--single sidebar: categories + share only (no seller/price — articles have neither)
-- related--articles mirrors related--ads exactly — same layout props, different BEM namespace
-- Media type (ad.d.ts) has no direct url field — cover images use formats.medium?.url || formats.thumbnail.url (GalleryItem extends Media adds url, but cover is Media[])
-- articles.store.ts uses no persist block — articles list is volatile (changes with filters)
-- HeroArticles accepts zero props — blog index hero breadcrumbs and title are always static
-- @type: "Blog" for blog listing structured data — correct schema.org collection type (not BlogPosting or SearchResultsPage)
-- FilterArticles receives categories as prop from useAsyncData result — no independent fetch
-- blog/index.vue definePageMeta({}) with empty object — no alias needed unlike /anuncios
-- HeroArticle breadcrumbs link to /blog (unfiltered) — categoryName/categorySlug props accepted for flexibility but not rendered in hero
-- ArticleSingle passes article.gallery (GalleryItem[] with .url) to GalleryDefault — not article.cover (Media[], no .url)
-- showError uses statusMessage (not description) — NuxtError type does not include description field
-- @type: "BlogPosting" for article detail structured data (not "Blog" — that's for the listing page)
-- Related articles fallback: load most-recent then merge, deduplicate by id, slice to 6
+(Cleared — milestone archived. See .planning/milestones/v1.30-ROADMAP.md for full decisions log.)
 
 ### Blockers/Concerns
 
@@ -89,22 +61,3 @@ None.
 | 22 | truncate long breadcrumb labels with ellipsis in website and dashboard | 2026-03-13 | b4f8dff | [22-truncate-long-breadcrumb-labels-with-ell](./quick/22-truncate-long-breadcrumb-labels-with-ell/) |
 | 23 | fix article body paragraph spacing in website and dashboard preview | 2026-03-13 | f8d8eee | [23-fix-article-body-paragraph-spacing-in-we](./quick/23-fix-article-body-paragraph-spacing-in-we/) |
 | 24 | add image upload component to article form (cover + gallery) | 2026-03-12 | — | [24-add-image-upload-component-to-article-fo](./quick/24-add-image-upload-component-to-article-fo/) |
-
-### Accumulated Context
-
-**From v1.29:**
-- Article content type in Strapi: `title`, `header`, `body` (richtext/Markdown), `cover` (media, multiple), `gallery` (media, multiple), `categories` (manyToMany → `api::category.category`), `seo_title`, `seo_description`, `draftAndPublish: true`
-- API endpoint: `GET /api/articles` (default Strapi v5 core routes)
-- Strapi v5 SDK delete requires `documentId || String(id)` — numeric id not accepted
-- `richtext` in Strapi v5 stores Markdown — website must render it via `sanitizeRich` composable
-
-**For v1.30:**
-- Website pages: `apps/website/app/pages/blog/index.vue` and `apps/website/app/pages/blog/[slug].vue` (currently empty stubs)
-- Reference layout: `anuncios/index.vue` (listing) and `anuncios/[slug].vue` (single)
-- Components to create: `HeroArticles`, `FilterArticles`, `ArticleArchive`, `CardArticle`, `ArticleSingle`, `HeroArticle`, `RelatedArticles`
-- Components to reuse: `HeaderDefault`, `FooterDefault`, `MessageDefault`, `BreadcrumbsDefault`, `ShareDefault`, `GalleryDefault`, `LoadingDefault`
-- SCSS infrastructure complete (Phase 066-02): _article.scss created, _hero/_filter/_related/_card extended
-- Available BEM blocks: article--archive, article--single, hero--articles, hero--article, filter--articles, related--articles, card--article
-- Article store created (Phase 067-02): useArticlesStore with loadArticles(filters, pagination, sort), pageSize 12, no persist
-- `Article` TypeScript type must be defined in `app/types/article.d.ts`
-- Slug field added to Article schema (Phase 065-01 complete) — uid type targeting title, auto-generated via lifecycle hooks

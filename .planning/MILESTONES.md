@@ -1,5 +1,14 @@
 ## v1.27 Reparar eventos GA4 ecommerce en flujo de pago unificado (Shipped: 2026-03-12)
 
+## v1.30 Blog Public Views (Shipped: 2026-03-13)
+
+**Phases completed:** 4 phases, 8 plans, 0 tasks
+
+**Key accomplishments:**
+- (none recorded)
+
+---
+
 ## v1.29 News Manager (Shipped: 2026-03-12)
 
 **Phases completed:** 2 phases, 3 plans, 0 tasks
