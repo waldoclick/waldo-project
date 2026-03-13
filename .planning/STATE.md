@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.25
 milestone_name: milestone
 current_phase: 070
-status: phase_complete
-last_updated: "2026-03-13T11:30:00.000Z"
-last_activity: "2026-03-13 — 070-01 verified: draft/publish toggle + source_url + detail link confirmed by user"
+status: completed
+last_updated: "2026-03-13T11:39:29.119Z"
+last_activity: "2026-03-13 — 070-01 complete: FormArticle draft/publish toggle + source_url field + detail page link"
 progress:
   total_phases: 2
   completed_phases: 2
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-03-13 after v1.31 milestone started)
 
 **Milestone:** v1.31 — Article Manager Improvements
 **Current Phase:** 070
-**Status:** Phase complete — milestone v1.31 done
+**Status:** Milestone complete
 
 ```
 Phase 069 [█] ██████████ 1/1 plans complete
