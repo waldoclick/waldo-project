@@ -273,6 +273,14 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
     | `useArticlesStore` has no persist | Article list is volatile (changes with filters/pagination); persist would stale-cache filtered views — v1.30 | ✓ Good |
     | Related articles: same-category first, fill with most-recent, deduplicate, slice to 6 | Maximizes relevance while guaranteeing 6 items; dedup prevents duplicates when same-category and recent overlap — v1.30 | ✓ Good |
 
+## Current Milestone: v1.31 Article Manager Improvements
+
+**Goal:** Agregar control de estado borrador/publicado y campo de fuente URL al mantenedor de artículos del dashboard.
+
+**Target features:**
+- Toggle draft/publish en el formulario de crear y editar artículos
+- Campo `source_url` en Strapi schema + form del dashboard
+
 ## Current State
 
 **Last shipped:** v1.30 (2026-03-13) — Blog Public Views: `slug` field on Article, `blog/index.vue` listing page with filtering/pagination, `blog/[slug].vue` article detail with Markdown rendering, SEO, and structured data; 7 new blog-specific components
@@ -301,4 +309,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-13 after v1.30 milestone*
+*Last updated: 2026-03-13 after v1.31 milestone started*
