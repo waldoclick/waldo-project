@@ -1,0 +1,91 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.article {
+  &--archive {
+    &__filter {
+      margin-bottom: 30px;
+    }
+
+    &__list {
+      display: grid;
+      width: 100%;
+      gap: 20px;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+
+      @include screen-large {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+
+      @include screen-medium {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      @include screen-small {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    &__paginate {
+      margin-top: 40px;
+    }
+  }
+
+  &--single {
+    &__container {
+      @extend .container;
+      display: flex;
+      gap: 30px;
+
+      @include screen-large {
+        flex-direction: column-reverse;
+      }
+    }
+
+    &__body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+
+      &__description {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        &__text {
+          font-size: 16px;
+          line-height: 26px;
+          letter-spacing: 0.25px;
+          color: $charcoal;
+        }
+      }
+    }
+
+    &__sidebar {
+      width: 350px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+
+      @include screen-large {
+        flex-direction: column;
+        width: auto;
+      }
+
+      &__categories {
+        padding: 20px;
+        border-radius: 4px;
+        border: 1px solid $gainsboro;
+      }
+
+      &__share {
+        padding: 20px;
+        border-radius: 4px;
+        border: 1px solid $gainsboro;
+      }
+    }
+  }
+}
