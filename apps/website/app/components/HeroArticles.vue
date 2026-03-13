@@ -14,8 +14,5 @@
 <script setup lang="ts">
 import BreadcrumbsDefault from "@/components/BreadcrumbsDefault.vue";
 
-const breadcrumbItems = [
-  { label: "Inicio", to: "/" },
-  { label: "Blog", to: "" },
-];
+const breadcrumbItems = [{ label: "Blog" }];
 </script>
