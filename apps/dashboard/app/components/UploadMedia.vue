@@ -1,19 +1,19 @@
 <template>
-  <div class="upload-media">
-    <div class="upload-media__grid">
+  <div class="upload upload--media">
+    <div class="upload--media__grid">
       <!-- Existing images -->
       <div
         v-for="(image, index) in modelValue"
         :key="`media-${image.id ?? index}`"
-        class="upload-media__item upload-media__item--filled"
+        class="upload--media__item upload--media__item--filled"
       >
         <img
-          class="upload-media__item__image"
+          class="upload--media__item__image"
           :src="resolveUrl(image.url || image.formats?.thumbnail?.url || '')"
           alt="Imagen"
         />
         <button
-          class="upload-media__item__remove"
+          class="upload--media__item__remove"
           type="button"
           :disabled="uploading"
           @click="handleRemove(index)"
@@ -26,27 +26,27 @@
       <button
         v-if="modelValue.length < maxFiles"
         type="button"
-        class="upload-media__item upload-media__item--empty"
+        class="upload--media__item upload--media__item--empty"
         :disabled="uploading"
         @click="openPicker"
       >
         <LoaderCircle
           v-if="uploading"
-          class="upload-media__item__spinner"
+          class="upload--media__item__spinner"
           :size="22"
         />
-        <PlusCircle v-else class="upload-media__item__icon" :size="22" />
+        <PlusCircle v-else class="upload--media__item__icon" :size="22" />
       </button>
     </div>
 
-    <p v-if="hint" class="upload-media__hint">{{ hint }}</p>
+    <p v-if="hint" class="upload--media__hint">{{ hint }}</p>
 
     <input
       ref="fileInput"
       type="file"
       accept="image/jpeg,image/png,image/webp"
       :multiple="maxFiles > 1"
-      class="upload-media__hidden"
+      class="upload--media__hidden"
       @change="handleFileChange"
     />
   </div>

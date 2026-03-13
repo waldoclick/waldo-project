@@ -127,6 +127,17 @@ Each service directory must have an `index.ts` that re-exports everything. Other
 - Keep transitions simple — no scale transforms on hover
 - Do not create new CSS files unless the component does not already have one
 
+#### BEM Naming Structure
+- BEM = **Block** + **Modifier** + **Elements**
+- The **block** is a single semantic noun: `upload`, `form`, `card`, `gallery`
+- A **modifier** extends the block with `--`: `upload--media`, `form--checkout`, `card--article`
+- The root HTML element gets **both** classes: `class="upload upload--media"`
+- All **elements** are children of the modifier namespace: `upload--media__grid`, `upload--media__item`
+- Element sub-levels use `__`: `upload--media__item__image`, `upload--media__item__remove`
+- **Never** use a hyphenated compound as the block name — that is a block + modifier, not a new block
+  - Correct: `upload--media` (block `upload`, modifier `media`)
+  - Wrong: `upload-media` (looks like a block but is really a compound — not valid BEM)
+
 #### BEM Modifier Encapsulation
 - A block modifier (`block--modifier`) is its **own namespace** — all its children must be prefixed with the modifier, not the base block
   - Correct: `form--checkout__field`, `form--checkout__field__title`
@@ -135,6 +146,11 @@ Each service directory must have an `index.ts` that re-exports everything. Other
   - Correct: `form--checkout__field__title`
   - Wrong: `form--checkout__field__section-title`
 - Do not invent new base-block element classes (e.g. `form__section-title`) when the component already has a modifier — scope everything under the modifier instead
+
+#### form__label with non-input elements
+- `form__label` is `position: absolute; top: -6px` — it floats over the border of a `form__control` input
+- Never use `form__label` directly on upload, gallery, or other non-input blocks — the label will float incorrectly
+- For non-input groups, add the `form__group--upload` modifier: `<div class="form__group form__group--upload">` — this makes the label `position: static` with proper margin
 
 ---
 

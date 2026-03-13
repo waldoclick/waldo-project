@@ -29,7 +29,7 @@
         <TextareaArticle v-model="form.body" />
       </div>
 
-      <div class="form__group">
+      <div class="form__group form__group--upload">
         <label class="form__label">Imagen de portada</label>
         <UploadMedia
           v-model="form.cover"
@@ -38,7 +38,7 @@
         />
       </div>
 
-      <div class="form__group">
+      <div class="form__group form__group--upload">
         <label class="form__label">Galería</label>
         <UploadMedia
           v-model="form.gallery"
