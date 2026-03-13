@@ -154,8 +154,7 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-  (event: "close"): void;
-  (event: "created"): void;
+  (event: "close" | "created"): void;
 }>();
 
 const client = useStrapiClient();
