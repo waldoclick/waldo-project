@@ -7,8 +7,8 @@
 
 ### Strapi Schema
 
-- [ ] **BLOG-01**: Article content type has a `slug` field (short text, unique, required) auto-generated from `title` via a Strapi lifecycle hook on beforeCreate and beforeUpdate
-- [ ] **BLOG-02**: `GET /api/articles` endpoint returns published articles populated with `categories`, `cover`, and `gallery` fields
+- [x] **BLOG-01**: Article content type has a `slug` field (short text, unique, required) auto-generated from `title` via a Strapi lifecycle hook on beforeCreate and beforeUpdate
+- [x] **BLOG-02**: `GET /api/articles` endpoint returns published articles populated with `categories`, `cover`, and `gallery` fields
 
 ### Article Type Definition
 
@@ -74,8 +74,8 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| BLOG-01 | Phase 065 | Pending |
-| BLOG-02 | Phase 065 | Pending |
+| BLOG-01 | Phase 065 | Complete |
+| BLOG-02 | Phase 065 | Complete |
 | BLOG-03 | Phase 066 | Pending |
 | BLOG-04 | Phase 067 | Pending |
 | BLOG-05 | Phase 067 | Pending |

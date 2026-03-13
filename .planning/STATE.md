@@ -3,14 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.30
 milestone_name: Blog Public Views
 status: in_progress
-stopped_at: Roadmap created — ready to plan Phase 065
-last_updated: "2026-03-12T00:00:00.000Z"
+last_updated: "2026-03-13T00:46:01.966Z"
 progress:
   total_phases: 4
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
-  percent: 0
+  completed_phases: 1
+  total_plans: 1
+  completed_plans: 1
+  percent: 88
 ---
 
 # Session State
@@ -25,16 +24,17 @@ See: .planning/PROJECT.md (updated 2026-03-12 after v1.30 milestone started)
 ## Position
 
 **Milestone:** v1.30 — Blog Public Views
-**Phase:** 065 (next)
-**Status:** Roadmap created — ready to plan Phase 065
+**Phase:** 065 Plan 01 — complete
+**Status:** Phase 065-01 complete — ready for Phase 066
 
-**Progress:** [░░░░░░░░░░] 0% (0/4 phases)
+**Progress:** [█████████░] 88%
 
 ## Session Log
 
 - 2026-03-12: Milestone v1.29 complete — News Manager shipped
 - 2026-03-12: Milestone v1.30 started — Blog Public Views
 - 2026-03-12: Roadmap created — 4 phases (065–068), 26/26 requirements mapped
+- 2026-03-13: Phase 065-01 complete — Article slug field + lifecycle hooks + 6 Jest tests
 
 ### Key Decisions
 
@@ -48,6 +48,9 @@ See: .planning/PROJECT.md (updated 2026-03-12 after v1.30 milestone started)
 - Related articles: same-category first, fill with most recent if not enough
 - 12 articles per page
 - SCSS requirements (BLOG-21–26) bundled with infrastructure phase (066), not standalone — they are implementation details of component/page work
+- Article slug: uid type (not string) — gives admin auto-generation UI, uniqueness, matches category pattern
+- Article slug beforeUpdate: fetches existing title via entityService.findOne before overwriting — prevents unnecessary regeneration
+- slugify with strict:true: strips accents/special chars (¡Artículo Español! → articulo-espanol) for clean URL slugs
 
 ### Blockers/Concerns
 
@@ -69,4 +72,4 @@ None.
 - SCSS files to create: `_article.scss` (mirrors `_announcement.scss`), new blocks in `_hero.scss`, `_filter.scss`, `_related.scss`, `_card.scss`
 - No article store or composable exists on website side yet — must be created
 - `Article` TypeScript type must be defined in `app/types/article.d.ts`
-- Slug field missing from Article schema — Phase 065 must add it
+- Slug field added to Article schema (Phase 065-01 complete) — uid type targeting title, auto-generated via lifecycle hooks
