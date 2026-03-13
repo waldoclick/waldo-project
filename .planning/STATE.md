@@ -4,13 +4,13 @@ milestone: v1.35
 milestone_name: Gift Reservations to Users
 current_phase: 076
 status: planning
-last_updated: "2026-03-13T19:57:35.861Z"
-last_activity: 2026-03-13 — Completed 075-02-PLAN.md (Gift Endpoints)
+last_updated: "2026-03-13T20:04:41.242Z"
+last_activity: 2026-03-13 — Completed 076-01-PLAN.md (Gift Lightbox Component)
 progress:
   total_phases: 2
   completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
+  total_plans: 4
+  completed_plans: 3
 ---
 
 # Session State
@@ -20,21 +20,21 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-13 after v1.35 milestone started)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 075 — Strapi Gift Endpoints
+**Current focus:** Phase 076 — Dashboard Gift Lightbox
 
 ## Position
 
 **Milestone:** v1.35 — Gift Reservations to Users
 **Current Phase:** 076
-**Status:** Ready to plan
+**Status:** In Progress (1/2 plans complete)
 
 ```
 Phase 075 [██████████] 100%  Strapi Gift Endpoints (2/2 plans)
-Phase 076 ░░░░░░░░░░  0%    Dashboard Gift Lightbox
-Overall   [█████░░░░░] 50%   (1/2 phases)
+Phase 076 [█████░░░░░] 50%   Dashboard Gift Lightbox (1/2 plans)
+Overall   [█████████░] 96%   (3/4 plans)
 ```
 
-Last activity: 2026-03-13 — Completed 075-02-PLAN.md (Gift Endpoints)
+Last activity: 2026-03-13 — Completed 076-01-PLAN.md (Gift Lightbox Component)
 
 ## Accumulated Context
 
@@ -58,6 +58,12 @@ Last activity: 2026-03-13 — Completed 075-02-PLAN.md (Gift Endpoints)
 
 - Replaced factory default controllers with custom gift() objects — only the gift action is needed on these routes
 - Email delivery wrapped in inner try/catch; gift creation still succeeds even on email failure
+
+### Phase 076 Decisions (076-01)
+
+- IAuthUser interface defined inline in LightboxGift.vue — no separate types file needed for a component-local shape
+- loadUsers() called on every open without caching — gift is an infrequent admin action; fresh user list preferred
+- LightboxGift accepts endpoint prop (e.g. 'ad-reservations') for reuse across both reservation detail pages
 
 ### Blockers/Concerns
 

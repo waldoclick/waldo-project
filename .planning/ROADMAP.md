@@ -141,4 +141,4 @@ Plans:
 | 073   | v1.34     | 2/2            | Complete | 2026-03-13 |
 | 074   | v1.34     | 2/2            | Complete | 2026-03-13 |
 | 075   | 2/2 | Complete    | 2026-03-13 | —       |
-| 076   | v1.35     | 0/TBD          | Not started | —       |
+| 076   | 1/2 | In Progress|  | —       |
