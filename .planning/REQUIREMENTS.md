@@ -7,7 +7,7 @@
 
 ### Article Schema
 
-- [ ] **ARTC-01**: El schema de Article en Strapi tiene el campo `source_url` (string, optional)
+- [x] **ARTC-01**: El schema de Article en Strapi tiene el campo `source_url` (string, optional)
 
 ### Article Form (Dashboard)
 
@@ -33,7 +33,7 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ARTC-01 | Phase 069 | Pending |
+| ARTC-01 | Phase 069 | Complete |
 | ARTF-01 | Phase 070 | Pending |
 | ARTF-02 | Phase 070 | Pending |
 | ARTF-03 | Phase 070 | Pending |

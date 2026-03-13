@@ -1,15 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.31
-milestone_name: Article Manager Improvements
-status: in_progress
-last_updated: "2026-03-13"
+milestone: v1.25
+milestone_name: milestone
+current_phase: 069 — Strapi Schema
+status: planning
+last_updated: "2026-03-13T11:13:40.684Z"
+last_activity: 2026-03-13 — Roadmap created (2 phases, 6 requirements mapped)
 progress:
   total_phases: 2
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
-  percent: 0
+  completed_phases: 1
+  total_plans: 1
+  completed_plans: 1
 ---
 
 # Session State
@@ -24,25 +25,26 @@ See: .planning/PROJECT.md (updated 2026-03-13 after v1.31 milestone started)
 ## Position
 
 **Milestone:** v1.31 — Article Manager Improvements
-**Current Phase:** 069 — Strapi Schema
-**Status:** Roadmap created — ready to plan Phase 069
+**Current Phase:** 069 — Strapi Schema → complete, ready for Phase 070
+**Status:** Phase 069 complete — ready to plan Phase 070
 
 ```
-Phase 069 [ ] ░░░░░░░░░░
+Phase 069 [█] ██████████ 1/1 plans complete
 Phase 070 [ ] ░░░░░░░░░░
 ```
 
-Last activity: 2026-03-13 — Roadmap created (2 phases, 6 requirements mapped)
+Last activity: 2026-03-13 — 069-01 complete: source_url field added to Article Strapi schema and website TypeScript interface
 
 ## Session Log
 
 - 2026-03-13: Milestone v1.30 archived — Blog Public Views shipped
 - 2026-03-13: Milestone v1.31 started — Article Manager Improvements
 - 2026-03-13: Roadmap created — 2 phases (069–070), 6/6 requirements mapped
+- 2026-03-13: 069-01 complete — source_url added to Article schema (Strapi + TypeScript)
 
 ### Key Decisions
 
-(None yet)
+- **069-01:** `source_url` uses no constraints (no unique/maxLength) — kept minimal like seo_title/seo_description. TypeScript interface uses `string | null` (not `string | undefined`) because Strapi returns null for unset optional fields.
 
 ### Blockers/Concerns
 

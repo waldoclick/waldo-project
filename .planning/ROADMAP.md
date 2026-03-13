@@ -54,7 +54,7 @@
 <details>
 <summary>🔄 v1.31 Article Manager Improvements (Phases 069–070) — IN PROGRESS</summary>
 
-- [ ] **Phase 069: Strapi Schema** — Add `source_url` field to Article content type
+- [x] **Phase 069: Strapi Schema** — Add `source_url` field to Article content type (completed 2026-03-13)
 - [ ] **Phase 070: Dashboard Form & Detail** — Draft/publish toggle + source_url field in FormArticle + detail view
 
 </details>
@@ -70,7 +70,7 @@
 2. Field is visible in Strapi admin Content Manager
 3. `GET /api/articles/:id` response includes `source_url`
 
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
 - [ ] 069-01-PLAN.md — Add source_url to Article schema + website interface
@@ -105,5 +105,5 @@ Plans:
 | 066   | v1.30     | 2/2            | Complete | 2026-03-13 |
 | 067   | v1.30     | 3/3            | Complete | 2026-03-13 |
 | 068   | v1.30     | 2/2            | Complete | 2026-03-13 |
-| 069   | v1.31     | 0/?            | Not started | - |
+| 069   | 1/1 | Complete   | 2026-03-13 | - |
 | 070   | v1.31     | 0/?            | Not started | - |
