@@ -52,6 +52,10 @@
     "seo_description": {
       "type": "string",
       "required": false
+    },
+    "source_url": {
+      "type": "string",
+      "required": false
     }
   }
 }
