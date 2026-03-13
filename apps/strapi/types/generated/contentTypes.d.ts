@@ -986,6 +986,42 @@ export interface ApiSuscriptionSuscription extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiVerificationCodeVerificationCode
+  extends Struct.CollectionTypeSchema {
+  collectionName: "verification_codes";
+  info: {
+    description: "Stores pending 2-step login verification codes";
+    displayName: "VerificationCode";
+    pluralName: "verification-codes";
+    singularName: "verification-code";
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    attempts: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    code: Schema.Attribute.String & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private;
+    expiresAt: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::verification-code.verification-code"
+    > &
+      Schema.Attribute.Private;
+    pendingToken: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private;
+    userId: Schema.Attribute.Integer & Schema.Attribute.Required;
+  };
+}
+
 export interface PluginContentReleasesRelease
   extends Struct.CollectionTypeSchema {
   collectionName: "strapi_releases";
@@ -1550,6 +1586,7 @@ declare module "@strapi/strapi" {
       "api::region.region": ApiRegionRegion;
       "api::remaining.remaining": ApiRemainingRemaining;
       "api::suscription.suscription": ApiSuscriptionSuscription;
+      "api::verification-code.verification-code": ApiVerificationCodeVerificationCode;
       "plugin::content-releases.release": PluginContentReleasesRelease;
       "plugin::content-releases.release-action": PluginContentReleasesReleaseAction;
       "plugin::i18n.locale": PluginI18NLocale;

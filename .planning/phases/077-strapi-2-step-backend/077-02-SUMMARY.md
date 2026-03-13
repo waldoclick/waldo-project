@@ -62,7 +62,7 @@ Each task was committed atomically:
 
 1. **Task 1: Create verification-code.mjml email template** - `3e37cd2` (feat)
 
-**Plan metadata:** _(pending — final docs commit)_
+**Plan metadata:** `ddbba28` (docs: complete plan)
 
 ## Files Created/Modified
 

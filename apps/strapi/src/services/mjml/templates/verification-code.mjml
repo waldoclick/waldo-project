@@ -1,8 +1,8 @@
 {% extends "layouts/base.mjml" %} {% block content %}
 <mj-text font-size="16px"> Hola {{ name }}, </mj-text>
 <mj-text>
-  Has iniciado sesión en <b>Waldo.click®</b>. Para completar el acceso,
-  ingresa el siguiente código de verificación:
+  Has iniciado sesión en <b>Waldo.click®</b>. Para completar el acceso, ingresa
+  el siguiente código de verificación:
 </mj-text>
 <mj-text
   font-size="32px"
@@ -13,9 +13,7 @@
 >
   {{ code }}
 </mj-text>
-<mj-text>
-  Este código es válido por <b>5 minutos</b>.
-</mj-text>
+<mj-text> Este código es válido por <b>5 minutos</b>. </mj-text>
 <mj-text>
   Si no intentaste iniciar sesión, ignora este correo. Tu cuenta sigue segura.
 </mj-text>
