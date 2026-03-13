@@ -17,7 +17,7 @@
 
 ## Phases
 
-- [ ] **Phase 077: Strapi 2-Step Backend** — verification-code content type, overridden auth.local controller, verify-code and resend-code endpoints, MJML email, Google OAuth bypass
+- [x] **Phase 077: Strapi 2-Step Backend** — verification-code content type, overridden auth.local controller, verify-code and resend-code endpoints, MJML email, Google OAuth bypass (completed 2026-03-13)
 - [ ] **Phase 078: Dashboard Verify Flow** — updated FormLogin + /auth/verify-code page with full verify/resend/error/redirect logic
 - [ ] **Phase 079: Website Verify Flow** — updated FormLogin + /login/verificar page with full verify/resend/error/redirect logic
 
@@ -161,6 +161,6 @@ Plans:
 | 074   | v1.34     | 2/2            | Complete    | 2026-03-13 |
 | 075   | v1.35     | 2/2            | Complete    | 2026-03-13 |
 | 076   | v1.35     | 2/2            | Complete    | 2026-03-13 |
-| 077   | 3/4 | In Progress|  | —          |
+| 077   | 4/4 | Complete   | 2026-03-13 | —          |
 | 078   | v1.36     | 0/TBD          | Not started | —          |
 | 079   | v1.36     | 0/TBD          | Not started | —          |

@@ -14,7 +14,7 @@ Requirements for milestone v1.36. Each maps to roadmap phases.
 - [x] **VSTEP-03**: `POST /api/auth/verify-code` accepts `{ pendingToken, code }` — validates the code is correct, not expired (5-minute window), and under the attempt limit (max 3); on success issues the real JWT in the same response shape as normal Strapi login
 - [x] **VSTEP-04**: Each failed `verify-code` attempt increments the `attempts` counter; when attempts reach 3, the code record is invalidated — user must restart login from scratch
 - [x] **VSTEP-05**: `POST /api/auth/resend-code` accepts `{ pendingToken }` — generates a new code, replaces the previous record, and resends the email; rate-limited to one resend per minute per `pendingToken`
-- [ ] **VSTEP-06**: Verification code records are cleaned up after expiry (via cron or on-demand query) to prevent table bloat
+- [x] **VSTEP-06**: Verification code records are cleaned up after expiry (via cron or on-demand query) to prevent table bloat
 - [x] **VSTEP-07**: Google OAuth (`/api/connect/google/callback`) is unaffected — bypasses the entire 2-step flow and issues JWT directly as before
 - [x] **VSTEP-08**: `verification-code.mjml` email template in Spanish with the 6-digit code, a 5-minute expiry notice, and branding consistent with existing templates
 
@@ -56,7 +56,7 @@ Requirements for milestone v1.36. Each maps to roadmap phases.
 | VSTEP-03    | 077   | Complete |
 | VSTEP-04    | 077   | Complete |
 | VSTEP-05    | 077   | Complete |
-| VSTEP-06    | 077   | Pending |
+| VSTEP-06    | 077   | Complete |
 | VSTEP-07    | 077   | Complete |
 | VSTEP-08    | 077   | Complete |
 | VSTEP-09    | 078   | Pending |
