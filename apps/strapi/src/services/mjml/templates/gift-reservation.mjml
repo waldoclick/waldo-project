@@ -1,0 +1,11 @@
+{% extends "layouts/base.mjml" %} {% block content %}
+<mj-text font-size="16px"> Hola {{ name }}, </mj-text>
+<mj-text>
+  ¡Tienes un regalo! Un administrador te ha otorgado <b>{{ quantity }} reserva(s) de {{ type }}</b> en
+  <b>Waldo.click®</b>.
+</mj-text>
+<mj-text>
+  Tus nuevas reservas ya están disponibles en tu cuenta y puedes usarlas al publicar tu próximo anuncio.
+</mj-text>
+<mj-text> Saludos,<br />El equipo de <b>Waldo.click®</b> </mj-text>
+{% endblock %}
