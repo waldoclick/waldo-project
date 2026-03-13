@@ -91,6 +91,12 @@ None - no external service configuration required.
 - `Article` and `ArticleResponse` types are available for Phase 067 (blog listing) and Phase 068 (article single)
 - Plan 066-02 (SCSS scaffolding) was already executed — `_article.scss` exists
 
+## Self-Check: PASSED
+
+- `apps/website/app/types/article.d.ts`: FOUND
+- Commit `28e54d2`: FOUND
+- SUMMARY.md created: FOUND
+
 ---
 *Phase: 066-article-infrastructure*
 *Completed: 2026-03-13*

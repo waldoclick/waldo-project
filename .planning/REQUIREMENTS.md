@@ -42,12 +42,12 @@
 
 ### SCSS
 
-- [ ] **BLOG-21**: `_article.scss` file created in `apps/website/app/scss/components/` with BEM blocks: `article--archive` (mirrors `announcement--archive`) and `article--single` (mirrors `announcement--single` with sidebar layout)
-- [ ] **BLOG-22**: `_hero.scss` extended with `hero--articles` (white bg, breadcrumbs) and `hero--article` (white bg, breadcrumbs, H1 title) blocks
-- [ ] **BLOG-23**: `_filter.scss` extended with `filter--articles` block (mirrors `filter--announcement` layout)
-- [ ] **BLOG-24**: `_related.scss` extended with `related--articles` block (same structure as `related--ads`)
-- [ ] **BLOG-25**: `_card.scss` extended with `card--article` block: cover image with aspect ratio, category badge, title, excerpt, date, read more link
-- [ ] **BLOG-26**: `app.scss` updated with `@use "components/article"` import
+- [x] **BLOG-21**: `_article.scss` file created in `apps/website/app/scss/components/` with BEM blocks: `article--archive` (mirrors `announcement--archive`) and `article--single` (mirrors `announcement--single` with sidebar layout)
+- [x] **BLOG-22**: `_hero.scss` extended with `hero--articles` (white bg, breadcrumbs) and `hero--article` (white bg, breadcrumbs, H1 title) blocks
+- [x] **BLOG-23**: `_filter.scss` extended with `filter--articles` block (mirrors `filter--announcement` layout)
+- [x] **BLOG-24**: `_related.scss` extended with `related--articles` block (same structure as `related--ads`)
+- [x] **BLOG-25**: `_card.scss` extended with `card--article` block: cover image with aspect ratio, category badge, title, excerpt, date, read more link
+- [x] **BLOG-26**: `app.scss` updated with `@use "components/article"` import
 
 ## v2 Requirements
 
@@ -94,12 +94,12 @@
 | BLOG-18 | Phase 068 | Pending |
 | BLOG-19 | Phase 068 | Pending |
 | BLOG-20 | Phase 067 | Pending |
-| BLOG-21 | Phase 066 | Pending |
-| BLOG-22 | Phase 066 | Pending |
-| BLOG-23 | Phase 066 | Pending |
-| BLOG-24 | Phase 066 | Pending |
-| BLOG-25 | Phase 066 | Pending |
-| BLOG-26 | Phase 066 | Pending |
+| BLOG-21 | Phase 066 | Complete |
+| BLOG-22 | Phase 066 | Complete |
+| BLOG-23 | Phase 066 | Complete |
+| BLOG-24 | Phase 066 | Complete |
+| BLOG-25 | Phase 066 | Complete |
+| BLOG-26 | Phase 066 | Complete |
 
 **Coverage:**
 - v1 requirements: 26 total
