@@ -1,18 +1,23 @@
 // Tests for getUserDataWithFilters — FILTER-01, FILTER-02, FILTER-03
+// Tests for getAuthenticatedUsers — GIFT-08
 // AAA pattern (Arrange-Act-Assert), all dependencies mocked.
 
-import { getUserDataWithFilters } from "./userController";
+import {
+  getUserDataWithFilters,
+  getAuthenticatedUsers,
+} from "./userController";
 
 // Mock strapi global
 const mockFindOne = jest.fn();
 const mockFindWithCount = jest.fn();
+const mockFindMany = jest.fn();
 
 const strapiQueryMock = (contentType: string) => {
   if (contentType === "plugin::users-permissions.role") {
     return { findOne: mockFindOne };
   }
   if (contentType === "plugin::users-permissions.user") {
-    return { findWithCount: mockFindWithCount };
+    return { findWithCount: mockFindWithCount, findMany: mockFindMany };
   }
   return {};
 };
@@ -140,5 +145,87 @@ describe("getUserDataWithFilters", () => {
         })
       );
     });
+  });
+});
+
+describe("getAuthenticatedUsers", () => {
+  // GIFT-08: server-enforced Authenticated role filter, minimal fields only
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("queries role by type='authenticated' then filters users", async () => {
+    // Arrange
+    mockFindOne.mockResolvedValue({ id: 42, type: "authenticated" });
+    mockFindMany.mockResolvedValue([
+      { id: 1, firstName: "Alice", lastName: "Smith" },
+      { id: 2, firstName: "Bob", lastName: "Jones" },
+    ]);
+    const ctx = { body: null };
+
+    // Act
+    await getAuthenticatedUsers(
+      ctx as unknown as Parameters<typeof getAuthenticatedUsers>[0]
+    );
+
+    // Assert: role looked up by type="authenticated"
+    expect(mockFindOne).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { type: "authenticated" } })
+    );
+    // Assert: users queried with the role id
+    expect(mockFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { role: { id: 42 } } })
+    );
+  });
+
+  it("returns { data: [...] } with only id, firstName, lastName fields", async () => {
+    // Arrange
+    mockFindOne.mockResolvedValue({ id: 42, type: "authenticated" });
+    mockFindMany.mockResolvedValue([
+      { id: 1, firstName: "Alice", lastName: "Smith" },
+      { id: 2, firstName: "Bob", lastName: "Jones" },
+    ]);
+    const ctx = { body: null };
+
+    // Act
+    await getAuthenticatedUsers(
+      ctx as unknown as Parameters<typeof getAuthenticatedUsers>[0]
+    );
+
+    // Assert: response shape is { data: [...] }
+    const body = ctx.body as unknown as {
+      data: { id: number; firstName: string; lastName: string }[];
+    };
+    expect(body).toHaveProperty("data");
+    expect(body.data).toHaveLength(2);
+    expect(body.data[0]).toEqual({
+      id: 1,
+      firstName: "Alice",
+      lastName: "Smith",
+    });
+    expect(body.data[1]).toEqual({
+      id: 2,
+      firstName: "Bob",
+      lastName: "Jones",
+    });
+    // No sensitive fields in result
+    expect(body.data[0]).not.toHaveProperty("password");
+    expect(body.data[0]).not.toHaveProperty("email");
+  });
+
+  it("returns { data: [] } when no authenticatedRole found", async () => {
+    // Arrange
+    mockFindOne.mockResolvedValue(null);
+    const ctx = { body: null };
+
+    // Act
+    await getAuthenticatedUsers(
+      ctx as unknown as Parameters<typeof getAuthenticatedUsers>[0]
+    );
+
+    // Assert: fallback to empty data, findMany not called
+    const body = ctx.body as unknown as { data: unknown[] };
+    expect(body).toEqual({ data: [] });
+    expect(mockFindMany).not.toHaveBeenCalled();
   });
 });
