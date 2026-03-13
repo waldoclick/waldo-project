@@ -59,6 +59,39 @@
 
 </details>
 
+### Phase 069: Strapi Schema
+
+**Goal:** `source_url` field exists in Article content type and is returned by the API
+
+**Requirements:** ARTC-01
+
+**Success criteria:**
+1. `source_url` (string, optional) exists in Article's `schema.json`
+2. Field is visible in Strapi admin Content Manager
+3. `GET /api/articles/:id` response includes `source_url`
+
+**Plans:** 1 plan
+
+Plans:
+- [ ] 069-01-PLAN.md — Add source_url to Article schema + website interface
+
+### Phase 070: Dashboard Form & Detail
+
+**Goal:** Admin can toggle draft/publish and enter source URL in FormArticle; detail page shows source URL
+
+**Requirements:** ARTF-01, ARTF-02, ARTF-03, ARTF-04, ARTF-05
+
+**Success criteria:**
+1. Create form: toggle/checkbox lets admin choose Borrador or Publicado before saving
+2. Edit form: toggle reflects current state and can be changed
+3. Saving sends `publishedAt: null` (draft) or current ISO timestamp (published)
+4. `source_url` input saves on create and pre-fills on edit
+5. Detail page (`/articles/:id`) shows `source_url` as a clickable link when non-empty
+
+**Plans:** 1 plan
+
+**Depends on:** Phase 069
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status   | Completed  |
