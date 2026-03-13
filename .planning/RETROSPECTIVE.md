@@ -857,6 +857,52 @@
 
 ---
 
+## Milestone: v1.29 — News Manager
+
+**Shipped:** 2026-03-12
+**Phases:** 2 (063–064) | **Plans:** 3 | **Timeline:** 1 day (2026-03-12)
+
+### What Was Built
+- `apps/strapi/src/api/article/` — full Strapi v5 content type: `schema.json` (title, header, body/richtext, cover, gallery, categories many-to-many, seo_title, seo_description, `draftAndPublish: true`), controller, routes, service (Phase 063)
+- `ArticlesDefault.vue` — articles list component: 5-column table (title, category, status, date, actions), search, sort, pagination, delete with Swal confirmation (Phase 064)
+- `FormArticle.vue` — create/edit form with vee-validate + yup: title, header, body (via TextareaArticle), seo_title, seo_description (Phase 064)
+- `TextareaArticle.vue` — custom Markdown textarea with lucide-vue-next toolbar (Bold, Italic, Heading2, List, ListOrdered, Link, Quote, Code) — no external font/icon dependencies (Phase 064)
+- 4 dashboard pages: `articles/index.vue`, `articles/new.vue`, `articles/[id]/index.vue`, `articles/[id]/edit.vue` (Phase 064)
+- `MenuDefault.vue` updated — Artículos entry added under Mantenedores with Newspaper icon (Phase 064)
+- `ToolbarDefault.vue` updated — Newspaper shortcut icon linking to `/articles` (Phase 064)
+- `settings.store.ts` updated — `articles` section added for pagination/sort state (Phase 064)
+- `_textarea.scss` created; `app.scss` updated with `@use "components/textarea"` import (Phase 064)
+
+### What Worked
+- Backend-first phase ordering (063 → 064) was correct — the Strapi schema was stable before any UI was built; no rework on the content type
+- `TextareaArticle.vue` as a custom component (lucide icons only) was the right call over EasyMDE — no external CSS import complexity, no Font Awesome dependency, aligns with the existing icon strategy
+- Following the `faqs/` page pattern exactly for article pages kept implementation mechanical — `ArticleData` interface, `publishedAt null→"Borrador"` status display, and pagination all reused established patterns
+- 9/9 requirements verified at VERIFICATION.md pass — clean delivery, no deferred items
+
+### What Was Inefficient
+- EasyMDE was installed, wired, committed, and then removed in the same milestone — a quick check for existing icon library (lucide-vue-next already in package.json) before reaching for an external library would have prevented the false start
+- BEM classes in `FormArticle.vue` used modifier-scoped element names (`form--article__field`) on the first pass — required a fix commit after the user flagged the deviation from the `form__group`/`form__label` pattern. Pre-reading an existing form component before writing a new one would have caught this.
+- The `body` field was omitted from `FormArticle.vue` in the initial implementation and required a separate fix commit — component requirements (especially all form fields) should be enumerated in the plan action rather than inferred from the schema
+
+### Patterns Established
+- **`TextareaArticle.vue` custom Markdown editor pattern**: lucide-vue-next toolbar + native `<textarea>`; `insertMarkdown(prefix, suffix)` helper for all toolbar actions; no external markdown/editor library needed for basic article authoring
+- **`richtext` in Strapi v5 stores Markdown** (not HTML) — the frontend receives and sends raw Markdown; rendering is the consumer's responsibility
+- **Strapi v5 SDK `delete` requires string `documentId`**: `documentId || String(id)` pattern for all delete operations — numeric `id` alone will silently fail
+- **Form field enumeration in plans**: list every form field explicitly in the plan action (not just "implement the form") — missing fields are only caught at runtime or review otherwise
+- **Pre-read existing component before writing a new one of the same type**: reading `FormFaq.vue` or `FormCategory.vue` before `FormArticle.vue` would have confirmed the BEM class pattern (`form__group`, `form__label`, `form__control`) and the vee-validate setup without trial and error
+
+### Key Lessons
+1. **Check installed packages before adding new ones.** `lucide-vue-next` was already in `package.json`; reaching for EasyMDE + Font Awesome was unnecessary. A 10-second `grep` for icon libraries before installing would have saved a full install/wire/remove cycle.
+2. **Read the BEM rules and a peer component before writing form markup.** The modifier-scoped element class mistake (`form--article__field` vs `form__group`) is a direct consequence of writing markup without first reading the BEM rule in AGENTS.md and looking at an existing form. Pre-reading is the cheapest form of validation.
+3. **Enumerate all form fields in the plan, not just the schema.** The schema lists all fields; the plan should explicitly map schema fields to form controls. Missing `body` was obvious in hindsight but invisible in the plan text because it was only implied by the schema reference.
+
+### Cost Observations
+- Model mix: ~100% sonnet (balanced profile)
+- Sessions: 2 (execute-phase for 063 + 064, milestone close)
+- Notable: Fastest feature milestone to date — 2 phases, 1 day; the faqs/ pattern reuse made dashboard implementation near-mechanical; only friction was the EasyMDE false start and the two BEM/field fix commits
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -887,6 +933,8 @@
 | v1.21 | 1 | 4 | Ad draft decoupling: `draft` field lifecycle, `publishAd()` helper, endpoint domain assignment, Strapi permission deploy step |
 | v1.26 | 1 | 3 | Webpay receipt: 8-field on-screen receipt in /pagar/gracias; order-centric redirect; test scaffolds |
 | v1.27 | 1 | 2 | GA4 ecommerce event chain completed: purchase() method + page wiring; flow discriminator; 12 Vitest tests |
+| v1.28 | 1 | 2 | Logout store cleanup: `reset()` pattern for Composition API stores; `useLogout` composable; `clearAll` renamed |
+| v1.29 | 2 | 3 | News Manager: Strapi article content type + dashboard CRUD UI; custom Markdown textarea with lucide icons |
 
 ### Cumulative Quality
 
@@ -916,6 +964,8 @@
 | v1.21 | utils + jest (payment + draft) | true | 0 |
 | v1.26 | utils + jest (vitest for ResumeOrder + gracias.vue) | true | 0 |
 | v1.27 | utils + vitest (useAdAnalytics — 12 tests) | true | 0 |
+| v1.28 | utils + vitest (useLogout — 4 tests) | true | 0 |
+| v1.29 | utils + vitest (unchanged) | true | 0 |
 
 ### Top Lessons (Verified Across Milestones)
 
@@ -942,6 +992,9 @@
 21. Plan the full lifecycle of a new boolean field — adding `default: true` is not complete until the flip to `false` is also planned (who, when, where)
 22. Endpoint domain belongs with the entity, not the trigger — `POST /api/ads/save-draft` (not `/api/payments/ad-draft`) because the result is an Ad
 23. Strapi permission setup for new non-standard routes is a manual deploy-time step — document it explicitly in the plan
+24. Check installed packages before adding new ones — `lucide-vue-next` was already present; EasyMDE was installed and immediately removed
+25. Read AGENTS.md BEM rules and a peer component before writing form markup — modifier-scoped element classes (`form--x__field`) are wrong; use `form__group`, `form__label`, `form__control`
+26. Enumerate all form fields explicitly in the plan — fields implied by the schema but not listed are frequently omitted in the first implementation pass
 
 ## Milestone: v1.17 — Security & Stability
 

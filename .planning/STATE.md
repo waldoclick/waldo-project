@@ -4,7 +4,7 @@ milestone: v1.29
 milestone_name: News Manager
 status: completed
 stopped_at: Completed 064-02-PLAN.md
-last_updated: "2026-03-12T23:26:04.727Z"
+last_updated: "2026-03-12T23:57:36.008Z"
 progress:
   total_phases: 2
   completed_phases: 2
@@ -17,20 +17,17 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-12 after v1.29 milestone start)
+See: .planning/PROJECT.md (updated 2026-03-12 after v1.29 milestone)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.29 — News Manager (roadmap defined, ready for Phase 063)
+**Current focus:** Planning next milestone
 
 ## Position
 
-**Milestone:** v1.29 — IN PROGRESS
-**Phase:** 064 — Dashboard Articles UI (COMPLETE — both plans done)
-**Status:** Milestone complete
+**Milestone:** v1.29 — COMPLETE (archived)
+**Status:** Between milestones — ready for v1.30
 
-**Progress:** [█████████░] 86%
-
-**Stopped at:** Completed 064-02-PLAN.md
+**Progress:** [██████████] 100%
 
 ## Session Log
 
