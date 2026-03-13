@@ -61,7 +61,10 @@
   2. Updating an article title updates the slug accordingly via the beforeUpdate lifecycle hook
   3. `GET /api/articles` returns articles with `slug`, `categories`, `cover`, and `gallery` fields populated
   4. `slug` field is marked unique and required — the Strapi admin blocks saving an article without one
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 065-01-PLAN.md — Add slug uid field to Article schema + beforeCreate/beforeUpdate lifecycle hooks with Jest tests
 
 ### Phase 066: Article Infrastructure
 **Goal**: The shared TypeScript type and all SCSS building blocks that every blog component depends on are in place before any component is written
