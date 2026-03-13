@@ -17,6 +17,7 @@
 <summary>🚧 v1.32 Gemini AI Service (Phase 071) — IN PROGRESS</summary>
 
 - [ ] **Phase 071: Gemini AI Service** - GeminiService + POST /api/ia/gemini endpoint end-to-end
+  - [ ] 071-01-PLAN.md — Install @google/generative-ai, GeminiService, and POST /api/ia/gemini controller+route
 
 </details>
 
@@ -78,13 +79,13 @@
   2. The `GEMINI_API_KEY` environment variable in Strapi `.env` is the sole location of the API key — it is never hardcoded in any service or controller file
   3. `GeminiService` in `apps/strapi/src/services/` encapsulates all Gemini API calls; the controller contains no direct HTTP calls to Google
   4. When the Gemini API is unreachable or returns an error, `POST /api/ia/gemini` responds with an appropriate HTTP error (4xx/5xx) and Strapi does not crash
-**Plans**: TBD
+**Plans**: 1 plan
 
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status      | Completed  |
 |-------|-----------|----------------|-------------|------------|
-| 071   | v1.32     | 0/TBD          | Not started | -          |
+| 071   | v1.32     | 0/1            | Not started | -          |
 | 060   | v1.26     | 3/3            | Complete    | 2026-03-11 |
 | 061   | v1.27     | 2/2            | Complete    | 2026-03-12 |
 | 062   | v1.28     | 2/2            | Complete    | 2026-03-12 |
