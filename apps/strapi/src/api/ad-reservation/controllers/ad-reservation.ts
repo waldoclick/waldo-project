@@ -61,7 +61,7 @@ export default factories.createCoreController(
             {
               name: (user as any).firstName || (user as any).email,
               quantity,
-              type: "avisos",
+              type: "reserva(s) de avisos",
             }
           );
         } catch (emailError) {

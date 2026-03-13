@@ -7,13 +7,13 @@
         </button>
       </template>
     </HeroDefault>
-    <FeaturedFree />
+    <FeaturedFree ref="tableRef" />
     <LightboxGift
       :is-open="giftOpen"
       endpoint="ad-featured-reservations"
       label="reservas destacadas"
       @close="giftOpen = false"
-      @gifted="giftOpen = false"
+      @gifted="handleGifted"
     />
   </div>
 </template>
@@ -33,4 +33,10 @@ const breadcrumbs = [
 ];
 
 const giftOpen = ref(false);
+const tableRef = ref<InstanceType<typeof FeaturedFree> | null>(null);
+
+function handleGifted() {
+  giftOpen.value = false;
+  tableRef.value?.refresh();
+}
 </script>

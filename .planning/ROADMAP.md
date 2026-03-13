@@ -12,45 +12,17 @@
 - ✅ **v1.32 Gemini AI Service** — Phase 071 (shipped 2026-03-13). See `.planning/milestones/v1.32-ROADMAP.md`
 - ✅ **v1.33 Anthropic Claude AI Service** — Phase 072 (shipped 2026-03-13). See `.planning/milestones/v1.33-ROADMAP.md`
 - ✅ **v1.34 LightBoxArticles** — Phases 073–074 (shipped 2026-03-13). See `.planning/milestones/v1.34-ROADMAP.md`
-- 🚧 **v1.35 Gift Reservations to Users** — Phases 075–076 (in progress)
+- ✅ **v1.35 Gift Reservations to Users** — Phases 075–076 (shipped 2026-03-13). See `.planning/milestones/v1.35-ROADMAP.md`
 
 ## Phases
 
-### v1.35 Gift Reservations to Users
+<details>
+<summary>✅ v1.35 Gift Reservations to Users (Phases 075–076) — SHIPPED 2026-03-13</summary>
 
-- [x] **Phase 075: Strapi Gift Endpoints** — Users endpoint + ad-reservation gift endpoint + featured-reservation gift endpoint + email notification (completed 2026-03-13)
-- [x] **Phase 076: Dashboard Gift Lightbox** — Gift lightbox component + wiring into ad-reservation and featured-reservation detail pages (completed 2026-03-13)
+- [x] Phase 075: Strapi Gift Endpoints (2/2 plans) — completed 2026-03-13
+- [x] Phase 076: Dashboard Gift Lightbox (2/2 plans) — completed 2026-03-13
 
-## Phase Details
-
-### Phase 075: Strapi Gift Endpoints
-**Goal**: Administrators can create gifted reservations for any authenticated user via Strapi API
-**Depends on**: Nothing (backend-only work)
-**Requirements**: GIFT-06, GIFT-07, GIFT-08, GIFT-09
-**Success Criteria** (what must be TRUE):
-  1. `GET /api/users/authenticated` returns only Authenticated-role users with id, firstName, lastName — server-side filtered, not forgeable
-  2. `POST /api/ad-reservations/gift` with `{ userId, quantity }` creates N ad-reservation records assigned to the specified user
-  3. `POST /api/ad-featured-reservations/gift` with `{ userId, quantity }` creates N featured-reservation records assigned to the specified user
-  4. Recipient receives an email notification after a successful gift creation
-**Plans**: 2 plans
-Plans:
-- [ ] 075-01-PLAN.md — GET /api/users/authenticated endpoint (server-side role filter)
-- [ ] 075-02-PLAN.md — POST gift endpoints for ad-reservations + ad-featured-reservations + email template
-
-### Phase 076: Dashboard Gift Lightbox
-**Goal**: Administrators can gift reservations to users from the reservation detail pages in the dashboard
-**Depends on**: Phase 075
-**Requirements**: GIFT-01, GIFT-02, GIFT-03, GIFT-04, GIFT-05
-**Success Criteria** (what must be TRUE):
-  1. A "Gift Reservations" button appears on the ad-reservation detail page and opens the gift lightbox
-  2. A "Gift Featured Reservations" button appears on the featured-reservation detail page and opens the gift lightbox
-  3. The lightbox contains a numeric quantity input (min: 1) and a searchable user select showing only Authenticated users (first name + last name)
-  4. A Swal confirmation dialog appears before the gift is submitted, requiring explicit admin approval
-  5. On confirmation, the appropriate gift endpoint is called and the lightbox closes on success
-**Plans**: 2 plans
-Plans:
-- [ ] 076-01-PLAN.md — LightboxGift component + SCSS modifier
-- [ ] 076-02-PLAN.md — Wire LightboxGift into reservation + featured detail pages
+</details>
 
 <details>
 <summary>✅ v1.34 LightBoxArticles (Phases 073–074) — SHIPPED 2026-03-13</summary>
@@ -75,31 +47,10 @@ Plans:
 </details>
 
 <details>
-<summary>✅ v1.26 Mostrar comprobante Webpay (Phase 060) — SHIPPED 2026-03-11</summary>
+<summary>✅ v1.31 Article Manager Improvements (Phases 069–070) — SHIPPED 2026-03-13</summary>
 
-- [x] Phase 060: Mostrar comprobante Webpay (3/3 plans) — completed 2026-03-11
-
-</details>
-
-<details>
-<summary>✅ v1.27 Reparar eventos GA4 ecommerce (Phase 061) — SHIPPED 2026-03-12</summary>
-
-- [x] Phase 061: Fix GA4 ecommerce events (2/2 plans) — completed 2026-03-12
-
-</details>
-
-<details>
-<summary>✅ v1.28 Logout Store Cleanup (Phase 062) — SHIPPED 2026-03-12</summary>
-
-- [x] Phase 062: Logout Store Cleanup (2/2 plans) — completed 2026-03-12
-
-</details>
-
-<details>
-<summary>✅ v1.29 News Manager (Phases 063–064) — SHIPPED 2026-03-12</summary>
-
-- [x] Phase 063: News Content Type (1/1 plan) — completed 2026-03-12
-- [x] Phase 064: Dashboard Articles UI (2/2 plans) — completed 2026-03-12
+- [x] Phase 069: Strapi Schema (1/1 plan) — completed 2026-03-13
+- [x] Phase 070: Dashboard Form & Detail (1/1 plan) — completed 2026-03-13
 
 </details>
 
@@ -114,10 +65,31 @@ Plans:
 </details>
 
 <details>
-<summary>✅ v1.31 Article Manager Improvements (Phases 069–070) — SHIPPED 2026-03-13</summary>
+<summary>✅ v1.29 News Manager (Phases 063–064) — SHIPPED 2026-03-12</summary>
 
-- [x] Phase 069: Strapi Schema (1/1 plan) — completed 2026-03-13
-- [x] Phase 070: Dashboard Form & Detail (1/1 plan) — completed 2026-03-13
+- [x] Phase 063: News Content Type (1/1 plan) — completed 2026-03-12
+- [x] Phase 064: Dashboard Articles UI (2/2 plans) — completed 2026-03-12
+
+</details>
+
+<details>
+<summary>✅ v1.28 Logout Store Cleanup (Phase 062) — SHIPPED 2026-03-12</summary>
+
+- [x] Phase 062: Logout Store Cleanup (2/2 plans) — completed 2026-03-12
+
+</details>
+
+<details>
+<summary>✅ v1.27 Reparar eventos GA4 ecommerce (Phase 061) — SHIPPED 2026-03-12</summary>
+
+- [x] Phase 061: Fix GA4 ecommerce events (2/2 plans) — completed 2026-03-12
+
+</details>
+
+<details>
+<summary>✅ v1.26 Mostrar comprobante Webpay (Phase 060) — SHIPPED 2026-03-11</summary>
+
+- [x] Phase 060: Mostrar comprobante Webpay (3/3 plans) — completed 2026-03-11
 
 </details>
 
@@ -140,5 +112,5 @@ Plans:
 | 072   | v1.33     | 1/1            | Complete | 2026-03-13 |
 | 073   | v1.34     | 2/2            | Complete | 2026-03-13 |
 | 074   | v1.34     | 2/2            | Complete | 2026-03-13 |
-| 075   | 2/2 | Complete    | 2026-03-13 | —       |
-| 076   | 2/2 | Complete    | 2026-03-13 | —       |
+| 075   | v1.35     | 2/2            | Complete | 2026-03-13 |
+| 076   | v1.35     | 2/2            | Complete | 2026-03-13 |

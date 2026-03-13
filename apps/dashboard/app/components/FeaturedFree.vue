@@ -208,6 +208,8 @@ const handleViewFeatured = (featuredId: number) => {
   router.push(`/featured/${featuredId}`);
 };
 
+defineExpose({ refresh: fetchFreeFeatured });
+
 // Watch para recargar cuando cambian los filtros o la búsqueda
 watch(
   [
