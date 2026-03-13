@@ -3,14 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.36
 milestone_name: Two-Step Login Verification
 current_phase: 077 — Strapi 2-Step Backend
-status: Roadmap ready — awaiting `/gsd-plan-phase 077`
-last_updated: "2026-03-13T22:27:56.887Z"
-last_activity: "2026-03-13 — Roadmap created for v1.36 (3 phases: 077–079)"
+status: executing
+last_updated: "2026-03-13T22:29:11.196Z"
+last_activity: 2026-03-13 — Executed 077-01 (verification-code Strapi content type schema + scaffold)
 progress:
   total_phases: 3
   completed_phases: 0
   total_plans: 4
-  completed_plans: 1
+  completed_plans: 2
+  percent: 50
 ---
 
 # Session State
@@ -26,13 +27,13 @@ See: .planning/PROJECT.md (updated 2026-03-13 after v1.36 milestone started)
 
 **Milestone:** v1.36 — Two-Step Login Verification
 **Current Phase:** 077 — Strapi 2-Step Backend
-**Status:** In Progress — Plan 02/04 complete
+**Status:** In Progress — Plans 01 and 02/04 complete
 
 ```
-Progress: [█████████░] 90%
+Progress: [█████░░░░░] 50%
 ```
 
-Last activity: 2026-03-13 — Executed 077-02 (verification-code.mjml MJML email template)
+Last activity: 2026-03-13 — Executed 077-01 (verification-code Strapi content type schema + scaffold)
 
 ## Accumulated Context
 
