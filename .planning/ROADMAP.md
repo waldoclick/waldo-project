@@ -75,7 +75,11 @@ Plans:
   2. `_article.scss` exists with `article--archive` and `article--single` BEM blocks importable via `app.scss`
   3. `_hero.scss` has `hero--articles` and `hero--article` modifier blocks; `_filter.scss` has `filter--articles`; `_related.scss` has `related--articles`; `_card.scss` has `card--article` — all following BEM conventions
   4. `app.scss` includes `@use "components/article"` and the website builds without SCSS errors
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 066-01-PLAN.md — Article TypeScript interface (article.d.ts) with all 13 fields
+- [ ] 066-02-PLAN.md — SCSS scaffolding: _article.scss + blog blocks in _hero, _filter, _related, _card + app.scss import
 
 ### Phase 067: Blog Listing Page
 **Goal**: Visitors can browse published articles at `/blog` with category filtering, sort order, pagination, and an empty-state fallback
