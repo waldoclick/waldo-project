@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.25
 milestone_name: milestone
 status: planning
-last_updated: "2026-03-13T01:53:25Z"
+last_updated: "2026-03-13T01:57:27Z"
 progress:
   total_phases: 4
-  completed_phases: 3
-  total_plans: 6
-  completed_plans: 6
-  percent: 92
+  completed_phases: 4
+  total_plans: 8
+  completed_plans: 8
+  percent: 100
 ---
 
 # Session State
@@ -24,10 +24,10 @@ See: .planning/PROJECT.md (updated 2026-03-12 after v1.30 milestone started)
 ## Position
 
 **Milestone:** v1.30 — Blog Public Views
-**Phase:** 068 Plan 01 — complete
-**Status:** Ready to execute
+**Phase:** 068 Plan 02 — complete
+**Status:** Milestone complete
 
-**Progress:** [█████████░] 92%
+**Progress:** [██████████] 100%
 
 ## Session Log
 
@@ -41,6 +41,7 @@ See: .planning/PROJECT.md (updated 2026-03-12 after v1.30 milestone started)
 - 2026-03-13: Phase 067-02 complete — articles.store.ts (useArticlesStore, pageSize 12, no persist) + HeroArticles.vue (static blog hero, BreadcrumbsDefault, h1 "Blog")
 - 2026-03-13: Phase 067-03 complete — FilterArticles.vue + ArticleArchive.vue + blog/index.vue (full listing page with useAsyncData, SEO @type:Blog, empty state)
 - 2026-03-13: Phase 068-01 complete — HeroArticle.vue + ArticleSingle.vue leaf display components, zero TypeScript errors
+- 2026-03-13: Phase 068-02 complete — blog/[slug].vue full article detail page (useAsyncData, 404, BlogPosting SEO, RelatedArticles)
 
 ### Key Decisions
 
@@ -68,6 +69,9 @@ See: .planning/PROJECT.md (updated 2026-03-12 after v1.30 milestone started)
 - blog/index.vue definePageMeta({}) with empty object — no alias needed unlike /anuncios
 - HeroArticle breadcrumbs link to /blog (unfiltered) — categoryName/categorySlug props accepted for flexibility but not rendered in hero
 - ArticleSingle passes article.gallery (GalleryItem[] with .url) to GalleryDefault — not article.cover (Media[], no .url)
+- showError uses statusMessage (not description) — NuxtError type does not include description field
+- @type: "BlogPosting" for article detail structured data (not "Blog" — that's for the listing page)
+- Related articles fallback: load most-recent then merge, deduplicate by id, slice to 6
 
 ### Blockers/Concerns
 

@@ -25,10 +25,10 @@
 
 ### Blog Detail Page (`blog/[slug].vue`)
 
-- [ ] **BLOG-10**: Visitor can view a single article at `/blog/[slug]` showing: hero with title + breadcrumbs, full cover gallery, rendered Markdown body, and sidebar with ShareDefault + article categories
-- [ ] **BLOG-11**: Visitor is shown a 404 error page when the article slug does not exist or the article is not published
-- [ ] **BLOG-12**: Page has SSR-correct `$setSEO` title, description (derived from `header`), cover image, and `BlogPosting` structured data (name, description, image, datePublished, author)
-- [ ] **BLOG-13**: Visitor sees `RelatedArticles` at the bottom of the article (same-category first, fall back to most recent)
+- [x] **BLOG-10**: Visitor can view a single article at `/blog/[slug]` showing: hero with title + breadcrumbs, full cover gallery, rendered Markdown body, and sidebar with ShareDefault + article categories
+- [x] **BLOG-11**: Visitor is shown a 404 error page when the article slug does not exist or the article is not published
+- [x] **BLOG-12**: Page has SSR-correct `$setSEO` title, description (derived from `header`), cover image, and `BlogPosting` structured data (name, description, image, datePublished, author)
+- [x] **BLOG-13**: Visitor sees `RelatedArticles` at the bottom of the article (same-category first, fall back to most recent)
 
 ### Blog-Specific Components
 
@@ -83,10 +83,10 @@
 | BLOG-07 | Phase 067 | Complete |
 | BLOG-08 | Phase 067 | Complete |
 | BLOG-09 | Phase 067 | Complete |
-| BLOG-10 | Phase 068 | Pending |
-| BLOG-11 | Phase 068 | Pending |
-| BLOG-12 | Phase 068 | Pending |
-| BLOG-13 | Phase 068 | Pending |
+| BLOG-10 | Phase 068 | Complete |
+| BLOG-11 | Phase 068 | Complete |
+| BLOG-12 | Phase 068 | Complete |
+| BLOG-13 | Phase 068 | Complete |
 | BLOG-14 | Phase 067 | Complete |
 | BLOG-15 | Phase 067 | Complete |
 | BLOG-16 | Phase 067 | Complete |
