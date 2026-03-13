@@ -44,7 +44,7 @@
 <summary>🔄 v1.30 Blog Public Views (Phases 065–068) — IN PROGRESS</summary>
 
 - [x] **Phase 065: Strapi Slug Field** — Add `slug` field to Article schema with lifecycle hook; verify API response (completed 2026-03-13)
-- [ ] **Phase 066: Article Infrastructure** — TypeScript Article type + SCSS scaffolding (all blog SCSS files/blocks)
+- [x] **Phase 066: Article Infrastructure** — TypeScript Article type + SCSS scaffolding (all blog SCSS files/blocks) (completed 2026-03-13)
 - [ ] **Phase 067: Blog Listing Page** — `/blog` listing page + all listing-related components (Hero, Filter, Archive, Card, Related)
 - [ ] **Phase 068: Blog Detail Page** — `/blog/[slug]` detail page + article-level components (HeroArticle, ArticleSingle)
 
@@ -114,6 +114,6 @@ Plans:
 | 063   | v1.29     | 1/1            | Complete    | 2026-03-12 |
 | 064   | v1.29     | 2/2            | Complete    | 2026-03-12 |
 | 065   | 1/1 | Complete    | 2026-03-13 | —          |
-| 066   | v1.30     | 0/TBD          | Not started | —          |
+| 066   | 2/2 | Complete   | 2026-03-13 | —          |
 | 067   | v1.30     | 0/TBD          | Not started | —          |
 | 068   | v1.30     | 0/TBD          | Not started | —          |

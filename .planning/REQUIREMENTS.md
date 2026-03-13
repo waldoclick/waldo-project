@@ -12,7 +12,7 @@
 
 ### Article Type Definition
 
-- [ ] **BLOG-03**: `Article` TypeScript interface is defined in `apps/website/app/types/article.d.ts` covering all fields: `id`, `documentId`, `title`, `header`, `body`, `slug`, `cover`, `gallery`, `categories`, `seo_title`, `seo_description`, `publishedAt`, `createdAt`
+- [x] **BLOG-03**: `Article` TypeScript interface is defined in `apps/website/app/types/article.d.ts` covering all fields: `id`, `documentId`, `title`, `header`, `body`, `slug`, `cover`, `gallery`, `categories`, `seo_title`, `seo_description`, `publishedAt`, `createdAt`
 
 ### Blog Listing Page (`blog/index.vue`)
 
@@ -76,7 +76,7 @@
 |-------------|-------|--------|
 | BLOG-01 | Phase 065 | Complete |
 | BLOG-02 | Phase 065 | Complete |
-| BLOG-03 | Phase 066 | Pending |
+| BLOG-03 | Phase 066 | Complete |
 | BLOG-04 | Phase 067 | Pending |
 | BLOG-05 | Phase 067 | Pending |
 | BLOG-06 | Phase 067 | Pending |
