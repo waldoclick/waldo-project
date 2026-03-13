@@ -26,7 +26,7 @@
 
 ### Dashboard — Integración
 
-- [ ] **INT-01**: `pages/articles/index.vue` tiene un botón "Generar artículo" con clase `btn--announcement` e icono `Wand2` (lucide) junto al botón "Agregar artículo"; al presionar abre `LightBoxArticles`
+- [x] **INT-01**: `pages/articles/index.vue` tiene un botón "Generar artículo" con clase `btn--announcement` e icono `Wand2` (lucide) junto al botón "Agregar artículo"; al presionar abre `LightBoxArticles`
 
 ## Future Requirements
 
@@ -58,7 +58,7 @@
 | LB-07 | Phase 074 | Complete |
 | LB-08 | Phase 074 | Complete |
 | SCSS-01 | Phase 074 | Complete |
-| INT-01 | Phase 074 | Pending |
+| INT-01 | Phase 074 | Complete |
 
 **Coverage:**
 - v1.34 requirements: 11 total
