@@ -74,7 +74,7 @@ const { data: pageData, pending } = await useAsyncData<ArticlePageData>(
     // Load related articles: same-category first, fallback to most recent
     await articlesStore.loadArticles(
       {
-        categories: { slug: { $eq: article.categories[0]?.slug } },
+        categories: { slug: { $eq: article.categories?.[0]?.slug } },
         slug: { $ne: article.slug },
       } as unknown as Record<string, unknown>,
       { page: 1, pageSize: 6 },
@@ -121,8 +121,8 @@ watch(
     if (newData?.article) {
       const article = newData.article;
       const imageUrl =
-        article.cover[0]?.formats?.medium?.url ||
-        article.cover[0]?.formats?.thumbnail?.url ||
+        article.cover?.[0]?.formats?.medium?.url ||
+        article.cover?.[0]?.formats?.thumbnail?.url ||
         `${config.public.baseUrl}/share.jpg`;
 
       $setSEO({
