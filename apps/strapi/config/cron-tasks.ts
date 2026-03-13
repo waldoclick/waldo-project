@@ -2,6 +2,7 @@ import UserCronService from "../src/cron/ad-free-reservation-restore.cron";
 import { AdService } from "../src/cron/ad-expiry.cron";
 import { CleanupService } from "../src/cron/media-cleanup.cron";
 import { BackupService } from "../src/cron/bbdd-backup.cron";
+import { VerificationCodeCleanupService } from "../src/cron/verification-code-cleanup.cron";
 
 export default {
   /**
@@ -81,6 +82,26 @@ export default {
     options: {
       rule: "0 3 * * *", // Every day at 3:00 AM (America/Santiago)
       // rule: "* * * * *", // Test - cada 1 minuto
+      tz: "America/Santiago",
+    },
+  },
+
+  /**
+   * Deletes expired verification-code records (expiresAt < now) to prevent
+   * table bloat. Each login attempt creates a record — expired ones accumulate.
+   * Runs daily at 4:00 AM Santiago time (America/Santiago).
+   * Calls VerificationCodeCleanupService.cleanExpiredCodes() — see verification-code-cleanup.cron.ts.
+   */
+  verificationCodeCleanupCron: {
+    task: async ({ strapi }) => {
+      strapi.log.info("=== INICIANDO CRON VERIFICATION CODE CLEANUP ===");
+      const cleanupService = new VerificationCodeCleanupService();
+      await cleanupService.cleanExpiredCodes();
+      strapi.log.info("=== CRON VERIFICATION CODE CLEANUP FINALIZADO ===");
+    },
+    options: {
+      rule: "0 4 * * *", // Every day at 4:00 AM (America/Santiago)
+      // rule: "* * * * *", // Test
       tz: "America/Santiago",
     },
   },
