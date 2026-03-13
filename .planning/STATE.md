@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.35
 milestone_name: Gift Reservations to Users
 current_phase: 076
-status: planning
-last_updated: "2026-03-13T20:04:41.242Z"
-last_activity: 2026-03-13 — Completed 076-01-PLAN.md (Gift Lightbox Component)
+status: executing
+last_updated: "2026-03-13T20:08:23.408Z"
+last_activity: 2026-03-13 — Completed 076-02-PLAN.md (LightboxGift Integration)
 progress:
   total_phases: 2
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 4
-  completed_plans: 3
+  completed_plans: 4
 ---
 
 # Session State
@@ -20,21 +20,21 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-13 after v1.35 milestone started)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 076 — Dashboard Gift Lightbox
+**Current focus:** Phase 076 — Dashboard Gift Lightbox (Complete)
 
 ## Position
 
 **Milestone:** v1.35 — Gift Reservations to Users
 **Current Phase:** 076
-**Status:** In Progress (1/2 plans complete)
+**Status:** Complete (2/2 plans complete)
 
 ```
 Phase 075 [██████████] 100%  Strapi Gift Endpoints (2/2 plans)
-Phase 076 [█████░░░░░] 50%   Dashboard Gift Lightbox (1/2 plans)
-Overall   [█████████░] 96%   (3/4 plans)
+Phase 076 [██████████] 100%  Dashboard Gift Lightbox (2/2 plans)
+Overall   [██████████] 100%  (4/4 plans)
 ```
 
-Last activity: 2026-03-13 — Completed 076-01-PLAN.md (Gift Lightbox Component)
+Last activity: 2026-03-13 — Completed 076-02-PLAN.md (LightboxGift Integration)
 
 ## Accumulated Context
 
@@ -64,6 +64,11 @@ Last activity: 2026-03-13 — Completed 076-01-PLAN.md (Gift Lightbox Component)
 - IAuthUser interface defined inline in LightboxGift.vue — no separate types file needed for a component-local shape
 - loadUsers() called on every open without caching — gift is an infrequent admin action; fresh user list preferred
 - LightboxGift accepts endpoint prop (e.g. 'ad-reservations') for reuse across both reservation detail pages
+
+### Phase 076 Decisions (076-02)
+
+- Button placed inside sidebar slot after BoxInformation — least invasive, no new wrapper components needed
+- giftOpen reset on both @close and @gifted — lightbox closes on cancel and on successful gift
 
 ### Blockers/Concerns
 
