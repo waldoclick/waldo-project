@@ -186,6 +186,7 @@ const emit = defineEmits<{
   (event: "close"): void;
 }>();
 
+const client = useStrapiClient();
 const currentStep = ref<1 | 2 | 3>(1);
 const query = ref("maquinaria industrial Chile noticias");
 const searchResults = ref<ITavilyNewsResult[]>([]);
@@ -235,7 +236,7 @@ async function handleSearch() {
   if (!query.value.trim() || loading.value) return;
   loading.value = true;
   try {
-    const result = await $fetch<{ news: ITavilyNewsResult[] }>(
+    const result = await client<{ news: ITavilyNewsResult[] }>(
       "/api/search/tavily",
       {
         method: "POST",
@@ -268,7 +269,7 @@ async function handleGenerate() {
   if (!geminiPrompt.value.trim() || loading.value) return;
   loading.value = true;
   try {
-    const result = await $fetch<{ text: string }>("/api/ia/gemini", {
+    const result = await client<{ text: string }>("/api/ia/gemini", {
       method: "POST",
       body: { prompt: geminiPrompt.value },
     });
