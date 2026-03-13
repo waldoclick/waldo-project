@@ -109,7 +109,7 @@ Plans:
 | 062   | v1.28     | 2/2            | Complete    | 2026-03-12 |
 | 063   | v1.29     | 1/1            | Complete    | 2026-03-12 |
 | 064   | v1.29     | 2/2            | Complete    | 2026-03-12 |
-| 065   | v1.30     | 0/TBD          | Not started | —          |
+| 065   | v1.30     | 0/1            | Planned     | —          |
 | 066   | v1.30     | 0/TBD          | Not started | —          |
 | 067   | v1.30     | 0/TBD          | Not started | —          |
 | 068   | v1.30     | 0/TBD          | Not started | —          |
