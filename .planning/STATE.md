@@ -86,6 +86,8 @@ None.
 | 19 | fix article body not showing in dashboard edit and preview pages | 2026-03-13 | 68f4746 | [19-fix-article-body-not-showing-in-dashboar](./quick/19-fix-article-body-not-showing-in-dashboar/) |
 | 20 | fix article body being reset to null on save in edit page | 2026-03-13 | 217d3fb | [20-fix-article-body-being-reset-to-null-on-](./quick/20-fix-article-body-being-reset-to-null-on-/) |
 | 21 | fix article update using numeric id instead of documentId causing 400 error | 2026-03-13 | 6d32544 | [21-fix-article-update-using-numeric-id-inst](./quick/21-fix-article-update-using-numeric-id-inst/) |
+| 22 | truncate long breadcrumb labels with ellipsis in website and dashboard | 2026-03-13 | b4f8dff | [22-truncate-long-breadcrumb-labels-with-ell](./quick/22-truncate-long-breadcrumb-labels-with-ell/) |
+| 23 | fix article body paragraph spacing in website and dashboard preview | 2026-03-13 | f8d8eee | [23-fix-article-body-paragraph-spacing-in-we](./quick/23-fix-article-body-paragraph-spacing-in-we/) |
 
 ### Accumulated Context
 
