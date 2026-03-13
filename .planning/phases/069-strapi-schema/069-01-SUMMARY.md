@@ -64,7 +64,7 @@ Each task was committed atomically:
 1. **Task 1: Add source_url attribute to Article schema.json** - `bd9a54e` (feat)
 2. **Task 2: Add source_url to Article TypeScript interface (website)** - `4485c65` (feat)
 
-**Plan metadata:** `(pending)` (docs: complete plan)
+**Plan metadata:** `1a0c63b` (docs: complete plan)
 
 ## Files Created/Modified
 - `apps/strapi/src/api/article/content-types/article/schema.json` - Added `source_url` attribute to `attributes` object

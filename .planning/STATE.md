@@ -1,10 +1,10 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.25
-milestone_name: milestone
+milestone: v1.31
+milestone_name: Article Manager Improvements
 current_phase: 070
 status: completed
-last_updated: "2026-03-13T11:39:29.119Z"
+last_updated: "2026-03-13T13:45:58.789Z"
 last_activity: "2026-03-13 — 070-01 complete: FormArticle draft/publish toggle + source_url field + detail page link"
 progress:
   total_phases: 2
@@ -17,16 +17,16 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-13 after v1.31 milestone started)
+See: .planning/PROJECT.md (updated 2026-03-13 after v1.31 milestone)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.31 — Article Manager Improvements
+**Current focus:** Planning next milestone
 
 ## Position
 
 **Milestone:** v1.31 — Article Manager Improvements
 **Current Phase:** 070
-**Status:** Milestone complete
+**Status:** v1.31 archived — planning next milestone
 
 ```
 Phase 069 [█] ██████████ 1/1 plans complete
@@ -44,6 +44,7 @@ Last activity: 2026-03-13 — 070-01 complete: FormArticle draft/publish toggle 
 - 2026-03-13: 070-01 planned — FormArticle draft/publish toggle + source_url field + detail page link
 - 2026-03-13: 070-01 complete — draft/publish toggle + source_url field in FormArticle, source_url link in detail sidebar
 - 2026-03-13: 070-01 verified by user — milestone v1.31 Article Manager Improvements complete
+- 2026-03-13: Milestone v1.31 archived — Article Manager Improvements shipped
 
 ### Key Decisions
 
