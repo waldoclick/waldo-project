@@ -1,8 +1,14 @@
 <template>
   <article class="card card--article">
-    <div class="card--article__image">
+    <div
+      :class="[
+        'card--article__image',
+        { 'card--article__image--empty': !hasCover },
+      ]"
+    >
       <NuxtLink :to="`/blog/${article.slug}`">
         <NuxtImg
+          v-if="hasCover"
           :src="coverImage"
           :alt="article.title"
           width="400"
@@ -10,6 +16,14 @@
           loading="lazy"
           format="webp"
           remote
+        />
+        <img
+          v-else
+          src="/images/empty-article.png"
+          :alt="article.title"
+          width="400"
+          height="300"
+          loading="lazy"
         />
       </NuxtLink>
     </div>
@@ -63,13 +77,15 @@ const { transformUrl } = useImageProxy();
 const stringTruncate = (str: string, length: number): string =>
   str.length > length ? str.slice(0, Math.max(0, length)) + "..." : str;
 
+const hasCover = computed(() => {
+  const cover = props.article.cover;
+  return cover && cover.length > 0;
+});
+
 const coverImage = computed(() => {
   const cover = props.article.cover;
-  if (cover && cover.length > 0) {
-    const firstImage =
-      cover[0]?.formats?.medium?.url || cover[0]?.formats?.thumbnail?.url || "";
-    return transformUrl(firstImage);
-  }
-  return "";
+  const firstImage =
+    cover[0]?.formats?.medium?.url || cover[0]?.formats?.thumbnail?.url || "";
+  return transformUrl(firstImage);
 });
 </script>

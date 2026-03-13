@@ -851,6 +851,10 @@
         float: left;
         aspect-ratio: 4 / 2;
       }
+
+      &--empty {
+        background-color: rgba($light_peach, 0.1);
+      }
     }
 
     &__info {
