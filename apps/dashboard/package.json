@@ -39,6 +39,7 @@
     "@pinia/nuxt": "^0.11.2",
     "@sentry/integrations": "^7.114.0",
     "@sentry/nuxt": "^9.17.0",
+    "@vueform/multiselect": "^2.6.11",
     "@vueuse/core": "^13.0.0",
     "bad-words": "^4.0.0",
     "chart.js": "^4.5.1",
