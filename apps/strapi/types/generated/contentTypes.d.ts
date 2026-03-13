@@ -673,6 +673,7 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
     seo_description: Schema.Attribute.String;
     seo_title: Schema.Attribute.String;
     slug: Schema.Attribute.UID<"title">;
+    source_url: Schema.Attribute.String;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &

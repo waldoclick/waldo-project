@@ -7,7 +7,7 @@ import type {
 
 export class GeminiService implements IGeminiService {
   private readonly client: GoogleGenerativeAI;
-  private readonly modelName = "gemini-1.5-flash";
+  private readonly modelName = "gemini-2.0-flash";
 
   constructor() {
     const apiKey = process.env.GEMINI_API_KEY || "";
