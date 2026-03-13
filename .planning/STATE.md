@@ -4,13 +4,13 @@ milestone: v1.36
 milestone_name: Two-Step Login Verification
 current_phase: 078
 status: planning
-last_updated: "2026-03-13T22:44:49.837Z"
-last_activity: 2026-03-13 — Executed 077-04 (verification-code cleanup cron)
+last_updated: "2026-03-13T23:19:14.883Z"
+last_activity: 2026-03-13 — Executed 078-01 (dashboard login pendingToken handoff)
 progress:
   total_phases: 3
   completed_phases: 1
-  total_plans: 4
-  completed_plans: 4
+  total_plans: 6
+  completed_plans: 5
   percent: 100
 ---
 
@@ -21,19 +21,19 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-13 after v1.36 milestone started)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 077 — Strapi 2-Step Backend (4/4 plans complete — phase complete)
+**Current focus:** Phase 078 — Dashboard Verify Flow (1/? plans complete — in progress)
 
 ## Position
 
 **Milestone:** v1.36 — Two-Step Login Verification
 **Current Phase:** 078
-**Status:** Ready to plan
+**Status:** In progress
 
 ```
-Progress: [██████████] 100%
+Progress: [██████████] 97%
 ```
 
-Last activity: 2026-03-13 — Executed 077-04 (verification-code cleanup cron)
+Last activity: 2026-03-13 — Executed 078-01 (dashboard login pendingToken handoff)
 
 ## Accumulated Context
 
@@ -54,6 +54,7 @@ Last activity: 2026-03-13 — Executed 077-04 (verification-code cleanup cron)
 - `resendCode` cooldown uses `record.updatedAt` timestamp for the 60-second rate-limit window
 - `verificationCodeCleanupCron` scheduled `0 4 * * *` (daily 4 AM Santiago) — same hour as cleanupCron (Sundays-only), no real conflict since they operate on different collections
 - `deleteMany` used for bulk deletion of expired verification-code records (single DB round-trip)
+- Dashboard FormLogin.vue: `Record<string, unknown>` used for vee-validate SubmissionHandler values parameter (satisfies GenericObject constraint); property access uses `as string` casts
 
 ### Phase Dependency
 
