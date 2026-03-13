@@ -10,14 +10,14 @@
 - ✅ **v1.30 Blog Public Views** — Phases 065–068 (shipped 2026-03-13). See `.planning/milestones/v1.30-ROADMAP.md`
   - ✅ **v1.31 Article Manager Improvements** — Phases 069–070 (shipped 2026-03-13). See `.planning/milestones/v1.31-ROADMAP.md`
 - ✅ **v1.32 Gemini AI Service** — Phase 071 (shipped 2026-03-13). See `.planning/milestones/v1.32-ROADMAP.md`
-- 🔄 **v1.33 Anthropic Claude AI Service** — Phase 072 (in progress)
+- ✅ **v1.33 Anthropic Claude AI Service** — Phase 072 (shipped 2026-03-13)
 
 ## Phases
 
 <details>
-<summary>🔄 v1.33 Anthropic Claude AI Service (Phase 072) — IN PROGRESS</summary>
+<summary>✅ v1.33 Anthropic Claude AI Service (Phase 072) — SHIPPED 2026-03-13</summary>
 
-- [ ] Phase 072: Anthropic Claude AI Service (0/1 plan) — in progress
+- [x] Phase 072: Anthropic Claude AI Service (1/1 plan) — completed 2026-03-13
 
 </details>
 
@@ -88,7 +88,7 @@
   4. When Claude calls the `web_search` tool, Strapi executes the Brave Search query and returns results back to Claude to continue the conversation loop
   5. When the Anthropic API or Brave Search is unreachable or returns an error, `POST /api/ia/claude` responds with an appropriate HTTP error (4xx/5xx) and Strapi does not crash
 **Plans**: 1 plan
-  - [ ] 072-01-PLAN.md — Install @anthropic-ai/sdk, implement AnthropicService with web_search tool loop, add POST /api/ia/claude endpoint
+  - [x] 072-01-PLAN.md — Install @anthropic-ai/sdk, implement AnthropicService with web_search tool loop, add POST /api/ia/claude endpoint
 
 ### Phase 071: Gemini AI Service
 **Goal**: Strapi exposes a working Gemini AI integration — a typed service reads the API key from env, and a custom endpoint accepts a prompt and returns generated text with proper error handling.
@@ -105,7 +105,7 @@
 
 | Phase | Milestone | Plans Complete | Status      | Completed  |
 |-------|-----------|----------------|-------------|------------|
-| 072   | v1.33     | 0/1            | In Progress | —          |
+| 072   | v1.33     | 1/1            | Complete    | 2026-03-13 |
 | 071   | v1.32     | 1/1            | Complete    | 2026-03-13 |
 | 060   | v1.26     | 3/3            | Complete    | 2026-03-11 |
 | 061   | v1.27     | 2/2            | Complete    | 2026-03-12 |
