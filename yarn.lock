@@ -8218,6 +8218,11 @@
     js-beautify "^1.14.9"
     vue-component-type-helpers "^2.0.0"
 
+"@vueform/multiselect@^2.6.11":
+  version "2.6.11"
+  resolved "https://registry.yarnpkg.com/@vueform/multiselect/-/multiselect-2.6.11.tgz#3585bf1989b969019cd6f8095c8a27d4d45c61e7"
+  integrity sha512-iG4TGfqE3baftbSGF0PhoS+xZOCnV0ChkDo9rwhJ/Qi2YlCdb6tyQCjvyug3jnzncga8+d85kx0WvG7rDYFqiA==
+
 "@vueuse/core@^13.0.0":
   version "13.9.0"
   resolved "https://registry.yarnpkg.com/@vueuse/core/-/core-13.9.0.tgz#051aeff47a259e9e4d7d0cc3e54879817b0cbcad"
