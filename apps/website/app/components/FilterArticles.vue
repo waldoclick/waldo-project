@@ -6,7 +6,7 @@
           <select
             v-if="isClient"
             v-model="selectedCategory"
-            class="filter--articles__selector__select"
+            class="filter--articles__select"
           >
             <option value="all">Todas las categorías</option>
             <option v-for="cat in categories" :key="cat.id" :value="cat.slug">
@@ -15,7 +15,7 @@
           </select>
           <div
             v-else
-            class="filter--articles__selector__select filter--articles__selector__select--loading"
+            class="filter--articles__select filter--articles__select--loading"
           >
             Cargando...
           </div>
@@ -27,14 +27,14 @@
         <select
           v-if="isClient"
           v-model="selectedOrder"
-          class="filter--articles__selector__select filter--articles__selector__select--simple"
+          class="filter--articles__select filter--articles__select--simple"
         >
           <option value="recent">Más recientes</option>
           <option value="oldest">Más antiguos</option>
         </select>
         <div
           v-else
-          class="filter--articles__selector__select filter--articles__selector__select--simple filter--articles__selector__select--loading"
+          class="filter--articles__select filter--articles__select--simple filter--articles__select--loading"
         >
           Cargando...
         </div>
