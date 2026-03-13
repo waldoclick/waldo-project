@@ -260,10 +260,23 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
    | `strapi.delete` requires string `documentId` in Strapi v5 SDK | Numeric `id` not accepted for delete in v5; use `documentId \|\| String(id)` fallback — v1.29 | ✓ Good |
    | `TextareaArticle.vue` custom component over EasyMDE/fontawesome | No external font dependencies; lucide already installed; full control over styling within BEM system — v1.29 | ✓ Good |
 
+## Current Milestone: v1.30 — Blog Public Views
+
+**Goal:** Expose the Article content type as a public blog on the website with a listing page and individual article view, visually consistent with the ads pages but with blog-specific components.
+
+**Target features:**
+- `slug` field added to Strapi Article schema (auto-generated via lifecycle hook from title)
+- `blog/index.vue` — article listing with category filter, sort order, pagination (12/page)
+- `blog/[slug].vue` — individual article view with full body, cover gallery, sidebar (share + categories)
+- Blog-specific components replicated from ads equivalents: `HeroArticles`, `FilterArticles`, `ArticleArchive`, `CardArticle`, `ArticleSingle`, `HeroArticle`, `RelatedArticles`
+- Shared components reused without duplication: `HeaderDefault`, `FooterDefault`, `MessageDefault`, `BreadcrumbsDefault`, `ShareDefault`, `GalleryDefault`
+- SEO: `$setSEO` + `$setStructuredData` on both pages (BlogPosting schema on article detail)
+- `Article` TypeScript type defined in `app/types/article.d.ts`
+
 ## Current State
 
 **Last shipped:** v1.29 (2026-03-12) — News Manager: `Article` content type in Strapi with all fields + full dashboard CRUD UI (list, create, edit, delete, SEO fields, Markdown body via `TextareaArticle`)
-**Current focus:** Planning next milestone
+**Current focus:** v1.30 — Blog Public Views
 
 **News Manager (since v1.29):** `Article` collection type (`title`, `header`, `body` richtext, `cover`/`gallery` media, `categories` manyToMany to `api::category.category`, `seo_title`, `seo_description`, `draftAndPublish: true`); dashboard: `ArticlesDefault.vue` (table with search/sort/pagination/delete + Swal confirm), `FormArticle.vue` (create/edit with vee-validate + yup, `TextareaArticle` markdown editor), 4 pages (`/articles`, `/articles/new`, `/articles/[id]`, `/articles/[id]/edit`), Artículos entry under Mantenedores in `MenuDefault.vue`, Newspaper shortcut icon in `ToolbarDefault.vue`; `TextareaArticle.vue` custom component with lucide toolbar (Bold, Italic, Heading2, List, ListOrdered, Link, Quote, Code), `_textarea.scss`.
 

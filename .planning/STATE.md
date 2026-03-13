@@ -1,50 +1,50 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.29
-milestone_name: News Manager
-status: completed
-stopped_at: Completed 064-02-PLAN.md
-last_updated: "2026-03-12T23:57:36.008Z"
+milestone: v1.30
+milestone_name: Blog Public Views
+status: in_progress
+stopped_at: Defining requirements
+last_updated: "2026-03-12T00:00:00.000Z"
 progress:
-  total_phases: 2
-  completed_phases: 2
-  total_plans: 3
-  completed_plans: 3
-  percent: 86
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Session State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-12 after v1.29 milestone)
+See: .planning/PROJECT.md (updated 2026-03-12 after v1.30 milestone started)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Planning next milestone
+**Current focus:** Defining requirements for v1.30
 
 ## Position
 
-**Milestone:** v1.29 — COMPLETE (archived)
-**Status:** Between milestones — ready for v1.30
+**Milestone:** v1.30 — Blog Public Views
+**Status:** Defining requirements
 
-**Progress:** [██████████] 100%
+**Progress:** [░░░░░░░░░░] 0%
 
 ## Session Log
 
-- 2026-03-12: Milestone v1.28 complete — Logout Store Cleanup shipped
-- 2026-03-12: Milestone v1.29 started — News Manager
-- 2026-03-12: Roadmap created — Phases 063 (Strapi schema) + 064 (Dashboard UI) defined; 9/9 requirements mapped
-- 2026-03-12: Phase 063 complete — News content type created in Strapi (schema.json + controller + routes + service); /api/news endpoint ready
-- 2026-03-12: Phase 064 complete — Dashboard Articles UI shipped (ArticlesDefault, FormArticle components + 4 pages + Mantenedores menu entry)
+- 2026-03-12: Milestone v1.29 complete — News Manager shipped
+- 2026-03-12: Milestone v1.30 started — Blog Public Views
 
 ### Key Decisions
 
-- Phase 063 groups all Strapi backend work (NEWS-01, 02, 03, 08) — content type schema + SEO fields + native draft/publish
-- Phase 064 groups all dashboard frontend work (NEWS-04, 05, 06, 07, 09) — list/create/edit/delete + SEO input
-- Granularity: coarse — 2 phases is the natural delivery boundary for backend-then-frontend
-- 064-01: strapi.delete in Strapi v5 SDK requires string documentId, not numeric id — use `documentId || String(id)` pattern
-- 064-01: FormArticle defers body/cover/gallery/categories to Strapi admin; form covers text fields + SEO only
-- 064-02: Article pages follow faqs/ pattern exactly with typed ArticleData interface; publishedAt null→"Borrador"/non-null→"Publicado"; Newspaper icon added to MenuDefault Mantenedores submenu
+- Blog components replicated from ads equivalents — not reused directly (user requirement)
+- `slug` field must be added to Strapi Article schema (missing — required for `blog/[slug].vue` routing)
+- Slug auto-generated from title via Strapi lifecycle hook (beforeCreate/beforeUpdate)
+- Blog hero: white background, breadcrumbs kept — no category color tint
+- Article card fields: cover image, category badge, title, header/excerpt, publishedAt, read more link
+- Blog index filters: category dropdown + sort order (recent/oldest)
+- Article sidebar: ShareDefault + categories list (no seller/price)
+- Related articles: same-category first, fill with most recent if not enough
+- 12 articles per page
 
 ### Blockers/Concerns
 
@@ -52,15 +52,18 @@ None.
 
 ### Accumulated Context
 
-**From v1.28:**
-- `useLogout` composable in `apps/website/app/composables/` — single responsibility: reset all user stores then call `useStrapiAuth().logout()`, then `navigateTo('/')`
-- `reset()` action pattern for Composition API stores (no built-in `$reset()`)
-- `#imports` alias in vitest.config.ts for Nuxt auto-import mocking in bare Vitest environment
+**From v1.29:**
+- Article content type in Strapi: `title`, `header`, `body` (richtext/Markdown), `cover` (media, multiple), `gallery` (media, multiple), `categories` (manyToMany → `api::category.category`), `seo_title`, `seo_description`, `draftAndPublish: true`
+- API endpoint: `GET /api/articles` (default Strapi v5 core routes)
+- Strapi v5 SDK delete requires `documentId || String(id)` — numeric id not accepted
+- `richtext` in Strapi v5 stores Markdown — website must render it via `sanitizeRich` composable
 
-**For v1.29:**
-- Content type name: `News` in Strapi (collection type)
-- Relation target: existing `categorias` content type (many-to-many or many-to-one, optional)
-- Draft/publish: use Strapi's native `draftAndPublish: true` option — no custom `status` field
-- SEO fields: `seo_title` (short text, optional) and `seo_description` (short text, optional) — added to Phase 063 schema
-- Dashboard pattern to follow: existing ads/users/orders sections in `apps/dashboard`
-- No website public view in this milestone — dashboard-only
+**For v1.30:**
+- Website pages: `apps/website/app/pages/blog/index.vue` and `apps/website/app/pages/blog/[slug].vue` (currently empty stubs)
+- Reference layout: `anuncios/index.vue` (listing) and `anuncios/[slug].vue` (single)
+- Components to create: `HeroArticles`, `FilterArticles`, `ArticleArchive`, `CardArticle`, `ArticleSingle`, `HeroArticle`, `RelatedArticles`
+- Components to reuse: `HeaderDefault`, `FooterDefault`, `MessageDefault`, `BreadcrumbsDefault`, `ShareDefault`, `GalleryDefault`, `LoadingDefault`
+- SCSS files to create: `_article.scss` (mirrors `_announcement.scss`), new blocks in `_hero.scss`, `_filter.scss`, `_related.scss`, `_card.scss`
+- No article store or composable exists on website side yet — must be created
+- `Article` TypeScript type must be defined in `app/types/article.d.ts`
+- Slug field missing from Article schema — Phase 065 must add it
