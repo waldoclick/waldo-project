@@ -137,14 +137,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
 import { X as IconX } from "lucide-vue-next";
-
-interface ITavilyNewsResult {
-  title: string;
-  link: string;
-  snippet: string;
-  date: string;
-  source: string;
-}
+import { useSearchStore, type ITavilyResult } from "@/stores/search.store";
 
 const props = withDefaults(
   defineProps<{
@@ -158,9 +151,12 @@ const emit = defineEmits<{
 }>();
 
 const client = useStrapiClient();
+const { Swal } = useSweetAlert2();
+const searchStore = useSearchStore();
+
 const currentStep = ref<1 | 2>(1);
 const query = ref("maquinaria industrial Chile noticias");
-const searchResults = ref<ITavilyNewsResult[]>([]);
+const searchResults = ref<ITavilyResult[]>([]);
 const selectedIndexes = ref<Set<number>>(new Set());
 const loading = ref(false);
 
@@ -203,18 +199,48 @@ function toggleRow(index: number) {
   selectedIndexes.value = next;
 }
 
+async function fetchFromApi(q: string) {
+  const result = await client<{ news: ITavilyResult[] }>("/search/tavily", {
+    method: "POST",
+    body: { query: q, num: 10 },
+  });
+  const news = result.news || [];
+  searchStore.setTavily(q, news);
+  return news;
+}
+
 async function handleSearch() {
-  if (!query.value.trim() || loading.value) return;
+  const q = query.value.trim();
+  if (!q || loading.value) return;
+
+  // If cache exists, ask user whether to reuse or re-fetch
+  if (searchStore.hasTavily(q)) {
+    const { isConfirmed, isDismissed } = await Swal.fire({
+      title: "Resultados guardados",
+      text: `Ya tenemos resultados para "${q}". ¿Quieres usar los datos guardados o hacer una nueva búsqueda?`,
+      icon: "question",
+      showConfirmButton: true,
+      showDenyButton: true,
+      showCancelButton: false,
+      confirmButtonText: "Usar guardados",
+      denyButtonText: "Nueva búsqueda",
+    });
+
+    if (isDismissed) return; // clicked outside — do nothing
+
+    if (isConfirmed) {
+      // Use cached results
+      searchResults.value = searchStore.getTavily(q)?.results ?? [];
+      selectedIndexes.value = new Set();
+      currentStep.value = 2;
+      return;
+    }
+    // isDenied → fall through to re-fetch
+  }
+
   loading.value = true;
   try {
-    const result = await client<{ news: ITavilyNewsResult[] }>(
-      "/search/tavily",
-      {
-        method: "POST",
-        body: { query: query.value.trim(), num: 10 },
-      },
-    );
-    searchResults.value = result.news || [];
+    searchResults.value = await fetchFromApi(q);
     selectedIndexes.value = new Set();
     currentStep.value = 2;
   } catch (e) {
@@ -232,7 +258,7 @@ async function handleCreate() {
   try {
     const selected = [...selectedIndexes.value]
       .map((i) => searchResults.value[i])
-      .filter((item): item is ITavilyNewsResult => item !== undefined);
+      .filter((item): item is ITavilyResult => item !== undefined);
     await Promise.all(
       selected.map((item) =>
         client("/articles?status=draft", {
