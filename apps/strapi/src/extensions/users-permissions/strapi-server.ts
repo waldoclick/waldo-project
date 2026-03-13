@@ -26,20 +26,26 @@ export default function (plugin) {
     config: { policies: [] },
   });
 
-  // --- Existing: Registration with ad-reservation creation ---
-  plugin.controllers.auth.register = registerUserLocal(
-    plugin.controllers.auth.register
-  );
-
-  // --- Existing: Google OAuth callback with ad-reservation creation ---
-  plugin.controllers.auth.connect = registerUserAuth(
-    plugin.controllers.auth.connect
-  );
-
-  // --- NEW: 2-Step login — override POST /api/auth/local ---
-  plugin.controllers.auth.callback = overrideAuthLocal(
-    plugin.controllers.auth.callback
-  );
+  // --- Auth controller overrides (register, connect, callback) ---
+  //
+  // plugin.controllers.auth is a FACTORY FUNCTION in Strapi v5 (not a plain object).
+  // Setting properties directly on the factory (e.g. plugin.controllers.auth.callback = ...)
+  // has no effect — the registry calls the factory with { strapi } to create a fresh instance
+  // and the instance never sees the property set on the function object.
+  //
+  // Fix: wrap the factory so that when Strapi instantiates it, our overrides are applied
+  // to the resulting instance before it is cached and used.
+  const originalAuthFactory = plugin.controllers.auth;
+  plugin.controllers.auth = (context) => {
+    const instance = originalAuthFactory(context);
+    // Registration with ad-reservation creation
+    instance.register = registerUserLocal(instance.register.bind(instance));
+    // Google OAuth callback with ad-reservation creation
+    instance.connect = registerUserAuth(instance.connect.bind(instance));
+    // 2-Step login: intercept POST /api/auth/local, return pendingToken instead of JWT
+    instance.callback = overrideAuthLocal(instance.callback.bind(instance));
+    return instance;
+  };
 
   // --- NEW: verify-code and resend-code are registered as a standard Strapi API ---
   // See: apps/strapi/src/api/auth-verify/ (controller + routes)
