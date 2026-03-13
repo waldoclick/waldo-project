@@ -237,7 +237,7 @@ async function handleSearch() {
   loading.value = true;
   try {
     const result = await client<{ news: ITavilyNewsResult[] }>(
-      "/api/search/tavily",
+      "/search/tavily",
       {
         method: "POST",
         body: { query: query.value.trim(), num: 10 },
@@ -269,7 +269,7 @@ async function handleGenerate() {
   if (!geminiPrompt.value.trim() || loading.value) return;
   loading.value = true;
   try {
-    const result = await client<{ text: string }>("/api/ia/gemini", {
+    const result = await client<{ text: string }>("/ia/gemini", {
       method: "POST",
       body: { prompt: geminiPrompt.value },
     });
