@@ -19,7 +19,7 @@ Requirements for milestone v1.35. Each maps to roadmap phases.
 
 - [x] **GIFT-06**: `POST /api/ad-reservations/gift` endpoint creates N ad-reservation records assigned to the selected user
 - [x] **GIFT-07**: `POST /api/ad-featured-reservations/gift` endpoint creates N featured-reservation records assigned to the selected user
-- [ ] **GIFT-08**: `GET /api/users/authenticated` endpoint returns all users with the Authenticated role (id, firstName, lastName) — server-side filtered via `strapi.db.query`
+- [x] **GIFT-08**: `GET /api/users/authenticated` endpoint returns all users with the Authenticated role (id, firstName, lastName) — server-side filtered via `strapi.db.query`
 
 ### Gift Email (Strapi)
 
@@ -49,7 +49,7 @@ Requirements for milestone v1.35. Each maps to roadmap phases.
 | GIFT-05 | Phase 076 | Pending |
 | GIFT-06 | Phase 075 | Complete |
 | GIFT-07 | Phase 075 | Complete |
-| GIFT-08 | Phase 075 | Pending |
+| GIFT-08 | Phase 075 | Complete |
 | GIFT-09 | Phase 075 | Complete |
 
 **Coverage:**
