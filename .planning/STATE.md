@@ -1,16 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.32
-milestone_name: Gemini AI Service
-current_phase: 071
-status: archived
+milestone: v1.33
+milestone_name: Anthropic Claude AI Service
+current_phase: 072
+status: in_progress
 last_updated: "2026-03-13"
-last_activity: 2026-03-13 — v1.32 archived — Gemini AI Service shipped
+last_activity: 2026-03-13 — v1.33 started — Anthropic Claude AI Service planning
 progress:
   total_phases: 1
-  completed_phases: 1
+  completed_phases: 0
   total_plans: 1
-  completed_plans: 1
+  completed_plans: 0
 ---
 
 # Session State
@@ -20,37 +20,34 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-13 after v1.32 milestone shipped)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Planning next milestone
+**Current focus:** v1.33 — Anthropic Claude AI Service
 
 ## Position
 
-**Milestone:** v1.32 — Gemini AI Service (archived)
-**Current Phase:** 071 (complete)
-**Status:** v1.32 archived — ready for next milestone
+**Milestone:** v1.33 — Anthropic Claude AI Service (in progress)
+**Current Phase:** 072 (planned)
+**Status:** 072-01-PLAN.md created — ready for execution
 
-Last activity: 2026-03-13 — 071-01 complete — GeminiService + POST /api/ia/gemini endpoint
+Last activity: 2026-03-13 — Phase 072 planned — AnthropicService + POST /api/ia/claude endpoint
 
 ## Session Log
 
-- 2026-03-13: Milestone v1.30 archived — Blog Public Views shipped
-- 2026-03-13: Milestone v1.31 started — Article Manager Improvements
-- 2026-03-13: Roadmap created — 2 phases (069–070), 6/6 requirements mapped
-- 2026-03-13: 069-01 complete — source_url added to Article schema (Strapi + TypeScript)
-- 2026-03-13: 070-01 planned — FormArticle draft/publish toggle + source_url field + detail page link
-- 2026-03-13: 070-01 complete — draft/publish toggle + source_url field in FormArticle, source_url link in detail sidebar
-- 2026-03-13: 070-01 verified by user — milestone v1.31 Article Manager Improvements complete
-- 2026-03-13: Milestone v1.31 archived — Article Manager Improvements shipped
-- 2026-03-13: Milestone v1.32 started — Gemini AI Service
-- 2026-03-13: Roadmap created — 1 phase (071), 5/5 requirements mapped (GEMINI-01 through GEMINI-05 → Phase 071)
-- 2026-03-13: 071-01 complete — GeminiService wrapping @google/generative-ai + POST /api/ia/gemini endpoint (4 min)
 - 2026-03-13: Milestone v1.32 archived — Gemini AI Service shipped
+- 2026-03-13: Milestone v1.33 started — Anthropic Claude AI Service
+- 2026-03-13: Roadmap created — 1 phase (072), 6/6 requirements mapped (CLAUDE-01 through CLAUDE-06 → Phase 072)
+- 2026-03-13: 072-01-PLAN.md created — AnthropicService with web_search tool loop + POST /api/ia/claude endpoint
 
 ### Key Decisions
 
-- All 5 GEMINI requirements map to single phase 071 — coarse granularity + tight coupling (one service + one endpoint) makes splitting artificial
-- GeminiService uses module-level singleton (same as SlackService) — throws at startup if GEMINI_API_KEY missing
-- Controller imports only from services/gemini/index.ts — no direct @google/generative-ai in API layer
-- ApplicationError chosen over ctx.internalServerError for Strapi-idiomatic error surfacing
+- All 6 CLAUDE requirements map to single phase 072 — tight coupling (one service + one endpoint + one tool) makes splitting artificial
+- AnthropicService uses module-level singleton (same as GeminiService/SlackService) — throws at startup if ANTHROPIC_API_KEY or BRAVE_SEARCH_API_KEY missing
+- Model: `claude-sonnet-4-5` (locked decision)
+- Web search via Brave Search API (`https://api.search.brave.com/res/v1/web/search`) with `X-Subscription-Token` header
+- Native `fetch` (Node 20+) for Brave Search HTTP calls — axios not in strapi dependencies
+- Tool loop processes tool_use blocks until stop_reason is "end_turn" (max_tokens not used as a loop control)
+- Controller imports only from `services/anthropic/index.ts` — no direct `@anthropic-ai/sdk` in API layer
+- `ApplicationError` for runtime errors (same as GeminiService pattern)
+- `process.env` for API keys (not `strapi.config.get`) — consistent with all other integration services
 
 ### Blockers/Concerns
 

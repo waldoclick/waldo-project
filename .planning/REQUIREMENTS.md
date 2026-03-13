@@ -1,20 +1,21 @@
-# Requirements: Waldo Project — v1.32 Gemini AI Service
+# Requirements: Waldo Project — v1.33 Anthropic Claude AI Service
 
 **Defined:** 2026-03-13
 **Core Value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
 
 ## v1 Requirements
 
-### Gemini Service
+### Anthropic Claude Service
 
-- [x] **GEMINI-01**: El `GeminiService` en `apps/strapi/src/services/` se conecta a la API de Gemini usando la API key configurada en variables de entorno
-- [x] **GEMINI-02**: La API key de Gemini se configura en `.env` de Strapi (`GEMINI_API_KEY`) y se accede desde el servicio de forma segura (no hardcodeada)
+- [ ] **CLAUDE-01**: El `AnthropicService` en `apps/strapi/src/services/anthropic/` se conecta a la API de Anthropic usando `@anthropic-ai/sdk` con el modelo `claude-sonnet-4-5`
+- [ ] **CLAUDE-02**: La `ANTHROPIC_API_KEY` y la `BRAVE_SEARCH_API_KEY` se leen desde `process.env` en Strapi; el servicio lanza error al iniciar si alguna de las dos falta
+- [ ] **CLAUDE-03**: El `AnthropicService` implementa tool use con una herramienta `web_search` — cuando Claude solicita una búsqueda, Strapi ejecuta `GET https://api.search.brave.com/res/v1/web/search` y devuelve los resultados a Claude; el loop continúa hasta que Claude retorna texto final
+- [ ] **CLAUDE-04**: `apps/strapi/src/services/anthropic/index.ts` exporta un singleton y la función nombrada `generateWithSearch(prompt): Promise<string>`; otros módulos importan únicamente desde `index.ts`
 
-### Gemini Endpoint
+### Anthropic Endpoint
 
-- [x] **GEMINI-03**: El endpoint `POST /api/ia/gemini` recibe `{ prompt: string }` y devuelve `{ text: string }` con la respuesta generada por Gemini
-- [x] **GEMINI-04**: El endpoint delega la llamada a la API de Gemini al `GeminiService` (separación de responsabilidades controller/service)
-- [x] **GEMINI-05**: Si la API de Gemini falla o devuelve error, el endpoint responde con un error HTTP apropiado (4xx/5xx) sin crashear Strapi
+- [ ] **CLAUDE-05**: El endpoint `POST /api/ia/claude` recibe `{ prompt: string }` y devuelve `{ text: string }` con la respuesta generada por Claude (incluyendo resultados de búsqueda web si los usó)
+- [ ] **CLAUDE-06**: Si la API de Anthropic o Brave Search falla, el endpoint responde con un error HTTP apropiado (4xx/5xx) via `ApplicationError` sin crashear Strapi
 
 ## v2 Requirements
 
@@ -26,23 +27,25 @@
 |---------|--------|
 | Streaming responses | Complejidad adicional — `POST → text` es suficiente para v1 |
 | Historial de conversación / contexto multi-turno | Out of scope por decisión del usuario |
-| Selección de modelo desde el endpoint | Un modelo fijo es suficiente para v1 |
+| Selección de modelo desde el endpoint | `claude-sonnet-4-5` fijo por decisión del usuario |
 | UI en dashboard o website | El usuario gestiona esto por separado |
 | Rate limiting / throttling | Gestionado a nivel de roles/permisos en Strapi |
+| Más de una herramienta (tool) | Solo `web_search` via Brave en v1 |
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| GEMINI-01 | Phase 071 | Complete |
-| GEMINI-02 | Phase 071 | Complete |
-| GEMINI-03 | Phase 071 | Complete |
-| GEMINI-04 | Phase 071 | Complete |
-| GEMINI-05 | Phase 071 | Complete |
+| CLAUDE-01 | Phase 072 | Pending |
+| CLAUDE-02 | Phase 072 | Pending |
+| CLAUDE-03 | Phase 072 | Pending |
+| CLAUDE-04 | Phase 072 | Pending |
+| CLAUDE-05 | Phase 072 | Pending |
+| CLAUDE-06 | Phase 072 | Pending |
 
 **Coverage:**
-- v1 requirements: 5 total
-- Mapped to phases: 5/5 ✓
+- v1 requirements: 6 total
+- Mapped to phases: 6/6 ✓
 - Unmapped: 0
 
 ---

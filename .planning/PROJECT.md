@@ -170,6 +170,7 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - Blog public views (since v1.30): `slug` uid field on Article with lifecycle hooks; `Article` TS interface (13 fields); 7 blog-specific components (`HeroArticles`, `FilterArticles`, `ArticleArchive`, `CardArticle`, `RelatedArticles`, `HeroArticle`, `ArticleSingle`); `useArticlesStore` (no persist, pageSize 12); `blog/index.vue` + `blog/[slug].vue` with full SSR, SEO, structured data; Markdown rendered via `marked`; related articles: same-category first, fill with most-recent, deduplicate, slice to 6
 - Article Manager Improvements (since v1.31): `source_url` string field in Strapi Article schema (optional, no constraints); `source_url: string | null` in website `Article` TS interface; `FormArticle.vue` has draft/publish boolean toggle mapping to `publishedAt: null` / ISO string on submit; `source_url` URL field with Yup validation saves on create and pre-fills on edit; article detail page (`/articles/:id`) sidebar renders `source_url` as `<a target="_blank" rel="noopener noreferrer">` when non-empty
 - Gemini AI Service (since v1.32): `apps/strapi/src/services/gemini/` — `GeminiService` class (`gemini.service.ts`) wraps `@google/generative-ai`, uses `gemini-1.5-flash` model, reads `GEMINI_API_KEY` from `process.env`, throws at startup if missing (same pattern as SlackService); `index.ts` exports singleton + `generateText` named export; `POST /api/ia/gemini` endpoint (`apps/strapi/src/api/ia/`) accepts `{ prompt }`, returns `{ text }`, wraps Gemini errors in `ApplicationError`; `GEMINI_API_KEY` documented in `.env.example`
+- Anthropic Claude AI Service (v1.33 — in progress): `apps/strapi/src/services/anthropic/` — `AnthropicService` class (`anthropic.service.ts`) wraps `@anthropic-ai/sdk`, uses `claude-sonnet-4-5` model, reads `ANTHROPIC_API_KEY` + `BRAVE_SEARCH_API_KEY` from `process.env`, throws at startup if either is missing; implements `web_search` tool — when Claude issues a tool call, Strapi executes `GET https://api.search.brave.com/res/v1/web/search?q={query}&count=5` with `X-Subscription-Token` header and returns results to Claude; tool loop continues until `stop_reason === "end_turn"`; `index.ts` exports singleton + `generateWithSearch` named export; `POST /api/ia/claude` endpoint accepts `{ prompt }`, returns `{ text }`, wraps errors in `ApplicationError`
 
 ## Constraints
 
@@ -290,15 +291,20 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
      | `source_url` typed as `string \| null` (not `string \| undefined`) in Article interface | Strapi returns `null` for unset optional string fields, not `undefined`; matches existing nullable field conventions — v1.31 | ✓ Good |
      | `form.published` boolean → `publishedAt: null / ISO string` mapping on submit (not direct v-model on `publishedAt`) | Avoids storing ISO strings in form state; boolean is cleaner to bind to checkbox; single mapping point on submit — v1.31 | ✓ Good |
       | `source_url` uses existing `card--info` pattern in detail sidebar (not `CardInfo` component) | `CardInfo` only accepts plain string descriptions; `card--info` allows custom `<a>` element inside — v1.31 | ✓ Good |
-      | `GeminiService` uses module-level singleton (same as `SlackService`) | Throws at startup if `GEMINI_API_KEY` missing — same intentional behavior as SlackService; no silent failures — v1.32 | ✓ Good |
-      | `process.env.GEMINI_API_KEY` (not `strapi.config.get`) | Follows SlackService pattern; env var access is consistent across all integration services — v1.32 | ✓ Good |
-      | Controller imports only from `services/gemini/index.ts` | No direct `@google/generative-ai` in the API layer; all Gemini calls encapsulated in the service — v1.32 | ✓ Good |
-      | `ApplicationError` over `ctx.internalServerError` for Gemini runtime failures | Strapi-idiomatic error surfacing; `try/catch` in controller → `ApplicationError` keeps Strapi running on Gemini API errors — v1.32 | ✓ Good |
+       | `GeminiService` uses module-level singleton (same as `SlackService`) | Throws at startup if `GEMINI_API_KEY` missing — same intentional behavior as SlackService; no silent failures — v1.32 | ✓ Good |
+       | `process.env.GEMINI_API_KEY` (not `strapi.config.get`) | Follows SlackService pattern; env var access is consistent across all integration services — v1.32 | ✓ Good |
+       | Controller imports only from `services/gemini/index.ts` | No direct `@google/generative-ai` in the API layer; all Gemini calls encapsulated in the service — v1.32 | ✓ Good |
+       | `ApplicationError` over `ctx.internalServerError` for Gemini runtime failures | Strapi-idiomatic error surfacing; `try/catch` in controller → `ApplicationError` keeps Strapi running on Gemini API errors — v1.32 | ✓ Good |
+       | `AnthropicService` throws at startup if `ANTHROPIC_API_KEY` or `BRAVE_SEARCH_API_KEY` missing | Both keys are required for the service to function; fail-fast at startup prevents silent runtime failures — v1.33 | ✓ Good |
+       | Native `fetch` (Node 20+) for Brave Search HTTP calls | `axios` is not in strapi's `dependencies`; Node 20 has stable native fetch — no new dependency needed — v1.33 | ✓ Good |
+       | Tool loop uses `stop_reason === "end_turn"` as termination condition | SDK-idiomatic; `end_turn` means Claude is done and returned text; guards against infinite loops from bad tool results — v1.33 | ✓ Good |
+       | `web_search` returns top-5 results to Claude (count=5) | Balances context window usage vs. search coverage; matches Brave Search API free tier expectations — v1.33 | ✓ Good |
 
 ## Current State
 
 **Last shipped:** v1.32 (2026-03-13) — Gemini AI Service: `GeminiService` + `POST /api/ia/gemini` endpoint
-**Current focus:** Planning next milestone
+**Current milestone:** v1.33 — Anthropic Claude AI Service (in progress)
+**Current focus:** Implementing `AnthropicService` with web_search tool loop + `POST /api/ia/claude` endpoint
 
 **Blog Public Views (since v1.30):** `slug` uid field on Article with lifecycle hooks (beforeCreate/beforeUpdate via `slugify strict:true`); 6 Jest tests for slug generation; `Article` TypeScript interface (13 fields) in `app/types/article.d.ts`; SCSS scaffolding (`_article.scss`, `_hero.scss`, `_filter.scss`, `_related.scss`, `_card.scss` blog blocks, `app.scss` import); `HeroArticles.vue` (static, zero props), `FilterArticles.vue` (client-only, updates `?category=`/`?order=` URL params), `ArticleArchive.vue` (4-col grid + `vue-awesome-paginate`), `CardArticle.vue`, `RelatedArticles.vue`; `useArticlesStore` (Pinia, no persist, pageSize 12); `blog/index.vue` (SSR `useAsyncData`, empty-state + RelatedArticles fallback, `@type:"Blog"` structured data); `HeroArticle.vue` (breadcrumbs + H1 + date), `ArticleSingle.vue` (two-column body/sidebar, `marked` Markdown rendering, GalleryDefault from `article.gallery`); `blog/[slug].vue` (SSR `useAsyncData(() => 'article-${slug}')`, 404 guard, `$setSEO`, `@type:"BlogPosting"` structured data).
 
@@ -323,4 +329,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-13 after v1.32 milestone shipped*
+*Last updated: 2026-03-13 after v1.33 milestone started*
