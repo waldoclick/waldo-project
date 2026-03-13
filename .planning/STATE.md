@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.25
 milestone_name: milestone
-status: planning
-last_updated: "2026-03-13T00:49:22.688Z"
+status: executing
+last_updated: "2026-03-13T01:04:23.355Z"
 progress:
   total_phases: 4
-  completed_phases: 1
-  total_plans: 1
-  completed_plans: 1
-  percent: 88
+  completed_phases: 2
+  total_plans: 3
+  completed_plans: 3
+  percent: 90
 ---
 
 # Session State
@@ -24,10 +24,10 @@ See: .planning/PROJECT.md (updated 2026-03-12 after v1.30 milestone started)
 ## Position
 
 **Milestone:** v1.30 — Blog Public Views
-**Phase:** 065 Plan 01 — complete
-**Status:** Ready to plan
+**Phase:** 066 Plan 02 — complete
+**Status:** Ready to plan (next: Phase 067)
 
-**Progress:** [█████████░] 88%
+**Progress:** [█████████░] 90%
 
 ## Session Log
 
@@ -35,6 +35,8 @@ See: .planning/PROJECT.md (updated 2026-03-12 after v1.30 milestone started)
 - 2026-03-12: Milestone v1.30 started — Blog Public Views
 - 2026-03-12: Roadmap created — 4 phases (065–068), 26/26 requirements mapped
 - 2026-03-13: Phase 065-01 complete — Article slug field + lifecycle hooks + 6 Jest tests
+- 2026-03-13: Phase 066-01 complete — Article TypeScript interface (article.d.ts) with 13 fields, zero typecheck errors
+- 2026-03-13: Phase 066-02 complete — SCSS scaffolding: _article.scss + 4 files extended, 7 BEM blocks ready for Phase 067
 
 ### Key Decisions
 
@@ -51,6 +53,9 @@ See: .planning/PROJECT.md (updated 2026-03-12 after v1.30 milestone started)
 - Article slug: uid type (not string) — gives admin auto-generation UI, uniqueness, matches category pattern
 - Article slug beforeUpdate: fetches existing title via entityService.findOne before overwriting — prevents unnecessary regeneration
 - slugify with strict:true: strips accents/special chars (¡Artículo Español! → articulo-espanol) for clean URL slugs
+- Article type imports Category/Media/GalleryItem from existing types — no duplication; cover:Media[], publishedAt:string|null for draft state
+- article--single sidebar: categories + share only (no seller/price — articles have neither)
+- related--articles mirrors related--ads exactly — same layout props, different BEM namespace
 
 ### Blockers/Concerns
 
@@ -69,7 +74,8 @@ None.
 - Reference layout: `anuncios/index.vue` (listing) and `anuncios/[slug].vue` (single)
 - Components to create: `HeroArticles`, `FilterArticles`, `ArticleArchive`, `CardArticle`, `ArticleSingle`, `HeroArticle`, `RelatedArticles`
 - Components to reuse: `HeaderDefault`, `FooterDefault`, `MessageDefault`, `BreadcrumbsDefault`, `ShareDefault`, `GalleryDefault`, `LoadingDefault`
-- SCSS files to create: `_article.scss` (mirrors `_announcement.scss`), new blocks in `_hero.scss`, `_filter.scss`, `_related.scss`, `_card.scss`
+- SCSS infrastructure complete (Phase 066-02): _article.scss created, _hero/_filter/_related/_card extended
+- Available BEM blocks: article--archive, article--single, hero--articles, hero--article, filter--articles, related--articles, card--article
 - No article store or composable exists on website side yet — must be created
 - `Article` TypeScript type must be defined in `app/types/article.d.ts`
 - Slug field added to Article schema (Phase 065-01 complete) — uid type targeting title, auto-generated via lifecycle hooks
