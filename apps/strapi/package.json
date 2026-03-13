@@ -22,6 +22,7 @@
     "strapi:upgrade": "NPM_CONFIG_REGISTRY=https://registry.npmjs.org/ npx --yes @strapi/upgrade@latest latest"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@logtail/node": "^0.5.4",
     "@logtail/winston": "^0.5.4",
     "@sentry/node": "^9.26.0",
