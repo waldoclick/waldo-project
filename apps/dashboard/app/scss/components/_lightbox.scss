@@ -482,9 +482,9 @@
       visibility 0.3s ease;
     overflow-y: auto;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
-    padding: 40px 20px;
+    padding: 20px;
 
     &.is-open {
       opacity: 1;
@@ -614,10 +614,25 @@
           padding-right: 4px;
 
           input[type="checkbox"] {
+            appearance: none;
             cursor: pointer;
-            width: 15px;
-            height: 15px;
-            accent-color: $dodger_blue;
+            width: 20px;
+            height: 20px;
+            border: 2px solid $platinum;
+            border-radius: 4px;
+            background-color: $white_smoke;
+            background-repeat: no-repeat;
+            background-position: center;
+            flex-shrink: 0;
+            transition:
+              border-color 0.15s ease,
+              background-color 0.15s ease;
+
+            &:checked {
+              border-color: $charcoal;
+              background-color: $light_peach;
+              background-image: url("/images/icon-check.svg");
+            }
           }
         }
 
