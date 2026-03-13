@@ -24,6 +24,10 @@
     letter-spacing: 0.25px;
     text-decoration: underline !important;
     transition: color 0.2s ease;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 
     &:hover {
       color: $charcoal;
@@ -36,6 +40,10 @@
     font-size: 14px;
     font-weight: 500;
     letter-spacing: 0.25px;
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   &__separator {
