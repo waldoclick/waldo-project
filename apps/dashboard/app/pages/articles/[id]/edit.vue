@@ -39,6 +39,7 @@ interface ArticleData {
   documentId?: string;
   title?: string;
   header?: string;
+  body?: string;
   seo_title?: string;
   seo_description?: string;
   publishedAt?: string | null;
