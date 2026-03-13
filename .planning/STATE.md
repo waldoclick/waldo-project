@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.25
 milestone_name: milestone
 status: completed
-last_updated: "2026-03-13T02:01:52.651Z"
+last_updated: "2026-03-13T02:20:25.966Z"
 progress:
   total_phases: 4
   completed_phases: 4
@@ -76,6 +76,12 @@ See: .planning/PROJECT.md (updated 2026-03-12 after v1.30 milestone started)
 ### Blockers/Concerns
 
 None.
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 17 | fix article body not rendering and add date to hero | 2026-03-13 | 95fc566 | [17-fix-article-body-not-rendering-and-add-d](./quick/17-fix-article-body-not-rendering-and-add-d/) |
 
 ### Accumulated Context
 
