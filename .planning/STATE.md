@@ -1,9 +1,9 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.30
-milestone_name: Blog Public Views
-status: in_progress
-last_updated: "2026-03-13T00:46:01.966Z"
+milestone: v1.25
+milestone_name: milestone
+status: planning
+last_updated: "2026-03-13T00:49:22.688Z"
 progress:
   total_phases: 4
   completed_phases: 1
@@ -25,7 +25,7 @@ See: .planning/PROJECT.md (updated 2026-03-12 after v1.30 milestone started)
 
 **Milestone:** v1.30 — Blog Public Views
 **Phase:** 065 Plan 01 — complete
-**Status:** Phase 065-01 complete — ready for Phase 066
+**Status:** Ready to plan
 
 **Progress:** [█████████░] 88%
 
