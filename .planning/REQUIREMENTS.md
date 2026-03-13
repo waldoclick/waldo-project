@@ -42,20 +42,20 @@ Requirements for milestone v1.35. Each maps to roadmap phases.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| GIFT-01 | TBD | Pending |
-| GIFT-02 | TBD | Pending |
-| GIFT-03 | TBD | Pending |
-| GIFT-04 | TBD | Pending |
-| GIFT-05 | TBD | Pending |
-| GIFT-06 | TBD | Pending |
-| GIFT-07 | TBD | Pending |
-| GIFT-08 | TBD | Pending |
-| GIFT-09 | TBD | Pending |
+| GIFT-01 | Phase 076 | Pending |
+| GIFT-02 | Phase 076 | Pending |
+| GIFT-03 | Phase 076 | Pending |
+| GIFT-04 | Phase 076 | Pending |
+| GIFT-05 | Phase 076 | Pending |
+| GIFT-06 | Phase 075 | Pending |
+| GIFT-07 | Phase 075 | Pending |
+| GIFT-08 | Phase 075 | Pending |
+| GIFT-09 | Phase 075 | Pending |
 
 **Coverage:**
 - v1.35 requirements: 9 total
-- Mapped to phases: 0
-- Unmapped: 9 ⚠️
+- Mapped to phases: 9 ✓
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-13*
