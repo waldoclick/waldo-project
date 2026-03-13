@@ -60,6 +60,18 @@
             title="Estado"
             :description="article.publishedAt ? 'Publicado' : 'Borrador'"
           />
+          <article v-if="article && article.source_url" class="card card--info">
+            <div class="card--info__title">Fuente</div>
+            <div class="card--info__description">
+              <a
+                :href="article.source_url"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="card--info__description__text"
+                >{{ article.source_url }}</a
+              >
+            </div>
+          </article>
         </BoxInformation>
         <BoxInformation
           v-if="coverImages.length > 0"
@@ -118,6 +130,7 @@ interface ArticleData {
   body?: string;
   seo_title?: string;
   seo_description?: string;
+  source_url?: string | null;
   publishedAt?: string | null;
   createdAt?: string;
   updatedAt?: string;
