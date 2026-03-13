@@ -16,12 +16,12 @@
 
 ### Blog Listing Page (`blog/index.vue`)
 
-- [ ] **BLOG-04**: Visitor can view a paginated list of published articles at `/blog` (12 per page)
-- [ ] **BLOG-05**: Visitor can filter articles by category using a dropdown that updates the URL query param
-- [ ] **BLOG-06**: Visitor can sort articles by most recent or oldest using a dropdown that updates the URL query param
-- [ ] **BLOG-07**: Visitor sees a `MessageDefault` empty state when no articles match the current filters
-- [ ] **BLOG-08**: Visitor sees `RelatedArticles` (most recent 12) when no articles match the current filters, as a fallback content block
-- [ ] **BLOG-09**: Page has SSR-correct `$setSEO` title, description, and `BlogPosting`-appropriate structured data
+- [x] **BLOG-04**: Visitor can view a paginated list of published articles at `/blog` (12 per page)
+- [x] **BLOG-05**: Visitor can filter articles by category using a dropdown that updates the URL query param
+- [x] **BLOG-06**: Visitor can sort articles by most recent or oldest using a dropdown that updates the URL query param
+- [x] **BLOG-07**: Visitor sees a `MessageDefault` empty state when no articles match the current filters
+- [x] **BLOG-08**: Visitor sees `RelatedArticles` (most recent 12) when no articles match the current filters, as a fallback content block
+- [x] **BLOG-09**: Page has SSR-correct `$setSEO` title, description, and `BlogPosting`-appropriate structured data
 
 ### Blog Detail Page (`blog/[slug].vue`)
 
@@ -33,8 +33,8 @@
 ### Blog-Specific Components
 
 - [x] **BLOG-14**: `HeroArticles` component exists — renders hero section with white background, breadcrumbs (Inicio → Blog), and "Blog" title; no category color tint
-- [ ] **BLOG-15**: `FilterArticles` component exists — category dropdown + sort order dropdown; updates `?category=` and `?order=` URL params; client-only rendered (SSR-safe loading state)
-- [ ] **BLOG-16**: `ArticleArchive` component exists — responsive 4-column grid of `CardArticle` with `vue-awesome-paginate` pagination updating `?page=` query param
+- [x] **BLOG-15**: `FilterArticles` component exists — category dropdown + sort order dropdown; updates `?category=` and `?order=` URL params; client-only rendered (SSR-safe loading state)
+- [x] **BLOG-16**: `ArticleArchive` component exists — responsive 4-column grid of `CardArticle` with `vue-awesome-paginate` pagination updating `?page=` query param
 - [x] **BLOG-17**: `CardArticle` component exists — displays: cover image (NuxtImg, webp/lazy), category badge, title (truncated to 60 chars), header/excerpt (truncated to 120 chars), formatted `publishedAt` date, and "Leer más" NuxtLink to `/blog/[slug]`
 - [ ] **BLOG-18**: `HeroArticle` component exists — renders hero section with white background, breadcrumbs (Inicio → Blog → Article title), and H1 article title
 - [ ] **BLOG-19**: `ArticleSingle` component exists — two-column layout: body column (GalleryDefault + rendered Markdown body via `sanitizeRich`); sidebar column (article categories list + ShareDefault)
@@ -77,19 +77,19 @@
 | BLOG-01 | Phase 065 | Complete |
 | BLOG-02 | Phase 065 | Complete |
 | BLOG-03 | Phase 066 | Complete |
-| BLOG-04 | Phase 067 | Pending |
-| BLOG-05 | Phase 067 | Pending |
-| BLOG-06 | Phase 067 | Pending |
-| BLOG-07 | Phase 067 | Pending |
-| BLOG-08 | Phase 067 | Pending |
-| BLOG-09 | Phase 067 | Pending |
+| BLOG-04 | Phase 067 | Complete |
+| BLOG-05 | Phase 067 | Complete |
+| BLOG-06 | Phase 067 | Complete |
+| BLOG-07 | Phase 067 | Complete |
+| BLOG-08 | Phase 067 | Complete |
+| BLOG-09 | Phase 067 | Complete |
 | BLOG-10 | Phase 068 | Pending |
 | BLOG-11 | Phase 068 | Pending |
 | BLOG-12 | Phase 068 | Pending |
 | BLOG-13 | Phase 068 | Pending |
 | BLOG-14 | Phase 067 | Complete |
-| BLOG-15 | Phase 067 | Pending |
-| BLOG-16 | Phase 067 | Pending |
+| BLOG-15 | Phase 067 | Complete |
+| BLOG-16 | Phase 067 | Complete |
 | BLOG-17 | Phase 067 | Complete |
 | BLOG-18 | Phase 068 | Pending |
 | BLOG-19 | Phase 068 | Pending |
