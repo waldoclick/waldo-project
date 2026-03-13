@@ -110,6 +110,15 @@ input:-webkit-autofill {
       display: block;
     }
 
+    &--upload {
+      .form__label {
+        position: static;
+        padding: 0;
+        margin-bottom: 10px;
+        background-color: transparent;
+      }
+    }
+
     &--password {
       position: relative;
 
