@@ -232,3 +232,30 @@ export const getUserDataWithFilters = async (ctx) => {
     },
   };
 };
+
+/**
+ * Returns all users with the Authenticated role, selecting only id, firstName, lastName.
+ * Server-enforced role filter — cannot be forged by the client.
+ * Used by the dashboard gift lightbox user-select (GIFT-08).
+ * @param {Object} ctx - The Koa context object.
+ */
+export const getAuthenticatedUsers = async (ctx) => {
+  const authenticatedRole = await strapi.db
+    .query("plugin::users-permissions.role")
+    .findOne({ where: { type: "authenticated" } });
+
+  if (!authenticatedRole) {
+    ctx.body = { data: [] };
+    return;
+  }
+
+  const users = await strapi.db
+    .query("plugin::users-permissions.user")
+    .findMany({
+      where: { role: { id: authenticatedRole.id } },
+      select: ["id", "firstName", "lastName"],
+      orderBy: { lastName: "asc" },
+    });
+
+  ctx.body = { data: users };
+};
