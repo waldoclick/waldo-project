@@ -8,6 +8,7 @@
 - ✅ **v1.28 Logout Store Cleanup** — Phase 062 (shipped 2026-03-12). See `.planning/milestones/v1.28-ROADMAP.md`
 - ✅ **v1.29 News Manager** — Phases 063–064 (shipped 2026-03-12). See `.planning/milestones/v1.29-ROADMAP.md`
 - ✅ **v1.30 Blog Public Views** — Phases 065–068 (shipped 2026-03-13). See `.planning/milestones/v1.30-ROADMAP.md`
+- 🔄 **v1.31 Article Manager Improvements** — Phases 069–070 (in progress). See `.planning/milestones/v1.31-ROADMAP.md`
 
 ## Phases
 
@@ -50,6 +51,14 @@
 
 </details>
 
+<details>
+<summary>🔄 v1.31 Article Manager Improvements (Phases 069–070) — IN PROGRESS</summary>
+
+- [ ] **Phase 069: Strapi Schema** — Add `source_url` field to Article content type
+- [ ] **Phase 070: Dashboard Form & Detail** — Draft/publish toggle + source_url field in FormArticle + detail view
+
+</details>
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status   | Completed  |
@@ -63,3 +72,5 @@
 | 066   | v1.30     | 2/2            | Complete | 2026-03-13 |
 | 067   | v1.30     | 3/3            | Complete | 2026-03-13 |
 | 068   | v1.30     | 2/2            | Complete | 2026-03-13 |
+| 069   | v1.31     | 0/?            | Not started | - |
+| 070   | v1.31     | 0/?            | Not started | - |
