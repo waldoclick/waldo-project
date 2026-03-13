@@ -4,13 +4,13 @@ milestone: v1.34
 milestone_name: LightBoxArticles
 current_phase: 074
 status: planning
-last_updated: "2026-03-13T16:31:01.640Z"
-last_activity: 2026-03-13 — Completed 073-01-PLAN.md (POST /api/search/tavily controller + route wired to TavilyService)
+last_updated: "2026-03-13T17:04:03.341Z"
+last_activity: 2026-03-13 — Completed 074-01-PLAN.md (LightBoxArticles.vue 3-step lightbox + _lightbox.scss &--articles modifier)
 progress:
   total_phases: 2
   completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
+  total_plans: 4
+  completed_plans: 4
 ---
 
 # Session State
@@ -26,15 +26,16 @@ See: .planning/PROJECT.md (updated 2026-03-13 after v1.34 milestone started)
 
 **Milestone:** v1.34 — LightBoxArticles (in progress)
 **Current Phase:** 074
-**Status:** Ready to plan
+**Status:** In progress — Phase 074 plan 01 complete
 
-Last activity: 2026-03-13 — Completed 073-01-PLAN.md (POST /api/search/tavily controller + route wired to TavilyService)
+Last activity: 2026-03-13 — Completed 074-01-PLAN.md (LightBoxArticles.vue 3-step lightbox + _lightbox.scss &--articles modifier)
 
 ## Session Log
 
 - 2026-03-13: Milestone v1.33 complete — Anthropic Claude AI Service shipped
 - 2026-03-13: Milestone v1.34 started — LightBoxArticles
 - 2026-03-13: Completed 073-01 (POST /api/search/tavily controller + route) and 073-02 (TavilyService Jest tests)
+- 2026-03-13: Completed 074-01 (LightBoxArticles.vue 3-step lightbox + _lightbox.scss &--articles modifier)
 
 ### Key Decisions
 
@@ -46,6 +47,9 @@ Last activity: 2026-03-13 — Completed 073-01-PLAN.md (POST /api/search/tavily 
 - No new CSS classes for the button
 - TavilyService tests import from ./tavily.service directly (not index) to avoid singleton instantiation without env var
 - global.fetch = jest.fn() preferred over jest.spyOn for fetch mocking in Node.js test env
+- No HTML fetch in LightBoxArticles step 1→2 — LB-04 satisfied without /api/fetch-url (not available yet)
+- Inline Markdown rendering via computed string replacement — no external library added to dashboard
+- Gemini prompt resets to DEFAULT_GEMINI_PROMPT + article context each time step 2 is entered
 
 ### Blockers/Concerns
 

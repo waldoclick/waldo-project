@@ -117,7 +117,7 @@ Plans:
 | Phase | Milestone | Plans Complete | Status      | Completed  |
 |-------|-----------|----------------|-------------|------------|
 | 073   | 2/2 | Complete    | 2026-03-13 | -          |
-| 074   | v1.34     | 0/TBD          | Not started | -          |
+| 074   | 1/2 | In Progress|  | -          |
 | 072   | v1.33     | 1/1            | Complete    | 2026-03-13 |
 | 071   | v1.32     | 1/1            | Complete    | 2026-03-13 |
 | 060   | v1.26     | 3/3            | Complete    | 2026-03-11 |
