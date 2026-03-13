@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.25
 milestone_name: milestone
 current_phase: 070
-status: executing
-last_updated: "2026-03-13T11:27:30.636Z"
-last_activity: "2026-03-13 — 069-01 complete: source_url field added to Article Strapi schema and website TypeScript interface"
+status: phase_complete
+last_updated: "2026-03-13T11:30:00.000Z"
+last_activity: "2026-03-13 — 070-01 verified: draft/publish toggle + source_url + detail link confirmed by user"
 progress:
   total_phases: 2
   completed_phases: 2
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-03-13 after v1.31 milestone started)
 
 **Milestone:** v1.31 — Article Manager Improvements
 **Current Phase:** 070
-**Status:** Awaiting human verification (070-01 checkpoint)
+**Status:** Phase complete — milestone v1.31 done
 
 ```
 Phase 069 [█] ██████████ 1/1 plans complete
@@ -43,6 +43,7 @@ Last activity: 2026-03-13 — 070-01 complete: FormArticle draft/publish toggle 
 - 2026-03-13: 069-01 complete — source_url added to Article schema (Strapi + TypeScript)
 - 2026-03-13: 070-01 planned — FormArticle draft/publish toggle + source_url field + detail page link
 - 2026-03-13: 070-01 complete — draft/publish toggle + source_url field in FormArticle, source_url link in detail sidebar
+- 2026-03-13: 070-01 verified by user — milestone v1.31 Article Manager Improvements complete
 
 ### Key Decisions
 
