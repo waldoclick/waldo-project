@@ -5,7 +5,7 @@ milestone_name: Article Manager Improvements
 status: in_progress
 last_updated: "2026-03-13"
 progress:
-  total_phases: 0
+  total_phases: 2
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -24,14 +24,21 @@ See: .planning/PROJECT.md (updated 2026-03-13 after v1.31 milestone started)
 ## Position
 
 **Milestone:** v1.31 — Article Manager Improvements
-**Status:** Defining requirements
+**Current Phase:** 069 — Strapi Schema
+**Status:** Roadmap created — ready to plan Phase 069
 
-Last activity: 2026-03-13 — Milestone v1.31 started
+```
+Phase 069 [ ] ░░░░░░░░░░
+Phase 070 [ ] ░░░░░░░░░░
+```
+
+Last activity: 2026-03-13 — Roadmap created (2 phases, 6 requirements mapped)
 
 ## Session Log
 
 - 2026-03-13: Milestone v1.30 archived — Blog Public Views shipped
 - 2026-03-13: Milestone v1.31 started — Article Manager Improvements
+- 2026-03-13: Roadmap created — 2 phases (069–070), 6/6 requirements mapped
 
 ### Key Decisions
 

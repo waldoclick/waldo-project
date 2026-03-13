@@ -34,11 +34,11 @@
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | ARTC-01 | Phase 069 | Pending |
-| ARTF-01 | Phase 069 | Pending |
-| ARTF-02 | Phase 069 | Pending |
-| ARTF-03 | Phase 069 | Pending |
-| ARTF-04 | Phase 069 | Pending |
-| ARTF-05 | Phase 069 | Pending |
+| ARTF-01 | Phase 070 | Pending |
+| ARTF-02 | Phase 070 | Pending |
+| ARTF-03 | Phase 070 | Pending |
+| ARTF-04 | Phase 070 | Pending |
+| ARTF-05 | Phase 070 | Pending |
 
 **Coverage:**
 - v1 requirements: 6 total
