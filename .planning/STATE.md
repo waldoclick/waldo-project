@@ -1,39 +1,34 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.31
-milestone_name: Article Manager Improvements
-current_phase: 070
-status: completed
-last_updated: "2026-03-13T13:45:58.789Z"
-last_activity: "2026-03-13 — 070-01 complete: FormArticle draft/publish toggle + source_url field + detail page link"
+milestone: v1.32
+milestone_name: Gemini AI Service
+current_phase: 071
+status: requirements
+last_updated: "2026-03-13T00:00:00.000Z"
+last_activity: "2026-03-13 — Milestone v1.32 started — Gemini AI Service"
 progress:
-  total_phases: 2
-  completed_phases: 2
-  total_plans: 2
-  completed_plans: 2
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
 ---
 
 # Session State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-13 after v1.31 milestone)
+See: .planning/PROJECT.md (updated 2026-03-13 after v1.32 milestone started)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Planning next milestone
+**Current focus:** v1.32 — Gemini AI Service
 
 ## Position
 
-**Milestone:** v1.31 — Article Manager Improvements
-**Current Phase:** 070
-**Status:** v1.31 archived — planning next milestone
+**Milestone:** v1.32 — Gemini AI Service
+**Current Phase:** 071 (not started)
+**Status:** Defining requirements
 
-```
-Phase 069 [█] ██████████ 1/1 plans complete
-Phase 070 [█] ██████████ 1/1 plans complete
-```
-
-Last activity: 2026-03-13 — 070-01 complete: FormArticle draft/publish toggle + source_url field + detail page link
+Last activity: 2026-03-13 — Milestone v1.32 started — Gemini AI Service
 
 ## Session Log
 
@@ -45,11 +40,11 @@ Last activity: 2026-03-13 — 070-01 complete: FormArticle draft/publish toggle 
 - 2026-03-13: 070-01 complete — draft/publish toggle + source_url field in FormArticle, source_url link in detail sidebar
 - 2026-03-13: 070-01 verified by user — milestone v1.31 Article Manager Improvements complete
 - 2026-03-13: Milestone v1.31 archived — Article Manager Improvements shipped
+- 2026-03-13: Milestone v1.32 started — Gemini AI Service
 
 ### Key Decisions
 
-- **069-01:** `source_url` uses no constraints (no unique/maxLength) — kept minimal like seo_title/seo_description. TypeScript interface uses `string | null` (not `string | undefined`) because Strapi returns null for unset optional fields.
-- **070-01:** Toggle uses boolean `form.published` mapped to `publishedAt` on submit (null vs ISO string) — cleaner than binding directly to ISO string in form state. source_url uses existing card--info pattern in detail page (same as body block) to support `<a>` element vs plain string CardInfo.
+(none yet — v1.32 requirements phase)
 
 ### Blockers/Concerns
 

@@ -284,10 +284,19 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
      | `form.published` boolean → `publishedAt: null / ISO string` mapping on submit (not direct v-model on `publishedAt`) | Avoids storing ISO strings in form state; boolean is cleaner to bind to checkbox; single mapping point on submit — v1.31 | ✓ Good |
      | `source_url` uses existing `card--info` pattern in detail sidebar (not `CardInfo` component) | `CardInfo` only accepts plain string descriptions; `card--info` allows custom `<a>` element inside — v1.31 | ✓ Good |
 
+## Current Milestone: v1.32 Gemini AI Service
+
+**Goal:** Crear un servicio Gemini en Strapi y un endpoint genérico que reciba un prompt y devuelva el texto generado por la API de Gemini.
+
+**Target features:**
+- `GeminiService` en `apps/strapi/src/services/` que encapsula la conexión a la API de Gemini
+- Endpoint `POST /api/ia/gemini` que recibe `{ prompt }` y devuelve `{ text }`
+- Variables de entorno para la API key de Gemini en `.env` de Strapi
+
 ## Current State
 
 **Last shipped:** v1.31 (2026-03-13) — Article Manager Improvements: draft/publish toggle and `source_url` field in FormArticle, `source_url` clickable link on article detail sidebar
-**Current focus:** Planning next milestone
+**Current focus:** v1.32 — Gemini AI Service
 
 **Blog Public Views (since v1.30):** `slug` uid field on Article with lifecycle hooks (beforeCreate/beforeUpdate via `slugify strict:true`); 6 Jest tests for slug generation; `Article` TypeScript interface (13 fields) in `app/types/article.d.ts`; SCSS scaffolding (`_article.scss`, `_hero.scss`, `_filter.scss`, `_related.scss`, `_card.scss` blog blocks, `app.scss` import); `HeroArticles.vue` (static, zero props), `FilterArticles.vue` (client-only, updates `?category=`/`?order=` URL params), `ArticleArchive.vue` (4-col grid + `vue-awesome-paginate`), `CardArticle.vue`, `RelatedArticles.vue`; `useArticlesStore` (Pinia, no persist, pageSize 12); `blog/index.vue` (SSR `useAsyncData`, empty-state + RelatedArticles fallback, `@type:"Blog"` structured data); `HeroArticle.vue` (breadcrumbs + H1 + date), `ArticleSingle.vue` (two-column body/sidebar, `marked` Markdown rendering, GalleryDefault from `article.gallery`); `blog/[slug].vue` (SSR `useAsyncData(() => 'article-${slug}')`, 404 guard, `$setSEO`, `@type:"BlogPosting"` structured data).
 
@@ -312,4 +321,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-13 after v1.31 milestone*
+*Last updated: 2026-03-13 after v1.32 milestone started*
