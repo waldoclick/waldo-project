@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-12 after v1.30 milestone started)
 ## Position
 
 **Milestone:** v1.30 — Blog Public Views
-**Phase:** 067 Plan 01 — complete
+**Phase:** 067 Plan 02 — complete
 **Status:** In progress
 
 **Progress:** [█████████░] 85%
@@ -38,6 +38,7 @@ See: .planning/PROJECT.md (updated 2026-03-12 after v1.30 milestone started)
 - 2026-03-13: Phase 066-01 complete — Article TypeScript interface (article.d.ts) with 13 fields, zero typecheck errors
 - 2026-03-13: Phase 066-02 complete — SCSS scaffolding: _article.scss + 4 files extended, 7 BEM blocks ready for Phase 067
 - 2026-03-13: Phase 067-01 complete — CardArticle.vue + RelatedArticles.vue leaf display components, zero TypeScript errors
+- 2026-03-13: Phase 067-02 complete — articles.store.ts (useArticlesStore, pageSize 12, no persist) + HeroArticles.vue (static blog hero, BreadcrumbsDefault, h1 "Blog")
 
 ### Key Decisions
 
@@ -58,6 +59,8 @@ See: .planning/PROJECT.md (updated 2026-03-12 after v1.30 milestone started)
 - article--single sidebar: categories + share only (no seller/price — articles have neither)
 - related--articles mirrors related--ads exactly — same layout props, different BEM namespace
 - Media type (ad.d.ts) has no direct url field — cover images use formats.medium?.url || formats.thumbnail.url (GalleryItem extends Media adds url, but cover is Media[])
+- articles.store.ts uses no persist block — articles list is volatile (changes with filters)
+- HeroArticles accepts zero props — blog index hero breadcrumbs and title are always static
 
 ### Blockers/Concerns
 
@@ -78,6 +81,6 @@ None.
 - Components to reuse: `HeaderDefault`, `FooterDefault`, `MessageDefault`, `BreadcrumbsDefault`, `ShareDefault`, `GalleryDefault`, `LoadingDefault`
 - SCSS infrastructure complete (Phase 066-02): _article.scss created, _hero/_filter/_related/_card extended
 - Available BEM blocks: article--archive, article--single, hero--articles, hero--article, filter--articles, related--articles, card--article
-- No article store or composable exists on website side yet — must be created
+- Article store created (Phase 067-02): useArticlesStore with loadArticles(filters, pagination, sort), pageSize 12, no persist
 - `Article` TypeScript type must be defined in `app/types/article.d.ts`
 - Slug field added to Article schema (Phase 065-01 complete) — uid type targeting title, auto-generated via lifecycle hooks
