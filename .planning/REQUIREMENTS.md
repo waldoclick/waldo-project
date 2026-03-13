@@ -11,11 +11,11 @@
 
 ### Article Form (Dashboard)
 
-- [ ] **ARTF-01**: El formulario de crear artículo tiene un toggle/checkbox para elegir entre Borrador y Publicado
-- [ ] **ARTF-02**: El formulario de editar artículo muestra el estado actual (borrador/publicado) y permite cambiarlo
-- [ ] **ARTF-03**: El formulario tiene un campo de URL para la fuente de la noticia (`source_url`)
-- [ ] **ARTF-04**: Al guardar, el estado draft/publish se envía correctamente a Strapi (`publishedAt: null` para borrador, fecha actual para publicado)
-- [ ] **ARTF-05**: La vista de detalle del artículo (`/articles/:id`) muestra el `source_url` si está presente
+- [x] **ARTF-01**: El formulario de crear artículo tiene un toggle/checkbox para elegir entre Borrador y Publicado
+- [x] **ARTF-02**: El formulario de editar artículo muestra el estado actual (borrador/publicado) y permite cambiarlo
+- [x] **ARTF-03**: El formulario tiene un campo de URL para la fuente de la noticia (`source_url`)
+- [x] **ARTF-04**: Al guardar, el estado draft/publish se envía correctamente a Strapi (`publishedAt: null` para borrador, fecha actual para publicado)
+- [x] **ARTF-05**: La vista de detalle del artículo (`/articles/:id`) muestra el `source_url` si está presente
 
 ## v2 Requirements
 
@@ -34,11 +34,11 @@
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | ARTC-01 | Phase 069 | Complete |
-| ARTF-01 | Phase 070 | Pending |
-| ARTF-02 | Phase 070 | Pending |
-| ARTF-03 | Phase 070 | Pending |
-| ARTF-04 | Phase 070 | Pending |
-| ARTF-05 | Phase 070 | Pending |
+| ARTF-01 | Phase 070 | Complete |
+| ARTF-02 | Phase 070 | Complete |
+| ARTF-03 | Phase 070 | Complete |
+| ARTF-04 | Phase 070 | Complete |
+| ARTF-05 | Phase 070 | Complete |
 
 **Coverage:**
 - v1 requirements: 6 total

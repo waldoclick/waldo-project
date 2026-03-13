@@ -55,7 +55,7 @@
 <summary>🔄 v1.31 Article Manager Improvements (Phases 069–070) — IN PROGRESS</summary>
 
 - [x] **Phase 069: Strapi Schema** — Add `source_url` field to Article content type (completed 2026-03-13)
-- [ ] **Phase 070: Dashboard Form & Detail** — Draft/publish toggle + source_url field in FormArticle + detail view
+- [x] **Phase 070: Dashboard Form & Detail** — Draft/publish toggle + source_url field in FormArticle + detail view (completed 2026-03-13)
 
 </details>
 
@@ -88,7 +88,7 @@ Plans:
 4. `source_url` input saves on create and pre-fills on edit
 5. Detail page (`/articles/:id`) shows `source_url` as a clickable link when non-empty
 
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
 - [ ] 070-01-PLAN.md — FormArticle draft/publish toggle + source_url field + detail page link
@@ -109,4 +109,4 @@ Plans:
 | 067   | v1.30     | 3/3            | Complete | 2026-03-13 |
 | 068   | v1.30     | 2/2            | Complete | 2026-03-13 |
 | 069   | 1/1 | Complete    | 2026-03-13 | - |
-| 070   | v1.31     | 0/?            | Not started | - |
+| 070   | 1/1 | Complete   | 2026-03-13 | - |
