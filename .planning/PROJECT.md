@@ -300,11 +300,20 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
        | Tool loop uses `stop_reason === "end_turn"` as termination condition | SDK-idiomatic; `end_turn` means Claude is done and returned text; guards against infinite loops from bad tool results — v1.33 | ✓ Good |
        | `web_search` returns top-5 results to Claude (count=5) | Balances context window usage vs. search coverage; matches Brave Search API free tier expectations — v1.33 | ✓ Good |
 
+## Current Milestone: v1.34 LightBoxArticles
+
+**Goal:** Permitir al administrador generar artículos desde noticias web usando IA, directamente desde el dashboard.
+
+**Target features:**
+- Endpoint `POST /api/search/tavily` en Strapi para búsqueda de noticias
+- `LightBoxArticles.vue` en dashboard con 3 pasos: buscar noticia → generar artículo con Gemini → ver resultado
+- Botón "Generar artículo" (`btn--announcement` + icono `Wand2`) en `pages/articles/index.vue`
+
 ## Current State
 
-**Last shipped:** v1.32 (2026-03-13) — Gemini AI Service: `GeminiService` + `POST /api/ia/gemini` endpoint
-**Current milestone:** v1.33 — Anthropic Claude AI Service (in progress)
-**Current focus:** Implementing `AnthropicService` with web_search tool loop + `POST /api/ia/claude` endpoint
+**Last shipped:** v1.33 (2026-03-13) — Anthropic Claude AI Service: `AnthropicService` + `POST /api/ia/claude` endpoint
+**Current milestone:** v1.34 — LightBoxArticles (in progress)
+**Current focus:** Implementar endpoint search/tavily + lightbox de 3 pasos en dashboard
 
 **Blog Public Views (since v1.30):** `slug` uid field on Article with lifecycle hooks (beforeCreate/beforeUpdate via `slugify strict:true`); 6 Jest tests for slug generation; `Article` TypeScript interface (13 fields) in `app/types/article.d.ts`; SCSS scaffolding (`_article.scss`, `_hero.scss`, `_filter.scss`, `_related.scss`, `_card.scss` blog blocks, `app.scss` import); `HeroArticles.vue` (static, zero props), `FilterArticles.vue` (client-only, updates `?category=`/`?order=` URL params), `ArticleArchive.vue` (4-col grid + `vue-awesome-paginate`), `CardArticle.vue`, `RelatedArticles.vue`; `useArticlesStore` (Pinia, no persist, pageSize 12); `blog/index.vue` (SSR `useAsyncData`, empty-state + RelatedArticles fallback, `@type:"Blog"` structured data); `HeroArticle.vue` (breadcrumbs + H1 + date), `ArticleSingle.vue` (two-column body/sidebar, `marked` Markdown rendering, GalleryDefault from `article.gallery`); `blog/[slug].vue` (SSR `useAsyncData(() => 'article-${slug}')`, 404 guard, `$setSEO`, `@type:"BlogPosting"` structured data).
 
@@ -329,4 +338,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-13 after v1.33 milestone started*
+*Last updated: 2026-03-13 after v1.34 milestone started*

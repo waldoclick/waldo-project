@@ -1,54 +1,48 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.33
-milestone_name: Anthropic Claude AI Service
-current_phase: 072
-status: complete
+milestone: v1.34
+milestone_name: LightBoxArticles
+current_phase: 073
+status: not_started
 last_updated: "2026-03-13"
-last_activity: 2026-03-13 — v1.33 complete — Anthropic Claude AI Service shipped
+last_activity: 2026-03-13 — Roadmap created (2 phases: 073 backend, 074 dashboard)
 progress:
-  total_phases: 1
-  completed_phases: 1
-  total_plans: 1
-  completed_plans: 1
+  total_phases: 2
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
 ---
 
 # Session State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-13 after v1.32 milestone shipped)
+See: .planning/PROJECT.md (updated 2026-03-13 after v1.34 milestone started)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.33 — Anthropic Claude AI Service
+**Current focus:** v1.34 — LightBoxArticles
 
 ## Position
 
-**Milestone:** v1.33 — Anthropic Claude AI Service (complete)
-**Current Phase:** 072 (complete)
-**Status:** 072-01-PLAN.md executed — AnthropicService shipped
+**Milestone:** v1.34 — LightBoxArticles (not started)
+**Current Phase:** 073 (pending)
+**Status:** Roadmap defined — ready to plan Phase 073
 
-Last activity: 2026-03-13 — Phase 072 complete — AnthropicService + POST /api/ia/claude endpoint delivered
+Last activity: 2026-03-13 — Roadmap created for v1.34 (2 phases: 073 backend, 074 dashboard)
 
 ## Session Log
 
-- 2026-03-13: Milestone v1.32 archived — Gemini AI Service shipped
-- 2026-03-13: Milestone v1.33 started — Anthropic Claude AI Service
-- 2026-03-13: Roadmap created — 1 phase (072), 6/6 requirements mapped (CLAUDE-01 through CLAUDE-06 → Phase 072)
-- 2026-03-13: 072-01-PLAN.md created — AnthropicService with web_search tool loop + POST /api/ia/claude endpoint
-- 2026-03-13: 072-01-PLAN.md executed — AnthropicService shipped, tsc --noEmit passes, all success criteria met
+- 2026-03-13: Milestone v1.33 complete — Anthropic Claude AI Service shipped
+- 2026-03-13: Milestone v1.34 started — LightBoxArticles
 
 ### Key Decisions
 
-- All 6 CLAUDE requirements map to single phase 072 — tight coupling (one service + one endpoint + one tool) makes splitting artificial
-- AnthropicService uses module-level singleton (same as GeminiService/SlackService) — throws at startup if ANTHROPIC_API_KEY or BRAVE_SEARCH_API_KEY missing
-- Model: `claude-sonnet-4-5` (locked decision)
-- Web search via Brave Search API (`https://api.search.brave.com/res/v1/web/search`) with `X-Subscription-Token` header
-- Native `fetch` (Node 20+) for Brave Search HTTP calls — axios not in strapi dependencies
-- Tool loop processes tool_use blocks until stop_reason is "end_turn" (max_tokens not used as a loop control)
-- Controller imports only from `services/anthropic/index.ts` — no direct `@anthropic-ai/sdk` in API layer
-- `ApplicationError` for runtime errors (same as GeminiService pattern)
-- `process.env` for API keys (not `strapi.config.get`) — consistent with all other integration services
+- TavilyService follows same singleton pattern as SerperService/GeminiService
+- search/tavily endpoint follows same pattern as ia/gemini (POST, { query, num? }, returns { news: [...] })
+- LightBoxArticles uses controlled pattern (isOpen prop + @close emit) like LightboxRazon
+- Step system built from scratch (no existing steps component in dashboard)
+- btn--announcement is the existing yellow brand button class
+- No new CSS classes for the button
 
 ### Blockers/Concerns
 
