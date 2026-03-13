@@ -16,14 +16,13 @@
       ref="textareaRef"
       class="textarea-article__editor"
       :value="modelValue"
-      rows="10"
       @input="onInput"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, nextTick, onMounted, watch } from "vue";
 import {
   Bold,
   Italic,
@@ -56,9 +55,28 @@ const toolbar = [
   { name: "code", title: "Código", icon: Code, syntax: "code" },
 ];
 
+const resize = () => {
+  const el = textareaRef.value;
+  if (!el) return;
+  el.style.height = "auto";
+  el.style.height = `${el.scrollHeight}px`;
+};
+
 const onInput = (e: Event) => {
   emit("update:modelValue", (e.target as HTMLTextAreaElement).value);
+  resize();
 };
+
+onMounted(() => {
+  nextTick(resize);
+});
+
+watch(
+  () => props.modelValue,
+  () => {
+    nextTick(resize);
+  },
+);
 
 const applyFormat = (syntax: string) => {
   const el = textareaRef.value;
@@ -113,6 +131,7 @@ const applyFormat = (syntax: string) => {
   nextTick(() => {
     el.focus();
     el.setSelectionRange(result.cursor, result.cursor);
+    resize();
   });
 };
 </script>
