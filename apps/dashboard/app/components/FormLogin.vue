@@ -66,6 +66,8 @@ import { useNuxtApp } from "#app";
 const sending = ref(false);
 const router = useRouter();
 const { $recaptcha } = useNuxtApp();
+const client = useStrapiClient();
+const pendingToken = useState<string>("pendingToken", () => "");
 
 const schema = yup.object({
   email: yup
@@ -95,7 +97,6 @@ const handleSubmit = async (values: Record<string, unknown>) => {
 
     // Call POST /api/auth/local directly — backend now returns { pendingToken, email }
     // (useStrapiAuth().login() is NOT used because it expects a JWT, not a pendingToken)
-    const client = useStrapiClient();
     const response = await client("/auth/local", {
       method: "POST",
       body: {
@@ -106,7 +107,6 @@ const handleSubmit = async (values: Record<string, unknown>) => {
     });
 
     // Store pendingToken in transient SSR-safe state, then navigate to verify page
-    const pendingToken = useState<string>("pendingToken", () => "");
     pendingToken.value = (response as { pendingToken: string }).pendingToken;
     router.push("/auth/verify-code");
   } catch (error) {
