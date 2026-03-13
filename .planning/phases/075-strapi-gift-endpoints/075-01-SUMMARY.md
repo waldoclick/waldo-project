@@ -94,6 +94,16 @@ None - no external service configuration required.
 - TypeScript check passes, all Jest tests green
 - No blockers for Phase 076
 
+## Self-Check: PASSED
+
+- ✅ `apps/strapi/src/extensions/users-permissions/controllers/userController.ts` — exists
+- ✅ `apps/strapi/src/extensions/users-permissions/controllers/userController.test.ts` — exists
+- ✅ `apps/strapi/src/extensions/users-permissions/strapi-server.ts` — exists
+- ✅ commit `cab1282` — test RED phase
+- ✅ commit `548376e` — feat GREEN phase
+- ✅ commit `6945781` — feat route wiring
+- ✅ commit `13a48aa` — docs metadata
+
 ---
 *Phase: 075-strapi-gift-endpoints*
 *Completed: 2026-03-13*
