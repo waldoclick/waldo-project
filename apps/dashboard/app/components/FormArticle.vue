@@ -100,6 +100,7 @@ import { ref, computed, watch } from "vue";
 import { Field, Form, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 import { useRoute, useRouter } from "vue-router";
+import { useStrapiClient } from "#imports";
 
 interface MediaItem {
   id?: number;
@@ -137,6 +138,7 @@ const { Swal } = useSweetAlert2();
 const router = useRouter();
 const route = useRoute();
 const strapi = useStrapi();
+const strapiClient = useStrapiClient();
 
 const sending = ref(false);
 const lastHydratedId = ref<string | number | null>(null);
@@ -214,10 +216,6 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       gallery: galleryIds.length > 0 ? galleryIds : null,
     };
 
-    if (!isEditMode.value) {
-      Object.assign(payload, { publishedAt: null });
-    }
-
     if (isEditMode.value) {
       const routeId = route.params.id;
       const documentId =
@@ -269,14 +267,11 @@ const handleSubmit = async (values: Record<string, unknown>) => {
         router.push(`/articles/${updatedId}`);
       }
     } else {
-      const response = await strapi.create(
-        "articles",
-        payload as unknown as Parameters<typeof strapi.create>[1],
-      );
-      const createdData = response.data as unknown as {
-        id?: number;
-        documentId?: string;
-      };
+      const response = (await strapiClient("/articles?status=draft", {
+        method: "POST",
+        body: { data: payload },
+      })) as { data: { id?: number; documentId?: string } };
+      const createdData = response.data;
       emit("saved", (createdData as ArticleData) || ({} as ArticleData));
       await Swal.fire("Éxito", "Artículo creado correctamente.", "success");
       const createdId = createdData?.documentId || createdData?.id;
