@@ -3,10 +3,10 @@ gsd_state_version: 1.0
 milestone: v1.30
 milestone_name: Blog Public Views
 status: in_progress
-stopped_at: Defining requirements
+stopped_at: Roadmap created — ready to plan Phase 065
 last_updated: "2026-03-12T00:00:00.000Z"
 progress:
-  total_phases: 0
+  total_phases: 4
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -20,19 +20,21 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-12 after v1.30 milestone started)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Defining requirements for v1.30
+**Current focus:** v1.30 — Blog Public Views (Phase 065 next)
 
 ## Position
 
 **Milestone:** v1.30 — Blog Public Views
-**Status:** Defining requirements
+**Phase:** 065 (next)
+**Status:** Roadmap created — ready to plan Phase 065
 
-**Progress:** [░░░░░░░░░░] 0%
+**Progress:** [░░░░░░░░░░] 0% (0/4 phases)
 
 ## Session Log
 
 - 2026-03-12: Milestone v1.29 complete — News Manager shipped
 - 2026-03-12: Milestone v1.30 started — Blog Public Views
+- 2026-03-12: Roadmap created — 4 phases (065–068), 26/26 requirements mapped
 
 ### Key Decisions
 
@@ -45,6 +47,7 @@ See: .planning/PROJECT.md (updated 2026-03-12 after v1.30 milestone started)
 - Article sidebar: ShareDefault + categories list (no seller/price)
 - Related articles: same-category first, fill with most recent if not enough
 - 12 articles per page
+- SCSS requirements (BLOG-21–26) bundled with infrastructure phase (066), not standalone — they are implementation details of component/page work
 
 ### Blockers/Concerns
 
