@@ -391,5 +391,17 @@
     &__title {
       margin-bottom: 0;
     }
+
+    &__date {
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: 0.25px;
+      color: $charcoal;
+      margin-top: -10px;
+
+      time {
+        font-style: normal;
+      }
+    }
   }
 }

@@ -5,6 +5,7 @@
       :title="pageData.article.title"
       :category-name="pageData.article.categories[0]?.name || ''"
       :category-slug="pageData.article.categories[0]?.slug || ''"
+      :published-at="pageData.article.publishedAt"
     />
     <ArticleSingle :article="pageData.article" />
     <RelatedArticles
