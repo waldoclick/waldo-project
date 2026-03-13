@@ -107,7 +107,11 @@ Plans:
   2. Visiting `/blog/nonexistent-slug` shows a Nuxt 404 error page (not a blank or broken page)
   3. The page emits SSR-correct `$setSEO` (title, description from `header`, cover image) and `BlogPosting` structured data (name, description, image, datePublished, author)
   4. A `RelatedArticles` block at the bottom of the article shows same-category articles first, falling back to most recent when not enough
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 068-01-PLAN.md — HeroArticle.vue + ArticleSingle.vue (leaf display components)
+- [ ] 068-02-PLAN.md — blog/[slug].vue (full detail page: fetch, 404, SEO, BlogPosting, RelatedArticles)
 
 ## Progress
 
