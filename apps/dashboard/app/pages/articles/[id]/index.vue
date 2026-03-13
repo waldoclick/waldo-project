@@ -23,7 +23,14 @@
             title="Encabezado"
             :description="article.header"
           />
-          <CardInfo v-if="article" title="Cuerpo" :description="article.body" />
+          <article v-if="article && article.body" class="card card--info">
+            <div class="card--info__title">Cuerpo</div>
+            <div class="card--info__description">
+              <div class="card--info__description__text article-body-preview">
+                {{ article.body }}
+              </div>
+            </div>
+          </article>
           <CardInfo
             v-if="article"
             title="Título SEO"
@@ -113,3 +120,11 @@ const { data: articleData } = await useAsyncData(
 
 article.value = (articleData.value as ArticleData) ?? null;
 </script>
+
+<style scoped>
+.article-body-preview {
+  white-space: pre-wrap;
+  font-size: 14px;
+  line-height: 1.6;
+}
+</style>

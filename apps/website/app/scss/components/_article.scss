@@ -59,6 +59,39 @@
           line-height: 26px;
           letter-spacing: 0.25px;
           color: $charcoal;
+
+          p {
+            margin-bottom: 1em;
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+          }
+
+          h2,
+          h3,
+          h4 {
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+            font-weight: 700;
+          }
+
+          ul,
+          ol {
+            margin-bottom: 1em;
+            padding-left: 1.5em;
+          }
+
+          li {
+            margin-bottom: 0.25em;
+          }
+
+          blockquote {
+            margin: 1em 0;
+            padding-left: 1em;
+            border-left: 3px solid $gainsboro;
+            color: lighten($charcoal, 20%);
+          }
         }
       }
     }
