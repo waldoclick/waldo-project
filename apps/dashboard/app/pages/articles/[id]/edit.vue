@@ -8,7 +8,23 @@
         </BoxInformation>
       </template>
       <template #sidebar>
+        <BoxInformation title="Acciones" :columns="1">
+          <button
+            v-if="article"
+            type="button"
+            class="btn btn--buy btn--block"
+            :disabled="publishing"
+            @click="handleTogglePublish"
+          >
+            {{ article.publishedAt ? "Volver a borrador" : "Publicar" }}
+          </button>
+        </BoxInformation>
         <BoxInformation title="Detalles" :columns="1">
+          <CardInfo
+            v-if="article"
+            title="Estado"
+            :description="article.publishedAt ? 'Publicado' : 'Borrador'"
+          />
           <CardInfo
             v-if="article"
             title="Fecha de creación"
@@ -52,6 +68,7 @@ interface ArticleData {
   body?: string;
   seo_title?: string;
   seo_description?: string;
+  source_url?: string | null;
   publishedAt?: string | null;
   createdAt?: string;
   updatedAt?: string;
@@ -64,7 +81,11 @@ definePageMeta({
 });
 
 const route = useRoute();
+const strapi = useStrapi();
+const { Swal } = useSweetAlert2();
+
 const article = ref<ArticleData | null>(null);
+const publishing = ref(false);
 
 const title = computed(() => article.value?.title || "Artículo");
 const breadcrumbs = computed(() => [
@@ -81,13 +102,50 @@ const handleArticleSaved = (updatedArticle: ArticleData) => {
   }
 };
 
+const handleTogglePublish = async () => {
+  if (!article.value) return;
+  const documentId =
+    article.value.documentId ||
+    (typeof route.params.id === "string" ? route.params.id : undefined);
+  if (!documentId) return;
+
+  publishing.value = true;
+  try {
+    const newPublishedAt = article.value.publishedAt
+      ? null
+      : new Date().toISOString();
+
+    await strapi.update("articles", documentId, {
+      publishedAt: newPublishedAt,
+    } as unknown as Parameters<typeof strapi.update>[2]);
+
+    article.value = { ...article.value, publishedAt: newPublishedAt };
+
+    await Swal.fire(
+      "Éxito",
+      newPublishedAt
+        ? "Artículo publicado."
+        : "Artículo guardado como borrador.",
+      "success",
+    );
+  } catch (error) {
+    console.error("Error toggling publish state:", error);
+    await Swal.fire(
+      "Error",
+      "No se pudo cambiar el estado del artículo.",
+      "error",
+    );
+  } finally {
+    publishing.value = false;
+  }
+};
+
 const { data: articleData } = await useAsyncData(
   `article-edit-${route.params.id}`,
   async () => {
     const id = route.params.id;
     if (!id) return null;
 
-    const strapi = useStrapi();
     const response = await strapi.find("articles", {
       filters: { documentId: { $eq: id } },
       populate: ["cover", "gallery"],

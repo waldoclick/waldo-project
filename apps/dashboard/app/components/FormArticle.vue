@@ -82,18 +82,6 @@
         <ErrorMessage name="source_url" />
       </div>
 
-      <div class="form__group form__group--toggle">
-        <label class="form__label--toggle" for="published">
-          <input
-            id="published"
-            v-model="form.published"
-            type="checkbox"
-            class="form__toggle"
-          />
-          <span>{{ form.published ? "Publicado" : "Borrador" }}</span>
-        </label>
-      </div>
-
       <div class="form__send">
         <button
           :disabled="sending || !meta.valid"
@@ -169,7 +157,6 @@ const form = ref<{
   seo_title: string;
   seo_description: string;
   source_url: string;
-  published: boolean;
   cover: MediaItem[];
   gallery: MediaItem[];
 }>({
@@ -179,7 +166,6 @@ const form = ref<{
   seo_title: "",
   seo_description: "",
   source_url: "",
-  published: false,
   cover: [],
   gallery: [],
 });
@@ -200,7 +186,6 @@ const hydrateForm = () => {
     seo_title: props.article?.seo_title || "",
     seo_description: props.article?.seo_description || "",
     source_url: props.article?.source_url || "",
-    published: props.article?.publishedAt != null,
     cover: props.article?.cover || [],
     gallery: props.article?.gallery || [],
   };
@@ -225,7 +210,6 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       seo_title: (values.seo_title as string)?.trim() || null,
       seo_description: (values.seo_description as string)?.trim() || null,
       source_url: form.value.source_url.trim() || null,
-      publishedAt: form.value.published ? new Date().toISOString() : null,
       cover: coverIds.length > 0 ? coverIds : null,
       gallery: galleryIds.length > 0 ? galleryIds : null,
     };
@@ -267,7 +251,6 @@ const handleSubmit = async (values: Record<string, unknown>) => {
         seo_title: payload.seo_title || "",
         seo_description: payload.seo_description || "",
         source_url: payload.source_url || "",
-        published: form.value.published,
         cover: form.value.cover,
         gallery: form.value.gallery,
       };
@@ -294,7 +277,7 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       await Swal.fire("Éxito", "Artículo creado correctamente.", "success");
       const createdId = createdData?.documentId || createdData?.id;
       if (createdId) {
-        router.push(`/articles/${createdId}`);
+        router.push(`/articles/${createdId}/edit`);
       } else {
         router.push("/articles");
       }
