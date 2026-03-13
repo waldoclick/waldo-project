@@ -11,6 +11,7 @@
   - ✅ **v1.31 Article Manager Improvements** — Phases 069–070 (shipped 2026-03-13). See `.planning/milestones/v1.31-ROADMAP.md`
 - ✅ **v1.32 Gemini AI Service** — Phase 071 (shipped 2026-03-13). See `.planning/milestones/v1.32-ROADMAP.md`
 - ✅ **v1.33 Anthropic Claude AI Service** — Phase 072 (shipped 2026-03-13)
+- 🚧 **v1.34 LightBoxArticles** — Phases 073–074 (in progress)
 
 ## Phases
 
@@ -75,36 +76,42 @@
 
 </details>
 
+### v1.34 LightBoxArticles (Phases 073–074) — IN PROGRESS
+
+- [ ] **Phase 073: Tavily Search Backend** - Strapi `TavilyService` + `POST /api/search/tavily` endpoint
+- [ ] **Phase 074: LightBoxArticles Dashboard** - `LightBoxArticles.vue` component (3-step flow) + SCSS + integration in articles page
+
 ## Phase Details
 
-### Phase 072: Anthropic Claude AI Service
-**Goal**: Strapi exposes a working Anthropic Claude AI integration — a typed service reads both API keys from env, implements a `web_search` tool loop via Brave Search, and a custom endpoint accepts a prompt and returns Claude-generated text (with optional web search) with proper error handling.
-**Depends on**: Phase 071 (ia controller/routes pattern established)
-**Requirements**: CLAUDE-01, CLAUDE-02, CLAUDE-03, CLAUDE-04, CLAUDE-05, CLAUDE-06
+### Phase 073: Tavily Search Backend
+**Goal**: Strapi exposes a working Tavily news search endpoint — a typed `TavilyService` reads the API key from env and a custom endpoint accepts a query and returns structured news results.
+**Depends on**: Nothing (self-contained Strapi addition following existing service patterns)
+**Requirements**: BACK-01
 **Success Criteria** (what must be TRUE):
-  1. `POST /api/ia/claude` with `{ prompt: "..." }` returns `{ text: "..." }` with a Claude-generated response
-  2. `ANTHROPIC_API_KEY` and `BRAVE_SEARCH_API_KEY` in Strapi `.env` are the sole locations of the API keys — never hardcoded in any service or controller file
-  3. `AnthropicService` in `apps/strapi/src/services/anthropic/` encapsulates all Anthropic API calls and Brave Search calls; the controller contains no direct HTTP calls
-  4. When Claude calls the `web_search` tool, Strapi executes the Brave Search query and returns results back to Claude to continue the conversation loop
-  5. When the Anthropic API or Brave Search is unreachable or returns an error, `POST /api/ia/claude` responds with an appropriate HTTP error (4xx/5xx) and Strapi does not crash
-**Plans**: 1 plan
-  - [x] 072-01-PLAN.md — Install @anthropic-ai/sdk, implement AnthropicService with web_search tool loop, add POST /api/ia/claude endpoint
+  1. `POST /api/search/tavily` with `{ query: "noticias maquinaria" }` returns `{ news: [{ title, link, snippet, date, source }] }`
+  2. The `TAVILY_API_KEY` environment variable in Strapi `.env` is the sole location of the API key — never hardcoded in any service or controller file
+  3. `TavilyService` in `apps/strapi/src/services/tavily/` encapsulates all Tavily API calls; the controller contains no direct HTTP calls
+  4. When the Tavily API is unreachable or returns an error, `POST /api/search/tavily` responds with an appropriate HTTP error (4xx/5xx) and Strapi does not crash
+**Plans**: TBD
 
-### Phase 071: Gemini AI Service
-**Goal**: Strapi exposes a working Gemini AI integration — a typed service reads the API key from env, and a custom endpoint accepts a prompt and returns generated text with proper error handling.
-**Depends on**: Nothing (self-contained Strapi addition)
-**Requirements**: GEMINI-01, GEMINI-02, GEMINI-03, GEMINI-04, GEMINI-05
+### Phase 074: LightBoxArticles Dashboard
+**Goal**: The dashboard administrator can search for news articles, generate an article draft using Gemini AI, and review the result — all within a 3-step lightbox modal accessible from the articles index page.
+**Depends on**: Phase 073 (Tavily search endpoint must exist)
+**Requirements**: LB-01, LB-02, LB-03, LB-04, LB-05, LB-06, LB-07, LB-08, SCSS-01, INT-01
 **Success Criteria** (what must be TRUE):
-  1. `POST /api/ia/gemini` with `{ prompt: "Hello" }` returns `{ text: "..." }` with a Gemini-generated response
-  2. The `GEMINI_API_KEY` environment variable in Strapi `.env` is the sole location of the API key — it is never hardcoded in any service or controller file
-  3. `GeminiService` in `apps/strapi/src/services/` encapsulates all Gemini API calls; the controller contains no direct HTTP calls to Google
-  4. When the Gemini API is unreachable or returns an error, `POST /api/ia/gemini` responds with an appropriate HTTP error (4xx/5xx) and Strapi does not crash
-**Plans**: 1 plan
+  1. The articles index page shows a "Generar artículo" button (`btn--announcement` + `Wand2` icon) that opens the `LightBoxArticles` modal
+  2. Step 1 of the lightbox shows a pre-filled query textarea; pressing "Buscar" calls `POST /api/search/tavily` and renders news results (title, URL, date) for selection
+  3. Clicking a news result in Step 1 fetches the full HTML of that URL and advances to Step 2 with the selected article's title, URL, and date displayed
+  4. Step 2 shows a pre-filled Gemini prompt textarea; pressing "Generar artículo" calls `POST /api/ia/gemini` and advances to Step 3 showing the generated result (title, header, Markdown body, keywords, source_url, source_date)
+  5. The user can navigate back from Step 3 → Step 2 → Step 1 without losing state; the lightbox can be closed at any step
+**Plans**: TBD
 
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status      | Completed  |
 |-------|-----------|----------------|-------------|------------|
+| 073   | v1.34     | 0/TBD          | Not started | -          |
+| 074   | v1.34     | 0/TBD          | Not started | -          |
 | 072   | v1.33     | 1/1            | Complete    | 2026-03-13 |
 | 071   | v1.32     | 1/1            | Complete    | 2026-03-13 |
 | 060   | v1.26     | 3/3            | Complete    | 2026-03-11 |
