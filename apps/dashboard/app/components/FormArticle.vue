@@ -214,6 +214,10 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       gallery: galleryIds.length > 0 ? galleryIds : null,
     };
 
+    if (!isEditMode.value) {
+      Object.assign(payload, { publishedAt: null });
+    }
+
     if (isEditMode.value) {
       const routeId = route.params.id;
       const documentId =
