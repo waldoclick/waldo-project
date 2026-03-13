@@ -8,5 +8,13 @@ export default {
         policies: [],
       },
     },
+    {
+      method: "POST",
+      path: "/ia/claude",
+      handler: "ia.claude",
+      config: {
+        policies: [],
+      },
+    },
   ],
 };
