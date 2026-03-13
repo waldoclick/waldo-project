@@ -47,8 +47,8 @@ import * as yup from "yup";
 
 interface IAuthUser {
   id: number;
-  firstName: string;
-  lastName: string;
+  firstname: string;
+  lastname: string;
 }
 
 const props = defineProps<{
@@ -85,7 +85,7 @@ const schema = yup.object({
 
 const userOptions = computed(() =>
   users.value.map((u) => ({
-    label: `${u.firstName} ${u.lastName}`,
+    label: `${u.firstname} ${u.lastname}`.trim() || "(sin nombre)",
     value: String(u.id),
   })),
 );
@@ -103,13 +103,14 @@ async function searchUsers(q: string) {
           { role: { type: { $eq: "authenticated" } } },
           {
             $or: [
-              { firstName: { $containsi: q } },
-              { lastName: { $containsi: q } },
+              { firstname: { $containsi: q } },
+              { lastname: { $containsi: q } },
+              { username: { $containsi: q } },
             ],
           },
         ],
       },
-      fields: ["id", "firstName", "lastName"],
+      fields: ["id", "firstname", "lastname", "username"],
       pagination: { pageSize: 20 },
     };
     const response = await strapi.find("users", params);
