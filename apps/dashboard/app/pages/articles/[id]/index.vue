@@ -161,6 +161,8 @@ const { data: articleData } = await useAsyncData(
     const response = await strapi.find("articles", {
       filters: { documentId: { $eq: id } },
       populate: ["cover", "gallery"],
+      // preview returns both published and draft entries (Strapi v5)
+      status: "preview",
     } as Record<string, unknown>);
     const data = Array.isArray(response.data) ? response.data[0] : null;
     if (data) return data as ArticleData;
@@ -170,6 +172,7 @@ const { data: articleData } = await useAsyncData(
       id as string,
       {
         populate: ["cover", "gallery"],
+        status: "preview",
       } as Record<string, unknown>,
     );
     return (fallbackResponse.data as unknown as ArticleData) || null;
