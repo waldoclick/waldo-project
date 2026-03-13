@@ -1216,3 +1216,42 @@
 - Notable: One of the cleanest executions — zero deviations in Plans 01 and 02; Plan 03 had a minor lang="ts" addition. Only friction was the wizard-guard SSR bug found post-verification.
 
 ---
+
+## Milestone: v1.34 — LightBoxArticles
+
+**Shipped:** 2026-03-13
+**Phases:** 2 (073–074) | **Plans:** 4 | **Quick Tasks:** 2 (QT-27, QT-28)
+
+### What Was Built
+- `TavilyService` in Strapi + `POST /api/search/tavily` — news search backend with typed results
+- `LightBoxArticles.vue` — 3-step dashboard lightbox: search → edit prompt → generate + save article draft
+- `search.store.ts` enhanced with Tavily cache by query string (Swal reuse-or-refresh on hit)
+- `articles.store.ts` — new session-only store caching AI responses by source URL + duplicate `source_url` guard before Strapi POST
+- Groq `llama-3.3-70b-versatile` via `POST /api/ia/groq` with `response_format: json_object` as primary article generator
+- DeepSeek and Gemini endpoints also scaffolded (`/api/ia/deepseek`, `/api/ia/gemini`)
+
+### What Worked
+- Tavily `snippet` field already contains article content — no browser fetch to source URL needed; eliminated a whole fetch layer
+- Quick tasks (QT-27, QT-28) were the right tool for iterative fixes to the generation flow — kept planned phases clean
+- Swal guard pattern (check before API call, inform user, let them choose) applied consistently for cache hits, empty content, AI errors, and duplicates
+
+### What Was Inefficient
+- Spent time on browser-side `fetch(item.link)` approach before realizing Tavily already provides content in `snippet`; this should have been caught in research
+- Rate limit friction: Gemini (5 RPM) → DeepSeek (402 Payment Required) → Groq; three providers before a working solution; a quick API capability check upfront would have saved iterations
+- Groq returned JSON wrapped in markdown code fences despite prompt instructions — `response_format: json_object` solved it but required a debug cycle
+
+### Patterns Established
+- **`response_format: { type: "json_object" }` in Groq requests** — always enforce this when expecting JSON; eliminates code fence wrapping entirely
+- **Check Tavily `snippet`/`content` before fetching source URLs** — Tavily already extracts article text; browser-side scraping is last resort, not first
+- **Session-only store for AI response cache** — no `persist`; session cache avoids redundant calls without stale data risk
+- **Duplicate guard pattern**: `GET /collection?filters[field][$eq]=value` before POST → Swal with "go to edit" option if found
+
+### Key Lessons
+1. **Evaluate AI provider rate limits before planning.** Gemini free tier (5 RPM) is insufficient for iterative dev. Groq (30 RPM free) is the right default for development workflows.
+2. **Read the third-party API response shape before planning the fetch layer.** Tavily returns `content` (extracted article text) — no browser fetch needed. Should be caught in discovery.
+3. **`response_format: json_object` is non-negotiable for JSON-only AI endpoints.** LLMs add markdown wrappers regardless of prompt instructions; enforce at the API level.
+
+### Cost Observations
+- Model mix: ~100% sonnet
+- Sessions: ~3 (plan-phase × 1, execute-phase × 1, iterative quick tasks × many)
+- Notable: High iteration count on AI provider selection; most context spent debugging rate limits and JSON parsing rather than core feature work

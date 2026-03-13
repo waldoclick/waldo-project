@@ -8,12 +8,20 @@
 - ✅ **v1.28 Logout Store Cleanup** — Phase 062 (shipped 2026-03-12). See `.planning/milestones/v1.28-ROADMAP.md`
 - ✅ **v1.29 News Manager** — Phases 063–064 (shipped 2026-03-12). See `.planning/milestones/v1.29-ROADMAP.md`
 - ✅ **v1.30 Blog Public Views** — Phases 065–068 (shipped 2026-03-13). See `.planning/milestones/v1.30-ROADMAP.md`
-  - ✅ **v1.31 Article Manager Improvements** — Phases 069–070 (shipped 2026-03-13). See `.planning/milestones/v1.31-ROADMAP.md`
+- ✅ **v1.31 Article Manager Improvements** — Phases 069–070 (shipped 2026-03-13). See `.planning/milestones/v1.31-ROADMAP.md`
 - ✅ **v1.32 Gemini AI Service** — Phase 071 (shipped 2026-03-13). See `.planning/milestones/v1.32-ROADMAP.md`
-- ✅ **v1.33 Anthropic Claude AI Service** — Phase 072 (shipped 2026-03-13)
-- 🚧 **v1.34 LightBoxArticles** — Phases 073–074 (in progress)
+- ✅ **v1.33 Anthropic Claude AI Service** — Phase 072 (shipped 2026-03-13). See `.planning/milestones/v1.33-ROADMAP.md`
+- ✅ **v1.34 LightBoxArticles** — Phases 073–074 (shipped 2026-03-13). See `.planning/milestones/v1.34-ROADMAP.md`
 
 ## Phases
+
+<details>
+<summary>✅ v1.34 LightBoxArticles (Phases 073–074) — SHIPPED 2026-03-13</summary>
+
+- [x] Phase 073: Tavily Search Backend (2/2 plans) — completed 2026-03-13
+- [x] Phase 074: LightBoxArticles Dashboard (2/2 plans) — completed 2026-03-13
+
+</details>
 
 <details>
 <summary>✅ v1.33 Anthropic Claude AI Service (Phase 072) — SHIPPED 2026-03-13</summary>
@@ -76,58 +84,22 @@
 
 </details>
 
-### v1.34 LightBoxArticles (Phases 073–074) — IN PROGRESS
-
-- [x] **Phase 073: Tavily Search Backend** - Strapi `TavilyService` + `POST /api/search/tavily` endpoint (completed 2026-03-13)
-- [x] **Phase 074: LightBoxArticles Dashboard** - `LightBoxArticles.vue` component (3-step flow) + SCSS + integration in articles page (completed 2026-03-13)
-
-## Phase Details
-
-### Phase 073: Tavily Search Backend
-**Goal**: Strapi exposes a working Tavily news search endpoint — a typed `TavilyService` reads the API key from env and a custom endpoint accepts a query and returns structured news results.
-**Depends on**: Nothing (self-contained Strapi addition following existing service patterns)
-**Requirements**: BACK-01
-**Success Criteria** (what must be TRUE):
-  1. `POST /api/search/tavily` with `{ query: "noticias maquinaria" }` returns `{ news: [{ title, link, snippet, date, source }] }`
-  2. The `TAVILY_API_KEY` environment variable in Strapi `.env` is the sole location of the API key — never hardcoded in any service or controller file
-  3. `TavilyService` in `apps/strapi/src/services/tavily/` encapsulates all Tavily API calls; the controller contains no direct HTTP calls
-  4. When the Tavily API is unreachable or returns an error, `POST /api/search/tavily` responds with an appropriate HTTP error (4xx/5xx) and Strapi does not crash
-**Plans**: 2 plans
-Plans:
-- [ ] 073-01-PLAN.md — Create POST /api/search/tavily controller and route
-- [ ] 073-02-PLAN.md — Jest unit tests for TavilyService (constructor guard + happy path + error path)
-
-### Phase 074: LightBoxArticles Dashboard
-**Goal**: The dashboard administrator can search for news articles, generate an article draft using Gemini AI, and review the result — all within a 3-step lightbox modal accessible from the articles index page.
-**Depends on**: Phase 073 (Tavily search endpoint must exist)
-**Requirements**: LB-01, LB-02, LB-03, LB-04, LB-05, LB-06, LB-07, LB-08, SCSS-01, INT-01
-**Success Criteria** (what must be TRUE):
-  1. The articles index page shows a "Generar artículo" button (`btn--announcement` + `Wand2` icon) that opens the `LightBoxArticles` modal
-  2. Step 1 of the lightbox shows a pre-filled query textarea; pressing "Buscar" calls `POST /api/search/tavily` and renders news results (title, URL, date) for selection
-  3. Clicking a news result in Step 1 fetches the full HTML of that URL and advances to Step 2 with the selected article's title, URL, and date displayed
-  4. Step 2 shows a pre-filled Gemini prompt textarea; pressing "Generar artículo" calls `POST /api/ia/gemini` and advances to Step 3 showing the generated result (title, header, Markdown body, keywords, source_url, source_date)
-  5. The user can navigate back from Step 3 → Step 2 → Step 1 without losing state; the lightbox can be closed at any step
-**Plans**: 2 plans
-Plans:
-- [ ] 074-01-PLAN.md — LightBoxArticles.vue component (3-step flow) + _lightbox.scss `&--articles` modifier
-- [ ] 074-02-PLAN.md — Wire "Generar artículo" button + LightBoxArticles modal in articles index page
-
 ## Progress
 
-| Phase | Milestone | Plans Complete | Status      | Completed  |
-|-------|-----------|----------------|-------------|------------|
-| 073   | 2/2 | Complete    | 2026-03-13 | -          |
-| 074   | 2/2 | Complete   | 2026-03-13 | -          |
-| 072   | v1.33     | 1/1            | Complete    | 2026-03-13 |
-| 071   | v1.32     | 1/1            | Complete    | 2026-03-13 |
-| 060   | v1.26     | 3/3            | Complete    | 2026-03-11 |
-| 061   | v1.27     | 2/2            | Complete    | 2026-03-12 |
-| 062   | v1.28     | 2/2            | Complete    | 2026-03-12 |
-| 063   | v1.29     | 1/1            | Complete    | 2026-03-12 |
-| 064   | v1.29     | 2/2            | Complete    | 2026-03-12 |
-| 065   | v1.30     | 1/1            | Complete    | 2026-03-13 |
-| 066   | v1.30     | 2/2            | Complete    | 2026-03-13 |
-| 067   | v1.30     | 3/3            | Complete    | 2026-03-13 |
-| 068   | v1.30     | 2/2            | Complete    | 2026-03-13 |
-| 069   | v1.31     | 1/1            | Complete    | 2026-03-13 |
-| 070   | v1.31     | 1/1            | Complete    | 2026-03-13 |
+| Phase | Milestone | Plans Complete | Status   | Completed  |
+|-------|-----------|----------------|----------|------------|
+| 060   | v1.26     | 3/3            | Complete | 2026-03-11 |
+| 061   | v1.27     | 2/2            | Complete | 2026-03-12 |
+| 062   | v1.28     | 2/2            | Complete | 2026-03-12 |
+| 063   | v1.29     | 1/1            | Complete | 2026-03-12 |
+| 064   | v1.29     | 2/2            | Complete | 2026-03-12 |
+| 065   | v1.30     | 1/1            | Complete | 2026-03-13 |
+| 066   | v1.30     | 2/2            | Complete | 2026-03-13 |
+| 067   | v1.30     | 3/3            | Complete | 2026-03-13 |
+| 068   | v1.30     | 2/2            | Complete | 2026-03-13 |
+| 069   | v1.31     | 1/1            | Complete | 2026-03-13 |
+| 070   | v1.31     | 1/1            | Complete | 2026-03-13 |
+| 071   | v1.32     | 1/1            | Complete | 2026-03-13 |
+| 072   | v1.33     | 1/1            | Complete | 2026-03-13 |
+| 073   | v1.34     | 2/2            | Complete | 2026-03-13 |
+| 074   | v1.34     | 2/2            | Complete | 2026-03-13 |
