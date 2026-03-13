@@ -90,6 +90,9 @@ Plans:
 
 **Plans:** 1 plan
 
+Plans:
+- [ ] 070-01-PLAN.md — FormArticle draft/publish toggle + source_url field + detail page link
+
 **Depends on:** Phase 069
 
 ## Progress
