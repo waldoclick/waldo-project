@@ -73,6 +73,7 @@ import type { User } from "@/types/user";
 
 const { Swal } = useSweetAlert2();
 const strapi = useStrapi();
+const { fetchUser } = useStrapiAuth();
 const user = useStrapiUser() as Ref<User | null>;
 
 const sending = ref(false);
@@ -103,6 +104,7 @@ const handleSubmit = async (values: any) => {
       email: values.email,
       username: values.username,
     } as unknown as Parameters<typeof strapi.update>[2]);
+    await fetchUser();
     Swal.fire("Éxito", "Perfil actualizado con éxito.", "success");
   } catch {
     Swal.fire("Error", "Hubo un error al guardar el perfil.", "error");
