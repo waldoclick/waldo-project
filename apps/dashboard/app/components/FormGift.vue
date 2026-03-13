@@ -14,40 +14,16 @@
         <ErrorMessage name="quantity" />
       </div>
 
-      <div class="form__group">
-        <label class="form__label" for="gift-search">Buscar usuario</label>
-        <input
-          id="gift-search"
-          v-model="userSearch"
-          type="text"
-          class="form__control"
-          placeholder="Nombre..."
-          autocomplete="off"
-        />
-      </div>
-
-      <div class="form__group">
-        <label class="form__label" for="gift-user">Usuario</label>
-        <Field
-          id="gift-user"
+      <div class="form__group form__group--upload">
+        <label class="form__label">Usuario</label>
+        <Field v-model="form.userId" name="userId" type="hidden" />
+        <InputAutocomplete
           v-model="form.userId"
-          name="userId"
-          as="select"
-          class="form__control"
-        >
-          <option value="">
-            {{
-              usersLoading
-                ? "Cargando usuarios..."
-                : filteredUsers.length === 0
-                  ? "Sin resultados"
-                  : "Selecciona un usuario"
-            }}
-          </option>
-          <option v-for="u in filteredUsers" :key="u.id" :value="String(u.id)">
-            {{ u.firstName }} {{ u.lastName }}
-          </option>
-        </Field>
+          :options="userOptions"
+          :placeholder="
+            usersLoading ? 'Cargando usuarios...' : 'Buscar usuario...'
+          "
+        />
         <ErrorMessage name="userId" />
       </div>
 
@@ -90,7 +66,6 @@ const client = useStrapiClient();
 
 const users = ref<IAuthUser[]>([]);
 const usersLoading = ref(false);
-const userSearch = ref("");
 const sending = ref(false);
 
 const form = ref({
@@ -107,13 +82,12 @@ const schema = yup.object({
   userId: yup.string().required("Selecciona un usuario"),
 });
 
-const filteredUsers = computed(() => {
-  const q = userSearch.value.trim().toLowerCase();
-  if (!q) return users.value;
-  return users.value.filter((u) =>
-    `${u.firstName} ${u.lastName}`.toLowerCase().includes(q),
-  );
-});
+const userOptions = computed(() =>
+  users.value.map((u) => ({
+    label: `${u.firstName} ${u.lastName}`,
+    value: String(u.id),
+  })),
+);
 
 async function loadUsers() {
   usersLoading.value = true;
@@ -163,7 +137,6 @@ watch(
   (open) => {
     if (open) {
       form.value = { quantity: "1", userId: "" };
-      userSearch.value = "";
       loadUsers();
     }
   },
