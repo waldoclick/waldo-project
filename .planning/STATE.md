@@ -61,3 +61,4 @@ None.
 | 22 | truncate long breadcrumb labels with ellipsis in website and dashboard | 2026-03-13 | b4f8dff | [22-truncate-long-breadcrumb-labels-with-ell](./quick/22-truncate-long-breadcrumb-labels-with-ell/) |
 | 23 | fix article body paragraph spacing in website and dashboard preview | 2026-03-13 | f8d8eee | [23-fix-article-body-paragraph-spacing-in-we](./quick/23-fix-article-body-paragraph-spacing-in-we/) |
 | 24 | add image upload component to article form (cover + gallery) | 2026-03-12 | — | [24-add-image-upload-component-to-article-fo](./quick/24-add-image-upload-component-to-article-fo/) |
+| 25 | make article body textarea auto-resize | 2026-03-13 | 5936945 | [25-make-article-body-textarea-auto-resize-i](./quick/25-make-article-body-textarea-auto-resize-i/) |
