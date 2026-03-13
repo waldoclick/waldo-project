@@ -33,7 +33,7 @@ See: .planning/PROJECT.md (updated 2026-03-13 after v1.36 milestone started)
 Progress: [██████████] 97%
 ```
 
-Last activity: 2026-03-13 — Executed 078-01 (dashboard login pendingToken handoff)
+Last activity: 2026-03-13 — Completed quick task 30: Fix Strapi Handler not found auth.verifyCode startup error
 
 ## Accumulated Context
 
@@ -70,3 +70,4 @@ None.
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 29 | Create InputAutocomplete.vue component with integrated search for FormGift | 2026-03-13 | a079dc0 | [29-create-inputautocomplete-vue-component-w](.planning/quick/29-create-inputautocomplete-vue-component-w/) |
+| 30 | Fix Strapi Handler not found auth.verifyCode startup error | 2026-03-13 | afb78d6 | [30-fix-strapi-handler-not-found-auth-verify](.planning/quick/30-fix-strapi-handler-not-found-auth-verify/) |
