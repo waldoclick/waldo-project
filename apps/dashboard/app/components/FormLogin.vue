@@ -55,24 +55,17 @@
   </Form>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue";
 import { Field, Form, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 const { Swal } = useSweetAlert2();
 import { useRouter } from "vue-router";
-import { useAppStore } from "@/stores/app.store";
 import { useNuxtApp } from "#app";
-import { useLogger } from "@/composables/useLogger";
 
 const sending = ref(false);
-const { login } = useStrapiAuth();
 const router = useRouter();
-const appStore = useAppStore();
 const { $recaptcha } = useNuxtApp();
-const { logInfo } = useLogger();
-const config = useRuntimeConfig();
-const strapi = useStrapi();
 
 const schema = yup.object({
   email: yup
@@ -93,55 +86,33 @@ const handleShowPassword = () => {
   passwordType.value = passwordType.value === "password" ? "text" : "password";
 };
 
-const handleSubmit = async (values) => {
+const handleSubmit = async (values: Record<string, unknown>) => {
   sending.value = true;
 
   try {
     // Execute reCAPTCHA v3
     const token = await $recaptcha.execute("submit");
 
-    // Agregar el token al objeto de login
-    await login({
-      identifier: values.email,
-      password: values.password,
-      recaptchaToken: token,
-    });
-
-    // Obtener el usuario usando /users/me que ahora incluye role y commune
-    const user = await strapi.find("users/me", {
-      populate: {
-        role: true,
-        commune: {
-          populate: "region",
-        },
+    // Call POST /api/auth/local directly — backend now returns { pendingToken, email }
+    // (useStrapiAuth().login() is NOT used because it expects a JWT, not a pendingToken)
+    const client = useStrapiClient();
+    const response = await client("/auth/local", {
+      method: "POST",
+      body: {
+        identifier: values.email as string,
+        password: values.password as string,
+        recaptchaToken: token,
       },
     });
 
-    // Verificar que el usuario tenga el role "manager" por type
-    if (!user || user.role?.type !== "manager") {
-      // Si no es manager, cerrar sesión y mostrar error
-      const { logout } = useStrapiAuth();
-      await logout();
-
-      Swal.fire(
-        "Acceso denegado",
-        "Solo los usuarios con rol de manager pueden acceder al dashboard.",
-        "error",
-      );
-      return;
-    }
-
-    // Log successful login
-    logInfo(`User '${values.email}' logged in successfully.`);
-
-    // Limpiar el referer si existe
-    appStore.clearReferer();
-
-    // Redirigir siempre al home después del login
-    router.push("/");
+    // Store pendingToken in transient SSR-safe state, then navigate to verify page
+    const pendingToken = useState<string>("pendingToken", () => "");
+    pendingToken.value = (response as { pendingToken: string }).pendingToken;
+    router.push("/auth/verify-code");
   } catch (error) {
     let swalMessage = "Hubo un error. Por favor, inténtalo de nuevo.";
-    const errorMessage = error.error?.message;
+    const errorMessage = (error as { error?: { message?: string } }).error
+      ?.message;
 
     if (errorMessage === "Your account email is not confirmed") {
       swalMessage =
