@@ -18,7 +18,7 @@
 
 ### v1.35 Gift Reservations to Users
 
-- [ ] **Phase 075: Strapi Gift Endpoints** — Users endpoint + ad-reservation gift endpoint + featured-reservation gift endpoint + email notification
+- [x] **Phase 075: Strapi Gift Endpoints** — Users endpoint + ad-reservation gift endpoint + featured-reservation gift endpoint + email notification (completed 2026-03-13)
 - [ ] **Phase 076: Dashboard Gift Lightbox** — Gift lightbox component + wiring into ad-reservation and featured-reservation detail pages
 
 ## Phase Details
@@ -137,5 +137,5 @@ Plans:
 | 072   | v1.33     | 1/1            | Complete | 2026-03-13 |
 | 073   | v1.34     | 2/2            | Complete | 2026-03-13 |
 | 074   | v1.34     | 2/2            | Complete | 2026-03-13 |
-| 075   | v1.35     | 0/TBD          | Not started | —       |
+| 075   | 2/2 | Complete   | 2026-03-13 | —       |
 | 076   | v1.35     | 0/TBD          | Not started | —       |

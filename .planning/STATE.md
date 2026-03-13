@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.35
 milestone_name: Gift Reservations to Users
-current_phase: 075
-status: roadmap_ready
-last_updated: "2026-03-13T00:00:00Z"
-last_activity: "2026-03-13 — Roadmap created (2 phases: 075–076)"
+current_phase: 075 — Strapi Gift Endpoints
+status: planning
+last_updated: "2026-03-13T19:53:03Z"
+last_activity: "2026-03-13 — Completed 075-02-PLAN.md (Gift Endpoints)"
 progress:
   total_phases: 2
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  completed_phases: 1
+  total_plans: 2
+  completed_plans: 2
 ---
 
 # Session State
@@ -25,16 +25,16 @@ See: .planning/PROJECT.md (updated 2026-03-13 after v1.35 milestone started)
 ## Position
 
 **Milestone:** v1.35 — Gift Reservations to Users
-**Current Phase:** 075 — Strapi Gift Endpoints
-**Status:** Roadmap ready — awaiting phase planning
+**Current Phase:** 075 — Strapi Gift Endpoints (Complete) → 076 — Dashboard Gift Lightbox
+**Status:** Phase 075 complete — ready for Phase 076
 
 ```
-Phase 075 ░░░░░░░░░░  0%   Strapi Gift Endpoints
-Phase 076 ░░░░░░░░░░  0%   Dashboard Gift Lightbox
-Overall   ░░░░░░░░░░  0%   (0/2 phases)
+Phase 075 [██████████] 100%  Strapi Gift Endpoints (2/2 plans)
+Phase 076 ░░░░░░░░░░  0%    Dashboard Gift Lightbox
+Overall   [█████░░░░░] 50%   (1/2 phases)
 ```
 
-Last activity: 2026-03-13 — Roadmap created (2 phases: 075–076)
+Last activity: 2026-03-13 — Completed 075-02-PLAN.md (Gift Endpoints)
 
 ## Accumulated Context
 
@@ -47,6 +47,17 @@ Last activity: 2026-03-13 — Roadmap created (2 phases: 075–076)
 - `strapi.db.query` for server-side role filtering (not forgeable by clients)
 - LightboxArticles.vue: most recent lightbox implementation — reference for structure
 - AGENTS.md BEM convention: block + modifier namespace for all SCSS
+
+### Phase 075 Decisions (075-01)
+
+- No pagination on getAuthenticatedUsers — gift lightbox needs full user list for select
+- select: ['id', 'firstName', 'lastName'] enforced in strapi.db.query — no sensitive fields can leak
+- Custom plugin route pattern: plugin.controllers.user.[action] + plugin.routes['content-api'].routes.push
+
+### Phase 075 Decisions (075-02)
+
+- Replaced factory default controllers with custom gift() objects — only the gift action is needed on these routes
+- Email delivery wrapped in inner try/catch; gift creation still succeeds even on email failure
 
 ### Blockers/Concerns
 

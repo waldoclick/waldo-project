@@ -17,13 +17,13 @@ Requirements for milestone v1.35. Each maps to roadmap phases.
 
 ### Gift Backend (Strapi)
 
-- [ ] **GIFT-06**: `POST /api/ad-reservations/gift` endpoint creates N ad-reservation records assigned to the selected user
-- [ ] **GIFT-07**: `POST /api/ad-featured-reservations/gift` endpoint creates N featured-reservation records assigned to the selected user
+- [x] **GIFT-06**: `POST /api/ad-reservations/gift` endpoint creates N ad-reservation records assigned to the selected user
+- [x] **GIFT-07**: `POST /api/ad-featured-reservations/gift` endpoint creates N featured-reservation records assigned to the selected user
 - [ ] **GIFT-08**: `GET /api/users/authenticated` endpoint returns all users with the Authenticated role (id, firstName, lastName) — server-side filtered via `strapi.db.query`
 
 ### Gift Email (Strapi)
 
-- [ ] **GIFT-09**: After successful gift creation, an email is sent to the recipient informing them they received gifted ad reservations or featured ad reservations
+- [x] **GIFT-09**: After successful gift creation, an email is sent to the recipient informing them they received gifted ad reservations or featured ad reservations
 
 ## Future Requirements
 
@@ -47,10 +47,10 @@ Requirements for milestone v1.35. Each maps to roadmap phases.
 | GIFT-03 | Phase 076 | Pending |
 | GIFT-04 | Phase 076 | Pending |
 | GIFT-05 | Phase 076 | Pending |
-| GIFT-06 | Phase 075 | Pending |
-| GIFT-07 | Phase 075 | Pending |
+| GIFT-06 | Phase 075 | Complete |
+| GIFT-07 | Phase 075 | Complete |
 | GIFT-08 | Phase 075 | Pending |
-| GIFT-09 | Phase 075 | Pending |
+| GIFT-09 | Phase 075 | Complete |
 
 **Coverage:**
 - v1.35 requirements: 9 total
