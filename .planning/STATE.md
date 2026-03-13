@@ -3,11 +3,11 @@ gsd_state_version: 1.0
 milestone: v1.32
 milestone_name: Gemini AI Service
 current_phase: 071
-status: requirements
+status: roadmap
 last_updated: "2026-03-13T00:00:00.000Z"
-last_activity: "2026-03-13 — Milestone v1.32 started — Gemini AI Service"
+last_activity: "2026-03-13 — Roadmap created — 1 phase (071), 5/5 requirements mapped"
 progress:
-  total_phases: 0
+  total_phases: 1
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-03-13 after v1.32 milestone started)
 
 **Milestone:** v1.32 — Gemini AI Service
 **Current Phase:** 071 (not started)
-**Status:** Defining requirements
+**Status:** Roadmap defined — ready for planning
 
-Last activity: 2026-03-13 — Milestone v1.32 started — Gemini AI Service
+Last activity: 2026-03-13 — Roadmap created — 1 phase (071), 5/5 requirements mapped
 
 ## Session Log
 
@@ -41,10 +41,11 @@ Last activity: 2026-03-13 — Milestone v1.32 started — Gemini AI Service
 - 2026-03-13: 070-01 verified by user — milestone v1.31 Article Manager Improvements complete
 - 2026-03-13: Milestone v1.31 archived — Article Manager Improvements shipped
 - 2026-03-13: Milestone v1.32 started — Gemini AI Service
+- 2026-03-13: Roadmap created — 1 phase (071), 5/5 requirements mapped (GEMINI-01 through GEMINI-05 → Phase 071)
 
 ### Key Decisions
 
-(none yet — v1.32 requirements phase)
+- All 5 GEMINI requirements map to single phase 071 — coarse granularity + tight coupling (one service + one endpoint) makes splitting artificial
 
 ### Blockers/Concerns
 
