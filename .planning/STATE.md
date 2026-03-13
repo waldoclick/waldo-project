@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-03-13 after v1.34 milestone started)
 **Current Phase:** 074
 **Status:** Phase 074 complete — all 2 plans done
 
-Last activity: 2026-03-13 — Completed 074-02-PLAN.md (LightBoxArticles wired into articles index page)
+Last activity: 2026-03-13 — Completed quick task 27: fix article creation and listing
 
 ## Session Log
 
@@ -72,3 +72,4 @@ None.
 | 24 | add image upload component to article form (cover + gallery) | 2026-03-12 | — | [24-add-image-upload-component-to-article-fo](./quick/24-add-image-upload-component-to-article-fo/) |
 | 25 | make article body textarea auto-resize | 2026-03-13 | 5936945 | [25-make-article-body-textarea-auto-resize-i](./quick/25-make-article-body-textarea-auto-resize-i/) |
 | 26 | create profile view with edit profile and change password | 2026-03-13 | 7f96a69 | [26-create-profile-view-with-edit-profile-an](./quick/26-create-profile-view-with-edit-profile-an/) |
+| 27 | fix article creation and listing | 2026-03-13 | f506f27 | [27-fix-article-creation-and-listing](./quick/27-fix-article-creation-and-listing/) |
