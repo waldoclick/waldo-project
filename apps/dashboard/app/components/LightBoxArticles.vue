@@ -111,7 +111,7 @@
         </div>
       </template>
 
-      <!-- Step 3: Prompt editable + generate -->
+      <!-- Step 3: Prompt only -->
       <template v-else-if="currentStep === 3">
         <div class="lightbox--articles__header">
           <div class="lightbox--articles__header__title">Generar artículo</div>
@@ -120,25 +120,12 @@
           </div>
         </div>
 
-        <div v-if="selectedItem" class="lightbox--articles__selected">
-          <span class="lightbox--articles__selected__title">{{
-            selectedItem.title
-          }}</span>
-          <a
-            :href="selectedItem.link"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="lightbox--articles__selected__url"
-            >{{ selectedItem.link }}</a
-          >
-        </div>
-
         <div class="lightbox--articles__field">
           <label for="lightbox-articles-prompt">Prompt</label>
           <textarea
             id="lightbox-articles-prompt"
             v-model="geminiPrompt"
-            rows="12"
+            rows="14"
           />
         </div>
 
@@ -156,7 +143,7 @@
             :disabled="loading || !geminiPrompt.trim()"
             @click="handleGenerate"
           >
-            {{ loading ? "Generando…" : "Generar artículo" }}
+            {{ loading ? "Generando…" : "Crear" }}
           </button>
         </div>
       </template>
@@ -169,16 +156,44 @@ import { ref, computed, watch } from "vue";
 import { X as IconX } from "lucide-vue-next";
 import { useSearchStore, type ITavilyResult } from "@/stores/search.store";
 
-const DEFAULT_GEMINI_PROMPT = `You are an expert copywriter specializing in industrial machinery in Chile. Based on the following news article, generate a professional article in Spanish with this exact JSON format:
+const DEFAULT_GEMINI_PROMPT = `You are an industrial news editor writing for a blog about industrial assets and productive sectors.
+
+You will receive the title, content, source URL, and publication date of a real news article.
+
+Your task is to rewrite the news as an original article suitable for a professional audience interested in industrial sectors.
+
+Requirements:
+
+1. The article MUST be written in Spanish.
+
+2. Rewrite the information completely in your own words.
+   Do NOT copy sentences from the original text.
+
+3. Preserve the main facts and meaning of the news but improve clarity and readability.
+
+4. Structure the article as:
+
+* title
+* header (2–3 sentence introduction)
+* body (4–6 paragraphs)
+
+5. The body MUST be written using **Markdown only**.
+
+* Use paragraphs separated by line breaks.
+* Highlight important keywords using **bold**.
+* DO NOT use HTML tags.
+
+6. The response MUST be **valid JSON only**. Do not include explanations, markdown wrappers, or additional text.
+
+JSON format:
+
 {
-  "title": "article title (max 80 chars)",
-  "header": "executive summary in 2-3 sentences",
-  "body": "full body in Markdown (minimum 300 words)",
-  "keywords": ["keyword1", "keyword2", "keyword3"],
-  "source_url": "source URL",
-  "source_date": "source date"
-}
-Do not include anything outside the JSON.`;
+"title": "string",
+"header": "string",
+"body": "string",
+"seo_title": "string",
+"seo_description": "string"
+}`;
 
 const props = withDefaults(
   defineProps<{
@@ -243,11 +258,7 @@ function toggleRow(index: number) {
 }
 
 function goToPrompt() {
-  const item = selectedItem.value;
-  if (!item) return;
-  // Append article context to the base prompt
-  const context = `\n\nSource: ${item.link}\nDate: ${item.date}\nTitle: ${item.title}`;
-  geminiPrompt.value = DEFAULT_GEMINI_PROMPT + context;
+  geminiPrompt.value = DEFAULT_GEMINI_PROMPT;
   currentStep.value = 3;
 }
 
@@ -307,22 +318,44 @@ async function handleGenerate() {
   if (!item || !geminiPrompt.value.trim() || loading.value) return;
   loading.value = true;
   try {
-    // Ask Gemini to rewrite the article using the prompt (which includes the source URL/title)
-    const result = await client<{ text: string }>("/ia/gemini", {
+    // 1. Use Tavily's content (already fetched server-side during search) — no browser fetch needed
+    const bodyText = item.snippet?.trim() ?? "";
+
+    if (!bodyText) {
+      await Swal.fire({
+        title: "Sin contenido",
+        text: "Tavily no devolvió contenido para este artículo. Intenta con otra noticia.",
+        icon: "error",
+      });
+      return;
+    }
+
+    // 2. Build the final prompt by appending article context after the instructions
+    const fullPrompt =
+      geminiPrompt.value.trim() +
+      "\n\n---\n\n" +
+      `Title: ${item.title}\n` +
+      `Source URL: ${item.link}\n` +
+      `Date: ${item.date ?? ""}\n` +
+      `Content:\n${bodyText}`;
+
+    // 3. Send to Groq
+    const result = await client<{ text: string }>("/ia/groq", {
       method: "POST",
-      body: { prompt: geminiPrompt.value },
+      body: { prompt: fullPrompt },
     });
 
-    const parsed = JSON.parse(result.text) as {
+    // 4. Parse the JSON response — Groq is set to json_object mode so no markdown fences
+    const rawText = result.text.trim();
+    const parsed = JSON.parse(rawText) as {
       title: string;
       header: string;
       body: string;
-      keywords: string[];
-      source_url: string;
-      source_date: string;
+      seo_title: string;
+      seo_description: string;
     };
 
-    // Create the article draft in Strapi with all generated fields
+    // 5. Create the article draft in Strapi — source_url always from Tavily, never from AI
     await client("/articles?status=draft", {
       method: "POST",
       body: {
@@ -330,9 +363,9 @@ async function handleGenerate() {
           title: parsed.title,
           header: parsed.header,
           body: parsed.body,
-          seo_title: parsed.title,
-          seo_description: parsed.header,
-          source_url: parsed.source_url || item.link,
+          seo_title: parsed.seo_title,
+          seo_description: parsed.seo_description,
+          source_url: item.link,
         },
       },
     });
@@ -341,6 +374,11 @@ async function handleGenerate() {
     handleClose();
   } catch (e) {
     console.error("[LightBoxArticles] Generate error:", e);
+    await Swal.fire(
+      "Error",
+      "No se pudo generar el artículo. Intenta nuevamente.",
+      "error",
+    );
   } finally {
     loading.value = false;
   }
