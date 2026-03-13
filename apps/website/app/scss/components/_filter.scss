@@ -3,7 +3,8 @@
 @use "../base/container";
 
 .filter {
-  &--announcement {
+  &--announcement,
+  &--articles {
     padding-bottom: 0;
 
     &__container {
@@ -63,61 +64,6 @@
         background-position: center right;
         border: none;
       }
-    }
-  }
-
-  &--articles {
-    padding-bottom: 0;
-
-    &__container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 14px;
-      @extend .container;
-    }
-
-    &__selectors {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-    }
-
-    &__selector {
-      display: flex;
-      flex-direction: column;
-      margin-right: 20px;
-
-      label {
-        font-size: 13px;
-        display: block;
-        margin-bottom: 1px;
-      }
-    }
-
-    &__order {
-      display: flex;
-      align-items: center;
-
-      label {
-        font-size: 13px;
-        display: block;
-        margin-right: 10px;
-      }
-    }
-
-    &__select {
-      appearance: none;
-      padding: 10px;
-      border: 1px solid $platinum;
-      border-radius: 4px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      padding-right: 40px;
-      background-image: url("/images/chevron-down.svg");
-      background-position: center right 15px;
-      background-repeat: no-repeat;
     }
   }
 }

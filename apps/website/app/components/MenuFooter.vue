@@ -1,6 +1,11 @@
 <template>
   <ul class="menu menu--footer">
     <li>
+      <NuxtLink to="/blog">
+        <span>Blog</span>
+      </NuxtLink>
+    </li>
+    <li>
       <NuxtLink to="/preguntas-frecuentes">
         <span>Preguntas Frecuentes</span>
       </NuxtLink>
