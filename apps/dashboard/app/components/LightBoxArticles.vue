@@ -11,7 +11,7 @@
         <IconX :size="24" />
       </button>
 
-      <!-- Step 1: Search -->
+      <!-- Step 1: Search form -->
       <template v-if="currentStep === 1">
         <div class="lightbox--articles__title">Buscar noticias</div>
         <div class="lightbox--articles__field">
@@ -28,6 +28,11 @@
             Buscar
           </button>
         </div>
+      </template>
+
+      <!-- Step 2: Search results -->
+      <template v-else-if="currentStep === 2">
+        <div class="lightbox--articles__title">Seleccionar noticia</div>
         <div
           v-if="searchResults.length > 0"
           class="lightbox--articles__results"
@@ -47,16 +52,22 @@
             >
           </button>
         </div>
-        <div
-          v-else-if="hasSearched && searchResults.length === 0"
-          class="lightbox--articles__empty"
-        >
+        <div v-else class="lightbox--articles__empty">
           No se encontraron resultados para esta búsqueda.
+        </div>
+        <div class="lightbox--articles__actions">
+          <button
+            class="btn btn--secondary"
+            type="button"
+            @click="currentStep = 1"
+          >
+            ← Volver
+          </button>
         </div>
       </template>
 
-      <!-- Step 2: Generate -->
-      <template v-else-if="currentStep === 2">
+      <!-- Step 3: Prompt + Generate -->
+      <template v-else-if="currentStep === 3">
         <div class="lightbox--articles__title">Generar artículo</div>
         <div v-if="selectedArticle" class="lightbox--articles__article">
           <span class="lightbox--articles__article__title">{{
@@ -74,18 +85,18 @@
           }}</span>
         </div>
         <div class="lightbox--articles__field">
-          <label for="lightbox-articles-prompt">Prompt para Gemini</label>
+          <label for="lightbox-articles-prompt">Prompt</label>
           <textarea
             id="lightbox-articles-prompt"
             v-model="geminiPrompt"
-            rows="8"
+            rows="10"
           />
         </div>
         <div class="lightbox--articles__actions">
           <button
             class="btn btn--secondary"
             type="button"
-            @click="currentStep = 1"
+            @click="currentStep = 2"
           >
             ← Volver
           </button>
@@ -100,8 +111,8 @@
         </div>
       </template>
 
-      <!-- Step 3: Result -->
-      <template v-else-if="currentStep === 3">
+      <!-- Step 4: Result -->
+      <template v-else-if="currentStep === 4">
         <div class="lightbox--articles__title">Resultado</div>
         <div v-if="generatedArticle" class="lightbox--articles__generated">
           <h3 class="lightbox--articles__generated__heading">
@@ -133,7 +144,7 @@
           <button
             class="btn btn--secondary"
             type="button"
-            @click="currentStep = 2"
+            @click="currentStep = 3"
           >
             ← Volver
           </button>
@@ -164,16 +175,16 @@ interface IGeneratedArticle {
   source_date: string;
 }
 
-const DEFAULT_GEMINI_PROMPT = `Eres un redactor experto en maquinaria industrial para Chile. A partir de la siguiente noticia, genera un artículo profesional en español con este formato JSON exacto:
+const DEFAULT_GEMINI_PROMPT = `You are an expert copywriter specializing in industrial machinery in Chile. Based on the following news article, generate a professional article in Spanish with this exact JSON format:
 {
-  "title": "título del artículo (max 80 chars)",
-  "header": "resumen ejecutivo en 2-3 oraciones",
-  "body": "cuerpo completo en Markdown (mínimo 300 palabras)",
-  "keywords": ["palabra1", "palabra2", "palabra3"],
-  "source_url": "URL de la fuente",
-  "source_date": "fecha de la fuente"
+  "title": "article title (max 80 chars)",
+  "header": "executive summary in 2-3 sentences",
+  "body": "full body in Markdown (minimum 300 words)",
+  "keywords": ["keyword1", "keyword2", "keyword3"],
+  "source_url": "source URL",
+  "source_date": "source date"
 }
-No incluyas nada fuera del JSON.`;
+Do not include anything outside the JSON.`;
 
 const props = withDefaults(
   defineProps<{
@@ -187,7 +198,7 @@ const emit = defineEmits<{
 }>();
 
 const client = useStrapiClient();
-const currentStep = ref<1 | 2 | 3>(1);
+const currentStep = ref<1 | 2 | 3 | 4>(1);
 const query = ref("maquinaria industrial Chile noticias");
 const searchResults = ref<ITavilyNewsResult[]>([]);
 const selectedArticle = ref<{
@@ -199,25 +210,26 @@ const selectedArticle = ref<{
 const geminiPrompt = ref(DEFAULT_GEMINI_PROMPT);
 const generatedArticle = ref<IGeneratedArticle | null>(null);
 const loading = ref(false);
-const hasSearched = ref(false);
 
-// When lightbox opens, reset step and results (but keep query and prompt)
+// Lock body scroll when open, restore on close
 watch(
   () => props.isOpen,
   (isOpen) => {
     if (isOpen) {
+      document.body.style.overflow = "hidden";
       currentStep.value = 1;
       searchResults.value = [];
       generatedArticle.value = null;
-      hasSearched.value = false;
+    } else {
+      document.body.style.overflow = "";
     }
   },
 );
 
-// When advancing to step 2, append article context to the prompt
+// When advancing to step 3, append article context to the prompt
 watch(currentStep, (step) => {
-  if (step === 2 && selectedArticle.value) {
-    const articleContext = `\n\nFuente: ${selectedArticle.value.url}\nFecha: ${selectedArticle.value.date}\nTítulo: ${selectedArticle.value.title}`;
+  if (step === 3 && selectedArticle.value) {
+    const articleContext = `\n\nSource: ${selectedArticle.value.url}\nDate: ${selectedArticle.value.date}\nTitle: ${selectedArticle.value.title}`;
     geminiPrompt.value = DEFAULT_GEMINI_PROMPT + articleContext;
   }
 });
@@ -244,11 +256,11 @@ async function handleSearch() {
       },
     );
     searchResults.value = result.news || [];
-    hasSearched.value = true;
+    currentStep.value = 2;
   } catch (e) {
     console.error("[LightBoxArticles] Tavily error:", e);
     searchResults.value = [];
-    hasSearched.value = true;
+    currentStep.value = 2;
   } finally {
     loading.value = false;
   }
@@ -262,7 +274,7 @@ function handleSelectArticle(item: ITavilyNewsResult) {
     date: item.date,
     html: "",
   };
-  currentStep.value = 2;
+  currentStep.value = 3;
 }
 
 async function handleGenerate() {
@@ -275,7 +287,7 @@ async function handleGenerate() {
     });
     const parsed = JSON.parse(result.text) as IGeneratedArticle;
     generatedArticle.value = parsed;
-    currentStep.value = 3;
+    currentStep.value = 4;
   } catch (e) {
     console.error("[LightBoxArticles] Gemini error:", e);
   } finally {
@@ -284,6 +296,7 @@ async function handleGenerate() {
 }
 
 function handleClose() {
+  document.body.style.overflow = "";
   emit("close");
 }
 </script>
