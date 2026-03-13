@@ -643,8 +643,12 @@
       &__url {
         font-size: 11px;
         color: $dodger_blue;
-        text-decoration: underline;
-        word-break: break-all;
+        text-decoration: none;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+        display: block;
         line-height: 1.3;
       }
 
