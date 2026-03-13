@@ -14,7 +14,7 @@
 - [ ] **LB-01**: `LightBoxArticles.vue` existe con estructura BEM `lightbox lightbox--articles`, siguiendo el mismo patrón HTML que `LightboxRazon.vue`
 - [ ] **LB-02**: El lightbox tiene 3 pasos con navegación adelante/atrás; el estado persiste mientras el lightbox está abierto
 - [ ] **LB-03**: Step 1 muestra un textarea con query predefinida y un botón "Buscar"; al presionar llama a `POST /api/search/tavily` y muestra los resultados (title, url, date)
-- [ ] **LB-04**: El usuario puede seleccionar una noticia del Step 1; al seleccionar se hace fetch del HTML completo de la URL y avanza al Step 2
+- [ ] **LB-04**: El usuario puede seleccionar una noticia del Step 1; al seleccionar se captura el título, URL y fecha de la noticia y avanza al Step 2 (el fetch del HTML completo queda diferido a una fase futura cuando exista el endpoint proxy)
 - [ ] **LB-05**: Step 2 muestra la info de la noticia seleccionada (title, url, date) y un textarea con el prompt predefinido de generación de artículo
 - [ ] **LB-06**: Step 2 tiene un botón "Generar artículo"; al presionar llama a `POST /api/ia/gemini` con prompt + HTML + url + date y avanza al Step 3
 - [ ] **LB-07**: Step 3 muestra el resultado JSON retornado por Gemini: title, header, body (Markdown renderizado), keywords, source_url, source_date
