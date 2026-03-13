@@ -33,7 +33,7 @@ See: .planning/PROJECT.md (updated 2026-03-13 after v1.36 milestone started)
 Progress: [██████████] 97%
 ```
 
-Last activity: 2026-03-13 — Completed quick task 30: Fix Strapi Handler not found auth.verifyCode startup error
+Last activity: 2026-03-13 — Completed quick task 31: Add /auth/verify-code to guard.global.ts publicRoutes
 
 ## Accumulated Context
 
@@ -71,3 +71,4 @@ None.
 |---|-------------|------|--------|-----------|
 | 29 | Create InputAutocomplete.vue component with integrated search for FormGift | 2026-03-13 | a079dc0 | [29-create-inputautocomplete-vue-component-w](.planning/quick/29-create-inputautocomplete-vue-component-w/) |
 | 30 | Fix Strapi Handler not found auth.verifyCode startup error | 2026-03-13 | afb78d6 | [30-fix-strapi-handler-not-found-auth-verify](.planning/quick/30-fix-strapi-handler-not-found-auth-verify/) |
+| 31 | Add /auth/verify-code to guard.global.ts publicRoutes | 2026-03-13 | ebf9324 | [31-add-auth-verify-code-to-public-routes](.planning/quick/31-add-auth-verify-code-to-public-routes/) |
