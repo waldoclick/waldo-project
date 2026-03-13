@@ -20,9 +20,9 @@
         <InputAutocomplete
           v-model="form.userId"
           :options="userOptions"
-          :placeholder="
-            usersLoading ? 'Cargando usuarios...' : 'Buscar usuario...'
-          "
+          :loading="usersLoading"
+          placeholder="Buscar por nombre..."
+          @search="searchUsers"
         />
         <ErrorMessage name="userId" />
       </div>
@@ -62,11 +62,12 @@ const emit = defineEmits<{
 }>();
 
 const { Swal } = useSweetAlert2();
-const client = useStrapiClient();
+const strapi = useStrapi();
 
 const users = ref<IAuthUser[]>([]);
 const usersLoading = ref(false);
 const sending = ref(false);
+const searchQuery = ref("");
 
 const form = ref({
   quantity: "1",
@@ -89,13 +90,34 @@ const userOptions = computed(() =>
   })),
 );
 
-async function loadUsers() {
+async function searchUsers(q: string) {
+  if (!q || q.trim().length < 2) {
+    users.value = [];
+    return;
+  }
   usersLoading.value = true;
   try {
-    const result = await client<{ data: IAuthUser[] }>("/users/authenticated");
-    users.value = result.data ?? [];
+    const params: Record<string, unknown> = {
+      filters: {
+        $and: [
+          { role: { type: { $eq: "authenticated" } } },
+          {
+            $or: [
+              { firstName: { $containsi: q } },
+              { lastName: { $containsi: q } },
+            ],
+          },
+        ],
+      },
+      fields: ["id", "firstName", "lastName"],
+      pagination: { pageSize: 20 },
+    };
+    const response = await strapi.find("users", params);
+    users.value = (
+      Array.isArray(response) ? response : ((response as any).data ?? [])
+    ) as IAuthUser[];
   } catch (e) {
-    console.error("[FormGift] loadUsers error:", e);
+    console.error("[FormGift] searchUsers error:", e);
     users.value = [];
   } finally {
     usersLoading.value = false;
@@ -118,8 +140,9 @@ async function handleSubmit() {
   if (!isConfirmed) return;
 
   sending.value = true;
+  const strapiClient = useStrapiClient();
   try {
-    await client(`/${props.endpoint}/gift`, {
+    await strapiClient(`/${props.endpoint}/gift`, {
       method: "POST",
       body: { userId, quantity },
     });
@@ -137,7 +160,8 @@ watch(
   (open) => {
     if (open) {
       form.value = { quantity: "1", userId: "" };
-      loadUsers();
+      users.value = [];
+      searchQuery.value = "";
     }
   },
   { immediate: true },
