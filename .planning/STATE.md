@@ -1,49 +1,41 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.30
-milestone_name: Blog Public Views
-status: completed
+milestone: v1.31
+milestone_name: Article Manager Improvements
+status: in_progress
 last_updated: "2026-03-13"
 progress:
-  total_phases: 4
-  completed_phases: 4
-  total_plans: 8
-  completed_plans: 8
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Session State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-13 after v1.30 milestone)
+See: .planning/PROJECT.md (updated 2026-03-13 after v1.31 milestone started)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Planning next milestone
+**Current focus:** v1.31 — Article Manager Improvements
 
 ## Position
 
-**Milestone:** v1.30 — Blog Public Views — ✅ COMPLETE AND ARCHIVED
-**Status:** Archived to .planning/milestones/v1.30-ROADMAP.md
+**Milestone:** v1.31 — Article Manager Improvements
+**Status:** Defining requirements
+
+Last activity: 2026-03-13 — Milestone v1.31 started
 
 ## Session Log
 
-- 2026-03-12: Milestone v1.29 complete — News Manager shipped
-- 2026-03-12: Milestone v1.30 started — Blog Public Views
-- 2026-03-12: Roadmap created — 4 phases (065–068), 26/26 requirements mapped
-- 2026-03-13: Phase 065-01 complete — Article slug field + lifecycle hooks + 6 Jest tests
-- 2026-03-13: Phase 066-01 complete — Article TypeScript interface (article.d.ts) with 13 fields, zero typecheck errors
-- 2026-03-13: Phase 066-02 complete — SCSS scaffolding: _article.scss + 4 files extended, 7 BEM blocks ready for Phase 067
-- 2026-03-13: Phase 067-01 complete — CardArticle.vue + RelatedArticles.vue leaf display components, zero TypeScript errors
-- 2026-03-13: Phase 067-02 complete — articles.store.ts (useArticlesStore, pageSize 12, no persist) + HeroArticles.vue (static blog hero, BreadcrumbsDefault, h1 "Blog")
-- 2026-03-13: Phase 067-03 complete — FilterArticles.vue + ArticleArchive.vue + blog/index.vue (full listing page with useAsyncData, SEO @type:Blog, empty state)
-- 2026-03-13: Phase 068-01 complete — HeroArticle.vue + ArticleSingle.vue leaf display components, zero TypeScript errors
-- 2026-03-13: Phase 068-02 complete — blog/[slug].vue full article detail page (useAsyncData, 404, BlogPosting SEO, RelatedArticles)
 - 2026-03-13: Milestone v1.30 archived — Blog Public Views shipped
+- 2026-03-13: Milestone v1.31 started — Article Manager Improvements
 
 ### Key Decisions
 
-(Cleared — milestone archived. See .planning/milestones/v1.30-ROADMAP.md for full decisions log.)
+(None yet)
 
 ### Blockers/Concerns
 
