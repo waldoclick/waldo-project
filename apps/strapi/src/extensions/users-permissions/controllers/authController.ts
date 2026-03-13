@@ -1,4 +1,6 @@
 // /src/extensions/users-permissions/controllers/authController.ts
+import crypto from "crypto";
+import { sendMjmlEmail } from "../../../services/mjml";
 
 /**
  * Creates user reservations and featured reservations after user registration.
@@ -152,4 +154,203 @@ export const registerUserAuth = (callbackController) => async (ctx) => {
 
   // Return the original response
   return ctx.response;
+};
+
+// ─── 2-Step Login controllers ───────────────────────────────────────────────
+
+const CODE_EXPIRY_MS = 5 * 60 * 1000; // 5 minutes
+const MAX_ATTEMPTS = 3;
+const RESEND_COOLDOWN_MS = 60 * 1000; // 60 seconds
+const VC_UID = "api::verification-code.verification-code";
+
+/** Generates a 6-digit numeric code as a string */
+const generateCode = (): string =>
+  Math.floor(100000 + Math.random() * 900000).toString();
+
+/**
+ * Wraps the original auth.local (callback) controller with 2-step verification.
+ * Valid credentials → returns { pendingToken, email } instead of JWT.
+ * Invalid credentials → passes through the original error unchanged.
+ */
+export const overrideAuthLocal = (originalController) => async (ctx) => {
+  // Call the original controller first
+  await originalController(ctx);
+
+  // If the response has no jwt, credentials were invalid — pass through unchanged
+  const jwt = ctx.response.body?.jwt;
+  if (!jwt) return;
+
+  // Credentials valid — intercept the response
+  const userId: number = ctx.response.body.user.id;
+  const email: string = ctx.response.body.user.email;
+  const name: string =
+    ctx.response.body.user.firstname ||
+    ctx.response.body.user.username ||
+    email;
+
+  const code = generateCode();
+  const pendingToken = crypto.randomUUID();
+  const expiresAt = new Date(Date.now() + CODE_EXPIRY_MS).toISOString();
+
+  // Delete any existing pending record for this user before creating a new one
+  const existing = await strapi.db.query(VC_UID).findOne({ where: { userId } });
+  if (existing) {
+    await strapi.db.query(VC_UID).delete({ where: { id: existing.id } });
+  }
+
+  await strapi.db.query(VC_UID).create({
+    data: { userId, code, expiresAt, attempts: 0, pendingToken },
+  });
+
+  // Send email — non-fatal
+  try {
+    await sendMjmlEmail(
+      strapi,
+      "verification-code",
+      email,
+      "Tu código de verificación",
+      { name, code }
+    );
+  } catch (_) {
+    // Non-fatal — user can use resend-code endpoint
+  }
+
+  // Replace response — no JWT exposed
+  ctx.body = { pendingToken, email };
+};
+
+/**
+ * Validates a pending verification code.
+ * Correct code → issues JWT and returns full Strapi login response { jwt, user }.
+ * Wrong code → increments attempts; max 3 failures deletes the record.
+ * Expired code → deletes record and returns 401.
+ */
+export const verifyCode = async (ctx) => {
+  const { pendingToken, code } = ctx.request.body as {
+    pendingToken?: string;
+    code?: string;
+  };
+
+  if (!pendingToken || !code) {
+    return ctx.badRequest("pendingToken and code are required");
+  }
+
+  const record = await strapi.db
+    .query(VC_UID)
+    .findOne({ where: { pendingToken } });
+
+  if (!record) {
+    return ctx.badRequest("Invalid or expired token");
+  }
+
+  // Check expiry
+  if (new Date(record.expiresAt) < new Date()) {
+    await strapi.db.query(VC_UID).delete({ where: { id: record.id } });
+    return ctx.unauthorized("Verification code has expired");
+  }
+
+  // Check wrong code
+  if (record.code !== code) {
+    const newAttempts = record.attempts + 1;
+    if (newAttempts >= MAX_ATTEMPTS) {
+      await strapi.db.query(VC_UID).delete({ where: { id: record.id } });
+      return ctx.unauthorized("Maximum attempts reached — please login again");
+    }
+    await strapi.db.query(VC_UID).update({
+      where: { id: record.id },
+      data: { attempts: newAttempts },
+    });
+    return ctx.unauthorized("Invalid code");
+  }
+
+  // Code is correct — issue JWT via Strapi's jwt service
+  const user = await strapi.db
+    .query("plugin::users-permissions.user")
+    .findOne({ where: { id: record.userId } });
+
+  if (!user) {
+    await strapi.db.query(VC_UID).delete({ where: { id: record.id } });
+    return ctx.internalServerError("User not found");
+  }
+
+  // Clean up the used verification record
+  await strapi.db.query(VC_UID).delete({ where: { id: record.id } });
+
+  // Issue JWT using the same method as the original auth.local controller
+  const jwtToken = strapi.plugins["users-permissions"].services.jwt.issue({
+    id: user.id,
+  });
+
+  // Sanitize user to match Strapi's normal login response shape
+  const sanitizedUser = await strapi.plugins[
+    "users-permissions"
+  ].services.user.sanitizeOutput(user, ctx);
+
+  ctx.body = { jwt: jwtToken, user: sanitizedUser };
+};
+
+/**
+ * Resends a verification code for an existing pending token.
+ * Rate-limited: rejects if called within 60 seconds of last send.
+ * After cooldown: regenerates code + expiresAt, resets attempts, resends email.
+ */
+export const resendCode = async (ctx) => {
+  const { pendingToken } = ctx.request.body as { pendingToken?: string };
+
+  if (!pendingToken) {
+    return ctx.badRequest("pendingToken is required");
+  }
+
+  const record = await strapi.db
+    .query(VC_UID)
+    .findOne({ where: { pendingToken } });
+
+  if (!record) {
+    return ctx.badRequest("Invalid or expired token");
+  }
+
+  // Rate limit: reject if last update was less than 60 seconds ago
+  const lastUpdate = new Date(record.updatedAt).getTime();
+  if (Date.now() - lastUpdate < RESEND_COOLDOWN_MS) {
+    ctx.status = 429;
+    ctx.body = {
+      error: {
+        status: 429,
+        name: "TooManyRequests",
+        message: "Please wait before requesting a new code",
+      },
+    };
+    return;
+  }
+
+  const newCode = generateCode();
+  const newExpiresAt = new Date(Date.now() + CODE_EXPIRY_MS).toISOString();
+
+  await strapi.db.query(VC_UID).update({
+    where: { id: record.id },
+    data: { code: newCode, expiresAt: newExpiresAt, attempts: 0 },
+  });
+
+  // Fetch user for email
+  const user = await strapi.db
+    .query("plugin::users-permissions.user")
+    .findOne({ where: { id: record.userId } });
+
+  const email = user?.email;
+  const name = user?.firstname || user?.username || email;
+
+  // Send email — non-fatal
+  try {
+    await sendMjmlEmail(
+      strapi,
+      "verification-code",
+      email,
+      "Tu código de verificación",
+      { name, code: newCode }
+    );
+  } catch (_) {
+    // Non-fatal
+  }
+
+  ctx.body = { ok: true };
 };
