@@ -36,8 +36,8 @@
 - [x] **BLOG-15**: `FilterArticles` component exists — category dropdown + sort order dropdown; updates `?category=` and `?order=` URL params; client-only rendered (SSR-safe loading state)
 - [x] **BLOG-16**: `ArticleArchive` component exists — responsive 4-column grid of `CardArticle` with `vue-awesome-paginate` pagination updating `?page=` query param
 - [x] **BLOG-17**: `CardArticle` component exists — displays: cover image (NuxtImg, webp/lazy), category badge, title (truncated to 60 chars), header/excerpt (truncated to 120 chars), formatted `publishedAt` date, and "Leer más" NuxtLink to `/blog/[slug]`
-- [ ] **BLOG-18**: `HeroArticle` component exists — renders hero section with white background, breadcrumbs (Inicio → Blog → Article title), and H1 article title
-- [ ] **BLOG-19**: `ArticleSingle` component exists — two-column layout: body column (GalleryDefault + rendered Markdown body via `sanitizeRich`); sidebar column (article categories list + ShareDefault)
+- [x] **BLOG-18**: `HeroArticle` component exists — renders hero section with white background, breadcrumbs (Inicio → Blog → Article title), and H1 article title
+- [x] **BLOG-19**: `ArticleSingle` component exists — two-column layout: body column (GalleryDefault + rendered Markdown body via `sanitizeRich`); sidebar column (article categories list + ShareDefault)
 - [x] **BLOG-20**: `RelatedArticles` component exists — same structure as `RelatedAds` but renders `CardArticle` instead of `CardAnnouncement`; accepts `articles`, `loading`, `error`, `title`, `text`, `centerHead` props
 
 ### SCSS
@@ -91,8 +91,8 @@
 | BLOG-15 | Phase 067 | Complete |
 | BLOG-16 | Phase 067 | Complete |
 | BLOG-17 | Phase 067 | Complete |
-| BLOG-18 | Phase 068 | Pending |
-| BLOG-19 | Phase 068 | Pending |
+| BLOG-18 | Phase 068 | Complete |
+| BLOG-19 | Phase 068 | Complete |
 | BLOG-20 | Phase 067 | Complete |
 | BLOG-21 | Phase 066 | Complete |
 | BLOG-22 | Phase 066 | Complete |
