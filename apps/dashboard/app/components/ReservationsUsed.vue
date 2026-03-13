@@ -226,6 +226,8 @@ const handleViewReservation = (reservationId: number) => {
   router.push(`/reservations/${reservationId}`);
 };
 
+defineExpose({ refresh: fetchUsedReservations });
+
 // Watch para recargar cuando cambian los filtros o la búsqueda
 watch(
   [

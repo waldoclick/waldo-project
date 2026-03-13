@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.35
 milestone_name: Gift Reservations to Users
-current_phase: 076
-status: completed
-last_updated: "2026-03-13T20:12:26.534Z"
-last_activity: 2026-03-13 — Completed 076-02-PLAN.md (LightboxGift Integration)
+current_phase: null
+status: milestone_archived
+last_updated: "2026-03-13T21:35:00.000Z"
+last_activity: "2026-03-13 — Archived milestone v1.35 (Gift Reservations to Users)"
 progress:
   total_phases: 2
   completed_phases: 2
@@ -17,58 +17,35 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-13 after v1.35 milestone started)
+See: .planning/PROJECT.md (updated 2026-03-13 after v1.35 milestone)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 076 — Dashboard Gift Lightbox (Complete)
+**Current focus:** Planning next milestone (`/gsd-new-milestone`)
 
 ## Position
 
-**Milestone:** v1.35 — Gift Reservations to Users
-**Current Phase:** 076
-**Status:** Milestone complete
+**Milestone:** v1.35 — Gift Reservations to Users ✅ SHIPPED 2026-03-13
+**Status:** Archived — ready for next milestone
 
 ```
 Phase 075 [██████████] 100%  Strapi Gift Endpoints (2/2 plans)
 Phase 076 [██████████] 100%  Dashboard Gift Lightbox (2/2 plans)
-Overall   [██████████] 100%  (4/4 plans)
+Overall   [██████████] 100%  (4/4 plans) — SHIPPED
 ```
 
-Last activity: 2026-03-13 — Completed quick task 29: Create InputAutocomplete.vue component with integrated search for FormGift
+Last activity: 2026-03-13 — Archived milestone v1.35 (Gift Reservations to Users)
 
 ## Accumulated Context
 
-### Key Decisions (from prior milestones)
+### Key Decisions (carry forward)
 
 - All business logic lives in Strapi; dashboard is a stateless HTTP client
-- LightboxRazon.vue pattern: `isOpen` prop + `@close` emit (controlled pattern)
-- Swal confirmation used in dashboard for destructive/irreversible actions
+- Controlled lightbox pattern: `isOpen` prop + `@close`/`@gifted` emits — `LightboxGift.vue` is the latest reference
+- Swal confirmation used in dashboard for destructive/irreversible admin actions
 - sendMjmlEmail() for all email notifications; email failures wrapped in try/catch (non-fatal)
 - `strapi.db.query` for server-side role filtering (not forgeable by clients)
-- LightboxArticles.vue: most recent lightbox implementation — reference for structure
+- `endpoint` prop pattern for reusable action lightboxes across multiple entity types
 - AGENTS.md BEM convention: block + modifier namespace for all SCSS
-
-### Phase 075 Decisions (075-01)
-
-- No pagination on getAuthenticatedUsers — gift lightbox needs full user list for select
-- select: ['id', 'firstName', 'lastName'] enforced in strapi.db.query — no sensitive fields can leak
-- Custom plugin route pattern: plugin.controllers.user.[action] + plugin.routes['content-api'].routes.push
-
-### Phase 075 Decisions (075-02)
-
-- Replaced factory default controllers with custom gift() objects — only the gift action is needed on these routes
-- Email delivery wrapped in inner try/catch; gift creation still succeeds even on email failure
-
-### Phase 076 Decisions (076-01)
-
-- IAuthUser interface defined inline in LightboxGift.vue — no separate types file needed for a component-local shape
-- loadUsers() called on every open without caching — gift is an infrequent admin action; fresh user list preferred
-- LightboxGift accepts endpoint prop (e.g. 'ad-reservations') for reuse across both reservation detail pages
-
-### Phase 076 Decisions (076-02)
-
-- Button placed inside sidebar slot after BoxInformation — least invasive, no new wrapper components needed
-- giftOpen reset on both @close and @gifted — lightbox closes on cancel and on successful gift
 
 ### Blockers/Concerns
 

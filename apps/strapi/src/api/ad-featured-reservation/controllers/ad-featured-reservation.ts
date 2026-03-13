@@ -54,11 +54,11 @@ export default factories.createCoreController(
             strapi,
             "gift-reservation",
             (user as any).email,
-            "Has recibido reservas de avisos destacados",
+            "Has recibido destacados para avisos",
             {
               name: (user as any).firstName || (user as any).email,
               quantity,
-              type: "avisos destacados",
+              type: "destacado(s) para avisos",
             }
           );
         } catch (emailError) {

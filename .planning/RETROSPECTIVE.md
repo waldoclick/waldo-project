@@ -1255,3 +1255,42 @@
 - Model mix: ~100% sonnet
 - Sessions: ~3 (plan-phase × 1, execute-phase × 1, iterative quick tasks × many)
 - Notable: High iteration count on AI provider selection; most context spent debugging rate limits and JSON parsing rather than core feature work
+
+---
+
+## Milestone: v1.35 — Gift Reservations to Users
+
+**Shipped:** 2026-03-13
+**Phases:** 2 (075–076) | **Plans:** 4 | **Timeline:** Same-day delivery (~90 min total)
+
+### What Was Built
+- `GET /api/users/authenticated` — custom users-permissions plugin route with `strapi.db.query` server-side role filter returning only `{ id, firstName, lastName }`
+- `POST /api/ad-reservations/gift` and `POST /api/ad-featured-reservations/gift` — create N reservation records for any authenticated user with MJML email notification
+- `gift-reservation.mjml` email template in Spanish with `name`, `quantity`, `type` variables
+- `LightboxGift.vue` — reusable controlled lightbox (quantity input + searchable user select + Swal confirm + dynamic POST to any `/gift` endpoint)
+- "Regalar Reservas" / "Regalar Reservas Destacadas" buttons wired into both reservation detail pages — end-to-end gift flow complete
+
+### What Worked
+- Existing patterns transferred cleanly: `strapi.db.query` role filter (from v1.17), controlled lightbox pattern (from LightboxRazon/LightboxArticles), non-fatal email wrappers (from free-ad and reject/ban flows)
+- TDD cycle (RED-GREEN commit pattern) for `getAuthenticatedUsers` worked well — 3 test cases before implementation, all green after
+- `endpoint` prop on `LightboxGift.vue` was the right abstraction — single component served both reservation types without branching
+- Same-day delivery across both phases with zero blockers or deviations
+
+### What Was Inefficient
+- Initial `FormGift` used a two-field manual input pattern (firstName + lastName as separate text fields) before being replaced by `InputAutocomplete.vue` with server-side search — this was a quick-task fix post-execution, not caught in planning
+- `InputAutocomplete.vue` was added as a quick task rather than planned in the original phase — a more thorough PLAN.md would have specified the UX for user selection
+
+### Patterns Established
+- **Gift endpoint pattern**: custom Strapi controller with `strapi.db.query` user lookup before bulk record creation + non-fatal MJML email in inner try/catch
+- **`giftOpen` ref pattern**: `ref(false)` toggled by button click, reset on both `@close` and `@gifted` — ensures lightbox closes on cancel and success
+- **`LightboxGift` after `BoxContent`**: placed inside root div after closing `BoxContent` tag — least invasive, no new wrapper components
+
+### Key Lessons
+1. **Plan the user-facing input component explicitly.** "Searchable user select" in the requirement description was underspecified — the plan should have spelled out the component approach (server-side search with debounce vs. client-side filter of preloaded list).
+2. **Reuse via `endpoint` prop beats per-type components.** A single `LightboxGift.vue` with a dynamic endpoint handles all gift types cleanly — this pattern should be the default for any future "action on a specific entity" lightboxes.
+3. **Non-fatal email is the right default for admin-triggered gifts.** Gift creation is the primary action; email is a side effect. Wrapping in inner try/catch prevents email misconfiguration from blocking the main flow.
+
+### Cost Observations
+- Model mix: ~100% sonnet
+- Sessions: ~2 (execute-phase × 2, quick tasks × 1)
+- Notable: Fastest milestone to date — small scope, clear patterns to follow, zero external API rate limit issues

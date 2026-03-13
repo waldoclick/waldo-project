@@ -1,5 +1,22 @@
 ## v1.27 Reparar eventos GA4 ecommerce en flujo de pago unificado (Shipped: 2026-03-12)
 
+## v1.35 Gift Reservations to Users (Shipped: 2026-03-13)
+
+**Phases completed:** 2 phases (075–076), 4 plans
+**Timeline:** 2026-03-13 (same-day delivery)
+**Files changed:** 35 files, 3,298 insertions, 71 deletions
+
+**Key accomplishments:**
+- `GET /api/users/authenticated` endpoint added to users-permissions plugin extension — server-side Authenticated role filter via `strapi.db.query`, returns `{ id, firstName, lastName }` only (no sensitive fields)
+- `POST /api/ad-reservations/gift` and `POST /api/ad-featured-reservations/gift` endpoints implemented — create N reservation records assigned to any authenticated user, with non-fatal MJML email notification
+- `gift-reservation.mjml` email template created with `name`, `quantity`, `type` variables in Spanish
+- `LightboxGift.vue` reusable controlled lightbox built — `isOpen/endpoint/label` props + `close/gifted` emits; quantity input + searchable user select + Swal confirmation; `lightbox--gift` BEM modifier
+- "Regalar Reservas" button wired into `reservations/[id].vue`; "Regalar Reservas Destacadas" button wired into `featured/[id].vue` — end-to-end gift flow complete for both reservation types
+
+**Archive:** `.planning/milestones/v1.35-ROADMAP.md` | `.planning/milestones/v1.35-REQUIREMENTS.md`
+
+---
+
 ## v1.34 LightBoxArticles (Shipped: 2026-03-13)
 
 **Phases completed:** 2 phases, 4 plans, 0 tasks

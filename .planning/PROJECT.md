@@ -153,6 +153,13 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
       - ✓ Groq `llama-3.3-70b-versatile` via `POST /api/ia/groq` with `response_format: json_object` replaces Gemini for article generation (rate limit workaround) — v1.34
       - ✓ DeepSeek service + `POST /api/ia/deepseek` endpoint scaffolded (requires paid credits) — v1.34
 
+       - ✓ `GET /api/users/authenticated` endpoint added to users-permissions plugin extension — server-side Authenticated role filter via `strapi.db.query`, returns only `{ id, firstName, lastName }` — v1.35
+       - ✓ `POST /api/ad-reservations/gift` endpoint creates N ad-reservation records assigned to the selected authenticated user — v1.35
+       - ✓ `POST /api/ad-featured-reservations/gift` endpoint creates N ad-featured-reservation records assigned to the selected authenticated user — v1.35
+       - ✓ `gift-reservation.mjml` email template notifies recipient after successful gift creation (non-fatal — gift succeeds even on email failure) — v1.35
+       - ✓ `LightboxGift.vue` reusable controlled lightbox — `isOpen/endpoint/label` props + `close/gifted` emits; quantity input + searchable user select (Authenticated users only, first+last name); Swal confirmation before POST — v1.35
+       - ✓ "Regalar Reservas" button wired into `reservations/[id].vue`; "Regalar Reservas Destacadas" wired into `featured/[id].vue` — end-to-end gift flow complete for both reservation types — v1.35
+
 ## Context
 
 - Monorepo con Turbo para orquestación de tareas
@@ -310,24 +317,20 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
        | `LightBoxArticles` uses controlled pattern (isOpen prop + @close emit) | Matches `LightboxRazon.vue` pattern; parent controls open/close state — v1.34 | ✓ Good |
        | Groq `response_format: { type: "json_object" }` for structured AI output | Forces valid JSON — eliminates markdown code fence wrapping that breaks `JSON.parse` — v1.34 | ✓ Good |
        | `articles.store.ts` caches AI responses by source URL (session-only, no persist) | Avoids redundant Groq calls; session cache sufficient — AI responses don't need to survive page refresh — v1.34 | ✓ Good |
-       | Duplicate article guard via `source_url` filter before Strapi POST | Prevents duplicate articles from same news source; navigates to existing article edit on conflict — v1.34 | ✓ Good |
-
-## Current Milestone: v1.35 Gift Reservations to Users
-
-**Goal:** Allow administrators to gift ad reservations or featured ad reservations to any authenticated user from the dashboard.
-
-**Target features:**
-- Gift button on reservation/featured detail pages (lightboxes) → opens gift lightbox
-- Gift lightbox: numeric input (quantity) + searchable user select (Authenticated users only, first+last name)
-- Swal confirmation before creation
-- Strapi endpoint: creates N reservations assigned to selected user
-- Email notification to recipient (optional)
+        | Duplicate article guard via `source_url` filter before Strapi POST | Prevents duplicate articles from same news source; navigates to existing article edit on conflict — v1.34 | ✓ Good |
+       | No pagination on `getAuthenticatedUsers` — gift lightbox needs full user list | Paginated select would complicate UX; user count is bounded (admin-only tool, Authenticated role only) — v1.35 | ✓ Good |
+        | `select: ['id', 'firstName', 'lastName']` enforced in `strapi.db.query` for gift user list | No sensitive fields (email, password hash) can leak even if caller forges request — v1.35 | ✓ Good |
+        | Email delivery non-fatal in gift endpoints (inner try/catch) | Gift creation succeeds even if MJML email fails; consistent with free-ad and reject/ban email patterns — v1.35 | ✓ Good |
+        | `LightboxGift.vue` accepts `endpoint` prop for reuse | Single component handles both `ad-reservations` and `ad-featured-reservations` gift flows — v1.35 | ✓ Good |
+        | `loadUsers()` called on every open without caching | Gift lightbox is used infrequently by admins; fresh user list preferred over stale cache — v1.35 | ✓ Good |
 
 ## Current State
 
-**Last shipped:** v1.34 (2026-03-13) — LightBoxArticles: Tavily search backend + 3-step AI article generation lightbox in dashboard
-**Current milestone:** v1.35 — Gift Reservations to Users
-**Current focus:** Phase planning
+**Last shipped:** v1.35 (2026-03-13) — Gift Reservations to Users: gift endpoints (Strapi) + LightboxGift lightbox (Dashboard)
+**Current milestone:** Planning next milestone
+**Current focus:** `/gsd-new-milestone`
+
+**Gift Reservations (since v1.35):** `GET /api/users/authenticated` (users-permissions plugin extension) — `strapi.db.query` role filter, returns `{ id, firstName, lastName }` only; `POST /api/ad-reservations/gift` and `POST /api/ad-featured-reservations/gift` — create N reservation records for any authenticated user + `gift-reservation.mjml` email (non-fatal); `LightboxGift.vue` controlled lightbox (`isOpen/endpoint/label` props + `close/gifted` emits) — quantity input + searchable Authenticated user select + Swal confirm; wired into `reservations/[id].vue` and `featured/[id].vue` with `giftOpen` ref pattern.
 
 **AI Article Generation (since v1.34):** `LightBoxArticles.vue` 3-step dashboard lightbox — Step 1: search news via `POST /api/search/tavily`; Step 2: edit Groq prompt (prefilled with Tavily `snippet` as content); Step 3: generate + create Strapi article draft via `POST /api/ia/groq`; Swal guards for empty content, AI errors, and duplicate `source_url`; `search.store.ts` caches Tavily results by query; `articles.store.ts` caches AI responses by source URL (session-only); Groq `llama-3.3-70b-versatile` with `response_format: json_object` ensures parseable JSON output; DeepSeek + Gemini endpoints also available.
 
@@ -354,4 +357,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-13 after v1.35 milestone started*
+*Last updated: 2026-03-13 after v1.35 milestone*
