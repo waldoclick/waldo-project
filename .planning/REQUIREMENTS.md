@@ -11,9 +11,9 @@ Requirements for milestone v1.35. Each maps to roadmap phases.
 
 - [ ] **GIFT-01**: Administrator can open a "Gift Reservations" lightbox from the ad-reservation detail page
 - [ ] **GIFT-02**: Administrator can open a "Gift Featured Reservations" lightbox from the featured-reservation detail page
-- [ ] **GIFT-03**: Gift lightbox contains a numeric input to specify the number of reservations to gift (min: 1)
-- [ ] **GIFT-04**: Gift lightbox contains a searchable user select showing only Authenticated-role users, displaying first name + last name per option
-- [ ] **GIFT-05**: A Swal confirmation dialog appears before the gift is created asking the admin to confirm
+- [x] **GIFT-03**: Gift lightbox contains a numeric input to specify the number of reservations to gift (min: 1)
+- [x] **GIFT-04**: Gift lightbox contains a searchable user select showing only Authenticated-role users, displaying first name + last name per option
+- [x] **GIFT-05**: A Swal confirmation dialog appears before the gift is created asking the admin to confirm
 
 ### Gift Backend (Strapi)
 
@@ -44,9 +44,9 @@ Requirements for milestone v1.35. Each maps to roadmap phases.
 |-------------|-------|--------|
 | GIFT-01 | Phase 076 | Pending |
 | GIFT-02 | Phase 076 | Pending |
-| GIFT-03 | Phase 076 | Pending |
-| GIFT-04 | Phase 076 | Pending |
-| GIFT-05 | Phase 076 | Pending |
+| GIFT-03 | Phase 076 | Complete |
+| GIFT-04 | Phase 076 | Complete |
+| GIFT-05 | Phase 076 | Complete |
 | GIFT-06 | Phase 075 | Complete |
 | GIFT-07 | Phase 075 | Complete |
 | GIFT-08 | Phase 075 | Complete |
