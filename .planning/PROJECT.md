@@ -132,7 +132,13 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
     - ✓ SCSS scaffolding: `_article.scss` (article--archive, article--single), `_hero.scss` (hero--articles, hero--article), `_filter.scss` (filter--articles), `_related.scss` (related--articles), `_card.scss` (card--article), `app.scss` import — v1.30
     - ✓ `blog/index.vue` — paginated article listing (12/page), category filter, sort order, empty-state + RelatedArticles fallback, SSR-correct `$setSEO` + `@type:"Blog"` structured data — v1.30
     - ✓ `blog/[slug].vue` — article detail with hero (breadcrumbs + H1 + date), GalleryDefault, Markdown body via `marked`, sidebar (categories + ShareDefault), RelatedArticles, 404 guard, `$setSEO` + `@type:"BlogPosting"` structured data — v1.30
-    - ✓ Blog-specific components: `HeroArticles`, `FilterArticles`, `ArticleArchive`, `CardArticle`, `RelatedArticles`, `HeroArticle`, `ArticleSingle` — v1.30
+     - ✓ Blog-specific components: `HeroArticles`, `FilterArticles`, `ArticleArchive`, `CardArticle`, `RelatedArticles`, `HeroArticle`, `ArticleSingle` — v1.30
+
+     - ✓ `source_url` (string, optional) field added to Article Strapi schema; returned by `GET /api/articles/:id` automatically — v1.31
+     - ✓ `source_url: string | null` added to website `Article` TypeScript interface — v1.31
+     - ✓ FormArticle.vue: draft/publish toggle sends `publishedAt: null` (draft) or ISO timestamp (published) on create and update; toggle hydrates correctly from existing `publishedAt` on edit — v1.31
+     - ✓ FormArticle.vue: `source_url` URL field with validation — saves on create, pre-fills on edit, sends null when empty — v1.31
+     - ✓ Article detail page (`/articles/:id`) sidebar shows `source_url` as a clickable `<a target="_blank" rel="noopener noreferrer">` link when non-empty; hidden when absent — v1.31
 
 ## Context
 
@@ -156,6 +162,7 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - SEO infrastructure (v1.15): `$setSEO` plugin in `seo.ts` emits full OG + Twitter Card set; `$setStructuredData` in `microdata.ts` with key-based deduplication; `@nuxtjs/seo` provides sitemap (with static entries having `changefreq`/`priority`), robots, OG defaults; all page URLs use `config.public.baseUrl`; 18+ private pages have `noindex`; home has WebSite + Organization JSON-LD; user profile `[slug].vue` has ProfilePage + Person schema
 - Strapi TypeScript (v1.20): zero `any` in ad service/controller, all type files, all integration services (Zoho, Facto, Indicador, Google, Transbank, payment-gateway), all payment utils/middlewares, all seeders, and all payment test files; `tsc --noEmit` exits 0; established patterns: `AdQueryOptions`, `IZohoContact`, `IWebpayCommitData`, data double-cast for entityService JSON fields, `Core.Strapi` for DI typing
 - Blog public views (since v1.30): `slug` uid field on Article with lifecycle hooks; `Article` TS interface (13 fields); 7 blog-specific components (`HeroArticles`, `FilterArticles`, `ArticleArchive`, `CardArticle`, `RelatedArticles`, `HeroArticle`, `ArticleSingle`); `useArticlesStore` (no persist, pageSize 12); `blog/index.vue` + `blog/[slug].vue` with full SSR, SEO, structured data; Markdown rendered via `marked`; related articles: same-category first, fill with most-recent, deduplicate, slice to 6
+- Article Manager Improvements (since v1.31): `source_url` string field in Strapi Article schema (optional, no constraints); `source_url: string | null` in website `Article` TS interface; `FormArticle.vue` has draft/publish boolean toggle mapping to `publishedAt: null` / ISO string on submit; `source_url` URL field with Yup validation saves on create and pre-fills on edit; article detail page (`/articles/:id`) sidebar renders `source_url` as `<a target="_blank" rel="noopener noreferrer">` when non-empty
 
 ## Constraints
 
@@ -271,19 +278,15 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
     | `article.gallery` (GalleryItem[]) for GalleryDefault, not `article.cover` (Media[]) | `cover: Media[]` has no direct `.url`; GalleryItem extends Media and adds `.url` — v1.30 | ✓ Good |
     | `@type: "Blog"` for listing, `@type: "BlogPosting"` for detail | Correct schema.org types for collection vs. individual article structured data — v1.30 | ✓ Good |
     | `useArticlesStore` has no persist | Article list is volatile (changes with filters/pagination); persist would stale-cache filtered views — v1.30 | ✓ Good |
-    | Related articles: same-category first, fill with most-recent, deduplicate, slice to 6 | Maximizes relevance while guaranteeing 6 items; dedup prevents duplicates when same-category and recent overlap — v1.30 | ✓ Good |
-
-## Current Milestone: v1.31 Article Manager Improvements
-
-**Goal:** Agregar control de estado borrador/publicado y campo de fuente URL al mantenedor de artículos del dashboard.
-
-**Target features:**
-- Toggle draft/publish en el formulario de crear y editar artículos
-- Campo `source_url` en Strapi schema + form del dashboard
+     | Related articles: same-category first, fill with most-recent, deduplicate, slice to 6 | Maximizes relevance while guaranteeing 6 items; dedup prevents duplicates when same-category and recent overlap — v1.30 | ✓ Good |
+     | No unique/maxLength constraints on `source_url` in Article schema | Kept minimal like `seo_title`/`seo_description`; URL validation lives in the form (Yup), not the schema — v1.31 | ✓ Good |
+     | `source_url` typed as `string \| null` (not `string \| undefined`) in Article interface | Strapi returns `null` for unset optional string fields, not `undefined`; matches existing nullable field conventions — v1.31 | ✓ Good |
+     | `form.published` boolean → `publishedAt: null / ISO string` mapping on submit (not direct v-model on `publishedAt`) | Avoids storing ISO strings in form state; boolean is cleaner to bind to checkbox; single mapping point on submit — v1.31 | ✓ Good |
+     | `source_url` uses existing `card--info` pattern in detail sidebar (not `CardInfo` component) | `CardInfo` only accepts plain string descriptions; `card--info` allows custom `<a>` element inside — v1.31 | ✓ Good |
 
 ## Current State
 
-**Last shipped:** v1.30 (2026-03-13) — Blog Public Views: `slug` field on Article, `blog/index.vue` listing page with filtering/pagination, `blog/[slug].vue` article detail with Markdown rendering, SEO, and structured data; 7 new blog-specific components
+**Last shipped:** v1.31 (2026-03-13) — Article Manager Improvements: draft/publish toggle and `source_url` field in FormArticle, `source_url` clickable link on article detail sidebar
 **Current focus:** Planning next milestone
 
 **Blog Public Views (since v1.30):** `slug` uid field on Article with lifecycle hooks (beforeCreate/beforeUpdate via `slugify strict:true`); 6 Jest tests for slug generation; `Article` TypeScript interface (13 fields) in `app/types/article.d.ts`; SCSS scaffolding (`_article.scss`, `_hero.scss`, `_filter.scss`, `_related.scss`, `_card.scss` blog blocks, `app.scss` import); `HeroArticles.vue` (static, zero props), `FilterArticles.vue` (client-only, updates `?category=`/`?order=` URL params), `ArticleArchive.vue` (4-col grid + `vue-awesome-paginate`), `CardArticle.vue`, `RelatedArticles.vue`; `useArticlesStore` (Pinia, no persist, pageSize 12); `blog/index.vue` (SSR `useAsyncData`, empty-state + RelatedArticles fallback, `@type:"Blog"` structured data); `HeroArticle.vue` (breadcrumbs + H1 + date), `ArticleSingle.vue` (two-column body/sidebar, `marked` Markdown rendering, GalleryDefault from `article.gallery`); `blog/[slug].vue` (SSR `useAsyncData(() => 'article-${slug}')`, 404 guard, `$setSEO`, `@type:"BlogPosting"` structured data).
@@ -309,4 +312,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-13 after v1.31 milestone started*
+*Last updated: 2026-03-13 after v1.31 milestone*

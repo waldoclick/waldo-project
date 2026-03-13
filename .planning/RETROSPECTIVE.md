@@ -949,6 +949,45 @@
 
 ---
 
+## Milestone: v1.31 — Article Manager Improvements
+
+**Shipped:** 2026-03-13
+**Phases:** 2 (069–070) | **Plans:** 2 | **Timeline:** 1 day (2026-03-13)
+**Files changed:** 4 files (apps/strapi, apps/website, apps/dashboard) | **Requirements:** 6/6 complete ✓
+
+### What Was Built
+- `source_url` string field added to Strapi Article schema (optional, no constraints); `source_url: string | null` in website `Article` TypeScript interface
+- `FormArticle.vue`: draft/publish boolean toggle mapped to `publishedAt: null` / ISO string on submit; toggle hydrates correctly from existing `publishedAt` on edit
+- `FormArticle.vue`: `source_url` URL field with Yup validation — saves on create, pre-fills on edit, sends null when empty
+- Article detail page (`/articles/:id`) sidebar: `source_url` rendered as `<a target="_blank" rel="noopener noreferrer">` when non-empty; hidden when absent
+
+### What Worked
+- Two-phase split (schema first → UI second) was correct; Phase 070 had stable prerequisites from day one
+- Boolean `form.published` → `publishedAt` mapping on submit was cleaner than direct v-model on an ISO string in form state
+- Using the existing `card--info` pattern in the detail sidebar (same as the body block) correctly accommodated the custom `<a>` element — `CardInfo` component only accepts plain string descriptions
+- Phase execution was mechanical — both phases were 2–3 min execution time
+
+### What Was Inefficient
+- `source_url` re-sync after update (keeping local form state consistent with saved payload) was not in the original plan but was a natural correctness requirement — a brief "what happens after save?" check during planning would have included it upfront
+- MILESTONES.md accomplishments were empty (`"none recorded"`) because the gsd-tools CLI couldn't parse one-liners from SUMMARY.md YAML format — required manual enrichment; this is a recurring issue with the CLI parser
+
+### Patterns Established
+- **`publishedAt` toggle pattern**: `boolean form.published → publishedAt: null | new Date().toISOString()` on submit — cleaner than storing ISO strings in form state; toggle hydrates from `!!article.publishedAt` on edit
+- **`card--info` for custom HTML elements in detail sidebar**: when a sidebar block needs a non-string child (like `<a>`), use `card--info` pattern directly; `CardInfo` component only supports plain text descriptions
+- **Nullable Strapi optional string field**: `string | null` (not `string | undefined`) — Strapi returns `null` for unset optional string fields; `undefined` would cause TypeScript false positives on `?.` guards
+
+### Key Lessons
+1. **Always ask "what happens after save?" when adding a form field.** The `source_url` re-sync after update ensures the form's local state matches what was actually stored. This is a correctness requirement for any field that can be server-processed or trimmed — plan it upfront.
+2. **Check component signatures before choosing a display pattern.** The `CardInfo` component only accepts string descriptions — using it for `source_url` (which needs an `<a>` element) would have required either hacking the component or adding a slot. The `card--info` CSS pattern provides the same visual output with full HTML flexibility.
+3. **Optional string fields in Strapi v5 return `null`, not `undefined`.** Always type them as `string | null` in TypeScript interfaces. Using `string | undefined` causes false positives on optional chaining (`?.`) that make the field appear always-absent.
+
+### Cost Observations
+- Model mix: ~100% sonnet (balanced profile)
+- Sessions: 2 (execute-phase × 2 phases, milestone close)
+- Notable: Fastest feature milestone by session count — 2 phases, 2 plans, both executed in under 5 minutes combined; the `publishedAt` mapping pattern was the only design decision; everything else was mechanical
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -982,6 +1021,7 @@
 | v1.28 | 1 | 2 | Logout store cleanup: `reset()` pattern for Composition API stores; `useLogout` composable; `clearAll` renamed |
 | v1.29 | 2 | 3 | News Manager: Strapi article content type + dashboard CRUD UI; custom Markdown textarea with lucide icons |
 | v1.30 | 4 | 8 | Blog Public Views: slug field, Article TS type, SCSS scaffolding, 7 blog components, /blog listing + detail pages, full SEO |
+| v1.31 | 2 | 2 | Article Manager Improvements: source_url Strapi field, draft/publish toggle in FormArticle, source_url link on detail page |
 
 ### Cumulative Quality
 
@@ -1014,6 +1054,7 @@
 | v1.28 | utils + vitest (useLogout — 4 tests) | true | 0 |
 | v1.29 | utils + vitest (unchanged) | true | 0 |
 | v1.30 | utils + jest (slug lifecycle hooks — 6 tests) + vitest (unchanged) | true | 1 (marked for Markdown rendering) |
+| v1.31 | utils + jest + vitest (unchanged) | true | 0 |
 
 ### Top Lessons (Verified Across Milestones)
 
@@ -1046,6 +1087,9 @@
 27. Infrastructure phases (types + SCSS) with no user-visible output unlock faster downstream phases — invest upfront, they pay off immediately
 28. `cover: Media[]` has no direct `.url`; `gallery: GalleryItem[]` does — always pass gallery to display components; cover is for OG image metadata only
 29. `useAsyncData(() => 'key-${param}')` lambda key is required for SSR cache isolation on dynamic routes — without the lambda, the key is evaluated once and all slug pages share the same cache entry
+30. Always ask "what happens after save?" when adding a form field — `source_url` re-sync after update was a correctness requirement that was missed in planning
+31. Check component signatures before choosing a display pattern — `CardInfo` only accepts plain strings; use the `card--info` CSS pattern directly when a sidebar block needs custom HTML (e.g., an `<a>` element)
+32. Strapi v5 optional string fields return `null`, not `undefined` — type them as `string | null`; using `string | undefined` causes false positives on optional chaining guards
 
 ## Milestone: v1.17 — Security & Stability
 
