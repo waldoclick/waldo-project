@@ -45,14 +45,14 @@
                 <button
                   class="articles--default__action"
                   title="Ver artículo"
-                  @click="handleViewArticle(article.id)"
+                  @click="handleViewArticle(article)"
                 >
                   <Eye class="articles--default__action__icon" />
                 </button>
                 <button
                   class="articles--default__action"
                   title="Editar artículo"
-                  @click="handleEditArticle(article.id)"
+                  @click="handleEditArticle(article)"
                 >
                   <Pencil class="articles--default__action__icon" />
                 </button>
@@ -222,12 +222,12 @@ const truncateText = (text: string, maxLength: number) => {
   return text.slice(0, Math.max(0, maxLength)) + "...";
 };
 
-const handleViewArticle = (articleId: number) => {
-  router.push(`/articles/${articleId}`);
+const handleViewArticle = (article: Article) => {
+  router.push(`/articles/${article.documentId || article.id}`);
 };
 
-const handleEditArticle = (articleId: number) => {
-  router.push(`/articles/${articleId}/edit`);
+const handleEditArticle = (article: Article) => {
+  router.push(`/articles/${article.documentId || article.id}/edit`);
 };
 
 watch(
