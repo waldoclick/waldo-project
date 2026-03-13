@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.25
 milestone_name: milestone
-status: planning
-last_updated: "2026-03-13T01:08:36.225Z"
+status: executing
+last_updated: "2026-03-13T01:23:20.164Z"
 progress:
   total_phases: 4
   completed_phases: 2
-  total_plans: 3
-  completed_plans: 3
-  percent: 90
+  total_plans: 6
+  completed_plans: 5
+  percent: 85
 ---
 
 # Session State
@@ -24,10 +24,10 @@ See: .planning/PROJECT.md (updated 2026-03-12 after v1.30 milestone started)
 ## Position
 
 **Milestone:** v1.30 — Blog Public Views
-**Phase:** 066 Plan 02 — complete
-**Status:** Ready to plan
+**Phase:** 067 Plan 01 — complete
+**Status:** In progress
 
-**Progress:** [█████████░] 90%
+**Progress:** [█████████░] 85%
 
 ## Session Log
 
@@ -37,6 +37,7 @@ See: .planning/PROJECT.md (updated 2026-03-12 after v1.30 milestone started)
 - 2026-03-13: Phase 065-01 complete — Article slug field + lifecycle hooks + 6 Jest tests
 - 2026-03-13: Phase 066-01 complete — Article TypeScript interface (article.d.ts) with 13 fields, zero typecheck errors
 - 2026-03-13: Phase 066-02 complete — SCSS scaffolding: _article.scss + 4 files extended, 7 BEM blocks ready for Phase 067
+- 2026-03-13: Phase 067-01 complete — CardArticle.vue + RelatedArticles.vue leaf display components, zero TypeScript errors
 
 ### Key Decisions
 
@@ -56,6 +57,7 @@ See: .planning/PROJECT.md (updated 2026-03-12 after v1.30 milestone started)
 - Article type imports Category/Media/GalleryItem from existing types — no duplication; cover:Media[], publishedAt:string|null for draft state
 - article--single sidebar: categories + share only (no seller/price — articles have neither)
 - related--articles mirrors related--ads exactly — same layout props, different BEM namespace
+- Media type (ad.d.ts) has no direct url field — cover images use formats.medium?.url || formats.thumbnail.url (GalleryItem extends Media adds url, but cover is Media[])
 
 ### Blockers/Concerns
 
