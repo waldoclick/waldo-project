@@ -4,7 +4,7 @@
       <!-- Body column -->
       <div class="article--single__body">
         <div class="article--single__body__gallery">
-          <GalleryDefault :media="props.article.gallery" />
+          <GalleryDefault :media="props.article.gallery ?? []" />
         </div>
         <div class="article--single__body__description">
           <div
@@ -17,12 +17,12 @@
       <!-- Sidebar column -->
       <div class="article--single__sidebar">
         <div
-          v-if="props.article.categories.length > 0"
+          v-if="props.article.categories?.length > 0"
           class="article--single__sidebar__categories"
         >
           <h3>Categorías</h3>
           <ul>
-            <li v-for="cat in props.article.categories" :key="cat.id">
+            <li v-for="cat in props.article.categories ?? []" :key="cat.id">
               <NuxtLink :to="`/blog?category=${cat.slug}`">{{
                 cat.name
               }}</NuxtLink>
