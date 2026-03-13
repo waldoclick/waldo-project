@@ -5,7 +5,7 @@ milestone_name: LightBoxArticles
 current_phase: 073 — tavily-search-backend (plan 2 of 4 complete)
 status: executing
 last_updated: "2026-03-13T16:27:50.952Z"
-last_activity: 2026-03-13 — Completed 073-02-PLAN.md (TavilyService Jest unit tests, 3 tests passing)
+last_activity: 2026-03-13 — Completed 073-01-PLAN.md (POST /api/search/tavily controller + route wired to TavilyService)
 progress:
   total_phases: 2
   completed_phases: 1
@@ -28,13 +28,13 @@ See: .planning/PROJECT.md (updated 2026-03-13 after v1.34 milestone started)
 **Current Phase:** 073 — tavily-search-backend (plan 2 of 4 complete)
 **Status:** In progress — ready for 073-03
 
-Last activity: 2026-03-13 — Completed 073-02-PLAN.md (TavilyService Jest unit tests, 3 tests passing)
+Last activity: 2026-03-13 — Completed 073-01-PLAN.md (POST /api/search/tavily controller + route wired to TavilyService)
 
 ## Session Log
 
 - 2026-03-13: Milestone v1.33 complete — Anthropic Claude AI Service shipped
 - 2026-03-13: Milestone v1.34 started — LightBoxArticles
-- 2026-03-13: Completed 073-01 (TavilyService implementation) and 073-02 (TavilyService Jest tests)
+- 2026-03-13: Completed 073-01 (POST /api/search/tavily controller + route) and 073-02 (TavilyService Jest tests)
 
 ### Key Decisions
 
