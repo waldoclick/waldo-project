@@ -15,14 +15,6 @@ export default defineEventHandler(async (event) => {
     "connect/google/callback",
     "connect/facebook",
     "connect/facebook/callback",
-    "connect/github",
-    "connect/github/callback",
-    "connect/twitter",
-    "connect/twitter/callback",
-    "connect/discord",
-    "connect/discord/callback",
-    "connect/linkedin",
-    "connect/linkedin/callback",
   ];
 
   // Check if this is an OAuth route that should be excluded from proxy
