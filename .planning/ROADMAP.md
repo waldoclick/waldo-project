@@ -110,7 +110,13 @@
   3. Calling `POST /api/auth/verify-code` with a valid `pendingToken` + `code` returns a full Strapi login response (JWT + user) — same shape as the pre-2-step response
   4. Three failed `verify-code` attempts invalidate the code; submitting a fourth attempt returns an error and a fresh login is required
   5. `POST /api/connect/google/callback` still issues a JWT directly — Google OAuth users are never redirected to a verify step
-**Plans**: TBD
+**Plans**: 4 plans
+
+Plans:
+- [ ] 077-01-PLAN.md — verification-code content type (schema + scaffolding)
+- [ ] 077-02-PLAN.md — verification-code.mjml email template in Spanish
+- [ ] 077-03-PLAN.md — overrideAuthLocal + verifyCode + resendCode controllers + plugin wiring
+- [ ] 077-04-PLAN.md — verification-code-cleanup cron + cron-tasks.ts + cron-runner.ts wiring
 
 ### Phase 078: Dashboard Verify Flow
 **Goal**: Dashboard users complete login through the 2-step verify page — `FormLogin` hands off to `/auth/verify-code`, which verifies the code and restores the existing post-login behavior
