@@ -6,7 +6,7 @@
 - ✅ **v1.26 Mostrar comprobante Webpay** — Phase 060 (shipped 2026-03-11). See `.planning/milestones/v1.26-ROADMAP.md`
 - ✅ **v1.27 Reparar eventos GA4 ecommerce** — Phase 061 (shipped 2026-03-12). See `.planning/milestones/v1.27-ROADMAP.md`
 - ✅ **v1.28 Logout Store Cleanup** — Phase 062 (shipped 2026-03-12). See `.planning/milestones/v1.28-ROADMAP.md`
-- 🚧 **v1.29 News Manager** — Phases 063–064 (in progress)
+- ✅ **v1.29 News Manager** — Phases 063–064 (shipped 2026-03-12). See `.planning/milestones/v1.29-ROADMAP.md`
 
 ## Phases
 
@@ -32,51 +32,19 @@
 </details>
 
 <details>
-<summary>🚧 v1.29 News Manager (Phases 063–064) — IN PROGRESS</summary>
+<summary>✅ v1.29 News Manager (Phases 063–064) — SHIPPED 2026-03-12</summary>
 
-- [ ] **Phase 063: News Content Type** — Strapi schema, SEO fields, draft/publish native support
-- [x] **Phase 064: Dashboard News UI** — Full CRUD interface for news management (completed 2026-03-12)
+- [x] Phase 063: News Content Type (1/1 plan) — completed 2026-03-12
+- [x] Phase 064: Dashboard Articles UI (2/2 plans) — completed 2026-03-12
 
 </details>
 
-## Phase Details
-
-### Phase 063: News Content Type
-**Goal**: The `News` content type exists in Strapi with all fields, SEO metadata, category relation, and native draft/publish support — ready to be consumed by the dashboard API.
-**Depends on**: Nothing (backend-only, no frontend prerequisite)
-**Requirements**: NEWS-01, NEWS-02, NEWS-03, NEWS-08
-**Success Criteria** (what must be TRUE):
-  1. A `News` entry can be created in Strapi admin with title, header, body (rich text), cover gallery, and image gallery
-  2. A `News` entry can be related to one or more `categorias` entries (optional relation)
-  3. A `News` entry can be saved as draft or published using Strapi's native draft/publish toggle — no custom status field exists on the schema
-  4. A `News` entry has optional `seo_title` and `seo_description` short-text fields visible in Strapi admin
-**Plans**: 1 plan
-
-Plans:
-- [ ] 063-01-PLAN.md — Create News content type (schema + controller + routes + service)
-
-### Phase 064: Dashboard Articles UI
-**Goal**: Dashboard administrators can list, create, edit, and delete article entries through the dashboard UI, including filling in SEO fields.
-**Depends on**: Phase 063 (Article content type API at /api/articles must exist)
-**Requirements**: NEWS-04, NEWS-05, NEWS-06, NEWS-07, NEWS-09
-**Success Criteria** (what must be TRUE):
-  1. Admin can navigate to an Artículos section under Mantenedores in the menu and see a list of articles showing title, published/draft status, and date
-  2. Admin can create a new article filling in title, header, seo_title, seo_description and save it
-  3. Admin can open an existing article and edit any of its fields, then save the update
-  4. Admin can delete an article from the list with a confirmation dialog
-  5. Admin can fill in `seo_title` and `seo_description` fields when creating or editing an article
-**Plans**: 2 plans
-
-Plans:
-- [ ] 064-01-PLAN.md — Settings store + ArticlesDefault.vue + FormArticle.vue (data layer and components)
-- [ ] 064-02-PLAN.md — Article pages (index, new, [id], [id]/edit) + MenuDefault entry
-
 ## Progress
 
-| Phase | Milestone | Plans Complete | Status      | Completed  |
-|-------|-----------|----------------|-------------|------------|
-| 060   | v1.26     | 3/3            | Complete    | 2026-03-11 |
-| 061   | v1.27     | 2/2            | Complete    | 2026-03-12 |
-| 062   | v1.28     | 2/2            | Complete    | 2026-03-12 |
-| 063   | v1.29     | 0/TBD          | Not started | -          |
-| 064   | 1/2 | Complete    | 2026-03-12 | -          |
+| Phase | Milestone | Plans Complete | Status   | Completed  |
+|-------|-----------|----------------|----------|------------|
+| 060   | v1.26     | 3/3            | Complete | 2026-03-11 |
+| 061   | v1.27     | 2/2            | Complete | 2026-03-12 |
+| 062   | v1.28     | 2/2            | Complete | 2026-03-12 |
+| 063   | v1.29     | 1/1            | Complete | 2026-03-12 |
+| 064   | v1.29     | 2/2            | Complete | 2026-03-12 |

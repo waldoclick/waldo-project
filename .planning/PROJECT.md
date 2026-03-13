@@ -123,7 +123,10 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
    - ✓ `purchaseFired` ref guard en `/pagar/gracias.vue` asegura exactamente un evento purchase por visita; `adStore.clearAll()` preservado sin interferir (purchase lee del order object) — v1.27
    - ✓ Al hacer logout, los 6 stores de usuario se resetean en orden: `useAdStore`, `useHistoryStore`, `useMeStore`, `useUserStore`, `useAdsStore`, `useAppStore` — el siguiente usuario ve estado limpio — v1.28
    - ✓ `useLogout` composable centraliza la lógica de logout; `MenuUser.vue`, `MobileBar.vue`, `SidebarAccount.vue` usan el composable — cero código de logout duplicado — v1.28
-   - ✓ `reset()` action consistente en todos los stores (Composition API); `clearAll()` eliminado — v1.28
+    - ✓ `reset()` action consistente en todos los stores (Composition API); `clearAll()` eliminado — v1.28
+   - ✓ Content type `Article` en Strapi con todos los campos (title, header, body richtext, cover/gallery media, categories manyToMany, seo_title, seo_description) y `draftAndPublish: true` — v1.29
+   - ✓ El administrador puede listar, crear, editar y eliminar artículos desde el dashboard — v1.29
+   - ✓ El administrador puede completar los campos SEO al crear o editar un artículo — v1.29
 
 ## Context
 
@@ -251,21 +254,18 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
     | `purchase()` passes `[]` as items to `pushEvent`, full payload in `extraData.ecommerce` | `pushEvent` internal `ecommerce` object would overwrite real items if passed normally; `extraData` route preserves full payload — v1.27 | ✓ Good |
     | `watch(orderData, ..., { immediate: true })` for purchase event in `gracias.vue` | Handles SSR hydration case where async data is already populated before mount; `onMounted` fires too late — v1.27 | ✓ Good |
     | `purchaseFired` ref guard prevents double-firing in reactive context | `watch` with `immediate: true` can re-evaluate; boolean guard ensures exactly one purchase event per page visit — v1.27 | ✓ Good |
-    | `adStore.ad.ad_id === null` as `beginCheckout` guard in `/pagar/index.vue` | Reliable sentinel for pack-only flow; ad-creation always has a numeric `ad_id` from the draft call — v1.27 | ✓ Good |
-
-## Current Milestone: v1.29 News Manager
-
-**Goal:** Permitir a los administradores crear y gestionar noticias desde el dashboard, con soporte de rich text, galerías de imágenes y categorización opcional.
-
-**Target features:**
-- Content type `News` en Strapi (title, header, body rich text, cover gallery, image gallery, category relation)
-- Draft/publish nativo de Strapi (sin campo custom)
-- UI de gestión en el dashboard: listar, crear, editar, eliminar noticias
+     | `adStore.ad.ad_id === null` as `beginCheckout` guard in `/pagar/index.vue` | Reliable sentinel for pack-only flow; ad-creation always has a numeric `ad_id` from the draft call — v1.27 | ✓ Good |
+   | `singularName: "article"` / `pluralName: "articles"` for News content type | Strapi uniqueness check includes both in same array; using "news"/"news" would conflict — v1.29 | ✓ Good |
+   | `categories` as `manyToMany` (not `manyToOne`) in Article schema | An article can belong to multiple categories; reuses existing `api::category.category` — v1.29 | ✓ Good |
+   | `strapi.delete` requires string `documentId` in Strapi v5 SDK | Numeric `id` not accepted for delete in v5; use `documentId \|\| String(id)` fallback — v1.29 | ✓ Good |
+   | `TextareaArticle.vue` custom component over EasyMDE/fontawesome | No external font dependencies; lucide already installed; full control over styling within BEM system — v1.29 | ✓ Good |
 
 ## Current State
 
-**Last shipped:** v1.28 (2026-03-12) — Logout store cleanup: `useLogout` composable resets all 6 user stores in locked order before auth logout; 3 entry points migrated; `clearAll()` renamed to `reset()` consistently across all stores
+**Last shipped:** v1.29 (2026-03-12) — News Manager: `Article` content type in Strapi with all fields + full dashboard CRUD UI (list, create, edit, delete, SEO fields, Markdown body via `TextareaArticle`)
 **Current focus:** Planning next milestone
+
+**News Manager (since v1.29):** `Article` collection type (`title`, `header`, `body` richtext, `cover`/`gallery` media, `categories` manyToMany to `api::category.category`, `seo_title`, `seo_description`, `draftAndPublish: true`); dashboard: `ArticlesDefault.vue` (table with search/sort/pagination/delete + Swal confirm), `FormArticle.vue` (create/edit with vee-validate + yup, `TextareaArticle` markdown editor), 4 pages (`/articles`, `/articles/new`, `/articles/[id]`, `/articles/[id]/edit`), Artículos entry under Mantenedores in `MenuDefault.vue`, Newspaper shortcut icon in `ToolbarDefault.vue`; `TextareaArticle.vue` custom component with lucide toolbar (Bold, Italic, Heading2, List, ListOrdered, Link, Quote, Code), `_textarea.scss`.
 
 **Logout infrastructure (since v1.28):** `useLogout` composable in `apps/website/app/composables/`; reset order: `useAdStore.$reset()` → `useHistoryStore.$reset()` → `useMeStore.reset()` → `useUserStore.reset()` → `useAdsStore.reset()` → `useAppStore.$reset()` → `strapiAuth.logout()` → `navigateTo('/')`; 4 Vitest tests with `#imports` alias infrastructure for Nuxt auto-import mocking.
 
@@ -288,4 +288,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-12 — Milestone v1.29 started*
+*Last updated: 2026-03-12 after v1.29 milestone*
