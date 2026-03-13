@@ -676,5 +676,31 @@
       text-align: center;
       padding: 20px 0;
     }
+
+    &__selected {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding: 12px;
+      border: 1px solid $platinum;
+      border-radius: 4px;
+
+      &__title {
+        font-size: 13px;
+        font-weight: 600;
+        color: $charcoal;
+        line-height: 1.4;
+      }
+
+      &__url {
+        font-size: 11px;
+        color: $dodger_blue;
+        text-decoration: none;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 60%;
+      }
+    }
   }
 }
