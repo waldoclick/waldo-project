@@ -45,24 +45,8 @@
             :description="formatDate(item.updatedAt)"
           />
         </BoxInformation>
-        <div style="padding: 16px 0 0">
-          <button
-            class="btn btn--primary"
-            type="button"
-            @click="giftOpen = true"
-          >
-            Regalar Reservas
-          </button>
-        </div>
       </template>
     </BoxContent>
-    <LightboxGift
-      :is-open="giftOpen"
-      endpoint="ad-reservations"
-      label="reservas"
-      @close="giftOpen = false"
-      @gifted="giftOpen = false"
-    />
   </div>
 </template>
 
@@ -82,7 +66,6 @@ definePageMeta({
 
 const route = useRoute();
 const item = ref<any>(null);
-const giftOpen = ref(false);
 
 const title = computed(() =>
   item.value?.id ? `Reserva #${item.value.id}` : "Reserva",
