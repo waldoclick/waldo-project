@@ -1,5 +1,10 @@
 <template>
-  <Form v-slot="{ meta }" :validation-schema="schema" @submit="handleSubmit">
+  <Form
+    :key="formKey"
+    v-slot="{ meta }"
+    :validation-schema="schema"
+    @submit="handleSubmit"
+  >
     <div class="form form--password">
       <div class="form__group form__group--password">
         <label class="form__label" for="currentPassword"
@@ -93,6 +98,7 @@ const strapi = useStrapi();
 const user = useStrapiUser() as Ref<User | null>;
 
 const sending = ref(false);
+const formKey = ref(0);
 const currentPasswordType = ref("password");
 const newPasswordType = ref("password");
 const confirmPasswordType = ref("password");
@@ -137,8 +143,9 @@ const handleSubmit = async (values: any) => {
       password: values.newPassword,
       currentPassword: values.currentPassword,
     } as unknown as Parameters<typeof strapi.update>[2]);
-    Swal.fire("Éxito", "Contraseña cambiada con éxito.", "success");
     form.value = { currentPassword: "", newPassword: "", confirmPassword: "" };
+    formKey.value++;
+    Swal.fire("Éxito", "Contraseña cambiada con éxito.", "success");
   } catch {
     Swal.fire(
       "Error",
