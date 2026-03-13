@@ -1,0 +1,110 @@
+/**
+ * Unit tests for Article lifecycle hooks.
+ * Verifies slug generation from title on beforeCreate and beforeUpdate.
+ *
+ * Requirements covered: BLOG-01
+ */
+
+import lifecycles from "../lifecycles";
+
+// Mock the global strapi object used by beforeUpdate
+const mockFindOne = jest.fn();
+(global as any).strapi = {
+  entityService: {
+    findOne: mockFindOne,
+  },
+};
+
+describe("Article lifecycles", () => {
+  describe("beforeCreate", () => {
+    it("generates slug from title", async () => {
+      // Arrange
+      const event = { params: { data: { title: "Hello World" } } };
+
+      // Act
+      await lifecycles.beforeCreate(event as any);
+
+      // Assert
+      expect(event.params.data).toHaveProperty("slug", "hello-world");
+    });
+
+    it("slugifies special characters and accents", async () => {
+      // Arrange
+      const event = { params: { data: { title: "¡Artículo Español!" } } };
+
+      // Act
+      await lifecycles.beforeCreate(event as any);
+
+      // Assert
+      expect(event.params.data).toHaveProperty("slug", "articulo-espanol");
+    });
+
+    it("does not set slug when title is absent", async () => {
+      // Arrange
+      const event = { params: { data: { header: "some header" } } };
+
+      // Act
+      await lifecycles.beforeCreate(event as any);
+
+      // Assert
+      expect((event.params.data as any).slug).toBeUndefined();
+    });
+  });
+
+  describe("beforeUpdate", () => {
+    beforeEach(() => {
+      mockFindOne.mockReset();
+    });
+
+    it("regenerates slug when title changes", async () => {
+      // Arrange
+      mockFindOne.mockResolvedValue({ title: "Old Title" });
+      const event = {
+        params: {
+          data: { title: "New Title" },
+          where: { id: 1 },
+        },
+      };
+
+      // Act
+      await lifecycles.beforeUpdate(event as any);
+
+      // Assert
+      expect(event.params.data).toHaveProperty("slug", "new-title");
+    });
+
+    it("does not regenerate slug when title is unchanged", async () => {
+      // Arrange
+      mockFindOne.mockResolvedValue({ title: "Same Title" });
+      const event = {
+        params: {
+          data: { title: "Same Title" },
+          where: { id: 1 },
+        },
+      };
+
+      // Act
+      await lifecycles.beforeUpdate(event as any);
+
+      // Assert
+      expect((event.params.data as any).slug).toBeUndefined();
+    });
+
+    it("does not touch slug when no title in update data", async () => {
+      // Arrange
+      const event = {
+        params: {
+          data: { header: "updated header" },
+          where: { id: 1 },
+        },
+      };
+
+      // Act
+      await lifecycles.beforeUpdate(event as any);
+
+      // Assert
+      expect(mockFindOne).not.toHaveBeenCalled();
+      expect((event.params.data as any).slug).toBeUndefined();
+    });
+  });
+});
