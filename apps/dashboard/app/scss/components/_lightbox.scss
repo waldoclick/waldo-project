@@ -572,21 +572,14 @@
       border-radius: 4px;
       overflow: hidden;
 
-      &__head {
-        display: grid;
-        grid-template-columns: 36px 1fr 100px;
-        background: $white_smoke;
-        border-bottom: 1px solid $platinum;
-        padding: 0 4px;
-      }
-
       &__row {
-        display: grid;
-        grid-template-columns: 36px 1fr 100px;
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
         border-bottom: 1px solid $platinum;
         cursor: pointer;
         transition: background 0.15s ease;
-        padding: 0 4px;
+        padding: 10px 12px;
 
         &:last-child {
           border-bottom: none;
@@ -602,16 +595,14 @@
       }
 
       &__cell {
-        padding: 10px 8px;
         font-size: 13px;
         color: $charcoal;
         display: flex;
-        align-items: center;
+        align-items: flex-start;
 
         &--check {
-          justify-content: center;
-          padding-left: 4px;
-          padding-right: 4px;
+          flex-shrink: 0;
+          padding-top: 2px;
 
           input[type="checkbox"] {
             appearance: none;
@@ -637,15 +628,11 @@
         }
 
         &--title {
+          flex: 1;
           flex-direction: column;
           align-items: flex-start;
-          gap: 2px;
-        }
-
-        &--date {
-          font-size: 11px;
-          color: rgba($charcoal, 0.55);
-          white-space: nowrap;
+          gap: 3px;
+          min-width: 0;
         }
       }
 
@@ -653,7 +640,8 @@
         font-size: 13px;
         font-weight: 600;
         color: $charcoal;
-        line-height: 1.3;
+        line-height: 1.4;
+        word-break: break-word;
       }
 
       &__url {
@@ -661,10 +649,12 @@
         color: $dodger_blue;
         text-decoration: underline;
         word-break: break-all;
-        max-width: 100%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        line-height: 1.3;
+      }
+
+      &__date {
+        font-size: 11px;
+        color: rgba($charcoal, 0.5);
       }
     }
 
