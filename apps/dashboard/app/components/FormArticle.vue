@@ -70,6 +70,30 @@
         <ErrorMessage name="seo_description" />
       </div>
 
+      <div class="form__group">
+        <label class="form__label" for="source_url">URL de fuente</label>
+        <Field
+          v-model="form.source_url"
+          name="source_url"
+          type="url"
+          class="form__control"
+          placeholder="https://..."
+        />
+        <ErrorMessage name="source_url" />
+      </div>
+
+      <div class="form__group form__group--toggle">
+        <label class="form__label--toggle" for="published">
+          <input
+            id="published"
+            v-model="form.published"
+            type="checkbox"
+            class="form__toggle"
+          />
+          <span>{{ form.published ? "Publicado" : "Borrador" }}</span>
+        </label>
+      </div>
+
       <div class="form__send">
         <button
           :disabled="sending || !meta.valid"
@@ -107,6 +131,8 @@ interface ArticleData {
   body?: string;
   seo_title?: string;
   seo_description?: string;
+  source_url?: string | null;
+  publishedAt?: string | null;
   cover?: MediaItem[];
   gallery?: MediaItem[];
 }
@@ -133,6 +159,7 @@ const schema = yup.object({
   body: yup.string().optional(),
   seo_title: yup.string().optional(),
   seo_description: yup.string().optional(),
+  source_url: yup.string().url("URL inválida").optional().nullable(),
 });
 
 const form = ref<{
@@ -141,6 +168,8 @@ const form = ref<{
   body: string;
   seo_title: string;
   seo_description: string;
+  source_url: string;
+  published: boolean;
   cover: MediaItem[];
   gallery: MediaItem[];
 }>({
@@ -149,6 +178,8 @@ const form = ref<{
   body: "",
   seo_title: "",
   seo_description: "",
+  source_url: "",
+  published: false,
   cover: [],
   gallery: [],
 });
@@ -168,6 +199,8 @@ const hydrateForm = () => {
     body: props.article?.body || "",
     seo_title: props.article?.seo_title || "",
     seo_description: props.article?.seo_description || "",
+    source_url: props.article?.source_url || "",
+    published: props.article?.publishedAt != null,
     cover: props.article?.cover || [],
     gallery: props.article?.gallery || [],
   };
@@ -191,6 +224,8 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       body: form.value.body?.trim() || null,
       seo_title: (values.seo_title as string)?.trim() || null,
       seo_description: (values.seo_description as string)?.trim() || null,
+      source_url: form.value.source_url.trim() || null,
+      publishedAt: form.value.published ? new Date().toISOString() : null,
       cover: coverIds.length > 0 ? coverIds : null,
       gallery: galleryIds.length > 0 ? galleryIds : null,
     };
@@ -231,6 +266,8 @@ const handleSubmit = async (values: Record<string, unknown>) => {
         body: payload.body || "",
         seo_title: payload.seo_title || "",
         seo_description: payload.seo_description || "",
+        source_url: payload.source_url || "",
+        published: form.value.published,
         cover: form.value.cover,
         gallery: form.value.gallery,
       };
