@@ -155,6 +155,7 @@
 import { ref, computed, watch } from "vue";
 import { X as IconX } from "lucide-vue-next";
 import { useSearchStore, type ITavilyResult } from "@/stores/search.store";
+import { useArticlesStore } from "@/stores/articles.store";
 
 const DEFAULT_GEMINI_PROMPT = `You are an industrial news editor writing for a blog about industrial assets and productive sectors.
 
@@ -209,6 +210,7 @@ const emit = defineEmits<{
 const client = useStrapiClient();
 const { Swal } = useSweetAlert2();
 const searchStore = useSearchStore();
+const articlesStore = useArticlesStore();
 
 // Max articles that can be selected at once.
 // Kept low during AI testing — increase when ready for bulk creation.
@@ -327,44 +329,105 @@ async function handleGenerate() {
         text: "Tavily no devolvió contenido para este artículo. Intenta con otra noticia.",
         icon: "error",
       });
+      loading.value = false;
       return;
     }
 
-    // 2. Build the final prompt by appending article context after the instructions
-    const fullPrompt =
-      geminiPrompt.value.trim() +
-      "\n\n---\n\n" +
-      `Title: ${item.title}\n` +
-      `Source URL: ${item.link}\n` +
-      `Date: ${item.date ?? ""}\n` +
-      `Content:\n${bodyText}`;
-
-    // 3. Send to Groq
-    const result = await client<{ text: string }>("/ia/groq", {
-      method: "POST",
-      body: { prompt: fullPrompt },
-    });
-
-    // 4. Parse the JSON response — Groq is set to json_object mode so no markdown fences
-    const rawText = result.text.trim();
-    const parsed = JSON.parse(rawText) as {
+    // Check AI cache first
+    let parsed: {
       title: string;
       header: string;
       body: string;
       seo_title: string;
       seo_description: string;
-    };
+    } | null = null;
 
-    // 5. Create the article draft in Strapi — source_url always from Tavily, never from AI
+    if (articlesStore.hasAICache(item.link)) {
+      const { isConfirmed, isDismissed } = await Swal.fire({
+        title: "Respuesta guardada",
+        text: "Ya generamos un artículo para esta noticia. ¿Quieres usar la respuesta guardada o generar una nueva?",
+        icon: "question",
+        showConfirmButton: true,
+        showDenyButton: true,
+        showCancelButton: false,
+        confirmButtonText: "Usar guardada",
+        denyButtonText: "Generar nueva",
+      });
+      if (isDismissed) {
+        loading.value = false;
+        return;
+      }
+      if (isConfirmed) {
+        parsed = articlesStore.getAICache(item.link)!.result;
+      }
+    }
+
+    if (!parsed) {
+      // 2. Build the final prompt by appending article context after the instructions
+      const fullPrompt =
+        geminiPrompt.value.trim() +
+        "\n\n---\n\n" +
+        `Title: ${item.title}\n` +
+        `Source URL: ${item.link}\n` +
+        `Date: ${item.date ?? ""}\n` +
+        `Content:\n${bodyText}`;
+
+      // 3. Send to Groq
+      const result = await client<{ text: string }>("/ia/groq", {
+        method: "POST",
+        body: { prompt: fullPrompt },
+      });
+
+      // 4. Parse the JSON response — Groq is set to json_object mode so no markdown fences
+      const rawText = result.text.trim();
+      parsed = JSON.parse(rawText) as {
+        title: string;
+        header: string;
+        body: string;
+        seo_title: string;
+        seo_description: string;
+      };
+
+      // Cache the parsed result for future use in this session
+      articlesStore.setAICache(item.link, parsed);
+    }
+
+    // 5. Check for duplicate before creating
+    type ArticleListResponse = { data: { documentId: string }[] };
+    const existing = await client<ArticleListResponse>("/articles", {
+      params: {
+        filters: { source_url: { $eq: item.link } },
+      } as Record<string, unknown>,
+    });
+
+    if (existing.data && existing.data.length > 0) {
+      const docId = existing.data[0]!.documentId;
+      const dupResult = await Swal.fire({
+        title: "Esta noticia ya existe",
+        text: "Ya existe un artículo creado con esta URL de origen.",
+        icon: "warning",
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonText: "Ir al artículo",
+        cancelButtonText: "Cancelar",
+      });
+      if (dupResult.isConfirmed) {
+        await navigateTo(`/articles/edit/${docId}`);
+        handleClose();
+      }
+      return;
+    }
+
+    // 6. Create the article draft in Strapi — source_url always from Tavily, never from AI
     await client("/articles?status=draft", {
       method: "POST",
       body: {
         data: {
-          title: parsed.title,
-          header: parsed.header,
-          body: parsed.body,
-          seo_title: parsed.seo_title,
-          seo_description: parsed.seo_description,
+          title: parsed!.title,
+          header: parsed!.header,
+          body: parsed!.body,
+          seo_title: parsed!.seo_title,
+          seo_description: parsed!.seo_description,
           source_url: item.link,
         },
       },
