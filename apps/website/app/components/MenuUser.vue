@@ -34,9 +34,7 @@
           </NuxtLink>
         </li>
         <li @click="menuOpen">
-          <NuxtLink to="/cuenta/mi-perfil" title="Mi perfil"
-            >Mi perfil</NuxtLink
-          >
+          <NuxtLink to="/cuenta/perfil" title="Mi perfil">Mi perfil</NuxtLink>
         </li>
         <!-- <li @click="menuOpen">
           <NuxtLink to="/cuenta/username" title="Mi perfil">
@@ -56,6 +54,11 @@
             <b>PRO</b>
           </NuxtLink>
         </li> -->
+        <li @click="menuOpen">
+          <NuxtLink to="/cuenta/cambiar-contrasena" title="Cambiar contraseña">
+            <span>Cambiar contraseña</span>
+          </NuxtLink>
+        </li>
       </ul>
       <ul class="menu--user__menu__links">
         <li @click="menuOpen">
