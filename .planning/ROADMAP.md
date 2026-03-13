@@ -127,7 +127,11 @@ Plans:
   2. The verify page shows a code input, a "Verificar" button, and a "Reenviar código" button that is disabled for 60 seconds after each send
   3. Entering the correct code on `/auth/verify-code` completes login — the JWT is stored via `useStrapiAuth()` and the user arrives at `/` (with manager-role check applied)
   4. When the code expires or the attempt limit is reached, a Swal error appears and the user is redirected back to `/auth/login` to start over
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 078-01-PLAN.md — FormLogin.vue: replace useStrapiAuth().login() with direct POST + pendingToken handoff
+- [ ] 078-02-PLAN.md — /auth/verify-code page: code input, 60s resend, JWT storage, role check, error flows
 
 ### Phase 079: Website Verify Flow
 **Goal**: Website users complete login through the 2-step verify page — `FormLogin` hands off to `/login/verificar`, which verifies the code and restores the existing post-login behavior (referer redirect + profile-complete check)
