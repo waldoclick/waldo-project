@@ -6,8 +6,6 @@ import {
   registerUserLocal,
   registerUserAuth,
   overrideAuthLocal,
-  verifyCode,
-  resendCode,
 } from "./controllers/authController";
 
 export default function (plugin) {
@@ -43,28 +41,12 @@ export default function (plugin) {
     plugin.controllers.auth.callback
   );
 
-  // --- NEW: Verify code endpoint ---
-  // NOTE: info.pluginName must be set explicitly here — registerPluginRoutes sets info on
-  // existing routes during bootstrap, but routes pushed after that never get pluginName injected.
-  // Without it, getAction() cannot resolve "auth.verifyCode" to plugin('users-permissions').controller('auth').
-  plugin.controllers.auth.verifyCode = verifyCode;
-  plugin.routes["content-api"].routes.push({
-    method: "POST",
-    path: "/auth/verify-code",
-    handler: "auth.verifyCode",
-    info: { pluginName: "users-permissions" },
-    config: { policies: [], middlewares: [] },
-  });
-
-  // --- NEW: Resend code endpoint ---
-  plugin.controllers.auth.resendCode = resendCode;
-  plugin.routes["content-api"].routes.push({
-    method: "POST",
-    path: "/auth/resend-code",
-    handler: "auth.resendCode",
-    info: { pluginName: "users-permissions" },
-    config: { policies: [], middlewares: [] },
-  });
+  // --- NEW: verify-code and resend-code are registered as a standard Strapi API ---
+  // See: apps/strapi/src/api/auth-verify/ (controller + routes)
+  // Reason: plugin.routes["content-api"] is a factory function in Strapi v5.
+  // Routes pushed via .routes.push() are set as properties on the function object and are
+  // ignored when instantiateRouterInputs calls the factory during server bootstrap.
+  // Standard content-API routes (src/api/) do not have this limitation.
 
   return plugin;
 }
