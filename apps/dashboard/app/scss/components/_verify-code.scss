@@ -1,0 +1,12 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+
+.form--verify {
+  // Modifier-specific layout: stack buttons below the input group
+
+  // BEM: __resend is a wrapper <div> around the resend <button>
+  // The btn classes live on the <button> inside — not on this element
+  &__resend {
+    margin-top: 15px;
+  }
+}
