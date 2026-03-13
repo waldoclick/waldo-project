@@ -67,7 +67,7 @@ Each task was committed atomically:
 1. **Task 1: Add source_url and draft/publish toggle to FormArticle.vue** - `f001677` (feat)
 2. **Task 2: Show source_url as clickable link on article detail page** - `2f4cd4b` (feat)
 
-**Plan metadata:** _(pending — will be added with docs commit)_
+**Plan metadata:** `dab55cf` (docs: complete plan)
 
 ## Files Created/Modified
 - `apps/dashboard/app/components/FormArticle.vue` — Added source_url field, published boolean toggle, publishedAt payload mapping, yup URL validation
@@ -89,9 +89,9 @@ None
 None - no external service configuration required.
 
 ## Next Phase Readiness
-- Phase 070 plan 01 complete
-- Human verification checkpoint pending — user must confirm toggle and source_url behavior in the running dashboard
-- Once verified: phase 070 complete, milestone v1.31 Article Manager Improvements complete
+- Phase 070 plan 01 complete — human verification passed ✓
+- Milestone v1.31 Article Manager Improvements complete (all 2 phases, 6/6 requirements met)
+- Ready for `/gsd-complete-milestone` to archive v1.31 and plan next milestone
 
 ---
 *Phase: 070-dashboard-form-detail*
