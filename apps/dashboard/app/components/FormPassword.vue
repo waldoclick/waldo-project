@@ -1,6 +1,6 @@
 <template>
   <Form v-slot="{ meta }" :validation-schema="schema" @submit="handleSubmit">
-    <div class="form form--profile-password">
+    <div class="form form--password">
       <div class="form__group form__group--password">
         <label class="form__label" for="currentPassword"
           >Contraseña actual</label
@@ -45,6 +45,29 @@
         <ErrorMessage name="newPassword" />
       </div>
 
+      <div class="form__group form__group--password">
+        <label class="form__label" for="confirmPassword"
+          >Repetir contraseña</label
+        >
+        <Field
+          v-model="form.confirmPassword"
+          name="confirmPassword"
+          :type="confirmPasswordType"
+          class="form__control"
+          autocomplete="new-password"
+        />
+        <button
+          class="form__group--password__show-password"
+          type="button"
+          title="Mostrar/ocultar contraseña"
+          @click="toggleConfirm"
+        >
+          <strong v-if="confirmPasswordType !== 'password'">Ocultar</strong>
+          <strong v-else>Mostrar</strong>
+        </button>
+        <ErrorMessage name="confirmPassword" />
+      </div>
+
       <div class="form__send">
         <button
           :disabled="sending || !meta.valid"
@@ -72,6 +95,7 @@ const user = useStrapiUser() as Ref<User | null>;
 const sending = ref(false);
 const currentPasswordType = ref("password");
 const newPasswordType = ref("password");
+const confirmPasswordType = ref("password");
 
 const toggleCurrent = () => {
   currentPasswordType.value =
@@ -83,17 +107,27 @@ const toggleNew = () => {
     newPasswordType.value === "password" ? "text" : "password";
 };
 
+const toggleConfirm = () => {
+  confirmPasswordType.value =
+    confirmPasswordType.value === "password" ? "text" : "password";
+};
+
 const schema = yup.object({
   currentPassword: yup.string().required("Contraseña actual es requerida"),
   newPassword: yup
     .string()
     .min(6, "La contraseña debe tener al menos 6 caracteres")
     .required("Nueva contraseña es requerida"),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref("newPassword")], "Las contraseñas no coinciden")
+    .required("Debes repetir la nueva contraseña"),
 });
 
 const form = ref({
   currentPassword: "",
   newPassword: "",
+  confirmPassword: "",
 });
 
 const handleSubmit = async (values: any) => {
@@ -104,7 +138,7 @@ const handleSubmit = async (values: any) => {
       currentPassword: values.currentPassword,
     } as unknown as Parameters<typeof strapi.update>[2]);
     Swal.fire("Éxito", "Contraseña cambiada con éxito.", "success");
-    form.value = { currentPassword: "", newPassword: "" };
+    form.value = { currentPassword: "", newPassword: "", confirmPassword: "" };
   } catch {
     Swal.fire(
       "Error",
