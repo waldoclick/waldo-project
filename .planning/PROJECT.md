@@ -312,11 +312,22 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
        | `articles.store.ts` caches AI responses by source URL (session-only, no persist) | Avoids redundant Groq calls; session cache sufficient — AI responses don't need to survive page refresh — v1.34 | ✓ Good |
        | Duplicate article guard via `source_url` filter before Strapi POST | Prevents duplicate articles from same news source; navigates to existing article edit on conflict — v1.34 | ✓ Good |
 
+## Current Milestone: v1.35 Gift Reservations to Users
+
+**Goal:** Allow administrators to gift ad reservations or featured ad reservations to any authenticated user from the dashboard.
+
+**Target features:**
+- Gift button on reservation/featured detail pages (lightboxes) → opens gift lightbox
+- Gift lightbox: numeric input (quantity) + searchable user select (Authenticated users only, first+last name)
+- Swal confirmation before creation
+- Strapi endpoint: creates N reservations assigned to selected user
+- Email notification to recipient (optional)
+
 ## Current State
 
 **Last shipped:** v1.34 (2026-03-13) — LightBoxArticles: Tavily search backend + 3-step AI article generation lightbox in dashboard
-**Current milestone:** None — planning next milestone
-**Current focus:** `/gsd-new-milestone`
+**Current milestone:** v1.35 — Gift Reservations to Users
+**Current focus:** Phase planning
 
 **AI Article Generation (since v1.34):** `LightBoxArticles.vue` 3-step dashboard lightbox — Step 1: search news via `POST /api/search/tavily`; Step 2: edit Groq prompt (prefilled with Tavily `snippet` as content); Step 3: generate + create Strapi article draft via `POST /api/ia/groq`; Swal guards for empty content, AI errors, and duplicate `source_url`; `search.store.ts` caches Tavily results by query; `articles.store.ts` caches AI responses by source URL (session-only); Groq `llama-3.3-70b-versatile` with `response_format: json_object` ensures parseable JSON output; DeepSeek + Gemini endpoints also available.
 
@@ -343,4 +354,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-13 after v1.34 milestone complete*
+*Last updated: 2026-03-13 after v1.35 milestone started*
