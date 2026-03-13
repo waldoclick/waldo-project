@@ -9,8 +9,16 @@
 - ✅ **v1.29 News Manager** — Phases 063–064 (shipped 2026-03-12). See `.planning/milestones/v1.29-ROADMAP.md`
 - ✅ **v1.30 Blog Public Views** — Phases 065–068 (shipped 2026-03-13). See `.planning/milestones/v1.30-ROADMAP.md`
 - ✅ **v1.31 Article Manager Improvements** — Phases 069–070 (shipped 2026-03-13). See `.planning/milestones/v1.31-ROADMAP.md`
+- 🚧 **v1.32 Gemini AI Service** — Phase 071 (in progress)
 
 ## Phases
+
+<details>
+<summary>🚧 v1.32 Gemini AI Service (Phase 071) — IN PROGRESS</summary>
+
+- [ ] **Phase 071: Gemini AI Service** - GeminiService + POST /api/ia/gemini endpoint end-to-end
+
+</details>
 
 <details>
 <summary>✅ v1.26 Mostrar comprobante Webpay (Phase 060) — SHIPPED 2026-03-11</summary>
@@ -59,18 +67,32 @@
 
 </details>
 
+## Phase Details
+
+### Phase 071: Gemini AI Service
+**Goal**: Strapi exposes a working Gemini AI integration — a typed service reads the API key from env, and a custom endpoint accepts a prompt and returns generated text with proper error handling.
+**Depends on**: Nothing (self-contained Strapi addition)
+**Requirements**: GEMINI-01, GEMINI-02, GEMINI-03, GEMINI-04, GEMINI-05
+**Success Criteria** (what must be TRUE):
+  1. `POST /api/ia/gemini` with `{ prompt: "Hello" }` returns `{ text: "..." }` with a Gemini-generated response
+  2. The `GEMINI_API_KEY` environment variable in Strapi `.env` is the sole location of the API key — it is never hardcoded in any service or controller file
+  3. `GeminiService` in `apps/strapi/src/services/` encapsulates all Gemini API calls; the controller contains no direct HTTP calls to Google
+  4. When the Gemini API is unreachable or returns an error, `POST /api/ia/gemini` responds with an appropriate HTTP error (4xx/5xx) and Strapi does not crash
+**Plans**: TBD
+
 ## Progress
 
-| Phase | Milestone | Plans Complete | Status   | Completed  |
-|-------|-----------|----------------|----------|------------|
-| 060   | v1.26     | 3/3            | Complete | 2026-03-11 |
-| 061   | v1.27     | 2/2            | Complete | 2026-03-12 |
-| 062   | v1.28     | 2/2            | Complete | 2026-03-12 |
-| 063   | v1.29     | 1/1            | Complete | 2026-03-12 |
-| 064   | v1.29     | 2/2            | Complete | 2026-03-12 |
-| 065   | v1.30     | 1/1            | Complete | 2026-03-13 |
-| 066   | v1.30     | 2/2            | Complete | 2026-03-13 |
-| 067   | v1.30     | 3/3            | Complete | 2026-03-13 |
-| 068   | v1.30     | 2/2            | Complete | 2026-03-13 |
-| 069   | v1.31     | 1/1            | Complete | 2026-03-13 |
-| 070   | v1.31     | 1/1            | Complete | 2026-03-13 |
+| Phase | Milestone | Plans Complete | Status      | Completed  |
+|-------|-----------|----------------|-------------|------------|
+| 071   | v1.32     | 0/TBD          | Not started | -          |
+| 060   | v1.26     | 3/3            | Complete    | 2026-03-11 |
+| 061   | v1.27     | 2/2            | Complete    | 2026-03-12 |
+| 062   | v1.28     | 2/2            | Complete    | 2026-03-12 |
+| 063   | v1.29     | 1/1            | Complete    | 2026-03-12 |
+| 064   | v1.29     | 2/2            | Complete    | 2026-03-12 |
+| 065   | v1.30     | 1/1            | Complete    | 2026-03-13 |
+| 066   | v1.30     | 2/2            | Complete    | 2026-03-13 |
+| 067   | v1.30     | 3/3            | Complete    | 2026-03-13 |
+| 068   | v1.30     | 2/2            | Complete    | 2026-03-13 |
+| 069   | v1.31     | 1/1            | Complete    | 2026-03-13 |
+| 070   | v1.31     | 1/1            | Complete    | 2026-03-13 |

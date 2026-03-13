@@ -42,8 +42,8 @@
 
 **Coverage:**
 - v1 requirements: 5 total
-- Mapped to phases: TBD (roadmapper will assign)
-- Unmapped: TBD
+- Mapped to phases: 5/5 ✓
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-13*
