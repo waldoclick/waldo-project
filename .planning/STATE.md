@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.34
 milestone_name: LightBoxArticles
 current_phase: 074
-status: planning
-last_updated: "2026-03-13T17:04:03.341Z"
-last_activity: 2026-03-13 — Completed 074-01-PLAN.md (LightBoxArticles.vue 3-step lightbox + _lightbox.scss &--articles modifier)
+status: complete
+last_updated: "2026-03-13T17:07:06Z"
+last_activity: 2026-03-13 — Completed 074-02-PLAN.md (LightBoxArticles wired into articles index page)
 progress:
   total_phases: 2
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 4
   completed_plans: 4
 ---
@@ -24,11 +24,11 @@ See: .planning/PROJECT.md (updated 2026-03-13 after v1.34 milestone started)
 
 ## Position
 
-**Milestone:** v1.34 — LightBoxArticles (in progress)
+**Milestone:** v1.34 — LightBoxArticles (complete)
 **Current Phase:** 074
-**Status:** In progress — Phase 074 plan 01 complete
+**Status:** Phase 074 complete — all 2 plans done
 
-Last activity: 2026-03-13 — Completed 074-01-PLAN.md (LightBoxArticles.vue 3-step lightbox + _lightbox.scss &--articles modifier)
+Last activity: 2026-03-13 — Completed 074-02-PLAN.md (LightBoxArticles wired into articles index page)
 
 ## Session Log
 
@@ -36,6 +36,7 @@ Last activity: 2026-03-13 — Completed 074-01-PLAN.md (LightBoxArticles.vue 3-s
 - 2026-03-13: Milestone v1.34 started — LightBoxArticles
 - 2026-03-13: Completed 073-01 (POST /api/search/tavily controller + route) and 073-02 (TavilyService Jest tests)
 - 2026-03-13: Completed 074-01 (LightBoxArticles.vue 3-step lightbox + _lightbox.scss &--articles modifier)
+- 2026-03-13: Completed 074-02 (LightBoxArticles wired into articles index page with btn--announcement trigger button)
 
 ### Key Decisions
 
@@ -50,6 +51,8 @@ Last activity: 2026-03-13 — Completed 074-01-PLAN.md (LightBoxArticles.vue 3-s
 - No HTML fetch in LightBoxArticles step 1→2 — LB-04 satisfied without /api/fetch-url (not available yet)
 - Inline Markdown rendering via computed string replacement — no external library added to dashboard
 - Gemini prompt resets to DEFAULT_GEMINI_PROMPT + article context each time step 2 is entered
+- btn--announcement button placed BEFORE 'Agregar artículo' link in #actions slot
+- isLightboxOpen ref in articles/index.vue toggled via @click and reset via @close emit
 
 ### Blockers/Concerns
 
