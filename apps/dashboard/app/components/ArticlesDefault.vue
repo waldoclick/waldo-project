@@ -242,4 +242,6 @@ watch(
   },
   { immediate: true },
 );
+
+defineExpose({ fetchArticles });
 </script>

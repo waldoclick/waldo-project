@@ -13,48 +13,104 @@
 
       <!-- Step 1: Search form -->
       <template v-if="currentStep === 1">
-        <div class="lightbox--articles__title">Buscar noticias</div>
+        <div class="lightbox--articles__header">
+          <div class="lightbox--articles__header__title">Buscar noticias</div>
+          <div class="lightbox--articles__header__subtitle">
+            Ingresa una consulta para buscar noticias relevantes
+          </div>
+        </div>
         <div class="lightbox--articles__field">
           <label for="lightbox-articles-query">Consulta de búsqueda</label>
           <textarea id="lightbox-articles-query" v-model="query" rows="3" />
         </div>
-        <div class="lightbox--articles__actions">
+        <div
+          class="lightbox--articles__actions lightbox--articles__actions--end"
+        >
           <button
             class="btn btn--primary"
             type="button"
-            :disabled="loading"
+            :disabled="loading || !query.trim()"
             @click="handleSearch"
           >
-            Buscar
+            {{ loading ? "Buscando..." : "Siguiente →" }}
           </button>
         </div>
       </template>
 
-      <!-- Step 2: Search results -->
+      <!-- Step 2: Results table + multi-select -->
       <template v-else-if="currentStep === 2">
-        <div class="lightbox--articles__title">Seleccionar noticia</div>
-        <div
-          v-if="searchResults.length > 0"
-          class="lightbox--articles__results"
-        >
-          <button
+        <div class="lightbox--articles__header">
+          <div class="lightbox--articles__header__title">
+            Seleccionar noticias
+          </div>
+          <div class="lightbox--articles__header__subtitle">
+            Selecciona una o más noticias para crear borradores de artículo
+          </div>
+        </div>
+
+        <div v-if="searchResults.length > 0" class="lightbox--articles__table">
+          <div class="lightbox--articles__table__head">
+            <div
+              class="lightbox--articles__table__cell lightbox--articles__table__cell--check"
+            >
+              <input
+                type="checkbox"
+                :checked="allSelected"
+                :indeterminate="someSelected && !allSelected"
+                @change="toggleAll"
+              />
+            </div>
+            <div class="lightbox--articles__table__cell">Título</div>
+            <div
+              class="lightbox--articles__table__cell lightbox--articles__table__cell--date"
+            >
+              Fecha
+            </div>
+          </div>
+          <div
             v-for="(item, index) in searchResults"
             :key="index"
-            class="lightbox--articles__result"
-            type="button"
-            @click="handleSelectArticle(item)"
+            class="lightbox--articles__table__row"
+            :class="{ 'is-selected': selectedIndexes.has(index) }"
+            @click="toggleRow(index)"
           >
-            <span class="lightbox--articles__result__title">{{
-              item.title
-            }}</span>
-            <span class="lightbox--articles__result__meta"
-              >{{ item.date }} · {{ item.source }}</span
+            <div
+              class="lightbox--articles__table__cell lightbox--articles__table__cell--check"
             >
-          </button>
+              <input
+                type="checkbox"
+                :checked="selectedIndexes.has(index)"
+                @click.stop
+                @change="toggleRow(index)"
+              />
+            </div>
+            <div
+              class="lightbox--articles__table__cell lightbox--articles__table__cell--title"
+            >
+              <span class="lightbox--articles__table__title">{{
+                item.title
+              }}</span>
+              <a
+                :href="item.link"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="lightbox--articles__table__url"
+                @click.stop
+                >{{ item.link }}</a
+              >
+            </div>
+            <div
+              class="lightbox--articles__table__cell lightbox--articles__table__cell--date"
+            >
+              {{ item.date }}
+            </div>
+          </div>
         </div>
+
         <div v-else class="lightbox--articles__empty">
           No se encontraron resultados para esta búsqueda.
         </div>
+
         <div class="lightbox--articles__actions">
           <button
             class="btn btn--secondary"
@@ -63,90 +119,14 @@
           >
             ← Volver
           </button>
-        </div>
-      </template>
-
-      <!-- Step 3: Prompt + Generate -->
-      <template v-else-if="currentStep === 3">
-        <div class="lightbox--articles__title">Generar artículo</div>
-        <div v-if="selectedArticle" class="lightbox--articles__article">
-          <span class="lightbox--articles__article__title">{{
-            selectedArticle.title
-          }}</span>
-          <a
-            :href="selectedArticle.url"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="lightbox--articles__article__url"
-            >{{ selectedArticle.url }}</a
-          >
-          <span class="lightbox--articles__article__date">{{
-            selectedArticle.date
-          }}</span>
-        </div>
-        <div class="lightbox--articles__field">
-          <label for="lightbox-articles-prompt">Prompt</label>
-          <textarea
-            id="lightbox-articles-prompt"
-            v-model="geminiPrompt"
-            rows="10"
-          />
-        </div>
-        <div class="lightbox--articles__actions">
           <button
-            class="btn btn--secondary"
-            type="button"
-            @click="currentStep = 2"
-          >
-            ← Volver
-          </button>
-          <button
+            v-if="searchResults.length > 0"
             class="btn btn--primary"
             type="button"
-            :disabled="loading"
-            @click="handleGenerate"
+            :disabled="loading || selectedIndexes.size === 0"
+            @click="handleCreate"
           >
-            Generar artículo
-          </button>
-        </div>
-      </template>
-
-      <!-- Step 4: Result -->
-      <template v-else-if="currentStep === 4">
-        <div class="lightbox--articles__title">Resultado</div>
-        <div v-if="generatedArticle" class="lightbox--articles__generated">
-          <h3 class="lightbox--articles__generated__heading">
-            {{ generatedArticle.title }}
-          </h3>
-          <p class="lightbox--articles__generated__header">
-            {{ generatedArticle.header }}
-          </p>
-          <div class="lightbox--articles__body" v-html="renderedBody" />
-          <div class="lightbox--articles__keywords">
-            <span
-              v-for="(keyword, index) in generatedArticle.keywords"
-              :key="index"
-              class="lightbox--articles__keywords__tag"
-              >{{ keyword }}</span
-            >
-          </div>
-          <div class="lightbox--articles__meta">
-            <a
-              :href="generatedArticle.source_url"
-              target="_blank"
-              rel="noopener noreferrer"
-              >{{ generatedArticle.source_url }}</a
-            >
-            · {{ generatedArticle.source_date }}
-          </div>
-        </div>
-        <div class="lightbox--articles__actions">
-          <button
-            class="btn btn--secondary"
-            type="button"
-            @click="currentStep = 3"
-          >
-            ← Volver
+            {{ loading ? "Creando..." : `Crear (${selectedIndexes.size})` }}
           </button>
         </div>
       </template>
@@ -166,26 +146,6 @@ interface ITavilyNewsResult {
   source: string;
 }
 
-interface IGeneratedArticle {
-  title: string;
-  header: string;
-  body: string;
-  keywords: string[];
-  source_url: string;
-  source_date: string;
-}
-
-const DEFAULT_GEMINI_PROMPT = `You are an expert copywriter specializing in industrial machinery in Chile. Based on the following news article, generate a professional article in Spanish with this exact JSON format:
-{
-  "title": "article title (max 80 chars)",
-  "header": "executive summary in 2-3 sentences",
-  "body": "full body in Markdown (minimum 300 words)",
-  "keywords": ["keyword1", "keyword2", "keyword3"],
-  "source_url": "source URL",
-  "source_date": "source date"
-}
-Do not include anything outside the JSON.`;
-
 const props = withDefaults(
   defineProps<{
     isOpen: boolean;
@@ -195,20 +155,14 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   (event: "close"): void;
+  (event: "created"): void;
 }>();
 
 const client = useStrapiClient();
-const currentStep = ref<1 | 2 | 3 | 4>(1);
+const currentStep = ref<1 | 2>(1);
 const query = ref("maquinaria industrial Chile noticias");
 const searchResults = ref<ITavilyNewsResult[]>([]);
-const selectedArticle = ref<{
-  title: string;
-  url: string;
-  date: string;
-  html: string;
-} | null>(null);
-const geminiPrompt = ref(DEFAULT_GEMINI_PROMPT);
-const generatedArticle = ref<IGeneratedArticle | null>(null);
+const selectedIndexes = ref<Set<number>>(new Set());
 const loading = ref(false);
 
 // Lock body scroll when open, restore on close
@@ -219,30 +173,36 @@ watch(
       document.body.style.overflow = "hidden";
       currentStep.value = 1;
       searchResults.value = [];
-      generatedArticle.value = null;
+      selectedIndexes.value = new Set();
     } else {
       document.body.style.overflow = "";
     }
   },
 );
 
-// When advancing to step 3, append article context to the prompt
-watch(currentStep, (step) => {
-  if (step === 3 && selectedArticle.value) {
-    const articleContext = `\n\nSource: ${selectedArticle.value.url}\nDate: ${selectedArticle.value.date}\nTitle: ${selectedArticle.value.title}`;
-    geminiPrompt.value = DEFAULT_GEMINI_PROMPT + articleContext;
-  }
-});
+const allSelected = computed(
+  () =>
+    searchResults.value.length > 0 &&
+    selectedIndexes.value.size === searchResults.value.length,
+);
 
-const renderedBody = computed(() => {
-  if (!generatedArticle.value?.body) return "";
-  return generatedArticle.value.body
-    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-    .replace(/\n\n/g, "</p><p>")
-    .replace(/\n/g, "<br>")
-    .replace(/^/, "<p>")
-    .replace(/$/, "</p>");
-});
+const someSelected = computed(() => selectedIndexes.value.size > 0);
+
+function toggleAll() {
+  selectedIndexes.value = allSelected.value
+    ? new Set()
+    : new Set(searchResults.value.map((_, i) => i));
+}
+
+function toggleRow(index: number) {
+  const next = new Set(selectedIndexes.value);
+  if (next.has(index)) {
+    next.delete(index);
+  } else {
+    next.add(index);
+  }
+  selectedIndexes.value = next;
+}
 
 async function handleSearch() {
   if (!query.value.trim() || loading.value) return;
@@ -256,6 +216,7 @@ async function handleSearch() {
       },
     );
     searchResults.value = result.news || [];
+    selectedIndexes.value = new Set();
     currentStep.value = 2;
   } catch (e) {
     console.error("[LightBoxArticles] Tavily error:", e);
@@ -266,30 +227,30 @@ async function handleSearch() {
   }
 }
 
-function handleSelectArticle(item: ITavilyNewsResult) {
-  if (loading.value) return;
-  selectedArticle.value = {
-    title: item.title,
-    url: item.link,
-    date: item.date,
-    html: "",
-  };
-  currentStep.value = 3;
-}
-
-async function handleGenerate() {
-  if (!geminiPrompt.value.trim() || loading.value) return;
+async function handleCreate() {
+  if (selectedIndexes.value.size === 0 || loading.value) return;
   loading.value = true;
   try {
-    const result = await client<{ text: string }>("/ia/gemini", {
-      method: "POST",
-      body: { prompt: geminiPrompt.value },
-    });
-    const parsed = JSON.parse(result.text) as IGeneratedArticle;
-    generatedArticle.value = parsed;
-    currentStep.value = 4;
+    const selected = [...selectedIndexes.value]
+      .map((i) => searchResults.value[i])
+      .filter((item): item is ITavilyNewsResult => item !== undefined);
+    await Promise.all(
+      selected.map((item) =>
+        client("/articles?status=draft", {
+          method: "POST",
+          body: {
+            data: {
+              title: item.title,
+              source_url: item.link,
+            },
+          },
+        }),
+      ),
+    );
+    emit("created");
+    handleClose();
   } catch (e) {
-    console.error("[LightBoxArticles] Gemini error:", e);
+    console.error("[LightBoxArticles] Create error:", e);
   } finally {
     loading.value = false;
   }
