@@ -73,16 +73,9 @@ const createUserReservations = async (user) => {
 export const registerUserLocal = (registerController) => async (ctx) => {
   try {
     // Extraer los datos del cuerpo de la solicitud
-    const {
-      is_company,
-      firstname,
-      lastname,
-      email,
-      rut,
-      password,
-      confirm_password,
-      username,
-    } = ctx.request.body;
+    // Note: confirm_password is validated and deleted by FormRegister.vue before submission
+    const { is_company, firstname, lastname, email, rut, password, username } =
+      ctx.request.body;
 
     // Validar que todos los campos requeridos estén presentes
     if (
@@ -92,18 +85,12 @@ export const registerUserLocal = (registerController) => async (ctx) => {
       !email ||
       !rut ||
       !password ||
-      !confirm_password ||
       !username
     ) {
       return ctx.badRequest("All fields are required");
     }
 
-    // Validar que las contraseñas coincidan
-    if (password !== confirm_password) {
-      return ctx.badRequest("Passwords do not match");
-    }
-
-    // Crear el objeto de datos del usuario sin `confirm_password`
+    // Crear el objeto de datos del usuario
     const userData = {
       is_company,
       firstname,
