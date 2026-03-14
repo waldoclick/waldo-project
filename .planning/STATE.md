@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-03-14 after v1.37 milestone)
 **Last Milestone:** v1.37 — Email Authentication Flows (SHIPPED 2026-03-14)
 **Status:** Between milestones — ready to start v1.38
 
-Last activity: 2026-03-14 — v1.37 milestone complete: Email Authentication Flows shipped (REGV-01, REGV-02, REGV-06)
+Last activity: 2026-03-14 - Completed quick task 36: Fix dashboard FormForgotPassword recaptcha not sent on submit
 
 ## Accumulated Context
 
