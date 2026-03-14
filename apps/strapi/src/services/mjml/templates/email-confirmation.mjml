@@ -1,0 +1,20 @@
+{% extends "layouts/base.mjml" %} {% block content %}
+<mj-text font-size="16px"> Hola {{ name }}, </mj-text>
+<mj-text>
+  Para activar tu cuenta en <b>Waldo.click®</b>, haz clic en el botón:
+</mj-text>
+<mj-button
+  background-color="#f5a623"
+  color="#ffffff"
+  font-size="16px"
+  border-radius="4px"
+  href="{{ confirmationUrl }}"
+>
+  Confirmar correo electrónico
+</mj-button>
+<mj-text>
+  Si no creaste esta cuenta, ignora este correo.
+</mj-text>
+<mj-text> El enlace es válido hasta que confirmes tu correo. </mj-text>
+<mj-text> Saludos,<br />El equipo de <b>Waldo.click®</b> </mj-text>
+{% endblock %}
