@@ -3,7 +3,12 @@
 // Tests for resendCode — VSTEP-07
 // AAA pattern (Arrange-Act-Assert), all dependencies mocked.
 
-import { overrideAuthLocal, verifyCode, resendCode } from "./authController";
+import {
+  overrideAuthLocal,
+  verifyCode,
+  resendCode,
+  overrideForgotPassword,
+} from "./authController";
 
 // --- Mock sendMjmlEmail ---
 jest.mock("../../../services/mjml", () => ({
@@ -14,10 +19,13 @@ const mockSendMjmlEmail = sendMjmlEmail as jest.MockedFunction<
   typeof sendMjmlEmail
 >;
 
-// --- Mock crypto.randomUUID ---
+// --- Mock crypto.randomUUID and randomBytes ---
 jest.mock("crypto", () => ({
   ...jest.requireActual("crypto"),
   randomUUID: jest.fn(() => "test-pending-token-uuid"),
+  randomBytes: jest.fn(() =>
+    Buffer.from("test-reset-token-hex-64-bytes-padded-to-correct-length!!!!!!!")
+  ),
 }));
 
 // --- Strapi DB mock factories ---
@@ -27,6 +35,7 @@ const mockVCUpdate = jest.fn();
 const mockVCDelete = jest.fn();
 
 const mockUserFindOne = jest.fn();
+const mockUserUpdate = jest.fn();
 const mockJwtIssue = jest.fn(() => "test-jwt-token");
 const mockSanitizeOutput = jest.fn((user) => ({
   id: user.id,
@@ -44,7 +53,7 @@ const strapiQueryMock = (contentType: string) => {
     };
   }
   if (contentType === "plugin::users-permissions.user") {
-    return { findOne: mockUserFindOne };
+    return { findOne: mockUserFindOne, update: mockUserUpdate };
   }
   return {};
 };
@@ -539,6 +548,242 @@ describe("resendCode", () => {
 
       // Assert
       expect(ctx.badRequest).toHaveBeenCalledWith("pendingToken is required");
+    });
+  });
+});
+
+describe("overrideForgotPassword", () => {
+  const testUser = {
+    id: 42,
+    email: "user@example.com",
+    username: "user42",
+    firstname: "Carlos",
+    blocked: false,
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockSendMjmlEmail.mockResolvedValue(true);
+    process.env.FRONTEND_URL = "https://waldo.click";
+    process.env.DASHBOARD_URL = "https://dashboard.waldo.click";
+  });
+
+  afterEach(() => {
+    delete process.env.FRONTEND_URL;
+    delete process.env.DASHBOARD_URL;
+  });
+
+  describe("PWDR-01: sends MJML email (not two, not zero)", () => {
+    it("calls sendMjmlEmail exactly once with reset-password template", async () => {
+      // Arrange
+      mockUserFindOne.mockResolvedValue(testUser);
+      mockUserUpdate.mockResolvedValue(testUser);
+      const ctx = makeCtx({ email: "user@example.com", context: "website" });
+
+      // Act
+      const handler = overrideForgotPassword();
+      await handler(ctx);
+
+      // Assert
+      expect(mockSendMjmlEmail).toHaveBeenCalledTimes(1);
+      expect(mockSendMjmlEmail).toHaveBeenCalledWith(
+        expect.anything(),
+        "reset-password",
+        "user@example.com",
+        "Restablece tu contraseña",
+        expect.objectContaining({
+          name: "Carlos",
+          resetUrl: expect.stringContaining("token="),
+        })
+      );
+    });
+
+    it("returns { ok: true } after sending email", async () => {
+      // Arrange
+      mockUserFindOne.mockResolvedValue(testUser);
+      mockUserUpdate.mockResolvedValue(testUser);
+      const ctx = makeCtx({ email: "user@example.com", context: "website" });
+
+      // Act
+      const handler = overrideForgotPassword();
+      await handler(ctx);
+
+      // Assert
+      expect(ctx.body).toEqual({ ok: true });
+    });
+  });
+
+  describe("PWDR-01: email send failure is non-fatal", () => {
+    it("returns { ok: true } even when sendMjmlEmail throws", async () => {
+      // Arrange
+      mockUserFindOne.mockResolvedValue(testUser);
+      mockUserUpdate.mockResolvedValue(testUser);
+      mockSendMjmlEmail.mockRejectedValueOnce(new Error("SMTP failure"));
+      const ctx = makeCtx({ email: "user@example.com", context: "website" });
+
+      // Act
+      const handler = overrideForgotPassword();
+      await expect(handler(ctx)).resolves.not.toThrow();
+
+      // Assert
+      expect(ctx.body).toEqual({ ok: true });
+    });
+  });
+
+  describe("PWDR-02: context 'website' → resetUrl uses FRONTEND_URL + restablecer-contrasena", () => {
+    it("builds correct website reset URL", async () => {
+      // Arrange
+      mockUserFindOne.mockResolvedValue(testUser);
+      mockUserUpdate.mockResolvedValue(testUser);
+      const ctx = makeCtx({ email: "user@example.com", context: "website" });
+
+      // Act
+      const handler = overrideForgotPassword();
+      await handler(ctx);
+
+      // Assert
+      const callArgs = mockSendMjmlEmail.mock.calls[0][4] as Record<
+        string,
+        string
+      >;
+      expect(callArgs.resetUrl).toContain("https://waldo.click");
+      expect(callArgs.resetUrl).toContain("restablecer-contrasena");
+      expect(callArgs.resetUrl).toContain("token=");
+    });
+  });
+
+  describe("PWDR-03: context 'dashboard' → resetUrl uses DASHBOARD_URL + auth/reset-password", () => {
+    it("builds correct dashboard reset URL", async () => {
+      // Arrange
+      mockUserFindOne.mockResolvedValue(testUser);
+      mockUserUpdate.mockResolvedValue(testUser);
+      const ctx = makeCtx({ email: "user@example.com", context: "dashboard" });
+
+      // Act
+      const handler = overrideForgotPassword();
+      await handler(ctx);
+
+      // Assert
+      const callArgs = mockSendMjmlEmail.mock.calls[0][4] as Record<
+        string,
+        string
+      >;
+      expect(callArgs.resetUrl).toContain("https://dashboard.waldo.click");
+      expect(callArgs.resetUrl).toContain("auth/reset-password");
+      expect(callArgs.resetUrl).toContain("token=");
+    });
+  });
+
+  describe("PWDR-01: unknown/blocked user → silent { ok: true }, no email", () => {
+    it("returns { ok: true } silently for unknown email (user not found)", async () => {
+      // Arrange
+      mockUserFindOne.mockResolvedValue(null);
+      const ctx = makeCtx({ email: "ghost@example.com", context: "website" });
+
+      // Act
+      const handler = overrideForgotPassword();
+      await handler(ctx);
+
+      // Assert
+      expect(mockSendMjmlEmail).not.toHaveBeenCalled();
+      expect(mockUserUpdate).not.toHaveBeenCalled();
+      expect(ctx.body).toEqual({ ok: true });
+    });
+
+    it("returns { ok: true } silently for blocked user", async () => {
+      // Arrange
+      mockUserFindOne.mockResolvedValue({ ...testUser, blocked: true });
+      const ctx = makeCtx({ email: "user@example.com", context: "website" });
+
+      // Act
+      const handler = overrideForgotPassword();
+      await handler(ctx);
+
+      // Assert
+      expect(mockSendMjmlEmail).not.toHaveBeenCalled();
+      expect(mockUserUpdate).not.toHaveBeenCalled();
+      expect(ctx.body).toEqual({ ok: true });
+    });
+  });
+
+  describe("PWDR-01: token saved to DB before email sent", () => {
+    it("calls userUpdate before sendMjmlEmail", async () => {
+      // Arrange
+      const callOrder: string[] = [];
+      mockUserFindOne.mockResolvedValue(testUser);
+      mockUserUpdate.mockImplementation(async () => {
+        callOrder.push("update");
+        return testUser;
+      });
+      mockSendMjmlEmail.mockImplementation(async () => {
+        callOrder.push("email");
+        return true;
+      });
+      const ctx = makeCtx({ email: "user@example.com", context: "website" });
+
+      // Act
+      const handler = overrideForgotPassword();
+      await handler(ctx);
+
+      // Assert
+      expect(callOrder).toEqual(["update", "email"]);
+    });
+
+    it("saves resetPasswordToken to DB with correct shape", async () => {
+      // Arrange
+      mockUserFindOne.mockResolvedValue(testUser);
+      mockUserUpdate.mockResolvedValue(testUser);
+      const ctx = makeCtx({ email: "user@example.com", context: "website" });
+
+      // Act
+      const handler = overrideForgotPassword();
+      await handler(ctx);
+
+      // Assert
+      expect(mockUserUpdate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: testUser.id },
+          data: expect.objectContaining({
+            resetPasswordToken: expect.any(String),
+          }),
+        })
+      );
+    });
+  });
+
+  describe("PWDR-02/03: missing context defaults to website URL", () => {
+    it("defaults to FRONTEND_URL path when context is undefined", async () => {
+      // Arrange
+      mockUserFindOne.mockResolvedValue(testUser);
+      mockUserUpdate.mockResolvedValue(testUser);
+      const ctx = makeCtx({ email: "user@example.com" }); // no context
+
+      // Act
+      const handler = overrideForgotPassword();
+      await handler(ctx);
+
+      // Assert
+      const callArgs = mockSendMjmlEmail.mock.calls[0][4] as Record<
+        string,
+        string
+      >;
+      expect(callArgs.resetUrl).toContain("https://waldo.click");
+      expect(callArgs.resetUrl).toContain("restablecer-contrasena");
+    });
+  });
+
+  describe("PWDR-01: missing email → 400", () => {
+    it("returns badRequest when email is missing", async () => {
+      // Arrange
+      const ctx = makeCtx({ context: "website" }); // no email
+
+      // Act
+      const handler = overrideForgotPassword();
+      await handler(ctx);
+
+      // Assert
+      expect(ctx.badRequest).toHaveBeenCalledWith("Email is required");
+      expect(mockSendMjmlEmail).not.toHaveBeenCalled();
     });
   });
 });
