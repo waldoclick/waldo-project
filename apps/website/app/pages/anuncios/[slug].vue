@@ -34,6 +34,7 @@ import FooterDefault from "@/components/FooterDefault.vue";
 import HeroAnnouncement from "@/components/HeroAnnouncement.vue";
 import AdSingle from "@/components/AdSingle.vue";
 import RelatedAds from "~/components/RelatedAds.vue";
+import { useAdAnalytics } from "@/composables/useAdAnalytics";
 
 interface PriceData {
   formattedPrice: string;
@@ -287,4 +288,28 @@ const {
   loading: relatedLoading,
   error: relatedError,
 } = storeToRefs(relatedStore);
+
+// Analytics — view_item tracking (DISC-02)
+const adAnalytics = useAdAnalytics();
+const viewItemFired = ref(false);
+
+// Reset fired guard when slug changes (Nuxt reuses component across [slug] navigations)
+watch(
+  () => route.params.slug,
+  () => {
+    viewItemFired.value = false;
+  },
+);
+
+// Fire view_item when ad data loads; guard prevents double-fire on same slug
+watch(
+  () => adData.value,
+  (ad) => {
+    if (ad && !viewItemFired.value) {
+      viewItemFired.value = true;
+      adAnalytics.viewItem(ad);
+    }
+  },
+  { immediate: true },
+);
 </script>
