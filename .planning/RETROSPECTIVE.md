@@ -1337,3 +1337,46 @@
 - Model mix: ~100% sonnet
 - Sessions: ~4 (execute-phase × 2, quick tasks × 3, post-ship bug fix × 1)
 - Notable: Post-ship OAuth bug required immediate hotfix — discovered via manual testing by user. The `ctx.method` check was the simplest possible fix (5 lines).
+
+## Milestone: v1.37 — Email Authentication Flows
+
+**Shipped:** 2026-03-14
+**Phases:** 4 (079–082) | **Plans:** 6 | **Timeline:** 1 day (~6 hours total)
+**Files changed:** 27 files, +1,550 / -85 lines
+
+### What Was Built
+- Verification email copy fix: "5 minutos" → "15 minutos" in `verification-code.mjml`
+- `overrideForgotPassword` controller fully replacing Strapi's built-in — sends branded `reset-password.mjml`; routes to website or dashboard reset page based on `context` field in POST body; `DASHBOARD_URL` env var drives dashboard URL
+- `FormRegister.vue` JWT guard (`if (response.jwt)`) prevents `setToken(undefined)` call in email-confirmation mode; redirects to `/registro/confirmar` using `useState('registrationEmail')` for cross-page handoff
+- `/registro/confirmar` page (website): displays email, resend button + 60s countdown, redirects to `/registro` on empty state
+- `FormLogin.vue` (website + dashboard): unconfirmed-user error now shows inline resend section with `POST /auth/send-email-confirmation` call; replaces generic Swal for this error path
+- Idempotent migration seeder (`user-confirmed-migration.ts`) — ORM `findMany` unconfirmed → early return if 0 → `updateMany`; registered in cron-runner with far-future `0 0 1 1 *` rule (manual-trigger only)
+- Production DB migrated: all users `confirmed=true`; Strapi Admin Panel: `email_confirmation: ON`, `email_confirmation_redirection: https://waldo.click/login`; smoke-test passed (all 5 checks)
+
+### What Worked
+- Phase sequencing rationale (079 → 080 → 081 → 082) was well-defined upfront and held — no ordering issues during execution
+- `overrideForgotPassword` was a pure replacement (not a wrap) — correct call; wrapping would have sent two emails per request
+- Native Strapi `POST /api/auth/send-email-confirmation` eliminated the need for any custom resend backend code — correct zero-code call
+- DB migration hard gate (count = 0 before toggle) enforced discipline — zero lockout risk on production flip
+- `useState('registrationEmail')` as transient cross-page state was immediately obvious given `pendingToken` precedent from v1.36
+
+### What Was Inefficient
+- Dashboard "Recuperar contraseña" reCAPTCHA bug discovered during v1.37 smoke testing — pre-existing issue not caught in v1.36; adds tech debt to address in a future milestone
+- Phase 079 was a carry-forward from v1.36 with code already written; the formal plan was minimal (1 plan, MJML copy fix only); bundling it with a larger milestone wastes a phase slot on a trivial change
+
+### Patterns Established
+- **`overrideForgotPassword` as full replacement**: never wrap Strapi's built-in forgotPassword — always fully replace; calling original + custom sends two emails
+- **`context` field in POST body for routing**: query params are lost after form submit redirect; body field survives the round-trip
+- **`if (response.jwt)` guard before `setToken()`**: mandatory whenever a Strapi endpoint can return a response without a JWT (e.g., email-confirmation mode)
+- **Migration seeder pattern**: `findMany` first (early return if 0) → `updateMany`; register in cron-runner with far-future rule; never in APP_RUN_SEEDERS (must be manual-only)
+- **DB migration hard gate before irreversible toggle**: always verify count = 0 before flipping `email_confirmation: ON`
+
+### Key Lessons
+1. **Surface pre-existing bugs in smoke-test gates.** The dashboard reCAPTCHA bug was pre-existing but was only discovered during this milestone's smoke test. Phase plans for frontend changes should include a quick regression pass on adjacent auth forms.
+2. **Carry-forwards inflate phase count.** Phase 079 was a single MJML copy fix carried over from v1.36. Future milestones should either ship these immediately (quick task) or formally fold them into the originating milestone.
+3. **Production config gates (Admin Panel toggles) belong in plans.** The two human-action checkpoints (DB migration + Admin Panel toggle) in phase 082 were well-structured; this pattern should be the default for any irreversible production configuration change.
+
+### Cost Observations
+- Model mix: ~100% sonnet
+- Sessions: ~3 (execute-phase × 2 with checkpoints, complete-milestone × 1)
+- Notable: The two human-gate checkpoints in phase 082 were smooth — checkpoint protocol worked exactly as designed; continuation agent correctly resumed from Task 3 after user confirmed Task 2.
