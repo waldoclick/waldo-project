@@ -68,7 +68,11 @@ Plans:
   4. GA4 Realtime shows a `sign_up` event with `method: "email"` immediately after a user completes registration via `FormRegister.vue`
   5. GA4 Realtime shows a `login` event with `method: "email"` or `method: "google"` after the 2-step verification completes successfully in `FormLogin.vue`
   6. GA4 Realtime shows an `article_view` event with `article_id`, `article_title`, and `article_category` when a user opens a blog article at `/blog/[slug]`
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 085-01-PLAN.md — Add contactSeller, generateLead, signUp, login, articleView to useAdAnalytics.ts with TDD
+- [ ] 085-02-PLAN.md — Wire all 5 events into AdSingle.vue, gracias.vue, FormRegister.vue, FormVerifyCode.vue, blog/[slug].vue + human verify
 
 ---
 
