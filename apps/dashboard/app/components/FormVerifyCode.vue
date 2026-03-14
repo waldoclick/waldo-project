@@ -101,7 +101,7 @@ const handleVerify = async () => {
   try {
     const responseRaw = await client("/auth/verify-code", {
       method: "POST",
-      body: { pendingToken: pendingToken.value, code: code.value },
+      body: { pendingToken: pendingToken.value, code: code.value.trim() },
     });
     const response = responseRaw as { jwt: string };
 

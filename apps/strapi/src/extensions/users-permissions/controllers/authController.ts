@@ -231,7 +231,9 @@ export const verifyCode = async (ctx) => {
     code?: string;
   };
 
-  if (!pendingToken || !code) {
+  const normalizedCode = (code ?? "").toString().trim();
+
+  if (!pendingToken || !normalizedCode) {
     return ctx.badRequest("pendingToken and code are required");
   }
 
@@ -249,8 +251,8 @@ export const verifyCode = async (ctx) => {
     return ctx.unauthorized("Verification code has expired");
   }
 
-  // Check wrong code
-  if (record.code !== code) {
+  // Check wrong code (normalize both sides — DB may have stored with trim)
+  if (record.code.trim() !== normalizedCode) {
     const newAttempts = record.attempts + 1;
     if (newAttempts >= MAX_ATTEMPTS) {
       await strapi.db.query(VC_UID).delete({ where: { id: record.id } });
