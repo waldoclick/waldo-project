@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.38
 milestone_name: GA4 Analytics Audit & Implementation
-current_phase: 083
-status: roadmap_ready
-last_updated: "2026-03-14T14:30:00.000Z"
-last_activity: "2026-03-14 - Roadmap created for v1.38"
+status: in_progress
+last_updated: "2026-03-14T15:08:46Z"
+last_activity: "2026-03-14 — Completed 083-01-PLAN.md (ECOM-01, ECOM-02)"
 progress:
   total_phases: 3
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_plans: 2
+  completed_plans: 1
   percent: 0
+stopped_at: "Completed 083-01-PLAN.md"
 ---
 
 # Session State
@@ -21,32 +21,35 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-14 after v1.38 milestone started)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.38 — GA4 Analytics Audit & Implementation (Phase 083 next)
+**Current focus:** v1.38 — GA4 Analytics Audit & Implementation (Phase 083 in progress)
 
 ## Position
 
 **Current Milestone:** v1.38 — GA4 Analytics Audit & Implementation
-**Status:** Roadmap ready — awaiting first plan
-Phase: 083 (next to plan)
-Plan: —
+**Status:** In progress — 083-01 complete
+Phase: 083
+Plan: 01 complete → 02 next
 
 ```
-Progress: [░░░░░░░░░░░░░░░░░░░░] 0% (0/3 phases)
+Progress: [██████████] 98% (40/41 plans across project)
 ```
 
-Last activity: 2026-03-14 — Roadmap created (3 phases: 083–085)
+Last activity: 2026-03-14 — Completed 083-01 (ECOM-01, ECOM-02 fixed)
 
 ## Phase Map
 
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
-| 083 | Ecommerce Bug Fixes | ECOM-01, ECOM-02, ECOM-03 | Not started |
+| 083 | Ecommerce Bug Fixes | ECOM-01, ECOM-02, ECOM-03 | In progress (1/2 plans done) |
 | 084 | Ad Discovery Tracking | DISC-01, DISC-02, DISC-03 | Not started |
 | 085 | Contact, Auth & Blog Events | CONT-01, CONT-02, AUTH-01, AUTH-02, BLOG-01 | Not started |
 
 ## Accumulated Context
 
 ### Key Decisions (carry forward)
+
+- Strapi biginteger defense: always wrap numeric fields from API responses with `Number()` before passing to GA4 (ECOM-01)
+- Use `||` (not `??`) for item_id fallback chains where empty string should trigger fallback (ECOM-02)
 
 - All business logic lives in Strapi; dashboard and website are stateless HTTP clients
 - Auth extension pattern: override plugin controllers in `src/extensions/users-permissions/strapi-server.ts` — same pattern as `registerUserLocal`
