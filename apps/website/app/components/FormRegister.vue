@@ -139,13 +139,14 @@ import { ref, watch } from "vue";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 const { Swal } = useSweetAlert2();
-import { useRouter, useRoute } from "vue-router";
+import { useRouter } from "vue-router";
 import type { Form as VeeForm } from "vee-validate";
 import type { FormRegister } from "@/types/form-register";
 import { useNuxtApp } from "#app";
 import { useRut } from "@/composables/useRut";
 
-const { register } = useStrapiAuth();
+const client = useStrapiClient();
+const registrationEmail = useState("registrationEmail", () => "");
 const router = useRouter();
 const { $recaptcha } = useNuxtApp();
 // const route = useRoute()
@@ -266,18 +267,29 @@ const handleSubmit = async () => {
 
       delete form.value.confirm_password;
 
-      // Agregar el token al objeto de registro
-      await register({
-        ...form.value,
-        recaptchaToken: token ?? "",
-      });
+      // Registrar usando useStrapiClient directamente para manejar el caso
+      // en que email_confirmation está activo (respuesta sin JWT).
+      const response = (await client("/auth/local/register", {
+        method: "POST",
+        body: {
+          ...form.value,
+          recaptchaToken: token ?? "",
+        },
+      })) as { jwt?: string; user?: { id: number } };
 
-      Swal.fire(
-        "Cuenta creada",
-        "Te enviado un correo para confirmar tu dirección de correo electrónico.",
-        "success",
-      );
-      router.push("/login");
+      if (response.jwt) {
+        // Email confirmation deshabilitado: flujo normal → login
+        Swal.fire(
+          "Cuenta creada",
+          "Tu cuenta ha sido creada exitosamente.",
+          "success",
+        );
+        router.push("/login");
+      } else {
+        // Email confirmation habilitado: NO llamar setToken(undefined)
+        registrationEmail.value = form.value.email;
+        router.push("/registro/confirmar");
+      }
     } catch (error) {
       console.error(error);
       const message =
