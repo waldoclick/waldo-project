@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.37
 milestone_name: Email Authentication Flows
-current_phase: 082
-status: completed
-last_updated: "2026-03-14T04:17:39.868Z"
-last_activity: "2026-03-14 — 082-01 SUMMARY created: email confirmation activated (migration + Admin Panel toggle + smoke-test) — REGV-01 REGV-02 REGV-06"
+current_phase: null
+status: between_milestones
+last_updated: "2026-03-14T04:21:18.102Z"
+last_activity: "2026-03-14 — v1.37 milestone complete: Email Authentication Flows shipped — REGV-01 REGV-02 REGV-06"
 progress:
   total_phases: 4
   completed_phases: 4
@@ -18,19 +18,17 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-14 after v1.36 milestone)
+See: .planning/PROJECT.md (updated 2026-03-14 after v1.37 milestone)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.37 — Email Authentication Flows — starting Phase 079
+**Current focus:** Planning next milestone
 
 ## Position
 
-**Milestone:** v1.37 — Email Authentication Flows
-**Current Phase:** 082
-**Status:** Milestone complete
-**Progress:** [██████████] 100%
+**Last Milestone:** v1.37 — Email Authentication Flows (SHIPPED 2026-03-14)
+**Status:** Between milestones — ready to start v1.38
 
-Last activity: 2026-03-14 — 082-01 SUMMARY created: email confirmation activated (migration + Admin Panel toggle + smoke-test) — REGV-01 REGV-02 REGV-06
+Last activity: 2026-03-14 — v1.37 milestone complete: Email Authentication Flows shipped (REGV-01, REGV-02, REGV-06)
 
 ## Accumulated Context
 
@@ -40,54 +38,24 @@ Last activity: 2026-03-14 — 082-01 SUMMARY created: email confirmation activat
 - Auth extension pattern: override plugin controllers in `src/extensions/users-permissions/strapi-server.ts` — same pattern as `registerUserLocal`
 - `recaptcha.ts` middleware already intercepts `POST /api/auth/local` — 2-step interception must be at **controller level** (after recaptcha passes), NOT in middleware
 - `verification-code` content type fields: `userId` (integer), `code` (string), `expiresAt` (datetime), `attempts` (integer, default 0), `pendingToken` (string, unique)
-- Three new routes: `POST /api/auth/local` (override), `POST /api/auth/verify-code` (new), `POST /api/auth/resend-code` (new)
 - Google OAuth (`/api/connect/google/callback`) is unaffected — must bypass 2-step entirely
 - `sendMjmlEmail()` for all email notifications; email failures wrapped in try/catch (non-fatal)
 - `pendingToken` carried in transient state (not URL) between login → verify pages in both frontend apps
-- Swal for user-facing errors (code expired, max attempts reached) in both apps
 - AGENTS.md BEM convention applies to all new SCSS components
 - `plugin.controllers.auth` is a factory function in Strapi v5 — overrides must wrap the factory, not set properties on it
 - `overrideAuthLocal` guards `ctx.method === "GET"` to skip 2-step for OAuth callbacks
-- `resendCode` cooldown uses `record.updatedAt` timestamp for the 60-second rate-limit window
-- Dashboard FormLogin.vue: `Record<string, unknown>` used for vee-validate SubmissionHandler values parameter
-
-### Key Decisions (v1.37 specific)
-
 - `overrideForgotPassword` must FULLY REPLACE Strapi's `forgotPassword` (not wrap it) — calling original + MJML sends two emails
 - `context` field in forgot-password POST body (not query param — query params are lost after form submit)
-- `DASHBOARD_URL` new env var in Strapi for context routing
-- Token generation: `crypto.randomBytes(64).toString('hex')` for password reset (matches Strapi's own size)
 - `if (response.jwt)` guard in `FormRegister.vue` before `setToken()` — email confirmation returns no JWT
 - `POST /api/auth/send-email-confirmation` is native Strapi — no custom code needed for resend
-- DB migration `UPDATE "up_users" SET confirmed = TRUE WHERE confirmed = FALSE OR confirmed IS NULL` is a hard gate before enabling `email_confirmation` toggle
-- Frontend (Phase 081) must be deployed and verified BEFORE backend toggle (Phase 082) — reversed order causes broken persistent auth state
-- `email_confirmation_redirection` in Strapi Admin Panel set to `${FRONTEND_URL}/login`
-- `reset-password.mjml` uses `mj-button` (not plain text link) for CTA — better mobile click target on email clients; no hardcoded expiry (Strapi has no automatic TTL for resetPasswordToken)
-    - `as any` cast required on dashboard `FormForgotPassword.vue` forgotPassword call — `context` not in @nuxtjs/strapi v2 type signature
-    - Vue 3 `<script setup>` closes internal scope — Vitest assertions must target DOM (v-if rendered elements), not `wrapper.vm` refs
-    - `vi.mock('#app')` must be called before component import for Nuxt virtual module resolution in Vitest
-    - `global.useSweetAlert2 = vi.fn()` for Nuxt auto-imported composables (not interceptable via vi.mock module path)
-    - `vi.mock('vue-router')` required for `useRouter` in component tests — inject-based, not global scope
-    - `useStrapiClient()` response cast as `{ jwt?: string; user?: ... }` — returns `unknown`, TypeScript strict requires explicit cast
-    - `/registro/confirmar` page has NO middleware — must be accessible without auth state (post-registration, pre-confirmation)
-    - `useState('registrationEmail')` used as cross-page shared state from FormRegister → /registro/confirmar
+- DB migration hard gate: `confirmed = TRUE` for all users BEFORE enabling `email_confirmation` toggle
+- `email_confirmation_redirection` requires full URL (Yup validation) — path-only values rejected
+- `/registro/confirmar` page has NO middleware — must be accessible without auth state (post-registration, pre-confirmation)
+- `useState('registrationEmail')` used as cross-page shared state from FormRegister → /registro/confirmar
 
-### Phase Sequencing Rationale
+### Blockers/Concerns (open)
 
-- **Phase 079 first**: Independent carry-forward (VSTEP-13–16 code exists) + low-risk MJML copy fix; ships immediately
-- **Phase 080 second**: Independent of email confirmation; fixes live broken UX (dashboard admins get wrong reset link); self-contained
-- **Phase 081 third**: Frontend must be deployed BEFORE the backend toggle; `setToken(undefined)` broken auth state is the critical pitfall
-- **Phase 082 last**: Risky atomic operation — DB migration + toggle; mostly operational, not code; CANNOT precede Phase 081
-
-### Known Carry-forward
-
-- VSTEP-13 to VSTEP-16 (website verify flow) — code exists in `FormLogin.vue` + `/login/verificar` + `FormVerifyCode.vue`; Phase 079 formally executes this work
-- `auth.callback` dual-path behavior (email/password + OAuth) documented — future auth overrides must guard on `ctx.method`
-
-### Blockers/Concerns
-
-- ✅ RESOLVED (082-01): `email_confirmation_redirection` requires full URL (Yup validation) — set to `https://waldo.click/login`. Path-only values rejected.
-- Dashboard "Recuperar contraseña" form is missing reCAPTCHA submission — the form submits without sending the recaptcha token. Needs investigation and fix (deferred, out of scope for Phase 082).
+- **Dashboard "Recuperar contraseña" reCAPTCHA bug:** `FormForgotPassword.vue` in dashboard does not send reCAPTCHA token — form submits without it. Pre-existing bug identified during v1.37 smoke testing. Needs investigation in next milestone.
 
 ### Quick Tasks Completed
 
