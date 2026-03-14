@@ -303,7 +303,12 @@ class PaymentController {
 
   checkoutCreate = this.controllerWrapper(async (ctx: Context) => {
     const { data } = ctx.request.body as {
-      data?: { pack?: string; ad_id?: number; featured?: boolean };
+      data?: {
+        pack?: string;
+        ad_id?: number;
+        featured?: boolean;
+        is_invoice?: boolean;
+      };
     };
     const userId = String(ctx.state.user.id);
 
@@ -327,6 +332,7 @@ class PaymentController {
         pack: data.pack,
         ad_id: data.ad_id,
         featured: data.featured,
+        is_invoice: data.is_invoice,
       },
       userId
     );
