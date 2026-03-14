@@ -28,13 +28,14 @@
 ## Phase Details
 
 ### Phase 083: Ecommerce Bug Fixes
-**Goal**: GA4 ecommerce events report accurate data — real revenue and real item IDs in purchase events
+**Goal**: GA4 ecommerce events report accurate data — real revenue, real item IDs, and free ad creation tracked as a conversion
 **Depends on**: Nothing (first phase of milestone)
-**Requirements**: ECOM-01, ECOM-02
+**Requirements**: ECOM-01, ECOM-02, ECOM-03
 **Success Criteria** (what must be TRUE):
   1. GA4 Realtime → Ecommerce → Purchase events show the actual transaction amount (e.g. $19.990) instead of $0
   2. GA4 `purchase` event `item_id` field shows the order's `documentId` string, not an empty string
-  3. All 12 existing Vitest tests in `useAdAnalytics` pass after the fixes; new tests cover corrected behavior
+  3. GA4 Realtime shows a `purchase` event with `value: 0` when a user completes a free ad creation at `/anunciar/gracias`
+  4. All 12 existing Vitest tests in `useAdAnalytics` pass after the fixes; new tests cover corrected behavior
 **Plans**: TBD
 
 ### Phase 084: Ad Discovery Tracking
