@@ -1,356 +1,399 @@
-# Pitfalls Research
+# Domain Pitfalls
 
-**Domain:** Zoho CRM Sync — Classified Ads / E-commerce Platform (Strapi v5 Backend)
-**Milestone:** Zoho CRM Sync Model Integration
-**Researched:** 2026-03-07
-**Confidence:** HIGH (official Zoho API docs + direct codebase inspection + confirmed bugs in existing code)
+**Domain:** Email auth flows on existing Strapi v5 + Nuxt 4 app
+**Milestone:** Adding email verification on registration + MJML auth emails + password reset context routing
+**Researched:** 2026-03-13
+**Confidence:** HIGH — all critical claims verified against Strapi v5 source code (`auth.js`, `user.js` from `github.com/strapi/strapi/main`)
 
 ---
 
 ## Critical Pitfalls
 
-### Pitfall 1: No 401 Retry → Silent Token Expiry Kills All Subsequent CRM Calls
-
-**What goes wrong:**
-Zoho access tokens expire after exactly **3600 seconds (1 hour)** (confirmed: official docs `expires_in: 3600`). The current `ZohoHttpClient` (`http-client.ts`) fetches a fresh token only when `this.accessToken` is `null`. After the first token fetch, `accessToken` is set and never cleared — so once it expires, every subsequent API call returns an HTTP 401, which the client neither catches nor retries. The service throws a generic `"Failed to create contact"` error with no token-renewal attempt.
-
-**Root cause in existing code:**
-```ts
-// http-client.ts — setupInterceptors()
-if (!this.accessToken) {
-  await this.refreshAccessToken();  // Only refreshes when null
-}
-// No response interceptor to catch 401 and retry
-```
-
-**Consequences:**
-- Any operation attempted more than 1 hour after server start (or last successful token refresh) silently fails
-- `createDeal()`, `updateContactStats()`, and all new event-wired calls will fail with opaque errors on long-running servers
-- Because the Zoho calls are wrapped in `try/catch` that don't re-throw (by design), the failure is invisible to the user — the Strapi operation succeeds but no CRM record is created/updated. Data goes out of sync with zero alert.
-
-**Prevention:**
-Add an Axios **response interceptor** that:
-1. Catches `error.response?.status === 401`
-2. Clears `this.accessToken = null`
-3. Retries the original request exactly once
-4. Throws if the retry also fails
-
-```ts
-this.client.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-      this.accessToken = null;
-      await this.refreshAccessToken();
-      originalRequest.headers.Authorization = `Bearer ${this.accessToken}`;
-      return this.client(originalRequest);
-    }
-    throw error;
-  }
-);
-```
-
-**Detection:**
-- Zoho calls succeed on fresh server start, fail ~1 hour later
-- Errors logged as `"Failed to create lead/contact"` without any 401 reference
-- CRM records stop appearing in Zoho after sustained server uptime
-
-**Phase to address:** Fix before any new Zoho methods are added. Every new method (`createDeal`, `updateContactStats`) inherits this bug.
+Mistakes that cause user lockout, data loss, or silent broken flows.
 
 ---
 
-### Pitfall 2: `createDeal()` Requires Contact Association — Missing Link Causes Orphaned Deals
+### Pitfall 1: Enabling `email_confirmation` Immediately Locks Out All Existing Users
 
 **What goes wrong:**
-Zoho Deals must have a `Deal_Name` (mandatory), `Stage` (mandatory), and ideally a `Contact_Name` lookup to be useful. If `createDeal()` is implemented without linking the deal to an existing Zoho Contact, the deal appears in CRM with no related contact — sales staff cannot trace it back to the user who purchased. On `pack_purchased` or `ad_paid` events, the trigger has the Strapi `userId` but the Zoho `contactId` must be resolved via `findContact(email)` first.
+Enabling "Enable email confirmation" in the Strapi admin panel Advanced Settings activates a live check in the `callback` controller (the one already wrapped by `overrideAuthLocal`):
 
-**Root cause pattern:**
+```js
+// Strapi v5 auth.js — verified source
+const requiresConfirmation = _.get(advancedSettings, 'email_confirmation');
+if (requiresConfirmation && user.confirmed !== true) {
+  throw new ApplicationError('Your account email is not confirmed');
+}
+```
+
+All existing users have `confirmed: false` (the schema default). The moment the toggle is flipped in the admin panel, **every existing user is locked out** at `POST /api/auth/local` — website login, dashboard login, everything. The `ApplicationError` is thrown inside the original `callback` controller before `overrideAuthLocal`'s code can run (because `overrideAuthLocal` calls `await originalController(ctx)` first, and that call throws).
+
+**Root cause:**
+The `confirmed` field defaults to `false` in Strapi's user schema. Existing apps running without `email_confirmation` never backfill it to `true`.
+
+**Consequences:**
+- All existing users cannot log in immediately after the flag is flipped
+- Dashboard admins cannot log in (lockout of operations team)
+- The `ApplicationError` propagates through `overrideAuthLocal` as an unhandled throw — the 2-step flow never reaches the pendingToken logic
+- Google OAuth users in the `callback()` path are affected the same way (if any use the local `callback`)
+
+**Prevention:**
+Run a database migration **before** flipping the toggle. Either approach works:
+
+```sql
+-- SQL migration — run against the Strapi database BEFORE enabling email_confirmation
+UPDATE up_users SET confirmed = TRUE WHERE confirmed = FALSE OR confirmed IS NULL;
+```
+
+Or via Strapi bootstrap (run once, then remove):
 ```ts
-// Wrong: creates an unlinked deal
-await zohoService.createDeal({ Deal_Name: "Pack Purchase", Amount: 9900, Stage: "Closed Won" });
-
-// Correct: look up contact first, link the deal
-const contact = await zohoService.findContact(user.email);
-if (contact) {
-  await zohoService.createDeal({
-    Deal_Name: "Pack Purchase",
-    Amount: 9900,
-    Stage: "Closed Won",
-    Contact_Name: { id: contact.id }  // Lookup field — must be JSON object with id
+// apps/strapi/src/index.ts — temporary bootstrap, remove after first deploy
+async bootstrap({ strapi }) {
+  await strapi.db.query('plugin::users-permissions.user').updateMany({
+    where: { $or: [{ confirmed: false }, { confirmed: null }] },
+    data: { confirmed: true },
   });
 }
 ```
 
-**Consequences:**
-- Orphaned deals cluttering CRM with no owner
-- `updateContactStats()` increment won't correlate with the deal if contacts aren't linked
-- Reporting and segmentation in Zoho CRM becomes unusable
-
-**Prevention:**
-- `createDeal()` signature must require a `contactId: string` parameter — never allow creation without it
-- The event handler for `pack_purchased`/`ad_paid` must: (1) fetch user email, (2) `findContact(email)`, (3) only then `createDeal()` with the contact lookup
-- If `findContact()` returns null (contact doesn't exist in Zoho yet), create the contact first or skip the deal creation and log a warning — never create an orphaned deal
-
 **Detection:**
-- Deals visible in Zoho Deals module with no Contact Name populated
-- "Unassigned" deals in CRM pipeline
+After enabling the flag in any environment, attempt a login with a pre-existing account. The error `"Your account email is not confirmed"` (HTTP 400) confirms the lockout is active.
+
+**Phase:** The migration must be the first step in any phase that enables `email_confirmation`. Enable the flag only after verifying the migration ran successfully.
 
 ---
 
-### Pitfall 3: `updateContact()` Uses Zoho's Internal Numeric `id` — Must Use `id` from Search Response
+### Pitfall 2: `email_confirmation` Changes the Register Response Shape — Frontend Breaks Silently
 
 **What goes wrong:**
-`userUpdateController.ts` calls `zohoService.updateContact(contact.id, data)` where `contact.id` comes from `findContact()`. The Zoho CRM v5 search API (`/Contacts/search`) returns records with a string-format numeric `id` like `"5725767000000524157"`. The `updateContact()` method then hits `PUT /crm/v5/Contacts/{id}` with this ID embedded in the URL path. This is correct **as long as** `findContact()` always returns the raw Zoho record. However:
+`registerUserLocal` wraps the original `register` controller and reads `ctx.response.body?.user` after calling it. This works either way. The problem is the **frontend** (`FormRegister.vue` on website and dashboard).
 
-1. The `findContact()` response uses `response.data` (the raw array), so `contact.id` is Zoho's internal `id` field — this is valid for v5
-2. **The real risk**: if `findContact()` is ever refactored to return a mapped/normalized object and the `id` field is renamed or dropped, all updates break silently (no TypeScript error because the return type is `Promise<any>`)
+When `email_confirmation: true` is set, Strapi's `register` controller sends `{ user }` with **no JWT**:
 
-**Secondary risk — `updateContact` patches ALL fields:**
-The current implementation sends every field in the update payload, including `undefined` values:
-```ts
-data: [{
-  First_Name: contact.First_Name,  // could be undefined if not in payload
-  ...
-}]
-```
-Zoho ignores `undefined` JSON values in the body, but if `contact.First_Name` is explicitly `undefined`, it may arrive as a JSON key with no value depending on the serializer. Safe in practice with `axios` (omits `undefined`), but fragile.
-
-**Prevention:**
-- Type the return value of `findContact()` strictly: `Promise<{ id: string; Email: string; [key: string]: any } | null>`
-- Never pass `undefined`-valued keys to Zoho update — filter them out: `Object.fromEntries(Object.entries(payload).filter(([, v]) => v !== undefined))`
-- Add a unit test asserting that `findContact()` always returns an object with a non-empty `id` string
-
----
-
-### Pitfall 4: `updateContactStats()` Read-Modify-Write Race Condition
-
-**What goes wrong:**
-"Increment a custom field" in Zoho CRM has no native atomic increment API for Contact fields. The only way is:
-1. `GET /crm/v5/Contacts/{id}` — read current value of custom counter field
-2. `PUT /crm/v5/Contacts/{id}` — write `current + 1`
-
-If two events fire concurrently (e.g., `ad_published` and `ad_paid` for the same user within milliseconds), both reads see `current = 5`, both write `6` — the final value is `6` instead of `7`. Lost increment.
-
-**Why it's likely:**
-Strapi lifecycle hooks and payment webhooks can fire nearly simultaneously. The `pack_purchased` → Webpay callback and the `ad_published` event are separate async flows with no coordination.
-
-**Consequences:**
-- Contact stats counters (`total_ads_published`, `total_packs_purchased`) undercount, slowly drifting from reality
-- Silent — no error, no log entry, just a wrong number in CRM
-
-**Prevention options (ordered by preference):**
-1. **Queue all CRM stat updates through a Strapi service with in-memory locking per-user** — simple, effective for a single-instance server
-2. **Accept eventual inconsistency and use periodic reconciliation** — a cron job compares Strapi counts vs. Zoho fields nightly and corrects drift
-3. **If Zoho introduces atomic increments via PATCH or scripting** — check Zoho Functions/Webhooks for server-side increment support (not available in REST API v5 as of research date)
-
-**Detection:**
-- CRM stats lower than Strapi actual counts
-- Discrepancy grows over time proportional to user activity
-
----
-
-### Pitfall 5: Test File Hits Production Zoho CRM
-
-**What goes wrong:**
-`zoho.test.ts` imports `zohoService` directly from `./index`, which reads real env vars (`ZOHO_CLIENT_ID`, etc.) and makes live HTTP calls to `https://www.zohoapis.com`. Running `yarn test` or CI creates real leads in production Zoho CRM and searches for personal email `geo2019ab@gmail.com`.
-
-**Confirmed in existing code:**
-```ts
-// zoho.test.ts — runs against production
-import { zohoService } from "./index";
-it("should create a real lead in Zoho CRM", async () => { ... });
-it("should find a contact by email", async () => {
-  const contact = await zohoService.findContact("geo2019ab@gmail.com"); // personal email hardcoded
+```js
+// Strapi v5 auth.js register() — verified source
+if (settings.email_confirmation) {
+  await getService('user').sendConfirmationEmail(sanitizedUser);
+  return ctx.send({ user: sanitizedUser }); // ← NO jwt field
+}
+// Without email_confirmation:
+const jwt = getService('jwt').issue(_.pick(user, ['id']));
+return ctx.send({ jwt, user: sanitizedUser }); // ← jwt present
 ```
 
+If any frontend registration handler calls `setToken(response.jwt)` unconditionally, it calls `setToken(undefined)`. With `@pinia-plugin-persistedstate/nuxt`, `undefined` gets persisted to localStorage as the auth token — producing a broken "logged-in-but-not" state that persists across page refreshes. The user registered successfully but cannot use the site.
+
+**Why it happens:**
+The existing registration flow was written assuming immediate JWT issuance (no email confirmation). The response shape change is a silent contract break.
+
 **Consequences:**
-- Production CRM polluted with test leads on every CI run
-- Personal email hardcoded — any contributor running tests queries a private account
-- New methods (`createDeal`, `updateContactStats`) added without mocking will also hit production on CI
-- Tests fail if Zoho is down or token is expired in CI environment
+- Users register successfully but cannot access protected routes
+- `useStrapiUser()` returns null even though `useAuthToken()` returns `"undefined"` (the stringified value)
+- `createUserReservations(user)` still fires (the user object is present regardless) — reservations are created but the user cannot reach them
 
 **Prevention:**
-- Replace test file entirely with Jest mocks:
-  ```ts
-  jest.mock("./http-client");
-  const mockPost = jest.fn().mockResolvedValue({ data: [{ code: "SUCCESS", details: { id: "123" } }] });
-  ```
-- Use `jest.spyOn(zohoService, 'createLead')` pattern for integration-level tests
-- Add a `.env.test` file (gitignored) with `ZOHO_CLIENT_ID=""` to prevent accidental live calls
-- If real integration tests are needed, use Zoho's Sandbox environment (`sandbox.zohoapis.com`) and a dedicated test account
+Before enabling `email_confirmation`, audit ALL registration response handlers:
+- `apps/website/app/components/FormRegister.vue` — does it guard `if (response.jwt) setToken(response.jwt)`?
+- `apps/dashboard` — does the dashboard even have a registration flow?
 
-**Detection:**
-- `grep -r "real" apps/strapi/src/services/zoho/` finds "Real Integration" test description
-- `grep -r "geo2019ab"` finds hardcoded personal email
+The safe frontend pattern:
+```ts
+const response = await $strapi.register(...)
+if (response.jwt) {
+  // Immediate login flow (email_confirmation disabled)
+  setToken(response.jwt)
+  await fetchUser()
+} else {
+  // Email confirmation flow
+  navigateTo('/registro/verifica-tu-email')
+}
+```
+
+**Phase:** Must be addressed in the same phase as the registration email template. Change the frontend before enabling the backend flag.
 
 ---
 
-### Pitfall 6: `userUpdateController` Is Imported But Never Routed
+### Pitfall 3: `forgotPassword` Email Cannot Be Intercepted — Full Controller Override Required
 
 **What goes wrong:**
-`userUpdateController.ts` exports `updateUser` and it imports `zohoService`, but `strapi-server.ts` only registers `getUserDataWithFilters` for the `plugin.controllers.user.find` slot. The `updateUser` function is never wired to any route. Any call to update user profile (which should sync Zoho) never invokes this controller.
+The Strapi v5 `forgotPassword` controller reads the reset URL from the admin panel's key-value store and sends the email directly — there is no hook, middleware, or override point short of replacing the entire controller:
 
-**Confirmed:**
-```ts
-// strapi-server.ts — only one controller registered
-plugin.controllers.user.find = getUserDataWithFilters;
-// updateUser is imported nowhere in strapi-server.ts
-return plugin;
+```js
+// Strapi v5 auth.js forgotPassword() — verified source
+const emailBody = await getService('users-permissions').template(
+  resetPasswordSettings.message,
+  {
+    URL: advancedSettings.email_reset_password, // ← static string from admin panel config
+    SERVER_URL: strapi.config.get('server.absoluteUrl'),
+    USER: userInfo,
+    TOKEN: resetPasswordToken,
+  }
+);
+await strapi.plugin('email').service('email').send(emailToSend);
 ```
 
-**Per AGENTS.md**: Custom controllers in plugin extensions are **not supported** in Strapi v5. The correct pattern is middlewares, which is already what `user-registration.ts` uses for the registration flow.
+`advancedSettings.email_reset_password` is set in the Strapi admin panel "Reset password page" field — a single static URL. There is no runtime mechanism to make it dynamic per-request. The email template is a Lodash template stored in the admin panel DB — it cannot use MJML or Nunjucks natively.
+
+**Why it happens:**
+Strapi designed `forgotPassword` for a single-frontend use case. The URL is evaluated from config at send time, not derived from the request context.
 
 **Consequences:**
-- The Zoho contact sync on user profile update (address, phone, etc.) never fires
-- Contact data in Zoho stays stale after user fills their profile
-- Dead code and dead imports that mislead developers about what's active
+- Cannot send `?app=dashboard` to route reset to the correct app frontend
+- Cannot use the existing MJML/Nunjucks email pipeline for the reset email
+- The admin panel email template editor has no MJML capability — custom HTML only
 
 **Prevention:**
-- Move the Zoho sync logic from `userUpdateController.ts` into the existing `user-registration.ts` middleware (which already handles multiple `path` conditions)
-- Add a new condition for `PUT /api/users/{id}` path in the middleware
-- Delete `userUpdateController.ts` or rename it clearly as non-functional pending refactor
-- Never add new routes to `strapi-server.ts` controllers for users-permissions plugin (Strapi v5 restriction)
+Use the same factory-wrap pattern already established in `strapi-server.ts` to replace `instance.forgotPassword`:
+
+```ts
+// strapi-server.ts (pattern already exists for callback, register, connect)
+instance.forgotPassword = forgotPasswordOverride(instance.forgotPassword.bind(instance));
+```
+
+The override in `authController.ts`:
+1. Reads optional `app` from `ctx.request.body` (`"website"` | `"dashboard"`) and strips it before calling the original controller (see Pitfall 8)
+2. After the original controller runs (it saves the token and sends the plain email), intercepts the response — or preferably, **does not call the original at all** and reimplements the logic using `sendMjmlEmail`
+3. Builds the reset URL dynamically: `${process.env.FRONTEND_URL}/auth/reset-password?token=${token}` vs `${process.env.APP_DASHBOARD_URL}/auth/reset-password?token=${token}`
+
+If calling the original is preferred (to avoid reimplementing token logic), note that the original already sends the plain email — the override would then send a *second* email (duplicate). Full replacement is cleaner.
+
+**Detection:**
+The plain Strapi reset email uses the Lodash template format (`<%= TOKEN %>`). Any MJML-formatted reset email in the inbox confirms the override is active.
+
+**Phase:** Must be the foundation of the password reset email phase. The override must exist before any email template work begins.
+
+---
+
+### Pitfall 4: `overrideAuthLocal` Will Intercept Email Confirmation Login Errors — Wrong Error Semantics
+
+**What goes wrong:**
+`overrideAuthLocal` currently interprets `if (!jwt) return` as "invalid credentials — pass through unchanged." This guard works for both the invalid-credentials case (original controller throws a `ValidationError`) and — critically — for the `email_confirmation` lockout case (original controller throws an `ApplicationError` with `"Your account email is not confirmed"`).
+
+The `ApplicationError` throw propagates upward through `overrideAuthLocal` unchanged (because the error is thrown inside `await originalController(ctx)`, which means it bubbles up before the `if (!jwt)` guard is even reached). So the existing guard is irrelevant for `email_confirmation` errors — they propagate correctly.
+
+**However**, if a future change makes the original controller return `{ user }` (without JWT and without throwing — for example, a partial-auth state), the `if (!jwt) return` guard would silently exit `overrideAuthLocal` without setting `ctx.body`, which would return an empty 200 response to the client. This is a latent design trap.
+
+**Why it matters:**
+The addition of `email_confirmation` is the first scenario where a "valid user, no JWT" path could be imagined (e.g., a confirmed email check that returns a hint instead of throwing). Understanding the guard's semantics prevents future misuse.
+
+**Consequences:**
+- No current breakage
+- Future: if anyone modifies the original controller to return `{ user }` without JWT on email confirmation failure (instead of throwing), `overrideAuthLocal` will eat the response silently
+
+**Prevention:**
+Add a comment in `overrideAuthLocal` clarifying the guard's contract:
+
+```ts
+// If originalController threw, execution never reaches here.
+// If no JWT is present in the response, credentials were rejected but no exception
+// was thrown (should not happen in Strapi's current auth flow — guard is defensive).
+const jwt = ctx.response.body?.jwt;
+if (!jwt) return; // pass through error response unchanged
+```
+
+**Phase:** Comment-only change, in the same phase as any `overrideAuthLocal` modifications.
 
 ---
 
 ## Moderate Pitfalls
 
-### Pitfall 7: Hardcoded `"Waldo API"` Company Fallback in Leads
-
-**What goes wrong:**
-`zoho.service.ts` line 29: `Company: lead.company || "Waldo API"`. Company is mandatory for a Zoho Lead (`Company` field is required). When contact form submissions have no company (individual users), the CRM shows "Waldo API" as company for all of them — internal-looking placeholder visible to any sales person reviewing leads.
-
-**Prevention:**
-- For contact form leads with no company, use `"Particular"` or `"No especificado"` (matching the Chilean market context)
-- Or configure the Zoho Lead layout to make Company optional (requires Zoho Admin access, not code change)
-- At minimum, change the fallback to a non-internal-sounding value: `lead.company || "Particular"`
-
 ---
 
-### Pitfall 8: `ZohoFollowUp` Interface Is Dead Code — Don't Implement Against It
+### Pitfall 5: MJML `renderEmail` Throws Inside `sendMjmlEmail`'s Outer `try/catch` — Template Errors Are Invisible
 
 **What goes wrong:**
-`interfaces.ts` defines `ZohoFollowUp` and `IZohoService` omits any `createFollowUp()` method. The README shows a usage example for `createFollowUp()` that doesn't exist. If a developer reads the README and tries to implement `createFollowUp()`, they'll implement against phantom requirements.
+`renderEmail` calls `nunjucks.render()` and `mjml2html()` — both throw on template errors (undefined variable, broken `{% extends %}` path, malformed MJML, missing template file). The outer `try/catch` in `sendMjmlEmail` catches everything and returns `false`:
 
-**Prevention:**
-- Delete `ZohoFollowUp` from `interfaces.ts` entirely if not being implemented in this milestone
-- Do not add `createFollowUp()` to the scope of the new milestone without explicit product requirement
-- README should be updated to remove the dead code example before new code is written
-
----
-
-### Pitfall 9: `ZOHO_*` Env Vars Missing from `.env.example`
-
-**What goes wrong:**
-The `.env.example` (confirmed by inspection) has no `ZOHO_CLIENT_ID`, `ZOHO_CLIENT_SECRET`, `ZOHO_REFRESH_TOKEN`, or `ZOHO_API_URL` entries. New developers cloning the repo won't know these vars exist. The `index.ts` silently falls back to empty strings:
 ```ts
-clientId: process.env.ZOHO_CLIENT_ID || "",
+// send-email.ts — current code
+export async function sendMjmlEmail(...) {
+  try {
+    const html = renderEmail(template, dataWithEnv); // ← can throw
+    // ...
+    await strapi.plugins["email"].services.email.send(emailOptions);
+    return true;
+  } catch (error) {
+    console.error("Error enviando email MJML:", error); // ← logged, not rethrown
+    return false; // ← non-fatal, caller continues
+  }
+}
 ```
-Empty string client ID causes the token refresh to fail with `invalid_client` — but since `ZohoHttpClient` only fetches the token on first API call, the server starts fine and the error only appears at runtime when a Zoho call is triggered.
 
-**Prevention:**
-- Add to `.env.example`:
-  ```env
-  # Zoho CRM configuration
-  ZOHO_CLIENT_ID=your_zoho_client_id
-  ZOHO_CLIENT_SECRET=your_zoho_client_secret
-  ZOHO_REFRESH_TOKEN=your_zoho_refresh_token
-  ZOHO_API_URL=https://www.zohoapis.com
-  ```
-- Add a startup validation in `index.ts` (or Strapi's `register()` hook) that warns if any `ZOHO_*` var is missing
+This is the **intended non-fatal pattern** — correct for production, but it makes template development errors invisible. A typo in `forgot-password.mjml`, an undefined Nunjucks variable, or a missing template file all produce the same result: the email silently fails to send, the business operation succeeds, and `console.error` is the only trace.
 
----
-
-### Pitfall 10: `console.error` Mixed With Structured Logger
-
-**What goes wrong:**
-Three files use `console.error` alongside the structured `logtail` logger:
-- `zoho.service.ts`: `console.error("Zoho API Error:", ...)` in `createContact`, `findContact`, `updateContact`
-- `contact.service.ts`: `console.error("Error saving to Zoho CRM:", ...)` after `logger.error(...)`
-- `userUpdateController.ts`: no `console.error` (already uses only `logger`)
-
-`console.error` writes to raw stdout/stderr, bypassing Logtail's structured format. On production (Heroku/PM2/Docker), these messages land in the process log without metadata (`userId`, `stacktrace`, `service`) — making them hard to correlate with user activity or trace in log management tools.
-
-**Prevention:**
-- Replace all `console.error` in Zoho-related code with `logger.error("...", { context })`
-- New methods (`createDeal`, `updateContactStats`) must use only `logger` — no `console.*`
-- The `console.log` statements in `userUpdateController.ts` (lines 14-25) are debug-only — remove before shipping
-
----
-
-### Pitfall 11: Zoho API Domain Is Region-Specific — Hardcoded `zohoapis.com` May Wrong Region
-
-**What goes wrong:**
-Zoho CRM has different API domains per data center region:
-- US: `https://www.zohoapis.com`
-- EU: `https://www.zohoapis.eu`
-- IN: `https://www.zohoapis.in`
-- AU: `https://www.zohoapis.com.au`
-
-The `ZOHO_API_URL` env var defaults to `"https://www.zohoapis.com"` (US). If the Waldo Zoho account was created in the EU or a non-US region (common for Chilean businesses which may use EU data centers), all API calls return `INVALID_URL_PATTERN` or auth errors because the token was issued for a different domain.
-
-**Prevention:**
-- Confirm the exact API domain from Zoho Admin → Setup → Developer Hub → API Domain
-- The `access-refresh.html` doc confirms: "Use the value in the 'api_domain' key" returned by the token exchange response — store this dynamically rather than hardcoding a default
-- For safety, log the effective `ZOHO_API_URL` at startup
-
----
-
-### Pitfall 12: `findContact()` Returns First Match — Duplicate Contacts Cause Wrong Updates
-
-**What goes wrong:**
-`findContact(email)` uses `criteria: (Email:equals:${email})` and returns `response.data[0]` — always the first result. If a Zoho contact was duplicated (common when both the registration middleware and the contact form create contacts for the same email), `updateContact()` and stats increments always target only one of the duplicates, leaving the other stale.
+**Why it happens:**
+The non-fatal pattern is a deliberate architectural decision already established across all email-sending code. The risk is that **all new MJML templates** (registration confirmation, forgot password) will have the same invisible failure mode during development.
 
 **Consequences:**
-- User updates their profile → one duplicate updated, one unchanged
-- Deal created → linked to the "wrong" duplicate contact
-- CRM data appears inconsistent to sales staff
+- New MJML templates can have errors that are never caught until a user reports not receiving an email
+- Nunjucks variable name mismatches (`{{ resetUrl }}` vs `{{ reset_url }}`) are silent
+- Wrong template name in `sendMjmlEmail(strapi, "forgot-password", ...)` vs file `forgot-password-email.mjml` is silent
 
 **Prevention:**
-- After `createContact()`, check for `DUPLICATE_DATA` in the Zoho API response (the v5 API returns `"code": "DUPLICATE_DATA"` with the existing record's ID in `details`)
-- In `createContact()`, handle the duplicate response by returning the existing record's ID rather than throwing
-- Consider using Zoho's **upsert** endpoint (`/crm/v5/Contacts/upsert`) which handles create-or-update atomically based on duplicate-check fields
+1. For each new auth email template, create a corresponding test call in `test.ts` (the existing test file) that exercises the template with expected variables before wiring to the live flow
+2. Check Mailgun logs (not just application logs) when testing new templates in staging — the email may appear to have been called but the log shows the Mailgun API was never reached
+3. The `nunjucks.configure("src/services/mjml/templates", ...)` path is relative to CWD at Strapi start. In the Turbo monorepo, Strapi starts from `apps/strapi/` — new templates must be in `apps/strapi/src/services/mjml/templates/`
+
+**Phase:** At-risk during every new MJML template creation. Acceptance criterion for each template: "template renders without error when called with its expected variables (verified via test.ts or direct renderEmail call)."
+
+---
+
+### Pitfall 6: `forgotPassword` Override — Token Must Be Saved to DB Before Email Is Sent
+
+**What goes wrong:**
+In Strapi's original `forgotPassword`, the token is written to the user record **before** the email is sent:
+
+```js
+// Strapi v5 auth.js — verified source, comment is Strapi's own
+// NOTE: Update the user before sending the email so an Admin can generate the link if the email fails
+await getService('user').edit(user.id, { resetPasswordToken });
+await strapi.plugin('email').service('email').send(emailToSend); // ← after token saved
+```
+
+An override that reverses this order — validates the email send succeeds, then saves the token — will produce a bug: the user receives the reset email, clicks the link, and `POST /api/auth/reset-password` returns `"Incorrect code provided"` because the token was never saved.
+
+**Why it happens:**
+Natural instinct when writing the override: "send first, save if successful." Strapi's design is intentionally the opposite, so admins can manually generate links if email fails.
+
+**Prevention:**
+In the `forgotPassword` override, always call `getService('user').edit(user.id, { resetPasswordToken })` **before** `sendMjmlEmail`. Treat the email send as non-fatal (the token is already in the DB; the user can request another reset). Add an explicit comment: `// Token must be persisted before email send — matches Strapi's original contract`.
+
+**Phase:** Password reset controller override phase.
+
+---
+
+### Pitfall 7: `?app=dashboard` Cannot Use Query Params — Must Be Request Body
+
+**What goes wrong:**
+`POST /api/auth/forgot-password` is a POST endpoint. To differentiate "reset from website" vs "reset from dashboard," passing `?app=dashboard` as a URL query param is technically accessible via `ctx.request.query` but semantically wrong for POST and may be stripped by reverse proxies or future Strapi middleware.
+
+Additionally, Strapi's rate limiter uses `prefixKey: ${userIdentifier}:${requestPath}:${ctx.request.ip}`. If the rate-limit key is ever configured to include query params, `?app=dashboard` creates a separate rate-limit bucket — effectively halving the protection.
+
+**Prevention:**
+Pass `app` as a body field:
+```json
+{ "email": "user@example.com", "app": "dashboard" }
+```
+
+The override reads `ctx.request.body.app` (default `"website"`) and strips it from the body before calling the original controller (see Pitfall 8).
+
+**Phase:** Password reset override phase.
+
+---
+
+### Pitfall 8: Extra Body Field (`app`) May Fail Strapi's `validateForgotPasswordBody` Validation
+
+**What goes wrong:**
+The `forgotPassword` controller runs `await validateForgotPasswordBody(ctx.request.body)` before any custom code can execute. If Strapi's Yup validation schema uses `.noUnknown()` or strict mode, passing `{ email, app }` throws a `ValidationError: "app is not allowed"` before the override intercepts anything.
+
+**Why it matters:**
+Yup's `strict` mode and `stripUnknown` behavior differ — without inspecting the exact validation schema, it is unclear whether extra fields throw or are silently stripped. The safe assumption is that they throw.
+
+**Prevention:**
+If the override is a wrapper (calls the original controller), strip `app` from the body before passing to the original:
+
+```ts
+export const forgotPasswordOverride = (originalController) => async (ctx) => {
+  const app = (ctx.request.body as Record<string, unknown>)?.app ?? 'website';
+  // Strip 'app' before the original controller's validateForgotPasswordBody sees it
+  const { app: _app, ...cleanBody } = ctx.request.body as Record<string, unknown>;
+  ctx.request.body = cleanBody;
+  await originalController(ctx); // validateForgotPasswordBody runs here against cleanBody
+  // ... build dynamic reset URL using `app`
+};
+```
+
+This is exactly the same pattern used in `registerUserLocal`:
+```ts
+// authController.ts — existing precedent
+ctx.request.body = userData; // strips confirm_password before calling registerController(ctx)
+```
+
+**Phase:** Password reset override phase — this is the most likely runtime bug if not handled.
+
+---
+
+### Pitfall 9: `forgotPassword` Override Sends TWO Emails If Original Controller Is Called
+
+**What goes wrong:**
+If the `forgotPassword` override calls the original controller (to reuse its token generation and DB-write logic) and then also calls `sendMjmlEmail`, the user receives two emails: the plain Strapi reset email AND the MJML email.
+
+**Why it happens:**
+The original `forgotPassword` both saves the token AND sends the email in one operation. There is no way to call "only the token-saving part" without reimplementing the token generation logic.
+
+**Prevention:**
+Choose one of two approaches — do not mix:
+- **Full replacement (recommended)**: Do not call the original controller at all. Reimplement the token generation (`crypto.randomBytes(64).toString('hex')`), call `getService('user').edit()` to save it, and call `sendMjmlEmail`. Only requires ~10 lines of logic.
+- **Wrapper with original suppressed**: Call the original controller, then override `ctx.body` with the expected response — but the original email has already been sent. No clean way to suppress it.
+
+**Phase:** Password reset override phase — decide on the approach (full replacement) before implementation begins.
+
+---
+
+### Pitfall 10: Email Confirmation Redirection URL Not Configured in Admin Panel
+
+**What goes wrong:**
+When `email_confirmation` is enabled, Strapi sends a confirmation email with a link to `GET /api/auth/email-confirmation?confirmation=TOKEN`. After confirming, the controller redirects to `advancedSettings.email_confirmation_redirection`. If this field is empty (the default for new installs), the redirect goes to `/` — which resolves to Strapi's own server root, not the website.
+
+**Verification:**
+From Strapi v5 `auth.js` `emailConfirmation()`:
+```js
+ctx.redirect(settings.email_confirmation_redirection || '/');
+```
+
+**Prevention:**
+Configure "Redirection url" in Strapi admin panel → Users & Permissions → Advanced Settings **before** enabling email confirmation. Set it to the website login page with a query param: `https://waldo.click/login?confirmed=true`.
+
+**Phase:** Must be part of the same phase that enables `email_confirmation` — add to the phase checklist.
 
 ---
 
 ## Minor Pitfalls
 
-### Pitfall 13: Zoho Response Shape Not Validated — `data[0]` Assumption
+---
 
-**What goes wrong:**
-`createContact()` returns `response.data[0]` and `updateContact()` returns `response.data[0]` without checking if `data` is a non-empty array. If Zoho returns `{ data: [] }` (which can happen if the record was rejected by a workflow), `data[0]` is `undefined` and callers receive `undefined` as a "created contact" — then `contact.id` throws `TypeError: Cannot read property 'id' of undefined`.
+### Pitfall 11: Google OAuth Users Have `confirmed: false` but Are Not Blocked by `email_confirmation`
 
-**Prevention:**
+OAuth registration via Google goes through `connect()` which does not check `email_confirmation`. Google OAuth users continue to work even without the confirmed migration (Pitfall 1). However, if an OAuth user also sets a local password and tries `POST /api/auth/local`, they will be blocked.
+
+The existing `overrideAuthLocal` correctly skips 2-step for OAuth via `if (ctx.method === "GET") return originalController(ctx)`. This bypass also bypasses the `email_confirmation` check (the original `connect()` handler is used for OAuth, which doesn't have the check).
+
+**Prevention:** Run the `confirmed: true` migration for all users (Pitfall 1) regardless. No code change needed for OAuth users specifically.
+
+---
+
+### Pitfall 12: `verification-code.mjml` States "válido por 5 minutos" — Mismatch with 15-Minute Actual Expiry
+
+The existing `verification-code.mjml` says "Este código es válido por **5 minutos**" but `CODE_EXPIRY_MS = 15 * 60 * 1000` in `authController.ts`. This is an existing inconsistency in the codebase. Any new auth email templates (registration confirmation, password reset) that display an expiry time must match the actual TTL constant — do not copy this discrepancy.
+
+**Prevention:** When creating new templates, confirm the TTL from the code, not from the template text.
+
+---
+
+### Pitfall 13: Strapi's Built-in Rate Limit Applies to `forgotPassword` — 5 Requests / 5 Minutes Default
+
+Strapi applies `koa2-ratelimit` to auth endpoints. The default is 5 requests per 5-minute window per `${identifier}:${path}:${ip}`. For `forgotPassword`, the identifier is the email. This is intentional but can cause test failures when repeatedly calling the endpoint during development.
+
+**Prevention:** Be aware during testing. Do not add a custom `prefixKey` that includes the request body (would complicate rate-limit behavior).
+
+---
+
+### Pitfall 14: `sendMjmlEmail` Uses `process.env.FRONTEND_URL` for `frontendUrl` — Dashboard Reset URL Requires a Separate Env Var
+
+`send-email.ts` automatically injects `frontendUrl: process.env.FRONTEND_URL` into every template's data. For the password reset email, the correct URL depends on which app initiated the request. If the MJML template for forgot-password uses `{{ frontendUrl }}` directly, dashboard resets will point to the website URL.
+
+**Prevention:** Do not rely on the auto-injected `frontendUrl` in forgot-password templates. Pass the correct `resetUrl` explicitly as a template variable in the `sendMjmlEmail` data argument:
+
 ```ts
-const record = response.data?.[0];
-if (!record || record.code !== "SUCCESS") {
-  throw new Error(`Zoho rejected record: ${record?.message || "unknown"}`);
-}
-return record.details;
+await sendMjmlEmail(strapi, 'forgot-password', user.email, 'Restablecer contraseña', {
+  name: user.firstname || user.username,
+  resetUrl: app === 'dashboard'
+    ? `${process.env.APP_DASHBOARD_URL}/auth/reset-password?code=${resetPasswordToken}`
+    : `${process.env.FRONTEND_URL}/auth/restablecer-contrasena?code=${resetPasswordToken}`,
+});
 ```
 
----
-
-### Pitfall 14: `Deal_Name` Must Be Unique-Enough to Be Searchable
-
-**What goes wrong:**
-Creating all deals with generic names like `"Pack Purchase"` or `"Ad Payment"` makes Zoho's internal search and de-duplication useless. When troubleshooting a specific transaction, there's no way to find it without the Zoho record ID.
-
-**Prevention:**
-Include the Strapi entity ID and date in `Deal_Name`: `"Pack #${packId} — User ${userId} — ${new Date().toISOString().slice(0,10)}"`. This is searchable and unique without being cryptic.
-
----
-
-### Pitfall 15: Event Wiring Has No Idempotency Guard
-
-**What goes wrong:**
-Strapi lifecycle hooks or payment webhooks can fire more than once (Webpay retries, double-click form submissions, server retry on timeout). Without an idempotency check, `createDeal()` creates duplicate deals and `updateContactStats()` increments twice.
-
-**Prevention:**
-- For `createDeal()`: before creating, search for an existing deal with the same `buyOrder` reference in the `Description` or a custom external ID field — skip creation if found
-- For `updateContactStats()`: accept that minor over-counting is tolerable OR track the last event processed (store `lastZohoSync` timestamp per user in Strapi and skip if event is older than the last sync)
+**Phase:** Password reset MJML template phase — name the template variable explicitly and document which env var each app uses.
 
 ---
 
@@ -358,46 +401,29 @@ Strapi lifecycle hooks or payment webhooks can fire more than once (Webpay retri
 
 | Phase Topic | Likely Pitfall | Mitigation |
 |-------------|---------------|------------|
-| Fix 401 token refresh | Pitfall 1 | Add response interceptor with single retry before any new methods |
-| Implement `createDeal()` | Pitfall 2, 13, 14, 15 | Require contactId param; validate response; use meaningful Deal_Name; add idempotency |
-| Implement `updateContactStats()` | Pitfall 4, 13 | Accept race risk + add nightly reconciliation cron; validate response |
-| Wire `pack_purchased` event | Pitfall 2, 15 | `findContact()` → `createDeal()` chain; idempotency guard via buyOrder |
-| Wire `ad_paid` event | Pitfall 2, 15 | Same chain; different amount field |
-| Wire `ad_published` event | Pitfall 4, 15 | Increment counter; accept eventual consistency |
-| Mock tests for new methods | Pitfall 5 | New test file must mock `ZohoHttpClient`; no live calls |
-| Route `userUpdateController` sync | Pitfall 6 | Move logic to `user-registration.ts` middleware; delete dead controller |
-| Clean up console.error | Pitfall 10 | Replace with logger before each feature is marked done |
-| Add env vars to `.env.example` | Pitfall 9 | Do it in first commit, not as a cleanup task at the end |
-
----
-
-## "Looks Done But Isn't" Checklist
-
-- [ ] **Token refresh on 401**: Response interceptor with `_retry` flag added to `ZohoHttpClient`
-- [ ] **`createDeal()` has contactId param**: No deal created without a linked Contact
-- [ ] **No orphaned deals**: `findContact()` called before every `createDeal()`; null case handled
-- [ ] **Tests are mocked**: `zoho.test.ts` uses `jest.mock('./http-client')`, no live calls
-- [ ] **No hardcoded personal emails**: `grep -r "geo2019ab" apps/strapi/src/` returns nothing
-- [ ] **No `console.error` in Zoho code**: All logging uses `logger.error()`
-- [ ] **No debug `console.log`**: `userUpdateController.ts` debug block removed
-- [ ] **`ZohoFollowUp` dead code removed**: Interface deleted or clearly marked as unimplemented
-- [ ] **`.env.example` updated**: All four `ZOHO_*` vars present
-- [ ] **`"Waldo API"` fallback replaced**: `lead.company || "Particular"` or similar
-- [ ] **`createContact()` handles DUPLICATE_DATA**: Returns existing ID rather than throwing
-- [ ] **`data[0]` calls guarded**: `response.data?.[0]` with `code === "SUCCESS"` check
-- [ ] **`userUpdateController` routing confirmed**: Either properly wired via middleware or deleted
+| Enable `email_confirmation` flag | All existing users locked out (Pitfall 1) | Run `confirmed = true` migration FIRST; verify before enabling flag |
+| Registration email flow | Frontend response shape change — no JWT (Pitfall 2) | Audit `FormRegister.vue` response handler; add `if (response.jwt)` guard |
+| `forgotPassword` MJML email | Cannot intercept without full controller override (Pitfall 3) | Factory-wrap `instance.forgotPassword` in `strapi-server.ts` |
+| `forgotPassword` override implementation | Two emails sent if original controller is called (Pitfall 9) | Full replacement — do not call `originalController` at all |
+| `app` routing in reset URL | Extra body field may fail Yup validation (Pitfall 8) | Strip `app` from body before `originalController` (same pattern as `registerUserLocal`) |
+| `app` routing — where to pass it | Query params are wrong for POST endpoints (Pitfall 7) | Pass `app` in request body |
+| Reset URL in MJML template | Auto-injected `frontendUrl` points to wrong app (Pitfall 14) | Pass explicit `resetUrl` variable to the template |
+| Any new MJML template creation | Template errors swallowed silently (Pitfall 5) | Test `renderEmail()` directly; check Mailgun logs in staging |
+| `forgotPassword` token ordering | Token saved after email fails causes "Invalid code" (Pitfall 6) | Always save token to DB before `sendMjmlEmail` |
+| Post-implementation | `email_confirmation_redirection` URL not set (Pitfall 10) | Set to `${FRONTEND_URL}/login?confirmed=true` in admin panel before enabling |
 
 ---
 
 ## Sources
 
-- Zoho CRM API v5 — OAuth Overview: https://www.zoho.com/crm/developer/docs/api/v5/oauth-overview.html (HIGH confidence — official, confirms 1h token expiry)
-- Zoho CRM API v5 — Access & Refresh Tokens: https://www.zoho.com/crm/developer/docs/api/v5/access-refresh.html (HIGH confidence — official, confirms `expires_in: 3600`)
-- Zoho CRM API v5 — Insert Records (Deals mandatory fields): https://www.zoho.com/crm/developer/docs/api/v5/insert-records.html (HIGH confidence — official, confirms `Deal_Name` + `Stage` mandatory, DUPLICATE_DATA error format)
-- Zoho CRM API v5 — Update Records: https://www.zoho.com/crm/developer/docs/api/v5/update-records.html (HIGH confidence — official, confirms `id` required in body for bulk update)
-- Direct codebase inspection: `apps/strapi/src/services/zoho/` (all files), `apps/strapi/src/extensions/users-permissions/`, `apps/strapi/src/middlewares/user-registration.ts`, `apps/strapi/src/api/payment/services/` (HIGH confidence — confirmed bugs)
-- AGENTS.md: Strapi v5 — "Custom controllers in plugin extensions are not supported" (HIGH confidence)
-
----
-*Pitfalls research for: Zoho CRM Sync Model — Strapi v5 Backend (waldo.click, Chile)*
-*Researched: 2026-03-07*
+- Strapi v5 `auth.js` controller (verified 2026-03-13): `https://raw.githubusercontent.com/strapi/strapi/main/packages/plugins/users-permissions/server/controllers/auth.js` — HIGH confidence
+- Strapi v5 `user.js` service (verified 2026-03-13): `https://raw.githubusercontent.com/strapi/strapi/main/packages/plugins/users-permissions/server/services/user.js` — HIGH confidence
+- Strapi v5 Users & Permissions official docs: `https://docs.strapi.io/cms/features/users-permissions` — HIGH confidence
+- Strapi v5 Plugins extension docs: `https://docs.strapi.io/cms/plugins-development/plugins-extension` — HIGH confidence
+- Project codebase (direct inspection):
+  - `apps/strapi/src/extensions/users-permissions/controllers/authController.ts`
+  - `apps/strapi/src/extensions/users-permissions/strapi-server.ts`
+  - `apps/strapi/src/services/mjml/send-email.ts`
+  - `apps/strapi/src/services/mjml/index.ts`
+  - `apps/strapi/src/extensions/users-permissions/content-types/user/schema.json`
+  - `apps/strapi/config/plugins.ts`

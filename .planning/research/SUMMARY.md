@@ -1,179 +1,166 @@
 # Project Research Summary
 
-**Project:** Waldo — `apps/website` Meta Copy Audit (v1.16)
-**Domain:** SEO copy audit — classified ads platform (industrial equipment, Chile)
-**Researched:** 2026-03-07
-**Confidence:** HIGH (all findings from direct source inspection)
-
----
+**Project:** Waldo — Email Auth Flows Milestone
+**Domain:** Strapi v5 auth plugin overrides + MJML email templates + Nuxt 4 frontend auth UX
+**Researched:** 2026-03-13
+**Confidence:** HIGH — all critical findings verified from installed plugin source code
 
 ## Executive Summary
 
-v1.16 is a **copy-only milestone** — zero new packages, zero architectural changes. The work is to audit and rewrite all `<title>` and `<meta description>` strings across 31 pages of `apps/website`. The delivery mechanism is already wired: a `$setSEO({ title, description })` plugin call on every page feeds `useSeoMeta`, which `@nuxtjs/seo`'s `nuxt-seo-utils` sub-module then wraps with a `titleTemplate` of `%s | Waldo.click®`. The final browser title is always `{title param} | Waldo.click®`. Writers must never include the suffix in the title string — the template adds it automatically.
+This milestone completes Waldo's email authentication story across three self-contained deliverables: (1) replacing Strapi's plain-text password reset email with a branded MJML email that routes each user to the correct app's reset page based on their role, (2) enabling Strapi's built-in email confirmation on registration and rebuilding the frontend UX to handle the no-JWT response correctly, and (3) ensuring all auth emails match the MJML standard already in use for every other user-facing email. The project already has the MJML pipeline (`sendMjmlEmail`, Nunjucks, 15+ templates, Mailgun), the auth controller factory wrapper pattern, and partial frontend forms — nothing greenfield is needed; this is extension of existing infrastructure.
 
-There is **one critical bug already in production**: two high-traffic indexed public pages (`anuncios/[slug].vue` and `[slug].vue`) manually embed `| Waldo.click` in their title strings, producing doubled suffixes in SERP snippets (e.g., `…| Waldo.click | Waldo.click®`). Both pages also carry dynamic ad counters in their descriptions that reflect only the current page slice (up to 12 items), not actual user totals, and must be replaced with static copy. These are the highest-priority fixes in the milestone.
+The recommended implementation approach follows two independent tracks that must be sequenced but not parallelized: **Track A** (MJML password reset + context routing) is a self-contained improvement that fixes a live broken UX today — dashboard admins get a reset link pointing to the website — while **Track B** (email confirmation on registration) is a larger atomic change where all pieces must land simultaneously or users will be locked out. The most critical architectural constraint is that Strapi's `forgotPassword` and `sendConfirmationEmail` each call `strapi.plugin('email').service('email').send()` internally; any wrapper that also calls the original will double-send. Full controller replacement (not wrapping) is mandatory for both email overrides.
 
-The recommended approach is: (1) fix the two double-suffix bugs first as a standalone patch, (2) audit and rewrite the 5–6 indexed public pages where SEO quality matters most, (3) bring the 19 private/noindex pages up to brand-voice standard. The work is low-risk (string changes only, fully type-safe), but requires careful character budgeting: each `title:` param must stay under 45 characters because the `| Waldo.click®` suffix consumes 15 characters of the 60-character SERP limit.
-
-> ⚠️ **Research conflict resolved:** ARCHITECTURE.md (written from `nuxt.config.ts` inspection alone) concluded there is no auto-suffix and titles must be written in full. STACK.md (written from installed `node_modules` inspection) confirmed that `nuxt-seo-utils` silently injects `titleTemplate` at runtime. **STACK.md is correct.** The suffix IS applied automatically. Requirements must be written assuming the `title:` param is `%s` and the final output is `{title} | Waldo.click®`. The code examples in ARCHITECTURE.md that include `| Waldo.click®` in the `title:` param are **wrong** and would produce double-suffixes.
-
----
+The single highest-risk operation in the entire milestone is enabling the `email_confirmation` toggle in the Strapi Admin Panel. A single click locks out every existing user whose `confirmed` field is `false` — which is all of them under the current schema default. A database migration setting `confirmed = true` for all existing users is a hard prerequisite that must be run and verified before the toggle is flipped. All frontend changes for Track B (`FormRegister.vue` guard, `FormLogin.vue` error handling in both apps, `/registro/confirmar` page, confirmation success banner) must be deployed and verified before the toggle is activated.
 
 ## Key Findings
 
 ### Recommended Stack
 
-No stack changes for this milestone. All tooling is already in place in `apps/website`.
+No new npm packages are required. All capabilities exist in the installed stack. The MJML email service (`sendMjmlEmail`) is already production-proven with 15+ templates, Nunjucks layout inheritance, and non-fatal error handling. The Strapi auth controller extension pattern (factory wrap in `strapi-server.ts`) is already established and in production for `register`, `connect`, and `callback`. The `@nuxtjs/strapi` v2 SDK covers all needed auth calls from both Nuxt apps.
 
-**Core technologies relevant to this work:**
+**Core technologies:**
+- `mjml@^4.16.1` + `nunjucks@^3.2.4`: MJML → Nunjucks → HTML email rendering — already installed and working; all new templates extend `layouts/base.mjml`
+- `@strapi/plugin-users-permissions@5.36.1`: provides `email_confirmation` toggle, `forgotPassword`, `sendConfirmationEmail` — behavior verified from installed source at `node_modules/`
+- `@nuxtjs/strapi` v2 (website + dashboard): `useStrapiAuth()` covers all auth operations; extra body fields require `as any` TypeScript cast but pass through to Strapi correctly
+- `crypto` (Node built-in): token generation — `randomBytes(20).toString('hex')` for confirmation, `randomBytes(64).toString('hex')` for password reset, matching Strapi's own sizes exactly
+- One new env var required: `DASHBOARD_URL` (e.g. `https://dashboard.waldo.click`) for context routing in `overrideForgotPassword`
 
-- **`$setSEO` plugin** (`app/plugins/seo.ts`): The single call site for all SEO metadata on every page. Wraps `useSeoMeta` and sets title, description, OG, and Twitter tags atomically. Always use `$setSEO` — never call `useSeoMeta({ title, description })` directly on pages.
-- **`@nuxtjs/seo` v3.4.0** (via `nuxt-seo-utils` sub-module): Silently registers `titleTemplate: "%s %separator %siteName"` at low priority. Confirmed in `node_modules/nuxt-seo-utils/dist/runtime/app/logic/applyDefaults.js:52`. The `%siteName` resolves to `"Waldo.click®"` from `nuxt.config.ts` (`site.name`). Default separator is `|` (confirmed in `unhead` source).
-- **`site.name: "Waldo.click®"`** (`nuxt.config.ts:136`): The only site-wide title variable. Not configurable per-page.
+### Expected Features
 
-**Character budget rule:** `title:` param ≤ 45 characters. Final browser title = `{title} | Waldo.click®` ≤ 60 characters.
+**Must have (table stakes):**
+- **MJML password reset email** — all other user-facing emails are branded MJML; the plain-text reset email is jarringly inconsistent; requires full `forgotPassword` controller replacement
+- **Password reset context routing** — dashboard admins must receive reset links pointing to `dashboard.waldo.click/auth/reset-password`, not the website; tightly coupled to the MJML override since both are implemented in the same function
+- **Enable Strapi email confirmation** — the existing `FormRegister.vue` already shows "we sent you a confirmation email" (Swal message) but confirmation is disabled; the UI message is a lie today
+- **Post-registration confirmation screen** (`/registro/confirmar`) — redirecting to `/login` immediately after register leaves users confused when login fails with a vague error; dedicated page with email displayed + resend button
+- **Login block handling for unconfirmed users** — when confirmation is enabled, Strapi returns HTTP 400 with `"Your account email is not confirmed"`; must surface an actionable message with a resend option, not a generic error Swal
+- **Resend confirmation email button** — native Strapi endpoint `POST /api/auth/send-email-confirmation` available with no custom code; add 60-second UI cooldown (same pattern as `FormVerifyCode.vue`)
 
-### Expected Features (Audit Scope)
+**Should have (differentiators):**
+- **Confirmation success banner on login** — `?confirmed=true` query param on Strapi redirect → green banner "¡Tu cuenta ha sido confirmada! Ya puedes iniciar sesión." on `/login`
+- **Already-confirmed guard** — second click of confirmation link redirects with Strapi error params; landing page shows "Ya confirmada — inicia sesión" instead of broken state
+- **Fix `verification-code.mjml` copy** — template says "5 minutos" but `CODE_EXPIRY_MS = 15 * 60 * 1000`; low-effort fix while touching the MJML service
 
-FEATURES.md is a verbatim page-by-page inventory of all current title/description values across all 31 pages. Key findings grouped by priority:
+**Defer (v2+):**
+- **MJML account-confirmation email** — Strapi's native `sendConfirmationEmail` sends before a wrapper can intercept cleanly; requires a `plugin.services.user` service factory override (identical pattern to the existing `plugin.controllers.auth` override, fully documented in STACK.md); acceptable interim is customizing Strapi's native template via Admin UI
+- **Confirmation token expiry** — Strapi v5 confirmation tokens do not expire by default; not a blocking issue; admins can manually set `confirmed: true`
 
-**Must fix — critical bugs (affects live indexed pages):**
-- `anuncios/[slug].vue` — ⚠️ double-suffix: title param embeds `| Venta de Equipo en Waldo.click`; description slice at 150 chars exceeds budget when prefix/suffix are added; double-space when `ad.description` is empty/null
-- `[slug].vue` (user profile) — ⚠️ double-suffix: title param embeds `| Waldo.click®`; `totalAds` counter reflects page slice (up to 12 items), not user's real total
-
-**Should fix — indexed public pages (direct SEO impact):**
-- `index.vue` (homepage) — current copy functional; review keyword strategy for Chilean market
-- `anuncios/index.vue` — `generateSEODescription()` embeds `${totalAds}` counter; trailing brand string uses `"Waldo.click"` (no `®`)
-- `contacto/index.vue` — title is a single generic word (`"Contacto"`) — too generic for SERP
-- `preguntas-frecuentes.vue` — functional; polish only
-- `sitemap.vue` — description uses `"Waldo.click"` without `®`
-
-**Lower priority — private/noindex pages (brand voice):**
-- `login/index.vue` — `"Iniciar sesión"` lowercase `s` (all other pages use Title Case)
-- `packs/comprar.vue` — description is only 44 chars (target: 120–150)
-- `cuenta/mis-ordenes.vue` — description is only 54 chars
-- All other `cuenta/**`, `anunciar/**`, `packs/**` pages — currently acceptable; polish optional
-
-**Non-copy fix (missing `noindex`):**
-- `packs/index.vue` — auth-gated but missing `useSeoMeta({ robots: "noindex, nofollow" })`; `robots.txt` disallows subpaths but not the root path
-
-**No action needed:**
-- `login/facebook.vue`, `login/google.vue` — redirect-only OAuth callbacks; no UI; correctly excluded from robots
+**Anti-features (explicitly avoid):**
+- Require confirmation before browsing the public site — block only authenticated actions; the `confirmed` check on login handles this
+- Email confirmation for Google OAuth users — Google proves email ownership; `confirmed: true` is set automatically by Strapi's OAuth callback
+- Duplicate confirmation email sends — Strapi's native system + custom MJML would double-send; pick one approach
+- Custom confirmation token content type — Strapi's native `confirmed` and `confirmationToken` fields are first-class; don't build a parallel system
+- `?origin=dashboard` query param on the forgot-password form URL — this param is lost after the form submits; the routing context must travel in the POST request body
 
 ### Architecture Approach
 
-All pages share a single, well-established SEO pattern. **No architectural changes are in scope for v1.16** — only the string values inside existing `$setSEO(...)` calls change.
+The entire milestone operates within three existing architectural patterns: the Strapi auth controller factory wrapper in `strapi-server.ts`, the `sendMjmlEmail(strapi, template, to, subject, data)` email service, and Nuxt 4 pages with `definePageMeta({ layout: 'auth', middleware: ['guest'] })` for token-based auth actions. No new patterns are introduced. The key structural decision is whether to use **Strapi's built-in email confirmation** (simpler: Admin Panel toggle + `email_confirmation_redirection` URL, native endpoint, plain-text interim email) or a **custom `email-confirmation` content type** (more complex: new schema + endpoint + MJML from day one). Research recommends the built-in approach with MJML confirmation email deferred to v2, since it eliminates 3 new files and 1 new content type at the cost of a temporarily plain-text confirmation email.
 
 **Major components:**
-
-1. **`$setSEO` plugin** (`app/plugins/seo.ts`) — Unchanged. Accepts `{ title, description, imageUrl?, url?, ogType?, twitterCard? }` and sets all 9 meta tags atomically via `useSeoMeta`.
-2. **Static pages (27 pages)** — Call `$setSEO` synchronously in `<script setup>` before any `await`. Hardcoded string values. SSR-safe.
-3. **Dynamic pages (3 pages: `anuncios/[slug].vue`, `[slug].vue`, `anuncios/index.vue`)** — Call `$setSEO` inside `watch(data, handler, { immediate: true })` after `useAsyncData({ server: true, lazy: false })`. SSR-safe because `immediate: true` fires synchronously with already-resolved data.
-4. **`packs/gracias.vue`** (edge case) — `watch` without `{ immediate: true }`: no title set on SSR. Acceptable as-is (`noindex`), but trivial to fix.
-
-**Title rendering pipeline (confirmed via `node_modules` inspection):**
-```
-$setSEO({ title: "Foo" })
-  → useSeoMeta({ title: "Foo", ogTitle: "Foo", ... })
-    → nuxt-seo-utils injects titleTemplate: "%s | Waldo.click®"
-      → final <title>: "Foo | Waldo.click®"
-```
+1. `overrideForgotPassword` (Strapi — NEW) — factory-wraps `instance.forgotPassword` in `strapi-server.ts`; generates token, looks up user role, builds context-specific reset URL, sends `password-reset.mjml`; does NOT call original controller (avoids double email)
+2. `password-reset.mjml` + `email-confirmation.mjml` (Strapi — NEW) — extend `layouts/base.mjml`; use Nunjucks variables; must be tested via direct `renderEmail()` call before wiring
+3. `/registro/confirmar` page (Website — NEW) — post-registration landing; shows email address, resend button (`POST /api/auth/send-email-confirmation`), link to login; pure frontend
+4. `FormRegister.vue` update (Website — MODIFIED) — `if (response.jwt)` guard before `setToken()`; redirect to `/registro/confirmar?email=...` on success instead of `/login`
+5. `FormLogin.vue` updates (Website + Dashboard — MODIFIED) — detect `"Your account email is not confirmed"` error string; show Swal with resend option using `POST /api/auth/send-email-confirmation`
+6. `FormForgotPassword.vue` updates (Website + Dashboard — MODIFIED) — pass `context: 'website'` / `context: 'dashboard'` in forgotPassword POST body (cast as `as any`)
 
 ### Critical Pitfalls
 
-1. **Double-suffix bug** — Any `title:` param containing `| Waldo.click` already has the suffix embedded; the template adds it again. Two production pages are currently affected. **Fix:** Remove all `| Waldo.click` substrings from the raw title params and let the template handle branding.
-
-2. **Title length budget is 45 chars, not 60** — The `| Waldo.click®` suffix consumes 15 of the 60-char SERP limit. Any title param longer than 45 characters will be truncated in Google SERPs. The current codebase is mostly within budget, but dynamic titles like ad detail pages are at risk.
-
-3. **Dynamic counters in descriptions** — `${totalAds}`, `${total}`, `${ads.length}` produce stale, inaccurate descriptions. The profile page `[slug].vue` describes a user with 50 ads as having "12 anuncios" (page-1 slice). Rule: no numeric interpolation in any indexed page description. Use "cientos de" or remove the count entirely.
-
-4. **SSR-unsafe `$setSEO` placement** — `$setSEO` must be called in the synchronous `<script setup>` context (or via `watch` with `{ immediate: true }` on a server-resolved `useAsyncData` ref). Calling it in `onMounted` or a non-immediate watcher means the `<title>` is absent from the SSR HTML that Googlebot crawls. Current `packs/gracias.vue` has this issue (noindex so low risk).
-
-5. **Chilean vocabulary** — Use `"avisos"` (not `"anuncios"`) for classified ads in copy; `"equipo industrial"` / `"maquinaria"` / `"activos industriales"` (not `"productos"`); `"compra y venta"` (not `"compraventa"`). City-level keywords (`Santiago`, `Valparaíso`, etc.) are high-value in dynamic page titles — the current pattern of `${commune?.name}` is correct.
-
----
+1. **Enabling `email_confirmation` immediately locks out all existing users** — the schema default is `confirmed: false`; the toggle activates a live check in `auth.js` `callback()` that throws before `overrideAuthLocal` runs; run `UPDATE up_users SET confirmed = TRUE WHERE confirmed = FALSE OR confirmed IS NULL` BEFORE flipping the toggle; verify with a pre-existing account login immediately after
+2. **`setToken(undefined)` produces a persistent broken auth state** — when `email_confirmation: true`, Strapi returns `{ user }` with no `jwt`; calling `setToken(response.jwt)` unconditionally calls `setToken(undefined)`, which `@pinia-plugin-persistedstate/nuxt` persists to localStorage as the string `"undefined"`; guard every registration handler with `if (response.jwt)` before touching the token
+3. **Double email send if original `forgotPassword` controller is called** — Strapi's `forgotPassword` saves the token AND sends the plain email atomically; calling `await originalController(ctx)` then `sendMjmlEmail` sends two emails to the user; use full replacement — do not call the original; the token generation is ~10 lines of code
+4. **Extra body field (`context`) may fail Strapi's `validateForgotPasswordBody` Yup validation** — strip `context` from `ctx.request.body` before passing to the original controller using destructuring, identical to the pattern already used in `registerUserLocal` for stripping `confirm_password`; if using full replacement (recommended), this is moot
+5. **MJML template errors are invisible** — `sendMjmlEmail` catches all errors and returns `false`; typos in Nunjucks variables, wrong template name, broken `{% extends %}` paths, and missing template files all silently fail; test each new template via direct `renderEmail()` call and verify in Mailgun logs before wiring to the live controller flow
 
 ## Implications for Roadmap
 
-This milestone has a clear linear dependency chain. The roadmap should reflect three phases of increasing scope and decreasing SEO impact.
+Based on research, suggested phase structure:
 
-### Phase 1: Bug Fixes (Critical — do this first)
-**Rationale:** The double-suffix bug affects two of the highest-traffic indexed pages and is actively degrading SERP snippets today. It is a standalone fix with zero regression risk: remove 2 substrings from 2 template strings. This must ship before any copy quality work, because evaluating copy against a broken rendering pipeline is meaningless.
-**Delivers:** Correct `<title>` rendering for ad detail page and user profile page; elimination of misleading `totalAds` counters in descriptions; fix for empty-description double-space bug
-**Files:** `apps/website/app/pages/anuncios/[slug].vue` (line 187), `apps/website/app/pages/[slug].vue` (line 161)
-**Avoids:** Double-suffix pitfall; dynamic counter pitfall; empty-description formatting bug
+### Phase 1: MJML Templates
+**Rationale:** Both password reset and email confirmation (v2) depend on rendered templates. Creating and validating templates in isolation first means they can be verified independently before being wired to controllers. Zero risk — no Strapi restart, no DB changes, no frontend changes.
+**Delivers:** `password-reset.mjml` template (and `email-confirmation.mjml` if targeting v2 MJML confirmation); fix `verification-code.mjml` "5 minutos" → "15 minutos" copy error
+**Addresses:** Foundation for all email features; existing minor inconsistency fix
+**Avoids:** Pitfall 5 (template errors invisible) — validate `renderEmail()` with expected variables before any controller wiring
 
-### Phase 2: Indexed Public Pages (High SEO Impact)
-**Rationale:** These are the only pages that rank in Google. There are 5–6 pages in this group, bounded effort with direct traffic impact. All changes are static string replacements with no logic changes.
-**Delivers:** Keyword-rich, properly sized titles and descriptions for all indexable pages
-**Addresses:** `index.vue`, `anuncios/index.vue` (static description replacement), `contacto/index.vue` (expand generic title), `preguntas-frecuentes.vue` (polish), `sitemap.vue` (add `®`)
-**Constraints to enforce:** 45-char title budget; 130–150 char description target; Chilean vocabulary standards; zero numeric counters; no brand suffix in title params
-**Avoids:** Generic title pitfall; description length pitfalls; vocabulary errors; keyword stuffing
+### Phase 2: MJML Password Reset + Context Routing
+**Rationale:** Fully independent of email confirmation; fixes a live broken UX today (dashboard admins get wrong reset link); self-contained backend + frontend change with no atomicity risk. Can ship to production before Phase 3 is ready. Depends only on Phase 1.
+**Delivers:** `overrideForgotPassword` in `authController.ts`; factory wire in `strapi-server.ts`; `DASHBOARD_URL` env var; `FormForgotPassword.vue` context param in both apps; dashboard admins receive correct MJML reset email pointing to `dashboard.waldo.click/auth/reset-password`
+**Addresses:** MJML password reset email (table stake); password reset context routing (table stake)
+**Avoids:** Pitfall 3 (full controller replacement, not wrapping); Pitfall 4 (strip context from body before original); Pitfall 5 (template tested first); Pitfall 6 (save token to DB before email send); Pitfall 7 (context in body, not query param); Pitfall 9 (no double email); Pitfall 14 (explicit `resetUrl` variable, not auto-injected `frontendUrl`)
 
-### Phase 3: Private/Noindex Pages (Brand Voice)
-**Rationale:** These 19 pages are not indexed but are seen by logged-in users in browser tabs and social share previews. Coherent, professional copy matters for UX even when SEO rank is irrelevant.
-**Delivers:** Consistent brand voice across all `cuenta/**`, `anunciar/**`, `packs/**`, `login/**`, and auth pages; missing `noindex` added to `packs/index.vue`
-**Addresses:** `login/index.vue` casing fix; `packs/comprar.vue` and `cuenta/mis-ordenes.vue` description padding; `packs/index.vue` noindex gap; opportunistic `packs/gracias.vue` watch fix
-**Avoids:** Sub-50-char descriptions on transactional pages; brand inconsistency
+### Phase 3: Email Confirmation — Frontend First
+**Rationale:** All frontend changes must be deployed before the Admin Panel toggle is flipped. Deploy frontend, verify in staging, then activate the backend toggle in Phase 4 as a separate operational step. Shipping frontend and toggle together is high-risk — if the toggle activates before `FormRegister.vue` is updated, every new registration produces a broken persistent auth state.
+**Delivers:** `/registro/confirmar` page in website; `FormRegister.vue` with `if (response.jwt)` guard + redirect to `/registro/confirmar`; `FormLogin.vue` (website + dashboard) with unconfirmed error handling + resend Swal; confirmation success banner on `/login?confirmed=true`
+**Addresses:** Post-registration confirmation screen (table stake); login block handling for unconfirmed users (table stake); resend confirmation button (table stake); confirmation success differentiator
+**Avoids:** Pitfall 2 (`setToken(undefined)` broken auth state — guarded before toggle is enabled)
+
+### Phase 4: Email Confirmation — Backend Activation
+**Rationale:** Only after Phase 3 frontend is deployed and verified. This phase is the risky atomic operation — mostly operational steps, not new code. The pre-flight migration is a hard gate.
+**Delivers:** All existing users migrated to `confirmed = true`; Strapi `email_confirmation_redirection` configured to `${FRONTEND_URL}/login?confirmed=true`; `email_confirmation` toggled ON in Admin Panel; end-to-end flow verified (register → confirmation email → click link → login with banner)
+**Addresses:** Enable Strapi email confirmation (table stake)
+**Avoids:** Pitfall 1 (existing user lockout — migration verified before toggle); Pitfall 10 (redirection URL configured before toggle)
+
+### Phase 5: Cleanup and Polish
+**Rationale:** After both tracks are live, address edge cases and secondary differentiators. Already-confirmed guard (second link click), any remaining polish. No cleanup cron needed if using Strapi's built-in email confirmation — Strapi manages its own confirmation token lifecycle.
+**Delivers:** Already-confirmed guard on confirmation redirect; already-confirmed guard on confirmation redirect page; any remaining copy or UX polish
+**Addresses:** Should-have differentiators
 
 ### Phase Ordering Rationale
 
-- **Phase 1 before Phase 2:** The double-suffix rendering bug must be fixed before any copy quality review. Writing copy targeted at a broken title output is wasted effort.
-- **Phase 2 before Phase 3:** Public indexed pages have direct revenue impact; private pages are polish. If only Phases 1 and 2 ship, the milestone is successful.
-- **No architectural work in any phase:** All changes are string replacements inside existing `$setSEO(...)` calls. TypeScript `typeCheck: true` passes automatically since `title` and `description` remain `string` types throughout.
+- **Templates before controllers** — MJML templates must exist before `sendMjmlEmail` references them; the failure mode is silent (Pitfall 5), so early isolated validation is essential
+- **Password reset before email confirmation** — Phase 2 is independent and fixes a live broken UX; shipping it first delivers immediate user value and de-risks the milestone if Phase 3/4 is delayed
+- **Frontend before backend toggle** — the `email_confirmation` toggle is a live database key-value that takes effect immediately; frontend must be deployed first (reversed order triggers Pitfall 2)
+- **Migration as explicit phase gate in Phase 4** — the DB migration (Pitfall 1) is a hard prerequisite for the toggle, not a code change; making it an explicit step ensures it cannot be skipped under delivery pressure
+- **Context routing in Phase 2, not separate** — the `context` param and MJML override are implemented in the same function; splitting them creates a half-implemented controller that routes incorrectly
 
 ### Research Flags
 
-No phase requires additional research during planning. This is an unusually well-mapped milestone — every file, every current value, and every required change is fully documented in the research files.
+Phases with well-documented patterns (skip research-phase):
+- **Phase 1 (MJML Templates):** Template authoring follows established Nunjucks + MJML pattern; 15 reference templates exist; no unknowns
+- **Phase 2 (Password Reset):** Full implementation code documented in STACK.md with exact line-level detail; factory pattern is in production; token ordering verified from Strapi source
+- **Phase 3 (Frontend First):** Standard Nuxt 4 page + component patterns; error string to detect is verified from Strapi `auth.js` source
 
-Phases with standard patterns (skip `/gsd:research-phase`):
-- **Phase 1:** Two targeted string edits in two known files (exact line numbers in STACK.md lines 289-292)
-- **Phase 2:** Standard SEO copy writing + character budget validation — patterns fully documented in PITFALLS.md
-- **Phase 3:** Simple string replacements — all 31 page files inventoried verbatim in FEATURES.md
-
----
+Phases needing a brief pre-execution check:
+- **Phase 4 (Backend Activation):** Admin Panel configuration steps are manual and environment-specific; verify that `email_confirmation_redirection` accepts a full URL with query params (`https://waldo.click/login?confirmed=true`) before the activation session, since this behavior is documented but not verified in the installed version; confirm migration row count matches expected user count before proceeding
 
 ## Confidence Assessment
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | HIGH | `nuxt-seo-utils` source inspected directly in `node_modules`; `$setSEO` plugin read from source; `nuxt.config.ts` verified |
-| Features | HIGH | Every page file in `apps/website/app/pages/` read directly; all values extracted verbatim from source |
-| Architecture | MEDIUM | ARCHITECTURE.md drew an **incorrect conclusion** (no auto-suffix) by reading `nuxt.config.ts` without checking the module's runtime behaviour. Correct conclusion confirmed by STACK.md. All other architectural patterns and diagrams in ARCHITECTURE.md are accurate. |
-| Pitfalls | HIGH | Cross-referenced with Google Search Central docs (2025-12 and 2026-02 updates) + `nuxtseo.com` docs (2026-01 updates) + direct codebase inspection |
+| Stack | HIGH | All findings verified from installed plugin source at `node_modules/@strapi/plugin-users-permissions/server/`; token sizes, factory pattern, email send sequencing all source-confirmed |
+| Features | HIGH | Current state verified by direct codebase inspection — FormRegister.vue Swal message is a lie (confirmed: email_confirmation is off), dashboard reset flow is broken (confirmed: single global URL), MJML gap confirmed by tracing sendMjmlEmail call sites |
+| Architecture | HIGH | Factory wrapper pattern already in production; MJML service fully understood; all integration points traced from source; one intentional deferral (service factory for MJML confirmation email, v2 path fully documented) |
+| Pitfalls | HIGH | All critical pitfalls verified from Strapi v5 `auth.js` and `user.js` source; double-email risk confirmed by reading both `forgotPassword` and `sendConfirmationEmail` implementations; `confirmed` default verified from schema |
 
 **Overall confidence:** HIGH
 
 ### Gaps to Address
 
-- **ARCHITECTURE.md conflict (resolved):** Requirements must be written using STACK.md's finding — the title suffix IS applied automatically by `nuxt-seo-utils`. The `title:` param must NOT include `| Waldo.click®`. Code examples in ARCHITECTURE.md's "Correct Pattern" sections that include the suffix in the title string would produce double-suffixes and must not be used as implementation references.
-
-- **`packs/gracias.vue` SSR gap:** `watch` without `{ immediate: true }` means no `<title>` on SSR. The page is `noindex` so there is no ranking risk, but the fix is one line. Requirements should decide whether this is in scope for Phase 3.
-
-- **OG image path inconsistency (out of scope):** Some pages pass `config.public.baseUrl + "/share.jpg"` while the plugin default is `/images/share.jpg`. Not a v1.16 concern, but worth a future ticket.
-
----
+- **`email_confirmation_redirection` URL format:** Research confirmed the redirect is `ctx.redirect(settings.email_confirmation_redirection || '/')`. Need to verify whether the Strapi Admin Panel UI accepts a full URL with query params (`https://waldo.click/login?confirmed=true`) or only a path. If only a path, the `?confirmed=true` banner approach requires adjustment — use a dedicated page like `/registro/bienvenida` as the redirect target instead, or read a different signal for the success banner.
+- **`@nuxtjs/strapi` v2 extra body field passthrough:** Verified structurally that extra fields in `forgotPassword({ email, context })` pass through to the Strapi endpoint without stripping. The only impact is TypeScript — requires `as any` cast. No runtime gap.
+- **Strapi built-in `email_confirmation_redirection` behavior for already-confirmed users:** If a user clicks the confirmation link a second time, Strapi returns an error. The exact error format in the redirect params (query string key and value) should be confirmed during Phase 3 implementation to build the already-confirmed guard correctly.
 
 ## Sources
 
-### Primary (HIGH confidence)
+### Primary (HIGH confidence — installed source code)
+- `node_modules/@strapi/plugin-users-permissions/server/controllers/auth.js` (v5.36.1) — `email_confirmation` registration/login behavior, `forgotPassword` implementation, token ordering, `sendConfirmationEmail` call
+- `node_modules/@strapi/plugin-users-permissions/server/services/user.js` (v5.36.1) — `sendConfirmationEmail` implementation, token generation, service factory pattern
+- `node_modules/@strapi/plugin-users-permissions/server/bootstrap/index.js` (v5.36.1) — default `confirmed` field value behavior
+- `apps/strapi/src/extensions/users-permissions/controllers/authController.ts` — `overrideAuthLocal`, `registerUserLocal`, existing override patterns
+- `apps/strapi/src/extensions/users-permissions/strapi-server.ts` — factory wrapper pattern (production)
+- `apps/strapi/src/services/mjml/send-email.ts` — MJML service, non-fatal error pattern, env var usage
+- `apps/strapi/config/plugins.ts` — email confirmation NOT configured; Mailgun provider; `allowedFields`
+- `apps/website/app/components/FormRegister.vue` — broken Swal message, current redirect behavior
+- `apps/website/app/components/FormForgotPassword.vue` — missing context param
+- `apps/dashboard/app/components/FormForgotPassword.vue` — missing context param, broken reset destination
+- `apps/dashboard/app/components/FormResetPassword.vue` — `route.query.token` → `code` body field mapping (verified)
+- `apps/website/app/pages/login/verificar.vue` — 60-second resend cooldown pattern for reuse
 
-- `apps/website/app/plugins/seo.ts` — `$setSEO` plugin signature and implementation
-- `apps/website/nuxt.config.ts` — `site.name: "Waldo.click®"`, `@nuxtjs/seo` config
-- `apps/website/app/app.vue` — global `blockSearchEngines` noindex guard
-- All 31 files in `apps/website/app/pages/` — verbatim title/description values
-- `node_modules/nuxt-seo-utils/dist/runtime/app/logic/applyDefaults.js:52` — confirms `titleTemplate: "%s %separator %siteName"` is injected at runtime
-- `node_modules/unhead/dist/shared/unhead.ckV6dpEQ.mjs:131` — confirms default separator is `|`
-- `node_modules/@nuxtjs/seo/package.json` — confirms version 3.4.0
-- Google Search Central — Title Links: https://developers.google.com/search/docs/appearance/title-link (updated 2025-12-10)
-- Google Search Central — Meta Descriptions: https://developers.google.com/search/docs/appearance/snippet (updated 2026-02-04)
-- Nuxt SEO Utils — Enhanced Titles: https://nuxtseo.com/docs/seo-utils/guides/fallback-title (updated 2026-01-27)
-- Nuxt SEO — Mastering Meta / Titles: https://nuxtseo.com/learn-seo/nuxt/mastering-meta/titles (updated 2026-01-04)
-
-### Secondary (MEDIUM confidence)
-
-- `.planning/PROJECT.md` v1.16 milestone — confirmed scope and milestone intent
+### Secondary (HIGH confidence — official docs)
+- `https://docs.strapi.io/dev-docs/plugins/users-permissions` — Strapi v5 Users & Permissions plugin docs
+- `https://docs.strapi.io/cms/features/users-permissions` — email confirmation endpoint, redirection URL, admin settings
+- `https://raw.githubusercontent.com/strapi/strapi/main/packages/plugins/users-permissions/server/controllers/auth.js` — verified against installed version for pitfall documentation
 
 ---
-*Research completed: 2026-03-07*
+*Research completed: 2026-03-13*
 *Ready for roadmap: yes*
