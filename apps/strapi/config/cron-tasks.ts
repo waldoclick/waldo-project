@@ -3,6 +3,7 @@ import { AdService } from "../src/cron/ad-expiry.cron";
 import { CleanupService } from "../src/cron/media-cleanup.cron";
 import { BackupService } from "../src/cron/bbdd-backup.cron";
 import { VerificationCodeCleanupService } from "../src/cron/verification-code-cleanup.cron";
+import runConfirmedMigration from "../seeders/user-confirmed-migration";
 
 export default {
   /**
@@ -102,6 +103,24 @@ export default {
     options: {
       rule: "0 4 * * *", // Every day at 4:00 AM (America/Santiago)
       // rule: "* * * * *", // Test
+      tz: "America/Santiago",
+    },
+  },
+
+  /**
+   * One-time migration: sets confirmed = true on all existing users.
+   * Execute ONCE before enabling email_confirmation in Admin Panel.
+   * Idempotent — safe to re-run; returns early if all users are already confirmed.
+   * Trigger manually: POST /api/cron-runner/user-confirmed-migration
+   */
+  userConfirmedMigration: {
+    task: async ({ strapi }) => {
+      strapi.log.info("=== INICIANDO MIGRACIÓN USUARIO CONFIRMED ===");
+      await runConfirmedMigration(strapi);
+      strapi.log.info("=== MIGRACIÓN USUARIO CONFIRMED FINALIZADA ===");
+    },
+    options: {
+      rule: "0 0 1 1 *", // far-future date — never auto-runs; execute manually only
       tz: "America/Santiago",
     },
   },

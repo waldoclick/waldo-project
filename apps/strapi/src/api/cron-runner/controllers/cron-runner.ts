@@ -4,7 +4,7 @@
  * Handles POST /api/cron-runner/:name requests.
  * Accepts kebab-case names and maps them to the camelCase keys in cron-tasks.ts.
  *
- * Supported names: user-cron, ad-cron, cleanup-cron, backup-cron, verification-code-cleanup
+ * Supported names: user-cron, ad-cron, cleanup-cron, backup-cron, verification-code-cleanup, user-confirmed-migration
  */
 
 import { Context } from "koa";
@@ -15,6 +15,7 @@ const CRON_NAME_MAP: Record<string, string> = {
   "cleanup-cron": "cleanupCron",
   "backup-cron": "backupCron",
   "verification-code-cleanup": "verificationCodeCleanupCron",
+  "user-confirmed-migration": "userConfirmedMigration",
 };
 
 export default {
