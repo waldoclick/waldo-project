@@ -119,6 +119,29 @@ Each service directory must have an `index.ts` that re-exports everything. Other
   - `filters: { ... } as unknown as Record<string, unknown>`
   - Payload double-cast: `payload as unknown as Parameters<...>[N]`
 
+### Brand Colors
+Never use colors outside this palette. Do not invent or approximate colors — use exact hex values.
+
+| Token | Hex | Usage |
+|-------|-----|-------|
+| `$light_peach` | `#ffd699` | Primary CTA buttons, brand backgrounds, email button background |
+| `$charcoal` | `#313338` | Primary text, dark button background, email button text on `#ffd699` |
+| `$davys_grey` | `#555555` | Secondary text |
+| `$silver` | `#c8c8c9` | Disabled states, borders |
+| `$gainsboro` | `#eaebeb` | Dividers, subtle borders |
+| `$platinum` | `#ededed` | Background surfaces |
+| `$cultured` | `#f5f5f5` | Light backgrounds |
+| `$ghost_white` | `#f7f7f7` | Alternate light backgrounds |
+| `$white_smoke` | `#f2f2f2` | Input backgrounds |
+| `$eerie_black` | `#333333` | High-contrast text |
+| `$jet` | `#2d2d2e` | Near-black surfaces |
+| `$red_salsa` | `#ff6b6b` | Errors, destructive actions |
+| `$dodger_blue` | `#2196f3` | Links, info states |
+| `$independence` | `#4e6297` | Secondary/muted blue accents |
+| `$magic_mint` | `#c2e3d9` | Success states |
+
+**In MJML email templates:** use `#ffd699` for button `background-color` and `#313338` for button `color`. Never use any other color for CTA buttons in emails.
+
 ### CSS / SCSS
 - Follow **BEM** naming convention for all CSS classes
 - One SCSS file per component, named after the base class (e.g. `header.scss` for `.header`)
