@@ -62,6 +62,7 @@ const onSubmit = async (values: any) => {
     await forgotPassword({
       email: values.email,
       recaptchaToken: token,
+      context: "website",
     } as any);
 
     Swal.fire(
