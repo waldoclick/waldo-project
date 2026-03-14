@@ -149,7 +149,10 @@ Plans:
   3. When an unconfirmed user attempts to log in on the website, they see an actionable error message with a "Reenviar confirmación" option — not a generic error Swal
   4. When an unconfirmed user attempts to log in on the dashboard, they see the same actionable error handling with a resend option
   5. A new registration that returns no JWT (email confirmation mode) does NOT corrupt the auth state (`setToken(undefined)` never called)
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 081-01-PLAN.md — FormRegister.vue setToken guard + /registro/confirmar page
+- [ ] 081-02-PLAN.md — Both FormLogin.vue unconfirmed-user inline resend section
 
 ### Phase 082: Email Verification Backend Activation
 **Goal**: Email confirmation is activated in production with all existing users migrated, completing the full email auth story
