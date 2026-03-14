@@ -9,6 +9,7 @@
 
 - [ ] **ECOM-01**: The `purchase` event reports real transaction value (not always $0) — `order.amount` field name corrected so GA4 ecommerce dashboard shows actual revenue
 - [ ] **ECOM-02**: The `purchase` event `item_id` is populated with the real order `documentId` (not empty string)
+- [ ] **ECOM-03**: GA4 receives a `purchase` event with `value: 0` when a user successfully creates a free ad (`/anunciar/gracias`) — free ad creation is a conversion and must be tracked alongside paid conversions
 
 ### Ad Discovery Tracking
 
@@ -36,7 +37,7 @@
 
 - **ECOM-F01**: `purchase` event `item_name` reflects the actual pack purchased (not hardcoded "Orden de pago")
 - **ECOM-F02**: `view_item_list` on `/packs` page fires for direct pack purchases (not just via wizard)
-- **ECOM-F03**: Free ad creation (`handleFreeCreation`) fires a `purchase` event with `value: 0` for conversion tracking
+- **ECOM-F01b**: `purchase` event `item_name` reflects the actual pack purchased (not hardcoded "Orden de pago") — moved from v1 scope to future
 
 ### Engagement
 
@@ -60,6 +61,7 @@
 |-------------|-------|--------|
 | ECOM-01 | Phase 083 | Pending |
 | ECOM-02 | Phase 083 | Pending |
+| ECOM-03 | Phase 083 | Pending |
 | DISC-01 | Phase 084 | Pending |
 | DISC-02 | Phase 084 | Pending |
 | DISC-03 | Phase 084 | Pending |
@@ -70,8 +72,8 @@
 | BLOG-01 | Phase 085 | Pending |
 
 **Coverage:**
-- v1.38 requirements: 10 total
-- Mapped to phases: 10
+- v1.38 requirements: 11 total
+- Mapped to phases: 11
 - Unmapped: 0 ✓
 
 ---
