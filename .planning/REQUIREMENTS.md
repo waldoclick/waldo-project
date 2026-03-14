@@ -13,9 +13,9 @@
 
 ### Ad Discovery Tracking
 
-- [ ] **DISC-01**: GA4 receives a `view_item_list` event when a user views the public ad listing (`/anuncios`) — includes item array with visible ads
-- [ ] **DISC-02**: GA4 receives a `view_item` event when a user views an ad detail page (`/anuncios/[slug]`) — includes `item_id`, `item_name`, `price`, `item_category`
-- [ ] **DISC-03**: GA4 receives a `search` event when a user submits a search query or applies a commune filter — includes `search_term`
+- [x] **DISC-01**: GA4 receives a `view_item_list` event when a user views the public ad listing (`/anuncios`) — includes item array with visible ads
+- [x] **DISC-02**: GA4 receives a `view_item` event when a user views an ad detail page (`/anuncios/[slug]`) — includes `item_id`, `item_name`, `price`, `item_category`
+- [x] **DISC-03**: GA4 receives a `search` event when a user submits a search query or applies a commune filter — includes `search_term`
 
 ### Seller Contact Tracking
 
@@ -66,9 +66,9 @@
 | ECOM-01 | Phase 083 | Complete |
 | ECOM-02 | Phase 083 | Complete |
 | ECOM-03 | Phase 083 | Complete |
-| DISC-01 | Phase 084 | Pending |
-| DISC-02 | Phase 084 | Pending |
-| DISC-03 | Phase 084 | Pending |
+| DISC-01 | Phase 084 | Complete |
+| DISC-02 | Phase 084 | Complete |
+| DISC-03 | Phase 084 | Complete |
 | CONT-01 | Phase 085 | Pending |
 | CONT-02 | Phase 085 | Pending |
 | LEAD-01 | Phase 085 | Pending |

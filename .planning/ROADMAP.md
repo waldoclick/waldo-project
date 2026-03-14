@@ -195,5 +195,5 @@ Plans:
 | 081   | v1.37     | 2/2            | Complete    | 2026-03-14 |
 | 082   | v1.37     | 1/1            | Complete    | 2026-03-14 |
 | 083   | 2/2 | Complete    | 2026-03-14 | -          |
-| 084   | v1.38     | 0/?            | Not started | -          |
+| 084   | 1/2 | In Progress|  | -          |
 | 085   | v1.38     | 0/?            | Not started | -          |
