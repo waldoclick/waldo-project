@@ -36,7 +36,11 @@
   2. GA4 `purchase` event `item_id` field shows the order's `documentId` string, not an empty string
   3. GA4 Realtime shows a `purchase` event with `value: 0` when a user completes a free ad creation at `/anunciar/gracias`
   4. All 12 existing Vitest tests in `useAdAnalytics` pass after the fixes; new tests cover corrected behavior
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 083-01-PLAN.md — Fix purchase() value coercion (ECOM-01) and item_id fallback (ECOM-02) in useAdAnalytics.ts + tests
+- [ ] 083-02-PLAN.md — Add free-ad purchase event watcher to anunciar/gracias.vue (ECOM-03) + tests
 
 ### Phase 084: Ad Discovery Tracking
 **Goal**: Users browsing ads generate GA4 discovery events — every listing view, detail view, and search is captured
