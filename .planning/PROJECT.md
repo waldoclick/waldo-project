@@ -334,27 +334,27 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
          | `LightboxGift.vue` accepts `endpoint` prop for reuse | Single component handles both `ad-reservations` and `ad-featured-reservations` gift flows — v1.35 | ✓ Good |
          | `loadUsers()` called on every open without caching | Gift listbox is used infrequently by admins; fresh user list preferred over stale cache — v1.35 | ✓ Good |
          | `overrideAuthLocal` guards `ctx.method === "GET"` to skip 2-step for OAuth | `auth.callback` handles both `POST /auth/local` and `GET /auth/:provider/callback`; GET check is the minimal correct discriminator — v1.36 | ✓ Good |
-         | `verification-code` content type with `draftAndPublish: false` | Records are create/query/delete lifecycle — no publishing workflow needed; matches all other utility content types — v1.36 | ✓ Good |
-         | `pendingToken` as `type=string + unique:true` (not `type=uid`) | `uid` is a slug generator, not an opaque token; string + unique gives correct semantics without unwanted behavior — v1.36 | ✓ Good |
-         | `useStrapiClient()` direct POST for 2-step login (bypassing `useStrapiAuth().login()`) | SDK `login()` expects a JWT in the response; backend now returns `{ pendingToken, email }` — direct client call is required — v1.36 | ✓ Good |
-         | `FormVerifyCode.vue` component extracted (not inline in page) | Follows existing auth page pattern (`FormLogin.vue`); page stays clean; resend button placed in `auth__form__help` section of page — v1.36 | ✓ Good |
-         | `onMounted` guard (not guest middleware) on verify-code page | JWT not set yet when page mounts; guest middleware would not apply; `pendingToken` emptiness is the correct guard signal — v1.36 | ✓ Good |
-## Current Milestone: v1.37 Email Authentication Flows
-
-**Goal:** Replace Strapi's built-in plain-text auth emails with branded MJML templates, enforce email verification on form registration (not OAuth), and make the password reset link context-aware (website vs. dashboard).
-
-**Target features:**
-- MJML email template for account registration (welcome + confirm email link)
-- MJML email template for password reset
-- Email confirmation required on form registration (Strapi `email_confirmation: true`); redirect to confirmation page after signup
-- OAuth registration (Google) bypasses email verification
-- Password reset link includes source context (`?app=dashboard` or `?app=website`); Strapi sends link pointing to correct app's reset page
+          | `verification-code` content type with `draftAndPublish: false` | Records are create/query/delete lifecycle — no publishing workflow needed; matches all other utility content types — v1.36 | ✓ Good |
+          | `pendingToken` as `type=string + unique:true` (not `type=uid`) | `uid` is a slug generator, not an opaque token; string + unique gives correct semantics without unwanted behavior — v1.36 | ✓ Good |
+          | `useStrapiClient()` direct POST for 2-step login (bypassing `useStrapiAuth().login()`) | SDK `login()` expects a JWT in the response; backend now returns `{ pendingToken, email }` — direct client call is required — v1.36 | ✓ Good |
+          | `FormVerifyCode.vue` component extracted (not inline in page) | Follows existing auth page pattern (`FormLogin.vue`); page stays clean; resend button placed in `auth__form__help` section of page — v1.36 | ✓ Good |
+          | `onMounted` guard (not guest middleware) on verify-code page | JWT not set yet when page mounts; guest middleware would not apply; `pendingToken` emptiness is the correct guard signal — v1.36 | ✓ Good |
+          | `overrideForgotPassword` fully replaces Strapi's built-in (not wraps it) | Calling original + MJML override sends two emails; full replacement is the only correct pattern — v1.37 | ✓ Good |
+          | `context` field in forgot-password POST body (not query param) | Query params are lost after form submit redirect; body field survives the round-trip — v1.37 | ✓ Good |
+          | `DASHBOARD_URL` env var for context routing in password reset | Single config point; changing reset link destination requires no code deploy — v1.37 | ✓ Good |
+          | `if (response.jwt)` guard in `FormRegister.vue` before `setToken()` | Email confirmation mode returns no JWT; calling `setToken(undefined)` would corrupt auth state — v1.37 | ✓ Good |
+          | `useState('registrationEmail')` as cross-page shared state (Register → /registro/confirmar) | No auth state set yet; composable shared state is SSR-safe and doesn't require Pinia for transient one-way handoff — v1.37 | ✓ Good |
+          | `POST /api/auth/send-email-confirmation` native Strapi (no custom code for resend) | Strapi exposes this endpoint out-of-the-box; custom override would duplicate existing behavior — v1.37 | ✓ Good |
+          | Idempotent migration seeder with early-return guard | `findMany` unconfirmed first; return early if 0 — safe to re-run multiple times without side effects — v1.37 | ✓ Good |
+          | Far-future cron rule `0 0 1 1 *` for one-shot migration | Never auto-runs; must be triggered manually via cron-runner; prevents accidental execution after initial run — v1.37 | ✓ Good |
+          | DB migration hard gate before enabling email_confirmation toggle | If existing users are not migrated first, flipping toggle locks out all pre-existing accounts immediately — v1.37 | ✓ Good |
 
 ## Current State
 
-**Last shipped:** v1.36 (2026-03-14) — Two-Step Login Verification: email/password logins now require a 6-digit code before JWT is issued; Google OAuth unaffected
-**Current milestone:** v1.37 — Email Authentication Flows
-**Current focus:** Email confirmation on registration + MJML auth emails + password reset context routing
+**Last shipped:** v1.37 (2026-03-14) — Email Authentication Flows: full email confirmation on form registration (not OAuth), branded MJML password reset with context routing, production DB migration, smoke-test passed
+**Planning next milestone**
+
+**Email Authentication (since v1.37):** `overrideForgotPassword` fully replaces Strapi's built-in — sends branded `reset-password.mjml` routed to website or dashboard based on `context` field in POST body; `DASHBOARD_URL` env var drives dashboard reset URL. `FormRegister.vue` JWT guard redirects to `/registro/confirmar` (no `setToken` call without JWT); `/registro/confirmar` page with resend button + 60s countdown; `FormLogin.vue` (both apps) shows inline resend section for unconfirmed accounts. Idempotent migration seeder (`user-confirmed-migration.ts`) + cron-runner registration; production DB migrated to `confirmed=true`; Strapi Admin Panel `email_confirmation: ON`, `email_confirmation_redirection: https://waldo.click/login`; smoke-test passed (REGV-01, REGV-02, REGV-06).
 
 **2-Step Login (since v1.36):** `verification-code` content type (5 fields, `draftAndPublish: false`); `overrideAuthLocal` wraps `auth.callback` — intercepts `POST /api/auth/local` on credential success to generate code, store record, send `verification-code.mjml` email, return `{ pendingToken, email }` with no JWT; `GET /auth/:provider/callback` (OAuth) bypassed via `ctx.method === "GET"` guard; `POST /api/auth/verify-code` (15-min expiry, max 3 attempts, single-use — issues JWT on success); `POST /api/auth/resend-code` (60s rate limit); daily cleanup cron at 4 AM; dashboard `/auth/verify-code` with `FormVerifyCode.vue` (6-digit input, auto-submit at 6, 60s countdown, `setToken(jwt)` + `fetchUser()`, manager role check, Swal errors); website `/login/verificar` with same `FormVerifyCode.vue` pattern.
 
@@ -367,6 +367,20 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 **GA4 analytics (since v1.27):** Full ecommerce event chain — `view_item_list` → `step_view` → `begin_checkout` → `redirect_to_payment` → `purchase` (guarded); `pushEvent` flow discriminator; 12 Vitest tests.
 
 **Webpay receipt (since v1.26):** `/pagar/gracias` shows 8-field Webpay receipt via `ResumeOrder.vue`; fetches by `order.documentId`.
+
+## Known Issues / Tech Debt
+
+- **Dashboard "Recuperar contraseña" reCAPTCHA bug:** `FormForgotPassword.vue` in dashboard does not send reCAPTCHA token — form submits without it. Pre-existing bug identified during v1.37 smoke testing. Needs investigation (reCAPTCHA middleware vs. controller interception).
+
+## Validated Requirements (v1.37)
+
+- ✓ `overrideForgotPassword` sends branded MJML password reset email with context routing (website vs. dashboard) — v1.37
+- ✓ `email_confirmation_redirection` set to `https://waldo.click/login`; email_confirmation toggle ON in production — v1.37
+- ✓ New form registrations redirect to `/registro/confirmar`; cannot log in until confirmation link clicked — v1.37
+- ✓ Google OAuth registration bypasses email confirmation gate — v1.37
+- ✓ All pre-existing users migrated to `confirmed=true`; zero lockout risk — v1.37
+- ✓ `FormLogin.vue` (both apps) shows inline resend section for unconfirmed accounts instead of generic Swal — v1.37
+- ✓ Verification email copy corrected: "15 minutos" (was "5 minutos") — v1.37
 
 ## Future Requirements
 
@@ -383,4 +397,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-14 after v1.36 milestone — v1.37 started 2026-03-14*
+*Last updated: 2026-03-14 after v1.37 milestone*

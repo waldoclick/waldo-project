@@ -14,7 +14,7 @@
 - ✅ **v1.34 LightBoxArticles** — Phases 073–074 (shipped 2026-03-13). See `.planning/milestones/v1.34-ROADMAP.md`
 - ✅ **v1.35 Gift Reservations to Users** — Phases 075–076 (shipped 2026-03-13). See `.planning/milestones/v1.35-ROADMAP.md`
 - ✅ **v1.36 Two-Step Login Verification** — Phases 077–078 (shipped 2026-03-14). See `.planning/milestones/v1.36-ROADMAP.md`
-- 🚧 **v1.37 Email Authentication Flows** — Phases 079–082 (in progress)
+  - ✅ **v1.37 Email Authentication Flows** — Phases 079–082 (shipped 2026-03-14). See `.planning/milestones/v1.37-ROADMAP.md`
 
 ## Phases
 
@@ -103,94 +103,40 @@
 
 </details>
 
-### v1.37 Email Authentication Flows (Phases 079–082)
+<details>
+<summary>✅ v1.37 Email Authentication Flows (Phases 079–082) — SHIPPED 2026-03-14</summary>
 
-- [x] **Phase 079: Website Verify Flow + MJML Fix** — Close the v1.36 carry-forward: execute the website 2-step verify UX + fix the "5 minutos" copy error in verification-code.mjml (completed 2026-03-14)
-- [x] **Phase 080: Password Reset MJML + Context Routing** — Replace Strapi's plain-text password reset with a branded MJML email that routes to the correct app's reset page based on the requester's role (completed 2026-03-14)
-- [x] **Phase 081: Email Verification Frontend** — All Nuxt changes (confirmar page, register redirect, login unconfirmed handling) deployed and verified before the backend toggle is flipped (completed 2026-03-14)
-- [x] **Phase 082: Email Verification Backend Activation** — DB migration + Strapi Admin Panel config + email_confirmation toggle ON; the risky atomic step that locks in the full email auth story (completed 2026-03-14)
+- [x] Phase 079: Website Verify Flow + MJML Fix (1/1 plan) — completed 2026-03-14
+- [x] Phase 080: Password Reset MJML + Context Routing (2/2 plans) — completed 2026-03-14
+- [x] Phase 081: Email Verification Frontend (2/2 plans) — completed 2026-03-14
+- [x] Phase 082: Email Verification Backend Activation (1/1 plan) — completed 2026-03-14
 
-## Phase Details
-
-### Phase 079: Website Verify Flow + MJML Fix
-**Goal**: The website's 2-step login verify UX is formally complete and the verification email shows the correct 15-minute expiry
-**Depends on**: Nothing (carry-forward code already exists; MJML fix is independent)
-**Requirements**: PWDR-04 (VSTEP-13–16 are carry-forward from v1.36, formally executed here)
-**Success Criteria** (what must be TRUE):
-  1. A website user who logs in with email/password is redirected to `/login/verificar` and can complete 2-step verification to receive a session JWT
-  2. A website user can request a resend of the verification code from the `/login/verificar` page, with a 60-second cooldown enforced in the UI
-  3. The verification email received by the user reads "15 minutos" (not "5 minutos") for the code expiry
-  4. Google OAuth login on the website bypasses the verify-code step entirely and logs the user in directly
-**Plans**: 1 plan
-Plans:
-- [ ] 079-02-PLAN.md — Fix "5 minutos" → "15 minutos" in verification-code.mjml
-
-### Phase 080: Password Reset MJML + Context Routing
-**Goal**: Dashboard admins receive a branded MJML password reset email pointing to the dashboard's reset page; website users receive one pointing to the website's reset page
-**Depends on**: Phase 079 (MJML templates are validated; independent otherwise)
-**Requirements**: PWDR-01, PWDR-02, PWDR-03
-**Success Criteria** (what must be TRUE):
-  1. A user who requests password reset from the website receives a branded MJML email (not Strapi's plain-text email) containing a reset link to `waldo.click/auth/reset-password`
-  2. A dashboard admin who requests password reset from the dashboard receives a branded MJML email containing a reset link to `dashboard.waldo.click/auth/reset-password`
-  3. Only one email is sent per forgot-password request (no double-send from original controller + MJML override)
-  4. The `DASHBOARD_URL` environment variable drives the dashboard reset URL; changing the env var correctly changes the link destination without a code deploy
-**Plans**: 2 plans
-Plans:
-- [ ] 080-01-PLAN.md — TDD: overrideForgotPassword controller + strapi-server wire-up + DASHBOARD_URL env var
-- [ ] 080-02-PLAN.md — reset-password.mjml template + context routing in both FormForgotPassword.vue components
-
-### Phase 081: Email Verification Frontend
-**Goal**: All Nuxt frontend changes for email confirmation are deployed and working in production before the Strapi toggle is activated
-**Depends on**: Phase 079, Phase 080
-**Requirements**: REGV-03, REGV-04, REGV-05
-**Success Criteria** (what must be TRUE):
-  1. After completing the registration form, the user lands on `/registro/confirmar` (not `/login`) and sees their email address displayed along with instructions to check their inbox
-  2. The `/registro/confirmar` page has a working "Reenviar email" button that triggers a new confirmation email, with a 60-second cooldown shown in the UI
-  3. When an unconfirmed user attempts to log in on the website, they see an actionable error message with a "Reenviar confirmación" option — not a generic error Swal
-  4. When an unconfirmed user attempts to log in on the dashboard, they see the same actionable error handling with a resend option
-  5. A new registration that returns no JWT (email confirmation mode) does NOT corrupt the auth state (`setToken(undefined)` never called)
-**Plans**: 2 plans
-Plans:
-- [ ] 081-01-PLAN.md — FormRegister.vue setToken guard + /registro/confirmar page
-- [ ] 081-02-PLAN.md — Both FormLogin.vue unconfirmed-user inline resend section
-
-### Phase 082: Email Verification Backend Activation
-**Goal**: Email confirmation is activated in production with all existing users migrated, completing the full email auth story
-**Depends on**: Phase 081 (frontend must be deployed and verified first — the toggle is irreversible until manually undone)
-**Requirements**: REGV-01, REGV-02, REGV-06
-**Success Criteria** (what must be TRUE):
-  1. All users registered before this phase have `confirmed = true` in the database (zero lockout risk from the migration)
-  2. A new user who registers via the form cannot log in until they click the confirmation link in their email
-  3. A new user who registers via Google OAuth is automatically confirmed and can log in immediately without any email confirmation step
-  4. The confirmation link in the email redirects the user to `waldo.click/login` upon successful confirmation
-**Plans**: 1 plan
-Plans:
-- [ ] 082-01-PLAN.md — Migration script + cron-runner registration + production activation runbook (DB migration → Admin Panel config → toggle ON → smoke test)
+</details>
 
 ## Progress
 
-| Phase | Milestone | Plans Complete | Status      | Completed  |
-|-------|-----------|----------------|-------------|------------|
-| 060   | v1.26     | 3/3            | Complete    | 2026-03-11 |
-| 061   | v1.27     | 2/2            | Complete    | 2026-03-12 |
-| 062   | v1.28     | 2/2            | Complete    | 2026-03-12 |
-| 063   | v1.29     | 1/1            | Complete    | 2026-03-12 |
-| 064   | v1.29     | 2/2            | Complete    | 2026-03-12 |
-| 065   | v1.30     | 1/1            | Complete    | 2026-03-13 |
-| 066   | v1.30     | 2/2            | Complete    | 2026-03-13 |
-| 067   | v1.30     | 3/3            | Complete    | 2026-03-13 |
-| 068   | v1.30     | 2/2            | Complete    | 2026-03-13 |
-| 069   | v1.31     | 1/1            | Complete    | 2026-03-13 |
-| 070   | v1.31     | 1/1            | Complete    | 2026-03-13 |
-| 071   | v1.32     | 1/1            | Complete    | 2026-03-13 |
-| 072   | v1.33     | 1/1            | Complete    | 2026-03-13 |
-| 073   | v1.34     | 2/2            | Complete    | 2026-03-13 |
-| 074   | v1.34     | 2/2            | Complete    | 2026-03-13 |
-| 075   | v1.35     | 2/2            | Complete    | 2026-03-13 |
-| 076   | v1.35     | 2/2            | Complete    | 2026-03-13 |
-| 077   | v1.36     | 4/4            | Complete    | 2026-03-13 |
-| 078   | v1.36     | 2/2            | Complete    | 2026-03-14 |
-| 079   | 1/1 | Complete    | 2026-03-14 | -          |
-| 080   | 2/2 | Complete    | 2026-03-14 | -          |
-| 081   | 2/2 | Complete    | 2026-03-14 | -          |
-| 082   | v1.37     | Complete    | 2026-03-14 | -          |
+| Phase | Milestone | Plans Complete | Status   | Completed  |
+|-------|-----------|----------------|----------|------------|
+| 060   | v1.26     | 3/3            | Complete | 2026-03-11 |
+| 061   | v1.27     | 2/2            | Complete | 2026-03-12 |
+| 062   | v1.28     | 2/2            | Complete | 2026-03-12 |
+| 063   | v1.29     | 1/1            | Complete | 2026-03-12 |
+| 064   | v1.29     | 2/2            | Complete | 2026-03-12 |
+| 065   | v1.30     | 1/1            | Complete | 2026-03-13 |
+| 066   | v1.30     | 2/2            | Complete | 2026-03-13 |
+| 067   | v1.30     | 3/3            | Complete | 2026-03-13 |
+| 068   | v1.30     | 2/2            | Complete | 2026-03-13 |
+| 069   | v1.31     | 1/1            | Complete | 2026-03-13 |
+| 070   | v1.31     | 1/1            | Complete | 2026-03-13 |
+| 071   | v1.32     | 1/1            | Complete | 2026-03-13 |
+| 072   | v1.33     | 1/1            | Complete | 2026-03-13 |
+| 073   | v1.34     | 2/2            | Complete | 2026-03-13 |
+| 074   | v1.34     | 2/2            | Complete | 2026-03-13 |
+| 075   | v1.35     | 2/2            | Complete | 2026-03-13 |
+| 076   | v1.35     | 2/2            | Complete | 2026-03-13 |
+| 077   | v1.36     | 4/4            | Complete | 2026-03-13 |
+| 078   | v1.36     | 2/2            | Complete | 2026-03-14 |
+| 079   | v1.37     | 1/1            | Complete | 2026-03-14 |
+| 080   | v1.37     | 2/2            | Complete | 2026-03-14 |
+| 081   | v1.37     | 2/2            | Complete | 2026-03-14 |
+| 082   | v1.37     | 1/1            | Complete | 2026-03-14 |

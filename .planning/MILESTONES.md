@@ -1,5 +1,14 @@
 ## v1.27 Reparar eventos GA4 ecommerce en flujo de pago unificado (Shipped: 2026-03-12)
 
+## v1.37 Email Authentication Flows (Shipped: 2026-03-14)
+
+**Phases completed:** 4 phases, 6 plans, 0 tasks
+
+**Key accomplishments:**
+- (none recorded)
+
+---
+
 ## v1.36 Two-Step Login Verification (Shipped: 2026-03-14)
 
 **Phases completed:** 2 phases (077–078), 6 plans
