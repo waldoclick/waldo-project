@@ -61,7 +61,8 @@ const onSubmit = async (values: any) => {
 
     await forgotPassword({
       email: values.email as string,
-    });
+      context: "dashboard",
+    } as any);
 
     Swal.fire(
       "Éxito",
