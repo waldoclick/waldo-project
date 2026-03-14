@@ -163,7 +163,9 @@ Plans:
   2. A new user who registers via the form cannot log in until they click the confirmation link in their email
   3. A new user who registers via Google OAuth is automatically confirmed and can log in immediately without any email confirmation step
   4. The confirmation link in the email redirects the user to `waldo.click/login` upon successful confirmation
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+- [ ] 082-01-PLAN.md — Migration script + cron-runner registration + production activation runbook (DB migration → Admin Panel config → toggle ON → smoke test)
 
 ## Progress
 
