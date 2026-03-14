@@ -2,12 +2,12 @@
 gsd_state_version: 1.0
 milestone: v1.38
 milestone_name: GA4 Analytics Audit & Implementation
-current_phase: null
-status: defining_requirements
-last_updated: "2026-03-14T14:00:00.000Z"
-last_activity: "2026-03-14 - Milestone v1.38 started"
+current_phase: 083
+status: roadmap_ready
+last_updated: "2026-03-14T14:30:00.000Z"
+last_activity: "2026-03-14 - Roadmap created for v1.38"
 progress:
-  total_phases: 0
+  total_phases: 3
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -21,16 +21,28 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-14 after v1.38 milestone started)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Defining requirements for v1.38
+**Current focus:** v1.38 — GA4 Analytics Audit & Implementation (Phase 083 next)
 
 ## Position
 
 **Current Milestone:** v1.38 — GA4 Analytics Audit & Implementation
-**Status:** Defining requirements
-Phase: Not started
+**Status:** Roadmap ready — awaiting first plan
+Phase: 083 (next to plan)
 Plan: —
 
-Last activity: 2026-03-14 — Milestone v1.38 started
+```
+Progress: [░░░░░░░░░░░░░░░░░░░░] 0% (0/3 phases)
+```
+
+Last activity: 2026-03-14 — Roadmap created (3 phases: 083–085)
+
+## Phase Map
+
+| Phase | Name | Requirements | Status |
+|-------|------|--------------|--------|
+| 083 | Ecommerce Bug Fixes | ECOM-01, ECOM-02, ECOM-03 | Not started |
+| 084 | Ad Discovery Tracking | DISC-01, DISC-02, DISC-03 | Not started |
+| 085 | Contact, Auth & Blog Events | CONT-01, CONT-02, AUTH-01, AUTH-02, BLOG-01 | Not started |
 
 ## Accumulated Context
 
@@ -54,6 +66,20 @@ Last activity: 2026-03-14 — Milestone v1.38 started
 - `email_confirmation_redirection` requires full URL (Yup validation) — path-only values rejected
 - `/registro/confirmar` page has NO middleware — must be accessible without auth state (post-registration, pre-confirmation)
 - `useState('registrationEmail')` used as cross-page shared state from FormRegister → /registro/confirmar
+
+### v1.38 Key Facts (GA4 analytics)
+
+- `useAdAnalytics.ts` composable wraps all GA4 events via `window.dataLayer.push()` — all new event functions must be added here
+- File: `apps/website/app/composables/useAdAnalytics.ts`
+- All event functions follow the existing `pushEvent()` pattern
+- `DataLayerEvent` is fully typed in `window.d.ts` (since v1.12)
+- 12 existing Vitest tests in `tests/composables/` — new event functions need tests too
+- Key files for new events:
+  - `apps/website/app/pages/anuncios/index.vue` → `view_item_list`, `search`
+  - `apps/website/app/pages/anuncios/[slug].vue` → `view_item`, `contact` (email + phone)
+  - `apps/website/app/components/FormRegister.vue` → `sign_up`
+  - `apps/website/app/components/FormLogin.vue` → `login` (after verify step completes)
+  - `apps/website/app/pages/blog/[slug].vue` → `article_view`
 
 ### Blockers/Concerns (open)
 
