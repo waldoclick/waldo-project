@@ -157,12 +157,13 @@ export const useAdAnalytics = () => {
   const purchase = (order: PurchaseOrderData) => {
     const transactionId =
       order.payment_response?.buy_order ?? order.documentId ?? "";
-    const value = order.amount ?? order.totalAmount ?? 0;
+    // Number() coercion required: Strapi biginteger fields serialize to strings in JSON responses
+    const value = Number(order.amount ?? order.totalAmount ?? 0);
     const currency = order.currency ?? "CLP";
 
     const items: AnalyticsItem[] = [
       {
-        item_id: order.documentId ?? "",
+        item_id: order.documentId || transactionId || "",
         item_name: "Orden de pago",
         item_category: "Order",
         price: value,
