@@ -5,7 +5,7 @@ milestone_name: TBD
 current_phase: null
 status: between_milestones
 last_updated: "2026-03-14"
-last_activity: "2026-03-14 — Completed quick task 34: Restore Facto invoice emission in unified Webpay checkout flow"
+last_activity: "2026-03-14 — Completed quick task 35: Forward is_invoice to Strapi checkout payload in CheckoutDefault.vue"
 progress:
   total_phases: 0
   completed_phases: 0
@@ -78,3 +78,4 @@ None.
 | 32 | Restrict verify code input to digits only, max 6, auto-submit on 6th | 2026-03-13 | 2f663d6 | [32-restrict-verify-code-input-digits-only](.planning/quick/32-restrict-verify-code-input-digits-only/) |
 | 33 | Fix registration broken by confirm_password check in registerUserLocal | 2026-03-13 | 3b2262e | [33-fix-register-confirm-password-check](.planning/quick/33-fix-register-confirm-password-check/) |
 | 34 | Restore Facto invoice emission in unified Webpay checkout flow | 2026-03-14 | 0780984 | [34-restore-facto-invoice-emission-in-webpay](.planning/quick/34-restore-facto-invoice-emission-in-webpay/) |
+| 35 | Forward is_invoice to Strapi checkout payload | 2026-03-14 | 3cc00fd | [35-verify-is-invoice-field-flows-from-check](.planning/quick/35-verify-is-invoice-field-flows-from-check/) |
