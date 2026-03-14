@@ -134,7 +134,10 @@ Plans:
   2. A dashboard admin who requests password reset from the dashboard receives a branded MJML email containing a reset link to `dashboard.waldo.click/auth/reset-password`
   3. Only one email is sent per forgot-password request (no double-send from original controller + MJML override)
   4. The `DASHBOARD_URL` environment variable drives the dashboard reset URL; changing the env var correctly changes the link destination without a code deploy
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 080-01-PLAN.md — TDD: overrideForgotPassword controller + strapi-server wire-up + DASHBOARD_URL env var
+- [ ] 080-02-PLAN.md — reset-password.mjml template + context routing in both FormForgotPassword.vue components
 
 ### Phase 081: Email Verification Frontend
 **Goal**: All Nuxt frontend changes for email confirmation are deployed and working in production before the Strapi toggle is activated
