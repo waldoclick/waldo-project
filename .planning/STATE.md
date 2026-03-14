@@ -1,39 +1,39 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.36
-milestone_name: Two-Step Login Verification
-current_phase: 079
-status: planning
-last_updated: "2026-03-14T00:56:27.993Z"
-last_activity: "2026-03-14 — Completed 078-02: /auth/verify-code page with JWT storage via setToken/fetchUser, manager role check, and 60s resend countdown"
+milestone: v1.37
+milestone_name: TBD
+current_phase: null
+status: between_milestones
+last_updated: "2026-03-14"
+last_activity: "2026-03-14 — Closed v1.36 Two-Step Login Verification milestone"
 progress:
-  total_phases: 3
-  completed_phases: 2
-  total_plans: 6
-  completed_plans: 6
-  percent: 97
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Session State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-13 after v1.36 milestone started)
+See: .planning/PROJECT.md (updated 2026-03-14 after v1.36 milestone)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 078 — Dashboard Verify Flow (2/2 plans complete — DONE)
+**Current focus:** Planning next milestone (v1.37)
 
 ## Position
 
-**Milestone:** v1.36 — Two-Step Login Verification
-**Current Phase:** 079
-**Status:** Ready to plan
+**Milestone:** v1.36 — Two-Step Login Verification — SHIPPED 2026-03-14
+**Current Phase:** Between milestones
+**Status:** Ready to plan v1.37
 
 ```
-Progress: [██████████] 97%
+Progress: v1.36 SHIPPED ✓
 ```
 
-Last activity: 2026-03-14 — Completed 078-02: /auth/verify-code page with JWT storage via setToken/fetchUser, manager role check, and 60s resend countdown
+Last activity: 2026-03-14 — Closed v1.36 Two-Step Login Verification milestone
 
 ## Accumulated Context
 
@@ -59,10 +59,10 @@ Last activity: 2026-03-14 — Completed 078-02: /auth/verify-code page with JWT 
 - Resend button in auth__form__help section of the page (not inside form component) — matches existing auth page UX pattern
 - JWT finalization: setToken(jwt) → fetchUser() → useStrapiUser() role check → clearReferer() → router.push('/') — same post-login sequence as pre-2-step
 
-### Phase Dependency
+### Known Carry-forward
 
-- Phase 077 (Strapi backend) must complete before Phase 078 (Dashboard) and Phase 079 (Website) can begin
-- Phases 078 and 079 are independent of each other — can be planned/executed in parallel
+- VSTEP-13 to VSTEP-16 (website verify flow) — code exists in `FormLogin.vue` + `/login/verificar` + `FormVerifyCode.vue`, but phase 079 was not formally planned/executed. Consider including in v1.37 scope.
+- `auth.callback` dual-path behavior (email/password + OAuth) documented — future auth overrides must guard on `ctx.method`
 
 ### Blockers/Concerns
 
