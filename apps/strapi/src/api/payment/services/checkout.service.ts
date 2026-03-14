@@ -8,6 +8,7 @@ interface CheckoutPayload {
   pack: string; // pack name (must not be "free")
   ad_id?: number; // optional — present when publishing an ad
   featured?: boolean; // optional — present when buying featured slot
+  is_invoice?: boolean; // optional — true for factura, false/omitted for boleta
 }
 
 interface InitiateResult {
@@ -67,10 +68,11 @@ class CheckoutService {
     }
 
     // 6. Encode buy_order — same style as pack.service.ts
-    // Format: "order-{userId}-{packId}-{adId}-{featured}"
+    // Format: "order-{userId}-{packId}-{adId}-{featured}-{isInvoice}"
     const adId = payload.ad_id ?? 0;
     const featuredFlag = payload.featured ? 1 : 0;
-    const buyOrder = `order-${userId}-${packData.id}-${adId}-${featuredFlag}`;
+    const invoiceFlag = payload.is_invoice ? 1 : 0;
+    const buyOrder = `order-${userId}-${packData.id}-${adId}-${featuredFlag}-${invoiceFlag}`;
     const sessionId = `session-${packData.id}`;
 
     // 7. Build return URL
