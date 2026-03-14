@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.37
 milestone_name: Email Authentication Flows
 current_phase: 082
-status: planning
-last_updated: "2026-03-14T03:28:14.007Z"
-last_activity: "2026-03-14 — 081-01 SUMMARY created: FormRegister useStrapiClient + /registro/confirmar page (TDD RED+GREEN) — REGV-03 REGV-04"
+status: complete
+last_updated: "2026-03-14T04:13:02Z"
+last_activity: "2026-03-14 — 082-01 SUMMARY created: email confirmation activated (migration + Admin Panel toggle + smoke-test) — REGV-01 REGV-02 REGV-06"
 progress:
   total_phases: 4
-  completed_phases: 3
-  total_plans: 5
-  completed_plans: 5
+  completed_phases: 4
+  total_plans: 6
+  completed_plans: 6
   percent: 100
 ---
 
@@ -27,10 +27,10 @@ See: .planning/PROJECT.md (updated 2026-03-14 after v1.36 milestone)
 
 **Milestone:** v1.37 — Email Authentication Flows
 **Current Phase:** 082
-**Status:** Ready to plan
+**Status:** Complete — milestone v1.37 done
 **Progress:** [██████████] 100%
 
-Last activity: 2026-03-14 — 081-01 SUMMARY created: FormRegister useStrapiClient + /registro/confirmar page (TDD RED+GREEN) — REGV-03 REGV-04
+Last activity: 2026-03-14 — 082-01 SUMMARY created: email confirmation activated (migration + Admin Panel toggle + smoke-test) — REGV-01 REGV-02 REGV-06
 
 ## Accumulated Context
 
@@ -86,7 +86,8 @@ Last activity: 2026-03-14 — 081-01 SUMMARY created: FormRegister useStrapiClie
 
 ### Blockers/Concerns
 
-- Phase 082 has a pre-flight check gap: need to verify whether `email_confirmation_redirection` in Strapi Admin Panel accepts a full URL with query params (`https://waldo.click/login?confirmed=true`) or only a path. If only a path, use `/registro/bienvenida` as the redirect target. Verify before activation session.
+- ✅ RESOLVED (082-01): `email_confirmation_redirection` requires full URL (Yup validation) — set to `https://waldo.click/login`. Path-only values rejected.
+- Dashboard "Recuperar contraseña" form is missing reCAPTCHA submission — the form submits without sending the recaptcha token. Needs investigation and fix (deferred, out of scope for Phase 082).
 
 ### Quick Tasks Completed
 

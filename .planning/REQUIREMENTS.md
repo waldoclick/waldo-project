@@ -16,12 +16,12 @@ Requirements for this milestone. Each maps to roadmap phases.
 
 ### Email Verification
 
-- [ ] **REGV-01**: User who registers via form must confirm their email address before they can log in
-- [ ] **REGV-02**: User who registers via Google OAuth is not required to confirm email (bypassed automatically)
+- [x] **REGV-01**: User who registers via form must confirm their email address before they can log in
+- [x] **REGV-02**: User who registers via Google OAuth is not required to confirm email (bypassed automatically)
 - [x] **REGV-03**: After form registration, user is redirected to a confirmation page (`/registro/confirmar`) instead of `/login`
 - [x] **REGV-04**: Confirmation page displays the user's email address and a resend confirmation email button
 - [x] **REGV-05**: When an unconfirmed user tries to log in, a clear actionable error is shown with a resend option (not a generic error Swal)
-- [ ] **REGV-06**: All existing users are migrated to `confirmed = true` before email confirmation is activated (prevents lockout)
+- [x] **REGV-06**: All existing users are migrated to `confirmed = true` before email confirmation is activated (prevents lockout)
 
 ## Future Requirements
 
@@ -59,9 +59,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | REGV-03     | 081   | Complete |
 | REGV-04     | 081   | Complete |
 | REGV-05     | 081   | Complete |
-| REGV-01     | 082   | Pending |
-| REGV-02     | 082   | Pending |
-| REGV-06     | 082   | Pending |
+| REGV-01     | 082   | Complete |
+| REGV-02     | 082   | Complete |
+| REGV-06     | 082   | Complete |
 
 **Coverage:**
 - v1.37 requirements: 10 total
