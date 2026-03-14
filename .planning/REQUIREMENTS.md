@@ -19,21 +19,21 @@
 
 ### Seller Contact Tracking
 
-- [ ] **CONT-01**: GA4 receives a `contact` event when a logged-in user clicks the seller's email link on an ad detail page — includes `method: "email"`
-- [ ] **CONT-02**: GA4 receives a `contact` event when a logged-in user clicks the seller's phone link on an ad detail page — includes `method: "phone"`
+- [x] **CONT-01**: GA4 receives a `contact` event when a logged-in user clicks the seller's email link on an ad detail page — includes `method: "email"`
+- [x] **CONT-02**: GA4 receives a `contact` event when a logged-in user clicks the seller's phone link on an ad detail page — includes `method: "phone"`
 
 ### Lead Generation Tracking
 
-- [ ] **LEAD-01**: GA4 receives a `generate_lead` event when a user successfully submits the contact form and reaches `/contacto/gracias`
+- [x] **LEAD-01**: GA4 receives a `generate_lead` event when a user successfully submits the contact form and reaches `/contacto/gracias`
 
 ### User Lifecycle Tracking
 
-- [ ] **AUTH-01**: GA4 receives a `sign_up` event when a user completes registration successfully — includes `method: "email"`
-- [ ] **AUTH-02**: GA4 receives a `login` event when a user completes login successfully (including 2-step verification) — includes `method: "email"` or `method: "google"`
+- [x] **AUTH-01**: GA4 receives a `sign_up` event when a user completes registration successfully — includes `method: "email"`
+- [x] **AUTH-02**: GA4 receives a `login` event when a user completes login successfully (including 2-step verification) — includes `method: "email"` or `method: "google"`
 
 ### Blog Tracking
 
-- [ ] **BLOG-01**: GA4 receives a custom `article_view` event when a user views a blog article (`/blog/[slug]`) — includes `article_id`, `article_title`, `article_category`
+- [x] **BLOG-01**: GA4 receives a custom `article_view` event when a user views a blog article (`/blog/[slug]`) — includes `article_id`, `article_title`, `article_category`
 
 ## Future Requirements
 
@@ -69,12 +69,12 @@
 | DISC-01 | Phase 084 | Complete |
 | DISC-02 | Phase 084 | Complete |
 | DISC-03 | Phase 084 | Complete |
-| CONT-01 | Phase 085 | Pending |
-| CONT-02 | Phase 085 | Pending |
-| LEAD-01 | Phase 085 | Pending |
-| AUTH-01 | Phase 085 | Pending |
-| AUTH-02 | Phase 085 | Pending |
-| BLOG-01 | Phase 085 | Pending |
+| CONT-01 | Phase 085 | Complete |
+| CONT-02 | Phase 085 | Complete |
+| LEAD-01 | Phase 085 | Complete |
+| AUTH-01 | Phase 085 | Complete |
+| AUTH-02 | Phase 085 | Complete |
+| BLOG-01 | Phase 085 | Complete |
 
 **Coverage:**
 - v1.38 requirements: 12 total

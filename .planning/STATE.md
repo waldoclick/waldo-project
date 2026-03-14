@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.38
 milestone_name: GA4 Analytics Audit & Implementation
 status: planning
-last_updated: "2026-03-14T16:54:40.582Z"
-last_activity: "2026-03-14 — Completed 084-02 (DISC-01, DISC-02, DISC-03: view_item_list, view_item, search wired in anuncios pages; verified in GA4 Realtime)"
+last_updated: "2026-03-14T17:15:25.660Z"
+last_activity: "2026-03-14 — Completed 085-01 (CONT-01, CONT-02, LEAD-01, AUTH-01, AUTH-02, BLOG-01: 5 new analytics functions added to useAdAnalytics via TDD)"
 progress:
   total_phases: 3
   completed_phases: 2
-  total_plans: 4
-  completed_plans: 4
-  percent: 100
+  total_plans: 6
+  completed_plans: 5
+  percent: 98
 ---
 
 # Session State
@@ -25,15 +25,15 @@ See: .planning/PROJECT.md (updated 2026-03-14 after v1.38 milestone started)
 ## Position
 
 **Current Milestone:** v1.38 — GA4 Analytics Audit & Implementation
-**Status:** Ready to plan
-Phase: 084
-Plan: 02 complete → Phase 084 done → 085 next
+**Status:** In progress
+Phase: 085
+Plan: 01 complete → 02 next
 
 ```
-Progress: [██████████] 100% (43/43 plans across project)
+Progress: [██████████] 98% (44/45 plans across project)
 ```
 
-Last activity: 2026-03-14 — Completed 084-02 (DISC-01, DISC-02, DISC-03: view_item_list, view_item, search wired in anuncios pages; verified in GA4 Realtime)
+Last activity: 2026-03-14 — Completed 085-01 (CONT-01, CONT-02, LEAD-01, AUTH-01, AUTH-02, BLOG-01: 5 new analytics functions added to useAdAnalytics via TDD)
 
 ## Phase Map
 
@@ -41,7 +41,7 @@ Last activity: 2026-03-14 — Completed 084-02 (DISC-01, DISC-02, DISC-03: view_
 |-------|------|--------------|--------|
 | 083 | Ecommerce Bug Fixes | ECOM-01, ECOM-02, ECOM-03 | Complete (2/2 plans done) |
 | 084 | Ad Discovery Tracking | DISC-01, DISC-02, DISC-03 | Complete (2/2 plans done) |
-| 085 | Contact, Auth & Blog Events | CONT-01, CONT-02, AUTH-01, AUTH-02, BLOG-01 | Not started |
+| 085 | Contact, Auth & Blog Events | CONT-01, CONT-02, AUTH-01, AUTH-02, BLOG-01 | In Progress (1/2 plans done) |
 
 ## Accumulated Context
 
@@ -76,6 +76,10 @@ Last activity: 2026-03-14 — Completed 084-02 (DISC-01, DISC-02, DISC-03: view_
 - `email_confirmation_redirection` requires full URL (Yup validation) — path-only values rejected
 - `/registro/confirmar` page has NO middleware — must be accessible without auth state (post-registration, pre-confirmation)
 - `useState('registrationEmail')` used as cross-page shared state from FormRegister → /registro/confirmar
+- contactSeller/generateLead use flow='user_engagement', signUp/login use flow='user_lifecycle', articleView uses flow='content_engagement' (085-01)
+- All new engagement/lifecycle/content GA4 events pass empty items array [] — no ecommerce block (085-01)
+- signUp() has no method param — always pushes method='email'; Google sign-up uses OAuth flow (085-01)
+- articleView() passes id as-is (string | number) without coercion — GA4 accepts both (085-01)
 
 ### v1.38 Key Facts (GA4 analytics)
 
