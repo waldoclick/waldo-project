@@ -5,7 +5,11 @@
       <div class="packs--default__list">
         <client-only>
           <template v-for="(item, index) in packs" :key="index">
-            <CardPack v-if="item.total_ads > 1" :pack="item" />
+            <CardPack
+              v-if="item.total_ads > 1"
+              :pack="item"
+              :all-packs="packs"
+            />
           </template>
         </client-only>
       </div>
@@ -26,9 +30,9 @@ const props = defineProps<{
 
 const separator = props.separator ?? false;
 const { sanitizeText } = useSanitize();
-const title = sanitizeText(
-  "Ahorra desde un 40% comprando uno <br>de nuestros packs",
-);
+const { getPacksPageTitle } = usePacks();
+
+const title = computed(() => sanitizeText(getPacksPageTitle(props.packs)));
 
 const isSeparator = computed(() => {
   return separator ? "is-separator" : "";

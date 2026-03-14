@@ -65,7 +65,20 @@
             { 'payment--method__item--active': payment === item.id },
           ]"
         >
-          <span v-if="item.text">{{ item.text }}</span>
+          <span
+            v-if="
+              getPackBadgeText(
+                item as import('@/types/pack').Pack,
+                packs as unknown as import('@/types/pack').Pack[],
+              )
+            "
+            >{{
+              getPackBadgeText(
+                item as import("@/types/pack").Pack,
+                packs as unknown as import("@/types/pack").Pack[],
+              )
+            }}</span
+          >
           <label>
             <p>
               <input
@@ -108,6 +121,7 @@ const props = withDefaults(
 
 const adStore = useAdStore();
 const { packs, loadPacks } = usePacksList();
+const { getPackBadgeText } = usePacks();
 const user = useStrapiUser();
 const { getAdReservations } = useUser();
 const payment = ref<string | number | null>(null);

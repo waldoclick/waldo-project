@@ -33,7 +33,7 @@ Plan: 01 complete → 02 next
 Progress: [██████████] 98% (44/45 plans across project)
 ```
 
-Last activity: 2026-03-14 — Completed 085-01 (CONT-01, CONT-02, LEAD-01, AUTH-01, AUTH-02, BLOG-01: 5 new analytics functions added to useAdAnalytics via TDD)
+Last activity: 2026-03-14 — Completed quick task 40: Fix AccountMain announcements banner to 2-column grid layout (text left, button right)
 
 ## Phase Map
 

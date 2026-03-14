@@ -69,7 +69,7 @@
       &__text {
         display: flex;
         flex-direction: column;
-        gap: 12px;
+        gap: 3px;
       }
 
       &__own {
@@ -77,8 +77,6 @@
         font-size: 18px;
         letter-spacing: 0.25px;
         color: $charcoal;
-        display: flex;
-        flex-direction: column;
 
         @include screen-medium {
           margin-bottom: 20px;
@@ -104,17 +102,11 @@
         }
 
         &__info {
-          display: flex;
-          flex-direction: column;
           font-weight: normal;
           font-size: 14px;
           letter-spacing: 0.25px;
           color: $charcoal;
-
-          span {
-            font-weight: bold;
-            margin-bottom: 10px;
-          }
+          line-height: 1.5;
         }
 
         img {

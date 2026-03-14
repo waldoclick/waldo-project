@@ -15,9 +15,6 @@
     "name": {
       "type": "string"
     },
-    "text": {
-      "type": "string"
-    },
     "total_days": {
       "type": "biginteger"
     },
@@ -29,9 +26,6 @@
     },
     "price": {
       "type": "biginteger"
-    },
-    "description": {
-      "type": "text"
     }
   }
 }
