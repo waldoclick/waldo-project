@@ -223,6 +223,66 @@ describe("useAdAnalytics - purchase()", () => {
     expect(ecommerce?.currency).not.toBeUndefined();
     expect(ecommerce?.items).not.toBeUndefined();
   });
+
+  it("coerces string amount to number (Strapi biginteger fix)", async () => {
+    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { purchase } = useAdAnalytics();
+
+    const order: PurchaseOrderData = {
+      documentId: "doc123",
+      amount: "19990" as unknown as number,
+      currency: "CLP",
+    };
+
+    purchase(order);
+
+    const event = mockDataLayer.find(
+      (e) => (e as Record<string, unknown>).event === "purchase",
+    ) as Record<string, unknown> | undefined;
+    const ecommerce = event?.ecommerce as Record<string, unknown>;
+    expect(typeof ecommerce?.value).toBe("number");
+    expect(ecommerce?.value).toBe(19990);
+  });
+
+  it("coerces string '0' amount to numeric 0 (Strapi biginteger fix)", async () => {
+    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { purchase } = useAdAnalytics();
+
+    const order: PurchaseOrderData = {
+      documentId: "doc123",
+      amount: "0" as unknown as number,
+      currency: "CLP",
+    };
+
+    purchase(order);
+
+    const event = mockDataLayer.find(
+      (e) => (e as Record<string, unknown>).event === "purchase",
+    ) as Record<string, unknown> | undefined;
+    const ecommerce = event?.ecommerce as Record<string, unknown>;
+    expect(typeof ecommerce?.value).toBe("number");
+    expect(ecommerce?.value).toBe(0);
+  });
+
+  it("uses transactionId as item_id fallback when documentId is absent", async () => {
+    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { purchase } = useAdAnalytics();
+
+    const order: PurchaseOrderData = {
+      amount: 9990,
+      currency: "CLP",
+      payment_response: { buy_order: "BO-123" },
+    };
+
+    purchase(order);
+
+    const event = mockDataLayer.find(
+      (e) => (e as Record<string, unknown>).event === "purchase",
+    ) as Record<string, unknown> | undefined;
+    const ecommerce = event?.ecommerce as Record<string, unknown>;
+    const items = ecommerce?.items as Record<string, unknown>[];
+    expect(items[0]?.item_id).toBe("BO-123");
+  });
 });
 
 describe("useAdAnalytics - existing methods unchanged", () => {
