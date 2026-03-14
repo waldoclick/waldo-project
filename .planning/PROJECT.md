@@ -349,10 +349,22 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
           | Far-future cron rule `0 0 1 1 *` for one-shot migration | Never auto-runs; must be triggered manually via cron-runner; prevents accidental execution after initial run — v1.37 | ✓ Good |
           | DB migration hard gate before enabling email_confirmation toggle | If existing users are not migrated first, flipping toggle locks out all pre-existing accounts immediately — v1.37 | ✓ Good |
 
+## Current Milestone: v1.38 GA4 Analytics Audit & Implementation
+
+**Goal:** Audit, correct, and complete the GA4 event coverage on the website — from ecommerce funnel validation to full user lifecycle tracking.
+
+**Target features:**
+- GA4 ecommerce audit: verify purchase, begin_checkout, view_item, view_item_list are firing correctly and appearing in GA4 reports
+- User lifecycle events: sign_up (registration), login (including 2-step and Google OAuth)
+- Contact/lead events: generate_lead for WhatsApp and email clicks on ad detail page
+- Search events: search when user filters or searches listings
+- Ad navigation: view_item on ad detail, view_item_list on listing (audit existing implementation)
+- Blog engagement: article read tracking
+
 ## Current State
 
 **Last shipped:** v1.37 (2026-03-14) — Email Authentication Flows: full email confirmation on form registration (not OAuth), branded MJML password reset with context routing, production DB migration, smoke-test passed
-**Planning next milestone**
+**Active milestone:** v1.38 — GA4 Analytics Audit & Implementation
 
 **Email Authentication (since v1.37):** `overrideForgotPassword` fully replaces Strapi's built-in — sends branded `reset-password.mjml` routed to website or dashboard based on `context` field in POST body; `DASHBOARD_URL` env var drives dashboard reset URL. `FormRegister.vue` JWT guard redirects to `/registro/confirmar` (no `setToken` call without JWT); `/registro/confirmar` page with resend button + 60s countdown; `FormLogin.vue` (both apps) shows inline resend section for unconfirmed accounts. Idempotent migration seeder (`user-confirmed-migration.ts`) + cron-runner registration; production DB migrated to `confirmed=true`; Strapi Admin Panel `email_confirmation: ON`, `email_confirmation_redirection: https://waldo.click/login`; smoke-test passed (REGV-01, REGV-02, REGV-06).
 
@@ -397,4 +409,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-14 after v1.37 milestone*
+*Last updated: 2026-03-14 after v1.38 milestone started*
