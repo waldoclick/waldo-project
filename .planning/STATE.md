@@ -2,9 +2,9 @@
 gsd_state_version: 1.0
 milestone: v1.38
 milestone_name: GA4 Analytics Audit & Implementation
-status: executing
-last_updated: "2026-03-14T16:50:29.327Z"
-last_activity: "2026-03-14 — Completed 084-01 (DISC-01, DISC-02, DISC-03: viewItemListPublic, viewItem, search via TDD)"
+status: planning
+last_updated: "2026-03-14T16:54:40.582Z"
+last_activity: "2026-03-14 — Completed 084-02 (DISC-01, DISC-02, DISC-03: view_item_list, view_item, search wired in anuncios pages; verified in GA4 Realtime)"
 progress:
   total_phases: 3
   completed_phases: 2
@@ -25,7 +25,7 @@ See: .planning/PROJECT.md (updated 2026-03-14 after v1.38 milestone started)
 ## Position
 
 **Current Milestone:** v1.38 — GA4 Analytics Audit & Implementation
-**Status:** In Progress
+**Status:** Ready to plan
 Phase: 084
 Plan: 02 complete → Phase 084 done → 085 next
 
