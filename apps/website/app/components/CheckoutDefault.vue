@@ -59,6 +59,7 @@ const handlePayClick = async () => {
         pack: selectedPack.name,
         ad_id: adStore.ad.ad_id,
         featured: adStore.featured,
+        is_invoice: adStore.is_invoice,
       } as unknown as Parameters<typeof create>[1],
     );
 
