@@ -39,8 +39,37 @@ class CheckoutService {
     userId: string
   ): Promise<InitiateResult> {
     // 1. Validate pack name
-    if (payload.pack === "free" || payload.pack === "paid") {
+    if (payload.pack === "free") {
       return { success: false, message: "Invalid pack" };
+    }
+
+    const adId = payload.ad_id ?? 0;
+    const featuredFlag = payload.featured ? 1 : 0;
+    const invoiceFlag = payload.is_invoice ? 1 : 0;
+
+    // pack === "paid": user has an existing paid reservation — only charge featured
+    if (payload.pack === "paid") {
+      const amount = Number(process.env.AD_FEATURED_PRICE) || 10000;
+      // Use packId=0 to signal "no new pack" in buy_order
+      const buyOrder = `order-${userId}-0-${adId}-${featuredFlag}-${invoiceFlag}`;
+      const sessionId = `session-paid-${adId}`;
+      const returnUrl = `${process.env.APP_URL}/api/payments/webpay`;
+
+      const result = await getPaymentGateway().createTransaction(
+        amount,
+        buyOrder,
+        sessionId,
+        returnUrl
+      );
+
+      if (!result.success) {
+        return {
+          success: false,
+          message: String(result.error ?? "Webpay transaction failed"),
+        };
+      }
+
+      return { success: true, url: result.url, token: result.gatewayRef };
     }
 
     // 2. Look up pack by name
@@ -72,9 +101,6 @@ class CheckoutService {
 
     // 6. Encode buy_order — same style as pack.service.ts
     // Format: "order-{userId}-{packId}-{adId}-{featured}-{isInvoice}"
-    const adId = payload.ad_id ?? 0;
-    const featuredFlag = payload.featured ? 1 : 0;
-    const invoiceFlag = payload.is_invoice ? 1 : 0;
     const buyOrder = `order-${userId}-${packData.id}-${adId}-${featuredFlag}-${invoiceFlag}`;
     const sessionId = `session-${packData.id}`;
 
@@ -128,7 +154,76 @@ class CheckoutService {
       const featured = parts[4] === "1";
       const is_invoice = parts[5] === "1";
 
-      // 4. Look up pack by id
+      // 4. Handle pack === "paid" (packId === 0): use existing paid reservation, only charge featured
+      if (packId === 0) {
+        // 4a. Create paid featured reservation and link to ad
+        if (featured && adId > 0) {
+          await PaymentUtils.adFeaturedReservation.createAdFeaturedReservation(
+            userId,
+            (Number(process.env.AD_FEATURED_PRICE) || 10000).toString(),
+            "Paid featured from unified checkout (paid pack)",
+            adId
+          );
+        }
+
+        // 4b. Use the user's existing paid ad reservation
+        const aAdReservationCredit =
+          await PaymentUtils.adReservation.getAdReservationAvailable(
+            userId,
+            false
+          );
+
+        if (
+          !aAdReservationCredit.success ||
+          !aAdReservationCredit.adReservation
+        ) {
+          return { success: false, message: "No paid reservation available" };
+        }
+
+        const adReservationId = aAdReservationCredit.adReservation.id;
+        const total_days = aAdReservationCredit.adReservation.total_days;
+
+        await PaymentUtils.ad.updateAdReservation(adId, adReservationId);
+        await PaymentUtils.ad.updateAdDates(Number(adId), total_days);
+        await PaymentUtils.ad.publishAd(Number(adId));
+
+        // IMPORTANT: always return orderDocumentId (not buyOrder) — /pagar/gracias uses
+        // route.query.order as a documentId to fetch the order record via useOrderById()
+        let paidPackOrderDocumentId: string | undefined;
+        try {
+          const orderResult = await OrderUtils.createAdOrder({
+            amount: wepbayResponse.response?.amount ?? 0,
+            buy_order: buyOrder,
+            userId: Number(userId),
+            is_invoice,
+            payment_method: process.env.PAYMENT_GATEWAY ?? "transbank",
+            payment_response: wepbayResponse.response,
+            adId: adId > 0 ? adId : undefined,
+          });
+          if (orderResult.success && orderResult.order) {
+            paidPackOrderDocumentId = (
+              orderResult.order as { documentId?: string }
+            ).documentId;
+          }
+        } catch (orderError) {
+          logger.error(
+            "Failed to create order record for checkout (paid pack)",
+            {
+              error: (orderError as { message?: string }).message,
+            }
+          );
+        }
+
+        return {
+          success: true,
+          adId,
+          message: "Checkout processed successfully",
+          orderId: buyOrder,
+          orderDocumentId: paidPackOrderDocumentId,
+        };
+      }
+
+      // 5. Look up pack by id
       const packRecord = await strapi.db
         .query("api::ad-pack.ad-pack")
         .findOne({ where: { id: packId } });
@@ -144,16 +239,16 @@ class CheckoutService {
         total_features?: number;
       };
 
-      // 5. Destructure pack data with defaults
+      // 6. Destructure pack data with defaults
       const resolvedTotalAds = packData.total_ads ?? 1;
       const resolvedTotalDays = packData.total_days ?? 30;
       const resolvedTotalFeatures = packData.total_features ?? 0;
       const resolvedPrice = packData.price ?? 0;
 
-      // 6. Calculate unit price per ad reservation
+      // 7. Calculate unit price per ad reservation
       const unitPrice = Number(resolvedPrice) / resolvedTotalAds;
 
-      // 7. Create paid ad-reservations
+      // 8. Create paid ad-reservations
       let firstAdReservationId: number | string | undefined;
       for (let i = 0; i < resolvedTotalAds; i++) {
         const res = await PaymentUtils.adReservation.createAdReservation(
@@ -161,19 +256,19 @@ class CheckoutService {
           unitPrice.toString(),
           resolvedTotalDays,
           "Reservation from unified checkout"
-          // Do NOT pass adId here — link is made explicitly in step 7b below
+          // Do NOT pass adId here — link is made explicitly in step 8b below
         );
         if (i === 0 && res.success && res.adReservation) {
           firstAdReservationId = res.adReservation.id;
         }
       }
 
-      // Step 7b — explicitly link the first reservation to the ad
+      // Step 8b — explicitly link the first reservation to the ad
       if (firstAdReservationId !== undefined && adId > 0) {
         await PaymentUtils.ad.updateAdReservation(adId, firstAdReservationId);
       }
 
-      // 8. Create pack-included featured reservations (if any)
+      // 9. Create pack-included featured reservations (if any)
       if (resolvedTotalFeatures > 0) {
         for (let i = 0; i < resolvedTotalFeatures; i++) {
           // Link first pack-included featured slot to the ad if present and not already
@@ -208,7 +303,7 @@ class CheckoutService {
         }
       }
 
-      // 9. Standalone paid featured reservation
+      // 10. Standalone paid featured reservation
       if (featured && adId > 0) {
         await PaymentUtils.adFeaturedReservation.createAdFeaturedReservation(
           userId,
@@ -218,7 +313,7 @@ class CheckoutService {
         );
       }
 
-      // 10. Update ad dates and publish ad
+      // 11. Update ad dates and publish ad
       if (adId > 0) {
         await PaymentUtils.ad.updateAdDates(adId, resolvedTotalDays);
         await PaymentUtils.ad.publishAd(adId);

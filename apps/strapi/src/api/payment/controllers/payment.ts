@@ -318,11 +318,30 @@ class PaymentController {
       return;
     }
 
-    if (data.pack === "free" || data.pack === "paid") {
+    if (data.pack === "free") {
       ctx.status = 400;
       ctx.body = {
         success: false,
-        message: "pack must be a valid paid pack name, not 'free' or 'paid'",
+        message: "pack must be a valid paid pack name, not 'free'",
+      };
+      return;
+    }
+
+    // pack === "paid" is only valid when paying for featured only (ad already has a paid reservation)
+    if (data.pack === "paid" && !data.featured) {
+      ctx.status = 400;
+      ctx.body = {
+        success: false,
+        message: "pack 'paid' requires featured=true — nothing to pay",
+      };
+      return;
+    }
+
+    if (data.pack === "paid" && !data.ad_id) {
+      ctx.status = 400;
+      ctx.body = {
+        success: false,
+        message: "pack 'paid' requires ad_id",
       };
       return;
     }
@@ -369,10 +388,19 @@ class PaymentController {
       return;
     }
 
+    // IMPORTANT: always redirect with order.documentId from Strapi — NEVER with buyOrder,
+    // token, or any payment gateway reference. /pagar/gracias uses this value to call
+    // useOrderById(documentId). See Payment Rules in AGENTS.md.
+    if (!result.orderDocumentId) {
+      logger.error("Checkout Webpay return missing orderDocumentId", {
+        orderId: result.orderId,
+      });
+      ctx.redirect(`${process.env.FRONTEND_URL}/pagar/error?reason=rejected`);
+      return;
+    }
+
     ctx.redirect(
-      `${process.env.FRONTEND_URL}/pagar/gracias?order=${
-        result.orderDocumentId ?? result.orderId
-      }`
+      `${process.env.FRONTEND_URL}/pagar/gracias?order=${result.orderDocumentId}`
     );
   });
 
