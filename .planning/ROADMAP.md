@@ -121,9 +121,8 @@
   2. A website user can request a resend of the verification code from the `/login/verificar` page, with a 60-second cooldown enforced in the UI
   3. The verification email received by the user reads "15 minutos" (not "5 minutos") for the code expiry
   4. Google OAuth login on the website bypasses the verify-code step entirely and logs the user in directly
-**Plans**: 2 plans
+**Plans**: 1 plan
 Plans:
-- [ ] 079-01-PLAN.md — Add _verify-code.scss to website and register in app.scss
 - [ ] 079-02-PLAN.md — Fix "5 minutos" → "15 minutos" in verification-code.mjml
 
 ### Phase 080: Password Reset MJML + Context Routing
