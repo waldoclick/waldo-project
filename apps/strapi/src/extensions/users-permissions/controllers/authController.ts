@@ -403,8 +403,12 @@ export const overrideForgotPassword = () => async (ctx) => {
       "Restablece tu contraseña",
       { name: user.firstname || user.username || user.email, resetUrl }
     );
-  } catch (_) {
-    // Non-fatal: token is saved; user can request again
+  } catch (err) {
+    strapi.log.error(
+      `[overrideForgotPassword] Failed to send reset-password email to ${
+        user.email
+      }: ${err?.message ?? err}`
+    );
   }
 
   ctx.send({ ok: true });
