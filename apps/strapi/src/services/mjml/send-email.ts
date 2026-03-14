@@ -40,10 +40,8 @@ export async function sendMjmlEmail(
     }
 
     await strapi.plugins["email"].services.email.send(emailOptions);
-
-    return true;
   } catch (error) {
     console.error("Error enviando email MJML:", error);
-    return false;
+    throw error;
   }
 }
