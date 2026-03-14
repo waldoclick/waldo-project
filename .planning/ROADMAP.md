@@ -13,13 +13,18 @@
 - ✅ **v1.33 Anthropic Claude AI Service** — Phase 072 (shipped 2026-03-13). See `.planning/milestones/v1.33-ROADMAP.md`
 - ✅ **v1.34 LightBoxArticles** — Phases 073–074 (shipped 2026-03-13). See `.planning/milestones/v1.34-ROADMAP.md`
 - ✅ **v1.35 Gift Reservations to Users** — Phases 075–076 (shipped 2026-03-13). See `.planning/milestones/v1.35-ROADMAP.md`
-- 🚧 **v1.36 Two-Step Login Verification** — Phases 077–079 (in progress)
+- ✅ **v1.36 Two-Step Login Verification** — Phases 077–078 (shipped 2026-03-14). See `.planning/milestones/v1.36-ROADMAP.md`
+- 📋 **v1.37** — TBD
 
 ## Phases
 
-- [x] **Phase 077: Strapi 2-Step Backend** — verification-code content type, overridden auth.local controller, verify-code and resend-code endpoints, MJML email, Google OAuth bypass (completed 2026-03-13)
-- [x] **Phase 078: Dashboard Verify Flow** — updated FormLogin + /auth/verify-code page with full verify/resend/error/redirect logic (completed 2026-03-14)
-- [ ] **Phase 079: Website Verify Flow** — updated FormLogin + /login/verificar page with full verify/resend/error/redirect logic
+<details>
+<summary>✅ v1.36 Two-Step Login Verification (Phases 077–078) — SHIPPED 2026-03-14</summary>
+
+- [x] Phase 077: Strapi 2-Step Backend (4/4 plans) — completed 2026-03-13
+- [x] Phase 078: Dashboard Verify Flow (2/2 plans) — completed 2026-03-14
+
+</details>
 
 <details>
 <summary>✅ v1.35 Gift Reservations to Users (Phases 075–076) — SHIPPED 2026-03-13</summary>
@@ -98,73 +103,26 @@
 
 </details>
 
-## Phase Details
-
-### Phase 077: Strapi 2-Step Backend
-**Goal**: Strapi intercepts email/password login, issues a `pendingToken` instead of a JWT, stores a time-limited 6-digit code, and provides verify/resend endpoints — Google OAuth flows through unmodified
-**Depends on**: Nothing (first phase of milestone)
-**Requirements**: VSTEP-01, VSTEP-02, VSTEP-03, VSTEP-04, VSTEP-05, VSTEP-06, VSTEP-07, VSTEP-08
-**Success Criteria** (what must be TRUE):
-  1. Calling `POST /api/auth/local` with valid credentials returns `{ pendingToken, email }` — no JWT in the response
-  2. The user receives an email with a 6-digit code within seconds of login; a `verification-code` record exists in Strapi with `userId`, `code`, `expiresAt`, `attempts`, and `pendingToken`
-  3. Calling `POST /api/auth/verify-code` with a valid `pendingToken` + `code` returns a full Strapi login response (JWT + user) — same shape as the pre-2-step response
-  4. Three failed `verify-code` attempts invalidate the code; submitting a fourth attempt returns an error and a fresh login is required
-  5. `POST /api/connect/google/callback` still issues a JWT directly — Google OAuth users are never redirected to a verify step
-**Plans**: 4 plans
-
-Plans:
-- [ ] 077-01-PLAN.md — verification-code content type (schema + scaffolding)
-- [ ] 077-02-PLAN.md — verification-code.mjml email template in Spanish
-- [ ] 077-03-PLAN.md — overrideAuthLocal + verifyCode + resendCode controllers + plugin wiring
-- [ ] 077-04-PLAN.md — verification-code-cleanup cron + cron-tasks.ts + cron-runner.ts wiring
-
-### Phase 078: Dashboard Verify Flow
-**Goal**: Dashboard users complete login through the 2-step verify page — `FormLogin` hands off to `/auth/verify-code`, which verifies the code and restores the existing post-login behavior
-**Depends on**: Phase 077
-**Requirements**: VSTEP-09, VSTEP-10, VSTEP-11, VSTEP-12
-**Success Criteria** (what must be TRUE):
-  1. Submitting valid email+password on `/auth/login` no longer logs in directly — the browser navigates to `/auth/verify-code` and the user is prompted for a 6-digit code
-  2. The verify page shows a code input, a "Verificar" button, and a "Reenviar código" button that is disabled for 60 seconds after each send
-  3. Entering the correct code on `/auth/verify-code` completes login — the JWT is stored via `useStrapiAuth()` and the user arrives at `/` (with manager-role check applied)
-  4. When the code expires or the attempt limit is reached, a Swal error appears and the user is redirected back to `/auth/login` to start over
-**Plans**: 2 plans
-
-Plans:
-- [ ] 078-01-PLAN.md — FormLogin.vue: replace useStrapiAuth().login() with direct POST + pendingToken handoff
-- [ ] 078-02-PLAN.md — /auth/verify-code page: code input, 60s resend, JWT storage, role check, error flows
-
-### Phase 079: Website Verify Flow
-**Goal**: Website users complete login through the 2-step verify page — `FormLogin` hands off to `/login/verificar`, which verifies the code and restores the existing post-login behavior (referer redirect + profile-complete check)
-**Depends on**: Phase 077
-**Requirements**: VSTEP-13, VSTEP-14, VSTEP-15, VSTEP-16
-**Success Criteria** (what must be TRUE):
-  1. Submitting valid email+password on `/login` no longer logs in directly — the browser navigates to `/login/verificar` and the user is prompted for a 6-digit code
-  2. The verify page shows a code input, a "Verificar" button, and a "Reenviar código" button that is disabled for 60 seconds after each send
-  3. Entering the correct code on `/login/verificar` completes login — JWT is stored and the user is redirected per existing post-login logic (referer → `/anuncios` fallback), with profile-complete check applied
-  4. When the code expires or the attempt limit is reached, a Swal error appears and the user is redirected back to `/login` to start over
-**Plans**: TBD
-
 ## Progress
 
-| Phase | Milestone | Plans Complete | Status      | Completed  |
-|-------|-----------|----------------|-------------|------------|
-| 060   | v1.26     | 3/3            | Complete    | 2026-03-11 |
-| 061   | v1.27     | 2/2            | Complete    | 2026-03-12 |
-| 062   | v1.28     | 2/2            | Complete    | 2026-03-12 |
-| 063   | v1.29     | 1/1            | Complete    | 2026-03-12 |
-| 064   | v1.29     | 2/2            | Complete    | 2026-03-12 |
-| 065   | v1.30     | 1/1            | Complete    | 2026-03-13 |
-| 066   | v1.30     | 2/2            | Complete    | 2026-03-13 |
-| 067   | v1.30     | 3/3            | Complete    | 2026-03-13 |
-| 068   | v1.30     | 2/2            | Complete    | 2026-03-13 |
-| 069   | v1.31     | 1/1            | Complete    | 2026-03-13 |
-| 070   | v1.31     | 1/1            | Complete    | 2026-03-13 |
-| 071   | v1.32     | 1/1            | Complete    | 2026-03-13 |
-| 072   | v1.33     | 1/1            | Complete    | 2026-03-13 |
-| 073   | v1.34     | 2/2            | Complete    | 2026-03-13 |
-| 074   | v1.34     | 2/2            | Complete    | 2026-03-13 |
-| 075   | v1.35     | 2/2            | Complete    | 2026-03-13 |
-| 076   | v1.35     | 2/2            | Complete    | 2026-03-13 |
-| 077   | 4/4 | Complete    | 2026-03-13 | —          |
-| 078   | 2/2 | Complete    | 2026-03-14 | —          |
-| 079   | v1.36     | 0/TBD          | Not started | —          |
+| Phase | Milestone | Plans Complete | Status   | Completed  |
+|-------|-----------|----------------|----------|------------|
+| 060   | v1.26     | 3/3            | Complete | 2026-03-11 |
+| 061   | v1.27     | 2/2            | Complete | 2026-03-12 |
+| 062   | v1.28     | 2/2            | Complete | 2026-03-12 |
+| 063   | v1.29     | 1/1            | Complete | 2026-03-12 |
+| 064   | v1.29     | 2/2            | Complete | 2026-03-12 |
+| 065   | v1.30     | 1/1            | Complete | 2026-03-13 |
+| 066   | v1.30     | 2/2            | Complete | 2026-03-13 |
+| 067   | v1.30     | 3/3            | Complete | 2026-03-13 |
+| 068   | v1.30     | 2/2            | Complete | 2026-03-13 |
+| 069   | v1.31     | 1/1            | Complete | 2026-03-13 |
+| 070   | v1.31     | 1/1            | Complete | 2026-03-13 |
+| 071   | v1.32     | 1/1            | Complete | 2026-03-13 |
+| 072   | v1.33     | 1/1            | Complete | 2026-03-13 |
+| 073   | v1.34     | 2/2            | Complete | 2026-03-13 |
+| 074   | v1.34     | 2/2            | Complete | 2026-03-13 |
+| 075   | v1.35     | 2/2            | Complete | 2026-03-13 |
+| 076   | v1.35     | 2/2            | Complete | 2026-03-13 |
+| 077   | v1.36     | 4/4            | Complete | 2026-03-13 |
+| 078   | v1.36     | 2/2            | Complete | 2026-03-14 |

@@ -158,7 +158,16 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
        - ✓ `POST /api/ad-featured-reservations/gift` endpoint creates N ad-featured-reservation records assigned to the selected authenticated user — v1.35
        - ✓ `gift-reservation.mjml` email template notifies recipient after successful gift creation (non-fatal — gift succeeds even on email failure) — v1.35
        - ✓ `LightboxGift.vue` reusable controlled lightbox — `isOpen/endpoint/label` props + `close/gifted` emits; quantity input + searchable user select (Authenticated users only, first+last name); Swal confirmation before POST — v1.35
-       - ✓ "Regalar Reservas" button wired into `reservations/[id].vue`; "Regalar Reservas Destacadas" wired into `featured/[id].vue` — end-to-end gift flow complete for both reservation types — v1.35
+        - ✓ "Regalar Reservas" button wired into `reservations/[id].vue`; "Regalar Reservas Destacadas" wired into `featured/[id].vue` — end-to-end gift flow complete for both reservation types — v1.35
+
+        - ✓ `verification-code` content type (userId, code, expiresAt, attempts, pendingToken) — `draftAndPublish: false`; `POST /api/auth/local` intercepted by `overrideAuthLocal` to return `{ pendingToken, email }` instead of JWT — v1.36
+        - ✓ `POST /api/auth/verify-code` validates code (15-min expiry, max 3 attempts) and issues JWT on success; `POST /api/auth/resend-code` rate-limited to 60s regenerates + resends email — v1.36
+        - ✓ `verification-code.mjml` Spanish email template with 32px bold code display extending Waldo base layout — v1.36
+        - ✓ Daily cleanup cron at 4 AM (`verification-code-cleanup`) bulk-deletes expired records via `deleteMany`; triggerable via `POST /api/cron-runner/verification-code-cleanup` — v1.36
+        - ✓ Google OAuth (`GET /auth/:provider/callback`) bypasses 2-step via `ctx.method === "GET"` guard in `overrideAuthLocal` — v1.36
+        - ✓ Dashboard `FormLogin.vue` rewritten with `useStrapiClient()` POST + `useState('pendingToken')` handoff to `/auth/verify-code` — v1.36
+        - ✓ Dashboard `/auth/verify-code` page with `FormVerifyCode.vue` component — 6-digit input, 60s resend countdown, `setToken(jwt)` + `fetchUser()`, manager role check, Swal errors on failure — v1.36
+        - ✓ Website `FormLogin.vue` and `/login/verificar` page with `FormVerifyCode.vue` implemented (VSTEP-13 to 16 code present; phase 079 not formally executed — carried to next milestone) — v1.36
 
 ## Context
 
@@ -184,7 +193,8 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - Blog public views (since v1.30): `slug` uid field on Article with lifecycle hooks; `Article` TS interface (13 fields); 7 blog-specific components (`HeroArticles`, `FilterArticles`, `ArticleArchive`, `CardArticle`, `RelatedArticles`, `HeroArticle`, `ArticleSingle`); `useArticlesStore` (no persist, pageSize 12); `blog/index.vue` + `blog/[slug].vue` with full SSR, SEO, structured data; Markdown rendered via `marked`; related articles: same-category first, fill with most-recent, deduplicate, slice to 6
 - Article Manager Improvements (since v1.31): `source_url` string field in Strapi Article schema (optional, no constraints); `source_url: string | null` in website `Article` TS interface; `FormArticle.vue` has draft/publish boolean toggle mapping to `publishedAt: null` / ISO string on submit; `source_url` URL field with Yup validation saves on create and pre-fills on edit; article detail page (`/articles/:id`) sidebar renders `source_url` as `<a target="_blank" rel="noopener noreferrer">` when non-empty
 - Gemini AI Service (since v1.32): `apps/strapi/src/services/gemini/` — `GeminiService` class (`gemini.service.ts`) wraps `@google/generative-ai`, uses `gemini-1.5-flash` model, reads `GEMINI_API_KEY` from `process.env`, throws at startup if missing (same pattern as SlackService); `index.ts` exports singleton + `generateText` named export; `POST /api/ia/gemini` endpoint (`apps/strapi/src/api/ia/`) accepts `{ prompt }`, returns `{ text }`, wraps Gemini errors in `ApplicationError`; `GEMINI_API_KEY` documented in `.env.example`
-- Anthropic Claude AI Service (v1.33 — in progress): `apps/strapi/src/services/anthropic/` — `AnthropicService` class (`anthropic.service.ts`) wraps `@anthropic-ai/sdk`, uses `claude-sonnet-4-5` model, reads `ANTHROPIC_API_KEY` + `BRAVE_SEARCH_API_KEY` from `process.env`, throws at startup if either is missing; implements `web_search` tool — when Claude issues a tool call, Strapi executes `GET https://api.search.brave.com/res/v1/web/search?q={query}&count=5` with `X-Subscription-Token` header and returns results to Claude; tool loop continues until `stop_reason === "end_turn"`; `index.ts` exports singleton + `generateWithSearch` named export; `POST /api/ia/claude` endpoint accepts `{ prompt }`, returns `{ text }`, wraps errors in `ApplicationError`
+- Anthropic Claude AI Service (v1.33): `apps/strapi/src/services/anthropic/` — `AnthropicService` class wraps `@anthropic-ai/sdk`, uses `claude-sonnet-4-5` model, implements `web_search` tool via Brave Search API; tool loop until `stop_reason === "end_turn"`; `POST /api/ia/claude` endpoint accepts `{ prompt }`, returns `{ text }`
+- 2-Step Login Verification (v1.36): `verification-code` content type (5 fields); `overrideAuthLocal` intercepts `POST /api/auth/local` — returns `{ pendingToken, email }`, no JWT; `GET /auth/:provider/callback` bypassed via `ctx.method === "GET"` guard; `POST /api/auth/verify-code` (15-min expiry, max 3 attempts); `POST /api/auth/resend-code` (60s rate limit); `verification-code-cleanup` daily cron 4 AM; `verification-code.mjml` Spanish email; dashboard `/auth/verify-code` with `FormVerifyCode.vue` (6-digit input, 60s countdown, setToken + role check); website `/login/verificar` with same pattern; 5 additional cron jobs now active (verification-code-cleanup added)
 
 ## Constraints
 
@@ -321,38 +331,31 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
        | No pagination on `getAuthenticatedUsers` — gift lightbox needs full user list | Paginated select would complicate UX; user count is bounded (admin-only tool, Authenticated role only) — v1.35 | ✓ Good |
         | `select: ['id', 'firstName', 'lastName']` enforced in `strapi.db.query` for gift user list | No sensitive fields (email, password hash) can leak even if caller forges request — v1.35 | ✓ Good |
         | Email delivery non-fatal in gift endpoints (inner try/catch) | Gift creation succeeds even if MJML email fails; consistent with free-ad and reject/ban email patterns — v1.35 | ✓ Good |
-        | `LightboxGift.vue` accepts `endpoint` prop for reuse | Single component handles both `ad-reservations` and `ad-featured-reservations` gift flows — v1.35 | ✓ Good |
-        | `loadUsers()` called on every open without caching | Gift lightbox is used infrequently by admins; fresh user list preferred over stale cache — v1.35 | ✓ Good |
-
-## Current Milestone: v1.36 — Two-Step Login Verification
-
-**Goal:** All email/password logins (website + dashboard) require a 6-digit verification code sent by email before a JWT is issued — Google OAuth is unaffected.
-
-**Target features:**
-- Strapi overrides `POST /api/auth/local` to intercept credentials, generate and store a 6-digit code, send it by email, and return a `pendingToken` (no JWT yet)
-- New `POST /api/auth/verify-code` endpoint validates the code (5-min expiry, max 3 attempts, single-use) and issues the JWT on success
-- New `POST /api/auth/resend-code` endpoint regenerates and resends the code (rate-limited)
-- Dashboard: `/auth/verify-code` page with code input + resend button
-- Website: `/login/verificar` page with same UX
-- Google OAuth flow fully bypassed
-
+         | `LightboxGift.vue` accepts `endpoint` prop for reuse | Single component handles both `ad-reservations` and `ad-featured-reservations` gift flows — v1.35 | ✓ Good |
+         | `loadUsers()` called on every open without caching | Gift listbox is used infrequently by admins; fresh user list preferred over stale cache — v1.35 | ✓ Good |
+         | `overrideAuthLocal` guards `ctx.method === "GET"` to skip 2-step for OAuth | `auth.callback` handles both `POST /auth/local` and `GET /auth/:provider/callback`; GET check is the minimal correct discriminator — v1.36 | ✓ Good |
+         | `verification-code` content type with `draftAndPublish: false` | Records are create/query/delete lifecycle — no publishing workflow needed; matches all other utility content types — v1.36 | ✓ Good |
+         | `pendingToken` as `type=string + unique:true` (not `type=uid`) | `uid` is a slug generator, not an opaque token; string + unique gives correct semantics without unwanted behavior — v1.36 | ✓ Good |
+         | `useStrapiClient()` direct POST for 2-step login (bypassing `useStrapiAuth().login()`) | SDK `login()` expects a JWT in the response; backend now returns `{ pendingToken, email }` — direct client call is required — v1.36 | ✓ Good |
+         | `FormVerifyCode.vue` component extracted (not inline in page) | Follows existing auth page pattern (`FormLogin.vue`); page stays clean; resend button placed in `auth__form__help` section of page — v1.36 | ✓ Good |
+         | `onMounted` guard (not guest middleware) on verify-code page | JWT not set yet when page mounts; guest middleware would not apply; `pendingToken` emptiness is the correct guard signal — v1.36 | ✓ Good |
 ## Current State
 
-**Last shipped:** v1.35 (2026-03-13) — Gift Reservations to Users: gift endpoints (Strapi) + LightboxGift lightbox (Dashboard)
-**Current milestone:** v1.36 — Two-Step Login Verification
-**Current focus:** Phase planning
+**Last shipped:** v1.36 (2026-03-14) — Two-Step Login Verification: email/password logins now require a 6-digit code before JWT is issued; Google OAuth unaffected
+**Current milestone:** Planning next milestone
+**Current focus:** Planning next milestone
 
-**Gift Reservations (since v1.35):** `GET /api/users/authenticated` (users-permissions plugin extension) — `strapi.db.query` role filter, returns `{ id, firstName, lastName }` only; `POST /api/ad-reservations/gift` and `POST /api/ad-featured-reservations/gift` — create N reservation records for any authenticated user + `gift-reservation.mjml` email (non-fatal); `LightboxGift.vue` controlled lightbox (`isOpen/endpoint/label` props + `close/gifted` emits) — quantity input + searchable Authenticated user select + Swal confirm; wired into `reservations/[id].vue` and `featured/[id].vue` with `giftOpen` ref pattern.
+**2-Step Login (since v1.36):** `verification-code` content type (5 fields, `draftAndPublish: false`); `overrideAuthLocal` wraps `auth.callback` — intercepts `POST /api/auth/local` on credential success to generate code, store record, send `verification-code.mjml` email, return `{ pendingToken, email }` with no JWT; `GET /auth/:provider/callback` (OAuth) bypassed via `ctx.method === "GET"` guard; `POST /api/auth/verify-code` (15-min expiry, max 3 attempts, single-use — issues JWT on success); `POST /api/auth/resend-code` (60s rate limit); daily cleanup cron at 4 AM; dashboard `/auth/verify-code` with `FormVerifyCode.vue` (6-digit input, auto-submit at 6, 60s countdown, `setToken(jwt)` + `fetchUser()`, manager role check, Swal errors); website `/login/verificar` with same `FormVerifyCode.vue` pattern.
 
-**AI Article Generation (since v1.34):** `LightBoxArticles.vue` 3-step dashboard lightbox — Step 1: search news via `POST /api/search/tavily`; Step 2: edit Groq prompt (prefilled with Tavily `snippet` as content); Step 3: generate + create Strapi article draft via `POST /api/ia/groq`; Swal guards for empty content, AI errors, and duplicate `source_url`; `search.store.ts` caches Tavily results by query; `articles.store.ts` caches AI responses by source URL (session-only); Groq `llama-3.3-70b-versatile` with `response_format: json_object` ensures parseable JSON output; DeepSeek + Gemini endpoints also available.
+**Gift Reservations (since v1.35):** `GET /api/users/authenticated` server-side role filter, returns `{ id, firstName, lastName }` only; `POST /api/ad-reservations/gift` and `POST /api/ad-featured-reservations/gift` — create N reservation records + `gift-reservation.mjml` email (non-fatal); `LightboxGift.vue` controlled lightbox — wired into `reservations/[id].vue` and `featured/[id].vue`.
 
-**Blog Public Views (since v1.30):** `slug` uid field on Article with lifecycle hooks (beforeCreate/beforeUpdate via `slugify strict:true`); 6 Jest tests for slug generation; `Article` TypeScript interface (13 fields) in `app/types/article.d.ts`; SCSS scaffolding (`_article.scss`, `_hero.scss`, `_filter.scss`, `_related.scss`, `_card.scss` blog blocks, `app.scss` import); `HeroArticles.vue` (static, zero props), `FilterArticles.vue` (client-only, updates `?category=`/`?order=` URL params), `ArticleArchive.vue` (4-col grid + `vue-awesome-paginate`), `CardArticle.vue`, `RelatedArticles.vue`; `useArticlesStore` (Pinia, no persist, pageSize 12); `blog/index.vue` (SSR `useAsyncData`, empty-state + RelatedArticles fallback, `@type:"Blog"` structured data); `HeroArticle.vue` (breadcrumbs + H1 + date), `ArticleSingle.vue` (two-column body/sidebar, `marked` Markdown rendering, GalleryDefault from `article.gallery`); `blog/[slug].vue` (SSR `useAsyncData(() => 'article-${slug}')`, 404 guard, `$setSEO`, `@type:"BlogPosting"` structured data).
+**AI Article Generation (since v1.34):** `LightBoxArticles.vue` 3-step dashboard lightbox — Tavily news search → Groq prompt edit → article draft creation; `search.store.ts` + `articles.store.ts` (session-only); Groq `llama-3.3-70b-versatile` with `response_format: json_object`; Gemini + DeepSeek + Claude endpoints also available.
 
-**Logout infrastructure (since v1.28):** `useLogout` composable in `apps/website/app/composables/`; reset order: `useAdStore.$reset()` → `useHistoryStore.$reset()` → `useMeStore.reset()` → `useUserStore.reset()` → `useAdsStore.reset()` → `useAppStore.$reset()` → `strapiAuth.logout()` → `navigateTo('/')`; 4 Vitest tests with `#imports` alias infrastructure for Nuxt auto-import mocking.
+**Blog Public Views (since v1.30):** `slug` uid field on Article; 7 blog-specific components; `useArticlesStore`; `blog/index.vue` + `blog/[slug].vue` with full SSR, SEO, Markdown via `marked`.
 
-**GA4 analytics (since v1.27):** Full ecommerce event chain — `view_item_list` → `step_view` (per wizard page) → `begin_checkout` (pack-only: `/pagar`; ad-creation: `/anunciar/resumen`) → `redirect_to_payment` → `purchase` (guarded, one-shot, order data only); `pushEvent` flow discriminator (`ad_creation` | `pack_purchase`) ensures correct attribution; 12 Vitest tests covering composable logic.
+**GA4 analytics (since v1.27):** Full ecommerce event chain — `view_item_list` → `step_view` → `begin_checkout` → `redirect_to_payment` → `purchase` (guarded); `pushEvent` flow discriminator; 12 Vitest tests.
 
-**Webpay receipt (since v1.26):** `/pagar/gracias` shows full Webpay receipt — 8 mandatory fields (amount, auth code, date/time, payment type, last 4 digits, order number, merchant info, status), Spanish labels, "No disponible" fallbacks; fetches by `order.documentId`.
+**Webpay receipt (since v1.26):** `/pagar/gracias` shows 8-field Webpay receipt via `ResumeOrder.vue`; fetches by `order.documentId`.
 
 ## Future Requirements
 
@@ -369,4 +372,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-13 after v1.36 milestone started*
+*Last updated: 2026-03-14 after v1.36 milestone*

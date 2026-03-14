@@ -1,5 +1,25 @@
 ## v1.27 Reparar eventos GA4 ecommerce en flujo de pago unificado (Shipped: 2026-03-12)
 
+## v1.36 Two-Step Login Verification (Shipped: 2026-03-14)
+
+**Phases completed:** 2 phases (077–078), 6 plans
+**Timeline:** 2026-03-13 → 2026-03-14 (1 day)
+**Files changed:** 26 files, 1,599 insertions, 163 deletions
+
+**Key accomplishments:**
+- `verification-code` content type (userId, code, expiresAt, attempts, pendingToken); `overrideAuthLocal` intercepts `POST /api/auth/local` — returns `{ pendingToken, email }` instead of JWT; Google OAuth bypassed via `ctx.method === "GET"` guard
+- `POST /api/auth/verify-code` validates 6-digit code (15-min expiry, max 3 attempts, single-use) and issues JWT on success; `POST /api/auth/resend-code` rate-limited to 60s
+- `verification-code.mjml` Spanish email template with 32px bold code display; daily cleanup cron at 4 AM (`deleteMany` expired records)
+- Dashboard `FormLogin.vue` rewritten with `useStrapiClient()` POST + `useState('pendingToken')` handoff; `/auth/verify-code` page with `FormVerifyCode.vue` (6-digit auto-submit, 60s countdown, setToken + role check)
+- Website `FormLogin.vue` and `/login/verificar` with `FormVerifyCode.vue` implemented (code present; phase 079 carried to next milestone)
+- Post-ship bug fix: OAuth Google login was triggering 2-step flow — resolved by `ctx.method === "GET"` guard in `overrideAuthLocal`
+
+**Known gaps:** VSTEP-13 to VSTEP-16 (website verify flow) — code exists but phase 079 not formally executed
+
+**Archive:** `.planning/milestones/v1.36-ROADMAP.md` | `.planning/milestones/v1.36-REQUIREMENTS.md`
+
+---
+
 ## v1.35 Gift Reservations to Users (Shipped: 2026-03-13)
 
 **Phases completed:** 2 phases (075–076), 4 plans

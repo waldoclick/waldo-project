@@ -1294,3 +1294,46 @@
 - Model mix: ~100% sonnet
 - Sessions: ~2 (execute-phase × 2, quick tasks × 1)
 - Notable: Fastest milestone to date — small scope, clear patterns to follow, zero external API rate limit issues
+
+## Milestone: v1.36 — Two-Step Login Verification
+
+**Shipped:** 2026-03-14
+**Phases:** 2 (077–078) | **Plans:** 6 | **Timeline:** 1 day (~5 hours total)
+**Files changed:** 26 files, +1,599 / -163 lines
+
+### What Was Built
+- `verification-code` Strapi content type (5 fields: userId, code, expiresAt, attempts, pendingToken); `overrideAuthLocal` intercepts `POST /api/auth/local` — valid credentials now return `{ pendingToken, email }` with no JWT exposed
+- `POST /api/auth/verify-code` (15-min expiry, max 3 attempts, single-use → issues JWT on success); `POST /api/auth/resend-code` (60s rate limit, regenerates code + resends email)
+- `verification-code.mjml` Spanish email template; daily 4 AM cleanup cron via `deleteMany`
+- Dashboard `/auth/verify-code` page with extracted `FormVerifyCode.vue` component — 6-digit auto-submit, 60s countdown, `setToken(jwt)` + `fetchUser()`, manager role check, Swal errors
+- Website `FormLogin.vue` and `/login/verificar` implemented (code present; phase 079 not formally executed)
+- Post-ship bug fix: OAuth Google login triggered 2-step flow — resolved by `ctx.method === "GET"` guard in `overrideAuthLocal`
+
+### What Worked
+- Strapi plugin controller override pattern (higher-order function) transferred cleanly from v1.17 user-controller work
+- `useStrapiClient()` direct POST was the correct call immediately — no time lost trying to force `useStrapiAuth().login()` to work with non-JWT responses
+- Component extraction to `FormVerifyCode.vue` was the right call — page stayed clean, resend button could live in `auth__form__help` following existing auth page conventions
+- TDD cycle for `authController.test.ts` (RED → GREEN) provided confidence in the verify/resend logic before integration
+- The `auth.callback` handler insight (same handler for both email/password and OAuth) was critical — understanding Strapi internals prevented a deeper bug from reaching production
+
+### What Was Inefficient
+- OAuth bug discovered post-execution during manual testing — the `auth.callback` dual-path behavior (handles both `POST /auth/local` and `GET /auth/:provider/callback`) was not documented in the phase plan, so the guard was not added upfront
+- VSTEP-13 to VSTEP-16 (website verify flow) — the code was implemented but phase 079 was never formally planned and executed; requirements stayed pending at milestone close
+- Multiple Strapi wiring fixes needed mid-execution: plugin route push being silently ignored, `info.pluginName` required for handler resolution, factory wrapper needed for controller overrides — each required an iteration cycle
+
+### Patterns Established
+- **`auth.callback` dual-path guard**: `overrideAuthLocal` must check `ctx.method === "GET"` to bypass OAuth callbacks — `auth.callback` handles both `POST /auth/local` and `GET /auth/:provider/callback`
+- **`pendingToken` handoff**: `useState<string>('pendingToken')` set in login form, consumed in verify-code page — SSR-safe transient state between auth pages
+- **`useStrapiClient()` for non-JWT responses**: when backend returns a shape that doesn't include `{ jwt }`, bypass `useStrapiAuth().login()` entirely
+- **`onMounted` guard (not middleware) for pre-auth pages**: JWT not set yet when verify-code page mounts — guard on `pendingToken` emptiness is the correct signal
+- **Strapi v5 plugin controller override**: `plugin.controllers.auth` is a factory — must wrap the factory itself, not set properties on it directly; override returns modified instance from factory call
+
+### Key Lessons
+1. **Document Strapi route handler sharing in phase plans.** `auth.callback` handles multiple routes — this should have been noted in phase 077 planning so the OAuth guard was included upfront, not discovered in testing.
+2. **"Code exists" ≠ "phase complete."** VSTEP-13–16 had implementation in place but the phase was never formally planned or executed. For future milestones: if code is written organically, create a minimal PLAN.md + SUMMARY.md to capture the work formally.
+3. **Strapi plugin wiring quirks accumulate.** Three separate wiring issues (route push ignored, pluginName missing, factory pattern) each required a debug cycle. A dedicated Strapi plugin cheatsheet in AGENTS.md would reduce future iteration.
+
+### Cost Observations
+- Model mix: ~100% sonnet
+- Sessions: ~4 (execute-phase × 2, quick tasks × 3, post-ship bug fix × 1)
+- Notable: Post-ship OAuth bug required immediate hotfix — discovered via manual testing by user. The `ctx.method` check was the simplest possible fix (5 lines).
