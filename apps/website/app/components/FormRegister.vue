@@ -144,6 +144,7 @@ import type { Form as VeeForm } from "vee-validate";
 import type { FormRegister } from "@/types/form-register";
 import { useNuxtApp } from "#app";
 import { useRut } from "@/composables/useRut";
+const { signUp } = useAdAnalytics();
 
 const client = useStrapiClient();
 const registrationEmail = useState("registrationEmail", () => "");
@@ -279,6 +280,7 @@ const handleSubmit = async () => {
 
       if (response.jwt) {
         // Email confirmation deshabilitado: flujo normal → login
+        signUp();
         Swal.fire(
           "Cuenta creada",
           "Tu cuenta ha sido creada exitosamente.",
@@ -288,6 +290,7 @@ const handleSubmit = async () => {
       } else {
         // Email confirmation habilitado: NO llamar setToken(undefined)
         registrationEmail.value = form.value.email;
+        signUp();
         await Swal.fire({
           title: "¡Revisa tu correo!",
           text: `Te enviamos un enlace de confirmación a ${form.value.email}. Haz clic en el enlace para activar tu cuenta.`,

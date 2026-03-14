@@ -35,7 +35,7 @@ const { $setSEO, $setStructuredData } = useNuxtApp() as unknown as {
 };
 const config = useRuntimeConfig();
 
-import { watch, watchEffect } from "vue";
+import { ref, watch, watchEffect } from "vue";
 import { useRoute } from "nuxt/app";
 import { useArticlesStore } from "@/stores/articles.store";
 import type { Article } from "@/types/article";
@@ -146,6 +146,34 @@ watch(
         },
         url: `${config.public.baseUrl}/blog/${route.params.slug}`,
       });
+    }
+  },
+  { immediate: true },
+);
+
+const { articleView } = useAdAnalytics();
+const articleViewFired = ref(false);
+
+// Reset guard when slug changes (Nuxt reuses this component across slug navigations)
+watch(
+  () => route.params.slug,
+  () => {
+    articleViewFired.value = false;
+  },
+);
+
+// Fire article_view once per article load
+watch(
+  () => pageData.value,
+  (newData) => {
+    if (newData?.article && !articleViewFired.value) {
+      articleViewFired.value = true;
+      const article = newData.article;
+      articleView(
+        article.id,
+        article.title,
+        article.categories[0]?.name || "Unknown",
+      );
     }
   },
   { immediate: true },

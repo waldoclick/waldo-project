@@ -42,6 +42,7 @@ const appStore = useAppStore();
 const meStore = useMeStore();
 const { logInfo } = useLogger();
 const client = useStrapiClient();
+const { login } = useAdAnalytics();
 
 const pendingToken = useState("pendingToken");
 
@@ -126,6 +127,7 @@ const handleVerify = async () => {
 
     pendingToken.value = "";
     logInfo("User logged in successfully via 2-step verification.");
+    login("email");
 
     // Website post-login flow: profile check → referer → /anuncios
     const isProfileComplete = await meStore.isProfileComplete();
