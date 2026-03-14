@@ -28,14 +28,13 @@
 ## Phase Details
 
 ### Phase 083: Ecommerce Bug Fixes
-**Goal**: GA4 ecommerce events report accurate data — real revenue, real item IDs, and cart events that reflect deliberate user intent
+**Goal**: GA4 ecommerce events report accurate data — real revenue and real item IDs in purchase events
 **Depends on**: Nothing (first phase of milestone)
-**Requirements**: ECOM-01, ECOM-02, ECOM-03
+**Requirements**: ECOM-01, ECOM-02
 **Success Criteria** (what must be TRUE):
   1. GA4 Realtime → Ecommerce → Purchase events show the actual transaction amount (e.g. $19.990) instead of $0
-  2. GA4 `add_to_cart` event appears only after a user explicitly selects a pack, never on page load
-  3. GA4 `purchase` event `item_id` field shows the order's `documentId` string, not an empty string
-  4. All 12 existing Vitest tests in `useAdAnalytics` pass after the fixes; new tests cover corrected behavior
+  2. GA4 `purchase` event `item_id` field shows the order's `documentId` string, not an empty string
+  3. All 12 existing Vitest tests in `useAdAnalytics` pass after the fixes; new tests cover corrected behavior
 **Plans**: TBD
 
 ### Phase 084: Ad Discovery Tracking
