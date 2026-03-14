@@ -1,536 +1,274 @@
-# Features Research: Zoho CRM Sync Model
+# Feature Landscape
 
-**Domain:** CRM sync — Zoho CRM v5 API integration from Strapi v5 backend  
-**Researched:** 2026-03-07  
-**Overall confidence:** HIGH (primary sources: official Zoho CRM v5 API documentation)
-
----
-
-## Zoho Objects: Contact vs Lead vs Deal
-
-### Contact
-
-- **When to use:** A known, registered user of the platform. In Waldo's model, every user who creates an account is a Contact from the moment of registration.
-- **Relationship:** Contacts belong to an Account. In B2C setups (no Account required), Contact is used standalone — Account can be omitted entirely.
-- **Deduplication:** The system-defined duplicate-check field for Contacts is `Email`. Upsert by email using `POST /crm/v5/Contacts/upsert` is idempotent. The existing `findContact(email)` + conditional create/update pattern is also correct.
-- **Existing service support:** `createContact()`, `findContact(email)`, `updateContact(id, data)` — all implemented and correct for the Contact lifecycle.
-- **Key API name:** `Contacts`
-- **Mandatory fields for creation:** `Last_Name` only (system-defined). Email is not technically mandatory but essential for deduplication.
-
-### Lead
-
-- **When to use:** An unqualified prospect whose identity is unknown or who has not yet registered. In Waldo's model, a **contact form submission** from a visitor maps to a Lead — it represents marketing interest, not a transacting user.
-- **Critical distinction vs Contact:** Leads do NOT have financial history, Deals, or pack associations. They exist in a separate CRM pipeline and can be "converted" into Contact + Account + Deal via the Zoho UI.
-- **Separation of concerns:** A Contact is someone who *has an account* (identity confirmed). A Lead is someone who *filled a form* (intent only, identity unconfirmed). Never create a Contact for a contact form submission — that would pollute the Contact database with unverified people.
-- **Lead_Status field:** Required for meaningful CRM segmentation. **Currently missing** in the existing `createLead()` implementation — this is a v1.19 bug to fix.
-- **Contact linkage:** When the contact-form submitter already exists as a Zoho Contact (found via `findContact(email)`), the Lead creation can be skipped; instead create a Note or Task against the existing Contact. Leads themselves have no direct `Contact_Name` lookup field.
-- **Key API name:** `Leads`
-- **Mandatory fields for creation:** `Last_Name` only (system-defined). `Company` is conventionally set to avoid empty state.
-
-### Deal
-
-- **When to use:** A revenue transaction. In Waldo's model: a **pack purchase** (user buys a bundle of ad credits) or a **single ad payment** (user pays for one ad). One financial event = one Deal.
-- **Relationship to Contact:** Deals are linked to a Contact via the `Contact_Name` field — a standard Lookup field in the Deals module. Pass it as `{ "id": "<zoho_contact_id>" }`.
-- **Relationship to Account:** Optional in B2C flows. If the Waldo org has no Accounts, omit `Account_Name` entirely.
-- **Key API name:** `Deals`
-- **Mandatory fields for creation:** `Deal_Name` (string) + `Stage` (picklist) — both system-defined mandatory.
+**Domain:** Email authentication flows — email verification on registration + MJML auth emails + password reset context routing
+**Project:** Waldo — Classified ads platform (Strapi v5 + Nuxt 4)
+**Researched:** 2026-03-13
+**Milestone scope:** Subsequent milestone. Platform already has 2-step login (v1.36), Google OAuth, password reset, and a working MJML email system.
 
 ---
 
-## Deal API v5
+## Critical Context: What Already Exists
 
-### Endpoint
+Before cataloguing features, understand what the codebase does today. Everything below is verified from direct code inspection (HIGH confidence).
 
-```
-POST https://www.zohoapis.com/crm/v5/Deals
-```
-
-Authorization header must be: `Zoho-oauthtoken <access_token>` (not `Bearer`).
-
-### Mandatory Fields (system-defined)
-
-| Field API Name | Type | Notes |
-|---|---|---|
-| `Deal_Name` | String (≤255 chars) | Human-readable name. Use pattern: `"Pack Purchase — {username} — {date}"` or `"Ad Payment — {adTitle} — {date}"`. Truncate `adTitle` to stay within 255 chars. |
-| `Stage` | Picklist | Must be a valid stage from the configured pipeline. For payment-confirmed deals, use `"Closed Won"` directly — payment already succeeded before the Deal is created. |
-
-**Source:** Official Zoho CRM v5 Insert Records API — "System-defined mandatory fields" section. HIGH confidence.
-
-### Important: Pipeline field
-
-When the Zoho org has multiple pipelines enabled for the Deals module, `Pipeline` also becomes mandatory. If only the default "Standard" pipeline exists, it can be omitted. **Safe practice:** always include `"Pipeline": "Standard"` to future-proof against a sales team adding more pipelines.
-
-### Strongly Recommended Fields
-
-| Field API Name | Type | Notes |
-|---|---|---|
-| `Amount` | Currency (double) | The transaction amount in CLP. Pass as a JavaScript `number` (e.g., `15000`). Accepts up to 16 digits before decimal. |
-| `Contact_Name` | Lookup JSON object | Links the Deal to a Contact. Pass `{ "id": "<zoho_contact_id>" }`. This is the primary association mechanism. |
-| `Type` | Picklist | Categorises the deal type. Recommended: `"New Business"` for first-time purchases, `"Existing Business"` for repeat purchases. |
-| `Description` | Multi-line string (≤2000 chars) | Embed Strapi Order ID and context for cross-referencing. |
-| `Lead_Source` | Picklist | Where the deal originated. Use `"Web Site"` for all Waldo-originated deals. |
-| `Closing_Date` | Date (`yyyy-MM-dd`) | The date payment was confirmed. Some pipeline views require it. Safe to always include as today's date. |
-
-### Standard Deal Stages (Default "Standard" Pipeline)
-
-From the official Get Pipelines API response (HIGH confidence):
-
-| Stage (actual_value) | Forecast Type | When to Use in Waldo |
-|---|---|---|
-| `Qualification` | Open | Not applicable (pre-sale) |
-| `Needs Analysis` | Open | Not applicable |
-| `Value Proposition` | Open | Not applicable |
-| `Id. Decision Makers` | Open | Not applicable |
-| `Proposal/Price Quote` | Open | Not applicable |
-| `Negotiation/Review` | Open | Not applicable |
-| **`Closed Won`** | Closed Won | ✅ **Use this for all payment-confirmed deals** |
-| `Closed Lost` | Closed Lost | For failed payments (optional future use) |
-| `Closed Lost to Competition` | Closed Lost | Not applicable |
-
-**For Waldo's model:** All Deals should be created directly at `"Closed Won"` because they are only created *after* Transbank confirms payment success. There is no pre-payment pipeline to manage.
-
-### Associating a Deal to a Contact
-
-The `Contact_Name` field is a **Lookup** type. Pass it as a JSON object containing the Contact's Zoho ID:
-
-```json
-{
-  "data": [
-    {
-      "Deal_Name": "Pack Purchase — johndoe — 2026-03-07",
-      "Stage": "Closed Won",
-      "Amount": 15000,
-      "Contact_Name": {
-        "id": "4150868000000376008"
-      },
-      "Type": "New Business",
-      "Closing_Date": "2026-03-07",
-      "Description": "Strapi Order #1234 — Pack: 5 ads"
-    }
-  ]
-}
-```
-
-**Source:** Zoho CRM v5 Insert Records API, "Lookup" field type definition: *"Accepts unique ID of the record"*. HIGH confidence.
-
-**Important nuances:**
-- `Contact_Name` is a **standard field** in Zoho CRM Deals — it does NOT need a `__c` suffix.
-- The value is the Contact's numeric Zoho record ID (the `id` field returned by `createContact()` or `findContact()`), not the Contact's name string.
-- `Contact_Name` accepts `{ "id": "..." }` only — no `"name"` key is required at write time.
-
-### Response Pattern
-
-```json
-{
-  "data": [
-    {
-      "code": "SUCCESS",
-      "details": {
-        "id": "4150868000003194003",
-        "Modified_Time": "2026-03-07T10:00:00+00:00",
-        "Created_Time": "2026-03-07T10:00:00+00:00"
-      },
-      "message": "record added",
-      "status": "success"
-    }
-  ]
-}
-```
-
-The Deal's Zoho ID is at `response.data[0].details.id`. The `createDeal()` method should return this ID as a `string`.
+| Concern | Current State |
+|---------|--------------|
+| **Registration (form)** | `FormRegister.vue` calls Strapi `register()`, shows Swal "Te enviamos un correo para confirmar tu dirección de correo electrónico." then `router.push('/login')`. Strapi email confirmation is **NOT enabled** in `plugins.ts` — users get a JWT immediately. The Swal message is a lie: no confirmation email is actually sent today. |
+| **Registration (Google OAuth)** | `registerUserAuth` wraps the OAuth callback, creates reservations, returns JWT. OAuth = email already verified by Google. Must never require email confirmation. |
+| **Login (2-step)** | `overrideAuthLocal` intercepts `POST /api/auth/local` — returns `{ pendingToken, email }` instead of JWT. User enters 6-digit code at `/login/verificar`. Code verified via `POST /api/auth/verify-code`. |
+| **Password reset (website)** | `FormForgotPassword.vue` calls `forgotPassword()` from `useStrapiAuth()`. Strapi sends its **built-in plain-text** reset email. Link goes to the URL configured in Strapi Admin → Advanced Settings → "Reset password page". Currently set to the website's `/restablecer-contrasena`. |
+| **Password reset (dashboard)** | Identical `forgotPassword()` call from `apps/dashboard/app/components/FormForgotPassword.vue`. **Same single Strapi config** → same plain-text email → same website link. Dashboard admins get sent to the website to reset, then land on the website homepage. Broken UX. |
+| **MJML email system** | `sendMjmlEmail()` + Nunjucks templates live in `apps/strapi/src/services/mjml/`. 15 templates exist (ad lifecycle, verification-code, gift-reservation, etc.). All user-facing emails use MJML **except** the password reset email and the email confirmation email — those use Strapi's native plain-text system. |
+| **Strapi `confirmed` field** | Every `plugin::users-permissions.user` has a `confirmed: boolean`. When "Enable email confirmation" is OFF in Strapi admin (current state), `confirmed` is `true` by default on registration and login is unrestricted. When ON, `confirmed` starts `false`; Strapi blocks `POST /api/auth/local` with HTTP 400 `"Your account email is not confirmed"` before the 2-step code flow even runs. |
+| **Reset password URL in Strapi** | One global config in **Users & Permissions → Advanced Settings → "Reset password page"**. Strapi embeds this URL in the reset email token query string as `?token=TOKEN`. It is a single value for the entire platform. |
+| **`overrideAuthLocal` and the `confirmed` field** | The function only sees the Strapi response. If login fails (wrong credentials OR unconfirmed email), `ctx.response.body?.jwt` is null → function returns early, no `pendingToken`. So email confirmation and 2-step login interact correctly at the Strapi level, but the frontend has no way to distinguish "wrong password" from "email not confirmed" without parsing the error message. |
+| **Strapi email confirmation endpoint** | `GET /api/auth/email-confirmation?confirmation=TOKEN` — Strapi native. Confirms account, sets `confirmed: true`, redirects to "Redirection url" from Advanced Settings. |
+| **Resend confirmation endpoint** | `POST /api/auth/send-email-confirmation` with `{ email }` — Strapi native. No custom code needed. |
 
 ---
 
-## Custom Fields on Contact
+## Table Stakes
 
-### How Zoho Names Custom Fields
+Features users expect. Missing = platform feels incomplete or broken.
 
-Zoho CRM appends `__c` to all **custom field API names** automatically when created via the UI or API.
-
-| Display Label | API Name (auto-generated) |
-|---|---|
-| Ads Published | `Ads_Published__c` |
-| Total Spent | `Total_Spent__c` |
-| Last Ad Posted At | `Last_Ad_Posted_At__c` |
-| Packs Purchased | `Packs_Purchased__c` |
-
-**Source:** Zoho CRM Module API docs: *"The Zoho CRM generates an API name internally while creating a custom module, custom field, or related list label."* The `__c` suffix is the universally documented convention. HIGH confidence.
-
-**Naming rules enforced by Zoho:**
-- API name must start with a letter
-- Only alphanumerics and underscores allowed
-- Cannot have two consecutive underscores (except the `__c` suffix itself)
-- Cannot end with an underscore (the `__c` suffix satisfies this)
-
-**Pre-creation requirement:** These custom fields must be created in the **Contacts** module in the Zoho CRM UI (Setup → Modules → Contacts → Fields → Add Field) **before** the sync code runs. The API cannot write to fields that do not exist.
-
-### Required Custom Fields to Create in Zoho CRM UI
-
-| Display Label | API Name | Type | Notes |
-|---|---|---|---|
-| Ads Published | `Ads_Published__c` | Number (Integer) | Count of all published ads by the user |
-| Total Spent | `Total_Spent__c` | Currency | Sum of all payments by the user in CLP |
-| Last Ad Posted At | `Last_Ad_Posted_At__c` | Date/Time | ISO8601: `yyyy-MM-ddTHH:mm:ss+HH:mm` |
-| Packs Purchased | `Packs_Purchased__c` | Number (Integer) | Count of pack purchases |
-
-### How to SET Custom Fields via API
-
-Custom fields are set and updated exactly like standard fields — include them in the `data` array with their API name:
-
-**On Contact update (`PUT /crm/v5/Contacts/{id}`):**
-
-```json
-{
-  "data": [
-    {
-      "id": "4150868000000376008",
-      "Ads_Published__c": 6,
-      "Total_Spent__c": 60000,
-      "Last_Ad_Posted_At__c": "2026-03-07T10:30:00+00:00"
-    }
-  ]
-}
-```
-
-**On Contact creation (`POST /crm/v5/Contacts`) — initialise to zero:**
-
-```json
-{
-  "data": [
-    {
-      "First_Name": "Juan",
-      "Last_Name": "Pérez",
-      "Email": "juan@example.com",
-      "Lead_Source": "Web Site",
-      "Ads_Published__c": 0,
-      "Total_Spent__c": 0,
-      "Packs_Purchased__c": 0
-    }
-  ]
-}
-```
-
-### Date/Time Format for Custom DateTime Fields
-
-```
-"2026-03-07T10:30:00+00:00"
-```
-
-ISO8601 format. Use `new Date().toISOString().replace('Z', '+00:00')` to produce the correct format. The CRM stores it in the org's configured timezone.
-
-### Incrementing Counters — No Atomic Increment in Zoho API
-
-Zoho CRM has no atomic increment operation. The `updateContactStats` flow must use read-modify-write:
-
-1. `findContact(email)` — read current values of `Ads_Published__c`, `Total_Spent__c`, etc. from the response
-2. Compute new values in Strapi
-3. `updateContact(id, { Ads_Published__c: currentValue + 1, ... })` — write back
-
-**Race condition:** If two events fire simultaneously (e.g., two concurrent ad publications), the counter increment may be lost. At Waldo's expected traffic volume, this is an acceptable known limitation. Document it; address in a future reliability milestone.
+| Feature | Why Expected | Complexity | Notes |
+|---------|--------------|------------|-------|
+| **MJML password reset email** | All other user-facing emails are MJML-based (ad approved, ad rejected, verification code, gift reservation). Sending a plain-text password reset email when everything else is branded HTML is jarringly inconsistent. | Medium | Requires overriding Strapi's `forgotPassword` endpoint. The challenge: Strapi generates the reset token internally. Override must generate the token via `strapi.plugins['users-permissions'].services.user.generateResetPasswordToken(user)` (or equivalent), build the URL, and call `sendMjmlEmail()` with a new `password-reset.mjml` template. |
+| **Post-registration confirmation screen** | After registering, users need clear visual feedback: "Check your inbox." Redirecting to `/login` (current behavior) leaves users confused — they try to log in and get a vague error. The Swal message on registration currently says a confirmation email was sent, but it was not. | Low | New page `/registro/confirmar` in website only. Shows email address, instructions, spam folder reminder, and a "Resend" button. Pure frontend — no backend change. |
+| **Enable Strapi email confirmation** | Must be toggled ON in Strapi Admin panel (Users & Permissions → Advanced Settings → "Enable email confirmation: TRUE"). Without this, the confirmation email system doesn't fire. This is a configuration change, not a code change. | Near-zero | Config-only. MUST be done together with items below or the UX breaks. |
+| **Login block handling for unconfirmed users** | When confirmation is enabled and a user tries to log in before confirming, `FormLogin.vue` receives a Strapi 400. Current catch shows a generic Swal "Hubo un error." Users need a specific actionable message: "Tu cuenta no ha sido confirmada. Revisa tu correo." with a "Reenviar confirmación" link/button. | Low-Medium | Detect the specific Strapi error string `"Your account email is not confirmed"` in the catch block of `FormLogin.vue` (website and dashboard). Show a targeted message. The email is already in the form state for the resend call. |
+| **Resend confirmation email button** | Users miss emails. Every email verification flow must provide a resend path. | Low | A button calling `POST /api/auth/send-email-confirmation` with `{ email }`. Strapi native endpoint — no custom backend code. Add a 60-second UI cooldown (same pattern as `FormVerifyCode.vue`). |
+| **Password reset context routing** | Dashboard admins clicking "Forgot password" get a reset link pointing to the website's `/restablecer-contrasena`. After resetting, they land on the website homepage — not the dashboard. Must route dashboard reset emails to `dashboard.waldo.click/auth/reset-password`. | Medium | See Feature Deep-Dive section below. |
 
 ---
 
-## Event-to-Action Mapping
+## Differentiators
 
-### Event 1: `user_created` → Contact
+Features that improve UX but are not strictly required.
 
-**Trigger:** Strapi lifecycle hook `afterCreate` on `plugin::users-permissions.user`  
-**API calls:** 1–2  
-**Sequence:**
-
-```
-1. findContact(email)           → check for existing Contact (deduplication guard)
-2a. if no Contact found:
-     POST /crm/v5/Contacts      → create Contact with stats initialised to 0
-2b. if Contact found:
-     PUT /crm/v5/Contacts/{id}  → update fields if needed (name, phone)
-```
-
-**Payload for step 2a:**
-
-```typescript
-{
-  First_Name: user.firstName || "",
-  Last_Name: user.lastName || "Unknown",  // Last_Name is mandatory
-  Email: user.email,
-  Phone: user.phone ?? undefined,
-  Lead_Source: "Web Site",
-  Ads_Published__c: 0,
-  Total_Spent__c: 0,
-  Packs_Purchased__c: 0,
-  // Last_Ad_Posted_At__c omitted — null by default in Zoho
-}
-```
-
-**Complexity:** LOW — 1–2 API calls, no dependencies on other services.  
-**Failure mode:** If the Zoho call fails, log the error. Do NOT block user registration — Zoho sync is a side effect.
+| Feature | Value Proposition | Complexity | Notes |
+|---------|-------------------|------------|-------|
+| **Confirmation landing page (`/registro/confirmar`)** | Dedicated page after registration with email displayed, instructions, spam reminder, and resend button. Pattern used by GitHub, Linear, Notion, Mailchimp. Users who land there know exactly what to do next. | Low | Static page + one API call. Only in website (dashboard users don't register). |
+| **Confirmation redirect success state** | When a user clicks the confirmation link, Strapi redirects to the "Redirection url" (e.g. `/login?confirmed=true`). The login page detects `?confirmed=true` and shows a success banner: "¡Tu cuenta ha sido confirmada! Ya puedes iniciar sesión." | Low | Pure frontend — a `computed` that reads `route.query.confirmed` in `login/index.vue`. |
+| **Already-confirmed guard on the confirmation redirect page** | If a user clicks the confirmation link a second time, Strapi redirects with an error param. The landing page should handle this gracefully: "Tu cuenta ya fue confirmada. Inicia sesión." instead of showing a broken state. | Low | Check for error query params on the redirect page. |
+| **MJML account-confirmation email** | Replace Strapi's native plain-text confirmation email with a branded MJML version matching the rest of the platform. | Medium-High | **Complex to implement without duplicate sends.** Strapi's native register controller sends the confirmation email automatically when the feature is enabled. Overriding requires intercepting at exactly the right point to prevent the native send AND still generate a valid confirmation token. The Strapi `email-confirmation` template can be customized via Admin UI as an acceptable interim. Flag as v2. |
+| **Typed login error differentiation in dashboard** | Dashboard `FormLogin.vue` also hits `POST /api/auth/local`. If a dashboard admin's email is unconfirmed (rare scenario), they should get an actionable message too. | Low | Same change as website `FormLogin.vue`. |
 
 ---
 
-### Event 2: `pack_purchased` → Deal + updateContactStats
+## Anti-Features
 
-**Trigger:** Strapi payment confirmation handler (after Transbank confirms pack payment success)  
-**API calls:** 3 sequential
-
-```
-1. findContact(email)               → get Zoho Contact ID + current stats
-2. POST /crm/v5/Deals               → create Deal linked to Contact
-3. PUT /crm/v5/Contacts/{contactId} → increment Total_Spent__c and Packs_Purchased__c
-```
-
-**Deal payload (step 2):**
-
-```typescript
-{
-  Deal_Name: `Pack Purchase — ${username} — ${isoDate}`,  // ≤255 chars
-  Stage: "Closed Won",
-  Amount: order.totalAmount,          // number, CLP
-  Contact_Name: { id: zohoContactId },
-  Type: packsCount === 0 ? "New Business" : "Existing Business",
-  Closing_Date: new Date().toISOString().split("T")[0],  // "yyyy-MM-dd"
-  Description: `Strapi Order #${order.id} — Pack: ${packName}`,
-  Lead_Source: "Web Site",
-}
-```
-
-**Contact update payload (step 3):**
-
-```typescript
-{
-  id: zohoContactId,
-  Total_Spent__c: currentTotalSpent + order.totalAmount,
-  Packs_Purchased__c: currentPacksPurchased + 1,
-}
-```
-
-**Complexity:** MEDIUM — 3 sequential API calls, read-modify-write for stats, requires Contact ID lookup first.  
-**Failure handling:** Deal creation is the primary value. If step 3 (contact stats update) fails, log the error but do not roll back the Deal. Contact stats inconsistency is recoverable; a missing Deal record is not.
-
----
-
-### Event 3: `ad_paid` → Deal + updateContactStats
-
-**Trigger:** Strapi payment confirmation handler (after Transbank confirms ad payment success)  
-**API calls:** 3 sequential (same pattern as `pack_purchased`)
-
-```
-1. findContact(email)               → get Zoho Contact ID + current Total_Spent__c
-2. POST /crm/v5/Deals               → create Deal for ad payment
-3. PUT /crm/v5/Contacts/{contactId} → increment Total_Spent__c only
-```
-
-**Deal payload (step 2):**
-
-```typescript
-{
-  Deal_Name: `Ad Payment — ${adTitle.slice(0, 40)} — ${isoDate}`,  // truncate adTitle
-  Stage: "Closed Won",
-  Amount: order.totalAmount,
-  Contact_Name: { id: zohoContactId },
-  Type: "Existing Business",   // paying for an ad implies existing account
-  Closing_Date: new Date().toISOString().split("T")[0],
-  Description: `Strapi Order #${order.id} — Ad ID: ${adId} — "${adTitle}"`,
-  Lead_Source: "Web Site",
-}
-```
-
-**Contact update payload (step 3):** Only `Total_Spent__c` is incremented (no pack counter change).
-
-**Complexity:** MEDIUM — identical pattern to `pack_purchased`.
-
----
-
-### Event 4: `ad_published` → updateContactStats (no Deal)
-
-**Trigger:** Strapi lifecycle hook `afterUpdate` on Ad, when `status` transitions to `"active"` or `"published"`  
-**API calls:** 2 sequential
-
-```
-1. findContact(email)               → get Zoho Contact ID + current Ads_Published__c
-2. PUT /crm/v5/Contacts/{contactId} → increment Ads_Published__c + set Last_Ad_Posted_At__c
-```
-
-**Contact update payload (step 2):**
-
-```typescript
-{
-  id: zohoContactId,
-  Ads_Published__c: currentAdsPublished + 1,
-  Last_Ad_Posted_At__c: new Date().toISOString().replace("Z", "+00:00"),
-}
-```
-
-**Complexity:** LOW — 2 API calls. No Deal involved.  
-**Edge case:** If `findContact` returns null (user not yet synced to Zoho), log a warning and skip silently. Do NOT create a Contact here — Contact creation belongs exclusively in `user_created`.  
-**Idempotency risk:** If the lifecycle hook fires twice for the same status transition (e.g., due to a re-publish after an admin action), the counter will be incremented twice. Guard with a status diff check in the hook: only trigger if `previousData.status !== "published"` and `currentData.status === "published"`.
-
----
-
-### Event 5: `contact_form_submitted` → Lead (+ Contact linkage check)
-
-**Trigger:** Contact form submission handler in Strapi  
-**API calls:** 1–2
-
-```
-1. findContact(email)             → check if submitter is a known registered user
-2a. If Contact found:
-     skip Lead creation; optionally create a Note/Task against the Contact
-2b. If no Contact found:
-     POST /crm/v5/Leads           → create Lead
-```
-
-**Lead payload (step 2b):**
-
-```typescript
-{
-  First_Name: form.firstName || "",
-  Last_Name: form.lastName,       // mandatory
-  Email: form.email,
-  Phone: form.phone ?? undefined,
-  Company: form.company || "Waldo API",
-  Description: form.message,
-  Lead_Source: "Web Form",
-  Lead_Status: "New",             // ← CURRENTLY MISSING — must add in v1.19
-}
-```
-
-**Complexity:** LOW-MEDIUM — the Contact-check-first logic adds one API call but prevents duplicate person records in CRM.
-
----
-
-## Table Stakes vs Differentiators
-
-### Table Stakes (Essential — missing any = incomplete integration)
-
-| Feature | Why Essential | Complexity |
-|---|---|---|
-| `createContact()` on user registration | Every registered user must exist in CRM from day one | LOW |
-| Deduplication guard (`findContact` before `createContact`) | Without it, re-registration or race conditions create duplicate Contacts | LOW |
-| `createDeal()` on payment confirmation | Core CRM value — revenue visibility per Contact | MEDIUM |
-| `Contact_Name` lookup in Deal | Without it, Deals are orphaned with no Contact linkage in Zoho UI | LOW |
-| `Amount` field in Deal | Without it, revenue reporting in Zoho is impossible | LOW |
-| `Stage: "Closed Won"` on Deal creation | Required field — `POST /crm/v5/Deals` returns `MANDATORY_NOT_FOUND` without it | LOW |
-| `Ads_Published__c` counter on Contact | Core user activity metric | LOW |
-| `Total_Spent__c` counter on Contact | Core revenue metric per user | LOW |
-| Fix `Lead_Status` missing from `createLead()` | Current bug — leads created without status break CRM workflows | LOW |
-| Fix `Authorization: Bearer` → `Zoho-oauthtoken` in `ZohoHttpClient` | Current bug — all API calls use wrong auth header; may work on some requests by accident | HIGH |
-| Fix token-expiry handling in `ZohoHttpClient` | Current bug — token only refreshes on startup; all calls fail silently after 1 hour | HIGH |
-
-### Differentiators (Valuable but deferrable)
-
-| Feature | Value | Complexity | Recommendation |
-|---|---|---|---|
-| `Type: "New Business"` vs `"Existing Business"` on Deal | Better CRM segmentation, identifies repeat buyers | LOW | Include in v1.19 (trivial) |
-| `Packs_Purchased__c` counter on Contact | Identifies power users; enables targeted offers | LOW | Include in v1.19 |
-| `Last_Ad_Posted_At__c` field | Recency segmentation in CRM | LOW | Include in v1.19 |
-| `Description` field in Deal with Strapi Order ID | Cross-reference Zoho Deal → Strapi Order | LOW | Include in v1.19 |
-| `Closing_Date` on Deal | Required by some pipeline views; best practice | LOW | Include in v1.19 |
-| Contact-first check before Lead creation | Prevents duplicate person records | LOW | Include in v1.19 |
-
-### Anti-Features (Explicitly Do NOT Build in v1.19)
+Features to explicitly NOT build.
 
 | Anti-Feature | Why Avoid | What to Do Instead |
-|---|---|---|
-| Inbound Zoho webhooks (Zoho → Strapi) | Bidirectional sync requires a public endpoint, authentication, and conflict resolution — out of scope | One-way push from Strapi only |
-| Storing Zoho Contact/Deal IDs in Strapi DB | Requires schema changes on `User` model — out of scope for this milestone | Pass Zoho IDs only in-memory during event handler |
-| Retry queue for failed Zoho calls | Valid for production hardening, but adds significant complexity (job queue, idempotency keys) | Log failures to Strapi error log; address in a dedicated reliability milestone |
-| Bulk backfill of existing users | Potentially thousands of API calls; rate-limit risk; risky on live data | One-time migration script in a separate milestone |
-| `Account_Name` association on Deals | Zoho Accounts are for B2B (company records); Waldo is B2C — no Account model needed | Omit entirely |
+|--------------|-----------|-------------------|
+| **Require confirmation before browsing the public site** | Users who haven't confirmed can still view listings, profiles, and articles. Blocking browsing adds friction with zero security benefit. | Block only authenticated-only actions: ad creation, viewing contact details. Strapi's `confirmed` check on login already handles this — unconfirmed users can't get a JWT. |
+| **Email confirmation for Google OAuth users** | Google OAuth proves email ownership. Strapi sets `confirmed: true` automatically for OAuth users. The existing `ctx.method === "GET"` guard in `overrideAuthLocal` correctly bypasses 2-step for OAuth — do NOT add a confirmation layer on top. | Keep OAuth flow as-is. |
+| **Duplicate confirmation email sends** | If email confirmation is enabled in Strapi, Strapi's `register()` controller already sends the native confirmation email. Adding `sendMjmlEmail()` in `registerUserLocal` without suppressing Strapi's native send would send TWO emails. | Either (A) customize Strapi's native email template via Admin UI (plain HTML, acceptable interim), or (B) suppress the native send AND call `sendMjmlEmail()`. Not both. |
+| **Custom confirmation token system** | The 2-step login needed a custom `verification-code` content type because Strapi's native `auth.local` had no concept of "pending." Email confirmation is already a first-class Strapi feature with token generation, storage, and expiry. Building a parallel system wastes time and creates confusion. | Use Strapi's native `confirmed` field and token lifecycle. Only intercept the email send if needed. |
+| **`?origin=dashboard` query param on the forgot-password form URL** | The forgot-password form is on a protected page. The `source` parameter must survive the email round-trip (sent via form → goes into email → comes back in reset link). Query params on the forgot-password form URL are not sent in the email — they're lost after the form submits. | Send `source` as a field in the `forgotPassword()` POST body. Strapi receives it and encodes it into the reset URL. |
+| **Separate Strapi "Reset password page" per app** | Strapi has one global setting. Configuring it to the dashboard URL would break website users. | Use a single neutral reset URL (e.g. website) and handle source-based routing client-side, OR generate the reset URL entirely in a custom controller override so Strapi's config is bypassed. |
 
 ---
 
-## Critical Existing Bugs to Fix in v1.19
+## Feature Deep-Dives
 
-### Bug 1: Wrong Authorization Header Format
+### Feature 1: Post-Registration UX Flow
 
-**File:** `apps/strapi/src/services/zoho/http-client.ts`, line 28  
-**Current code:** `config.headers.Authorization = \`Bearer ${this.accessToken}\``  
-**Correct code:** `config.headers.Authorization = \`Zoho-oauthtoken ${this.accessToken}\``  
-**Source:** All Zoho CRM v5 API documentation uses `Zoho-oauthtoken` as the auth header prefix. HIGH confidence.  
-**Impact:** All API calls may fail with 401 in production depending on how Zoho validates the scheme prefix.
+**Recommended flow (when email confirmation is enabled):**
 
-### Bug 2: Token Not Refreshed on Expiry
+```
+1. User submits /registro form
+2. Strapi creates user (confirmed: false), sends native confirmation email
+3. FormRegister.vue receives success → navigates to /registro/confirmar?email=user@domain.com
+4. /registro/confirmar page shows:
+   - "Hemos enviado un correo a user@domain.com"
+   - "Revisa tu bandeja de entrada y la carpeta de spam"
+   - "Reenviar correo" button (POST /api/auth/send-email-confirmation)
+   - Link back to /login
+5. User clicks link in email → Strapi confirms → redirects to /login?confirmed=true
+6. /login detects ?confirmed=true → shows banner "¡Cuenta confirmada! Ya puedes iniciar sesión."
+```
 
-**File:** `apps/strapi/src/services/zoho/http-client.ts`  
-**Problem:** `this.accessToken` is only null on startup. Zoho OAuth tokens expire in 1 hour. After expiry, all calls fail with 401, but the client will NOT attempt a refresh because `this.accessToken !== null`.  
-**Fix:** Add a response interceptor that detects 401 status, clears `this.accessToken`, refreshes, and retries the original request with `_retry` flag to prevent infinite loops:
+**What NOT to do:** Show a Swal then `router.push('/login')`. Users arrive at login without knowing they need to confirm. They try to log in, get a vague error, and churn.
+
+**Strapi mechanics (HIGH confidence — verified from official docs + code):**
+- `Enable email confirmation: TRUE` in Strapi admin panel Advanced Settings
+- Strapi sends `GET /api/auth/email-confirmation?confirmation=TOKEN` link in email
+- After confirmation: Strapi redirects to "Redirection url" (set in Advanced Settings → should be `/login?confirmed=true` or `/registro/bienvenida`)
+- Resend: `POST /api/auth/send-email-confirmation` with `{ email }` — natively available, no custom code
+
+---
+
+### Feature 2: Login Block UX for Unconfirmed Users
+
+**What Strapi does (HIGH confidence):**
+- `POST /api/auth/local` returns HTTP 400 with error message `"Your account email is not confirmed"` BEFORE reaching `overrideAuthLocal`'s JWT check
+- `overrideAuthLocal` sees `ctx.response.body?.jwt` is null and returns early → no `pendingToken` issued
+- The frontend's generic `catch` currently shows "Hubo un error. Por favor, inténtalo de nuevo." regardless of reason
+
+**Required change in `FormLogin.vue` (both apps):**
 
 ```typescript
-this.client.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    if (error.response?.status === 401 && !error.config._retry) {
-      error.config._retry = true;
-      this.accessToken = null;
-      await this.refreshAccessToken();
-      error.config.headers.Authorization = `Zoho-oauthtoken ${this.accessToken}`;
-      return this.client(error.config);
-    }
-    throw error;
+} catch (error) {
+  const msg = (error as any)?.error?.message || '';
+  if (msg === 'Your account email is not confirmed') {
+    // Show actionable message with resend option
+    // email is available from form.value.email
+    await Swal.fire({
+      title: 'Cuenta sin confirmar',
+      text: 'Tu cuenta no ha sido confirmada. Revisa tu bandeja de entrada o haz clic para reenviar el correo.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Reenviar correo',
+      cancelButtonText: 'Cerrar',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        // POST /api/auth/send-email-confirmation
+      }
+    });
+  } else {
+    Swal.fire('Error', 'Hubo un error. Por favor, inténtalo de nuevo.', 'error');
   }
-);
+}
 ```
 
-### Bug 3: `createLead()` Missing `Lead_Status` Field
-
-**File:** `apps/strapi/src/services/zoho/zoho.service.ts`  
-**Fix:** Add `Lead_Status: lead.status || "New"` to the lead creation payload.
-
-### Bug 4: Test File Hits Live Production Zoho API
-
-**File:** `apps/strapi/src/services/zoho/zoho.test.ts`  
-**Problem:** Tests use the live `zohoService` singleton, creating real records in the production Zoho CRM org.  
-**Fix:** Mock `ZohoHttpClient` in all tests. The factory pattern already supports this — `new ZohoService(mockHttpClient)`.
+**Important nuance:** The unconfirmed login scenario only occurs AFTER email confirmation is enabled. Both changes (Strapi config + frontend error handling) must ship together.
 
 ---
 
-## Interface Additions Required
+### Feature 3: Password Reset Context Routing
 
-The current `interfaces.ts` requires the following additions for v1.19:
+**The problem in detail:**
+- Strapi has ONE global "Reset password page" URL setting
+- `FormForgotPassword.vue` in **both** apps calls the same `forgotPassword()` from `useStrapiAuth()`
+- `useStrapiAuth()` from `@nuxtjs/strapi` calls `POST /api/auth/forgot-password` with just `{ email }`
+- Strapi generates a token, builds `<Reset password page>?token=TOKEN`, sends it in the native plain-text email
+- Dashboard user gets an email pointing to the website — broken
 
-```typescript
-// New: Deal creation DTO
-export interface ZohoDeal {
-  Deal_Name: string;
-  Stage: "Closed Won" | "Closed Lost" | "Qualification" | string;
-  Amount?: number;
-  Contact_Name?: { id: string };
-  Type?: "New Business" | "Existing Business";
-  Closing_Date?: string;      // "yyyy-MM-dd"
-  Description?: string;
-  Lead_Source?: string;
-  Pipeline?: string;
-}
+**Recommended solution: Custom `forgotPassword` controller override + MJML email**
 
-// New: Contact stats update DTO
-export interface ZohoContactStats {
-  Ads_Published__c?: number;
-  Total_Spent__c?: number;
-  Last_Ad_Posted_At__c?: string;   // ISO8601 datetime
-  Packs_Purchased__c?: number;
-}
+This solution is tightly coupled to the MJML password reset email (also a table stake). When we override the controller to send MJML, we can simultaneously control the URL:
+
+```
+1. Dashboard FormForgotPassword sends { email, source: "dashboard" }
+   (source field added to form submission, not a query param)
+
+2. Strapi custom forgotPassword controller:
+   a. Validates email → finds user
+   b. Generates reset token via strapi.plugins['users-permissions'].services.user
+   c. Builds reset URL:
+      - source === "dashboard" → https://dashboard.waldo.click/auth/reset-password?token=TOKEN
+      - else → https://waldo.click/restablecer-contrasena?token=TOKEN
+   d. Calls sendMjmlEmail() with password-reset.mjml template + the URL
+   e. Does NOT call the original Strapi forgotPassword (avoids double email)
+
+3. User clicks link in MJML email → lands on the correct app's reset page
+4. FormResetPassword.vue on each app reads route.query.token as "code" → calls resetPassword()
+   (existing FormResetPassword.vue already handles this correctly — no change needed)
+5. After reset: redirect to the correct app's login
+   - Website: router.push('/login')
+   - Dashboard: router.push('/auth/login')
 ```
 
-`IZohoService` requires two new method signatures:
-- `createDeal(deal: ZohoDeal): Promise<string>` — returns the created Deal's Zoho record ID
-- `updateContactStats(contactId: string, stats: ZohoContactStats): Promise<void>`
+**Strapi reset password token generation (MEDIUM confidence — documented in source code patterns):**
+The Strapi `users-permissions` service exposes a method to generate reset tokens. The exact method name needs verification at implementation time (`generateResetPasswordToken` or similar). The token is stored directly on the user record (not a separate content type) — this is different from the verification-code system.
+
+**Alternative (simpler, lower risk):**
+Set Strapi's "Reset password page" to the website URL (current behavior). On the website's `FormResetPassword.vue`, add a `source` query param forwarding: if `?source=dashboard`, after successful reset call `navigateTo('https://dashboard.waldo.click/auth/login')` instead of `router.push('/')`. The dashboard's `FormForgotPassword.vue` passes `?source=dashboard` as part of a custom redirect URL (but this requires the website to know the dashboard URL, which is stored in `runtimeConfig`).
+
+**Recommendation:** Use the custom controller + MJML approach (option 1). It's cleaner and avoids cross-app URL references. The MJML email is a table stake anyway — solving both problems in one controller override is efficient.
+
+---
+
+### Feature 4: Email Verification Edge Cases
+
+| Edge Case | Strapi Behavior | Required Frontend Handling |
+|-----------|----------------|---------------------------|
+| User tries to log in before confirming | HTTP 400 `"Your account email is not confirmed"` | Specific Swal + resend button (Feature 2) |
+| User clicks confirmation link twice | Strapi returns error in redirect query params to "Redirection url" | Landing page reads error params, shows "Ya confirmada — inicia sesión" |
+| User already confirmed tries to re-confirm | Same as above — Strapi returns error | Same handler |
+| User re-registers with same email (any confirm state) | Strapi: "Email or Username are already taken" | Existing error handler in `FormRegister.vue` — no change needed |
+| Resend called too fast | Strapi native has no built-in rate limiting on resend | Add 60-second UI cooldown on resend button. Same pattern as `FormVerifyCode.vue`. |
+| Confirmation token expires | Strapi v5 confirmation tokens do NOT expire by default | Document as known gap. Admin can manually confirm in Strapi admin panel. Not a blocking issue. |
+| Google OAuth user — does `confirmed` matter? | Strapi sets `confirmed: true` during OAuth callback automatically | No change needed. OAuth flow is unaffected. |
+| Dashboard user (admin) gets unconfirmed error | Admin accounts are typically created via Strapi admin panel (not the public register form) with `confirmed: true` manually set | Low-risk scenario. But add error handling to dashboard `FormLogin.vue` defensively. |
+| User registered BEFORE email confirmation was enabled | All pre-existing users have `confirmed: true` (Strapi default). Enabling confirmation does NOT lock out existing users. | No migration needed. Verify `confirmed: true` on existing users before enabling. |
+
+**Pre-migration verification (critical, LOW complexity):**
+Before enabling email confirmation in Strapi admin, run a DB check to confirm all existing users have `confirmed: true`. If any have `confirmed: false` (could exist if admin manually created them), bulk-update them before enabling the feature to avoid locking them out.
+
+---
+
+## Feature Dependencies
+
+```
+MJML password-reset.mjml template
+  ↓
+Custom forgotPassword controller override (Strapi)
+  ↓
+Password reset context routing (source field → correct URL in email)
+  ↑
+Dashboard FormForgotPassword sends { email, source: "dashboard" }
+
+─────────────────────────────────────────────────────────────
+
+Enable Strapi email confirmation (Admin Settings)
+  ↓ [must ship together with ALL of:]
+  ├─ /registro/confirmar page (website)
+  ├─ FormRegister.vue updated: redirect to /registro/confirmar instead of /login
+  ├─ Login error handling for unconfirmed users (FormLogin.vue — website)
+  ├─ Login error handling for unconfirmed users (FormLogin.vue — dashboard)
+  └─ Resend confirmation button (calls POST /api/auth/send-email-confirmation)
+
+─────────────────────────────────────────────────────────────
+
+MJML account-confirmation email (DEFERRED — v2)
+  → Requires suppressing Strapi's native confirmation send
+  → Complex to implement without duplicate emails
+  → Acceptable interim: style Strapi's native template via Admin UI
+```
+
+---
+
+## MVP Recommendation
+
+**Phase A — Password reset (ship first, independent of email confirmation):**
+
+1. `password-reset.mjml` MJML template
+2. Custom `forgotPassword` controller override in `authController.ts`
+3. Dashboard `FormForgotPassword.vue` sends `{ email, source: "dashboard" }` in POST body
+4. Reset URLs route to correct app based on source
+
+**Phase B — Email confirmation (ship as atomic unit):**
+
+1. Pre-flight: verify all existing users have `confirmed: true`
+2. Enable Strapi "Email confirmation" in Admin Settings
+3. Set "Redirection url" in Strapi to `/login?confirmed=true`
+4. Create `/registro/confirmar` page in website
+5. Update `FormRegister.vue` to navigate to `/registro/confirmar` on success
+6. Update `FormLogin.vue` (website + dashboard) to detect unconfirmed error + show resend UI
+7. Enable and test end-to-end
+
+**Ship A first, then B.** Phase A is a self-contained improvement that fixes a real broken UX (dashboard reset). Phase B is a larger change that requires all pieces to land simultaneously.
+
+**Defer:**
+- MJML account-confirmation email override (complex, acceptable with styled native template as interim)
+- Confirmation token expiry (not a Strapi v5 default feature)
+- Bulk backfill of unconfirmed users (not needed if pre-flight check passes)
 
 ---
 
 ## Sources
 
-| Source | Confidence | URL |
-|---|---|---|
-| Zoho CRM v5 Insert Records API | HIGH | https://www.zoho.com/crm/developer/docs/api/v5/insert-records.html |
-| Zoho CRM v5 Update Records API | HIGH | https://www.zoho.com/crm/developer/docs/api/v5/update-records.html |
-| Zoho CRM v5 Upsert Records API | HIGH | https://www.zoho.com/crm/developer/docs/api/v5/upsert-records.html |
-| Zoho CRM v5 Get Pipelines API (incl. standard stages) | HIGH | https://www.zoho.com/crm/developer/docs/api/v5/get-pipelines.html |
-| Zoho CRM v5 Fields Metadata API | HIGH | https://www.zoho.com/crm/developer/docs/api/v5/field-meta.html |
-| Zoho CRM v5 Module Metadata API | HIGH | https://www.zoho.com/crm/developer/docs/api/v5/module-meta.html |
-| Zoho CRM v5 Get Related Records API | HIGH | https://www.zoho.com/crm/developer/docs/api/v5/get-related-records.html |
-| Existing Zoho service implementation | — | `apps/strapi/src/services/zoho/` |
-
----
-*Research for: v1.19 Zoho CRM Integration milestone*  
-*Researched: 2026-03-07*  
-*Confidence: HIGH — all Zoho API mechanics verified against official v5 docs*
+| Source | Confidence | Reference |
+|--------|------------|-----------|
+| Strapi v5 Users & Permissions docs — Advanced Settings, email templates, confirmation endpoint | HIGH | https://docs.strapi.io/dev-docs/plugins/users-permissions |
+| Codebase — `apps/strapi/src/extensions/users-permissions/controllers/authController.ts` | HIGH | `overrideAuthLocal`, `registerUserLocal`, token handling |
+| Codebase — `apps/strapi/config/plugins.ts` | HIGH | Email confirmation NOT currently configured; Mailgun provider; `allowedFields` |
+| Codebase — `apps/website/app/components/FormRegister.vue` | HIGH | Swal message (incorrect — says email sent, but confirmation is disabled) + `router.push('/login')` |
+| Codebase — `apps/website/app/components/FormForgotPassword.vue` | HIGH | `forgotPassword()` call, no `source` field, generic catch |
+| Codebase — `apps/dashboard/app/components/FormForgotPassword.vue` | HIGH | Identical pattern, same missing `source` field, routes to `/` after success (website homepage via Strapi redirect) |
+| Codebase — `apps/website/app/components/FormResetPassword.vue` | HIGH | Reads `route.query.token` as `code`; `resetPassword()` from `useStrapiAuth()` |
+| Codebase — `apps/strapi/src/services/mjml/index.ts` | HIGH | `sendMjmlEmail()` — established override pattern for email interception |
+| Codebase — `apps/website/app/pages/login/verificar.vue` | HIGH | 60-second resend cooldown pattern via `FormVerifyCode.vue` — reuse for resend confirmation |
