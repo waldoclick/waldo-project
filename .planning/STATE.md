@@ -2,16 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.38
 milestone_name: GA4 Analytics Audit & Implementation
-status: in_progress
-last_updated: "2026-03-14T15:08:46Z"
-last_activity: "2026-03-14 — Completed 083-01-PLAN.md (ECOM-01, ECOM-02)"
+status: executing
+last_updated: "2026-03-14T15:13:33.222Z"
+last_activity: 2026-03-14 — Completed 083-02 (ECOM-03 fixed)
 progress:
   total_phases: 3
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 2
-  completed_plans: 1
-  percent: 0
-stopped_at: "Completed 083-01-PLAN.md"
+  completed_plans: 2
+  percent: 100
 ---
 
 # Session State
@@ -26,21 +25,21 @@ See: .planning/PROJECT.md (updated 2026-03-14 after v1.38 milestone started)
 ## Position
 
 **Current Milestone:** v1.38 — GA4 Analytics Audit & Implementation
-**Status:** In progress — 083-01 complete
+**Status:** In progress — 083 complete (2/2 plans done)
 Phase: 083
-Plan: 01 complete → 02 next
+Plan: 02 complete → Phase 084 next
 
 ```
-Progress: [██████████] 98% (40/41 plans across project)
+Progress: [██████████] 100% (41/41 plans across project)
 ```
 
-Last activity: 2026-03-14 — Completed 083-01 (ECOM-01, ECOM-02 fixed)
+Last activity: 2026-03-14 — Completed 083-02 (ECOM-03 fixed)
 
 ## Phase Map
 
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
-| 083 | Ecommerce Bug Fixes | ECOM-01, ECOM-02, ECOM-03 | In progress (1/2 plans done) |
+| 083 | Ecommerce Bug Fixes | ECOM-01, ECOM-02, ECOM-03 | Complete (2/2 plans done) |
 | 084 | Ad Discovery Tracking | DISC-01, DISC-02, DISC-03 | Not started |
 | 085 | Contact, Auth & Blog Events | CONT-01, CONT-02, AUTH-01, AUTH-02, BLOG-01 | Not started |
 
@@ -50,6 +49,8 @@ Last activity: 2026-03-14 — Completed 083-01 (ECOM-01, ECOM-02 fixed)
 
 - Strapi biginteger defense: always wrap numeric fields from API responses with `Number()` before passing to GA4 (ECOM-01)
 - Use `||` (not `??`) for item_id fallback chains where empty string should trigger fallback (ECOM-02)
+- Free-ad purchase event uses `amount: 0` (not undefined) — enables GA4 funnel comparison between free and paid conversions (ECOM-03)
+- documentId fallback to `route.query.ad` for free-ad analytics covers SSR edge case where ad.documentId may not be populated yet (ECOM-03)
 
 - All business logic lives in Strapi; dashboard and website are stateless HTTP clients
 - Auth extension pattern: override plugin controllers in `src/extensions/users-permissions/strapi-server.ts` — same pattern as `registerUserLocal`
