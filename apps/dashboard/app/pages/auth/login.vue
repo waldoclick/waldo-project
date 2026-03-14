@@ -18,6 +18,12 @@
                 Recupérala aquí
               </NuxtLink>
             </p>
+            <p>
+              ¿Necesitas acceso? Contacta a un administrador en
+              <a href="mailto:contacto@waldo.click" title="Contactar soporte">
+                contacto@waldo.click
+              </a>
+            </p>
           </div>
         </div>
       </div>
@@ -29,13 +35,12 @@
 import IntroduceAuth from "@/components/IntroduceAuth.vue";
 import FormLogin from "@/components/FormLogin.vue";
 
-const title = "Accede y gestiona tus anuncios en waldo.click®";
-const subtitle = "Con tu cuenta en waldo.click® podrás:";
+const title = "Panel de administración de waldo.click®";
+const subtitle = "Esta es una zona de acceso restringido.";
 const list = [
-  "Ver los datos de contacto de los anuncios.",
-  "Publicar anuncios con nuestros planes disponibles.",
-  "Disfrutar de hasta 3 anuncios gratis renovables.",
-  "Recibir notificaciones de nuevos anuncios en tu correo periódicamente.",
+  "El acceso está habilitado exclusivamente para administradores autorizados.",
+  "Si necesitas acceder y no tienes credenciales, contacta a un administrador.",
+  "¿Problemas para ingresar? Escríbenos a contacto@waldo.click",
 ];
 
 definePageMeta({
