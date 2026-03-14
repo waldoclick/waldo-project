@@ -19,6 +19,7 @@ definePageMeta({
 const { $setSEO, $setStructuredData } = useNuxtApp();
 const config = useRuntimeConfig();
 const appStore = useAppStore();
+const { generateLead } = useAdAnalytics();
 
 // Verificar si el formulario fue enviado
 if (!appStore.getContactFormSent) {
@@ -28,6 +29,9 @@ if (!appStore.getContactFormSent) {
     statusMessage: "La página que intentas acceder no existe",
   });
 }
+
+// Fire GA4 event before clearing state (guard is still true at this point)
+generateLead();
 
 // Limpiar el estado después de verificar
 appStore.clearContactFormSent();

@@ -107,18 +107,26 @@
             class="announcement--single__sidebar__info__seller"
           >
             <CardInfo title="Contacto" :description="getUserFullName" />
-            <CardInfo
+            <div
               v-if="getUserFromAll?.email"
-              title="Email"
-              :description="getUserFromAll.email"
-              show-copy-button
-            />
-            <CardInfo
+              @click.capture="contactSeller('email')"
+            >
+              <CardInfo
+                title="Email"
+                :description="getUserFromAll.email"
+                show-copy-button
+              />
+            </div>
+            <div
               v-if="getUserFromAll?.phone"
-              title="Teléfono"
-              :description="getUserFromAll.phone"
-              show-copy-button
-            />
+              @click.capture="contactSeller('phone')"
+            >
+              <CardInfo
+                title="Teléfono"
+                :description="getUserFromAll.phone"
+                show-copy-button
+              />
+            </div>
           </div>
           <div v-else class="announcement--single__sidebar__info__reminder">
             <ReminderDefault />
@@ -158,6 +166,8 @@ const isLoggedIn = computed(() => !!authUser.value);
 
 // Composable para sanitización
 const { sanitizeRich } = useSanitize();
+
+const { contactSeller } = useAdAnalytics();
 
 // Computed property para obtener el nombre de la comuna
 const communeName = computed(() => {
