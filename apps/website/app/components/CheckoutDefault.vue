@@ -44,19 +44,21 @@ const handlePayClick = async () => {
     adAnalytics.addPaymentInfo();
 
     await loadPacks();
-    const selectedPack =
-      typeof adStore.pack === "number"
-        ? packs.value.find((p) => p.id === adStore.pack)
-        : null;
 
-    if (!selectedPack) {
-      throw new Error("Pack not found");
+    let packValue: string | number | null = adStore.pack;
+
+    if (typeof adStore.pack === "number") {
+      const selectedPack = packs.value.find((p) => p.id === adStore.pack);
+      if (!selectedPack) {
+        throw new Error("Pack not found");
+      }
+      packValue = selectedPack.name;
     }
 
     const response = await create<{ url: string; token: string }>(
       "payments/checkout",
       {
-        pack: selectedPack.name,
+        pack: packValue,
         ad_id: adStore.ad.ad_id,
         featured: adStore.featured,
         is_invoice: adStore.is_invoice,

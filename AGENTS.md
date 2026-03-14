@@ -188,6 +188,15 @@ Never use colors outside this palette. Do not invent or approximate colors — u
 - Prefer `documentId` over numeric `id` for content updates and deletes in Strapi v5
 - Never assume `id` works for write operations
 
+### Payment Rules — NEVER VIOLATE THESE
+
+- **Order identity is always the Strapi `order.documentId`** — never use a payment gateway reference (Webpay `buy_order`, token, `TBK_*`, etc.) as an order identifier
+- The frontend page `/pagar/gracias` receives `?order={documentId}` in the URL and calls `useOrderById(documentId)` to fetch the order from Strapi — if you pass anything other than `order.documentId` the page will 500
+- Payment gateway data (`buy_order`, `token_ws`, `authorization_code`, etc.) is stored **inside** the order record for audit purposes only — it is never used as a primary key or redirect parameter
+- `buy_order` is a Webpay-specific field — other gateways will not have it; always resolve to `order.documentId` before redirecting or returning to the frontend
+- After any Webpay/payment flow completes, always create the Strapi order record first, then redirect with `?order={order.documentId}`
+- When in doubt: the source of truth is Strapi, not the payment gateway
+
 ### Cron Jobs
 - Four active cron jobs: `adCron` (1 AM), `userCron` (2 AM), `backupCron` (3 AM), `cleanupCron` (Sunday 4 AM)
 - Manual execution available via `POST /api/cron-runner/:name`
