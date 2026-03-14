@@ -21,6 +21,10 @@
             <span>Volver</span>
           </NuxtLink>
           <h1 class="auth__form__title title">Verificación en dos pasos</h1>
+          <div class="auth__form__description">
+            Hemos enviado un código de 6 dígitos a tu correo electrónico.
+            Ingrésalo a continuación para continuar.
+          </div>
           <div class="auth__form__fields">
             <FormVerifyCode ref="formRef" />
           </div>
