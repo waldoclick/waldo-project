@@ -158,7 +158,7 @@ export const registerUserAuth = (callbackController) => async (ctx) => {
 
 // ─── 2-Step Login controllers ───────────────────────────────────────────────
 
-const CODE_EXPIRY_MS = 5 * 60 * 1000; // 5 minutes
+const CODE_EXPIRY_MS = 15 * 60 * 1000; // 15 minutes
 const MAX_ATTEMPTS = 3;
 const RESEND_COOLDOWN_MS = 60 * 1000; // 60 seconds
 const VC_UID = "api::verification-code.verification-code";
