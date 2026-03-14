@@ -1,34 +1,36 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.37
-milestone_name: Email Authentication Flows
+milestone: v1.38
+milestone_name: GA4 Analytics Audit & Implementation
 current_phase: null
-status: between_milestones
-last_updated: "2026-03-14T04:21:18.102Z"
-last_activity: "2026-03-14 - Completed quick task 38: Fix dashboard FormResetPassword missing recaptchaToken in submit payload"
+status: defining_requirements
+last_updated: "2026-03-14T14:00:00.000Z"
+last_activity: "2026-03-14 - Milestone v1.38 started"
 progress:
-  total_phases: 4
-  completed_phases: 4
-  total_plans: 6
-  completed_plans: 6
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Session State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-14 after v1.37 milestone)
+See: .planning/PROJECT.md (updated 2026-03-14 after v1.38 milestone started)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Planning next milestone
+**Current focus:** Defining requirements for v1.38
 
 ## Position
 
-**Last Milestone:** v1.37 — Email Authentication Flows (SHIPPED 2026-03-14)
-**Status:** Between milestones — ready to start v1.38
+**Current Milestone:** v1.38 — GA4 Analytics Audit & Implementation
+**Status:** Defining requirements
+Phase: Not started
+Plan: —
 
-Last activity: 2026-03-14 - Completed quick task 39 tasks 1-3 (email-confirmation MJML); stopped at checkpoint:human-verify
+Last activity: 2026-03-14 — Milestone v1.38 started
 
 ## Accumulated Context
 
