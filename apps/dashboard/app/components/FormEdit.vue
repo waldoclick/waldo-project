@@ -72,7 +72,7 @@ import * as yup from "yup";
 import type { User } from "@/types/user";
 
 const { Swal } = useSweetAlert2();
-const strapi = useStrapi();
+const client = useStrapiClient();
 const { fetchUser } = useStrapiAuth();
 const user = useStrapiUser() as Ref<User | null>;
 
@@ -98,12 +98,15 @@ const form = ref({
 const handleSubmit = async (values: any) => {
   sending.value = true;
   try {
-    await strapi.update("users", user.value!.id, {
-      firstname: values.firstname,
-      lastname: values.lastname,
-      email: values.email,
-      username: values.username,
-    } as unknown as Parameters<typeof strapi.update>[2]);
+    await client(`/users/${user.value!.id}`, {
+      method: "PUT",
+      body: {
+        firstname: values.firstname,
+        lastname: values.lastname,
+        email: values.email,
+        username: values.username,
+      },
+    });
     await fetchUser();
     Swal.fire("Éxito", "Perfil actualizado con éxito.", "success");
   } catch {
