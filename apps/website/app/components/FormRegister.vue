@@ -288,6 +288,12 @@ const handleSubmit = async () => {
       } else {
         // Email confirmation habilitado: NO llamar setToken(undefined)
         registrationEmail.value = form.value.email;
+        await Swal.fire({
+          title: "¡Revisa tu correo!",
+          text: `Te enviamos un enlace de confirmación a ${form.value.email}. Haz clic en el enlace para activar tu cuenta.`,
+          icon: "success",
+          confirmButtonText: "Entendido",
+        });
         router.push("/registro/confirmar");
       }
     } catch (error) {
