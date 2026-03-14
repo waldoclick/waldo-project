@@ -22,6 +22,10 @@
 - [ ] **CONT-01**: GA4 receives a `contact` event when a logged-in user clicks the seller's email link on an ad detail page — includes `method: "email"`
 - [ ] **CONT-02**: GA4 receives a `contact` event when a logged-in user clicks the seller's phone link on an ad detail page — includes `method: "phone"`
 
+### Lead Generation Tracking
+
+- [ ] **LEAD-01**: GA4 receives a `generate_lead` event when a user successfully submits the contact form and reaches `/contacto/gracias`
+
 ### User Lifecycle Tracking
 
 - [ ] **AUTH-01**: GA4 receives a `sign_up` event when a user completes registration successfully — includes `method: "email"`
@@ -67,13 +71,14 @@
 | DISC-03 | Phase 084 | Pending |
 | CONT-01 | Phase 085 | Pending |
 | CONT-02 | Phase 085 | Pending |
+| LEAD-01 | Phase 085 | Pending |
 | AUTH-01 | Phase 085 | Pending |
 | AUTH-02 | Phase 085 | Pending |
 | BLOG-01 | Phase 085 | Pending |
 
 **Coverage:**
-- v1.38 requirements: 11 total
-- Mapped to phases: 11
+- v1.38 requirements: 12 total
+- Mapped to phases: 12
 - Unmapped: 0 ✓
 
 ---
