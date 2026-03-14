@@ -264,6 +264,35 @@ export const useAdAnalytics = () => {
     pushEvent("search", [], { search_term: searchTerm }, "ad_discovery");
   };
 
+  const contactSeller = (method: "email" | "phone") => {
+    pushEvent("contact", [], { method }, "user_engagement");
+  };
+
+  const generateLead = () => {
+    pushEvent("generate_lead", [], {}, "user_engagement");
+  };
+
+  const signUp = () => {
+    pushEvent("sign_up", [], { method: "email" }, "user_lifecycle");
+  };
+
+  const login = (method: "email" | "google") => {
+    pushEvent("login", [], { method }, "user_lifecycle");
+  };
+
+  const articleView = (
+    id: string | number,
+    title: string,
+    category: string,
+  ) => {
+    pushEvent(
+      "article_view",
+      [],
+      { article_id: id, article_title: title, article_category: category },
+      "content_engagement",
+    );
+  };
+
   return {
     viewItemList,
     addToCartPack,
@@ -278,5 +307,10 @@ export const useAdAnalytics = () => {
     viewItemListPublic,
     viewItem,
     search,
+    contactSeller,
+    generateLead,
+    signUp,
+    login,
+    articleView,
   };
 };
