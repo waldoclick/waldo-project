@@ -52,22 +52,22 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PWDR-01 | TBD | Pending |
-| PWDR-02 | TBD | Pending |
-| PWDR-03 | TBD | Pending |
-| PWDR-04 | TBD | Pending |
-| REGV-01 | TBD | Pending |
-| REGV-02 | TBD | Pending |
-| REGV-03 | TBD | Pending |
-| REGV-04 | TBD | Pending |
-| REGV-05 | TBD | Pending |
-| REGV-06 | TBD | Pending |
+| PWDR-04     | 079   | Pending |
+| PWDR-01     | 080   | Pending |
+| PWDR-02     | 080   | Pending |
+| PWDR-03     | 080   | Pending |
+| REGV-03     | 081   | Pending |
+| REGV-04     | 081   | Pending |
+| REGV-05     | 081   | Pending |
+| REGV-01     | 082   | Pending |
+| REGV-02     | 082   | Pending |
+| REGV-06     | 082   | Pending |
 
 **Coverage:**
 - v1.37 requirements: 10 total
-- Mapped to phases: 0 (pending roadmap)
-- Unmapped: 10 ⚠️
+- Mapped to phases: 10 ✓
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-14*
-*Last updated: 2026-03-14 after initial definition*
+*Last updated: 2026-03-14 — Traceability updated after roadmap creation (phases 079–082)*
