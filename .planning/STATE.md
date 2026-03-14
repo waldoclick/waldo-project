@@ -5,7 +5,7 @@ milestone_name: Email Authentication Flows
 current_phase: null
 status: between_milestones
 last_updated: "2026-03-14T04:21:18.102Z"
-last_activity: "2026-03-14 - Completed quick task 37: no llega el correo de recuperar contrasena desde el dashboard"
+last_activity: "2026-03-14 - Completed quick task 38: Fix dashboard FormResetPassword missing recaptchaToken in submit payload"
 progress:
   total_phases: 4
   completed_phases: 4
@@ -70,3 +70,4 @@ None.
 | 35 | Forward is_invoice to Strapi checkout payload | 2026-03-14 | 3cc00fd | [35-verify-is-invoice-field-flows-from-check](.planning/quick/35-verify-is-invoice-field-flows-from-check/) |
 | 36 | Fix dashboard FormForgotPassword missing reCAPTCHA token in payload | 2026-03-14 | ac77641 | [36-fix-dashboard-formforgotpassword-recaptc](.planning/quick/36-fix-dashboard-formforgotpassword-recaptc/) |
 | 37 | Surface silent email delivery failures in forgot-password flow | 2026-03-14 | 9c64588 | [37-no-llega-el-correo-de-recuperar-contrase](.planning/quick/37-no-llega-el-correo-de-recuperar-contrase/) |
+| 38 | Fix dashboard FormResetPassword missing recaptchaToken in submit payload | 2026-03-14 | f377ac1 | [38-fix-dashboard-formresetpassword-missing-](.planning/quick/38-fix-dashboard-formresetpassword-missing-/) |
