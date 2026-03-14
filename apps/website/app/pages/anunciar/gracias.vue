@@ -15,9 +15,13 @@
 </template>
 
 <script setup lang="ts">
-import { watchEffect, onMounted } from "vue";
+import { watchEffect, onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useAdStore } from "@/stores/ad.store";
+import {
+  useAdAnalytics,
+  type PurchaseOrderData,
+} from "~/composables/useAdAnalytics";
 
 import HeaderDefault from "@/components/HeaderDefault.vue";
 import HeroFake from "@/components/HeroFake.vue";
@@ -70,6 +74,27 @@ const adData = computed((): Record<string, unknown> | null => {
   if (!data.value || "error" in data.value) return null;
   return data.value as Record<string, unknown>;
 });
+
+// Analytics: fire purchase event once when ad data is available
+// Mirrors pagar/gracias.vue pattern — purchaseFired guard prevents double-fire on SSR hydration
+const adAnalytics = useAdAnalytics();
+const purchaseFired = ref(false);
+
+watch(
+  adData,
+  (ad) => {
+    if (ad && !purchaseFired.value) {
+      purchaseFired.value = true;
+      const freeAdOrder: PurchaseOrderData = {
+        documentId: (ad.documentId as string) ?? (route.query.ad as string),
+        amount: 0,
+        currency: (ad.currency as string) ?? "CLP",
+      };
+      adAnalytics.purchase(freeAdOrder);
+    }
+  },
+  { immediate: true },
+);
 
 // Handle errors via watchEffect
 watchEffect(() => {
