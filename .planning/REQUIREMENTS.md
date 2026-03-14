@@ -12,7 +12,7 @@ Requirements for this milestone. Each maps to roadmap phases.
 - [ ] **PWDR-01**: User receives a branded MJML email when requesting a password reset
 - [ ] **PWDR-02**: Password reset email link points to the website's reset page when requested from the website
 - [ ] **PWDR-03**: Password reset email link points to the dashboard's reset page when requested from the dashboard
-- [ ] **PWDR-04**: `verification-code.mjml` displays the correct 15-minute expiry (fix "5 minutos" → "15 minutos" copy error)
+- [x] **PWDR-04**: `verification-code.mjml` displays the correct 15-minute expiry (fix "5 minutos" → "15 minutos" copy error)
 
 ### Email Verification
 
@@ -52,7 +52,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PWDR-04     | 079   | Pending |
+| PWDR-04     | 079   | Complete |
 | PWDR-01     | 080   | Pending |
 | PWDR-02     | 080   | Pending |
 | PWDR-03     | 080   | Pending |
