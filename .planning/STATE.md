@@ -4,13 +4,13 @@ milestone: v1.36
 milestone_name: Two-Step Login Verification
 current_phase: 078
 status: planning
-last_updated: "2026-03-13T23:19:14.883Z"
-last_activity: 2026-03-13 — Executed 078-01 (dashboard login pendingToken handoff)
+last_updated: "2026-03-14T00:44:46Z"
+last_activity: 2026-03-14 — Executed 078-02 (dashboard verify-code page with JWT storage and role check)
 progress:
   total_phases: 3
   completed_phases: 1
   total_plans: 6
-  completed_plans: 5
+  completed_plans: 6
   percent: 100
 ---
 
@@ -21,7 +21,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-13 after v1.36 milestone started)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 078 — Dashboard Verify Flow (1/? plans complete — in progress)
+**Current focus:** Phase 078 — Dashboard Verify Flow (2/2 plans complete — DONE)
 
 ## Position
 
@@ -33,7 +33,7 @@ See: .planning/PROJECT.md (updated 2026-03-13 after v1.36 milestone started)
 Progress: [██████████] 97%
 ```
 
-Last activity: 2026-03-13 — Completed quick task 33: Fix registration broken by confirm_password check in registerUserLocal
+Last activity: 2026-03-14 — Completed 078-02: /auth/verify-code page with JWT storage via setToken/fetchUser, manager role check, and 60s resend countdown
 
 ## Accumulated Context
 
@@ -55,6 +55,9 @@ Last activity: 2026-03-13 — Completed quick task 33: Fix registration broken b
 - `verificationCodeCleanupCron` scheduled `0 4 * * *` (daily 4 AM Santiago) — same hour as cleanupCron (Sundays-only), no real conflict since they operate on different collections
 - `deleteMany` used for bulk deletion of expired verification-code records (single DB round-trip)
 - Dashboard FormLogin.vue: `Record<string, unknown>` used for vee-validate SubmissionHandler values parameter (satisfies GenericObject constraint); property access uses `as string` casts
+- FormVerifyCode.vue extracted as component (instead of inline in page) — follows FormLogin.vue/login.vue split pattern; page delegates via ref
+- Resend button in auth__form__help section of the page (not inside form component) — matches existing auth page UX pattern
+- JWT finalization: setToken(jwt) → fetchUser() → useStrapiUser() role check → clearReferer() → router.push('/') — same post-login sequence as pre-2-step
 
 ### Phase Dependency
 
