@@ -190,6 +190,6 @@ Plans:
 | 080   | v1.37     | 2/2            | Complete    | 2026-03-14 |
 | 081   | v1.37     | 2/2            | Complete    | 2026-03-14 |
 | 082   | v1.37     | 1/1            | Complete    | 2026-03-14 |
-| 083   | v1.38     | 0/?            | Not started | -          |
+| 083   | 1/2 | In Progress|  | -          |
 | 084   | v1.38     | 0/?            | Not started | -          |
 | 085   | v1.38     | 0/?            | Not started | -          |

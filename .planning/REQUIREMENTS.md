@@ -7,8 +7,8 @@
 
 ### Ecommerce Bug Fixes
 
-- [ ] **ECOM-01**: The `purchase` event reports real transaction value (not always $0) — `order.amount` field name corrected so GA4 ecommerce dashboard shows actual revenue
-- [ ] **ECOM-02**: The `purchase` event `item_id` is populated with the real order `documentId` (not empty string)
+- [x] **ECOM-01**: The `purchase` event reports real transaction value (not always $0) — `order.amount` field name corrected so GA4 ecommerce dashboard shows actual revenue
+- [x] **ECOM-02**: The `purchase` event `item_id` is populated with the real order `documentId` (not empty string)
 - [ ] **ECOM-03**: GA4 receives a `purchase` event with `value: 0` when a user successfully creates a free ad (`/anunciar/gracias`) — free ad creation is a conversion and must be tracked alongside paid conversions
 
 ### Ad Discovery Tracking
@@ -63,8 +63,8 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ECOM-01 | Phase 083 | Pending |
-| ECOM-02 | Phase 083 | Pending |
+| ECOM-01 | Phase 083 | Complete |
+| ECOM-02 | Phase 083 | Complete |
 | ECOM-03 | Phase 083 | Pending |
 | DISC-01 | Phase 084 | Pending |
 | DISC-02 | Phase 084 | Pending |
