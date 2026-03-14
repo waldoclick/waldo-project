@@ -21,9 +21,9 @@ Requirements for milestone v1.36. Each maps to roadmap phases.
 ### Dashboard Frontend
 
 - [x] **VSTEP-09**: After submitting email+password on `/auth/login`, if the response contains `pendingToken` (not a JWT), `FormLogin` redirects to `/auth/verify-code` carrying the `pendingToken` in transient state (not in the URL)
-- [ ] **VSTEP-10**: `/auth/verify-code` page in dashboard contains a single 6-digit code input field, a "Verificar" submit button, and a "Reenviar código" resend button that is disabled for 60 seconds after each send
-- [ ] **VSTEP-11**: On successful code verification in dashboard, the JWT is stored via `useStrapiAuth()` and the user is redirected to `/` (same post-login behavior as today, including manager-role check)
-- [ ] **VSTEP-12**: On code expiry or max-attempts reached in dashboard, show a Swal error and redirect back to `/auth/login`
+- [x] **VSTEP-10**: `/auth/verify-code` page in dashboard contains a single 6-digit code input field, a "Verificar" submit button, and a "Reenviar código" resend button that is disabled for 60 seconds after each send
+- [x] **VSTEP-11**: On successful code verification in dashboard, the JWT is stored via `useStrapiAuth()` and the user is redirected to `/` (same post-login behavior as today, including manager-role check)
+- [x] **VSTEP-12**: On code expiry or max-attempts reached in dashboard, show a Swal error and redirect back to `/auth/login`
 
 ### Website Frontend
 
@@ -60,9 +60,9 @@ Requirements for milestone v1.36. Each maps to roadmap phases.
 | VSTEP-07    | 077   | Complete |
 | VSTEP-08    | 077   | Complete |
 | VSTEP-09    | 078   | Complete |
-| VSTEP-10    | 078   | Pending |
-| VSTEP-11    | 078   | Pending |
-| VSTEP-12    | 078   | Pending |
+| VSTEP-10    | 078   | Complete |
+| VSTEP-11    | 078   | Complete |
+| VSTEP-12    | 078   | Complete |
 | VSTEP-13    | 079   | Pending |
 | VSTEP-14    | 079   | Pending |
 | VSTEP-15    | 079   | Pending |
