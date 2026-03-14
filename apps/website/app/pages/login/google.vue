@@ -23,6 +23,7 @@ const router = useRouter();
 const appStore = useAppStore();
 const meStore = useMeStore();
 const { logInfo } = useLogger();
+const { login } = useAdAnalytics();
 
 const authenticate = async () => {
   try {
@@ -35,6 +36,7 @@ const authenticate = async () => {
     if (response) {
       // Log successful Google login
       logInfo(`User logged in successfully with Google.`);
+      login("google");
 
       // Verificar si el perfil del usuario está completo
       const isProfileComplete = await meStore.isProfileComplete();
