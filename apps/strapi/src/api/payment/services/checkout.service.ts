@@ -3,6 +3,9 @@ import OrderUtils from "../utils/order.utils";
 import { getPaymentGateway } from "../../../services/payment-gateway";
 import { zohoService } from "../../../services/zoho";
 import logger from "../../../utils/logtail";
+import { documentDetails } from "../utils/user.utils";
+import generalUtils from "../utils/general.utils";
+import { PackType, FeaturedType } from "../types/payment.type";
 
 interface CheckoutPayload {
   pack: string; // pack name (must not be "free")
@@ -116,13 +119,14 @@ class CheckoutService {
       }
 
       // 3. Parse buy_order
-      // Format: "order-{userId}-{packId}-{adId}-{featured}"
+      // Format: "order-{userId}-{packId}-{adId}-{featured}-{isInvoice}"
       const buyOrder = wepbayResponse.response.buy_order as string;
       const parts = buyOrder.split("-");
       const userId = parts[1];
       const packId = Number(parts[2]);
       const adId = Number(parts[3]); // 0 means no ad
       const featured = parts[4] === "1";
+      const is_invoice = parts[5] === "1";
 
       // 4. Look up pack by id
       const packRecord = await strapi.db
@@ -220,6 +224,46 @@ class CheckoutService {
         await PaymentUtils.ad.publishAd(adId);
       }
 
+      // 10b. Fetch billing details and emit Facto document (non-fatal)
+      let userDocumentDetails:
+        | Awaited<ReturnType<typeof documentDetails>>
+        | undefined;
+      let paymentItems: Parameters<
+        typeof generalUtils.generateFactoDocument
+      >[0]["items"] = [];
+      let documentResponse: unknown;
+
+      try {
+        userDocumentDetails = await documentDetails(userId, is_invoice);
+
+        const paymentDetails = await generalUtils.PaymentDetails(
+          packId as unknown as PackType,
+          featured as unknown as FeaturedType,
+          String(userId),
+          String(adId)
+        );
+        paymentItems = paymentDetails.items;
+
+        documentResponse = await generalUtils.generateFactoDocument({
+          isInvoice: is_invoice,
+          userDetails: userDocumentDetails,
+          items: paymentItems,
+        });
+
+        logger.info("Documento Facto generado exitosamente (checkout)", {
+          adId,
+          isInvoice: is_invoice,
+        });
+      } catch (factoError) {
+        logger.error(
+          "Error generando documento Facto (checkout) — pago no afectado",
+          {
+            adId,
+            error: (factoError as { message?: string }).message,
+          }
+        );
+      }
+
       // 11. Create order record for /pagar/gracias receipt
       let orderDocumentId: string | undefined;
       try {
@@ -227,10 +271,13 @@ class CheckoutService {
           amount: wepbayResponse.response?.amount ?? 0,
           buy_order: buyOrder,
           userId: Number(userId),
-          is_invoice: false,
+          is_invoice,
           payment_method: process.env.PAYMENT_GATEWAY ?? "transbank",
           payment_response: wepbayResponse.response,
           adId: adId > 0 ? adId : undefined,
+          document_details: userDocumentDetails,
+          items: paymentItems,
+          document_response: documentResponse,
         });
         if (orderResult.success && orderResult.order) {
           orderDocumentId = (orderResult.order as { documentId?: string })
