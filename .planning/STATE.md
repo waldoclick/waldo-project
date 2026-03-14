@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-03-14 after v1.37 milestone)
 **Last Milestone:** v1.37 — Email Authentication Flows (SHIPPED 2026-03-14)
 **Status:** Between milestones — ready to start v1.38
 
-Last activity: 2026-03-14 - Completed quick task 36: Fix dashboard FormForgotPassword recaptcha not sent on submit
+Last activity: 2026-03-14 - Completed quick task 37: Surface silent email delivery failures in forgot-password flow
 
 ## Accumulated Context
 
@@ -69,3 +69,4 @@ None.
 | 34 | Restore Facto invoice emission in unified Webpay checkout flow | 2026-03-14 | 0780984 | [34-restore-facto-invoice-emission-in-webpay](.planning/quick/34-restore-facto-invoice-emission-in-webpay/) |
 | 35 | Forward is_invoice to Strapi checkout payload | 2026-03-14 | 3cc00fd | [35-verify-is-invoice-field-flows-from-check](.planning/quick/35-verify-is-invoice-field-flows-from-check/) |
 | 36 | Fix dashboard FormForgotPassword missing reCAPTCHA token in payload | 2026-03-14 | ac77641 | [36-fix-dashboard-formforgotpassword-recaptc](.planning/quick/36-fix-dashboard-formforgotpassword-recaptc/) |
+| 37 | Surface silent email delivery failures in forgot-password flow | 2026-03-14 | 9c64588 | [37-no-llega-el-correo-de-recuperar-contrase](.planning/quick/37-no-llega-el-correo-de-recuperar-contrase/) |
