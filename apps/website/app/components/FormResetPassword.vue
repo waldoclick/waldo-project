@@ -16,17 +16,7 @@
       <ErrorMessage name="email" />
     </div>
 
-    <div class="form-group">
-      <label class="form-label" for="code">Código de restablecimiento</label>
-      <Field
-        v-model="form.code"
-        name="code"
-        type="hidden"
-        class="form-control"
-        readonly
-      />
-      <ErrorMessage name="code" />
-    </div>
+    <Field v-model="form.code" name="code" type="hidden" />
 
     <div class="form-group form-group--password">
       <label class="form-label" for="password">Nueva Contraseña</label>
