@@ -33,7 +33,7 @@ See: .planning/PROJECT.md (updated 2026-03-13 after v1.36 milestone started)
 Progress: [██████████] 97%
 ```
 
-Last activity: 2026-03-13 — Completed quick task 31: Add /auth/verify-code to guard.global.ts publicRoutes
+Last activity: 2026-03-13 — Completed quick task 32: Restrict verify code input to digits only, max 6, auto-submit on 6th
 
 ## Accumulated Context
 
@@ -72,3 +72,4 @@ None.
 | 29 | Create InputAutocomplete.vue component with integrated search for FormGift | 2026-03-13 | a079dc0 | [29-create-inputautocomplete-vue-component-w](.planning/quick/29-create-inputautocomplete-vue-component-w/) |
 | 30 | Fix Strapi Handler not found auth.verifyCode startup error | 2026-03-13 | afb78d6 | [30-fix-strapi-handler-not-found-auth-verify](.planning/quick/30-fix-strapi-handler-not-found-auth-verify/) |
 | 31 | Add /auth/verify-code to guard.global.ts publicRoutes | 2026-03-13 | ebf9324 | [31-add-auth-verify-code-to-public-routes](.planning/quick/31-add-auth-verify-code-to-public-routes/) |
+| 32 | Restrict verify code input to digits only, max 6, auto-submit on 6th | 2026-03-13 | 2f663d6 | [32-restrict-verify-code-input-digits-only](.planning/quick/32-restrict-verify-code-input-digits-only/) |
