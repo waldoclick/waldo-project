@@ -50,6 +50,23 @@
           <span v-if="!sending">Iniciar Sesión</span>
           <span v-if="sending">Iniciando sesión...</span>
         </button>
+
+        <div v-if="showResendSection" class="form__resend-confirmation">
+          <p>
+            Tu cuenta (<strong>{{ unconfirmedEmail }}</strong
+            >) no ha sido confirmada. Revisa tu bandeja de entrada o solicita un
+            nuevo correo de confirmación.
+          </p>
+          <button
+            type="button"
+            :disabled="resending"
+            class="btn btn--block btn--secondary"
+            @click="handleResendConfirmation"
+          >
+            <span v-if="!resending">Reenviar confirmación</span>
+            <span v-if="resending">Enviando...</span>
+          </button>
+        </div>
       </div>
     </div>
   </Form>
@@ -64,6 +81,9 @@ import { useRouter } from "vue-router";
 import { useNuxtApp } from "#app";
 
 const sending = ref(false);
+const showResendSection = ref<boolean>(false);
+const unconfirmedEmail = ref<string>("");
+const resending = ref<boolean>(false);
 const router = useRouter();
 const { $recaptcha } = useNuxtApp();
 const client = useStrapiClient();
@@ -88,6 +108,30 @@ const handleShowPassword = () => {
   passwordType.value = passwordType.value === "password" ? "text" : "password";
 };
 
+const handleResendConfirmation = async () => {
+  resending.value = true;
+  try {
+    await client("/auth/send-email-confirmation", {
+      method: "POST",
+      body: { email: unconfirmedEmail.value },
+    });
+    Swal.fire(
+      "Correo enviado",
+      "Hemos enviado un nuevo enlace de confirmación a tu correo.",
+      "success",
+    );
+    showResendSection.value = false;
+  } catch {
+    Swal.fire(
+      "Error",
+      "No se pudo enviar el correo. Inténtalo de nuevo.",
+      "error",
+    );
+  } finally {
+    resending.value = false;
+  }
+};
+
 const handleSubmit = async (values: Record<string, unknown>) => {
   sending.value = true;
 
@@ -110,14 +154,18 @@ const handleSubmit = async (values: Record<string, unknown>) => {
     pendingToken.value = (response as { pendingToken: string }).pendingToken;
     router.push("/auth/verify-code");
   } catch (error) {
-    let swalMessage = "Hubo un error. Por favor, inténtalo de nuevo.";
     const errorMessage = (error as { error?: { message?: string } }).error
       ?.message;
 
     if (errorMessage === "Your account email is not confirmed") {
-      swalMessage =
-        "Tu cuenta no ha sido confirmada. Por favor, revisa tu correo y sigue las instrucciones para confirmar tu cuenta.";
-    } else if (errorMessage === "Invalid identifier or password") {
+      unconfirmedEmail.value = values.email as string;
+      showResendSection.value = true;
+      return;
+    }
+
+    let swalMessage = "Hubo un error. Por favor, inténtalo de nuevo.";
+
+    if (errorMessage === "Invalid identifier or password") {
       swalMessage =
         "El correo electrónico o la contraseña son incorrectos. Por favor, verifica tus credenciales.";
     }
