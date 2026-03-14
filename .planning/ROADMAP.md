@@ -108,7 +108,7 @@
 - [x] **Phase 079: Website Verify Flow + MJML Fix** — Close the v1.36 carry-forward: execute the website 2-step verify UX + fix the "5 minutos" copy error in verification-code.mjml (completed 2026-03-14)
 - [x] **Phase 080: Password Reset MJML + Context Routing** — Replace Strapi's plain-text password reset with a branded MJML email that routes to the correct app's reset page based on the requester's role (completed 2026-03-14)
 - [x] **Phase 081: Email Verification Frontend** — All Nuxt changes (confirmar page, register redirect, login unconfirmed handling) deployed and verified before the backend toggle is flipped (completed 2026-03-14)
-- [ ] **Phase 082: Email Verification Backend Activation** — DB migration + Strapi Admin Panel config + email_confirmation toggle ON; the risky atomic step that locks in the full email auth story
+- [x] **Phase 082: Email Verification Backend Activation** — DB migration + Strapi Admin Panel config + email_confirmation toggle ON; the risky atomic step that locks in the full email auth story (completed 2026-03-14)
 
 ## Phase Details
 
@@ -193,4 +193,4 @@ Plans:
 | 079   | 1/1 | Complete    | 2026-03-14 | -          |
 | 080   | 2/2 | Complete    | 2026-03-14 | -          |
 | 081   | 2/2 | Complete    | 2026-03-14 | -          |
-| 082   | v1.37     | 0/?            | Not started | -          |
+| 082   | v1.37     | Complete    | 2026-03-14 | -          |

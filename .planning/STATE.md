@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.37
 milestone_name: Email Authentication Flows
 current_phase: 082
-status: complete
-last_updated: "2026-03-14T04:13:02Z"
+status: completed
+last_updated: "2026-03-14T04:17:39.868Z"
 last_activity: "2026-03-14 — 082-01 SUMMARY created: email confirmation activated (migration + Admin Panel toggle + smoke-test) — REGV-01 REGV-02 REGV-06"
 progress:
   total_phases: 4
@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-03-14 after v1.36 milestone)
 
 **Milestone:** v1.37 — Email Authentication Flows
 **Current Phase:** 082
-**Status:** Complete — milestone v1.37 done
+**Status:** Milestone complete
 **Progress:** [██████████] 100%
 
 Last activity: 2026-03-14 — 082-01 SUMMARY created: email confirmation activated (migration + Admin Panel toggle + smoke-test) — REGV-01 REGV-02 REGV-06
