@@ -2,12 +2,12 @@
 gsd_state_version: 1.0
 milestone: v1.37
 milestone_name: Email Authentication Flows
-current_phase: null
-status: defining_requirements
+current_phase: 079
+status: roadmap_approved
 last_updated: "2026-03-14"
-last_activity: "2026-03-14 — Milestone v1.37 started"
+last_activity: "2026-03-14 — Roadmap created: 4 phases (079–082), 10/10 requirements mapped"
 progress:
-  total_phases: 0
+  total_phases: 4
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -21,14 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-14 after v1.36 milestone)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Defining requirements for v1.37
+**Current focus:** v1.37 — Email Authentication Flows — starting Phase 079
 
 ## Position
 
 **Milestone:** v1.37 — Email Authentication Flows
-**Current Phase:** Not started (defining requirements)
-**Status:** Defining requirements
-Last activity: 2026-03-14 — Milestone v1.37 started
+**Current Phase:** 079 — Website Verify Flow + MJML Fix
+**Status:** Roadmap approved, ready to plan Phase 079
+**Progress:** ░░░░░░░░░░ 0% (0/4 phases complete)
+
+Last activity: 2026-03-14 — Roadmap created: 4 phases (079–082), 10/10 requirements mapped
 
 ## Accumulated Context
 
@@ -49,15 +51,33 @@ Last activity: 2026-03-14 — Milestone v1.37 started
 - `resendCode` cooldown uses `record.updatedAt` timestamp for the 60-second rate-limit window
 - Dashboard FormLogin.vue: `Record<string, unknown>` used for vee-validate SubmissionHandler values parameter
 
+### Key Decisions (v1.37 specific)
+
+- `overrideForgotPassword` must FULLY REPLACE Strapi's `forgotPassword` (not wrap it) — calling original + MJML sends two emails
+- `context` field in forgot-password POST body (not query param — query params are lost after form submit)
+- `DASHBOARD_URL` new env var in Strapi for context routing
+- Token generation: `crypto.randomBytes(64).toString('hex')` for password reset (matches Strapi's own size)
+- `if (response.jwt)` guard in `FormRegister.vue` before `setToken()` — email confirmation returns no JWT
+- `POST /api/auth/send-email-confirmation` is native Strapi — no custom code needed for resend
+- DB migration `UPDATE "up_users" SET confirmed = TRUE WHERE confirmed = FALSE OR confirmed IS NULL` is a hard gate before enabling `email_confirmation` toggle
+- Frontend (Phase 081) must be deployed and verified BEFORE backend toggle (Phase 082) — reversed order causes broken persistent auth state
+- `email_confirmation_redirection` in Strapi Admin Panel set to `${FRONTEND_URL}/login`
+
+### Phase Sequencing Rationale
+
+- **Phase 079 first**: Independent carry-forward (VSTEP-13–16 code exists) + low-risk MJML copy fix; ships immediately
+- **Phase 080 second**: Independent of email confirmation; fixes live broken UX (dashboard admins get wrong reset link); self-contained
+- **Phase 081 third**: Frontend must be deployed BEFORE the backend toggle; `setToken(undefined)` broken auth state is the critical pitfall
+- **Phase 082 last**: Risky atomic operation — DB migration + toggle; mostly operational, not code; CANNOT precede Phase 081
+
 ### Known Carry-forward
 
-- VSTEP-13 to VSTEP-16 (website verify flow) — code exists in `FormLogin.vue` + `/login/verificar` + `FormVerifyCode.vue`, but phase 079 was not formally planned/executed. Consider including in v1.37 scope.
+- VSTEP-13 to VSTEP-16 (website verify flow) — code exists in `FormLogin.vue` + `/login/verificar` + `FormVerifyCode.vue`; Phase 079 formally executes this work
 - `auth.callback` dual-path behavior (email/password + OAuth) documented — future auth overrides must guard on `ctx.method`
-- Password reset currently sends Strapi's built-in plain-text email; reset link always points to website — both issues addressed in v1.37
 
 ### Blockers/Concerns
 
-None.
+- Phase 082 has a pre-flight check gap: need to verify whether `email_confirmation_redirection` in Strapi Admin Panel accepts a full URL with query params (`https://waldo.click/login?confirmed=true`) or only a path. If only a path, use `/registro/bienvenida` as the redirect target. Verify before activation session.
 
 ### Quick Tasks Completed
 
