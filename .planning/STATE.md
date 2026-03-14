@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-03-14 after v1.37 milestone)
 **Last Milestone:** v1.37 — Email Authentication Flows (SHIPPED 2026-03-14)
 **Status:** Between milestones — ready to start v1.38
 
-Last activity: 2026-03-14 - Completed quick task 37: Surface silent email delivery failures in forgot-password flow
+Last activity: 2026-03-14 - Completed quick task 39 tasks 1-3 (email-confirmation MJML); stopped at checkpoint:human-verify
 
 ## Accumulated Context
 
@@ -71,3 +71,4 @@ None.
 | 36 | Fix dashboard FormForgotPassword missing reCAPTCHA token in payload | 2026-03-14 | ac77641 | [36-fix-dashboard-formforgotpassword-recaptc](.planning/quick/36-fix-dashboard-formforgotpassword-recaptc/) |
 | 37 | Surface silent email delivery failures in forgot-password flow | 2026-03-14 | 9c64588 | [37-no-llega-el-correo-de-recuperar-contrase](.planning/quick/37-no-llega-el-correo-de-recuperar-contrase/) |
 | 38 | Fix dashboard FormResetPassword missing recaptchaToken in submit payload | 2026-03-14 | f377ac1 | [38-fix-dashboard-formresetpassword-missing-](.planning/quick/38-fix-dashboard-formresetpassword-missing-/) |
+| 39 | Replace Strapi default email confirmation with branded MJML (tasks 1-3 complete; awaiting human-verify) | 2026-03-14 | d85e1f7 | [39-fix-post-registration-redirect-and-missi](.planning/quick/39-fix-post-registration-redirect-and-missi/) |
