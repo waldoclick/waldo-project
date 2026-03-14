@@ -160,6 +160,11 @@ const generateCode = (): string =>
  * Invalid credentials → passes through the original error unchanged.
  */
 export const overrideAuthLocal = (originalController) => async (ctx) => {
+  // OAuth callbacks use GET /api/auth/:provider/callback — skip 2-step for those
+  if (ctx.method === "GET") {
+    return originalController(ctx);
+  }
+
   // Call the original controller first
   await originalController(ctx);
 
