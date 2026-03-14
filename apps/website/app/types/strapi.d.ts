@@ -22,6 +22,15 @@ declare module "@nuxtjs/strapi" {
   }
 
   type StrapiData<T> = T;
+
+  interface StrapiForgotPasswordData {
+    recaptchaToken?: string;
+    context?: "website" | "dashboard";
+  }
+
+  interface StrapiResetPasswordData {
+    recaptchaToken?: string;
+  }
 }
 
 export {};

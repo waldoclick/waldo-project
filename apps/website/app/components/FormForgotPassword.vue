@@ -63,7 +63,7 @@ const onSubmit = async (values: any) => {
       email: values.email,
       recaptchaToken: token,
       context: "website",
-    } as any);
+    });
 
     Swal.fire(
       "Éxito",
