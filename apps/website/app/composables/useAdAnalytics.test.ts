@@ -283,6 +283,47 @@ describe("useAdAnalytics - purchase()", () => {
     const items = ecommerce?.items as Record<string, unknown>[];
     expect(items[0]?.item_id).toBe("BO-123");
   });
+
+  it("handles free ad purchase with value: 0 (ECOM-03)", async () => {
+    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { purchase } = useAdAnalytics();
+
+    const order: PurchaseOrderData = {
+      documentId: "ad-doc-abc",
+      amount: 0,
+      currency: "CLP",
+    };
+
+    purchase(order);
+
+    const event = mockDataLayer.find(
+      (e) => (e as Record<string, unknown>).event === "purchase",
+    ) as Record<string, unknown> | undefined;
+    const ecommerce = event?.ecommerce as Record<string, unknown>;
+    expect(ecommerce?.value).toBe(0);
+    expect(typeof ecommerce?.value).toBe("number");
+    expect(ecommerce?.transaction_id).toBe("ad-doc-abc");
+  });
+
+  it("uses ad documentId as item_id for free ad purchase (ECOM-03)", async () => {
+    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { purchase } = useAdAnalytics();
+
+    const order: PurchaseOrderData = {
+      documentId: "ad-doc-abc",
+      amount: 0,
+      currency: "CLP",
+    };
+
+    purchase(order);
+
+    const event = mockDataLayer.find(
+      (e) => (e as Record<string, unknown>).event === "purchase",
+    ) as Record<string, unknown> | undefined;
+    const ecommerce = event?.ecommerce as Record<string, unknown>;
+    const items = ecommerce?.items as Record<string, unknown>[];
+    expect(items[0]?.item_id).toBe("ad-doc-abc");
+  });
 });
 
 describe("useAdAnalytics - existing methods unchanged", () => {
