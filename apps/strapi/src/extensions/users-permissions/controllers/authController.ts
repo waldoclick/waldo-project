@@ -113,6 +113,46 @@ export const registerUserLocal = (registerController) => async (ctx) => {
     // Crear reservas de usuario
     createUserReservations(user);
 
+    // If email confirmation is enabled, Strapi sends its built-in template.
+    // Also send our branded MJML template (Admin Panel template must be cleared to avoid duplicate).
+    if (!ctx.response.body?.jwt && user?.id) {
+      try {
+        const userWithToken = await strapi.db
+          .query("plugin::users-permissions.user")
+          .findOne({
+            where: { id: user.id },
+            select: ["confirmationToken", "email", "username", "firstname"],
+          });
+
+        if (userWithToken?.confirmationToken) {
+          const confirmationUrl = `${
+            process.env.APP_URL || "http://localhost:1337"
+          }/api/auth/email-confirmation?confirmation=${
+            userWithToken.confirmationToken
+          }`;
+          const name =
+            userWithToken.firstname ||
+            userWithToken.username ||
+            userWithToken.email;
+
+          await sendMjmlEmail(
+            strapi,
+            "email-confirmation",
+            userWithToken.email,
+            "Confirma tu correo electrónico",
+            { name, confirmationUrl }
+          );
+        }
+      } catch (err) {
+        // Non-fatal — Strapi's built-in already sent a confirmation email
+        strapi.log.error(
+          `[registerUserLocal] Failed to send MJML confirmation email: ${
+            err?.message ?? err
+          }`
+        );
+      }
+    }
+
     // Devolver la respuesta original
     return ctx.response;
   } catch (error) {
@@ -406,6 +446,61 @@ export const overrideForgotPassword = () => async (ctx) => {
   } catch (err) {
     strapi.log.error(
       `[overrideForgotPassword] Failed to send reset-password email to ${
+        user.email
+      }: ${err?.message ?? err}`
+    );
+  }
+
+  ctx.send({ ok: true });
+};
+
+// ─── Email Confirmation Override ─────────────────────────────────────────────
+
+/**
+ * Full replacement for Strapi's built-in sendEmailConfirmation controller.
+ * Sends a branded MJML confirmation email instead of the default Strapi template.
+ * IMPORTANT: Do NOT call the original sendEmailConfirmation — it also sends an email,
+ * which would result in two emails per request.
+ *
+ * Handles POST /api/auth/send-email-confirmation
+ */
+export const overrideSendEmailConfirmation = () => async (ctx) => {
+  const { email } = ctx.request.body as { email?: string };
+
+  if (!email) return ctx.badRequest("Email is required");
+
+  const user = await strapi.db.query("plugin::users-permissions.user").findOne({
+    where: { email: email.toLowerCase() },
+    select: [
+      "id",
+      "email",
+      "username",
+      "firstname",
+      "confirmed",
+      "blocked",
+      "confirmationToken",
+    ],
+  });
+
+  // Silent success if user not found or already confirmed (matches Strapi built-in behavior)
+  if (!user || user.confirmed || user.blocked) return ctx.send({ ok: true });
+
+  const confirmationUrl = `${
+    process.env.APP_URL || "http://localhost:1337"
+  }/api/auth/email-confirmation?confirmation=${user.confirmationToken}`;
+  const name = user.firstname || user.username || user.email;
+
+  try {
+    await sendMjmlEmail(
+      strapi,
+      "email-confirmation",
+      user.email,
+      "Confirma tu correo electrónico",
+      { name, confirmationUrl }
+    );
+  } catch (err) {
+    strapi.log.error(
+      `[overrideSendEmailConfirmation] Failed to send confirmation email to ${
         user.email
       }: ${err?.message ?? err}`
     );
