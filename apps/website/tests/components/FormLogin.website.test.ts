@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { ref } from "vue";
+import { ref, nextTick } from "vue";
 
 // ─── Mock #app before importing component ─────────────────────────────────
 const mockRecaptcha = {
@@ -14,7 +14,7 @@ vi.mock("vee-validate", () => ({
   Field: { template: "<input />" },
   Form: {
     template:
-      '<form @submit.prevent="$emit(\'submit\', values)"><slot :errors="{}" :meta="{ valid: true }" /></form>',
+      '<form @submit.prevent><slot :errors="{}" :meta="{ valid: true }" /></form>',
     emits: ["submit"],
   },
   ErrorMessage: { template: "<span />" },
@@ -55,10 +55,39 @@ function makeLoginError(message: string) {
   return { error: { message } };
 }
 
+// Helper: mount FormLogin with standard stubs
+function mountFormLogin() {
+  return mount(FormLogin, {
+    global: {
+      stubs: {
+        Form: {
+          name: "Form",
+          template:
+            '<form @submit.prevent><slot :errors="{}" :meta="{ valid: true }" /></form>',
+        },
+        Field: { template: "<input />" },
+        ErrorMessage: { template: "<span />" },
+      },
+    },
+  });
+}
+
+// Helper: invoke handleSubmit on the component vm
+async function triggerSubmit(
+  vm: unknown,
+  email: string,
+  password: string,
+): Promise<void> {
+  await (
+    vm as {
+      handleSubmit: (v: Record<string, unknown>) => Promise<void>;
+    }
+  ).handleSubmit({ email, password });
+}
+
 describe("FormLogin.vue — REGV-05 unconfirmed email resend section", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    // Re-assign mocks so cleared state doesn't break tests
     global.useSweetAlert2 = vi.fn(() => ({ Swal: { fire: mockSwalFire } }));
     global.useStrapiClient = vi.fn(
       () => mockClient,
@@ -72,64 +101,32 @@ describe("FormLogin.vue — REGV-05 unconfirmed email resend section", () => {
     mockRecaptcha.execute.mockResolvedValue("fake-recaptcha-token");
   });
 
-  // Test 1: showResendSection becomes true when error is "not confirmed"
-  it('sets showResendSection to true when login error is "Your account email is not confirmed"', async () => {
+  // Test 1: showResendSection renders in DOM when error is "not confirmed"
+  it('shows resend section in DOM when login error is "Your account email is not confirmed"', async () => {
     mockClient.mockRejectedValueOnce(
       makeLoginError("Your account email is not confirmed"),
     );
 
-    const wrapper = mount(FormLogin, {
-      global: {
-        stubs: {
-          Form: {
-            name: "Form",
-            template:
-              '<form @submit.prevent><slot :errors="{}" :meta="{ valid: true }" /></form>',
-          },
-          Field: { template: "<input />" },
-          ErrorMessage: { template: "<span />" },
-        },
-      },
-    });
+    const wrapper = mountFormLogin();
+    await triggerSubmit(wrapper.vm, "test@example.com", "pass");
+    await nextTick();
 
-    const vm = wrapper.vm as unknown as {
-      handleSubmit: (values: Record<string, unknown>) => Promise<void>;
-      showResendSection: { value: boolean };
-    };
-
-    await vm.handleSubmit({ email: "test@example.com", password: "pass" });
-
-    expect(vm.showResendSection.value).toBe(true);
+    expect(wrapper.find(".form__resend-confirmation").exists()).toBe(true);
   });
 
-  // Test 2: unconfirmedEmail is set to submitted email
-  it('sets unconfirmedEmail to submitted email when error is "Your account email is not confirmed"', async () => {
+  // Test 2: resend section shows user's email
+  it('displays submitted email in resend section when error is "Your account email is not confirmed"', async () => {
     mockClient.mockRejectedValueOnce(
       makeLoginError("Your account email is not confirmed"),
     );
 
-    const wrapper = mount(FormLogin, {
-      global: {
-        stubs: {
-          Form: {
-            name: "Form",
-            template:
-              '<form @submit.prevent><slot :errors="{}" :meta="{ valid: true }" /></form>',
-          },
-          Field: { template: "<input />" },
-          ErrorMessage: { template: "<span />" },
-        },
-      },
-    });
+    const wrapper = mountFormLogin();
+    await triggerSubmit(wrapper.vm, "test@example.com", "pass");
+    await nextTick();
 
-    const vm = wrapper.vm as unknown as {
-      handleSubmit: (values: Record<string, unknown>) => Promise<void>;
-      unconfirmedEmail: { value: string };
-    };
-
-    await vm.handleSubmit({ email: "test@example.com", password: "pass" });
-
-    expect(vm.unconfirmedEmail.value).toBe("test@example.com");
+    expect(wrapper.find(".form__resend-confirmation").text()).toContain(
+      "test@example.com",
+    );
   });
 
   // Test 3: Swal IS fired for "Invalid identifier or password" (other errors unchanged)
@@ -138,25 +135,8 @@ describe("FormLogin.vue — REGV-05 unconfirmed email resend section", () => {
       makeLoginError("Invalid identifier or password"),
     );
 
-    const wrapper = mount(FormLogin, {
-      global: {
-        stubs: {
-          Form: {
-            name: "Form",
-            template:
-              '<form @submit.prevent><slot :errors="{}" :meta="{ valid: true }" /></form>',
-          },
-          Field: { template: "<input />" },
-          ErrorMessage: { template: "<span />" },
-        },
-      },
-    });
-
-    const vm = wrapper.vm as unknown as {
-      handleSubmit: (values: Record<string, unknown>) => Promise<void>;
-    };
-
-    await vm.handleSubmit({ email: "bad@example.com", password: "wrong" });
+    const wrapper = mountFormLogin();
+    await triggerSubmit(wrapper.vm, "bad@example.com", "wrong");
 
     expect(mockSwalFire).toHaveBeenCalledWith(
       "Error",
@@ -173,32 +153,21 @@ describe("FormLogin.vue — REGV-05 unconfirmed email resend section", () => {
       )
       .mockResolvedValueOnce({});
 
-    const wrapper = mount(FormLogin, {
-      global: {
-        stubs: {
-          Form: {
-            name: "Form",
-            template:
-              '<form @submit.prevent><slot :errors="{}" :meta="{ valid: true }" /></form>',
-          },
-          Field: { template: "<input />" },
-          ErrorMessage: { template: "<span />" },
-        },
-      },
-    });
-
-    const vm = wrapper.vm as unknown as {
-      handleSubmit: (values: Record<string, unknown>) => Promise<void>;
-      handleResendConfirmation: () => Promise<void>;
-      unconfirmedEmail: { value: string };
-    };
+    const wrapper = mountFormLogin();
 
     // Trigger unconfirmed state
-    await vm.handleSubmit({ email: "test@example.com", password: "pass" });
-    expect(vm.unconfirmedEmail.value).toBe("test@example.com");
+    await triggerSubmit(wrapper.vm, "test@example.com", "pass");
+    await nextTick();
 
-    // Call resend
-    await vm.handleResendConfirmation();
+    // Resend section should be visible
+    expect(wrapper.find(".form__resend-confirmation").exists()).toBe(true);
+
+    // Call resend handler directly
+    await (
+      wrapper.vm as unknown as {
+        handleResendConfirmation: () => Promise<void>;
+      }
+    ).handleResendConfirmation();
 
     expect(mockClient).toHaveBeenCalledWith("/auth/send-email-confirmation", {
       method: "POST",

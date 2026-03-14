@@ -28,26 +28,47 @@ global.useState = vi.fn((key: string, init?: () => string) => {
   return ref(init ? init() : "");
 });
 
-// ─── Mock useNuxtApp ($recaptcha) ─────────────────────────────────────────
-global.useNuxtApp = vi.fn(() => ({
-  $recaptcha: {
-    execute: vi.fn().mockResolvedValue("mock-recaptcha-token"),
-  },
-}));
-
 // ─── Mock useSweetAlert2 ─────────────────────────────────────────────────
 const mockSwalFire = vi.fn();
 global.useSweetAlert2 = vi.fn(() => ({
   Swal: { fire: mockSwalFire },
 }));
 
+// ─── Mock #app (provides useNuxtApp with $recaptcha) ─────────────────────
+// The component imports useNuxtApp from "#app" — we intercept at the module level.
+const mockRecaptchaExecute = vi.fn().mockResolvedValue("mock-recaptcha-token");
+vi.mock("#app", () => ({
+  useNuxtApp: vi.fn(() => ({
+    $recaptcha: {
+      execute: mockRecaptchaExecute,
+    },
+  })),
+  useRuntimeConfig: vi.fn(() => ({ public: {} })),
+}));
+
+// ─── Mock vue-router (useRouter/useRoute use Vue inject — must be module-mocked) ─
+vi.mock("vue-router", () => ({
+  useRouter: vi.fn(() => ({ push: mockPush })),
+  useRoute: vi.fn(() => ({ params: {}, query: {}, path: "/" })),
+}));
+
 // ─── Stub vee-validate ───────────────────────────────────────────────────
+// The Form stub must expose `validate()` because FormRegister uses a template ref (ref="formRef")
+// and calls formRef.value.validate() inside handleSubmit.
 vi.mock("vee-validate", () => ({
   Field: { template: "<input />" },
   Form: {
+    name: "Form",
     template:
       '<form @submit.prevent="$emit(\'submit\')"><slot :errors="{}" :meta="{ valid: true }" /></form>',
     emits: ["submit"],
+    setup() {
+      return {
+        validate: () => Promise.resolve(true),
+        resetForm: () => {},
+        setErrors: () => {},
+      };
+    },
   },
   ErrorMessage: { template: "<span />" },
 }));
@@ -80,26 +101,11 @@ vi.mock("@/composables/useRut", () => ({
   }),
 }));
 
-// ─── Import component AFTER all globals are set ───────────────────────────
+// ─── Import component AFTER all mocks (vi.mock is hoisted by Vitest) ─────
 import FormRegister from "@/components/FormRegister.vue";
 
-// ─── Helper: mount component and stub the formRef ────────────────────────
-const buildWrapper = () => {
-  const wrapper = mount(FormRegister, {
-    attachTo: document.body,
-  });
-
-  // Vue template refs are exposed directly on vm as the ref object.
-  // We need to inject validate() into the underlying ref so handleSubmit works.
-  const vm = wrapper.vm as unknown as Record<string, unknown>;
-  // formRef is a shallowRef/ref — we overwrite its .value with a mock
-  const formRefKey = "formRef";
-  if (formRefKey in vm) {
-    const formRef = vm[formRefKey] as { value: unknown };
-    formRef.value = { validate: vi.fn().mockResolvedValue(true) };
-  }
-  return wrapper;
-};
+// ─── Helper: mount component ──────────────────────────────────────────────
+const buildWrapper = () => mount(FormRegister, { attachTo: document.body });
 
 describe("FormRegister.vue — no-JWT redirect behavior (REGV-03)", () => {
   beforeEach(() => {
@@ -118,14 +124,10 @@ describe("FormRegister.vue — no-JWT redirect behavior (REGV-03)", () => {
       if (key === "registrationEmail") return registrationEmailRef;
       return ref(init ? init() : "");
     });
-    global.useNuxtApp = vi.fn(() => ({
-      $recaptcha: {
-        execute: vi.fn().mockResolvedValue("mock-recaptcha-token"),
-      },
-    }));
     global.useSweetAlert2 = vi.fn(() => ({
       Swal: { fire: mockSwalFire },
     }));
+    mockRecaptchaExecute.mockResolvedValue("mock-recaptcha-token");
   });
 
   it("Test 1: When register response has no jwt, redirects to /registro/confirmar (not /login)", async () => {
