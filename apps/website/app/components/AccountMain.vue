@@ -17,17 +17,19 @@
     </div> -->
 
     <div class="account--main__announcements">
-      <div class="account--main__announcements__own">
-        <span v-html="adReservationsText" />
-        <span
-          v-if="featuredAdReservationsText"
-          v-html="featuredAdReservationsText"
-        />
-      </div>
-      <div class="account--main__announcements__pack">
-        <div class="account--main__announcements__pack__info">
-          <strong>Ahorra desde un 27% y obten tu perfil de vendedor</strong>
-          comprando un pack de anuncios.
+      <div class="account--main__announcements__text">
+        <div class="account--main__announcements__own">
+          <span v-html="adReservationsText" />
+          <span
+            v-if="featuredAdReservationsText"
+            v-html="featuredAdReservationsText"
+          />
+        </div>
+        <div class="account--main__announcements__pack">
+          <div class="account--main__announcements__pack__info">
+            <strong>Ahorra desde un 27% y obten tu perfil de vendedor</strong>
+            comprando un pack de anuncios.
+          </div>
         </div>
       </div>
       <nuxt-link to="/packs" class="btn btn--buy" title="Comprar">
