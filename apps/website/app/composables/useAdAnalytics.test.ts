@@ -341,5 +341,144 @@ describe("useAdAnalytics - existing methods unchanged", () => {
     expect(typeof analytics.stepView).toBe("function");
     expect(typeof analytics.pushEvent).toBe("function");
     expect(typeof analytics.purchase).toBe("function");
+    // New discovery-tracking functions
+    expect(typeof analytics.viewItemListPublic).toBe("function");
+    expect(typeof analytics.viewItem).toBe("function");
+    expect(typeof analytics.search).toBe("function");
+  });
+});
+
+describe("useAdAnalytics - viewItemListPublic()", () => {
+  it("pushes view_item_list event with flow='ad_discovery' and mapped items", async () => {
+    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { viewItemListPublic } = useAdAnalytics();
+
+    const ad = {
+      id: 42,
+      name: "Grúa horquilla Toyota",
+      price: 5000000,
+      currency: "CLP",
+      category: { id: 7, name: "Maquinaria", slug: "maquinaria" },
+    };
+
+    viewItemListPublic([ad]);
+
+    const event = mockDataLayer.find(
+      (e) => (e as Record<string, unknown>).event === "view_item_list",
+    ) as Record<string, unknown> | undefined;
+
+    expect(event).toBeDefined();
+    expect(event?.flow).toBe("ad_discovery");
+
+    const ecommerce = event?.ecommerce as Record<string, unknown>;
+    const items = ecommerce?.items as Record<string, unknown>[];
+    expect(items).toHaveLength(1);
+    expect(items[0]).toMatchObject({
+      item_id: "42",
+      item_name: "Grúa horquilla Toyota",
+      item_category: "Maquinaria",
+      price: 5000000,
+    });
+  });
+
+  it("does NOT push an event when ads array is empty", async () => {
+    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { viewItemListPublic } = useAdAnalytics();
+
+    viewItemListPublic([]);
+
+    const event = mockDataLayer.find(
+      (e) => (e as Record<string, unknown>).event === "view_item_list",
+    );
+    expect(event).toBeUndefined();
+  });
+
+  it("uses 'Unknown' for item_category when category is a number", async () => {
+    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { viewItemListPublic } = useAdAnalytics();
+
+    const ad = {
+      id: 10,
+      name: "Camión",
+      price: 12000000,
+      currency: "CLP",
+      category: 3,
+    };
+
+    viewItemListPublic([ad]);
+
+    const event = mockDataLayer.find(
+      (e) => (e as Record<string, unknown>).event === "view_item_list",
+    ) as Record<string, unknown> | undefined;
+    const ecommerce = event?.ecommerce as Record<string, unknown>;
+    const items = ecommerce?.items as Record<string, unknown>[];
+    expect(items[0]?.item_category).toBe("Unknown");
+  });
+});
+
+describe("useAdAnalytics - viewItem()", () => {
+  it("pushes view_item event with flow='ad_discovery' and exactly 1 item", async () => {
+    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { viewItem } = useAdAnalytics();
+
+    const ad = {
+      id: 99,
+      name: "Montacargas Clark",
+      price: 8500000,
+      currency: "CLP",
+      category: { id: 7, name: "Maquinaria", slug: "maquinaria" },
+    };
+
+    viewItem(ad);
+
+    const event = mockDataLayer.find(
+      (e) => (e as Record<string, unknown>).event === "view_item",
+    ) as Record<string, unknown> | undefined;
+
+    expect(event).toBeDefined();
+    expect(event?.flow).toBe("ad_discovery");
+
+    const ecommerce = event?.ecommerce as Record<string, unknown>;
+    const items = ecommerce?.items as Record<string, unknown>[];
+    expect(items).toHaveLength(1);
+    expect(items[0]?.item_id).toBe("99");
+  });
+
+  it("uses category.name when category is an object, 'Unknown' when numeric", async () => {
+    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { viewItem } = useAdAnalytics();
+
+    viewItem({
+      id: 5,
+      name: "Tractor",
+      price: 20000000,
+      currency: "CLP",
+      category: { id: 2, name: "Agrícola", slug: "agricola" },
+    });
+
+    const event = mockDataLayer.find(
+      (e) => (e as Record<string, unknown>).event === "view_item",
+    ) as Record<string, unknown> | undefined;
+    const ecommerce = event?.ecommerce as Record<string, unknown>;
+    const items = ecommerce?.items as Record<string, unknown>[];
+    expect(items[0]?.item_category).toBe("Agrícola");
+  });
+});
+
+describe("useAdAnalytics - search()", () => {
+  it("pushes search event with search_term and flow='ad_discovery', no ecommerce block", async () => {
+    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { search } = useAdAnalytics();
+
+    search("grúa horquilla");
+
+    const event = mockDataLayer.find(
+      (e) => (e as Record<string, unknown>).event === "search",
+    ) as Record<string, unknown> | undefined;
+
+    expect(event).toBeDefined();
+    expect(event?.flow).toBe("ad_discovery");
+    expect(event?.search_term).toBe("grúa horquilla");
+    expect(event?.ecommerce).toBeUndefined();
   });
 });
