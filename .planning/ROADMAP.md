@@ -22,7 +22,7 @@
 ### v1.38 GA4 Analytics Audit & Implementation
 
 - [x] **Phase 083: Ecommerce Bug Fixes** — Correct purchase value, add_to_cart timing, and item_id in existing GA4 events (completed 2026-03-14)
-- [ ] **Phase 084: Ad Discovery Tracking** — Fire view_item_list, view_item, and search events across ad listing and detail pages
+- [x] **Phase 084: Ad Discovery Tracking** — Fire view_item_list, view_item, and search events across ad listing and detail pages (completed 2026-03-14)
 - [ ] **Phase 085: Contact, Auth & Blog Events** — Add seller contact, sign_up, login, and article_view events
 
 ## Phase Details
@@ -195,5 +195,5 @@ Plans:
 | 081   | v1.37     | 2/2            | Complete    | 2026-03-14 |
 | 082   | v1.37     | 1/1            | Complete    | 2026-03-14 |
 | 083   | 2/2 | Complete    | 2026-03-14 | -          |
-| 084   | 1/2 | In Progress|  | -          |
+| 084   | 2/2 | Complete   | 2026-03-14 | -          |
 | 085   | v1.38     | 0/?            | Not started | -          |
