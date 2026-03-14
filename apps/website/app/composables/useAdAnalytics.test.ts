@@ -358,7 +358,7 @@ describe("useAdAnalytics - viewItemListPublic()", () => {
       name: "Grúa horquilla Toyota",
       price: 5000000,
       currency: "CLP",
-      category: { id: 7, name: "Maquinaria", slug: "maquinaria" },
+      category: { name: "Maquinaria" },
     };
 
     viewItemListPublic([ad]);
@@ -426,7 +426,7 @@ describe("useAdAnalytics - viewItem()", () => {
       name: "Montacargas Clark",
       price: 8500000,
       currency: "CLP",
-      category: { id: 7, name: "Maquinaria", slug: "maquinaria" },
+      category: { name: "Maquinaria" },
     };
 
     viewItem(ad);
@@ -453,7 +453,7 @@ describe("useAdAnalytics - viewItem()", () => {
       name: "Tractor",
       price: 20000000,
       currency: "CLP",
-      category: { id: 2, name: "Agrícola", slug: "agricola" },
+      category: { name: "Agrícola" },
     });
 
     const event = mockDataLayer.find(

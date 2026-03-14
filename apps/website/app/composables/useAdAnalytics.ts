@@ -187,6 +187,62 @@ export const useAdAnalytics = () => {
     );
   };
 
+  const viewItemListPublic = (
+    ads: Array<{
+      id: number | string;
+      name: string;
+      price?: number;
+      currency?: string;
+      category?: number | { name: string } | null;
+    }>,
+  ) => {
+    if (ads.length === 0) return;
+    const items: AnalyticsItem[] = ads.map((ad) => ({
+      item_id: String(ad.id),
+      item_name: ad.name,
+      item_category:
+        typeof ad.category === "object" && ad.category !== null
+          ? (ad.category as { name: string }).name
+          : "Unknown",
+      price: ad.price ?? 0,
+      quantity: 1,
+      currency: ad.currency ?? "CLP",
+    }));
+    pushEvent("view_item_list", items, {}, "ad_discovery");
+  };
+
+  const viewItem = (ad: {
+    id: number | string;
+    name: string;
+    price?: number;
+    currency?: string;
+    category?: number | { name: string } | null;
+  }) => {
+    const category =
+      typeof ad.category === "object" && ad.category !== null
+        ? (ad.category as { name: string }).name
+        : "Unknown";
+    pushEvent(
+      "view_item",
+      [
+        {
+          item_id: String(ad.id),
+          item_name: ad.name,
+          item_category: category,
+          price: ad.price ?? 0,
+          quantity: 1,
+          currency: ad.currency ?? "CLP",
+        },
+      ],
+      {},
+      "ad_discovery",
+    );
+  };
+
+  const search = (searchTerm: string) => {
+    pushEvent("search", [], { search_term: searchTerm }, "ad_discovery");
+  };
+
   return {
     viewItemList,
     addToCartPack,
@@ -198,5 +254,8 @@ export const useAdAnalytics = () => {
     stepView,
     pushEvent,
     purchase,
+    viewItemListPublic,
+    viewItem,
+    search,
   };
 };
