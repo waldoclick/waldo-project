@@ -57,7 +57,8 @@ const { $setSEO, $setStructuredData } = useNuxtApp() as unknown as {
 };
 const config = useRuntimeConfig();
 
-import { watch, computed } from "vue";
+import { watch, computed, ref } from "vue";
+import { useAdAnalytics } from "@/composables/useAdAnalytics";
 import { useRoute } from "nuxt/app";
 import { useCategoriesStore } from "@/stores/categories.store";
 import { useAdsStore } from "@/stores/ads.store";
@@ -333,5 +334,45 @@ watch(
     }
   },
   { immediate: true },
+);
+
+// Analytics — ad discovery tracking
+const adAnalytics = useAdAnalytics();
+
+// DISC-01: fire view_item_list when ads load (also fires on filter/page changes
+// because adsData key changes when query params change)
+watch(
+  () => adsData.value,
+  (data) => {
+    if (data && data.ads.length > 0) {
+      adAnalytics.viewItemListPublic(data.ads);
+    }
+  },
+  { immediate: true },
+);
+
+// DISC-03: fire search when keyword or commune changes
+const lastSearchTerm = ref<string | null>(null);
+
+const resolveSearchTerm = (s?: string, communeId?: string): string | null => {
+  if (s) return s;
+  if (communeId) {
+    const commune = filterStore.filterCommunes.find(
+      (c) => c.id.toString() === communeId,
+    );
+    return commune?.name ?? communeId;
+  }
+  return null;
+};
+
+watch(
+  [() => route.query.s, () => route.query.commune],
+  ([newS, newCommune]) => {
+    const term = resolveSearchTerm(newS?.toString(), newCommune?.toString());
+    if (term && term !== lastSearchTerm.value) {
+      lastSearchTerm.value = term;
+      adAnalytics.search(term);
+    }
+  },
 );
 </script>
