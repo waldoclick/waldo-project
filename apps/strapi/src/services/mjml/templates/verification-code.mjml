@@ -13,7 +13,7 @@
 >
   {{ code }}
 </mj-text>
-<mj-text> Este código es válido por <b>5 minutos</b>. </mj-text>
+<mj-text> Este código es válido por <b>15 minutos</b>. </mj-text>
 <mj-text>
   Si no intentaste iniciar sesión, ignora este correo. Tu cuenta sigue segura.
 </mj-text>
