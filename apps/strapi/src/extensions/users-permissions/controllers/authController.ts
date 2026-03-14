@@ -283,10 +283,13 @@ export const verifyCode = async (ctx) => {
     id: user.id,
   });
 
-  // Sanitize user to match Strapi's normal login response shape
-  const sanitizedUser = await strapi.plugins[
-    "users-permissions"
-  ].services.user.sanitizeOutput(user, ctx);
+  // Sanitize user using Strapi v5's contentAPI sanitizer (same as auth.local callback)
+  const userSchema = strapi.getModel("plugin::users-permissions.user");
+  const sanitizedUser = await strapi.contentAPI.sanitize.output(
+    user,
+    userSchema,
+    { auth: ctx.state.auth }
+  );
 
   ctx.body = { jwt: jwtToken, user: sanitizedUser };
 };
