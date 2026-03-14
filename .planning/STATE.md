@@ -5,7 +5,7 @@ milestone_name: Email Authentication Flows
 current_phase: null
 status: between_milestones
 last_updated: "2026-03-14T04:21:18.102Z"
-last_activity: "2026-03-14 — v1.37 milestone complete: Email Authentication Flows shipped — REGV-01 REGV-02 REGV-06"
+last_activity: "2026-03-14 - Completed quick task 37: no llega el correo de recuperar contrasena desde el dashboard"
 progress:
   total_phases: 4
   completed_phases: 4
