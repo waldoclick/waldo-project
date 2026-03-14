@@ -60,20 +60,14 @@ import { ref } from "vue";
 import { Field, Form, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 const { Swal } = useSweetAlert2();
-import { useRouter, useRoute } from "vue-router";
-import { useAppStore } from "@/stores/app.store";
-import { useMeStore } from "@/stores/me.store";
+import { useRouter } from "vue-router";
 import { useNuxtApp } from "#app";
-import { useLogger } from "@/composables/useLogger";
 
 const sending = ref(false);
-const { login } = useStrapiAuth();
+const client = useStrapiClient();
+const pendingToken = useState("pendingToken", () => "");
 const router = useRouter();
-const route = useRoute();
-const appStore = useAppStore();
-const meStore = useMeStore();
 const { $recaptcha } = useNuxtApp();
-const { logInfo } = useLogger();
 
 const schema = yup.object({
   email: yup
@@ -98,40 +92,23 @@ const handleSubmit = async (values) => {
   sending.value = true;
 
   try {
-    // Execute reCAPTCHA v3
     const token = await $recaptcha.execute("submit");
 
-    // Agregar el token al objeto de login
-    await login({
-      identifier: values.email,
-      password: values.password,
-      recaptchaToken: token,
+    // Backend returns { pendingToken, email } — do NOT use useStrapiAuth().login()
+    const response = await client("/auth/local", {
+      method: "POST",
+      body: {
+        identifier: values.email,
+        password: values.password,
+        recaptchaToken: token,
+      },
     });
 
-    // Log successful login
-    logInfo(`User '${values.email}' logged in successfully.`);
-
-    // Verificar si el perfil del usuario está completo
-    const isProfileComplete = await meStore.isProfileComplete();
-
-    if (!isProfileComplete) {
-      // Si el perfil no está completo, redirigir a la página de edición de perfil
-      router.push("/cuenta/perfil/editar");
-      return;
-    }
-
-    // Cerrar el lightbox de login si estaba abierto
-    appStore.closeLoginLightbox();
-
-    // Obtener el referer del store o usar /anuncios como fallback
-    const redirectTo = appStore.getReferer || "/anuncios";
-    // Limpiar el referer después de usarlo
-    appStore.clearReferer();
-
-    router.push(redirectTo);
+    pendingToken.value = response.pendingToken;
+    router.push("/login/verificar");
   } catch (error) {
     let swalMessage = "Hubo un error. Por favor, inténtalo de nuevo.";
-    const errorMessage = error.error?.message;
+    const errorMessage = error?.error?.message;
 
     if (errorMessage === "Your account email is not confirmed") {
       swalMessage =
