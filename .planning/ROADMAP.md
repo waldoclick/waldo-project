@@ -52,13 +52,14 @@
 ### Phase 085: Contact, Auth & Blog Events
 **Goal**: User lifecycle and engagement actions — contacting a seller, registering, logging in, and reading articles — all produce GA4 events
 **Depends on**: Phase 084
-**Requirements**: CONT-01, CONT-02, AUTH-01, AUTH-02, BLOG-01
+**Requirements**: CONT-01, CONT-02, LEAD-01, AUTH-01, AUTH-02, BLOG-01
 **Success Criteria** (what must be TRUE):
   1. GA4 Realtime shows a `contact` event with `method: "email"` when a logged-in user clicks the seller's email link on an ad detail page
   2. GA4 Realtime shows a `contact` event with `method: "phone"` when a logged-in user clicks the seller's phone link on an ad detail page
-  3. GA4 Realtime shows a `sign_up` event with `method: "email"` immediately after a user completes registration via `FormRegister.vue`
-  4. GA4 Realtime shows a `login` event with `method: "email"` or `method: "google"` after the 2-step verification completes successfully in `FormLogin.vue`
-  5. GA4 Realtime shows an `article_view` event with `article_id`, `article_title`, and `article_category` when a user opens a blog article at `/blog/[slug]`
+  3. GA4 Realtime shows a `generate_lead` event when a user reaches `/contacto/gracias` after submitting the contact form
+  4. GA4 Realtime shows a `sign_up` event with `method: "email"` immediately after a user completes registration via `FormRegister.vue`
+  5. GA4 Realtime shows a `login` event with `method: "email"` or `method: "google"` after the 2-step verification completes successfully in `FormLogin.vue`
+  6. GA4 Realtime shows an `article_view` event with `article_id`, `article_title`, and `article_category` when a user opens a blog article at `/blog/[slug]`
 **Plans**: TBD
 
 ---
