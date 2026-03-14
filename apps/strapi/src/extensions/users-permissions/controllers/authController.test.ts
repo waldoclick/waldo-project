@@ -12,7 +12,7 @@ import {
 
 // --- Mock sendMjmlEmail ---
 jest.mock("../../../services/mjml", () => ({
-  sendMjmlEmail: jest.fn().mockResolvedValue(true),
+  sendMjmlEmail: jest.fn().mockResolvedValue(undefined),
 }));
 import { sendMjmlEmail } from "../../../services/mjml";
 const mockSendMjmlEmail = sendMjmlEmail as jest.MockedFunction<
@@ -109,7 +109,7 @@ describe("overrideAuthLocal", () => {
     jest.clearAllMocks();
     mockVCFindOne.mockResolvedValue(null); // no existing record
     mockVCCreate.mockResolvedValue({ id: 1 });
-    mockSendMjmlEmail.mockResolvedValue(true);
+    mockSendMjmlEmail.mockResolvedValue(undefined);
   });
 
   describe("VSTEP-01: Valid credentials — returns pendingToken + email, no JWT", () => {
@@ -443,7 +443,7 @@ describe("resendCode", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockSendMjmlEmail.mockResolvedValue(true);
+    mockSendMjmlEmail.mockResolvedValue(undefined);
   });
 
   describe("VSTEP-07: Valid pendingToken within 60s → 429 (rate limited)", () => {
@@ -567,7 +567,7 @@ describe("overrideForgotPassword", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockSendMjmlEmail.mockResolvedValue(true);
+    mockSendMjmlEmail.mockResolvedValue(undefined);
     process.env.FRONTEND_URL = "https://waldo.click";
     process.env.DASHBOARD_URL = "https://dashboard.waldo.click";
   });
@@ -721,7 +721,6 @@ describe("overrideForgotPassword", () => {
       });
       mockSendMjmlEmail.mockImplementation(async () => {
         callOrder.push("email");
-        return true;
       });
       const ctx = makeCtx({ email: "user@example.com", context: "website" });
 
