@@ -8,8 +8,7 @@
 ### Ecommerce Bug Fixes
 
 - [ ] **ECOM-01**: The `purchase` event reports real transaction value (not always $0) — `order.amount` field name corrected so GA4 ecommerce dashboard shows actual revenue
-- [ ] **ECOM-02**: The `add_to_cart` event fires only on deliberate user selection, not on page mount — `{ immediate: true }` watcher behavior corrected so GA4 cart metrics reflect intent
-- [ ] **ECOM-03**: The `purchase` event `item_id` is populated with the real order `documentId` (not empty string)
+- [ ] **ECOM-02**: The `purchase` event `item_id` is populated with the real order `documentId` (not empty string)
 
 ### Ad Discovery Tracking
 
@@ -61,7 +60,6 @@
 |-------------|-------|--------|
 | ECOM-01 | Phase 083 | Pending |
 | ECOM-02 | Phase 083 | Pending |
-| ECOM-03 | Phase 083 | Pending |
 | DISC-01 | Phase 084 | Pending |
 | DISC-02 | Phase 084 | Pending |
 | DISC-03 | Phase 084 | Pending |
@@ -72,8 +70,8 @@
 | BLOG-01 | Phase 085 | Pending |
 
 **Coverage:**
-- v1.38 requirements: 11 total
-- Mapped to phases: 11
+- v1.38 requirements: 10 total
+- Mapped to phases: 10
 - Unmapped: 0 ✓
 
 ---
