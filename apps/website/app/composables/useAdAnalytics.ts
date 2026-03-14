@@ -13,11 +13,19 @@ interface AnalyticsItem {
   currency?: string;
 }
 
+export interface PurchaseOrderItem {
+  name: string;
+  price: number;
+  quantity: number;
+}
+
 export interface PurchaseOrderData {
+  id?: number | string;
   documentId?: string;
   amount?: number;
   totalAmount?: number;
   currency?: string;
+  items?: PurchaseOrderItem[];
   payment_response?: {
     buy_order?: string;
     authorization_code?: string;
@@ -155,22 +163,35 @@ export const useAdAnalytics = () => {
   };
 
   const purchase = (order: PurchaseOrderData) => {
-    const transactionId =
-      order.payment_response?.buy_order ?? order.documentId ?? "";
+    // Use the Order's numeric id as transaction_id — stable, gateway-agnostic identifier.
+    // buy_order is Webpay-specific; documentId is a CMS identifier, not a business identifier.
+    const transactionId = String(order.id ?? "");
     // Number() coercion required: Strapi biginteger fields serialize to strings in JSON responses
     const value = Number(order.amount ?? order.totalAmount ?? 0);
     const currency = order.currency ?? "CLP";
 
-    const items: AnalyticsItem[] = [
-      {
-        item_id: order.documentId || transactionId || "",
-        item_name: "Orden de pago",
-        item_category: "Order",
-        price: value,
-        quantity: 1,
-        currency,
-      },
-    ];
+    // Map order line items when available (e.g. "1 Aviso", "Anuncio destacado").
+    // Fall back to a single generic item for free-ad orders that have no line items.
+    const items: AnalyticsItem[] =
+      order.items && order.items.length > 0
+        ? order.items.map((item) => ({
+            item_id: item.name.toLowerCase().replace(/\s+/g, "_"),
+            item_name: item.name,
+            item_category: "Order",
+            price: Number(item.price),
+            quantity: item.quantity,
+            currency,
+          }))
+        : [
+            {
+              item_id: order.documentId || "",
+              item_name: "Orden de pago",
+              item_category: "Order",
+              price: value,
+              quantity: 1,
+              currency,
+            },
+          ];
 
     pushEvent(
       "purchase",

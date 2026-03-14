@@ -69,8 +69,8 @@ const handleError = (type: "INVALID_URL" | "NOT_FOUND") => {
 
 // Tipo temporal para la orden hasta que se defina en types/
 interface OrderData {
+  id?: number;
   documentId?: string;
-  id?: string;
   amount?: number;
   totalAmount?: number;
   currency?: string;
@@ -79,6 +79,7 @@ interface OrderData {
   paymentMethod?: string;
   paidAt?: string;
   createdAt?: string;
+  items?: Array<{ name: string; price: number; quantity: number }>;
   payment_response?: {
     buy_order?: string;
     authorization_code?: string;

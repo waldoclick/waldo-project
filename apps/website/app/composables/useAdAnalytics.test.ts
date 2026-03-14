@@ -1,5 +1,5 @@
 import { vi, describe, it, expect, beforeEach } from "vitest";
-import type { PurchaseOrderData } from "./useAdAnalytics";
+import type { PurchaseOrderData, PurchaseOrderItem } from "./useAdAnalytics";
 
 // Mock the ad store
 vi.mock("@/stores/ad.store", () => ({
@@ -66,11 +66,12 @@ describe("useAdAnalytics - pushEvent flow param", () => {
 });
 
 describe("useAdAnalytics - purchase()", () => {
-  it("pushes a purchase event with correct transaction_id from buy_order", async () => {
+  it("uses order.id as transaction_id (gateway-agnostic)", async () => {
     const { useAdAnalytics } = await import("./useAdAnalytics");
     const { purchase } = useAdAnalytics();
 
     const order: PurchaseOrderData = {
+      id: 42,
       documentId: "doc123",
       amount: 9990,
       currency: "CLP",
@@ -89,31 +90,13 @@ describe("useAdAnalytics - purchase()", () => {
     expect(event?.flow).toBe("pack_purchase");
 
     const ecommerce = event?.ecommerce as Record<string, unknown>;
-    expect(ecommerce?.transaction_id).toBe("BO-456");
+    // transaction_id uses order.id, not buy_order (which is Webpay-specific)
+    expect(ecommerce?.transaction_id).toBe("42");
     expect(ecommerce?.value).toBe(9990);
     expect(ecommerce?.currency).toBe("CLP");
   });
 
-  it("falls back to documentId for transaction_id when buy_order is absent", async () => {
-    const { useAdAnalytics } = await import("./useAdAnalytics");
-    const { purchase } = useAdAnalytics();
-
-    const order: PurchaseOrderData = {
-      documentId: "doc123",
-      amount: 5000,
-      currency: "CLP",
-    };
-
-    purchase(order);
-
-    const event = mockDataLayer.find(
-      (e) => (e as Record<string, unknown>).event === "purchase",
-    ) as Record<string, unknown> | undefined;
-    const ecommerce = event?.ecommerce as Record<string, unknown>;
-    expect(ecommerce?.transaction_id).toBe("doc123");
-  });
-
-  it("uses empty string for transaction_id when both buy_order and documentId are absent", async () => {
+  it("uses empty string for transaction_id when id is absent", async () => {
     const { useAdAnalytics } = await import("./useAdAnalytics");
     const { purchase } = useAdAnalytics();
 
@@ -176,7 +159,51 @@ describe("useAdAnalytics - purchase()", () => {
     expect(ecommerce?.currency).toBe("CLP");
   });
 
-  it("builds items array with correct item fields", async () => {
+  it("maps order.items to GA4 items when present", async () => {
+    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { purchase } = useAdAnalytics();
+
+    const orderItems: PurchaseOrderItem[] = [
+      { name: "1 Aviso", price: 5990, quantity: 1 },
+      { name: "Anuncio destacado", price: 10000, quantity: 1 },
+    ];
+
+    const order: PurchaseOrderData = {
+      id: 101,
+      documentId: "doc123",
+      amount: 15990,
+      currency: "CLP",
+      items: orderItems,
+    };
+
+    purchase(order);
+
+    const event = mockDataLayer.find(
+      (e) => (e as Record<string, unknown>).event === "purchase",
+    ) as Record<string, unknown> | undefined;
+    const ecommerce = event?.ecommerce as Record<string, unknown>;
+    const items = ecommerce?.items as Record<string, unknown>[];
+
+    expect(items).toHaveLength(2);
+    expect(items[0]).toMatchObject({
+      item_id: "1_aviso",
+      item_name: "1 Aviso",
+      item_category: "Order",
+      price: 5990,
+      quantity: 1,
+      currency: "CLP",
+    });
+    expect(items[1]).toMatchObject({
+      item_id: "anuncio_destacado",
+      item_name: "Anuncio destacado",
+      item_category: "Order",
+      price: 10000,
+      quantity: 1,
+      currency: "CLP",
+    });
+  });
+
+  it("falls back to single generic item when order.items is absent", async () => {
     const { useAdAnalytics } = await import("./useAdAnalytics");
     const { purchase } = useAdAnalytics();
 
@@ -264,7 +291,7 @@ describe("useAdAnalytics - purchase()", () => {
     expect(ecommerce?.value).toBe(0);
   });
 
-  it("uses transactionId as item_id fallback when documentId is absent", async () => {
+  it("generic fallback item uses empty item_id when documentId is also absent", async () => {
     const { useAdAnalytics } = await import("./useAdAnalytics");
     const { purchase } = useAdAnalytics();
 
@@ -281,7 +308,7 @@ describe("useAdAnalytics - purchase()", () => {
     ) as Record<string, unknown> | undefined;
     const ecommerce = event?.ecommerce as Record<string, unknown>;
     const items = ecommerce?.items as Record<string, unknown>[];
-    expect(items[0]?.item_id).toBe("BO-123");
+    expect(items[0]?.item_id).toBe("");
   });
 
   it("handles free ad purchase with value: 0 (ECOM-03)", async () => {
@@ -302,10 +329,11 @@ describe("useAdAnalytics - purchase()", () => {
     const ecommerce = event?.ecommerce as Record<string, unknown>;
     expect(ecommerce?.value).toBe(0);
     expect(typeof ecommerce?.value).toBe("number");
-    expect(ecommerce?.transaction_id).toBe("ad-doc-abc");
+    // Free ads have no order.id — transaction_id is empty string
+    expect(ecommerce?.transaction_id).toBe("");
   });
 
-  it("uses ad documentId as item_id for free ad purchase (ECOM-03)", async () => {
+  it("uses ad documentId as item_id for free ad purchase fallback (ECOM-03)", async () => {
     const { useAdAnalytics } = await import("./useAdAnalytics");
     const { purchase } = useAdAnalytics();
 
@@ -322,6 +350,7 @@ describe("useAdAnalytics - purchase()", () => {
     ) as Record<string, unknown> | undefined;
     const ecommerce = event?.ecommerce as Record<string, unknown>;
     const items = ecommerce?.items as Record<string, unknown>[];
+    // No order.items → falls back to generic item; item_id uses documentId
     expect(items[0]?.item_id).toBe("ad-doc-abc");
   });
 });
@@ -345,6 +374,12 @@ describe("useAdAnalytics - existing methods unchanged", () => {
     expect(typeof analytics.viewItemListPublic).toBe("function");
     expect(typeof analytics.viewItem).toBe("function");
     expect(typeof analytics.search).toBe("function");
+    // New contact/auth/blog functions
+    expect(typeof analytics.contactSeller).toBe("function");
+    expect(typeof analytics.generateLead).toBe("function");
+    expect(typeof analytics.signUp).toBe("function");
+    expect(typeof analytics.login).toBe("function");
+    expect(typeof analytics.articleView).toBe("function");
   });
 });
 
@@ -480,5 +515,143 @@ describe("useAdAnalytics - search()", () => {
     expect(event?.flow).toBe("ad_discovery");
     expect(event?.search_term).toBe("grúa horquilla");
     expect(event?.ecommerce).toBeUndefined();
+  });
+});
+
+describe("useAdAnalytics - contactSeller()", () => {
+  it("pushes contact event with method='email' and flow='user_engagement', no ecommerce block", async () => {
+    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { contactSeller } = useAdAnalytics();
+
+    contactSeller("email");
+
+    const event = mockDataLayer.find(
+      (e) => (e as Record<string, unknown>).event === "contact",
+    ) as Record<string, unknown> | undefined;
+
+    expect(event).toBeDefined();
+    expect(event?.flow).toBe("user_engagement");
+    expect(event?.method).toBe("email");
+    expect(event?.ecommerce).toBeUndefined();
+  });
+
+  it("pushes contact event with method='phone' and flow='user_engagement', no ecommerce block", async () => {
+    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { contactSeller } = useAdAnalytics();
+
+    contactSeller("phone");
+
+    const event = mockDataLayer.find(
+      (e) => (e as Record<string, unknown>).event === "contact",
+    ) as Record<string, unknown> | undefined;
+
+    expect(event).toBeDefined();
+    expect(event?.flow).toBe("user_engagement");
+    expect(event?.method).toBe("phone");
+    expect(event?.ecommerce).toBeUndefined();
+  });
+});
+
+describe("useAdAnalytics - generateLead()", () => {
+  it("pushes generate_lead event with flow='user_engagement', no ecommerce block", async () => {
+    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { generateLead } = useAdAnalytics();
+
+    generateLead();
+
+    const event = mockDataLayer.find(
+      (e) => (e as Record<string, unknown>).event === "generate_lead",
+    ) as Record<string, unknown> | undefined;
+
+    expect(event).toBeDefined();
+    expect(event?.flow).toBe("user_engagement");
+    expect(event?.ecommerce).toBeUndefined();
+  });
+});
+
+describe("useAdAnalytics - signUp()", () => {
+  it("pushes sign_up event with method='email' and flow='user_lifecycle', no ecommerce block", async () => {
+    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { signUp } = useAdAnalytics();
+
+    signUp();
+
+    const event = mockDataLayer.find(
+      (e) => (e as Record<string, unknown>).event === "sign_up",
+    ) as Record<string, unknown> | undefined;
+
+    expect(event).toBeDefined();
+    expect(event?.flow).toBe("user_lifecycle");
+    expect(event?.method).toBe("email");
+    expect(event?.ecommerce).toBeUndefined();
+  });
+});
+
+describe("useAdAnalytics - login()", () => {
+  it("pushes login event with method='email' and flow='user_lifecycle', no ecommerce block", async () => {
+    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { login } = useAdAnalytics();
+
+    login("email");
+
+    const event = mockDataLayer.find(
+      (e) => (e as Record<string, unknown>).event === "login",
+    ) as Record<string, unknown> | undefined;
+
+    expect(event).toBeDefined();
+    expect(event?.flow).toBe("user_lifecycle");
+    expect(event?.method).toBe("email");
+    expect(event?.ecommerce).toBeUndefined();
+  });
+
+  it("pushes login event with method='google' and flow='user_lifecycle', no ecommerce block", async () => {
+    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { login } = useAdAnalytics();
+
+    login("google");
+
+    const event = mockDataLayer.find(
+      (e) => (e as Record<string, unknown>).event === "login",
+    ) as Record<string, unknown> | undefined;
+
+    expect(event).toBeDefined();
+    expect(event?.flow).toBe("user_lifecycle");
+    expect(event?.method).toBe("google");
+    expect(event?.ecommerce).toBeUndefined();
+  });
+});
+
+describe("useAdAnalytics - articleView()", () => {
+  it("pushes article_view event with article_id, article_title, article_category and flow='content_engagement', no ecommerce block", async () => {
+    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { articleView } = useAdAnalytics();
+
+    articleView("post-123", "Cómo vender tu maquinaria", "Consejos");
+
+    const event = mockDataLayer.find(
+      (e) => (e as Record<string, unknown>).event === "article_view",
+    ) as Record<string, unknown> | undefined;
+
+    expect(event).toBeDefined();
+    expect(event?.flow).toBe("content_engagement");
+    expect(event?.article_id).toBe("post-123");
+    expect(event?.article_title).toBe("Cómo vender tu maquinaria");
+    expect(event?.article_category).toBe("Consejos");
+    expect(event?.ecommerce).toBeUndefined();
+  });
+
+  it("passes article_id as-is without coercion (number stays number)", async () => {
+    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { articleView } = useAdAnalytics();
+
+    articleView(42, "Mercado de maquinaria 2026", "Mercado");
+
+    const event = mockDataLayer.find(
+      (e) => (e as Record<string, unknown>).event === "article_view",
+    ) as Record<string, unknown> | undefined;
+
+    expect(event).toBeDefined();
+    expect(event?.article_id).toBe(42);
+    expect(typeof event?.article_id).toBe("number");
   });
 });
