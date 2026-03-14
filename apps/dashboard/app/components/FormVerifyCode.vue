@@ -4,13 +4,16 @@
       <label class="form__label" for="code">Código de verificación</label>
       <input
         id="code"
-        v-model="code"
+        :value="code"
         type="text"
         inputmode="numeric"
         maxlength="6"
         autocomplete="one-time-code"
         class="form__control"
         placeholder="000000"
+        @input="handleInput"
+        @keydown="handleKeydown"
+        @paste="handlePaste"
       />
     </div>
 
@@ -23,21 +26,6 @@
       <span v-if="!sending">Verificar</span>
       <span v-if="sending">Verificando...</span>
     </button>
-
-    <div class="form--verify__resend">
-      <button
-        :disabled="resendDisabled || resending"
-        type="button"
-        class="btn btn--block btn--secondary"
-        @click="handleResend"
-      >
-        <span v-if="resendCooldown > 0"
-          >Reenviar código ({{ resendCooldown }}s)</span
-        >
-        <span v-else-if="resending">Reenviando...</span>
-        <span v-else>Reenviar código</span>
-      </button>
-    </div>
   </div>
 </template>
 
@@ -66,9 +54,47 @@ const resending = ref(false);
 // Code must be exactly 6 digits
 const isCodeValid = computed(() => /^\d{6}$/.test(code.value));
 
+// Only allow digit characters — block everything else at keydown level
+const handleKeydown = (e: KeyboardEvent) => {
+  // Allow: backspace, delete, tab, arrows, home, end, ctrl/cmd+a/c/v/x
+  const allowed = [
+    "Backspace",
+    "Delete",
+    "Tab",
+    "ArrowLeft",
+    "ArrowRight",
+    "Home",
+    "End",
+  ];
+  if (allowed.includes(e.key)) return;
+  if ((e.ctrlKey || e.metaKey) && ["a", "c", "v", "x"].includes(e.key)) return;
+  // Block anything that is not a digit
+  if (!/^\d$/.test(e.key)) e.preventDefault();
+};
+
+// Strip non-digits on input (handles autocomplete and IME), auto-submit at 6
+const handleInput = (e: Event) => {
+  const input = e.target as HTMLInputElement;
+  const digits = input.value.replace(/\D/g, "").slice(0, 6);
+  code.value = digits;
+  // Keep cursor at end
+  input.value = digits;
+  if (digits.length === 6) handleVerify();
+};
+
+// Handle paste: strip non-digits, cap at 6, auto-submit
+const handlePaste = (e: ClipboardEvent) => {
+  e.preventDefault();
+  const pasted = (e.clipboardData?.getData("text") ?? "")
+    .replace(/\D/g, "")
+    .slice(0, 6);
+  code.value = pasted;
+  (e.target as HTMLInputElement).value = pasted;
+  if (pasted.length === 6) handleVerify();
+};
+
 // 60-second resend countdown (starts on mount — code was just sent by FormLogin)
 const resendCooldown = ref(60);
-const resendDisabled = computed(() => resendCooldown.value > 0);
 let timer: ReturnType<typeof setInterval> | null = null;
 
 const startCountdown = () => {
@@ -143,7 +169,7 @@ const handleVerify = async () => {
   }
 };
 
-// Resend code
+// Resend code — called by the parent page via ref
 const handleResend = async () => {
   resending.value = true;
   try {
@@ -166,4 +192,7 @@ const handleResend = async () => {
     resending.value = false;
   }
 };
+
+// Expose to parent page (verify-code.vue uses ref to drive the resend link)
+defineExpose({ handleResend, resendCooldown, resending });
 </script>
