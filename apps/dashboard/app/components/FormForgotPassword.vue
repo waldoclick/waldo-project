@@ -61,6 +61,7 @@ const onSubmit = async (values: any) => {
 
     await forgotPassword({
       email: values.email as string,
+      recaptchaToken: token,
       context: "dashboard",
     } as any);
 
