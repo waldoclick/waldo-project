@@ -292,13 +292,18 @@ const handleSubmit = async () => {
       }
     } catch (error) {
       console.error(error);
-      const message =
+      const strapiMessage =
+        (error as any).error?.details?.error?.message ||
         (error as any).error?.message ||
-        "Ocurrió un error durante el registro.";
-      if (message === "Email or Username are already taken") {
+        "";
+      if (strapiMessage === "Email or Username are already taken") {
         Swal.fire("Error", "El correo electrónico ya está en uso.", "error");
       } else {
-        Swal.fire("Error", message, "error");
+        Swal.fire(
+          "Error",
+          strapiMessage || "Ocurrió un error durante el registro.",
+          "error",
+        );
       }
     } finally {
       loading.value = false;
