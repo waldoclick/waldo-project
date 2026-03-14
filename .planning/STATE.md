@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.38
 milestone_name: GA4 Analytics Audit & Implementation
-status: planning
-last_updated: "2026-03-14T15:44:12.105Z"
-last_activity: 2026-03-14 — Completed 084-01 (DISC-01, DISC-02, DISC-03: viewItemListPublic, viewItem, search added via TDD)
+status: executing
+last_updated: "2026-03-14T16:50:29.327Z"
+last_activity: "2026-03-14 — Completed 084-01 (DISC-01, DISC-02, DISC-03: viewItemListPublic, viewItem, search via TDD)"
 progress:
   total_phases: 3
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 4
-  completed_plans: 3
-  percent: 98
+  completed_plans: 4
+  percent: 100
 ---
 
 # Session State
@@ -27,26 +27,30 @@ See: .planning/PROJECT.md (updated 2026-03-14 after v1.38 milestone started)
 **Current Milestone:** v1.38 — GA4 Analytics Audit & Implementation
 **Status:** In Progress
 Phase: 084
-Plan: 01 complete → 084-02 next
+Plan: 02 complete → Phase 084 done → 085 next
 
 ```
-Progress: [██████████] 98% (42/43 plans across project)
+Progress: [██████████] 100% (43/43 plans across project)
 ```
 
-Last activity: 2026-03-14 — Completed 084-01 (DISC-01, DISC-02, DISC-03: viewItemListPublic, viewItem, search via TDD)
+Last activity: 2026-03-14 — Completed 084-02 (DISC-01, DISC-02, DISC-03: view_item_list, view_item, search wired in anuncios pages; verified in GA4 Realtime)
 
 ## Phase Map
 
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
 | 083 | Ecommerce Bug Fixes | ECOM-01, ECOM-02, ECOM-03 | Complete (2/2 plans done) |
-| 084 | Ad Discovery Tracking | DISC-01, DISC-02, DISC-03 | In Progress (1/? plans done) |
+| 084 | Ad Discovery Tracking | DISC-01, DISC-02, DISC-03 | Complete (2/2 plans done) |
 | 085 | Contact, Auth & Blog Events | CONT-01, CONT-02, AUTH-01, AUTH-02, BLOG-01 | Not started |
 
 ## Accumulated Context
 
 ### Key Decisions (carry forward)
 
+- watch({ immediate: true }) on adsData in index.vue — ensures view_item_list fires even when data is already resolved on SSR hydration (DISC-01)
+- No { immediate: true } on search watcher — search events should only fire on explicit user action, not page load (DISC-03)
+- viewItemFired boolean ref + slug-change reset watcher in [slug].vue — Nuxt reuses component across [slug] navigations; guard must be explicitly reset (DISC-02)
+- resolveSearchTerm maps commune ID → name via filterStore.filterCommunes for human-readable GA4 search_term (DISC-03)
 - Inline shape type for ad params in useAdAnalytics (not importing Ad type) — keeps composable self-contained; category narrowed via typeof guard (DISC-01,02,03)
 - search() passes empty items array — no ecommerce block; GA4 search events are not ecommerce events (DISC-03)
 - Strapi biginteger defense: always wrap numeric fields from API responses with `Number()` before passing to GA4 (ECOM-01)
