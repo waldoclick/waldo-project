@@ -6,6 +6,7 @@ import {
   registerUserLocal,
   registerUserAuth,
   overrideAuthLocal,
+  overrideForgotPassword,
 } from "./controllers/authController";
 
 export default function (plugin) {
@@ -44,6 +45,8 @@ export default function (plugin) {
     instance.connect = registerUserAuth(instance.connect.bind(instance));
     // 2-Step login: intercept POST /api/auth/local, return pendingToken instead of JWT
     instance.callback = overrideAuthLocal(instance.callback.bind(instance));
+    // Password reset: full replacement with MJML email and context-aware URL
+    instance.forgotPassword = overrideForgotPassword();
     return instance;
   };
 

@@ -75,6 +75,10 @@ const buildCtx = (body: Record<string, unknown> = {}) => ({
   request: { body },
   response: { body: null as unknown },
   body: null as unknown,
+  send: jest.fn((data: unknown) => {
+    result.body = data;
+    return undefined;
+  }),
   badRequest: jest.fn((msg: string) => {
     const ctx = result;
     ctx.body = { error: { status: 400, message: msg } };

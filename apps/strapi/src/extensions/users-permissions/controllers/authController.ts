@@ -351,3 +351,61 @@ export const resendCode = async (ctx) => {
 
   ctx.body = { ok: true };
 };
+
+// ─── Password Reset Override ─────────────────────────────────────────────────
+
+/**
+ * Full replacement for Strapi's built-in forgotPassword controller.
+ * Sends a branded MJML email with a context-aware reset URL.
+ * IMPORTANT: Do NOT call the original forgotPassword — it also sends an email,
+ * which would result in two emails per request.
+ *
+ * @see .planning/phases/080-password-reset-mjml-context-routing/080-RESEARCH.md
+ */
+export const overrideForgotPassword = () => async (ctx) => {
+  const { email, context } = ctx.request.body as {
+    email?: string;
+    context?: "website" | "dashboard";
+  };
+
+  if (!email) return ctx.badRequest("Email is required");
+
+  const user = await strapi.db
+    .query("plugin::users-permissions.user")
+    .findOne({ where: { email: email.toLowerCase() } });
+
+  // Silent success for unknown/blocked users (matches built-in behavior)
+  if (!user || user.blocked) return ctx.send({ ok: true });
+
+  const resetPasswordToken = crypto.randomBytes(64).toString("hex");
+
+  // Save token before sending email (matches built-in ordering)
+  await strapi.db.query("plugin::users-permissions.user").update({
+    where: { id: user.id },
+    data: { resetPasswordToken },
+  });
+
+  const baseUrl =
+    context === "dashboard"
+      ? process.env.DASHBOARD_URL || "https://dashboard.waldo.click"
+      : process.env.FRONTEND_URL || "https://waldo.click";
+
+  const resetPath =
+    context === "dashboard" ? "auth/reset-password" : "restablecer-contrasena";
+
+  const resetUrl = `${baseUrl}/${resetPath}?token=${resetPasswordToken}`;
+
+  try {
+    await sendMjmlEmail(
+      strapi,
+      "reset-password",
+      user.email,
+      "Restablece tu contraseña",
+      { name: user.firstname || user.username || user.email, resetUrl }
+    );
+  } catch (_) {
+    // Non-fatal: token is saved; user can request again
+  }
+
+  ctx.send({ ok: true });
+};
