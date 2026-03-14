@@ -25,11 +25,11 @@
             v-html="featuredAdReservationsText"
           />
         </div>
-        <div class="account--main__announcements__pack">
-          <div class="account--main__announcements__pack__info">
-            <strong>Ahorra desde un 27% y obten tu perfil de vendedor</strong>
-            comprando un pack de anuncios.
-          </div>
+        <div v-if="packSavingsText" class="account--main__announcements__pack">
+          <div
+            class="account--main__announcements__pack__info"
+            v-html="packSavingsText"
+          />
         </div>
       </div>
       <nuxt-link to="/packs" class="btn btn--buy" title="Comprar">
@@ -79,7 +79,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 import {
   Megaphone as IconMegaphone,
   Package as IconPackage,
@@ -92,14 +92,22 @@ import { useSanitize } from "@/composables/useSanitize";
 
 // Usar la función del composable
 const { getAdReservationsText, getFeaturedAdReservationsText } = useUser();
+const { getPackBannerText } = usePacks();
 const user = useStrapiUser<User>();
 const { sanitizeText } = useSanitize();
+const { packs, loadPacks } = usePacksList();
 
-// Computed property para el texto de reservas
+onMounted(() => loadPacks());
+
 const adReservationsText = computed(() =>
   sanitizeText(getAdReservationsText()),
 );
 const featuredAdReservationsText = computed(() =>
   sanitizeText(getFeaturedAdReservationsText()),
+);
+const packSavingsText = computed(() =>
+  sanitizeText(
+    getPackBannerText(packs.value as import("@/types/pack").Pack[]) ?? "",
+  ),
 );
 </script>

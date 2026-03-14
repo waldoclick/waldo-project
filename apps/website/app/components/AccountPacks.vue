@@ -3,8 +3,7 @@
     <section class="account account--packs">
       <div class="account--packs__title">Comprar Packs</div>
       <div class="account--packs__subtitle">
-        Ahorra desde un 40% y obten tu perfil de vendedor comprando uno de estos
-        packs.
+        Compra un pack y publica más anuncios pagando menos por cada uno.
       </div>
 
       <div class="account--packs__list">

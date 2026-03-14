@@ -1,13 +1,10 @@
 export interface Pack {
   id: number;
   name: string;
-  description: string;
   price: number;
-  duration: number; // en días
-  features: string[];
   total_ads: number;
   total_days: number;
-  text: string | null;
+  total_features?: number;
   createdAt: string;
   updatedAt: string;
   publishedAt: string;

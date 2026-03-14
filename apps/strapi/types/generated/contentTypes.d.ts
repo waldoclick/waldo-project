@@ -482,7 +482,6 @@ export interface ApiAdPackAdPack extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
-    description: Schema.Attribute.Text;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       "oneToMany",
@@ -492,7 +491,6 @@ export interface ApiAdPackAdPack extends Struct.CollectionTypeSchema {
     name: Schema.Attribute.String;
     price: Schema.Attribute.BigInteger;
     publishedAt: Schema.Attribute.DateTime;
-    text: Schema.Attribute.String;
     total_ads: Schema.Attribute.BigInteger;
     total_days: Schema.Attribute.BigInteger;
     total_features: Schema.Attribute.BigInteger;
