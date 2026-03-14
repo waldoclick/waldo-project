@@ -23,12 +23,18 @@
                 class="auth__form__help__link"
                 @click="handleResend"
               >
-                <span v-if="resendCooldown > 0">
-                  Reenviar en {{ resendCooldown }}s
-                </span>
+                <span v-if="resendCooldown > 0"
+                  >Reenviar en {{ resendCooldown }}s</span
+                >
                 <span v-else-if="resending">Reenviando...</span>
                 <span v-else>Haz clic aquí para reenviarlo</span>
               </button>
+            </p>
+            <p>
+              ¿Necesitas acceso? Contacta a un administrador en
+              <a href="mailto:contacto@waldo.click" title="Contactar soporte">
+                contacto@waldo.click
+              </a>
             </p>
           </div>
         </div>
@@ -46,12 +52,12 @@ definePageMeta({
   layout: "auth",
 });
 
-const title = "Verifica tu identidad en waldo.click®";
-const subtitle = "Con la verificación en dos pasos podrás:";
+const title = "Panel de administración de waldo.click®";
+const subtitle = "Esta es una zona de acceso restringido.";
 const list = [
-  "Proteger tu cuenta con un código de un solo uso.",
-  "Asegurarte de que solo tú puedes acceder.",
-  "Confirmar tu identidad de forma rápida y segura.",
+  "El acceso está habilitado exclusivamente para administradores autorizados.",
+  "Si necesitas acceder y no tienes credenciales, contacta a un administrador.",
+  "¿Problemas para ingresar? Escríbenos a contacto@waldo.click",
 ];
 
 const formRef = ref<InstanceType<typeof FormVerifyCode> | null>(null);
