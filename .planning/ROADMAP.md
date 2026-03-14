@@ -51,7 +51,11 @@ Plans:
   2. GA4 Realtime shows a `view_item` event with `item_id`, `item_name`, `price`, and `item_category` when a user opens an ad detail page
   3. GA4 Realtime shows a `search` event with `search_term` populated when a user submits a keyword search or selects a commune filter on `/anuncios`
   4. Navigating between multiple ads generates distinct `view_item` events (one per ad) in GA4 Realtime
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 084-01-PLAN.md — Add viewItemListPublic, viewItem, search to useAdAnalytics.ts + tests (TDD)
+- [ ] 084-02-PLAN.md — Wire view_item_list, search (index.vue) and view_item (slug.vue) + human verify
 
 ### Phase 085: Contact, Auth & Blog Events
 **Goal**: User lifecycle and engagement actions — contacting a seller, registering, logging in, and reading articles — all produce GA4 events
