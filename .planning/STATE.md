@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.38
 milestone_name: GA4 Analytics Audit & Implementation
 status: planning
-last_updated: "2026-03-14T15:17:15.211Z"
-last_activity: 2026-03-14 — Completed 083-02 (ECOM-03 fixed)
+last_updated: "2026-03-14T15:44:12.105Z"
+last_activity: 2026-03-14 — Completed 084-01 (DISC-01, DISC-02, DISC-03: viewItemListPublic, viewItem, search added via TDD)
 progress:
   total_phases: 3
   completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
-  percent: 100
+  total_plans: 4
+  completed_plans: 3
+  percent: 98
 ---
 
 # Session State
@@ -25,28 +25,30 @@ See: .planning/PROJECT.md (updated 2026-03-14 after v1.38 milestone started)
 ## Position
 
 **Current Milestone:** v1.38 — GA4 Analytics Audit & Implementation
-**Status:** Ready to plan
-Phase: 083
-Plan: 02 complete → Phase 084 next
+**Status:** In Progress
+Phase: 084
+Plan: 01 complete → 084-02 next
 
 ```
-Progress: [██████████] 100% (41/41 plans across project)
+Progress: [██████████] 98% (42/43 plans across project)
 ```
 
-Last activity: 2026-03-14 — Completed 083-02 (ECOM-03 fixed)
+Last activity: 2026-03-14 — Completed 084-01 (DISC-01, DISC-02, DISC-03: viewItemListPublic, viewItem, search via TDD)
 
 ## Phase Map
 
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
 | 083 | Ecommerce Bug Fixes | ECOM-01, ECOM-02, ECOM-03 | Complete (2/2 plans done) |
-| 084 | Ad Discovery Tracking | DISC-01, DISC-02, DISC-03 | Not started |
+| 084 | Ad Discovery Tracking | DISC-01, DISC-02, DISC-03 | In Progress (1/? plans done) |
 | 085 | Contact, Auth & Blog Events | CONT-01, CONT-02, AUTH-01, AUTH-02, BLOG-01 | Not started |
 
 ## Accumulated Context
 
 ### Key Decisions (carry forward)
 
+- Inline shape type for ad params in useAdAnalytics (not importing Ad type) — keeps composable self-contained; category narrowed via typeof guard (DISC-01,02,03)
+- search() passes empty items array — no ecommerce block; GA4 search events are not ecommerce events (DISC-03)
 - Strapi biginteger defense: always wrap numeric fields from API responses with `Number()` before passing to GA4 (ECOM-01)
 - Use `||` (not `??`) for item_id fallback chains where empty string should trigger fallback (ECOM-02)
 - Free-ad purchase event uses `amount: 0` (not undefined) — enables GA4 funnel comparison between free and paid conversions (ECOM-03)
