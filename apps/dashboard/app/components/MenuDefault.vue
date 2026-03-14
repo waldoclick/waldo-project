@@ -359,6 +359,8 @@ import {
   Newspaper,
 } from "lucide-vue-next";
 
+const emit = defineEmits<{ (e: "close"): void }>();
+
 const route = useRoute();
 const openMenu = ref<string | null>(null);
 
@@ -411,6 +413,8 @@ watch(
     } else {
       openMenu.value = null;
     }
+    // Close sidebar on navigation (no-op on desktop — CSS hides the toggle)
+    emit("close");
   },
   { immediate: true },
 );
