@@ -33,7 +33,7 @@ See: .planning/PROJECT.md (updated 2026-03-13 after v1.36 milestone started)
 Progress: [██████████] 97%
 ```
 
-Last activity: 2026-03-13 — Completed quick task 32: Restrict verify code input to digits only, max 6, auto-submit on 6th
+Last activity: 2026-03-13 — Completed quick task 33: Fix registration broken by confirm_password check in registerUserLocal
 
 ## Accumulated Context
 
@@ -73,3 +73,4 @@ None.
 | 30 | Fix Strapi Handler not found auth.verifyCode startup error | 2026-03-13 | afb78d6 | [30-fix-strapi-handler-not-found-auth-verify](.planning/quick/30-fix-strapi-handler-not-found-auth-verify/) |
 | 31 | Add /auth/verify-code to guard.global.ts publicRoutes | 2026-03-13 | ebf9324 | [31-add-auth-verify-code-to-public-routes](.planning/quick/31-add-auth-verify-code-to-public-routes/) |
 | 32 | Restrict verify code input to digits only, max 6, auto-submit on 6th | 2026-03-13 | 2f663d6 | [32-restrict-verify-code-input-digits-only](.planning/quick/32-restrict-verify-code-input-digits-only/) |
+| 33 | Fix registration broken by confirm_password check in registerUserLocal | 2026-03-13 | 3b2262e | [33-fix-register-confirm-password-check](.planning/quick/33-fix-register-confirm-password-check/) |
