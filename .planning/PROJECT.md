@@ -339,11 +339,22 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
          | `useStrapiClient()` direct POST for 2-step login (bypassing `useStrapiAuth().login()`) | SDK `login()` expects a JWT in the response; backend now returns `{ pendingToken, email }` — direct client call is required — v1.36 | ✓ Good |
          | `FormVerifyCode.vue` component extracted (not inline in page) | Follows existing auth page pattern (`FormLogin.vue`); page stays clean; resend button placed in `auth__form__help` section of page — v1.36 | ✓ Good |
          | `onMounted` guard (not guest middleware) on verify-code page | JWT not set yet when page mounts; guest middleware would not apply; `pendingToken` emptiness is the correct guard signal — v1.36 | ✓ Good |
+## Current Milestone: v1.37 Email Authentication Flows
+
+**Goal:** Replace Strapi's built-in plain-text auth emails with branded MJML templates, enforce email verification on form registration (not OAuth), and make the password reset link context-aware (website vs. dashboard).
+
+**Target features:**
+- MJML email template for account registration (welcome + confirm email link)
+- MJML email template for password reset
+- Email confirmation required on form registration (Strapi `email_confirmation: true`); redirect to confirmation page after signup
+- OAuth registration (Google) bypasses email verification
+- Password reset link includes source context (`?app=dashboard` or `?app=website`); Strapi sends link pointing to correct app's reset page
+
 ## Current State
 
 **Last shipped:** v1.36 (2026-03-14) — Two-Step Login Verification: email/password logins now require a 6-digit code before JWT is issued; Google OAuth unaffected
-**Current milestone:** Planning next milestone
-**Current focus:** Planning next milestone
+**Current milestone:** v1.37 — Email Authentication Flows
+**Current focus:** Email confirmation on registration + MJML auth emails + password reset context routing
 
 **2-Step Login (since v1.36):** `verification-code` content type (5 fields, `draftAndPublish: false`); `overrideAuthLocal` wraps `auth.callback` — intercepts `POST /api/auth/local` on credential success to generate code, store record, send `verification-code.mjml` email, return `{ pendingToken, email }` with no JWT; `GET /auth/:provider/callback` (OAuth) bypassed via `ctx.method === "GET"` guard; `POST /api/auth/verify-code` (15-min expiry, max 3 attempts, single-use — issues JWT on success); `POST /api/auth/resend-code` (60s rate limit); daily cleanup cron at 4 AM; dashboard `/auth/verify-code` with `FormVerifyCode.vue` (6-digit input, auto-submit at 6, 60s countdown, `setToken(jwt)` + `fetchUser()`, manager role check, Swal errors); website `/login/verificar` with same `FormVerifyCode.vue` pattern.
 
@@ -372,4 +383,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
 ---
-*Last updated: 2026-03-14 after v1.36 milestone*
+*Last updated: 2026-03-14 after v1.36 milestone — v1.37 started 2026-03-14*

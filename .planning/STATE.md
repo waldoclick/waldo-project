@@ -1,11 +1,11 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.37
-milestone_name: TBD
+milestone_name: Email Authentication Flows
 current_phase: null
-status: between_milestones
+status: defining_requirements
 last_updated: "2026-03-14"
-last_activity: "2026-03-14 — Completed quick task 35: Forward is_invoice to Strapi checkout payload in CheckoutDefault.vue"
+last_activity: "2026-03-14 — Milestone v1.37 started"
 progress:
   total_phases: 0
   completed_phases: 0
@@ -21,19 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-14 after v1.36 milestone)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Planning next milestone (v1.37)
+**Current focus:** Defining requirements for v1.37
 
 ## Position
 
-**Milestone:** v1.36 — Two-Step Login Verification — SHIPPED 2026-03-14
-**Current Phase:** Between milestones
-**Status:** Ready to plan v1.37
-
-```
-Progress: v1.36 SHIPPED ✓
-```
-
-Last activity: 2026-03-14 — Closed v1.36 Two-Step Login Verification milestone
+**Milestone:** v1.37 — Email Authentication Flows
+**Current Phase:** Not started (defining requirements)
+**Status:** Defining requirements
+Last activity: 2026-03-14 — Milestone v1.37 started
 
 ## Accumulated Context
 
@@ -49,20 +44,16 @@ Last activity: 2026-03-14 — Closed v1.36 Two-Step Login Verification milestone
 - `pendingToken` carried in transient state (not URL) between login → verify pages in both frontend apps
 - Swal for user-facing errors (code expired, max attempts reached) in both apps
 - AGENTS.md BEM convention applies to all new SCSS components
-- `plugin.controllers.auth.callback` is the Strapi v5 hook for `POST /api/auth/local` (not `auth.local`)
-- Existing pending verification-code record for same userId is deleted before creating a new one on re-login
+- `plugin.controllers.auth` is a factory function in Strapi v5 — overrides must wrap the factory, not set properties on it
+- `overrideAuthLocal` guards `ctx.method === "GET"` to skip 2-step for OAuth callbacks
 - `resendCode` cooldown uses `record.updatedAt` timestamp for the 60-second rate-limit window
-- `verificationCodeCleanupCron` scheduled `0 4 * * *` (daily 4 AM Santiago) — same hour as cleanupCron (Sundays-only), no real conflict since they operate on different collections
-- `deleteMany` used for bulk deletion of expired verification-code records (single DB round-trip)
-- Dashboard FormLogin.vue: `Record<string, unknown>` used for vee-validate SubmissionHandler values parameter (satisfies GenericObject constraint); property access uses `as string` casts
-- FormVerifyCode.vue extracted as component (instead of inline in page) — follows FormLogin.vue/login.vue split pattern; page delegates via ref
-- Resend button in auth__form__help section of the page (not inside form component) — matches existing auth page UX pattern
-- JWT finalization: setToken(jwt) → fetchUser() → useStrapiUser() role check → clearReferer() → router.push('/') — same post-login sequence as pre-2-step
+- Dashboard FormLogin.vue: `Record<string, unknown>` used for vee-validate SubmissionHandler values parameter
 
 ### Known Carry-forward
 
 - VSTEP-13 to VSTEP-16 (website verify flow) — code exists in `FormLogin.vue` + `/login/verificar` + `FormVerifyCode.vue`, but phase 079 was not formally planned/executed. Consider including in v1.37 scope.
 - `auth.callback` dual-path behavior (email/password + OAuth) documented — future auth overrides must guard on `ctx.method`
+- Password reset currently sends Strapi's built-in plain-text email; reset link always points to website — both issues addressed in v1.37
 
 ### Blockers/Concerns
 
