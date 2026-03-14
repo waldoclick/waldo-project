@@ -4,14 +4,14 @@ milestone: v1.37
 milestone_name: Email Authentication Flows
 current_phase: 081
 status: planning
-last_updated: "2026-03-14T02:58:25.027Z"
-last_activity: "2026-03-14 — 080-01 SUMMARY created: overrideForgotPassword TDD (RED+GREEN) + phase 080 complete"
+last_updated: "2026-03-14T03:23:06.296Z"
+last_activity: "2026-03-14 — 081-02 SUMMARY created: FormLogin inline resend confirmation (REGV-05) GREEN — both apps"
 progress:
   total_phases: 4
   completed_phases: 2
-  total_plans: 3
-  completed_plans: 3
-  percent: 100
+  total_plans: 5
+  completed_plans: 4
+  percent: 97
 ---
 
 # Session State
@@ -27,10 +27,10 @@ See: .planning/PROJECT.md (updated 2026-03-14 after v1.36 milestone)
 
 **Milestone:** v1.37 — Email Authentication Flows
 **Current Phase:** 081
-**Status:** Ready to plan
-**Progress:** [██████████] 100%
+**Status:** In Progress (081-02 complete, 081-03 pending)
+**Progress:** [██████████] 97%
 
-Last activity: 2026-03-14 — 080-01 SUMMARY created: overrideForgotPassword TDD (RED+GREEN) + phase 080 complete
+Last activity: 2026-03-14 — 081-02 complete: FormLogin inline resend section (REGV-05) — website + dashboard
 
 ## Accumulated Context
 
@@ -63,7 +63,10 @@ Last activity: 2026-03-14 — 080-01 SUMMARY created: overrideForgotPassword TDD
 - Frontend (Phase 081) must be deployed and verified BEFORE backend toggle (Phase 082) — reversed order causes broken persistent auth state
 - `email_confirmation_redirection` in Strapi Admin Panel set to `${FRONTEND_URL}/login`
 - `reset-password.mjml` uses `mj-button` (not plain text link) for CTA — better mobile click target on email clients; no hardcoded expiry (Strapi has no automatic TTL for resetPasswordToken)
-- `as any` cast required on dashboard `FormForgotPassword.vue` forgotPassword call — `context` not in @nuxtjs/strapi v2 type signature
+    - `as any` cast required on dashboard `FormForgotPassword.vue` forgotPassword call — `context` not in @nuxtjs/strapi v2 type signature
+    - Vue 3 `<script setup>` closes internal scope — Vitest assertions must target DOM (v-if rendered elements), not `wrapper.vm` refs
+    - `vi.mock('#app')` must be called before component import for Nuxt virtual module resolution in Vitest
+    - `global.useSweetAlert2 = vi.fn()` for Nuxt auto-imported composables (not interceptable via vi.mock module path)
 
 ### Phase Sequencing Rationale
 
