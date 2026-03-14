@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.37
 milestone_name: Email Authentication Flows
 current_phase: 081
-status: planning
-last_updated: "2026-03-14T03:23:06.296Z"
-last_activity: "2026-03-14 — 081-02 SUMMARY created: FormLogin inline resend confirmation (REGV-05) GREEN — both apps"
+status: executing
+last_updated: "2026-03-14T03:24:13.258Z"
+last_activity: "2026-03-14 — 081-01 SUMMARY created: FormRegister useStrapiClient + /registro/confirmar page (TDD RED+GREEN) — REGV-03 REGV-04"
 progress:
   total_phases: 4
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 5
-  completed_plans: 4
-  percent: 97
+  completed_plans: 5
+  percent: 100
 ---
 
 # Session State
@@ -28,9 +28,9 @@ See: .planning/PROJECT.md (updated 2026-03-14 after v1.36 milestone)
 **Milestone:** v1.37 — Email Authentication Flows
 **Current Phase:** 081
 **Status:** In Progress (081-02 complete, 081-03 pending)
-**Progress:** [██████████] 97%
+**Progress:** [██████████] 100%
 
-Last activity: 2026-03-14 — 081-02 complete: FormLogin inline resend section (REGV-05) — website + dashboard
+Last activity: 2026-03-14 — 081-01 SUMMARY created: FormRegister useStrapiClient + /registro/confirmar page (TDD RED+GREEN) — REGV-03 REGV-04
 
 ## Accumulated Context
 
@@ -67,6 +67,10 @@ Last activity: 2026-03-14 — 081-02 complete: FormLogin inline resend section (
     - Vue 3 `<script setup>` closes internal scope — Vitest assertions must target DOM (v-if rendered elements), not `wrapper.vm` refs
     - `vi.mock('#app')` must be called before component import for Nuxt virtual module resolution in Vitest
     - `global.useSweetAlert2 = vi.fn()` for Nuxt auto-imported composables (not interceptable via vi.mock module path)
+    - `vi.mock('vue-router')` required for `useRouter` in component tests — inject-based, not global scope
+    - `useStrapiClient()` response cast as `{ jwt?: string; user?: ... }` — returns `unknown`, TypeScript strict requires explicit cast
+    - `/registro/confirmar` page has NO middleware — must be accessible without auth state (post-registration, pre-confirmation)
+    - `useState('registrationEmail')` used as cross-page shared state from FormRegister → /registro/confirmar
 
 ### Phase Sequencing Rationale
 
