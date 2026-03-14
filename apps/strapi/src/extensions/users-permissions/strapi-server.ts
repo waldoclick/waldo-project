@@ -7,6 +7,7 @@ import {
   registerUserAuth,
   overrideAuthLocal,
   overrideForgotPassword,
+  overrideSendEmailConfirmation,
 } from "./controllers/authController";
 
 export default function (plugin) {
@@ -47,6 +48,8 @@ export default function (plugin) {
     instance.callback = overrideAuthLocal(instance.callback.bind(instance));
     // Password reset: full replacement with MJML email and context-aware URL
     instance.forgotPassword = overrideForgotPassword();
+    // Email confirmation resend: full replacement with MJML branded template
+    instance.sendEmailConfirmation = overrideSendEmailConfirmation();
     return instance;
   };
 
