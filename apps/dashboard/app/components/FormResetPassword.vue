@@ -112,6 +112,7 @@ const onSubmit = async (values: any) => {
       code: values.code as string,
       password: values.password as string,
       passwordConfirmation: values.password as string,
+      recaptchaToken: token,
     });
 
     Swal.fire("Éxito", "Contraseña restablecida con éxito.", "success");
