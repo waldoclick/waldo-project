@@ -186,6 +186,6 @@ Plans:
 | 077   | v1.36     | 4/4            | Complete    | 2026-03-13 |
 | 078   | v1.36     | 2/2            | Complete    | 2026-03-14 |
 | 079   | 1/1 | Complete    | 2026-03-14 | -          |
-| 080   | v1.37     | 0/?            | Not started | -          |
+| 080   | 1/2 | In Progress|  | -          |
 | 081   | v1.37     | 0/?            | Not started | -          |
 | 082   | v1.37     | 0/?            | Not started | -          |

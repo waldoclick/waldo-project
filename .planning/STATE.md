@@ -4,14 +4,14 @@ milestone: v1.37
 milestone_name: Email Authentication Flows
 current_phase: 080
 status: planning
-last_updated: "2026-03-14T02:22:18.176Z"
-last_activity: "2026-03-14 — Roadmap created: 4 phases (079–082), 10/10 requirements mapped"
+last_updated: "2026-03-14T02:44:07.600Z"
+last_activity: "2026-03-14 — 080-02 complete: reset-password.mjml + context routing in both FormForgotPassword.vue"
 progress:
   total_phases: 4
   completed_phases: 1
-  total_plans: 1
-  completed_plans: 1
-  percent: 100
+  total_plans: 3
+  completed_plans: 2
+  percent: 97
 ---
 
 # Session State
@@ -27,10 +27,10 @@ See: .planning/PROJECT.md (updated 2026-03-14 after v1.36 milestone)
 
 **Milestone:** v1.37 — Email Authentication Flows
 **Current Phase:** 080
-**Status:** Ready to plan
-**Progress:** [██████████] 100%
+**Status:** In Progress (080-01 remaining)
+**Progress:** [██████████] 97%
 
-Last activity: 2026-03-14 — Roadmap created: 4 phases (079–082), 10/10 requirements mapped
+Last activity: 2026-03-14 — 080-02 complete: reset-password.mjml + context routing in both FormForgotPassword.vue
 
 ## Accumulated Context
 
@@ -62,6 +62,8 @@ Last activity: 2026-03-14 — Roadmap created: 4 phases (079–082), 10/10 requi
 - DB migration `UPDATE "up_users" SET confirmed = TRUE WHERE confirmed = FALSE OR confirmed IS NULL` is a hard gate before enabling `email_confirmation` toggle
 - Frontend (Phase 081) must be deployed and verified BEFORE backend toggle (Phase 082) — reversed order causes broken persistent auth state
 - `email_confirmation_redirection` in Strapi Admin Panel set to `${FRONTEND_URL}/login`
+- `reset-password.mjml` uses `mj-button` (not plain text link) for CTA — better mobile click target on email clients; no hardcoded expiry (Strapi has no automatic TTL for resetPasswordToken)
+- `as any` cast required on dashboard `FormForgotPassword.vue` forgotPassword call — `context` not in @nuxtjs/strapi v2 type signature
 
 ### Phase Sequencing Rationale
 
