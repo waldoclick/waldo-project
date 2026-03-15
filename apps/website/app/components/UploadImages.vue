@@ -68,6 +68,7 @@ import { useAdStore } from "@/stores/ad.store";
 import { useRuntimeConfig } from "#app";
 import { useToast } from "../composables/useNotifications";
 import { useImageProxy } from "@/composables/useImage";
+import { useApiClient } from "#imports";
 import {
   X as IconX,
   PlusCircle as IconPlusCircle,
@@ -79,6 +80,7 @@ const adStore = useAdStore();
 const token = useStrapiToken();
 const toast = useToast();
 const { transformUrl, uploadFile } = useImageProxy();
+const apiClient = useApiClient();
 
 const form = ref({
   file: undefined,
@@ -198,6 +200,7 @@ const removeImage = async (image) => {
   document.body.style.cursor = "wait";
 
   try {
+    await apiClient(`/api/ads/upload/${image.id}`, { method: "DELETE" });
     adStore.removeFromGallery(image);
     toast.success("¡Listo! La imagen fue eliminada");
   } catch {
