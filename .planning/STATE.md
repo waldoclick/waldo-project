@@ -4,7 +4,7 @@ milestone: v1.38
 milestone_name: GA4 Analytics Audit & Implementation
 status: completed
 last_updated: "2026-03-15T15:19:55.707Z"
-last_activity: 2026-03-15 — Completed 090-06-PLAN.md (Tasks 1-2; Task 3 human-verify pending)
+last_activity: 2026-03-15 — Completed 090-06-PLAN.md (all tasks + browser smoke test approved)
 progress:
   total_phases: 5
   completed_phases: 5
@@ -98,6 +98,8 @@ Last activity: 2026-03-15 — Completed 090-05-PLAN.md
 - anunciar/gracias.vue findOne response accessed via response.data (not { data: ad } destructure) — useApiClient returns raw body (090-05)
 - index.vue and packs/index.vue were migrated in plan 090-03 alongside stores — plan 090-05 recognized them as already done (090-05)
 - FormProfile.vue useStrapi() was truly dead code — no calls, purely subtractive removal (090-05)
+- Store methods returning collection responses must declare explicit return types when callers access .data/.meta — TypeScript infers {} from raw client() result (090-06)
+- Browser smoke test approved: all key pages load correctly with zero console errors after full migration (090-06)
 
 ### v1.38 Key Facts (GA4 analytics)
 

@@ -11,7 +11,7 @@ requires:
 provides:
   - "grep gate confirms zero strapi.find/findOne calls across stores, composables, pages, components"
   - "nuxt typecheck exits 0 — zero TypeScript errors after full migration"
-  - "Human smoke test checkpoint pending verification"
+  - "Browser smoke test approved — all key pages load correctly end-to-end"
 affects:
   - "v1.39 milestone closure"
 
@@ -54,14 +54,14 @@ completed: 2026-03-15
 - **Duration:** ~2 min
 - **Started:** 2026-03-15T15:17:37Z
 - **Completed:** 2026-03-15T15:19:14Z
-- **Tasks:** 2 of 3 completed (Task 3 awaiting human smoke test)
+- **Tasks:** 3 of 3 completed
 - **Files modified:** 1
 
 ## Accomplishments
 - `grep -rn "strapi\.find\|strapi\.findOne"` across all stores, composables, pages, and components → exit 1 (zero matches)
 - `grep -rn "useStrapi()"` in data-fetch paths → exit 1 (zero matches)
 - `nuxt typecheck` exits 0 after fixing TS2339 errors in `loadUserAds`/`loadUserOrders` return types
-- Task 3 (browser smoke test) checkpoint staged — awaiting human verification
+- Browser smoke test approved — home, packs, anuncios, cuenta, mis-anuncios, mis-ordenes all load correctly with zero console errors
 
 ## Task Commits
 
@@ -69,8 +69,9 @@ Each task was committed atomically:
 
 1. **Task 1: grep gate** - `84d5da7` (chore — validation-only, empty commit)
 2. **Task 2: typecheck** - `9c59dfd` (fix — user.store.ts return type annotations)
+3. **Task 3: browser smoke test** - approved by user (no code changes required)
 
-_Task 3 (human-verify checkpoint) pending human approval_
+**Plan metadata:** `d5db075` (docs: complete final validation gate plan)
 
 ## Files Created/Modified
 - `apps/website/app/stores/user.store.ts` — Added explicit return types to `loadUserAds` and `loadUserOrders`
@@ -101,10 +102,19 @@ None beyond the auto-fixed type errors above.
 ## User Setup Required
 None - no external service configuration required.
 
+## Self-Check: PASSED
+
+- `FOUND: .planning/phases/090-migrate-all-get-callers/090-06-SUMMARY.md`
+- `FOUND: 84d5da7` (chore grep gate)
+- `FOUND: 9c59dfd` (fix typecheck)
+- `FOUND: d5db075` (docs metadata)
+
 ## Next Phase Readiness
-- Awaiting Task 3: human browser smoke test (checkpoint:human-verify)
-- Once approved: v1.39 milestone is complete — all API-01 through API-06 requirements satisfied
-- No blockers — typecheck clean, zero legacy strapi calls
+- v1.39 milestone complete — all API-01 through API-06 requirements satisfied
+- Zero legacy `strapi.find`/`findOne` calls remain in website
+- TypeScript typecheck passes clean
+- Browser smoke test approved end-to-end
+- No blockers
 
 ---
 *Phase: 090-migrate-all-get-callers*
