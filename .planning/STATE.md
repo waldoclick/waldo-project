@@ -6,7 +6,7 @@ status: planning
 last_updated: "2026-03-15T06:00:00Z"
 last_activity: "2026-03-15 — Milestone v1.39 started"
 progress:
-  total_phases: 0
+  total_phases: 2
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -20,26 +20,27 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-14 after v1.38 milestone started)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.38 — GA4 Analytics Audit & Implementation (Phase 083 in progress)
+**Current focus:** v1.39 — Unified API Client (roadmap created, Phase 089 next)
 
 ## Position
 
 **Current Milestone:** v1.39 — Unified API Client
-**Status:** Defining requirements
-Phase: Not started
+**Status:** Roadmap created — ready to plan Phase 089
+Phase: 089 (not started)
 Plan: —
 
 ```
 Progress: [░░░░░░░░░░] 0%
 ```
 
-Last activity: 2026-03-15 — Milestone v1.39 started
+Last activity: 2026-03-15 — Roadmap created for v1.39
 
 ## Phase Map
 
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
-| TBD | TBD | TBD | Pending |
+| 089 | GET Support in useApiClient | API-05 | Not started |
+| 090 | Migrate All GET Callers | API-01, API-02, API-03, API-04, API-06 | Not started |
 
 ## Accumulated Context
 
