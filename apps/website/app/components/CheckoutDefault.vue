@@ -15,7 +15,7 @@ import { useAdAnalytics } from "@/composables/useAdAnalytics";
 import { usePacksList } from "@/composables/usePacksList";
 
 const { Swal } = useSweetAlert2();
-const { create } = useStrapi();
+const apiClient = useApiClient();
 
 const adStore = useAdStore();
 const adAnalytics = useAdAnalytics();
@@ -55,17 +55,20 @@ const handlePayClick = async () => {
       packValue = selectedPack.name;
     }
 
-    const response = await create<{ url: string; token: string }>(
-      "payments/checkout",
+    const response = await apiClient<{ url: string; token: string }>(
+      "/api/payments/checkout",
       {
-        pack: packValue,
-        ad_id: adStore.ad.ad_id,
-        featured: adStore.featured,
-        is_invoice: adStore.is_invoice,
-      } as unknown as Parameters<typeof create>[1],
+        method: "POST",
+        body: {
+          pack: packValue,
+          ad_id: adStore.ad.ad_id,
+          featured: adStore.featured,
+          is_invoice: adStore.is_invoice,
+        },
+      },
     );
 
-    const { url, token } = response.data ?? {};
+    const { url, token } = response;
 
     if (!url || !token) {
       throw new Error("Invalid payment response");
