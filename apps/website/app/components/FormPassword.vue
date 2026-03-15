@@ -100,7 +100,7 @@ const handleSubmit = async (values: any) => {
 
   try {
     // Execute reCAPTCHA v3
-    const token = await $recaptcha.execute("submit");
+    const token = await $recaptcha!.execute("submit");
 
     const data = {
       currentPassword: values.current_password,
