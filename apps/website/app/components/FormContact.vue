@@ -96,14 +96,13 @@ import { useForm, Field, ErrorMessage } from "vee-validate";
 import { useRouter } from "vue-router";
 import * as yup from "yup";
 const { Swal } = useSweetAlert2();
-import { useNuxtApp, useStrapiUser } from "#imports";
+import { useStrapiUser } from "#imports";
 import { useAppStore } from "@/stores/app.store";
 import type { User } from "~/types/user";
 
 // Inicializa el router y strapi
-const { $recaptcha } = useNuxtApp();
 const router = useRouter();
-const client = useStrapiClient();
+const apiClient = useApiClient();
 const appStore = useAppStore();
 const user = useStrapiUser<User>();
 
@@ -194,11 +193,10 @@ const handleTextArea = (e: Event) => {
 };
 
 // Handle Strapi submission
-const submitToStrapi = async (values: any, token: string) => {
+const submitToStrapi = async (values: any) => {
   try {
-    await client("/contacts", {
+    await apiClient("/contacts", {
       method: "POST",
-      headers: { "X-Recaptcha-Token": token },
       body: {
         data: {
           fullname: values.name,
@@ -206,7 +204,6 @@ const submitToStrapi = async (values: any, token: string) => {
           company: values.company,
           phone: values.phone,
           message: values.message,
-          // recaptchaToken removed — now validated at proxy layer
         },
       },
     });
@@ -228,9 +225,7 @@ const submitToStrapi = async (values: any, token: string) => {
 const onSubmit = handleSubmit(async (values) => {
   sending.value = true;
   try {
-    // Execute reCAPTCHA v3
-    const token = await $recaptcha.execute("submit");
-    await submitToStrapi(values, token ?? "");
+    await submitToStrapi(values);
   } catch (error) {
     sending.value = false;
     console.error(error);
