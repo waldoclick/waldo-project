@@ -141,10 +141,11 @@ const handleSubmit = async (values) => {
     // Backend returns { pendingToken, email } — do NOT use useStrapiAuth().login()
     const response = await client("/auth/local", {
       method: "POST",
+      headers: { "X-Recaptcha-Token": token ?? "" },
       body: {
         identifier: values.email,
         password: values.password,
-        recaptchaToken: token,
+        // recaptchaToken removed — now sent as X-Recaptcha-Token header
       },
     });
 

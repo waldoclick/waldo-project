@@ -145,6 +145,24 @@ describe("FormLogin.vue — REGV-05 unconfirmed email resend section", () => {
     );
   });
 
+  // Test 5: client called with X-Recaptcha-Token header and NO recaptchaToken in body
+  it("sends X-Recaptcha-Token header and excludes recaptchaToken from body", async () => {
+    mockClient.mockResolvedValueOnce({ pendingToken: "tok" });
+
+    const wrapper = mountFormLogin();
+    await triggerSubmit(wrapper.vm, "user@example.com", "password123");
+
+    expect(mockClient).toHaveBeenCalledWith(
+      "/auth/local",
+      expect.objectContaining({
+        headers: { "X-Recaptcha-Token": "fake-recaptcha-token" },
+        body: expect.not.objectContaining({
+          recaptchaToken: expect.anything(),
+        }),
+      }),
+    );
+  });
+
   // Test 4: handleResendConfirmation calls POST /auth/send-email-confirmation
   it("calls POST /auth/send-email-confirmation with the unconfirmed email on resend", async () => {
     mockClient
