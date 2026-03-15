@@ -20,6 +20,6 @@
     "strapi:upgrade": "cd apps/strapi && NPM_REGISTRY_URL=https://registry.npmjs.org/ npx @strapi/upgrade latest"
   },
   "devDependencies": {
-    "turbo": "2.7.3"
+    "turbo": "^2.8.17"
   }
 }
