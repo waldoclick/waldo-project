@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.38
 milestone_name: GA4 Analytics Audit & Implementation
 status: planning
-last_updated: "2026-03-15T04:23:05Z"
-last_activity: "2026-03-15 — Completed 087-01 (useApiClient composable centralizes reCAPTCHA token injection, 5 components migrated)"
+last_updated: "2026-03-15T02:00:00Z"
+last_activity: "2026-03-15 — Completed 088-01 (all 15 mutation calls migrated to useApiClient, deactivateAd fixed to use documentId)"
 progress:
-  total_phases: 5
+  total_phases: 6
   completed_phases: 2
-  total_plans: 8
-  completed_plans: 7
-  percent: 88
+  total_plans: 9
+  completed_plans: 8
+  percent: 89
 ---
 
 # Session State
@@ -26,14 +26,14 @@ See: .planning/PROJECT.md (updated 2026-03-14 after v1.38 milestone started)
 
 **Current Milestone:** v1.38 — GA4 Analytics Audit & Implementation
 **Status:** In progress
-Phase: 087
+Phase: 088
 Plan: 01 complete
 
 ```
-Progress: [████████░░] 88% (7/8 plans across current milestone)
+Progress: [████████░░] 89% (8/9 plans across current milestone)
 ```
 
-Last activity: 2026-03-15 — Completed 087-01: useApiClient composable centralizes reCAPTCHA token injection (5 components migrated, 8 tests pass)
+Last activity: 2026-03-15 — Completed 088-01: All 15 mutation calls migrated to useApiClient (12 files, deactivateAd fixed to use documentId, 8 tests pass)
 
 ## Phase Map
 
@@ -44,6 +44,7 @@ Last activity: 2026-03-15 — Completed 087-01: useApiClient composable centrali
 | 085 | Contact, Auth & Blog Events | CONT-01, CONT-02, AUTH-01, AUTH-02, BLOG-01 | In Progress (1/2 plans done) |
 | 086 | reCAPTCHA Nitro Proxy | — | Complete (1/1 plans done) |
 | 087 | useApiClient reCAPTCHA Composable | — | Complete (1/1 plans done) |
+| 088 | Mutation Calls → useApiClient | — | Complete (1/1 plans done) |
 
 ## Accumulated Context
 
@@ -89,6 +90,11 @@ Last activity: 2026-03-15 — Completed 087-01: useApiClient composable centrali
 - useApiClient() must explicitly import from #imports (not rely on Nuxt auto-imports) for Vitest vi.mock() interception to work (087-01)
 - vi.hoisted() required for mock variables referenced in vi.mock() factory — prevents undefined at hoisting time (087-01)
 - $recaptcha is optional in plugins.d.ts (client-only plugin, undefined on SSR) — out-of-scope components needing direct access use ! non-null assertion (087-01)
+- All 15 mutation calls (POST/PUT/DELETE) in apps/website now flow through useApiClient — reCAPTCHA X-Recaptcha-Token header injected universally (088-01)
+- deactivateAd accepts documentId: string (not adId: number) — Strapi v5 write operations must use documentId (088-01)
+- Ad interface has documentId: string field — prerequisite for Strapi v5 write operations (088-01)
+- useApiClient returns raw body — no .data wrapper; strapi.create()/update() SDK wrappers do wrap; always remove .data accessor after migrating from SDK (088-01)
+- client = useApiClient() moved to store root level in user.store.ts — composable rules require setup-level instantiation (088-01)
 
 ### v1.38 Key Facts (GA4 analytics)
 
