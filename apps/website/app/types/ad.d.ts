@@ -36,6 +36,7 @@ export interface Announcement {
 
 export interface Ad {
   id: number;
+  documentId: string; // ADD — Strapi v5 document identifier used for write operations
   title: string;
   description: string;
   name: string;

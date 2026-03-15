@@ -339,7 +339,7 @@ import { useCommunesStore } from "@/stores/communes.store";
 import { useUserStore } from "@/stores/user.store";
 
 const sending = ref(false);
-const { $recaptcha } = useNuxtApp();
+
 const router = useRouter();
 
 const regionsStore = useRegionsStore();
@@ -659,13 +659,9 @@ const handleSubmit = async (values) => {
   sending.value = true;
 
   try {
-    // Execute reCAPTCHA v3
-    const recaptchaToken = await $recaptcha.execute("submit");
-
     const mappedValues = {
       ...values,
       phone: String(values.phone),
-      recaptchaToken,
     };
 
     // Usar la función del store para actualizar el perfil

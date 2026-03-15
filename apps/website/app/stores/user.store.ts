@@ -99,25 +99,14 @@ export const useUserStore = defineStore("user", () => {
     userData: Record<string, unknown>,
   ) => {
     try {
-      // Obtener el token JWT
-      const token = useCookie("waldo_jwt").value;
+      const client = useApiClient();
 
       // Verificar si los datos vienen envueltos en 'data' y extraerlos
       const dataToSend = userData.data ? userData.data : userData;
 
-      // Usar la URL correcta según el entorno
-      const apiUrl =
-        process.env.API_DISABLE_PROXY === "true"
-          ? config.public.apiUrl
-          : config.public.baseUrl;
-
-      const response = await $fetch(`${apiUrl}/api/users/${userId}`, {
+      const response = await client(`/users/${userId}`, {
         method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: dataToSend,
+        body: dataToSend as Record<string, unknown>,
       });
 
       return response;
