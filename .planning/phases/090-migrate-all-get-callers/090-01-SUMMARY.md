@@ -111,6 +111,16 @@ None - no external service configuration required.
 - Requirement API-01 satisfied
 - Pre-existing TypeScript errors (4) in mis-anuncios.vue and mis-ordenes.vue do not affect plan success criteria — no new errors introduced
 
+## Self-Check: PASSED
+
+- `apps/website/app/stores/filter.store.ts` — FOUND, zero strapi references
+- `apps/website/app/stores/regions.store.ts` — FOUND, zero strapi references
+- `apps/website/app/stores/communes.store.ts` — FOUND, zero strapi references
+- `apps/website/app/stores/conditions.store.ts` — FOUND, zero strapi references
+- `apps/website/app/stores/faqs.store.ts` — FOUND, zero strapi references
+- `.planning/phases/090-migrate-all-get-callers/090-01-SUMMARY.md` — FOUND
+- Commits `65d5135` (filter.store.ts), `f452aff` (regions/communes/conditions/faqs) — BOTH FOUND
+
 ---
 *Phase: 090-migrate-all-get-callers*
 *Completed: 2026-03-15*
