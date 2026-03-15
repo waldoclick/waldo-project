@@ -96,14 +96,14 @@ import { useForm, Field, ErrorMessage } from "vee-validate";
 import { useRouter } from "vue-router";
 import * as yup from "yup";
 const { Swal } = useSweetAlert2();
-import { useNuxtApp, useStrapiUser, useStrapi } from "#imports";
+import { useNuxtApp, useStrapiUser } from "#imports";
 import { useAppStore } from "@/stores/app.store";
 import type { User } from "~/types/user";
 
 // Inicializa el router y strapi
 const { $recaptcha } = useNuxtApp();
 const router = useRouter();
-const strapi = useStrapi();
+const client = useStrapiClient();
 const appStore = useAppStore();
 const user = useStrapiUser<User>();
 
@@ -196,16 +196,20 @@ const handleTextArea = (e: Event) => {
 // Handle Strapi submission
 const submitToStrapi = async (values: any, token: string) => {
   try {
-    const formData = {
-      fullname: values.name,
-      email: values.email,
-      company: values.company,
-      phone: values.phone,
-      message: values.message,
-      recaptchaToken: token,
-    };
-
-    await strapi.create("contacts", formData);
+    await client("/contacts", {
+      method: "POST",
+      headers: { "X-Recaptcha-Token": token },
+      body: {
+        data: {
+          fullname: values.name,
+          email: values.email,
+          company: values.company,
+          phone: values.phone,
+          message: values.message,
+          // recaptchaToken removed — now validated at proxy layer
+        },
+      },
+    });
     sending.value = false;
     appStore.setContactFormSent();
     router.push("/contacto/gracias");

@@ -48,7 +48,7 @@ const form = ref({
 });
 
 const loading = ref(false);
-const { forgotPassword } = useStrapiAuth();
+const client = useStrapiClient();
 const router = useRouter();
 const { $recaptcha } = useNuxtApp();
 
@@ -59,10 +59,10 @@ const onSubmit = async (values: any) => {
     // Execute reCAPTCHA v3
     const token = await $recaptcha.execute("submit");
 
-    await forgotPassword({
-      email: values.email,
-      recaptchaToken: token,
-      context: "website",
+    await client("/auth/forgot-password", {
+      method: "POST",
+      headers: { "X-Recaptcha-Token": token ?? "" },
+      body: { email: values.email, context: "website" },
     });
 
     Swal.fire(

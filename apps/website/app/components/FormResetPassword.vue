@@ -90,7 +90,7 @@ const form = ref({
 
 const loading = ref(false);
 const passwordType = ref("password");
-const { resetPassword } = useStrapiAuth();
+const client = useStrapiClient();
 const router = useRouter();
 
 const onSubmit = async (values: any) => {
@@ -100,11 +100,15 @@ const onSubmit = async (values: any) => {
     // Execute reCAPTCHA v3
     const token = await $recaptcha.execute("submit");
 
-    await resetPassword({
-      code: values.code,
-      password: values.password,
-      passwordConfirmation: values.password,
-      recaptchaToken: token,
+    await client("/auth/reset-password", {
+      method: "POST",
+      headers: { "X-Recaptcha-Token": token ?? "" },
+      body: {
+        code: values.code,
+        password: values.password,
+        passwordConfirmation: values.password,
+        // recaptchaToken removed — now sent as X-Recaptcha-Token header
+      },
     });
 
     Swal.fire("Éxito", "Contraseña restablecida con éxito.", "success");
