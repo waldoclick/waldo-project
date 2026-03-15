@@ -19,11 +19,10 @@
 </template>
 
 <script setup>
-import { useNuxtApp } from "#app";
 const { Swal } = useSweetAlert2();
 import { Crown } from "lucide-vue-next";
 
-const { create } = useStrapi();
+const apiClient = useApiClient();
 
 const handleProSubscription = async () => {
   const result = await Swal.fire({
@@ -40,14 +39,17 @@ const handleProSubscription = async () => {
   }
 
   try {
-    const { data } = await create("payments/pro", {});
+    const response = await apiClient("/api/payments/pro", {
+      method: "POST",
+      body: {},
+    });
 
     // Redirección GET a Flow con token en URL
-    if (data?.url && data?.token) {
-      const redirectUrl = `${data.url}?token=${data.token}`;
+    if (response?.url && response?.token) {
+      const redirectUrl = `${response.url}?token=${response.token}`;
       window.location.href = redirectUrl;
     } else {
-      console.error("Respuesta inválida de la API para Flow", data);
+      console.error("Respuesta inválida de la API para Flow", response);
       Swal.fire(
         "Error",
         "La respuesta de la API no contiene la información necesaria para el pago.",
