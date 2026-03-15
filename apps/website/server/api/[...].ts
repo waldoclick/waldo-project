@@ -1,4 +1,10 @@
+import {
+  verifyRecaptchaToken,
+  isRecaptchaProtectedRoute,
+} from "../utils/recaptcha";
+
 export default defineEventHandler(async (event) => {
+  const config = useRuntimeConfig(event);
   // Get the API URL from environment
   const apiUrl = process.env.API_URL || "http://localhost:1337";
 
@@ -6,7 +12,6 @@ export default defineEventHandler(async (event) => {
   const frontendUrl = process.env.BASE_URL || "http://localhost:3000";
 
   // Get the path after /api/
-  const path = getRouterParam(event, "api") || "";
   const fullPath = event.node.req.url?.replace("/api/", "") || "";
 
   // Exclude OAuth routes from proxy - these should go directly to Strapi
@@ -43,10 +48,20 @@ export default defineEventHandler(async (event) => {
     return sendRedirect(event, finalUrl, 302);
   }
 
+  // reCAPTCHA validation for protected routes
+  if (isRecaptchaProtectedRoute(fullPath, event.method ?? "")) {
+    const recaptchaToken = getHeader(event, "x-recaptcha-token");
+    await verifyRecaptchaToken(
+      recaptchaToken,
+      config.recaptchaSecretKey as string,
+    );
+    // Token is valid — proceed. X-Recaptcha-Token is NOT forwarded to Strapi.
+  }
+
   // Build the target URL for non-OAuth routes
   const targetUrl = `${apiUrl}/api/${fullPath}`;
 
-  // Get headers from the original request
+  // Forward only whitelisted headers — X-Recaptcha-Token is deliberately excluded
   const headers: Record<string, string> = {
     "Access-Control-Allow-Origin": process.env.BASE_URL || "*",
     "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
