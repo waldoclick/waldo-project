@@ -40,7 +40,7 @@ const { data: initData } = await useAsyncData(
       await Promise.all([
         meStore.loadMe(),
         categoriesStore.loadCategories(),
-        client("/api/ad-packs", {
+        client("ad-packs", {
           method: "GET",
           params: { populate: "*" } as unknown as Record<string, unknown>,
         }),

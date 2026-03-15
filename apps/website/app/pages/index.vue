@@ -50,7 +50,7 @@ const { data: packsData } = await useAsyncData<Pack[]>(
   "home-packs",
   async () => {
     try {
-      const response = (await client("/api/ad-packs", {
+      const response = (await client("ad-packs", {
         method: "GET",
         params: { populate: "*" } as unknown as Record<string, unknown>,
       })) as { data: Pack[] };

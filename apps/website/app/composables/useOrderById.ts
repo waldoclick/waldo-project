@@ -7,7 +7,7 @@ export async function useOrderById(documentId: string) {
   if (!documentId) {
     throw new Error("Missing documentId");
   }
-  const response = (await client(`/api/orders/${documentId}`, {
+  const response = (await client(`orders/${documentId}`, {
     method: "GET",
     params: { populate: "*" } as unknown as Record<string, unknown>,
   })) as { data: unknown };

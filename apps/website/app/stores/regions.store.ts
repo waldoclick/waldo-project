@@ -48,7 +48,7 @@ export const useRegionsStore = defineStore("regions", {
         this.error = null;
 
         const client = useApiClient();
-        const response = await client("/api/regions", {
+        const response = await client("regions", {
           method: "GET",
           params: {
             pagination: { page: 1, pageSize: 1000 },

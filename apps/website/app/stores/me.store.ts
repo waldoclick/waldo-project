@@ -9,7 +9,7 @@ export const useMeStore = defineStore("me", () => {
 
   const loadMe = async () => {
     try {
-      const response = await apiClient("/api/users/me", {
+      const response = await apiClient("users/me", {
         method: "GET",
         params: {
           populate: {

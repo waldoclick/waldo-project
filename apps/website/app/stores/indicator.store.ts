@@ -28,7 +28,7 @@ export const useIndicatorStore = defineStore(
       loading.value = true;
       error.value = null;
       try {
-        const response = (await client("/api/indicators", {
+        const response = (await client("indicators", {
           method: "GET",
         })) as { data: Indicator[]; meta: { timestamp: string } };
 
@@ -50,7 +50,7 @@ export const useIndicatorStore = defineStore(
       loading.value = true;
       error.value = null;
       try {
-        const response = await client(`/api/indicators/${code}`, {
+        const response = await client(`indicators/${code}`, {
           method: "GET",
         });
         return response as unknown as StrapiData<Indicator>;
@@ -71,7 +71,7 @@ export const useIndicatorStore = defineStore(
       loading.value = true;
       error.value = null;
       try {
-        const response = await client("/api/indicators/convert", {
+        const response = await client("indicators/convert", {
           method: "GET",
           params: { amount, from, to } as unknown as Record<string, unknown>,
         });

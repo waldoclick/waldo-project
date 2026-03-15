@@ -41,7 +41,7 @@ export const useAdsStore = defineStore(
           populate: "*",
         } as unknown as Record<string, unknown>;
 
-        const response = await client("/api/ads", {
+        const response = await client("ads", {
           method: "GET",
           params: params as unknown as Record<string, unknown>,
         });
@@ -61,7 +61,7 @@ export const useAdsStore = defineStore(
       error.value = null;
 
       try {
-        const response = await client("/api/ads", {
+        const response = await client("ads", {
           method: "GET",
           params: {
             filters: {
@@ -103,7 +103,7 @@ export const useAdsStore = defineStore(
       error.value = null;
 
       try {
-        const response = await client("/api/ads", {
+        const response = await client("ads", {
           method: "GET",
           params: {
             filters: { id: { $eq: id } },
