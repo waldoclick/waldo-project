@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.38
 milestone_name: GA4 Analytics Audit & Implementation
-status: planning
-last_updated: "2026-03-15T14:40:30.301Z"
-last_activity: 2026-03-15 — Completed 089-01-PLAN.md
+status: executing
+last_updated: "2026-03-15T15:11:35Z"
+last_activity: 2026-03-15 — Completed 090-03-PLAN.md (user/indicator stores migrated)
 progress:
   total_phases: 5
   completed_phases: 4
-  total_plans: 7
-  completed_plans: 7
-  percent: 50
+  total_plans: 13
+  completed_plans: 9
+  percent: 91
 ---
 
 # Session State
@@ -25,22 +25,22 @@ See: .planning/PROJECT.md (updated 2026-03-14 after v1.38 milestone started)
 ## Position
 
 **Current Milestone:** v1.39 — Unified API Client
-**Status:** Ready to plan
-Phase: 089
-Plan: 01 ✓ (of 1)
+**Status:** In progress
+Phase: 090
+Plan: 04 ✓ (of 6)
 
 ```
-Progress: [█░░░░░░░░░] 50% (1/2 phases)
+Progress: [█████████░] 91% (12/13 plans)
 ```
 
-Last activity: 2026-03-15 — Completed 089-01-PLAN.md
+Last activity: 2026-03-15 — Completed 090-04-PLAN.md
 
 ## Phase Map
 
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
 | 089 | GET Support in useApiClient | API-05 | ✅ Complete (2026-03-15) |
-| 090 | Migrate All GET Callers | API-01, API-02, API-03, API-04, API-06 | Not started |
+| 090 | Migrate All GET Callers | API-01, API-02, API-03, API-04, API-06 | In Progress (4/6 plans done) |
 
 ## Accumulated Context
 
@@ -92,6 +92,8 @@ Last activity: 2026-03-15 — Completed 089-01-PLAN.md
 - useApiClient returns raw body — no .data wrapper; strapi.create()/update() SDK wrappers do wrap; always remove .data accessor after migrating from SDK (088-01)
 - client = useApiClient() moved to store root level in user.store.ts — composable rules require setup-level instantiation (088-01)
 - GET callers use client(url, { method: 'GET', params: {...} }) — response is raw body, no .data wrapper; confirmed by 9-test suite (089-01)
+- useApiClient() placed inside factory function (not module level) for composables like usePacksList — Nuxt composable rules require setup-level instantiation (090-04)
+- Raw body shapes for collection { data: T[] } and single-item { data: T } endpoints are identical to Strapi SDK returns — callers of useStrapi/useOrderById/usePacksList required no changes (090-04)
 
 ### v1.38 Key Facts (GA4 analytics)
 
