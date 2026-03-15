@@ -45,13 +45,16 @@ const { data: categoriesData } = await useAsyncData("categories", async () => {
 const categories = computed(() => categoriesData.value ?? []);
 
 // Load packs
-const strapi = useStrapi();
+const client = useApiClient();
 const { data: packsData } = await useAsyncData<Pack[]>(
   "home-packs",
   async () => {
     try {
-      const response = await strapi.find("ad-packs", { populate: "*" });
-      return response.data as unknown as Pack[];
+      const response = (await client("/api/ad-packs", {
+        method: "GET",
+        params: { populate: "*" } as unknown as Record<string, unknown>,
+      })) as { data: Pack[] };
+      return response.data;
     } catch (error) {
       console.error("Error loading packs:", error);
       return [];

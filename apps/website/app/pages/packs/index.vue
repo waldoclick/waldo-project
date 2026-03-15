@@ -17,13 +17,16 @@ import FooterDefault from "@/components/FooterDefault.vue";
 import type { Pack } from "@/types/pack";
 
 // Load packs
-const strapi = useStrapi();
+const client = useApiClient();
 const { data: packsData } = await useAsyncData<Pack[]>(
   "packs-page-packs",
   async () => {
     try {
-      const response = await strapi.find("ad-packs", { populate: "*" });
-      return response.data as unknown as Pack[];
+      const response = (await client("/api/ad-packs", {
+        method: "GET",
+        params: { populate: "*" } as unknown as Record<string, unknown>,
+      })) as { data: Pack[] };
+      return response.data;
     } catch (error) {
       console.error("Error loading packs:", error);
       return [];
