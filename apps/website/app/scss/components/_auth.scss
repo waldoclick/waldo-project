@@ -158,7 +158,16 @@
         }
       }
 
-      a {
+      button {
+        appearance: none;
+        clear: both;
+        font-size: inherit;
+        border: none;
+        background: none;
+      }
+
+      a,
+      button {
         color: $dodger_blue;
         text-decoration: underline;
       }
