@@ -38,6 +38,9 @@ export async function verifyRecaptchaToken(
   });
 
   if (!result.success || result.score <= 0.5) {
+    console.warn(
+      `[recaptcha] Verification failed. success=${result.success}, score=${result.score ?? "n/a"}, error-codes=${(result["error-codes"] ?? []).join(",")}`,
+    );
     throw createError({
       statusCode: 400,
       statusMessage: "reCAPTCHA verification failed. Please try again.",
