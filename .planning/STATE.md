@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.38
 milestone_name: GA4 Analytics Audit & Implementation
 status: executing
-last_updated: "2026-03-15T15:13:37.413Z"
-last_activity: 2026-03-15 — Completed 090-04-PLAN.md
+last_updated: "2026-03-15T15:14:38.589Z"
+last_activity: 2026-03-15 — Completed 090-05-PLAN.md
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 13
-  completed_plans: 10
-  percent: 91
+  completed_plans: 13
+  percent: 100
 ---
 
 # Session State
@@ -25,22 +25,22 @@ See: .planning/PROJECT.md (updated 2026-03-14 after v1.38 milestone started)
 ## Position
 
 **Current Milestone:** v1.39 — Unified API Client
-**Status:** In progress
+**Status:** Complete
 Phase: 090
-Plan: 04 ✓ (of 6)
+Plan: 05 ✓ (of 6)
 
 ```
-Progress: [█████████░] 91% (12/13 plans)
+Progress: [██████████] 100% (13/13 plans)
 ```
 
-Last activity: 2026-03-15 — Completed 090-02-PLAN.md
+Last activity: 2026-03-15 — Completed 090-05-PLAN.md
 
 ## Phase Map
 
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
 | 089 | GET Support in useApiClient | API-05 | ✅ Complete (2026-03-15) |
-| 090 | Migrate All GET Callers | API-01, API-02, API-03, API-04, API-06 | In Progress (4/6 plans done) |
+| 090 | Migrate All GET Callers | API-01, API-02, API-03, API-04, API-06 | ✅ Complete (2026-03-15) |
 
 ## Accumulated Context
 
@@ -95,6 +95,9 @@ Last activity: 2026-03-15 — Completed 090-02-PLAN.md
 - useApiClient() placed inside factory function (not module level) for composables like usePacksList — Nuxt composable rules require setup-level instantiation (090-04)
 - Raw body shapes for collection { data: T[] } and single-item { data: T } endpoints are identical to Strapi SDK returns — callers of useStrapi/useOrderById/usePacksList required no changes (090-04)
 - For categories.store.ts (Options API store with per-action useStrapi()): migrated to single useApiClient() at setup root level — eliminates redundant instantiation and aligns with composable rules (090-02)
+- anunciar/gracias.vue findOne response accessed via response.data (not { data: ad } destructure) — useApiClient returns raw body (090-05)
+- index.vue and packs/index.vue were migrated in plan 090-03 alongside stores — plan 090-05 recognized them as already done (090-05)
+- FormProfile.vue useStrapi() was truly dead code — no calls, purely subtractive removal (090-05)
 
 ### v1.38 Key Facts (GA4 analytics)
 
