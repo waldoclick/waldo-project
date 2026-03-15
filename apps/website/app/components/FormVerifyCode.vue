@@ -41,7 +41,7 @@ const router = useRouter();
 const appStore = useAppStore();
 const meStore = useMeStore();
 const { logInfo } = useLogger();
-const client = useStrapiClient();
+const apiClient = useApiClient();
 const { login } = useAdAnalytics();
 
 const pendingToken = useState("pendingToken");
@@ -116,7 +116,7 @@ const handlePaste = (e) => {
 const handleVerify = async () => {
   sending.value = true;
   try {
-    const responseRaw = await client("/auth/verify-code", {
+    const responseRaw = await apiClient("/auth/verify-code", {
       method: "POST",
       body: { pendingToken: pendingToken.value, code: code.value.trim() },
     });
@@ -155,7 +155,7 @@ const handleVerify = async () => {
 const handleResend = async () => {
   resending.value = true;
   try {
-    await client("/auth/resend-code", {
+    await apiClient("/auth/resend-code", {
       method: "POST",
       body: { pendingToken: pendingToken.value },
     });
