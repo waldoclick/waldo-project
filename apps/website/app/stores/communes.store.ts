@@ -60,15 +60,15 @@ export const useCommunesStore = defineStore("communes", {
         this.loading = true;
         this.error = null;
 
-        const strapi = useStrapi();
-        const response = await strapi.find("communes", {
-          pagination: {
-            page: 1,
-            pageSize: 1000,
-          },
-          populate: "*",
-          sort: ["name:asc"],
-        } as unknown as Record<string, unknown>);
+        const client = useApiClient();
+        const response = await client("/api/communes", {
+          method: "GET",
+          params: {
+            pagination: { page: 1, pageSize: 1000 },
+            populate: "*",
+            sort: ["name:asc"],
+          } as unknown as Record<string, unknown>,
+        });
         const typedResponse = response as unknown as CommuneResponse;
 
         if (!typedResponse.data || !Array.isArray(typedResponse.data)) {

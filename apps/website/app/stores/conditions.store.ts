@@ -40,13 +40,13 @@ export const useConditionsStore = defineStore("conditions", {
         this.loading = true;
         this.error = null;
 
-        const strapi = useStrapi();
-        const response = await strapi.find("conditions", {
-          pagination: {
-            page: 1,
-            pageSize: 1000,
-          },
-          populate: "*",
+        const client = useApiClient();
+        const response = await client("/api/conditions", {
+          method: "GET",
+          params: {
+            pagination: { page: 1, pageSize: 1000 },
+            populate: "*",
+          } as unknown as Record<string, unknown>,
         });
         const typedResponse = response as unknown as ConditionResponse;
 
@@ -69,15 +69,14 @@ export const useConditionsStore = defineStore("conditions", {
         this.loading = true;
         this.error = null;
 
-        const strapi = useStrapi();
-        const response = await strapi.find("conditions", {
-          filters: {
-            id: {
-              $eq: id,
-            },
-          },
-          populate: "*",
-        } as unknown as Record<string, unknown>);
+        const client = useApiClient();
+        const response = await client("/api/conditions", {
+          method: "GET",
+          params: {
+            filters: { id: { $eq: id } },
+            populate: "*",
+          } as unknown as Record<string, unknown>,
+        });
         const typedResponse = response as unknown as ConditionResponse;
 
         if (!typedResponse.data || !Array.isArray(typedResponse.data)) {

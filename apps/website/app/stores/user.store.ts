@@ -66,13 +66,17 @@ export const useUserStore = defineStore("user", () => {
     sort = [],
   ) => {
     try {
-      const response = await strapi.find("ads/me", {
-        filters,
-        pagination,
-        sort, // Pasar el sort como un parámetro separado
-        populate: "*",
+      const response = await client("/api/ads/me", {
+        method: "GET",
+        params: {
+          filters,
+          pagination,
+          sort,
+          populate: "*",
+        } as unknown as Record<string, unknown>,
       });
-      ads.value = response.data as unknown as Ad[];
+      ads.value = (response as unknown as { data: Ad[] })
+        .data as unknown as Ad[];
       return response;
     } catch {
       ads.value = [];
@@ -86,11 +90,14 @@ export const useUserStore = defineStore("user", () => {
     sort = [],
   ) => {
     try {
-      const response = await strapi.find("orders/me", {
-        filters,
-        pagination,
-        sort,
-        populate: "*",
+      const response = await client("/api/orders/me", {
+        method: "GET",
+        params: {
+          filters,
+          pagination,
+          sort,
+          populate: "*",
+        } as unknown as Record<string, unknown>,
       });
       return response;
     } catch {
@@ -125,7 +132,7 @@ export const useUserStore = defineStore("user", () => {
     banned: number;
   }> => {
     try {
-      const response = await strapi.find("ads/me/counts", {});
+      const response = await client("/api/ads/me/counts", { method: "GET" });
       return response as unknown as {
         published: number;
         review: number;
