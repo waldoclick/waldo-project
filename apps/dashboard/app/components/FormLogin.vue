@@ -143,10 +143,11 @@ const handleSubmit = async (values: Record<string, unknown>) => {
     // (useStrapiAuth().login() is NOT used because it expects a JWT, not a pendingToken)
     const response = await client("/auth/local", {
       method: "POST",
+      headers: { "X-Recaptcha-Token": token ?? "" },
       body: {
         identifier: values.email as string,
         password: values.password as string,
-        recaptchaToken: token,
+        // recaptchaToken removed — now sent as X-Recaptcha-Token header
       },
     });
 
