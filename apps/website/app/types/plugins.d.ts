@@ -7,7 +7,7 @@ declare module "#app" {
       hasError: boolean;
       errorDetails: Array<{ type: string; message: string }>;
     }>;
-    $recaptcha: {
+    $recaptcha?: {
       execute: (action: string) => Promise<string | undefined>;
     };
   }
