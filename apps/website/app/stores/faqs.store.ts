@@ -29,9 +29,13 @@ export const useFaqsStore = defineStore(
           loading.value = true;
           error.value = null;
 
-          const response = await client('/api/faqs', {
-            method: 'GET',
-            params: { pagination: { pageSize: PAGE_SIZE, page: 1 }, populate: '*', sort: ['createdAt:asc'] } as unknown as Record<string, unknown>,
+          const response = await client("/api/faqs", {
+            method: "GET",
+            params: {
+              pagination: { pageSize: PAGE_SIZE, page: 1 },
+              populate: "*",
+              sort: ["createdAt:asc"],
+            } as unknown as Record<string, unknown>,
           });
 
           const typedResponse = response as unknown as FAQResponse;

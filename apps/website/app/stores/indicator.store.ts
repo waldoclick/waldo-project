@@ -14,7 +14,7 @@ export const useIndicatorStore = defineStore(
     const error = ref<string | null>(null);
     const indicators = ref<Indicator[]>([]);
     const lastFetchDate = ref<string>("");
-    const strapi = useStrapi();
+    const client = useApiClient();
 
     async function fetchIndicators() {
       // Obtenemos la fecha actual en formato YYYY-MM-DD
@@ -28,10 +28,9 @@ export const useIndicatorStore = defineStore(
       loading.value = true;
       error.value = null;
       try {
-        const response = await strapi.find<{
-          data: Indicator[];
-          meta: { timestamp: string };
-        }>("indicators");
+        const response = (await client("/api/indicators", {
+          method: "GET",
+        })) as { data: Indicator[]; meta: { timestamp: string } };
 
         // Guardar los datos y la fecha
         indicators.value = response.data as unknown as Indicator[];
@@ -51,10 +50,10 @@ export const useIndicatorStore = defineStore(
       loading.value = true;
       error.value = null;
       try {
-        const response = await strapi.findOne<StrapiData<Indicator>>(
-          `indicators/${code}`,
-        );
-        return response;
+        const response = await client(`/api/indicators/${code}`, {
+          method: "GET",
+        });
+        return response as unknown as StrapiData<Indicator>;
       } catch (err) {
         error.value = "Error al obtener el indicador económico";
         console.error(err);
@@ -72,15 +71,11 @@ export const useIndicatorStore = defineStore(
       loading.value = true;
       error.value = null;
       try {
-        const response = await strapi.find<StrapiResponse<ConvertResponse>>(
-          "indicators/convert",
-          {
-            amount,
-            from,
-            to,
-          } as unknown as Record<string, unknown>,
-        );
-        return response;
+        const response = await client("/api/indicators/convert", {
+          method: "GET",
+          params: { amount, from, to } as unknown as Record<string, unknown>,
+        });
+        return response as unknown as StrapiResponse<ConvertResponse>;
       } catch (err) {
         error.value = "Error al convertir la moneda";
         console.error(err);

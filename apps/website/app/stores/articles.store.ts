@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import type { Article, ArticleResponse } from "@/types/article";
 import type { Pagination } from "@/types/pagination";
+import { useApiClient } from "#imports";
 
 export const useArticlesStore = defineStore("articles", () => {
   const articles = ref<Article[]>([]);
@@ -14,7 +15,7 @@ export const useArticlesStore = defineStore("articles", () => {
   const loading = ref<boolean>(false);
   const error = ref<string | null>(null);
 
-  const strapi = useStrapi();
+  const client = useApiClient();
 
   const DEFAULT_PAGINATION = {
     page: 1,
@@ -37,7 +38,10 @@ export const useArticlesStore = defineStore("articles", () => {
         populate: "*",
       } as unknown as Record<string, unknown>;
 
-      const response = await strapi.find("articles", params);
+      const response = await client("/api/articles", {
+        method: "GET",
+        params: params as unknown as Record<string, unknown>,
+      });
       const typedResponse = response as unknown as ArticleResponse;
       articles.value = typedResponse.data;
       pagination.value = typedResponse.meta.pagination;
