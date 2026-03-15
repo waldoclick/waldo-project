@@ -3,6 +3,7 @@ import { ref } from "vue";
 import type { Ad } from "@/types/ad";
 import type { Pagination } from "@/types/pagination";
 import type { StrapiResponse } from "@nuxtjs/strapi";
+import { useApiClient } from "#imports";
 
 export const useAdsStore = defineStore(
   "ads",
@@ -17,7 +18,7 @@ export const useAdsStore = defineStore(
     const loading = ref<boolean>(false);
     const error = ref<string | null>(null);
 
-    const strapi = useStrapi();
+    const client = useApiClient();
 
     const DEFAULT_PAGINATION = {
       page: 1,
@@ -40,7 +41,10 @@ export const useAdsStore = defineStore(
           populate: "*",
         } as unknown as Record<string, unknown>;
 
-        const response = await strapi.find("ads", params);
+        const response = await client("/api/ads", {
+          method: "GET",
+          params: params as unknown as Record<string, unknown>,
+        });
         const typedResponse = response as unknown as StrapiResponse<Ad>;
         ads.value = typedResponse.data;
         pagination.value = typedResponse.meta.pagination;

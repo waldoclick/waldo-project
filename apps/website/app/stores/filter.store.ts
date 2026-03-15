@@ -29,6 +29,8 @@ export const useFilterStore = defineStore(
     const isLoading = computed(() => loading.value);
     const hasError = computed(() => error.value !== null);
 
+    const client = useApiClient();
+
     // Actions
     async function loadFilterCommunes() {
       if (
@@ -43,8 +45,9 @@ export const useFilterStore = defineStore(
         loading.value = true;
         error.value = null;
 
-        const strapi = useStrapi();
-        const response = await strapi.find("filter/communes", {});
+        const response = await client("/api/filter/communes", {
+          method: "GET",
+        });
         const typedResponse =
           response as unknown as FilterResponse<FilterCommune>;
 
@@ -76,8 +79,9 @@ export const useFilterStore = defineStore(
         loading.value = true;
         error.value = null;
 
-        const strapi = useStrapi();
-        const response = await strapi.find("filter/categories", {});
+        const response = await client("/api/filter/categories", {
+          method: "GET",
+        });
         const typedResponse =
           response as unknown as FilterResponse<FilterCategory>;
 
