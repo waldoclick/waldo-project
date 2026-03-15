@@ -12,7 +12,7 @@ Requirements for milestone v1.39 — Unified API Client. Completa la centralizac
 - [x] **API-01**: Todos los `strapi.find()` en stores del website migrados a `useApiClient`
 - [x] **API-02**: Todos los `strapi.findOne()` en stores del website migrados a `useApiClient`
 - [x] **API-03**: Los composables `useStrapi.ts`, `useOrderById.ts`, `usePacksList.ts` migrados a `useApiClient`
-- [ ] **API-04**: Las pages y components que llaman `strapi.find()/findOne()` directamente migrados a `useApiClient`
+- [x] **API-04**: Las pages y components que llaman `strapi.find()/findOne()` directamente migrados a `useApiClient`
 - [x] **API-05**: `useApiClient` soporta GET requests (sin inyección de reCAPTCHA)
 - [ ] **API-06**: `typeCheck: true` pasa con zero errores después de la migración
 
@@ -32,7 +32,7 @@ Requirements for milestone v1.39 — Unified API Client. Completa la centralizac
 | API-01 | Phase 090 | Complete |
 | API-02 | Phase 090 | Complete |
 | API-03 | Phase 090 | Complete |
-| API-04 | Phase 090 | Pending |
+| API-04 | Phase 090 | Complete |
 | API-05 | Phase 089 | Complete |
 | API-06 | Phase 090 | Pending |
 
