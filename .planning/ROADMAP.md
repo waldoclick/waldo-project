@@ -57,7 +57,15 @@ Plans:
   3. `index.vue`, `anunciar/gracias.vue`, `anunciar/index.vue`, `packs/index.vue`, and `FormProfile.vue` fetch data via `useApiClient` — no direct SDK calls remain in any page or component
   4. `typeCheck: true` runs with zero TypeScript errors after the full migration; `nuxt typecheck` exits 0
   5. The website loads and all pages render correctly in the browser — no runtime errors from response shape mismatches (`.data` wrapper removed at every migrated call site)
-**Plans**: TBD
+**Plans**: 6 plans
+
+Plans:
+- [ ] 090-01-PLAN.md — Migrate stores batch 1: filter, regions, communes, conditions, faqs
+- [ ] 090-02-PLAN.md — Migrate stores batch 2: ads, related, articles, categories
+- [ ] 090-03-PLAN.md — Migrate stores batch 3: me, user, indicator
+- [ ] 090-04-PLAN.md — Migrate composables: useStrapi, useOrderById, usePacksList
+- [ ] 090-05-PLAN.md — Migrate pages/components: index.vue, anunciar/gracias.vue, anunciar/index.vue, packs/index.vue, FormProfile.vue
+- [ ] 090-06-PLAN.md — Final validation gate: grep + typecheck + browser smoke test
 
 ---
 
