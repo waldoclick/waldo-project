@@ -73,7 +73,7 @@ export class AdService {
             data: {
               remaining_days: updatedRemainingDays,
               ...(updatedRemainingDays === 0 && { active: false }),
-            },
+            } as unknown as Record<string, unknown>,
           });
 
           // Record this decrement in the remainings collection. This entry acts as the idempotency

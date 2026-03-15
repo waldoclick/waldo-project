@@ -528,10 +528,14 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
       // Fetch ads for the logged-in user with the specified conditions
       const ads = await strapi.entityService.findMany("api::ad.ad", {
         filters: filterClause,
-        populate,
+        populate: populate as unknown as Parameters<
+          typeof strapi.entityService.findMany
+        >[1]["populate"],
         start: (page - 1) * pageSize,
         limit: pageSize,
-        sort,
+        sort: sort as unknown as Parameters<
+          typeof strapi.entityService.findMany
+        >[1]["sort"],
       });
 
       // Add status from filters to each ad

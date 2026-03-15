@@ -30,7 +30,7 @@ class ReservationUtils {
         }
       );
 
-      return reservations;
+      return reservations as unknown as AdReservation[];
     } catch (error) {
       console.error("Error in getReservationByUser:", error);
       return null;

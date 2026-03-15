@@ -639,14 +639,14 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
         await strapi.entityService.update(
           "api::ad-reservation.ad-reservation",
           ad.ad_reservation.id,
-          { data: { ad: null } }
+          { data: { ad: null } as unknown as Record<string, unknown> }
         );
       }
       if (ad.ad_featured_reservation?.id) {
         await strapi.entityService.update(
           "api::ad-featured-reservation.ad-featured-reservation",
           ad.ad_featured_reservation.id,
-          { data: { ad: null } }
+          { data: { ad: null } as unknown as Record<string, unknown> }
         );
       }
 
@@ -748,14 +748,14 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
         await strapi.entityService.update(
           "api::ad-reservation.ad-reservation",
           ad.ad_reservation.id,
-          { data: { ad: null } }
+          { data: { ad: null } as unknown as Record<string, unknown> }
         );
       }
       if (ad.ad_featured_reservation?.id) {
         await strapi.entityService.update(
           "api::ad-featured-reservation.ad-featured-reservation",
           ad.ad_featured_reservation.id,
-          { data: { ad: null } }
+          { data: { ad: null } as unknown as Record<string, unknown> }
         );
       }
 
