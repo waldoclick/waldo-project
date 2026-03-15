@@ -303,6 +303,7 @@ export default defineNuxtConfig({
       devMode: process.env.DEV_MODE === "true",
     },
     // Variables privadas del servidor
+    recaptchaSecretKey: process.env.RECAPTCHA_SECRET_KEY, // server-only — for Nitro proxy
     devUsername: process.env.DEV_USERNAME,
     devPassword: process.env.DEV_PASSWORD,
   },

@@ -349,6 +349,7 @@ export default defineNuxtConfig({
       zohoWidgetCode: process.env.ZOHO_WIDGET_CODE || "",
     },
     // Variables privadas del servidor
+    recaptchaSecretKey: process.env.RECAPTCHA_SECRET_KEY, // server-only — for Nitro proxy
     devUsername: process.env.DEV_USERNAME,
     devPassword: process.env.DEV_PASSWORD,
   },
