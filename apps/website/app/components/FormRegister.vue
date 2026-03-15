@@ -272,9 +272,10 @@ const handleSubmit = async () => {
       // en que email_confirmation está activo (respuesta sin JWT).
       const response = (await client("/auth/local/register", {
         method: "POST",
+        headers: { "X-Recaptcha-Token": token ?? "" },
         body: {
           ...form.value,
-          recaptchaToken: token ?? "",
+          // recaptchaToken removed — now sent as X-Recaptcha-Token header
         },
       })) as { jwt?: string; user?: { id: number } };
 
