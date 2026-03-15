@@ -132,7 +132,7 @@ class AdUtils {
       const ad = await strapi.entityService.update("api::ad.ad", adId, {
         data: {
           ad_reservation: adReservationId,
-        },
+        } as unknown as Record<string, unknown>,
       });
 
       return { success: true, ad };
@@ -156,7 +156,7 @@ class AdUtils {
       const ad = await strapi.entityService.update("api::ad.ad", adId, {
         data: {
           ad_featured_reservation: adFeaturedReservationId,
-        },
+        } as unknown as Record<string, unknown>,
       });
 
       return { success: true, ad };
@@ -177,7 +177,7 @@ class AdUtils {
       const ad = await strapi.entityService.update("api::ad.ad", adId, {
         data: {
           draft: false,
-        },
+        } as unknown as Record<string, unknown>,
       });
 
       return { success: true, ad };
@@ -199,7 +199,7 @@ class AdUtils {
         data: {
           duration_days: total_days,
           remaining_days: total_days,
-        },
+        } as unknown as Record<string, unknown>,
       });
 
       return { success: true, ad };

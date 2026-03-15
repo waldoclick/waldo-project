@@ -99,7 +99,7 @@ export class CleanupService {
         }
       );
 
-      return images || [];
+      return (images as any[]) || [];
     } catch (error) {
       logger.error("Error fetching images from Strapi:", error);
       throw error;

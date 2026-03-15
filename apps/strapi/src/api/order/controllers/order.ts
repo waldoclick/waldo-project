@@ -54,7 +54,9 @@ export default factories.createCoreController(
 
         // Obtener órdenes con paginación
         const orders = await strapi.entityService.findMany("api::order.order", {
-          filters,
+          filters: filters as unknown as Parameters<
+            typeof strapi.entityService.findMany
+          >[1]["filters"],
           populate,
           start: (page - 1) * pageSize,
           limit: pageSize,
@@ -63,7 +65,9 @@ export default factories.createCoreController(
 
         // Obtener el total de registros
         const total = await strapi.entityService.count("api::order.order", {
-          filters,
+          filters: filters as unknown as Parameters<
+            typeof strapi.entityService.count
+          >[1]["filters"],
         });
 
         // Calcular paginación
@@ -123,11 +127,17 @@ export default factories.createCoreController(
 
         // Obtener órdenes del usuario con paginación
         const orders = await strapi.entityService.findMany("api::order.order", {
-          filters: filterClause,
-          populate,
+          filters: filterClause as unknown as Parameters<
+            typeof strapi.entityService.findMany
+          >[1]["filters"],
+          populate: populate as unknown as Parameters<
+            typeof strapi.entityService.findMany
+          >[1]["populate"],
           start: (page - 1) * pageSize,
           limit: pageSize,
-          sort,
+          sort: sort as unknown as Parameters<
+            typeof strapi.entityService.findMany
+          >[1]["sort"],
         });
 
         // Obtener el total de registros
@@ -177,7 +187,7 @@ export default factories.createCoreController(
         const monthlyTotals: Record<number, number> = {};
         for (let i = 0; i < 12; i++) monthlyTotals[i] = 0;
 
-        for (const order of orders) {
+        for (const order of orders as any[]) {
           const date = new Date(order.createdAt as string);
           const month = date.getUTCMonth();
           const amount =
