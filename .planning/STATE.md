@@ -33,7 +33,7 @@ Plan: 01 complete
 Progress: [████████░░] 89% (8/9 plans across current milestone)
 ```
 
-Last activity: 2026-03-15 — Completed 088-01: All 15 mutation calls migrated to useApiClient (12 files, deactivateAd fixed to use documentId, 8 tests pass)
+Last activity: 2026-03-15 — Completed quick task 43: fix image deletion endpoint call and secure image delete in Strapi to own images only
 
 ## Phase Map
 
