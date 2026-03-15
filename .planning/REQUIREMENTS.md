@@ -29,17 +29,17 @@ Requirements for milestone v1.39 — Unified API Client. Completa la centralizac
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| API-01 | TBD | Pending |
-| API-02 | TBD | Pending |
-| API-03 | TBD | Pending |
-| API-04 | TBD | Pending |
-| API-05 | TBD | Pending |
-| API-06 | TBD | Pending |
+| API-01 | Phase 090 | Pending |
+| API-02 | Phase 090 | Pending |
+| API-03 | Phase 090 | Pending |
+| API-04 | Phase 090 | Pending |
+| API-05 | Phase 089 | Pending |
+| API-06 | Phase 090 | Pending |
 
 **Coverage:**
 - v1.39 requirements: 6 total
-- Mapped to phases: 0 (pending roadmap)
-- Unmapped: 6 ⚠️
+- Mapped to phases: 6 ✓
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-15*
