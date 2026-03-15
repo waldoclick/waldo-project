@@ -3,16 +3,16 @@
  * Returns the order on success, or throws if not found or on error.
  */
 export async function useOrderById(documentId: string) {
-  const strapi = useStrapi();
+  const client = useApiClient();
   if (!documentId) {
     throw new Error("Missing documentId");
   }
-  // Strapi's .findOne uses 'id' but our backend accepts documentId as id or documentId.
-  const { data } = await strapi.findOne("orders", documentId, {
-    populate: "*",
-  });
-  if (!data) {
+  const response = (await client(`/api/orders/${documentId}`, {
+    method: "GET",
+    params: { populate: "*" } as unknown as Record<string, unknown>,
+  })) as { data: unknown };
+  if (!response.data) {
     throw new Error("Order not found");
   }
-  return data;
+  return response.data;
 }

@@ -61,24 +61,27 @@ export const useAdsStore = defineStore(
       error.value = null;
 
       try {
-        const response = await strapi.find("ads", {
-          filters: {
-            slug: { $eq: slug },
-            active: { $eq: true },
-            remaining_days: { $gt: 0 },
-          },
-          populate: {
-            commune: {
-              populate: "*",
+        const response = await client("/api/ads", {
+          method: "GET",
+          params: {
+            filters: {
+              slug: { $eq: slug },
+              active: { $eq: true },
+              remaining_days: { $gt: 0 },
             },
-            user: {
-              populate: "*",
+            populate: {
+              commune: {
+                populate: "*",
+              },
+              user: {
+                populate: "*",
+              },
+              category: true,
+              condition: true,
+              gallery: true,
             },
-            category: true,
-            condition: true,
-            gallery: true,
-          },
-        } as unknown as Record<string, unknown>);
+          } as unknown as Record<string, unknown>,
+        });
         const typedResponse = response as unknown as StrapiResponse<Ad>;
 
         if (typedResponse.data.length > 0) {
@@ -100,18 +103,21 @@ export const useAdsStore = defineStore(
       error.value = null;
 
       try {
-        const response = await strapi.find("ads", {
-          filters: { id: { $eq: id } },
-          populate: {
-            commune: {
-              populate: "*",
+        const response = await client("/api/ads", {
+          method: "GET",
+          params: {
+            filters: { id: { $eq: id } },
+            populate: {
+              commune: {
+                populate: "*",
+              },
+              user: true,
+              category: true,
+              condition: true,
+              gallery: true,
             },
-            user: true,
-            category: true,
-            condition: true,
-            gallery: true,
-          },
-        } as unknown as Record<string, unknown>);
+          } as unknown as Record<string, unknown>,
+        });
         const typedResponse = response as unknown as StrapiResponse<Ad>;
 
         if (typedResponse.data.length > 0) {

@@ -8,7 +8,6 @@ export const useUserStore = defineStore("user", () => {
   const user = ref<User | null>(null);
   const ads = ref<Ad[]>([]);
 
-  const strapi = useStrapi();
   const client = useApiClient();
 
   const DEFAULT_PAGINATION = {
