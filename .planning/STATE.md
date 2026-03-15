@@ -1,15 +1,15 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.39
-milestone_name: Unified API Client
+milestone: v1.38
+milestone_name: GA4 Analytics Audit & Implementation
 status: planning
-last_updated: "2026-03-15T06:00:00Z"
-last_activity: "2026-03-15 — Milestone v1.39 started"
+last_updated: "2026-03-15T14:37:13.349Z"
+last_activity: 2026-03-15 — Roadmap created for v1.39
 progress:
-  total_phases: 2
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_phases: 5
+  completed_phases: 4
+  total_plans: 7
+  completed_plans: 7
   percent: 0
 ---
 
@@ -25,21 +25,21 @@ See: .planning/PROJECT.md (updated 2026-03-14 after v1.38 milestone started)
 ## Position
 
 **Current Milestone:** v1.39 — Unified API Client
-**Status:** Roadmap created — ready to plan Phase 089
-Phase: 089 (not started)
-Plan: —
+**Status:** In progress — Phase 089 Plan 01 complete
+Phase: 089
+Plan: 01 ✓ (of 1)
 
 ```
-Progress: [░░░░░░░░░░] 0%
+Progress: [█░░░░░░░░░] 50% (1/2 phases)
 ```
 
-Last activity: 2026-03-15 — Roadmap created for v1.39
+Last activity: 2026-03-15 — Completed 089-01-PLAN.md
 
 ## Phase Map
 
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
-| 089 | GET Support in useApiClient | API-05 | Not started |
+| 089 | GET Support in useApiClient | API-05 | ✅ Complete (2026-03-15) |
 | 090 | Migrate All GET Callers | API-01, API-02, API-03, API-04, API-06 | Not started |
 
 ## Accumulated Context
@@ -91,6 +91,7 @@ Last activity: 2026-03-15 — Roadmap created for v1.39
 - Ad interface has documentId: string field — prerequisite for Strapi v5 write operations (088-01)
 - useApiClient returns raw body — no .data wrapper; strapi.create()/update() SDK wrappers do wrap; always remove .data accessor after migrating from SDK (088-01)
 - client = useApiClient() moved to store root level in user.store.ts — composable rules require setup-level instantiation (088-01)
+- GET callers use client(url, { method: 'GET', params: {...} }) — response is raw body, no .data wrapper; confirmed by 9-test suite (089-01)
 
 ### v1.38 Key Facts (GA4 analytics)
 

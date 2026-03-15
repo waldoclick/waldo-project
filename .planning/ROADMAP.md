@@ -22,7 +22,7 @@
 
 ### v1.39 Unified API Client
 
-- [ ] **Phase 089: GET Support in useApiClient** — Extend `useApiClient` to handle GET requests without reCAPTCHA injection
+- [x] **Phase 089: GET Support in useApiClient** — Extend `useApiClient` to handle GET requests without reCAPTCHA injection (completed 2026-03-15)
 - [ ] **Phase 090: Migrate All GET Callers** — Migrate all stores, composables, pages and components from `strapi.find()/findOne()` to `useApiClient`; typeCheck passes
 
 ### v1.38 GA4 Analytics Audit & Implementation
@@ -235,5 +235,5 @@ Plans:
 | 083   | v1.38     | 2/2            | Complete    | 2026-03-14 |
 | 084   | v1.38     | 2/2            | Complete    | 2026-03-14 |
 | 085   | v1.38     | 1/2            | In Progress | -          |
-| 089   | v1.39     | 0/TBD          | Not started | -          |
+| 089   | 1/1 | Complete   | 2026-03-15 | -          |
 | 090   | v1.39     | 0/TBD          | Not started | -          |
