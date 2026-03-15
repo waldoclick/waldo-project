@@ -154,7 +154,7 @@ const handleUpload = async () => {
 
 const updateUserCover = async (image) => {
   try {
-    await apiClient("/api/users/cover", {
+    await apiClient("users/cover", {
       method: "PUT",
       body: { cover: image.id },
     });
@@ -191,7 +191,7 @@ const removeImage = async (image) => {
 
   try {
     // Primero eliminamos el cover
-    await apiClient("/api/users/cover", {
+    await apiClient("users/cover", {
       method: "PUT",
       body: { coverId: null },
     });

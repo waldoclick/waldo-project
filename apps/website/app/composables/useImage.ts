@@ -46,19 +46,23 @@ export function useImageProxy() {
    * @param recaptchaToken - Token de reCAPTCHA (opcional)
    * @returns Promise con el resultado del upload
    */
-  const uploadFile = async (
-    file: File,
-    type: string,
-    recaptchaToken?: string,
-  ) => {
+  const uploadFile = async (file: File, type: string) => {
     const token = useStrapiToken();
+    const { $recaptcha } = useNuxtApp();
     const formData = new FormData();
     formData.append("files", file);
     formData.append("type", type);
 
-    // Agregar token de reCAPTCHA si está disponible
-    if (recaptchaToken) {
-      formData.append("recaptchaToken", recaptchaToken);
+    // Generar token reCAPTCHA para el header
+    let recaptchaToken: string | undefined;
+    try {
+      recaptchaToken = await (
+        $recaptcha as
+          | { execute: (action: string) => Promise<string> }
+          | undefined
+      )?.execute("submit");
+    } catch {
+      // reCAPTCHA bloqueado o no disponible — continuar sin token
     }
 
     // Usar el proxy en lugar de la URL directa
@@ -66,12 +70,17 @@ export function useImageProxy() {
       ? `${config.public.apiUrl}/api/ads/upload`
       : `/api/ads/upload`;
 
+    const headers: Record<string, string> = {
+      Authorization: `Bearer ${token.value}`,
+    };
+    if (recaptchaToken) {
+      headers["X-Recaptcha-Token"] = recaptchaToken;
+    }
+
     const response = await fetch(uploadUrl, {
       method: "POST",
       body: formData,
-      headers: {
-        Authorization: `Bearer ${token.value}`,
-      },
+      headers,
     });
 
     if (!response.ok) {

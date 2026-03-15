@@ -44,7 +44,7 @@ export const useMeStore = defineStore("me", () => {
 
   const saveUsername = async (data: { username: string }) => {
     try {
-      const response = await apiClient("/api/users/username", {
+      const response = await apiClient("users/username", {
         method: "PUT",
         body: data as Record<string, unknown>,
       });

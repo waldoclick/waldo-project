@@ -157,7 +157,7 @@ const handleUpload = async () => {
 
 const updateUserAvatar = async (image) => {
   try {
-    await apiClient("/api/users/avatar", {
+    await apiClient("users/avatar", {
       method: "PUT",
       body: { avatar: image.id },
     });
@@ -194,7 +194,7 @@ const removeImage = async (image) => {
 
   try {
     // Primero eliminamos el avatar
-    await apiClient("/api/users/avatar", {
+    await apiClient("users/avatar", {
       method: "PUT",
       body: { avatarId: null },
     });
