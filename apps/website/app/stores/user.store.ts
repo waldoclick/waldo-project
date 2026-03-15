@@ -22,14 +22,15 @@ export const useUserStore = defineStore("user", () => {
 
   const loadUsers = async () => {
     try {
-      const response = await strapi.find("users", {
-        pagination: {
-          pageSize: 20,
-          page: 1,
-        },
-        populate: "*",
+      const response = await client("/api/users", {
+        method: "GET",
+        params: {
+          pagination: { pageSize: 20, page: 1 },
+          populate: "*",
+        } as unknown as Record<string, unknown>,
       });
-      users.value = response.data as unknown as User[];
+      users.value = (response as unknown as { data: User[] })
+        .data as unknown as User[];
     } catch {
       // Error handling logic can be added here if needed
     }
@@ -37,17 +38,23 @@ export const useUserStore = defineStore("user", () => {
 
   const loadUser = async (slug: string) => {
     try {
-      const response = await strapi.find("users", {
-        filters: {
-          username: {
-            $eq: slug,
+      const response = await client("/api/users", {
+        method: "GET",
+        params: {
+          filters: {
+            username: {
+              $eq: slug,
+            },
           },
-        } as any,
-        populate: "*",
+          populate: "*",
+        } as unknown as Record<string, unknown>,
       });
 
-      const list = (response.data ?? response) as unknown as User[];
-      user.value = list?.[0] ?? null;
+      const rawList = response as unknown as { data: User[] } | User[];
+      const userList = (
+        Array.isArray(rawList) ? rawList : (rawList as { data: User[] }).data
+      ) as User[];
+      user.value = userList?.[0] ?? null;
     } catch {
       user.value = null;
     }

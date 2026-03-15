@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import type { Ad, AdResponse } from "@/types/ad";
+import { useApiClient } from "#imports";
 
 export const useRelatedStore = defineStore(
   "related",
@@ -9,15 +10,16 @@ export const useRelatedStore = defineStore(
     const loading = ref<boolean>(false);
     const error = ref<string | null>(null);
 
-    const strapi = useStrapi();
+    const client = useApiClient();
 
     const loadRelatedAds = async (id: number) => {
       try {
         loading.value = true;
         error.value = null;
 
-        const response = await strapi.find(`related/ads/${id}`, {
-          populate: "*",
+        const response = await client(`/api/related/ads/${id}`, {
+          method: "GET",
+          params: { populate: "*" } as unknown as Record<string, unknown>,
         });
 
         const typedResponse = response as unknown as AdResponse;
