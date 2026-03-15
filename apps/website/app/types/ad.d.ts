@@ -16,6 +16,7 @@ export interface GalleryItem extends Media {
   id: string;
   url: string;
   type?: string;
+  pending?: boolean; // true = local blob preview only, not yet uploaded to Strapi
 }
 
 export interface Announcement {
