@@ -65,6 +65,11 @@ export default {
       handler: "ad.upload",
     },
     {
+      method: "DELETE",
+      path: "/ads/upload/:id",
+      handler: "ad.deleteUpload",
+    },
+    {
       method: "PUT",
       path: "/ads/:id/banned",
       handler: "ad.bannedAd",

@@ -602,6 +602,57 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
   },
 
   /**
+   * Delete an uploaded image file — only the uploader can delete their own files.
+   *
+   * Ownership is verified by checking that at least one ad belonging to the
+   * authenticated user contains this file in its gallery.
+   *
+   * @route DELETE /api/ads/upload/:id
+   */
+  async deleteUpload(ctx: Context) {
+    try {
+      const fileId = Number(ctx.params.id);
+      const userId = ctx.state.user?.id;
+
+      if (!userId) {
+        return ctx.unauthorized("You must be authenticated to delete an image");
+      }
+
+      if (!fileId || isNaN(fileId)) {
+        return ctx.badRequest("Invalid file id");
+      }
+
+      // Verify the file exists
+      const file = await strapi.db
+        .query("plugin::upload.file")
+        .findOne({ where: { id: fileId } });
+
+      if (!file) {
+        return ctx.notFound("File not found");
+      }
+
+      // Ownership check: verify at least one ad by this user contains this file
+      const ownerAd = await strapi.db.query("api::ad.ad").findOne({
+        where: {
+          user: { id: userId },
+          gallery: { id: fileId },
+        },
+      });
+
+      if (!ownerAd) {
+        return ctx.forbidden("You do not have permission to delete this file");
+      }
+
+      // Delete the file from storage and database
+      await strapi.plugin("upload").service("upload").remove(file);
+
+      ctx.body = { success: true };
+    } catch (error) {
+      ctx.throw(500, error);
+    }
+  },
+
+  /**
    * Ban an advertisement
    *
    * Bans an advertisement. Only the owner of the ad or an administrator can ban it.
