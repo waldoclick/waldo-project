@@ -34,7 +34,7 @@ import ResumeDefault from "@/components/ResumeDefault.vue";
 import BarAnnouncement from "@/components/BarAnnouncement.vue";
 import HeroFake from "@/components/HeroFake.vue";
 import LoadingDefault from "@/components/LoadingDefault.vue";
-const { create } = useStrapi();
+const apiClient = useApiClient();
 const { fetchUser } = useStrapiAuth();
 
 // Define SEO
@@ -131,10 +131,14 @@ const confirmPay = async () => {
   // Si hay que pagar, guardar draft y navegar directo a pagar sin confirmación
   if (hasToPay.value) {
     try {
-      const draftResponse = await create<{ id: number }>("ads/save-draft", {
-        ad: adStore.ad,
-      } as unknown as Parameters<typeof create>[1]);
-      adStore.updateAdId(draftResponse.data.id);
+      const draftResponse = await apiClient<{ id: number; documentId: string }>(
+        "/api/ads/save-draft",
+        {
+          method: "POST",
+          body: { ad: adStore.ad },
+        },
+      );
+      adStore.updateAdId(draftResponse.id);
       router.push("/pagar");
     } catch {
       Swal.fire({
@@ -159,10 +163,14 @@ const confirmPay = async () => {
 
   if (result.isConfirmed) {
     try {
-      const draftResponse = await create<{ id: number }>("ads/save-draft", {
-        ad: adStore.ad,
-      } as unknown as Parameters<typeof create>[1]);
-      adStore.updateAdId(draftResponse.data.id);
+      const draftResponse = await apiClient<{ id: number; documentId: string }>(
+        "/api/ads/save-draft",
+        {
+          method: "POST",
+          body: { ad: adStore.ad },
+        },
+      );
+      adStore.updateAdId(draftResponse.id);
       await handleFreeCreation();
     } catch {
       Swal.fire({
@@ -180,17 +188,18 @@ const handleFreeCreation = async () => {
     adAnalytics.addPaymentInfo();
 
     // Process free ad using the dedicated endpoint
-    const freeAdResponse = await create<{
+    const freeAdResponse = await apiClient<{
       ad?: { documentId?: string; id?: number };
-    }>("payments/free-ad", {
-      ad_id: adStore.ad.ad_id,
-      pack: adStore.pack,
-    } as unknown as Parameters<typeof create>[1]);
+    }>("/api/payments/free-ad", {
+      method: "POST",
+      body: {
+        ad_id: adStore.ad.ad_id,
+        pack: adStore.pack,
+      },
+    });
 
     await fetchUser();
-    const adDocumentId = (
-      freeAdResponse as unknown as { data?: { ad?: { documentId?: string } } }
-    ).data?.ad?.documentId;
+    const adDocumentId = freeAdResponse.ad?.documentId;
     router.push("/anunciar/gracias?ad=" + (adDocumentId || adStore.ad.ad_id));
   } catch (error: unknown) {
     let errorMessage =
