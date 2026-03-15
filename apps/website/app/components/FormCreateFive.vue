@@ -43,20 +43,25 @@ import { useAdPaymentSummary } from "@/composables/useAdPaymentSummary";
 import BarAnnouncement from "@/components/BarAnnouncement.vue";
 
 import { useAdStore } from "@/stores/ad.store";
+import { usePendingUploads } from "@/composables/usePendingUploads";
 
 const emit = defineEmits(["formSubmitted", "formBack"]);
 
 // Importar useAdStore
 const adStore = useAdStore(); // Inicializar adStore
 const { paymentSummaryText } = useAdPaymentSummary();
+const { pendingGalleryItems } = usePendingUploads();
 
 // Define las reglas de validación
 const schema = yup.object({});
-const isButtonDisabled = computed(() => adStore.ad.gallery.length === 0);
+const totalImages = computed(
+  () => adStore.ad.gallery.length + pendingGalleryItems.value.length,
+);
+const isButtonDisabled = computed(() => totalImages.value === 0);
 
 // Manejo del envío del formulario
 const handleSubmit = async (values) => {
-  if (adStore.ad.gallery.length === 0) {
+  if (totalImages.value === 0) {
     await Swal.fire({
       icon: "error",
       title: "Error",
