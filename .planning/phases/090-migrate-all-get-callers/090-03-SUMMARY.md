@@ -109,6 +109,16 @@ None - no external service configuration required.
 - Requirements API-01 and API-02 are satisfied by this plan
 - Remaining GET callers (composables, other stores) are handled in plans 090-04+
 
+## Self-Check: PASSED
+
+- ✅ `apps/website/app/stores/me.store.ts` — exists, zero strapi.find/findOne references
+- ✅ `apps/website/app/stores/user.store.ts` — exists, zero strapi.find/findOne references
+- ✅ `apps/website/app/stores/indicator.store.ts` — exists, zero strapi.find/findOne references
+- ✅ `.planning/phases/090-migrate-all-get-callers/090-03-SUMMARY.md` — exists
+- ✅ `f452aff` — feat(090-03): migrate user.store.ts GET calls to useApiClient
+- ✅ `fdbc01b` — feat(090-03): migrate indicator.store.ts to useApiClient
+- ✅ `99da301` — docs(090-03): complete migrate-user-and-indicator-stores plan
+
 ---
 *Phase: 090-migrate-all-get-callers*
 *Completed: 2026-03-15*
