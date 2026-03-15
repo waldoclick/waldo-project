@@ -69,6 +69,7 @@ import iconInfo from "/images/icon-info.svg";
 // Accede a la configuración de runtime
 const user = useStrapiUser();
 const { transformUrl, uploadFile } = useImageProxy();
+const apiClient = useApiClient();
 
 const form = ref({
   file: undefined,
@@ -153,9 +154,9 @@ const handleUpload = async () => {
 
 const updateUserCover = async (image) => {
   try {
-    const strapi = useStrapi();
-    await strapi.update("users/cover", {
-      cover: image.id,
+    await apiClient("/api/users/cover", {
+      method: "PUT",
+      body: { cover: image.id },
     });
     const { fetchUser } = useStrapiAuth();
     await fetchUser();
@@ -189,10 +190,10 @@ const removeImage = async (image) => {
   document.body.classList.add("cursor-wait");
 
   try {
-    const strapi = useStrapi();
     // Primero eliminamos el cover
-    await strapi.update("users/cover", {
-      coverId: null,
+    await apiClient("/api/users/cover", {
+      method: "PUT",
+      body: { coverId: null },
     });
 
     // Actualizamos el usuario en el frontend
