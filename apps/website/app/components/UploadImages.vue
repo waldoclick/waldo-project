@@ -7,16 +7,16 @@
       }"
       class="upload--images__grid"
     >
-      <!-- Imágenes cargadas -->
+      <!-- All images: uploaded (from store) + pending (blob previews) -->
       <div
-        v-for="(image, index) in images"
-        :key="`${image?.id}-${index}`"
+        v-for="(image, index) in allImages"
+        :key="`${image.id}-${index}`"
         :class="{ 'is-active': true }"
         class="upload--images__input"
       >
         <img
           class="upload--images__input__image"
-          :src="image?.url || ''"
+          :src="image.url || ''"
           alt="Imagen"
         />
         <button
@@ -28,7 +28,7 @@
         </button>
       </div>
 
-      <!-- Imágenes por subir -->
+      <!-- Empty slots -->
       <div
         v-for="index in calculateMax"
         :key="`upload-image-${index}`"
@@ -55,6 +55,7 @@
       ref="fileInput"
       type="file"
       name="image"
+      multiple
       class="upload--hidden"
       @change="handleFileChange"
     />
@@ -65,9 +66,8 @@
 import { ref, computed } from "vue";
 const { Swal } = useSweetAlert2();
 import { useAdStore } from "@/stores/ad.store";
-import { useRuntimeConfig } from "#app";
 import { useToast } from "../composables/useNotifications";
-import { useImageProxy } from "@/composables/useImage";
+import { usePendingUploads } from "@/composables/usePendingUploads";
 import { useApiClient } from "#imports";
 import {
   X as IconX,
@@ -75,34 +75,33 @@ import {
   Info as IconInfo,
 } from "lucide-vue-next";
 
-// Accede a la configuración de runtime
 const adStore = useAdStore();
-const token = useStrapiToken();
 const toast = useToast();
-const { transformUrl, uploadFile } = useImageProxy();
 const apiClient = useApiClient();
-
-const form = ref({
-  file: undefined,
-});
+const { pendingGalleryItems, addPending, removePending } = usePendingUploads();
 
 const fileInput = ref(null);
 const isProcessing = ref(false);
 
-// Computed property to determine if the ad is free
 const isFree = computed(() => adStore.pack === "free");
 
-// Computed property for images
-const images = computed(() => {
+// Uploaded images from store (real IDs and URLs)
+const uploadedImages = computed(() => {
   const gallery = adStore.ad.gallery;
   return Array.isArray(gallery) ? gallery : [];
 });
 
-const calculateMax = computed(() => {
-  const maxImages = isFree.value ? 4 : 12;
-  const currentImages = images.value.length;
-  return Math.max(0, maxImages - currentImages);
-});
+// All images to display: uploaded + pending previews
+const allImages = computed(() => [
+  ...uploadedImages.value,
+  ...pendingGalleryItems.value,
+]);
+
+const maxImages = computed(() => (isFree.value ? 4 : 12));
+
+const calculateMax = computed(() =>
+  Math.max(0, maxImages.value - allImages.value.length),
+);
 
 const handleFileOpen = () => {
   if (!isProcessing.value) {
@@ -110,76 +109,72 @@ const handleFileOpen = () => {
   }
 };
 
-const handleFileChange = (event) => {
-  const file = event.target.files[0];
-  const validTypes = ["image/jpeg", "image/png", "image/webp"];
+const validateImageDimensions = (file) =>
+  new Promise((resolve) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.src = url;
+    img.addEventListener("load", () => {
+      URL.revokeObjectURL(url);
+      resolve(img.width >= 750 && img.height >= 420);
+    });
+  });
 
-  // Limpiar el input después de cada intento
+const handleFileChange = async (event) => {
+  const files = [...event.target.files];
   fileInput.value.value = "";
 
-  // Verificar límite de imágenes según el pack
-  const maxImages = isFree.value ? 4 : 12;
-  if (images.value.length >= maxImages) {
+  const validTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
+  const remaining = maxImages.value - allImages.value.length;
+
+  if (remaining <= 0) {
     toast.warning(
-      `Ups, ya tienes ${maxImages} imágenes. No puedes agregar más.`,
+      `Ups, ya tienes ${maxImages.value} imágenes. No puedes agregar más.`,
     );
     return;
   }
 
-  if (!validTypes.includes(file.type)) {
-    toast.error(
-      "Solo aceptamos imágenes en JPG, PNG o WebP. ¿Podrías intentar con otro formato?",
+  // Limit selection to available slots
+  const filesToProcess = files.slice(0, remaining);
+
+  if (files.length > remaining) {
+    toast.warning(
+      `Solo puedes agregar ${remaining} imagen(es) más. Se procesarán las primeras ${remaining}.`,
     );
-    return;
   }
 
-  const img = new Image();
-  img.src = URL.createObjectURL(file);
-  img.addEventListener("load", () => {
-    if (img.width < 750 || img.height < 420) {
+  const validFiles = [];
+
+  for (const file of filesToProcess) {
+    if (!validTypes.has(file.type)) {
       toast.error(
-        "Esta imagen es muy pequeña. Necesitamos una de al menos 750x420 píxeles para que se vea bien.",
+        `"${file.name}" no es un formato válido. Solo aceptamos JPG, PNG o WebP.`,
       );
-      return;
+      continue;
     }
 
-    form.value.file = file;
-    handleUpload();
-  });
-};
+    const hasValidDimensions = await validateImageDimensions(file);
+    if (!hasValidDimensions) {
+      toast.error(
+        `"${file.name}" es muy pequeña. Necesitamos al menos 750x420 píxeles.`,
+      );
+      continue;
+    }
 
-const handleUpload = async () => {
-  isProcessing.value = true;
-  document.body.classList.add("cursor-wait");
+    validFiles.push(file);
+  }
 
-  try {
-    const uploadedImage = await uploadFile(form.value.file, "gallery");
-    handlePushImage(uploadedImage);
-  } catch (error) {
-    console.error("Upload error:", error);
-    toast.error(
-      "¡Ups! No pudimos subir tu imagen. ¿Podrías intentarlo de nuevo?",
+  if (validFiles.length > 0) {
+    addPending(validFiles);
+    toast.success(
+      validFiles.length === 1
+        ? "¡Imagen lista! Se subirá al confirmar."
+        : `¡${validFiles.length} imágenes listas! Se subirán al confirmar.`,
     );
-  } finally {
-    isProcessing.value = false;
-    document.body.classList.remove("cursor-wait");
   }
 };
 
-const handlePushImage = (uploadedImage) => {
-  const imageUrl = uploadedImage.formats?.thumbnail?.url || uploadedImage.url;
-  const newImage = {
-    id: uploadedImage.id,
-    url: transformUrl(imageUrl),
-  };
-
-  const updatedGallery = [...images.value, newImage];
-  adStore.updateGallery(updatedGallery);
-  fileInput.value.value = "";
-  toast.success("¡Listo! Tu imagen se subió perfectamente");
-};
-
-const handleRemoveImage = (id) => {
+const handleRemoveImage = (image) => {
   if (isProcessing.value) return;
 
   Swal.fire({
@@ -190,12 +185,18 @@ const handleRemoveImage = (id) => {
     cancelButtonText: "No, mantener",
   }).then((result) => {
     if (result.isConfirmed) {
-      removeImage(id);
+      if (image.pending) {
+        // Local-only removal — no API call needed
+        removePending(image.url);
+        toast.success("¡Listo! La imagen fue eliminada");
+      } else {
+        removeUploadedImage(image);
+      }
     }
   });
 };
 
-const removeImage = async (image) => {
+const removeUploadedImage = async (image) => {
   isProcessing.value = true;
   document.body.style.cursor = "wait";
 
@@ -209,7 +210,7 @@ const removeImage = async (image) => {
     );
   } finally {
     isProcessing.value = false;
-    document.body.classList.remove("cursor-wait");
+    document.body.style.cursor = "";
   }
 };
 </script>
