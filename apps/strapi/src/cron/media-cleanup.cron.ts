@@ -1,5 +1,17 @@
 import logger from "../utils/logtail";
 
+interface StrapiUploadFile {
+  id: number;
+  url: string;
+  secure_url?: string;
+  name: string;
+  createdAt: string;
+}
+
+interface StrapiAd {
+  gallery?: StrapiUploadFile[];
+}
+
 export interface ICronjobResult {
   success: boolean;
   results?: string;
@@ -71,7 +83,7 @@ export class CleanupService {
    * the folder name ("ads"), we must first resolve the folder's path string
    * via `db.query`, then use that path value in the file filter.
    */
-  private async getStrapiImages(): Promise<any[]> {
+  private async getStrapiImages(): Promise<StrapiUploadFile[]> {
     try {
       // Step 1: Resolve the 'ads' folder to get its numeric path string.
       // `folderPath` on upload files contains the folder's path (e.g. "/1"),
@@ -99,7 +111,7 @@ export class CleanupService {
         }
       );
 
-      return (images as any[]) || [];
+      return (images as unknown as StrapiUploadFile[]) || [];
     } catch (error) {
       logger.error("Error fetching images from Strapi:", error);
       throw error;
@@ -121,14 +133,14 @@ export class CleanupService {
           gallery: true,
         },
         pagination: { pageSize: -1 },
-      })) as any[];
+      })) as unknown as StrapiAd[];
 
       const imageUrls: string[] = [];
 
       // Extract all image URLs from each ad's gallery
       ads.forEach((ad) => {
         if (ad.gallery && Array.isArray(ad.gallery)) {
-          ad.gallery.forEach((image: any) => {
+          ad.gallery.forEach((image: StrapiUploadFile) => {
             if (image.url) {
               imageUrls.push(image.url);
             }
@@ -153,7 +165,10 @@ export class CleanupService {
    * but its URL does not appear in the set of URLs referenced by any active ad.
    * Both `url` and `secure_url` are checked to handle HTTP/HTTPS variants.
    */
-  private findOrphans(strapiImages: any[], dbImages: string[]): any[] {
+  private findOrphans(
+    strapiImages: StrapiUploadFile[],
+    dbImages: string[]
+  ): StrapiUploadFile[] {
     const dbImageSet = new Set(dbImages);
 
     return strapiImages.filter((strapiImg) => {
@@ -174,7 +189,9 @@ export class CleanupService {
    * destructive operation and must be triggered explicitly after reviewing
    * the orphan list produced by findOrphanImages().
    */
-  async deleteOrphanImages(orphanImages: any[]): Promise<ICronjobResult> {
+  async deleteOrphanImages(
+    orphanImages: StrapiUploadFile[]
+  ): Promise<ICronjobResult> {
     try {
       logger.info(`=== DELETING ${orphanImages.length} ORPHAN IMAGES ===`);
 

@@ -3,7 +3,13 @@
  */
 
 import { factories } from "@strapi/strapi";
+import type { Context } from "koa";
 import { QueryParams } from "../types";
+
+interface StrapiOrder {
+  createdAt: string;
+  amount: string | number;
+}
 
 export default factories.createCoreController(
   "api::order.order",
@@ -13,7 +19,7 @@ export default factories.createCoreController(
         const { query } = ctx;
 
         // Extraer parámetros de paginación
-        const pagination = query.pagination as any;
+        const pagination = query.pagination as Record<string, string>;
         const page = parseInt(pagination?.page || "1", 10);
         const pageSize = parseInt(pagination?.pageSize || "25", 10);
 
@@ -21,7 +27,7 @@ export default factories.createCoreController(
         const filters = query.filters || {};
 
         // Transformar sort de string a objeto (formato compatible con Strapi v5)
-        let sort: any = { createdAt: "desc" };
+        let sort: Record<string, unknown> = { createdAt: "desc" };
         if (query.sort) {
           if (typeof query.sort === "string") {
             const [field, direction] = query.sort.split(":");
@@ -31,7 +37,7 @@ export default factories.createCoreController(
             typeof query.sort === "object" &&
             !Array.isArray(query.sort)
           ) {
-            sort = query.sort;
+            sort = query.sort as Record<string, unknown>;
           } else if (Array.isArray(query.sort) && query.sort.length > 0) {
             // Si viene como array, tomar el primer elemento
             const firstSort = query.sort[0];
@@ -42,7 +48,7 @@ export default factories.createCoreController(
         }
 
         // Manejar populate: si viene como objeto (populate[user]=true), convertirlo a formato correcto
-        let populate: any = "*";
+        let populate: string | Record<string, unknown> = "*";
         if (query.populate) {
           if (typeof query.populate === "string") {
             populate = query.populate;
@@ -60,7 +66,9 @@ export default factories.createCoreController(
           populate,
           start: (page - 1) * pageSize,
           limit: pageSize,
-          sort,
+          sort: sort as unknown as Parameters<
+            typeof strapi.entityService.findMany
+          >[1]["sort"],
         });
 
         // Obtener el total de registros
@@ -178,7 +186,9 @@ export default factories.createCoreController(
               $gte: startDate.toISOString(),
               $lt: endDate.toISOString(),
             },
-          } as any,
+          } as unknown as Parameters<
+            typeof strapi.entityService.findMany
+          >[1]["filters"],
           fields: ["amount", "createdAt"],
           limit: -1, // fetch all matching orders without pagination
         });
@@ -187,7 +197,7 @@ export default factories.createCoreController(
         const monthlyTotals: Record<number, number> = {};
         for (let i = 0; i < 12; i++) monthlyTotals[i] = 0;
 
-        for (const order of orders as any[]) {
+        for (const order of orders as unknown as StrapiOrder[]) {
           const date = new Date(order.createdAt as string);
           const month = date.getUTCMonth();
           const amount =
@@ -209,7 +219,7 @@ export default factories.createCoreController(
       }
     },
 
-    async findOne(ctx: any) {
+    async findOne(ctx: Context) {
       try {
         const documentId = ctx.params.documentId ?? ctx.params.id;
         if (!documentId) {
