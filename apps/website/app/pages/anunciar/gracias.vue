@@ -29,7 +29,7 @@ import ResumeDefault from "@/components/ResumeDefault.vue";
 import FooterDefault from "@/components/FooterDefault.vue";
 
 const route = useRoute();
-const strapi = useStrapi();
+const client = useApiClient();
 const adStore = useAdStore();
 
 onMounted(() => {

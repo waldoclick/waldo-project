@@ -7,6 +7,7 @@ import type {
   CategoryResponse,
   CategoryState,
 } from "@/types/category";
+import { useApiClient } from "#imports";
 
 const DEFAULT_CACHE_MINUTES = 30;
 
@@ -20,6 +21,8 @@ export const useCategoriesStore = defineStore(
     const error = ref<string | null>(null);
     const lastFetch = ref(0);
     const cacheDurationMinutes = ref(DEFAULT_CACHE_MINUTES);
+
+    const client = useApiClient();
 
     // Getters
     const getCategories = computed(() => categories.value);
@@ -53,13 +56,16 @@ export const useCategoriesStore = defineStore(
       error.value = null;
 
       try {
-        const strapi = useStrapi();
-        const response = await strapi.find("categories", {
-          pagination: {
-            page: 1,
-            pageSize: 1000,
-          },
-          populate: "*",
+        const response = await client("/api/categories", {
+          method: "GET",
+          params: {
+            pagination: {
+              page: 1,
+              pageSize: 1000,
+            },
+            populate: "*",
+            sort: ["name:asc"],
+          } as unknown as Record<string, unknown>,
         });
         const typedResponse = response as unknown as CategoryResponse;
 
@@ -100,15 +106,17 @@ export const useCategoriesStore = defineStore(
         loading.value = true;
         error.value = null;
 
-        const strapi = useStrapi();
-        const response = await strapi.find("categories", {
-          filters: {
-            slug: {
-              $eq: slug,
+        const response = await client("/api/categories", {
+          method: "GET",
+          params: {
+            filters: {
+              slug: {
+                $eq: slug,
+              },
             },
-          },
-          populate: "*",
-        } as unknown as Record<string, unknown>);
+            populate: "*",
+          } as unknown as Record<string, unknown>,
+        });
         const typedResponse = response as unknown as CategoryResponse;
 
         if (!typedResponse.data || !Array.isArray(typedResponse.data)) {
@@ -141,14 +149,17 @@ export const useCategoriesStore = defineStore(
           };
         }
 
-        const strapi = useStrapi();
-        const response = await strapi.find("categories", {
-          filters: {
-            id: {
-              $eq: id,
+        const response = await client("/api/categories", {
+          method: "GET",
+          params: {
+            filters: {
+              id: {
+                $eq: id,
+              },
             },
-          },
-        } as unknown as Record<string, unknown>);
+            populate: "*",
+          } as unknown as Record<string, unknown>,
+        });
 
         const typedResponse = response as unknown as CategoryResponse;
         if (!typedResponse.data || !Array.isArray(typedResponse.data)) {
