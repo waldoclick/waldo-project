@@ -96,7 +96,7 @@ const handleSubmit = async (values: any) => {
   loading.value = true;
 
   try {
-    await apiClient("/api/auth/change-password", {
+    await apiClient("auth/change-password", {
       method: "POST",
       body: {
         currentPassword: values.current_password,

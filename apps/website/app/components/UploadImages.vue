@@ -74,8 +74,6 @@ import {
   Info as IconInfo,
 } from "lucide-vue-next";
 
-const { $recaptcha } = useNuxtApp();
-
 // Accede a la configuración de runtime
 const adStore = useAdStore();
 const token = useStrapiToken();
@@ -153,14 +151,7 @@ const handleUpload = async () => {
   document.body.classList.add("cursor-wait");
 
   try {
-    // Execute reCAPTCHA v3
-    const recaptchaToken = await $recaptcha.execute("upload_image");
-
-    const uploadedImage = await uploadFile(
-      form.value.file,
-      "gallery",
-      recaptchaToken,
-    );
+    const uploadedImage = await uploadFile(form.value.file, "gallery");
     handlePushImage(uploadedImage);
   } catch (error) {
     console.error("Upload error:", error);

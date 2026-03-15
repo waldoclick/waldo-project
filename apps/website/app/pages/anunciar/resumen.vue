@@ -131,14 +131,14 @@ const confirmPay = async () => {
   // Si hay que pagar, guardar draft y navegar directo a pagar sin confirmación
   if (hasToPay.value) {
     try {
-      const draftResponse = await apiClient<{ id: number; documentId: string }>(
-        "/api/ads/save-draft",
+      const draftResponse = await apiClient<{ data: { id: number } }>(
+        "ads/save-draft",
         {
           method: "POST",
-          body: { ad: adStore.ad },
+          body: { data: { ad: adStore.ad } },
         },
       );
-      adStore.updateAdId(draftResponse.id);
+      adStore.updateAdId(draftResponse.data.id);
       router.push("/pagar");
     } catch {
       Swal.fire({
@@ -163,14 +163,14 @@ const confirmPay = async () => {
 
   if (result.isConfirmed) {
     try {
-      const draftResponse = await apiClient<{ id: number; documentId: string }>(
-        "/api/ads/save-draft",
+      const draftResponse = await apiClient<{ data: { id: number } }>(
+        "ads/save-draft",
         {
           method: "POST",
-          body: { ad: adStore.ad },
+          body: { data: { ad: adStore.ad } },
         },
       );
-      adStore.updateAdId(draftResponse.id);
+      adStore.updateAdId(draftResponse.data.id);
       await handleFreeCreation();
     } catch {
       Swal.fire({
@@ -189,17 +189,19 @@ const handleFreeCreation = async () => {
 
     // Process free ad using the dedicated endpoint
     const freeAdResponse = await apiClient<{
-      ad?: { documentId?: string; id?: number };
-    }>("/api/payments/free-ad", {
+      data: { ad?: { documentId?: string; id?: number } };
+    }>("payments/free-ad", {
       method: "POST",
       body: {
-        ad_id: adStore.ad.ad_id,
-        pack: adStore.pack,
+        data: {
+          ad_id: adStore.ad.ad_id,
+          pack: adStore.pack,
+        },
       },
     });
 
     await fetchUser();
-    const adDocumentId = freeAdResponse.ad?.documentId;
+    const adDocumentId = freeAdResponse.data?.ad?.documentId;
     router.push("/anunciar/gracias?ad=" + (adDocumentId || adStore.ad.ad_id));
   } catch (error: unknown) {
     let errorMessage =

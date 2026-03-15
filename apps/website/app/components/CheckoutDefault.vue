@@ -55,20 +55,22 @@ const handlePayClick = async () => {
       packValue = selectedPack.name;
     }
 
-    const response = await apiClient<{ url: string; token: string }>(
-      "/api/payments/checkout",
+    const response = await apiClient<{ data: { url: string; token: string } }>(
+      "payments/checkout",
       {
         method: "POST",
         body: {
-          pack: packValue,
-          ad_id: adStore.ad.ad_id,
-          featured: adStore.featured,
-          is_invoice: adStore.is_invoice,
+          data: {
+            pack: packValue,
+            ad_id: adStore.ad.ad_id,
+            featured: adStore.featured,
+            is_invoice: adStore.is_invoice,
+          },
         },
       },
     );
 
-    const { url, token } = response;
+    const { url, token } = response.data;
 
     if (!url || !token) {
       throw new Error("Invalid payment response");

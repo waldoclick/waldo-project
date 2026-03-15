@@ -39,14 +39,14 @@ const handleProSubscription = async () => {
   }
 
   try {
-    const response = await apiClient("/api/payments/pro", {
+    const response = await apiClient("payments/pro", {
       method: "POST",
-      body: {},
+      body: { data: {} },
     });
 
     // Redirección GET a Flow con token en URL
-    if (response?.url && response?.token) {
-      const redirectUrl = `${response.url}?token=${response.token}`;
+    if (response?.data?.url && response?.data?.token) {
+      const redirectUrl = `${response.data.url}?token=${response.data.token}`;
       window.location.href = redirectUrl;
     } else {
       console.error("Respuesta inválida de la API para Flow", response);

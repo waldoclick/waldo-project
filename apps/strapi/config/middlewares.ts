@@ -67,7 +67,7 @@ export default ({ env }) => [
   // "global::image-uploader", // Comentado para pruebas con Cloudinary
   // "global::image-converter",
   "global::upload",
-  "global::recaptcha",
+  // "global::recaptcha", // Movido a Nuxt Nitro proxy
   ...(env("ENABLE_CACHE", "false") === "true" ? ["global::cache"] : []),
   "global::user-registration",
 ];
