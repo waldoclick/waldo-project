@@ -6,6 +6,9 @@
   &--default {
     &__container {
       @extend .container;
+      display: flex;
+      flex-direction: column;
+      gap: 50px;
 
       @include screen-large {
         padding: 0;
@@ -13,7 +16,7 @@
     }
 
     &__head {
-      margin-bottom: 50px;
+      // margin-bottom: 50px;
 
       &__title {
         margin-bottom: 20px;
@@ -43,6 +46,12 @@
         padding: 0 20px;
         grid-template-columns: 1fr;
       }
+    }
+
+    &__buttons {
+      display: flex;
+      justify-content: center;
+      // margin-top: 40px;
     }
   }
 }
