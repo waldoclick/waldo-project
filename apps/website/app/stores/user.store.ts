@@ -22,7 +22,7 @@ export const useUserStore = defineStore("user", () => {
 
   const loadUsers = async () => {
     try {
-      const response = await client("/api/users", {
+      const response = await client("users", {
         method: "GET",
         params: {
           pagination: { pageSize: 20, page: 1 },
@@ -38,7 +38,7 @@ export const useUserStore = defineStore("user", () => {
 
   const loadUser = async (slug: string) => {
     try {
-      const response = await client("/api/users", {
+      const response = await client("users", {
         method: "GET",
         params: {
           filters: {
@@ -69,7 +69,7 @@ export const useUserStore = defineStore("user", () => {
     meta: { pagination: { total: number } };
   } | null> => {
     try {
-      const response = await client("/api/ads/me", {
+      const response = await client("ads/me", {
         method: "GET",
         params: {
           filters,
@@ -99,7 +99,7 @@ export const useUserStore = defineStore("user", () => {
     meta: { pagination: { total: number } };
   } | null> => {
     try {
-      const response = await client("/api/orders/me", {
+      const response = await client("orders/me", {
         method: "GET",
         params: {
           filters,
@@ -144,7 +144,7 @@ export const useUserStore = defineStore("user", () => {
     banned: number;
   }> => {
     try {
-      const response = await client("/api/ads/me/counts", { method: "GET" });
+      const response = await client("ads/me/counts", { method: "GET" });
       return response as unknown as {
         published: number;
         review: number;

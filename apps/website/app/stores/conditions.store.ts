@@ -41,7 +41,7 @@ export const useConditionsStore = defineStore("conditions", {
         this.error = null;
 
         const client = useApiClient();
-        const response = await client("/api/conditions", {
+        const response = await client("conditions", {
           method: "GET",
           params: {
             pagination: { page: 1, pageSize: 1000 },
@@ -70,7 +70,7 @@ export const useConditionsStore = defineStore("conditions", {
         this.error = null;
 
         const client = useApiClient();
-        const response = await client("/api/conditions", {
+        const response = await client("conditions", {
           method: "GET",
           params: {
             filters: { id: { $eq: id } },

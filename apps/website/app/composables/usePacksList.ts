@@ -11,7 +11,7 @@ export const usePacksList = () => {
   const loadPacks = async () => {
     const now = Date.now();
     if (_packs.value.length > 0 && now - _lastFetch < TTL) return;
-    const response = (await client("/api/ad-packs", {
+    const response = (await client("ad-packs", {
       method: "GET",
       params: { populate: "*" } as unknown as Record<string, unknown>,
     })) as { data: Pack[] };

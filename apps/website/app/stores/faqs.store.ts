@@ -29,7 +29,7 @@ export const useFaqsStore = defineStore(
           loading.value = true;
           error.value = null;
 
-          const response = await client("/api/faqs", {
+          const response = await client("faqs", {
             method: "GET",
             params: {
               pagination: { pageSize: PAGE_SIZE, page: 1 },

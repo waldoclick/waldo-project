@@ -38,7 +38,7 @@ export const useArticlesStore = defineStore("articles", () => {
         populate: "*",
       } as unknown as Record<string, unknown>;
 
-      const response = await client("/api/articles", {
+      const response = await client("articles", {
         method: "GET",
         params: params as unknown as Record<string, unknown>,
       });

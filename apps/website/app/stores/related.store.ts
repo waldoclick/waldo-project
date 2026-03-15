@@ -17,7 +17,7 @@ export const useRelatedStore = defineStore(
         loading.value = true;
         error.value = null;
 
-        const response = await client(`/api/related/ads/${id}`, {
+        const response = await client(`related/ads/${id}`, {
           method: "GET",
           params: { populate: "*" } as unknown as Record<string, unknown>,
         });

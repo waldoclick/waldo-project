@@ -61,7 +61,7 @@ export const useCommunesStore = defineStore("communes", {
         this.error = null;
 
         const client = useApiClient();
-        const response = await client("/api/communes", {
+        const response = await client("communes", {
           method: "GET",
           params: {
             pagination: { page: 1, pageSize: 1000 },

@@ -56,7 +56,7 @@ export const useCategoriesStore = defineStore(
       error.value = null;
 
       try {
-        const response = await client("/api/categories", {
+        const response = await client("categories", {
           method: "GET",
           params: {
             pagination: {
@@ -106,7 +106,7 @@ export const useCategoriesStore = defineStore(
         loading.value = true;
         error.value = null;
 
-        const response = await client("/api/categories", {
+        const response = await client("categories", {
           method: "GET",
           params: {
             filters: {
@@ -149,7 +149,7 @@ export const useCategoriesStore = defineStore(
           };
         }
 
-        const response = await client("/api/categories", {
+        const response = await client("categories", {
           method: "GET",
           params: {
             filters: {

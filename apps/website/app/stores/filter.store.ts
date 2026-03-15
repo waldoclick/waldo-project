@@ -45,7 +45,7 @@ export const useFilterStore = defineStore(
         loading.value = true;
         error.value = null;
 
-        const response = await client("/api/filter/communes", {
+        const response = await client("filter/communes", {
           method: "GET",
         });
         const typedResponse =
@@ -79,7 +79,7 @@ export const useFilterStore = defineStore(
         loading.value = true;
         error.value = null;
 
-        const response = await client("/api/filter/categories", {
+        const response = await client("filter/categories", {
           method: "GET",
         });
         const typedResponse =
