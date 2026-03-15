@@ -32,7 +32,7 @@ const categoriesStore = useCategoriesStore();
 
 // Pre-load creation flow data for SSR — categories, packs, and me data
 // must be available before components mount to avoid client-side flash
-const strapi = useStrapi();
+const client = useApiClient();
 const { data: initData } = await useAsyncData(
   "anunciar-init",
   async () => {
@@ -40,11 +40,14 @@ const { data: initData } = await useAsyncData(
       await Promise.all([
         meStore.loadMe(),
         categoriesStore.loadCategories(),
-        strapi.find("ad-packs", { populate: "*" }),
+        client("/api/ad-packs", {
+          method: "GET",
+          params: { populate: "*" } as unknown as Record<string, unknown>,
+        }),
       ])
-    )[2];
+    )[2] as { data: Pack[] };
     return {
-      packs: (packsResponse.data as unknown as Pack[]) ?? [],
+      packs: packsResponse.data ?? [],
     };
   },
   { default: () => ({ packs: [] as Pack[] }) },
