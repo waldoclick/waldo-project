@@ -1,6 +1,8 @@
 import type Cookies from "js-cookie";
 import type { GtmSupport } from "@gtm-support/vue-gtm";
 import type { formatDate, formatDateShort } from "../utils/date";
+// Activate pinia-plugin-persistedstate module augmentation (adds `persist` to DefineStoreOptionsBase)
+import "pinia-plugin-persistedstate";
 
 declare module "#app" {
   interface NuxtApp {
