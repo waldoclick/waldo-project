@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.38
 milestone_name: GA4 Analytics Audit & Implementation
 status: planning
-last_updated: "2026-03-15T03:48:31Z"
-last_activity: "2026-03-15 — Completed 086-01 (reCAPTCHA v3 validation moved to Nitro proxy — X-Recaptcha-Token header, 8 components migrated, stale type augmentations removed)"
+last_updated: "2026-03-15T04:23:05Z"
+last_activity: "2026-03-15 — Completed 087-01 (useApiClient composable centralizes reCAPTCHA token injection, 5 components migrated)"
 progress:
-  total_phases: 4
+  total_phases: 5
   completed_phases: 2
-  total_plans: 7
-  completed_plans: 6
-  percent: 86
+  total_plans: 8
+  completed_plans: 7
+  percent: 88
 ---
 
 # Session State
@@ -26,14 +26,14 @@ See: .planning/PROJECT.md (updated 2026-03-14 after v1.38 milestone started)
 
 **Current Milestone:** v1.38 — GA4 Analytics Audit & Implementation
 **Status:** In progress
-Phase: 086
+Phase: 087
 Plan: 01 complete
 
 ```
-Progress: [████████░░] 86% (6/7 plans across current milestone)
+Progress: [████████░░] 88% (7/8 plans across current milestone)
 ```
 
-Last activity: 2026-03-15 — Completed 086-01: reCAPTCHA v3 validation moved to Nitro proxy (X-Recaptcha-Token header)
+Last activity: 2026-03-15 — Completed 087-01: useApiClient composable centralizes reCAPTCHA token injection (5 components migrated, 8 tests pass)
 
 ## Phase Map
 
@@ -42,7 +42,8 @@ Last activity: 2026-03-15 — Completed 086-01: reCAPTCHA v3 validation moved to
 | 083 | Ecommerce Bug Fixes | ECOM-01, ECOM-02, ECOM-03 | Complete (2/2 plans done) |
 | 084 | Ad Discovery Tracking | DISC-01, DISC-02, DISC-03 | Complete (2/2 plans done) |
 | 085 | Contact, Auth & Blog Events | CONT-01, CONT-02, AUTH-01, AUTH-02, BLOG-01 | In Progress (1/2 plans done) |
-| 086 | reCAPTCHA Nitro Proxy | — | In Progress (1/1 plans done) |
+| 086 | reCAPTCHA Nitro Proxy | — | Complete (1/1 plans done) |
+| 087 | useApiClient reCAPTCHA Composable | — | Complete (1/1 plans done) |
 
 ## Accumulated Context
 
@@ -83,8 +84,11 @@ Last activity: 2026-03-15 — Completed 086-01: reCAPTCHA v3 validation moved to
 - articleView() passes id as-is (string | number) without coercion — GA4 accepts both (085-01)
 - reCAPTCHA v3 validated at Nitro proxy layer via X-Recaptcha-Token header — token never reaches Strapi (086-01)
 - verifyRecaptchaToken imports createError from h3 explicitly (not Nitro auto-import) for Vitest testability (086-01)
-- FormForgotPassword/ResetPassword/Contact use useStrapiClient() directly (SDK doesn't support custom headers) (086-01)
+- FormForgotPassword/ResetPassword/Contact used useStrapiClient() directly (SDK doesn't support custom headers) (086-01) — SUPERSEDED by 087-01: now use useApiClient()
 - X-Recaptcha-Token travels browser→Nuxt server (same origin) then Nuxt→Strapi (server-to-server, CORS N/A) — no Strapi CORS changes needed (086-01)
+- useApiClient() must explicitly import from #imports (not rely on Nuxt auto-imports) for Vitest vi.mock() interception to work (087-01)
+- vi.hoisted() required for mock variables referenced in vi.mock() factory — prevents undefined at hoisting time (087-01)
+- $recaptcha is optional in plugins.d.ts (client-only plugin, undefined on SSR) — out-of-scope components needing direct access use ! non-null assertion (087-01)
 
 ### v1.38 Key Facts (GA4 analytics)
 
