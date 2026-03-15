@@ -1,86 +1,46 @@
-# Requirements: Waldo Project — v1.38
+# Requirements: Waldo Project — v1.39
 
-**Defined:** 2026-03-14
+**Defined:** 2026-03-15
 **Core Value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
 
-## v1.38 Requirements
+## v1.39 Requirements
 
-### Ecommerce Bug Fixes
+Requirements for milestone v1.39 — Unified API Client. Completa la centralización de API iniciada en v1.38 donde todos los POST/PUT/DELETE ya pasaron por `useApiClient`. Este milestone migra los GET de datos del website al mismo composable, dejando un único punto de entrada para todos los fetches.
 
-- [x] **ECOM-01**: The `purchase` event reports real transaction value (not always $0) — `order.amount` field name corrected so GA4 ecommerce dashboard shows actual revenue
-- [x] **ECOM-02**: The `purchase` event `item_id` is populated with the real order `documentId` (not empty string)
-- [x] **ECOM-03**: GA4 receives a `purchase` event with `value: 0` when a user successfully creates a free ad (`/anunciar/gracias`) — free ad creation is a conversion and must be tracked alongside paid conversions
+### API Client Unification (apps/website only)
 
-### Ad Discovery Tracking
-
-- [x] **DISC-01**: GA4 receives a `view_item_list` event when a user views the public ad listing (`/anuncios`) — includes item array with visible ads
-- [x] **DISC-02**: GA4 receives a `view_item` event when a user views an ad detail page (`/anuncios/[slug]`) — includes `item_id`, `item_name`, `price`, `item_category`
-- [x] **DISC-03**: GA4 receives a `search` event when a user submits a search query or applies a commune filter — includes `search_term`
-
-### Seller Contact Tracking
-
-- [x] **CONT-01**: GA4 receives a `contact` event when a logged-in user clicks the seller's email link on an ad detail page — includes `method: "email"`
-- [x] **CONT-02**: GA4 receives a `contact` event when a logged-in user clicks the seller's phone link on an ad detail page — includes `method: "phone"`
-
-### Lead Generation Tracking
-
-- [x] **LEAD-01**: GA4 receives a `generate_lead` event when a user successfully submits the contact form and reaches `/contacto/gracias`
-
-### User Lifecycle Tracking
-
-- [x] **AUTH-01**: GA4 receives a `sign_up` event when a user completes registration successfully — includes `method: "email"`
-- [x] **AUTH-02**: GA4 receives a `login` event when a user completes login successfully (including 2-step verification) — includes `method: "email"` or `method: "google"`
-
-### Blog Tracking
-
-- [x] **BLOG-01**: GA4 receives a custom `article_view` event when a user views a blog article (`/blog/[slug]`) — includes `article_id`, `article_title`, `article_category`
-
-## Future Requirements
-
-### Enhanced Ecommerce
-
-- **ECOM-F01**: `purchase` event `item_name` reflects the actual pack purchased (not hardcoded "Orden de pago")
-- **ECOM-F02**: `view_item_list` on `/packs` page fires for direct pack purchases (not just via wizard)
-- **ECOM-F01b**: `purchase` event `item_name` reflects the actual pack purchased (not hardcoded "Orden de pago") — moved from v1 scope to future
-
-### Engagement
-
-- **ENG-F01**: `share` event fires when user shares an ad via `ShareDefault.vue`
-- **ENG-F02**: Filter interaction event fires when user changes commune or sort order without text search
-- **ENG-F03**: `article_view` event for blog listing page (`/blog`)
+- [ ] **API-01**: Todos los `strapi.find()` en stores del website migrados a `useApiClient`
+- [ ] **API-02**: Todos los `strapi.findOne()` en stores del website migrados a `useApiClient`
+- [ ] **API-03**: Los composables `useStrapi.ts`, `useOrderById.ts`, `usePacksList.ts` migrados a `useApiClient`
+- [ ] **API-04**: Las pages y components que llaman `strapi.find()/findOne()` directamente migrados a `useApiClient`
+- [ ] **API-05**: `useApiClient` soporta GET requests (sin inyección de reCAPTCHA)
+- [ ] **API-06**: `typeCheck: true` pasa con zero errores después de la migración
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| Dashboard analytics | Dashboard is admin-only; GA4 is a user-facing analytics tool |
-| Consent Mode default state fix | Pre-existing legal/compliance concern; needs dedicated GTM container work, not a code change |
-| GTM container configuration | Out of codebase scope — done in GTM UI |
-| `exception` event standardization | Not a user-facing bug; low business impact |
-| `step_view` → GA4 standard funnel migration | Would require GTM trigger reconfiguration; no user-facing impact |
+| Migrar apps/dashboard | Dashboard queda para milestone posterior |
+| Migrar auth helpers (fetchUser, setToken, logout) | No son fetches de datos — son helpers de sesión correctos en el SDK |
+| Migrar OAuth helpers (getProviderAuthenticationUrl, authenticateProvider) | OAuth flow requiere el SDK; no son candidates para useApiClient |
+| Eliminar dependencia completa de @nuxtjs/strapi | Auth layer aún depende del SDK; eliminación completa queda para el futuro |
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ECOM-01 | Phase 083 | Complete |
-| ECOM-02 | Phase 083 | Complete |
-| ECOM-03 | Phase 083 | Complete |
-| DISC-01 | Phase 084 | Complete |
-| DISC-02 | Phase 084 | Complete |
-| DISC-03 | Phase 084 | Complete |
-| CONT-01 | Phase 085 | Complete |
-| CONT-02 | Phase 085 | Complete |
-| LEAD-01 | Phase 085 | Complete |
-| AUTH-01 | Phase 085 | Complete |
-| AUTH-02 | Phase 085 | Complete |
-| BLOG-01 | Phase 085 | Complete |
+| API-01 | TBD | Pending |
+| API-02 | TBD | Pending |
+| API-03 | TBD | Pending |
+| API-04 | TBD | Pending |
+| API-05 | TBD | Pending |
+| API-06 | TBD | Pending |
 
 **Coverage:**
-- v1.38 requirements: 12 total
-- Mapped to phases: 12
-- Unmapped: 0 ✓
+- v1.39 requirements: 6 total
+- Mapped to phases: 0 (pending roadmap)
+- Unmapped: 6 ⚠️
 
 ---
-*Requirements defined: 2026-03-14*
-*Last updated: 2026-03-14 — Roadmap created (phases 083–085 assigned)*
+*Requirements defined: 2026-03-15*
+*Last updated: 2026-03-15 after initial definition*
