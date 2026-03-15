@@ -9,9 +9,7 @@ export const useUserStore = defineStore("user", () => {
   const ads = ref<Ad[]>([]);
 
   const strapi = useStrapi();
-
-  // Obtener la configuración para usar en las funciones
-  const config = useRuntimeConfig();
+  const client = useApiClient();
 
   const DEFAULT_PAGINATION = {
     page: 1,
@@ -99,8 +97,6 @@ export const useUserStore = defineStore("user", () => {
     userData: Record<string, unknown>,
   ) => {
     try {
-      const client = useApiClient();
-
       // Verificar si los datos vienen envueltos en 'data' y extraerlos
       const dataToSend = userData.data ? userData.data : userData;
 
@@ -136,21 +132,10 @@ export const useUserStore = defineStore("user", () => {
     }
   };
 
-  const deactivateAd = async (adId: number, reason?: string) => {
+  const deactivateAd = async (adDocumentId: string, reason?: string) => {
     try {
-      const token = useCookie("waldo_jwt").value;
-
-      const apiUrl =
-        process.env.API_DISABLE_PROXY === "true"
-          ? config.public.apiUrl
-          : config.public.baseUrl;
-
-      const response = await $fetch(`${apiUrl}/api/ads/${adId}/deactivate`, {
+      const response = await client(`/api/ads/${adDocumentId}/deactivate`, {
         method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
         body: { reason_for_deactivation: reason ?? null },
       });
 
