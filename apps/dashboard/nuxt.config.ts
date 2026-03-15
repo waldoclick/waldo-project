@@ -391,7 +391,10 @@ export default defineNuxtConfig({
   // 6. Development Configuration
   typescript: {
     strict: true,
-    typeCheck: true,
+    // typeCheck disabled: both apps share the same node_modules/vite-plugin-checker/dist/checkers/vueTsc/typescript-vue-tsc
+    // path. Running prepareVueTsc concurrently causes EEXIST race. Website runs typeCheck instead.
+    // Use `yarn workspace waldo-dashboard nuxi typecheck` for standalone dashboard type checking.
+    typeCheck: false,
   },
 
   devtools: { enabled: process.env.NODE_ENV === "development" },
@@ -425,6 +428,12 @@ export default defineNuxtConfig({
         scss: {
           // Removemos additionalData ya que estamos importando app.scss en css
         },
+      },
+    },
+    server: {
+      hmr: {
+        // Use 24679 (not default 24678) to avoid WebSocket port conflict with website when both dev servers run concurrently
+        port: 24679,
       },
     },
   },
