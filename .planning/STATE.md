@@ -33,7 +33,7 @@ Plan: 01 complete
 Progress: [████████░░] 89% (8/9 plans across current milestone)
 ```
 
-Last activity: 2026-03-15 — Completed quick task 43: fix image deletion endpoint call and secure image delete in Strapi to own images only
+Last activity: 2026-03-15 — Completed quick task 44: defer image uploads in ad creation flow to save-draft step with local previews and multi-select support
 
 ## Phase Map
 
@@ -133,3 +133,4 @@ None.
 | 41 | Fix dashboard header not updating after profile save (useStrapiClient flat body) | 2026-03-14 | 51fac50 | [41-fix-dashboard-header-not-updating-after-](.planning/quick/41-fix-dashboard-header-not-updating-after-/) |
 | 42 | Make dashboard admin layout responsive (off-canvas sidebar with hamburger toggle) | 2026-03-14 | 8b253d1 | [42-make-dashboard-admin-layout-responsive-s](.planning/quick/42-make-dashboard-admin-layout-responsive-s/) |
 | 43 | Fix image deletion endpoint call and ownership security | 2026-03-15 | 618d931 | [43-fix-image-deletion-endpoint-call-and-sec](.planning/quick/43-fix-image-deletion-endpoint-call-and-sec/) |
+| 44 | defer image uploads in ad creation flow to save-draft step with local previews and multi-select support | 2026-03-15 | 39a752e | [44-defer-image-uploads-in-ad-creation-flow-](.planning/quick/44-defer-image-uploads-in-ad-creation-flow-/) |
