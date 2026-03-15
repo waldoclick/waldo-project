@@ -64,7 +64,10 @@ export const useUserStore = defineStore("user", () => {
     filters = {},
     pagination = DEFAULT_PAGINATION,
     sort = [],
-  ) => {
+  ): Promise<{
+    data: Ad[];
+    meta: { pagination: { total: number } };
+  } | null> => {
     try {
       const response = await client("/api/ads/me", {
         method: "GET",
@@ -75,9 +78,12 @@ export const useUserStore = defineStore("user", () => {
           populate: "*",
         } as unknown as Record<string, unknown>,
       });
-      ads.value = (response as unknown as { data: Ad[] })
-        .data as unknown as Ad[];
-      return response;
+      const typed = response as unknown as {
+        data: Ad[];
+        meta: { pagination: { total: number } };
+      };
+      ads.value = typed.data as unknown as Ad[];
+      return typed;
     } catch {
       ads.value = [];
       return null;
@@ -88,7 +94,10 @@ export const useUserStore = defineStore("user", () => {
     filters = {},
     pagination = DEFAULT_ORDER_PAGINATION,
     sort = [],
-  ) => {
+  ): Promise<{
+    data: Record<string, unknown>[];
+    meta: { pagination: { total: number } };
+  } | null> => {
     try {
       const response = await client("/api/orders/me", {
         method: "GET",
@@ -99,7 +108,10 @@ export const useUserStore = defineStore("user", () => {
           populate: "*",
         } as unknown as Record<string, unknown>,
       });
-      return response;
+      return response as unknown as {
+        data: Record<string, unknown>[];
+        meta: { pagination: { total: number } };
+      };
     } catch {
       return null;
     }
