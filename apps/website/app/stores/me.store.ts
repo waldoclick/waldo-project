@@ -5,19 +5,21 @@ import type { User } from "@/types/user";
 export const useMeStore = defineStore("me", () => {
   const me = ref<User | null>(null);
 
-  const strapi = useStrapi();
   const apiClient = useApiClient();
 
   const loadMe = async () => {
     try {
-      const response = await strapi.find("users/me", {
-        populate: {
-          commune: {
-            populate: "region",
+      const response = await apiClient("/api/users/me", {
+        method: "GET",
+        params: {
+          populate: {
+            commune: {
+              populate: "region",
+            },
           },
-        },
+        } as unknown as Record<string, unknown>,
       });
-      me.value = response as unknown as User; // Strapi SDK v5: find returns ResponseMany, cast to User
+      me.value = response as unknown as User; // useApiClient returns raw body — /api/users/me returns the User object directly
     } catch (_error) {
       console.error("Error loading user data:", _error);
     }

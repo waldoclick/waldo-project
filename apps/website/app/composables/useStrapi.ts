@@ -1,10 +1,9 @@
 // composables/useStrapi.ts
 
 export async function useStrapiData() {
-  const strapi = useStrapi();
-
-  // Usa `strapi` para tus operaciones
-  const { data } = await strapi.find("ads");
-
-  return data;
+  const client = useApiClient();
+  const response = (await client("/api/ads", { method: "GET" })) as {
+    data: unknown;
+  };
+  return response.data;
 }
