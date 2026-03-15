@@ -32,7 +32,7 @@ export default ({ env }) => [
         },
       },
       frameguard: false, // Desactiva x-frame-options
-      noSniff: false, // Desactiva x-content-type-options
+      noSniff: true, // X-Content-Type-Options: nosniff — previene MIME sniffing
     },
   },
   {
@@ -58,7 +58,7 @@ export default ({ env }) => [
       keepHeaderOnError: true,
     },
   },
-  "strapi::poweredBy",
+  // "strapi::poweredBy" removido — expone "x-powered-by: Strapi" (information disclosure)
   "strapi::query",
   "strapi::body",
   "strapi::session",
@@ -70,4 +70,5 @@ export default ({ env }) => [
   // "global::recaptcha", // Movido a Nuxt Nitro proxy
   ...(env("ENABLE_CACHE", "false") === "true" ? ["global::cache"] : []),
   "global::user-registration",
+  "global::hide-admin-redirect",
 ];
