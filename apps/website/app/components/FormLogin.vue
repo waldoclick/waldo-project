@@ -145,7 +145,6 @@ const handleSubmit = async (values) => {
       body: {
         identifier: values.email,
         password: values.password,
-        // recaptchaToken removed — now sent as X-Recaptcha-Token header
       },
     });
 
