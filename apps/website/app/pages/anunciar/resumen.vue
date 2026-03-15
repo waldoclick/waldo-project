@@ -23,12 +23,15 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, computed } from "vue";
+import { onMounted, computed, ref } from "vue";
 import { useRouter } from "vue-router";
 const { Swal } = useSweetAlert2();
 import { useAdStore } from "@/stores/ad.store";
 import { useAdAnalytics } from "@/composables/useAdAnalytics";
 import { useAdPaymentSummary } from "@/composables/useAdPaymentSummary";
+import { useImageProxy } from "@/composables/useImage";
+import { usePendingUploads } from "@/composables/usePendingUploads";
+import type { GalleryItem } from "@/types/ad";
 import HeaderDefault from "@/components/HeaderDefault.vue";
 import ResumeDefault from "@/components/ResumeDefault.vue";
 import BarAnnouncement from "@/components/BarAnnouncement.vue";
@@ -36,6 +39,9 @@ import HeroFake from "@/components/HeroFake.vue";
 import LoadingDefault from "@/components/LoadingDefault.vue";
 const apiClient = useApiClient();
 const { fetchUser } = useStrapiAuth();
+const { uploadFile, transformUrl } = useImageProxy();
+const { getPendingFiles, clearAll: clearPendingUploads } = usePendingUploads();
+const isUploadingImages = ref(false);
 
 // Define SEO
 const { $setSEO, $setStructuredData } = useNuxtApp();
@@ -127,7 +133,46 @@ onMounted(async () => {
   adAnalytics.beginCheckout();
 });
 
+const uploadPendingImages = async (): Promise<boolean> => {
+  const pending = getPendingFiles();
+  if (pending.length === 0) return true;
+
+  isUploadingImages.value = true;
+  try {
+    const uploadedItems: GalleryItem[] = [];
+
+    for (const { file } of pending) {
+      const result = await uploadFile(file, "gallery");
+      uploadedItems.push({
+        id: String(result.id),
+        url: transformUrl(result.formats?.thumbnail?.url || result.url),
+        formats: result.formats,
+      });
+    }
+
+    // Merge with any already-uploaded gallery items (filter out pending blobs)
+    const currentGallery = adStore.ad.gallery.filter((item) => !item.pending);
+    adStore.updateGallery([...currentGallery, ...uploadedItems]);
+    clearPendingUploads();
+    return true;
+  } catch {
+    Swal.fire({
+      title: "Error al subir imágenes",
+      text: "No pudimos subir una o más imágenes. Por favor, inténtalo de nuevo.",
+      icon: "error",
+      confirmButtonText: "Aceptar",
+    });
+    return false;
+  } finally {
+    isUploadingImages.value = false;
+  }
+};
+
 const confirmPay = async () => {
+  // Upload pending images first — abort if any upload fails
+  const uploaded = await uploadPendingImages();
+  if (!uploaded) return;
+
   // Si hay que pagar, guardar draft y navegar directo a pagar sin confirmación
   if (hasToPay.value) {
     try {
