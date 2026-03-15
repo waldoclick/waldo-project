@@ -128,3 +128,10 @@ credentials.json
 ############################
 
 backups/
+
+############################
+# Auto-generated types
+############################
+
+# Regenerado por Strapi al arrancar — no trackear en git
+types/generated/
