@@ -42,7 +42,10 @@
   2. Calling `useApiClient('POST', '/api/ads')` still injects `X-Recaptcha-Token` (existing behaviour preserved)
   3. `typeCheck: true` passes with zero errors after the GET support change
   4. Existing Vitest tests for `useApiClient` (POST/PUT/DELETE paths) continue to pass unchanged
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 089-01-PLAN.md — Add GET-with-params test, run full Vitest suite + typecheck gate
 
 ### Phase 090: Migrate All GET Callers
 **Goal**: Every `strapi.find()` and `strapi.findOne()` call in `apps/website` is replaced by `useApiClient`; the Strapi SDK is no longer used for data fetching
