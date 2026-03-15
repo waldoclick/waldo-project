@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.38
 milestone_name: GA4 Analytics Audit & Implementation
 status: executing
-last_updated: "2026-03-15T15:11:35Z"
-last_activity: 2026-03-15 — Completed 090-03-PLAN.md (user/indicator stores migrated)
+last_updated: "2026-03-15T15:13:37.413Z"
+last_activity: 2026-03-15 — Completed 090-04-PLAN.md
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 13
-  completed_plans: 9
+  completed_plans: 10
   percent: 91
 ---
 
@@ -33,7 +33,7 @@ Plan: 04 ✓ (of 6)
 Progress: [█████████░] 91% (12/13 plans)
 ```
 
-Last activity: 2026-03-15 — Completed 090-04-PLAN.md
+Last activity: 2026-03-15 — Completed 090-02-PLAN.md
 
 ## Phase Map
 
@@ -94,6 +94,7 @@ Last activity: 2026-03-15 — Completed 090-04-PLAN.md
 - GET callers use client(url, { method: 'GET', params: {...} }) — response is raw body, no .data wrapper; confirmed by 9-test suite (089-01)
 - useApiClient() placed inside factory function (not module level) for composables like usePacksList — Nuxt composable rules require setup-level instantiation (090-04)
 - Raw body shapes for collection { data: T[] } and single-item { data: T } endpoints are identical to Strapi SDK returns — callers of useStrapi/useOrderById/usePacksList required no changes (090-04)
+- For categories.store.ts (Options API store with per-action useStrapi()): migrated to single useApiClient() at setup root level — eliminates redundant instantiation and aligns with composable rules (090-02)
 
 ### v1.38 Key Facts (GA4 analytics)
 
