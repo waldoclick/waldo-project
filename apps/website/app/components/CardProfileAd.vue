@@ -338,10 +338,10 @@ const closeDeactivateLightbox = () => {
 };
 
 const handleDeactivateSubmit = async (reason: string) => {
-  if (!props.ad?.id) return;
+  if (!props.ad?.documentId) return;
   isDeactivating.value = true;
   try {
-    await userStore.deactivateAd(props.ad.id, reason);
+    await userStore.deactivateAd(props.ad.documentId, reason);
     closeDeactivateLightbox();
     await Swal.fire({
       title: "Publicación desactivada",
