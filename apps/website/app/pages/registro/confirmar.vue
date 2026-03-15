@@ -74,7 +74,7 @@ const list = [
 
 const router = useRouter();
 const registrationEmail = useState("registrationEmail", () => "");
-const client = useStrapiClient();
+const apiClient = useApiClient();
 const { Swal } = useSweetAlert2();
 
 const resendCooldown = ref(60);
@@ -107,7 +107,7 @@ onUnmounted(() => {
 const handleResend = async () => {
   resending.value = true;
   try {
-    await client("/auth/send-email-confirmation", {
+    await apiClient("/auth/send-email-confirmation", {
       method: "POST",
       body: { email: registrationEmail.value },
     });
