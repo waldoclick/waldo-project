@@ -63,7 +63,7 @@ export default factories.createCoreController(
           filters: filters as unknown as Parameters<
             typeof strapi.entityService.findMany
           >[1]["filters"],
-          populate,
+          populate: populate as unknown as Record<string, unknown>,
           start: (page - 1) * pageSize,
           limit: pageSize,
           sort: sort as unknown as Parameters<
