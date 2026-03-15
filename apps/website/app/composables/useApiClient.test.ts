@@ -1,8 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-// Mock Nuxt auto-imports
-const mockClient = vi.fn();
-const mockExecute = vi.fn();
+// Use vi.hoisted() so mock variables are initialized before vi.mock() factory runs
+const { mockClient, mockExecute } = vi.hoisted(() => ({
+  mockClient: vi.fn(),
+  mockExecute: vi.fn(),
+}));
 
 vi.mock("#imports", () => ({
   useStrapiClient: () => mockClient,
@@ -65,7 +67,7 @@ describe("useApiClient", () => {
     const apiClient = useApiClient();
     await apiClient("/items", { method: "GET" });
     expect(mockExecute).not.toHaveBeenCalled();
-    const callArgs = mockClient.mock.calls[0][1];
+    const callArgs = mockClient.mock.calls[0]?.[1];
     expect(callArgs?.headers?.["X-Recaptcha-Token"]).toBeUndefined();
   });
 
@@ -100,12 +102,12 @@ describe("useApiClient", () => {
       apiClient("/auth/local", { method: "POST", body: {} }),
     ).resolves.toEqual({ ok: true });
     // Header should be absent, not throw
-    const callArgs = mockClient.mock.calls[0][1];
+    const callArgs = mockClient.mock.calls[0]?.[1];
     expect(callArgs?.headers?.["X-Recaptcha-Token"]).toBeUndefined();
   });
 
   it("proceeds without token when $recaptcha is undefined (SSR)", async () => {
-    vi.mock("#imports", () => ({
+    vi.doMock("#imports", () => ({
       useStrapiClient: () => mockClient,
       useNuxtApp: () => ({}), // no $recaptcha
     }));
