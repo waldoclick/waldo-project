@@ -371,64 +371,10 @@ export default defineNuxtConfig({
   // 6. Performance Optimizations
   // (Nitro config moved above to avoid duplication)
 
-  // Sitemap Configuration - Static + dynamic URLs merged in single async function
-  sitemap: {
-    exclude: [
-      "/404",
-      "/500",
-      "/login/facebook",
-      "/login/google",
-      "/restablecer-contrasena",
-      "/dev/",
-      "/cuenta/**",
-      "/anunciar/**",
-      "/packs/**",
-      "/contacto/**",
-    ],
-    urls: async () => {
-      const staticUrls = [
-        { loc: "/", changefreq: "daily" as const, priority: 1 },
-        { loc: "/anuncios", changefreq: "hourly" as const, priority: 0.9 },
-        {
-          loc: "/preguntas-frecuentes",
-          changefreq: "monthly" as const,
-          priority: 0.5,
-        },
-        {
-          loc: "/politicas-de-privacidad",
-          changefreq: "yearly" as const,
-          priority: 0.3,
-        },
-        { loc: "/contacto", changefreq: "yearly" as const, priority: 0.4 },
-        { loc: "/packs", changefreq: "monthly" as const, priority: 0.6 },
-      ];
-
-      try {
-        const apiUrl = process.env.API_URL || "http://localhost:1337";
-        const response = await fetch(`${apiUrl}/api/ads/actives`);
-
-        if (!response.ok) {
-          console.warn("Error fetching ads for sitemap:", response.status);
-          return staticUrls;
-        }
-
-        const data = await response.json();
-        const ads = data.data || [];
-
-        const dynamicUrls = ads.map((ad: any) => ({
-          loc: `/anuncios/${ad.slug}`,
-          lastmod: new Date(ad.updatedAt || ad.createdAt).toISOString(),
-          changefreq: "weekly" as const,
-          priority: ad.details?.featured ? 0.8 : 0.6,
-        }));
-
-        return [...staticUrls, ...dynamicUrls];
-      } catch (error) {
-        console.warn("Error generating dynamic sitemap URLs:", error);
-        return staticUrls;
-      }
-    },
-  },
+  // Sitemap — generado en runtime via server/routes/sitemap.xml.ts (Nitro cachedEventHandler)
+  // El módulo @nuxtjs/seo/sitemap está deshabilitado para no competir con el endpoint Nitro
+  // y para no hacer fetch a Strapi en build-time (lo que ralentizaba la compilación).
+  sitemap: false,
 
   // Robots Configuration
   robots:
