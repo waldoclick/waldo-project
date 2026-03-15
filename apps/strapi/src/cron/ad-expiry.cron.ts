@@ -126,9 +126,9 @@ export class AdService {
         }
       );
 
-      const updatedAds = remainings
-        .filter((remaining: any) => remaining.ad)
-        .map((remaining: any) => ({
+      const updatedAds = (remainings as unknown as Remaining[])
+        .filter((remaining: Remaining) => remaining.ad)
+        .map((remaining: Remaining) => ({
           id: remaining.ad.id,
           name: remaining.ad.name,
           duration_days: remaining.ad.duration_days,
