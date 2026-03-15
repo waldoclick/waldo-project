@@ -365,7 +365,6 @@ const filteredCommunes = computed(() => {
   return listCommunes.value.filter((commune) => commune.region.id === regionId);
 });
 
-const strapi = useStrapi();
 const user = useStrapiUser();
 const { fetchUser } = useStrapiAuth();
 
