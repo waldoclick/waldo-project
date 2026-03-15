@@ -7726,7 +7726,7 @@
   resolved "https://registry.yarnpkg.com/@vue/devtools-api/-/devtools-api-6.6.4.tgz#cbe97fe0162b365edc1dba80e173f90492535343"
   integrity sha512-sGhTPMuXqZ1rVOk32RylztWkfXTRhuS7vgAKv0zjqk8gbsHkJ7xfFf+jbySxt7tWObEJwyKaHMikV/WGDiQm8g==
 
-"@vue/devtools-api@^7.5.2":
+"@vue/devtools-api@^7.5.2", "@vue/devtools-api@^7.7.7":
   version "7.7.9"
   resolved "https://registry.yarnpkg.com/@vue/devtools-api/-/devtools-api-7.7.9.tgz#999dbea50da6b00cf59a1336f11fdc2b43d9e063"
   integrity sha512-kIE8wvwlcZ6TJTbNeU2HQNtaxLx3a84aotTITUuL/4bzfPxzajGBOoqjMhwZJ8L9qFYDU/lAYMEEm11dnZOD6g==
@@ -18100,6 +18100,13 @@ pinia@^2.2.2:
     "@vue/devtools-api" "^6.6.3"
     vue-demi "^0.14.10"
 
+pinia@^3.0.4:
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/pinia/-/pinia-3.0.4.tgz#75dde12784a61e34c1fa6abcd13c1a1061c360c0"
+  integrity sha512-l7pqLUFTI/+ESXn6k3nu30ZIzW5E2WZF/LaHJEpoq6ElcLD+wduZoB2kBN19du6K/4FDpPMazY2wJr+IndBtQw==
+  dependencies:
+    "@vue/devtools-api" "^7.7.7"
+
 pirates@^4.0.4, pirates@^4.0.6:
   version "4.0.7"
   resolved "https://registry.yarnpkg.com/pirates/-/pirates-4.0.7.tgz#643b4a18c4257c8a65104b73f3049ce9a0a15e22"
@@ -22153,13 +22160,6 @@ vue-resize@^2.0.0-alpha.1:
   resolved "https://registry.yarnpkg.com/vue-resize/-/vue-resize-2.0.0-alpha.1.tgz#43eeb79e74febe932b9b20c5c57e0ebc14e2df3a"
   integrity sha512-7+iqOueLU7uc9NrMfrzbG8hwMqchfVfSzpVlCMeJQe4pyibqyoifDNbKTZvwxZKDvGkB+PdFeKvnGZMoEb8esg==
 
-vue-router@4.6.3:
-  version "4.6.3"
-  resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-4.6.3.tgz#52a40a231b910806438a8203c065a411fd3f1faa"
-  integrity sha512-ARBedLm9YlbvQomnmq91Os7ck6efydTSpRP3nuOKCvgJOHNrhRoJDSKtee8kcL1Vf7nz6U+PMBL+hTvR3bTVQg==
-  dependencies:
-    "@vue/devtools-api" "^6.6.4"
-
 "vue-router@>= 4.1.0 < 5.0.0":
   version "4.6.4"
   resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-4.6.4.tgz#a0a9cb9ef811a106d249e4bb9313d286718020d8"
@@ -22167,7 +22167,7 @@ vue-router@4.6.3:
   dependencies:
     "@vue/devtools-api" "^6.6.4"
 
-vue-router@^5.0.3, vue-router@latest:
+vue-router@^5.0.0, vue-router@^5.0.3, vue-router@latest:
   version "5.0.3"
   resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-5.0.3.tgz#de0fac20b25dfa36ab77476abe944b9f86840621"
   integrity sha512-nG1c7aAFac7NYj8Hluo68WyWfc41xkEjaR0ViLHCa3oDvTQ/nIuLJlXJX1NUPw/DXzx/8+OKMng045HHQKQKWw==
