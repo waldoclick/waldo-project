@@ -349,17 +349,16 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
           | Far-future cron rule `0 0 1 1 *` for one-shot migration | Never auto-runs; must be triggered manually via cron-runner; prevents accidental execution after initial run — v1.37 | ✓ Good |
           | DB migration hard gate before enabling email_confirmation toggle | If existing users are not migrated first, flipping toggle locks out all pre-existing accounts immediately — v1.37 | ✓ Good |
 
-## Current Milestone: v1.38 GA4 Analytics Audit & Implementation
+## Current Milestone: v1.39 Unified API Client
 
-**Goal:** Audit, correct, and complete the GA4 event coverage on the website — from ecommerce funnel validation to full user lifecycle tracking.
+**Goal:** Migrar todos los GET de datos del website a `useApiClient`, completando la unificación iniciada en v1.38 donde todos los POST/PUT/DELETE ya pasaron por este composable.
 
 **Target features:**
-- GA4 ecommerce audit: verify purchase, begin_checkout, view_item, view_item_list are firing correctly and appearing in GA4 reports
-- User lifecycle events: sign_up (registration), login (including 2-step and Google OAuth)
-- Contact/lead events: generate_lead for WhatsApp and email clicks on ad detail page
-- Search events: search when user filters or searches listings
-- Ad navigation: view_item on ad detail, view_item_list on listing (audit existing implementation)
-- Blog engagement: article read tracking
+- `useApiClient` extendido para soportar GET requests (sin reCAPTCHA)
+- Todos los `strapi.find()` y `strapi.findOne()` en stores migrados a `useApiClient`
+- Composables `useStrapi.ts`, `useOrderById.ts`, `usePacksList.ts` migrados
+- Pages y components con fetches directos migrados
+- `typeCheck: true` pasa con zero errores
 
 ## Current State
 
