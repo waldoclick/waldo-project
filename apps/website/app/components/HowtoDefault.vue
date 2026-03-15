@@ -24,6 +24,16 @@
           :show-line="index < 3"
         />
       </div>
+
+      <div class="howto--default__buttons">
+        <nuxt-link
+          title="Anunciar ahora"
+          to="/anunciar"
+          class="btn btn--primary btn--announcement"
+        >
+          <span>Anunciar ahora</span>
+        </nuxt-link>
+      </div>
     </div>
   </section>
 </template>

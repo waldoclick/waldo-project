@@ -77,6 +77,23 @@ describe("useApiClient", () => {
     expect(mockExecute).not.toHaveBeenCalled();
   });
 
+  it("passes params through on GET without modification", async () => {
+    const apiClient = useApiClient();
+    await apiClient("/api/ads", {
+      method: "GET",
+      params: { populate: "*", "pagination[pageSize]": 20 },
+    });
+    expect(mockExecute).not.toHaveBeenCalled();
+    expect(mockClient).toHaveBeenCalledWith(
+      "/api/ads",
+      expect.objectContaining({
+        params: { populate: "*", "pagination[pageSize]": 20 },
+      }),
+    );
+    const callArgs = mockClient.mock.calls[0]?.[1];
+    expect(callArgs?.headers?.["X-Recaptcha-Token"]).toBeUndefined();
+  });
+
   it("preserves caller-supplied headers alongside reCAPTCHA header", async () => {
     const apiClient = useApiClient();
     await apiClient("/auth/local", {

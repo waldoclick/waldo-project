@@ -18,7 +18,7 @@
         <div class="card--howto__info__content__description">
           {{ description }}
         </div>
-        <div class="card--howto__info__content__button">
+        <!-- <div class="card--howto__info__content__button">
           <nuxt-link
             :title="textButton"
             to="/anunciar"
@@ -26,7 +26,7 @@
           >
             <span>{{ textButton }}</span>
           </nuxt-link>
-        </div>
+        </div> -->
       </div>
     </div>
   </article>
