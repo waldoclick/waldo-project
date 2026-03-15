@@ -15,7 +15,7 @@ export const useFaqsStore = defineStore(
     const loading = ref<boolean>(false);
     const error = ref<string | null>(null);
 
-    const strapi = useStrapi();
+    const client = useApiClient();
 
     const loadFaqs = async () => {
       const now = Date.now();
@@ -29,11 +29,10 @@ export const useFaqsStore = defineStore(
           loading.value = true;
           error.value = null;
 
-          const response = await strapi.find("faqs", {
-            pagination: { pageSize: PAGE_SIZE, page: 1 },
-            populate: "*",
-            sort: ["createdAt:asc"], // Ordenar de más antigua a más nueva
-          } as unknown as Record<string, unknown>);
+          const response = await client('/api/faqs', {
+            method: 'GET',
+            params: { pagination: { pageSize: PAGE_SIZE, page: 1 }, populate: '*', sort: ['createdAt:asc'] } as unknown as Record<string, unknown>,
+          });
 
           const typedResponse = response as unknown as FAQResponse;
 

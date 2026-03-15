@@ -47,12 +47,12 @@ export const useRegionsStore = defineStore("regions", {
         this.loading = true;
         this.error = null;
 
-        const strapi = useStrapi();
-        const response = await strapi.find("regions", {
-          pagination: {
-            page: 1,
-            pageSize: 1000, // Un número grande para obtener prácticamente todos los registros
-          },
+        const client = useApiClient();
+        const response = await client("/api/regions", {
+          method: "GET",
+          params: {
+            pagination: { page: 1, pageSize: 1000 },
+          } as unknown as Record<string, unknown>,
         });
         const typedResponse = response as unknown as RegionResponse;
 
