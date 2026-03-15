@@ -1,13 +1,7 @@
 // apps/website/server/utils/recaptcha.ts
 import { createError } from "h3";
 
-export const RECAPTCHA_PROTECTED_ROUTES = [
-  "auth/local",
-  "auth/local/register",
-  "auth/forgot-password",
-  "auth/reset-password",
-  "contacts",
-] as const;
+const RECAPTCHA_PROTECTED_METHODS = ["POST", "PUT", "DELETE"];
 
 /**
  * Verifies a reCAPTCHA v3 token against Google's siteverify API.
@@ -49,9 +43,8 @@ export async function verifyRecaptchaToken(
 }
 
 export function isRecaptchaProtectedRoute(
-  fullPath: string,
+  _fullPath: string,
   method: string,
 ): boolean {
-  if (method !== "POST") return false;
-  return RECAPTCHA_PROTECTED_ROUTES.some((route) => fullPath.startsWith(route));
+  return RECAPTCHA_PROTECTED_METHODS.includes(method.toUpperCase());
 }
