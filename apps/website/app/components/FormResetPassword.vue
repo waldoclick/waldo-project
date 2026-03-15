@@ -56,7 +56,6 @@ import { useRouter, useRoute } from "vue-router";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 const { Swal } = useSweetAlert2();
-import { useNuxtApp } from "#app";
 
 // Define validation schema using yup
 const schema = yup.object({
@@ -69,7 +68,6 @@ const schema = yup.object({
 });
 
 const route = useRoute();
-const { $recaptcha } = useNuxtApp();
 
 // onMounted: UI-only — validates presence of reset token from URL query param; shows 404 if missing
 onMounted(() => {
@@ -90,24 +88,19 @@ const form = ref({
 
 const loading = ref(false);
 const passwordType = ref("password");
-const client = useStrapiClient();
+const apiClient = useApiClient();
 const router = useRouter();
 
 const onSubmit = async (values: any) => {
   loading.value = true;
 
   try {
-    // Execute reCAPTCHA v3
-    const token = await $recaptcha.execute("submit");
-
-    await client("/auth/reset-password", {
+    await apiClient("/auth/reset-password", {
       method: "POST",
-      headers: { "X-Recaptcha-Token": token ?? "" },
       body: {
         code: values.code,
         password: values.password,
         passwordConfirmation: values.password,
-        // recaptchaToken removed — now sent as X-Recaptcha-Token header
       },
     });
 

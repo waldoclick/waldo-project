@@ -142,14 +142,12 @@ const { Swal } = useSweetAlert2();
 import { useRouter } from "vue-router";
 import type { Form as VeeForm } from "vee-validate";
 import type { FormRegister } from "@/types/form-register";
-import { useNuxtApp } from "#app";
 import { useRut } from "@/composables/useRut";
 const { signUp } = useAdAnalytics();
 
-const client = useStrapiClient();
+const apiClient = useApiClient();
 const registrationEmail = useState("registrationEmail", () => "");
 const router = useRouter();
-const { $recaptcha } = useNuxtApp();
 // const route = useRoute()
 const formRef = ref<InstanceType<typeof VeeForm> | null>(null);
 
@@ -259,23 +257,18 @@ const handleSubmit = async () => {
   } else {
     loading.value = true;
     try {
-      // Execute reCAPTCHA v3
-      const token = await $recaptcha.execute("submit");
-
       // Crear el campo username a partir del email
       const emailParts = form.value.email.split("@");
       form.value.username = emailParts[0] ?? ""; // Asigna el nombre antes del @
 
       delete form.value.confirm_password;
 
-      // Registrar usando useStrapiClient directamente para manejar el caso
-      // en que email_confirmation está activo (respuesta sin JWT).
-      const response = (await client("/auth/local/register", {
+      // Registrar usando useApiClient — auto-injects X-Recaptcha-Token header.
+      // Handles email_confirmation active case (response without JWT).
+      const response = (await apiClient("/auth/local/register", {
         method: "POST",
-        headers: { "X-Recaptcha-Token": token ?? "" },
         body: {
           ...form.value,
-          // recaptchaToken removed — now sent as X-Recaptcha-Token header
         },
       })) as { jwt?: string; user?: { id: number } };
 
