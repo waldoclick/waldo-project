@@ -51,13 +51,15 @@ const { data, error } = await useAsyncData(
       return { error: "INVALID_URL" };
     }
     try {
-      const { data: ad } = await strapi.findOne("ads", documentId, {
-        populate: "*",
-      } as unknown as Parameters<typeof strapi.findOne>[2]);
+      const response = (await client(`/api/ads/${documentId}`, {
+        method: "GET",
+        params: { populate: "*" } as unknown as Record<string, unknown>,
+      })) as { data: Record<string, unknown> | null };
+      const ad = response.data;
       if (!ad) {
         return { error: "NOT_FOUND" };
       }
-      return ad as Record<string, unknown>;
+      return ad;
     } catch {
       return { error: "NOT_FOUND" };
     }
