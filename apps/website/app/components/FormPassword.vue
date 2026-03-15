@@ -68,11 +68,9 @@ import { useRouter } from "vue-router";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 const { Swal } = useSweetAlert2();
-import { useNuxtApp } from "#app";
 
 const user = useStrapiUser();
-const { changePassword } = useStrapiAuth();
-const { $recaptcha } = useNuxtApp();
+const apiClient = useApiClient();
 
 // Define validation schema using yup
 const schema = yup.object({
@@ -93,23 +91,20 @@ const form = ref({
 const loading = ref(false);
 const passwordType = ref("password");
 const router = useRouter();
-const { login } = useStrapiAuth();
 
 const handleSubmit = async (values: any) => {
   loading.value = true;
 
   try {
-    // Execute reCAPTCHA v3
-    const token = await $recaptcha!.execute("submit");
-
-    const data = {
-      currentPassword: values.current_password,
-      password: values.password,
-      passwordConfirmation: values.password_confirmation,
-      recaptchaToken: token,
-    };
-
-    await changePassword(data);
+    await apiClient("/api/auth/change-password", {
+      method: "POST",
+      body: {
+        currentPassword: values.current_password,
+        password: values.password,
+        passwordConfirmation: values.password_confirmation,
+        // recaptchaToken removed — useApiClient injects X-Recaptcha-Token header automatically
+      },
+    });
 
     Swal.fire("", "La contraseña se ha cambiado con éxito.", "success");
   } catch (error) {
