@@ -33,7 +33,7 @@ Plan: 05 ✓ (of 6)
 Progress: [██████████] 100% (13/13 plans)
 ```
 
-Last activity: 2026-03-15 - Completed quick task 46: replace any types with proper typed interfaces in order controller and cron files
+Last activity: 2026-03-15 - Completed quick task 47: fix strapi develop TS errors in ad controller populate cast and order controller populate cast
 
 ## Phase Map
 
@@ -141,3 +141,4 @@ None.
 | 44 | defer image uploads in ad creation flow to save-draft step with local previews and multi-select support | 2026-03-15 | 39a752e | [44-defer-image-uploads-in-ad-creation-flow-](.planning/quick/44-defer-image-uploads-in-ad-creation-flow-/) |
 | 45 | security report and cloudflare rate limiting recommendations | 2026-03-15 | 0f8def4 | [45-security-report-and-cloudflare-rate-limi](.planning/quick/45-security-report-and-cloudflare-rate-limi/) |
 | 46 | replace any types with proper typed interfaces in order controller and cron files | 2026-03-15 | c84eb2d | [46-replace-any-types-with-proper-typed-inte](.planning/quick/46-replace-any-types-with-proper-typed-inte/) |
+| 47 | fix strapi develop TS errors in ad controller populate cast and order controller populate cast | 2026-03-15 | 05dad51 | [47-fix-strapi-develop-ts-errors-in-ad-contr](.planning/quick/47-fix-strapi-develop-ts-errors-in-ad-contr/) |
