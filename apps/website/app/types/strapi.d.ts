@@ -24,12 +24,12 @@ declare module "@nuxtjs/strapi" {
   type StrapiData<T> = T;
 
   interface StrapiForgotPasswordData {
-    recaptchaToken?: string;
+    // recaptchaToken removed — validation moved to Nitro proxy via X-Recaptcha-Token header
     context?: "website" | "dashboard";
   }
 
   interface StrapiResetPasswordData {
-    recaptchaToken?: string;
+    // recaptchaToken removed — validation moved to Nitro proxy via X-Recaptcha-Token header
   }
 }
 
