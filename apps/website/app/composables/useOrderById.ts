@@ -1,3 +1,5 @@
+import { useApiClient } from "#imports";
+
 /**
  * Fetch a single order from Strapi by documentId (string or number).
  * Returns the order on success, or throws if not found or on error.
