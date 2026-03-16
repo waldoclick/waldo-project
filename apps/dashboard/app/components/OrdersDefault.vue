@@ -88,7 +88,9 @@ import BadgeDefault from "@/components/BadgeDefault.vue";
 import PaginationDefault from "@/components/PaginationDefault.vue";
 import type { Order, OrdersListResponse } from "@/types/order";
 
-const settingsStore = useSettingsStore();
+const settingsStore = import.meta.client
+  ? useSettingsStore()
+  : ({} as ReturnType<typeof useSettingsStore>);
 const section = "orders" as const;
 const strapi = useStrapi();
 
