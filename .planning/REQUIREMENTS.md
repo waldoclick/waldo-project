@@ -41,20 +41,20 @@ Requirements for Shared Authentication Session milestone.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SAFE-01 | Phase TBD | Pending |
-| SAFE-02 | Phase TBD | Pending |
-| SAFE-03 | Phase TBD | Pending |
-| SESS-01 | Phase TBD | Pending |
-| SESS-02 | Phase TBD | Pending |
-| SESS-03 | Phase TBD | Pending |
-| SESS-04 | Phase TBD | Pending |
-| SESS-05 | Phase TBD | Pending |
-| SESS-06 | Phase TBD | Pending |
+| SAFE-01 | Phase 091 | Pending |
+| SAFE-02 | Phase 092 | Pending |
+| SAFE-03 | Phase 092 | Pending |
+| SESS-01 | Phase 092 | Pending |
+| SESS-02 | Phase 092 | Pending |
+| SESS-03 | Phase 092 | Pending |
+| SESS-04 | Phase 092 | Pending |
+| SESS-05 | Phase 092 | Pending |
+| SESS-06 | Phase 092 | Pending |
 
 **Coverage:**
 - v1.40 requirements: 9 total
-- Mapped to phases: 0 (pending roadmap)
-- Unmapped: 9 ⚠️
+- Mapped to phases: 9 ✓
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-16*

@@ -6,7 +6,7 @@ status: in_progress
 last_updated: "2026-03-16T00:00:00.000Z"
 last_activity: 2026-03-16 — Milestone v1.40 started
 progress:
-  total_phases: 0
+  total_phases: 2
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -25,21 +25,22 @@ See: .planning/PROJECT.md (updated 2026-03-16 after v1.40 milestone started)
 ## Position
 
 **Current Milestone:** v1.40 — Shared Authentication Session
-**Status:** Defining requirements
-Phase: Not started
+**Status:** Roadmap defined — ready to plan Phase 091
+Phase: 091 (next)
 Plan: —
 
 ```
-Progress: [░░░░░░░░░░] 0% (0/0 plans)
+Progress: [░░░░░░░░░░] 0% (0/2 phases)
 ```
 
-Last activity: 2026-03-16 — Milestone v1.40 started
+Last activity: 2026-03-16 — Roadmap created for v1.40 (2 phases, 9 requirements mapped)
 
 ## Phase Map
 
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
-| — | — | — | ○ Pending |
+| 091 | Dashboard useLogout Composable | SAFE-01 | ○ Not started |
+| 092 | Cookie Domain Migration | SESS-01, SESS-02, SESS-03, SESS-04, SESS-05, SESS-06, SAFE-02, SAFE-03 | ○ Not started |
 
 ## Accumulated Context
 
@@ -113,6 +114,19 @@ Last activity: 2026-03-16 — Milestone v1.40 started
   - `apps/website/app/components/FormRegister.vue` → `sign_up`
   - `apps/website/app/components/FormLogin.vue` → `login` (after verify step completes)
   - `apps/website/app/pages/blog/[slug].vue` → `article_view`
+
+### v1.40 Key Facts (Shared Authentication Session)
+
+- Cookie name `waldo_jwt` is already identical in both apps — zero name change needed
+- Core change is a conditional domain spread in both `nuxt.config.ts` strapi.cookie blocks: `...(process.env.COOKIE_DOMAIN ? { domain: process.env.COOKIE_DOMAIN } : {})`
+- `@nuxtjs/strapi@2.1.1` passes `strapi.cookie` options verbatim to `useCookie()` — `domain` field is typed and supported
+- Old host-only `waldo_jwt` (no domain attr) must be explicitly cleared in `useLogout.ts` on BOTH apps: `document.cookie = "waldo_jwt=; path=/; max-age=0"` before `strapiLogout()`
+- Dashboard currently has NO `useLogout.ts` composable — Phase 091 creates it; Phase 092 adds old-cookie cleanup to both apps
+- `nuxt-security` does NOT modify Set-Cookie headers (confirmed from installed source) — safe to add domain attr
+- Production `COOKIE_DOMAIN=.waldo.click`; staging `COOKIE_DOMAIN=.waldoclick.dev`; local dev: unset (host-only)
+- Non-manager website users who visit dashboard get force-logged-out by `guard.global.ts` — this clears the shared cookie, also logging them out of website (documented, acceptable behavior)
+- Phase 091 must audit ALL dashboard logout call sites before centralizing (components + middleware)
+- Phase 091 before Phase 092: old-cookie cleanup must cover every call site atomically — no scattered missed call sites
 
 ### Blockers/Concerns (open)
 

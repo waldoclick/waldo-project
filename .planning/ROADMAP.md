@@ -17,8 +17,14 @@
 - ✅ **v1.37 Email Authentication Flows** — Phases 079–082 (shipped 2026-03-14). See `.planning/milestones/v1.37-ROADMAP.md`
 - 🚧 **v1.38 GA4 Analytics Audit & Implementation** — Phases 083–085 (in progress)
 - 📋 **v1.39 Unified API Client** — Phases 089–090 (planned)
+- 🚧 **v1.40 Shared Authentication Session** — Phases 091–092 (in progress)
 
 ## Phases
+
+### v1.40 Shared Authentication Session
+
+- [ ] **Phase 091: Dashboard useLogout Composable** — Centralize dashboard logout into a single composable; wire all call sites
+- [ ] **Phase 092: Cookie Domain Migration** — Add COOKIE_DOMAIN-conditional domain attribute to both apps; ship old-cookie cleanup atomically
 
 ### v1.39 Unified API Client
 
@@ -32,6 +38,31 @@
 - [ ] **Phase 085: Contact, Auth & Blog Events** — Add seller contact, sign_up, login, and article_view events
 
 ## Phase Details
+
+### Phase 091: Dashboard useLogout Composable
+**Goal**: Dashboard logout is centralized in a single composable — every call site uses it, and the old-cookie cleanup can be applied in one place
+**Depends on**: Nothing (first phase of milestone)
+**Requirements**: SAFE-01
+**Success Criteria** (what must be TRUE):
+  1. `apps/dashboard/app/composables/useLogout.ts` exists and mirrors the website pattern (`strapiLogout()` + store resets)
+  2. Every component and middleware that previously called `useStrapiAuth().logout()` directly now calls `useLogout()` instead — no scattered logout logic remains
+  3. `typeCheck: true` passes with zero errors after the composable is wired in
+**Plans**: TBD
+
+### Phase 092: Cookie Domain Migration
+**Goal**: Users authenticated on one subdomain are automatically recognized on the other — login once, access both apps; logout anywhere clears both
+**Depends on**: Phase 091
+**Requirements**: SESS-01, SESS-02, SESS-03, SESS-04, SESS-05, SESS-06, SAFE-02, SAFE-03
+**Success Criteria** (what must be TRUE):
+  1. A manager who logs in on `waldo.click` can navigate directly to `dashboard.waldo.click` and land on the dashboard without being prompted to log in again
+  2. A user who logs in on `dashboard.waldo.click` is recognized as authenticated when they visit `waldo.click` (their name/avatar loads)
+  3. Clicking logout on the website causes the dashboard to show the login page on the next visit (session cleared on both subdomains)
+  4. Clicking logout on the dashboard causes the website to show the logged-out state on the next visit (session cleared on both subdomains)
+  5. Running both apps locally with no `COOKIE_DOMAIN` env var set produces a host-only cookie — local dev login works exactly as before
+  6. `.env.example` in both `apps/website` and `apps/dashboard` documents the `COOKIE_DOMAIN` variable with the production value `.waldo.click`
+**Plans**: TBD
+
+---
 
 ### Phase 089: GET Support in useApiClient
 **Goal**: `useApiClient` handles all HTTP methods — GET requests pass through cleanly without reCAPTCHA injection, unblocking caller migrations
@@ -243,5 +274,7 @@ Plans:
 | 083   | v1.38     | 2/2            | Complete    | 2026-03-14 |
 | 084   | v1.38     | 2/2            | Complete    | 2026-03-14 |
 | 085   | v1.38     | 1/2            | In Progress | -          |
-| 089   | 1/1 | Complete    | 2026-03-15 | -          |
-| 090   | 6/6 | Complete    | 2026-03-15 | -          |
+| 089   | v1.39     | 1/1            | Complete    | 2026-03-15 |
+| 090   | v1.39     | 6/6            | Complete    | 2026-03-15 |
+| 091   | v1.40     | 0/TBD          | Not started | -          |
+| 092   | v1.40     | 0/TBD          | Not started | -          |
