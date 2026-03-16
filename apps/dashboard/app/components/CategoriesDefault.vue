@@ -107,7 +107,9 @@ import BadgeDefault from "@/components/BadgeDefault.vue";
 import PaginationDefault from "@/components/PaginationDefault.vue";
 import type { Category } from "@/types/category";
 
-const settingsStore = useSettingsStore();
+const settingsStore = import.meta.client
+  ? useSettingsStore()
+  : ({} as ReturnType<typeof useSettingsStore>);
 const section = "categories" as const;
 
 const filters = computed(() => settingsStore.getCategoriesFilters);
