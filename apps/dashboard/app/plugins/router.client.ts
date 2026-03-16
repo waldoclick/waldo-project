@@ -1,4 +1,9 @@
 export default defineNuxtPlugin(() => {
+  // Referer tracking only makes sense on the client (client-side navigations).
+  // Skipping on SSR avoids calling useAppStore() when Pinia may not be active
+  // (e.g. after @pinia/nuxt calls setActivePinia(void 0) in app:rendered hook).
+  if (!import.meta.client) return;
+
   const router = useRouter();
   const appStore = useAppStore();
 
