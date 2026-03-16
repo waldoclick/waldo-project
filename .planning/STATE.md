@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.38
 milestone_name: GA4 Analytics Audit & Implementation
 status: planning
-last_updated: "2026-03-16T13:24:20.866Z"
-last_activity: 2026-03-16 — Completed 091-01-PLAN.md (useLogout composable + 3 call site migrations)
+last_updated: "2026-03-16T13:53:56.530Z"
+last_activity: 2026-03-16 — Completed 092-02-PLAN.md (COOKIE_DOMAIN env documentation + human-verified login/logout regression-free)
 progress:
   total_phases: 7
-  completed_phases: 6
-  total_plans: 14
-  completed_plans: 14
+  completed_phases: 7
+  total_plans: 16
+  completed_plans: 16
   percent: 100
 ---
 
@@ -25,22 +25,22 @@ See: .planning/PROJECT.md (updated 2026-03-16 after v1.40 milestone started)
 ## Position
 
 **Current Milestone:** v1.40 — Shared Authentication Session
-**Status:** Ready to plan
-Phase: 092 (next)
-Plan: —
+**Status:** Phase 092 complete — ready for staging deploy
+Phase: 092 ✓
+Plan: 02/02 ✓
 
 ```
 Progress: [████████████████████] 100%
 ```
 
-Last activity: 2026-03-16 — Completed 091-01-PLAN.md (useLogout composable + 3 call site migrations)
+Last activity: 2026-03-16 — Completed 092-02-PLAN.md (COOKIE_DOMAIN env documentation + human-verified login/logout regression-free)
 
 ## Phase Map
 
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
 | 091 | Dashboard useLogout Composable | SAFE-01 | ✓ Complete (2026-03-16) |
-| 092 | Cookie Domain Migration | SESS-01, SESS-02, SESS-03, SESS-04, SESS-05, SESS-06, SAFE-02, SAFE-03 | ○ Not started |
+| 092 | Cookie Domain Migration | SESS-01, SESS-02, SESS-03, SESS-04, SESS-05, SESS-06, SAFE-02, SAFE-03 | ✓ Complete (2026-03-16) |
 
 ## Accumulated Context
 
@@ -102,6 +102,8 @@ Last activity: 2026-03-16 — Completed 091-01-PLAN.md (useLogout composable + 3
 - Browser smoke test approved: all key pages load correctly with zero console errors after full migration (090-06)
 - useLogout composable centralizes dashboard logout: appStore.$reset() + meStore.reset() + searchStore.clearTavily() + strapiLogout() + navigateTo('/auth/login') — single place for Phase 092 old-cookie cleanup (091-01)
 - import { useStrapiAuth, navigateTo } from '#imports' in useLogout composable — required for Nuxt auto-import interception (091-01)
+- COOKIE_DOMAIN lines are commented out in .env.example — local dev must NOT set this var (host-only cookie is correct for localhost); configure only in staging/production deployment environments (092-02)
+- Production COOKIE_DOMAIN=.waldo.click; staging COOKIE_DOMAIN=.waldoclick.dev — both values documented inline in .env.example for both apps (092-02)
 
 ### v1.38 Key Facts (GA4 analytics)
 
