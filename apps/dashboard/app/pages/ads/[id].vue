@@ -4,6 +4,41 @@
       <template v-if="statusIcon" #titlePrefix>
         <component :is="statusIcon" aria-hidden="true" />
       </template>
+      <template #actions>
+        <button
+          v-if="isPending"
+          type="button"
+          class="btn btn--buy"
+          @click="handleApprove"
+        >
+          Aprobar
+        </button>
+        <button
+          v-if="isPending"
+          type="button"
+          class="btn btn--secondary"
+          @click="openRejectLightbox"
+        >
+          Rechazar
+        </button>
+        <a
+          v-if="item?.slug"
+          :href="`${websiteUrl}/anuncios/${item.slug}`"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn btn--secondary"
+        >
+          Ver en web
+        </a>
+        <button
+          v-if="isActive"
+          type="button"
+          class="btn btn--secondary"
+          @click="openBanLightbox"
+        >
+          Banear
+        </button>
+      </template>
     </HeroDefault>
     <BoxContent>
       <template #content>
@@ -110,41 +145,6 @@
         </BoxInformation>
       </template>
       <template #sidebar>
-        <BoxInformation title="Acciones" :columns="1">
-          <button
-            v-if="isPending"
-            type="button"
-            class="btn btn--buy btn--block"
-            @click="handleApprove"
-          >
-            Aprobar
-          </button>
-          <button
-            v-if="isPending"
-            type="button"
-            class="btn btn--secondary btn--block"
-            @click="openRejectLightbox"
-          >
-            Rechazar
-          </button>
-          <a
-            v-if="isActive && item?.slug"
-            :href="`${websiteUrl}/anuncios/${item.slug}`"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="btn btn--primary btn--block"
-          >
-            Ver anuncio
-          </a>
-          <button
-            v-if="isActive"
-            type="button"
-            class="btn btn--secondary btn--block"
-            @click="openBanLightbox"
-          >
-            Banear
-          </button>
-        </BoxInformation>
         <BoxInformation title="Detalles" :columns="1">
           <CardInfo
             v-if="item"
