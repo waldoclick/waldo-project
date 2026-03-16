@@ -98,6 +98,42 @@ export const useAdsStore = defineStore(
       }
     };
 
+    const loadAdBySlugUnfiltered = async (slug: string): Promise<Ad> => {
+      loading.value = true;
+      error.value = null;
+
+      try {
+        const response = await client("ads", {
+          method: "GET",
+          params: {
+            filters: {
+              slug: { $eq: slug },
+            },
+            populate: {
+              commune: { populate: "*" },
+              user: { populate: "*" },
+              category: true,
+              condition: true,
+              gallery: true,
+            },
+          } as unknown as Record<string, unknown>,
+        });
+        const typedResponse = response as unknown as StrapiResponse<Ad>;
+
+        if (typedResponse.data.length > 0) {
+          return typedResponse.data[0]!;
+        } else {
+          throw new Error("Ad not found");
+        }
+      } catch (err) {
+        error.value = "Error al cargar el anuncio";
+        console.error("Error loading ad:", err);
+        throw err;
+      } finally {
+        loading.value = false;
+      }
+    };
+
     const loadAdById = async (id: string): Promise<Ad> => {
       loading.value = true;
       error.value = null;
@@ -148,6 +184,7 @@ export const useAdsStore = defineStore(
       error,
       loadAds,
       loadAdBySlug,
+      loadAdBySlugUnfiltered,
       loadAdById,
       reset,
     };
