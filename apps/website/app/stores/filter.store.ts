@@ -129,7 +129,7 @@ export const useFilterStore = defineStore(
   {
     // persist: CORRECT — static reference data with 30-min cache TTL (lastFetchCommunes, lastFetchCategories); safe to reuse across sessions
     persist: {
-      storage: typeof window !== "undefined" ? localStorage : undefined,
+      storage: persistedState.localStorage,
     },
   },
 );

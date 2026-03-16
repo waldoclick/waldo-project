@@ -155,7 +155,7 @@ export const useAdsStore = defineStore(
   {
     // persist: RISK — query results (ads[], pagination) are volatile; stale listings survive reload and may show deleted/outdated ads
     persist: {
-      storage: typeof window !== "undefined" ? localStorage : undefined,
+      storage: persistedState.localStorage,
     },
   },
 );

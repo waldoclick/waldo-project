@@ -47,7 +47,7 @@ export const useRelatedStore = defineStore(
   {
     // persist: RISK — related ads are specific to the last-viewed ad; stale results appear on unrelated ad pages after reload
     persist: {
-      storage: typeof window !== "undefined" ? localStorage : undefined,
+      storage: persistedState.localStorage,
     },
   },
 );
