@@ -87,6 +87,6 @@ export const useCommunesStore = defineStore("communes", {
 
   // persist: REVIEW — static reference data but no TTL; communes are stable in practice but could go stale indefinitely
   persist: {
-    storage: typeof window !== "undefined" ? localStorage : undefined,
+    storage: persistedState.localStorage,
   },
 });

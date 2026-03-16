@@ -1,4 +1,6 @@
 export default defineNuxtPlugin(() => {
+  if (!import.meta.client) return;
+
   const router = useRouter();
   const appStore = useAppStore();
 

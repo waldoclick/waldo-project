@@ -73,6 +73,6 @@ export const useRegionsStore = defineStore("regions", {
 
   // persist: CORRECT — static reference data with 30-min cache TTL (lastFetch); safe to reuse across sessions
   persist: {
-    storage: typeof window !== "undefined" ? localStorage : undefined,
+    storage: persistedState.localStorage,
   },
 });
