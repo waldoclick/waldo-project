@@ -51,9 +51,8 @@ const { data, error } = await useAsyncData(
       return { error: "INVALID_URL" };
     }
     try {
-      const response = (await client(`ads/${documentId}`, {
+      const response = (await client(`ads/thankyou/${documentId}`, {
         method: "GET",
-        params: { populate: "*" } as unknown as Record<string, unknown>,
       })) as { data: Record<string, unknown> | null };
       const ad = response.data;
       if (!ad) {
