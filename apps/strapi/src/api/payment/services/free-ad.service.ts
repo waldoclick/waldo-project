@@ -77,7 +77,7 @@ class FreeAdService {
             name: `${result.ad.user.firstname} ${result.ad.user.lastname}`,
             email: result.ad.user.email,
             slug: result.ad.slug,
-            adUrl: `${process.env.DASHBOARD_URL}/dashboard/ads/${result.ad.id}`,
+            adUrl: `${process.env.DASHBOARD_URL}/ads/${result.ad.id}`,
           }
         );
       } catch (error) {
