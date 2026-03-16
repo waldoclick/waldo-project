@@ -47,7 +47,10 @@ export const useAppStore = defineStore(
   {
     // persist: CORRECT — referer must survive page refresh so post-login redirect works
     persist: {
-      storage: typeof window !== "undefined" ? localStorage : undefined,
+      // Use persistedState.localStorage (SSR-safe wrapper from @pinia-plugin-persistedstate/nuxt)
+      // instead of raw `localStorage` — the raw guard (typeof window !== "undefined") is not
+      // sufficient in Pinia 3 and causes getActivePinia() to throw during SSR hydration
+      storage: persistedState.localStorage,
     },
   },
 );
