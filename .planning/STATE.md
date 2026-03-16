@@ -4,7 +4,7 @@ milestone: v1.38
 milestone_name: GA4 Analytics Audit & Implementation
 status: completed
 last_updated: "2026-03-15T15:26:52.492Z"
-last_activity: 2026-03-16 — Completed quick task 52: batch all image uploads into a single POST request
+last_activity: 2026-03-16 — Completed quick task 53: fix dashboard logout on refresh by pointing strapi.url directly to API_URL
 progress:
   total_phases: 5
   completed_phases: 5
@@ -33,7 +33,7 @@ Plan: 05 ✓ (of 6)
 Progress: [██████████] 100% (13/13 plans)
 ```
 
-Last activity: 2026-03-16 - Completed quick task 52: batch all image uploads into a single POST request
+Last activity: 2026-03-16 - Completed quick task 53: fix dashboard logout on refresh by pointing strapi.url directly to API_URL
 
 ## Phase Map
 
@@ -147,3 +147,4 @@ None.
 | 50 | fix getActivePinia crash: replace raw localStorage guard with persistedState.localStorage in persist stores | 2026-03-16 | aa4f4c4 | [50-fix-getactivepinia-crash-replace-manual-](.planning/quick/50-fix-getactivepinia-crash-replace-manual-/) |
 | 51 | fix all getActivePinia SSR crashes: guard/lazy-init all top-level store calls in 21 dashboard and website components | 2026-03-16 | 66cb9ab | [51-fix-all-getactivepinia-ssr-crashes-acros](.planning/quick/51-fix-all-getactivepinia-ssr-crashes-acros/) |
 | 52 | batch all image uploads into a single POST request to eliminate Cloudflare rate-limit failures | 2026-03-16 | 3ed19cb | [52-batch-all-image-uploads-into-a-single-po](.planning/quick/52-batch-all-image-uploads-into-a-single-po/) |
+| 53 | fix dashboard logout on refresh: point strapi.url directly to API_URL to prevent SSR self-proxy loop | 2026-03-16 | f12ad4e | [53-fix-dashboard-logout-on-refresh-point-ss](.planning/quick/53-fix-dashboard-logout-on-refresh-point-ss/) |
