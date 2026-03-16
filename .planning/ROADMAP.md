@@ -23,7 +23,7 @@
 
 ### v1.40 Shared Authentication Session
 
-- [ ] **Phase 091: Dashboard useLogout Composable** — Centralize dashboard logout into a single composable; wire all call sites
+- [x] **Phase 091: Dashboard useLogout Composable** — Centralize dashboard logout into a single composable; wire all call sites (completed 2026-03-16)
 - [ ] **Phase 092: Cookie Domain Migration** — Add COOKIE_DOMAIN-conditional domain attribute to both apps; ship old-cookie cleanup atomically
 
 ### v1.39 Unified API Client
@@ -279,5 +279,5 @@ Plans:
 | 085   | v1.38     | 1/2            | In Progress | -          |
 | 089   | v1.39     | 1/1            | Complete    | 2026-03-15 |
 | 090   | v1.39     | 6/6            | Complete    | 2026-03-15 |
-| 091   | v1.40     | 0/TBD          | Not started | -          |
+| 091   | 1/1 | Complete   | 2026-03-16 | -          |
 | 092   | v1.40     | 0/TBD          | Not started | -          |
