@@ -23,7 +23,7 @@ export default {
     try {
       const dashboardUrl =
         process.env.DASHBOARD_URL || "https://dashboard.waldoclick.dev";
-      const message = `🆕 *Nuevo Anuncio Creado: Para aprobarlo o rechazarlo, ve a: ${dashboardUrl}/dashboard/ads/${result.id}`;
+      const message = `🆕 *Nuevo Anuncio Creado: Para aprobarlo o rechazarlo, ve a: ${dashboardUrl}/ads/${result.id}`;
 
       await sendNewAdNotification(message);
       console.log("📢 Notificación enviada a Slack para el ad ID:", result.id);
