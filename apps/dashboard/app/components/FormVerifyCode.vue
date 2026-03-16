@@ -131,7 +131,8 @@ const handleVerify = async () => {
     const response = responseRaw as { jwt: string };
 
     // Store JWT via @nuxtjs/strapi v2 — sets cookie AND reactive user state
-    const { setToken, fetchUser, logout } = useStrapiAuth();
+    const { setToken, fetchUser } = useStrapiAuth();
+    const { logout } = useLogout();
     setToken(response.jwt);
     await fetchUser();
 
@@ -144,7 +145,6 @@ const handleVerify = async () => {
         "Solo los usuarios con rol de manager pueden acceder al dashboard.",
         "error",
       );
-      router.push("/auth/login");
       return;
     }
 

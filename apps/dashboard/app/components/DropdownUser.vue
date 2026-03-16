@@ -44,7 +44,6 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue";
-import { useRouter } from "vue-router";
 import { useSweetAlert2 } from "@/composables/useSweetAlert2";
 import AvatarDefault from "@/components/AvatarDefault.vue";
 import { Menu as IconMenu, X as IconX } from "lucide-vue-next";
@@ -53,7 +52,7 @@ import type { User } from "@/types/user";
 const { Swal } = useSweetAlert2();
 
 const user = useStrapiUser() as Ref<User | null>;
-const { logout } = useStrapiAuth();
+const { logout } = useLogout();
 
 const isOpen = ref(false);
 const dropdownRef = ref<HTMLElement | null>(null);
@@ -80,8 +79,6 @@ onUnmounted(() => {
   document.removeEventListener("click", handleClickOutside);
 });
 
-const router = useRouter();
-
 const handleLogout = async () => {
   Swal.fire({
     text: "¿Estás seguro de cerrar sesión?",
@@ -93,7 +90,6 @@ const handleLogout = async () => {
     if (result.isConfirmed) {
       try {
         await logout();
-        router.push("/auth/login");
       } catch (error) {
         console.error("Error al cerrar sesión:", error);
       }
