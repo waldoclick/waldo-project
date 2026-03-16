@@ -58,6 +58,14 @@ const routes: RouteConfig[] = [
       policies: [],
     },
   },
+  {
+    method: "GET",
+    path: "/payments/thankyou/:documentId",
+    handler: "payment.thankyou",
+    config: {
+      policies: [],
+    },
+  },
 ];
 
 export default {
