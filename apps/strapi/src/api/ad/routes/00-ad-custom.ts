@@ -50,6 +50,12 @@ export default {
       handler: "ad.saveDraft",
     },
     {
+      method: "GET",
+      path: "/ads/slug/:slug",
+      handler: "ad.findBySlug",
+      config: { auth: false },
+    },
+    {
       method: "PUT",
       path: "/ads/:id/approve",
       handler: "ad.approveAd",
