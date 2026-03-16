@@ -284,6 +284,9 @@ export default defineNuxtConfig({
       maxAge: process.env.SESSION_MAX_AGE
         ? Number.parseInt(process.env.SESSION_MAX_AGE)
         : 604800, // Valor por defecto de 1 semana
+      ...(process.env.COOKIE_DOMAIN
+        ? { domain: process.env.COOKIE_DOMAIN }
+        : {}),
     },
     cookieName: "waldo_jwt",
     auth: {
