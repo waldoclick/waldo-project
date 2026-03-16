@@ -47,7 +47,10 @@
   1. `apps/dashboard/app/composables/useLogout.ts` exists and mirrors the website pattern (`strapiLogout()` + store resets)
   2. Every component and middleware that previously called `useStrapiAuth().logout()` directly now calls `useLogout()` instead — no scattered logout logic remains
   3. `typeCheck: true` passes with zero errors after the composable is wired in
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 091-01-PLAN.md — Create useLogout composable + meStore.reset() + migrate 3 call sites
 
 ### Phase 092: Cookie Domain Migration
 **Goal**: Users authenticated on one subdomain are automatically recognized on the other — login once, access both apps; logout anywhere clears both
