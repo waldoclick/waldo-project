@@ -165,3 +165,4 @@ None.
 | 51 | fix all getActivePinia SSR crashes: guard/lazy-init all top-level store calls in 21 dashboard and website components | 2026-03-16 | 66cb9ab | [51-fix-all-getactivepinia-ssr-crashes-acros](.planning/quick/51-fix-all-getactivepinia-ssr-crashes-acros/) |
 | 52 | batch all image uploads into a single POST request to eliminate Cloudflare rate-limit failures | 2026-03-16 | 3ed19cb | [52-batch-all-image-uploads-into-a-single-po](.planning/quick/52-batch-all-image-uploads-into-a-single-po/) |
 | 53 | fix dashboard logout on refresh: point strapi.url directly to API_URL to prevent SSR self-proxy loop | 2026-03-16 | f12ad4e | [53-fix-dashboard-logout-on-refresh-point-ss](.planning/quick/53-fix-dashboard-logout-on-refresh-point-ss/) |
+| 54 | replace dual-fetch ad detail with server-side ACL endpoint GET /api/ads/slug/:slug | 2026-03-16 | 2ec04b3 | [54-fix-ad-detail-page-access-control-active](.planning/quick/54-fix-ad-detail-page-access-control-active/) |
