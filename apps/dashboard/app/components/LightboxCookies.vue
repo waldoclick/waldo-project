@@ -25,13 +25,15 @@
         >
           Aceptar
         </button>
-        <nuxt-link
-          to="/politicas-de-privacidad"
+        <a
+          :href="`${websiteUrl}/politicas-de-privacidad`"
           class="btn btn--secondary btn--block"
           title="Más información"
+          target="_blank"
+          rel="noopener noreferrer"
         >
           Más información
-        </nuxt-link>
+        </a>
       </div>
     </div>
   </div>
@@ -42,6 +44,8 @@ import { ref, onMounted } from "vue";
 import { X as IconX } from "lucide-vue-next";
 
 const { $cookies } = useNuxtApp();
+const { public: publicConfig } = useRuntimeConfig();
+const websiteUrl = publicConfig.websiteUrl as string;
 
 const isOpen = ref(false);
 const cookieName = "site-cookies-accepted-v2";
