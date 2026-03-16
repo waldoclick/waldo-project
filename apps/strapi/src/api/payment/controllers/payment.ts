@@ -416,6 +416,37 @@ class PaymentController {
 
     ctx.body = { data };
   });
+
+  thankyou = this.controllerWrapper(async (ctx: Context) => {
+    const userId = ctx.state.user?.id;
+    if (!userId) {
+      ctx.status = 401;
+      ctx.body = { success: false, message: "Unauthorized" };
+      return;
+    }
+
+    const { documentId } = ctx.params;
+
+    const order = await strapi.db.query("api::order.order").findOne({
+      where: { documentId },
+      populate: ["user", "ad"],
+    });
+
+    if (!order) {
+      ctx.status = 404;
+      ctx.body = { success: false, message: "Order not found" };
+      return;
+    }
+
+    const orderRecord = order as Record<string, any>;
+    if (orderRecord.user?.id !== userId) {
+      ctx.status = 403;
+      ctx.body = { success: false, message: "Access denied" };
+      return;
+    }
+
+    ctx.body = { data: order };
+  });
 }
 
 export default new PaymentController();
