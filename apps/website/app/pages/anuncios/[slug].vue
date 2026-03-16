@@ -134,8 +134,9 @@ const {
         }
       }
 
-      // Only load related ads if the ad is active (pending/review ads skip this — Strapi related endpoint requires a published ad)
-      if (ad.status !== "review") {
+      // Only load related ads for active ads — Strapi related endpoint requires a published ad
+      // Non-active statuses from Strapi: "pending", "archived", "banned", "rejected", "draft", "unknown"
+      if (ad.status === "active") {
         await relatedStore.loadRelatedAds(ad.id);
       }
 
