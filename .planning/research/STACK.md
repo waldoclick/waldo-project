@@ -1,390 +1,249 @@
-# Technology Stack Research
+# Stack Research
 
-**Project:** Waldo — Email Auth Flows Milestone
-**Researched:** 2026-03-13
-**Scope:** MJML auth emails + email verification on registration + password reset context routing
-
----
+**Domain:** Cross-subdomain cookie sharing — Nuxt 4 + @nuxtjs/strapi v2
+**Researched:** 2026-03-16
+**Confidence:** HIGH
 
 ## Scope Statement
 
-This file answers three precise questions about the Strapi v5.36.1 / `@strapi/plugin-users-permissions@5.36.1` codebase as installed in this project:
+This file answers the precise questions for the shared authentication session milestone:
 
-1. How does `email_confirmation: true` work, and what APIs does it expose?
-2. Does `forgotPassword` support custom email templates? How to override the email it sends?
-3. Can a custom `url` parameter be passed to `forgotPassword` so the reset link points to a specific app?
+1. Does `useCookie()` in Nuxt 4 support a `domain` option?
+2. Does `@nuxtjs/strapi` v2's `cookie` config object accept `domain`?
+3. Are there any version constraints or required package updates?
+4. Are there Nitro/h3 changes needed for server-side cookie writes?
+5. What is NOT needed (avoid adding)?
 
-All findings are based on the **installed** plugin source at
-`node_modules/@strapi/plugin-users-permissions/server/` — **HIGH confidence** (reading actual runtime code, not docs).
-
----
-
-## Question 1 — Email Confirmation on Registration
-
-### How the built-in mechanism works (source-verified)
-
-**Config flag:** `email_confirmation` stored in the plugin's database store (`pluginStore.get({ key: 'advanced' })`).
-Set via **Strapi Admin Panel → Settings → Users & Permissions → Advanced Settings → "Enable email confirmation: TRUE"**.
-There is no code-level way to set it in `config/plugins.ts`; it is a DB-persisted value seeded at bootstrap with default `false`.
-
-**Registration flow change (`auth.js` `register` method, line 603–611):**
-
-```javascript
-if (settings.email_confirmation) {
-  await getService('user').sendConfirmationEmail(sanitizedUser);
-  return ctx.send({ user: sanitizedUser });  // ← NO JWT returned
-}
-// Normal path: return { jwt, user }
-```
-
-**Key consequence:** When `email_confirmation: true`, `POST /api/auth/local/register` returns `{ user }` only — **no JWT**. The user cannot log in until they confirm. The `confirmed` field on the user record is set to `false` at creation.
-
-**Login enforcement (`auth.js` `callback` method, lines 84–89):**
-
-```javascript
-const requiresConfirmation = _.get(advancedSettings, 'email_confirmation');
-if (requiresConfirmation && user.confirmed !== true) {
-  throw new ApplicationError('Your account email is not confirmed');
-}
-```
-
-This check runs on `POST /api/auth/local` — unconfirmed users get a 400 error.
-
-**`sendConfirmationEmail` (`user.js`, lines 133–195):**
-- Generates a random `confirmationToken` via `crypto.randomBytes(20).toString('hex')`
-- Saves it to `user.confirmationToken` in DB
-- Reads the email template from the plugin store (Admin Panel → Email Templates → "Email address confirmation")
-- Template variables: `URL`, `SERVER_URL`, `ADMIN_URL`, `USER` (object), `CODE`
-- `URL` is hardcoded to: `${server.absoluteUrl}${apiPrefix}/auth/email-confirmation`
-- Uses Lodash `_.template()` — **NOT Nunjucks/MJML**
-- Sends via `strapi.plugin('email').service('email').send()`
-
-**Confirmation endpoint:**
-`GET /api/auth/email-confirmation?confirmation=<TOKEN>`
-Sets `confirmed: true`, clears `confirmationToken`, then redirects to `email_confirmation_redirection` (set in Admin Panel Advanced Settings) or `/`.
-
-**Resend confirmation endpoint:**
-`POST /api/auth/send-email-confirmation` with `{ email }` — resends for unconfirmed, non-blocked users.
-
-### Integration with existing `registerUserLocal` wrapper
-
-`registerUserLocal` (`authController.ts`) calls `await registerController(ctx)`, then reads `ctx.response.body?.user`. When `email_confirmation: true`, the body still contains `user` — so `createUserReservations(user)` will still fire correctly. **No changes needed to the wrapper.**
-
-However, the website's `FormRegister.vue` currently expects a JWT back from `useStrapiAuth().register()`. With confirmation enabled, no JWT is returned — **the website's `FormRegister.vue` must handle the no-JWT response gracefully** (show "check your email" instead of auto-logging in).
-
-### Overriding the confirmation email with MJML
-
-The built-in `sendConfirmationEmail` sends a plain Lodash-templated HTML email. To replace it with an MJML email, override `sendConfirmationEmail` on the `plugin.services.user` factory instance using the same factory-wrapper pattern already used for `plugin.controllers.auth` in `strapi-server.ts`.
-
-**`plugin.services.user` is a factory function** — same structure as `plugin.controllers.auth`. The pattern is identical:
-
-```typescript
-// In strapi-server.ts — add after existing controller factory override:
-const originalUserServiceFactory = plugin.services.user;
-plugin.services.user = (context) => {
-  const instance = originalUserServiceFactory(context);
-  instance.sendConfirmationEmail = overrideConfirmationEmail();
-  return instance;
-};
-```
-
-**Full replacement (not wrapping) is required** because the original method also sends an email — wrapping would double-send. The override replicates the token-generation logic and sends MJML instead:
-
-```typescript
-// authController.ts — export overrideConfirmationEmail
-export const overrideConfirmationEmail = () => async (user) => {
-  const confirmationToken = require('crypto').randomBytes(20).toString('hex');
-  await strapi.db.query('plugin::users-permissions.user').update({
-    where: { id: user.id },
-    data: { confirmationToken },
-  });
-  const apiUrl = process.env.APP_URL || 'http://localhost:1337';
-  const apiPrefix = strapi.config.get('api.rest.prefix') as string;
-  const confirmationUrl = `${apiUrl}${apiPrefix}/auth/email-confirmation?confirmation=${confirmationToken}`;
-  await sendMjmlEmail(
-    strapi,
-    'email-confirmation',
-    user.email,
-    'Confirma tu correo electrónico',
-    { name: user.firstname || user.username || user.email, confirmationUrl }
-  );
-};
-```
-
-**The confirmation link still points to Strapi's backend** (`GET /api/auth/email-confirmation?confirmation=TOKEN`), which confirms the user and then redirects to `email_confirmation_redirection` set in Admin Panel. Set that field to the website login page (e.g. `https://waldo.click/login`).
+All findings are based on: installed package source at `node_modules/`, official Nuxt 4 docs, and `@nuxtjs/strapi` v2 GitHub source.
 
 ---
 
-## Question 2 — forgotPassword Custom Email Templates
+## Executive Answer
 
-### How forgotPassword works (auth.js lines 458–517, source-verified)
+**Zero new packages required.** The entire cross-subdomain cookie sharing implementation is a pure configuration change to both `nuxt.config.ts` files. The chain works as follows:
+
+```
+nuxt.config.ts strapi.cookie.domain
+  → useStrapiToken.js: useCookie(cookieName, config.strapi.cookie)
+    → Nuxt useCookie() accepts CookieSerializeOptions including domain
+      → Set-Cookie: waldo_jwt=...; Domain=.waldo.click; Path=/
+```
+
+---
+
+## Key Findings
+
+### Finding 1 — `useCookie()` natively supports `domain` (HIGH confidence)
+
+**Source:** Official Nuxt 4 docs, `nuxt.com/docs/api/composables/use-cookie` (verified 2026-03-16)
+
+`useCookie()` extends `CookieSerializeOptions` from `cookie-es`. The `domain` option is documented:
+
+> Sets the `Domain` `Set-Cookie` attribute. By default, no domain is set, and most clients will consider applying the cookie only to the current domain.
+
+Usage:
+```typescript
+const token = useCookie('waldo_jwt', {
+  path: '/',
+  maxAge: 604800,
+  domain: '.waldo.click',  // ← dot-prefixed = all subdomains
+})
+```
+
+The `.waldo.click` (leading dot) format is the correct RFC 6265 convention for matching all subdomains of `waldo.click`.
+
+**Installed version:** `cookie-es@2.0.0` (in project's `node_modules/`), which is the underlying serializer Nuxt uses. Supports `domain` in `CookieSerializeOptions`. ✅
+
+### Finding 2 — `@nuxtjs/strapi` v2 `cookie` config accepts `domain` (HIGH confidence)
+
+**Source:** `node_modules/@nuxtjs/strapi/dist/runtime/composables/useStrapiToken.js` (installed, read directly)
 
 ```javascript
-async forgotPassword(ctx) {
-  const { email } = await validateForgotPasswordBody(ctx.request.body);
+// useStrapiToken.js line 10 — the entirety of cookie creation:
+const cookie = useCookie(config.strapi.cookieName, config.strapi.cookie);
+```
 
-  const emailSettings = await pluginStore.get({ key: 'email' });
-  const advancedSettings = await pluginStore.get({ key: 'advanced' });
+The `cookie` option object from `nuxt.config.ts` is passed **directly and entirely** to `useCookie()`. There is no filtering or stripping.
 
-  // advancedSettings.email_reset_password is the URL from Admin Panel
-  const resetPasswordToken = crypto.randomBytes(64).toString('hex');
-  const emailBody = await getService('users-permissions').template(
-    resetPasswordSettings.message,   // ← Lodash template from Admin Panel
-    {
-      URL: advancedSettings.email_reset_password,   // ← global Admin Panel setting
-      SERVER_URL: strapi.config.get('server.absoluteUrl'),
-      USER: userInfo,
-      TOKEN: resetPasswordToken,
-    }
-  );
-
-  // Saves token first, THEN sends email
-  await getService('user').edit(user.id, { resetPasswordToken });
-  await strapi.plugin('email').service('email').send(emailToSend);
-
-  ctx.send({ ok: true });
+**Module type definition** (`module.ts` from GitHub source, verified):
+```typescript
+export interface ModuleOptions {
+  cookie?: CookieOptions  // ← Nuxt's own CookieOptions type — includes domain
 }
 ```
 
-**Key findings:**
-- The built-in `forgotPassword` uses Lodash `_.template()`, not MJML
-- `URL` is taken from `advancedSettings.email_reset_password` — a single global Admin Panel setting, not a per-request parameter
-- The default template renders the link as `<%= URL %>?code=<%= TOKEN %>`
-- There is **no `url` parameter in the request body** — the built-in code never reads one
+`CookieOptions` is imported from `nuxt/app` — the same type used by `useCookie()` itself. Therefore, `domain` is a valid, typed field.
 
-### Overriding with MJML (full replacement recommended)
+**Currently installed version:** `@nuxtjs/strapi@2.1.1` — this behavior is present in the installed version. ✅
 
-`forgotPassword` is a method on the `plugin.controllers.auth` factory instance. The project already wraps this factory. Add `instance.forgotPassword` to the block in `strapi-server.ts`:
+**What this means:** Adding `domain: '.waldo.click'` to the `cookie` block in both `nuxt.config.ts` files is all that is needed for `@nuxtjs/strapi` to emit cookies with the correct domain attribute.
+
+### Finding 3 — `SameSite` must be set to `'lax'` or unset (HIGH confidence)
+
+**Source:** RFC 6265bis; MDN Cookie docs; browser behavior (well-established)
+
+A cookie with `Domain=.waldo.click` and `SameSite=Strict` will NOT be sent on cross-subdomain navigation (e.g., website → dashboard redirects or link clicks). The current config does not set `sameSite`, which defaults to browser default — typically `Lax` in modern browsers. `Lax` is the correct value for cross-subdomain within the same eTLD+1.
+
+**Current state in `nuxt.config.ts`:** Neither app sets `sameSite` in the `cookie` config block. This is correct — do not add `sameSite: 'strict'`. Do not add `sameSite: 'none'` (that is for cross-site, not cross-subdomain, and requires `secure: true`).
+
+No change needed on `sameSite`.
+
+### Finding 4 — h3 `setCookie()` supports `domain` in server routes (HIGH confidence)
+
+**Source:** h3 GitHub source `src/utils/cookie.ts` (verified 2026-03-16)
 
 ```typescript
-instance.forgotPassword = overrideForgotPassword();
-// No .bind(instance) — full replacement, not wrapping
+export function setCookie(
+  event: H3Event,
+  name: string,
+  value: string,
+  options?: CookieSerializeOptions,  // ← includes domain
+): void
 ```
 
-**Full replacement in `authController.ts` (avoids double email send):**
+`CookieSerializeOptions` is from `cookie-es` and includes `domain`. If any Nitro server routes in `apps/website/server/` or `apps/dashboard/server/` manually set the JWT cookie, they will need the `domain` option added to their `setCookie()` call.
+
+**Current state:** No server routes in either app manually set `waldo_jwt`. The `@nuxtjs/strapi` module handles all JWT cookie writes. No Nitro/h3 changes needed today.
+
+### Finding 5 — `nuxt-security@2.4.0` does NOT interfere with cookie domain (HIGH confidence)
+
+**Source:** `node_modules/nuxt-security/dist/defaultConfig.mjs` (read directly)
+
+`nuxt-security` only sets HTTP response security headers (CSP, HSTS, etc.). It does not set, modify, or strip `Set-Cookie` headers. No conflict with `Domain` attribute.
+
+**Exception to watch:** `strictTransportSecurity.includeSubdomains: true` is nuxt-security's default. This means all subdomains of `waldo.click` require HTTPS. The JWT cookie with `Domain=.waldo.click` must also be secure in production (which it is — both apps run on HTTPS via Forge). In development (HTTP), the cookie will still be set but not transmitted in secure contexts — this is expected behavior.
+
+### Finding 6 — Both apps already use identical `cookieName: "waldo_jwt"` (HIGH confidence)
+
+**Source:** Both `nuxt.config.ts` files read directly
 
 ```typescript
-export const overrideForgotPassword = () => async (ctx) => {
-  const { email } = ctx.request.body as { email?: string };
+// apps/website/nuxt.config.ts
+cookieName: "waldo_jwt",
 
-  if (!email) return ctx.badRequest('Email is required');
-
-  const user = await strapi.db.query('plugin::users-permissions.user')
-    .findOne({ where: { email: email.toLowerCase() } });
-
-  // Matches built-in behavior: silent success for unknown/blocked users
-  if (!user || user.blocked) return ctx.send({ ok: true });
-
-  const resetPasswordToken = require('crypto').randomBytes(64).toString('hex');
-
-  // Save token before sending email (matches built-in ordering)
-  await strapi.db.query('plugin::users-permissions.user').update({
-    where: { id: user.id },
-    data: { resetPasswordToken },
-  });
-
-  // Build reset URL (see Question 3 for context routing)
-  const resetUrl = `${process.env.FRONTEND_URL}/restablecer-contrasena?token=${resetPasswordToken}`;
-
-  try {
-    await sendMjmlEmail(
-      strapi,
-      'reset-password',
-      user.email,
-      'Restablece tu contraseña',
-      { name: user.firstname || user.username || user.email, resetUrl }
-    );
-  } catch (_) {
-    // Non-fatal: token is saved; admin can retrieve it; user can re-request
-  }
-
-  ctx.send({ ok: true });
-};
+// apps/dashboard/nuxt.config.ts
+cookieName: "waldo_jwt",
 ```
 
-**Why token in query param must be `?token=`** — both `FormResetPassword.vue` implementations (website `/restablecer-contrasena` and dashboard `/auth/reset-password`) read `route.query.token`, then pass it to `resetPassword({ code: route.query.token, ... })`. The `POST /api/auth/reset-password` body field is named `code`. So:
-- Email link must use `?token=<TOKEN>` (matching `route.query.token`)
-- Frontend form reads `route.query.token` and passes it as the `code` body field
-- Strapi `resetPassword` controller looks up `resetPasswordToken === code` in DB ✅
+The cookie name is already identical across apps — this is a prerequisite for cross-subdomain sharing. Both apps reading the same name means once `Domain=.waldo.click` is set at login, the other app will automatically read it. ✅
 
 ---
 
-## Question 3 — Password Reset Context Routing
+## Recommended Stack
 
-### The problem
+### Core Technologies (unchanged — no additions)
 
-Two apps have reset pages:
-- **Website:** `/restablecer-contrasena` (public-facing)
-- **Dashboard:** `/auth/reset-password` (admin-facing)
+| Technology | Version | Purpose | Notes |
+|------------|---------|---------|-------|
+| `nuxt` | `^4.1.3` | SSR framework | Already installed — `useCookie` domain support built-in |
+| `@nuxtjs/strapi` | `^2.1.1` | Strapi integration + JWT cookie | Already installed — `cookie` config passes through to `useCookie` |
+| `cookie-es` | `2.0.0` | Cookie serialization | Already installed (transitive) — supports `domain` in `CookieSerializeOptions` |
+| `h3` | (Nuxt bundled) | Server-side cookie utils | Already installed (via Nitro) — `setCookie` supports `domain` |
 
-The built-in `forgotPassword` uses a single global URL (`advancedSettings.email_reset_password`) and has no per-request URL override. The website already uses `useStrapiAuth().forgotPassword({ email })` via `@nuxtjs/strapi` v2, which posts to `POST /api/auth/forgot-password`.
+### Supporting Libraries (unchanged)
 
-### Recommended approach: optional `context` body parameter
+No additions required.
 
-With the full-replacement override from Question 2, the controller can read an optional `context` field from the request body and route accordingly:
+---
+
+## Installation
+
+No new packages to install.
+
+---
+
+## The Exact Config Change
+
+**Both apps — add `domain` to `strapi.cookie` block in `nuxt.config.ts`:**
 
 ```typescript
-export const overrideForgotPassword = () => async (ctx) => {
-  const { email, context } = ctx.request.body as {
-    email?: string;
-    context?: 'website' | 'dashboard';
-  };
-
-  // ...token generation...
-
-  const baseUrl = context === 'dashboard'
-    ? (process.env.DASHBOARD_URL || 'https://dashboard.waldo.click')
-    : (process.env.FRONTEND_URL || 'https://waldo.click');
-
-  const resetPath = context === 'dashboard'
-    ? 'auth/reset-password'
-    : 'restablecer-contrasena';
-
-  const resetUrl = `${baseUrl}/${resetPath}?token=${resetPasswordToken}`;
-
-  await sendMjmlEmail(strapi, 'reset-password', user.email, 'Restablece tu contraseña', {
-    name: user.firstname || user.username || user.email,
-    resetUrl,
-  });
-
-  ctx.send({ ok: true });
-};
+// apps/website/nuxt.config.ts
+strapi: {
+  url: ...,
+  prefix: '/api',
+  version: 'v5',
+  cookie: {
+    path: '/',
+    maxAge: process.env.SESSION_MAX_AGE
+      ? Number.parseInt(process.env.SESSION_MAX_AGE)
+      : 604800,
+    domain: process.env.COOKIE_DOMAIN || undefined,  // ← ADD THIS
+  },
+  cookieName: 'waldo_jwt',
+  // ...
+},
 ```
-
-**Frontend change — website `FormForgotPassword.vue`:**
 
 ```typescript
-// Cast required: @nuxtjs/strapi forgotPassword type only accepts { email }
-await forgotPassword({ email: values.email, context: 'website' } as any);
+// apps/dashboard/nuxt.config.ts
+strapi: {
+  url: ...,
+  prefix: '/api',
+  version: 'v5',
+  cookie: {
+    path: '/',
+    maxAge: process.env.SESSION_MAX_AGE
+      ? Number.parseInt(process.env.SESSION_MAX_AGE)
+      : 604800,
+    domain: process.env.COOKIE_DOMAIN || undefined,  // ← ADD THIS
+  },
+  cookieName: 'waldo_jwt',
+  // ...
+},
 ```
 
-**Frontend change — dashboard `FormForgotPassword.vue`:**
+**New env var in both `.env` and `.env.example`:**
 
-```typescript
-await forgotPassword({ email: values.email, context: 'dashboard' } as any);
+```bash
+# Cookie domain for cross-subdomain sharing
+# Production: .waldo.click or .waldoclick.dev
+# Local dev: leave unset (undefined = current domain only)
+COOKIE_DOMAIN=.waldo.click
 ```
 
-**Why this approach over alternatives:**
-
-| Approach | Verdict | Reason |
-|----------|---------|--------|
-| Single global URL (website only) | ❌ | Dashboard users reset on website — different UX context, confusing |
-| Two separate Strapi endpoints | ❌ | Extra boilerplate; same logic duplicated; Admin Panel rate-limit config only covers one |
-| `context` body param (recommended) | ✅ | One endpoint, one MJML template, context-aware URL; follows body-extension pattern from `overrideAuthLocal` |
-
-**New env var required:**
-
-```
-DASHBOARD_URL=https://dashboard.waldo.click
-# FRONTEND_URL already exists
-```
+**Why `|| undefined` instead of a fallback string:** When `domain` is `undefined`, `useCookie` / `cookie-es` omits the `Domain` attribute entirely, so the cookie is scoped to the exact domain that set it. This is the correct behavior for local development where both apps run on `localhost` (not subdomains). Setting `domain: '.localhost'` has inconsistent browser support and is not needed.
 
 ---
 
-## Current State Summary
+## Alternatives Considered
 
-| Capability | Status | Notes |
-|-----------|--------|-------|
-| MJML email infrastructure (`sendMjmlEmail`, Nunjucks, templates) | ✅ EXISTS | `verification-code.mjml` is the reference template |
-| Auth factory wrapper pattern (`plugin.controllers.auth`) | ✅ EXISTS | Already wraps `register`, `connect`, `callback` |
-| `forgotPassword` MJML override | ❌ NOT DONE | Built-in sends plain Lodash template; needs factory addition |
-| Service factory wrapper (`plugin.services.user`) | ❌ NOT DONE | Same factory pattern; needed for `sendConfirmationEmail` override |
-| Email confirmation on register | ❌ NOT DONE | `email_confirmation: false` by default; Admin Panel toggle + service override needed |
-| Password reset context routing | ❌ NOT DONE | Single global URL; needs `context` param approach |
+| Recommended | Alternative | Why Not |
+|-------------|-------------|---------|
+| `domain` in `strapi.cookie` config | `js-cookie` library client-side workaround | `js-cookie` doesn't run on SSR; strapi module handles both sides correctly |
+| `domain` in `strapi.cookie` config | Custom Nitro middleware to rewrite `Set-Cookie` | Over-engineering; strapi module already exposes the right hook |
+| `COOKIE_DOMAIN` env var | Hardcoded `.waldo.click` in config | Hardcoding breaks local dev; env var lets each environment opt in |
+| `sameSite: 'lax'` (browser default, unset) | `sameSite: 'none'` | `none` requires `secure: true` and is for cross-origin, not cross-subdomain |
 
 ---
 
-## Stack Additions Required
+## What NOT to Use
 
-### No new npm packages needed
-
-All required capabilities exist in the installed stack:
-
-| Package | Installed version | Role |
-|---------|------------------|------|
-| `mjml` | `^4.16.1` | MJML → HTML compilation |
-| `nunjucks` | `^3.2.4` | Template variable injection in `.mjml` files |
-| `@strapi/plugin-users-permissions` | `5.36.1` | Auth controllers, factory pattern |
-| `@nuxtjs/strapi` (website + dashboard) | v2 | `useStrapiAuth()` — `forgotPassword`, `resetPassword`, `register` |
-
-### New Strapi files
-
-| File | Purpose |
-|------|---------|
-| `src/services/mjml/templates/email-confirmation.mjml` | MJML template for email verification on registration |
-| `src/services/mjml/templates/reset-password.mjml` | MJML template for password reset link |
-
-### Modified Strapi files
-
-| File | Change |
-|------|--------|
-| `src/extensions/users-permissions/strapi-server.ts` | Add `plugin.services.user` factory override block; add `instance.forgotPassword` to existing auth factory block |
-| `src/extensions/users-permissions/controllers/authController.ts` | Add `overrideForgotPassword()` and `overrideConfirmationEmail()` exports |
-
-### Modified Nuxt files — website (`apps/website`)
-
-| File | Change |
-|------|--------|
-| `app/components/FormRegister.vue` | Handle no-JWT response when `email_confirmation: true` — show "check your email" message instead of auto-login |
-| `app/components/FormForgotPassword.vue` | Pass `context: 'website'` in forgotPassword body (cast as `any`) |
-
-### Modified Nuxt files — dashboard (`apps/dashboard`)
-
-| File | Change |
-|------|--------|
-| `app/components/FormForgotPassword.vue` | Pass `context: 'dashboard'` in forgotPassword body (cast as `any`) |
-
-### New env var (Strapi)
-
-| Variable | Example value | Purpose |
-|----------|--------------|---------|
-| `DASHBOARD_URL` | `https://dashboard.waldo.click` | Base URL for dashboard reset links |
+| Avoid | Why | Use Instead |
+|-------|-----|-------------|
+| `js-cookie` for domain setting | Already in both apps as `js-cookie@3.0.5` but SSR-unaware; `useCookie` is the correct SSR-safe API | `useCookie` via `@nuxtjs/strapi` |
+| Custom Nitro middleware rewriting `Set-Cookie` | Over-engineering; fragile; would need to track all cookie writes | `strapi.cookie.domain` config |
+| `sameSite: 'none'` with `secure: true` | For cross-site contexts (third-party cookies); subdomains of same root domain are same-site | Leave `sameSite` unset (defaults to `Lax`) |
+| Separate auth session per app | Defeats the purpose; users would need to log in twice | Single `waldo_jwt` with domain scope |
+| `httpOnly: true` on `waldo_jwt` | Would prevent `useStrapiToken` from reading the cookie client-side (JavaScript access required for Nuxt SSR hydration) | Keep `httpOnly` unset (defaults to `false`) |
 
 ---
 
-## Integration Notes
+## Version Compatibility
 
-### Unconfirmed users and the 2-step login (`overrideAuthLocal`)
+| Package | Version | Compatibility Notes |
+|---------|---------|---------------------|
+| `@nuxtjs/strapi@2.1.1` | Installed | `cookie?: CookieOptions` — typed as Nuxt's own `CookieOptions`; `domain` field valid and passes through |
+| `nuxt@^4.1.3` | Installed | `useCookie` `domain` option documented and stable since Nuxt 3; no version constraint |
+| `cookie-es@2.0.0` | Installed (transitive) | `CookieSerializeOptions.domain: string` — supported |
+| `nuxt-security@2.4.0` | Installed | No cookie attribute manipulation; no conflict |
 
-`overrideAuthLocal` intercepts `POST /api/auth/local` **after** the original controller runs. The original controller throws `ApplicationError('Your account email is not confirmed')` before returning a JWT when `email_confirmation: true` and `user.confirmed !== true`. Since `overrideAuthLocal` only intercepts when `jwt` is present (`if (!jwt) return;`), unconfirmed users pass through cleanly — correct behavior, no change needed.
-
-### `sendConfirmationEmail` and `registerUserLocal` reservation timing
-
-`registerUserLocal` calls `createUserReservations(user)` as a **floating promise** (no `await`). The confirmation email is sent by the original `register` controller before responding. These are independent — no timing conflict.
-
-### Confirmation link routes through Strapi backend first
-
-The MJML email confirmation link must point to the **Strapi backend**:
-`GET /api/auth/email-confirmation?confirmation=TOKEN`
-
-Strapi confirms the user, then redirects to `email_confirmation_redirection` (Admin Panel Advanced Settings). Set this to `https://waldo.click/login` so the user lands on the website login page after confirming.
-
-The MJML email links to Strapi, not directly to the Nuxt frontend.
-
-### `resetPassword` token field name consistency
-
-Both apps' `FormResetPassword.vue` read `route.query.token` and pass it as `code` to `resetPassword({ code, password, passwordConfirmation })`. The `POST /api/auth/reset-password` controller looks up `resetPasswordToken === code`.
-
-Therefore:
-- Email link → `?token=<TOKEN>` (so `route.query.token` is populated)
-- Frontend → `{ code: route.query.token }` → body field matches DB column ✅
-
-### Rate limiting on `POST /api/auth/forgot-password`
-
-The built-in `forgotPassword` is covered by the plugin's default rate limiter (5 requests per 5 minutes). The full-replacement override bypasses the plugin's internal request processing but the **koa2-ratelimit middleware at the route level still applies** because it runs before the controller. No additional rate limiting needed.
+No version upgrades required.
 
 ---
 
-## Confidence Assessment
+## Strapi CORS Note (not blocking, but verify)
 
-| Area | Confidence | Source |
-|------|------------|--------|
-| `email_confirmation` flag behavior (registration, login enforcement) | HIGH | Read `auth.js` + `user.js` from installed plugin source |
-| `forgotPassword` URL comes from Admin Panel setting only | HIGH | Read `auth.js` + `bootstrap/index.js` from installed plugin source |
-| Service factory wrapper pattern (`plugin.services.user`) | HIGH | Confirmed by inspecting plugin structure; same pattern as auth factory already in production |
-| `context` body param approach | MEDIUM | Pattern inferred from existing body-extension patterns; `@nuxtjs/strapi` v2 SDK behavior for extra fields is type-cast with `as any` |
-| MJML double-send issue (wrapping = two emails) | HIGH | Confirmed by reading both `sendConfirmationEmail` and `forgotPassword` — they each call `strapi.plugin('email').service('email').send()` internally |
-| `route.query.token` → `code` body field mapping | HIGH | Read both `FormResetPassword.vue` files directly |
+If the Strapi backend sets the JWT cookie directly in any response (e.g., the custom `overrideAuthLocal` returns a cookie via `ctx.set('Set-Cookie', ...)`), that server response must also include `Domain=.waldo.click`. However, in the current architecture, Strapi only returns JWT values in the JSON body (`{ jwt, user }`), and the Nuxt apps write the cookie via `useStrapiToken`'s `setToken()` → `useCookie` assignment. Strapi does not write the cookie directly. No Strapi change needed.
 
 ---
 
@@ -392,15 +251,14 @@ The built-in `forgotPassword` is covered by the plugin's default rate limiter (5
 
 | Source | Type | Confidence |
 |--------|------|------------|
-| `node_modules/@strapi/plugin-users-permissions/server/controllers/auth.js` (v5.36.1) | Installed source | HIGH |
-| `node_modules/@strapi/plugin-users-permissions/server/services/user.js` (v5.36.1) | Installed source | HIGH |
-| `node_modules/@strapi/plugin-users-permissions/server/bootstrap/index.js` (v5.36.1) | Installed source | HIGH |
-| `apps/strapi/src/extensions/users-permissions/strapi-server.ts` | Project source | HIGH |
-| `apps/strapi/src/extensions/users-permissions/controllers/authController.ts` | Project source | HIGH |
-| `apps/strapi/src/services/mjml/send-email.ts` | Project source | HIGH |
-| `apps/strapi/config/plugins.ts` | Project source | HIGH |
-| `apps/dashboard/app/components/FormForgotPassword.vue` | Project source | HIGH |
-| `apps/dashboard/app/components/FormResetPassword.vue` | Project source | HIGH |
-| `apps/website/app/components/FormForgotPassword.vue` | Project source | HIGH |
-| `apps/website/app/pages/restablecer-contrasena.vue` | Project source | HIGH |
-| https://docs.strapi.io/dev-docs/plugins/users-permissions | Official Strapi v5 docs | MEDIUM |
+| `nuxt.com/docs/api/composables/use-cookie` (fetched 2026-03-16) | Official Nuxt 4 docs | HIGH |
+| `node_modules/@nuxtjs/strapi/dist/runtime/composables/useStrapiToken.js` | Installed package source | HIGH |
+| `github.com/nuxt-modules/strapi/raw/main/src/module.ts` | Package author source (fetched 2026-03-16) | HIGH |
+| `github.com/h3js/h3/blob/main/src/utils/cookie.ts` | h3 package source (fetched 2026-03-16) | HIGH |
+| `node_modules/nuxt-security/dist/defaultConfig.mjs` | Installed package source | HIGH |
+| `apps/website/nuxt.config.ts`, `apps/dashboard/nuxt.config.ts` | Project config (read directly) | HIGH |
+
+---
+
+*Stack research for: cross-subdomain cookie sharing, Nuxt 4 + @nuxtjs/strapi v2*
+*Researched: 2026-03-16*

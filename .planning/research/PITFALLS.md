@@ -1,197 +1,217 @@
-# Domain Pitfalls
+# Pitfalls Research
 
-**Domain:** Email auth flows on existing Strapi v5 + Nuxt 4 app
-**Milestone:** Adding email verification on registration + MJML auth emails + password reset context routing
-**Researched:** 2026-03-13
-**Confidence:** HIGH — all critical claims verified against Strapi v5 source code (`auth.js`, `user.js` from `github.com/strapi/strapi/main`)
+**Domain:** Adding cross-subdomain cookie sharing to existing Nuxt 4 + @nuxtjs/strapi v2 auth
+**Milestone:** Shared authentication session across `waldo.click` subdomains (website + dashboard)
+**Researched:** 2026-03-16
+**Confidence:** HIGH — all critical claims verified against @nuxtjs/strapi v2 source (`useStrapiToken.ts`, `useStrapiAuth.ts`), Nuxt 4 `useCookie` docs, and MDN cookie specification
 
 ---
 
 ## Critical Pitfalls
 
-Mistakes that cause user lockout, data loss, or silent broken flows.
+Mistakes that cause broken sessions, zombie cookies, or users locked out after logout.
 
 ---
 
-### Pitfall 1: Enabling `email_confirmation` Immediately Locks Out All Existing Users
+### Pitfall 1: Logout Doesn't Clear the Old Cookie — Two Cookies Now Exist
 
 **What goes wrong:**
-Enabling "Enable email confirmation" in the Strapi admin panel Advanced Settings activates a live check in the `callback` controller (the one already wrapped by `overrideAuthLocal`):
+The existing `waldo_jwt` cookie is set **without** a `domain` attribute:
 
-```js
-// Strapi v5 auth.js — verified source
-const requiresConfirmation = _.get(advancedSettings, 'email_confirmation');
-if (requiresConfirmation && user.confirmed !== true) {
-  throw new ApplicationError('Your account email is not confirmed');
-}
-```
-
-All existing users have `confirmed: false` (the schema default). The moment the toggle is flipped in the admin panel, **every existing user is locked out** at `POST /api/auth/local` — website login, dashboard login, everything. The `ApplicationError` is thrown inside the original `callback` controller before `overrideAuthLocal`'s code can run (because `overrideAuthLocal` calls `await originalController(ctx)` first, and that call throws).
-
-**Root cause:**
-The `confirmed` field defaults to `false` in Strapi's user schema. Existing apps running without `email_confirmation` never backfill it to `true`.
-
-**Consequences:**
-- All existing users cannot log in immediately after the flag is flipped
-- Dashboard admins cannot log in (lockout of operations team)
-- The `ApplicationError` propagates through `overrideAuthLocal` as an unhandled throw — the 2-step flow never reaches the pendingToken logic
-- Google OAuth users in the `callback()` path are affected the same way (if any use the local `callback`)
-
-**Prevention:**
-Run a database migration **before** flipping the toggle. Either approach works:
-
-```sql
--- SQL migration — run against the Strapi database BEFORE enabling email_confirmation
-UPDATE up_users SET confirmed = TRUE WHERE confirmed = FALSE OR confirmed IS NULL;
-```
-
-Or via Strapi bootstrap (run once, then remove):
 ```ts
-// apps/strapi/src/index.ts — temporary bootstrap, remove after first deploy
-async bootstrap({ strapi }) {
-  await strapi.db.query('plugin::users-permissions.user').updateMany({
-    where: { $or: [{ confirmed: false }, { confirmed: null }] },
-    data: { confirmed: true },
-  });
-}
+// nuxt.config.ts — current state (both website and dashboard)
+cookie: {
+  path: "/",
+  maxAge: 604800,
+},
 ```
 
-**Detection:**
-After enabling the flag in any environment, attempt a login with a pre-existing account. The error `"Your account email is not confirmed"` (HTTP 400) confirms the lockout is active.
+When `domain: ".waldo.click"` is added, `useStrapiToken` calls `useCookie(cookieName, config.strapi.cookie)`, which sets a **new cookie** with `Domain=.waldo.click`. The browser now has **two separate cookies** with the name `waldo_jwt`:
 
-**Phase:** The migration must be the first step in any phase that enables `email_confirmation`. Enable the flag only after verifying the migration ran successfully.
+1. `waldo_jwt` — no domain attribute (host-only, scoped to `www.waldo.click`)
+2. `waldo_jwt` — `Domain=.waldo.click` (visible to all subdomains)
 
----
-
-### Pitfall 2: `email_confirmation` Changes the Register Response Shape — Frontend Breaks Silently
-
-**What goes wrong:**
-`registerUserLocal` wraps the original `register` controller and reads `ctx.response.body?.user` after calling it. This works either way. The problem is the **frontend** (`FormRegister.vue` on website and dashboard).
-
-When `email_confirmation: true` is set, Strapi's `register` controller sends `{ user }` with **no JWT**:
-
-```js
-// Strapi v5 auth.js register() — verified source
-if (settings.email_confirmation) {
-  await getService('user').sendConfirmationEmail(sanitizedUser);
-  return ctx.send({ user: sanitizedUser }); // ← NO jwt field
-}
-// Without email_confirmation:
-const jwt = getService('jwt').issue(_.pick(user, ['id']));
-return ctx.send({ jwt, user: sanitizedUser }); // ← jwt present
-```
-
-If any frontend registration handler calls `setToken(response.jwt)` unconditionally, it calls `setToken(undefined)`. With `@pinia-plugin-persistedstate/nuxt`, `undefined` gets persisted to localStorage as the auth token — producing a broken "logged-in-but-not" state that persists across page refreshes. The user registered successfully but cannot use the site.
+Both are sent to the server on requests from `www.waldo.click`. When `useStrapiAuth().logout()` calls `setToken(null)`, it sets `cookie.value = null` through the `useCookie` ref that was created with `Domain=.waldo.click` — this clears only cookie #2. Cookie #1 (the old host-only one) remains untouched in the browser and continues to be sent on requests. From the user's perspective, they are still "logged in" after logout.
 
 **Why it happens:**
-The existing registration flow was written assuming immediate JWT issuance (no email confirmation). The response shape change is a silent contract break.
+RFC 6265 treats cookies with and without a `Domain` attribute as distinct entries. Setting `Domain=.waldo.click` creates a different cookie than the one without a domain, even if the name is identical. The browser sends both, and clearing the domain-scoped one does not affect the host-only one.
 
 **Consequences:**
-- Users register successfully but cannot access protected routes
-- `useStrapiUser()` returns null even though `useAuthToken()` returns `"undefined"` (the stringified value)
-- `createUserReservations(user)` still fires (the user object is present regardless) — reservations are created but the user cannot reach them
+- After logout, `useStrapiUser()` returns the old user object on next SSR render (the old cookie's JWT is sent to Strapi and validates)
+- Users cannot fully log out — the old cookie survives until its 7-day `maxAge` expires
+- On the dashboard, admins can appear to be logged out in the UI but their JWT is still active
 
 **Prevention:**
-Before enabling `email_confirmation`, audit ALL registration response handlers:
-- `apps/website/app/components/FormRegister.vue` — does it guard `if (response.jwt) setToken(response.jwt)`?
-- `apps/dashboard` — does the dashboard even have a registration flow?
+The logout must **explicitly clear the old host-only cookie** in the same operation. Before removing the domain attribute from the cookie config, add a one-time client-side cleanup:
 
-The safe frontend pattern:
 ```ts
-const response = await $strapi.register(...)
-if (response.jwt) {
-  // Immediate login flow (email_confirmation disabled)
-  setToken(response.jwt)
-  await fetchUser()
-} else {
-  // Email confirmation flow
-  navigateTo('/registro/verifica-tu-email')
+// In useLogout.ts — add BEFORE calling strapiLogout()
+// Step 1: Clear the old host-only cookie (no domain attribute)
+if (import.meta.client) {
+  // Set Max-Age=0 on the old cookie — must match EXACT original attributes
+  document.cookie = `waldo_jwt=; path=/; max-age=0`
 }
+// Step 2: Clear the new domain-scoped cookie via the reactive ref
+await strapiLogout()
 ```
 
-**Phase:** Must be addressed in the same phase as the registration email template. Change the frontend before enabling the backend flag.
+Or via a Nitro server route that issues both `Set-Cookie` headers simultaneously.
+
+**The permanent fix:** After all existing users' old cookies have expired (7 days after the domain migration is deployed), the cleanup code can be removed.
+
+**Warning signs:**
+- After logout, `document.cookie` still contains `waldo_jwt` in browser DevTools
+- After logout, `GET /api/users/me` returns a 200 with user data instead of 401
+- `document.cookie` shows two `waldo_jwt` values when inspected from `www.waldo.click`
+
+**Phase to address:** Domain migration phase — the cleanup must be in the same commit as the domain attribute change. Cannot be split.
 
 ---
 
-### Pitfall 3: `forgotPassword` Email Cannot Be Intercepted — Full Controller Override Required
+### Pitfall 2: `nuxt-security` May Block `Set-Cookie` with Cross-Subdomain Domain Attributes
 
 **What goes wrong:**
-The Strapi v5 `forgotPassword` controller reads the reset URL from the admin panel's key-value store and sends the email directly — there is no hook, middleware, or override point short of replacing the entire controller:
+Both apps use `nuxt-security` which adds security headers including a strict CSP. The `nuxt-security` module also has cookie-hardening features. If any `nuxt-security` config applies `httpOnly: true` globally to cookies, or if Strapi's Nitro proxy route (`/api/*`) rewrites `Set-Cookie` headers, the `Domain=.waldo.click` attribute may be stripped.
 
-```js
-// Strapi v5 auth.js forgotPassword() — verified source
-const emailBody = await getService('users-permissions').template(
-  resetPasswordSettings.message,
-  {
-    URL: advancedSettings.email_reset_password, // ← static string from admin panel config
-    SERVER_URL: strapi.config.get('server.absoluteUrl'),
-    USER: userInfo,
-    TOKEN: resetPasswordToken,
+More critically: the website's `nuxt-security` config is **disabled in `local` mode** (`process.env.NODE_ENV !== "local"`):
+
+```ts
+// apps/website/nuxt.config.ts
+...(process.env.NODE_ENV !== "local" ? ["nuxt-security"] : []),
+```
+
+This means security headers — including any that affect cookie policy — are only active in production. A cross-subdomain cookie that works in local dev may fail in production due to security header conflicts, or vice versa.
+
+**Why it happens:**
+`nuxt-security` can modify HTTP response headers including `Set-Cookie` attributes. The interaction between the module's cookie hardening and a custom `Domain` attribute is not always predictable.
+
+**Consequences:**
+- The `Domain` attribute is silently stripped in production, breaking subdomain sharing
+- Or: `nuxt-security` adds `SameSite=Strict` to the cookie, which (combined with the domain attribute) prevents the cookie from being sent on cross-subdomain navigations
+
+**Prevention:**
+1. After deploying to staging, inspect the raw `Set-Cookie` response header in browser DevTools → Network tab — verify `Domain=.waldo.click` is present
+2. Check `nuxt-security`'s cookie-related config (`security.headers.crossOriginResourcePolicy`, etc.) to ensure no rewrites affect `Set-Cookie`
+3. Test the full login/logout flow from both `www.waldo.click` AND `admin.waldo.click` in staging (not just `localhost`)
+
+**Warning signs:**
+- Cookie in browser DevTools shows no `Domain` attribute despite config change
+- Login works on subdomain A but not B
+
+**Phase to address:** Staging verification phase — mandatory cross-browser, cross-subdomain smoke test.
+
+---
+
+### Pitfall 3: `SameSite=Lax` (the Browser Default) Breaks Cross-Subdomain Requests on Some Flows
+
+**What goes wrong:**
+Modern browsers default cookies to `SameSite=Lax` when no `SameSite` attribute is set. Under `SameSite=Lax`:
+- The cookie **is sent** on top-level navigations (clicking a link from `admin.waldo.click` to `www.waldo.click`)
+- The cookie **is NOT sent** on cross-origin subresource requests (AJAX, `fetch()`, XHR from one subdomain to another)
+
+The current cookie config sets no `sameSite` attribute. This is technically fine for the main use case (each app communicates with its own Nitro server which proxies to Strapi). However, if any future code makes direct cross-subdomain `fetch()` calls (e.g., website calls a dashboard API route, or vice versa), the JWT cookie will be silently absent.
+
+Additionally: `SameSite=None` **requires** `Secure=true`. If the team wants to enable `SameSite=None` (to guarantee the cookie is sent in all cross-site contexts), `Secure: true` must also be set — which breaks local HTTP development (see Pitfall 4).
+
+**Why it happens:**
+`SameSite` semantics are commonly misunderstood. `waldo.click` subdomains ARE same-site (same registrable domain), so `SameSite=Lax` does NOT block them from seeing the cookie — this is NOT a problem for the primary use case. The confusion is that developers may try to set `SameSite=None` unnecessarily, which then requires `Secure` and breaks localhost.
+
+**Consequences:**
+- Setting `SameSite=None` without `Secure` causes the browser to silently ignore the cookie
+- The default `SameSite=Lax` is actually correct for subdomain sharing (subdomains are same-site)
+- Unnecessary changes to `SameSite` create new problems that didn't exist before
+
+**Prevention:**
+- **Do NOT change `SameSite`** from its current unset state. The default browser behavior (Lax) is compatible with subdomain sharing.
+- If `SameSite=None` is ever needed (for third-party/cross-site embedding scenarios), pair it with `Secure: true` and test in HTTPS environments only.
+- Explicitly document in code that `SameSite` is intentionally absent: `// sameSite intentionally unset — browser defaults to Lax, which is correct for same-site subdomain sharing`
+
+**Warning signs:**
+- Cookie disappears from requests after adding `SameSite=None` without `Secure`
+- Browser console shows: "Cookie 'waldo_jwt' has been rejected because it has the 'SameSite=None' attribute but is missing the 'secure' attribute"
+
+**Phase to address:** Domain migration phase — add the comment, do not change the attribute.
+
+---
+
+### Pitfall 4: `Secure: true` Breaks Local HTTP Development
+
+**What goes wrong:**
+If `Secure: true` is added to the cookie config (required for `SameSite=None`, or as a general security hardening step), the cookie will not be set over HTTP connections. Local development runs on `http://localhost:3000` and `http://localhost:3001`. After adding `Secure: true`, the `waldo_jwt` cookie is never stored by the browser on localhost, making login impossible in local dev.
+
+The Nuxt docs explicitly warn about this:
+> "Be careful when setting this to true, as compliant clients will not send the cookie back to the server in the future if the browser does not have an HTTPS connection. **This can lead to hydration errors.**"
+
+The website already conditionally excludes `nuxt-security` for `NODE_ENV=local`. The same conditional logic would need to apply to the cookie's `Secure` flag.
+
+**Why it happens:**
+Developers add `Secure: true` as a security best-practice without realizing it blocks local HTTP dev.
+
+**Consequences:**
+- `waldo_jwt` cookie is never set in local dev — all auth flows silently fail
+- No error is shown — the login appears to succeed but the cookie is not stored
+- SSR hydration mismatches: server renders authenticated content, client sees no cookie
+
+**Prevention:**
+If `Secure` is ever added, it must be environment-conditional:
+
+```ts
+// nuxt.config.ts
+cookie: {
+  path: "/",
+  maxAge: 604800,
+  // Only require Secure flag in non-local environments
+  ...(process.env.NODE_ENV !== "local" && { secure: true }),
+},
+```
+
+**Warning signs:**
+- Login appears successful but protected routes redirect to `/login` immediately
+- Browser DevTools → Application → Cookies shows no `waldo_jwt` entry after login on localhost
+- `useStrapiUser()` returns `null` immediately after successful `useStrapiAuth().login()` on localhost
+
+**Phase to address:** If `Secure` is added — must be in same commit as the environment conditional.
+
+---
+
+### Pitfall 5: SSR Hydration Mismatch When Domain Cookie Is Not Present on First Load
+
+**What goes wrong:**
+When a user visits a subdomain app (e.g., `admin.waldo.click`) for the first time after the domain-scoped cookie is introduced, the server renders the page using the `waldo_jwt` cookie sent in the request. If the cookie exists (user was previously logged in on `www.waldo.click`), the server-rendered HTML shows authenticated content. However, if there is a timing window where the cookie is set but the reactive state hasn't hydrated correctly on the client, Vue's hydration will fail with a mismatch.
+
+The specific failure mode: `useStrapiToken()` caches the cookie ref in `nuxt._cookies[cookieName]`. On SSR, this ref is populated from the incoming request cookie. On hydration, Vue expects the client-side DOM to match the server-rendered HTML. If the cookie resolution differs between server and client (e.g., the cookie was set with `Domain=.waldo.click` on the website but the old host-only version is what the browser sends), the hydration comparison fails.
+
+**Why it happens:**
+`useStrapiToken` uses `useCookie` which is SSR-aware — but it reads the cookie from `nuxt._cookies` cache. If two cookies with the same name exist (old host-only + new domain-scoped), the server sees whichever the browser sends first in the `Cookie` header. The browser sends them in an unspecified order when both match the request domain. Server and client may resolve to different cookie values.
+
+**Consequences:**
+- Vue hydration warnings in browser console: "Hydration attribute mismatch"
+- Authenticated state flickers: page renders as logged-in on SSR, flashes to logged-out on client hydration (or vice versa)
+- `useStrapiUser()` returns different values on server vs client during the migration period
+
+**Prevention:**
+1. Plan for a migration window: the old host-only cookie and new domain-scoped cookie will coexist for up to 7 days (maxAge)
+2. During this window, log and monitor for hydration errors in Sentry
+3. The fastest resolution: after deploying the domain change, add a server-side middleware to Nitro that explicitly clears the old host-only cookie when both are present:
+
+```ts
+// server/middleware/cookie-migration.ts
+export default defineEventHandler((event) => {
+  const cookies = parseCookies(event)
+  // If the request has waldo_jwt, we assume the domain-scoped cookie is now canonical
+  // Instruct the browser to delete the host-only version
+  if (cookies['waldo_jwt']) {
+    deleteCookie(event, 'waldo_jwt', { path: '/', domain: undefined })
   }
-);
-await strapi.plugin('email').service('email').send(emailToSend);
+})
 ```
 
-`advancedSettings.email_reset_password` is set in the Strapi admin panel "Reset password page" field — a single static URL. There is no runtime mechanism to make it dynamic per-request. The email template is a Lodash template stored in the admin panel DB — it cannot use MJML or Nunjucks natively.
+**Warning signs:**
+- Vue console warnings about "Hydration text content mismatch"
+- User sees a flash of logged-out state on page load even though they were logged in
+- `useStrapiUser()` is non-null on SSR but null on first client-side read
 
-**Why it happens:**
-Strapi designed `forgotPassword` for a single-frontend use case. The URL is evaluated from config at send time, not derived from the request context.
-
-**Consequences:**
-- Cannot send `?app=dashboard` to route reset to the correct app frontend
-- Cannot use the existing MJML/Nunjucks email pipeline for the reset email
-- The admin panel email template editor has no MJML capability — custom HTML only
-
-**Prevention:**
-Use the same factory-wrap pattern already established in `strapi-server.ts` to replace `instance.forgotPassword`:
-
-```ts
-// strapi-server.ts (pattern already exists for callback, register, connect)
-instance.forgotPassword = forgotPasswordOverride(instance.forgotPassword.bind(instance));
-```
-
-The override in `authController.ts`:
-1. Reads optional `app` from `ctx.request.body` (`"website"` | `"dashboard"`) and strips it before calling the original controller (see Pitfall 8)
-2. After the original controller runs (it saves the token and sends the plain email), intercepts the response — or preferably, **does not call the original at all** and reimplements the logic using `sendMjmlEmail`
-3. Builds the reset URL dynamically: `${process.env.FRONTEND_URL}/auth/reset-password?token=${token}` vs `${process.env.APP_DASHBOARD_URL}/auth/reset-password?token=${token}`
-
-If calling the original is preferred (to avoid reimplementing token logic), note that the original already sends the plain email — the override would then send a *second* email (duplicate). Full replacement is cleaner.
-
-**Detection:**
-The plain Strapi reset email uses the Lodash template format (`<%= TOKEN %>`). Any MJML-formatted reset email in the inbox confirms the override is active.
-
-**Phase:** Must be the foundation of the password reset email phase. The override must exist before any email template work begins.
-
----
-
-### Pitfall 4: `overrideAuthLocal` Will Intercept Email Confirmation Login Errors — Wrong Error Semantics
-
-**What goes wrong:**
-`overrideAuthLocal` currently interprets `if (!jwt) return` as "invalid credentials — pass through unchanged." This guard works for both the invalid-credentials case (original controller throws a `ValidationError`) and — critically — for the `email_confirmation` lockout case (original controller throws an `ApplicationError` with `"Your account email is not confirmed"`).
-
-The `ApplicationError` throw propagates upward through `overrideAuthLocal` unchanged (because the error is thrown inside `await originalController(ctx)`, which means it bubbles up before the `if (!jwt)` guard is even reached). So the existing guard is irrelevant for `email_confirmation` errors — they propagate correctly.
-
-**However**, if a future change makes the original controller return `{ user }` (without JWT and without throwing — for example, a partial-auth state), the `if (!jwt) return` guard would silently exit `overrideAuthLocal` without setting `ctx.body`, which would return an empty 200 response to the client. This is a latent design trap.
-
-**Why it matters:**
-The addition of `email_confirmation` is the first scenario where a "valid user, no JWT" path could be imagined (e.g., a confirmed email check that returns a hint instead of throwing). Understanding the guard's semantics prevents future misuse.
-
-**Consequences:**
-- No current breakage
-- Future: if anyone modifies the original controller to return `{ user }` without JWT on email confirmation failure (instead of throwing), `overrideAuthLocal` will eat the response silently
-
-**Prevention:**
-Add a comment in `overrideAuthLocal` clarifying the guard's contract:
-
-```ts
-// If originalController threw, execution never reaches here.
-// If no JWT is present in the response, credentials were rejected but no exception
-// was thrown (should not happen in Strapi's current auth flow — guard is defensive).
-const jwt = ctx.response.body?.jwt;
-if (!jwt) return; // pass through error response unchanged
-```
-
-**Phase:** Comment-only change, in the same phase as any `overrideAuthLocal` modifications.
+**Phase to address:** Domain migration phase + 7-day monitoring window after deployment.
 
 ---
 
@@ -199,231 +219,207 @@ if (!jwt) return; // pass through error response unchanged
 
 ---
 
-### Pitfall 5: MJML `renderEmail` Throws Inside `sendMjmlEmail`'s Outer `try/catch` — Template Errors Are Invisible
+### Pitfall 6: The Dashboard Logout Composable Does Not Exist — Store Resets Won't Fire
 
 **What goes wrong:**
-`renderEmail` calls `nunjucks.render()` and `mjml2html()` — both throw on template errors (undefined variable, broken `{% extends %}` path, malformed MJML, missing template file). The outer `try/catch` in `sendMjmlEmail` catches everything and returns `false`:
+The website has a centralized `useLogout` composable (created in v1.28) that resets all 6 user stores before calling `useStrapiAuth().logout()`. The **dashboard does not have an equivalent** — no `useLogout` composable was found in `apps/dashboard/app/composables/`. Dashboard logout is likely scattered across individual components.
 
-```ts
-// send-email.ts — current code
-export async function sendMjmlEmail(...) {
-  try {
-    const html = renderEmail(template, dataWithEnv); // ← can throw
-    // ...
-    await strapi.plugins["email"].services.email.send(emailOptions);
-    return true;
-  } catch (error) {
-    console.error("Error enviando email MJML:", error); // ← logged, not rethrown
-    return false; // ← non-fatal, caller continues
-  }
-}
-```
-
-This is the **intended non-fatal pattern** — correct for production, but it makes template development errors invisible. A typo in `forgot-password.mjml`, an undefined Nunjucks variable, or a missing template file all produce the same result: the email silently fails to send, the business operation succeeds, and `console.error` is the only trace.
-
-**Why it happens:**
-The non-fatal pattern is a deliberate architectural decision already established across all email-sending code. The risk is that **all new MJML templates** (registration confirmation, forgot password) will have the same invisible failure mode during development.
-
-**Consequences:**
-- New MJML templates can have errors that are never caught until a user reports not receiving an email
-- Nunjucks variable name mismatches (`{{ resetUrl }}` vs `{{ reset_url }}`) are silent
-- Wrong template name in `sendMjmlEmail(strapi, "forgot-password", ...)` vs file `forgot-password-email.mjml` is silent
-
-**Prevention:**
-1. For each new auth email template, create a corresponding test call in `test.ts` (the existing test file) that exercises the template with expected variables before wiring to the live flow
-2. Check Mailgun logs (not just application logs) when testing new templates in staging — the email may appear to have been called but the log shows the Mailgun API was never reached
-3. The `nunjucks.configure("src/services/mjml/templates", ...)` path is relative to CWD at Strapi start. In the Turbo monorepo, Strapi starts from `apps/strapi/` — new templates must be in `apps/strapi/src/services/mjml/templates/`
-
-**Phase:** At-risk during every new MJML template creation. Acceptance criterion for each template: "template renders without error when called with its expected variables (verified via test.ts or direct renderEmail call)."
-
----
-
-### Pitfall 6: `forgotPassword` Override — Token Must Be Saved to DB Before Email Is Sent
-
-**What goes wrong:**
-In Strapi's original `forgotPassword`, the token is written to the user record **before** the email is sent:
-
-```js
-// Strapi v5 auth.js — verified source, comment is Strapi's own
-// NOTE: Update the user before sending the email so an Admin can generate the link if the email fails
-await getService('user').edit(user.id, { resetPasswordToken });
-await strapi.plugin('email').service('email').send(emailToSend); // ← after token saved
-```
-
-An override that reverses this order — validates the email send succeeds, then saves the token — will produce a bug: the user receives the reset email, clicks the link, and `POST /api/auth/reset-password` returns `"Incorrect code provided"` because the token was never saved.
-
-**Why it happens:**
-Natural instinct when writing the override: "send first, save if successful." Strapi's design is intentionally the opposite, so admins can manually generate links if email fails.
-
-**Prevention:**
-In the `forgotPassword` override, always call `getService('user').edit(user.id, { resetPasswordToken })` **before** `sendMjmlEmail`. Treat the email send as non-fatal (the token is already in the DB; the user can request another reset). Add an explicit comment: `// Token must be persisted before email send — matches Strapi's original contract`.
-
-**Phase:** Password reset controller override phase.
-
----
-
-### Pitfall 7: `?app=dashboard` Cannot Use Query Params — Must Be Request Body
-
-**What goes wrong:**
-`POST /api/auth/forgot-password` is a POST endpoint. To differentiate "reset from website" vs "reset from dashboard," passing `?app=dashboard` as a URL query param is technically accessible via `ctx.request.query` but semantically wrong for POST and may be stripped by reverse proxies or future Strapi middleware.
-
-Additionally, Strapi's rate limiter uses `prefixKey: ${userIdentifier}:${requestPath}:${ctx.request.ip}`. If the rate-limit key is ever configured to include query params, `?app=dashboard` creates a separate rate-limit bucket — effectively halving the protection.
-
-**Prevention:**
-Pass `app` as a body field:
-```json
-{ "email": "user@example.com", "app": "dashboard" }
-```
-
-The override reads `ctx.request.body.app` (default `"website"`) and strips it from the body before calling the original controller (see Pitfall 8).
-
-**Phase:** Password reset override phase.
-
----
-
-### Pitfall 8: Extra Body Field (`app`) May Fail Strapi's `validateForgotPasswordBody` Validation
-
-**What goes wrong:**
-The `forgotPassword` controller runs `await validateForgotPasswordBody(ctx.request.body)` before any custom code can execute. If Strapi's Yup validation schema uses `.noUnknown()` or strict mode, passing `{ email, app }` throws a `ValidationError: "app is not allowed"` before the override intercepts anything.
+When the domain cookie is added, the logout behavior change (Pitfall 1 — clearing the old host-only cookie) must be applied to **both** apps. If the dashboard has no centralized logout, the fix must be applied to every individual logout call site.
 
 **Why it matters:**
-Yup's `strict` mode and `stripUnknown` behavior differ — without inspecting the exact validation schema, it is unclear whether extra fields throw or are silently stripped. The safe assumption is that they throw.
+- A fix applied only to the website composable does not affect the dashboard
+- The old host-only cookie persists after dashboard logout, allowing session fixation
 
 **Prevention:**
-If the override is a wrapper (calls the original controller), strip `app` from the body before passing to the original:
+Before implementing the domain cookie change, create `apps/dashboard/app/composables/useLogout.ts` mirroring the website pattern. Wire all dashboard logout call sites to use it. This is a prerequisite, not an afterthought.
 
-```ts
-export const forgotPasswordOverride = (originalController) => async (ctx) => {
-  const app = (ctx.request.body as Record<string, unknown>)?.app ?? 'website';
-  // Strip 'app' before the original controller's validateForgotPasswordBody sees it
-  const { app: _app, ...cleanBody } = ctx.request.body as Record<string, unknown>;
-  ctx.request.body = cleanBody;
-  await originalController(ctx); // validateForgotPasswordBody runs here against cleanBody
-  // ... build dynamic reset URL using `app`
-};
-```
+**Warning signs:**
+- Logging out from the dashboard still shows the user as logged in when navigating to the website
 
-This is exactly the same pattern used in `registerUserLocal`:
-```ts
-// authController.ts — existing precedent
-ctx.request.body = userData; // strips confirm_password before calling registerController(ctx)
-```
-
-**Phase:** Password reset override phase — this is the most likely runtime bug if not handled.
+**Phase to address:** Must be a prerequisite step within the domain migration phase.
 
 ---
 
-### Pitfall 9: `forgotPassword` Override Sends TWO Emails If Original Controller Is Called
+### Pitfall 7: `@nuxtjs/strapi` v2 `cookie` Config Is Passed Directly to `useCookie` — No Domain Sanitization
 
 **What goes wrong:**
-If the `forgotPassword` override calls the original controller (to reuse its token generation and DB-write logic) and then also calls `sendMjmlEmail`, the user receives two emails: the plain Strapi reset email AND the MJML email.
-
-**Why it happens:**
-The original `forgotPassword` both saves the token AND sends the email in one operation. There is no way to call "only the token-saving part" without reimplementing the token generation logic.
-
-**Prevention:**
-Choose one of two approaches — do not mix:
-- **Full replacement (recommended)**: Do not call the original controller at all. Reimplement the token generation (`crypto.randomBytes(64).toString('hex')`), call `getService('user').edit()` to save it, and call `sendMjmlEmail`. Only requires ~10 lines of logic.
-- **Wrapper with original suppressed**: Call the original controller, then override `ctx.body` with the expected response — but the original email has already been sent. No clean way to suppress it.
-
-**Phase:** Password reset override phase — decide on the approach (full replacement) before implementation begins.
-
----
-
-### Pitfall 10: Email Confirmation Redirection URL Not Configured in Admin Panel
-
-**What goes wrong:**
-When `email_confirmation` is enabled, Strapi sends a confirmation email with a link to `GET /api/auth/email-confirmation?confirmation=TOKEN`. After confirming, the controller redirects to `advancedSettings.email_confirmation_redirection`. If this field is empty (the default for new installs), the redirect goes to `/` — which resolves to Strapi's own server root, not the website.
-
-**Verification:**
-From Strapi v5 `auth.js` `emailConfirmation()`:
-```js
-ctx.redirect(settings.email_confirmation_redirection || '/');
-```
-
-**Prevention:**
-Configure "Redirection url" in Strapi admin panel → Users & Permissions → Advanced Settings **before** enabling email confirmation. Set it to the website login page with a query param: `https://waldo.click/login?confirmed=true`.
-
-**Phase:** Must be part of the same phase that enables `email_confirmation` — add to the phase checklist.
-
----
-
-## Minor Pitfalls
-
----
-
-### Pitfall 11: Google OAuth Users Have `confirmed: false` but Are Not Blocked by `email_confirmation`
-
-OAuth registration via Google goes through `connect()` which does not check `email_confirmation`. Google OAuth users continue to work even without the confirmed migration (Pitfall 1). However, if an OAuth user also sets a local password and tries `POST /api/auth/local`, they will be blocked.
-
-The existing `overrideAuthLocal` correctly skips 2-step for OAuth via `if (ctx.method === "GET") return originalController(ctx)`. This bypass also bypasses the `email_confirmation` check (the original `connect()` handler is used for OAuth, which doesn't have the check).
-
-**Prevention:** Run the `confirmed: true` migration for all users (Pitfall 1) regardless. No code change needed for OAuth users specifically.
-
----
-
-### Pitfall 12: `verification-code.mjml` States "válido por 5 minutos" — Mismatch with 15-Minute Actual Expiry
-
-The existing `verification-code.mjml` says "Este código es válido por **5 minutos**" but `CODE_EXPIRY_MS = 15 * 60 * 1000` in `authController.ts`. This is an existing inconsistency in the codebase. Any new auth email templates (registration confirmation, password reset) that display an expiry time must match the actual TTL constant — do not copy this discrepancy.
-
-**Prevention:** When creating new templates, confirm the TTL from the code, not from the template text.
-
----
-
-### Pitfall 13: Strapi's Built-in Rate Limit Applies to `forgotPassword` — 5 Requests / 5 Minutes Default
-
-Strapi applies `koa2-ratelimit` to auth endpoints. The default is 5 requests per 5-minute window per `${identifier}:${path}:${ip}`. For `forgotPassword`, the identifier is the email. This is intentional but can cause test failures when repeatedly calling the endpoint during development.
-
-**Prevention:** Be aware during testing. Do not add a custom `prefixKey` that includes the request body (would complicate rate-limit behavior).
-
----
-
-### Pitfall 14: `sendMjmlEmail` Uses `process.env.FRONTEND_URL` for `frontendUrl` — Dashboard Reset URL Requires a Separate Env Var
-
-`send-email.ts` automatically injects `frontendUrl: process.env.FRONTEND_URL` into every template's data. For the password reset email, the correct URL depends on which app initiated the request. If the MJML template for forgot-password uses `{{ frontendUrl }}` directly, dashboard resets will point to the website URL.
-
-**Prevention:** Do not rely on the auto-injected `frontendUrl` in forgot-password templates. Pass the correct `resetUrl` explicitly as a template variable in the `sendMjmlEmail` data argument:
+`useStrapiToken` passes `config.strapi.cookie` directly as the options object to `useCookie`:
 
 ```ts
-await sendMjmlEmail(strapi, 'forgot-password', user.email, 'Restablecer contraseña', {
-  name: user.firstname || user.username,
-  resetUrl: app === 'dashboard'
-    ? `${process.env.APP_DASHBOARD_URL}/auth/reset-password?code=${resetPasswordToken}`
-    : `${process.env.FRONTEND_URL}/auth/restablecer-contrasena?code=${resetPasswordToken}`,
-});
+const cookie = useCookie<string | null>(config.strapi.cookieName, config.strapi.cookie)
 ```
 
-**Phase:** Password reset MJML template phase — name the template variable explicitly and document which env var each app uses.
+This means `domain`, `secure`, `sameSite`, `httpOnly`, and `maxAge` from `nuxt.config.ts` are all passed through without any validation or sanitization. If a misconfigured `domain` value is passed (e.g., `domain: "waldo.click"` instead of `domain: ".waldo.click"`), the module will silently create a cookie that does not share across subdomains.
+
+RFC 6265 specifies: when a server sets `Domain=waldo.click` (without the leading dot), browsers MAY interpret it as `waldo.click` only (not subdomains). The spec says leading dot is optional but most browsers treat `Domain=example.com` as equivalent to `.example.com` for subdomain sharing. However, the leading dot in `.waldo.click` is the explicit, unambiguous way to declare subdomain scope.
+
+**Why it matters:**
+The difference between `domain: "waldo.click"` and `domain: ".waldo.click"` is invisible in most tests but can fail in specific browsers or reverse proxies that follow the RFC strictly.
+
+**Prevention:**
+Always use the leading-dot form: `domain: ".waldo.click"`. Verify in at least Chrome, Firefox, and Safari that the cookie appears in `Application → Cookies` with `Domain: .waldo.click`.
+
+**Warning signs:**
+- Cookie sharing works in Chrome but not Safari
+- The cookie appears in DevTools without the leading dot: `Domain: waldo.click`
+
+**Phase to address:** Domain migration phase — explicitly document the leading dot in `nuxt.config.ts` comments.
 
 ---
 
-## Phase-Specific Warnings
+### Pitfall 8: Pinia Stores with `persist` Leak Cross-User State When Cookie Is Shared
 
-| Phase Topic | Likely Pitfall | Mitigation |
-|-------------|---------------|------------|
-| Enable `email_confirmation` flag | All existing users locked out (Pitfall 1) | Run `confirmed = true` migration FIRST; verify before enabling flag |
-| Registration email flow | Frontend response shape change — no JWT (Pitfall 2) | Audit `FormRegister.vue` response handler; add `if (response.jwt)` guard |
-| `forgotPassword` MJML email | Cannot intercept without full controller override (Pitfall 3) | Factory-wrap `instance.forgotPassword` in `strapi-server.ts` |
-| `forgotPassword` override implementation | Two emails sent if original controller is called (Pitfall 9) | Full replacement — do not call `originalController` at all |
-| `app` routing in reset URL | Extra body field may fail Yup validation (Pitfall 8) | Strip `app` from body before `originalController` (same pattern as `registerUserLocal`) |
-| `app` routing — where to pass it | Query params are wrong for POST endpoints (Pitfall 7) | Pass `app` in request body |
-| Reset URL in MJML template | Auto-injected `frontendUrl` points to wrong app (Pitfall 14) | Pass explicit `resetUrl` variable to the template |
-| Any new MJML template creation | Template errors swallowed silently (Pitfall 5) | Test `renderEmail()` directly; check Mailgun logs in staging |
-| `forgotPassword` token ordering | Token saved after email fails causes "Invalid code" (Pitfall 6) | Always save token to DB before `sendMjmlEmail` |
-| Post-implementation | `email_confirmation_redirection` URL not set (Pitfall 10) | Set to `${FRONTEND_URL}/login?confirmed=true` in admin panel before enabling |
+**What goes wrong:**
+The website has 14 stores with `persist: true` (backed by localStorage). Currently, user A on `www.waldo.click` and user B on `admin.waldo.click` are fully isolated because they run in different browser origins. After adding `domain: ".waldo.click"` to the JWT cookie, a user logged in on the website who navigates to the dashboard sends their JWT to the dashboard's Nitro server.
+
+The Pinia store data (`me.store.ts`, `user.store.ts`, `ad.store.ts`, etc.) is stored in **localStorage**, which remains origin-scoped (`www.waldo.click` vs `admin.waldo.click`). So the JWT is shared but the Pinia state is not. This creates an asymmetric state: the dashboard sees a valid JWT and can authenticate the user but starts with empty stores — correct behavior.
+
+The risk is the **reverse**: a user who was previously on the dashboard (as an admin) navigates to the website with the dashboard's JWT still in the shared cookie. The website will authenticate them as an admin user. Most website stores only cache non-sensitive data (categories, regions) but `me.store.ts` and `user.store.ts` will load the admin user's profile data.
+
+**Why it matters:**
+This is expected behavior for shared auth — but it means the logout flow on the dashboard MUST clear the shared cookie properly. If a dashboard admin does not explicitly log out and a non-admin user then opens the website in the same browser, the admin's JWT remains active.
+
+**Prevention:**
+- Ensure the dashboard logout composable (Pitfall 6) clears the domain-scoped cookie completely
+- Consider adding a role check on the website's `auth` middleware: if `useStrapiUser()` has `role.type === "authenticated"` or above, allow; if somehow an admin role leaks, handle gracefully
+- Document in code: "The domain cookie is shared between website and dashboard. Any user with a valid JWT on either subdomain will be authenticated on both."
+
+**Phase to address:** Domain migration phase — the store isolation analysis must be done before deployment.
+
+---
+
+### Pitfall 9: `redirect` Cookie in Auth Middleware Has No Domain — Will Not Round-Trip Across Subdomains
+
+**What goes wrong:**
+The website's `auth.ts` middleware saves the attempted route in a cookie before redirecting to login:
+
+```ts
+// apps/website/app/middleware/auth.ts
+useCookie("redirect", { path: "/" }).value = to.fullPath;
+return navigateTo("/login");
+```
+
+This `redirect` cookie has no domain attribute (host-only, `www.waldo.click` only). If the website ever tries to redirect through the dashboard login (or vice versa), the `redirect` cookie will not survive the cross-subdomain round-trip. This is not a current problem but will become one if cross-subdomain authenticated redirects are added later.
+
+**Why it matters:**
+Low severity now, but the pattern establishes a trap. Any new cookies created without the domain attribute during this milestone will not be visible cross-subdomain.
+
+**Prevention:**
+If any new cookies are created during this milestone, audit whether they need cross-subdomain visibility. If they do, add `domain: ".waldo.click"`. If they don't (like this `redirect` cookie), leave them host-only and document why.
+
+**Phase to address:** Domain migration phase — audit all `useCookie()` calls during the implementation to categorize each cookie's intended scope.
+
+---
+
+## Technical Debt Patterns
+
+Shortcuts that seem reasonable but create long-term problems.
+
+| Shortcut | Immediate Benefit | Long-term Cost | When Acceptable |
+|----------|-------------------|----------------|-----------------|
+| Add domain without clearing old cookie | Fast to deploy | 7-day window of dual cookies, zombie sessions | Never — always pair with old cookie cleanup |
+| Set `domain: "waldo.click"` (no leading dot) | Works in most browsers | Fails in strict RFC implementations, Safari edge cases | Never — always use `.waldo.click` |
+| Add `Secure: true` without environment conditional | Better security posture | Breaks all local HTTP development | Never — must be conditional on `NODE_ENV` |
+| Skip creating dashboard `useLogout` composable | Saves time | Cookie cleanup fix is scattered across components, easy to miss one | Never — centralize logout before the domain change |
+| Defer cookie migration cleanup to "after it expires" | No immediate work | The 7-day zombie session period is a real UX bug | Acceptable only if explicitly monitored and scheduled |
+
+---
+
+## Integration Gotchas
+
+Common mistakes when connecting to external services or the module ecosystem.
+
+| Integration | Common Mistake | Correct Approach |
+|-------------|----------------|------------------|
+| `@nuxtjs/strapi` v2 `useStrapiToken` | Assuming `setToken(null)` clears the domain-scoped cookie correctly | It does clear the new cookie — but does NOT clear the old host-only one. Manual cleanup required. |
+| `@nuxtjs/strapi` v2 `useStrapiAuth().logout()` | Trusting it handles all cookie cleanup | `logout()` only calls `setToken(null)` and `setUser(null)`. No HTTP `Set-Cookie` header is sent. Cookie clearing happens via `useCookie` ref assignment. |
+| Nitro `server/` routes | Forgetting that `getCookie(event, 'waldo_jwt')` returns the FIRST match when two same-name cookies exist | Browser sends cookies in arbitrary order when multiple match. Server sees only one value. |
+| `nuxt-security` module | Assuming security headers don't affect cookie attributes | `nuxt-security` can modify `Set-Cookie` headers. Always verify the raw response header in staging. |
+| Laravel Forge deployment | Assuming HTTPS is already configured before testing Secure flag | Verify HTTPS certificate is valid on all subdomains before enabling `Secure: true`. |
+
+---
+
+## Performance Traps
+
+| Trap | Symptoms | Prevention | When It Breaks |
+|------|----------|------------|----------------|
+| Two same-name cookies on every request | Every request to the server carries double the JWT payload (2× ~500 bytes) | Clear the old cookie immediately on deployment | During the 7-day migration window |
+| `fetchUser()` called twice on subdomain navigation | Extra API call on first cross-subdomain page load | The `nuxt._cookies` cache in `useStrapiToken` prevents this — but only within the same Nuxt app instance | Not a concern — each app has its own instance |
+
+---
+
+## Security Mistakes
+
+Domain-specific security issues introduced by cross-subdomain cookie sharing.
+
+| Mistake | Risk | Prevention |
+|---------|------|------------|
+| Setting `domain: ".waldo.click"` without `Secure` in production | JWT sent over HTTP if any subdomain is ever accidentally accessed via HTTP | Add `Secure: true` for non-local environments only |
+| Not revoking JWT server-side on logout | After logout, the old host-only cookie (if not cleared) still grants valid access to Strapi APIs | Clear the old cookie client-side AND consider adding a server-side token revocation endpoint in Strapi |
+| Sharing domain cookie between website (public) and dashboard (admin) | A compromised website subdomain (XSS) can steal the admin JWT if `httpOnly` is not set | `httpOnly` is not currently set — understand and accept this risk or add it. Note: `httpOnly: true` prevents `useStrapiToken`'s client-side JS from reading it. |
+| Subdomain takeover via dangling DNS | If any `*.waldo.click` subdomain is ever abandoned with active DNS, an attacker could host there and steal the cookie | Only add `Domain=.waldo.click` to cookies that must be shared. Keep non-auth cookies host-only. |
+
+---
+
+## "Looks Done But Isn't" Checklist
+
+Things that appear complete but are missing critical pieces.
+
+- [ ] **Domain cookie added:** Often missing — cleanup of old host-only cookie. Verify: `document.cookie` in DevTools shows only ONE `waldo_jwt` after login, not two.
+- [ ] **Logout works:** Often missing — verification on BOTH subdomains. Verify: log in on website, log out on dashboard (or vice versa), navigate back to website, confirm `useStrapiUser()` returns null.
+- [ ] **`Secure` flag conditional:** Often missing — environment guard for local dev. Verify: local HTTP dev login still works after adding `Secure: true`.
+- [ ] **Dashboard `useLogout` composable:** Often missing — dashboard logout may still use raw `useStrapiAuth().logout()` without store resets or old-cookie cleanup. Verify: all dashboard logout call sites use the composable.
+- [ ] **Staging test on HTTPS:** Often missing — subdomain sharing may work on localhost but fail on production due to `nuxt-security` or proxy stripping the `Domain` attribute. Verify: inspect raw `Set-Cookie` header in staging Network tab.
+- [ ] **Old cookies expired in users' browsers:** Often forgotten — after 7 days, the old host-only cookie has expired for all users. After that point, the old-cookie cleanup code can be removed. Set a calendar reminder.
+
+---
+
+## Recovery Strategies
+
+When pitfalls occur despite prevention, how to recover.
+
+| Pitfall | Recovery Cost | Recovery Steps |
+|---------|---------------|----------------|
+| Zombie cookies (Pitfall 1) after deploy | LOW | Deploy a Nitro server middleware that sets `waldo_jwt=; path=/; max-age=0` (no domain) on every response — forces all browsers to clear the old cookie within one page load |
+| All users appear logged in after logout | LOW | Same as above — the middleware fix is non-breaking |
+| Hydration mismatches (Pitfall 5) | MEDIUM | Add `nuxt.config.ts: ssr: false` temporarily on affected page(s) to suppress hydration while cookie migration window passes; re-enable after 7 days |
+| `Secure` flag breaks local dev | LOW | Remove `Secure: true` from cookie config, add environment conditional, redeploy |
+| `nuxt-security` strips `Domain` attribute | MEDIUM | Add explicit cookie configuration in `nuxt-security` options to allowlist the `Domain` attribute; or switch to Nitro server middleware for cookie setting |
+
+---
+
+## Pitfall-to-Phase Mapping
+
+How roadmap phases should address these pitfalls.
+
+| Pitfall | Prevention Phase | Verification |
+|---------|------------------|--------------|
+| Zombie cookies after logout (Pitfall 1) | Domain cookie migration phase | After login, verify ONE `waldo_jwt` in DevTools. After logout, verify ZERO. |
+| `nuxt-security` stripping Domain attribute (Pitfall 2) | Staging verification phase | Inspect raw `Set-Cookie` header in staging Network tab |
+| Unnecessary `SameSite=None` change (Pitfall 3) | Domain migration phase | Keep `SameSite` unset; add comment explaining why |
+| `Secure: true` breaking local dev (Pitfall 4) | Domain migration phase | Login works on `http://localhost:3000` after change |
+| SSR hydration mismatch during transition (Pitfall 5) | Domain migration phase + 7-day monitoring | No Vue hydration warnings in Sentry during the transition week |
+| Dashboard missing `useLogout` composable (Pitfall 6) | Prerequisite step in domain migration phase | All dashboard logout call sites use the new composable |
+| Leading dot in domain config (Pitfall 7) | Domain migration phase | Cookie appears as `.waldo.click` in DevTools, not `waldo.click` |
+| Pinia store leakage analysis (Pitfall 8) | Domain migration phase — analysis step | Documented decision on which stores need cross-subdomain awareness |
+| New `redirect` cookie scoping (Pitfall 9) | Domain migration phase — audit step | All new `useCookie()` calls documented with intended scope |
 
 ---
 
 ## Sources
 
-- Strapi v5 `auth.js` controller (verified 2026-03-13): `https://raw.githubusercontent.com/strapi/strapi/main/packages/plugins/users-permissions/server/controllers/auth.js` — HIGH confidence
-- Strapi v5 `user.js` service (verified 2026-03-13): `https://raw.githubusercontent.com/strapi/strapi/main/packages/plugins/users-permissions/server/services/user.js` — HIGH confidence
-- Strapi v5 Users & Permissions official docs: `https://docs.strapi.io/cms/features/users-permissions` — HIGH confidence
-- Strapi v5 Plugins extension docs: `https://docs.strapi.io/cms/plugins-development/plugins-extension` — HIGH confidence
-- Project codebase (direct inspection):
-  - `apps/strapi/src/extensions/users-permissions/controllers/authController.ts`
-  - `apps/strapi/src/extensions/users-permissions/strapi-server.ts`
-  - `apps/strapi/src/services/mjml/send-email.ts`
-  - `apps/strapi/src/services/mjml/index.ts`
-  - `apps/strapi/src/extensions/users-permissions/content-types/user/schema.json`
-  - `apps/strapi/config/plugins.ts`
+- `@nuxtjs/strapi` v2 source, `useStrapiToken.ts` (verified 2026-03-16): `https://github.com/nuxt-modules/strapi/blob/main/src/runtime/composables/useStrapiToken.ts` — HIGH confidence
+- `@nuxtjs/strapi` v2 source, `useStrapiAuth.ts` (verified 2026-03-16): `https://github.com/nuxt-modules/strapi/blob/main/src/runtime/composables/useStrapiAuth.ts` — HIGH confidence
+- Nuxt 4 `useCookie` documentation (verified 2026-03-16): `https://nuxt.com/docs/api/composables/use-cookie` — HIGH confidence (official, current)
+- MDN HTTP Cookies — Domain attribute semantics (verified 2026-03-16): `https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Cookies` — HIGH confidence
+- RFC 6265 cookie specification — Domain matching: `https://datatracker.ietf.org/doc/html/rfc6265#section-5.2.3` — HIGH confidence
+- Project codebase (direct inspection, 2026-03-16):
+  - `apps/website/nuxt.config.ts` — cookie config: `{ path: "/", maxAge: 604800, cookieName: "waldo_jwt" }` — no domain attribute
+  - `apps/dashboard/nuxt.config.ts` — same cookie config (identical)
+  - `apps/website/app/composables/useLogout.ts` — calls `useStrapiAuth().logout()` after store resets
+  - `apps/website/app/middleware/auth.ts` — `redirect` cookie without domain attribute
+  - `apps/dashboard/app/composables/` — no `useLogout.ts` found
+
+---
+*Pitfalls research for: Cross-subdomain cookie sharing, Nuxt 4 + @nuxtjs/strapi v2*
+*Researched: 2026-03-16*
