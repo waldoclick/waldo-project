@@ -10,14 +10,15 @@ type RouteConfig = {
 };
 
 const routes: RouteConfig[] = [
-  {
-    method: "POST",
-    path: "/payments/ad",
-    handler: "payment.adCreate",
-    config: {
-      policies: [],
-    },
-  },
+  // DEPRECATED: adCreate replaced by checkoutCreate (unified checkout flow)
+  // {
+  //   method: "POST",
+  //   path: "/payments/ad",
+  //   handler: "payment.adCreate",
+  //   config: {
+  //     policies: [],
+  //   },
+  // },
   {
     method: "POST",
     path: "/payments/free-ad",
