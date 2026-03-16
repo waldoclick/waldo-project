@@ -1,6 +1,6 @@
 import type { User } from "@/types/user";
 
-export default defineNuxtRouteMiddleware(async (to, _from) => {
+export default defineNuxtRouteMiddleware((to, _from) => {
   const publicRoutes = [
     "/auth/login",
     "/auth/forgot-password",
@@ -25,8 +25,10 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
   const roleName = userRole?.name?.toLowerCase() || null;
 
   if (roleName !== "manager") {
-    const { logout } = useLogout();
-    await logout();
-    return;
+    // Non-manager users are not allowed in the dashboard.
+    // Just redirect to login — do NOT call useLogout() here (composables that use
+    // Pinia stores cannot be called safely in a global route middleware context).
+    // The website session is intentionally left untouched.
+    return navigateTo("/auth/login");
   }
 });
