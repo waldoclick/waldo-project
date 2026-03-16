@@ -2,7 +2,7 @@ import type { User } from "@/types/user";
 import type { Category } from "@/types/category";
 
 export interface Media {
-  formats: {
+  formats?: {
     thumbnail: {
       url: string;
     };
