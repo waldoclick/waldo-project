@@ -51,6 +51,11 @@ export default {
     },
     {
       method: "GET",
+      path: "/ads/thankyou/:documentId",
+      handler: "ad.thankyou",
+    },
+    {
+      method: "GET",
       path: "/ads/slug/:slug",
       handler: "ad.findBySlug",
       config: { auth: false },

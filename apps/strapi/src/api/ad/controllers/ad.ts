@@ -770,6 +770,25 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
   },
 
   /**
+   * Get ad by documentId for thank-you page (owner only).
+   * Uses strapi.db.query to bypass publishedAt — pending ads are valid.
+   * @route GET /api/ads/thankyou/:documentId
+   */
+  async thankyou(ctx: Context) {
+    const userId = ctx.state.user?.id;
+    if (!userId) return ctx.unauthorized();
+
+    const { documentId } = ctx.params;
+    const ad = await strapi
+      .service("api::ad.ad")
+      .findByDocumentIdForOwner(documentId, userId);
+
+    if (!ad) return ctx.notFound("Ad not found or access denied");
+
+    return ctx.send({ data: ad });
+  },
+
+  /**
    * Get advertisement by slug with server-side access control.
    * Active ads are public. Pending/inactive: owner or manager only.
    *
