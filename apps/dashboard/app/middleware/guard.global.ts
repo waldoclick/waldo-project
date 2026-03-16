@@ -25,8 +25,8 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
   const roleName = userRole?.name?.toLowerCase() || null;
 
   if (roleName !== "manager") {
-    const { logout } = useStrapiAuth();
+    const { logout } = useLogout();
     await logout();
-    return navigateTo("/auth/login");
+    return;
   }
 });
