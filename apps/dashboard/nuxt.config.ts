@@ -223,9 +223,10 @@ export default defineNuxtConfig({
   css: ["@/scss/app.scss"],
 
   // 3. Modules Configuration
-  // strapi.url must always point directly to Strapi — never through the dashboard proxy.
-  // The Nitro proxy (server/api/[...].ts) handles client-side requests transparently.
-  // Routing SSR fetchUser() through BASE_URL causes a self-loop that destroys the JWT cookie on any error.
+  // strapi.url for the module registration uses API_URL (direct).
+  // At runtime, useStrapiUrl() reads from runtimeConfig: server-side gets runtimeConfig.strapi.url
+  // (API_URL direct — no self-proxy loop), client-side gets runtimeConfig.public.strapi.url
+  // (BASE_URL through the Nitro proxy for CORS safety).
   strapi: {
     url: process.env.API_URL || "http://localhost:1337",
     prefix: "/api",
@@ -283,6 +284,15 @@ export default defineNuxtConfig({
   // 4. Environment Configuration
   runtimeConfig: {
     public: {
+      // Override strapi.url for the client-side: use the Nitro proxy (BASE_URL) so the
+      // browser never calls Strapi directly (avoids CORS). Server-side keeps using
+      // runtimeConfig.strapi.url = API_URL (direct, no self-proxy loop).
+      strapi: {
+        url:
+          process.env.API_DISABLE_PROXY === "true"
+            ? process.env.API_URL || "http://localhost:1337"
+            : process.env.BASE_URL || "http://localhost:3001",
+      },
       apiUrl: process.env.API_URL || "http://localhost:1337",
       sessionMaxAge: process.env.SESSION_MAX_AGE || "86400", // Valor por defecto de 1 día
       baseUrl: process.env.BASE_URL || "http://localhost:3001",
