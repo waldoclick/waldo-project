@@ -27,8 +27,8 @@ import { useAdsStore } from "@/stores/ads.store";
 import { useRelatedStore } from "@/stores/related.store";
 import { useHistoryStore } from "@/stores/history.store";
 import { useIndicatorStore } from "@/stores/indicator.store";
-import { useMeStore } from "@/stores/me.store";
 import type { Ad } from "@/types/ad";
+import type { User } from "@/types/user";
 
 import HeaderDefault from "@/components/HeaderDefault.vue";
 import FooterDefault from "@/components/FooterDefault.vue";
@@ -90,14 +90,15 @@ const {
     }
 
     // Fallback: if not found and user is authenticated, try owner fetch
+    // useStrapiUser() works on SSR (reads from JWT cookie) unlike meStore.me which is null on server
     if (!ad) {
-      const meStore = useMeStore();
-      if (meStore.me) {
+      const strapiUser = useStrapiUser<User>();
+      if (strapiUser.value) {
         try {
           const ownerAd = (await adsStore.loadAdBySlugUnfiltered(
             route.params.slug as string,
           )) as AdWithPriceData | null;
-          if (ownerAd && ownerAd.user?.id === meStore.me.id) {
+          if (ownerAd && ownerAd.user?.id === strapiUser.value.id) {
             ad = ownerAd;
           }
         } catch {
@@ -153,8 +154,10 @@ const {
         }
       }
 
-      // Only load related ads and add to history if the ad exists
-      await relatedStore.loadRelatedAds(ad.id);
+      // Only load related ads if the ad is active (pending/review ads skip this — Strapi related endpoint requires a published ad)
+      if (ad.status !== "review") {
+        await relatedStore.loadRelatedAds(ad.id);
+      }
 
       historyStore.addToHistory({
         id: ad.id,
