@@ -1,4 +1,4 @@
-import AccountAnnouncements from "./AccountAnnouncements.vue";
+import AccountAnnouncements from "@/components/AccountAnnouncements.vue";
 import { describe, it, expect } from "vitest";
 
 describe("<AccountAnnouncements />", () => {
