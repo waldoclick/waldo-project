@@ -39,7 +39,7 @@ import HeroFake from "@/components/HeroFake.vue";
 import LoadingDefault from "@/components/LoadingDefault.vue";
 const apiClient = useApiClient();
 const { fetchUser } = useStrapiAuth();
-const { uploadFile, transformUrl } = useImageProxy();
+const { uploadFiles, transformUrl } = useImageProxy();
 const { getPendingFiles, clearAll: clearPendingUploads } = usePendingUploads();
 const isUploadingImages = ref(false);
 
@@ -139,16 +139,13 @@ const uploadPendingImages = async (): Promise<boolean> => {
 
   isUploadingImages.value = true;
   try {
-    const uploadedItems: GalleryItem[] = [];
-
-    for (const { file } of pending) {
-      const result = await uploadFile(file, "gallery");
-      uploadedItems.push({
-        id: String(result.id),
-        url: transformUrl(result.formats?.thumbnail?.url || result.url),
-        formats: result.formats,
-      });
-    }
+    const files = pending.map(({ file }) => file);
+    const results = await uploadFiles(files, "gallery");
+    const uploadedItems: GalleryItem[] = results.map((result) => ({
+      id: String(result.id),
+      url: transformUrl(result.formats?.thumbnail?.url || result.url),
+      formats: result.formats,
+    }));
 
     // Merge with any already-uploaded gallery items (filter out pending blobs)
     const currentGallery = adStore.ad.gallery.filter((item) => !item.pending);

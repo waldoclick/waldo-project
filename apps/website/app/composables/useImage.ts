@@ -40,17 +40,27 @@ export function useImageProxy() {
   };
 
   /**
-   * Sube un archivo usando el proxy de Strapi
-   * @param file - Archivo a subir
+   * Sube múltiples archivos en una sola petición usando el proxy de Strapi
+   * @param files - Archivos a subir
    * @param type - Tipo de archivo (gallery, cover, avatar, etc.)
-   * @param recaptchaToken - Token de reCAPTCHA (opcional)
-   * @returns Promise con el resultado del upload
+   * @returns Promise con el array de resultados del upload
    */
-  const uploadFile = async (file: File, type: string) => {
+  const uploadFiles = async (
+    files: File[],
+    type: string,
+  ): Promise<
+    Array<{
+      id: number;
+      url: string;
+      formats?: { thumbnail: { url: string }; medium?: { url: string } };
+    }>
+  > => {
     const token = useStrapiToken();
     const { $recaptcha } = useNuxtApp();
     const formData = new FormData();
-    formData.append("files", file);
+    for (const file of files) {
+      formData.append("files", file);
+    }
     formData.append("type", type);
 
     // Generar token reCAPTCHA para el header
@@ -88,8 +98,8 @@ export function useImageProxy() {
     }
 
     const result = await response.json();
-    return result[0]; // Strapi devuelve un array, tomamos el primer elemento
+    return result; // Strapi devuelve un array con todos los archivos subidos
   };
 
-  return { transformUrl, uploadFile };
+  return { transformUrl, uploadFiles };
 }
