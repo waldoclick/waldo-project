@@ -61,67 +61,13 @@ export const useAdsStore = defineStore(
       error.value = null;
 
       try {
-        const response = await client("ads", {
+        const response = await client(`ads/slug/${slug}`, {
           method: "GET",
-          params: {
-            filters: {
-              slug: { $eq: slug },
-              active: { $eq: true },
-              remaining_days: { $gt: 0 },
-            },
-            populate: {
-              commune: {
-                populate: "*",
-              },
-              user: {
-                populate: "*",
-              },
-              category: true,
-              condition: true,
-              gallery: true,
-            },
-          } as unknown as Record<string, unknown>,
         });
-        const typedResponse = response as unknown as StrapiResponse<Ad>;
+        const typedResponse = response as unknown as { data: Ad };
 
-        if (typedResponse.data.length > 0) {
-          return typedResponse.data[0]!;
-        } else {
-          throw new Error("Ad not found");
-        }
-      } catch (err) {
-        error.value = "Error al cargar el anuncio";
-        console.error("Error loading ad:", err);
-        throw err;
-      } finally {
-        loading.value = false;
-      }
-    };
-
-    const loadAdBySlugUnfiltered = async (slug: string): Promise<Ad> => {
-      loading.value = true;
-      error.value = null;
-
-      try {
-        const response = await client("ads", {
-          method: "GET",
-          params: {
-            filters: {
-              slug: { $eq: slug },
-            },
-            populate: {
-              commune: { populate: "*" },
-              user: { populate: "*" },
-              category: true,
-              condition: true,
-              gallery: true,
-            },
-          } as unknown as Record<string, unknown>,
-        });
-        const typedResponse = response as unknown as StrapiResponse<Ad>;
-
-        if (typedResponse.data.length > 0) {
-          return typedResponse.data[0]!;
+        if (typedResponse.data) {
+          return typedResponse.data;
         } else {
           throw new Error("Ad not found");
         }
@@ -184,7 +130,6 @@ export const useAdsStore = defineStore(
       error,
       loadAds,
       loadAdBySlug,
-      loadAdBySlugUnfiltered,
       loadAdById,
       reset,
     };
