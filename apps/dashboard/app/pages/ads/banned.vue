@@ -1,7 +1,11 @@
 <template>
   <div>
     <HeroDefault title="Baneados" :breadcrumbs="breadcrumbs" />
-    <AdsTable endpoint="ads/banneds" section="adsBanned" />
+    <AdsTable
+      endpoint="ads/banneds"
+      section="adsBanned"
+      :show-web-link="true"
+    />
   </div>
 </template>
 
