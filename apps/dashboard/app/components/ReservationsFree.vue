@@ -90,9 +90,7 @@ interface Reservation {
 }
 
 // Store de settings
-const settingsStore = import.meta.client
-  ? useSettingsStore()
-  : ({} as ReturnType<typeof useSettingsStore>);
+const settingsStore = useSettingsStore();
 const section = "reservations" as const;
 
 // Computed para los filtros de reservas

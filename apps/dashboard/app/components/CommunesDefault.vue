@@ -100,9 +100,7 @@ interface Commune {
   region?: { name: string };
 }
 
-const settingsStore = import.meta.client
-  ? useSettingsStore()
-  : ({} as ReturnType<typeof useSettingsStore>);
+const settingsStore = useSettingsStore();
 const section = "communes" as const;
 
 const filters = computed(() => settingsStore.getCommunesFilters);

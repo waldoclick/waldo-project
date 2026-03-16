@@ -98,9 +98,7 @@ import BadgeDefault from "@/components/BadgeDefault.vue";
 import PaginationDefault from "@/components/PaginationDefault.vue";
 import type { Pack } from "@/types/pack";
 
-const settingsStore = import.meta.client
-  ? useSettingsStore()
-  : ({} as ReturnType<typeof useSettingsStore>);
+const settingsStore = useSettingsStore();
 const section = "packs" as const;
 
 const filters = computed(() => settingsStore.getPacksFilters);
