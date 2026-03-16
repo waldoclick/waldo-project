@@ -956,6 +956,37 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
   },
 
   /**
+   * Find an advertisement by documentId for the thank-you page (owner only).
+   *
+   * Uses strapi.db.query to bypass the publishedAt filter — pending ads are valid.
+   * Returns null if the ad is not found or if the requesting user is not the owner.
+   *
+   * @param documentId - The advertisement documentId (Strapi v5)
+   * @param userId - The authenticated user's numeric ID
+   */
+  async findByDocumentIdForOwner(documentId: string, userId: number) {
+    const ad = await strapi.db.query("api::ad.ad").findOne({
+      where: { documentId },
+      populate: {
+        user: true,
+        commune: true,
+        category: true,
+        condition: true,
+        gallery: true,
+        ad_reservation: true,
+        ad_featured_reservation: true,
+      },
+    });
+
+    if (!ad) return null;
+
+    const adRecord = ad as Record<string, any>;
+    if (adRecord.user?.id !== userId) return null;
+
+    return ad;
+  },
+
+  /**
    * Save an ad as a draft (create or update with draft: true).
    * Used before payment processing to persist the ad data.
    *
