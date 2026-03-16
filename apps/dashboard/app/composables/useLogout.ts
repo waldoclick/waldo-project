@@ -14,6 +14,11 @@ export const useLogout = () => {
     meStore.reset();
     searchStore.clearTavily();
 
+    // Clear the old host-only cookie (pre-migration, no domain attr) to prevent zombie sessions
+    if (import.meta.client) {
+      document.cookie = "waldo_jwt=; path=/; max-age=0";
+    }
+
     await strapiLogout();
     await navigateTo("/auth/login");
   };
