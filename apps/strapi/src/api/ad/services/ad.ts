@@ -867,15 +867,15 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
    * @param userId - The authenticated user's numeric ID, or null for anonymous callers
    */
   async findBySlug(slug: string, userId?: number | null) {
-    const POPULATE = [
-      "user",
-      "commune",
-      "category",
-      "condition",
-      "gallery",
-      "ad_reservation",
-      "ad_featured_reservation",
-    ];
+    const POPULATE = {
+      user: true,
+      commune: { populate: ["region"] },
+      category: true,
+      condition: true,
+      gallery: true,
+      ad_reservation: true,
+      ad_featured_reservation: true,
+    };
 
     // Step 1: always fetch — no active/publishedAt filters
     const ad = await strapi.db.query("api::ad.ad").findOne({
