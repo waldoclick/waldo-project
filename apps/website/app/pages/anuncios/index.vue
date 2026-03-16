@@ -146,8 +146,6 @@ const { data: adsData } = await useAsyncData<AdsData>(
       ...(name && { name: { $containsi: name } }),
       ...(category && { category: { slug: { $eq: category } } }),
       ...(commune && { commune: { id: { $eq: commune } } }),
-      active: { $eq: true },
-      remaining_days: { $gt: 0 },
     };
 
     await adsStore.loadAds(filtersParams, paginationParams, sortParams);
@@ -161,11 +159,10 @@ const { data: adsData } = await useAsyncData<AdsData>(
     if (mainAds.length === 0 && mainPagination.total === 0) {
       relatedLoading = true;
       try {
-        await adsStore.loadAds(
-          { active: { $eq: true }, remaining_days: { $gt: 0 } },
-          { page: 1, pageSize: 12 },
-          ["ad_featured_reservation.id:desc", "createdAt:desc"],
-        );
+        await adsStore.loadAds({}, { page: 1, pageSize: 12 }, [
+          "ad_featured_reservation.id:desc",
+          "createdAt:desc",
+        ]);
         relatedAds = adsStore.ads;
       } catch (error) {
         relatedError = error instanceof Error ? error.message : String(error);

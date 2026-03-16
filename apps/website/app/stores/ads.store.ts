@@ -41,7 +41,7 @@ export const useAdsStore = defineStore(
           populate: "*",
         } as unknown as Record<string, unknown>;
 
-        const response = await client("ads", {
+        const response = await client("ads/actives", {
           method: "GET",
           params: params as unknown as Record<string, unknown>,
         });
