@@ -139,7 +139,7 @@
           <GalleryDefault
             :images="item.gallery"
             :alt-prefix="item.name"
-            :columns="4"
+            :columns="6"
             @image-delete="handleDeleteImage"
           />
         </BoxInformation>
