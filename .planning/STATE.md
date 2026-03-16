@@ -1,15 +1,15 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.40
-milestone_name: Shared Authentication Session
-status: in_progress
-last_updated: "2026-03-16T00:00:00.000Z"
-last_activity: 2026-03-16 — Milestone v1.40 started
+milestone: v1.38
+milestone_name: GA4 Analytics Audit & Implementation
+status: planning
+last_updated: "2026-03-16T13:20:36.003Z"
+last_activity: 2026-03-16 — Roadmap created for v1.40 (2 phases, 9 requirements mapped)
 progress:
-  total_phases: 2
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_phases: 7
+  completed_phases: 6
+  total_plans: 14
+  completed_plans: 14
   percent: 0
 ---
 
@@ -25,21 +25,21 @@ See: .planning/PROJECT.md (updated 2026-03-16 after v1.40 milestone started)
 ## Position
 
 **Current Milestone:** v1.40 — Shared Authentication Session
-**Status:** Roadmap defined — ready to plan Phase 091
-Phase: 091 (next)
+**Status:** In progress — Phase 091 complete, ready for Phase 092
+Phase: 092 (next)
 Plan: —
 
 ```
-Progress: [░░░░░░░░░░] 0% (0/2 phases)
+Progress: [████████████████████] 100%
 ```
 
-Last activity: 2026-03-16 — Roadmap created for v1.40 (2 phases, 9 requirements mapped)
+Last activity: 2026-03-16 — Completed 091-01-PLAN.md (useLogout composable + 3 call site migrations)
 
 ## Phase Map
 
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
-| 091 | Dashboard useLogout Composable | SAFE-01 | ○ Not started |
+| 091 | Dashboard useLogout Composable | SAFE-01 | ✓ Complete (2026-03-16) |
 | 092 | Cookie Domain Migration | SESS-01, SESS-02, SESS-03, SESS-04, SESS-05, SESS-06, SAFE-02, SAFE-03 | ○ Not started |
 
 ## Accumulated Context
@@ -100,6 +100,8 @@ Last activity: 2026-03-16 — Roadmap created for v1.40 (2 phases, 9 requirement
 - FormProfile.vue useStrapi() was truly dead code — no calls, purely subtractive removal (090-05)
 - Store methods returning collection responses must declare explicit return types when callers access .data/.meta — TypeScript infers {} from raw client() result (090-06)
 - Browser smoke test approved: all key pages load correctly with zero console errors after full migration (090-06)
+- useLogout composable centralizes dashboard logout: appStore.$reset() + meStore.reset() + searchStore.clearTavily() + strapiLogout() + navigateTo('/auth/login') — single place for Phase 092 old-cookie cleanup (091-01)
+- import { useStrapiAuth, navigateTo } from '#imports' in useLogout composable — required for Nuxt auto-import interception (091-01)
 
 ### v1.38 Key Facts (GA4 analytics)
 

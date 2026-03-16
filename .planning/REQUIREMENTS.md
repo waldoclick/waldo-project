@@ -18,7 +18,7 @@ Requirements for Shared Authentication Session milestone.
 
 ### Safety & Cleanup
 
-- [ ] **SAFE-01**: Dashboard tiene composable `useLogout` centralizado; todos los call sites lo usan
+- [x] **SAFE-01**: Dashboard tiene composable `useLogout` centralizado; todos los call sites lo usan
 - [ ] **SAFE-02**: La cookie host-only antigua (sin atributo domain) se limpia explícitamente en logout para prevenir zombie sessions
 - [ ] **SAFE-03**: `.env.example` en ambas apps documenta `COOKIE_DOMAIN`
 
@@ -41,7 +41,7 @@ Requirements for Shared Authentication Session milestone.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SAFE-01 | Phase 091 | Pending |
+| SAFE-01 | Phase 091 | Complete |
 | SAFE-02 | Phase 092 | Pending |
 | SAFE-03 | Phase 092 | Pending |
 | SESS-01 | Phase 092 | Pending |
