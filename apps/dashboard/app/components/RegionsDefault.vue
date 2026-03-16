@@ -103,9 +103,7 @@ interface Region {
   communes?: Array<{ id: number; name: string }>;
 }
 
-const settingsStore = import.meta.client
-  ? useSettingsStore()
-  : ({} as ReturnType<typeof useSettingsStore>);
+const settingsStore = useSettingsStore();
 const section = "regions" as const;
 
 const filters = computed(() => settingsStore.getRegionsFilters);

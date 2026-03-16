@@ -62,9 +62,7 @@ export const useSearchStore = defineStore(
     // persist: CORRECT — search cache should survive page refresh so admins
     // don't re-fetch the same Tavily queries across navigation
     persist: {
-      // Use persistedState.localStorage (SSR-safe wrapper from @pinia-plugin-persistedstate/nuxt)
-      // instead of raw `localStorage` — the raw guard causes getActivePinia() crash during SSR
-      storage: persistedState.localStorage,
+      storage: typeof window !== "undefined" ? localStorage : undefined,
       key: "search",
     },
   },

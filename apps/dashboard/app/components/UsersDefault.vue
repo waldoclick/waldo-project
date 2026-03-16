@@ -91,9 +91,7 @@ import PaginationDefault from "@/components/PaginationDefault.vue";
 import type { User } from "@/types/user";
 
 // Store de settings
-const settingsStore = import.meta.client
-  ? useSettingsStore()
-  : ({} as ReturnType<typeof useSettingsStore>);
+const settingsStore = useSettingsStore();
 const section = "users" as const;
 
 // Computed para los filtros de usuarios

@@ -115,9 +115,7 @@ interface Article {
   updatedAt: string;
 }
 
-const settingsStore = import.meta.client
-  ? useSettingsStore()
-  : ({} as ReturnType<typeof useSettingsStore>);
+const settingsStore = useSettingsStore();
 const section = "articles" as const;
 
 const filters = computed(() => settingsStore.getArticlesFilters);

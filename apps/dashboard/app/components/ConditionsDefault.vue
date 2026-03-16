@@ -97,9 +97,7 @@ interface Condition {
   updatedAt: string;
 }
 
-const settingsStore = import.meta.client
-  ? useSettingsStore()
-  : ({} as ReturnType<typeof useSettingsStore>);
+const settingsStore = useSettingsStore();
 const section = "conditions" as const;
 
 const filters = computed(() => settingsStore.getConditionsFilters);

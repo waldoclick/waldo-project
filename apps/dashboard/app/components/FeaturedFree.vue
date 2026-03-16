@@ -90,9 +90,7 @@ interface Featured {
 }
 
 // Store de settings
-const settingsStore = import.meta.client
-  ? useSettingsStore()
-  : ({} as ReturnType<typeof useSettingsStore>);
+const settingsStore = useSettingsStore();
 const section = "featured" as const;
 
 // Computed para los filtros de destacados

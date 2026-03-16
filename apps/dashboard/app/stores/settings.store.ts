@@ -283,9 +283,7 @@ export const useSettingsStore = defineStore(
   },
   {
     persist: {
-      // Use persistedState.localStorage (SSR-safe wrapper from @pinia-plugin-persistedstate/nuxt)
-      // instead of raw `localStorage` — the raw guard causes getActivePinia() crash during SSR
-      storage: persistedState.localStorage,
+      storage: typeof window !== "undefined" ? localStorage : undefined,
       key: "settings",
     },
   },
