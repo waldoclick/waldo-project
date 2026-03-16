@@ -1,7 +1,11 @@
 <template>
   <div>
     <HeroDefault title="Pendientes" :breadcrumbs="breadcrumbs" />
-    <AdsTable endpoint="ads/pendings" section="adsPendings" />
+    <AdsTable
+      endpoint="ads/pendings"
+      section="adsPendings"
+      :show-web-link="true"
+    />
   </div>
 </template>
 

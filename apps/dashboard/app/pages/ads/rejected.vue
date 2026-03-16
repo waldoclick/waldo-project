@@ -1,7 +1,11 @@
 <template>
   <div>
     <HeroDefault title="Rechazados" :breadcrumbs="breadcrumbs" />
-    <AdsTable endpoint="ads/rejecteds" section="adsRejected" />
+    <AdsTable
+      endpoint="ads/rejecteds"
+      section="adsRejected"
+      :show-web-link="true"
+    />
   </div>
 </template>
 

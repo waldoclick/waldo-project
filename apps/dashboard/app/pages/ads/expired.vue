@@ -1,7 +1,11 @@
 <template>
   <div>
     <HeroDefault title="Expirados" :breadcrumbs="breadcrumbs" />
-    <AdsTable endpoint="ads/archiveds" section="adsArchived" />
+    <AdsTable
+      endpoint="ads/archiveds"
+      section="adsArchived"
+      :show-web-link="true"
+    />
   </div>
 </template>
 
