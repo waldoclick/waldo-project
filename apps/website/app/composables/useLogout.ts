@@ -23,6 +23,11 @@ export const useLogout = () => {
     adsStore.reset();
     appStore.$reset();
 
+    // Clear the old host-only cookie (pre-migration, no domain attr) to prevent zombie sessions
+    if (import.meta.client) {
+      document.cookie = "waldo_jwt=; path=/; max-age=0";
+    }
+
     await strapiLogout();
     await navigateTo("/");
   };
