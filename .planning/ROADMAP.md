@@ -63,7 +63,11 @@ Plans:
   4. Clicking logout on the dashboard causes the website to show the logged-out state on the next visit (session cleared on both subdomains)
   5. Running both apps locally with no `COOKIE_DOMAIN` env var set produces a host-only cookie — local dev login works exactly as before
   6. `.env.example` in both `apps/website` and `apps/dashboard` documents the `COOKIE_DOMAIN` variable with the production value `.waldo.click`
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 092-01-PLAN.md — Add COOKIE_DOMAIN conditional to both nuxt.config.ts + old-cookie cleanup in both useLogout composables
+- [ ] 092-02-PLAN.md — Document COOKIE_DOMAIN in both .env.example files + human-verify checkpoint
 
 ---
 
