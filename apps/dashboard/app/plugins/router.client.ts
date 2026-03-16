@@ -1,6 +1,5 @@
 export default defineNuxtPlugin(() => {
   const router = useRouter();
-  const appStore = useAppStore();
 
   // Rutas que no queremos guardar como referer
   const excludedRoutes = new Set([
@@ -10,6 +9,9 @@ export default defineNuxtPlugin(() => {
   ]);
 
   router.beforeEach((to, from) => {
+    // useAppStore() must be resolved inside the callback — Pinia is not yet active
+    // when the plugin body executes during Nuxt bootstrap
+    const appStore = useAppStore();
     // Solo guardamos el referer si la ruta anterior no está en la lista de excluidas
     // y no es una ruta de /account o /auth
     if (
