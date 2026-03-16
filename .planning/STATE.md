@@ -4,7 +4,7 @@ milestone: v1.38
 milestone_name: GA4 Analytics Audit & Implementation
 status: completed
 last_updated: "2026-03-16T14:22:52.308Z"
-last_activity: 2026-03-16 — Completed quick task 55: add public view icon to all dashboard ads tables
+last_activity: 2026-03-16 — Completed quick task 56: add authenticated thank-you endpoints for ads and orders
 progress:
   total_phases: 7
   completed_phases: 7
@@ -167,3 +167,4 @@ None.
 | 53 | fix dashboard logout on refresh: point strapi.url directly to API_URL to prevent SSR self-proxy loop | 2026-03-16 | f12ad4e | [53-fix-dashboard-logout-on-refresh-point-ss](.planning/quick/53-fix-dashboard-logout-on-refresh-point-ss/) |
 | 54 | replace dual-fetch ad detail with server-side ACL endpoint GET /api/ads/slug/:slug | 2026-03-16 | 2ec04b3 | [54-fix-ad-detail-page-access-control-active](.planning/quick/54-fix-ad-detail-page-access-control-active/) |
 | 55 | add public view icon to all dashboard ads tables (pending, expired, banned, rejected, abandoned) | 2026-03-16 | 63ea3e6 | [55-add-public-view-icon-to-dashboard-ads-ta](.planning/quick/55-add-public-view-icon-to-dashboard-ads-ta/) |
+| 56 | add authenticated thank-you endpoints for ads (bypasses publishedAt) and orders (ownership check) | 2026-03-16 | 33aa14f | [56-add-authenticated-thank-you-endpoints-fo](.planning/quick/56-add-authenticated-thank-you-endpoints-fo/) |
