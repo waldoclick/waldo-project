@@ -223,13 +223,11 @@ export default defineNuxtConfig({
   css: ["@/scss/app.scss"],
 
   // 3. Modules Configuration
-  // Note: Using BASE_URL instead of API_URL to route through proxy
-  // This hides the actual Strapi API URL from the client
+  // strapi.url must always point directly to Strapi — never through the dashboard proxy.
+  // The Nitro proxy (server/api/[...].ts) handles client-side requests transparently.
+  // Routing SSR fetchUser() through BASE_URL causes a self-loop that destroys the JWT cookie on any error.
   strapi: {
-    url:
-      process.env.API_DISABLE_PROXY === "true"
-        ? process.env.API_URL || "http://localhost:1337" // ← Directo a Strapi
-        : process.env.BASE_URL || "http://localhost:3001", // ← A través del proxy
+    url: process.env.API_URL || "http://localhost:1337",
     prefix: "/api",
     version: "v5",
     cookie: {
