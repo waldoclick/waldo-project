@@ -209,8 +209,12 @@ const emit = defineEmits<{
 
 const client = useStrapiClient();
 const { Swal } = useSweetAlert2();
-const searchStore = useSearchStore();
-const articlesStore = useArticlesStore();
+const searchStore = import.meta.client
+  ? useSearchStore()
+  : ({} as ReturnType<typeof useSearchStore>);
+const articlesStore = import.meta.client
+  ? useArticlesStore()
+  : ({} as ReturnType<typeof useArticlesStore>);
 
 // Max articles that can be selected at once.
 // Kept low during AI testing — increase when ready for bulk creation.
