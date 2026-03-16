@@ -4,7 +4,7 @@ milestone: v1.38
 milestone_name: GA4 Analytics Audit & Implementation
 status: completed
 last_updated: "2026-03-15T15:26:52.492Z"
-last_activity: 2026-03-16 — Completed quick task 51: fix all getActivePinia SSR crashes across dashboard and website
+last_activity: 2026-03-16 — Completed quick task 52: batch all image uploads into a single POST request
 progress:
   total_phases: 5
   completed_phases: 5
@@ -33,7 +33,7 @@ Plan: 05 ✓ (of 6)
 Progress: [██████████] 100% (13/13 plans)
 ```
 
-Last activity: 2026-03-16 - Completed quick task 51: fix all getActivePinia SSR crashes across dashboard and website
+Last activity: 2026-03-16 - Completed quick task 52: batch all image uploads into a single POST request
 
 ## Phase Map
 
@@ -146,3 +146,4 @@ None.
 | 49 | block Strapi robots.txt to prevent search engine indexing of API backend | 2026-03-15 | 30a8a94 | [49-block-strapi-robots-txt-to-prevent-searc](.planning/quick/49-block-strapi-robots-txt-to-prevent-searc/) |
 | 50 | fix getActivePinia crash: replace raw localStorage guard with persistedState.localStorage in persist stores | 2026-03-16 | aa4f4c4 | [50-fix-getactivepinia-crash-replace-manual-](.planning/quick/50-fix-getactivepinia-crash-replace-manual-/) |
 | 51 | fix all getActivePinia SSR crashes: guard/lazy-init all top-level store calls in 21 dashboard and website components | 2026-03-16 | 66cb9ab | [51-fix-all-getactivepinia-ssr-crashes-acros](.planning/quick/51-fix-all-getactivepinia-ssr-crashes-acros/) |
+| 52 | batch all image uploads into a single POST request to eliminate Cloudflare rate-limit failures | 2026-03-16 | 3ed19cb | [52-batch-all-image-uploads-into-a-single-po](.planning/quick/52-batch-all-image-uploads-into-a-single-po/) |
