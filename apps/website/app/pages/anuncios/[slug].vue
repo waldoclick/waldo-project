@@ -1,13 +1,12 @@
 <template>
-  <!-- <pre>{{ adData }}</pre> -->
-  <div v-if="adData" class="page page--contact">
+  <div v-if="adComputed" class="page page--contact">
     <HeaderDefault :show-search="true" />
     <HeroAnnouncement
-      :name="adData.name"
-      :category="(adData.category as Record<string, any>) || {}"
-      :user="adData.user"
+      :name="adComputed.name"
+      :category="(adComputed.category as Record<string, any>) || {}"
+      :user="adComputed.user"
     />
-    <AdSingle :all="adData" />
+    <AdSingle :all="adComputed" :access="adAccess ?? undefined" />
     <RelatedAds
       v-if="relatedAds && relatedAds.length > 0"
       :ads="relatedAds"
@@ -27,7 +26,7 @@ import { useAdsStore } from "@/stores/ads.store";
 import { useRelatedStore } from "@/stores/related.store";
 import { useHistoryStore } from "@/stores/history.store";
 import { useIndicatorStore } from "@/stores/indicator.store";
-import type { Ad } from "@/types/ad";
+import type { Ad, AdAccess } from "@/types/ad";
 
 import HeaderDefault from "@/components/HeaderDefault.vue";
 import FooterDefault from "@/components/FooterDefault.vue";
@@ -62,6 +61,11 @@ interface AdWithPriceData extends Omit<
   active?: boolean;
 }
 
+interface AdPageData {
+  ad: AdWithPriceData;
+  access: AdAccess;
+}
+
 const route = useRoute();
 const config = useRuntimeConfig();
 const historyStore = useHistoryStore();
@@ -73,24 +77,27 @@ const {
   refresh,
   pending,
   error: adError,
-} = await useAsyncData<AdWithPriceData | null>(
+} = await useAsyncData<AdPageData | null>(
   `ad-${route.params.slug}`,
   async () => {
     const adsStore = useAdsStore();
 
-    let ad: AdWithPriceData | null = null;
+    let result: { ad: AdWithPriceData; access: AdAccess } | null = null;
     try {
-      ad = (await adsStore.loadAdBySlug(
-        route.params.slug as string,
-      )) as AdWithPriceData | null;
+      result = (await adsStore.loadAdBySlug(route.params.slug as string)) as {
+        ad: AdWithPriceData;
+        access: AdAccess;
+      } | null;
     } catch {
       // Ad not found or access denied
     }
 
     try {
-      if (!ad) {
+      if (!result) {
         return null;
       }
+
+      const ad = result.ad;
 
       // For now, always show the ad information
 
@@ -149,7 +156,7 @@ const {
         image: ad.gallery?.[0]?.url || "",
       });
 
-      return ad;
+      return { ad, access: result.access };
     } catch (error) {
       console.error("Error loading ad:", error);
       return null;
@@ -160,6 +167,10 @@ const {
     lazy: false,
   },
 );
+
+// Convenience computed refs — adData is now { ad, access }
+const adComputed = computed(() => adData.value?.ad ?? null);
+const adAccess = computed(() => adData.value?.access ?? null);
 
 // Build the appropriate error message
 const getErrorMessage = () => {
@@ -188,7 +199,7 @@ watchEffect(() => {
 
 // Set SEO and structured data when ad data is available
 watch(
-  () => adData.value,
+  () => adComputed.value,
   (newData) => {
     if (newData) {
       const commune = newData.commune?.name || "Chile";
@@ -311,7 +322,7 @@ watch(
 
 // Fire view_item when ad data loads; guard prevents double-fire on same slug
 watch(
-  () => adData.value,
+  () => adComputed.value,
   (ad) => {
     if (ad && !viewItemFired.value) {
       viewItemFired.value = true;

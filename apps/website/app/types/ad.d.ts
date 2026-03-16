@@ -125,3 +125,9 @@ export interface AdsStoreState {
   loading: boolean;
   error: string | null;
 }
+
+export interface AdAccess {
+  role: "public" | "owner" | "manager";
+  status: string;
+  message: string | null;
+}

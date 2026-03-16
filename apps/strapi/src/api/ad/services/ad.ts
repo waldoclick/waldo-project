@@ -853,15 +853,18 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
    * Find an advertisement by slug with server-side access control.
    *
    * Access rules:
-   * - Active ads are returned to any caller (public).
-   * - Non-active ads require authentication:
-   *   - The owner (userId matches ad.user.id) can see their own ad.
-   *   - Manager, Admin, or Administrator roles can see any ad.
-   *   - Everyone else gets null (caller should return 404).
+   * 1. Always fetch the ad (no filters) — if not found → null
+   * 2. Public (no userId): only active ads
+   * 3. Authenticated:
+   *    - Manager (role.name.toLowerCase() === "manager") → always, any status
+   *    - active → always
+   *    - pending + owner (ad.user.id === userId) → allowed
+   *    - anything else → null
+   *
+   * Returns the ad plus an `access` object with role, status, and a contextual message.
    *
    * @param slug - The advertisement slug
-   * @param userId - The authenticated user's numeric ID, or null/undefined for anonymous callers
-   * @returns The ad with a computed status field, or null when access is denied
+   * @param userId - The authenticated user's numeric ID, or null for anonymous callers
    */
   async findBySlug(slug: string, userId?: number | null) {
     const POPULATE = [
@@ -874,6 +877,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
       "ad_featured_reservation",
     ];
 
+    // Step 1: always fetch — no active/publishedAt filters
     const ad = await strapi.db.query("api::ad.ad").findOne({
       where: { slug },
       populate: POPULATE,
@@ -881,31 +885,71 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
 
     if (!ad) return null;
 
+    const adRecord = ad as Record<string, any>;
     const status = computeAdStatus(ad);
 
-    // Active ads are public
-    if (status === "active") return { ...ad, status };
+    // Step 2: public (no token)
+    if (!userId) {
+      if (status === "active") {
+        return {
+          ad: { ...ad, status },
+          access: { role: "public", status, message: null },
+        };
+      }
+      return null;
+    }
 
-    // Non-active: require authentication
-    if (!userId) return null;
-
-    // Owner access
-    const adRecord = ad as Record<string, any>;
-    if (adRecord.user?.id === userId) return { ...ad, status };
-
-    // Manager/Admin access
+    // Step 3: authenticated — fetch user role once
     const user = await strapi.db
       .query("plugin::users-permissions.user")
       .findOne({ where: { id: userId }, populate: ["role"] });
 
     const userRecord = user as Record<string, any>;
-    const roleName = userRecord?.role?.name as string | undefined;
-    if (
-      roleName === "Manager" ||
-      roleName === "Admin" ||
-      roleName === "Administrator"
-    ) {
-      return { ...ad, status };
+    const roleName = ((userRecord?.role?.name as string) ?? "").toLowerCase();
+    const isManager = roleName === "manager";
+    const isOwner = adRecord.user?.id === userId;
+
+    const statusLabels: Record<string, string> = {
+      active: "activo",
+      pending: "en revisión",
+      archived: "archivado",
+      banned: "baneado",
+      rejected: "rechazado",
+      draft: "borrador",
+      unknown: "desconocido",
+    };
+    const statusLabel = statusLabels[status] ?? status;
+
+    // Manager sees everything
+    if (isManager) {
+      return {
+        ad: { ...ad, status },
+        access: {
+          role: "manager",
+          status,
+          message: `Estás viendo este anuncio como manager. Estado: ${statusLabel}`,
+        },
+      };
+    }
+
+    // Active — any authenticated user
+    if (status === "active") {
+      return {
+        ad: { ...ad, status },
+        access: { role: "owner", status, message: null },
+      };
+    }
+
+    // Pending + owner
+    if (status === "pending" && isOwner) {
+      return {
+        ad: { ...ad, status },
+        access: {
+          role: "owner",
+          status,
+          message: "Este anuncio está en revisión. Solo tú puedes verlo.",
+        },
+      };
     }
 
     return null;

@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import type { Ad } from "@/types/ad";
+import type { Ad, AdAccess } from "@/types/ad";
 import type { Pagination } from "@/types/pagination";
 import type { StrapiResponse } from "@nuxtjs/strapi";
 import { useApiClient } from "#imports";
@@ -56,7 +56,9 @@ export const useAdsStore = defineStore(
       }
     };
 
-    const loadAdBySlug = async (slug: string): Promise<Ad> => {
+    const loadAdBySlug = async (
+      slug: string,
+    ): Promise<{ ad: Ad; access: AdAccess }> => {
       loading.value = true;
       error.value = null;
 
@@ -64,10 +66,13 @@ export const useAdsStore = defineStore(
         const response = await client(`ads/slug/${slug}`, {
           method: "GET",
         });
-        const typedResponse = response as unknown as { data: Ad };
+        const typedResponse = response as unknown as {
+          data: Ad;
+          access: AdAccess;
+        };
 
         if (typedResponse.data) {
-          return typedResponse.data;
+          return { ad: typedResponse.data, access: typedResponse.access };
         } else {
           throw new Error("Ad not found");
         }
