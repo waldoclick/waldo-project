@@ -407,18 +407,16 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-05**: Consolidar Reservations*/Featured* una vez que tengan store keys dedicados y estrategias de fetch alineadas
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
-## Current Milestone: v1.39 Fix Pinia SSR Hydration Crash
+## Current Milestone: v1.40 Shared Authentication Session
 
-**Goal:** Eliminate all `getActivePinia() was called but there was no active Pinia` crashes in the dashboard by fixing the root cause: Pinia store access during middleware execution before hydration is complete.
+**Goal:** Compartir la cookie JWT entre `www.waldo.click` y `dashboard.waldo.click` (y sus equivalentes de staging) para que un manager que se autentica en una app quede automáticamente autenticado en la otra — sin doble login.
 
-**Root cause (confirmed via stack trace):**
-`guard.global.ts:14` calls `useAppStore()` inside `if (import.meta.client)` — but `import.meta.client` is `true` during client-side hydration, and at that point the Nuxt router middleware runs BEFORE Pinia plugins have finished initializing. The fix is to move all Pinia store access out of middleware entirely and into the correct lifecycle hook (`app:beforeEach` via a plugin, or `onMounted` in components).
-
-**Target fixes:**
-- Remove `useAppStore()` from `guard.global.ts` middleware completely
-- Move referer tracking to a `nuxtApp.hook('page:start')` or `router.beforeEach` registered AFTER Pinia is ready
-- Revert `error.vue` diagnostic stack display (temp commit `135a5ac`)
-- Verify zero `getActivePinia` crashes on dashboard refresh after login
+**Target features:**
+- Cookie `waldo_jwt` emitida con `domain` configurable por entorno (`COOKIE_DOMAIN` env var)
+- Login en website con role `manager` → sesión activa en dashboard automáticamente
+- Login en dashboard → sesión activa en website automáticamente
+- Logout global: borrar la cookie compartida cierra la sesión en ambas apps
+- Guard del dashboard (`guard.global.ts`) preserva comportamiento actual — expulsa roles non-manager
 
 ---
-*Last updated: 2026-03-16 after v1.39 milestone started*
+*Last updated: 2026-03-16 after v1.40 milestone started*

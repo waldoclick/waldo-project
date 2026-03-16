@@ -1,46 +1,45 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.38
-milestone_name: GA4 Analytics Audit & Implementation
-status: completed
-last_updated: "2026-03-15T15:26:52.492Z"
-last_activity: 2026-03-16 — Completed quick task 53: fix dashboard logout on refresh by pointing strapi.url directly to API_URL
+milestone: v1.40
+milestone_name: Shared Authentication Session
+status: in_progress
+last_updated: "2026-03-16T00:00:00.000Z"
+last_activity: 2026-03-16 — Milestone v1.40 started
 progress:
-  total_phases: 5
-  completed_phases: 5
-  total_plans: 13
-  completed_plans: 13
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Session State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-14 after v1.38 milestone started)
+See: .planning/PROJECT.md (updated 2026-03-16 after v1.40 milestone started)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.39 — Unified API Client (roadmap created, Phase 089 next)
+**Current focus:** v1.40 — Shared Authentication Session
 
 ## Position
 
-**Current Milestone:** v1.39 — Unified API Client
-**Status:** Milestone complete
-Phase: 090
-Plan: 05 ✓ (of 6)
+**Current Milestone:** v1.40 — Shared Authentication Session
+**Status:** Defining requirements
+Phase: Not started
+Plan: —
 
 ```
-Progress: [██████████] 100% (13/13 plans)
+Progress: [░░░░░░░░░░] 0% (0/0 plans)
 ```
 
-Last activity: 2026-03-16 - Completed quick task 53: fix dashboard logout on refresh by pointing strapi.url directly to API_URL
+Last activity: 2026-03-16 — Milestone v1.40 started
 
 ## Phase Map
 
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
-| 089 | GET Support in useApiClient | API-05 | ✅ Complete (2026-03-15) |
-| 090 | Migrate All GET Callers | API-01, API-02, API-03, API-04, API-06 | ✅ Complete (2026-03-15) |
+| — | — | — | ○ Pending |
 
 ## Accumulated Context
 
