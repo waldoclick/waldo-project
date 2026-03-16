@@ -9,6 +9,7 @@
 
 import { factories } from "@strapi/strapi";
 import { Context } from "koa";
+import jwt from "jsonwebtoken";
 
 interface PaginationMeta {
   pagination: {
@@ -776,14 +777,28 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    */
   async findBySlug(ctx: Context) {
     const { slug } = ctx.params;
-    const userId = ctx.state.user?.id ?? null;
 
-    const ad = await strapi.service("api::ad.ad").findBySlug(slug, userId);
+    // Route has auth: false so ctx.state.user is not populated by Strapi middleware.
+    // Decode JWT manually — allows owner/manager access without requiring Public role permission.
+    let userId: number | null = null;
+    const authHeader = ctx.request.headers?.authorization as string | undefined;
+    if (authHeader?.startsWith("Bearer ")) {
+      const token = authHeader.slice(7);
+      try {
+        const secret = process.env.JWT_SECRET ?? "strapi-jwt-secret";
+        const decoded = jwt.verify(token, secret) as { id: number };
+        userId = decoded?.id ?? null;
+      } catch {
+        userId = null;
+      }
+    }
 
-    if (!ad) {
+    const result = await strapi.service("api::ad.ad").findBySlug(slug, userId);
+
+    if (!result) {
       return ctx.notFound("Ad not found or access denied");
     }
 
-    return ctx.send({ data: ad });
+    return ctx.send({ data: result.ad, access: result.access });
   },
 }));

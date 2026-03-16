@@ -1,7 +1,6 @@
 <template>
   <section class="announcement announcement--single">
     <div class="announcement--single__container">
-      <!-- <pre>{{ all }}</pre> -->
       <div class="announcement--single__body">
         <div class="announcement--single__body__gallery">
           <GalleryDefault :media="all?.gallery || null" />
@@ -64,9 +63,9 @@
           class="announcement--single__sidebar__expired"
         >
           <MemoDefault
-            v-if="!all.active"
+            v-if="!all.active && access?.message"
             :icon="Clock"
-            text="Este anuncio está en revisión. Solo tú puedes verlo."
+            :text="access.message"
             link=""
           />
           <MemoDefault
@@ -157,6 +156,10 @@ const props = defineProps({
   all: {
     type: Object,
     default: () => ({}),
+  },
+  access: {
+    type: Object,
+    default: null,
   },
 });
 
