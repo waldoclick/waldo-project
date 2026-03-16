@@ -27,6 +27,7 @@ import { useAdsStore } from "@/stores/ads.store";
 import { useRelatedStore } from "@/stores/related.store";
 import { useHistoryStore } from "@/stores/history.store";
 import { useIndicatorStore } from "@/stores/indicator.store";
+import { useMeStore } from "@/stores/me.store";
 import type { Ad } from "@/types/ad";
 
 import HeaderDefault from "@/components/HeaderDefault.vue";
@@ -78,11 +79,34 @@ const {
   async () => {
     const adsStore = useAdsStore();
 
+    // First try: public fetch (active ads only)
+    let ad: AdWithPriceData | null = null;
     try {
-      const ad = (await adsStore.loadAdBySlug(
+      ad = (await adsStore.loadAdBySlug(
         route.params.slug as string,
       )) as AdWithPriceData | null;
+    } catch {
+      // Ad not found in public feed — may be pending/inactive
+    }
 
+    // Fallback: if not found and user is authenticated, try owner fetch
+    if (!ad) {
+      const meStore = useMeStore();
+      if (meStore.me) {
+        try {
+          const ownerAd = (await adsStore.loadAdBySlugUnfiltered(
+            route.params.slug as string,
+          )) as AdWithPriceData | null;
+          if (ownerAd && ownerAd.user?.id === meStore.me.id) {
+            ad = ownerAd;
+          }
+        } catch {
+          // Not found at all
+        }
+      }
+    }
+
+    try {
       if (!ad) {
         return null;
       }
