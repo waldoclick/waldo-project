@@ -1,5 +1,5 @@
 import { mount } from "@vue/test-utils";
-import AccordionDefault from "./AccordionDefault.vue";
+import AccordionDefault from "@/components/AccordionDefault.vue";
 import { describe, it, expect } from "vitest";
 
 describe("<AccordionDefault />", () => {

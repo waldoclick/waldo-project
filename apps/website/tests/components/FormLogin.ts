@@ -1,6 +1,6 @@
 import { mount } from "@vue/test-utils";
 import { describe, it, expect } from "vitest";
-import FormLogin from "./FormLogin.vue";
+import FormLogin from "@/components/FormLogin.vue";
 
 describe("<FormLogin />", () => {
   it("should disable submit button when fields are empty", async () => {
