@@ -74,6 +74,7 @@ export default defineNuxtConfig({
             "https://js.zohocdn.com",
             "https://css.zohocdn.com",
             "https://static.zohocdn.com",
+            "https://static.cloudflareinsights.com",
           ],
 
           "style-src": ["'self'", "'unsafe-inline'", "https://css.zohocdn.com"],
