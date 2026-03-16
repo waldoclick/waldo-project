@@ -34,12 +34,11 @@ const props = defineProps({
   },
 });
 
-// Instancia del store
-const appStore = useAppStore();
-
 const handleOpenLightbox = () => {
   // Debug: verificar que se está ejecutando
   console.log("SearchIcon clicked, opening lightbox");
+  // Lazy-init store inside handler — safe, never runs during SSR
+  const appStore = useAppStore();
   // Llama la acción del store para abrir la lightbox
   appStore.openSearchLightbox();
   console.log("Lightbox state:", appStore.isSearchLightboxActive);

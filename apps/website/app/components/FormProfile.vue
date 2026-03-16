@@ -342,13 +342,19 @@ const sending = ref(false);
 
 const router = useRouter();
 
-const regionsStore = useRegionsStore();
-const listRegions = computed(() => regionsStore.regions.data);
+const regionsStore = import.meta.client
+  ? useRegionsStore()
+  : /** @type {ReturnType<typeof useRegionsStore>} */ ({});
+const listRegions = computed(() => regionsStore.regions?.data ?? []);
 
-const communesStore = useCommunesStore();
-const listCommunes = computed(() => communesStore.communes.data || []);
+const communesStore = import.meta.client
+  ? useCommunesStore()
+  : /** @type {ReturnType<typeof useCommunesStore>} */ ({});
+const listCommunes = computed(() => communesStore.communes?.data ?? []);
 
-const userStore = useUserStore();
+const userStore = import.meta.client
+  ? useUserStore()
+  : /** @type {ReturnType<typeof useUserStore>} */ ({});
 
 const selectedRegionId = ref(null);
 

@@ -111,8 +111,12 @@ const isTop = ref(true);
 
 const { y: scrollY } = useScroll(window);
 
-const adStore = useAdStore();
-const appStore = useAppStore();
+const adStore = import.meta.client
+  ? useAdStore()
+  : ({} as ReturnType<typeof useAdStore>);
+const appStore = import.meta.client
+  ? useAppStore()
+  : ({} as ReturnType<typeof useAppStore>);
 
 watch(scrollY, (newY) => {
   // Check if we're at the top

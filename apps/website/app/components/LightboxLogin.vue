@@ -55,7 +55,9 @@ import LoginWithGoogle from "@/components/LoginWithGoogle.vue";
 import { useAppStore } from "@/stores/app.store";
 import { X as IconX } from "lucide-vue-next";
 
-const appStore = useAppStore();
+const appStore = import.meta.client
+  ? useAppStore()
+  : ({} as ReturnType<typeof useAppStore>);
 
 const { data: providers, pending: providersPending } = useLazyAsyncData(
   "providers",
