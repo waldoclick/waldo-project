@@ -767,4 +767,23 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
       ctx.throw(500, error);
     }
   },
+
+  /**
+   * Get advertisement by slug with server-side access control.
+   * Active ads are public. Pending/inactive: owner or manager only.
+   *
+   * @route GET /api/ads/slug/:slug
+   */
+  async findBySlug(ctx: Context) {
+    const { slug } = ctx.params;
+    const userId = ctx.state.user?.id ?? null;
+
+    const ad = await strapi.service("api::ad.ad").findBySlug(slug, userId);
+
+    if (!ad) {
+      return ctx.notFound("Ad not found or access denied");
+    }
+
+    return ctx.send({ data: ad });
+  },
 }));
