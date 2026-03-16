@@ -54,7 +54,9 @@ import { ref, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useFilterStore } from "@/stores/filter.store";
 
-const filterStore = useFilterStore();
+const filterStore = import.meta.client
+  ? useFilterStore()
+  : ({} as ReturnType<typeof useFilterStore>);
 const route = useRoute();
 const router = useRouter();
 const isClient = ref(false);

@@ -38,8 +38,6 @@ import { useLogger } from "@/composables/useLogger";
 
 const { Swal } = useSweetAlert2();
 const router = useRouter();
-const appStore = useAppStore();
-const meStore = useMeStore();
 const { logInfo } = useLogger();
 const apiClient = useApiClient();
 const { login } = useAdAnalytics();
@@ -130,12 +128,14 @@ const handleVerify = async () => {
     login("email");
 
     // Website post-login flow: profile check → referer → /anuncios
+    const meStore = useMeStore();
     const isProfileComplete = await meStore.isProfileComplete();
     if (!isProfileComplete) {
       router.push("/cuenta/perfil/editar");
       return;
     }
 
+    const appStore = useAppStore();
     appStore.closeLoginLightbox();
     const redirectTo = appStore.getReferer || "/anuncios";
     appStore.clearReferer();

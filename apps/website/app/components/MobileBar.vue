@@ -186,8 +186,12 @@ import LogoBlack from "@/components/LogoBlack.vue";
 
 const me = useStrapiUser();
 const { logout } = useLogout();
-const appStore = useAppStore();
-const { isMobileMenuOpen } = storeToRefs(appStore);
+const appStore = import.meta.client
+  ? useAppStore()
+  : ({} as ReturnType<typeof useAppStore>);
+const { isMobileMenuOpen } = import.meta.client
+  ? storeToRefs(appStore as ReturnType<typeof useAppStore>)
+  : { isMobileMenuOpen: ref(false) };
 
 const route = useRoute();
 

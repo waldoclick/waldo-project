@@ -66,13 +66,11 @@ const form = ref({
   category: String(route.query.category || ""),
 });
 
-const filterStore = useFilterStore();
-const appStore = useAppStore();
-
 // Cargar y ordenar categorías antes del renderizado
 const { data: categories } = await useAsyncData(
   "search-categories",
   async () => {
+    const filterStore = useFilterStore();
     const cats = await filterStore.loadFilterCategories();
     return (cats as (FilterCategory & { count?: number })[]).sort(
       (a, b) => (b.count || 0) - (a.count || 0),
@@ -115,7 +113,8 @@ const handleSubmit = () => {
     },
   });
 
-  // Cerrar el lightbox después de la búsqueda
+  // Cerrar el lightbox después de la búsqueda — lazy-init, never runs during SSR
+  const appStore = useAppStore();
   appStore.closeSearchLightbox();
 };
 </script>

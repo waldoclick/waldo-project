@@ -28,10 +28,10 @@ const props = defineProps({
   },
 });
 
-const appStore = useAppStore();
-
 const handleClick = (event: MouseEvent) => {
   event.preventDefault(); // Prevenir la redirección
+  // Lazy-init store inside handler — safe, never runs during SSR
+  const appStore = useAppStore();
   appStore.openLoginLightbox(); // Abrir el lightbox
 };
 

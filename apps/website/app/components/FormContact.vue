@@ -103,7 +103,6 @@ import type { User } from "~/types/user";
 // Inicializa el router y strapi
 const router = useRouter();
 const apiClient = useApiClient();
-const appStore = useAppStore();
 const user = useStrapiUser<User>();
 
 // Define the form schema using yup
@@ -208,6 +207,8 @@ const submitToStrapi = async (values: any) => {
       },
     });
     sending.value = false;
+    // Lazy-init store inside handler — safe, never runs during SSR
+    const appStore = useAppStore();
     appStore.setContactFormSent();
     router.push("/contacto/gracias");
   } catch (error) {

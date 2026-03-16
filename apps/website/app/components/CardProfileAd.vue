@@ -138,9 +138,6 @@ import { useImageProxy } from "@/composables/useImage";
 import ButtonIcon from "@/components/ButtonIcon.vue";
 
 const { transformUrl } = useImageProxy();
-const adStore = useAdStore();
-const communesStore = useCommunesStore();
-const userStore = useUserStore();
 
 const props = defineProps({
   ad: {
@@ -231,6 +228,9 @@ const formatDate = (dateString?: string) => {
 
 const handleRepublish = async () => {
   const ad = props.ad;
+  // Lazy-init stores inside handler — safe, never runs during SSR
+  const adStore = useAdStore();
+  const communesStore = useCommunesStore();
 
   const fillAdStore = async () => {
     if (!ad) return;
@@ -340,6 +340,8 @@ const closeDeactivateLightbox = () => {
 const handleDeactivateSubmit = async (reason: string) => {
   if (!props.ad?.documentId) return;
   isDeactivating.value = true;
+  // Lazy-init store inside handler — safe, never runs during SSR
+  const userStore = useUserStore();
   try {
     await userStore.deactivateAd(props.ad.documentId, reason);
     closeDeactivateLightbox();
@@ -372,6 +374,8 @@ const handlePushImage = (response: any) => {
   };
 
   const currentGallery: GalleryItem[] = props.ad?.gallery || [];
+  // Lazy-init store inside handler — safe, never runs during SSR
+  const adStore = useAdStore();
   adStore.updateGallery([...currentGallery, newImage]);
 };
 </script>

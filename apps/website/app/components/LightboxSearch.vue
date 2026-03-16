@@ -47,8 +47,10 @@ import { X as IconX } from "lucide-vue-next";
 // Importación de la imagen de búsqueda
 import searchImage from "/images/search-image.svg";
 
-// Instancia del store
-const appStore = useAppStore();
+// Instancia del store — guarded to avoid getActivePinia crash during SSR
+const appStore = import.meta.client
+  ? useAppStore()
+  : ({} as ReturnType<typeof useAppStore>);
 
 // Computed para obtener el valor reactivo del store
 const isSearchLightboxActive = computed(() => {
