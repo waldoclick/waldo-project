@@ -4,7 +4,7 @@ milestone: v1.38
 milestone_name: GA4 Analytics Audit & Implementation
 status: completed
 last_updated: "2026-03-16T14:22:52.308Z"
-last_activity: 2026-03-16 — Completed 092-02-PLAN.md (COOKIE_DOMAIN env documentation + human-verified login/logout regression-free)
+last_activity: 2026-03-16 — Completed quick task 54: replace dual-fetch ad detail with server-side ACL endpoint GET /api/ads/slug/:slug
 progress:
   total_phases: 7
   completed_phases: 7
