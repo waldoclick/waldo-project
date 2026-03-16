@@ -33,13 +33,12 @@
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import type { Ref } from "vue";
 import { useRouter } from "vue-router";
-import { useAppStore } from "@/stores/app.store";
 import { useLogger } from "@/composables/useLogger";
 import type { User } from "@/types/user";
+import { useAppStore } from "@/stores/app.store";
 
 const { Swal } = useSweetAlert2();
 const router = useRouter();
-const appStore = useAppStore();
 const { logInfo } = useLogger();
 const client = useStrapiClient();
 
@@ -151,6 +150,7 @@ const handleVerify = async () => {
 
     pendingToken.value = "";
     logInfo("User logged in successfully via 2-step verification.");
+    const appStore = useAppStore();
     appStore.clearReferer();
     router.push("/");
   } catch (error) {

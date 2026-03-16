@@ -154,7 +154,9 @@ const props = withDefaults(defineProps<Props>(), {
 const { public: publicConfig } = useRuntimeConfig();
 const websiteUrl = publicConfig.websiteUrl as string;
 
-const settingsStore = useSettingsStore();
+const settingsStore = import.meta.client
+  ? useSettingsStore()
+  : ({} as ReturnType<typeof useSettingsStore>);
 
 // Computed accessor for the current section's settings
 const sectionSettings = computed(() => settingsStore[props.section]);

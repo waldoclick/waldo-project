@@ -124,7 +124,9 @@ interface Faq {
   updatedAt: string;
 }
 
-const settingsStore = useSettingsStore();
+const settingsStore = import.meta.client
+  ? useSettingsStore()
+  : ({} as ReturnType<typeof useSettingsStore>);
 const section = "faqs" as const;
 
 const filters = computed(() => settingsStore.getFaqsFilters);
