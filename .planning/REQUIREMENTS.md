@@ -1,46 +1,61 @@
-# Requirements: Waldo Project — v1.39
+# Requirements: Waldo — Shared Authentication Session
 
-**Defined:** 2026-03-15
+**Defined:** 2026-03-16
 **Core Value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
 
-## v1.39 Requirements
+## v1.40 Requirements
 
-Requirements for milestone v1.39 — Unified API Client. Completa la centralización de API iniciada en v1.38 donde todos los POST/PUT/DELETE ya pasaron por `useApiClient`. Este milestone migra los GET de datos del website al mismo composable, dejando un único punto de entrada para todos los fetches.
+Requirements for Shared Authentication Session milestone.
 
-### API Client Unification (apps/website only)
+### Session Sharing
 
-- [x] **API-01**: Todos los `strapi.find()` en stores del website migrados a `useApiClient`
-- [x] **API-02**: Todos los `strapi.findOne()` en stores del website migrados a `useApiClient`
-- [x] **API-03**: Los composables `useStrapi.ts`, `useOrderById.ts`, `usePacksList.ts` migrados a `useApiClient`
-- [x] **API-04**: Las pages y components que llaman `strapi.find()/findOne()` directamente migrados a `useApiClient`
-- [x] **API-05**: `useApiClient` soporta GET requests (sin inyección de reCAPTCHA)
-- [x] **API-06**: `typeCheck: true` pasa con zero errores después de la migración
+- [ ] **SESS-01**: El usuario manager que se autentica en website queda automáticamente autenticado en dashboard sin doble login
+- [ ] **SESS-02**: El usuario que se autentica en dashboard queda automáticamente autenticado en website
+- [ ] **SESS-03**: Al hacer logout en website, la sesión en dashboard también se cierra
+- [ ] **SESS-04**: Al hacer logout en dashboard, la sesión en website también se cierra
+- [ ] **SESS-05**: La cookie compartida se configura por entorno via `COOKIE_DOMAIN` env var (`.waldo.click` prod, `.waldoclick.dev` staging)
+- [ ] **SESS-06**: El entorno local (sin `COOKIE_DOMAIN`) no se ve afectado — cookie sigue siendo host-only
+
+### Safety & Cleanup
+
+- [ ] **SAFE-01**: Dashboard tiene composable `useLogout` centralizado; todos los call sites lo usan
+- [ ] **SAFE-02**: La cookie host-only antigua (sin atributo domain) se limpia explícitamente en logout para prevenir zombie sessions
+- [ ] **SAFE-03**: `.env.example` en ambas apps documenta `COOKIE_DOMAIN`
+
+## Future Requirements
+
+### Post-migration Polish
+
+- **POLL-01**: Post-logout website Pinia stores reset cuando el logout se origina desde el dashboard (minor stale-data UX issue; stores son origin-scoped a localStorage, sin riesgo de seguridad)
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| Migrar apps/dashboard | Dashboard queda para milestone posterior |
-| Migrar auth helpers (fetchUser, setToken, logout) | No son fetches de datos — son helpers de sesión correctos en el SDK |
-| Migrar OAuth helpers (getProviderAuthenticationUrl, authenticateProvider) | OAuth flow requiere el SDK; no son candidates para useApiClient |
-| Eliminar dependencia completa de @nuxtjs/strapi | Auth layer aún depende del SDK; eliminación completa queda para el futuro |
+| Custom SSO redirect flow | No necesario — ambas apps comparten el mismo backend Strapi y emisor de JWT |
+| Server-side JWT revocation / session blacklist | Fuera del modelo stateless JWT actual; no requerido para el caso de uso |
+| Staging verification phase formal | Manual testing post-deploy, no requiere fase de código |
+| `__Host-` prefixed cookie name | Explícitamente previene el atributo `Domain` (restricción RFC 6265) |
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| API-01 | Phase 090 | Complete |
-| API-02 | Phase 090 | Complete |
-| API-03 | Phase 090 | Complete |
-| API-04 | Phase 090 | Complete |
-| API-05 | Phase 089 | Complete |
-| API-06 | Phase 090 | Complete |
+| SAFE-01 | Phase TBD | Pending |
+| SAFE-02 | Phase TBD | Pending |
+| SAFE-03 | Phase TBD | Pending |
+| SESS-01 | Phase TBD | Pending |
+| SESS-02 | Phase TBD | Pending |
+| SESS-03 | Phase TBD | Pending |
+| SESS-04 | Phase TBD | Pending |
+| SESS-05 | Phase TBD | Pending |
+| SESS-06 | Phase TBD | Pending |
 
 **Coverage:**
-- v1.39 requirements: 6 total
-- Mapped to phases: 6 ✓
-- Unmapped: 0 ✓
+- v1.40 requirements: 9 total
+- Mapped to phases: 0 (pending roadmap)
+- Unmapped: 9 ⚠️
 
 ---
-*Requirements defined: 2026-03-15*
-*Last updated: 2026-03-15 after initial definition*
+*Requirements defined: 2026-03-16*
+*Last updated: 2026-03-16 after initial definition*
