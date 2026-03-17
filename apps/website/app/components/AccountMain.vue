@@ -19,8 +19,8 @@
     <div class="account--main__announcements">
       <div class="account--main__announcements__text">
         <div class="account--main__announcements__own">
-          <span v-html="adReservationsText" />
-          <span
+          <span v-html="adReservationsText" />{{ " "
+          }}<span
             v-if="featuredAdReservationsText"
             v-html="featuredAdReservationsText"
           />
