@@ -17,4 +17,5 @@ export default ({ env }) => ({
     enabled: env.bool("CRON_ENABLED", true),
     tasks: cronTasks,
   },
+  watchIgnoreFiles: ["**/data/**"],
 });
