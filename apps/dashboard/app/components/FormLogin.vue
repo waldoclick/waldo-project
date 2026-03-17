@@ -133,6 +133,22 @@ const handleResendConfirmation = async () => {
 };
 
 const handleSubmit = async (values: Record<string, unknown>) => {
+  // Check if there's an existing non-manager session cookie
+  const existingCookie = useCookie("waldo_jwt");
+  if (existingCookie.value) {
+    const confirmed = await Swal.fire({
+      title: "Ya tienes una sesión activa",
+      text: "Estás conectado con un usuario que no es administrador. ¿Deseas cerrar esa sesión e iniciar sesión como administrador?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Continuar",
+      cancelButtonText: "Cancelar",
+    });
+    if (!confirmed.isConfirmed) return;
+    // Clear the existing session cookie
+    existingCookie.value = null;
+  }
+
   sending.value = true;
 
   try {
