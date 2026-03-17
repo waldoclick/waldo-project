@@ -18,7 +18,7 @@ export const useColor = () => {
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
   };
 
-  const bgColorWithTransparency = (color: string, alpha: number = 0.1) => {
+  const bgColorWithTransparency = (color: string, alpha: number = 0.2) => {
     return hexToRgba(color, alpha);
   };
 
