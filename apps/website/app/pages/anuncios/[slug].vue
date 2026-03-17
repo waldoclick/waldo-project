@@ -197,7 +197,13 @@ const getErrorMessage = () => {
 // Show 404 when data is done loading but no ad was found
 watchEffect(() => {
   if (!pending.value && !adData.value) {
-    showError(getErrorMessage());
+    const err = getErrorMessage();
+    throw createError({
+      statusCode: err.statusCode,
+      statusMessage: err.message,
+      message: err.description,
+      fatal: true,
+    });
   }
 });
 
