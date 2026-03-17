@@ -10,8 +10,8 @@
     <RelatedAds
       v-if="relatedAds && relatedAds.length > 0"
       :ads="relatedAds"
-      :loading="relatedLoading"
-      :error="relatedError"
+      :loading="false"
+      :error="null"
     />
     <FooterDefault />
   </div>
@@ -22,8 +22,6 @@ const { $setSEO, $setStructuredData } = useNuxtApp();
 
 import { useRoute } from "vue-router";
 import { useAsyncData } from "#app";
-import { useAdsStore } from "@/stores/ads.store";
-import { useRelatedStore } from "@/stores/related.store";
 import { useHistoryStore } from "@/stores/history.store";
 import { useIndicatorStore } from "@/stores/indicator.store";
 import type { Ad, AdAccess } from "@/types/ad";
@@ -64,69 +62,64 @@ interface AdWithPriceData extends Omit<
 interface AdPageData {
   ad: AdWithPriceData;
   access: AdAccess;
+  relatedAds: Ad[];
 }
 
 const route = useRoute();
 const config = useRuntimeConfig();
 const historyStore = useHistoryStore();
-const relatedStore = useRelatedStore();
 const indicatorStore = useIndicatorStore();
+const client = useApiClient();
 
-const {
-  data: adData,
-  refresh,
-  pending,
-  error: adError,
-} = await useAsyncData<AdPageData | null>(
+const { data: adData } = await useAsyncData<AdPageData | null>(
   `ad-${route.params.slug}`,
   async () => {
-    const adsStore = useAdsStore();
-
-    let result: { ad: AdWithPriceData; access: AdAccess } | null = null;
+    // Fetch the ad directly — no store
+    let adResult: { data: AdWithPriceData; access: AdAccess } | null = null;
     try {
-      result = (await adsStore.loadAdBySlug(route.params.slug as string)) as {
-        ad: AdWithPriceData;
-        access: AdAccess;
-      } | null;
+      adResult = await client<{ data: AdWithPriceData; access: AdAccess }>(
+        `ads/slug/${route.params.slug as string}`,
+      );
     } catch {
-      // Ad not found or access denied
+      // 404 or access denied — show error page
+      showError({ statusCode: 404, statusMessage: "Anuncio no encontrado" });
+      return null;
     }
 
-    try {
-      if (!result) {
-        return null;
-      }
+    if (!adResult?.data) {
+      showError({ statusCode: 404, statusMessage: "Anuncio no encontrado" });
+      return null;
+    }
 
-      const ad = result.ad;
+    const ad = adResult.data;
+    const access = adResult.access;
 
-      // For now, always show the ad information
+    // Format price
+    if (ad.price) {
+      ad.priceData = {
+        formattedPrice: new Intl.NumberFormat("es-CL", {
+          style: "currency",
+          currency: ad.currency || "CLP",
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+        }).format(ad.price),
+        originalPrice: ad.price,
+        originalCurrency: ad.currency || "CLP",
+      };
 
-      // Format original price and convert to alternate currency
-      if (ad.price) {
-        ad.priceData = {
-          formattedPrice: new Intl.NumberFormat("es-CL", {
-            style: "currency",
-            currency: ad.currency || "CLP",
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0,
-          }).format(ad.price),
-          originalPrice: ad.price,
-          originalCurrency: ad.currency || "CLP",
-        };
-
-        const result = await indicatorStore.convertCurrency({
+      try {
+        const converted = await indicatorStore.convertCurrency({
           amount: ad.priceData.originalPrice,
           from: ad.priceData.originalCurrency as "CLP" | "USD" | "EUR",
           to: (ad.currency === "CLP" ? "USD" : "CLP") as "CLP" | "USD" | "EUR",
         });
-
-        if (result?.data) {
-          const resultData = result.data as unknown as { result: number };
-          const resultMeta = (result as any).meta as
+        if (converted?.data) {
+          const convertedData = converted.data as unknown as { result: number };
+          const convertedMeta = (converted as any).meta as
             | { timestamp: string }
             | undefined;
-          ad.priceData.convertedPrice = resultData.result;
-          ad.priceData.convertedTimestamp = resultMeta?.timestamp;
+          ad.priceData.convertedPrice = convertedData.result;
+          ad.priceData.convertedTimestamp = convertedMeta?.timestamp;
           ad.priceData.convertedCurrency =
             ad.currency === "CLP" ? "USD" : "CLP";
           ad.priceData.formattedConvertedPrice = new Intl.NumberFormat(
@@ -139,71 +132,51 @@ const {
             },
           ).format(ad.priceData.convertedPrice ?? 0);
         }
+      } catch {
+        // Currency conversion is non-critical
       }
-
-      // Only load related ads for active ads — Strapi related endpoint requires a published ad
-      // Non-active statuses from Strapi: "pending", "archived", "banned", "rejected", "draft", "unknown"
-      if (ad.status === "active") {
-        try {
-          await relatedStore.loadRelatedAds(ad.id);
-        } catch {
-          // Non-critical — related ads failing should not block the main ad page
-        }
-      }
-
-      historyStore.addToHistory({
-        id: ad.id,
-        title: ad.title,
-        slug: ad.slug,
-        url: route.fullPath,
-        price: ad.price,
-        image: ad.gallery?.[0]?.url || "",
-      });
-
-      return { ad, access: result.access };
-    } catch (error) {
-      console.error("Error loading ad:", error);
-      return null;
     }
+
+    // Fetch related ads directly — only for active ads
+    let relatedAds: Ad[] = [];
+    if (ad.status === "active" && ad.id) {
+      try {
+        const relatedResult = await client<{ data: Ad[] }>(
+          `related/ads/${ad.id}`,
+          { params: { populate: "*" } as unknown as Record<string, unknown> },
+        );
+        relatedAds = relatedResult?.data ?? [];
+      } catch {
+        // Non-critical
+      }
+    }
+
+    historyStore.addToHistory({
+      id: ad.id,
+      title: ad.title,
+      slug: ad.slug,
+      url: route.fullPath,
+      price: ad.price,
+      image: ad.gallery?.[0]?.url || "",
+    });
+
+    return { ad, access, relatedAds };
   },
   {
     server: true,
     lazy: false,
+    default: () => null,
   },
 );
 
-// Convenience computed refs — adData is now { ad, access }
 const adComputed = computed(() => adData.value?.ad ?? null);
 const adAccess = computed(() => adData.value?.access ?? null);
-
-// Build the appropriate error message
-const getErrorMessage = () => {
-  if (adError.value) {
-    return {
-      statusCode: 404,
-      message: "Página no encontrada",
-      description:
-        "Lo sentimos, no pudimos cargar el anuncio. Por favor, intenta nuevamente.",
-    };
-  }
-  return {
-    statusCode: 404,
-    message: "Página no encontrada",
-    description:
-      "Lo sentimos, el anuncio que buscas no existe o no está disponible.",
-  };
-};
+const relatedAds = computed(() => adData.value?.relatedAds ?? []);
 
 // Show 404 when data is done loading but no ad was found
 watchEffect(() => {
-  if (!pending.value && !adData.value) {
-    const err = getErrorMessage();
-    throw createError({
-      statusCode: err.statusCode,
-      statusMessage: err.message,
-      message: err.description,
-      fatal: true,
-    });
+  if (!adData.value) {
+    showError({ statusCode: 404, statusMessage: "Anuncio no encontrado" });
   }
 });
 
@@ -311,12 +284,6 @@ watch(
   },
   { immediate: true },
 );
-
-const {
-  relatedAds,
-  loading: relatedLoading,
-  error: relatedError,
-} = storeToRefs(relatedStore);
 
 // Analytics — view_item tracking (DISC-02)
 const adAnalytics = useAdAnalytics();

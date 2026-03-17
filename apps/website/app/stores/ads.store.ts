@@ -77,7 +77,6 @@ export const useAdsStore = defineStore(
           throw new Error("Ad not found");
         }
       } catch (err) {
-        error.value = "Error al cargar el anuncio";
         console.error("Error loading ad:", err);
         throw err;
       } finally {
