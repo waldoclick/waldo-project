@@ -144,7 +144,11 @@ const {
       // Only load related ads for active ads — Strapi related endpoint requires a published ad
       // Non-active statuses from Strapi: "pending", "archived", "banned", "rejected", "draft", "unknown"
       if (ad.status === "active") {
-        await relatedStore.loadRelatedAds(ad.id);
+        try {
+          await relatedStore.loadRelatedAds(ad.id);
+        } catch {
+          // Non-critical — related ads failing should not block the main ad page
+        }
       }
 
       historyStore.addToHistory({
