@@ -10,6 +10,13 @@
 import { factories } from "@strapi/strapi";
 import { Context } from "koa";
 import jwt from "jsonwebtoken";
+import { sanitizeAdForPublic } from "../services/sanitize-ad";
+
+/** Returns true if ctx.state.user has the manager role. */
+const ctxIsManager = (ctx: Context): boolean => {
+  const role = (ctx.state.user as Record<string, any>)?.role;
+  return (role?.name ?? "").toLowerCase() === "manager";
+};
 
 interface PaginationMeta {
   pagination: {
@@ -91,7 +98,9 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
         delete options.pagination;
       }
 
-      const activeAds = await strapi.service("api::ad.ad").activeAds(options);
+      const activeAds = await strapi
+        .service("api::ad.ad")
+        .activeAds(options, ctxIsManager(ctx));
       return activeAds;
     } catch (error) {
       ctx.throw(500, error);
@@ -127,7 +136,9 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
         delete options.pagination;
       }
 
-      const pendingAds = await strapi.service("api::ad.ad").pendingAds(options);
+      const pendingAds = await strapi
+        .service("api::ad.ad")
+        .pendingAds(options, ctxIsManager(ctx));
       return pendingAds;
     } catch (error) {
       ctx.throw(500, error);
@@ -165,7 +176,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
 
       const archivedAds = await strapi
         .service("api::ad.ad")
-        .archivedAds(options);
+        .archivedAds(options, ctxIsManager(ctx));
       return archivedAds;
     } catch (error) {
       ctx.throw(500, error);
@@ -198,7 +209,9 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
         delete options.pagination;
       }
 
-      const bannedAds = await strapi.service("api::ad.ad").bannedAds(options);
+      const bannedAds = await strapi
+        .service("api::ad.ad")
+        .bannedAds(options, ctxIsManager(ctx));
       return bannedAds;
     } catch (error) {
       ctx.throw(500, error);
@@ -236,7 +249,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
 
       const rejectedAds = await strapi
         .service("api::ad.ad")
-        .rejectedAds(options);
+        .rejectedAds(options, ctxIsManager(ctx));
       return rejectedAds;
     } catch (error) {
       ctx.throw(500, error);
@@ -270,7 +283,9 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
         delete options.pagination;
       }
 
-      const draftAds = await strapi.service("api::ad.ad").draftAds(options);
+      const draftAds = await strapi
+        .service("api::ad.ad")
+        .draftAds(options, ctxIsManager(ctx));
       return draftAds;
     } catch (error) {
       ctx.throw(500, error);
@@ -818,6 +833,12 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
       return ctx.notFound("Ad not found or access denied");
     }
 
-    return ctx.send({ data: result.ad, access: result.access });
+    // Managers see the full ad; public and owners get sanitized data
+    const adData =
+      result.access.role === "manager"
+        ? result.ad
+        : sanitizeAdForPublic(result.ad as Record<string, any>);
+
+    return ctx.send({ data: adData, access: result.access });
   },
 }));
