@@ -112,6 +112,7 @@ export default defineNuxtConfig({
             "https://salesiq.zoho.com",
             "wss://salesiq.zohopublic.com",
             "wss://salesiq.zoho.com",
+            "wss://vts.zohopublic.com",
             "https://*.zohocdn.com",
             "wss://*.zohocdn.com",
           ],
