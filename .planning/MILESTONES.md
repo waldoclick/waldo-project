@@ -1,5 +1,23 @@
 ## v1.27 Reparar eventos GA4 ecommerce en flujo de pago unificado (Shipped: 2026-03-12)
 
+## v1.39 Unified API Client (Shipped: 2026-03-15)
+
+**Phases completed:** 2 phases (089–090), 7 plans
+**Timeline:** 2026-03-15 (1 day)
+**Git range:** `4035b8c` → `96653c4`
+
+**Key accomplishments:**
+- Confirmed `useApiClient` GET passthrough is correct without source changes; added 1 GET-with-params test to document the contract (9 tests total)
+- Migrated 5 reference-data stores (filter, regions, communes, conditions, faqs) from `strapi.find()` to `useApiClient` with cache guards preserved
+- Migrated 4 primary content stores (ads, related, articles, categories) and 3 user/business stores (me, user, indicator)
+- Migrated 3 composables (`useStrapi`, `useOrderById`, `usePacksList`) — callers required zero changes (raw body shapes identical to SDK returns)
+- Migrated 4 pages and 1 component (`index.vue`, `anunciar/gracias.vue`, `anunciar/index.vue`, `packs/index.vue`, `FormProfile.vue`)
+- Final validation gate: `grep` confirms zero `strapi.find/findOne` calls remain; `typeCheck: true` passes; browser smoke test approved
+
+**Archive:** `.planning/milestones/v1.39-ROADMAP.md` | `.planning/milestones/v1.39-REQUIREMENTS.md`
+
+---
+
 ## v1.38 GA4 Analytics Audit & Implementation (Shipped: 2026-03-14)
 
 **Phases completed:** 3 phases (083–085), 6 plans

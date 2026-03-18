@@ -16,7 +16,7 @@
 - ✅ **v1.36 Two-Step Login Verification** — Phases 077–078 (shipped 2026-03-14). See `.planning/milestones/v1.36-ROADMAP.md`
 - ✅ **v1.37 Email Authentication Flows** — Phases 079–082 (shipped 2026-03-14). See `.planning/milestones/v1.37-ROADMAP.md`
 - ✅ **v1.38 GA4 Analytics Audit & Implementation** — Phases 083–085 (shipped 2026-03-14). See `.planning/milestones/v1.38-ROADMAP.md`
-- 📋 **v1.39 Unified API Client** — Phases 089–090 (planned)
+- ✅ **v1.39 Unified API Client** — Phases 089–090 (shipped 2026-03-15). See `.planning/milestones/v1.39-ROADMAP.md`
 - 🚧 **v1.40 Shared Authentication Session** — Phases 091–092 (in progress)
 
 ## Phases
@@ -26,10 +26,13 @@
 - [x] **Phase 091: Dashboard useLogout Composable** — Centralize dashboard logout into a single composable; wire all call sites (completed 2026-03-16)
 - [x] **Phase 092: Cookie Domain Migration** — Add COOKIE_DOMAIN-conditional domain attribute to both apps; ship old-cookie cleanup atomically (completed 2026-03-16)
 
-### v1.39 Unified API Client
+<details>
+<summary>✅ v1.39 Unified API Client (Phases 089–090) — SHIPPED 2026-03-15</summary>
 
-- [x] **Phase 089: GET Support in useApiClient** — Extend `useApiClient` to handle GET requests without reCAPTCHA injection (completed 2026-03-15)
-- [x] **Phase 090: Migrate All GET Callers** — Migrate all stores, composables, pages and components from `strapi.find()/findOne()` to `useApiClient`; typeCheck passes (completed 2026-03-15)
+- [x] Phase 089: GET Support in useApiClient (1/1 plan) — completed 2026-03-15
+- [x] Phase 090: Migrate All GET Callers (6/6 plans) — completed 2026-03-15
+
+</details>
 
 <details>
 <summary>✅ v1.38 GA4 Analytics Audit & Implementation (Phases 083–085) — SHIPPED 2026-03-14</summary>
@@ -71,42 +74,6 @@ Plans:
 Plans:
 - [ ] 092-01-PLAN.md — Add COOKIE_DOMAIN conditional to both nuxt.config.ts + old-cookie cleanup in both useLogout composables
 - [ ] 092-02-PLAN.md — Document COOKIE_DOMAIN in both .env.example files + human-verify checkpoint
-
----
-
-### Phase 089: GET Support in useApiClient
-**Goal**: `useApiClient` handles all HTTP methods — GET requests pass through cleanly without reCAPTCHA injection, unblocking caller migrations
-**Depends on**: Nothing (first phase of milestone; v1.38 Phase 085 can run concurrently)
-**Requirements**: API-05
-**Success Criteria** (what must be TRUE):
-  1. Calling `useApiClient('GET', '/api/filters')` returns the raw response body without adding an `X-Recaptcha-Token` header
-  2. Calling `useApiClient('POST', '/api/ads')` still injects `X-Recaptcha-Token` (existing behaviour preserved)
-  3. `typeCheck: true` passes with zero errors after the GET support change
-  4. Existing Vitest tests for `useApiClient` (POST/PUT/DELETE paths) continue to pass unchanged
-**Plans**: 1 plan
-
-Plans:
-- [ ] 089-01-PLAN.md — Add GET-with-params test, run full Vitest suite + typecheck gate
-
-### Phase 090: Migrate All GET Callers
-**Goal**: Every `strapi.find()` and `strapi.findOne()` call in `apps/website` is replaced by `useApiClient`; the Strapi SDK is no longer used for data fetching
-**Depends on**: Phase 089
-**Requirements**: API-01, API-02, API-03, API-04, API-06
-**Success Criteria** (what must be TRUE):
-  1. All 12 stores (`filter`, `regions`, `ads`, `communes`, `related`, `me`, `conditions`, `articles`, `indicator`, `faqs`, `user`, `categories`) fetch data via `useApiClient` — no `strapi.find()` or `strapi.findOne()` calls remain in any store file
-  2. `useStrapi.ts`, `useOrderById.ts`, and `usePacksList.ts` composables fetch data via `useApiClient` — callers receive the raw response body (no `.data` wrapper)
-  3. `index.vue`, `anunciar/gracias.vue`, `anunciar/index.vue`, `packs/index.vue`, and `FormProfile.vue` fetch data via `useApiClient` — no direct SDK calls remain in any page or component
-  4. `typeCheck: true` runs with zero TypeScript errors after the full migration; `nuxt typecheck` exits 0
-  5. The website loads and all pages render correctly in the browser — no runtime errors from response shape mismatches (`.data` wrapper removed at every migrated call site)
-**Plans**: 6 plans
-
-Plans:
-- [ ] 090-01-PLAN.md — Migrate stores batch 1: filter, regions, communes, conditions, faqs
-- [ ] 090-02-PLAN.md — Migrate stores batch 2: ads, related, articles, categories
-- [ ] 090-03-PLAN.md — Migrate stores batch 3: me, user, indicator
-- [ ] 090-04-PLAN.md — Migrate composables: useStrapi, useOrderById, usePacksList
-- [ ] 090-05-PLAN.md — Migrate pages/components: index.vue, anunciar/gracias.vue, anunciar/index.vue, packs/index.vue, FormProfile.vue
-- [ ] 090-06-PLAN.md — Final validation gate: grep + typecheck + browser smoke test
 
 <details>
 <summary>✅ v1.36 Two-Step Login Verification (Phases 077–078) — SHIPPED 2026-03-14</summary>
