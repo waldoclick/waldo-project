@@ -4,9 +4,9 @@ milestone: v1.42
 milestone_name: Dashboard Session Persistence
 status: active
 last_updated: "2026-03-18T00:00:00.000Z"
-last_activity: 2026-03-18 — Milestone v1.42 started (Dashboard Session Persistence)
+last_activity: 2026-03-18 — Roadmap created for v1.42 (1 phase: 094)
 progress:
-  total_phases: 0
+  total_phases: 1
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -20,24 +20,25 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-18 after v1.42 milestone started)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Defining requirements for v1.42 (Dashboard Session Persistence)
+**Current focus:** Phase 094 — Diagnose & Fix Session Persistence in dashboard
 
 ## Position
 
 **Current Milestone:** v1.42 — Dashboard Session Persistence
-**Status:** Defining requirements
+**Current Phase:** 094 — Diagnose & Fix Session Persistence
+**Status:** Ready for planning
 
 ```
-Progress: [░░░░░░░░░░░░░░░░░░░░] 0% — Not started
+Progress: [░░░░░░░░░░░░░░░░░░░░] 0% — Phase 094 not started
 ```
 
-Last activity: 2026-03-18 — Milestone v1.42 started (Dashboard Session Persistence)
+Last activity: 2026-03-18 — Roadmap created (1 phase: 094), all 4 requirements mapped
 
 ## Phase Map
 
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
-| TBD | Dashboard Session Persistence | SESS-* | ⬜ Pending |
+| 094 | Diagnose & Fix Session Persistence | SESS-01, SESS-02, SESS-03, SESS-04 | ⬜ Not started |
 
 ## Accumulated Context
 

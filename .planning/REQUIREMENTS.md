@@ -32,15 +32,15 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SESS-01 | TBD | Pending |
-| SESS-02 | TBD | Pending |
-| SESS-03 | TBD | Pending |
-| SESS-04 | TBD | Pending |
+| SESS-01 | Phase 094 | Pending |
+| SESS-02 | Phase 094 | Pending |
+| SESS-03 | Phase 094 | Pending |
+| SESS-04 | Phase 094 | Pending |
 
 **Coverage:**
 - v1.42 requirements: 4 total
-- Mapped to phases: 0 (pending roadmap)
-- Unmapped: 4 ⚠️
+- Mapped to phases: 4 ✓
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-18*

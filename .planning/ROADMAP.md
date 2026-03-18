@@ -2,6 +2,7 @@
 
 ## Milestones
 
+- 🔄 **v1.42 Dashboard Session Persistence** — Phase 094 (active). See `.planning/ROADMAP.md`
 - ✅ **v1.41 Ad Preview Error Handling** — Phase 093 (shipped 2026-03-18). See `.planning/milestones/v1.41-ROADMAP.md`
 - ⛔ **v1.25 Unified Checkout** — forcibly closed 2026-03-09. See `.planning/milestones/v1.25-ROADMAP.md`
 - ✅ **v1.26 Mostrar comprobante Webpay** — Phase 060 (shipped 2026-03-11). See `.planning/milestones/v1.26-ROADMAP.md`
@@ -21,6 +22,13 @@
 - ✅ **v1.40 Shared Authentication Session** — Phases 091–092 (shipped 2026-03-16). See `.planning/milestones/v1.40-ROADMAP.md`
 
 ## Phases
+
+<details>
+<summary>🔄 v1.42 Dashboard Session Persistence (Phase 094) — ACTIVE</summary>
+
+- [ ] **Phase 094: Diagnose & Fix Session Persistence** — Identify why the guard redirects to login after refresh and apply the fix so sessions persist through page reloads
+
+</details>
 
 <details>
 <summary>✅ v1.41 Ad Preview Error Handling (Phase 093) — SHIPPED 2026-03-18</summary>
@@ -149,6 +157,26 @@
 
 </details>
 
+## Phase Details
+
+### Phase 094: Diagnose & Fix Session Persistence
+
+**Goal**: Dashboard users who log in through the 2-step verify-code flow remain authenticated after a page refresh — the guard never redirects an authenticated user to login
+
+**Depends on**: Nothing (standalone bug fix)
+
+**Requirements**: SESS-01, SESS-02, SESS-03, SESS-04
+
+**Success Criteria** (what must be TRUE):
+  1. Root cause is identified and documented — specifically whether the issue is a missing/expired cookie set by `setToken()`, a failed `fetchUser()` call on page load, a race condition between the Strapi plugin auto-`fetchUser` and `guard.global.ts`, or a `cookieName`/`path`/`domain` mismatch
+  2. After login → verify-code → page refresh, the `waldo_jwt` cookie is present in browser DevTools (Application → Cookies) with `path=/` and the correct `maxAge`
+  3. After login → verify-code → page refresh, the dashboard loads the authenticated user's home page (`/`) without being redirected to `/auth/login`
+  4. The full end-to-end flow is verified in local dev: login form → 6-digit code entry → `setToken()` + `fetchUser()` → hard browser refresh → user stays on `/` authenticated
+
+**Plans**: TBD
+
+---
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status      | Completed  |
@@ -184,3 +212,4 @@
 | 091   | v1.40     | 1/1            | Complete    | 2026-03-16 |
 | 092   | v1.40     | 2/2            | Complete    | 2026-03-16 |
 | 093   | v1.41     | 2/2            | Complete    | 2026-03-18 |
+| 094   | v1.42     | 0/?            | Not started | -          |
