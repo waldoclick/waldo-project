@@ -351,8 +351,8 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 
 ## Current State
 
-**Last shipped:** v1.38 (2026-03-14) — GA4 Analytics Audit & Implementation: complete event coverage (ecommerce bugs, ad discovery, user lifecycle, engagement, blog), 31 Vitest tests, GTM Version 6 published, all events verified in GA4 Realtime
-**Also shipped (same session):** v1.39 (2026-03-15) — Unified API Client; v1.40 (2026-03-16) — Shared Authentication Session
+**Last shipped:** v1.39 (2026-03-15) — Unified API Client: all `strapi.find/findOne` calls replaced with `useApiClient` across 12 stores, 3 composables, 5 pages; `typeCheck` passes; browser smoke-test approved
+**Also shipped:** v1.38 (2026-03-14) — GA4 Analytics; v1.40 (2026-03-16) — Shared Authentication Session (pending archival)
 
 **Email Authentication (since v1.37):** `overrideForgotPassword` fully replaces Strapi's built-in — sends branded `reset-password.mjml` routed to website or dashboard based on `context` field in POST body; `DASHBOARD_URL` env var drives dashboard reset URL. `FormRegister.vue` JWT guard redirects to `/registro/confirmar` (no `setToken` call without JWT); `/registro/confirmar` page with resend button + 60s countdown; `FormLogin.vue` (both apps) shows inline resend section for unconfirmed accounts. Idempotent migration seeder (`user-confirmed-migration.ts`) + cron-runner registration; production DB migrated to `confirmed=true`; Strapi Admin Panel `email_confirmation: ON`, `email_confirmation_redirection: https://waldo.click/login`; smoke-test passed (REGV-01, REGV-02, REGV-06).
 
@@ -368,9 +368,20 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 
 **Webpay receipt (since v1.26):** `/pagar/gracias` shows 8-field Webpay receipt via `ResumeOrder.vue`; fetches by `order.documentId`.
 
+**Unified API Client (since v1.39):** `useApiClient` composable handles all HTTP methods — POST/PUT/DELETE inject `X-Recaptcha-Token`; GET passes through cleanly. All 12 website stores, 3 composables (`useStrapi`, `useOrderById`, `usePacksList`), and 5 pages/components migrated from `@nuxtjs/strapi` SDK; Strapi SDK now used for auth only. Calling convention: `client(url, { method: 'GET', params })` returns raw body (no `.data` wrapper). 9 Vitest tests. `apps/dashboard` migration deferred.
+
 ## Known Issues / Tech Debt
 
 - **Dashboard "Recuperar contraseña" reCAPTCHA bug:** `FormForgotPassword.vue` in dashboard does not send reCAPTCHA token — form submits without it. Pre-existing bug identified during v1.37 smoke testing. Needs investigation (reCAPTCHA middleware vs. controller interception).
+
+## Validated Requirements (v1.39)
+
+- ✓ `useApiClient` GET passthrough confirmed — no reCAPTCHA injection on GET; params forwarded cleanly — v1.39
+- ✓ All 12 `apps/website` stores migrated from `strapi.find()/findOne()` to `useApiClient` — zero SDK data-fetch calls remain — v1.39
+- ✓ `useStrapi.ts`, `useOrderById.ts`, `usePacksList.ts` composables migrated — callers required no changes — v1.39
+- ✓ `index.vue`, `anunciar/gracias.vue`, `anunciar/index.vue`, `packs/index.vue`, `FormProfile.vue` migrated — v1.39
+- ✓ `typeCheck: true` passes with zero errors after full migration — v1.39
+- ✓ Browser smoke test approved — all pages render correctly, zero runtime errors — v1.39
 
 ## Validated Requirements (v1.38)
 
@@ -418,4 +429,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - Guard del dashboard (`guard.global.ts`) preserva comportamiento actual — expulsa roles non-manager
 
 ---
-*Last updated: 2026-03-18 after v1.38 milestone archived*
+*Last updated: 2026-03-18 after v1.39 milestone archived*

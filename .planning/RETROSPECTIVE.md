@@ -2,6 +2,48 @@
 
 *A living document updated after each milestone. Lessons feed forward into future planning.*
 
+## Milestone: v1.39 — Unified API Client
+
+**Shipped:** 2026-03-15
+**Phases:** 2 (089–090) | **Plans:** 7 | **Timeline:** 1 day
+
+### What Was Built
+- Confirmed `useApiClient` GET passthrough was already correct — added 1 test to document the contract; no source changes needed (phase 089)
+- Migrated 5 reference-data stores (filter, regions, communes, conditions, faqs) to `useApiClient` in batch
+- Migrated 4 content stores (ads, related, articles, categories) and 3 user/business stores (me, user, indicator)
+- Migrated 3 composables (`useStrapi`, `useOrderById`, `usePacksList`) — caller API unchanged
+- Migrated 4 pages + 1 component; `FormProfile.vue` `useStrapi()` import was dead code (purely subtractive)
+- Final grep gate + typecheck + browser smoke test — zero regressions, zero SDK data-fetch calls remain
+
+### What Worked
+- Batching stores by domain (reference data / content / user-business) made each plan focused and reviewable
+- "Raw body shapes identical to SDK" discovery meant zero caller changes needed for composable migrations — multiplied the value of phases 089-04
+- Final validation gate plan (090-06) as a dedicated explicit step gave confidence the migration was complete — prevented "probably done" ambiguity
+- `/api/` prefix discovery and fix (`96653c4`) happened quickly post-ship — the grep gate found it because it tested against a live server, not just typecheck
+
+### What Was Inefficient
+- gsd-tools milestone complete reported "4 phases, 10 plans" (inflated) — it included phases/plans from other milestones that happened to be in the directory. Phase count should have been filtered by milestone scope
+- The `/api/` prefix bug (URLs were being doubled: `/api/api/...`) was only caught by the browser smoke test, not by typecheck or Vitest — an integration test against the real Nitro proxy would have caught this earlier
+
+### Patterns Established
+- `const client = useApiClient()` at store root level — never inside action functions; composable rules require setup-level instantiation
+- `useApiClient()` inside factory function for module-level composables like `usePacksList` — same rule, different shape
+- Store methods returning collection responses need explicit return types when callers access `.data`/`.meta` — TypeScript infers `{}` from raw `client()` without them
+- URL convention: no `/api/` prefix in `useApiClient` calls — `useStrapiClient` config already applies the prefix
+- Final validation plan pattern: grep gate → typecheck → browser smoke test → summary commit; this sequence catches all three failure modes systematically
+
+### Key Lessons
+1. **Add a dedicated validation plan for large migrations.** The 090-06 grep + typecheck + smoke test pattern is worth repeating for any migration that touches 10+ files.
+2. **Don't trust typecheck alone for API shape migrations.** The `/api/` prefix bug passed typecheck and Vitest but failed in the browser. Integration tests or manual smoke testing is required for URL-shape changes.
+3. **"Caller API unchanged" is a force multiplier.** Preserving the existing return shape in `useStrapi`/`useOrderById`/`usePacksList` meant callers were migration-transparent — zero downstream changes needed.
+
+### Cost Observations
+- Model mix: ~100% sonnet (balanced profile)
+- Sessions: 7 (one per plan + one for post-ship fix)
+- Notable: Phase 089 was 1 min — discovered the implementation was already correct; just added missing test. Fastest phase in project history.
+
+---
+
 ## Milestone: v1.38 — GA4 Analytics Audit & Implementation
 
 **Shipped:** 2026-03-14
