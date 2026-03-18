@@ -84,7 +84,12 @@ const { data: adData, refresh } = await useAsyncData<AdPageData | null>(
         access: AdAccess;
       } | null;
     } catch {
-      // Ad not found or access denied
+      // Ad not found or access denied (e.g. 404 from Strapi)
+      throw createError({
+        statusCode: 404,
+        message: "Página no encontrada",
+        fatal: true,
+      });
     }
 
     try {
