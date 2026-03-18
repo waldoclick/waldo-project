@@ -90,6 +90,13 @@ None - no external service configuration required.
 - Phase 093 has 1 plan total; this is the only Strapi-side plan
 - Ready for phase completion
 
+## Self-Check: PASSED
+
+- `apps/strapi/src/api/ad/controllers/__tests__/ad.findBySlug.test.ts` ✅ Found
+- `apps/strapi/src/api/ad/controllers/ad.ts` ✅ Found
+- Commit `2a0794a` (test RED) ✅ Found
+- Commit `bf0ee50` (feat GREEN) ✅ Found
+
 ---
 *Phase: 093-ad-preview-error-handling*
 *Completed: 2026-03-18*

@@ -2,7 +2,7 @@
 
 ## Milestones
 
-- 🚧 **v1.41 Ad Preview Error Handling** — Phase 093 (in progress 2026-03-18)
+- ✅ **v1.41 Ad Preview Error Handling** — Phase 093 (shipped 2026-03-18). See `.planning/milestones/v1.41-ROADMAP.md`
 - ⛔ **v1.25 Unified Checkout** — forcibly closed 2026-03-09. See `.planning/milestones/v1.25-ROADMAP.md`
 - ✅ **v1.26 Mostrar comprobante Webpay** — Phase 060 (shipped 2026-03-11). See `.planning/milestones/v1.26-ROADMAP.md`
 - ✅ **v1.27 Reparar eventos GA4 ecommerce** — Phase 061 (shipped 2026-03-12). See `.planning/milestones/v1.27-ROADMAP.md`
@@ -22,27 +22,12 @@
 
 ## Phases
 
-### v1.41 Ad Preview Error Handling
+<details>
+<summary>✅ v1.41 Ad Preview Error Handling (Phase 093) — SHIPPED 2026-03-18</summary>
 
-- [x] **Phase 093: Ad Preview Error Handling** — Fix 500 errors on `/anuncios/[slug]` by replacing `watchEffect`+`showError` with `createError` inside `useAsyncData`, adding `default: () => null`, and wrapping the Strapi `findBySlug` service call in try/catch (completed 2026-03-18)
+- [x] Phase 093: Ad Preview Error Handling (2/2 plans) — completed 2026-03-18
 
-## Phase Details
-
-### Phase 093: Ad Preview Error Handling
-**Goal**: The website never returns 500 on `/anuncios/[slug]` — errors propagate cleanly as 404/5xx Nuxt error pages
-**Depends on**: Nothing (standalone bug fix)
-**Requirements**: PREV-01, PREV-02, PREV-03, PREV-04, STRP-01
-**Success Criteria** (what must be TRUE):
-  1. Visiting `/anuncios/[slug]` with a non-existent or inaccessible slug renders Nuxt's 404 error page, never a 500
-  2. Any unexpected DB error in `findBySlug` returns a clean Strapi error response without exposing a stack trace
-  3. `useAsyncData` in `[slug].vue` has `default: () => null` — hydration never encounters `undefined` state
-  4. `watchEffect` and `showError()` are gone from `[slug].vue` — the error is thrown inside `useAsyncData` via `createError`
-**Plans**: 2 plans
-Plans:
-- [ ] 093-01-PLAN.md — Strapi findBySlug try/catch + Jest test (STRP-01)
-- [ ] 093-02-PLAN.md — [slug].vue createError refactor, remove watchEffect/showError (PREV-01–04)
-
----
+</details>
 
 <details>
 <summary>✅ v1.40 Shared Authentication Session (Phases 091–092) — SHIPPED 2026-03-16</summary>
@@ -198,4 +183,4 @@ Plans:
 | 090   | v1.39     | 6/6            | Complete    | 2026-03-15 |
 | 091   | v1.40     | 1/1            | Complete    | 2026-03-16 |
 | 092   | v1.40     | 2/2            | Complete    | 2026-03-16 |
-| 093   | 2/2 | Complete    | 2026-03-18 | -          |
+| 093   | v1.41     | 2/2            | Complete    | 2026-03-18 |
