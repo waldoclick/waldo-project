@@ -189,6 +189,14 @@ const { data: adData, refresh } = await useAsyncData<AdPageData | null>(
 const adComputed = computed(() => adData.value?.ad ?? null);
 const adAccess = computed(() => adData.value?.access ?? null);
 
+// Client-side guard: if adData is null after hydration, show 404 error page.
+// Cannot use watchEffect (fires in SSR → 500). onMounted is client-only.
+onMounted(() => {
+  if (!adData.value) {
+    showError({ statusCode: 404, message: "Página no encontrada" });
+  }
+});
+
 // Set SEO and structured data when ad data is available
 watch(
   () => adComputed.value,
