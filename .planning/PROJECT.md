@@ -349,21 +349,10 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
           | Far-future cron rule `0 0 1 1 *` for one-shot migration | Never auto-runs; must be triggered manually via cron-runner; prevents accidental execution after initial run — v1.37 | ✓ Good |
           | DB migration hard gate before enabling email_confirmation toggle | If existing users are not migrated first, flipping toggle locks out all pre-existing accounts immediately — v1.37 | ✓ Good |
 
-## Current Milestone: v1.39 Unified API Client
-
-**Goal:** Migrar todos los GET de datos del website a `useApiClient`, completando la unificación iniciada en v1.38 donde todos los POST/PUT/DELETE ya pasaron por este composable.
-
-**Target features:**
-- `useApiClient` extendido para soportar GET requests (sin reCAPTCHA)
-- Todos los `strapi.find()` y `strapi.findOne()` en stores migrados a `useApiClient`
-- Composables `useStrapi.ts`, `useOrderById.ts`, `usePacksList.ts` migrados
-- Pages y components con fetches directos migrados
-- `typeCheck: true` pasa con zero errores
-
 ## Current State
 
-**Last shipped:** v1.37 (2026-03-14) — Email Authentication Flows: full email confirmation on form registration (not OAuth), branded MJML password reset with context routing, production DB migration, smoke-test passed
-**Active milestone:** v1.38 — GA4 Analytics Audit & Implementation
+**Last shipped:** v1.38 (2026-03-14) — GA4 Analytics Audit & Implementation: complete event coverage (ecommerce bugs, ad discovery, user lifecycle, engagement, blog), 31 Vitest tests, GTM Version 6 published, all events verified in GA4 Realtime
+**Also shipped (same session):** v1.39 (2026-03-15) — Unified API Client; v1.40 (2026-03-16) — Shared Authentication Session
 
 **Email Authentication (since v1.37):** `overrideForgotPassword` fully replaces Strapi's built-in — sends branded `reset-password.mjml` routed to website or dashboard based on `context` field in POST body; `DASHBOARD_URL` env var drives dashboard reset URL. `FormRegister.vue` JWT guard redirects to `/registro/confirmar` (no `setToken` call without JWT); `/registro/confirmar` page with resend button + 60s countdown; `FormLogin.vue` (both apps) shows inline resend section for unconfirmed accounts. Idempotent migration seeder (`user-confirmed-migration.ts`) + cron-runner registration; production DB migrated to `confirmed=true`; Strapi Admin Panel `email_confirmation: ON`, `email_confirmation_redirection: https://waldo.click/login`; smoke-test passed (REGV-01, REGV-02, REGV-06).
 
@@ -375,13 +364,23 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 
 **Blog Public Views (since v1.30):** `slug` uid field on Article; 7 blog-specific components; `useArticlesStore`; `blog/index.vue` + `blog/[slug].vue` with full SSR, SEO, Markdown via `marked`.
 
-**GA4 analytics (since v1.27):** Full ecommerce event chain — `view_item_list` → `step_view` → `begin_checkout` → `redirect_to_payment` → `purchase` (guarded); `pushEvent` flow discriminator; 12 Vitest tests.
+**GA4 analytics (since v1.27, extended v1.38):** Full event coverage — ecommerce chain (`view_item_list` → `step_view` → `begin_checkout` → `redirect_to_payment` → `purchase`), ad discovery (`viewItemListPublic`, `viewItem`, `search`), user lifecycle (`signUp`, `login`), engagement (`contactSeller`, `generateLead`), content (`articleView`); `pushEvent` flow discriminator with `ad_creation`/`user_engagement`/`user_lifecycle`/`content_engagement` flows; 31 Vitest tests; GTM Version 6 published with `ga4-engagement-events` tag (dynamic `{{Event}}` name covers all engagement/lifecycle/content events); all events verified in GA4 Realtime and Tag Assistant.
 
 **Webpay receipt (since v1.26):** `/pagar/gracias` shows 8-field Webpay receipt via `ResumeOrder.vue`; fetches by `order.documentId`.
 
 ## Known Issues / Tech Debt
 
 - **Dashboard "Recuperar contraseña" reCAPTCHA bug:** `FormForgotPassword.vue` in dashboard does not send reCAPTCHA token — form submits without it. Pre-existing bug identified during v1.37 smoke testing. Needs investigation (reCAPTCHA middleware vs. controller interception).
+
+## Validated Requirements (v1.38)
+
+- ✓ GA4 purchase events report real revenue (Strapi biginteger `Number()` coercion) — v1.38
+- ✓ GA4 purchase `item_id` shows `order.documentId` (not empty string) — v1.38
+- ✓ Free ad creation tracked as `purchase` event with `value: 0` in GA4 — v1.38
+- ✓ `view_item_list` event fires on `/anuncios` page load; `search` event fires on keyword/commune filter change — v1.38
+- ✓ `view_item` event fires on `/anuncios/[slug]` with `item_id`, `item_name`, `price`, `item_category`; navigating between ads fires distinct events — v1.38
+- ✓ `contact` (email/phone), `generate_lead`, `sign_up`, `login` (email/google), `article_view` events fire at correct trigger points — v1.38
+- ✓ GTM Version 6 published: `ga4-engagement-events` tag covers all engagement/lifecycle/content events with dynamic `{{Event}}` name — v1.38
 
 ## Validated Requirements (v1.37)
 
@@ -419,4 +418,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - Guard del dashboard (`guard.global.ts`) preserva comportamiento actual — expulsa roles non-manager
 
 ---
-*Last updated: 2026-03-16 after v1.40 milestone started*
+*Last updated: 2026-03-18 after v1.38 milestone archived*

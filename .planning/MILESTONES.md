@@ -1,5 +1,23 @@
 ## v1.27 Reparar eventos GA4 ecommerce en flujo de pago unificado (Shipped: 2026-03-12)
 
+## v1.38 GA4 Analytics Audit & Implementation (Shipped: 2026-03-14)
+
+**Phases completed:** 3 phases (083–085), 6 plans
+**Timeline:** 2026-03-14 (1 day)
+**Git range:** `bccfada` → `026f06c`
+
+**Key accomplishments:**
+- Fixed GA4 ecommerce bugs: `Number()` coercion on Strapi biginteger revenue fields and `||` fallback for `item_id` — GA4 now shows real revenue instead of $0
+- Added `purchase` event (value: 0) on free ad creation at `/anunciar/gracias` via `watch(adData)` + `purchaseFired` guard — TDD (17 tests)
+- Added `viewItemListPublic`, `viewItem`, `search` events to `useAdAnalytics.ts` via TDD (23 tests) and wired into ad listing/detail pages with SSR-safe guard patterns
+- Added `contactSeller`, `generateLead`, `signUp`, `login`, `articleView` events (31 tests) and wired into `AdSingle.vue`, `gracias.vue`, `FormRegister.vue`, `FormVerifyCode.vue`, `blog/[slug].vue`
+- GTM Version 6 published: `ga4-engagement-events` tag with dynamic `{{Event}}` name covers all new engagement/lifecycle/content events
+- All 6 new event types verified in GA4 Realtime and GTM Tag Assistant
+
+**Archive:** `.planning/milestones/v1.38-ROADMAP.md` | `.planning/milestones/v1.38-REQUIREMENTS.md`
+
+---
+
 ## v1.37 Email Authentication Flows (Shipped: 2026-03-14)
 
 **Phases completed:** 4 phases, 6 plans, 0 tasks

@@ -2,6 +2,50 @@
 
 *A living document updated after each milestone. Lessons feed forward into future planning.*
 
+## Milestone: v1.38 — GA4 Analytics Audit & Implementation
+
+**Shipped:** 2026-03-14
+**Phases:** 3 (083–085) | **Plans:** 6 | **Timeline:** 1 day
+
+### What Was Built
+- Fixed 3 GA4 ecommerce bugs: real revenue (Strapi biginteger `Number()` coercion), correct `item_id` (`||` fallback chain), and free-ad `purchase` event with `value: 0`
+- Added 3 discovery tracking functions to `useAdAnalytics`: `viewItemListPublic`, `viewItem`, `search` — wired into `/anuncios` pages with SSR-safe guard patterns
+- Added 5 engagement/lifecycle/content functions: `contactSeller`, `generateLead`, `signUp`, `login`, `articleView` — wired into 5 components/pages
+- TDD throughout: each plan started with failing tests, implementation driven by RED-GREEN cycle; 31 tests total
+- GTM Version 6 published: single `ga4-engagement-events` tag with `{{Event}}` dynamic name covers all new events
+
+### What Worked
+- TDD cycle was extremely fast — RED commit then GREEN commit per plan; no debugging needed
+- The `pushEvent()` delegation pattern from prior milestones made adding new events trivial (just call pushEvent with different args)
+- SSR guard patterns (`viewItemFired` ref + slug-change reset watcher) established in 084 carried cleanly into 085
+- GTM `{{Event}}` dynamic variable pattern: one tag, one trigger covering all engagement events — no per-event tag pollution
+- `@click.capture` for contact events was a low-effort, high-reliability fix for click propagation edge cases
+
+### What Was Inefficient
+- Phase 083's git first-commit shows `2025-12-18` in the stats lookup (the `008589a` commit is an old codebase commit matched by `083`/`084`/`085` string — not phase-specific). Better to scope git stats to phase directory commits only
+- Pre-existing Vitest failures in unrelated files (`useOrderById.test.ts`, `FormLogin.spec.ts`, `ResumeOrder.test.ts`) caused confusion in Phase 084 — needed `git stash` to confirm they were pre-existing
+
+### Patterns Established
+- Strapi biginteger defense: always wrap numeric fields from API responses with `Number()` before passing to GA4
+- `||` over `??` for fallback chains where empty string should trigger fallback (not just `null`/`undefined`)
+- `watch(dataRef, { immediate: true })` + boolean `firedRef` guard for all analytics events on data-driven pages — prevents double-fire on SSR hydration
+- Slug-change watcher resets `firedRef` to `false` — required when Nuxt reuses a component across `[slug]` navigations
+- Flow strings: `ad_creation` (ecommerce), `user_engagement` (contact/lead), `user_lifecycle` (auth), `content_engagement` (blog)
+- All non-ecommerce GA4 events pass empty `[]` items array — no ecommerce block for engagement events
+- GTM dynamic `{{Event}}` variable pattern: one trigger regex + one tag = coverage for N events without N tags
+
+### Key Lessons
+1. **TDD is the fastest path for analytics composables.** Writing assertions before implementation forces precise thinking about event shape and avoids debugging dataLayer pushes manually in the browser.
+2. **SSR-safe analytics requires two guards: immediate watcher + fired ref.** The `{ immediate: true }` handles already-loaded SSR data; the boolean guard prevents multiple calls from reactive re-evaluation.
+3. **GTM tag consolidation pays off.** Registering all engagement events under one regex trigger + one tag keeps GTM workspace clean and reduces publish friction for future event additions.
+
+### Cost Observations
+- Model mix: ~100% sonnet (balanced profile)
+- Sessions: 3 (one per phase)
+- Notable: All 6 plans completed in 1 day — TDD + established patterns = very low friction; average plan execution ~2-5 min
+
+---
+
 ## Milestone: v1.1 — Dashboard Technical Debt Reduction
 
 **Shipped:** 2026-03-05
