@@ -29,6 +29,10 @@
 
 - [ ] **Phase 095: Fix Cookie Replacement on Session Swap** — Replace `existingCookie.value = null` with `await strapiLogout()` in `FormLogin.vue` so the shared-domain cookie is cleared correctly
 
+**Plans:** 1 plan
+Plans:
+- [ ] 095-01-PLAN.md — Fix FormLogin.vue cookie clearing + remove dead auth.populate joins from both nuxt.config.ts files
+
 </details>
 
 <details>
