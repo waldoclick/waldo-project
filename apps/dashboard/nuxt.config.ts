@@ -248,6 +248,8 @@ export default defineNuxtConfig({
         "region",
         "business_region",
         "business_commune",
+        "ad_reservations.ad",
+        "ad_featured_reservations.ad",
       ],
     },
   },
