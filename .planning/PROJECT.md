@@ -364,8 +364,8 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 
 ## Current State
 
-**Last shipped:** v1.41 (2026-03-18) — Ad Preview Error Handling: `createError` inside `useAsyncData` in `[slug].vue`; `watchEffect`+`showError` eliminated; `default: () => null` added; Strapi `findBySlug` controller wrapped in `try/catch` + 4 Jest tests
-**Also shipped recently:** v1.40 (2026-03-16) — Shared Authentication Session; v1.39 (2026-03-15) — Unified API Client
+**Last shipped:** v1.42 (2026-03-18) — Dashboard Session Persistence: removed dead `ad_reservations.ad` + `ad_featured_reservations.ad` populate from `auth.populate`; root cause documented (`fetchUser()` SSR catch calls `setToken(null)`)
+**Also shipped recently:** v1.41 (2026-03-18) — Ad Preview Error Handling; v1.40 (2026-03-16) — Shared Authentication Session
 
 **Email Authentication (since v1.37):** `overrideForgotPassword` fully replaces Strapi's built-in — sends branded `reset-password.mjml` routed to website or dashboard based on `context` field in POST body; `DASHBOARD_URL` env var drives dashboard reset URL. `FormRegister.vue` JWT guard redirects to `/registro/confirmar` (no `setToken` call without JWT); `/registro/confirmar` page with resend button + 60s countdown; `FormLogin.vue` (both apps) shows inline resend section for unconfirmed accounts. Idempotent migration seeder (`user-confirmed-migration.ts`) + cron-runner registration; production DB migrated to `confirmed=true`; Strapi Admin Panel `email_confirmation: ON`, `email_confirmation_redirection: https://waldo.click/login`; smoke-test passed (REGV-01, REGV-02, REGV-06).
 
@@ -447,14 +447,12 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ `findBySlug` controller envuelto en `try/catch` + `strapi.log.error` — errores inesperados de DB devuelven respuesta limpia sin stack trace — v1.41
 - ✓ 4 tests Jest para `findBySlug` controller (TDD RED→GREEN): null→notFound, throw→internalServerError, happy path manager, happy path public — v1.41
 
-## Current Milestone: v1.42 Dashboard Session Persistence
+## Validated Requirements (v1.42)
 
-**Goal:** Diagnosticar y reparar la pérdida de sesión del dashboard — al refrescar la página después de login, el usuario debe permanecer autenticado en lugar de ser redirigido al login.
-
-**Target features:**
-- Diagnóstico root-cause de por qué `useStrapiUser()` retorna null en el guard al refrescar
-- Fix de la persistencia de la cookie `waldo_jwt` en el dashboard
-- Verificación smoke-test end-to-end: login → refresh → continúa autenticado
+- ✓ Root cause identificado: `@nuxtjs/strapi` plugin `strapi.js` llama `fetchUser()` en SSR; su catch llama `setToken(null)` si `/users/me` falla, destruyendo el JWT cookie antes de que corra el guard — v1.42
+- ✓ Fix substractivo: eliminados `"ad_reservations.ad"` y `"ad_featured_reservations.ad"` del `auth.populate` en `nuxt.config.ts` — no estaban en el `User` TypeScript interface ni eran consumidos por ningún componente — v1.42
+- ✓ `/users/me` SSR ya no falla con el populate reducido; `waldo_jwt` cookie persiste correctamente entre recargas — v1.42
+- ✓ `guard.global.ts` sin modificar — el guard original con `if (!roleName) return` es correcto y suficiente — v1.42
 
 ---
-*Last updated: 2026-03-18 after v1.42 milestone started*
+*Last updated: 2026-03-18 after v1.42 complete*

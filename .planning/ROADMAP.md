@@ -2,7 +2,7 @@
 
 ## Milestones
 
-- 🔄 **v1.42 Dashboard Session Persistence** — Phase 094 (active). See `.planning/ROADMAP.md`
+- ✅ **v1.42 Dashboard Session Persistence** — Phase 094 (shipped 2026-03-18). See `.planning/milestones/v1.42-ROADMAP.md`
 - ✅ **v1.41 Ad Preview Error Handling** — Phase 093 (shipped 2026-03-18). See `.planning/milestones/v1.41-ROADMAP.md`
 - ⛔ **v1.25 Unified Checkout** — forcibly closed 2026-03-09. See `.planning/milestones/v1.25-ROADMAP.md`
 - ✅ **v1.26 Mostrar comprobante Webpay** — Phase 060 (shipped 2026-03-11). See `.planning/milestones/v1.26-ROADMAP.md`
@@ -24,11 +24,9 @@
 ## Phases
 
 <details>
-<summary>🔄 v1.42 Dashboard Session Persistence (Phase 094) — ACTIVE</summary>
+<summary>✅ v1.42 Dashboard Session Persistence (Phase 094) — SHIPPED 2026-03-18</summary>
 
-- [ ] **Phase 094: Diagnose & Fix Session Persistence** — Identify why the guard redirects to login after refresh and apply the fix so sessions persist through page reloads
-  - Plans: 1 plan
-    - [ ] 094-01-PLAN.md — Guard token-aware fix + client-only fetchUser plugin
+- [x] Phase 094: Diagnose & Fix Session Persistence (1/1 plan) — completed 2026-03-18
 
 </details>
 
@@ -176,7 +174,7 @@
   4. The full end-to-end flow is verified in local dev: login form → 6-digit code entry → `setToken()` + `fetchUser()` → hard browser refresh → user stays on `/` authenticated
 
 **Plans**: 1 plan
-- [ ] 094-01-PLAN.md — Guard token-aware fix + client-only fetchUser plugin
+- [x] 094-01-PLAN.md — Remove dead auth.populate joins; root cause documented — completed 2026-03-18
 
 ---
 
@@ -215,4 +213,4 @@
 | 091   | v1.40     | 1/1            | Complete    | 2026-03-16 |
 | 092   | v1.40     | 2/2            | Complete    | 2026-03-16 |
 | 093   | v1.41     | 2/2            | Complete    | 2026-03-18 |
-| 094   | v1.42     | 0/?            | Not started | -          |
+| 094   | v1.42     | 1/1            | Complete    | 2026-03-18 |

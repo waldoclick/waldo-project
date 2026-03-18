@@ -7,10 +7,10 @@
 
 ### Session Persistence
 
-- [ ] **SESS-01**: Diagnóstico root-cause documentado — se identifica exactamente por qué el guard redirige al login tras refresh (cookie ausente, fetchUser falla, o race condition SSR)
-- [ ] **SESS-02**: La cookie `waldo_jwt` persiste correctamente entre recargas de página en el dashboard local
-- [ ] **SESS-03**: El guard `guard.global.ts` no redirige a un usuario autenticado al refrescar la página
-- [ ] **SESS-04**: Usuario puede completar el flujo: login → verify-code → refresh → permanecer autenticado
+- [x] **SESS-01**: Diagnóstico root-cause documentado — `@nuxtjs/strapi` `fetchUser()` llama `setToken(null)` en el catch del SSR `/users/me`; fix: eliminar populate de relaciones pesadas no usadas (`ad_reservations.ad`, `ad_featured_reservations.ad`)
+- [x] **SESS-02**: La cookie `waldo_jwt` persiste correctamente entre recargas de página — el fix previene que `fetchUser()` destruya el token en SSR
+- [x] **SESS-03**: El guard `guard.global.ts` no redirige a un usuario autenticado al refrescar la página — `/users/me` ya no falla en SSR con el populate reducido
+- [x] **SESS-04**: Usuario puede completar el flujo: login → verify-code → refresh → permanecer autenticado
 
 ## Future Requirements
 
@@ -32,16 +32,16 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SESS-01 | Phase 094 | Pending |
-| SESS-02 | Phase 094 | Pending |
-| SESS-03 | Phase 094 | Pending |
-| SESS-04 | Phase 094 | Pending |
+| SESS-01 | Phase 094 | ✅ Complete (2026-03-18) |
+| SESS-02 | Phase 094 | ✅ Complete (2026-03-18) |
+| SESS-03 | Phase 094 | ✅ Complete (2026-03-18) |
+| SESS-04 | Phase 094 | ✅ Complete (2026-03-18) |
 
 **Coverage:**
 - v1.42 requirements: 4 total
 - Mapped to phases: 4 ✓
-- Unmapped: 0 ✓
+- Completed: 4 ✓
 
 ---
 *Requirements defined: 2026-03-18*
-*Last updated: 2026-03-18 after initial definition*
+*Last updated: 2026-03-18 — v1.42 complete*
