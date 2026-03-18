@@ -2,43 +2,42 @@
 gsd_state_version: 1.0
 milestone: v1.42
 milestone_name: Dashboard Session Persistence
-status: active
+status: complete
 last_updated: "2026-03-18T00:00:00.000Z"
-last_activity: 2026-03-18 — Roadmap created for v1.42 (1 phase: 094)
+last_activity: 2026-03-18 — v1.42 complete. SSR session persistence fixed (auth.populate cleanup)
 progress:
   total_phases: 1
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
-  percent: 0
+  completed_phases: 1
+  total_plans: 1
+  completed_plans: 1
+  percent: 100
 ---
 
 # Session State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-18 after v1.42 milestone started)
+See: .planning/PROJECT.md
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 094 — Diagnose & Fix Session Persistence in dashboard
+**Current focus:** Milestone v1.42 complete — ready for next milestone
 
 ## Position
 
-**Current Milestone:** v1.42 — Dashboard Session Persistence
-**Current Phase:** 094 — Diagnose & Fix Session Persistence
-**Status:** Ready for planning
+**Current Milestone:** v1.42 — Dashboard Session Persistence ✅ COMPLETE
+**Status:** Milestone shipped 2026-03-18
 
 ```
-Progress: [░░░░░░░░░░░░░░░░░░░░] 0% — Phase 094 not started
+Progress: [████████████████████] 100% — Phase 094 complete
 ```
 
-Last activity: 2026-03-18 — Roadmap created (1 phase: 094), all 4 requirements mapped
+Last activity: 2026-03-18 — v1.42 shipped. Root cause: `@nuxtjs/strapi` fetchUser() SSR catch calls setToken(null) when /users/me fails due to heavy populate. Fix: removed unused `ad_reservations.ad` and `ad_featured_reservations.ad` from auth.populate.
 
 ## Phase Map
 
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
-| 094 | Diagnose & Fix Session Persistence | SESS-01, SESS-02, SESS-03, SESS-04 | ⬜ Not started |
+| 094 | Diagnose & Fix Session Persistence | SESS-01, SESS-02, SESS-03, SESS-04 | ✅ Complete (2026-03-18) |
 
 ## Accumulated Context
 
@@ -105,33 +104,8 @@ Last activity: 2026-03-18 — Roadmap created (1 phase: 094), all 4 requirements
 - default: () => null in useAsyncData options constrains return type to T | null (not T | null | undefined) — eliminates undefined from downstream null checks (093-02)
 - COOKIE_DOMAIN lines are commented out in .env.example — local dev must NOT set this var (host-only cookie is correct for localhost); configure only in staging/production deployment environments (092-02)
 - Production COOKIE_DOMAIN=.waldo.click; staging COOKIE_DOMAIN=.waldoclick.dev — both values documented inline in .env.example for both apps (092-02)
-
-### v1.38 Key Facts (GA4 analytics)
-
-- `useAdAnalytics.ts` composable wraps all GA4 events via `window.dataLayer.push()` — all new event functions must be added here
-- File: `apps/website/app/composables/useAdAnalytics.ts`
-- All event functions follow the existing `pushEvent()` pattern
-- `DataLayerEvent` is fully typed in `window.d.ts` (since v1.12)
-- 12 existing Vitest tests in `tests/composables/` — new event functions need tests too
-- Key files for new events:
-  - `apps/website/app/pages/anuncios/index.vue` → `view_item_list`, `search`
-  - `apps/website/app/pages/anuncios/[slug].vue` → `view_item`, `contact` (email + phone)
-  - `apps/website/app/components/FormRegister.vue` → `sign_up`
-  - `apps/website/app/components/FormLogin.vue` → `login` (after verify step completes)
-  - `apps/website/app/pages/blog/[slug].vue` → `article_view`
-
-### v1.40 Key Facts (Shared Authentication Session)
-
-- Cookie name `waldo_jwt` is already identical in both apps — zero name change needed
-- Core change is a conditional domain spread in both `nuxt.config.ts` strapi.cookie blocks: `...(process.env.COOKIE_DOMAIN ? { domain: process.env.COOKIE_DOMAIN } : {})`
-- `@nuxtjs/strapi@2.1.1` passes `strapi.cookie` options verbatim to `useCookie()` — `domain` field is typed and supported
-- Old host-only `waldo_jwt` (no domain attr) must be explicitly cleared in `useLogout.ts` on BOTH apps: `document.cookie = "waldo_jwt=; path=/; max-age=0"` before `strapiLogout()`
-- Dashboard currently has NO `useLogout.ts` composable — Phase 091 creates it; Phase 092 adds old-cookie cleanup to both apps
-- `nuxt-security` does NOT modify Set-Cookie headers (confirmed from installed source) — safe to add domain attr
-- Production `COOKIE_DOMAIN=.waldo.click`; staging `COOKIE_DOMAIN=.waldoclick.dev`; local dev: unset (host-only)
-- Non-manager website users who visit dashboard get force-logged-out by `guard.global.ts` — this clears the shared cookie, also logging them out of website (documented, acceptable behavior)
-- Phase 091 must audit ALL dashboard logout call sites before centralizing (components + middleware)
-- Phase 091 before Phase 092: old-cookie cleanup must cover every call site atomically — no scattered missed call sites
+- SSR populate hygiene: only include populate fields present in the TypeScript User interface and consumed by dashboard components — dead populate joins cause slow /users/me queries that trigger setToken(null) in SSR fetchUser() catch (094-01)
+- dashboard auth.populate: ["role", "commune", "region", "business_region", "business_commune"] — ad_reservations.ad and ad_featured_reservations.ad removed (not in User type, not used by any component) (094-01)
 
 ### Blockers/Concerns (open)
 
