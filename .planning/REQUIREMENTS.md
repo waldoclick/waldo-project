@@ -16,7 +16,7 @@ El website nunca debe devolver 500. Toda la lógica de acceso a avisos vive en e
 
 ### Strapi Robustez
 
-- [ ] **STRP-01**: El controller `findBySlug` tiene `try/catch` alrededor del service call — errores inesperados de DB devuelven respuesta limpia sin exponer stack trace
+- [x] **STRP-01**: El controller `findBySlug` tiene `try/catch` alrededor del service call — errores inesperados de DB devuelven respuesta limpia sin exponer stack trace
 
 ## Future Requirements
 
@@ -39,7 +39,7 @@ El website nunca debe devolver 500. Toda la lógica de acceso a avisos vive en e
 | PREV-02 | Phase 093 | Pending |
 | PREV-03 | Phase 093 | Pending |
 | PREV-04 | Phase 093 | Pending |
-| STRP-01 | Phase 093 | Pending |
+| STRP-01 | Phase 093 | Complete |
 
 **Coverage:**
 - v1.41 requirements: 5 total

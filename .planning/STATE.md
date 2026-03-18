@@ -2,14 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.41
 milestone_name: Ad Preview Error Handling
-status: roadmap_ready
-last_updated: "2026-03-18T00:00:00.000Z"
-last_activity: 2026-03-18 — Roadmap created for v1.41 (1 phase, 5 requirements)
+current_phase: 093 — Ad Preview Error Handling
+status: In Progress — 093-01 complete
+last_updated: "2026-03-18T18:10:00.000Z"
+last_activity: 2026-03-18 — Completed 093-01-PLAN.md (findBySlug try/catch + Jest tests)
 progress:
   total_phases: 1
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_plans: 2
+  completed_plans: 1
   percent: 0
 ---
 
@@ -26,19 +27,19 @@ See: .planning/PROJECT.md (updated 2026-03-18 — milestone v1.41 started)
 
 **Current Milestone:** v1.41 — Ad Preview Error Handling
 **Current Phase:** 093 — Ad Preview Error Handling
-**Status:** Roadmap ready — awaiting plan
+**Status:** In Progress — 093-01 complete (1/2 plans done)
 
 ```
-Progress: [░░░░░░░░░░░░░░░░░░░░] 0% (0/1 phases complete)
+Progress: [██████████] 98% (59/60 plans complete across all milestones)
 ```
 
-Last activity: 2026-03-18 — Roadmap created (Phase 093, 5 requirements)
+Last activity: 2026-03-18 — Completed 093-01 (findBySlug try/catch + 4 Jest tests, STRP-01 done)
 
 ## Phase Map
 
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
-| 093 | Ad Preview Error Handling | PREV-01, PREV-02, PREV-03, PREV-04, STRP-01 | 🚧 Not started |
+| 093 | Ad Preview Error Handling | PREV-01, PREV-02, PREV-03, PREV-04, STRP-01 | 🚧 In Progress (1/2 plans) |
 
 ## Accumulated Context
 
@@ -100,6 +101,7 @@ Last activity: 2026-03-18 — Roadmap created (Phase 093, 5 requirements)
 - Browser smoke test approved: all key pages load correctly with zero console errors after full migration (090-06)
 - useLogout composable centralizes dashboard logout: appStore.$reset() + meStore.reset() + searchStore.clearTavily() + strapiLogout() + navigateTo('/auth/login') — single place for Phase 092 old-cookie cleanup (091-01)
 - import { useStrapiAuth, navigateTo } from '#imports' in useLogout composable — required for Nuxt auto-import interception (091-01)
+- findBySlug try/catch pattern: JWT decode inner try/catch stays OUTSIDE the new outer try — already guarded; outer try wraps service call through ctx.send; catch uses strapi.log.error (not console.error) for server-side logging (STRP-01, 093-01)
 - COOKIE_DOMAIN lines are commented out in .env.example — local dev must NOT set this var (host-only cookie is correct for localhost); configure only in staging/production deployment environments (092-02)
 - Production COOKIE_DOMAIN=.waldo.click; staging COOKIE_DOMAIN=.waldoclick.dev — both values documented inline in .env.example for both apps (092-02)
 
