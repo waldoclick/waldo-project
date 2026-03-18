@@ -145,8 +145,10 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       cancelButtonText: "Cancelar",
     });
     if (!confirmed.isConfirmed) return;
-    // Clear the existing session cookie
-    existingCookie.value = null;
+    // Clear the existing session cookie using strapiLogout() so the shared-domain cookie
+    // is cleared correctly (respects domain attribute from nuxt.config.ts strapi.cookie)
+    const { logout: strapiLogout } = useStrapiAuth();
+    await strapiLogout();
   }
 
   sending.value = true;
