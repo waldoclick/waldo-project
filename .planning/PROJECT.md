@@ -362,6 +362,15 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
            | Catch block re-throws Nuxt errors before generic `createError({ statusCode: 500 })` | Prevents the 404 path (which throws `createError`) from being incorrectly swallowed and re-wrapped as a 500 — v1.41 | ✓ Good |
            | TDD order for Strapi controller fix | Jest test scaffold (RED) before implementation (GREEN) — explicitly confirms broken behavior before fixing it; aligns with project testing standards — v1.41 | ✓ Good |
 
+## Current Milestone: v1.43 — Cross-App Session Replacement
+
+**Goal:** Corregir el flujo de login forzado en el dashboard cuando ya existe una sesión activa del website, para que la nueva cookie de manager se escriba correctamente con el `domain` compartido y persista en ambas apps al refrescar.
+
+**Target features:**
+- Reemplazo correcto de la cookie `waldo_jwt` al cambiar de sesión (de usuario normal a manager)
+- La nueva sesión persiste al refrescar en dashboard y website
+- Eliminación del bug de cookie zombie (host-only vs. shared domain)
+
 ## Current State
 
 **Last shipped:** v1.42 (2026-03-18) — Dashboard Session Persistence: removed dead `ad_reservations.ad` + `ad_featured_reservations.ad` populate from `auth.populate`; root cause documented (`fetchUser()` SSR catch calls `setToken(null)`)
@@ -454,5 +463,12 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ `/users/me` SSR ya no falla con el populate reducido; `waldo_jwt` cookie persiste correctamente entre recargas — v1.42
 - ✓ `guard.global.ts` sin modificar — el guard original con `if (!roleName) return` es correcto y suficiente — v1.42
 
+## Active Requirements (v1.43)
+
+- [ ] Al forzar login en dashboard con sesión activa de website, la cookie `waldo_jwt` previa se elimina correctamente (con `domain` compartido)
+- [ ] La nueva cookie de manager persiste al refrescar en dashboard
+- [ ] La nueva cookie de manager persiste al refrescar en website
+- [ ] No quedan cookies zombie de `waldo_jwt` con distintos `domain` scopes
+
 ---
-*Last updated: 2026-03-18 after v1.42 complete*
+*Last updated: 2026-03-18 after v1.43 started*
