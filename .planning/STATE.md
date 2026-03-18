@@ -2,11 +2,11 @@
 gsd_state_version: 1.0
 milestone: v1.41
 milestone_name: Ad Preview Error Handling
-status: defining_requirements
+status: roadmap_ready
 last_updated: "2026-03-18T00:00:00.000Z"
-last_activity: 2026-03-18 — Milestone v1.41 started
+last_activity: 2026-03-18 — Roadmap created for v1.41 (1 phase, 5 requirements)
 progress:
-  total_phases: 0
+  total_phases: 1
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -25,20 +25,20 @@ See: .planning/PROJECT.md (updated 2026-03-18 — milestone v1.41 started)
 ## Position
 
 **Current Milestone:** v1.41 — Ad Preview Error Handling
-**Status:** Defining requirements
+**Current Phase:** 093 — Ad Preview Error Handling
+**Status:** Roadmap ready — awaiting plan
 
 ```
-Progress: [░░░░░░░░░░░░░░░░░░░░] 0%
+Progress: [░░░░░░░░░░░░░░░░░░░░] 0% (0/1 phases complete)
 ```
 
-Last activity: 2026-03-18 — Milestone v1.41 started
+Last activity: 2026-03-18 — Roadmap created (Phase 093, 5 requirements)
 
 ## Phase Map
 
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
-| 091 | Dashboard useLogout Composable | SAFE-01 | ✓ Complete (2026-03-16) |
-| 092 | Cookie Domain Migration | SESS-01, SESS-02, SESS-03, SESS-04, SESS-05, SESS-06, SAFE-02, SAFE-03 | ✓ Complete (2026-03-16) |
+| 093 | Ad Preview Error Handling | PREV-01, PREV-02, PREV-03, PREV-04, STRP-01 | 🚧 Not started |
 
 ## Accumulated Context
 
