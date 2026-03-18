@@ -9,10 +9,10 @@ El website nunca debe devolver 500. Toda la lógica de acceso a avisos vive en e
 
 ### Ad Preview
 
-- [ ] **PREV-01**: El website nunca devuelve 500 al cargar `/anuncios/[slug]` — cualquier error del endpoint se maneja limpiamente
-- [ ] **PREV-02**: Si el endpoint devuelve 404 (aviso no existe, no accesible, o acceso denegado), el website muestra la página de error 404 correctamente
-- [ ] **PREV-03**: `useAsyncData` en `[slug].vue` usa `default: () => null` para evitar estado `undefined` durante hidratación SSR
-- [ ] **PREV-04**: Se elimina el `watchEffect` + `showError()` de `[slug].vue` — el error se lanza dentro del `useAsyncData` con `createError`
+- [x] **PREV-01**: El website nunca devuelve 500 al cargar `/anuncios/[slug]` — cualquier error del endpoint se maneja limpiamente
+- [x] **PREV-02**: Si el endpoint devuelve 404 (aviso no existe, no accesible, o acceso denegado), el website muestra la página de error 404 correctamente
+- [x] **PREV-03**: `useAsyncData` en `[slug].vue` usa `default: () => null` para evitar estado `undefined` durante hidratación SSR
+- [x] **PREV-04**: Se elimina el `watchEffect` + `showError()` de `[slug].vue` — el error se lanza dentro del `useAsyncData` con `createError`
 
 ### Strapi Robustez
 
@@ -35,10 +35,10 @@ El website nunca debe devolver 500. Toda la lógica de acceso a avisos vive en e
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PREV-01 | Phase 093 | Pending |
-| PREV-02 | Phase 093 | Pending |
-| PREV-03 | Phase 093 | Pending |
-| PREV-04 | Phase 093 | Pending |
+| PREV-01 | Phase 093 | Complete |
+| PREV-02 | Phase 093 | Complete |
+| PREV-03 | Phase 093 | Complete |
+| PREV-04 | Phase 093 | Complete |
 | STRP-01 | Phase 093 | Complete |
 
 **Coverage:**

@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.41
 milestone_name: Ad Preview Error Handling
 current_phase: 093 — Ad Preview Error Handling
-status: In Progress — 093-01 complete
-last_updated: "2026-03-18T18:10:00.000Z"
-last_activity: 2026-03-18 — Completed 093-01-PLAN.md (findBySlug try/catch + Jest tests)
+status: Complete — 093-02 done, all requirements met
+last_updated: "2026-03-18T18:13:00Z"
+last_activity: 2026-03-18 — Completed 093-02 (createError refactor in [slug].vue — PREV-01..PREV-04 done)
 progress:
   total_phases: 1
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 2
-  completed_plans: 1
-  percent: 0
+  completed_plans: 2
+  percent: 100
 ---
 
 # Session State
@@ -27,19 +27,19 @@ See: .planning/PROJECT.md (updated 2026-03-18 — milestone v1.41 started)
 
 **Current Milestone:** v1.41 — Ad Preview Error Handling
 **Current Phase:** 093 — Ad Preview Error Handling
-**Status:** In Progress — 093-01 complete (1/2 plans done)
+**Status:** Complete — both plans done (2/2), all requirements met (STRP-01, PREV-01..PREV-04)
 
 ```
-Progress: [██████████] 98% (59/60 plans complete across all milestones)
+Progress: [██████████] 100% (60/60 plans complete across all milestones)
 ```
 
-Last activity: 2026-03-18 — Completed 093-01 (findBySlug try/catch + 4 Jest tests, STRP-01 done)
+Last activity: 2026-03-18 — Completed 093-02 ([slug].vue createError refactor — PREV-01..PREV-04 done)
 
 ## Phase Map
 
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
-| 093 | Ad Preview Error Handling | PREV-01, PREV-02, PREV-03, PREV-04, STRP-01 | 🚧 In Progress (1/2 plans) |
+| 093 | Ad Preview Error Handling | PREV-01, PREV-02, PREV-03, PREV-04, STRP-01 | ✅ Complete (2/2 plans) |
 
 ## Accumulated Context
 
@@ -102,6 +102,8 @@ Last activity: 2026-03-18 — Completed 093-01 (findBySlug try/catch + 4 Jest te
 - useLogout composable centralizes dashboard logout: appStore.$reset() + meStore.reset() + searchStore.clearTavily() + strapiLogout() + navigateTo('/auth/login') — single place for Phase 092 old-cookie cleanup (091-01)
 - import { useStrapiAuth, navigateTo } from '#imports' in useLogout composable — required for Nuxt auto-import interception (091-01)
 - findBySlug try/catch pattern: JWT decode inner try/catch stays OUTSIDE the new outer try — already guarded; outer try wraps service call through ctx.send; catch uses strapi.log.error (not console.error) for server-side logging (STRP-01, 093-01)
+- SSR-safe 404/500 in Nuxt 4: throw createError({ statusCode, fatal: true }) inside useAsyncData callback — watchEffect/showError races SSR lifecycle and produces 500s; createError is the only pattern that honours Nuxt's error boundary (PREV-01..04, 093-02)
+- default: () => null in useAsyncData options constrains return type to T | null (not T | null | undefined) — eliminates undefined from downstream null checks (093-02)
 - COOKIE_DOMAIN lines are commented out in .env.example — local dev must NOT set this var (host-only cookie is correct for localhost); configure only in staging/production deployment environments (092-02)
 - Production COOKIE_DOMAIN=.waldo.click; staging COOKIE_DOMAIN=.waldoclick.dev — both values documented inline in .env.example for both apps (092-02)
 

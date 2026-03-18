@@ -24,7 +24,7 @@
 
 ### v1.41 Ad Preview Error Handling
 
-- [ ] **Phase 093: Ad Preview Error Handling** — Fix 500 errors on `/anuncios/[slug]` by replacing `watchEffect`+`showError` with `createError` inside `useAsyncData`, adding `default: () => null`, and wrapping the Strapi `findBySlug` service call in try/catch
+- [x] **Phase 093: Ad Preview Error Handling** — Fix 500 errors on `/anuncios/[slug]` by replacing `watchEffect`+`showError` with `createError` inside `useAsyncData`, adding `default: () => null`, and wrapping the Strapi `findBySlug` service call in try/catch (completed 2026-03-18)
 
 ## Phase Details
 
@@ -198,4 +198,4 @@ Plans:
 | 090   | v1.39     | 6/6            | Complete    | 2026-03-15 |
 | 091   | v1.40     | 1/1            | Complete    | 2026-03-16 |
 | 092   | v1.40     | 2/2            | Complete    | 2026-03-16 |
-| 093   | 1/2 | In Progress|  | -          |
+| 093   | 2/2 | Complete   | 2026-03-18 | -          |
