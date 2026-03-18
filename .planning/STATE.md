@@ -1,43 +1,43 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.41
-milestone_name: Ad Preview Error Handling
-status: archived
+milestone: v1.42
+milestone_name: Dashboard Session Persistence
+status: active
 last_updated: "2026-03-18T00:00:00.000Z"
-last_activity: 2026-03-18 — Archived v1.41 milestone (Ad Preview Error Handling)
+last_activity: 2026-03-18 — Milestone v1.42 started (Dashboard Session Persistence)
 progress:
-  total_phases: 1
-  completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Session State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-18 after v1.41 milestone archived)
+See: .planning/PROJECT.md (updated 2026-03-18 after v1.42 milestone started)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Planning next milestone (run `/gsd-new-milestone`)
+**Current focus:** Defining requirements for v1.42 (Dashboard Session Persistence)
 
 ## Position
 
-**Last Milestone:** v1.41 — Ad Preview Error Handling ✅ ARCHIVED
-**Status:** Milestone complete and archived — ready for next milestone
+**Current Milestone:** v1.42 — Dashboard Session Persistence
+**Status:** Defining requirements
 
 ```
-Progress: [████████████████████] 100% — SHIPPED
+Progress: [░░░░░░░░░░░░░░░░░░░░] 0% — Not started
 ```
 
-Last activity: 2026-03-18 — Completed 093-02 ([slug].vue createError refactor — PREV-01..PREV-04 done)
+Last activity: 2026-03-18 — Milestone v1.42 started (Dashboard Session Persistence)
 
 ## Phase Map
 
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
-| 093 | Ad Preview Error Handling | PREV-01, PREV-02, PREV-03, PREV-04, STRP-01 | ✅ Complete (2/2 plans) |
+| TBD | Dashboard Session Persistence | SESS-* | ⬜ Pending |
 
 ## Accumulated Context
 

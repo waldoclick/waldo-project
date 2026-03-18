@@ -447,15 +447,14 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ `findBySlug` controller envuelto en `try/catch` + `strapi.log.error` — errores inesperados de DB devuelven respuesta limpia sin stack trace — v1.41
 - ✓ 4 tests Jest para `findBySlug` controller (TDD RED→GREEN): null→notFound, throw→internalServerError, happy path manager, happy path public — v1.41
 
-## Next Milestone
+## Current Milestone: v1.42 Dashboard Session Persistence
 
-Start with `/gsd-new-milestone` to define requirements and roadmap for the next milestone.
+**Goal:** Diagnosticar y reparar la pérdida de sesión del dashboard — al refrescar la página después de login, el usuario debe permanecer autenticado en lugar de ser redirigido al login.
 
-**Candidates / open items:**
-- POLL-01: Post-logout website Pinia stores reset cuando el logout se origina desde el dashboard (minor stale-data UX; sin riesgo de seguridad)
-- Staging cross-domain verification: deploy `COOKIE_DOMAIN=.waldoclick.dev` en ambas apps y smoke-test SESS-01–04
-- Dashboard `useApiClient` migration (deferred from v1.39)
-- Testing milestone (TEST-01 through TEST-04)
+**Target features:**
+- Diagnóstico root-cause de por qué `useStrapiUser()` retorna null en el guard al refrescar
+- Fix de la persistencia de la cookie `waldo_jwt` en el dashboard
+- Verificación smoke-test end-to-end: login → refresh → continúa autenticado
 
 ---
-*Last updated: 2026-03-18 after v1.41 milestone*
+*Last updated: 2026-03-18 after v1.42 milestone started*
