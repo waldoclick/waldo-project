@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.40
 milestone_name: Shared Authentication Session
-status: completed
-last_updated: "2026-03-18T03:02:44.283Z"
-last_activity: 2026-03-16 — Completed 092-02-PLAN.md (COOKIE_DOMAIN env documentation + human-verified login/logout regression-free)
+status: archived
+last_updated: "2026-03-18T00:00:00.000Z"
+last_activity: 2026-03-18 — Archived v1.40 milestone (Shared Authentication Session)
 progress:
-  total_phases: 4
-  completed_phases: 4
-  total_plans: 10
-  completed_plans: 10
+  total_phases: 2
+  completed_phases: 2
+  total_plans: 3
+  completed_plans: 3
   percent: 100
 ---
 
@@ -17,23 +17,21 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-16 after v1.40 milestone started)
+See: .planning/PROJECT.md (updated 2026-03-18 after v1.40 milestone archived)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.40 — Shared Authentication Session
+**Current focus:** Planning next milestone (run `/gsd-new-milestone`)
 
 ## Position
 
-**Current Milestone:** v1.40 — Shared Authentication Session
-**Status:** v1.39 milestone complete
-Phase: 092 ✓
-Plan: 02/02 ✓
+**Last Milestone:** v1.40 — Shared Authentication Session ✅ ARCHIVED
+**Status:** Milestone complete and archived — ready for next milestone
 
 ```
-Progress: [████████████████████] 100%
+Progress: [████████████████████] 100% — SHIPPED
 ```
 
-Last activity: 2026-03-16 — Completed 092-02-PLAN.md (COOKIE_DOMAIN env documentation + human-verified login/logout regression-free)
+Last activity: 2026-03-18 — Archived v1.40 milestone (Shared Authentication Session)
 
 ## Phase Map
 

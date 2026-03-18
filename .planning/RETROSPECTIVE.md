@@ -2,6 +2,44 @@
 
 *A living document updated after each milestone. Lessons feed forward into future planning.*
 
+## Milestone: v1.40 — Shared Authentication Session
+
+**Shipped:** 2026-03-16
+**Phases:** 2 (091–092) | **Plans:** 3 | **Timeline:** 1 day (same-day delivery)
+
+### What Was Built
+- `useLogout.ts` composable created in dashboard — centralizes all logout logic (resets 3 stores + strapiLogout + navigate); `meStore.reset()` action added; 3 scattered call sites migrated
+- Conditional `COOKIE_DOMAIN` domain spread in both `nuxt.config.ts` strapi.cookie blocks — production emits shared-domain JWT cookie
+- Old host-only `waldo_jwt` cleanup in both `useLogout.ts` composables via `import.meta.client` guard — eliminates zombie sessions
+- `COOKIE_DOMAIN` documented as commented-out examples in both `.env.example` files; human-verified regression-free
+
+### What Worked
+- Phase 091 (composable) before Phase 092 (cookie domain) was the right ordering — old-cookie cleanup applied in one place atomically, no scattered missed call sites
+- The `import.meta.client` guard pattern for client-side cookie manipulation was already established in the codebase — immediate adoption, no discovery needed
+- Conditional object spread `...(COOKIE_DOMAIN ? { domain } : {})` is a clean TypeScript-idiomatic pattern for optional cookie attributes
+- Human-verify checkpoint as last task in Phase 092 (plan 02) gave explicit local regression confirmation before archiving
+
+### What Was Inefficient
+- REQUIREMENTS.md traceability table showed SESS-01–06 as "Pending" after Phase 092 was complete — the SUMMARY.md marked them complete but the requirements file wasn't updated during execution; required reconciliation at archival time
+- No staging deployment to fully validate SESS-01–04 cross-subdomain behavior — code is correct but the real test requires `COOKIE_DOMAIN` to be set in staging environment
+
+### Patterns Established
+- `import { useStrapiAuth, navigateTo } from '#imports'` in composables — required for Nuxt auto-import interception; always use `#imports` (not auto-import) in composable files
+- `if (import.meta.client) { document.cookie = ... }` — the canonical SSR-safe pattern for client-side cookie manipulation in Nuxt 4 composables
+- Commented-out env vars in `.env.example` for vars that MUST be unset in local dev — prevents developer confusion while documenting the production/staging values
+
+### Key Lessons
+1. **Update REQUIREMENTS.md traceability during execution, not just SUMMARY.md.** When a plan completes requirements, checking them in REQUIREMENTS.md immediately prevents archival-time reconciliation.
+2. **For env-gated features, staging smoke test should be a mandatory plan.** SESS-01–04 (cross-subdomain session sharing) can only be verified with `COOKIE_DOMAIN` set — a dedicated staging-verify plan would close this gap formally.
+3. **Two-phase cookie migration (composable first, domain second) is the right pattern.** Phase 091 guaranteed Phase 092's cleanup was atomic — single place, no scattered call sites. Always centralize before extending.
+
+### Cost Observations
+- Model mix: ~100% sonnet (balanced profile)
+- Sessions: 2 (one per phase)
+- Notable: v1.40 was the fastest 2-phase milestone in project history — 6 min total execution time across all 3 plans
+
+---
+
 ## Milestone: v1.39 — Unified API Client
 
 **Shipped:** 2026-03-15

@@ -167,7 +167,12 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
         - ✓ Google OAuth (`GET /auth/:provider/callback`) bypasses 2-step via `ctx.method === "GET"` guard in `overrideAuthLocal` — v1.36
         - ✓ Dashboard `FormLogin.vue` rewritten with `useStrapiClient()` POST + `useState('pendingToken')` handoff to `/auth/verify-code` — v1.36
         - ✓ Dashboard `/auth/verify-code` page with `FormVerifyCode.vue` component — 6-digit input, 60s resend countdown, `setToken(jwt)` + `fetchUser()`, manager role check, Swal errors on failure — v1.36
-        - ✓ Website `FormLogin.vue` and `/login/verificar` page with `FormVerifyCode.vue` implemented (VSTEP-13 to 16 code present; phase 079 not formally executed — carried to next milestone) — v1.36
+         - ✓ Website `FormLogin.vue` and `/login/verificar` page with `FormVerifyCode.vue` implemented (VSTEP-13 to 16 code present; phase 079 not formally executed — carried to next milestone) — v1.36
+
+         - ✓ `useLogout.ts` composable created in `apps/dashboard` — resets appStore, meStore, searchStore, then calls `strapiLogout()` + `navigateTo('/auth/login')`; 3 scattered `useStrapiAuth().logout()` call sites migrated; `meStore.reset()` action added — v1.40
+         - ✓ Conditional `COOKIE_DOMAIN` domain spread added to both `apps/website/nuxt.config.ts` and `apps/dashboard/nuxt.config.ts` strapi.cookie blocks — production emits `Set-Cookie: waldo_jwt=...; Domain=.waldo.click` — v1.40
+         - ✓ Old host-only `waldo_jwt` cleanup injected into both `useLogout` composables via `if (import.meta.client) { document.cookie = "waldo_jwt=; path=/; max-age=0" }` — eliminates zombie sessions post-migration — v1.40
+         - ✓ `COOKIE_DOMAIN` documented as commented-out examples in both `.env.example` files with production (`.waldo.click`) and staging (`.waldoclick.dev`) values — v1.40
 
 ## Context
 
@@ -195,6 +200,7 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - Gemini AI Service (since v1.32): `apps/strapi/src/services/gemini/` — `GeminiService` class (`gemini.service.ts`) wraps `@google/generative-ai`, uses `gemini-1.5-flash` model, reads `GEMINI_API_KEY` from `process.env`, throws at startup if missing (same pattern as SlackService); `index.ts` exports singleton + `generateText` named export; `POST /api/ia/gemini` endpoint (`apps/strapi/src/api/ia/`) accepts `{ prompt }`, returns `{ text }`, wraps Gemini errors in `ApplicationError`; `GEMINI_API_KEY` documented in `.env.example`
 - Anthropic Claude AI Service (v1.33): `apps/strapi/src/services/anthropic/` — `AnthropicService` class wraps `@anthropic-ai/sdk`, uses `claude-sonnet-4-5` model, implements `web_search` tool via Brave Search API; tool loop until `stop_reason === "end_turn"`; `POST /api/ia/claude` endpoint accepts `{ prompt }`, returns `{ text }`
 - 2-Step Login Verification (v1.36): `verification-code` content type (5 fields); `overrideAuthLocal` intercepts `POST /api/auth/local` — returns `{ pendingToken, email }`, no JWT; `GET /auth/:provider/callback` bypassed via `ctx.method === "GET"` guard; `POST /api/auth/verify-code` (15-min expiry, max 3 attempts); `POST /api/auth/resend-code` (60s rate limit); `verification-code-cleanup` daily cron 4 AM; `verification-code.mjml` Spanish email; dashboard `/auth/verify-code` with `FormVerifyCode.vue` (6-digit input, 60s countdown, setToken + role check); website `/login/verificar` with same pattern; 5 additional cron jobs now active (verification-code-cleanup added)
+- Shared Authentication Session (since v1.40): cookie `waldo_jwt` is identical in both apps — conditional `COOKIE_DOMAIN` domain spread in both `nuxt.config.ts` strapi.cookie blocks enables shared JWT across `.waldo.click` subdomains in production; when unset (local dev), host-only cookies issued unchanged; both `useLogout.ts` composables clear the pre-migration host-only `waldo_jwt` cookie before `strapiLogout()`; `COOKIE_DOMAIN` documented as commented-out examples in both `.env.example` files; dashboard `useLogout.ts` composable centralizes all dashboard logout logic (3 call sites migrated)
 
 ## Constraints
 
@@ -347,12 +353,16 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
           | `POST /api/auth/send-email-confirmation` native Strapi (no custom code for resend) | Strapi exposes this endpoint out-of-the-box; custom override would duplicate existing behavior — v1.37 | ✓ Good |
           | Idempotent migration seeder with early-return guard | `findMany` unconfirmed first; return early if 0 — safe to re-run multiple times without side effects — v1.37 | ✓ Good |
           | Far-future cron rule `0 0 1 1 *` for one-shot migration | Never auto-runs; must be triggered manually via cron-runner; prevents accidental execution after initial run — v1.37 | ✓ Good |
-          | DB migration hard gate before enabling email_confirmation toggle | If existing users are not migrated first, flipping toggle locks out all pre-existing accounts immediately — v1.37 | ✓ Good |
+           | DB migration hard gate before enabling email_confirmation toggle | If existing users are not migrated first, flipping toggle locks out all pre-existing accounts immediately — v1.37 | ✓ Good |
+           | Conditional spread `...(COOKIE_DOMAIN ? { domain: COOKIE_DOMAIN } : {})` in strapi.cookie | Keeps the cookie object clean and TypeScript-safe; zero-cost when env var is unset (local dev unchanged) — v1.40 | ✓ Good |
+           | `if (import.meta.client)` guard for `document.cookie` old-cookie cleanup | Prevents Nitro SSR from attempting to access `document` (undefined on server); cleanup runs client-side only — v1.40 | ✓ Good |
+           | No `domain` attr on old-cookie cleanup line | `document.cookie = "waldo_jwt=; max-age=0"` targets only the host-only pre-migration cookie; `strapiLogout()` clears the new shared cookie via `useCookie()` — v1.40 | ✓ Good |
+           | `import { useStrapiAuth, navigateTo } from '#imports'` in dashboard `useLogout.ts` | Required for Nuxt auto-import interception in composables (same pattern as website composable) — v1.40 | ✓ Good |
 
 ## Current State
 
-**Last shipped:** v1.39 (2026-03-15) — Unified API Client: all `strapi.find/findOne` calls replaced with `useApiClient` across 12 stores, 3 composables, 5 pages; `typeCheck` passes; browser smoke-test approved
-**Also shipped:** v1.38 (2026-03-14) — GA4 Analytics; v1.40 (2026-03-16) — Shared Authentication Session (pending archival)
+**Last shipped:** v1.40 (2026-03-16) — Shared Authentication Session: `COOKIE_DOMAIN` conditional spread in both apps; dashboard `useLogout.ts` composable; old host-only cookie cleanup; env documentation; human-verified regression-free
+**Also shipped recently:** v1.39 (2026-03-15) — Unified API Client; v1.38 (2026-03-14) — GA4 Analytics
 
 **Email Authentication (since v1.37):** `overrideForgotPassword` fully replaces Strapi's built-in — sends branded `reset-password.mjml` routed to website or dashboard based on `context` field in POST body; `DASHBOARD_URL` env var drives dashboard reset URL. `FormRegister.vue` JWT guard redirects to `/registro/confirmar` (no `setToken` call without JWT); `/registro/confirmar` page with resend button + 60s countdown; `FormLogin.vue` (both apps) shows inline resend section for unconfirmed accounts. Idempotent migration seeder (`user-confirmed-migration.ts`) + cron-runner registration; production DB migrated to `confirmed=true`; Strapi Admin Panel `email_confirmation: ON`, `email_confirmation_redirection: https://waldo.click/login`; smoke-test passed (REGV-01, REGV-02, REGV-06).
 
@@ -373,6 +383,16 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 ## Known Issues / Tech Debt
 
 - **Dashboard "Recuperar contraseña" reCAPTCHA bug:** `FormForgotPassword.vue` in dashboard does not send reCAPTCHA token — form submits without it. Pre-existing bug identified during v1.37 smoke testing. Needs investigation (reCAPTCHA middleware vs. controller interception).
+
+## Validated Requirements (v1.40)
+
+- ✓ Dashboard `useLogout.ts` composable centralized — resets 3 stores + strapiLogout + navigate; all 3 call sites migrated — v1.40
+- ✓ `meStore.reset()` action added (Composition API pattern — sets `me.value = null`) — v1.40
+- ✓ `COOKIE_DOMAIN` conditional domain spread in both `nuxt.config.ts` — production emits `Domain=.waldo.click` on `waldo_jwt` — v1.40
+- ✓ Old host-only `waldo_jwt` cleanup in both `useLogout.ts` composables — eliminates zombie sessions post-migration — v1.40
+- ✓ `COOKIE_DOMAIN` documented as commented-out examples in both `.env.example` files — v1.40
+- ✓ Local dev regression-free — human verified login/logout without `COOKIE_DOMAIN` set — v1.40
+- ✓ `nuxt typecheck` exits 0 after all changes — v1.40
 
 ## Validated Requirements (v1.39)
 
@@ -417,16 +437,15 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-05**: Consolidar Reservations*/Featured* una vez que tengan store keys dedicados y estrategias de fetch alineadas
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
-## Current Milestone: v1.40 Shared Authentication Session
+## Next Milestone
 
-**Goal:** Compartir la cookie JWT entre `www.waldo.click` y `dashboard.waldo.click` (y sus equivalentes de staging) para que un manager que se autentica en una app quede automáticamente autenticado en la otra — sin doble login.
+Start with `/gsd-new-milestone` to define requirements and roadmap for the next milestone.
 
-**Target features:**
-- Cookie `waldo_jwt` emitida con `domain` configurable por entorno (`COOKIE_DOMAIN` env var)
-- Login en website con role `manager` → sesión activa en dashboard automáticamente
-- Login en dashboard → sesión activa en website automáticamente
-- Logout global: borrar la cookie compartida cierra la sesión en ambas apps
-- Guard del dashboard (`guard.global.ts`) preserva comportamiento actual — expulsa roles non-manager
+**Candidates / open items:**
+- POLL-01: Post-logout website Pinia stores reset when logout originates from dashboard (minor stale-data UX; no security risk)
+- Staging cross-domain verification: deploy `COOKIE_DOMAIN=.waldoclick.dev` to both apps on staging and smoke-test SESS-01–04
+- Dashboard `useApiClient` migration (deferred from v1.39 scope)
+- Testing milestone (TEST-01 through TEST-04)
 
 ---
-*Last updated: 2026-03-18 after v1.39 milestone archived*
+*Last updated: 2026-03-18 after v1.40 milestone*

@@ -1,3 +1,23 @@
+## v1.40 Shared Authentication Session (Shipped: 2026-03-16)
+
+**Phases completed:** 2 phases (091–092), 3 plans
+**Timeline:** 2026-03-16 (same-day)
+**Git range:** `8f287a8` → `115599a`
+**Files changed:** 22 files, +1,362 / -44
+
+**Key accomplishments:**
+- `useLogout.ts` composable created in dashboard — resets appStore, meStore, searchStore, then calls `strapiLogout()` + `navigateTo('/auth/login')`; `meStore.reset()` action added; 3 scattered call sites (DropdownUser.vue, FormVerifyCode.vue, guard.global.ts) migrated
+- Conditional `COOKIE_DOMAIN` domain spread added to both `nuxt.config.ts` strapi.cookie blocks — production emits `Set-Cookie: waldo_jwt=...; Domain=.waldo.click`; local dev unaffected (host-only cookies unchanged)
+- Old host-only `waldo_jwt` cleanup injected into both `useLogout.ts` composables via `if (import.meta.client)` guard — eliminates zombie sessions post-migration
+- `COOKIE_DOMAIN` documented as commented-out examples in both `.env.example` files with production/staging values; human-verified login/logout regression-free
+- `nuxt typecheck` exits 0 in both apps after all changes
+
+**Known gaps:** SESS-01–04 require staging deployment with `COOKIE_DOMAIN=.waldoclick.dev` for full cross-subdomain smoke test (code is complete and correct)
+
+**Archive:** `.planning/milestones/v1.40-ROADMAP.md` | `.planning/milestones/v1.40-REQUIREMENTS.md`
+
+---
+
 ## v1.27 Reparar eventos GA4 ecommerce en flujo de pago unificado (Shipped: 2026-03-12)
 
 ## v1.39 Unified API Client (Shipped: 2026-03-15)
