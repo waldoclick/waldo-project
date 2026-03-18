@@ -827,18 +827,25 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
       }
     }
 
-    const result = await strapi.service("api::ad.ad").findBySlug(slug, userId);
+    try {
+      const result = await strapi
+        .service("api::ad.ad")
+        .findBySlug(slug, userId);
 
-    if (!result) {
-      return ctx.notFound("Ad not found or access denied");
+      if (!result) {
+        return ctx.notFound("Ad not found or access denied");
+      }
+
+      // Managers see the full ad; public and owners get sanitized data
+      const adData =
+        result.access.role === "manager"
+          ? result.ad
+          : sanitizeAdForPublic(result.ad as Record<string, any>);
+
+      return ctx.send({ data: adData, access: result.access });
+    } catch (error) {
+      strapi.log.error("findBySlug error for slug %s: %o", slug, error);
+      return ctx.internalServerError("Internal server error");
     }
-
-    // Managers see the full ad; public and owners get sanitized data
-    const adData =
-      result.access.role === "manager"
-        ? result.ad
-        : sanitizeAdForPublic(result.ad as Record<string, any>);
-
-    return ctx.send({ data: adData, access: result.access });
   },
 }));
