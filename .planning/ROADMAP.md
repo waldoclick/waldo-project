@@ -37,7 +37,10 @@
   2. Any unexpected DB error in `findBySlug` returns a clean Strapi error response without exposing a stack trace
   3. `useAsyncData` in `[slug].vue` has `default: () => null` — hydration never encounters `undefined` state
   4. `watchEffect` and `showError()` are gone from `[slug].vue` — the error is thrown inside `useAsyncData` via `createError`
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 093-01-PLAN.md — Strapi findBySlug try/catch + Jest test (STRP-01)
+- [ ] 093-02-PLAN.md — [slug].vue createError refactor, remove watchEffect/showError (PREV-01–04)
 
 ---
 
@@ -195,4 +198,4 @@
 | 090   | v1.39     | 6/6            | Complete    | 2026-03-15 |
 | 091   | v1.40     | 1/1            | Complete    | 2026-03-16 |
 | 092   | v1.40     | 2/2            | Complete    | 2026-03-16 |
-| 093   | v1.41     | 0/TBD          | Not started | -          |
+| 093   | v1.41     | 0/2            | Not started | -          |
