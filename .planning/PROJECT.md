@@ -437,15 +437,14 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-05**: Consolidar Reservations*/Featured* una vez que tengan store keys dedicados y estrategias de fetch alineadas
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
-## Next Milestone
+## Current Milestone: v1.41 Ad Preview Error Handling
 
-Start with `/gsd-new-milestone` to define requirements and roadmap for the next milestone.
+**Goal:** El website nunca devuelve 500 — cualquier error del endpoint de aviso se maneja limpiamente y delega a la página de error correcta.
 
-**Candidates / open items:**
-- POLL-01: Post-logout website Pinia stores reset when logout originates from dashboard (minor stale-data UX; no security risk)
-- Staging cross-domain verification: deploy `COOKIE_DOMAIN=.waldoclick.dev` to both apps on staging and smoke-test SESS-01–04
-- Dashboard `useApiClient` migration (deferred from v1.39 scope)
-- Testing milestone (TEST-01 through TEST-04)
+**Target features:**
+- `[slug].vue` reemplaza `watchEffect` + `showError()` por `createError` dentro de `useAsyncData`
+- `default: () => null` agregado a `useAsyncData` en `[slug].vue`
+- Controller `findBySlug` en Strapi envuelto en `try/catch` para errores inesperados de DB
 
 ---
-*Last updated: 2026-03-18 after v1.40 milestone*
+*Last updated: 2026-03-18 — milestone v1.41 started*
