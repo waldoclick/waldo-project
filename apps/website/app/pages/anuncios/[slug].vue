@@ -72,12 +72,7 @@ const historyStore = useHistoryStore();
 const relatedStore = useRelatedStore();
 const indicatorStore = useIndicatorStore();
 
-const {
-  data: adData,
-  refresh,
-  pending,
-  error: adError,
-} = await useAsyncData<AdPageData | null>(
+const { data: adData, refresh } = await useAsyncData<AdPageData | null>(
   `ad-${route.params.slug}`,
   async () => {
     const adsStore = useAdsStore();
@@ -94,7 +89,11 @@ const {
 
     try {
       if (!result) {
-        return null;
+        throw createError({
+          statusCode: 404,
+          message: "Página no encontrada",
+          fatal: true,
+        });
       }
 
       const ad = result.ad;
@@ -162,44 +161,28 @@ const {
 
       return { ad, access: result.access };
     } catch (error) {
+      // Re-throw Nuxt errors (e.g. the 404 from the !result path above) — do not convert to 500
+      if (error && typeof error === "object" && "statusCode" in error) {
+        throw error;
+      }
       console.error("Error loading ad:", error);
-      return null;
+      throw createError({
+        statusCode: 500,
+        message: "Error del servidor",
+        fatal: true,
+      });
     }
   },
   {
     server: true,
     lazy: false,
+    default: () => null,
   },
 );
 
 // Convenience computed refs — adData is now { ad, access }
 const adComputed = computed(() => adData.value?.ad ?? null);
 const adAccess = computed(() => adData.value?.access ?? null);
-
-// Build the appropriate error message
-const getErrorMessage = () => {
-  if (adError.value) {
-    return {
-      statusCode: 404,
-      message: "Página no encontrada",
-      description:
-        "Lo sentimos, no pudimos cargar el anuncio. Por favor, intenta nuevamente.",
-    };
-  }
-  return {
-    statusCode: 404,
-    message: "Página no encontrada",
-    description:
-      "Lo sentimos, el anuncio que buscas no existe o no está disponible.",
-  };
-};
-
-// Show 404 when data is done loading but no ad was found
-watchEffect(() => {
-  if (!pending.value && !adData.value) {
-    showError(getErrorMessage());
-  }
-});
 
 // Set SEO and structured data when ad data is available
 watch(
