@@ -2,6 +2,44 @@
 
 *A living document updated after each milestone. Lessons feed forward into future planning.*
 
+## Milestone: v1.41 — Ad Preview Error Handling
+
+**Shipped:** 2026-03-18
+**Phases:** 1 (093) | **Plans:** 2 | **Timeline:** same-day
+
+### What Was Built
+- `createError({ statusCode: 404/500, fatal: true })` dentro de `useAsyncData` en `[slug].vue` — reemplaza `watchEffect`+`showError` que crasheaba el SSR con 500
+- `default: () => null` agregado a `useAsyncData` (AGENTS.md compliance)
+- `try/catch` + `strapi.log.error` en controller `findBySlug` — errores de DB → respuesta limpia
+- 4 tests Jest (TDD RED→GREEN): null→notFound, throw→internalServerError, happy path manager, happy path public
+
+### What Worked
+- La investigación previa (fuera del workflow) identificó las 3 capas del bug antes de escribir una línea de código — el planner tuvo contexto completo y los planes fueron precisos desde el primer intento
+- TDD en el plan de Strapi: el test en RED confirmó explícitamente el comportamiento roto antes de hacer el fix, dando confianza total en la solución
+- Plan checker pasó en la segunda iteración (blocker único: VALIDATION.md faltante, creado manualmente en minutos)
+- Verificador detectó un bonus no planeado: catch block re-lanza Nuxt errors correctamente — arquitectura más robusta de lo esperado
+
+### What Was Inefficient
+- El bug requirió 3 rondas de investigación con subagentes explore antes de entender la cadena completa — en retrospectiva, la segunda y tercera ronda de investigación podían haberse consolidado
+- El questioning inicial generó una pregunta que demostró falta de comprensión del proyecto (¿cómo debe verse el preview para un manager?), lo que erosionó confianza brevemente — la investigación del código debería preceder más preguntas de scoping
+
+### Patterns Established
+- `createError({ fatal: true })` dentro de `useAsyncData` es el patrón canónico Nuxt 4 para errores SSR-safe — `showError()` fuera de `useAsyncData` es un anti-patrón que causa 500 en SSR
+- Catch block en `useAsyncData` debe re-lanzar errores Nuxt antes del `createError({ statusCode: 500 })` genérico — previene que los 404 se conviertan en 500
+- Bug investigation con subagentes explore es costoso pero confiable — ideal cuando la cadena de causalidad abarca múltiples archivos y frameworks
+
+### Key Lessons
+1. **Investigar el código antes de hacer scoping.** Este milestone empezó con preguntas de UX que resultaron irrelevantes (¿cómo se ve el preview para un manager?) cuando el bug era puramente técnico. Revisar los archivos implicados antes de hacer preguntas habría ahorrado 2-3 turnos.
+2. **`showError()` en `watchEffect` es un anti-patrón Nuxt 4.** Marcarlo en AGENTS.md o en una futura skill como patrón prohibido evitaría que se repita.
+3. **TDD en Strapi vale la pena incluso para fixes pequeños.** El test RED confirmó que el bug existía y el test GREEN confirmó que el fix fue correcto — confianza sin smoke test manual.
+
+### Cost Observations
+- Model mix: ~100% sonnet
+- Sessions: 1 de investigación (3 subagentes explore) + 1 de planning + 1 de ejecución
+- Notable: milestone más corto en historia del proyecto — 1 fase, 2 planes, ~2 horas total incluyendo investigación
+
+---
+
 ## Milestone: v1.40 — Shared Authentication Session
 
 **Shipped:** 2026-03-16

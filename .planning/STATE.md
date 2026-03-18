@@ -2,10 +2,9 @@
 gsd_state_version: 1.0
 milestone: v1.41
 milestone_name: Ad Preview Error Handling
-current_phase: 093
-status: completed
-last_updated: "2026-03-18T18:18:19.086Z"
-last_activity: 2026-03-18 — Completed 093-02 ([slug].vue createError refactor — PREV-01..PREV-04 done)
+status: archived
+last_updated: "2026-03-18T00:00:00.000Z"
+last_activity: 2026-03-18 — Archived v1.41 milestone (Ad Preview Error Handling)
 progress:
   total_phases: 1
   completed_phases: 1
@@ -18,19 +17,18 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-18 — milestone v1.41 started)
+See: .planning/PROJECT.md (updated 2026-03-18 after v1.41 milestone archived)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.41 — Ad Preview Error Handling
+**Current focus:** Planning next milestone (run `/gsd-new-milestone`)
 
 ## Position
 
-**Current Milestone:** v1.41 — Ad Preview Error Handling
-**Current Phase:** 093
-**Status:** Milestone complete
+**Last Milestone:** v1.41 — Ad Preview Error Handling ✅ ARCHIVED
+**Status:** Milestone complete and archived — ready for next milestone
 
 ```
-Progress: [██████████] 100% (60/60 plans complete across all milestones)
+Progress: [████████████████████] 100% — SHIPPED
 ```
 
 Last activity: 2026-03-18 — Completed 093-02 ([slug].vue createError refactor — PREV-01..PREV-04 done)

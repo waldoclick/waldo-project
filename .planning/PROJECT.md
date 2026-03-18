@@ -358,11 +358,14 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
            | `if (import.meta.client)` guard for `document.cookie` old-cookie cleanup | Prevents Nitro SSR from attempting to access `document` (undefined on server); cleanup runs client-side only — v1.40 | ✓ Good |
            | No `domain` attr on old-cookie cleanup line | `document.cookie = "waldo_jwt=; max-age=0"` targets only the host-only pre-migration cookie; `strapiLogout()` clears the new shared cookie via `useCookie()` — v1.40 | ✓ Good |
            | `import { useStrapiAuth, navigateTo } from '#imports'` in dashboard `useLogout.ts` | Required for Nuxt auto-import interception in composables (same pattern as website composable) — v1.40 | ✓ Good |
+           | `createError({ fatal: true })` inside `useAsyncData` (not `showError` in `watchEffect`) | `showError()` in `watchEffect` fires during SSR setup outside Nuxt's error boundary → 500 crash; `createError` inside `useAsyncData` is the canonical Nuxt 4 SSR-safe pattern — v1.41 | ✓ Good |
+           | Catch block re-throws Nuxt errors before generic `createError({ statusCode: 500 })` | Prevents the 404 path (which throws `createError`) from being incorrectly swallowed and re-wrapped as a 500 — v1.41 | ✓ Good |
+           | TDD order for Strapi controller fix | Jest test scaffold (RED) before implementation (GREEN) — explicitly confirms broken behavior before fixing it; aligns with project testing standards — v1.41 | ✓ Good |
 
 ## Current State
 
-**Last shipped:** v1.40 (2026-03-16) — Shared Authentication Session: `COOKIE_DOMAIN` conditional spread in both apps; dashboard `useLogout.ts` composable; old host-only cookie cleanup; env documentation; human-verified regression-free
-**Also shipped recently:** v1.39 (2026-03-15) — Unified API Client; v1.38 (2026-03-14) — GA4 Analytics
+**Last shipped:** v1.41 (2026-03-18) — Ad Preview Error Handling: `createError` inside `useAsyncData` in `[slug].vue`; `watchEffect`+`showError` eliminated; `default: () => null` added; Strapi `findBySlug` controller wrapped in `try/catch` + 4 Jest tests
+**Also shipped recently:** v1.40 (2026-03-16) — Shared Authentication Session; v1.39 (2026-03-15) — Unified API Client
 
 **Email Authentication (since v1.37):** `overrideForgotPassword` fully replaces Strapi's built-in — sends branded `reset-password.mjml` routed to website or dashboard based on `context` field in POST body; `DASHBOARD_URL` env var drives dashboard reset URL. `FormRegister.vue` JWT guard redirects to `/registro/confirmar` (no `setToken` call without JWT); `/registro/confirmar` page with resend button + 60s countdown; `FormLogin.vue` (both apps) shows inline resend section for unconfirmed accounts. Idempotent migration seeder (`user-confirmed-migration.ts`) + cron-runner registration; production DB migrated to `confirmed=true`; Strapi Admin Panel `email_confirmation: ON`, `email_confirmation_redirection: https://waldo.click/login`; smoke-test passed (REGV-01, REGV-02, REGV-06).
 
@@ -437,14 +440,22 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - **COMP-05**: Consolidar Reservations*/Featured* una vez que tengan store keys dedicados y estrategias de fetch alineadas
 - **COMP-06**: `ChartSales.vue` soporta filtros por rango de fechas usando el endpoint de agregación
 
-## Current Milestone: v1.41 Ad Preview Error Handling
+## Validated Requirements (v1.41)
 
-**Goal:** El website nunca devuelve 500 — cualquier error del endpoint de aviso se maneja limpiamente y delega a la página de error correcta.
+- ✓ `[slug].vue` nunca devuelve 500 — `createError({ statusCode: 404/500, fatal: true })` lanzado dentro de `useAsyncData`; `watchEffect` + `showError` eliminados — v1.41
+- ✓ `default: () => null` en `useAsyncData` de `[slug].vue` — elimina estado `undefined` durante hidratación SSR (AGENTS.md compliance) — v1.41
+- ✓ `findBySlug` controller envuelto en `try/catch` + `strapi.log.error` — errores inesperados de DB devuelven respuesta limpia sin stack trace — v1.41
+- ✓ 4 tests Jest para `findBySlug` controller (TDD RED→GREEN): null→notFound, throw→internalServerError, happy path manager, happy path public — v1.41
 
-**Target features:**
-- `[slug].vue` reemplaza `watchEffect` + `showError()` por `createError` dentro de `useAsyncData`
-- `default: () => null` agregado a `useAsyncData` en `[slug].vue`
-- Controller `findBySlug` en Strapi envuelto en `try/catch` para errores inesperados de DB
+## Next Milestone
+
+Start with `/gsd-new-milestone` to define requirements and roadmap for the next milestone.
+
+**Candidates / open items:**
+- POLL-01: Post-logout website Pinia stores reset cuando el logout se origina desde el dashboard (minor stale-data UX; sin riesgo de seguridad)
+- Staging cross-domain verification: deploy `COOKIE_DOMAIN=.waldoclick.dev` en ambas apps y smoke-test SESS-01–04
+- Dashboard `useApiClient` migration (deferred from v1.39)
+- Testing milestone (TEST-01 through TEST-04)
 
 ---
-*Last updated: 2026-03-18 — milestone v1.41 started*
+*Last updated: 2026-03-18 after v1.41 milestone*

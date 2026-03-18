@@ -1,3 +1,21 @@
+## v1.41 Ad Preview Error Handling (Shipped: 2026-03-18)
+
+**Phases completed:** 1 phase (093), 2 plans
+**Timeline:** 2026-03-18 (same-day)
+**Git range:** `bb909d4` → `fb55613`
+**Files changed:** 14 files, +1,929 / -68
+
+**Key accomplishments:**
+- `createError({ statusCode: 404/500, fatal: true })` lanzado dentro de `useAsyncData` en `[slug].vue` — el website nunca más devuelve 500 en `/anuncios/[slug]`; `watchEffect` + `showError` + `getErrorMessage` eliminados completamente
+- `default: () => null` agregado a `useAsyncData` — elimina estado `undefined` durante hidratación SSR (AGENTS.md compliance)
+- `try/catch` + `strapi.log.error` en controller `findBySlug` — errores inesperados de DB devuelven respuesta limpia sin stack trace expuesto
+- 4 tests Jest para el controller (TDD RED→GREEN): null→notFound, throw→internalServerError, happy path manager, happy path public
+- Smoke test aprobado por usuario: curl devuelve HTTP 404 (no 500) para slugs inexistentes; avisos reales cargan sin errores de consola
+
+**Archive:** `.planning/milestones/v1.41-ROADMAP.md` | `.planning/milestones/v1.41-REQUIREMENTS.md`
+
+---
+
 ## v1.40 Shared Authentication Session (Shipped: 2026-03-16)
 
 **Phases completed:** 2 phases (091–092), 3 plans
