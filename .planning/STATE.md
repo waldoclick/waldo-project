@@ -1,37 +1,37 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.40
-milestone_name: Shared Authentication Session
-status: archived
+milestone: v1.41
+milestone_name: Ad Preview Error Handling
+status: defining_requirements
 last_updated: "2026-03-18T00:00:00.000Z"
-last_activity: 2026-03-18 — Archived v1.40 milestone (Shared Authentication Session)
+last_activity: 2026-03-18 — Milestone v1.41 started
 progress:
-  total_phases: 2
-  completed_phases: 2
-  total_plans: 3
-  completed_plans: 3
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Session State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-18 after v1.40 milestone archived)
+See: .planning/PROJECT.md (updated 2026-03-18 — milestone v1.41 started)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Planning next milestone (run `/gsd-new-milestone`)
+**Current focus:** v1.41 — Ad Preview Error Handling
 
 ## Position
 
-**Last Milestone:** v1.40 — Shared Authentication Session ✅ ARCHIVED
-**Status:** Milestone complete and archived — ready for next milestone
+**Current Milestone:** v1.41 — Ad Preview Error Handling
+**Status:** Defining requirements
 
 ```
-Progress: [████████████████████] 100% — SHIPPED
+Progress: [░░░░░░░░░░░░░░░░░░░░] 0%
 ```
 
-Last activity: 2026-03-18 — Archived v1.40 milestone (Shared Authentication Session)
+Last activity: 2026-03-18 — Milestone v1.41 started
 
 ## Phase Map
 
