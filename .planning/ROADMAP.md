@@ -2,6 +2,7 @@
 
 ## Milestones
 
+- 🔄 **v1.43 Cross-App Session Replacement** — Phase 095 (in progress). See `.planning/ROADMAP.md`
 - ✅ **v1.42 Dashboard Session Persistence** — Phase 094 (shipped 2026-03-18). See `.planning/milestones/v1.42-ROADMAP.md`
 - ✅ **v1.41 Ad Preview Error Handling** — Phase 093 (shipped 2026-03-18). See `.planning/milestones/v1.41-ROADMAP.md`
 - ⛔ **v1.25 Unified Checkout** — forcibly closed 2026-03-09. See `.planning/milestones/v1.25-ROADMAP.md`
@@ -22,6 +23,13 @@
 - ✅ **v1.40 Shared Authentication Session** — Phases 091–092 (shipped 2026-03-16). See `.planning/milestones/v1.40-ROADMAP.md`
 
 ## Phases
+
+<details>
+<summary>🔄 v1.43 Cross-App Session Replacement (Phase 095) — IN PROGRESS</summary>
+
+- [ ] **Phase 095: Fix Cookie Replacement on Session Swap** — Replace `existingCookie.value = null` with `await strapiLogout()` in `FormLogin.vue` so the shared-domain cookie is cleared correctly
+
+</details>
 
 <details>
 <summary>✅ v1.42 Dashboard Session Persistence (Phase 094) — SHIPPED 2026-03-18</summary>
@@ -159,6 +167,24 @@
 
 ## Phase Details
 
+### Phase 095: Fix Cookie Replacement on Session Swap
+
+**Goal**: When a dashboard manager replaces an existing session, the old `waldo_jwt` cookie — including the shared-domain version — is fully removed before the new one is written
+
+**Depends on**: Nothing (standalone one-file bug fix)
+
+**Requirements**: SESS-05, SESS-06, SESS-07, SESS-08
+
+**Success Criteria** (what must be TRUE):
+  1. After session replacement, no `waldo_jwt` cookie with `Domain=.waldo.click` (or `.waldoclick.dev`) remains in the browser — DevTools Application → Cookies shows a single clean cookie for the new session
+  2. After session replacement + hard refresh in the dashboard, the manager remains authenticated and is not redirected to `/auth/login`
+  3. After session replacement + hard refresh in the website, the new manager cookie is present and readable — the user appears logged in on the website
+  4. No duplicate `waldo_jwt` cookies with different `domain` scopes exist at any point after the replacement flow completes
+
+**Plans**: TBD
+
+---
+
 ### Phase 094: Diagnose & Fix Session Persistence
 
 **Goal**: Dashboard users who log in through the 2-step verify-code flow remain authenticated after a page refresh — the guard never redirects an authenticated user to login
@@ -214,3 +240,4 @@
 | 092   | v1.40     | 2/2            | Complete    | 2026-03-16 |
 | 093   | v1.41     | 2/2            | Complete    | 2026-03-18 |
 | 094   | v1.42     | 1/1            | Complete    | 2026-03-18 |
+| 095   | v1.43     | 0/1            | Not started | -          |
