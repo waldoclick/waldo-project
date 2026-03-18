@@ -4,7 +4,7 @@ milestone: v1.43
 milestone_name: Cross-App Session Replacement
 status: in_progress
 last_updated: "2026-03-18T00:00:00.000Z"
-last_activity: 2026-03-18 — Milestone v1.43 started
+last_activity: 2026-03-18 — Roadmap created (Phase 095)
 progress:
   total_phases: 1
   completed_phases: 0
@@ -25,19 +25,20 @@ See: .planning/PROJECT.md
 ## Position
 
 **Current Milestone:** v1.43 — Cross-App Session Replacement
-**Status:** Defining requirements
+**Current Phase:** 095 — Fix Cookie Replacement on Session Swap
+**Status:** Roadmap approved — ready to plan
 
 ```
-Progress: [░░░░░░░░░░░░░░░░░░░░] 0% — Not started
+Progress: [░░░░░░░░░░░░░░░░░░░░] 0% — Phase 095 not started
 ```
 
-Last activity: 2026-03-18 — Milestone v1.43 started. Bug identificado: `FormLogin.vue` línea 149 usa `existingCookie.value = null` sin `domain` → no borra la cookie compartida → cookies zombie.
+Last activity: 2026-03-18 — Roadmap created. Single phase 095 targets the one-line bug in `FormLogin.vue` line 149: replace `existingCookie.value = null` with `await strapiLogout()` via `useStrapiAuth()` so the shared-domain cookie is cleared with correct `domain` attribute.
 
 ## Phase Map
 
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
-| 095 | TBD | TBD | ○ Pending |
+| 095 | Fix Cookie Replacement on Session Swap | SESS-05, SESS-06, SESS-07, SESS-08 | ○ Pending |
 
 ## Accumulated Context
 
@@ -107,6 +108,7 @@ Last activity: 2026-03-18 — Milestone v1.43 started. Bug identificado: `FormLo
 - SSR populate hygiene: only include populate fields present in the TypeScript User interface and consumed by dashboard components — dead populate joins cause slow /users/me queries that trigger setToken(null) in SSR fetchUser() catch (094-01)
 - dashboard auth.populate: ["role", "commune", "region", "business_region", "business_commune"] — ad_reservations.ad and ad_featured_reservations.ad removed (not in User type, not used by any component) (094-01)
 - FormLogin.vue (dashboard) línea 149: `existingCookie.value = null` es incorrecto — borra solo la cookie host-only, deja zombie la cookie compartida con domain=.COOKIE_DOMAIN — fix: llamar useLogout() antes del nuevo login (095-diagnosis)
+- Fix scope: `apps/dashboard/app/components/FormLogin.vue` line 149 only — replace `existingCookie.value = null` with `const { logout: strapiLogout } = useStrapiAuth()` + `await strapiLogout()` so cookie removal respects the `domain` attribute from @nuxtjs/strapi module config (095-plan)
 
 ### Blockers/Concerns (open)
 
@@ -134,7 +136,7 @@ None.
 | 44 | defer image uploads in ad creation flow to save-draft step with local previews and multi-select support | 2026-03-15 | 39a752e | [44-defer-image-uploads-in-ad-creation-flow-](.planning/quick/44-defer-image-uploads-in-ad-creation-flow-/) |
 | 45 | security report and cloudflare rate limiting recommendations | 2026-03-15 | 0f8def4 | [45-security-report-and-cloudflare-rate-limi](.planning/quick/45-security-report-and-cloudflare-rate-limi/) |
 | 46 | replace any types with proper typed interfaces in order controller and cron files | 2026-03-15 | c84eb2d | [46-replace-any-types-with-proper-typed-inte](.planning/quick/46-replace-any-types-with-proper-typed-inte/) |
-| 47 | fix strapi develop TS errors in ad controller populate cast and order controller populate cast | 2026-03-15 | 05dad51 | [47-fix-strapi-develop-ts-errors-in-ad-contr](.planning/quick/47-fix-strapi-develop-ts-done/) |
+| 47 | fix strapi develop TS errors in ad controller populate cast and order controller populate cast | 2026-03-15 | 05dad51 | [47-fix-strapi-develop-ts-errors-in-ad-contr](.planning/quick/47-fix-strapi-develop-ts-errors-in-ad-contr/) |
 | 48 | fix EEXIST mkdir error in vite-plugin-checker — disable dashboard typeCheck and set HMR port 24679 | 2026-03-15 | 124a026 | [48-fix-eexist-mkdir-error-in-vite-plugin-ch](.planning/quick/48-fix-eexist-mkdir-error-in-vite-plugin-ch/) |
 | 49 | block Strapi robots.txt to prevent search engine indexing of API backend | 2026-03-15 | 30a8a94 | [49-block-strapi-robots-txt-to-prevent-searc](.planning/quick/49-block-strapi-robots-txt-to-prevent-searc/) |
 | 50 | fix getActivePinia crash: replace raw localStorage guard with persistedState.localStorage in persist stores | 2026-03-16 | aa4f4c4 | [50-fix-getactivepinia-crash-replace-manual-](.planning/quick/50-fix-getactivepinia-crash-replace-manual-/) |
