@@ -15,7 +15,7 @@
 - ✅ **v1.35 Gift Reservations to Users** — Phases 075–076 (shipped 2026-03-13). See `.planning/milestones/v1.35-ROADMAP.md`
 - ✅ **v1.36 Two-Step Login Verification** — Phases 077–078 (shipped 2026-03-14). See `.planning/milestones/v1.36-ROADMAP.md`
 - ✅ **v1.37 Email Authentication Flows** — Phases 079–082 (shipped 2026-03-14). See `.planning/milestones/v1.37-ROADMAP.md`
-- 🚧 **v1.38 GA4 Analytics Audit & Implementation** — Phases 083–085 (in progress)
+- ✅ **v1.38 GA4 Analytics Audit & Implementation** — Phases 083–085 (shipped 2026-03-14). See `.planning/milestones/v1.38-ROADMAP.md`
 - 📋 **v1.39 Unified API Client** — Phases 089–090 (planned)
 - 🚧 **v1.40 Shared Authentication Session** — Phases 091–092 (in progress)
 
@@ -31,11 +31,14 @@
 - [x] **Phase 089: GET Support in useApiClient** — Extend `useApiClient` to handle GET requests without reCAPTCHA injection (completed 2026-03-15)
 - [x] **Phase 090: Migrate All GET Callers** — Migrate all stores, composables, pages and components from `strapi.find()/findOne()` to `useApiClient`; typeCheck passes (completed 2026-03-15)
 
-### v1.38 GA4 Analytics Audit & Implementation
+<details>
+<summary>✅ v1.38 GA4 Analytics Audit & Implementation (Phases 083–085) — SHIPPED 2026-03-14</summary>
 
-- [x] **Phase 083: Ecommerce Bug Fixes** — Correct purchase value, add_to_cart timing, and item_id in existing GA4 events (completed 2026-03-14)
-- [x] **Phase 084: Ad Discovery Tracking** — Fire view_item_list, view_item, and search events across ad listing and detail pages (completed 2026-03-14)
-- [ ] **Phase 085: Contact, Auth & Blog Events** — Add seller contact, sign_up, login, and article_view events
+- [x] Phase 083: Ecommerce Bug Fixes (2/2 plans) — completed 2026-03-14
+- [x] Phase 084: Ad Discovery Tracking (2/2 plans) — completed 2026-03-14
+- [x] Phase 085: Contact, Auth & Blog Events (2/2 plans) — completed 2026-03-14
+
+</details>
 
 ## Phase Details
 
@@ -104,57 +107,6 @@ Plans:
 - [ ] 090-04-PLAN.md — Migrate composables: useStrapi, useOrderById, usePacksList
 - [ ] 090-05-PLAN.md — Migrate pages/components: index.vue, anunciar/gracias.vue, anunciar/index.vue, packs/index.vue, FormProfile.vue
 - [ ] 090-06-PLAN.md — Final validation gate: grep + typecheck + browser smoke test
-
----
-
-### Phase 083: Ecommerce Bug Fixes
-**Goal**: GA4 ecommerce events report accurate data — real revenue, real item IDs, and free ad creation tracked as a conversion
-**Depends on**: Nothing (first phase of milestone)
-**Requirements**: ECOM-01, ECOM-02, ECOM-03
-**Success Criteria** (what must be TRUE):
-  1. GA4 Realtime → Ecommerce → Purchase events show the actual transaction amount (e.g. $19.990) instead of $0
-  2. GA4 `purchase` event `item_id` field shows the order's `documentId` string, not an empty string
-  3. GA4 Realtime shows a `purchase` event with `value: 0` when a user completes a free ad creation at `/anunciar/gracias`
-  4. All 12 existing Vitest tests in `useAdAnalytics` pass after the fixes; new tests cover corrected behavior
-**Plans**: 2 plans
-
-Plans:
-- [ ] 083-01-PLAN.md — Fix purchase() value coercion (ECOM-01) and item_id fallback (ECOM-02) in useAdAnalytics.ts + tests
-- [ ] 083-02-PLAN.md — Add free-ad purchase event watcher to anunciar/gracias.vue (ECOM-03) + tests
-
-### Phase 084: Ad Discovery Tracking
-**Goal**: Users browsing ads generate GA4 discovery events — every listing view, detail view, and search is captured
-**Depends on**: Phase 083
-**Requirements**: DISC-01, DISC-02, DISC-03
-**Success Criteria** (what must be TRUE):
-  1. GA4 Realtime shows a `view_item_list` event with an `items` array when a user loads `/anuncios`
-  2. GA4 Realtime shows a `view_item` event with `item_id`, `item_name`, `price`, and `item_category` when a user opens an ad detail page
-  3. GA4 Realtime shows a `search` event with `search_term` populated when a user submits a keyword search or selects a commune filter on `/anuncios`
-  4. Navigating between multiple ads generates distinct `view_item` events (one per ad) in GA4 Realtime
-**Plans**: 2 plans
-
-Plans:
-- [ ] 084-01-PLAN.md — Add viewItemListPublic, viewItem, search to useAdAnalytics.ts + tests (TDD)
-- [ ] 084-02-PLAN.md — Wire view_item_list, search (index.vue) and view_item (slug.vue) + human verify
-
-### Phase 085: Contact, Auth & Blog Events
-**Goal**: User lifecycle and engagement actions — contacting a seller, registering, logging in, and reading articles — all produce GA4 events
-**Depends on**: Phase 084
-**Requirements**: CONT-01, CONT-02, LEAD-01, AUTH-01, AUTH-02, BLOG-01
-**Success Criteria** (what must be TRUE):
-  1. GA4 Realtime shows a `contact` event with `method: "email"` when a logged-in user clicks the seller's email link on an ad detail page
-  2. GA4 Realtime shows a `contact` event with `method: "phone"` when a logged-in user clicks the seller's phone link on an ad detail page
-  3. GA4 Realtime shows a `generate_lead` event when a user reaches `/contacto/gracias` after submitting the contact form
-  4. GA4 Realtime shows a `sign_up` event with `method: "email"` immediately after a user completes registration via `FormRegister.vue`
-  5. GA4 Realtime shows a `login` event with `method: "email"` or `method: "google"` after the 2-step verification completes successfully in `FormLogin.vue`
-  6. GA4 Realtime shows an `article_view` event with `article_id`, `article_title`, and `article_category` when a user opens a blog article at `/blog/[slug]`
-**Plans**: 2 plans
-
-Plans:
-- [ ] 085-01-PLAN.md — Add contactSeller, generateLead, signUp, login, articleView to useAdAnalytics.ts with TDD
-- [ ] 085-02-PLAN.md — Wire all 5 events into AdSingle.vue, gracias.vue, FormRegister.vue, FormVerifyCode.vue, blog/[slug].vue + human verify
-
----
 
 <details>
 <summary>✅ v1.36 Two-Step Login Verification (Phases 077–078) — SHIPPED 2026-03-14</summary>
@@ -280,8 +232,8 @@ Plans:
 | 082   | v1.37     | 1/1            | Complete    | 2026-03-14 |
 | 083   | v1.38     | 2/2            | Complete    | 2026-03-14 |
 | 084   | v1.38     | 2/2            | Complete    | 2026-03-14 |
-| 085   | v1.38     | 1/2            | In Progress | -          |
+| 085   | v1.38     | 2/2            | Complete    | 2026-03-14 |
 | 089   | v1.39     | 1/1            | Complete    | 2026-03-15 |
 | 090   | v1.39     | 6/6            | Complete    | 2026-03-15 |
-| 091   | 1/1 | Complete    | 2026-03-16 | -          |
-| 092   | 2/2 | Complete    | 2026-03-16 | -          |
+| 091   | v1.40     | 1/1            | Complete    | 2026-03-16 |
+| 092   | v1.40     | 2/2            | Complete    | 2026-03-16 |
