@@ -27,6 +27,8 @@
 <summary>🔄 v1.42 Dashboard Session Persistence (Phase 094) — ACTIVE</summary>
 
 - [ ] **Phase 094: Diagnose & Fix Session Persistence** — Identify why the guard redirects to login after refresh and apply the fix so sessions persist through page reloads
+  - Plans: 1 plan
+    - [ ] 094-01-PLAN.md — Guard token-aware fix + client-only fetchUser plugin
 
 </details>
 
@@ -173,7 +175,8 @@
   3. After login → verify-code → page refresh, the dashboard loads the authenticated user's home page (`/`) without being redirected to `/auth/login`
   4. The full end-to-end flow is verified in local dev: login form → 6-digit code entry → `setToken()` + `fetchUser()` → hard browser refresh → user stays on `/` authenticated
 
-**Plans**: TBD
+**Plans**: 1 plan
+- [ ] 094-01-PLAN.md — Guard token-aware fix + client-only fetchUser plugin
 
 ---
 
