@@ -17,14 +17,17 @@
 - ✅ **v1.37 Email Authentication Flows** — Phases 079–082 (shipped 2026-03-14). See `.planning/milestones/v1.37-ROADMAP.md`
 - ✅ **v1.38 GA4 Analytics Audit & Implementation** — Phases 083–085 (shipped 2026-03-14). See `.planning/milestones/v1.38-ROADMAP.md`
 - ✅ **v1.39 Unified API Client** — Phases 089–090 (shipped 2026-03-15). See `.planning/milestones/v1.39-ROADMAP.md`
-- 🚧 **v1.40 Shared Authentication Session** — Phases 091–092 (in progress)
+- ✅ **v1.40 Shared Authentication Session** — Phases 091–092 (shipped 2026-03-16). See `.planning/milestones/v1.40-ROADMAP.md`
 
 ## Phases
 
-### v1.40 Shared Authentication Session
+<details>
+<summary>✅ v1.40 Shared Authentication Session (Phases 091–092) — SHIPPED 2026-03-16</summary>
 
-- [x] **Phase 091: Dashboard useLogout Composable** — Centralize dashboard logout into a single composable; wire all call sites (completed 2026-03-16)
-- [x] **Phase 092: Cookie Domain Migration** — Add COOKIE_DOMAIN-conditional domain attribute to both apps; ship old-cookie cleanup atomically (completed 2026-03-16)
+- [x] Phase 091: Dashboard useLogout Composable (1/1 plan) — completed 2026-03-16
+- [x] Phase 092: Cookie Domain Migration (2/2 plans) — completed 2026-03-16
+
+</details>
 
 <details>
 <summary>✅ v1.39 Unified API Client (Phases 089–090) — SHIPPED 2026-03-15</summary>
@@ -42,38 +45,6 @@
 - [x] Phase 085: Contact, Auth & Blog Events (2/2 plans) — completed 2026-03-14
 
 </details>
-
-## Phase Details
-
-### Phase 091: Dashboard useLogout Composable
-**Goal**: Dashboard logout is centralized in a single composable — every call site uses it, and the old-cookie cleanup can be applied in one place
-**Depends on**: Nothing (first phase of milestone)
-**Requirements**: SAFE-01
-**Success Criteria** (what must be TRUE):
-  1. `apps/dashboard/app/composables/useLogout.ts` exists and mirrors the website pattern (`strapiLogout()` + store resets)
-  2. Every component and middleware that previously called `useStrapiAuth().logout()` directly now calls `useLogout()` instead — no scattered logout logic remains
-  3. `typeCheck: true` passes with zero errors after the composable is wired in
-**Plans**: 1 plan
-
-Plans:
-- [ ] 091-01-PLAN.md — Create useLogout composable + meStore.reset() + migrate 3 call sites
-
-### Phase 092: Cookie Domain Migration
-**Goal**: Users authenticated on one subdomain are automatically recognized on the other — login once, access both apps; logout anywhere clears both
-**Depends on**: Phase 091
-**Requirements**: SESS-01, SESS-02, SESS-03, SESS-04, SESS-05, SESS-06, SAFE-02, SAFE-03
-**Success Criteria** (what must be TRUE):
-  1. A manager who logs in on `waldo.click` can navigate directly to `dashboard.waldo.click` and land on the dashboard without being prompted to log in again
-  2. A user who logs in on `dashboard.waldo.click` is recognized as authenticated when they visit `waldo.click` (their name/avatar loads)
-  3. Clicking logout on the website causes the dashboard to show the login page on the next visit (session cleared on both subdomains)
-  4. Clicking logout on the dashboard causes the website to show the logged-out state on the next visit (session cleared on both subdomains)
-  5. Running both apps locally with no `COOKIE_DOMAIN` env var set produces a host-only cookie — local dev login works exactly as before
-  6. `.env.example` in both `apps/website` and `apps/dashboard` documents the `COOKIE_DOMAIN` variable with the production value `.waldo.click`
-**Plans**: 2 plans
-
-Plans:
-- [ ] 092-01-PLAN.md — Add COOKIE_DOMAIN conditional to both nuxt.config.ts + old-cookie cleanup in both useLogout composables
-- [ ] 092-02-PLAN.md — Document COOKIE_DOMAIN in both .env.example files + human-verify checkpoint
 
 <details>
 <summary>✅ v1.36 Two-Step Login Verification (Phases 077–078) — SHIPPED 2026-03-14</summary>
