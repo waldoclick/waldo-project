@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.44
 milestone_name: Google One Tap Sign-In
 current_phase: 098
-status: planning
-last_updated: "2026-03-19T04:22:12.420Z"
-last_activity: "2026-03-19 — Phase 098 plan 01 complete: TDD RED scaffolds for GTAP-07,09,10,11,12"
+status: executing
+last_updated: "2026-03-19T04:32:14.861Z"
+last_activity: "2026-03-19 — Phase 098 plan 02 complete: window.d.ts cleanup, disableAutoSelect() logout fix, useGoogleOneTap rewrite"
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 9
-  completed_plans: 7
-  percent: 98
+  completed_plans: 8
+  percent: 97
 ---
 
 # Session State
@@ -27,14 +27,14 @@ See: .planning/PROJECT.md
 
 **Current Milestone:** v1.44 — Google One Tap Sign-In
 **Current Phase:** 098
-**Status:** In progress — Plan 01 complete
+**Status:** In progress — Plan 02 complete
 
 ```
-Progress: [██████████] 97% — Phase 098 in progress
-Phase 096 ████ | Phase 097 ████ | Phase 098 ░░░░
+Progress: [██████████] 99% — Phase 098 in progress
+Phase 096 ████ | Phase 097 ████ | Phase 098 ██░░
 ```
 
-Last activity: 2026-03-19 — Phase 098 plan 01 complete: TDD RED scaffolds for GTAP-07,09,10,11,12
+Last activity: 2026-03-19 — Phase 098 plan 02 complete: window.d.ts cleanup, disableAutoSelect() logout fix, useGoogleOneTap rewrite
 
 ## Phase Map
 
@@ -138,6 +138,8 @@ Last activity: 2026-03-19 — Phase 098 plan 01 complete: TDD RED scaffolds for 
 - Dynamic import for `createUserReservations` in auth-one-tap controller avoids circular dep between src/api/ and src/extensions/; Jest mock at top of test file correctly intercepts dynamic imports (097-03)
 - `export` added to `createUserReservations` in authController.ts — needed for dynamic import pattern, no behavioral change to existing usages (097-03)
 - 2-step bypass for One Tap: implementing endpoint in `src/api/auth-one-tap/` means `overrideAuthLocal` (which only intercepts POST /api/auth/local) never fires — no explicit bypass code needed (097-03)
+- `disableAutoSelect()` placed outside `if(import.meta.client)` block — optional chain `window.google?.accounts?.id?.disableAutoSelect()` is SSR-safe; required for testability since `import.meta.client` is falsy in vitest happy-dom (098-02)
+- `promptIfEligible()` composable replaces `initializeGoogleOneTap()` — auth guard + route guard + GIS guard; 90 lines → 25 lines, purely subtractive (098-02)
 
 ### Blockers/Concerns (open)
 
