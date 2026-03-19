@@ -3,7 +3,18 @@ import vue from "@vitejs/plugin-vue";
 import { fileURLToPath } from "node:url";
 
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    // Replace Nuxt SSR guards with client-side values so stores initialize in tests
+    {
+      name: "nuxt-meta-client-stub",
+      transform(code) {
+        return code
+          .replace(/import\.meta\.client/g, "true")
+          .replace(/import\.meta\.server/g, "false");
+      },
+    },
+  ],
   test: {
     environment: "happy-dom",
     globals: true,
