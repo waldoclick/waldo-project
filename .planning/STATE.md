@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.44
 milestone_name: Google One Tap Sign-In
-current_phase: 096 — CSP & Environment Setup (not started)
-status: Roadmap ready — awaiting `/gsd-plan-phase 096`
-last_updated: "2026-03-19T02:42:16.711Z"
-last_activity: 2026-03-18 — Roadmap created; phases 096–098 defined
+current_phase: 097
+status: planning
+last_updated: "2026-03-19T02:46:54.978Z"
+last_activity: "2026-03-19 — Phase 096 complete: CSP GIS entries + GOOGLE_CLIENT_ID env setup"
 progress:
   total_phases: 5
   completed_phases: 3
@@ -26,8 +26,8 @@ See: .planning/PROJECT.md
 ## Position
 
 **Current Milestone:** v1.44 — Google One Tap Sign-In
-**Current Phase:** 096 — CSP & Environment Setup (1/1 plans complete)
-**Status:** Phase 096 complete — ready for Phase 097 (Strapi One Tap Endpoint)
+**Current Phase:** 097
+**Status:** Ready to plan
 
 ```
 Progress: [░░░░░░░░░░] 0% — Phase 096 next
