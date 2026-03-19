@@ -463,12 +463,14 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ `/users/me` SSR ya no falla con el populate reducido; `waldo_jwt` cookie persiste correctamente entre recargas — v1.42
 - ✓ `guard.global.ts` sin modificar — el guard original con `if (!roleName) return` es correcto y suficiente — v1.42
 
-## Active Requirements (v1.43)
+- ✓ Al forzar login en dashboard con sesión activa de website, la cookie `waldo_jwt` previa se elimina correctamente (con `domain` compartido) — v1.43
+- ✓ La nueva cookie de manager persiste al refrescar en dashboard — v1.43
+- ✓ La nueva cookie de manager persiste al refrescar en website — v1.43
+- ✓ No quedan cookies zombie de `waldo_jwt` con distintos `domain` scopes — v1.43
 
-- [ ] Al forzar login en dashboard con sesión activa de website, la cookie `waldo_jwt` previa se elimina correctamente (con `domain` compartido)
-- [ ] La nueva cookie de manager persiste al refrescar en dashboard
-- [ ] La nueva cookie de manager persiste al refrescar en website
-- [ ] No quedan cookies zombie de `waldo_jwt` con distintos `domain` scopes
+## Active Requirements
+
+(None — next milestone not yet defined)
 
 ---
-*Last updated: 2026-03-18 after v1.43 started*
+*Last updated: 2026-03-19 after v1.43 milestone*
