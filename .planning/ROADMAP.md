@@ -31,7 +31,7 @@
 **Milestone Goal:** Force newly registered users with incomplete profiles through a dedicated onboarding flow before they can use the platform.
 
 - [x] **Phase 099: Onboarding UI** - Layout, pages, and components for the onboarding flow (completed 2026-03-19)
-- [ ] **Phase 100: Guard** - Middleware that intercepts navigation and enforces profile completion
+- [x] **Phase 100: Guard** - Middleware that intercepts navigation and enforces profile completion (completed 2026-03-19)
 - [ ] **Phase 101: Integration** - Wire One Tap suppression, referer exclusion, and pre-redirect URL storage
 
 ## Phase Details
@@ -60,7 +60,7 @@ Plans:
   2. A user with a complete profile visiting `/onboarding` is redirected to the home page
   3. Visiting `/login`, `/registro`, or `/logout` never triggers the onboarding redirect
   4. Page refresh on any page does not cause an incorrect redirect to `/onboarding` (SSR-safe)
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 Plans:
 - [ ] 100-01-PLAN.md — Onboarding guard middleware with TDD and meStore cache fix
 
@@ -79,5 +79,5 @@ Plans:
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 099. Onboarding UI | 3/3 | Complete    | 2026-03-19 | - |
-| 100. Guard | v1.45 | 0/1 | Not started | - |
+| 100. Guard | 1/1 | Complete   | 2026-03-19 | - |
 | 101. Integration | v1.45 | 0/? | Not started | - |
