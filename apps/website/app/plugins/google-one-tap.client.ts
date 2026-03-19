@@ -1,4 +1,4 @@
-import { defineNuxtPlugin } from "#app";
+import { defineNuxtPlugin, reloadNuxtApp } from "#app";
 import { useApiClient } from "@/composables/useApiClient";
 import {
   useStrapiAuth,
@@ -46,6 +46,7 @@ export default defineNuxtPlugin(() => {
           );
           setToken(result.jwt);
           await fetchUser();
+          reloadNuxtApp();
         } catch (error) {
           console.error("[OneTap] Authentication failed:", error);
         }

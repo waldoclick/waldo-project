@@ -15,6 +15,13 @@ vi.mock("#imports", () => ({
   useRoute: () => ({ path: "/" }),
 }));
 
+// ─── Mock #app ──────────────────────────────────────────────────────────────
+const mockReloadNuxtApp = vi.fn();
+vi.mock("#app", () => ({
+  defineNuxtPlugin: (fn: (...args: unknown[]) => unknown) => fn,
+  reloadNuxtApp: mockReloadNuxtApp,
+}));
+
 // ─── Mock useApiClient ─────────────────────────────────────────────────────
 vi.mock("@/composables/useApiClient", () => ({
   useApiClient: () => mockApiClient,
