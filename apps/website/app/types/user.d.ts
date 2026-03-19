@@ -57,6 +57,11 @@ export interface User {
     };
     url: string;
   } | null;
+  role?: {
+    id: number;
+    name: string;
+    type: string;
+  };
   ad_reservations?: AdReservation[];
   ad_featured_reservations?: AdFeaturedReservation[];
   ads?: any[];

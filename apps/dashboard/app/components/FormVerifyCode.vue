@@ -131,6 +131,13 @@ const handleVerify = async () => {
     const response = responseRaw as { jwt: string };
 
     // Store JWT via @nuxtjs/strapi v2 — sets cookie AND reactive user state
+    // Clear the nuxt._cookies cache first — the module caches the cookie ref on init
+    // and won't re-read document.cookie if it was externally cleared (e.g. logout in another tab)
+    const nuxtApp = useNuxtApp();
+    const config = useRuntimeConfig().public;
+    if (nuxtApp._cookies?.[config.strapi.cookieName]) {
+      delete nuxtApp._cookies[config.strapi.cookieName];
+    }
     const { setToken, fetchUser } = useStrapiAuth();
     const { logout } = useLogout();
     setToken(response.jwt);
