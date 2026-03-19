@@ -136,19 +136,13 @@ const handleSubmit = async (values: Record<string, unknown>) => {
   // Check if there's an existing non-manager session cookie
   const existingCookie = useCookie("waldo_jwt");
   if (existingCookie.value) {
-    const confirmed = await Swal.fire({
-      title: "Ya tienes una sesión activa",
-      text: "Estás conectado con un usuario que no es administrador. ¿Deseas cerrar esa sesión e iniciar sesión como administrador?",
+    await Swal.fire({
+      title: "Sesión activa en el sitio público",
+      text: "Tienes una sesión iniciada en el sitio público. Debes cerrarla manualmente antes de poder ingresar al dashboard.",
       icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Continuar",
-      cancelButtonText: "Cancelar",
+      confirmButtonText: "Entendido",
     });
-    if (!confirmed.isConfirmed) return;
-    // Clear the existing session cookie using strapiLogout() so the shared-domain cookie
-    // is cleared correctly (respects domain attribute from nuxt.config.ts strapi.cookie)
-    const { logout: strapiLogout } = useStrapiAuth();
-    await strapiLogout();
+    return;
   }
 
   sending.value = true;
