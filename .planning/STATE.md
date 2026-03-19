@@ -4,14 +4,14 @@ milestone: v1.45
 milestone_name: User Onboarding
 current_phase: "099"
 status: ready_to_plan
-last_updated: "2026-03-19T20:52:00.000Z"
-last_activity: "2026-03-19 — Completed 099-00: Wave 0 test stubs for onboarding UI"
+last_updated: "2026-03-19T20:58:00.000Z"
+last_activity: "2026-03-19 — Completed 099-01: Onboarding layout, SCSS, and FormProfile emit refactor"
 progress:
   total_phases: 3
   completed_phases: 0
-  total_plans: 1
-  completed_plans: 1
-  percent: 5
+  total_plans: 2
+  completed_plans: 2
+  percent: 10
 ---
 
 # Session State
@@ -26,12 +26,12 @@ See: .planning/PROJECT.md (updated 2026-03-19)
 ## Position
 
 Phase: 099 of 101 (Onboarding UI)
-Plan: 1 of 3 in current phase (099-00 complete)
+Plan: 2 of 3 in current phase (099-01 complete)
 Status: In progress
-Last activity: 2026-03-19 — Completed 099-00: Wave 0 TDD test stubs for onboarding UI
+Last activity: 2026-03-19 — Completed 099-01: Onboarding layout, SCSS, FormProfile emit refactor
 
 ```
-Progress: [█░░░░░░░░░] 5%
+Progress: [██░░░░░░░░] 10%
 ```
 
 ## Accumulated Context
@@ -53,6 +53,8 @@ Progress: [█░░░░░░░░░] 5%
 - `layout: "auth"` reuse preferred over new `layouts/onboarding.vue` — verify against auth.vue before creating duplicate
 - `appStore.referer` persisted to localStorage — survives One Tap `window.location.reload()`
 - Wave 0 TDD stub pattern: use it.todo() (not it.skip()) for scaffolding before components exist — Vitest reports pending without failure
+- `nuxt-meta-client-stub` Vite plugin in vitest.config.ts replaces import.meta.client/server literals at transform time — required for components with `import.meta.client ? useStore() : {}` guards to work in tests
+- FormProfile emit pattern: `defineEmits(["success"]) + defineProps({ onboardingMode })` — emit fires always, redirect only when `!props.onboardingMode`; AccountEdit unchanged (no props = default false = redirect fires)
 
 ### Blockers/Concerns (open)
 

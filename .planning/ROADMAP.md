@@ -45,10 +45,10 @@
   2. User can complete the profile form at `/onboarding` and be taken to `/onboarding/thankyou` on success
   3. Existing profile editing at `/cuenta/perfil/editar` continues to work exactly as before
   4. `/onboarding/thankyou` displays a thank-you message with two buttons: "Crear mi primer anuncio" and "Volver a Waldo"
-**Plans:** 1/3 plans executed
+**Plans:** 2/3 plans executed
 Plans:
-- [ ] 099-00-PLAN.md — Wave 0 test stubs (Nyquist scaffolding)
-- [ ] 099-01-PLAN.md — Layout, SCSS, and FormProfile emit refactor (foundation)
+- [x] 099-00-PLAN.md — Wave 0 test stubs (Nyquist scaffolding)
+- [x] 099-01-PLAN.md — Layout, SCSS, and FormProfile emit refactor (foundation)
 - [ ] 099-02-PLAN.md — Onboarding pages and components (user-facing UI)
 
 ### Phase 100: Guard
@@ -76,6 +76,6 @@ Plans:
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 099. Onboarding UI | 1/3 | In Progress|  | - |
+| 099. Onboarding UI | v1.45 | 2/3 | In Progress | - |
 | 100. Guard | v1.45 | 0/? | Not started | - |
 | 101. Integration | v1.45 | 0/? | Not started | - |
