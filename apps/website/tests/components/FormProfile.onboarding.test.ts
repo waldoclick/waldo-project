@@ -44,6 +44,8 @@ const mockUpdateUserProfile = vi.fn().mockResolvedValue();
 global.useUserStore = vi.fn(() => ({
   updateUserProfile: mockUpdateUserProfile,
 }));
+const mockMeReset = vi.fn();
+global.useMeStore = vi.fn(() => ({ reset: mockMeReset }));
 
 // ─── Mock useSweetAlert2 ─────────────────────────────────────────────────
 const mockSwalFire = vi.fn().mockResolvedValue({ isConfirmed: true });
@@ -186,6 +188,7 @@ describe("FormProfile.vue — onboarding mode (FORM-02, FORM-03)", () => {
     global.useUserStore = vi.fn(() => ({
       updateUserProfile: mockUpdateUserProfile,
     }));
+    global.useMeStore = vi.fn(() => ({ reset: mockMeReset }));
     global.useSweetAlert2 = vi.fn(() => ({
       Swal: { fire: mockSwalFire },
     }));
