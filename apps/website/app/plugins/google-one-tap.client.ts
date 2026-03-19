@@ -53,7 +53,7 @@ export default defineNuxtPlugin(() => {
       },
       auto_select: false,
       cancel_on_tap_outside: true,
-      // Note: use_fedcm_for_prompt intentionally omitted — deprecated in GIS SDK
+      use_fedcm_for_prompt: true,
     });
 
     // Prompt once on app load — GIS handles suppression for dismissed/skipped users
