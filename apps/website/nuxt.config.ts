@@ -77,7 +77,12 @@ export default defineNuxtConfig({
             "https://static.cloudflareinsights.com",
           ],
 
-          "style-src": ["'self'", "'unsafe-inline'", "https://css.zohocdn.com"],
+          "style-src": [
+            "'self'",
+            "'unsafe-inline'",
+            "https://css.zohocdn.com",
+            "https://accounts.google.com",
+          ],
 
           "img-src": [
             "'self'",
