@@ -327,6 +327,12 @@
 import { ref, computed, onMounted, watch } from "vue";
 import { Field, Form, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
+
+const emit = defineEmits(["success"]);
+const props = defineProps({
+  onboardingMode: { type: Boolean, default: false },
+});
+
 const { Swal } = useSweetAlert2();
 import { useNuxtApp } from "#app";
 import { useRut } from "@/composables/useRut";
@@ -683,8 +689,11 @@ const handleSubmit = async (values) => {
       confirmButtonText: "Aceptar",
     });
 
-    // Recargar la página para actualizar los datos
-    window.location.href = "/cuenta/perfil";
+    // Notify parent and conditionally redirect
+    emit("success");
+    if (!props.onboardingMode) {
+      window.location.href = "/cuenta/perfil";
+    }
   } catch (error) {
     console.error("Error updating user:", error);
 
