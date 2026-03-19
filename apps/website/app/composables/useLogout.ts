@@ -28,6 +28,10 @@ export const useLogout = () => {
       document.cookie = "waldo_jwt=; path=/; max-age=0";
     }
 
+    // GTAP-12: Clear GIS auto-sign-in state — prevents One Tap dead-loop after logout
+    // Optional chain makes this a safe no-op on server (window.google is undefined)
+    window.google?.accounts?.id?.disableAutoSelect();
+
     await strapiLogout();
     await navigateTo("/");
   };
