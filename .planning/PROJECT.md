@@ -468,9 +468,25 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ La nueva cookie de manager persiste al refrescar en website — v1.43
 - ✓ No quedan cookies zombie de `waldo_jwt` con distintos `domain` scopes — v1.43
 
+## Current Milestone: v1.44 — Google One Tap Sign-In
+
+**Goal:** Integrar Google One Tap en el website para que los usuarios no autenticados vean automáticamente el overlay de inicio de sesión en páginas públicas, reduciendo la fricción de registro y login.
+
+**Target features:**
+- Google One Tap overlay en todas las páginas públicas del website (excluye `/cuenta/*` y páginas privadas)
+- Flujo de auto-creación de cuenta vía el OAuth de Google existente (credential JWT → Strapi)
+- Bypass de 2-step verification para One Tap (Google ya verificó la identidad del usuario)
+- Coexistencia con el botón Google redirect actual (`/login/google`)
+
 ## Active Requirements
 
-(None — next milestone not yet defined)
+- [ ] GTAP-01: El overlay de Google One Tap aparece automáticamente para usuarios no autenticados en páginas públicas
+- [ ] GTAP-02: El overlay NO aparece en rutas privadas (`/cuenta/*`, `/pagar/*`, `/anunciar/*`, etc.)
+- [ ] GTAP-03: Al hacer sign-in con One Tap, si el usuario ya existe se autentica directamente
+- [ ] GTAP-04: Al hacer sign-in con One Tap, si el usuario no existe se crea la cuenta automáticamente
+- [ ] GTAP-05: El flujo de One Tap emite un JWT de Strapi y establece la cookie `waldo_jwt` correctamente
+- [ ] GTAP-06: One Tap bypassa el 2-step de código de verificación (igual que el OAuth redirect actual)
+- [ ] GTAP-07: El botón Google redirect existente (`/login/google`) coexiste sin conflicto con One Tap
 
 ---
-*Last updated: 2026-03-19 after v1.43 milestone*
+*Last updated: 2026-03-18 after v1.44 milestone start*
