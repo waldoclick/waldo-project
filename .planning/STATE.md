@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.44
 milestone_name: Google One Tap Sign-In
-current_phase: 096
-status: roadmap ready
-last_updated: "2026-03-18T00:00:00.000Z"
+current_phase: 096 — CSP & Environment Setup (not started)
+status: Roadmap ready — awaiting `/gsd-plan-phase 096`
+last_updated: "2026-03-19T02:42:16.711Z"
 last_activity: 2026-03-18 — Roadmap created; phases 096–098 defined
 progress:
-  total_phases: 3
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_phases: 5
+  completed_phases: 3
+  total_plans: 3
+  completed_plans: 3
   percent: 0
 ---
 
@@ -26,15 +26,15 @@ See: .planning/PROJECT.md
 ## Position
 
 **Current Milestone:** v1.44 — Google One Tap Sign-In
-**Current Phase:** 096 — CSP & Environment Setup (not started)
-**Status:** Roadmap ready — awaiting `/gsd-plan-phase 096`
+**Current Phase:** 096 — CSP & Environment Setup (1/1 plans complete)
+**Status:** Phase 096 complete — ready for Phase 097 (Strapi One Tap Endpoint)
 
 ```
 Progress: [░░░░░░░░░░] 0% — Phase 096 next
 Phase 096 ░░░░ | Phase 097 ░░░░ | Phase 098 ░░░░
 ```
 
-Last activity: 2026-03-18 — Roadmap created; phases 096–098 defined
+Last activity: 2026-03-19 — Phase 096 complete: CSP GIS entries + GOOGLE_CLIENT_ID env setup
 
 ## Phase Map
 
@@ -118,6 +118,8 @@ Last activity: 2026-03-18 — Roadmap created; phases 096–098 defined
 
 ### Key Decisions (v1.44 — carry forward as discovered)
 
+- GIS CSP pattern: use `https://accounts.google.com/gsi/` (path prefix, trailing slash) in both `connect-src` and `frame-src` — never add to `script-src` (already covered by `accounts.google.com`); per Google's official CSP guidance (GTAP-01, GTAP-02, 096-01)
+- GOOGLE_CLIENT_ID in Strapi .env = same credential as website GIS loader — single OAuth project, no new credential needed; must be set in staging/production deployment secrets (GTAP-02, 096-01)
 - New Strapi endpoint uses standard content API (`src/api/auth-one-tap/`), NOT plugin extension routes — plugin route factory is broken in Strapi v5 (documented in `strapi-server.ts` lines 56–62); mirrors proven `auth-verify/` pattern (GTAP-03)
 - Look up users by Google `sub` field first (not email) — Google explicitly prohibits email as primary key; account linking by email is only a fallback for existing users (GTAP-04)
 - `google-auth-library` must be verified as explicit dep in `apps/strapi/package.json` — may be transitive via `googleapis@148.0.0`; run `yarn why google-auth-library` before deciding (GTAP-03)
