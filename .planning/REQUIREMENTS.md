@@ -9,7 +9,7 @@ Requirements for User Onboarding milestone. Each maps to roadmap phases.
 
 ### Onboarding Layout
 
-- [ ] **LAYOUT-01**: `/onboarding` and `/onboarding/thankyou` use a dedicated `onboarding` layout with centered Waldo logo, no header, no footer, no navigation
+- [x] **LAYOUT-01**: `/onboarding` and `/onboarding/thankyou` use a dedicated `onboarding` layout with centered Waldo logo, no header, no footer, no navigation
 - [x] **LAYOUT-02**: `OnboardingDefault` component uses BEM classes `onboarding onboarding--default` with logo centered above the form
 - [x] **LAYOUT-03**: `OnboardingThankyou` component uses BEM classes `onboarding onboarding--thankyou` with thank you message and 2 action buttons
 
@@ -58,7 +58,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| LAYOUT-01 | Phase 099 | Pending |
+| LAYOUT-01 | Phase 099 | Complete |
 | LAYOUT-02 | Phase 099 | Complete |
 | LAYOUT-03 | Phase 099 | Complete |
 | GUARD-01 | Phase 100 | Pending |
@@ -82,4 +82,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-03-19*
-*Last updated: 2026-03-19 after roadmap creation*
+*Last updated: 2026-03-19 after 099-01 execution (LAYOUT-01, FORM-02, FORM-03 complete)*
