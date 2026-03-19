@@ -370,6 +370,17 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
            | Full page reload after One Tap login (`window.location.reload()`) | Ensures all SSR-hydrated components pick up auth state cleanly; simpler than reactive propagation across all layouts — v1.44 | ✓ Good |
            | Dynamic import for `createUserReservations` in auth-one-tap controller | Avoids circular dep between `src/api/` and `src/extensions/`; Jest mock correctly intercepts — v1.44 | ✓ Good |
 
+## Current Milestone: v1.45 User Onboarding
+
+**Goal:** Force newly registered users with incomplete profiles through a dedicated onboarding flow before they can use the platform.
+
+**Target features:**
+- `/onboarding` page with minimal layout (logo only, no header/footer) — locked until profile complete
+- `OnboardingDefault` component (BEM: `onboarding onboarding--default`) reusing `FormProfile`
+- `/onboarding/thankyou` page with same minimal layout — "Crear mi primer anuncio" + "Volver a Waldo" buttons
+- Middleware to redirect incomplete-profile users to onboarding and prevent escape
+- Pre-onboarding URL storage for "Volver a Waldo" return navigation
+
 ## Current State
 
 **Last shipped:** v1.44 (2026-03-19) — Google One Tap Sign-In: One Tap overlay on public pages, Strapi endpoint with Google JWT verification + user find-or-create, `disableAutoSelect()` logout fix, SSR-safe plugin
@@ -486,4 +497,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ Google redirect button (`/login/google`) coexists with One Tap without conflict — v1.44
 
 ---
-*Last updated: 2026-03-19 after v1.44 milestone*
+*Last updated: 2026-03-19 after v1.45 milestone started*
