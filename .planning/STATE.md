@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.44
 milestone_name: Google One Tap Sign-In
 current_phase: 097
-status: planning
-last_updated: "2026-03-19T03:08:33.940Z"
-last_activity: "2026-03-19 — Phase 097 plan 01 complete: TDD RED scaffolds for GoogleOneTapService + auth-one-tap controller"
+status: executing
+last_updated: "2026-03-19T03:13:55.812Z"
+last_activity: "2026-03-19 — Phase 097 plan 02 complete: GoogleOneTapService GREEN + google_sub schema field"
 progress:
   total_phases: 5
   completed_phases: 3
   total_plans: 6
-  completed_plans: 4
-  percent: 97
+  completed_plans: 5
+  percent: 98
 ---
 
 # Session State
@@ -27,14 +27,14 @@ See: .planning/PROJECT.md
 
 **Current Milestone:** v1.44 — Google One Tap Sign-In
 **Current Phase:** 097
-**Status:** In progress (plan 01 of 3 complete)
+**Status:** In progress (plan 02 of 3 complete)
 
 ```
-Progress: [██████████] 97% — Phase 097 in progress
+Progress: [██████████] 98% — Phase 097 in progress
 Phase 096 ████ | Phase 097 ░░░░ | Phase 098 ░░░░
 ```
 
-Last activity: 2026-03-19 — Phase 097 plan 01 complete: TDD RED scaffolds for GoogleOneTapService + auth-one-tap controller
+Last activity: 2026-03-19 — Phase 097 plan 02 complete: GoogleOneTapService GREEN + google_sub schema field
 
 ## Phase Map
 
@@ -129,6 +129,9 @@ Last activity: 2026-03-19 — Phase 097 plan 01 complete: TDD RED scaffolds for 
 - `google-one-tap.client.ts` plugin suffix ensures SSR exclusion automatically — no `if (import.meta.client)` guard needed inside the plugin (GTAP-08)
 - Global `googleOneTapInitialized` flag in existing composable must be removed — it prevents `prompt()` from firing on subsequent SPA pages; `initialize()` moves to plugin (once on startup), `prompt()` stays in composable (per-page) (GTAP-07)
 - `disableAutoSelect()` must be called before `strapiLogout()` in `useLogout.ts` — clears GIS `g_state` cookie; prerequisite before `auto_select: true` can ever be enabled safely (GTAP-12)
+- `rut:'N/A'` placeholder for Google One Tap new users — rut is required in schema; profile completion deferred to Phase 098 (097-02)
+- `GoogleOneTapService` constructor warns (not throws) on missing GOOGLE_CLIENT_ID — throwing kills Strapi startup; endpoint returns 401 for all requests when key is absent (097-02)
+- `google_sub` field: lookup by sub first (immutable), then email fallback for existing account linking, then create new user with `provider:'google'` (097-02)
 
 ### Blockers/Concerns (open)
 
