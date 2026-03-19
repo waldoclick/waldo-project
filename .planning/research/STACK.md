@@ -1,218 +1,139 @@
 # Stack Research
 
-**Domain:** Cross-subdomain cookie sharing — Nuxt 4 + @nuxtjs/strapi v2
-**Researched:** 2026-03-16
-**Confidence:** HIGH
-
-## Scope Statement
-
-This file answers the precise questions for the shared authentication session milestone:
-
-1. Does `useCookie()` in Nuxt 4 support a `domain` option?
-2. Does `@nuxtjs/strapi` v2's `cookie` config object accept `domain`?
-3. Are there any version constraints or required package updates?
-4. Are there Nitro/h3 changes needed for server-side cookie writes?
-5. What is NOT needed (avoid adding)?
-
-All findings are based on: installed package source at `node_modules/`, official Nuxt 4 docs, and `@nuxtjs/strapi` v2 GitHub source.
-
----
-
-## Executive Answer
-
-**Zero new packages required.** The entire cross-subdomain cookie sharing implementation is a pure configuration change to both `nuxt.config.ts` files. The chain works as follows:
-
-```
-nuxt.config.ts strapi.cookie.domain
-  → useStrapiToken.js: useCookie(cookieName, config.strapi.cookie)
-    → Nuxt useCookie() accepts CookieSerializeOptions including domain
-      → Set-Cookie: waldo_jwt=...; Domain=.waldo.click; Path=/
-```
-
----
-
-## Key Findings
-
-### Finding 1 — `useCookie()` natively supports `domain` (HIGH confidence)
-
-**Source:** Official Nuxt 4 docs, `nuxt.com/docs/api/composables/use-cookie` (verified 2026-03-16)
-
-`useCookie()` extends `CookieSerializeOptions` from `cookie-es`. The `domain` option is documented:
-
-> Sets the `Domain` `Set-Cookie` attribute. By default, no domain is set, and most clients will consider applying the cookie only to the current domain.
-
-Usage:
-```typescript
-const token = useCookie('waldo_jwt', {
-  path: '/',
-  maxAge: 604800,
-  domain: '.waldo.click',  // ← dot-prefixed = all subdomains
-})
-```
-
-The `.waldo.click` (leading dot) format is the correct RFC 6265 convention for matching all subdomains of `waldo.click`.
-
-**Installed version:** `cookie-es@2.0.0` (in project's `node_modules/`), which is the underlying serializer Nuxt uses. Supports `domain` in `CookieSerializeOptions`. ✅
-
-### Finding 2 — `@nuxtjs/strapi` v2 `cookie` config accepts `domain` (HIGH confidence)
-
-**Source:** `node_modules/@nuxtjs/strapi/dist/runtime/composables/useStrapiToken.js` (installed, read directly)
-
-```javascript
-// useStrapiToken.js line 10 — the entirety of cookie creation:
-const cookie = useCookie(config.strapi.cookieName, config.strapi.cookie);
-```
-
-The `cookie` option object from `nuxt.config.ts` is passed **directly and entirely** to `useCookie()`. There is no filtering or stripping.
-
-**Module type definition** (`module.ts` from GitHub source, verified):
-```typescript
-export interface ModuleOptions {
-  cookie?: CookieOptions  // ← Nuxt's own CookieOptions type — includes domain
-}
-```
-
-`CookieOptions` is imported from `nuxt/app` — the same type used by `useCookie()` itself. Therefore, `domain` is a valid, typed field.
-
-**Currently installed version:** `@nuxtjs/strapi@2.1.1` — this behavior is present in the installed version. ✅
-
-**What this means:** Adding `domain: '.waldo.click'` to the `cookie` block in both `nuxt.config.ts` files is all that is needed for `@nuxtjs/strapi` to emit cookies with the correct domain attribute.
-
-### Finding 3 — `SameSite` must be set to `'lax'` or unset (HIGH confidence)
-
-**Source:** RFC 6265bis; MDN Cookie docs; browser behavior (well-established)
-
-A cookie with `Domain=.waldo.click` and `SameSite=Strict` will NOT be sent on cross-subdomain navigation (e.g., website → dashboard redirects or link clicks). The current config does not set `sameSite`, which defaults to browser default — typically `Lax` in modern browsers. `Lax` is the correct value for cross-subdomain within the same eTLD+1.
-
-**Current state in `nuxt.config.ts`:** Neither app sets `sameSite` in the `cookie` config block. This is correct — do not add `sameSite: 'strict'`. Do not add `sameSite: 'none'` (that is for cross-site, not cross-subdomain, and requires `secure: true`).
-
-No change needed on `sameSite`.
-
-### Finding 4 — h3 `setCookie()` supports `domain` in server routes (HIGH confidence)
-
-**Source:** h3 GitHub source `src/utils/cookie.ts` (verified 2026-03-16)
-
-```typescript
-export function setCookie(
-  event: H3Event,
-  name: string,
-  value: string,
-  options?: CookieSerializeOptions,  // ← includes domain
-): void
-```
-
-`CookieSerializeOptions` is from `cookie-es` and includes `domain`. If any Nitro server routes in `apps/website/server/` or `apps/dashboard/server/` manually set the JWT cookie, they will need the `domain` option added to their `setCookie()` call.
-
-**Current state:** No server routes in either app manually set `waldo_jwt`. The `@nuxtjs/strapi` module handles all JWT cookie writes. No Nitro/h3 changes needed today.
-
-### Finding 5 — `nuxt-security@2.4.0` does NOT interfere with cookie domain (HIGH confidence)
-
-**Source:** `node_modules/nuxt-security/dist/defaultConfig.mjs` (read directly)
-
-`nuxt-security` only sets HTTP response security headers (CSP, HSTS, etc.). It does not set, modify, or strip `Set-Cookie` headers. No conflict with `Domain` attribute.
-
-**Exception to watch:** `strictTransportSecurity.includeSubdomains: true` is nuxt-security's default. This means all subdomains of `waldo.click` require HTTPS. The JWT cookie with `Domain=.waldo.click` must also be secure in production (which it is — both apps run on HTTPS via Forge). In development (HTTP), the cookie will still be set but not transmitted in secure contexts — this is expected behavior.
-
-### Finding 6 — Both apps already use identical `cookieName: "waldo_jwt"` (HIGH confidence)
-
-**Source:** Both `nuxt.config.ts` files read directly
-
-```typescript
-// apps/website/nuxt.config.ts
-cookieName: "waldo_jwt",
-
-// apps/dashboard/nuxt.config.ts
-cookieName: "waldo_jwt",
-```
-
-The cookie name is already identical across apps — this is a prerequisite for cross-subdomain sharing. Both apps reading the same name means once `Domain=.waldo.click` is set at login, the other app will automatically read it. ✅
+**Domain:** Google One Tap Sign-In integration for Nuxt 4 website
+**Researched:** 2026-03-18
+**Confidence:** HIGH — all claims verified against official Google Identity Services documentation (updated 2025–2026) and direct codebase inspection.
 
 ---
 
 ## Recommended Stack
 
-### Core Technologies (unchanged — no additions)
+### Core Technologies
 
-| Technology | Version | Purpose | Notes |
-|------------|---------|---------|-------|
-| `nuxt` | `^4.1.3` | SSR framework | Already installed — `useCookie` domain support built-in |
-| `@nuxtjs/strapi` | `^2.1.1` | Strapi integration + JWT cookie | Already installed — `cookie` config passes through to `useCookie` |
-| `cookie-es` | `2.0.0` | Cookie serialization | Already installed (transitive) — supports `domain` in `CookieSerializeOptions` |
-| `h3` | (Nuxt bundled) | Server-side cookie utils | Already installed (via Nitro) — `setCookie` supports `domain` |
+| Technology | Version | Purpose | Why Recommended |
+|------------|---------|---------|-----------------|
+| GIS script tag (CDN) | N/A — always latest from `accounts.google.com` | Loads `window.google.accounts.id` API in the browser | Google's **official and only supported** delivery method. Self-hosting or npm bundling is explicitly unsupported — the CDN ensures automatic security updates and FedCM compatibility patches. **Already loaded** in `app.head.script` in `apps/website/nuxt.config.ts` (lines 261–265). Zero addition needed on the website. |
+| `google-auth-library` | `^10.6.2` (current, published 2026-03-16) | Server-side JWT verification in Strapi | Google's official Node.js client. `OAuth2Client.verifyIdToken()` verifies RS256 signature, `aud`, `iss`, and `exp` in one call, with built-in public-key caching and rotation handling. Required in Strapi because the browser GIS SDK is client-only — the server must independently verify the credential JWT. Built-in TypeScript declarations. |
 
-### Supporting Libraries (unchanged)
+### Supporting Libraries
 
-No additions required.
+| Library | Version | Purpose | When to Use |
+|---------|---------|---------|-------------|
+| `@types/google-one-tap` | ❌ DO NOT INSTALL | TypeScript types for `window.google.accounts.id` | Already covered in `app/types/window.d.ts`. The website has hand-written `GoogleOneTapNotification` and `window.google.accounts.id` types. Installing `@types/google-one-tap` would create duplicate global declarations and cause TypeScript conflicts. |
+
+### No New Nuxt Module Needed
+
+| Decision | Rationale |
+|----------|-----------|
+| No `nuxt-google-signin` or similar Nuxt module | The GIS script tag is already loaded globally via `app.head.script` in `nuxt.config.ts`. A Nuxt wrapper module would add a layer around the same CDN script without adding value. Consistent with how GTM, LogRocket, and Hotjar are loaded in this project (direct script injection, no modules). |
+
+### Development Tools
+
+| Tool | Purpose | Notes |
+|------|---------|-------|
+| Existing `app/types/window.d.ts` | TypeScript types for `window.google` | Already declares `google.accounts.id.initialize`, `google.accounts.id.prompt`, `GoogleOneTapNotification`, and `window.googleOneTapInitialized`. Extend with `disableAutoSelect()` if used in logout (recommended). |
 
 ---
 
 ## Installation
 
-No new packages to install.
+```bash
+# Strapi only — adds server-side JWT verification
+# Run from: apps/strapi/
+yarn add google-auth-library
+
+# Website — NOTHING to install
+# GIS SDK already loaded via script tag in nuxt.config.ts
+# No npm package needed or desired
+```
 
 ---
 
-## The Exact Config Change
+## CSP Header Changes (`nuxt-security`)
 
-**Both apps — add `domain` to `strapi.cookie` block in `nuxt.config.ts`:**
+The existing `nuxt.config.ts` CSP already covers most Google domains from the existing OAuth redirect flow. Here is the exact status of each directive relevant to One Tap:
 
+### `script-src` — ✅ Already present, no change needed
+`https://accounts.google.com` is in `script-src` (line 67 of current `nuxt.config.ts`). The GIS client library loads from `https://accounts.google.com/gsi/client`.
+
+### `frame-src` — ✅ Already present, no change needed
+`https://accounts.google.com` is in `frame-src` (line 121). One Tap renders an iframe from `accounts.google.com/gsi/`.
+
+### `connect-src` — ❌ MISSING — must be added
+Google Identity Services makes XHR/fetch calls to `https://accounts.google.com/gsi/` for status checks, token exchange, and FedCM flows. The official CSP guide requires the **parent path** `https://accounts.google.com/gsi/` (not individual sub-URLs — adding the parent avoids breakage on GIS updates).
+
+**Required addition:**
 ```typescript
-// apps/website/nuxt.config.ts
-strapi: {
-  url: ...,
-  prefix: '/api',
-  version: 'v5',
-  cookie: {
-    path: '/',
-    maxAge: process.env.SESSION_MAX_AGE
-      ? Number.parseInt(process.env.SESSION_MAX_AGE)
-      : 604800,
-    domain: process.env.COOKIE_DOMAIN || undefined,  // ← ADD THIS
-  },
-  cookieName: 'waldo_jwt',
-  // ...
-},
+"connect-src": [
+  // ... existing entries ...
+  "https://accounts.google.com/gsi/",  // ← ADD THIS for One Tap / FedCM XHR calls
+],
 ```
 
-```typescript
-// apps/dashboard/nuxt.config.ts
-strapi: {
-  url: ...,
-  prefix: '/api',
-  version: 'v5',
-  cookie: {
-    path: '/',
-    maxAge: process.env.SESSION_MAX_AGE
-      ? Number.parseInt(process.env.SESSION_MAX_AGE)
-      : 604800,
-    domain: process.env.COOKIE_DOMAIN || undefined,  // ← ADD THIS
-  },
-  cookieName: 'waldo_jwt',
-  // ...
-},
+Without this, Chrome DevTools will show:
+```
+[GSI_LOGGER]: FedCM get() rejects with NetworkError: Refused to connect to
+'https://accounts.google.com/gsi/fedcm.json' because it violates the document's
+Content Security Policy.
 ```
 
-**New env var in both `.env` and `.env.example`:**
+### `style-src` — Optional addition
+Google's stylesheet `https://accounts.google.com/gsi/style` controls One Tap UI appearance. Currently absent. The prompt renders without custom styling if omitted (browser default styles apply). Add if visual consistency matters:
+
+```typescript
+"style-src": [
+  "'self'",
+  "'unsafe-inline'",
+  "https://css.zohocdn.com",
+  "https://accounts.google.com/gsi/style",  // ← OPTIONAL: One Tap UI styles
+],
+```
+
+### FedCM / `Cross-Origin-Opener-Policy`
+FedCM (active by default in Chrome 117+) eliminates the popup mode that required `COOP: same-origin-allow-popups`. `nuxt-security` does not set COOP headers, and no change is needed — FedCM handles sign-in without popups entirely.
+
+---
+
+## Strapi-Side Changes
+
+### Why Strapi needs changes
+
+One Tap delivers a **credential JWT** to the browser callback — a signed Google ID token. This is **not** the same as the OAuth authorization code handled by Strapi's existing `GET /auth/google/callback`. A new endpoint is required to:
+
+1. Accept `{ credential: string }` (the Google ID token)
+2. Verify it server-side with `google-auth-library`
+3. Find-or-create a Strapi user by email
+4. Issue a Strapi JWT
+5. Return `{ jwt, user }` — same shape as `verify-code` and OAuth callback responses
+
+### New components to create
+
+| Component | Location | Responsibility |
+|-----------|----------|---------------|
+| `google-one-tap.service.ts` | `apps/strapi/src/services/google-one-tap/` | Wraps `OAuth2Client.verifyIdToken()`. Validates `aud` = `GOOGLE_CLIENT_ID`. Returns decoded payload (`sub`, `email`, `given_name`, `family_name`, `picture`). Throws `ApplicationError` on invalid token. |
+| `google-one-tap.types.ts` | `apps/strapi/src/services/google-one-tap/` | `IGoogleOneTapPayload` interface: `sub`, `email`, `email_verified`, `given_name`, `family_name`, `picture`, `aud`, `iss`, `exp`. |
+| `index.ts` | `apps/strapi/src/services/google-one-tap/` | Exports singleton + `verifyCredential()` named export. Follows GeminiService / TavilyService singleton pattern established in this codebase. |
+| `google-one-tap.controller.ts` | `apps/strapi/src/api/auth-one-tap/controllers/` | Receives `POST /api/auth/google-one-tap` with `{ credential }`. Delegates to service. Calls `findOrCreateUser()`. Calls `createUserReservations()` for new users. Returns `{ jwt, user }`. |
+| `google-one-tap.routes.ts` | `apps/strapi/src/api/auth-one-tap/routes/` | Public route (no auth middleware) — same as `verify-code` route pattern. |
+
+### What does NOT change in Strapi
+
+| Existing Component | Status |
+|--------------------|--------|
+| `GET /auth/google/callback` (OAuth redirect flow) | **Unchanged** — different flow for the existing `/login/google` redirect button. One Tap uses a separate endpoint. |
+| `overrideAuthLocal` 2-step verification | **Unchanged** — One Tap bypasses 2-step entirely. One Tap credential is Google-cryptographically-verified; running a 6-digit SMS/email code after Google already verified the identity is redundant and degrades UX. Pattern is consistent with the existing `ctx.method === "GET"` guard for OAuth callbacks. |
+| `createUserReservations()` in `authController.ts` | **Reused** — called for new users created via One Tap, same as existing OAuth and local registration flows. |
+| `registerUserAuth` wrapper | **Not reused** — One Tap uses a new endpoint, not the `connect` handler, because the credential format differs (JWT vs. OAuth code exchange). |
+| `google-auth-library` is not yet in `apps/strapi/package.json` | Needs `yarn add google-auth-library` — this is the **one new dependency**. |
+
+### New environment variable in Strapi
 
 ```bash
-# Cookie domain for cross-subdomain sharing
-# Production: .waldo.click or .waldoclick.dev
-# Local dev: leave unset (undefined = current domain only)
-COOKIE_DOMAIN=.waldo.click
+# apps/strapi/.env and .env.example
+GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
 ```
 
-**Why `|| undefined` instead of a fallback string:** When `domain` is `undefined`, `useCookie` / `cookie-es` omits the `Domain` attribute entirely, so the cookie is scoped to the exact domain that set it. This is the correct behavior for local development where both apps run on `localhost` (not subdomains). Setting `domain: '.localhost'` has inconsistent browser support and is not needed.
-
----
-
-## Alternatives Considered
-
-| Recommended | Alternative | Why Not |
-|-------------|-------------|---------|
-| `domain` in `strapi.cookie` config | `js-cookie` library client-side workaround | `js-cookie` doesn't run on SSR; strapi module handles both sides correctly |
-| `domain` in `strapi.cookie` config | Custom Nitro middleware to rewrite `Set-Cookie` | Over-engineering; strapi module already exposes the right hook |
-| `COOKIE_DOMAIN` env var | Hardcoded `.waldo.click` in config | Hardcoding breaks local dev; env var lets each environment opt in |
-| `sameSite: 'lax'` (browser default, unset) | `sameSite: 'none'` | `none` requires `secure: true` and is for cross-origin, not cross-subdomain |
+`google-auth-library` `verifyIdToken()` requires the client ID to verify the `aud` claim. **Same client ID as the website** (`runtimeConfig.public.googleClientId`). Must be added to Strapi's env — it does not have it yet (the existing GoogleConfig service is for Sheets API, not authentication).
 
 ---
 
@@ -220,45 +141,93 @@ COOKIE_DOMAIN=.waldo.click
 
 | Avoid | Why | Use Instead |
 |-------|-----|-------------|
-| `js-cookie` for domain setting | Already in both apps as `js-cookie@3.0.5` but SSR-unaware; `useCookie` is the correct SSR-safe API | `useCookie` via `@nuxtjs/strapi` |
-| Custom Nitro middleware rewriting `Set-Cookie` | Over-engineering; fragile; would need to track all cookie writes | `strapi.cookie.domain` config |
-| `sameSite: 'none'` with `secure: true` | For cross-site contexts (third-party cookies); subdomains of same root domain are same-site | Leave `sameSite` unset (defaults to `Lax`) |
-| Separate auth session per app | Defeats the purpose; users would need to log in twice | Single `waldo_jwt` with domain scope |
-| `httpOnly: true` on `waldo_jwt` | Would prevent `useStrapiToken` from reading the cookie client-side (JavaScript access required for Nuxt SSR hydration) | Keep `httpOnly` unset (defaults to `false`) |
+| `google-one-tap` npm package (community) | Community wrapper that self-hosts the GIS SDK. Google explicitly marks self-hosting unsupported. Security patches won't arrive automatically. Also conflicts with the existing `app.head.script` injection (would load GIS twice). | Direct `window.google.accounts.id` calls — GIS already loaded via script tag. |
+| `vue3-google-login` | Vue wrapper library. Opinionated about loading order, conflicts with existing `app.head.script` injection, adds ~10KB for no benefit over direct API calls. | Direct `window.google.accounts.id` API in a `plugin.client.ts`. |
+| `@types/google-one-tap` | Creates duplicate `window.google` global declarations conflicting with existing `window.d.ts`. | Extend existing `app/types/window.d.ts` for any missing types (`disableAutoSelect`, `renderButton`). |
+| `jsonwebtoken` for server-side verification | Manual JWT verification requires managing Google public key rotation (JWKS endpoint, `Cache-Control` header). Easy to miss `aud`, `iss`, or `exp` checks. | `google-auth-library` `OAuth2Client.verifyIdToken()` — handles key rotation, caching, and all required validation steps. |
+| Adding One Tap to the dashboard app | Dashboard is admin-only. Google One Tap is a consumer-facing sign-in UX. Admin access via 2-step local login is appropriate and more secure. | Website-only feature. |
+| Re-using `registerUserAuth` (`instance.connect`) for One Tap | `connect` handles OAuth code exchange (redirect flow). One Tap provides a signed JWT directly — different protocol, different verification. | New `google-one-tap.controller.ts` endpoint. |
+
+---
+
+## Integration Points with Existing Stack
+
+### `@nuxtjs/strapi` — how the frontend calls the new endpoint
+
+After the One Tap callback fires in the browser, the frontend calls `POST /api/auth/google-one-tap` via `useApiClient` (which injects `X-Recaptcha-Token`). The response `{ jwt, user }` feeds into `setToken(jwt)` + `fetchUser()` from `useStrapiAuth()` — identical pattern to `FormVerifyCode.vue` (verify-code flow, v1.36).
+
+### Pinia / logout
+
+`useLogout.ts` must call `google.accounts.id.disableAutoSelect()` before `strapiLogout()`. This prevents One Tap from auto-signing-in the next visitor on a shared device. Pattern:
+
+```typescript
+// apps/website/composables/useLogout.ts — ADD before strapiLogout():
+if (import.meta.client && window.google?.accounts?.id) {
+  window.google.accounts.id.disableAutoSelect()
+}
+```
+
+### `@saslavik/nuxt-gtm` / analytics
+
+Push a `login` GA4 event inside the credential callback:
+```typescript
+window.dataLayer.push({ event: 'login', method: 'google_one_tap' })
+```
+Uses the existing `window.dataLayer` typed union (`DataLayerEvent | Record<string, unknown>`).
+
+### 2-Step verification bypass
+
+The new `POST /api/auth/google-one-tap` endpoint issues a Strapi JWT directly, bypassing the `overrideAuthLocal` 2-step intercept. This is correct: Google has already verified the user's identity cryptographically. The existing `ctx.method === "GET"` guard only bypasses for OAuth redirect callbacks — the new endpoint must explicitly skip 2-step by not going through `auth.local` at all.
+
+### `nuxt-security` CSP
+
+Only `connect-src` change required. All other existing CSP entries already cover One Tap domains. See CSP section above.
+
+### `runtimeConfig.public.googleClientId`
+
+Already present in `apps/website/nuxt.config.ts` (line 344). The client plugin reads `useRuntimeConfig().public.googleClientId` for `google.accounts.id.initialize({ client_id })`. No new runtimeConfig key needed.
+
+---
+
+## Alternatives Considered
+
+| Category | Recommended | Alternative | Why Not |
+|----------|-------------|-------------|---------|
+| GIS loading | Script tag (CDN) — already loaded | `google-one-tap` npm package | Google explicitly unsupported for self-hosting; would load GIS twice |
+| Server JWT verification | `google-auth-library` | `jsonwebtoken` + manual JWKS fetch | `google-auth-library` handles key rotation; manual approach is error-prone |
+| Nuxt integration | Client-side plugin using `window.google.accounts.id` | Nuxt wrapper module | Script already loaded; module adds no value |
+| New Strapi endpoint | Dedicated `api/auth-one-tap/` content-API style | Extending `users-permissions` plugin routes | Plugin route push is a factory-function in Strapi v5 and doesn't work (documented in `strapi-server.ts` comment line 57–61). Dedicated API folder is the established pattern. |
 
 ---
 
 ## Version Compatibility
 
-| Package | Version | Compatibility Notes |
-|---------|---------|---------------------|
-| `@nuxtjs/strapi@2.1.1` | Installed | `cookie?: CookieOptions` — typed as Nuxt's own `CookieOptions`; `domain` field valid and passes through |
-| `nuxt@^4.1.3` | Installed | `useCookie` `domain` option documented and stable since Nuxt 3; no version constraint |
-| `cookie-es@2.0.0` | Installed (transitive) | `CookieSerializeOptions.domain: string` — supported |
-| `nuxt-security@2.4.0` | Installed | No cookie attribute manipulation; no conflict |
-
-No version upgrades required.
-
----
-
-## Strapi CORS Note (not blocking, but verify)
-
-If the Strapi backend sets the JWT cookie directly in any response (e.g., the custom `overrideAuthLocal` returns a cookie via `ctx.set('Set-Cookie', ...)`), that server response must also include `Domain=.waldo.click`. However, in the current architecture, Strapi only returns JWT values in the JSON body (`{ jwt, user }`), and the Nuxt apps write the cookie via `useStrapiToken`'s `setToken()` → `useCookie` assignment. Strapi does not write the cookie directly. No Strapi change needed.
+| Package | Compatible With | Notes |
+|---------|-----------------|-------|
+| `google-auth-library@10.6.2` | Node.js ≥ 18, TypeScript ≥ 4.7 | Built-in TypeScript declarations (`index.d.ts`). Strapi v5 requires Node.js ≥ 18. No version conflict with existing deps. |
+| GIS CDN script | Chrome 117+ (FedCM native), all modern browsers | FedCM is the default since April 2024 in Chrome. The existing CDN script handles FedCM transparently — no configuration change needed to activate it. |
+| `nuxt-security@2.4.0` | CSP via `contentSecurityPolicy` config object | Adding `connect-src` entry follows the same array pattern already used for all other CSP directives. |
+| `nuxt@^4.1.3` | `app.head.script` injection | Already used for GIS; no Nuxt version constraint on this approach. |
 
 ---
 
 ## Sources
 
-| Source | Type | Confidence |
-|--------|------|------------|
-| `nuxt.com/docs/api/composables/use-cookie` (fetched 2026-03-16) | Official Nuxt 4 docs | HIGH |
-| `node_modules/@nuxtjs/strapi/dist/runtime/composables/useStrapiToken.js` | Installed package source | HIGH |
-| `github.com/nuxt-modules/strapi/raw/main/src/module.ts` | Package author source (fetched 2026-03-16) | HIGH |
-| `github.com/h3js/h3/blob/main/src/utils/cookie.ts` | h3 package source (fetched 2026-03-16) | HIGH |
-| `node_modules/nuxt-security/dist/defaultConfig.mjs` | Installed package source | HIGH |
-| `apps/website/nuxt.config.ts`, `apps/dashboard/nuxt.config.ts` | Project config (read directly) | HIGH |
+| Source | What Was Verified | Confidence |
+|--------|-------------------|------------|
+| `https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid#content_security_policy` (updated 2025-10-31) | CSP directives: `connect-src` + `frame-src` + `script-src` required URLs; `https://accounts.google.com/gsi/` as parent path | HIGH |
+| `https://developers.google.com/identity/gsi/web/guides/display-google-one-tap` (updated 2025-09-29) | JS callback mode; `CredentialResponse.credential` JWT field; `initialize()` + `prompt()` API | HIGH |
+| `https://developers.google.com/identity/gsi/web/guides/verify-google-id-token` (updated 2025-12-22) | `google-auth-library` Node.js `verifyIdToken()` as recommended server-side approach; JWT payload fields (`sub`, `email`, etc.) | HIGH |
+| `https://developers.google.com/identity/gsi/web/guides/fedcm-migration` (updated 2026-02-10) | FedCM CSP requirement (`connect-src` mandatory); COOP not needed with FedCM; `use_fedcm_for_prompt` deprecated | HIGH |
+| `https://developers.google.com/identity/gsi/web/reference/js-reference` (updated 2026-02-10) | `IdConfiguration`, `CredentialResponse`, `disableAutoSelect()`, `google.accounts.id.initialize` | HIGH |
+| `https://www.npmjs.com/package/google-auth-library` (v10.6.2, published 2026-03-16) | Current version; built-in TS types confirmed | HIGH |
+| `apps/website/nuxt.config.ts` (direct codebase inspection) | GIS script tag already in `app.head.script`; existing CSP state; `GOOGLE_CLIENT_ID` in `runtimeConfig.public`; `connect-src` missing `accounts.google.com/gsi/` | HIGH |
+| `apps/website/app/types/window.d.ts` (direct codebase inspection) | `window.google.accounts.id` typed; `GoogleOneTapNotification` defined; no `@types/google-one-tap` needed | HIGH |
+| `apps/strapi/src/extensions/users-permissions/strapi-server.ts` (direct inspection) | `ctx.method === "GET"` bypass for OAuth; plugin route push limitation documented | HIGH |
+| `apps/strapi/src/extensions/users-permissions/controllers/authController.ts` (direct inspection) | `createUserReservations()` reusable; `registerUserAuth` uses OAuth code path, not JWT path | HIGH |
+| `apps/strapi/package.json` (direct inspection) | `google-auth-library` not currently installed; `googleapis@148.0.0` is for Sheets API (different) | HIGH |
 
 ---
 
-*Stack research for: cross-subdomain cookie sharing, Nuxt 4 + @nuxtjs/strapi v2*
-*Researched: 2026-03-16*
+*Stack research for: Google One Tap Sign-In integration (website only)*
+*Researched: 2026-03-18*

@@ -1,425 +1,271 @@
-# Pitfalls Research
+# Domain Pitfalls: Google One Tap Sign-In on Nuxt 4 + Strapi
 
-**Domain:** Adding cross-subdomain cookie sharing to existing Nuxt 4 + @nuxtjs/strapi v2 auth
-**Milestone:** Shared authentication session across `waldo.click` subdomains (website + dashboard)
-**Researched:** 2026-03-16
-**Confidence:** HIGH — all critical claims verified against @nuxtjs/strapi v2 source (`useStrapiToken.ts`, `useStrapiAuth.ts`), Nuxt 4 `useCookie` docs, and MDN cookie specification
+**Domain:** Adding Google One Tap to an existing SSR Nuxt 4 app with nuxt-security CSP + Strapi v5 OAuth
+**Researched:** 2026-03-18
+**Sources:** Google Identity Services official docs (updated 2026-02-10), live codebase analysis
 
 ---
 
 ## Critical Pitfalls
 
-Mistakes that cause broken sessions, zombie cookies, or users locked out after logout.
+Mistakes that cause silent failures, broken auth, or security regressions.
 
 ---
 
-### Pitfall 1: Logout Doesn't Clear the Old Cookie — Two Cookies Now Exist
+### Pitfall 1: CSP Missing `connect-src` for `accounts.google.com/gsi/`
 
-**What goes wrong:**
-The existing `waldo_jwt` cookie is set **without** a `domain` attribute:
+**What goes wrong:** One Tap initializes but the FedCM flow silently fails. Chrome DevTools shows:
+`[GSI_LOGGER]: FedCM get() rejects with NetworkError: ... Refused to connect to 'https://accounts.google.com/gsi/fedcm.json' because it violates the document's Content Security Policy.`
 
-```ts
-// nuxt.config.ts — current state (both website and dashboard)
-cookie: {
-  path: "/",
-  maxAge: 604800,
-},
+**Why it happens:** `nuxt-security` enforces CSP headers on every response. The existing `connect-src` in `nuxt.config.ts` does NOT include `https://accounts.google.com/gsi/` (it only has `https://accounts.google.com` in `script-src`, not the `/gsi/` sub-path in `connect-src`). The `frame-src` already has `https://accounts.google.com` but not the `/gsi/` prefix. The `style-src` doesn't include `https://accounts.google.com/gsi/style` at all.
+
+**Consequences:** One Tap prompt never appears on FedCM-capable browsers (Chrome 117+) — the most common browser. No visible error for users. Developers waste hours thinking the issue is in JS code.
+
+**Prevention:** Add `https://accounts.google.com/gsi/` to ALL of these CSP directives in `nuxt.config.ts`:
+```typescript
+"connect-src": [..., "https://accounts.google.com/gsi/"],
+"frame-src":   [..., "https://accounts.google.com/gsi/"],
+"style-src":   [..., "https://accounts.google.com/gsi/style"],
+// script-src already has "https://accounts.google.com" — confirm gsi/client is covered
 ```
+Google explicitly says: use the parent path `https://accounts.google.com/gsi/` (not individual endpoint URLs) to future-proof against GIS library updates. Avoid listing individual GIS URLs.
 
-When `domain: ".waldo.click"` is added, `useStrapiToken` calls `useCookie(cookieName, config.strapi.cookie)`, which sets a **new cookie** with `Domain=.waldo.click`. The browser now has **two separate cookies** with the name `waldo_jwt`:
+**Detection:** `[GSI_LOGGER]` errors in Chrome DevTools console. One Tap never shows despite correct JS initialization.
 
-1. `waldo_jwt` — no domain attribute (host-only, scoped to `www.waldo.click`)
-2. `waldo_jwt` — `Domain=.waldo.click` (visible to all subdomains)
-
-Both are sent to the server on requests from `www.waldo.click`. When `useStrapiAuth().logout()` calls `setToken(null)`, it sets `cookie.value = null` through the `useCookie` ref that was created with `Domain=.waldo.click` — this clears only cookie #2. Cookie #1 (the old host-only one) remains untouched in the browser and continues to be sent on requests. From the user's perspective, they are still "logged in" after logout.
-
-**Why it happens:**
-RFC 6265 treats cookies with and without a `Domain` attribute as distinct entries. Setting `Domain=.waldo.click` creates a different cookie than the one without a domain, even if the name is identical. The browser sends both, and clearing the domain-scoped one does not affect the host-only one.
-
-**Consequences:**
-- After logout, `useStrapiUser()` returns the old user object on next SSR render (the old cookie's JWT is sent to Strapi and validates)
-- Users cannot fully log out — the old cookie survives until its 7-day `maxAge` expires
-- On the dashboard, admins can appear to be logged out in the UI but their JWT is still active
-
-**Prevention:**
-The logout must **explicitly clear the old host-only cookie** in the same operation. Before removing the domain attribute from the cookie config, add a one-time client-side cleanup:
-
-```ts
-// In useLogout.ts — add BEFORE calling strapiLogout()
-// Step 1: Clear the old host-only cookie (no domain attribute)
-if (import.meta.client) {
-  // Set Max-Age=0 on the old cookie — must match EXACT original attributes
-  document.cookie = `waldo_jwt=; path=/; max-age=0`
-}
-// Step 2: Clear the new domain-scoped cookie via the reactive ref
-await strapiLogout()
-```
-
-Or via a Nitro server route that issues both `Set-Cookie` headers simultaneously.
-
-**The permanent fix:** After all existing users' old cookies have expired (7 days after the domain migration is deployed), the cleanup code can be removed.
-
-**Warning signs:**
-- After logout, `document.cookie` still contains `waldo_jwt` in browser DevTools
-- After logout, `GET /api/users/me` returns a 200 with user data instead of 401
-- `document.cookie` shows two `waldo_jwt` values when inspected from `www.waldo.click`
-
-**Phase to address:** Domain migration phase — the cleanup must be in the same commit as the domain attribute change. Cannot be split.
+**Source:** https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid#content_security_policy (HIGH confidence — official docs)
 
 ---
 
-### Pitfall 2: `nuxt-security` May Block `Set-Cookie` with Cross-Subdomain Domain Attributes
+### Pitfall 2: `use_fedcm_for_prompt` Is Deprecated — Silently Ignored + Notification Methods Broken
 
-**What goes wrong:**
-Both apps use `nuxt-security` which adds security headers including a strict CSP. The `nuxt-security` module also has cookie-hardening features. If any `nuxt-security` config applies `httpOnly: true` globally to cookies, or if Strapi's Nitro proxy route (`/api/*`) rewrites `Set-Cookie` headers, the `Domain=.waldo.click` attribute may be stripped.
+**What goes wrong:** The existing `useGoogleOneTap.ts` composable passes `use_fedcm_for_prompt: true` to `initialize()`. According to current GIS docs (updated 2026-02-10), this attribute is **deprecated and will be ignored**. FedCM for One Tap is now the default — there is no opt-in flag.
 
-More critically: the website's `nuxt-security` config is **disabled in `local` mode** (`process.env.NODE_ENV !== "local"`):
-
-```ts
-// apps/website/nuxt.config.ts
-...(process.env.NODE_ENV !== "local" ? ["nuxt-security"] : []),
+More critically, the composable's `prompt()` callback calls:
+```typescript
+notification.isNotDisplayed()         // NOT SUPPORTED with FedCM
+notification.getNotDisplayedReason()  // NOT SUPPORTED with FedCM
+notification.getSkippedReason()       // PARTIALLY SUPPORTED — doesn't return 'user_cancel'
 ```
+These methods return `undefined` or incorrect values with FedCM enabled. The `console.log` calls log `undefined`.
 
-This means security headers — including any that affect cookie policy — are only active in production. A cross-subdomain cookie that works in local dev may fail in production due to security header conflicts, or vice versa.
-
-**Why it happens:**
-`nuxt-security` can modify HTTP response headers including `Set-Cookie` attributes. The interaction between the module's cookie hardening and a custom `Domain` attribute is not always predictable.
+**Why it happens:** The composable was written against an older API version. The deprecated field causes no error but creates false confidence that FedCM is being controlled.
 
 **Consequences:**
-- The `Domain` attribute is silently stripped in production, breaking subdomain sharing
-- Or: `nuxt-security` adds `SameSite=Strict` to the cookie, which (combined with the domain attribute) prevents the cookie from being sent on cross-subdomain navigations
+- No functional breakage today, but debugging is impossible (notifications lie)
+- Custom prompt positioning via `prompt_parent_id` **does not work** with FedCM (browser controls position); any CSS positioning built around a parent container will be ignored
+- `isNotDisplayed()` / `getNotDisplayedReason()` cannot be used to diagnose why the prompt isn't showing
 
 **Prevention:**
-1. After deploying to staging, inspect the raw `Set-Cookie` response header in browser DevTools → Network tab — verify `Domain=.waldo.click` is present
-2. Check `nuxt-security`'s cookie-related config (`security.headers.crossOriginResourcePolicy`, etc.) to ensure no rewrites affect `Set-Cookie`
-3. Test the full login/logout flow from both `www.waldo.click` AND `admin.waldo.click` in staging (not just `localhost`)
+- Remove `use_fedcm_for_prompt: true` from `initialize()` call
+- Replace the `prompt()` notification handler with FedCM-compatible methods only: `isDismissedMoment()` and `getDismissedReason()` are fully supported; `isSkippedMoment()` is partially supported
+- Do not attempt to position or style the One Tap prompt container — browser controls it with FedCM
 
-**Warning signs:**
-- Cookie in browser DevTools shows no `Domain` attribute despite config change
-- Login works on subdomain A but not B
-
-**Phase to address:** Staging verification phase — mandatory cross-browser, cross-subdomain smoke test.
+**Source:** https://developers.google.com/identity/gsi/web/reference/js-reference#use_fedcm_for_prompt and https://developers.google.com/identity/gsi/web/guides/fedcm-migration (HIGH confidence — official docs)
 
 ---
 
-### Pitfall 3: `SameSite=Lax` (the Browser Default) Breaks Cross-Subdomain Requests on Some Flows
+### Pitfall 3: Wrong Token Type Passed to `authenticateProvider()` — Silent 400/401
 
-**What goes wrong:**
-Modern browsers default cookies to `SameSite=Lax` when no `SameSite` attribute is set. Under `SameSite=Lax`:
-- The cookie **is sent** on top-level navigations (clicking a link from `admin.waldo.click` to `www.waldo.click`)
-- The cookie **is NOT sent** on cross-origin subresource requests (AJAX, `fetch()`, XHR from one subdomain to another)
+**What goes wrong:** The existing `useGoogleOneTap.ts` redirects to `/login/google?access_token=${token}` where `token` is the Google **ID token** (a credential JWT from One Tap's `callback`). But `/login/google.vue` calls `authenticateProvider("google", access_token)` from `@nuxtjs/strapi`, which calls Strapi's `GET /api/auth/google/callback?access_token=...`. Strapi's Google provider callback expects an **OAuth access token** to exchange with Google's userinfo endpoint — an ID token will be rejected.
 
-The current cookie config sets no `sameSite` attribute. This is technically fine for the main use case (each app communicates with its own Nitro server which proxies to Strapi). However, if any future code makes direct cross-subdomain `fetch()` calls (e.g., website calls a dashboard API route, or vice versa), the JWT cookie will be silently absent.
+**Why it happens:** One Tap returns an **ID token** (credential JWT). The existing `/connect/google` flow returns an **OAuth access token** via redirect. These are fundamentally different tokens used in different flows.
 
-Additionally: `SameSite=None` **requires** `Secure=true`. If the team wants to enable `SameSite=None` (to guarantee the cookie is sent in all cross-site contexts), `Secure: true` must also be set — which breaks local HTTP development (see Pitfall 4).
+**Consequences:** Authentication silently fails or returns a 400/401 from Strapi. The user sees an error and is redirected to `/login`. The One Tap integration appears entirely broken. This is the most likely reason any initial One Tap test appears to "not work."
 
-**Why it happens:**
-`SameSite` semantics are commonly misunderstood. `waldo.click` subdomains ARE same-site (same registrable domain), so `SameSite=Lax` does NOT block them from seeing the cookie — this is NOT a problem for the primary use case. The confusion is that developers may try to set `SameSite=None` unnecessarily, which then requires `Secure` and breaks localhost.
+**Prevention:** One Tap requires a **completely separate backend endpoint** on Strapi (e.g., `POST /api/auth/google-one-tap`) that:
+1. Receives the Google ID token in the request body
+2. Verifies it server-side using `google-auth-library` (`OAuth2Client.verifyIdToken()`)
+3. Looks up or creates a user by `sub` (not email — see Pitfall 6)
+4. Returns a Strapi JWT directly (same response format as `auth/local`)
 
-**Consequences:**
-- Setting `SameSite=None` without `Secure` causes the browser to silently ignore the cookie
-- The default `SameSite=Lax` is actually correct for subdomain sharing (subdomains are same-site)
-- Unnecessary changes to `SameSite` create new problems that didn't exist before
+Do NOT reuse `/login/google.vue` for One Tap tokens. The existing page must remain as-is for the standard OAuth flow; One Tap needs its own callback page or flow.
 
-**Prevention:**
-- **Do NOT change `SameSite`** from its current unset state. The default browser behavior (Lax) is compatible with subdomain sharing.
-- If `SameSite=None` is ever needed (for third-party/cross-site embedding scenarios), pair it with `Secure: true` and test in HTTPS environments only.
-- Explicitly document in code that `SameSite` is intentionally absent: `// sameSite intentionally unset — browser defaults to Lax, which is correct for same-site subdomain sharing`
-
-**Warning signs:**
-- Cookie disappears from requests after adding `SameSite=None` without `Secure`
-- Browser console shows: "Cookie 'waldo_jwt' has been rejected because it has the 'SameSite=None' attribute but is missing the 'secure' attribute"
-
-**Phase to address:** Domain migration phase — add the comment, do not change the attribute.
+**Source:** https://developers.google.com/identity/gsi/web/guides/verify-google-id-token + codebase analysis (HIGH confidence)
 
 ---
 
-### Pitfall 4: `Secure: true` Breaks Local HTTP Development
+### Pitfall 4: One Tap Fires on Authenticated Pages → Dead-Loop UX on Logout
 
-**What goes wrong:**
-If `Secure: true` is added to the cookie config (required for `SameSite=None`, or as a general security hardening step), the cookie will not be set over HTTP connections. Local development runs on `http://localhost:3000` and `http://localhost:3001`. After adding `Secure: true`, the `waldo_jwt` cookie is never stored by the browser on localhost, making login impossible in local dev.
+**What goes wrong:** `useGoogleOneTap` is initialized globally. A user signs out → `useLogout.ts` calls `strapiLogout()` → clears `waldo_jwt` cookie → navigates to `/`. If One Tap is active on `/` with `auto_select: false` (current config), it fires again but requires a click. However, if `auto_select: true` is ever enabled for returning users, it re-authenticates the user immediately after logout — an infinite loop.
 
-The Nuxt docs explicitly warn about this:
-> "Be careful when setting this to true, as compliant clients will not send the cookie back to the server in the future if the browser does not have an HTTPS connection. **This can lead to hydration errors.**"
+Even with `auto_select: false`, the bigger issue is: if `google.accounts.id.disableAutoSelect()` is never called on logout, the GIS library's internal `g_state` cookie is not updated, so the library still believes the user wants automatic sign-in on future visits.
 
-The website already conditionally excludes `nuxt-security` for `NODE_ENV=local`. The same conditional logic would need to apply to the cookie's `Secure` flag.
+**Why it happens:** The GIS library manages its own `g_state` cookie to track sign-in state. If `disableAutoSelect()` is not called when a user explicitly logs out, the library re-triggers One Tap on the next visit.
 
-**Why it happens:**
-Developers add `Secure: true` as a security best-practice without realizing it blocks local HTTP dev.
-
-**Consequences:**
-- `waldo_jwt` cookie is never set in local dev — all auth flows silently fail
-- No error is shown — the login appears to succeed but the cookie is not stored
-- SSR hydration mismatches: server renders authenticated content, client sees no cookie
+**Consequences:** Users who sign out are immediately prompted to sign back in. With `auto_select: true`, they are signed back in without any interaction. Extremely confusing UX.
 
 **Prevention:**
-If `Secure` is ever added, it must be environment-conditional:
+1. Call `window.google?.accounts?.id?.disableAutoSelect()` inside `useLogout.ts` **before** calling `strapiLogout()`
+2. Set `state_cookie_domain: "waldo.click"` in `initialize()` so the `g_state` cookie is shared across `waldo.click` subdomains (matches existing `COOKIE_DOMAIN=.waldo.click`)
+3. Suppress One Tap on pages where the user is already authenticated (`useStrapiUser().value != null`)
 
-```ts
-// nuxt.config.ts
-cookie: {
-  path: "/",
-  maxAge: 604800,
-  // Only require Secure flag in non-local environments
-  ...(process.env.NODE_ENV !== "local" && { secure: true }),
-},
-```
+**Detection:** User clicks "Cerrar sesión" → immediately gets One Tap prompt or (worse) gets re-signed-in.
 
-**Warning signs:**
-- Login appears successful but protected routes redirect to `/login` immediately
-- Browser DevTools → Application → Cookies shows no `waldo_jwt` entry after login on localhost
-- `useStrapiUser()` returns `null` immediately after successful `useStrapiAuth().login()` on localhost
-
-**Phase to address:** If `Secure` is added — must be in same commit as the environment conditional.
+**Source:** https://developers.google.com/identity/gsi/web/guides/automatic-sign-in-sign-out (HIGH confidence — official docs)
 
 ---
 
-### Pitfall 5: SSR Hydration Mismatch When Domain Cookie Is Not Present on First Load
+### Pitfall 5: `googleOneTapInitialized` Global Flag — Blocks Per-Page `prompt()`
 
-**What goes wrong:**
-When a user visits a subdomain app (e.g., `admin.waldo.click`) for the first time after the domain-scoped cookie is introduced, the server renders the page using the `waldo_jwt` cookie sent in the request. If the cookie exists (user was previously logged in on `www.waldo.click`), the server-rendered HTML shows authenticated content. However, if there is a timing window where the cookie is set but the reactive state hasn't hydrated correctly on the client, Vue's hydration will fail with a mismatch.
+**What goes wrong:** The current composable uses `(window as any).googleOneTapInitialized = true` as a global flag. Once set (on the first page load where One Tap is shown), the `initializeGoogleOneTap()` function exits early on every subsequent call — including calls on new pages where One Tap should appear fresh. In SPA navigation, the flag persists across route changes.
 
-The specific failure mode: `useStrapiToken()` caches the cookie ref in `nuxt._cookies[cookieName]`. On SSR, this ref is populated from the incoming request cookie. On hydration, Vue expects the client-side DOM to match the server-rendered HTML. If the cookie resolution differs between server and client (e.g., the cookie was set with `Domain=.waldo.click` on the website but the old host-only version is what the browser sends), the hydration comparison fails.
+**Why it happens:** The flag guards both `initialize()` AND `prompt()` together. But `google.accounts.id.initialize()` should only be called once (per official docs), while `google.accounts.id.prompt()` should be called on each page where One Tap should appear.
 
-**Why it happens:**
-`useStrapiToken` uses `useCookie` which is SSR-aware — but it reads the cookie from `nuxt._cookies` cache. If two cookies with the same name exist (old host-only + new domain-scoped), the server sees whichever the browser sends first in the `Cookie` header. The browser sends them in an unspecified order when both match the request domain. Server and client may resolve to different cookie values.
-
-**Consequences:**
-- Vue hydration warnings in browser console: "Hydration attribute mismatch"
-- Authenticated state flickers: page renders as logged-in on SSR, flashes to logged-out on client hydration (or vice versa)
-- `useStrapiUser()` returns different values on server vs client during the migration period
+**Consequences:** After One Tap is shown (and dismissed or closes) on the first page, it never appears again during the same browser session — even on pages where it should. The composable works only once per page load (F5 refresh).
 
 **Prevention:**
-1. Plan for a migration window: the old host-only cookie and new domain-scoped cookie will coexist for up to 7 days (maxAge)
-2. During this window, log and monitor for hydration errors in Sentry
-3. The fastest resolution: after deploying the domain change, add a server-side middleware to Nitro that explicitly clears the old host-only cookie when both are present:
+- Move `initialize()` to a Nuxt **client-side plugin** that runs exactly once on app startup
+- Keep `prompt()` in the composable, called from individual page `onMounted()` hooks
+- Remove the `googleOneTapInitialized` global flag from the current composable
+- Add `google.accounts.id.cancel()` in route leave hooks to cancel any pending prompt
 
-```ts
-// server/middleware/cookie-migration.ts
-export default defineEventHandler((event) => {
-  const cookies = parseCookies(event)
-  // If the request has waldo_jwt, we assume the domain-scoped cookie is now canonical
-  // Instruct the browser to delete the host-only version
-  if (cookies['waldo_jwt']) {
-    deleteCookie(event, 'waldo_jwt', { path: '/', domain: undefined })
-  }
-})
-```
+**Source:** https://developers.google.com/identity/gsi/web/reference/js-reference#google.accounts.id.initialize + codebase analysis (HIGH confidence)
 
-**Warning signs:**
-- Vue console warnings about "Hydration text content mismatch"
-- User sees a flash of logged-out state on page load even though they were logged in
-- `useStrapiUser()` is non-null on SSR but null on first client-side read
+---
 
-**Phase to address:** Domain migration phase + 7-day monitoring window after deployment.
+### Pitfall 6: Using Email Instead of `sub` as User Identifier in Strapi
+
+**What goes wrong:** When the new Strapi endpoint creates or looks up a user from a One Tap credential, it queries by `email`. If a user changes their Gmail address, a duplicate account is created. If a user registered with email/password using the same address, the One Tap endpoint may silently merge them into the wrong account.
+
+**Why it happens:** The ID token payload contains both `email` and `sub`. Email is visible and tempting to use. But Google explicitly states: **only use `sub` as the unique identifier** — email can change.
+
+**Consequences:** Duplicate accounts, broken account linking, potential security escalation if a malicious actor registers an email address previously owned by someone else.
+
+**Prevention:**
+- In the new Strapi One Tap endpoint, look up users by a dedicated `google_sub` field first
+- Fall back to email lookup ONLY for account linking (existing user without a `google_sub`)
+- Store `sub` in a custom indexed field on the Strapi User content type
+- Also audit `registerUserAuth` in `authController.ts` (the existing `/connect/google` flow) — if it relies on Strapi's built-in Google provider which may use email as the lookup key, it has the same vulnerability
+
+**Source:** https://developers.google.com/identity/gsi/web/guides/verify-google-id-token (HIGH confidence — official docs)
+
+---
+
+### Pitfall 7: One Tap Initializes During SSR → Hydration Mismatch
+
+**What goes wrong:** The existing composable has a `typeof window === "undefined"` guard, but if `initializeGoogleOneTap()` is called without `onMounted()` wrapping (e.g., directly in `<script setup>` at the top level), Nuxt 4 may execute it during SSR. The `window.google` check returns false on the server, but the `useRuntimeConfig()` call happens server-side too, which is fine — but any `setTimeout` callbacks will be scheduled in a Node.js context rather than browser context.
+
+**Why it happens:** Nuxt 4 SSR executes `<script setup>` on the server. The composable's `typeof window` guard handles the immediate call but the `setTimeout(checkGoogle, 500)` creates a lingering Node.js timeout if ever triggered server-side.
+
+**Consequences:** Memory leaks in SSR; if any component calls the composable outside `onMounted`, Node.js timers accumulate across requests.
+
+**Prevention:**
+- Always wrap `initializeGoogleOneTap()` in `onMounted()` or guard with `if (import.meta.client)`
+- In the new plugin-based approach, use `defineNuxtPlugin` with `{ ssr: false }` or check `import.meta.client`
+
+**Detection:** Console errors like `window is not defined` during SSR, or memory growth in long-running Nuxt SSR processes.
+
+**Source:** Nuxt 4 SSR behavior + codebase analysis (HIGH confidence)
+
+---
+
+### Pitfall 8: `createUserReservations` Not Called for New One Tap Users
+
+**What goes wrong:** When a new user registers via the existing Google OAuth flow, `registerUserAuth` wraps the callback and calls `createUserReservations(user)` to create 3 free ad reservations and 3 featured reservations. A new Strapi endpoint for One Tap would NOT automatically inherit this logic.
+
+**Consequences:** Users who register via One Tap for the first time don't receive their 3 free ad slots.
+
+**Prevention:** The new One Tap Strapi endpoint must call `createUserReservations(user)` for newly created users (same guard: check `existingReservations.length > 0` before creating to avoid duplicates on re-authentication).
+
+**Source:** Codebase analysis of `authController.ts` (HIGH confidence)
 
 ---
 
 ## Moderate Pitfalls
 
+### Pitfall 9: 2-Step Verification (`overrideAuthLocal`) Bypassed by One Tap
+
+**What goes wrong:** The existing `overrideAuthLocal` in `authController.ts` intercepts `POST /api/auth/local` and replaces the JWT with a `pendingToken` for 2-step verification via email code. The existing Google OAuth flow (`/connect/google`) intentionally bypasses this — it issues a JWT directly. One Tap will similarly bypass 2-step verification by design.
+
+**Consequences:** This may or may not be intentional. If the business requirement is that ALL sign-ins require 2-step verification, One Tap breaks the policy. If social auth is intentionally exempt (current behavior of `/connect/google`), this is correct.
+
+**Prevention:** Document the decision explicitly in the new One Tap Strapi endpoint. If 2-step is required, the endpoint should also issue `pendingToken + email` instead of a direct JWT. If intentionally skipped (matching the behavior of existing `/connect/google`), add a comment to that effect.
+
+**Source:** Codebase analysis of `authController.ts` (HIGH confidence)
+
 ---
 
-### Pitfall 6: The Dashboard Logout Composable Does Not Exist — Store Resets Won't Fire
+### Pitfall 10: One Tap Shows on Pages with `middleware: ['auth']` — Race Condition
 
-**What goes wrong:**
-The website has a centralized `useLogout` composable (created in v1.28) that resets all 6 user stores before calling `useStrapiAuth().logout()`. The **dashboard does not have an equivalent** — no `useLogout` composable was found in `apps/dashboard/app/composables/`. Dashboard logout is likely scattered across individual components.
+**What goes wrong:** One Tap is initialized globally (e.g., in `app.vue`). On protected pages (e.g., `/cuenta/*`), the `auth` middleware redirects unauthenticated users to `/login`. If One Tap fires BEFORE the middleware redirect completes, the user might see a One Tap prompt on a protected page. After completing One Tap sign-in, they are already on the page but the auth state hasn't propagated yet, potentially triggering a redirect to `/login` anyway.
 
-When the domain cookie is added, the logout behavior change (Pitfall 1 — clearing the old host-only cookie) must be applied to **both** apps. If the dashboard has no centralized logout, the fix must be applied to every individual logout call site.
+**Prevention:** 
+- Check `useStrapiUser().value` before calling `prompt()` — suppress One Tap if user is already authenticated
+- Only call `prompt()` on pages without `middleware: ['auth']` (public pages)
 
-**Why it matters:**
-- A fix applied only to the website composable does not affect the dashboard
-- The old host-only cookie persists after dashboard logout, allowing session fixation
+**Source:** Codebase analysis (MEDIUM confidence)
+
+---
+
+### Pitfall 11: One Tap Cooldown — Silently Suppressed After Dismiss (Testing Trap)
+
+**What goes wrong:** If a user clicks the X button on One Tap, Chrome enters a **cooldown period** during which One Tap is suppressed on that site. The developer has no programmatic control over this. During this period, `prompt()` is called but nothing shows — and with FedCM enabled, `isNotDisplayed()` notifications are not even delivered.
+
+**Consequences:** QA testers think the integration is broken after dismissing the prompt once. Hours wasted debugging a "broken" integration that is working as designed.
 
 **Prevention:**
-Before implementing the domain cookie change, create `apps/dashboard/app/composables/useLogout.ts` mirroring the website pattern. Wire all dashboard logout call sites to use it. This is a prerequisite, not an afterthought.
+- In development, reset the cooldown via Chrome: click the lock icon in the address bar → Reset Permission
+- Add a comment in the composable documenting the cooldown behavior
+- Do NOT implement retry logic — Google explicitly prohibits it
 
-**Warning signs:**
-- Logging out from the dashboard still shows the user as logged in when navigating to the website
-
-**Phase to address:** Must be a prerequisite step within the domain migration phase.
-
----
-
-### Pitfall 7: `@nuxtjs/strapi` v2 `cookie` Config Is Passed Directly to `useCookie` — No Domain Sanitization
-
-**What goes wrong:**
-`useStrapiToken` passes `config.strapi.cookie` directly as the options object to `useCookie`:
-
-```ts
-const cookie = useCookie<string | null>(config.strapi.cookieName, config.strapi.cookie)
-```
-
-This means `domain`, `secure`, `sameSite`, `httpOnly`, and `maxAge` from `nuxt.config.ts` are all passed through without any validation or sanitization. If a misconfigured `domain` value is passed (e.g., `domain: "waldo.click"` instead of `domain: ".waldo.click"`), the module will silently create a cookie that does not share across subdomains.
-
-RFC 6265 specifies: when a server sets `Domain=waldo.click` (without the leading dot), browsers MAY interpret it as `waldo.click` only (not subdomains). The spec says leading dot is optional but most browsers treat `Domain=example.com` as equivalent to `.example.com` for subdomain sharing. However, the leading dot in `.waldo.click` is the explicit, unambiguous way to declare subdomain scope.
-
-**Why it matters:**
-The difference between `domain: "waldo.click"` and `domain: ".waldo.click"` is invisible in most tests but can fail in specific browsers or reverse proxies that follow the RFC strictly.
-
-**Prevention:**
-Always use the leading-dot form: `domain: ".waldo.click"`. Verify in at least Chrome, Firefox, and Safari that the cookie appears in `Application → Cookies` with `Domain: .waldo.click`.
-
-**Warning signs:**
-- Cookie sharing works in Chrome but not Safari
-- The cookie appears in DevTools without the leading dot: `Domain: waldo.click`
-
-**Phase to address:** Domain migration phase — explicitly document the leading dot in `nuxt.config.ts` comments.
+**Source:** https://developers.google.com/identity/gsi/web/guides/fedcm-migration#one_tap_cooldown_period (HIGH confidence — official docs)
 
 ---
 
-### Pitfall 8: Pinia Stores with `persist` Leak Cross-User State When Cookie Is Shared
+### Pitfall 12: COOP Header Conflict with FedCM-Disabled Fallback (Safari/Firefox)
 
-**What goes wrong:**
-The website has 14 stores with `persist: true` (backed by localStorage). Currently, user A on `www.waldo.click` and user B on `admin.waldo.click` are fully isolated because they run in different browser origins. After adding `domain: ".waldo.click"` to the JWT cookie, a user logged in on the website who navigates to the dashboard sends their JWT to the dashboard's Nitro server.
+**What goes wrong:** On browsers without FedCM support (Safari, Firefox), One Tap falls back to a popup-based flow. Google's docs state that in non-FedCM mode, the `Cross-Origin-Opener-Policy` header must be `same-origin` AND include `same-origin-allow-popups`; otherwise the popup communication breaks (blank popup window). The current `nuxt-security` COOP configuration may conflict with this.
 
-The Pinia store data (`me.store.ts`, `user.store.ts`, `ad.store.ts`, etc.) is stored in **localStorage**, which remains origin-scoped (`www.waldo.click` vs `admin.waldo.click`). So the JWT is shared but the Pinia state is not. This creates an asymmetric state: the dashboard sees a valid JWT and can authenticate the user but starts with empty stores — correct behavior.
+**Prevention:** Since FedCM (Chrome 117+) covers the vast majority of users, and One Tap gracefully degrades on non-FedCM browsers by simply not showing, this is low priority. However, if cross-browser One Tap is required, audit the COOP configuration in `nuxt-security` before declaring the feature complete.
 
-The risk is the **reverse**: a user who was previously on the dashboard (as an admin) navigates to the website with the dashboard's JWT still in the shared cookie. The website will authenticate them as an admin user. Most website stores only cache non-sensitive data (categories, regions) but `me.store.ts` and `user.store.ts` will load the admin user's profile data.
-
-**Why it matters:**
-This is expected behavior for shared auth — but it means the logout flow on the dashboard MUST clear the shared cookie properly. If a dashboard admin does not explicitly log out and a non-admin user then opens the website in the same browser, the admin's JWT remains active.
-
-**Prevention:**
-- Ensure the dashboard logout composable (Pitfall 6) clears the domain-scoped cookie completely
-- Consider adding a role check on the website's `auth` middleware: if `useStrapiUser()` has `role.type === "authenticated"` or above, allow; if somehow an admin role leaks, handle gracefully
-- Document in code: "The domain cookie is shared between website and dashboard. Any user with a valid JWT on either subdomain will be authenticated on both."
-
-**Phase to address:** Domain migration phase — the store isolation analysis must be done before deployment.
+**Source:** https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid#cross_origin_opener_policy (HIGH confidence — official docs)
 
 ---
 
-### Pitfall 9: `redirect` Cookie in Auth Middleware Has No Domain — Will Not Round-Trip Across Subdomains
+## Minor Pitfalls
 
-**What goes wrong:**
-The website's `auth.ts` middleware saves the attempted route in a cookie before redirecting to login:
+### Pitfall 13: One Tap Does Not Work on HTTP
 
-```ts
-// apps/website/app/middleware/auth.ts
-useCookie("redirect", { path: "/" }).value = to.fullPath;
-return navigateTo("/login");
-```
+**What goes wrong:** One Tap requires HTTPS in production. In development on `localhost`, it works on HTTP because `localhost` is whitelisted by Google. Any staging environment on HTTP (without a valid domain) will fail silently.
 
-This `redirect` cookie has no domain attribute (host-only, `www.waldo.click` only). If the website ever tries to redirect through the dashboard login (or vice versa), the `redirect` cookie will not survive the cross-subdomain round-trip. This is not a current problem but will become one if cross-subdomain authenticated redirects are added later.
+**Prevention:** Staging environments must use HTTPS. The existing `NODE_ENV !== "local"` guard for `nuxt-security` is already correctly handled. No change needed if existing staging uses HTTPS.
 
-**Why it matters:**
-Low severity now, but the pattern establishes a trap. Any new cookies created without the domain attribute during this milestone will not be visible cross-subdomain.
-
-**Prevention:**
-If any new cookies are created during this milestone, audit whether they need cross-subdomain visibility. If they do, add `domain: ".waldo.click"`. If they don't (like this `redirect` cookie), leave them host-only and document why.
-
-**Phase to address:** Domain migration phase — audit all `useCookie()` calls during the implementation to categorize each cookie's intended scope.
+**Source:** https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid (HIGH confidence — official docs)
 
 ---
 
-## Technical Debt Patterns
+### Pitfall 14: `google.accounts.id.initialize()` Called Multiple Times
 
-Shortcuts that seem reasonable but create long-term problems.
+**What goes wrong:** If called more than once, only the LAST call's configuration is retained. The current composable guards against this with `googleOneTapInitialized`, but the guard should specifically protect only `initialize()` (not `prompt()`).
 
-| Shortcut | Immediate Benefit | Long-term Cost | When Acceptable |
-|----------|-------------------|----------------|-----------------|
-| Add domain without clearing old cookie | Fast to deploy | 7-day window of dual cookies, zombie sessions | Never — always pair with old cookie cleanup |
-| Set `domain: "waldo.click"` (no leading dot) | Works in most browsers | Fails in strict RFC implementations, Safari edge cases | Never — always use `.waldo.click` |
-| Add `Secure: true` without environment conditional | Better security posture | Breaks all local HTTP development | Never — must be conditional on `NODE_ENV` |
-| Skip creating dashboard `useLogout` composable | Saves time | Cookie cleanup fix is scattered across components, easy to miss one | Never — centralize logout before the domain change |
-| Defer cookie migration cleanup to "after it expires" | No immediate work | The 7-day zombie session period is a real UX bug | Acceptable only if explicitly monitored and scheduled |
+**Prevention:** Move `initialize()` to a Nuxt client-side plugin that runs exactly once. The flag is no longer needed when properly architectured.
+
+**Source:** https://developers.google.com/identity/gsi/web/reference/js-reference#google.accounts.id.initialize (HIGH confidence — official docs)
 
 ---
 
-## Integration Gotchas
+## Phase-Specific Warnings
 
-Common mistakes when connecting to external services or the module ecosystem.
-
-| Integration | Common Mistake | Correct Approach |
-|-------------|----------------|------------------|
-| `@nuxtjs/strapi` v2 `useStrapiToken` | Assuming `setToken(null)` clears the domain-scoped cookie correctly | It does clear the new cookie — but does NOT clear the old host-only one. Manual cleanup required. |
-| `@nuxtjs/strapi` v2 `useStrapiAuth().logout()` | Trusting it handles all cookie cleanup | `logout()` only calls `setToken(null)` and `setUser(null)`. No HTTP `Set-Cookie` header is sent. Cookie clearing happens via `useCookie` ref assignment. |
-| Nitro `server/` routes | Forgetting that `getCookie(event, 'waldo_jwt')` returns the FIRST match when two same-name cookies exist | Browser sends cookies in arbitrary order when multiple match. Server sees only one value. |
-| `nuxt-security` module | Assuming security headers don't affect cookie attributes | `nuxt-security` can modify `Set-Cookie` headers. Always verify the raw response header in staging. |
-| Laravel Forge deployment | Assuming HTTPS is already configured before testing Secure flag | Verify HTTPS certificate is valid on all subdomains before enabling `Secure: true`. |
-
----
-
-## Performance Traps
-
-| Trap | Symptoms | Prevention | When It Breaks |
-|------|----------|------------|----------------|
-| Two same-name cookies on every request | Every request to the server carries double the JWT payload (2× ~500 bytes) | Clear the old cookie immediately on deployment | During the 7-day migration window |
-| `fetchUser()` called twice on subdomain navigation | Extra API call on first cross-subdomain page load | The `nuxt._cookies` cache in `useStrapiToken` prevents this — but only within the same Nuxt app instance | Not a concern — each app has its own instance |
-
----
-
-## Security Mistakes
-
-Domain-specific security issues introduced by cross-subdomain cookie sharing.
-
-| Mistake | Risk | Prevention |
-|---------|------|------------|
-| Setting `domain: ".waldo.click"` without `Secure` in production | JWT sent over HTTP if any subdomain is ever accidentally accessed via HTTP | Add `Secure: true` for non-local environments only |
-| Not revoking JWT server-side on logout | After logout, the old host-only cookie (if not cleared) still grants valid access to Strapi APIs | Clear the old cookie client-side AND consider adding a server-side token revocation endpoint in Strapi |
-| Sharing domain cookie between website (public) and dashboard (admin) | A compromised website subdomain (XSS) can steal the admin JWT if `httpOnly` is not set | `httpOnly` is not currently set — understand and accept this risk or add it. Note: `httpOnly: true` prevents `useStrapiToken`'s client-side JS from reading it. |
-| Subdomain takeover via dangling DNS | If any `*.waldo.click` subdomain is ever abandoned with active DNS, an attacker could host there and steal the cookie | Only add `Domain=.waldo.click` to cookies that must be shared. Keep non-auth cookies host-only. |
-
----
-
-## "Looks Done But Isn't" Checklist
-
-Things that appear complete but are missing critical pieces.
-
-- [ ] **Domain cookie added:** Often missing — cleanup of old host-only cookie. Verify: `document.cookie` in DevTools shows only ONE `waldo_jwt` after login, not two.
-- [ ] **Logout works:** Often missing — verification on BOTH subdomains. Verify: log in on website, log out on dashboard (or vice versa), navigate back to website, confirm `useStrapiUser()` returns null.
-- [ ] **`Secure` flag conditional:** Often missing — environment guard for local dev. Verify: local HTTP dev login still works after adding `Secure: true`.
-- [ ] **Dashboard `useLogout` composable:** Often missing — dashboard logout may still use raw `useStrapiAuth().logout()` without store resets or old-cookie cleanup. Verify: all dashboard logout call sites use the composable.
-- [ ] **Staging test on HTTPS:** Often missing — subdomain sharing may work on localhost but fail on production due to `nuxt-security` or proxy stripping the `Domain` attribute. Verify: inspect raw `Set-Cookie` header in staging Network tab.
-- [ ] **Old cookies expired in users' browsers:** Often forgotten — after 7 days, the old host-only cookie has expired for all users. After that point, the old-cookie cleanup code can be removed. Set a calendar reminder.
-
----
-
-## Recovery Strategies
-
-When pitfalls occur despite prevention, how to recover.
-
-| Pitfall | Recovery Cost | Recovery Steps |
-|---------|---------------|----------------|
-| Zombie cookies (Pitfall 1) after deploy | LOW | Deploy a Nitro server middleware that sets `waldo_jwt=; path=/; max-age=0` (no domain) on every response — forces all browsers to clear the old cookie within one page load |
-| All users appear logged in after logout | LOW | Same as above — the middleware fix is non-breaking |
-| Hydration mismatches (Pitfall 5) | MEDIUM | Add `nuxt.config.ts: ssr: false` temporarily on affected page(s) to suppress hydration while cookie migration window passes; re-enable after 7 days |
-| `Secure` flag breaks local dev | LOW | Remove `Secure: true` from cookie config, add environment conditional, redeploy |
-| `nuxt-security` strips `Domain` attribute | MEDIUM | Add explicit cookie configuration in `nuxt-security` options to allowlist the `Domain` attribute; or switch to Nitro server middleware for cookie setting |
-
----
-
-## Pitfall-to-Phase Mapping
-
-How roadmap phases should address these pitfalls.
-
-| Pitfall | Prevention Phase | Verification |
-|---------|------------------|--------------|
-| Zombie cookies after logout (Pitfall 1) | Domain cookie migration phase | After login, verify ONE `waldo_jwt` in DevTools. After logout, verify ZERO. |
-| `nuxt-security` stripping Domain attribute (Pitfall 2) | Staging verification phase | Inspect raw `Set-Cookie` header in staging Network tab |
-| Unnecessary `SameSite=None` change (Pitfall 3) | Domain migration phase | Keep `SameSite` unset; add comment explaining why |
-| `Secure: true` breaking local dev (Pitfall 4) | Domain migration phase | Login works on `http://localhost:3000` after change |
-| SSR hydration mismatch during transition (Pitfall 5) | Domain migration phase + 7-day monitoring | No Vue hydration warnings in Sentry during the transition week |
-| Dashboard missing `useLogout` composable (Pitfall 6) | Prerequisite step in domain migration phase | All dashboard logout call sites use the new composable |
-| Leading dot in domain config (Pitfall 7) | Domain migration phase | Cookie appears as `.waldo.click` in DevTools, not `waldo.click` |
-| Pinia store leakage analysis (Pitfall 8) | Domain migration phase — analysis step | Documented decision on which stores need cross-subdomain awareness |
-| New `redirect` cookie scoping (Pitfall 9) | Domain migration phase — audit step | All new `useCookie()` calls documented with intended scope |
+| Phase Topic | Likely Pitfall | Mitigation |
+|-------------|---------------|------------|
+| New Strapi endpoint for One Tap | Wrong token type — ID token ≠ OAuth access token | Build `POST /api/auth/google-one-tap` with `google-auth-library` verification |
+| New Strapi endpoint for One Tap | Missing `createUserReservations` call for new users | Copy guard logic from `registerUserAuth` in `authController.ts` |
+| New Strapi endpoint for One Tap | `email` used as identifier instead of `sub` | Add `google_sub` field to User; query by sub first |
+| New Strapi endpoint for One Tap | 2-step bypass — document explicitly | Match behavior of existing `/connect/google` (bypass), or enforce if required |
+| Nuxt composable refactor | `use_fedcm_for_prompt` deprecated; notifications broken | Remove deprecated field; use only `isDismissedMoment()` / `getDismissedReason()` |
+| Nuxt composable refactor | Global flag blocks per-page `prompt()` | Separate `initialize()` (plugin, once) from `prompt()` (composable, per-page) |
+| Logout flow | Dead-loop after logout if One Tap fires | Add `disableAutoSelect()` call in `useLogout.ts`; set `state_cookie_domain` |
+| CSP update | Missing `connect-src` and `style-src` for `gsi/` | Update `nuxt.config.ts` security block with `/gsi/` sub-paths |
+| Callback page | Passing ID token to `authenticateProvider()` | Build separate page/handler that POSTs to the new Strapi endpoint |
 
 ---
 
 ## Sources
 
-- `@nuxtjs/strapi` v2 source, `useStrapiToken.ts` (verified 2026-03-16): `https://github.com/nuxt-modules/strapi/blob/main/src/runtime/composables/useStrapiToken.ts` — HIGH confidence
-- `@nuxtjs/strapi` v2 source, `useStrapiAuth.ts` (verified 2026-03-16): `https://github.com/nuxt-modules/strapi/blob/main/src/runtime/composables/useStrapiAuth.ts` — HIGH confidence
-- Nuxt 4 `useCookie` documentation (verified 2026-03-16): `https://nuxt.com/docs/api/composables/use-cookie` — HIGH confidence (official, current)
-- MDN HTTP Cookies — Domain attribute semantics (verified 2026-03-16): `https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Cookies` — HIGH confidence
-- RFC 6265 cookie specification — Domain matching: `https://datatracker.ietf.org/doc/html/rfc6265#section-5.2.3` — HIGH confidence
-- Project codebase (direct inspection, 2026-03-16):
-  - `apps/website/nuxt.config.ts` — cookie config: `{ path: "/", maxAge: 604800, cookieName: "waldo_jwt" }` — no domain attribute
-  - `apps/dashboard/nuxt.config.ts` — same cookie config (identical)
-  - `apps/website/app/composables/useLogout.ts` — calls `useStrapiAuth().logout()` after store resets
-  - `apps/website/app/middleware/auth.ts` — `redirect` cookie without domain attribute
-  - `apps/dashboard/app/composables/` — no `useLogout.ts` found
-
----
-*Pitfalls research for: Cross-subdomain cookie sharing, Nuxt 4 + @nuxtjs/strapi v2*
-*Researched: 2026-03-16*
+- https://developers.google.com/identity/gsi/web/reference/js-reference (updated 2026-02-10)
+- https://developers.google.com/identity/gsi/web/guides/fedcm-migration (updated 2026-02-10)
+- https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid (updated 2025-10-31)
+- https://developers.google.com/identity/gsi/web/guides/verify-google-id-token (updated 2025-12-22)
+- https://developers.google.com/identity/gsi/web/guides/automatic-sign-in-sign-out (updated 2025-05-23)
+- https://developers.google.com/identity/gsi/web/guides/display-google-one-tap (updated 2025-09-29)
+- Live codebase analysis: `apps/website/nuxt.config.ts`, `apps/website/app/composables/useGoogleOneTap.ts`, `apps/website/app/composables/useLogout.ts`, `apps/strapi/src/extensions/users-permissions/controllers/authController.ts`, `apps/website/app/pages/login/google.vue`
