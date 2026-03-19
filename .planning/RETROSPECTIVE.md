@@ -1192,6 +1192,49 @@
 
 ---
 
+## Milestone: v1.44 — Google One Tap Sign-In
+
+**Shipped:** 2026-03-19
+**Phases:** 5 (094–098) | **Plans:** 9 | **Timeline:** 2 days (2026-03-18 → 2026-03-19)
+
+### What Was Built
+- Root-caused SSR session persistence bug — dead `auth.populate` joins causing `setToken(null)` on SSR `fetchUser()` failure; purely subtractive fix
+- Fixed cookie replacement on session swap — `useStrapiAuth().logout()` respects `COOKIE_DOMAIN` attribute
+- GIS CSP entries (`connect-src` + `frame-src`) and `GOOGLE_CLIENT_ID` env var
+- `POST /api/auth/google-one-tap` Strapi endpoint — Google JWT verification, user find-or-create with `google_sub`, 3 free ad slots, 2-step bypass
+- `useGoogleOneTap` composable rewrite — `promptIfEligible()` (25 lines) replaces `initializeGoogleOneTap()` (90 lines)
+- `google-one-tap.client.ts` Nuxt plugin — SSR-safe GIS initializer with auth + route guards
+- `disableAutoSelect()` in `useLogout.ts` prevents post-logout One Tap re-prompt
+
+### What Worked
+- TDD across both Strapi (Jest) and frontend (Vitest) — RED scaffolds in wave 0 validated API contracts before implementation
+- Phases 094 and 095 (session bugs) were diagnosed and fixed in under an hour each — root cause analysis was precise
+- Research phase for 096–098 identified the `src/api/` pattern over plugin extension routes early, avoiding the known Strapi v5 plugin factory bug
+- `google_sub` field decision (lookup by sub, email fallback) followed Google's explicit guidance — no need to revisit
+- Purely subtractive composable rewrite: 90 → 25 lines, no new abstractions, cleaner test surface
+
+### What Was Inefficient
+- Phases 094 and 095 were reactive bug fixes triggered by deploying v1.40's shared cookie — could have been caught with a pre-deploy session replacement test
+- The initial 098-01 RED scaffolds had test structure issues that needed fixing in 098-02 (import paths, mock patterns)
+
+### Patterns Established
+- `src/api/auth-*` pattern for new Strapi auth endpoints (not plugin extensions) — confirmed reliable across `auth-verify`, `auth-one-tap`
+- `google_sub` field as immutable Google identity anchor — email is fallback only for existing account linking
+- `.client.ts` plugin suffix for SSR-safe browser-only initialization — no runtime guards needed
+- `disableAutoSelect()` before `strapiLogout()` as mandatory logout step for any Google auth integration
+
+### Key Lessons
+1. **Deploy session changes with a session-swap test plan** — shared domain cookies have interaction effects (host-only zombies) that unit tests can't catch
+2. **Research phase blockers (`google_sub` vs `provideridentifier`) resolve faster during implementation** — the field turned out to be needed; research flagged it correctly
+3. **Full page reload after OAuth-style login is simpler and safer than reactive propagation** — all SSR-hydrated components pick up auth state cleanly without refactoring layouts
+
+### Cost Observations
+- Model mix: ~100% sonnet (balanced profile) for execution, opus for research/planning
+- Sessions: Multiple sessions across 2 days (094/095 bug fixes, then 096–098 feature work)
+- Notable: 5-phase milestone completed in 2 days including 2 reactive bug fixes and 3 planned feature phases
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -1227,6 +1270,10 @@
 | v1.30 | 4 | 8 | Blog Public Views: slug field, Article TS type, SCSS scaffolding, 7 blog components, /blog listing + detail pages, full SEO |
 | v1.31 | 2 | 2 | Article Manager Improvements: source_url Strapi field, draft/publish toggle in FormArticle, source_url link on detail page |
 | v1.32 | 1 | 1 | Gemini AI Service: GeminiService + POST /api/ia/gemini endpoint; SlackService pattern reused exactly; 4-min execution |
+| v1.41 | 1 | 2 | Ad preview error handling: SSR-safe createError pattern, TDD controller fix |
+| v1.42 | 1 | 1 | Session persistence: removed dead auth.populate joins causing setToken(null) on SSR |
+| v1.43 | 1 | 1 | Cookie replacement: useStrapiAuth().logout() respects COOKIE_DOMAIN attribute |
+| v1.44 | 5 | 9 | Google One Tap: Strapi endpoint + frontend plugin + composable rewrite + session bug fixes |
 
 ### Cumulative Quality
 
@@ -1261,6 +1308,10 @@
 | v1.30 | utils + jest (slug lifecycle hooks — 6 tests) + vitest (unchanged) | true | 1 (marked for Markdown rendering) |
 | v1.31 | utils + jest + vitest (unchanged) | true | 0 |
 | v1.32 | utils + jest + vitest (unchanged) | true | 1 (@google/generative-ai) |
+| v1.41 | utils + jest (findBySlug controller — 4 tests) + vitest | true | 0 |
+| v1.42 | utils + jest + vitest (unchanged) | true | 0 |
+| v1.43 | utils + jest + vitest (unchanged) | true | 0 |
+| v1.44 | utils + jest (GoogleOneTapService 8 + controller 4) + vitest (composable 3 + plugin) | true | 1 (google-auth-library) |
 
 ### Top Lessons (Verified Across Milestones)
 
