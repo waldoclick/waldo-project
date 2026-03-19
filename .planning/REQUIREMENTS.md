@@ -15,10 +15,10 @@ Requirements for User Onboarding milestone. Each maps to roadmap phases.
 
 ### Onboarding Guard
 
-- [ ] **GUARD-01**: Authenticated users with incomplete profiles are redirected to `/onboarding` on any non-exempt page navigation
-- [ ] **GUARD-02**: Users with complete profiles cannot access `/onboarding` (redirected to home)
-- [ ] **GUARD-03**: Onboarding guard is client-only (SSR-safe) and runs after auth guard
-- [ ] **GUARD-04**: Auth pages (`/login`, `/registro`, `/logout`) are exempt from onboarding redirect
+- [x] **GUARD-01**: Authenticated users with incomplete profiles are redirected to `/onboarding` on any non-exempt page navigation
+- [x] **GUARD-02**: Users with complete profiles cannot access `/onboarding` (redirected to home)
+- [x] **GUARD-03**: Onboarding guard is client-only (SSR-safe) and runs after auth guard
+- [x] **GUARD-04**: Auth pages (`/login`, `/registro`, `/logout`) are exempt from onboarding redirect
 
 ### Profile Form
 
@@ -61,10 +61,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | LAYOUT-01 | Phase 099 | Complete |
 | LAYOUT-02 | Phase 099 | Complete |
 | LAYOUT-03 | Phase 099 | Complete |
-| GUARD-01 | Phase 100 | Pending |
-| GUARD-02 | Phase 100 | Pending |
-| GUARD-03 | Phase 100 | Pending |
-| GUARD-04 | Phase 100 | Pending |
+| GUARD-01 | Phase 100 | Complete |
+| GUARD-02 | Phase 100 | Complete |
+| GUARD-03 | Phase 100 | Complete |
+| GUARD-04 | Phase 100 | Complete |
 | FORM-01 | Phase 099 | Complete |
 | FORM-02 | Phase 099 | Complete |
 | FORM-03 | Phase 099 | Complete |

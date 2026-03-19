@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.45
 milestone_name: User Onboarding
 status: executing
-last_updated: "2026-03-19T21:08:14.975Z"
-last_activity: "2026-03-19 — Completed 099-02: Onboarding pages and components"
+last_updated: "2026-03-19T18:33:00.000Z"
+last_activity: "2026-03-19 — Completed 100-01: Onboarding guard middleware"
 progress:
   total_phases: 3
   completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
-  percent: 15
+  total_plans: 4
+  completed_plans: 4
+  percent: 22
 ---
 
 # Session State
@@ -20,17 +20,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-19)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 099 — Onboarding UI
+**Current focus:** Phase 100 — Onboarding Guard
 
 ## Position
 
-Phase: 099 of 101 (Onboarding UI)
-Plan: 3 of 3 in current phase (099-02 complete)
+Phase: 100 of 101 (Onboarding Guard)
+Plan: 1 of 1 in current phase (100-01 complete)
 Status: In progress
-Last activity: 2026-03-19 — Completed 099-02: Onboarding pages and components
+Last activity: 2026-03-19 — Completed 100-01: Onboarding guard middleware
 
 ```
-Progress: [██░░░░░░░░] 15%
+Progress: [██░░░░░░░░] 22%
 ```
 
 ## Accumulated Context
@@ -58,6 +58,9 @@ Progress: [██░░░░░░░░] 15%
 - NuxtLink stub in vitest: `{ template: '<a :href="to"><slot /></a>', props: ['to'] }` — needed for anchor href assertions
 - OnboardingDefault/Thankyou component stubs passed via `global.components` in buildWrapper — standard pattern for auto-imported components
 - returnUrl in OnboardingThankyou: `appStore.getReferer || "/"` — no client-only wrapper needed, referer available before user can click
+- AUTH_EXEMPT_PATHS = {/login, /registro, /logout} only — /onboarding excluded so GUARD-02 reverse guard can fire for complete-profile users
+- Middleware test pattern: dynamic import (beforeAll + await import()) required when guard uses global auto-imports — static import is hoisted before global.xxx assignments
+- FormProfile save sequence: updateUserProfile → fetchUser() → useMeStore().reset() → Swal.fire → emit/redirect; reset() prevents post-onboarding redirect loop from stale meStore cache
 
 ### Blockers/Concerns (open)
 
