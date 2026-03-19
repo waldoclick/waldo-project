@@ -1,15 +1,16 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.43
-milestone_name: Cross-App Session Replacement
-status: in_progress
-last_updated: "2026-03-18T00:00:00.000Z"
-last_activity: 2026-03-18 — Roadmap created (Phase 095)
+milestone_name: milestone
+current_phase: 095 — Fix Cookie Replacement on Session Swap
+status: planning
+last_updated: "2026-03-19T00:00:22.105Z"
+last_activity: "2026-03-18 — Roadmap created. Single phase 095 targets the one-line bug in `FormLogin.vue` line 149: replace `existingCookie.value = null` with `await strapiLogout()` via `useStrapiAuth()` so the shared-domain cookie is cleared with correct `domain` attribute."
 progress:
-  total_phases: 1
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_phases: 2
+  completed_phases: 2
+  total_plans: 2
+  completed_plans: 2
   percent: 0
 ---
 
@@ -26,19 +27,19 @@ See: .planning/PROJECT.md
 
 **Current Milestone:** v1.43 — Cross-App Session Replacement
 **Current Phase:** 095 — Fix Cookie Replacement on Session Swap
-**Status:** Roadmap approved — ready to plan
+**Status:** Awaiting human-verify checkpoint (code complete, TypeScript-clean)
 
 ```
-Progress: [░░░░░░░░░░░░░░░░░░░░] 0% — Phase 095 not started
+Progress: [██████████] 100% — Phase 095 plan 01 code complete, awaiting human browser verification
 ```
 
-Last activity: 2026-03-18 — Roadmap created. Single phase 095 targets the one-line bug in `FormLogin.vue` line 149: replace `existingCookie.value = null` with `await strapiLogout()` via `useStrapiAuth()` so the shared-domain cookie is cleared with correct `domain` attribute.
+Last activity: 2026-03-18 — Executed 095-01-PLAN.md. Fixed zombie-cookie bug (useStrapiAuth().logout() replaces existingCookie.value=null) and removed dead auth.populate joins from both apps. Awaiting human-verify checkpoint.
 
 ## Phase Map
 
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
-| 095 | Fix Cookie Replacement on Session Swap | SESS-05, SESS-06, SESS-07, SESS-08 | ○ Pending |
+| 095 | Fix Cookie Replacement on Session Swap | SESS-05, SESS-06, SESS-07, SESS-08 | ◑ In Progress (awaiting human-verify) |
 
 ## Accumulated Context
 
@@ -109,6 +110,8 @@ Last activity: 2026-03-18 — Roadmap created. Single phase 095 targets the one-
 - dashboard auth.populate: ["role", "commune", "region", "business_region", "business_commune"] — ad_reservations.ad and ad_featured_reservations.ad removed (not in User type, not used by any component) (094-01)
 - FormLogin.vue (dashboard) línea 149: `existingCookie.value = null` es incorrecto — borra solo la cookie host-only, deja zombie la cookie compartida con domain=.COOKIE_DOMAIN — fix: llamar useLogout() antes del nuevo login (095-diagnosis)
 - Fix scope: `apps/dashboard/app/components/FormLogin.vue` line 149 only — replace `existingCookie.value = null` with `const { logout: strapiLogout } = useStrapiAuth()` + `await strapiLogout()` so cookie removal respects the `domain` attribute from @nuxtjs/strapi module config (095-plan)
+- Use useStrapiAuth().logout() (not useLogout() composable) mid-login flow — useLogout() also resets Pinia stores and navigates to /auth/login, which breaks login in progress (095-01)
+- auth.populate must be lean in both apps: only fields in User TypeScript interface; dead joins (ad_reservations.ad, ad_featured_reservations.ad) removed from both website and dashboard (095-01)
 
 ### Blockers/Concerns (open)
 
