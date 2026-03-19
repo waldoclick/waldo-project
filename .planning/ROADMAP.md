@@ -49,7 +49,7 @@
 Plans:
 - [x] 099-00-PLAN.md — Wave 0 test stubs (Nyquist scaffolding)
 - [x] 099-01-PLAN.md — Layout, SCSS, and FormProfile emit refactor (foundation)
-- [ ] 099-02-PLAN.md — Onboarding pages and components (user-facing UI)
+- [x] 099-02-PLAN.md — Onboarding pages and components (user-facing UI)
 
 ### Phase 100: Guard
 **Goal**: Incomplete-profile users are automatically intercepted and routed to onboarding on every page navigation
@@ -60,7 +60,9 @@ Plans:
   2. A user with a complete profile visiting `/onboarding` is redirected to the home page
   3. Visiting `/login`, `/registro`, or `/logout` never triggers the onboarding redirect
   4. Page refresh on any page does not cause an incorrect redirect to `/onboarding` (SSR-safe)
-**Plans**: TBD
+**Plans:** 1 plan
+Plans:
+- [ ] 100-01-PLAN.md — Onboarding guard middleware with TDD and meStore cache fix
 
 ### Phase 101: Integration
 **Goal**: Google One Tap is suppressed on onboarding pages, the referer is saved before redirect, and `/onboarding` routes are excluded from referer history
@@ -77,5 +79,5 @@ Plans:
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 099. Onboarding UI | 3/3 | Complete    | 2026-03-19 | - |
-| 100. Guard | v1.45 | 0/? | Not started | - |
+| 100. Guard | v1.45 | 0/1 | Not started | - |
 | 101. Integration | v1.45 | 0/? | Not started | - |
