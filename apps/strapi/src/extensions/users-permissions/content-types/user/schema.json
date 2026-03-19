@@ -30,6 +30,13 @@
       "type": "string",
       "configurable": false
     },
+    "google_sub": {
+      "type": "string",
+      "configurable": false,
+      "private": true,
+      "searchable": false,
+      "unique": true
+    },
     "password": {
       "type": "password",
       "minLength": 6,
