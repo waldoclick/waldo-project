@@ -7,8 +7,8 @@
 
 ### Infrastructure
 
-- [ ] **GTAP-01**: `connect-src` en `nuxt.config.ts` incluye `https://accounts.google.com/gsi/` y `frame-src` incluye `https://accounts.google.com/gsi/`
-- [ ] **GTAP-02**: `GOOGLE_CLIENT_ID` está presente en `apps/strapi/.env` y documentado en `.env.example`
+- [x] **GTAP-01**: `connect-src` en `nuxt.config.ts` incluye `https://accounts.google.com/gsi/` y `frame-src` incluye `https://accounts.google.com/gsi/`
+- [x] **GTAP-02**: `GOOGLE_CLIENT_ID` está presente en `apps/strapi/.env` y documentado en `.env.example`
 
 ### Strapi Backend
 
@@ -50,8 +50,8 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| GTAP-01 | Phase 096 | Pending |
-| GTAP-02 | Phase 096 | Pending |
+| GTAP-01 | Phase 096 | Complete |
+| GTAP-02 | Phase 096 | Complete |
 | GTAP-03 | Phase 097 | Pending |
 | GTAP-04 | Phase 097 | Pending |
 | GTAP-05 | Phase 097 | Pending |

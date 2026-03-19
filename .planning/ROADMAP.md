@@ -28,7 +28,7 @@
 <details>
 <summary>🚧 v1.44 Google One Tap Sign-In (Phases 096–098) — IN PROGRESS</summary>
 
-- [ ] **Phase 096: CSP & Environment Setup** — Add `connect-src`/`frame-src` for GIS and `GOOGLE_CLIENT_ID` env var
+- [x] **Phase 096: CSP & Environment Setup** — Add `connect-src`/`frame-src` for GIS and `GOOGLE_CLIENT_ID` env var (completed 2026-03-19)
 - [ ] **Phase 097: Strapi One Tap Endpoint** — `POST /api/auth/google-one-tap` with token verification, user upsert, and JWT response
 - [ ] **Phase 098: Frontend Rewrite + Logout Fix** — Plugin, composable rewrite, route guard, and `disableAutoSelect`
 
@@ -308,6 +308,6 @@
 | 093   | v1.41     | 2/2            | Complete    | 2026-03-18 |
 | 094   | v1.42     | 1/1            | Complete    | 2026-03-18 |
 | 095   | v1.43     | 1/1            | Complete    | 2026-03-19 |
-| 096   | v1.44     | 0/?            | Not started | -          |
+| 096   | 1/1 | Complete   | 2026-03-19 | -          |
 | 097   | v1.44     | 0/?            | Not started | -          |
 | 098   | v1.44     | 0/?            | Not started | -          |
