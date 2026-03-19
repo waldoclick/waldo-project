@@ -1,51 +1,86 @@
 @use "../abstracts/mixins" as *;
 @use "../abstracts/variables" as *;
+@use "../base/container";
 
-.onboarding--default {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 100vh;
-  padding: 40px 20px;
-  background-color: #ffffff;
-
-  &__logo {
-    margin-bottom: 40px;
-  }
-
-  &__form {
-    width: 100%;
-    max-width: 700px;
-  }
-}
-
-.onboarding--thankyou {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding: 40px 20px;
-  background-color: #ffffff;
-
-  &__content {
-    max-width: 500px;
+.onboarding {
+  &--default {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #ffffff;
+
+    &__container {
+      @extend .container;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 0;
+    }
+
+    &__logo {
+      margin-bottom: 40px;
+
+      img {
+        min-width: 250px;
+      }
+    }
+
+    &__title {
+      font-style: normal;
+      font-weight: bold;
+      font-size: 32px;
+      line-height: 1.2;
+      letter-spacing: 0.25px;
+      color: $charcoal;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    &__text {
+      font-size: 14px;
+      letter-spacing: 0.25px;
+      line-height: 1.5;
+      color: $davys_grey;
+      margin-bottom: 32px;
+      text-align: center;
+      margin-bottom: 80px;
+    }
+
+    &__form {
+      width: 100%;
+      max-width: 700px;
+    }
   }
 
-  &__title {
-    text-align: center;
-  }
-
-  &__text {
-    text-align: center;
-  }
-
-  &__actions {
+  &--thankyou {
     display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-top: 20px;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 40px 20px;
+    background-color: #ffffff;
+
+    &__content {
+      max-width: 500px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    &__title {
+      text-align: center;
+    }
+
+    &__text {
+      text-align: center;
+    }
+
+    &__actions {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 20px;
+    }
   }
 }
