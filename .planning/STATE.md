@@ -1,17 +1,17 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.43
-milestone_name: milestone
-current_phase: 095 — Fix Cookie Replacement on Session Swap
-status: completed
-last_updated: "2026-03-19T01:45:48.705Z"
-last_activity: 2026-03-18 — Executed 095-01-PLAN.md. Fixed zombie-cookie bug (useStrapiAuth().logout() replaces existingCookie.value=null) and removed dead auth.populate joins from both apps. Awaiting human-verify checkpoint.
+milestone: v1.44
+milestone_name: Google One Tap Sign-In
+current_phase: —
+status: defining requirements
+last_updated: "2026-03-18T00:00:00.000Z"
+last_activity: 2026-03-18 — Milestone v1.44 started
 progress:
-  total_phases: 2
-  completed_phases: 2
-  total_plans: 2
-  completed_plans: 2
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Session State
@@ -21,25 +21,25 @@ progress:
 See: .planning/PROJECT.md
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Milestone v1.43 — Cross-App Session Replacement
+**Current focus:** Milestone v1.44 — Google One Tap Sign-In
 
 ## Position
 
-**Current Milestone:** v1.43 — Cross-App Session Replacement
-**Current Phase:** 095 — Fix Cookie Replacement on Session Swap
-**Status:** v1.43 milestone complete
+**Current Milestone:** v1.44 — Google One Tap Sign-In
+**Current Phase:** Not started (defining requirements)
+**Status:** Defining requirements
 
 ```
-Progress: [██████████] 100% — Phase 095 plan 01 code complete, awaiting human browser verification
+Progress: [░░░░░░░░░░] 0% — Not started
 ```
 
-Last activity: 2026-03-18 — Executed 095-01-PLAN.md. Fixed zombie-cookie bug (useStrapiAuth().logout() replaces existingCookie.value=null) and removed dead auth.populate joins from both apps. Awaiting human-verify checkpoint.
+Last activity: 2026-03-18 — Milestone v1.44 started
 
 ## Phase Map
 
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
-| 095 | Fix Cookie Replacement on Session Swap | SESS-05, SESS-06, SESS-07, SESS-08 | ◑ In Progress (awaiting human-verify) |
+| — | TBD by roadmapper | — | ○ Pending |
 
 ## Accumulated Context
 
