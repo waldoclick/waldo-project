@@ -2,12 +2,12 @@
 gsd_state_version: 1.0
 milestone: v1.45
 milestone_name: User Onboarding
-current_phase: null
-status: defining_requirements
-last_updated: "2026-03-19T20:00:00.000Z"
-last_activity: "2026-03-19 — Milestone v1.45 started"
+current_phase: "099"
+status: ready_to_plan
+last_updated: "2026-03-19T20:30:00.000Z"
+last_activity: "2026-03-19 — Roadmap created for v1.45; Phase 099 ready to plan"
 progress:
-  total_phases: 0
+  total_phases: 3
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-19)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Defining requirements for v1.45 User Onboarding
+**Current focus:** Phase 099 — Onboarding UI
 
 ## Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-03-19 — Milestone v1.45 started
+Phase: 099 of 101 (Onboarding UI)
+Plan: 0 of ? in current phase
+Status: Ready to plan
+Last activity: 2026-03-19 — Roadmap created for v1.45 User Onboarding
 
 ```
 Progress: [░░░░░░░░░░] 0%
@@ -40,19 +40,18 @@ Progress: [░░░░░░░░░░] 0%
 
 - All business logic lives in Strapi; dashboard and website are stateless HTTP clients
 - Auth extension pattern: override plugin controllers in `src/extensions/users-permissions/strapi-server.ts`
-- `recaptcha.ts` middleware intercepts `POST /api/auth/local` — 2-step interception at controller level (after recaptcha)
 - `overrideAuthLocal` guards `ctx.method === "GET"` to skip 2-step for OAuth callbacks
-- New Strapi auth endpoints use `src/api/` (standard content API), NOT plugin extension routes — plugin route factory broken in Strapi v5
+- New Strapi auth endpoints use `src/api/` (standard content API) — plugin route factory broken in Strapi v5
 - `google_sub` field: lookup by sub first (immutable), then email fallback for existing account linking
 - `disableAutoSelect()` before `strapiLogout()` in `useLogout.ts` — clears GIS `g_state` cookie
-- `google-one-tap.client.ts` plugin suffix ensures SSR exclusion automatically
-- SSR populate hygiene: only include populate fields present in TypeScript User interface and consumed by components
-- useApiClient returns raw body — no .data wrapper; Strapi SDK wrappers do wrap
-- COOKIE_DOMAIN conditional spread in nuxt.config.ts strapi.cookie — production emits `Domain=.waldo.click`
 - SSR-safe 404/500: throw `createError({ statusCode, fatal: true })` inside `useAsyncData` callback
 - `isProfileComplete()` in me.store.ts checks: firstname, lastname, rut, phone, commune
-- `FormProfile.vue` on success redirects to `/cuenta/perfil` — onboarding must override this behavior
-- `useHistoryStore` tracks viewed ads, not page navigation — pre-onboarding URL stored separately
+- `FormProfile.vue` on success hardcodes redirect to `/cuenta/perfil` — onboarding needs `@success` emit to override
+- Onboarding guard must be client-only (`if (import.meta.server) return`) — same pattern as `wizard-guard.ts`
+- Guard escape routes: `/onboarding`, `/login`, `/registro`, `/logout` — omitting any causes redirect loops
+- REQUIREMENTS.md defers `onboarding_completed` boolean field to out of scope — guard uses `isProfileComplete()` only
+- `layout: "auth"` reuse preferred over new `layouts/onboarding.vue` — verify against auth.vue before creating duplicate
+- `appStore.referer` persisted to localStorage — survives One Tap `window.location.reload()`
 
 ### Blockers/Concerns (open)
 
