@@ -6,3 +6,5 @@ export const useStrapiClient = () => () => Promise.resolve({});
 export const useNuxtApp = () => ({});
 export const useStrapiUser = () => ({ value: null });
 export const useRoute = () => ({ path: "/" });
+export const defineNuxtPlugin = (fn: unknown) => fn;
+export const useRuntimeConfig = () => ({ public: {} });

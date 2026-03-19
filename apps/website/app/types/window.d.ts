@@ -11,7 +11,7 @@ declare global {
         id: {
           initialize: (config: Record<string, unknown>) => void;
           prompt: (
-            callback: (notification: GoogleOneTapNotification) => void,
+            callback?: (notification: GoogleOneTapNotification) => void,
           ) => void;
           disableAutoSelect: () => void;
         };
