@@ -314,5 +314,5 @@ Plans:
 | 094   | v1.42     | 1/1            | Complete    | 2026-03-18 |
 | 095   | v1.43     | 1/1            | Complete    | 2026-03-19 |
 | 096   | 1/1 | Complete    | 2026-03-19 | -          |
-| 097   | v1.44     | 0/?            | Not started | -          |
+| 097   | 1/3 | In Progress|  | -          |
 | 098   | v1.44     | 0/?            | Not started | -          |

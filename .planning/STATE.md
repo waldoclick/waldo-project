@@ -4,14 +4,14 @@ milestone: v1.44
 milestone_name: Google One Tap Sign-In
 current_phase: 097
 status: planning
-last_updated: "2026-03-19T02:46:54.978Z"
-last_activity: "2026-03-19 — Phase 096 complete: CSP GIS entries + GOOGLE_CLIENT_ID env setup"
+last_updated: "2026-03-19T03:08:33.940Z"
+last_activity: "2026-03-19 — Phase 097 plan 01 complete: TDD RED scaffolds for GoogleOneTapService + auth-one-tap controller"
 progress:
   total_phases: 5
   completed_phases: 3
-  total_plans: 3
-  completed_plans: 3
-  percent: 0
+  total_plans: 6
+  completed_plans: 4
+  percent: 97
 ---
 
 # Session State
@@ -27,14 +27,14 @@ See: .planning/PROJECT.md
 
 **Current Milestone:** v1.44 — Google One Tap Sign-In
 **Current Phase:** 097
-**Status:** Ready to plan
+**Status:** In progress (plan 01 of 3 complete)
 
 ```
-Progress: [░░░░░░░░░░] 0% — Phase 096 next
-Phase 096 ░░░░ | Phase 097 ░░░░ | Phase 098 ░░░░
+Progress: [██████████] 97% — Phase 097 in progress
+Phase 096 ████ | Phase 097 ░░░░ | Phase 098 ░░░░
 ```
 
-Last activity: 2026-03-19 — Phase 096 complete: CSP GIS entries + GOOGLE_CLIENT_ID env setup
+Last activity: 2026-03-19 — Phase 097 plan 01 complete: TDD RED scaffolds for GoogleOneTapService + auth-one-tap controller
 
 ## Phase Map
 
@@ -118,6 +118,8 @@ Last activity: 2026-03-19 — Phase 096 complete: CSP GIS entries + GOOGLE_CLIEN
 
 ### Key Decisions (v1.44 — carry forward as discovered)
 
+- TDD RED scaffolds fail at TypeScript compile level (TS2307): stricter RED guarantee than runtime import errors; both test files confirmed failing before any implementation written (097-01)
+- `auth-one-tap.test.ts` mocks `'../../../services/google-one-tap'` as index export (not service file directly): plan 097-02 must export `googleOneTapService` singleton from `index.ts` (097-01)
 - GIS CSP pattern: use `https://accounts.google.com/gsi/` (path prefix, trailing slash) in both `connect-src` and `frame-src` — never add to `script-src` (already covered by `accounts.google.com`); per Google's official CSP guidance (GTAP-01, GTAP-02, 096-01)
 - GOOGLE_CLIENT_ID in Strapi .env = same credential as website GIS loader — single OAuth project, no new credential needed; must be set in staging/production deployment secrets (GTAP-02, 096-01)
 - New Strapi endpoint uses standard content API (`src/api/auth-one-tap/`), NOT plugin extension routes — plugin route factory is broken in Strapi v5 (documented in `strapi-server.ts` lines 56–62); mirrors proven `auth-verify/` pattern (GTAP-03)
