@@ -25,7 +25,7 @@ const mockSetReferer = vi.fn();
 global.useAppStore = vi.fn(() => ({ setReferer: mockSetReferer }));
 
 // Use dynamic import so globals are set before the guard module evaluates.
- 
+
 let guard: any;
 
 beforeAll(async () => {

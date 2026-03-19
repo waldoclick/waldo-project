@@ -678,6 +678,7 @@ const handleSubmit = async (values) => {
     // Usar la función del store para actualizar el perfil
     await userStore.updateUserProfile(user.value.id, mappedValues);
     await fetchUser();
+    useMeStore().reset();
 
     // Log successful profile update
     logInfo(`User profile updated successfully.`);
