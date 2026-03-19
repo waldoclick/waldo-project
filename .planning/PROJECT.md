@@ -361,20 +361,19 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
            | `createError({ fatal: true })` inside `useAsyncData` (not `showError` in `watchEffect`) | `showError()` in `watchEffect` fires during SSR setup outside Nuxt's error boundary → 500 crash; `createError` inside `useAsyncData` is the canonical Nuxt 4 SSR-safe pattern — v1.41 | ✓ Good |
            | Catch block re-throws Nuxt errors before generic `createError({ statusCode: 500 })` | Prevents the 404 path (which throws `createError`) from being incorrectly swallowed and re-wrapped as a 500 — v1.41 | ✓ Good |
            | TDD order for Strapi controller fix | Jest test scaffold (RED) before implementation (GREEN) — explicitly confirms broken behavior before fixing it; aligns with project testing standards — v1.41 | ✓ Good |
-
-## Current Milestone: v1.43 — Cross-App Session Replacement
-
-**Goal:** Corregir el flujo de login forzado en el dashboard cuando ya existe una sesión activa del website, para que la nueva cookie de manager se escriba correctamente con el `domain` compartido y persista en ambas apps al refrescar.
-
-**Target features:**
-- Reemplazo correcto de la cookie `waldo_jwt` al cambiar de sesión (de usuario normal a manager)
-- La nueva sesión persiste al refrescar en dashboard y website
-- Eliminación del bug de cookie zombie (host-only vs. shared domain)
+           | `google_sub` field lookup before email fallback | Google prohibits email as primary key; `sub` is immutable; email fallback only for existing account linking — v1.44 | ✓ Good |
+           | New Strapi endpoint in `src/api/auth-one-tap/` (not plugin extension routes) | Plugin route factory broken in Strapi v5; mirrors proven `auth-verify/` pattern — v1.44 | ✓ Good |
+           | `GoogleOneTapService` warns (not throws) on missing `GOOGLE_CLIENT_ID` | Throwing kills Strapi startup; endpoint returns 401 when key absent — v1.44 | ✓ Good |
+           | `promptIfEligible()` replaces `initializeGoogleOneTap()` in composable | Auth guard + route guard + GIS guard; 90 lines → 25 lines, purely subtractive — v1.44 | ✓ Good |
+           | `disableAutoSelect()` before `strapiLogout()` in `useLogout.ts` | Clears GIS `g_state` cookie; prerequisite for `auto_select: true` to work safely — v1.44 | ✓ Good |
+           | `google-one-tap.client.ts` plugin suffix ensures SSR exclusion | No `if (import.meta.client)` guard needed inside the plugin — v1.44 | ✓ Good |
+           | Full page reload after One Tap login (`window.location.reload()`) | Ensures all SSR-hydrated components pick up auth state cleanly; simpler than reactive propagation across all layouts — v1.44 | ✓ Good |
+           | Dynamic import for `createUserReservations` in auth-one-tap controller | Avoids circular dep between `src/api/` and `src/extensions/`; Jest mock correctly intercepts — v1.44 | ✓ Good |
 
 ## Current State
 
-**Last shipped:** v1.42 (2026-03-18) — Dashboard Session Persistence: removed dead `ad_reservations.ad` + `ad_featured_reservations.ad` populate from `auth.populate`; root cause documented (`fetchUser()` SSR catch calls `setToken(null)`)
-**Also shipped recently:** v1.41 (2026-03-18) — Ad Preview Error Handling; v1.40 (2026-03-16) — Shared Authentication Session
+**Last shipped:** v1.44 (2026-03-19) — Google One Tap Sign-In: One Tap overlay on public pages, Strapi endpoint with Google JWT verification + user find-or-create, `disableAutoSelect()` logout fix, SSR-safe plugin
+**Also shipped recently:** v1.43 (2026-03-19) — Cross-App Session Replacement; v1.42 (2026-03-18) — Dashboard Session Persistence; v1.41 (2026-03-18) — Ad Preview Error Handling
 
 **Email Authentication (since v1.37):** `overrideForgotPassword` fully replaces Strapi's built-in — sends branded `reset-password.mjml` routed to website or dashboard based on `context` field in POST body; `DASHBOARD_URL` env var drives dashboard reset URL. `FormRegister.vue` JWT guard redirects to `/registro/confirmar` (no `setToken` call without JWT); `/registro/confirmar` page with resend button + 60s countdown; `FormLogin.vue` (both apps) shows inline resend section for unconfirmed accounts. Idempotent migration seeder (`user-confirmed-migration.ts`) + cron-runner registration; production DB migrated to `confirmed=true`; Strapi Admin Panel `email_confirmation: ON`, `email_confirmation_redirection: https://waldo.click/login`; smoke-test passed (REGV-01, REGV-02, REGV-06).
 
@@ -391,6 +390,10 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 **Webpay receipt (since v1.26):** `/pagar/gracias` shows 8-field Webpay receipt via `ResumeOrder.vue`; fetches by `order.documentId`.
 
 **Unified API Client (since v1.39):** `useApiClient` composable handles all HTTP methods — POST/PUT/DELETE inject `X-Recaptcha-Token`; GET passes through cleanly. All 12 website stores, 3 composables (`useStrapi`, `useOrderById`, `usePacksList`), and 5 pages/components migrated from `@nuxtjs/strapi` SDK; Strapi SDK now used for auth only. Calling convention: `client(url, { method: 'GET', params })` returns raw body (no `.data` wrapper). 9 Vitest tests. `apps/dashboard` migration deferred.
+
+**Google One Tap (since v1.44):** `google-one-tap.client.ts` Nuxt plugin initializes GIS on app startup (SSR-safe via `.client.ts` suffix); `useGoogleOneTap.ts` composable exposes `promptIfEligible()` with auth guard + route guard + GIS guard; `POST /api/auth/google-one-tap` Strapi endpoint verifies Google credential JWT via `google-auth-library`, finds or creates user by `google_sub` field (email fallback for existing accounts), grants 3 free ad slots to new users, bypasses 2-step verification, returns `{ jwt, user }`; `useLogout.ts` calls `disableAutoSelect()` before `strapiLogout()` to prevent post-logout re-prompt; full page reload after One Tap login ensures clean state. `google_sub` field added to User schema (private, unique, nullable). TDD: 8 Jest tests for service, 4 for controller; 3 Vitest tests for composable, plugin tests for GTAP-08.
+
+**Session persistence (since v1.42–v1.43):** Root cause: `@nuxtjs/strapi` plugin `fetchUser()` SSR catch calls `setToken(null)` on any `/users/me` error; fix: removed dead `auth.populate` joins (`ad_reservations.ad`, `ad_featured_reservations.ad`). Cookie replacement: `useStrapiAuth().logout()` in `FormLogin.vue` line 149 replaces `existingCookie.value = null` to respect `COOKIE_DOMAIN` attribute. Both apps have lean `auth.populate`: `["role", "commune", "region", "business_region", "business_commune"]` only.
 
 ## Known Issues / Tech Debt
 
@@ -468,25 +471,19 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ La nueva cookie de manager persiste al refrescar en website — v1.43
 - ✓ No quedan cookies zombie de `waldo_jwt` con distintos `domain` scopes — v1.43
 
-## Current Milestone: v1.44 — Google One Tap Sign-In
+## Validated Requirements (v1.44)
 
-**Goal:** Integrar Google One Tap en el website para que los usuarios no autenticados vean automáticamente el overlay de inicio de sesión en páginas públicas, reduciendo la fricción de registro y login.
-
-**Target features:**
-- Google One Tap overlay en todas las páginas públicas del website (excluye `/cuenta/*` y páginas privadas)
-- Flujo de auto-creación de cuenta vía el OAuth de Google existente (credential JWT → Strapi)
-- Bypass de 2-step verification para One Tap (Google ya verificó la identidad del usuario)
-- Coexistencia con el botón Google redirect actual (`/login/google`)
-
-## Active Requirements
-
-- [ ] GTAP-01: El overlay de Google One Tap aparece automáticamente para usuarios no autenticados en páginas públicas
-- [ ] GTAP-02: El overlay NO aparece en rutas privadas (`/cuenta/*`, `/pagar/*`, `/anunciar/*`, etc.)
-- [ ] GTAP-03: Al hacer sign-in con One Tap, si el usuario ya existe se autentica directamente
-- [ ] GTAP-04: Al hacer sign-in con One Tap, si el usuario no existe se crea la cuenta automáticamente
-- [ ] GTAP-05: El flujo de One Tap emite un JWT de Strapi y establece la cookie `waldo_jwt` correctamente
-- [ ] GTAP-06: One Tap bypassa el 2-step de código de verificación (igual que el OAuth redirect actual)
-- [ ] GTAP-07: El botón Google redirect existente (`/login/google`) coexiste sin conflicto con One Tap
+- ✓ CSP `connect-src` + `frame-src` include `https://accounts.google.com/gsi/`; `GOOGLE_CLIENT_ID` in Strapi `.env` and `.env.example` — v1.44
+- ✓ `POST /api/auth/google-one-tap` verifies Google credential JWT, returns `{ jwt, user }`; 8 unit tests GREEN — v1.44
+- ✓ Existing user by `google_sub` or email → authenticated directly, no duplicate account — v1.44
+- ✓ New Google user → account created with `provider:'google'`, 3 free ad slots granted — v1.44
+- ✓ One Tap bypasses 2-step verification (endpoint in `src/api/`, not intercepted by `overrideAuthLocal`) — v1.44
+- ✓ `useGoogleOneTap.ts` rewritten — `promptIfEligible()` replaces `initializeGoogleOneTap()`; deprecated GIS methods removed — v1.44
+- ✓ `google-one-tap.client.ts` plugin created — SSR-safe, auth guard, route guard for private paths — v1.44
+- ✓ One Tap appears on public pages for unauthenticated users; suppressed on `/cuenta/*`, `/pagar/*`, `/anunciar/*`, `/login/*` — v1.44
+- ✓ `setToken(jwt)` + `fetchUser()` + page reload after One Tap — user fully authenticated with `waldo_jwt` cookie — v1.44
+- ✓ `disableAutoSelect()` called in `useLogout.ts` before `strapiLogout()` — no post-logout re-prompt — v1.44
+- ✓ Google redirect button (`/login/google`) coexists with One Tap without conflict — v1.44
 
 ---
-*Last updated: 2026-03-18 after v1.44 milestone start*
+*Last updated: 2026-03-19 after v1.44 milestone*
