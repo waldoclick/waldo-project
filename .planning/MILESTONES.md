@@ -1,5 +1,24 @@
 ## v1.41 Ad Preview Error Handling (Shipped: 2026-03-18)
 
+## v1.44 Google One Tap Sign-In (Shipped: 2026-03-19)
+
+**Phases completed:** 5 phases (094–098), 9 plans
+**Timeline:** 2026-03-18 → 2026-03-19 (2 days)
+**Git range:** `docs(094)` → `feat(098-03)`
+**Files changed:** 74 files, +9,374 / −1,234
+
+**Key accomplishments:**
+- Root-caused SSR session persistence bug — dead `auth.populate` joins caused `setToken(null)` on `fetchUser()` SSR failure; purely subtractive fix (removed unused `ad_reservations.ad` and `ad_featured_reservations.ad`)
+- Fixed cookie replacement on session swap — `useStrapiAuth().logout()` respects `COOKIE_DOMAIN` attribute; eliminates zombie cookies after manager login
+- Added GIS CSP entries (`connect-src` + `frame-src`) and `GOOGLE_CLIENT_ID` env var for Google One Tap
+- Built `POST /api/auth/google-one-tap` endpoint — Google JWT verification via `google-auth-library`, user find-or-create with `google_sub` field, 3 free ad slots for new users, 2-step bypass
+- Rewrote `useGoogleOneTap` composable — `promptIfEligible()` replaces 90-line `initializeGoogleOneTap()`; `disableAutoSelect()` in `useLogout` prevents post-logout dead-loop
+- Created `google-one-tap.client.ts` plugin — SSR-safe GIS initializer with auth guard, route guard, and credential-to-session wiring; full reload after One Tap login for clean state refresh
+
+**Archive:** `.planning/milestones/v1.44-ROADMAP.md` | `.planning/milestones/v1.44-REQUIREMENTS.md`
+
+---
+
 ## v1.43 Cross-App Session Replacement (Shipped: 2026-03-19)
 
 **Phases completed:** 2 phases, 2 plans, 0 tasks
