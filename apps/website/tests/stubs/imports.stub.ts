@@ -4,3 +4,5 @@ export const navigateTo = () => {};
 export const useStrapiAuth = () => ({ logout: () => {} });
 export const useStrapiClient = () => () => Promise.resolve({});
 export const useNuxtApp = () => ({});
+export const useStrapiUser = () => ({ value: null });
+export const useRoute = () => ({ path: "/" });
