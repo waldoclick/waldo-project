@@ -1,6 +1,11 @@
 import { defineNuxtPlugin } from "#app";
 import { useApiClient } from "@/composables/useApiClient";
-import { useStrapiAuth, useStrapiUser, useRuntimeConfig } from "#imports";
+import {
+  useStrapiAuth,
+  useStrapiUser,
+  useRuntimeConfig,
+  useRoute,
+} from "#imports";
 
 export default defineNuxtPlugin(() => {
   const config = useRuntimeConfig();
@@ -14,6 +19,11 @@ export default defineNuxtPlugin(() => {
   // Auth state guard — skip if user is already authenticated on app load
   const user = useStrapiUser();
   if (user.value) return;
+
+  // Route guard — skip on auth callback pages (e.g. /login/google) to avoid
+  // showing One Tap while OAuth flow is completing
+  const route = useRoute();
+  if (route.path.startsWith("/login/")) return;
 
   // Instantiate composables at plugin root level (AGENTS.md: setup-level instantiation required)
   const client = useApiClient();
