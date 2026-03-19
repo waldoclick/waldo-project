@@ -4,14 +4,14 @@ milestone: v1.45
 milestone_name: User Onboarding
 current_phase: "099"
 status: ready_to_plan
-last_updated: "2026-03-19T20:30:00.000Z"
-last_activity: "2026-03-19 — Roadmap created for v1.45; Phase 099 ready to plan"
+last_updated: "2026-03-19T20:52:00.000Z"
+last_activity: "2026-03-19 — Completed 099-00: Wave 0 test stubs for onboarding UI"
 progress:
   total_phases: 3
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
-  percent: 0
+  total_plans: 1
+  completed_plans: 1
+  percent: 5
 ---
 
 # Session State
@@ -26,12 +26,12 @@ See: .planning/PROJECT.md (updated 2026-03-19)
 ## Position
 
 Phase: 099 of 101 (Onboarding UI)
-Plan: 0 of ? in current phase
-Status: Ready to plan
-Last activity: 2026-03-19 — Roadmap created for v1.45 User Onboarding
+Plan: 1 of 3 in current phase (099-00 complete)
+Status: In progress
+Last activity: 2026-03-19 — Completed 099-00: Wave 0 TDD test stubs for onboarding UI
 
 ```
-Progress: [░░░░░░░░░░] 0%
+Progress: [█░░░░░░░░░] 5%
 ```
 
 ## Accumulated Context
@@ -52,6 +52,7 @@ Progress: [░░░░░░░░░░] 0%
 - REQUIREMENTS.md defers `onboarding_completed` boolean field to out of scope — guard uses `isProfileComplete()` only
 - `layout: "auth"` reuse preferred over new `layouts/onboarding.vue` — verify against auth.vue before creating duplicate
 - `appStore.referer` persisted to localStorage — survives One Tap `window.location.reload()`
+- Wave 0 TDD stub pattern: use it.todo() (not it.skip()) for scaffolding before components exist — Vitest reports pending without failure
 
 ### Blockers/Concerns (open)
 
