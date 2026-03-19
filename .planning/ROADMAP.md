@@ -30,7 +30,7 @@
 
 - [x] **Phase 096: CSP & Environment Setup** — Add `connect-src`/`frame-src` for GIS and `GOOGLE_CLIENT_ID` env var (completed 2026-03-19)
 - [x] **Phase 097: Strapi One Tap Endpoint** — `POST /api/auth/google-one-tap` with token verification, user upsert, and JWT response (completed 2026-03-19)
-- [ ] **Phase 098: Frontend Rewrite + Logout Fix** — Plugin, composable rewrite, route guard, and `disableAutoSelect`
+- [x] **Phase 098: Frontend Rewrite + Logout Fix** — Plugin, composable rewrite, route guard, and `disableAutoSelect` (completed 2026-03-19)
 
 
 </details>
@@ -321,4 +321,4 @@ Plans:
 | 095   | v1.43     | 1/1            | Complete    | 2026-03-19 |
 | 096   | 1/1 | Complete    | 2026-03-19 | -          |
 | 097   | 3/3 | Complete    | 2026-03-19 | -          |
-| 098   | 1/3 | In Progress|  | -          |
+| 098   | 3/3 | Complete    | 2026-03-19 | -          |
