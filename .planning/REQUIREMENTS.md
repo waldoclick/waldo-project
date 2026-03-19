@@ -19,15 +19,15 @@
 
 ### Nuxt Frontend
 
-- [ ] **GTAP-07**: `apps/website/app/composables/useGoogleOneTap.ts` reescrito — redirect hack eliminado, global flag eliminado, métodos FedCM deprecated eliminados (`isNotDisplayed`, `getNotDisplayedReason`, `use_fedcm_for_prompt`)
+- [x] **GTAP-07**: `apps/website/app/composables/useGoogleOneTap.ts` reescrito — redirect hack eliminado, global flag eliminado, métodos FedCM deprecated eliminados (`isNotDisplayed`, `getNotDisplayedReason`, `use_fedcm_for_prompt`)
 - [ ] **GTAP-08**: `apps/website/app/plugins/google-one-tap.client.ts` creado — inicializa GIS una vez con guard de auth-state; SSR-safe por sufijo `.client.ts`
-- [ ] **GTAP-09**: One Tap aparece automáticamente en páginas públicas para usuarios no autenticados
-- [ ] **GTAP-10**: One Tap NO aparece en rutas privadas (`/cuenta/*`, `/pagar/*`, `/anunciar/*`, etc.)
-- [ ] **GTAP-11**: Al completar One Tap, se llama `setToken(jwt)` + `fetchUser()` y el usuario queda autenticado con cookie `waldo_jwt` correcta
+- [x] **GTAP-09**: One Tap aparece automáticamente en páginas públicas para usuarios no autenticados
+- [x] **GTAP-10**: One Tap NO aparece en rutas privadas (`/cuenta/*`, `/pagar/*`, `/anunciar/*`, etc.)
+- [x] **GTAP-11**: Al completar One Tap, se llama `setToken(jwt)` + `fetchUser()` y el usuario queda autenticado con cookie `waldo_jwt` correcta
 
 ### Logout
 
-- [ ] **GTAP-12**: `useLogout.ts` llama `window.google?.accounts?.id?.disableAutoSelect()` antes de `strapiLogout()` — previene el dead-loop post-logout
+- [x] **GTAP-12**: `useLogout.ts` llama `window.google?.accounts?.id?.disableAutoSelect()` antes de `strapiLogout()` — previene el dead-loop post-logout
 
 ## v2 Requirements (deferred to v1.45)
 
@@ -56,12 +56,12 @@
 | GTAP-04 | Phase 097 | Complete |
 | GTAP-05 | Phase 097 | Complete |
 | GTAP-06 | Phase 097 | Complete |
-| GTAP-07 | Phase 098 | Pending |
+| GTAP-07 | Phase 098 | Complete |
 | GTAP-08 | Phase 098 | Pending |
-| GTAP-09 | Phase 098 | Pending |
-| GTAP-10 | Phase 098 | Pending |
-| GTAP-11 | Phase 098 | Pending |
-| GTAP-12 | Phase 098 | Pending |
+| GTAP-09 | Phase 098 | Complete |
+| GTAP-10 | Phase 098 | Complete |
+| GTAP-11 | Phase 098 | Complete |
+| GTAP-12 | Phase 098 | Complete |
 
 **Coverage:**
 - v1.44 requirements: 12 total
