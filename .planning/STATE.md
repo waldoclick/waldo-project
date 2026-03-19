@@ -4,14 +4,14 @@ milestone: v1.45
 milestone_name: User Onboarding
 current_phase: "099"
 status: ready_to_plan
-last_updated: "2026-03-19T20:58:00.000Z"
-last_activity: "2026-03-19 — Completed 099-01: Onboarding layout, SCSS, and FormProfile emit refactor"
+last_updated: "2026-03-19T21:03:04Z"
+last_activity: "2026-03-19 — Completed 099-02: Onboarding pages and components (OnboardingDefault, OnboardingThankyou, /onboarding, /onboarding/thankyou)"
 progress:
   total_phases: 3
   completed_phases: 0
-  total_plans: 2
-  completed_plans: 2
-  percent: 10
+  total_plans: 3
+  completed_plans: 3
+  percent: 15
 ---
 
 # Session State
@@ -26,12 +26,12 @@ See: .planning/PROJECT.md (updated 2026-03-19)
 ## Position
 
 Phase: 099 of 101 (Onboarding UI)
-Plan: 2 of 3 in current phase (099-01 complete)
+Plan: 3 of 3 in current phase (099-02 complete)
 Status: In progress
-Last activity: 2026-03-19 — Completed 099-01: Onboarding layout, SCSS, FormProfile emit refactor
+Last activity: 2026-03-19 — Completed 099-02: Onboarding pages and components
 
 ```
-Progress: [██░░░░░░░░] 10%
+Progress: [██░░░░░░░░] 15%
 ```
 
 ## Accumulated Context
@@ -55,6 +55,10 @@ Progress: [██░░░░░░░░] 10%
 - Wave 0 TDD stub pattern: use it.todo() (not it.skip()) for scaffolding before components exist — Vitest reports pending without failure
 - `nuxt-meta-client-stub` Vite plugin in vitest.config.ts replaces import.meta.client/server literals at transform time — required for components with `import.meta.client ? useStore() : {}` guards to work in tests
 - FormProfile emit pattern: `defineEmits(["success"]) + defineProps({ onboardingMode })` — emit fires always, redirect only when `!props.onboardingMode`; AccountEdit unchanged (no props = default false = redirect fires)
+- OnboardingThankyou requires explicit `import { computed } from "vue"` — vitest does not auto-import Vue APIs
+- NuxtLink stub in vitest: `{ template: '<a :href="to"><slot /></a>', props: ['to'] }` — needed for anchor href assertions
+- OnboardingDefault/Thankyou component stubs passed via `global.components` in buildWrapper — standard pattern for auto-imported components
+- returnUrl in OnboardingThankyou: `appStore.getReferer || "/"` — no client-only wrapper needed, referer available before user can click
 
 ### Blockers/Concerns (open)
 
