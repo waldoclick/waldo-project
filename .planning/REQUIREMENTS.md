@@ -1,0 +1,85 @@
+# Requirements: Waldo Project
+
+**Defined:** 2026-03-19
+**Core Value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
+
+## v1.45 Requirements
+
+Requirements for User Onboarding milestone. Each maps to roadmap phases.
+
+### Onboarding Layout
+
+- [ ] **LAYOUT-01**: `/onboarding` and `/onboarding/thankyou` use a dedicated `onboarding` layout with centered Waldo logo, no header, no footer, no navigation
+- [ ] **LAYOUT-02**: `OnboardingDefault` component uses BEM classes `onboarding onboarding--default` with logo centered above the form
+- [ ] **LAYOUT-03**: `OnboardingThankyou` component uses BEM classes `onboarding onboarding--thankyou` with thank you message and 2 action buttons
+
+### Onboarding Guard
+
+- [ ] **GUARD-01**: Authenticated users with incomplete profiles are redirected to `/onboarding` on any non-exempt page navigation
+- [ ] **GUARD-02**: Users with complete profiles cannot access `/onboarding` (redirected to home)
+- [ ] **GUARD-03**: Onboarding guard is client-only (SSR-safe) and runs after auth guard
+- [ ] **GUARD-04**: Auth pages (`/login`, `/registro`, `/logout`) are exempt from onboarding redirect
+
+### Profile Form
+
+- [ ] **FORM-01**: `/onboarding` page reuses `FormProfile` for profile completion
+- [ ] **FORM-02**: `FormProfile` emits a `@success` event (or accepts `redirectTo` prop) so parent controls post-submit navigation
+- [ ] **FORM-03**: Existing `FormProfile` behavior at `/cuenta/perfil/editar` is unchanged (backward compatible)
+
+### Thank You Page
+
+- [ ] **THANK-01**: `/onboarding/thankyou` displays "Muchas gracias por registrarte" with descriptive text
+- [ ] **THANK-02**: Primary button "Crear mi primer anuncio" navigates to `/anunciar`
+- [ ] **THANK-03**: Secondary button "Volver a Waldo" navigates to the page the user was on before onboarding (via `appStore.referer`), defaulting to `/` if no referer
+
+### Integration
+
+- [ ] **INTEG-01**: Google One Tap is suppressed on `/onboarding` pages
+- [ ] **INTEG-02**: `/onboarding` pages are excluded from `referer.global.ts` (not stored as return URLs)
+- [ ] **INTEG-03**: Onboarding guard saves pre-redirect URL to `appStore.referer` before redirecting
+
+## Future Requirements
+
+(None deferred for this milestone)
+
+## Out of Scope
+
+| Feature | Reason |
+|---------|--------|
+| Multi-step onboarding wizard | Profile form is a single page; wizard adds complexity without value |
+| `onboarding_completed` boolean on User schema | `isProfileComplete()` field checks are sufficient; no Strapi schema change needed |
+| Aligning `isProfileComplete()` with full Yup schema | Current 5-field check (firstname, lastname, rut, phone, commune) is intentionally minimum viable |
+| Onboarding for dashboard users | Dashboard is admin-only; onboarding is consumer-facing |
+| Progress indicators / stepper UI | Single-page form doesn't need step indicators |
+
+## Traceability
+
+Which phases cover which requirements. Updated during roadmap creation.
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| LAYOUT-01 | — | Pending |
+| LAYOUT-02 | — | Pending |
+| LAYOUT-03 | — | Pending |
+| GUARD-01 | — | Pending |
+| GUARD-02 | — | Pending |
+| GUARD-03 | — | Pending |
+| GUARD-04 | — | Pending |
+| FORM-01 | — | Pending |
+| FORM-02 | — | Pending |
+| FORM-03 | — | Pending |
+| THANK-01 | — | Pending |
+| THANK-02 | — | Pending |
+| THANK-03 | — | Pending |
+| INTEG-01 | — | Pending |
+| INTEG-02 | — | Pending |
+| INTEG-03 | — | Pending |
+
+**Coverage:**
+- v1.45 requirements: 16 total
+- Mapped to phases: 0
+- Unmapped: 16 ⚠️
+
+---
+*Requirements defined: 2026-03-19*
+*Last updated: 2026-03-19 after initial definition*
