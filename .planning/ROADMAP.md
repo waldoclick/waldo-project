@@ -32,6 +32,7 @@
 - [x] **Phase 097: Strapi One Tap Endpoint** — `POST /api/auth/google-one-tap` with token verification, user upsert, and JWT response (completed 2026-03-19)
 - [ ] **Phase 098: Frontend Rewrite + Logout Fix** — Plugin, composable rewrite, route guard, and `disableAutoSelect`
 
+
 </details>
 
 <details>
@@ -235,7 +236,12 @@ Plans:
   4. An already-authenticated user visiting any page does NOT see the One Tap overlay — the auth-state guard suppresses it for existing sessions
   5. After logout, the One Tap overlay does NOT immediately reappear — `disableAutoSelect()` clears the GIS auto-sign-in state so the user can stay logged out
 
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 098-01-PLAN.md — Wave 1: TDD scaffolds (RED) for all changed files
+- [ ] 098-02-PLAN.md — Wave 2: window.d.ts update + useLogout fix + useGoogleOneTap rewrite (GREEN)
+- [ ] 098-03-PLAN.md — Wave 3: google-one-tap.client.ts plugin + layout cleanup + smoke test
 
 ---
 
@@ -315,4 +321,4 @@ Plans:
 | 095   | v1.43     | 1/1            | Complete    | 2026-03-19 |
 | 096   | 1/1 | Complete    | 2026-03-19 | -          |
 | 097   | 3/3 | Complete    | 2026-03-19 | -          |
-| 098   | v1.44     | 0/?            | Not started | -          |
+| 098   | v1.44     | 0/3            | Not started | -          |
