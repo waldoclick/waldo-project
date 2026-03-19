@@ -12,10 +12,10 @@
 
 ### Strapi Backend
 
-- [ ] **GTAP-03**: `POST /api/auth/google-one-tap` acepta un credential JWT de Google, lo verifica con `OAuth2Client.verifyIdToken()` vía `google-auth-library`, y retorna `{ jwt, user }`
-- [ ] **GTAP-04**: Si el usuario ya existe (por `sub` o email), se autentica sin crear una cuenta nueva
-- [ ] **GTAP-05**: Si el usuario no existe, se crea la cuenta automáticamente y se llama `createUserReservations()` para dar los 3 free ad slots
-- [ ] **GTAP-06**: El endpoint bypassa el 2-step de verificación por código (mismo comportamiento que `/connect/google`)
+- [x] **GTAP-03**: `POST /api/auth/google-one-tap` acepta un credential JWT de Google, lo verifica con `OAuth2Client.verifyIdToken()` vía `google-auth-library`, y retorna `{ jwt, user }`
+- [x] **GTAP-04**: Si el usuario ya existe (por `sub` o email), se autentica sin crear una cuenta nueva
+- [x] **GTAP-05**: Si el usuario no existe, se crea la cuenta automáticamente y se llama `createUserReservations()` para dar los 3 free ad slots
+- [x] **GTAP-06**: El endpoint bypassa el 2-step de verificación por código (mismo comportamiento que `/connect/google`)
 
 ### Nuxt Frontend
 
@@ -52,10 +52,10 @@
 |-------------|-------|--------|
 | GTAP-01 | Phase 096 | Complete |
 | GTAP-02 | Phase 096 | Complete |
-| GTAP-03 | Phase 097 | Pending |
-| GTAP-04 | Phase 097 | Pending |
-| GTAP-05 | Phase 097 | Pending |
-| GTAP-06 | Phase 097 | Pending |
+| GTAP-03 | Phase 097 | Complete |
+| GTAP-04 | Phase 097 | Complete |
+| GTAP-05 | Phase 097 | Complete |
+| GTAP-06 | Phase 097 | Complete |
 | GTAP-07 | Phase 098 | Pending |
 | GTAP-08 | Phase 098 | Pending |
 | GTAP-09 | Phase 098 | Pending |
