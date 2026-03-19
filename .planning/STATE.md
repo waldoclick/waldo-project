@@ -4,13 +4,13 @@ milestone: v1.44
 milestone_name: Google One Tap Sign-In
 current_phase: 098
 status: planning
-last_updated: "2026-03-19T03:47:06.796Z"
-last_activity: "2026-03-19 — Phase 097 plan 02 complete: GoogleOneTapService GREEN + google_sub schema field"
+last_updated: "2026-03-19T04:22:12.420Z"
+last_activity: "2026-03-19 — Phase 098 plan 01 complete: TDD RED scaffolds for GTAP-07,09,10,11,12"
 progress:
   total_phases: 5
   completed_phases: 4
-  total_plans: 6
-  completed_plans: 6
+  total_plans: 9
+  completed_plans: 7
   percent: 98
 ---
 
@@ -27,14 +27,14 @@ See: .planning/PROJECT.md
 
 **Current Milestone:** v1.44 — Google One Tap Sign-In
 **Current Phase:** 098
-**Status:** Ready to plan
+**Status:** In progress — Plan 01 complete
 
 ```
-Progress: [██████████] 98% — Phase 097 in progress
-Phase 096 ████ | Phase 097 ░░░░ | Phase 098 ░░░░
+Progress: [██████████] 97% — Phase 098 in progress
+Phase 096 ████ | Phase 097 ████ | Phase 098 ░░░░
 ```
 
-Last activity: 2026-03-19 — Phase 097 plan 02 complete: GoogleOneTapService GREEN + google_sub schema field
+Last activity: 2026-03-19 — Phase 098 plan 01 complete: TDD RED scaffolds for GTAP-07,09,10,11,12
 
 ## Phase Map
 
@@ -118,6 +118,9 @@ Last activity: 2026-03-19 — Phase 097 plan 02 complete: GoogleOneTapService GR
 
 ### Key Decisions (v1.44 — carry forward as discovered)
 
+- RED failures for 098-01 are behavioral (TypeError/module-not-found) not TS compile errors — test scaffolds will go GREEN once implementation exists without re-structuring (098-01)
+- vi.hoisted() used in useGoogleOneTap.test.ts and plugin test for mock refs in vi.mock() factory, matching 087-01 pattern (098-01)
+- Top-level vi.resetModules() + vi.clearAllMocks() in useLogout.test.ts beforeEach so GTAP-12 window.google stub is seen by dynamic import (098-01)
 - TDD RED scaffolds fail at TypeScript compile level (TS2307): stricter RED guarantee than runtime import errors; both test files confirmed failing before any implementation written (097-01)
 - `auth-one-tap.test.ts` mocks `'../../../services/google-one-tap'` as index export (not service file directly): plan 097-02 must export `googleOneTapService` singleton from `index.ts` (097-01)
 - GIS CSP pattern: use `https://accounts.google.com/gsi/` (path prefix, trailing slash) in both `connect-src` and `frame-src` — never add to `script-src` (already covered by `accounts.google.com`); per Google's official CSP guidance (GTAP-01, GTAP-02, 096-01)
