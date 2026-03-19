@@ -20,7 +20,7 @@
 ### Nuxt Frontend
 
 - [x] **GTAP-07**: `apps/website/app/composables/useGoogleOneTap.ts` reescrito — redirect hack eliminado, global flag eliminado, métodos FedCM deprecated eliminados (`isNotDisplayed`, `getNotDisplayedReason`, `use_fedcm_for_prompt`)
-- [ ] **GTAP-08**: `apps/website/app/plugins/google-one-tap.client.ts` creado — inicializa GIS una vez con guard de auth-state; SSR-safe por sufijo `.client.ts`
+- [x] **GTAP-08**: `apps/website/app/plugins/google-one-tap.client.ts` creado — inicializa GIS una vez con guard de auth-state; SSR-safe por sufijo `.client.ts`
 - [x] **GTAP-09**: One Tap aparece automáticamente en páginas públicas para usuarios no autenticados
 - [x] **GTAP-10**: One Tap NO aparece en rutas privadas (`/cuenta/*`, `/pagar/*`, `/anunciar/*`, etc.)
 - [x] **GTAP-11**: Al completar One Tap, se llama `setToken(jwt)` + `fetchUser()` y el usuario queda autenticado con cookie `waldo_jwt` correcta
@@ -57,7 +57,7 @@
 | GTAP-05 | Phase 097 | Complete |
 | GTAP-06 | Phase 097 | Complete |
 | GTAP-07 | Phase 098 | Complete |
-| GTAP-08 | Phase 098 | Pending |
+| GTAP-08 | Phase 098 | Complete |
 | GTAP-09 | Phase 098 | Complete |
 | GTAP-10 | Phase 098 | Complete |
 | GTAP-11 | Phase 098 | Complete |
