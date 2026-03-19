@@ -1,39 +1,28 @@
-# Feature Research: Google One Tap Sign-In
+# Feature Research: User Onboarding Flow
 
-**Domain:** Social/Federated authentication overlay for a classified ads website
-**Researched:** 2026-03-18
-**Confidence:** HIGH (sourced directly from official Google Identity Services documentation, last updated 2025–2026)
+**Domain:** Forced profile completion onboarding for a classified ads / marketplace platform
+**Researched:** 2026-03-19
+**Confidence:** HIGH (sourced from direct codebase analysis + domain knowledge from established classified ads patterns)
+
 ---
 
-## How Google One Tap Works
+## Context: What Already Exists
 
-### The Core Flow
+This is a subsequent milestone. These pieces are built and must NOT be re-implemented:
 
-One Tap is a non-blocking overlay UI rendered by Google's GIS library (`accounts.google.com/gsi/client`). It appears on top of page content without navigation, shows the user's Google account avatar + name, and issues a **signed JWT ID token** when the user taps "Continue as [Name]." The integration receives this JWT either via:
-
-- **JS callback** (`callback:`) — preferred for SPAs like Nuxt; the credential is handled client-side
-- **Redirect** (`login_uri:`/`ux_mode: "redirect"`) — the JWT is POST-ed to your backend endpoint
-
-For waldo.click, the **JS callback** mode is the correct choice: the Nuxt frontend intercepts the JWT, then calls a new Strapi endpoint to exchange it for a Waldo session JWT (same pattern as the existing `/login/google.vue` page that calls `authenticateProvider("google", access_token)`).
-
-### When the Prompt Appears
-
-One Tap renders only when:
-1. The user is **signed in to at least one Google Account** in the browser
-2. The user is **not already signed in** to your site (for that session)
-3. Browser/user hasn't suppressed it (no cooldown active, no global opt-out)
-4. The page is served over HTTPS
-
-**If no Google session exists → One Tap does not display at all.** It silently does nothing.
-
-### Prompt Suppression Conditions
-
-One Tap will NOT show if:
-- No active Google session in the browser
-- User disabled "Apps with access to your account" sign-in prompts in Google Account settings
-- User disabled "Third-party sign-in" in Chrome Privacy & Security settings
-- The exponential cooldown is active (see below)
-- The prompt is obscured by other content (triggers fallback pop-up instead)
+| Existing Piece | Location | How Onboarding Uses It |
+|----------------|----------|------------------------|
+| `isProfileComplete()` async method | `useMeStore` — checks `firstname`, `lastname`, `rut`, `phone`, `commune` | Middleware calls this to decide whether to gate |
+| `FormProfile.vue` | `apps/website/app/components/FormProfile.vue` | Reused as the onboarding form (no modifications needed) |
+| Profile edit page with full regions/communes loading | `cuenta/perfil/editar.vue` — `useAsyncData` loads both stores before render | Pattern to copy for `/onboarding` page data loading |
+| `auth` middleware | `middleware/auth.ts` — stores `redirect` cookie, sends to `/login` | `/onboarding` must declare `middleware: "auth"` to enforce login |
+| `referer.global.ts` middleware | Records `appStore.referer` on every non-auth navigation | Onboarding reads this to know where to send user after completion |
+| `appStore.referer` / `clearReferer()` | `app.store.ts` — persisted in localStorage | Used for "Volver a Waldo" post-onboarding routing |
+| `layout: "auth"` | `layouts/auth.vue` — logo only, no header/footer, has lightbox slots | The minimal layout required; no new layout needed |
+| `wizard-guard.ts` pattern | `middleware/wizard-guard.ts` — `if (import.meta.server) return;` guard, client-only store check | Template for the new onboarding-guard middleware |
+| `login/google.vue` incomplete-profile redirect | Redirects to `/cuenta/perfil/editar` when `isProfileComplete()` is false | Pattern to replace: must now redirect to `/onboarding` instead |
+| `CreateAd.vue` incomplete-profile alert | Shows `AlertDefault` with link to `/cuenta/perfil/editar` | Must be updated to point to `/onboarding` |
+| `FormVerifyCode.vue` post-action routing | Calls `isProfileComplete()` post-login, routes accordingly | Reference pattern; Google One Tap callback follows same logic |
 
 ---
 
@@ -41,158 +30,112 @@ One Tap will NOT show if:
 
 ### Table Stakes (Users Expect These)
 
-Features that must exist for One Tap to feel complete and correct.
+Features that must exist for the onboarding flow to be coherent. Missing any of these makes the feature feel broken.
 
 | Feature | Why Expected | Complexity | Notes |
 |---------|--------------|------------|-------|
-| One Tap overlay on public pages only | Core feature scope — not in `/cuenta/*`, `/pagar/*`, `/anunciar/*` | LOW | Route guard needed in Nuxt plugin; check `useRoute()` path prefix |
-| JWT callback handler on frontend | The GIS library returns a credential; something must receive it | LOW | `google.accounts.id.initialize({ callback: ... })` wired in a client-side Nuxt plugin |
-| New Strapi endpoint to exchange Google JWT for Waldo JWT | One Tap returns a Google ID token, not an OAuth `access_token`; existing `/login/google.vue` flow uses `authenticateProvider("google", access_token)` which is OAuth redirect — **different protocol** | MEDIUM | New `POST /api/auth/google-one-tap` endpoint in Strapi; verifies ID token via `google-auth-library`, upserts user, issues Waldo JWT |
-| Auto-create account for new users | "Bypasses 2-step verification" is the user-facing promise — new users must be silently registered | MEDIUM | Reuse `createUserReservations()` from `registerUserAuth`; same upsert-or-create logic as existing Google OAuth connect |
-| Bypass 2-step verification | Google already confirmed identity via their signed JWT | LOW | Strapi endpoint issues JWT directly — no `pendingToken` step; same as the existing `ctx.method === "GET"` bypass in `overrideAuthLocal` |
-| `disableAutoSelect()` on logout | Prevents dead-loop: user logs out → One Tap auto-signs them back in | LOW | Call `google.accounts.id.disableAutoSelect()` inside `useLogout.ts` composable |
-| Coexistence with existing Google Sign-In button | Both can appear on the same page; they share the same `google.accounts.id.initialize()` call | LOW | `initialize()` must be called exactly once — the existing redirect button and One Tap share the same GIS instance |
-| Server-side ID token verification | Security requirement from Google docs: "strongly recommended to verify the Google ID token on your server side" | MEDIUM | Use `google-auth-library` (already installed for Google Sheets auth) `OAuth2Client.verifyIdToken()` in the new Strapi endpoint |
-| Prompt only for unauthenticated users | One Tap must not appear when user already has a Waldo session | LOW | Check `useStrapiUser()` in the plugin; skip `google.accounts.id.prompt()` if user exists |
+| Locked `/onboarding` page with minimal layout | Marketplace standard: new users cannot access core features until profile is complete. Prevents "ghost" accounts with no contact info. | LOW | Use existing `layout: "auth"` — already has logo-only UI. Declare `middleware: "auth"` to prevent unauthenticated access. |
+| `OnboardingDefault` component wrapping `FormProfile` | Users expect the same form fields they'd see in profile edit. Rebuilding form fields creates inconsistency and doubles maintenance. | LOW | Wrap existing `FormProfile.vue` inside a new BEM block `onboarding onboarding--default`. Do NOT modify `FormProfile.vue` internals. |
+| Post-submit redirect to `/onboarding/thankyou` | Completing a major action (profile) needs a distinct confirmation state, not a silent redirect. Standard in onboarding flows (LinkedIn, MercadoLibre, etc.). | LOW | `FormProfile.vue`'s `handleSubmit` currently navigates to `/cuenta/perfil`. In onboarding context it must navigate to `/onboarding/thankyou` instead. Needs a prop or emit. |
+| `/onboarding/thankyou` page with "Crear mi primer anuncio" CTA | First-time users expect a clear next step. MercadoLibre, Facebook Marketplace, OLX all funnel new users directly to listing creation after registration. | LOW | Two buttons: `navigateTo('/anunciar')` and `navigateTo(appStore.getReferer || '/')` with `clearReferer()` after. |
+| Middleware to block incomplete-profile users from the platform | Without this, the locked layout is decorative — users can navigate away via URL bar. Standard in marketplace onboarding (e.g., Airbnb host registration, MercadoLibre vendor setup). | MEDIUM | New `onboarding-guard.global.ts` middleware — runs client-only (localStorage stores). Must check `isProfileComplete()` and redirect to `/onboarding` if false. Must not redirect users who are already on `/onboarding` or `/onboarding/thankyou` (infinite loop prevention). Must not run for unauthenticated users (let `auth` middleware handle those). |
+| Escape prevention from `/onboarding` | Minimal layout must not contain navigation links that let users exit onboarding. The entire interaction is "fill this form, continue." | LOW | `layout: "auth"` has no navigation — this is already handled. Verify no back button or links to `/` are rendered by the layout. |
+| Pre-onboarding URL storage | "Volver a Waldo" button needs to know where the user was going. Without this, users who registered mid-browse lose their context (e.g., they were looking at a specific ad). | LOW | `appStore.referer` already exists and is set by `referer.global.ts`. Onboarding guard stores the current `to.fullPath` before redirecting to `/onboarding`. Pattern already used in `auth.ts` middleware via `redirect` cookie. |
 
 ### Differentiators (Competitive Advantage)
 
-Features that go beyond table stakes and add polish.
+Features beyond the minimum that improve the onboarding experience for this platform.
 
 | Feature | Value Proposition | Complexity | Notes |
 |---------|-------------------|------------|-------|
-| Auto sign-in for returning users (`auto_select: true`) | Zero-click sign-in for returning Google users who already consented — they land and are signed in automatically | LOW | Add `auto_select: true`; requires user previously consented; FedCM has 10-min quiet period between auto sign-ins |
-| Profile completeness redirect post-One-Tap | Mirrors existing `google.vue` flow: if profile incomplete → `/cuenta/perfil/editar`; ensures data quality | LOW | Copy existing `meStore.isProfileComplete()` check from `login/google.vue` into the One Tap callback handler |
-| `context: "signup"` vs `context: "signin"` | Changing prompt title to "Sign up to" for pages where registration intent is clearer (e.g., landing page) | LOW | Single config option; no implementation cost |
-| ITP browser support (`itp_support: true`) | Enables upgraded UX on Safari/Firefox/Chrome iOS where normal One Tap doesn't work due to ITP | LOW | Single boolean flag; provides welcome page + pop-up fallback; **auto sign-in not supported on ITP** |
-| `state_cookie_domain` for subdomain consistency | If One Tap runs on both `waldo.click` and subdomains, a shared `g_state` cookie prevents duplicate prompts | LOW | Set `state_cookie_domain: "waldo.click"` in `initialize()`; mirrors the existing `COOKIE_DOMAIN` pattern for `waldo_jwt` |
-| Dark mode One Tap (`color_scheme: "default"`) | Matches user system preference automatically | LOW | `color_scheme: "default"` adapts to system; explicit dark option also available |
-| Referer-aware post-login redirect | After One Tap sign-in, redirect to `appStore.getReferer` then clear it — mirrors `login/google.vue` | LOW | Same logic already exists; copy to One Tap callback |
+| Context-aware "Volver a Waldo" routing | After onboarding, user lands where they were going — not at `/`. Most classified platforms just redirect to home, losing the ad the user was browsing. | LOW | Read `appStore.getReferer` on `/onboarding/thankyou`, show it as the secondary button destination. Clear after use. |
+| Onboarding triggered only for new registrations, not returning users | Users who registered before this milestone exists (with incomplete profiles) should NOT be force-gated. This is a policy call that affects trust — blindly gating all users with incomplete profiles is disruptive. | MEDIUM | Requires a strategy: either (a) only trigger if user was created after a certain date, or (b) trigger based on a `onboarding_completed` flag in Strapi user schema. Option (b) is correct and clean. Adds one boolean field to User. |
+| Same-page validation before redirect | If the onboarding middleware gates too eagerly (e.g., on first page load before auth hydrates), it creates a flash of redirect. | LOW | Client-only guard (`if (import.meta.server) return`) is already the established pattern from `wizard-guard.ts`. Must be replicated exactly. |
+| `OnboardingDefault` submit button labeled "Guardar y Continuar" not "Actualizar" | Form semantics differ: in profile edit, the user is updating. In onboarding, they are completing a required step. Label must reflect the intent. | LOW | Prop on `FormProfile.vue` for button label, or override via slot. Or a simpler `isOnboarding` prop that changes the button text and post-submit navigation target. |
+| Analytics: `sign_up` event already fires on registration; profile completion should fire a distinct event | Post-onboarding, marketplaces typically fire a `complete_registration` or `profile_complete` event for funnel tracking. GA4 already has custom events. | LOW | Fire `pushEvent('profile_complete', ...)` from `onboarding/thankyou.vue` `onMounted`. Uses existing `useAdAnalytics` or a new minimal `pushEvent` call. |
 
 ### Anti-Features (Commonly Requested, Often Problematic)
 
 | Feature | Why Requested | Why Problematic | Alternative |
 |---------|---------------|-----------------|-------------|
-| Custom positioning of the One Tap prompt | Designers want it aligned with page layout | **With FedCM enabled (Chrome 117+, the default for new apps), browser controls position — custom positioning is ignored/unsupported.** Building layout around assumed position breaks when FedCM moves it | Accept browser-default top-right positioning; don't build any CSS around One Tap's location |
-| Using `isNotDisplayed()` / `getNotDisplayedReason()` to show fallback UI | Seems useful for "show a different sign-in if One Tap is suppressed" | **These methods are removed in FedCM mode** (GIS migration guide explicitly says to delete them). They return nothing meaningful | Use `isSkippedMoment()` + `isDismissedMoment()` which remain supported under FedCM |
-| Showing One Tap on protected pages (`/cuenta/*`, `/pagar/*`) | Simpler to show everywhere | Creates confusing UX: user is being signed in mid-transaction. Google explicitly warns not to show One Tap when UI action is covered by other content. These pages also have `auth` middleware already | Filter by route prefix in the Nuxt plugin |
-| Custom cooldown / reset logic | Wanting to re-show One Tap immediately after dismissal | Browser controls cooldown in FedCM mode. Circumventing it violates Google's UX guidelines and risks project suspension | Respect the cooldown; Chrome DevTools "Reset Permission" exists for testing only |
-| Using `email` as account identifier on the backend | Email feels like a stable unique key | **Google explicitly prohibits this.** Users can have multiple emails; emails can change. Always use the `sub` field from the JWT as the unique Google Account identifier | Store `provideridentifier` (the `sub` field) in the Strapi user record — this is what the existing Google OAuth plugin already does |
-| Replacing `authenticateProvider()` call with raw JWT exchange everywhere | Seems cleaner to unify all Google auth under One Tap | The existing OAuth redirect flow (`/login/google`) is a completely different protocol (OAuth `access_token` vs. GIS `id_token`). They must stay separate | Keep both flows; One Tap adds a new endpoint, doesn't replace the redirect flow |
-| Auto sign-in on ITP browsers (Safari, Firefox, Chrome iOS) | More conversions from mobile Safari users | **Not supported on ITP browsers.** Google docs explicitly state: "Auto sign in isn't supported" on ITP due to pop-up flash issues. Enabling `auto_select` on ITP triggers no-op behavior | Enable `itp_support: true` for the welcome-page fallback UX; accept that auto sign-in is Chrome/desktop only |
+| Interrupting existing logged-in users (retroactive gate) | "All incomplete profiles should be forced through onboarding" sounds correct at policy level | Existing users with incomplete profiles registered before this feature. Gating them silently without communication feels like a bug, not a feature. Creates support tickets and churn. | Gate only users where `onboarding_completed = false` on the User record. Set `onboarding_completed = true` for all pre-existing users via a migration seeder (same pattern as `user-confirmed-migration.ts` in v1.37). |
+| Multi-step onboarding wizard (split form into steps) | Step-by-step flows feel lighter and less overwhelming for long forms | `FormProfile.vue` is already a single-page form with grouped sections (Datos Personales, Datos de Empresa). Splitting it requires significant form logic refactoring. The existing form already has good UX with section labels. | Keep single-page form. The complexity is in the middleware and routing, not in the form UI. |
+| Onboarding modal/overlay instead of dedicated page | Modals are "lighter" — user stays on the page they were browsing | Modals cannot be forced with a route guard. User can close them. For compliance-critical profile data (RUT, legal contact info), a modal is insufficient. Airbnb/Mercadolibre use full-page flows for required onboarding. | Dedicated `/onboarding` page with locked layout. Full-page commitment matches the seriousness of the requirement. |
+| Skip/remind-me-later option | Users hate being blocked | This platform requires RUT for legal ad posting compliance. The product decision (from PROJECT.md: v1.45 goal) is forced completion. A skip option defeats the entire purpose of the feature. | None — this is a business requirement. Document it in the implementation as intentional. |
+| Storing the pre-onboarding URL in a Pinia store field dedicated to onboarding | Clean separation of concerns | `appStore.referer` already exists, is persisted, and is already used for post-login redirects. A second storage mechanism creates inconsistency. | Use `appStore.referer` — it is already the canonical URL-storage mechanism in this codebase. The onboarding guard sets it before redirecting, same as `auth.ts` middleware does. |
+| Server-side `isProfileComplete()` check in middleware | Sounds more robust | `isProfileComplete()` in `useMeStore` uses `useApiClient` which requires Pinia to be active. Pinia stores that use `localStorage` are empty on SSR. `wizard-guard.ts` already established the correct pattern: `if (import.meta.server) return;`. | Client-only guard. The SSR render shows the page briefly before the guard fires — this is acceptable and matches the existing wizard flow behavior. |
 
 ---
 
 ## Feature Dependencies
 
 ```
-[One Tap Nuxt Plugin]
-    └──requires──> [GIS Library loaded] (accounts.google.com/gsi/client)
-    └──requires──> [New Strapi endpoint: POST /api/auth/google-one-tap]
-                       └──requires──> [google-auth-library verifyIdToken()]
-                       └──requires──> [User upsert logic (reuse from registerUserAuth)]
-                       └──requires──> [createUserReservations() on first sign-up]
-                       └──requires──> [Waldo JWT issuance (bypass 2-step)]
+[onboarding-guard.global.ts middleware]
+    └──requires──> [useStrapiUser()] — check if logged in before checking profile
+    └──requires──> [useMeStore.isProfileComplete()] — async call to /users/me
+    └──requires──> [appStore.setReferer(to.fullPath)] — store URL before redirect
+    └──requires──> [client-only execution] — if (import.meta.server) return;
+    └──conflicts──> [/onboarding route itself] — must not redirect when already on /onboarding
 
-[Auto sign-in (auto_select: true)]
-    └──requires──> [User previously consented] (Google manages this state)
-    └──conflicts──> [ITP browsers] (auto sign-in not supported on Safari/Firefox)
+[/onboarding page]
+    └──requires──> [middleware: "auth"] — must be logged in
+    └──requires──> [layout: "auth"] — logo-only, no navigation escape
+    └──requires──> [OnboardingDefault component]
+                       └──requires──> [FormProfile.vue] — reused as-is
+                       └──requires──> [useRegionsStore + useCommunesStore pre-loaded] — via useAsyncData in page
+                       └──requires──> [isOnboarding prop or emit] — to change submit destination
 
-[disableAutoSelect() on logout]
-    └──requires──> [GIS library loaded on pages with logout button]
-    └──enhances──> [useLogout.ts composable] (add call there)
+[/onboarding/thankyou page]
+    └──requires──> [middleware: "auth"] — must be logged in
+    └──requires──> [layout: "auth"] — same minimal layout
+    └──requires──> [appStore.getReferer] — for "Volver a Waldo" button
+    └──requires──> [appStore.clearReferer()] — after reading, clean up
 
-[Route filtering (public pages only)]
-    └──requires──> [Nuxt plugin knows current route]
-    └──conflicts──> [auth middleware pages] (must not overlap)
+[login/google.vue incomplete-profile redirect]
+    └──conflicts──> [new onboarding-guard] — currently redirects to /cuenta/perfil/editar
+    └──must change to──> [/onboarding] — so new users enter the onboarding flow
 
-[Profile completeness redirect]
-    └──requires──> [meStore.isProfileComplete()]
-    └──enhances──> [One Tap callback handler]
+[CreateAd.vue AlertDefault]
+    └──conflicts──> [new onboarding-guard] — currently shows alert with link to /cuenta/perfil/editar
+    └──note──> [onboarding-guard will intercept before CreateAd renders] — AlertDefault may be redundant
 
-[state_cookie_domain]
-    └──enhances──> [One Tap] (prevents duplicate prompts across subdomains)
-    └──mirrors──> [COOKIE_DOMAIN pattern already in nuxt.config.ts]
+[onboarding_completed boolean on User schema (Strapi)]
+    └──requires──> [migration seeder] — sets onboarding_completed = true for all pre-existing users
+    └──enhances──> [onboarding-guard] — allows targeting only genuinely new accounts
+    └──enhances──> [/onboarding/thankyou] — sets onboarding_completed = true via API call on load
 ```
 
 ### Dependency Notes
 
-- **New Strapi endpoint requires `google-auth-library`:** The library is already installed (`apps/strapi` uses it in `google-auth.service.ts` for Sheets auth via `JWT` class). The `OAuth2Client.verifyIdToken()` method is a different use case but same package — no new dependency needed.
-- **`disableAutoSelect()` conflicts with auto sign-in if omitted after logout:** Without calling it, the user signs out and is immediately auto-signed back in. This is the "dead loop" Google warns about explicitly.
-- **One Tap and redirect button share `initialize()`:** `google.accounts.id.initialize()` must be called exactly once per page. The Nuxt plugin must not re-initialize if the redirect button also triggers initialization.
-
----
-
-## UX Behavior Reference (Critical for Correct Implementation)
-
-### Exponential Cooldown (non-FedCM browsers)
-
-When the user manually closes One Tap by clicking the X:
-
-| Times Closed | Suppression Period |
-|---|---|
-| 1 | 2 hours |
-| 2 | 1 day |
-| 3 | 1 week |
-| 4+ | 4 weeks |
-
-Cooldown resets after a successful sign-in. **With FedCM enabled, browser vendors define their own cooldowns** — Chrome allows reset via lock icon → "Reset Permission" (for testing only).
-
-### Auto-Dismissal on Mobile (non-FedCM)
-
-On mobile browsers without FedCM: One Tap auto-closes after **90 seconds** of no interaction. This does **not** trigger a cooldown.
-
-### Auto Sign-In Behavior
-
-- **Without FedCM:** If `auto_select: true` and user previously consented + has one Google session → ID token returned after 5 seconds with no interaction. User can cancel via "Cancel" button. Cancelling disables auto sign-in for **1 day**.
-- **With FedCM:** 10-minute quiet period between auto sign-in attempts. User clicks X to cancel (no 5-second timer). Cancelling does NOT block One Tap from showing (only blocks auto sign-in briefly).
-
-### FedCM vs. Non-FedCM Mode
-
-| Aspect | Without FedCM | With FedCM (Chrome 117+, recommended) |
-|--------|--------------|--------------------------------------|
-| Third-party cookies | Required | Not needed |
-| Prompt position | Customizable via `prompt_parent_id` | Browser-controlled (top-right on desktop) |
-| `isDisplayed()` / `getNotDisplayedReason()` | Supported | **Removed — delete from code** |
-| `getSkippedReason()` | Fully supported | Partial (no `user_cancel` reason) |
-| `isDismissedMoment()` / `getDismissedReason()` | Supported | Fully supported (unchanged) |
-| Cooldown | Exponential table above | Browser-vendor-defined |
-| Auto sign-in reconfirmation | Not required for returning users | Required once per Chrome instance (unless 3rd-party cookies restricted) |
-| ITP browsers (Safari, Firefox) | Different UX (welcome page + popup) | N/A (FedCM not available) |
-| `use_fedcm_for_prompt` attribute | N/A | **Deprecated** — FedCM for One Tap is now automatic in Chrome |
-
-**Key insight for waldo.click:** `use_fedcm_for_prompt` is now deprecated and ignored. FedCM for One Tap is automatically applied by Chrome. **Do not add this attribute.** `use_fedcm_for_button` (for the redirect button flow) is separate and optional.
-
-### New User vs. Returning User Flows
-
-- **New user (single Google session):** Consent page shown → user taps confirm → JWT issued
-- **Returning user (single Google session):** "Continue as [Name]" button → one tap → JWT issued
-- **Multiple Google sessions:** Account chooser shown first → then consent or continue
-- **Auto sign-in (returning user, `auto_select: true`):** JWT issued automatically after 5 seconds (non-FedCM) or via quiet-period mechanic (FedCM)
+- **`onboarding-guard` must check `user` first, then `isProfileComplete()`:** Unauthenticated users must not reach the `isProfileComplete()` call (which would trigger `/users/me` for an anonymous user). The guard returns early if no user, letting `auth` middleware handle the redirect to `/login`.
+- **`isProfileComplete()` is async:** The middleware must `await` it. Nuxt route middleware supports async handlers. This adds a brief async pause before navigation — consistent with how `login/google.vue` already handles it.
+- **`FormProfile.vue` submit currently navigates to `/cuenta/perfil`:** This hardcoded destination must be parameterized. Best approach: emit a `@submitted` event and let the parent (`OnboardingDefault` or `AccountEdit`) handle the navigation. This is the same pattern as `FormCreateOne` emitting `@form-submitted` in the wizard.
+- **`appStore.referer` is already set by `referer.global.ts`** before the `onboarding-guard` fires. The guard does not need to set it — it just reads it on the thankyou page. However, `referer.global.ts` excludes `/cuenta` routes; ensure `/onboarding` is also excluded from being saved as a referer.
 
 ---
 
 ## MVP Definition
 
-### Launch With (v1 — this milestone)
+### Launch With (v1.45 — this milestone)
 
-- [x] **One Tap Nuxt plugin** — loads GIS library, calls `initialize()` + `prompt()` on public pages only
-- [x] **Route guard** — skip One Tap on `/cuenta/*`, `/pagar/*`, `/anunciar/*`
-- [x] **Skip if authenticated** — check `useStrapiUser()`, suppress prompt if session exists
-- [x] **JWT callback handler** — receive credential, call new Strapi endpoint, store JWT, redirect
-- [x] **New Strapi endpoint `POST /api/auth/google-one-tap`** — verify Google ID token, upsert user, call `createUserReservations()` for new accounts, issue Waldo JWT (bypass 2-step)
-- [x] **`disableAutoSelect()` in `useLogout.ts`** — prevents dead-loop after logout
+- [ ] **`onboarding-guard.global.ts` middleware** — client-only, checks `isProfileComplete()`, redirects to `/onboarding` for logged-in users with incomplete profiles
+- [ ] **`/onboarding` page** — `layout: "auth"`, `middleware: "auth"`, pre-loads regions/communes, renders `OnboardingDefault`
+- [ ] **`OnboardingDefault.vue` component** — wraps `FormProfile.vue`, changes submit destination to `/onboarding/thankyou`, button label "Guardar y Continuar"
+- [ ] **`/onboarding/thankyou` page** — `layout: "auth"`, "Crear mi primer anuncio" + "Volver a Waldo" buttons, clears `appStore.referer` after use
+- [ ] **`FormProfile.vue` refactor** — extract submit navigation into an emit or a prop, so parent controls destination (non-breaking: `AccountEdit.vue` continues to work unchanged)
+- [ ] **Update `login/google.vue`** — change incomplete-profile redirect from `/cuenta/perfil/editar` to `/onboarding`
+- [ ] **`onboarding_completed` field on Strapi User schema** — boolean, default `false` for new users; migration seeder sets `true` for all pre-existing accounts
+- [ ] **`isProfileComplete()` updated to check `onboarding_completed`** — or middleware checks it separately to avoid gating returning users
 
 ### Add After Validation (v1.x)
 
-- [ ] **Auto sign-in (`auto_select: true`)** — add after confirming basic One Tap works; risk of dead-loop if logout handling incomplete
-- [ ] **ITP support (`itp_support: true`)** — validate on Safari/Firefox after base flow confirmed
-- [ ] **`state_cookie_domain`** — only needed if One Tap will be added to other waldo.click subdomains
+- [ ] **Update `CreateAd.vue` `AlertDefault`** — with onboarding-guard in place, the alert may still fire for edge cases; update link to `/onboarding` for consistency
+- [ ] **Analytics: `profile_complete` event on `/onboarding/thankyou`** — low effort, closes GA4 funnel gap between `sign_up` and first `step_view`
 
 ### Future Consideration (v2+)
 
-- [ ] **`context: "signup"` variant on landing pages** — minor copy tuning, low priority
-- [ ] **One Tap on AMP pages** — not applicable to Nuxt/Nitro stack
+- [ ] **Progressive profile completion** — allow partial fills and prompt at contextually relevant moments (e.g., before posting an ad). Requires rethinking `isProfileComplete()` to return a "completeness percentage" rather than a boolean.
+- [ ] **Onboarding A/B test** — test forced vs. prompted onboarding for conversion impact. Requires feature flag infrastructure not present in codebase.
 
 ---
 
@@ -200,59 +143,108 @@ On mobile browsers without FedCM: One Tap auto-closes after **90 seconds** of no
 
 | Feature | User Value | Implementation Cost | Priority |
 |---------|------------|---------------------|----------|
-| One Tap plugin + public route guard | HIGH | LOW | P1 |
-| JWT callback → new Strapi endpoint | HIGH | MEDIUM | P1 |
-| New user account creation (upsert) | HIGH | MEDIUM | P1 |
-| Bypass 2-step verification | HIGH | LOW | P1 |
-| disableAutoSelect() on logout | HIGH | LOW | P1 |
-| Coexistence with redirect button | HIGH | LOW | P1 |
-| Profile completeness redirect | MEDIUM | LOW | P2 |
-| Auto sign-in (auto_select) | MEDIUM | LOW | P2 |
-| ITP browser support | LOW | LOW | P2 |
-| state_cookie_domain | LOW | LOW | P3 |
+| `onboarding-guard.global.ts` | HIGH | MEDIUM | P1 |
+| `/onboarding` page + `OnboardingDefault` | HIGH | LOW | P1 |
+| `/onboarding/thankyou` page | HIGH | LOW | P1 |
+| `FormProfile.vue` emit refactor | HIGH | LOW | P1 |
+| `onboarding_completed` Strapi field + migration | HIGH | LOW | P1 |
+| Update `login/google.vue` redirect | MEDIUM | LOW | P1 |
+| Update `CreateAd.vue` alert link | LOW | LOW | P2 |
+| `profile_complete` analytics event | LOW | LOW | P2 |
+| Progressive profile completion | LOW | HIGH | P3 |
 
 **Priority key:**
-- P1: Must have for launch (this milestone)
-- P2: Should have, add when stable
-- P3: Nice to have, future consideration
+- P1: Must have for this milestone (v1.45)
+- P2: Should have, add once P1 is working
+- P3: Future consideration only
 
 ---
 
-## Integration with Existing Infrastructure
+## Existing Pattern Analysis
 
-### What Already Exists (DO NOT Re-Build)
+The codebase has established several patterns this milestone must follow consistently:
 
-| Existing Piece | How One Tap Connects |
-|----------------|----------------------|
-| `registerUserAuth` in `authController.ts` | Contains `createUserReservations()` — call this for new One Tap registrations |
-| Google OAuth `ctx.method === "GET"` bypass in `overrideAuthLocal` | Established pattern for bypassing 2-step for Google; One Tap new endpoint follows same principle |
-| `useLogout.ts` composable (website) | Add `google.accounts.id.disableAutoSelect()` call here |
-| `meStore.isProfileComplete()` | Call after One Tap sign-in to redirect incomplete profiles |
-| `appStore.getReferer` / `clearReferer()` | Use for post-login redirect (same as `login/google.vue`) |
-| `google-auth-library` package | Already installed; `OAuth2Client.verifyIdToken()` is the ID token verification method needed |
-| `COOKIE_DOMAIN` pattern in `nuxt.config.ts` | Reference for `state_cookie_domain` value |
-| `nuxt-security` CSP in `nuxt.config.ts` | Must add Google GIS domains to CSP: `accounts.google.com`, `*.googleusercontent.com` |
+### Middleware Pattern (from `wizard-guard.ts`)
 
-### What Must Be Built New
+```typescript
+// Client-only guard pattern — mandatory for localStorage-backed stores
+export default defineNuxtRouteMiddleware(async (to) => {
+  if (import.meta.server) return;
 
-| New Piece | Notes |
-|-----------|-------|
-| Nuxt plugin `google-one-tap.client.ts` | Client-only plugin; loads GIS, calls `initialize()` + conditional `prompt()` |
-| `POST /api/auth/google-one-tap` Strapi endpoint | Verify ID token → upsert user → issue JWT; new API domain separate from users-permissions |
-| Route filtering logic | Check `useRoute().path` against protected prefixes before calling `prompt()` |
+  const user = useStrapiUser();
+  if (!user.value) return; // let auth middleware handle unauthenticated users
+
+  // Guard must not redirect when already on onboarding routes (infinite loop prevention)
+  if (to.path.startsWith('/onboarding')) return;
+
+  const meStore = useMeStore();
+  const complete = await meStore.isProfileComplete();
+  if (!complete) {
+    return navigateTo('/onboarding');
+  }
+});
+```
+
+### Page Pattern (from `cuenta/perfil/editar.vue`)
+
+```typescript
+// Pre-load regions/communes via useAsyncData before FormProfile renders
+await useAsyncData('onboarding-regions-communes', async () => {
+  await regionsStore.loadRegions();
+  await communesStore.loadCommunes();
+});
+
+definePageMeta({
+  layout: 'auth',      // logo only, no navigation
+  middleware: 'auth',  // must be logged in
+});
+```
+
+### Post-Submit Navigation Pattern (from `FormCreateOne.vue` → `CreateAd.vue`)
+
+```
+FormProfile emits @submitted
+  └──> OnboardingDefault handles @submitted
+           └──> navigateTo('/onboarding/thankyou')
+
+AccountEdit handles @submitted (existing behavior, unchanged)
+           └──> window.location.href = '/cuenta/perfil'
+```
+
+### Referer Pattern (from `login/google.vue`)
+
+```typescript
+// On /onboarding/thankyou
+const redirectTo = appStore.getReferer || '/';
+appStore.clearReferer();
+navigateTo(redirectTo);
+```
+
+---
+
+## Competitor Reference: Onboarding in Classified Platforms
+
+(Based on domain knowledge — no web search available)
+
+- **MercadoLibre:** Forces profile completion (name, phone, ID) before first listing. Dedicated full-page flow with minimal header. After completion, returns user to the listing they were creating.
+- **OLX:** Required profile fields shown inline on first ad creation attempt; blocks submission until complete. Less explicit about routing but same net behavior.
+- **Airbnb (host onboarding):** Dedicated multi-step onboarding flow with its own URL space (`/become-a-host`). Separate from profile edit. Thank-you/confirmation step with clear CTA to dashboard.
+- **LinkedIn:** Forces profile minimum (name, headline) before allowing any other actions. Minimal layout, no navigation escape. "Skip" options deliberately hidden until minimum is reached.
+- **Facebook Marketplace:** Requires phone verification before listing. Interstitial page, full-screen, no escape. Returns to listing after verification.
+
+**Common pattern across all:** Dedicated URL, minimal layout, no navigation escape, clear CTA after completion. Waldo v1.45 specification maps directly to this established pattern.
 
 ---
 
 ## Sources
 
-- [Google Identity Services Overview](https://developers.google.com/identity/gsi/web/guides/overview) — Updated 2026-02-10 (HIGH confidence)
-- [One Tap UX Guide](https://developers.google.com/identity/gsi/web/guides/features) — Updated 2025-05-19 (HIGH confidence); cooldown tables, ITP behavior, auto-dismissal
-- [Display Google One Tap](https://developers.google.com/identity/gsi/web/guides/display-google-one-tap) — Updated 2025-09-29 (HIGH confidence); prompt status moments, callback/redirect modes
-- [Automatic Sign-In and Sign-Out](https://developers.google.com/identity/gsi/web/guides/automatic-sign-in-sign-out) — Updated 2025-05-23 (HIGH confidence); auto_select behavior, FedCM quiet period, disableAutoSelect
-- [Migrate to FedCM](https://developers.google.com/identity/gsi/web/guides/fedcm-migration) — Updated 2026-02-10 (HIGH confidence); deprecated methods, removed APIs, migration steps
-- [JavaScript API Reference](https://developers.google.com/identity/gsi/web/reference/js-reference) — Updated 2026-02-10 (HIGH confidence); IdConfiguration fields, CredentialResponse, select_by values
-- [Verify the Google ID Token](https://developers.google.com/identity/gsi/web/guides/verify-google-id-token) — Updated 2025-12-22 (HIGH confidence); server-side verification with Node.js google-auth-library
+- Direct codebase analysis: `apps/website/app/middleware/wizard-guard.ts`, `auth.ts`, `referer.global.ts`
+- Direct codebase analysis: `apps/website/app/components/FormProfile.vue`, `CreateAd.vue`, `login/google.vue`
+- Direct codebase analysis: `apps/website/app/stores/me.store.ts`, `app.store.ts`
+- Direct codebase analysis: `apps/website/app/layouts/auth.vue`, `apps/website/app/pages/cuenta/perfil/editar.vue`
+- `.planning/PROJECT.md` — v1.45 milestone specification
+- Domain knowledge: classified ads / marketplace onboarding conventions (HIGH confidence — established industry patterns)
 
 ---
-*Feature research for: Google One Tap Sign-In on waldo.click (Nuxt 4 classified ads website)*
-*Researched: 2026-03-18*
+*Feature research for: User Onboarding Flow — Waldo.click classified ads platform (v1.45)*
+*Researched: 2026-03-19*
