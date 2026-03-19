@@ -7,10 +7,10 @@
 
 ### Sesión Compartida
 
-- [ ] **SESS-05**: Cuando el usuario confirma reemplazar la sesión activa en el dashboard, la cookie `waldo_jwt` existente se elimina correctamente (incluyendo la versión con `domain` compartido `.waldoclick.dev` / `.waldo.click`)
-- [ ] **SESS-06**: Después del reemplazo de sesión, la nueva cookie de manager persiste al refrescar en el dashboard
-- [ ] **SESS-07**: Después del reemplazo de sesión, la nueva cookie de manager es válida y visible en el website al refrescar
-- [ ] **SESS-08**: No existen cookies `waldo_jwt` duplicadas con distintos scopes de `domain` después del proceso de reemplazo
+- [x] **SESS-05**: Cuando el usuario confirma reemplazar la sesión activa en el dashboard, la cookie `waldo_jwt` existente se elimina correctamente (incluyendo la versión con `domain` compartido `.waldoclick.dev` / `.waldo.click`)
+- [x] **SESS-06**: Después del reemplazo de sesión, la nueva cookie de manager persiste al refrescar en el dashboard
+- [x] **SESS-07**: Después del reemplazo de sesión, la nueva cookie de manager es válida y visible en el website al refrescar
+- [x] **SESS-08**: No existen cookies `waldo_jwt` duplicadas con distintos scopes de `domain` después del proceso de reemplazo
 
 ## v2 Requirements
 
@@ -28,10 +28,10 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SESS-05 | Phase 095 | Pending |
-| SESS-06 | Phase 095 | Pending |
-| SESS-07 | Phase 095 | Pending |
-| SESS-08 | Phase 095 | Pending |
+| SESS-05 | Phase 095 | Complete |
+| SESS-06 | Phase 095 | Complete |
+| SESS-07 | Phase 095 | Complete |
+| SESS-08 | Phase 095 | Complete |
 
 **Coverage:**
 - v1 requirements: 4 total

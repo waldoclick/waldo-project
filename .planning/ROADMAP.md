@@ -27,7 +27,7 @@
 <details>
 <summary>🔄 v1.43 Cross-App Session Replacement (Phase 095) — IN PROGRESS</summary>
 
-- [ ] **Phase 095: Fix Cookie Replacement on Session Swap** — Replace `existingCookie.value = null` with `await strapiLogout()` in `FormLogin.vue` so the shared-domain cookie is cleared correctly
+- [x] **Phase 095: Fix Cookie Replacement on Session Swap** — Replace `existingCookie.value = null` with `await strapiLogout()` in `FormLogin.vue` so the shared-domain cookie is cleared correctly (completed 2026-03-19)
 
 **Plans:** 1 plan
 Plans:
@@ -244,4 +244,4 @@ Plans:
 | 092   | v1.40     | 2/2            | Complete    | 2026-03-16 |
 | 093   | v1.41     | 2/2            | Complete    | 2026-03-18 |
 | 094   | v1.42     | 1/1            | Complete    | 2026-03-18 |
-| 095   | v1.43     | 0/1            | Not started | -          |
+| 095   | 1/1 | Complete   | 2026-03-19 | -          |
