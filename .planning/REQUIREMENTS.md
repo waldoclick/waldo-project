@@ -58,28 +58,28 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| LAYOUT-01 | — | Pending |
-| LAYOUT-02 | — | Pending |
-| LAYOUT-03 | — | Pending |
-| GUARD-01 | — | Pending |
-| GUARD-02 | — | Pending |
-| GUARD-03 | — | Pending |
-| GUARD-04 | — | Pending |
-| FORM-01 | — | Pending |
-| FORM-02 | — | Pending |
-| FORM-03 | — | Pending |
-| THANK-01 | — | Pending |
-| THANK-02 | — | Pending |
-| THANK-03 | — | Pending |
-| INTEG-01 | — | Pending |
-| INTEG-02 | — | Pending |
-| INTEG-03 | — | Pending |
+| LAYOUT-01 | Phase 099 | Pending |
+| LAYOUT-02 | Phase 099 | Pending |
+| LAYOUT-03 | Phase 099 | Pending |
+| GUARD-01 | Phase 100 | Pending |
+| GUARD-02 | Phase 100 | Pending |
+| GUARD-03 | Phase 100 | Pending |
+| GUARD-04 | Phase 100 | Pending |
+| FORM-01 | Phase 099 | Pending |
+| FORM-02 | Phase 099 | Pending |
+| FORM-03 | Phase 099 | Pending |
+| THANK-01 | Phase 099 | Pending |
+| THANK-02 | Phase 099 | Pending |
+| THANK-03 | Phase 099 | Pending |
+| INTEG-01 | Phase 101 | Pending |
+| INTEG-02 | Phase 101 | Pending |
+| INTEG-03 | Phase 101 | Pending |
 
 **Coverage:**
 - v1.45 requirements: 16 total
-- Mapped to phases: 0
-- Unmapped: 16 ⚠️
+- Mapped to phases: 16
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-19*
-*Last updated: 2026-03-19 after initial definition*
+*Last updated: 2026-03-19 after roadmap creation*
