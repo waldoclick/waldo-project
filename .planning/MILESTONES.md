@@ -1,5 +1,14 @@
 ## v1.41 Ad Preview Error Handling (Shipped: 2026-03-18)
 
+## v1.43 Cross-App Session Replacement (Shipped: 2026-03-19)
+
+**Phases completed:** 2 phases, 2 plans, 0 tasks
+
+**Key accomplishments:**
+- (none recorded)
+
+---
+
 **Phases completed:** 1 phase (093), 2 plans
 **Timeline:** 2026-03-18 (same-day)
 **Git range:** `bb909d4` → `fb55613`

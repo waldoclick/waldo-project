@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.43
 milestone_name: milestone
 current_phase: 095 — Fix Cookie Replacement on Session Swap
-status: planning
-last_updated: "2026-03-19T00:00:22.105Z"
-last_activity: "2026-03-18 — Roadmap created. Single phase 095 targets the one-line bug in `FormLogin.vue` line 149: replace `existingCookie.value = null` with `await strapiLogout()` via `useStrapiAuth()` so the shared-domain cookie is cleared with correct `domain` attribute."
+status: completed
+last_updated: "2026-03-19T01:45:48.705Z"
+last_activity: 2026-03-18 — Executed 095-01-PLAN.md. Fixed zombie-cookie bug (useStrapiAuth().logout() replaces existingCookie.value=null) and removed dead auth.populate joins from both apps. Awaiting human-verify checkpoint.
 progress:
   total_phases: 2
   completed_phases: 2
   total_plans: 2
   completed_plans: 2
-  percent: 0
+  percent: 100
 ---
 
 # Session State
@@ -27,7 +27,7 @@ See: .planning/PROJECT.md
 
 **Current Milestone:** v1.43 — Cross-App Session Replacement
 **Current Phase:** 095 — Fix Cookie Replacement on Session Swap
-**Status:** Awaiting human-verify checkpoint (code complete, TypeScript-clean)
+**Status:** v1.43 milestone complete
 
 ```
 Progress: [██████████] 100% — Phase 095 plan 01 code complete, awaiting human browser verification
