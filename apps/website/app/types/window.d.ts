@@ -13,11 +13,10 @@ declare global {
           prompt: (
             callback: (notification: GoogleOneTapNotification) => void,
           ) => void;
+          disableAutoSelect: () => void;
         };
       };
     };
-    googleOneTapInitialized?: boolean;
-    handleCredentialResponse?: (response: { credential: string }) => void;
     $zoho?: {
       salesiq?: {
         widgetcode: string;
@@ -31,10 +30,8 @@ declare global {
 }
 
 interface GoogleOneTapNotification {
-  isNotDisplayed: () => boolean;
   isSkippedMoment: () => boolean;
   isDismissedMoment: () => boolean;
-  getNotDisplayedReason: () => string;
   getSkippedReason: () => string;
   getDismissedReason: () => string;
 }
