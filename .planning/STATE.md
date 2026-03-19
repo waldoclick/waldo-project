@@ -2,12 +2,12 @@
 gsd_state_version: 1.0
 milestone: v1.44
 milestone_name: Google One Tap Sign-In
-current_phase: —
-status: defining requirements
+current_phase: 096
+status: roadmap ready
 last_updated: "2026-03-18T00:00:00.000Z"
-last_activity: 2026-03-18 — Milestone v1.44 started
+last_activity: 2026-03-18 — Roadmap created; phases 096–098 defined
 progress:
-  total_phases: 0
+  total_phases: 3
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -26,20 +26,23 @@ See: .planning/PROJECT.md
 ## Position
 
 **Current Milestone:** v1.44 — Google One Tap Sign-In
-**Current Phase:** Not started (defining requirements)
-**Status:** Defining requirements
+**Current Phase:** 096 — CSP & Environment Setup (not started)
+**Status:** Roadmap ready — awaiting `/gsd-plan-phase 096`
 
 ```
-Progress: [░░░░░░░░░░] 0% — Not started
+Progress: [░░░░░░░░░░] 0% — Phase 096 next
+Phase 096 ░░░░ | Phase 097 ░░░░ | Phase 098 ░░░░
 ```
 
-Last activity: 2026-03-18 — Milestone v1.44 started
+Last activity: 2026-03-18 — Roadmap created; phases 096–098 defined
 
 ## Phase Map
 
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
-| — | TBD by roadmapper | — | ○ Pending |
+| 096 | CSP & Environment Setup | GTAP-01, GTAP-02 | ○ Not started |
+| 097 | Strapi One Tap Endpoint | GTAP-03, GTAP-04, GTAP-05, GTAP-06 | ○ Not started |
+| 098 | Frontend Rewrite + Logout Fix | GTAP-07, GTAP-08, GTAP-09, GTAP-10, GTAP-11, GTAP-12 | ○ Not started |
 
 ## Accumulated Context
 
@@ -113,9 +116,20 @@ Last activity: 2026-03-18 — Milestone v1.44 started
 - Use useStrapiAuth().logout() (not useLogout() composable) mid-login flow — useLogout() also resets Pinia stores and navigates to /auth/login, which breaks login in progress (095-01)
 - auth.populate must be lean in both apps: only fields in User TypeScript interface; dead joins (ad_reservations.ad, ad_featured_reservations.ad) removed from both website and dashboard (095-01)
 
+### Key Decisions (v1.44 — carry forward as discovered)
+
+- New Strapi endpoint uses standard content API (`src/api/auth-one-tap/`), NOT plugin extension routes — plugin route factory is broken in Strapi v5 (documented in `strapi-server.ts` lines 56–62); mirrors proven `auth-verify/` pattern (GTAP-03)
+- Look up users by Google `sub` field first (not email) — Google explicitly prohibits email as primary key; account linking by email is only a fallback for existing users (GTAP-04)
+- `google-auth-library` must be verified as explicit dep in `apps/strapi/package.json` — may be transitive via `googleapis@148.0.0`; run `yarn why google-auth-library` before deciding (GTAP-03)
+- 2-step bypass for One Tap matches existing `/connect/google` OAuth behavior — `overrideAuthLocal` already has a `ctx.method === "GET"` guard; One Tap uses a POST endpoint in `src/api/`, so bypass is achieved by simply NOT intercepting it in `overrideAuthLocal` (GTAP-06)
+- `google-one-tap.client.ts` plugin suffix ensures SSR exclusion automatically — no `if (import.meta.client)` guard needed inside the plugin (GTAP-08)
+- Global `googleOneTapInitialized` flag in existing composable must be removed — it prevents `prompt()` from firing on subsequent SPA pages; `initialize()` moves to plugin (once on startup), `prompt()` stays in composable (per-page) (GTAP-07)
+- `disableAutoSelect()` must be called before `strapiLogout()` in `useLogout.ts` — clears GIS `g_state` cookie; prerequisite before `auto_select: true` can ever be enabled safely (GTAP-12)
+
 ### Blockers/Concerns (open)
 
-None.
+- **`google_sub` field gap**: Research recommends looking up users by `sub` using a dedicated `google_sub` field. Verify during Phase 097 whether Strapi's existing `provideridentifier` field already stores the Google `sub` — if yes, a new field may not be needed.
+- **`prompt()` calling frequency**: Whether `prompt()` should be called on every route change or only on initial app load is unresolved. Decide before Phase 098 implementation begins (UX decision: per-page re-prompt vs. single app-load prompt).
 
 ### Quick Tasks Completed
 

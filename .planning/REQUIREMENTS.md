@@ -48,8 +48,6 @@
 
 ## Traceability
 
-Which phases cover which requirements. Updated during roadmap creation.
-
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | GTAP-01 | Phase 096 | Pending |
@@ -72,4 +70,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-03-18*
-*Last updated: 2026-03-18 after initial definition*
+*Roadmap created: 2026-03-18 — phases 096–098 assigned*
