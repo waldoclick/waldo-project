@@ -2,8 +2,8 @@
 phase: 099
 slug: onboarding-ui
 status: draft
-nyquist_compliant: false
-wave_0_complete: false
+nyquist_compliant: true
+wave_0_complete: true
 created: 2026-03-19
 ---
 
@@ -38,10 +38,10 @@ created: 2026-03-19
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 099-01-01 | 01 | 0 | LAYOUT-02, FORM-01 | unit | `cd apps/website && yarn vitest run tests/components/OnboardingDefault.test.ts` | ❌ W0 | ⬜ pending |
-| 099-01-02 | 01 | 0 | LAYOUT-03, THANK-01, THANK-02, THANK-03 | unit | `cd apps/website && yarn vitest run tests/components/OnboardingThankyou.test.ts` | ❌ W0 | ⬜ pending |
-| 099-01-03 | 01 | 0 | FORM-02, FORM-03 | unit | `cd apps/website && yarn vitest run tests/components/FormProfile.onboarding.test.ts` | ❌ W0 | ⬜ pending |
-| 099-02-01 | 02 | 1 | LAYOUT-01 | manual-only | N/A — layout structure verified by visual inspection | N/A | ⬜ pending |
+| 099-00-01 | 00 | 0 | LAYOUT-02, LAYOUT-03, FORM-01, FORM-02, FORM-03, THANK-01, THANK-02, THANK-03 | scaffold | `cd apps/website && yarn vitest run tests/components/OnboardingDefault.test.ts tests/components/OnboardingThankyou.test.ts tests/components/FormProfile.onboarding.test.ts` | Wave 0 | ⬜ pending |
+| 099-01-02 | 01 | 1 | FORM-02, FORM-03 | unit | `cd apps/website && yarn vitest run tests/components/FormProfile.onboarding.test.ts` | Wave 0 | ⬜ pending |
+| 099-02-01 | 02 | 2 | LAYOUT-02, LAYOUT-03, FORM-01, THANK-01, THANK-02, THANK-03 | unit | `cd apps/website && yarn vitest run tests/components/OnboardingDefault.test.ts tests/components/OnboardingThankyou.test.ts` | Wave 0 | ⬜ pending |
+| 099-02-02 | 02 | 2 | LAYOUT-01 | manual-only | N/A — layout structure verified by visual inspection | N/A | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -49,11 +49,11 @@ created: 2026-03-19
 
 ## Wave 0 Requirements
 
-- [ ] `apps/website/tests/components/OnboardingDefault.test.ts` — stubs for LAYOUT-02, FORM-01
-- [ ] `apps/website/tests/components/OnboardingThankyou.test.ts` — stubs for LAYOUT-03, THANK-01, THANK-02, THANK-03
-- [ ] `apps/website/tests/components/FormProfile.onboarding.test.ts` — stubs for FORM-02, FORM-03
+- [x] `apps/website/tests/components/OnboardingDefault.test.ts` — stubs for LAYOUT-02, FORM-01 (created by Plan 00)
+- [x] `apps/website/tests/components/OnboardingThankyou.test.ts` — stubs for LAYOUT-03, THANK-01, THANK-02, THANK-03 (created by Plan 00)
+- [x] `apps/website/tests/components/FormProfile.onboarding.test.ts` — stubs for FORM-02, FORM-03 (created by Plan 00)
 
-*Existing infrastructure covers all framework requirements — no new framework setup needed.*
+*Wave 0 plan (099-00-PLAN.md) creates all three test stub files with it.todo() entries.*
 
 ---
 
@@ -67,11 +67,11 @@ created: 2026-03-19
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all MISSING references
-- [ ] No watch-mode flags
-- [ ] Feedback latency < 10s
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [x] All tasks have `<automated>` verify or Wave 0 dependencies
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify
+- [x] Wave 0 covers all MISSING references
+- [x] No watch-mode flags
+- [x] Feedback latency < 10s
+- [x] `nyquist_compliant: true` set in frontmatter
 
-**Approval:** pending
+**Approval:** approved (Wave 0 plan created)
