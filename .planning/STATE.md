@@ -4,14 +4,14 @@ milestone: v1.44
 milestone_name: Google One Tap Sign-In
 current_phase: 097
 status: executing
-last_updated: "2026-03-19T03:13:55.812Z"
-last_activity: "2026-03-19 — Phase 097 plan 02 complete: GoogleOneTapService GREEN + google_sub schema field"
+last_updated: "2026-03-19T03:43:10.849Z"
+last_activity: "2026-03-19 — Phase 097 plan 03 complete: auth-one-tap controller + routes GREEN (GTAP-03,04,05,06)"
 progress:
   total_phases: 5
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 6
-  completed_plans: 5
-  percent: 98
+  completed_plans: 6
+  percent: 100
 ---
 
 # Session State
@@ -132,6 +132,9 @@ Last activity: 2026-03-19 — Phase 097 plan 02 complete: GoogleOneTapService GR
 - `rut:'N/A'` placeholder for Google One Tap new users — rut is required in schema; profile completion deferred to Phase 098 (097-02)
 - `GoogleOneTapService` constructor warns (not throws) on missing GOOGLE_CLIENT_ID — throwing kills Strapi startup; endpoint returns 401 for all requests when key is absent (097-02)
 - `google_sub` field: lookup by sub first (immutable), then email fallback for existing account linking, then create new user with `provider:'google'` (097-02)
+- Dynamic import for `createUserReservations` in auth-one-tap controller avoids circular dep between src/api/ and src/extensions/; Jest mock at top of test file correctly intercepts dynamic imports (097-03)
+- `export` added to `createUserReservations` in authController.ts — needed for dynamic import pattern, no behavioral change to existing usages (097-03)
+- 2-step bypass for One Tap: implementing endpoint in `src/api/auth-one-tap/` means `overrideAuthLocal` (which only intercepts POST /api/auth/local) never fires — no explicit bypass code needed (097-03)
 
 ### Blockers/Concerns (open)
 
