@@ -76,6 +76,6 @@ Plans:
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 099. Onboarding UI | 3/3 | Complete   | 2026-03-19 | - |
+| 099. Onboarding UI | 3/3 | Complete    | 2026-03-19 | - |
 | 100. Guard | v1.45 | 0/? | Not started | - |
 | 101. Integration | v1.45 | 0/? | Not started | - |
