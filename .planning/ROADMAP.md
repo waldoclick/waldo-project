@@ -211,7 +211,12 @@
   4. The endpoint does NOT trigger the 2-step verification-code flow — the Waldo JWT is returned directly, matching the existing `/connect/google` OAuth bypass behaviour
   5. Calling the endpoint with an invalid or expired Google credential returns a 4xx error — no JWT is issued for malformed tokens
 
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 097-01-PLAN.md — Wave 0: Test scaffolds (RED) for service and controller
+- [ ] 097-02-PLAN.md — schema google_sub field + GoogleOneTapService implementation (GREEN)
+- [ ] 097-03-PLAN.md — auth-one-tap controller + routes wiring (GREEN)
 
 ---
 
