@@ -1,17 +1,17 @@
 # Project Research Summary
 
-**Project:** Google One Tap Sign-In — waldo.click
-**Domain:** Federated social authentication overlay for Nuxt 4 SSR + Strapi v5
-**Researched:** 2026-03-18
+**Project:** User Onboarding Flow — Waldo.click (v1.45)
+**Domain:** Forced profile-completion onboarding for a classified ads / marketplace platform
+**Researched:** 2026-03-19
 **Confidence:** HIGH
 
 ## Executive Summary
 
-Google One Tap is a non-blocking overlay UI rendered by Google's GIS library that signs users in with a single tap — no redirect, no full page reload. The correct implementation for waldo.click requires two parallel tracks: a **Nuxt client-side plugin** that initializes the GIS SDK and calls `prompt()` on public pages for unauthenticated users, and a **new dedicated Strapi endpoint** (`POST /api/auth/google-one-tap`) that verifies the Google ID token server-side using `google-auth-library`, upserts the user, and returns a Waldo JWT in the same `{ jwt, user }` shape as all existing auth flows.
+This milestone adds a mandatory profile-completion gate to the Waldo website. When a newly registered user navigates anywhere after login, a global Nuxt 4 route middleware intercepts the request, detects that their profile is incomplete, saves the intended URL, and redirects them to a locked `/onboarding` page. The user fills in the required fields via the existing `FormProfile.vue` component, lands on a thank-you page, and is then offered clear next steps (create a listing or return to where they were going). This pattern is industry standard across MercadoLibre, LinkedIn, Airbnb, OLX, and Facebook Marketplace — dedicated URL, minimal layout, no navigation escape, clear CTA after completion.
 
-The recommended approach is deliberately minimal: the GIS SDK is already loaded globally in `nuxt.config.ts`, `google-auth-library` is already available as a transitive dependency of `googleapis`, and JWT cookie persistence is handled by `@nuxtjs/strapi` automatically after `setToken(jwt)`. **Zero new npm packages are needed on the website; only `yarn add google-auth-library` may be needed in Strapi** (verify first with `yarn why`). The biggest risk is the existing `useGoogleOneTap.ts` composable — it uses a fragile redirect hack (passing a Google ID token as an OAuth access token) that silently fails, has a broken global flag that prevents `prompt()` from firing on subsequent SPA pages, and calls FedCM-deprecated notification methods. The composable must be **rewritten**, not patched.
+The recommended implementation requires no new dependencies and no new Strapi content types beyond one boolean field. All capabilities already exist in the codebase: `isProfileComplete()` in `useMeStore`, `appStore.referer` for URL preservation, the `auth` layout for minimal chrome, and the `wizard-guard.ts` pattern for client-only route guards. The scope is 7 new files and 2 surgical modifications. One Strapi schema addition (`onboarding_completed` boolean on User) is needed to avoid retroactively gating pre-existing users with incomplete profiles — a migration seeder must set this flag to `true` for all existing accounts, consistent with the `user-confirmed-migration.ts` precedent from v1.37.
 
-The critical mitigation strategy is to build the Strapi endpoint first, independently test it, then rewrite the frontend composable against the real endpoint. One hard constraint to enforce throughout: always look up users by Google's `sub` field (not email) as the unique identifier — Google explicitly prohibits using email as a primary key, and the security implications of getting this wrong (account merging, potential escalation) are severe.
+The primary risk is middleware misconfiguration: the onboarding guard must be client-only (Pinia stores are empty on SSR), must carry explicit escape routes for `/onboarding`, `/login`, and `/registro` paths to prevent infinite redirect loops, and must check authentication before checking profile completeness to avoid conflicting with the existing `guard.global.ts`. All three risks are fully mitigated by strictly following the `wizard-guard.ts` precedent already in the codebase.
 
 ---
 
@@ -19,145 +19,155 @@ The critical mitigation strategy is to build the Strapi endpoint first, independ
 
 ### Recommended Stack
 
-The integration requires exactly **one new server-side dependency** (`google-auth-library` in Strapi) and zero new frontend packages. The GIS SDK is delivered only via CDN script tag — self-hosting is explicitly unsupported by Google and would conflict with the existing `app.head.script` injection already in `nuxt.config.ts`. `google-auth-library@^10.6.2` (Google's official Node.js client) provides `OAuth2Client.verifyIdToken()` which handles RS256 signature verification, `aud`/`iss`/`exp` checks, and Google JWKS key rotation automatically. The website's `app/types/window.d.ts` already covers `window.google.accounts.id` — `@types/google-one-tap` must NOT be installed (causes duplicate global declarations).
+No new packages are required. The full onboarding flow is buildable from the Nuxt 4 + Pinia + `@nuxtjs/strapi` v2 stack already in place. See `STACK.md` for the complete capability mapping.
 
-One CSP update is required: `connect-src` in `nuxt.config.ts` is missing `https://accounts.google.com/gsi/` — without it, FedCM silently fails on Chrome 117+ (the majority of users). `script-src` and `frame-src` already cover the necessary Google domains. Adding `https://accounts.google.com/gsi/style` to `style-src` is optional but recommended for visual consistency. One new environment variable — `GOOGLE_CLIENT_ID` — must be added to `apps/strapi/.env` and `.env.example`.
+**Existing capabilities that cover all needs:**
+- `layouts/auth.vue` — logo-only layout with no navigation escape; already correct for onboarding
+- `middleware/guard.global.ts` + `wizard-guard.ts` — client-only guard template to copy exactly
+- `FormProfile.vue` — full profile form with Yup validation (~740 lines); must be reused, not duplicated
+- `appStore.referer` / `setReferer()` / `clearReferer()` — URL preservation already persisted to localStorage
+- `useMeStore.isProfileComplete()` — checks 5 fields: `firstname`, `lastname`, `rut`, `phone`, `commune`
 
-**Core technologies:**
-- **GIS SDK (CDN):** Browser-side One Tap rendering — already loaded in `nuxt.config.ts`; no change needed
-- **`google-auth-library` (Strapi):** Server-side ID token verification — verify/add to `apps/strapi/`; `OAuth2Client.verifyIdToken()` handles all required validation
-- **`@nuxtjs/strapi`:** JWT cookie persistence — handles `waldo_jwt` cookie automatically after `setToken(jwt)`; no custom cookie code needed
-- **Nuxt `.client.ts` plugin:** Lifecycle hook ensuring One Tap initializes after hydration on every public page; `.client.ts` suffix excludes it from SSR automatically
+**New artifacts required (7 files, 2 modifications):**
+- `middleware/onboarding-guard.global.ts` (new)
+- `layouts/onboarding.vue` (new — or reuse `auth` layout directly; see Gaps)
+- `pages/onboarding/index.vue` (new)
+- `pages/onboarding/thankyou.vue` (new)
+- `components/OnboardingDefault.vue` (new)
+- `components/OnboardingThankyou.vue` (new)
+- `scss/_onboarding.scss` (new)
+- `components/FormProfile.vue` (modify — add `@success` emit)
+- `middleware/referer.global.ts` (modify — exclude `/onboarding` routes)
 
 ### Expected Features
 
-The feature scope is tight and well-defined. The GIS library handles the entire UI; the implementation surface is the callback handler, the Strapi endpoint, and the route/auth guards.
+**Must have (table stakes):**
+- Locked `/onboarding` page with minimal layout — prevents navigation escape; use `layout: "auth"` and `middleware: "auth"`
+- `OnboardingDefault` component wrapping `FormProfile.vue` — consistent form fields with no duplication
+- Post-submit redirect to `/onboarding/thankyou` — requires `FormProfile.vue` to emit `@success` instead of hardcoding `window.location.href`
+- `/onboarding/thankyou` page with "Crear mi primer anuncio" and "Volver a Waldo" CTAs
+- `onboarding-guard.global.ts` middleware — client-only, escapes for unauthenticated users and onboarding/login/registro routes
+- `onboarding_completed` boolean on Strapi User + migration seeder to set `true` for all pre-existing accounts
+- Update `login/google.vue` redirect from `/cuenta/perfil/editar` to `/onboarding`
 
-**Must have (table stakes — v1 launch):**
-- One Tap Nuxt plugin initializing GIS and calling `prompt()` on public pages only
-- Route guard suppressing One Tap on `/cuenta/*`, `/pagar/*`, `/anunciar/*`
-- Auth-state guard suppressing One Tap when user already has a Waldo session (`useStrapiUser()`)
-- JWT callback → `POST /api/auth/google-one-tap` → `{ jwt, user }` → `setToken` + `fetchUser`
-- New Strapi endpoint: verify Google ID token, upsert user by `sub`, call `createUserReservations()` for new users, issue Waldo JWT (bypass 2-step — same as existing `/connect/google`)
-- `disableAutoSelect()` called in `useLogout.ts` before `strapiLogout()` to prevent dead-loop
-
-**Should have (add after stable v1):**
-- Auto sign-in (`auto_select: true`) — only safe after logout handling confirmed working in production
-- ITP support (`itp_support: true`) — Safari/Firefox fallback UX (welcome page + popup)
-- Profile completeness redirect (mirrors existing `login/google.vue` behavior via `meStore.isProfileComplete()`)
+**Should have (differentiators):**
+- Context-aware "Volver a Waldo" routing — returns user to the specific ad or page they were browsing, not just home
+- Button label "Guardar y Continuar" instead of "Actualizar" — semantically correct in onboarding context
+- Add `/onboarding` to One Tap suppression list in `useGoogleOneTap.ts` and `google-one-tap.client.ts`
+- `profile_complete` analytics event on `/onboarding/thankyou` — closes GA4 funnel gap between `sign_up` and first listing step
 
 **Defer (v2+):**
-- `state_cookie_domain: "waldo.click"` — only needed if One Tap expands to other waldo.click subdomains
-- `context: "signup"` variant on landing pages — minor copy change, low impact
+- Progressive profile completion — completeness percentage vs. boolean; requires significant form logic rework
+- Multi-step onboarding wizard — `FormProfile.vue` already has good grouped UX; splitting adds complexity without clear payoff
+- A/B test forced vs. prompted onboarding — requires feature flag infrastructure not yet in codebase
 
 **Anti-features to avoid:**
-- Custom One Tap prompt positioning — FedCM (Chrome 117+) controls position; CSS targeting it breaks
-- `isNotDisplayed()` / `getNotDisplayedReason()` — removed in FedCM mode; delete from composable
-- Using `email` as user identifier — Google prohibits this; use `sub`
-- One Tap on the dashboard — consumer-facing UX; admin should use 2-step local login
-- `use_fedcm_for_prompt: true` — deprecated, silently ignored; remove from `initialize()` call
+- Retroactive gate for existing users — gate only users where `onboarding_completed = false`; set existing users to `true` via migration
+- Multi-step wizard splitting `FormProfile.vue` — adds maintenance cost with no UX gain for this form structure
+- Onboarding modal/overlay — modals can be dismissed; full-page flow is required for compliance-critical profile data
+- Skip/remind-me-later option — business requirement is forced completion; a skip option defeats the purpose
+- Server-side `isProfileComplete()` check in middleware — `wizard-guard.ts` pattern exists for a reason; client-only is correct
 
 ### Architecture Approach
 
-The architecture is clean: a Nuxt client-side plugin handles the browser-side lifecycle (initialize once, prompt per page, guard by auth state and route); a new Strapi content API (`src/api/auth-one-tap/`) handles the server-side exchange; a new Strapi service (`src/services/google-one-tap/`) wraps `OAuth2Client.verifyIdToken()` following the singleton service pattern established in this codebase. The existing `useGoogleOneTap.ts` composable is **rewritten** (not extended) to remove the fragile OAuth redirect hack and replace it with a direct POST + `setToken` + `fetchUser` pattern matching `FormVerifyCode.vue`.
+The onboarding flow slots cleanly into Nuxt 4's existing middleware, layout, and routing systems. Global middleware executes alphabetically, so `onboarding-guard.global.ts` runs after `guard.global.ts` (auth check) and before `referer.global.ts` by design — no ordering changes needed. `FormProfile.vue` is modified minimally: adding an optional `@success` emit that the parent (`OnboardingDefault`) listens to for routing, while the existing `window.location.href` redirect is preserved as a fallback when no listener is present (backward compatible with `AccountEdit.vue`). The Strapi layer requires only a boolean field and a migration seeder.
 
-**Major components:**
-1. **`apps/website/app/plugins/google-one-tap.client.ts`** (NEW) — Auth-state guard + calls `initializeGoogleOneTap()`; runs once after hydration on all routes; `.client.ts` suffix handles SSR exclusion
-2. **`apps/website/app/composables/useGoogleOneTap.ts`** (REWRITE) — GIS `initialize()` + route-aware `prompt()` + credential callback → POST to Strapi → `setToken` + `fetchUser` + `navigateTo`; remove redirect hack, broken flag, deprecated methods
-3. **`apps/strapi/src/services/google-one-tap/`** (NEW) — `GoogleOneTapService.verifyCredential()` wrapping `OAuth2Client.verifyIdToken()`; singleton pattern; typed via `IGoogleOneTapPayload`
-4. **`apps/strapi/src/api/auth-one-tap/`** (NEW) — `POST /api/auth/google-one-tap` controller + public route; validates credential → `findOrCreateUser` by `sub` → `createUserReservations()` for new users → issues Waldo JWT
-5. **`apps/website/app/composables/useLogout.ts`** (EXTEND) — Add `google.accounts.id.disableAutoSelect()` call before `strapiLogout()`
+**Major components and responsibilities:**
 
-**Key structural decision:** New Strapi endpoint uses standard content API (`src/api/`), NOT plugin extension routes — the plugin route factory is documented as broken in Strapi v5 (`strapi-server.ts` lines 56–62). Mirrors the proven `auth-verify/` endpoint pattern.
+1. `onboarding-guard.global.ts` — global interceptor; client-only; checks auth, escape routes, and profile completeness; saves `appStore.referer` before redirect
+2. `pages/onboarding/index.vue` — pre-loads regions/communes via `useAsyncData`; renders `OnboardingDefault`; declares `layout: "auth"` and `middleware: "auth"`
+3. `components/OnboardingDefault.vue` — BEM block `onboarding onboarding--default`; wraps `FormProfile.vue`; listens to `@success` emit; navigates to `/onboarding/thankyou`
+4. `pages/onboarding/thankyou.vue` — reads `appStore.getReferer`; renders `OnboardingThankyou`; clears referer after use
+5. `components/OnboardingThankyou.vue` — BEM block `onboarding onboarding--thankyou`; two CTAs: `/anunciar` and `appStore.referer || '/'`
+6. `FormProfile.vue` (modified) — adds optional `@success` emit; existing navigation behavior preserved when no listener
+7. `middleware/referer.global.ts` (modified) — adds `/onboarding` to excluded referer routes
+
+**Data flow:**
+```
+Registration → Login → Any page
+                         |
+              onboarding-guard.global.ts
+                         | (profile incomplete)
+              appStore.setReferer(currentUrl)
+                         |
+              /onboarding (OnboardingDefault + FormProfile)
+                         | (@success emit)
+              /onboarding/thankyou (OnboardingThankyou)
+                         |
+              "Crear mi primer anuncio" → /anunciar
+              "Volver a Waldo" → appStore.referer || /
+```
 
 ### Critical Pitfalls
 
-1. **Missing `connect-src https://accounts.google.com/gsi/` in CSP** — One Tap silently never shows on Chrome 117+ (FedCM). No visible user-facing error. Add to `nuxt.config.ts` `connect-src` and `frame-src`; optionally add `/gsi/style` to `style-src`. Use the parent path — not individual GIS endpoint URLs — to future-proof against GIS updates.
+1. **SSR-executed middleware reads empty Pinia store** (RISK: HIGH) — `me.store.ts` has no `persist` key; `me` is always `null` on SSR. If the guard runs server-side, every authenticated user gets redirected to `/onboarding` on every page load. Prevention: `if (import.meta.server) return` — identical to `wizard-guard.ts`.
 
-2. **Existing `useGoogleOneTap.ts` redirect hack is broken by design** — passes a Google ID token as an OAuth `access_token` to `authenticateProvider()` which Strapi's `tokeninfo` endpoint rejects. This is the most likely reason any past One Tap testing appeared to "not work." The composable must be fully rewritten; do not attempt to patch the redirect approach.
+2. **Redirect loop between onboarding and auth middleware** (RISK: HIGH) — without explicit escape routes, the browser throws "too many redirects." Prevention: guard must skip when `!user.value`, when `to.path.startsWith('/onboarding')`, and for `/login` and `/registro` routes.
 
-3. **Global `googleOneTapInitialized` flag breaks per-page `prompt()`** — the flag guards both `initialize()` and `prompt()` together. After One Tap shows once per app load, it never shows again during SPA navigation. Fix: move `initialize()` to the plugin (runs once on startup), keep `prompt()` in the composable (called per-page), remove the global flag entirely.
+3. **`FormProfile.vue` hardcoded redirect on submit** (RISK: MEDIUM) — line ~687 hardcodes `window.location.href = '/cuenta/perfil'` and cannot be overridden from a parent. Prevention: add `@success` emit; parent handles navigation; existing `AccountEdit.vue` behavior is unchanged.
 
-4. **`disableAutoSelect()` missing from logout → dead-loop** — without this call in `useLogout.ts`, the GIS library's `g_state` cookie retains auto-sign-in state. Users who sign out are immediately prompted (or silently re-authenticated if `auto_select: true` is ever enabled). Must be fixed before enabling auto sign-in.
+4. **`isProfileComplete()` field list may not match the full form** (RISK: MEDIUM) — checks only 5 fields while `FormProfile.vue` Yup schema requires more. Prevention: decide intentionally whether onboarding requires the 5-field minimum or full form alignment; document the decision in code.
 
-5. **Using `email` as user identifier instead of `sub`** — Google explicitly prohibits email as a unique key. Look up users by a dedicated `google_sub` field first; fall back to email only for account linking. Failure leads to duplicate accounts and potential security escalation if a malicious actor registers an email address previously owned by someone else.
+5. **Google One Tap overlay appears on `/onboarding` pages** (RISK: LOW) — `/onboarding` is not in `PRIVATE_PREFIXES` in either `useGoogleOneTap.ts` or `google-one-tap.client.ts`. Prevention: add `/onboarding` to both lists.
 
-6. **`use_fedcm_for_prompt: true` is deprecated + notification methods broken** — current composable passes this flag (silently ignored in Chrome 117+) and calls `isNotDisplayed()` / `getNotDisplayedReason()` which are not supported in FedCM mode and return `undefined`. Remove both. Use only `isDismissedMoment()` / `getDismissedReason()` for prompt status.
+6. **Pre-onboarding URL lost after One Tap `reloadNuxtApp()`** (RISK: LOW) — `appStore.referer` is persisted to localStorage and survives the reload triggered by One Tap login (v1.44 behavior). The guard must call `appStore.setReferer(to.fullPath)` before redirecting. Prevention: `appStore.referer` persistence already handles this; the guard just needs to set it correctly.
 
 ---
 
 ## Implications for Roadmap
 
-Based on combined research, the natural build order follows the dependency chain: infrastructure fixes first (CSP, env vars), Strapi endpoint second (can be tested independently), then frontend rewrite against the live endpoint, then polish.
+Based on combined research, the build order follows strict dependency chains. Each phase must complete before the next can be tested end-to-end. The Strapi schema change and `FormProfile.vue` emit refactor are prerequisites for everything else.
 
-### Phase 1: Infrastructure Prerequisites
+### Phase 1: Foundation — Strapi Schema + FormProfile Emit Refactor
 
-**Rationale:** CSP changes and the `GOOGLE_CLIENT_ID` env var in Strapi are prerequisites for any browser-side or server-side testing. Small, isolated, zero risk — must land before any other phase can be validated.
+**Rationale:** All other phases depend on `FormProfile.vue` emitting `@success` (components cannot be built without it) and on the `onboarding_completed` field existing in Strapi (middleware logic for new-user targeting depends on it). These are the two prerequisites with no UI dependencies.
+**Delivers:** Backward-compatible `@success` emit on `FormProfile.vue`; `onboarding_completed` boolean on Strapi User model; migration seeder sets `true` for all pre-existing accounts.
+**Addresses:** FEATURES.md table stakes: `FormProfile.vue` refactor, `onboarding_completed` field.
+**Avoids:** Pitfall #3 (hardcoded redirect) and the retroactive-gate anti-feature.
 
-**Delivers:** `connect-src https://accounts.google.com/gsi/` and `frame-src https://accounts.google.com/gsi/` added to `nuxt.config.ts`; optional `style-src` update; `GOOGLE_CLIENT_ID` added to `apps/strapi/.env` and `.env.example`.
+### Phase 2: Layout + Components
 
-**Addresses:** Foundational requirement for all subsequent work.
+**Rationale:** Pages import and render components. Components depend on the `@success` emit from Phase 1. SCSS and BEM structure must be in place before pages reference them.
+**Delivers:** `layouts/onboarding.vue` (or confirmed reuse of `auth` layout); `OnboardingDefault.vue` and `OnboardingThankyou.vue` with BEM `onboarding--default` / `onboarding--thankyou`; `scss/_onboarding.scss`.
+**Implements:** BEM structure per `CLAUDE.md` conventions, layout shell, component wiring to `FormProfile.vue`.
+**Uses:** `FormProfile.vue` `@success` emit from Phase 1.
 
-**Avoids:** Pitfall 1 (missing `connect-src` = silent FedCM failure on Chrome 117+) — the most common debugging time sink.
+### Phase 3: Pages
 
-### Phase 2: Strapi Backend Endpoint
+**Rationale:** Pages are thin wrappers over components from Phase 2. They define `definePageMeta` (layout, middleware) and pre-load regions/communes via `useAsyncData` following the `cuenta/perfil/editar.vue` pattern exactly.
+**Delivers:** `pages/onboarding/index.vue` and `pages/onboarding/thankyou.vue`.
+**Implements:** Route definitions, `useAsyncData` data pre-loading, referer read/clear logic on thank-you page.
 
-**Rationale:** The new Strapi endpoint has zero frontend dependencies — it can be built, tested, and validated independently via `curl`/Postman before any Nuxt code changes. Establishing the API contract early unblocks frontend work and eliminates the guesswork of building against a mock.
+### Phase 4: Middleware Guard
 
-**Delivers:** `POST /api/auth/google-one-tap` that accepts a Google ID token, verifies it with `OAuth2Client.verifyIdToken()`, upserts user by `sub` field (not email), calls `createUserReservations()` for new users, and returns `{ jwt, user }`. Includes `GoogleOneTapService` singleton and `IGoogleOneTapPayload` types.
+**Rationale:** The guard can only be tested when the `/onboarding` page exists (Phase 3). Adding it earlier would redirect users to a 404 during development. Phase 4 is also where the most critical pitfalls live — it deserves its own isolated phase.
+**Delivers:** `onboarding-guard.global.ts` with client-only guard, full escape route list, `appStore.setReferer()` before redirect.
+**Avoids:** Pitfall #1 (SSR empty store), Pitfall #2 (redirect loops).
 
-**Addresses:** Table-stakes: ID token verification, new user auto-creation, bypass 2-step (matching existing `/connect/google` behavior — document explicitly in code), user reservation creation.
+### Phase 5: Integration Cleanup
 
-**Uses:** `google-auth-library` (verify/add to `apps/strapi/`), standard content API pattern from `auth-verify/`.
-
-**Avoids:** Pitfall 3 (wrong token type — ID token ≠ OAuth access token), Pitfall 6 (email as identifier — use `sub`), Pitfall 8 (missing `createUserReservations` for new One Tap users), Pitfall 9 (2-step bypass — document the decision).
-
-### Phase 3: Nuxt Plugin + Composable Rewrite
-
-**Rationale:** Frontend work depends on Phases 1 and 2. The composable is a complete rewrite — not a patch — which benefits from being a clean-slate implementation against the known API contract established in Phase 2.
-
-**Delivers:** `plugins/google-one-tap.client.ts` (auth-state guard + `initialize()` once on startup); rewritten `useGoogleOneTap.ts` (route-aware `prompt()` + credential callback → POST → `setToken` + `fetchUser` + `navigateTo`); removal of deprecated `use_fedcm_for_prompt` and broken FedCM notification methods; removal of the global `googleOneTapInitialized` flag; `window.d.ts` extended with `cancel(): void`.
-
-**Addresses:** Table-stakes: One Tap overlay on public pages, JWT callback handler, coexistence with existing Google Sign-In redirect button, SSR safety (`.client.ts` suffix).
-
-**Avoids:** Pitfall 2 (deprecated FedCM flag/methods), Pitfall 5 (global flag breaking per-page `prompt()`), Pitfall 7 (SSR hydration via plugin suffix), Pitfall 10 (race condition on auth-guarded pages via route guard).
-
-### Phase 4: Logout Fix
-
-**Rationale:** Small, targeted change that completes the auth lifecycle. `disableAutoSelect()` in logout is critical before any real-user testing — without it, logout followed by a page visit triggers One Tap immediately, which is severely confusing UX and becomes a dead-loop if `auto_select: true` is ever enabled.
-
-**Delivers:** `useLogout.ts` extended with `window.google?.accounts?.id?.disableAutoSelect()` before `strapiLogout()`.
-
-**Addresses:** Table-stakes: `disableAutoSelect()` on logout.
-
-**Avoids:** Pitfall 4 (dead-loop after logout).
-
-### Phase 5: Polish + v1.x Enhancements (post-production validation)
-
-**Rationale:** Add `auto_select: true`, ITP support, and profile completeness redirect only after the base flow is confirmed working in production. `auto_select` is explicitly flagged as risky until logout handling (Phase 4) is verified in production to prevent dead-loops. ITP behavior has its own edge cases (auto sign-in not supported on ITP — explicitly documented by Google).
-
-**Delivers:** Auto sign-in for returning users (`auto_select: true`); ITP browser fallback (`itp_support: true`); profile completeness redirect mirroring `login/google.vue` (via `meStore.isProfileComplete()` and `appStore.getReferer`).
-
-**Addresses:** Differentiator features: zero-click sign-in, cross-browser support, post-login UX parity with existing OAuth flow.
+**Rationale:** After the core flow works, update existing files that still reference the old incomplete-profile destination. Suppress One Tap on onboarding pages. Update `referer.global.ts` exclusions. These are mechanical changes with no design decisions.
+**Delivers:** `login/google.vue` redirect updated to `/onboarding`; `CreateAd.vue` alert link updated; `/onboarding` added to One Tap `PRIVATE_PREFIXES` in both plugin and composable; `/onboarding` exclusion added to `referer.global.ts`; optional `profile_complete` analytics event on thank-you page.
+**Avoids:** Pitfall #5 (One Tap on onboarding), Pitfall #6 (referer not preserved after reload).
 
 ### Phase Ordering Rationale
 
-- **Infrastructure first:** A missing `connect-src` entry causes silent failures with no user-visible error — debugging with this unfixed is a guaranteed time sink.
-- **Backend before frontend:** Strapi endpoint can be fully tested with `curl`/Postman before any Nuxt work. Establishing the real API contract eliminates mocking complexity.
-- **Composable as complete rewrite:** The existing code has multiple layered bugs (redirect hack, broken flag, deprecated methods). Incremental patching risks leaving one issue while fixing another. A clean rewrite against a known API contract is faster and safer.
-- **Logout fix before auto_select:** The dead-loop risk is non-trivial. `disableAutoSelect()` must be confirmed working in production before enabling auto sign-in.
-- **v1.x features gated on production validation:** Auto sign-in and ITP support have documented behavioral edge cases — validate core flow in production before layering enhancements.
+- Phase 1 must come first because `FormProfile.vue` is imported by `OnboardingDefault.vue` — the emit refactor must exist before the wrapper component is built.
+- Phase 2 before Phase 3 because pages import and render components; building a page that references a non-existent component causes build errors.
+- Phase 4 last among core phases because activating the guard before Phase 3 would redirect users to a 404; redirects to a working page can only be tested once the destination exists.
+- Phase 5 is independent of Phase 4 and could be done in parallel, but separating it keeps diffs focused on cleanup rather than interleaved with core logic.
 
 ### Research Flags
 
-Phases with well-documented patterns (deep research not needed during planning):
-- **Phase 1 (Infrastructure):** Mechanical — exact CSP values specified in official Google docs and STACK.md.
-- **Phase 2 (Strapi endpoint):** Follows the exact `auth-verify/` content API pattern already in the codebase. `OAuth2Client.verifyIdToken()` is thoroughly documented. Build order is clear.
-- **Phase 4 (Logout fix):** Trivial change, no design ambiguity.
+Phases with standard, well-documented patterns (no additional research needed during planning):
+- **Phase 2 (Layout + Components):** Nuxt 4 layout and BEM component patterns are well-established in this codebase. `auth.vue` and `FormProfile.vue` are the direct templates.
+- **Phase 3 (Pages):** `useAsyncData` + `definePageMeta` pattern is directly documented by `cuenta/perfil/editar.vue` in the same app.
+- **Phase 5 (Integration cleanup):** Mechanical find-and-replace updates with no design decisions.
 
-Phases that may need targeted investigation during planning:
-- **Phase 3 (Composable rewrite):** How and when to call `prompt()` during SPA navigation (on every route change? on app load only? from `onMounted` in a layout?) needs a decision. The ARCHITECTURE.md is slightly inconsistent: it recommends calling `prompt()` from "individual page `onMounted()` hooks" but also shows the plugin calling `initializeGoogleOneTap()` globally. Resolve the calling convention before implementation starts.
-- **Phase 5 (auto_select + ITP):** Auto sign-in under FedCM has documented quirks (10-minute quiet period, reconfirmation requirement per Chrome instance). ITP popup fallback interacts with COOP headers — audit `nuxt-security` COOP config before shipping.
+Phases that require a design decision before coding begins:
+- **Phase 1 (FormProfile emit):** Choose between `redirectTo` prop vs. `@success` emit. Architecture research recommends `@success` emit (consistent with `FormCreateOne` → `CreateAd` pattern). Confirm before implementation.
+- **Phase 1 (Strapi schema strategy):** Decide whether the guard checks `onboarding_completed` directly or updates `isProfileComplete()` to include it. Both are valid; the decision affects Phase 4 implementation. FEATURES.md recommends checking the flag separately in the guard.
+- **Phase 4 (Middleware):** The exact escape route list must be agreed before coding — omitting one route (e.g., `/logout`) can cause subtle redirect edge cases.
 
 ---
 
@@ -165,47 +175,36 @@ Phases that may need targeted investigation during planning:
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | HIGH | All claims verified against official Google Identity Services docs (updated 2025–2026) and direct codebase inspection. Single dependency (`google-auth-library`) is Google's official library with built-in TypeScript declarations. |
-| Features | HIGH | Sourced from official GIS docs. FedCM behavior, cooldown mechanics, and ITP limitations are clearly documented. Feature scope is narrow and unambiguous. |
-| Architecture | HIGH | Build order and component boundaries verified against live codebase. Existing patterns (`auth-verify/`, `FormVerifyCode.vue`) are proven. The broken plugin route factory limitation is confirmed via existing code comment. |
-| Pitfalls | HIGH | Critical pitfalls sourced from official docs with version dates. Codebase-specific pitfalls (broken flag, redirect hack, deprecated methods) confirmed via direct inspection of `useGoogleOneTap.ts`. |
+| Stack | HIGH | All findings from direct codebase inspection; no external packages involved; every claimed existing capability was verified in source files |
+| Features | HIGH | Codebase analysis of existing components + established marketplace onboarding conventions; feature scope is narrow and unambiguous |
+| Architecture | HIGH | Build order and component boundaries verified against live codebase; Nuxt 4 middleware execution order confirmed as alphabetical; existing patterns (`wizard-guard.ts`, `FormCreateOne` emit) are proven templates |
+| Pitfalls | HIGH | All pitfalls identified from direct code analysis of `wizard-guard.ts`, `google-one-tap.client.ts`, `referer.global.ts`, and `FormProfile.vue`; no speculative risks |
 
 **Overall confidence:** HIGH
 
 ### Gaps to Address
 
-- **`google_sub` field on Strapi User model:** Research recommends looking up users by `sub` using a dedicated `google_sub` field. The existing OAuth flow may already store `provideridentifier` (which could be `sub`). Verify during Phase 2 implementation: if `provideridentifier` already stores the Google `sub`, a new field may not be needed; if not, add an indexed `google_sub` field to the User content type.
+- **`layouts/onboarding.vue` vs. reusing `layout: "auth"`:** Architecture research lists `layouts/onboarding.vue` as a new file, but FEATURES.md notes `layout: "auth"` is already correct for onboarding. If `auth.vue` meets all visual requirements (no header, no footer, no lightboxes), the new layout is unnecessary. Verify against `auth.vue` before creating a duplicate.
 
-- **`google-auth-library` transitive availability:** ARCHITECTURE.md notes it may already be available as a transitive dep of `googleapis@^148.0.0`. STACK.md notes it's not in `apps/strapi/package.json` as a direct dep. Run `yarn why google-auth-library` in `apps/strapi/` before deciding — either way, add it as an explicit dependency.
+- **`isProfileComplete()` field alignment:** The 5-field check (`firstname`, `lastname`, `rut`, `phone`, `commune`) may not match the full set of Yup-required fields in `FormProfile.vue`. Decide intentionally which fields constitute "onboarded" for v1.45 and document in code.
 
-- **`prompt()` calling frequency during SPA navigation:** Whether `prompt()` should be called on every route change or only once on initial app load is left unresolved. The architecture doc suggests both approaches in different sections. This is a UX decision (prompt on every page vs. only on entry pages) — resolve before Phase 3 implementation begins.
-
-- **2-step verification policy:** The decision to bypass `overrideAuthLocal` for One Tap (matching existing `/connect/google` behavior) is architecturally correct but should be confirmed with product stakeholders. Document the decision explicitly in the new endpoint code.
-
-- **Account linking edge case:** User registered with email/password, then uses One Tap with the same email. The new endpoint must handle this: link by email on first use, then store `sub` for future lookups. The exact linking logic needs to be designed during Phase 2.
+- **Guard check strategy for `onboarding_completed`:** Whether the middleware checks the Strapi flag directly (one boolean, clean) or calls the updated `isProfileComplete()` method (existing abstraction) needs to be decided before Phase 4 coding. Both work; the former is recommended.
 
 ---
 
 ## Sources
 
-### Primary (HIGH confidence)
-- https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid#content_security_policy (2025-10-31) — CSP directives; parent path approach for future-proofing
-- https://developers.google.com/identity/gsi/web/guides/display-google-one-tap (2025-09-29) — JS callback mode, prompt status moments, `initialize()` + `prompt()` API
-- https://developers.google.com/identity/gsi/web/guides/verify-google-id-token (2025-12-22) — `google-auth-library` server-side verification; JWT payload fields
-- https://developers.google.com/identity/gsi/web/guides/fedcm-migration (2026-02-10) — deprecated methods, FedCM defaults, CSP requirements, removed APIs
-- https://developers.google.com/identity/gsi/web/reference/js-reference (2026-02-10) — `IdConfiguration`, `CredentialResponse`, `disableAutoSelect()`, all config fields
-- https://developers.google.com/identity/gsi/web/guides/automatic-sign-in-sign-out (2025-05-23) — auto_select behavior, FedCM quiet period, disableAutoSelect dead-loop
-- https://developers.google.com/identity/gsi/web/guides/features (2025-05-19) — cooldown tables, ITP behavior, auto-dismissal timing
-- https://www.npmjs.com/package/google-auth-library (v10.6.2, 2026-03-16) — current version; built-in TypeScript declarations confirmed
+### Primary (HIGH confidence — direct codebase inspection)
+- `apps/website/app/middleware/wizard-guard.ts`, `guard.global.ts`, `referer.global.ts`, `auth.ts`
+- `apps/website/app/components/FormProfile.vue`, `CreateAd.vue`, `login/google.vue`
+- `apps/website/app/stores/me.store.ts`, `app.store.ts`
+- `apps/website/app/layouts/auth.vue`, `apps/website/app/pages/cuenta/perfil/editar.vue`
+- `apps/website/app/plugins/google-one-tap.client.ts`, `composables/useGoogleOneTap.ts`
+- `.planning/PROJECT.md` — v1.45 milestone specification
 
-### Codebase (HIGH confidence — direct inspection)
-- `apps/website/nuxt.config.ts` — GIS script already in `app.head.script`; CSP state; `GOOGLE_CLIENT_ID` in `runtimeConfig.public`; missing `connect-src` entries confirmed
-- `apps/website/app/types/window.d.ts` — existing `window.google.accounts.id` types confirmed; `@types/google-one-tap` not needed
-- `apps/website/app/composables/useGoogleOneTap.ts` — redirect hack on line 27; broken global flag; deprecated `use_fedcm_for_prompt`; broken notification methods
-- `apps/strapi/src/extensions/users-permissions/strapi-server.ts` — plugin route factory limitation documented (lines 56–62)
-- `apps/strapi/src/extensions/users-permissions/controllers/authController.ts` — `createUserReservations()` reusable; `overrideAuthLocal` bypass pattern confirmed
-- `apps/strapi/package.json` — `google-auth-library` not listed as direct dep; `googleapis@148.0.0` present (transitive source)
+### Secondary (MEDIUM confidence)
+- Domain knowledge: classified ads / marketplace onboarding conventions (MercadoLibre, OLX, Airbnb, LinkedIn, Facebook Marketplace) — no web search performed; HIGH confidence given established industry patterns
 
 ---
-*Research completed: 2026-03-18*
+*Research completed: 2026-03-19*
 *Ready for roadmap: yes*
