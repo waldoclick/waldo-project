@@ -191,7 +191,8 @@
   3. `.env.example` in `apps/strapi` documents `GOOGLE_CLIENT_ID` so future developers know the variable is required
   4. `nuxt.config.ts` `connect-src` and `frame-src` directives include `https://accounts.google.com/gsi/` — verified by inspecting the CSP header on a local build
 
-**Plans**: TBD
+**Plans**: 1 plan
+- [ ] 096-01-PLAN.md — CSP GIS entries + GOOGLE_CLIENT_ID env setup
 
 ---
 
