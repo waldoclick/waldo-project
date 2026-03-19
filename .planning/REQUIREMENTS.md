@@ -10,8 +10,8 @@ Requirements for User Onboarding milestone. Each maps to roadmap phases.
 ### Onboarding Layout
 
 - [ ] **LAYOUT-01**: `/onboarding` and `/onboarding/thankyou` use a dedicated `onboarding` layout with centered Waldo logo, no header, no footer, no navigation
-- [ ] **LAYOUT-02**: `OnboardingDefault` component uses BEM classes `onboarding onboarding--default` with logo centered above the form
-- [ ] **LAYOUT-03**: `OnboardingThankyou` component uses BEM classes `onboarding onboarding--thankyou` with thank you message and 2 action buttons
+- [x] **LAYOUT-02**: `OnboardingDefault` component uses BEM classes `onboarding onboarding--default` with logo centered above the form
+- [x] **LAYOUT-03**: `OnboardingThankyou` component uses BEM classes `onboarding onboarding--thankyou` with thank you message and 2 action buttons
 
 ### Onboarding Guard
 
@@ -22,15 +22,15 @@ Requirements for User Onboarding milestone. Each maps to roadmap phases.
 
 ### Profile Form
 
-- [ ] **FORM-01**: `/onboarding` page reuses `FormProfile` for profile completion
-- [ ] **FORM-02**: `FormProfile` emits a `@success` event (or accepts `redirectTo` prop) so parent controls post-submit navigation
-- [ ] **FORM-03**: Existing `FormProfile` behavior at `/cuenta/perfil/editar` is unchanged (backward compatible)
+- [x] **FORM-01**: `/onboarding` page reuses `FormProfile` for profile completion
+- [x] **FORM-02**: `FormProfile` emits a `@success` event (or accepts `redirectTo` prop) so parent controls post-submit navigation
+- [x] **FORM-03**: Existing `FormProfile` behavior at `/cuenta/perfil/editar` is unchanged (backward compatible)
 
 ### Thank You Page
 
-- [ ] **THANK-01**: `/onboarding/thankyou` displays "Muchas gracias por registrarte" with descriptive text
-- [ ] **THANK-02**: Primary button "Crear mi primer anuncio" navigates to `/anunciar`
-- [ ] **THANK-03**: Secondary button "Volver a Waldo" navigates to the page the user was on before onboarding (via `appStore.referer`), defaulting to `/` if no referer
+- [x] **THANK-01**: `/onboarding/thankyou` displays "Muchas gracias por registrarte" with descriptive text
+- [x] **THANK-02**: Primary button "Crear mi primer anuncio" navigates to `/anunciar`
+- [x] **THANK-03**: Secondary button "Volver a Waldo" navigates to the page the user was on before onboarding (via `appStore.referer`), defaulting to `/` if no referer
 
 ### Integration
 
@@ -59,18 +59,18 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | LAYOUT-01 | Phase 099 | Pending |
-| LAYOUT-02 | Phase 099 | Pending |
-| LAYOUT-03 | Phase 099 | Pending |
+| LAYOUT-02 | Phase 099 | Complete |
+| LAYOUT-03 | Phase 099 | Complete |
 | GUARD-01 | Phase 100 | Pending |
 | GUARD-02 | Phase 100 | Pending |
 | GUARD-03 | Phase 100 | Pending |
 | GUARD-04 | Phase 100 | Pending |
-| FORM-01 | Phase 099 | Pending |
-| FORM-02 | Phase 099 | Pending |
-| FORM-03 | Phase 099 | Pending |
-| THANK-01 | Phase 099 | Pending |
-| THANK-02 | Phase 099 | Pending |
-| THANK-03 | Phase 099 | Pending |
+| FORM-01 | Phase 099 | Complete |
+| FORM-02 | Phase 099 | Complete |
+| FORM-03 | Phase 099 | Complete |
+| THANK-01 | Phase 099 | Complete |
+| THANK-02 | Phase 099 | Complete |
+| THANK-03 | Phase 099 | Complete |
 | INTEG-01 | Phase 101 | Pending |
 | INTEG-02 | Phase 101 | Pending |
 | INTEG-03 | Phase 101 | Pending |
