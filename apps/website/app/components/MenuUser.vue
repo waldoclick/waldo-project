@@ -25,6 +25,18 @@
 
     <nav class="menu--user__menu" :class="{ 'is-open': isOpen }">
       <ul class="menu--user__menu__links">
+        <li
+          v-if="user?.role?.type?.toLowerCase() === 'manager'"
+          @click="menuOpen"
+        >
+          <a
+            :href="config.public.dashboardUrl"
+            title="Ver dashboard"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Ver dashboard</a
+          >
+        </li>
         <li @click="menuOpen">
           <NuxtLink to="/cuenta" title="Mi cuenta">Mi cuenta</NuxtLink>
         </li>
@@ -101,6 +113,8 @@ const { Swal } = useSweetAlert2();
 import AvatarDefault from "@/components/AvatarDefault.vue";
 import type { User } from "@/types/user";
 import { Menu as IconMenu, X as IconX } from "lucide-vue-next";
+
+const config = useRuntimeConfig();
 
 // Obtener el usuario de Strapi
 const user = useStrapiUser<User>();

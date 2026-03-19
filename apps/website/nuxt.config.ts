@@ -292,6 +292,7 @@ export default defineNuxtConfig({
     cookieName: "waldo_jwt",
     auth: {
       populate: [
+        "role",
         "commune",
         "region",
         "business_region",
@@ -334,6 +335,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       apiUrl: process.env.API_URL || "http://localhost:1337",
+      dashboardUrl: process.env.DASHBOARD_URL || "http://localhost:3001",
       sessionMaxAge: process.env.SESSION_MAX_AGE || "86400", // Valor por defecto de 1 día
       baseUrl: process.env.BASE_URL || "http://localhost:3000",
       apiDisableProxy: process.env.API_DISABLE_PROXY === "true",

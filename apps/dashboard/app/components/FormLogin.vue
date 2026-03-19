@@ -134,15 +134,31 @@ const handleResendConfirmation = async () => {
 
 const handleSubmit = async (values: Record<string, unknown>) => {
   // Check if there's an existing non-manager session cookie
-  const existingCookie = useCookie("waldo_jwt");
-  if (existingCookie.value) {
-    await Swal.fire({
+  // Read document.cookie directly to always get the current browser state,
+  // since useCookie() ref may be stale if the cookie was cleared in another tab
+  const hasExistingSession =
+    import.meta.client &&
+    document.cookie.split(";").some((c) => c.trim().startsWith("waldo_jwt="));
+  if (hasExistingSession) {
+    const confirmed = await Swal.fire({
       title: "Sesión activa en el sitio público",
-      text: "Tienes una sesión iniciada en el sitio público. Debes cerrarla manualmente antes de poder ingresar al dashboard.",
+      text: "Tienes una sesión iniciada en el sitio público. ¿Deseas cerrarla e ingresar al dashboard?",
       icon: "warning",
-      confirmButtonText: "Entendido",
+      showCancelButton: true,
+      confirmButtonText: "Cerrar sesión e ingresar",
+      cancelButtonText: "Cancelar",
     });
-    return;
+    if (!confirmed.isConfirmed) return;
+    const { logout: strapiLogout } = useStrapiAuth();
+    await strapiLogout();
+  }
+
+  // Clear the nuxt._cookies cache so setToken() writes a fresh cookie
+  // regardless of any stale ref left from a previous session in another tab
+  const nuxtApp = useNuxtApp();
+  const strapiConfig = useRuntimeConfig().public;
+  if (nuxtApp._cookies?.[strapiConfig.strapi.cookieName]) {
+    delete nuxtApp._cookies[strapiConfig.strapi.cookieName];
   }
 
   sending.value = true;

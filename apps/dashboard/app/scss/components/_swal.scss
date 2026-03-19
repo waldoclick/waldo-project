@@ -3,8 +3,12 @@
 @use "../base/container";
 
 .swal2-container {
-  .swal2-content {
-    font-size: 1em;
+  .swal2-title {
+    font-size: 1.5em;
+  }
+
+  .swal2-html-container {
+    font-size: 16px;
   }
 
   .swal2-confirm {
