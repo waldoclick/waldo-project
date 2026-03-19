@@ -8,7 +8,7 @@ import { sendMjmlEmail } from "../../../services/mjml";
  * @param {Object} user - The user object.
  * @returns {Object|Error} The user object if successful, or an error object if there was an issue.
  */
-const createUserReservations = async (user) => {
+export const createUserReservations = async (user) => {
   // Ensure the user was created successfully
   if (user && user.id) {
     try {
