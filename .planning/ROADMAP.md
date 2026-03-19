@@ -2,6 +2,7 @@
 
 ## Milestones
 
+- 🚧 **v1.44 Google One Tap Sign-In** — Phases 096–098 (in progress). See below.
 - ✅ **v1.43 Cross-App Session Replacement** — Phase 095 (shipped 2026-03-19). See `.planning/milestones/v1.43-ROADMAP.md`
 - ✅ **v1.42 Dashboard Session Persistence** — Phase 094 (shipped 2026-03-18). See `.planning/milestones/v1.42-ROADMAP.md`
 - ✅ **v1.41 Ad Preview Error Handling** — Phase 093 (shipped 2026-03-18). See `.planning/milestones/v1.41-ROADMAP.md`
@@ -23,6 +24,15 @@
 - ✅ **v1.40 Shared Authentication Session** — Phases 091–092 (shipped 2026-03-16). See `.planning/milestones/v1.40-ROADMAP.md`
 
 ## Phases
+
+<details>
+<summary>🚧 v1.44 Google One Tap Sign-In (Phases 096–098) — IN PROGRESS</summary>
+
+- [ ] **Phase 096: CSP & Environment Setup** — Add `connect-src`/`frame-src` for GIS and `GOOGLE_CLIENT_ID` env var
+- [ ] **Phase 097: Strapi One Tap Endpoint** — `POST /api/auth/google-one-tap` with token verification, user upsert, and JWT response
+- [ ] **Phase 098: Frontend Rewrite + Logout Fix** — Plugin, composable rewrite, route guard, and `disableAutoSelect`
+
+</details>
 
 <details>
 <summary>✅ v1.43 Cross-App Session Replacement (Phase 095) — SHIPPED 2026-03-19</summary>
@@ -167,6 +177,62 @@
 
 ## Phase Details
 
+### Phase 096: CSP & Environment Setup
+
+**Goal**: The infrastructure prerequisites for One Tap are in place — CSP allows GIS network traffic and Strapi has the Google Client ID it needs to verify tokens
+
+**Depends on**: Nothing (prerequisite for all subsequent phases)
+
+**Requirements**: GTAP-01, GTAP-02
+
+**Success Criteria** (what must be TRUE):
+  1. Chrome DevTools Network tab shows no CSP-blocked requests to `accounts.google.com/gsi/` — One Tap overlay can communicate with Google's FedCM endpoint without being silently blocked
+  2. `apps/strapi` starts without errors after `GOOGLE_CLIENT_ID` is added to `.env` — the variable is present and accessible at runtime
+  3. `.env.example` in `apps/strapi` documents `GOOGLE_CLIENT_ID` so future developers know the variable is required
+  4. `nuxt.config.ts` `connect-src` and `frame-src` directives include `https://accounts.google.com/gsi/` — verified by inspecting the CSP header on a local build
+
+**Plans**: TBD
+
+---
+
+### Phase 097: Strapi One Tap Endpoint
+
+**Goal**: A new `POST /api/auth/google-one-tap` endpoint verifies a Google credential JWT server-side and returns a valid Waldo session — independently testable before any frontend work
+
+**Depends on**: Phase 096 (`GOOGLE_CLIENT_ID` must be present in Strapi env)
+
+**Requirements**: GTAP-03, GTAP-04, GTAP-05, GTAP-06
+
+**Success Criteria** (what must be TRUE):
+  1. `curl -X POST /api/auth/google-one-tap -d '{"credential":"<valid-google-jwt>"}'` returns `{ jwt, user }` in the same shape as all other Strapi auth endpoints — the response is immediately usable by `setToken(jwt)` + `fetchUser()`
+  2. Calling the endpoint with the credential of a user whose email already exists in Strapi returns the existing user's JWT — no duplicate account is created
+  3. Calling the endpoint with a brand-new Google account creates a new Strapi user AND grants 3 free ad-reservation slots (same behaviour as email registration) — the new user can immediately create ads
+  4. The endpoint does NOT trigger the 2-step verification-code flow — the Waldo JWT is returned directly, matching the existing `/connect/google` OAuth bypass behaviour
+  5. Calling the endpoint with an invalid or expired Google credential returns a 4xx error — no JWT is issued for malformed tokens
+
+**Plans**: TBD
+
+---
+
+### Phase 098: Frontend Rewrite + Logout Fix
+
+**Goal**: One Tap appears automatically for unauthenticated users on public pages, signs them in via the new Strapi endpoint, and is cleanly suppressed after logout — with no dead-loops or SSR crashes
+
+**Depends on**: Phase 096 (CSP), Phase 097 (Strapi endpoint must exist)
+
+**Requirements**: GTAP-07, GTAP-08, GTAP-09, GTAP-10, GTAP-11, GTAP-12
+
+**Success Criteria** (what must be TRUE):
+  1. An unauthenticated user visiting any public page (home, ad listing, ad detail, blog) sees the Google One Tap overlay appear — the prompt fires without a page redirect or any manual action
+  2. Completing One Tap signs the user in: the `waldo_jwt` cookie is set, the site header shows the user's name/avatar, and the user remains on the current page without a full-page reload
+  3. Visiting a private route (`/cuenta/*`, `/pagar/*`, `/anunciar/*`) as an unauthenticated user does NOT trigger the One Tap overlay — no prompt appears on authenticated-only pages
+  4. An already-authenticated user visiting any page does NOT see the One Tap overlay — the auth-state guard suppresses it for existing sessions
+  5. After logout, the One Tap overlay does NOT immediately reappear — `disableAutoSelect()` clears the GIS auto-sign-in state so the user can stay logged out
+
+**Plans**: TBD
+
+---
+
 ### Phase 095: Fix Cookie Replacement on Session Swap
 
 **Goal**: When a dashboard manager replaces an existing session, the old `waldo_jwt` cookie — including the shared-domain version — is fully removed before the new one is written
@@ -240,4 +306,7 @@
 | 092   | v1.40     | 2/2            | Complete    | 2026-03-16 |
 | 093   | v1.41     | 2/2            | Complete    | 2026-03-18 |
 | 094   | v1.42     | 1/1            | Complete    | 2026-03-18 |
-| 095   | 1/1 | Complete   | 2026-03-19 | -          |
+| 095   | v1.43     | 1/1            | Complete    | 2026-03-19 |
+| 096   | v1.44     | 0/?            | Not started | -          |
+| 097   | v1.44     | 0/?            | Not started | -          |
+| 098   | v1.44     | 0/?            | Not started | -          |
