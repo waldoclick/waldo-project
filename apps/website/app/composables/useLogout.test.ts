@@ -1,4 +1,4 @@
-import { vi, describe, it, expect } from "vitest";
+import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 
 // Mock all stores and Nuxt auto-imports
 const mockAdReset = vi.fn();
@@ -9,6 +9,7 @@ const mockAdsReset = vi.fn();
 const mockAppReset = vi.fn();
 const mockAuthLogout = vi.fn();
 const mockNavigateTo = vi.fn();
+const mockDisableAutoSelect = vi.fn();
 
 vi.mock("@/stores/ad.store", () => ({
   useAdStore: () => ({ $reset: mockAdReset }),
@@ -32,6 +33,11 @@ vi.mock("#imports", () => ({
   useStrapiAuth: () => ({ logout: mockAuthLogout }),
   navigateTo: mockNavigateTo,
 }));
+
+beforeEach(() => {
+  vi.resetModules();
+  vi.clearAllMocks();
+});
 
 describe("useLogout", () => {
   it("calls all 6 store resets on logout()", async () => {
@@ -86,5 +92,28 @@ describe("useLogout", () => {
     await logout();
 
     expect(mockNavigateTo).toHaveBeenCalledWith("/");
+  });
+});
+
+describe("GTAP-12: disableAutoSelect() before strapiLogout()", () => {
+  beforeEach(() => {
+    vi.stubGlobal("google", {
+      accounts: { id: { disableAutoSelect: mockDisableAutoSelect } },
+    });
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("calls disableAutoSelect() before strapiLogout()", async () => {
+    const { useLogout } = await import("./useLogout");
+    const { logout } = useLogout();
+    await logout();
+
+    expect(mockDisableAutoSelect).toHaveBeenCalledOnce();
+    const disableOrder = mockDisableAutoSelect.mock.invocationCallOrder[0]!;
+    const authOrder = mockAuthLogout.mock.invocationCallOrder[0]!;
+    expect(disableOrder).toBeLessThan(authOrder);
   });
 });
