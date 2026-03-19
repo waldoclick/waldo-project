@@ -20,10 +20,9 @@ export default defineNuxtPlugin(() => {
   const user = useStrapiUser();
   if (user.value) return;
 
-  // Route guard — skip on auth callback pages (e.g. /login/google) to avoid
-  // showing One Tap while OAuth flow is completing
+  // Route guard — skip on auth/dev pages where One Tap should not appear
   const route = useRoute();
-  if (route.path.startsWith("/login/")) return;
+  if (route.path.startsWith("/login/") || route.path === "/dev") return;
 
   // Instantiate composables at plugin root level (AGENTS.md: setup-level instantiation required)
   const client = useApiClient();
