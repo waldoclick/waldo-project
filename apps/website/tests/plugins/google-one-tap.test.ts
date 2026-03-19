@@ -12,6 +12,7 @@ vi.mock("#imports", () => ({
   useStrapiAuth: () => ({ setToken: mockSetToken, fetchUser: mockFetchUser }),
   useStrapiUser: () => ({ value: null }),
   useRuntimeConfig: () => ({ public: { googleClientId: "test-client-id" } }),
+  useRoute: () => ({ path: "/" }),
 }));
 
 // ─── Mock useApiClient ─────────────────────────────────────────────────────
