@@ -115,10 +115,12 @@ export default defineNuxtConfig({
             "wss://vts.zohopublic.com",
             "https://*.zohocdn.com",
             "wss://*.zohocdn.com",
+            "https://accounts.google.com/gsi/", // FedCM One Tap network requests
           ],
 
           "frame-src": [
             "https://accounts.google.com",
+            "https://accounts.google.com/gsi/", // FedCM One Tap iframe
             "https://www.google.com",
             "https://www.gstatic.com",
             "https://www.googletagmanager.com",
