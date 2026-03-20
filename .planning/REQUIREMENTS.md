@@ -19,7 +19,7 @@ Requirements for PRO Subscriptions (Webpay Oneclick) milestone. Each maps to roa
 - [ ] **CHRG-01**: Daily cron job charges users with `pro_status: active` whose `pro_expires_at` has passed
 - [ ] **CHRG-02**: Each successful charge creates a `subscription-payment` record and extends `pro_expires_at` by 30 days
 - [ ] **CHRG-03**: Failed charges are retried over 3 days before deactivating the subscription
-- [ ] **CHRG-04**: Charge amount is read from `PRO_MONTHLY_PRICE` env var (not hardcoded)
+- [x] **CHRG-04**: Charge amount is read from `PRO_MONTHLY_PRICE` env var (not hardcoded)
 - [ ] **CHRG-05**: Idempotency guard prevents double-charging for the same billing period
 
 ### Cancellation
@@ -64,7 +64,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CHRG-01 | Phase 103 | Pending |
 | CHRG-02 | Phase 103 | Pending |
 | CHRG-03 | Phase 103 | Pending |
-| CHRG-04 | Phase 103 | Pending |
+| CHRG-04 | Phase 103 | Complete |
 | CHRG-05 | Phase 103 | Pending |
 | CANC-01 | Phase 104 | Pending |
 | CANC-02 | Phase 104 | Pending |

@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: PRO Subscriptions (Webpay Oneclick)
 status: executing
-stopped_at: Completed 102-02-PLAN.md — awaiting human verification checkpoint (Task 3)
-last_updated: "2026-03-20T07:47:48.489Z"
-last_activity: "2026-03-20 — Completed 102-01: OneclickService + inscription API routes (9 files, 7 tests passing)"
+stopped_at: Completed 103-01-PLAN.md
+last_updated: "2026-03-20T17:18:47.751Z"
+last_activity: "2026-03-20 — Completed 103-01: subscription-payment content type, OneclickService.authorizeCharge(), env vars"
 progress:
   total_phases: 3
   completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
-  percent: 10
+  total_plans: 9
+  completed_plans: 4
+  percent: 44
 ---
 
 # Session State
@@ -21,17 +21,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-20)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 102 — Oneclick Service + Inscription Flow
+**Current focus:** Phase 103 — Monthly Charging Cron
 
 ## Position
 
-Phase: 102 of 104 (Oneclick Service + Inscription Flow)
-Plan: 02 complete — awaiting human verification (Task 3 checkpoint), then ready for Phase 103
+Phase: 103 of 104 (Monthly Charging Cron)
+Plan: 01 complete, ready for Plan 02 (subscription-charge cron service)
 Status: In progress
-Last activity: 2026-03-20 — Completed 102-02: Frontend Oneclick wiring (MemoPro.vue + /pro/gracias page)
+Last activity: 2026-03-20 — Completed 103-01: subscription-payment content type, OneclickService.authorizeCharge(), env vars
 
 ```
-Progress: [██████████] 100%
+Progress: [█████░░░░░] 44%
 ```
 
 ## Accumulated Context
@@ -54,6 +54,8 @@ Progress: [██████████] 100%
 - [102-01] buildOneclickUsername exported from types module for Phase 104 (inscription.delete) reuse
 - [102-01] pro_inscription_token cleared on finish to prevent token replay
 - [102-02] fetchUser comes from useStrapiAuth() not useStrapi() — consistent with all components (resumen.vue, FormProfile.vue, etc.)
+- [103-01] MallTransaction instantiated per-call in authorizeCharge() (not singleton) for testability and avoiding module-level state
+- [103-01] authorizeCharge() takes parentBuyOrder/childBuyOrder as parameters — caller controls buy_order uniqueness per retry attempt
 
 ### Blockers/Concerns (open)
 
@@ -61,6 +63,6 @@ Progress: [██████████] 100%
 
 ## Session Continuity
 
-Last session: 2026-03-20T07:47:48.486Z
-Stopped at: Completed 102-02-PLAN.md — awaiting human verification checkpoint (Task 3)
+Last session: 2026-03-20T17:18:47.751Z
+Stopped at: Completed 103-01-PLAN.md
 Resume file: None
