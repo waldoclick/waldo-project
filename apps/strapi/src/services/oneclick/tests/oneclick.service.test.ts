@@ -47,7 +47,7 @@ describe("OneclickService", () => {
       const mockUrl = "https://webpay.transbank.cl/oneclick/initTransaction";
       transbankSdk.__mockStart.mockResolvedValueOnce({
         token: mockToken,
-        urlWebpay: mockUrl,
+        url_webpay: mockUrl,
       });
 
       // Act
@@ -95,10 +95,10 @@ describe("OneclickService", () => {
       const mockCardType = "Visa";
       const mockLast4 = "1234";
       transbankSdk.__mockFinish.mockResolvedValueOnce({
-        tbkUser: mockTbkUser,
-        cardType: mockCardType,
-        last4CardDigits: mockLast4,
-        responseCode: 0,
+        tbk_user: mockTbkUser,
+        card_type: mockCardType,
+        card_number: mockLast4,
+        response_code: 0,
       });
 
       // Act

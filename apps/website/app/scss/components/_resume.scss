@@ -4,7 +4,8 @@
 
 .resume {
   &--default,
-  &--order {
+  &--order,
+  &--pro {
     &__container {
       @extend .container;
       margin-bottom: 90px;

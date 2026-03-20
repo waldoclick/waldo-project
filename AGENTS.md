@@ -71,13 +71,18 @@ Monorepo orchestrated with Turbo. Package manager: **Yarn** (never npm).
 ## Project Structure
 
 ### Nuxt apps (`apps/website`, `apps/dashboard`)
-- `pages/` — file-based routing (Nuxt convention)
+- `pages/` — file-based routing (Nuxt convention). Pages are **composition only**: they import and arrange components, never contain HTML sections or BEM classes directly
 - `components/` — auto-imported Vue components (PascalCase filenames)
 - `composables/` — reusable logic (auto-imported)
 - `stores/` — Pinia stores
 - `server/` — Nitro server-side code and API routes
 - `app/types/` — shared TypeScript types and declaration files
 - `app/utils/` — pure formatting utilities (auto-imported via Nuxt)
+
+### Creating new files (pages, components, SCSS)
+- **Always replicate the closest existing equivalent** — before creating any new file, find the most similar existing file and copy its exact structure, imports, and patterns
+- New pages must follow the same template as sibling pages in the same directory (e.g. `pro/gracias.vue` must match `pagar/gracias.vue`)
+- New components must follow the same structure as the component they are modeled after (e.g. `ResumePro.vue` must match `ResumeOrder.vue`)
 
 ### Strapi (`apps/strapi`)
 Service folder structure: `/config`, `/services`, `/types`, `/factories`, `/tests`
