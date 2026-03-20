@@ -126,7 +126,7 @@ const { logout } = useLogout();
 const getUbication = computed(() => {
   if (!user.value || !user.value.commune || !user.value.commune.region)
     return "";
-  return `${user.value.commune.name}, ${user.value.commune.region.name}`;
+  return user.value.commune.name;
 });
 
 // Método para confirmar cierre de sesión
