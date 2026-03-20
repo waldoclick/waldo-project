@@ -399,14 +399,17 @@ export default defineNuxtConfig({
           disallow: [
             "/404",
             "/500",
-            "/login/facebook",
-            "/login/google",
+            "/login/**",
+            "/registro/**",
             "/restablecer-contrasena",
+            "/recuperar-contrasena",
             "/dev/",
             "/cuenta/**",
             "/anunciar/**",
             "/packs/**",
+            "/pagar/**",
             "/contacto/**",
+            "/onboarding/**",
           ],
           sitemap: `${
             process.env.BASE_URL || "http://localhost:3000"
