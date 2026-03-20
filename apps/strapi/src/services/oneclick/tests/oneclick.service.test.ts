@@ -5,6 +5,7 @@ import { buildOneclickUsername } from "../types/oneclick.types";
 jest.mock("transbank-sdk", () => {
   const mockStart = jest.fn();
   const mockFinish = jest.fn();
+  const mockAuthorize = jest.fn();
 
   return {
     Oneclick: {
@@ -12,14 +13,25 @@ jest.mock("transbank-sdk", () => {
         start: mockStart,
         finish: mockFinish,
       })),
+      MallTransaction: jest.fn().mockImplementation(() => ({
+        authorize: mockAuthorize,
+      })),
     },
     Options: jest.fn(),
     Environment: {
       Integration: "integration",
       Production: "production",
     },
+    TransactionDetail: jest
+      .fn()
+      .mockImplementation((amount, commerceCode, buyOrder) => ({
+        amount,
+        commerceCode,
+        buyOrder,
+      })),
     __mockStart: mockStart,
     __mockFinish: mockFinish,
+    __mockAuthorize: mockAuthorize,
   };
 });
 
@@ -124,6 +136,94 @@ describe("OneclickService", () => {
       expect(result.success).toBe(false);
       expect(result.error).toBe(sdkError);
       expect(result.tbkUser).toBeUndefined();
+    });
+  });
+
+  describe("authorizeCharge", () => {
+    const userDocumentId = "abc123xyz456789012345678";
+    const tbkUser = "tbk-user-stored-token";
+    const amount = 9990;
+    const parentBuyOrder = "pro-42-20260320";
+    const childBuyOrder = "c-42-20260320-1";
+
+    it("calls MallTransaction.authorize with correct params and returns success when response_code is 0", async () => {
+      // Arrange
+      transbankSdk.__mockAuthorize.mockResolvedValueOnce({
+        details: [
+          {
+            response_code: 0,
+            authorization_code: "AUTH123",
+          },
+        ],
+      });
+
+      // Act
+      const result = await service.authorizeCharge(
+        userDocumentId,
+        tbkUser,
+        amount,
+        parentBuyOrder,
+        childBuyOrder
+      );
+
+      // Assert
+      expect(result.success).toBe(true);
+      expect(result.authorizationCode).toBe("AUTH123");
+      expect(result.responseCode).toBe(0);
+      expect(transbankSdk.__mockAuthorize).toHaveBeenCalledWith(
+        buildOneclickUsername(userDocumentId),
+        tbkUser,
+        parentBuyOrder,
+        expect.arrayContaining([
+          expect.objectContaining({ amount, buyOrder: childBuyOrder }),
+        ])
+      );
+    });
+
+    it("returns success false when response_code is non-zero (rejected by Transbank)", async () => {
+      // Arrange
+      transbankSdk.__mockAuthorize.mockResolvedValueOnce({
+        details: [
+          {
+            response_code: -8,
+            authorization_code: undefined,
+          },
+        ],
+      });
+
+      // Act
+      const result = await service.authorizeCharge(
+        userDocumentId,
+        tbkUser,
+        amount,
+        parentBuyOrder,
+        childBuyOrder
+      );
+
+      // Assert
+      expect(result.success).toBe(false);
+      expect(result.responseCode).toBe(-8);
+      expect(result.authorizationCode).toBeUndefined();
+    });
+
+    it("returns success false with error when SDK throws an exception", async () => {
+      // Arrange
+      const sdkError = new Error("Transbank connection timeout");
+      transbankSdk.__mockAuthorize.mockRejectedValueOnce(sdkError);
+
+      // Act
+      const result = await service.authorizeCharge(
+        userDocumentId,
+        tbkUser,
+        amount,
+        parentBuyOrder,
+        childBuyOrder
+      );
+
+      // Assert
+      expect(result.success).toBe(false);
+      expect(result.error).toBe(sdkError);
+      expect(result.authorizationCode).toBeUndefined();
     });
   });
 });
