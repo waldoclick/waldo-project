@@ -2,6 +2,49 @@
 
 *A living document updated after each milestone. Lessons feed forward into future planning.*
 
+## Milestone: v1.45 — User Onboarding
+
+**Shipped:** 2026-03-20
+**Phases:** 3 (099–101) | **Plans:** 5 | **Timeline:** same-day
+
+### What Was Built
+- Dedicated onboarding layout with minimal chrome (logo only, no header/footer/navigation)
+- `FormProfile` emit refactor with `onboardingMode` prop — backward-compatible, parent controls post-submit navigation
+- `OnboardingDefault` and `OnboardingThankyou` components with BEM SCSS
+- Global client-only `onboarding-guard.global.ts` middleware — incomplete profiles redirected, complete profiles reverse-guarded
+- `meStore.reset()` cache invalidation after profile save prevents redirect loop
+- Google One Tap suppressed on `/onboarding` routes; referer middleware excludes onboarding URLs
+- 24+ Vitest tests across all components, middleware, and integration points
+
+### What Worked
+- Wave 0 TDD stub pattern (`it.todo()`) scaffolded all test expectations before any component code existed — tests were the requirements contract
+- `nuxt-meta-client-stub` Vite plugin pattern (from 099-01) unblocked `import.meta.client` in tests — reusable for any component with SSR guards
+- Existing patterns transferred cleanly: `wizard-guard.ts` SSR-safe middleware pattern → `onboarding-guard.global.ts`; `startsWith("/onboarding")` consistent with `/cuenta` and `/login` exclusion patterns in referer middleware
+- Phase 101 (Integration) discovered INTEG-03 required no code change — guard already saved pre-redirect URL; good planning captured this as a verification task, not a coding task
+
+### What Was Inefficient
+- Phase 099 was split into 3 plans (Wave 0 stubs, foundation, pages) — Wave 0 stubs could have been folded into 099-01 as the first task, saving a plan overhead
+- `layout: "auth"` reuse was explored in research but abandoned for a dedicated `layouts/onboarding.vue` — the research was useful but the final decision could have been faster
+
+### Patterns Established
+- **Wave 0 TDD stub pattern**: `it.todo()` stubs for all planned tests before any component exists — Vitest reports pending without failure
+- **`nuxt-meta-client-stub` Vite plugin**: replaces `import.meta.client`/`import.meta.server` literals at transform time — required for components with SSR guards in test environment
+- **FormProfile emit pattern**: `defineEmits(["success"]) + defineProps({ onboardingMode })` — emit fires always, redirect only when `!props.onboardingMode`; AccountEdit unchanged
+- **Middleware dynamic import in tests**: `beforeAll + await import()` required when guard uses global auto-imports — static import hoists before `global.xxx` assignments
+- **`vi.hoisted()` mutable ref pattern**: controls `useRoute()` path per test without separate `vi.mock` factories
+
+### Key Lessons
+1. **Guard escape routes must include the destination.** `/onboarding` was initially not in AUTH_EXEMPT_PATHS — but it must be excluded from the onboarding guard's own check so GUARD-02 (reverse guard for complete profiles) can fire.
+2. **Cache invalidation after form save is critical.** Without `meStore.reset()` after `FormProfile` save, the onboarding guard re-reads stale `isProfileComplete()` and redirects back to `/onboarding` — creating an infinite loop.
+3. **Integration phases can be pure verification.** INTEG-03 required zero code — the existing guard already implemented the behavior. Planning it as a separate requirement made it verifiable; execution confirmed it immediately.
+
+### Cost Observations
+- Model mix: ~80% opus, ~20% sonnet
+- Sessions: ~4 (plan-phase, execute-phase × 3)
+- Notable: Same-day delivery for all 3 phases; INTEG-03 was free (no code change)
+
+---
+
 ## Milestone: v1.41 — Ad Preview Error Handling
 
 **Shipped:** 2026-03-18
@@ -1274,6 +1317,7 @@
 | v1.42 | 1 | 1 | Session persistence: removed dead auth.populate joins causing setToken(null) on SSR |
 | v1.43 | 1 | 1 | Cookie replacement: useStrapiAuth().logout() respects COOKIE_DOMAIN attribute |
 | v1.44 | 5 | 9 | Google One Tap: Strapi endpoint + frontend plugin + composable rewrite + session bug fixes |
+| v1.45 | 3 | 5 | User Onboarding: dedicated layout, guard middleware, One Tap/referer integration, Wave 0 TDD stubs |
 
 ### Cumulative Quality
 
@@ -1312,6 +1356,7 @@
 | v1.42 | utils + jest + vitest (unchanged) | true | 0 |
 | v1.43 | utils + jest + vitest (unchanged) | true | 0 |
 | v1.44 | utils + jest (GoogleOneTapService 8 + controller 4) + vitest (composable 3 + plugin) | true | 1 (google-auth-library) |
+| v1.45 | utils + jest + vitest (24+ onboarding tests: components 12, middleware 10, integration 2) | true | 0 |
 
 ### Top Lessons (Verified Across Milestones)
 
