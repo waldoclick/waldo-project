@@ -2,6 +2,7 @@ import { Context } from "koa";
 
 interface UserData {
   id: string | number;
+  documentId?: string;
   username?: string;
   email?: string;
   firstname?: string;
