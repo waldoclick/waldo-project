@@ -34,9 +34,9 @@ Requirements for User Onboarding milestone. Each maps to roadmap phases.
 
 ### Integration
 
-- [ ] **INTEG-01**: Google One Tap is suppressed on `/onboarding` pages
-- [ ] **INTEG-02**: `/onboarding` pages are excluded from `referer.global.ts` (not stored as return URLs)
-- [ ] **INTEG-03**: Onboarding guard saves pre-redirect URL to `appStore.referer` before redirecting
+- [x] **INTEG-01**: Google One Tap is suppressed on `/onboarding` pages
+- [x] **INTEG-02**: `/onboarding` pages are excluded from `referer.global.ts` (not stored as return URLs)
+- [x] **INTEG-03**: Onboarding guard saves pre-redirect URL to `appStore.referer` before redirecting
 
 ## Future Requirements
 
@@ -71,9 +71,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | THANK-01 | Phase 099 | Complete |
 | THANK-02 | Phase 099 | Complete |
 | THANK-03 | Phase 099 | Complete |
-| INTEG-01 | Phase 101 | Pending |
-| INTEG-02 | Phase 101 | Pending |
-| INTEG-03 | Phase 101 | Pending |
+| INTEG-01 | Phase 101 | Complete |
+| INTEG-02 | Phase 101 | Complete |
+| INTEG-03 | Phase 101 | Complete |
 
 **Coverage:**
 - v1.45 requirements: 16 total

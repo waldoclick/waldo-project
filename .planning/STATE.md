@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.45
 milestone_name: User Onboarding
 status: executing
-last_updated: "2026-03-19T21:29:05.989Z"
-last_activity: "2026-03-19 — Completed 100-01: Onboarding guard middleware"
+last_updated: "2026-03-20T02:48:51.126Z"
+last_activity: "2026-03-19 — Completed 101-01: One Tap suppression and referer exclusion for onboarding"
 progress:
   total_phases: 3
-  completed_phases: 2
-  total_plans: 4
-  completed_plans: 4
-  percent: 22
+  completed_phases: 3
+  total_plans: 5
+  completed_plans: 5
+  percent: 100
 ---
 
 # Session State
@@ -20,17 +20,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-19)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 100 — Onboarding Guard
+**Current focus:** Phase 101 — Integration (complete)
 
 ## Position
 
-Phase: 100 of 101 (Onboarding Guard)
-Plan: 1 of 1 in current phase (100-01 complete)
-Status: In progress
-Last activity: 2026-03-19 — Completed 100-01: Onboarding guard middleware
+Phase: 101 of 101 (Integration)
+Plan: 1 of 1 in current phase (101-01 complete)
+Status: Complete — v1.45 User Onboarding milestone done
+Last activity: 2026-03-19 — Completed 101-01: One Tap suppression and referer exclusion for onboarding
 
 ```
-Progress: [██░░░░░░░░] 22%
+Progress: [██████████] 100%
 ```
 
 ## Accumulated Context
@@ -61,6 +61,10 @@ Progress: [██░░░░░░░░] 22%
 - AUTH_EXEMPT_PATHS = {/login, /registro, /logout} only — /onboarding excluded so GUARD-02 reverse guard can fire for complete-profile users
 - Middleware test pattern: dynamic import (beforeAll + await import()) required when guard uses global auto-imports — static import is hoisted before global.xxx assignments
 - FormProfile save sequence: updateUserProfile → fetchUser() → useMeStore().reset() → Swal.fire → emit/redirect; reset() prevents post-onboarding redirect loop from stale meStore cache
+- One Tap route guard uses `startsWith("/onboarding")` — single condition covers /onboarding and /onboarding/thankyou (INTEG-01)
+- Referer middleware uses `startsWith("/onboarding")` exclusion — consistent with /cuenta and /login patterns (INTEG-02)
+- INTEG-03 required no code change — onboarding-guard.global.ts already calls appStore.setReferer(to.fullPath) before redirect
+- vi.hoisted() mutable ref pattern (mockRoutePath) — controls useRoute() path per test without separate vi.mock factories
 
 ### Blockers/Concerns (open)
 
