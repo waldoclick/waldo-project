@@ -2,14 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: PRO Subscriptions (Webpay Oneclick)
-status: in_progress
-last_updated: "2026-03-20"
-last_activity: "2026-03-20 — Completed 102-01: OneclickService + inscription API routes"
+status: executing
+stopped_at: Completed 102-02-PLAN.md — awaiting human verification checkpoint (Task 3)
+last_updated: "2026-03-20T07:47:48.489Z"
+last_activity: "2026-03-20 — Completed 102-01: OneclickService + inscription API routes (9 files, 7 tests passing)"
 progress:
   total_phases: 3
-  completed_phases: 0
-  total_plans: 1
-  completed_plans: 1
+  completed_phases: 1
+  total_plans: 2
+  completed_plans: 2
   percent: 10
 ---
 
@@ -25,12 +26,12 @@ See: .planning/PROJECT.md (updated 2026-03-20)
 ## Position
 
 Phase: 102 of 104 (Oneclick Service + Inscription Flow)
-Plan: 01 complete — ready for Phase 103
+Plan: 02 complete — awaiting human verification (Task 3 checkpoint), then ready for Phase 103
 Status: In progress
-Last activity: 2026-03-20 — Completed 102-01: OneclickService + inscription API routes (9 files, 7 tests passing)
+Last activity: 2026-03-20 — Completed 102-02: Frontend Oneclick wiring (MemoPro.vue + /pro/gracias page)
 
 ```
-Progress: [█░░░░░░░░░] 10%
+Progress: [██████████] 100%
 ```
 
 ## Accumulated Context
@@ -52,6 +53,7 @@ Progress: [█░░░░░░░░░] 10%
 - [102-01] User resolved in proInscriptionFinish via pro_inscription_token DB lookup — no JWT on Transbank GET redirect
 - [102-01] buildOneclickUsername exported from types module for Phase 104 (inscription.delete) reuse
 - [102-01] pro_inscription_token cleared on finish to prevent token replay
+- [102-02] fetchUser comes from useStrapiAuth() not useStrapi() — consistent with all components (resumen.vue, FormProfile.vue, etc.)
 
 ### Blockers/Concerns (open)
 
@@ -59,6 +61,6 @@ Progress: [█░░░░░░░░░] 10%
 
 ## Session Continuity
 
-Last session: 2026-03-20
-Stopped at: Completed 102-01-PLAN.md — OneclickService + inscription API complete
+Last session: 2026-03-20T07:47:48.486Z
+Stopped at: Completed 102-02-PLAN.md — awaiting human verification checkpoint (Task 3)
 Resume file: None
