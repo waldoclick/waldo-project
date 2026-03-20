@@ -20,9 +20,18 @@ export default defineNuxtPlugin(() => {
   const user = useStrapiUser();
   if (user.value) return;
 
-  // Route guard — skip on auth/dev pages where One Tap should not appear
+  // Dev mode guard — skip entirely when site is in dev mode and user hasn't authenticated via /dev
+  const devMode = config.public.devMode as boolean | undefined;
+  if (devMode) {
+    const devCookie = document.cookie
+      .split("; ")
+      .find((c) => c.startsWith("devmode="));
+    if (!devCookie) return;
+  }
+
+  // Route guard — skip on auth pages where One Tap should not appear
   const route = useRoute();
-  if (route.path.startsWith("/login/") || route.path === "/dev") return;
+  if (route.path.startsWith("/login/")) return;
 
   // Instantiate composables at plugin root level (AGENTS.md: setup-level instantiation required)
   const client = useApiClient();
