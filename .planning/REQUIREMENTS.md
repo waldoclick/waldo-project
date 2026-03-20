@@ -9,10 +9,10 @@ Requirements for PRO Subscriptions (Webpay Oneclick) milestone. Each maps to roa
 
 ### Inscription
 
-- [ ] **INSC-01**: "Hazte PRO" button redirects user to Transbank Oneclick inscription page
-- [ ] **INSC-02**: After card enrollment, `tbk_user` token is stored on the user record and `pro_status` is set to `active`
-- [ ] **INSC-03**: User's card type and masked card number are stored for display
-- [ ] **INSC-04**: Failed or cancelled inscription redirects to an error page with a retry option
+- [x] **INSC-01**: "Hazte PRO" button redirects user to Transbank Oneclick inscription page
+- [x] **INSC-02**: After card enrollment, `tbk_user` token is stored on the user record and `pro_status` is set to `active`
+- [x] **INSC-03**: User's card type and masked card number are stored for display
+- [x] **INSC-04**: Failed or cancelled inscription redirects to an error page with a retry option
 
 ### Charging
 
@@ -57,10 +57,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INSC-01 | Phase 102 | Pending |
-| INSC-02 | Phase 102 | Pending |
-| INSC-03 | Phase 102 | Pending |
-| INSC-04 | Phase 102 | Pending |
+| INSC-01 | Phase 102 | Complete |
+| INSC-02 | Phase 102 | Complete |
+| INSC-03 | Phase 102 | Complete |
+| INSC-04 | Phase 102 | Complete |
 | CHRG-01 | Phase 103 | Pending |
 | CHRG-02 | Phase 103 | Pending |
 | CHRG-03 | Phase 103 | Pending |

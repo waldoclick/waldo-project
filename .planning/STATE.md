@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: PRO Subscriptions (Webpay Oneclick)
-status: ready_to_plan
+status: in_progress
 last_updated: "2026-03-20"
-last_activity: "2026-03-20 — Roadmap created, 3 phases defined (102–104)"
+last_activity: "2026-03-20 — Completed 102-01: OneclickService + inscription API routes"
 progress:
   total_phases: 3
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
-  percent: 0
+  total_plans: 1
+  completed_plans: 1
+  percent: 10
 ---
 
 # Session State
@@ -25,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-03-20)
 ## Position
 
 Phase: 102 of 104 (Oneclick Service + Inscription Flow)
-Plan: — (not yet planned)
-Status: Ready to plan
-Last activity: 2026-03-20 — Roadmap created for v1.46 PRO Subscriptions
+Plan: 01 complete — ready for Phase 103
+Status: In progress
+Last activity: 2026-03-20 — Completed 102-01: OneclickService + inscription API routes (9 files, 7 tests passing)
 
 ```
-Progress: [░░░░░░░░░░] 0%
+Progress: [█░░░░░░░░░] 10%
 ```
 
 ## Accumulated Context
@@ -48,6 +48,10 @@ Progress: [░░░░░░░░░░] 0%
 - Cron schedule: 5 AM daily (after existing crons at 1–4 AM); file name: `subscription-charge.cron.ts`
 - Idempotency: check for existing `subscription-payment` record for current period before charging
 - Sandbox credentials available in SDK source (`597055555541` parent, `597055555542` child)
+- [102-01] ONECLICK_API_KEY falls back to WEBPAY_API_KEY in integration (separate for production)
+- [102-01] User resolved in proInscriptionFinish via pro_inscription_token DB lookup — no JWT on Transbank GET redirect
+- [102-01] buildOneclickUsername exported from types module for Phase 104 (inscription.delete) reuse
+- [102-01] pro_inscription_token cleared on finish to prevent token replay
 
 ### Blockers/Concerns (open)
 
@@ -56,5 +60,5 @@ Progress: [░░░░░░░░░░] 0%
 ## Session Continuity
 
 Last session: 2026-03-20
-Stopped at: Roadmap written — ready to plan Phase 102
+Stopped at: Completed 102-01-PLAN.md — OneclickService + inscription API complete
 Resume file: None
