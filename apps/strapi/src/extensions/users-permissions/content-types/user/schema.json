@@ -167,6 +167,28 @@
       "type": "json",
       "private": true
     },
+    "pro_status": {
+      "type": "enumeration",
+      "enum": ["active", "inactive", "cancelled"],
+      "default": "inactive"
+    },
+    "tbk_user": {
+      "type": "string",
+      "private": true
+    },
+    "pro_expires_at": {
+      "type": "datetime"
+    },
+    "pro_card_type": {
+      "type": "string"
+    },
+    "pro_card_last4": {
+      "type": "string"
+    },
+    "pro_inscription_token": {
+      "type": "string",
+      "private": true
+    },
     "ad_reservations": {
       "type": "relation",
       "relation": "oneToMany",
