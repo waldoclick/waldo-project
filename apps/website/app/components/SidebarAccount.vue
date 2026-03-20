@@ -60,7 +60,7 @@
           <span>Mi perfil</span>
         </nuxt-link>
       </li>
-      <!-- <li class="sidebar--account__menu__item">
+      <li class="sidebar--account__menu__item">
         <nuxt-link to="/cuenta/username" title="Nombre de usuario">
           <IconAtSign :size="20" />
           <span>Nombre de usuario</span>
@@ -80,7 +80,7 @@
           <span>Portada</span>
           <b>PRO</b>
         </nuxt-link>
-      </li> -->
+      </li>
       <li class="sidebar--account__menu__item">
         <nuxt-link to="/cuenta/cambiar-contrasena" title="Cambiar contraseña">
           <IconLock :size="20" />

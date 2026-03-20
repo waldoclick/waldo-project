@@ -12,9 +12,9 @@
       </nuxt-link>
     </div>
 
-    <!-- <div v-if="!user?.pro" class="account--main__become_pro">
+    <div v-if="!user?.pro" class="account--main__become_pro">
       <MemoPro />
-    </div> -->
+    </div>
 
     <div class="account--main__announcements">
       <div class="account--main__announcements__text">

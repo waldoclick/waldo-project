@@ -5,17 +5,15 @@
         <SidebarProfile :user="user" />
       </div>
       <div class="profile--default__content">
-        <!-- Memo para usuarios sin cuenta pro -->
-        <!-- <MemoPro v-if="isProfileOwner && !user.pro" /> -->
+        <MemoPro v-if="isProfileOwner && !user.pro" />
 
-        <!-- Memo para usuarios pro sin avatar o cover -->
-        <!-- <MemoDefault
+        <MemoDefault
           v-if="isProfileOwner && user.pro && (!user.avatar || !user.cover)"
           :icon="IconImage"
           text="¡Felicidades! Ya eres usuario PRO. Ahora puedes personalizar tu perfil agregando una foto de perfil y una imagen de portada para destacar aún más."
           button-text="Personalizar perfil"
           link="/cuenta"
-        /> -->
+        />
 
         <!-- List -->
         <div
