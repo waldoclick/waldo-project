@@ -1,16 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.45
-milestone_name: User Onboarding
-status: shipped
+milestone: v1.46
+milestone_name: PRO Subscriptions (Webpay Oneclick)
+status: defining_requirements
 last_updated: "2026-03-20"
-last_activity: "2026-03-20 — Milestone v1.45 User Onboarding archived and tagged"
+last_activity: "2026-03-20 — Milestone v1.46 started"
 progress:
-  total_phases: 3
-  completed_phases: 3
-  total_plans: 5
-  completed_plans: 5
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Session State
@@ -20,16 +20,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-20)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Planning next milestone
+**Current focus:** Defining requirements for v1.46 PRO Subscriptions
 
 ## Position
 
-Phase: N/A — between milestones
-Status: v1.45 User Onboarding shipped and archived
-Last activity: 2026-03-20 — Milestone archived, git tagged v1.45
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-03-20 — Milestone v1.46 started
 
 ```
-Progress: [██████████] 100% — milestone complete
+Progress: [░░░░░░░░░░] 0%
 ```
 
 ## Accumulated Context
@@ -37,19 +38,15 @@ Progress: [██████████] 100% — milestone complete
 ### Key Decisions (carry forward)
 
 - All business logic lives in Strapi; dashboard and website are stateless HTTP clients
-- Auth extension pattern: override plugin controllers in `src/extensions/users-permissions/strapi-server.ts`
-- `overrideAuthLocal` guards `ctx.method === "GET"` to skip 2-step for OAuth callbacks
-- New Strapi auth endpoints use `src/api/` (standard content API) — plugin route factory broken in Strapi v5
-- `google_sub` field: lookup by sub first (immutable), then email fallback for existing account linking
-- `disableAutoSelect()` before `strapiLogout()` in `useLogout.ts` — clears GIS `g_state` cookie
-- SSR-safe 404/500: throw `createError({ statusCode, fatal: true })` inside `useAsyncData` callback
-- `isProfileComplete()` in me.store.ts checks: firstname, lastname, rut, phone, commune
-- Onboarding guard is client-only (`if (import.meta.server) return`) — same pattern as `wizard-guard.ts`
-- Guard escape routes: `/onboarding`, `/login`, `/registro`, `/logout`
-- `appStore.referer` persisted to localStorage — survives One Tap `window.location.reload()`
-- FormProfile emit pattern: `defineEmits(["success"]) + defineProps({ onboardingMode })` — backward-compatible
-- `meStore.reset()` after profile save prevents post-onboarding redirect loop from stale cache
+- `transbank-sdk@5.0.0` already installed — includes Oneclick Mall support via `Oneclick.MallInscription` and `Oneclick.MallTransaction`
+- Oneclick Mall requires separate commerce codes from Webpay Plus — `ONECLICK_COMMERCE_CODE` and `ONECLICK_CHILD_COMMERCE_CODE`
+- `username` parameter must be identical across inscription.start(), transaction.authorize(), and inscription.delete() — use `user-{documentId}`
+- Flow service kept but unused — Oneclick replaces Flow for PRO subscriptions
+- `pro` boolean field already exists on User schema
+- `MemoPro.vue` already calls `POST /payments/pro` with Swal confirmation
+- Price set via `PRO_MONTHLY_PRICE` env var (not hardcoded)
+- Sandbox credentials available in SDK for integration testing
 
 ### Blockers/Concerns (open)
 
-(none)
+- Oneclick Mall must be contracted with Transbank for production (separate from Webpay Plus)
