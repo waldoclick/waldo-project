@@ -74,11 +74,6 @@
           <CardInfo v-if="item" title="Slug" :description="item.slug" />
           <CardInfo
             v-if="item"
-            title="Descripción"
-            :description="item.description || '--'"
-          />
-          <CardInfo
-            v-if="item"
             title="Precio"
             :description="
               formatCurrency(item.price, { currency: item.currency })
@@ -128,6 +123,12 @@
             v-if="item"
             title="Moneda"
             :description="item.currency || '--'"
+          />
+          <CardInfo
+            v-if="item"
+            class="box--information__description__full"
+            title="Descripción"
+            :description="item.description || '--'"
           />
         </BoxInformation>
 

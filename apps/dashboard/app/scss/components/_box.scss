@@ -45,6 +45,10 @@
       &--cols-3 {
         grid-template-columns: repeat(3, 1fr);
       }
+
+      &__full {
+        grid-column: 1 / -1;
+      }
     }
   }
 

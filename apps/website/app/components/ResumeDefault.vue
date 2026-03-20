@@ -83,6 +83,7 @@
                   "
                 />
                 <CardInfo
+                  class="resume--default__grid__full"
                   title="Descripción"
                   :description="summary.description"
                 />
