@@ -39,17 +39,17 @@ const handleProSubscription = async () => {
   }
 
   try {
-    const response = await apiClient("payments/pro", {
+    const response = await apiClient("payments/pro-inscription/start", {
       method: "POST",
       body: { data: {} },
     });
 
-    // Redirección GET a Flow con token en URL
-    if (response?.data?.url && response?.data?.token) {
-      const redirectUrl = `${response.data.url}?token=${response.data.token}`;
+    // Redirección GET a Transbank Oneclick con TBK_TOKEN en URL
+    if (response?.data?.urlWebpay && response?.data?.token) {
+      const redirectUrl = `${response.data.urlWebpay}?TBK_TOKEN=${response.data.token}`;
       window.location.href = redirectUrl;
     } else {
-      console.error("Respuesta inválida de la API para Flow", response);
+      console.error("Respuesta inválida de la API para Oneclick", response);
       Swal.fire(
         "Error",
         "La respuesta de la API no contiene la información necesaria para el pago.",
