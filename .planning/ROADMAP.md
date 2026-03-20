@@ -72,7 +72,9 @@ Plans:
   1. Google One Tap overlay does not appear on `/onboarding` or `/onboarding/thankyou`
   2. "Volver a Waldo" on the thank-you page returns the user to the page they were visiting before being redirected to onboarding
   3. Navigating through `/onboarding` pages does not pollute `appStore.referer` with onboarding URLs
-**Plans**: TBD
+**Plans:** 1 plan
+Plans:
+- [ ] 101-01-PLAN.md — One Tap suppression, referer exclusion, and INTEG-03 verification
 
 ## Progress
 
@@ -80,4 +82,4 @@ Plans:
 |-------|-----------|----------------|--------|-----------|
 | 099. Onboarding UI | 3/3 | Complete    | 2026-03-19 | - |
 | 100. Guard | 1/1 | Complete    | 2026-03-19 | - |
-| 101. Integration | v1.45 | 0/? | Not started | - |
+| 101. Integration | v1.45 | 0/1 | Not started | - |
