@@ -22,6 +22,10 @@ declare global {
         widgetcode: string;
         values: Record<string, unknown>;
         ready: () => void;
+        afterReady?: () => void;
+        privacy?: {
+          updateCookieConsent: (types: string[]) => void;
+        };
         [key: string]: unknown;
       };
       [key: string]: unknown;

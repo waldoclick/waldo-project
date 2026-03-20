@@ -14,6 +14,17 @@ export default defineNuxtPlugin(() => {
     ready: function () {},
   };
 
+  // Restore cookie consent if user already accepted site cookies
+  const hasConsent = document.cookie.includes("site-cookies-accepted-v2=");
+  const salesiq = window.$zoho.salesiq;
+  if (salesiq) {
+    salesiq.afterReady = function () {
+      if (hasConsent && salesiq.privacy?.updateCookieConsent) {
+        salesiq.privacy.updateCookieConsent(["analytics", "performance"]);
+      }
+    };
+  }
+
   const d = document;
   const s = d.createElement("script");
   s.type = "text/javascript";
