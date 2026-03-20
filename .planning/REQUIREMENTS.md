@@ -31,8 +31,8 @@ Requirements for PRO Subscriptions (Webpay Oneclick) milestone. Each maps to roa
 
 ### Frontend
 
-- [ ] **FRNT-01**: `MemoPro.vue` redirects to Oneclick inscription (replaces Flow redirect)
-- [ ] **FRNT-02**: Return page after successful inscription shows confirmation with card info
+- [x] **FRNT-01**: `MemoPro.vue` redirects to Oneclick inscription (replaces Flow redirect)
+- [x] **FRNT-02**: Return page after successful inscription shows confirmation with card info
 - [ ] **FRNT-03**: Account page shows subscription status (active/cancelled), card info, and next charge date
 - [ ] **FRNT-04**: Cancel button with Swal confirmation available on account page for active subscribers
 
@@ -70,8 +70,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CANC-02 | Phase 104 | Pending |
 | CANC-03 | Phase 104 | Pending |
 | CANC-04 | Phase 104 | Pending |
-| FRNT-01 | Phase 102 | Pending |
-| FRNT-02 | Phase 102 | Pending |
+| FRNT-01 | Phase 102 | Complete |
+| FRNT-02 | Phase 102 | Complete |
 | FRNT-03 | Phase 104 | Pending |
 | FRNT-04 | Phase 104 | Pending |
 

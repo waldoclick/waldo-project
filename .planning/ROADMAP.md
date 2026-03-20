@@ -31,7 +31,7 @@
 
 **Milestone goal:** Users can subscribe to a monthly PRO plan via Webpay Oneclick Mall — card registration, automatic monthly charges, and cancellation.
 
-- [ ] **Phase 102: Oneclick Service + Inscription Flow** - Backend Oneclick service and end-to-end card enrollment with frontend redirect and return handling
+- [x] **Phase 102: Oneclick Service + Inscription Flow** - Backend Oneclick service and end-to-end card enrollment with frontend redirect and return handling (completed 2026-03-20)
 - [ ] **Phase 103: Monthly Charging Cron** - subscription-payment content type, daily charge cron, 3-day retry logic, and idempotency guard
 - [ ] **Phase 104: Cancellation + Account Management** - Cancel endpoint, period-end expiry, card deletion from Transbank, and account UI
 
@@ -46,7 +46,7 @@
   2. After completing enrollment on Transbank, user is redirected back and their `pro_status` is set to `active`
   3. User's card type and masked card number are stored and visible on the confirmation page
   4. If the user cancels or the enrollment fails, they land on an error page with a retry option
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 Plans:
 - [ ] 102-01-PLAN.md — OneclickService backend + user schema extension + API routes
 - [ ] 102-02-PLAN.md — Frontend rewire (MemoPro.vue) + confirmation page (/pro/gracias)
@@ -78,6 +78,6 @@ Plans:
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 102. Oneclick Service + Inscription Flow | 1/2 | In Progress|  | - |
+| 102. Oneclick Service + Inscription Flow | 2/2 | Complete   | 2026-03-20 | - |
 | 103. Monthly Charging Cron | v1.46 | 0/? | Not started | - |
 | 104. Cancellation + Account Management | v1.46 | 0/? | Not started | - |
