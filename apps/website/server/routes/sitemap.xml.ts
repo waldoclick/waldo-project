@@ -49,8 +49,9 @@ function buildUrl(
 
 export default cachedEventHandler(
   async (event) => {
-    const apiUrl = process.env.API_URL || "http://localhost:1337";
-    const baseUrl = process.env.BASE_URL || "http://localhost:3000";
+    const config = useRuntimeConfig(event);
+    const apiUrl = config.public.apiUrl as string;
+    const baseUrl = config.public.baseUrl as string;
 
     const urls: string[] = [];
 
