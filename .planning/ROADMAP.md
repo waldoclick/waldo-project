@@ -32,7 +32,7 @@
 **Milestone goal:** Users can subscribe to a monthly PRO plan via Webpay Oneclick Mall — card registration, automatic monthly charges, and cancellation.
 
 - [x] **Phase 102: Oneclick Service + Inscription Flow** - Backend Oneclick service and end-to-end card enrollment with frontend redirect and return handling (completed 2026-03-20)
-- [ ] **Phase 103: Monthly Charging Cron** - subscription-payment content type, daily charge cron, 3-day retry logic, and idempotency guard
+- [x] **Phase 103: Monthly Charging Cron** - subscription-payment content type, daily charge cron, 3-day retry logic, and idempotency guard (completed 2026-03-20)
 - [ ] **Phase 104: Cancellation + Account Management** - Cancel endpoint, period-end expiry, card deletion from Transbank, and account UI
 
 ## Phase Details
@@ -61,10 +61,10 @@ Plans:
   3. A failed charge is retried on day 1 and day 3 before deactivating the subscription on day 4
   4. The charge amount comes from `PRO_MONTHLY_PRICE` env var — changing the var changes the charge with no code deploy
   5. Running the cron twice in the same day does not double-charge any user
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 Plans:
-- [ ] 103-01-PLAN.md — subscription-payment content type + OneclickService.authorizeCharge() + env vars
-- [ ] 103-02-PLAN.md — SubscriptionChargeService cron class + tests + cron registration
+- [x] 103-01-PLAN.md — subscription-payment content type + OneclickService.authorizeCharge() + env vars
+- [x] 103-02-PLAN.md — SubscriptionChargeService cron class + tests + cron registration
 
 ### Phase 104: Cancellation + Account Management
 **Goal**: PRO subscribers can cancel their subscription and see their subscription status at any time
@@ -82,5 +82,5 @@ Plans:
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 102. Oneclick Service + Inscription Flow | 2/2 | Complete   | 2026-03-20 | - |
-| 103. Monthly Charging Cron | 1/2 | In Progress|  | - |
+| 103. Monthly Charging Cron | 1/2 | 2/2 | Complete   | 2026-03-20 |
 | 104. Cancellation + Account Management | v1.46 | 0/? | Not started | - |
