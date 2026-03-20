@@ -1,0 +1,59 @@
+{
+  "kind": "collectionType",
+  "collectionName": "subscription_payments",
+  "info": {
+    "singularName": "subscription-payment",
+    "pluralName": "subscription-payments",
+    "displayName": "Subscription Payment"
+  },
+  "options": {
+    "draftAndPublish": false,
+    "timestamps": true
+  },
+  "attributes": {
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "amount": {
+      "type": "integer",
+      "required": true
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["approved", "failed", "deactivated"],
+      "default": "failed",
+      "required": true
+    },
+    "parent_buy_order": {
+      "type": "string"
+    },
+    "child_buy_order": {
+      "type": "string"
+    },
+    "authorization_code": {
+      "type": "string"
+    },
+    "response_code": {
+      "type": "integer"
+    },
+    "payment_response": {
+      "type": "json"
+    },
+    "period_start": {
+      "type": "date",
+      "required": true
+    },
+    "charged_at": {
+      "type": "datetime"
+    },
+    "charge_attempts": {
+      "type": "integer",
+      "default": 1
+    },
+    "next_charge_attempt": {
+      "type": "date"
+    }
+  }
+}
