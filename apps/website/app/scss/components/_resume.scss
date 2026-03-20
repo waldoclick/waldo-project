@@ -83,6 +83,10 @@
       @include screen-small {
         grid-template-columns: 1fr;
       }
+
+      &__full {
+        grid-column: 1 / -1;
+      }
     }
 
     &__box {
