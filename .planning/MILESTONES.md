@@ -1,5 +1,24 @@
 ## v1.41 Ad Preview Error Handling (Shipped: 2026-03-18)
 
+## v1.45 User Onboarding (Shipped: 2026-03-20)
+
+**Phases completed:** 3 phases (099–101), 5 plans
+**Timeline:** 2026-03-19 (same-day)
+**Git range:** `1d945515` → `8d79910d`
+**Files changed:** 48 files, +4,573 / −82
+
+**Key accomplishments:**
+- Dedicated onboarding layout (`layouts/onboarding.vue`) with minimal chrome — logo only, no header/footer/navigation; BEM SCSS for `onboarding--default` and `onboarding--thankyou` modifiers
+- `FormProfile` emit refactor — `defineEmits(["success"]) + defineProps({ onboardingMode })` enables parent-controlled post-submit navigation; backward-compatible (AccountEdit unchanged)
+- `OnboardingDefault` and `OnboardingThankyou` components with full Vitest coverage (12 tests); `/onboarding` preloads regions/communes via `useAsyncData`
+- Global client-only `onboarding-guard.global.ts` middleware — redirects incomplete-profile users to `/onboarding`, reverse-guards complete profiles away from `/onboarding`, SSR-safe via `import.meta.server` check; `meStore.reset()` cache invalidation after profile save prevents redirect loop
+- Google One Tap suppressed on `/onboarding` routes via `startsWith("/onboarding")` guard (INTEG-01); referer middleware excludes `/onboarding` from persisted referer (INTEG-02); INTEG-03 confirmed — guard already saves pre-redirect URL to `appStore.referer`
+- 24+ Vitest tests covering all onboarding components, middleware guards, and integration points; `nuxt-meta-client-stub` Vite plugin pattern established for `import.meta.client` in tests
+
+**Archive:** `.planning/milestones/v1.45-ROADMAP.md` | `.planning/milestones/v1.45-REQUIREMENTS.md`
+
+---
+
 ## v1.44 Google One Tap Sign-In (Shipped: 2026-03-19)
 
 **Phases completed:** 5 phases (094–098), 9 plans
