@@ -71,6 +71,14 @@ function acceptCookies() {
     },
   ]);
 
+  // Zoho SalesIQ cookie consent
+  if (window.$zoho?.salesiq?.privacy?.updateCookieConsent) {
+    window.$zoho.salesiq.privacy.updateCookieConsent([
+      "analytics",
+      "performance",
+    ]);
+  }
+
   $cookies.set(cookieName, true, {
     path: "/",
     expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)), // Expira en 1 año
