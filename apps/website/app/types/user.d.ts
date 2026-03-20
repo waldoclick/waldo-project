@@ -18,6 +18,10 @@ export interface User {
   address_number: string | null;
   birthdate: string | null;
   pro: boolean;
+  pro_status: "active" | "inactive" | "cancelled" | null;
+  pro_card_type: string | null;
+  pro_card_last4: string | null;
+  pro_expires_at: string | null;
   postal_code: string | null;
   commune: {
     id: number;
