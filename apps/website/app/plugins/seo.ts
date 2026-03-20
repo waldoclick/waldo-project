@@ -1,10 +1,10 @@
 // plugins/seo.ts
-import { defineNuxtPlugin } from "#app";
-
-const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
-const DEFAULT_IMAGE = `${BASE_URL}/images/share.jpg`;
+import { defineNuxtPlugin, useRuntimeConfig } from "#app";
 
 export default defineNuxtPlugin((nuxtApp) => {
+  const baseUrl = useRuntimeConfig().public.baseUrl as string;
+  const DEFAULT_IMAGE = `${baseUrl}/images/share.jpg`;
+
   // Define a global function for setting SEO meta tags
   nuxtApp.provide(
     "setSEO",
