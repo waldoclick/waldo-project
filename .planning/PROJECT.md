@@ -370,21 +370,10 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
            | Full page reload after One Tap login (`window.location.reload()`) | Ensures all SSR-hydrated components pick up auth state cleanly; simpler than reactive propagation across all layouts — v1.44 | ✓ Good |
            | Dynamic import for `createUserReservations` in auth-one-tap controller | Avoids circular dep between `src/api/` and `src/extensions/`; Jest mock correctly intercepts — v1.44 | ✓ Good |
 
-## Current Milestone: v1.45 User Onboarding
-
-**Goal:** Force newly registered users with incomplete profiles through a dedicated onboarding flow before they can use the platform.
-
-**Target features:**
-- `/onboarding` page with minimal layout (logo only, no header/footer) — locked until profile complete
-- `OnboardingDefault` component (BEM: `onboarding onboarding--default`) reusing `FormProfile`
-- `/onboarding/thankyou` page with same minimal layout — "Crear mi primer anuncio" + "Volver a Waldo" buttons
-- Middleware to redirect incomplete-profile users to onboarding and prevent escape
-- Pre-onboarding URL storage for "Volver a Waldo" return navigation
-
 ## Current State
 
-**Last shipped:** v1.44 (2026-03-19) — Google One Tap Sign-In: One Tap overlay on public pages, Strapi endpoint with Google JWT verification + user find-or-create, `disableAutoSelect()` logout fix, SSR-safe plugin
-**Also shipped recently:** v1.43 (2026-03-19) — Cross-App Session Replacement; v1.42 (2026-03-18) — Dashboard Session Persistence; v1.41 (2026-03-18) — Ad Preview Error Handling
+**Last shipped:** v1.45 (2026-03-20) — User Onboarding: dedicated onboarding flow for new users with incomplete profiles, global guard middleware, One Tap suppression on onboarding routes
+**Also shipped recently:** v1.44 (2026-03-19) — Google One Tap Sign-In; v1.43 (2026-03-19) — Cross-App Session Replacement; v1.42 (2026-03-18) — Dashboard Session Persistence
 
 **Email Authentication (since v1.37):** `overrideForgotPassword` fully replaces Strapi's built-in — sends branded `reset-password.mjml` routed to website or dashboard based on `context` field in POST body; `DASHBOARD_URL` env var drives dashboard reset URL. `FormRegister.vue` JWT guard redirects to `/registro/confirmar` (no `setToken` call without JWT); `/registro/confirmar` page with resend button + 60s countdown; `FormLogin.vue` (both apps) shows inline resend section for unconfirmed accounts. Idempotent migration seeder (`user-confirmed-migration.ts`) + cron-runner registration; production DB migrated to `confirmed=true`; Strapi Admin Panel `email_confirmation: ON`, `email_confirmation_redirection: https://waldo.click/login`; smoke-test passed (REGV-01, REGV-02, REGV-06).
 
@@ -403,6 +392,8 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 **Unified API Client (since v1.39):** `useApiClient` composable handles all HTTP methods — POST/PUT/DELETE inject `X-Recaptcha-Token`; GET passes through cleanly. All 12 website stores, 3 composables (`useStrapi`, `useOrderById`, `usePacksList`), and 5 pages/components migrated from `@nuxtjs/strapi` SDK; Strapi SDK now used for auth only. Calling convention: `client(url, { method: 'GET', params })` returns raw body (no `.data` wrapper). 9 Vitest tests. `apps/dashboard` migration deferred.
 
 **Google One Tap (since v1.44):** `google-one-tap.client.ts` Nuxt plugin initializes GIS on app startup (SSR-safe via `.client.ts` suffix); `useGoogleOneTap.ts` composable exposes `promptIfEligible()` with auth guard + route guard + GIS guard; `POST /api/auth/google-one-tap` Strapi endpoint verifies Google credential JWT via `google-auth-library`, finds or creates user by `google_sub` field (email fallback for existing accounts), grants 3 free ad slots to new users, bypasses 2-step verification, returns `{ jwt, user }`; `useLogout.ts` calls `disableAutoSelect()` before `strapiLogout()` to prevent post-logout re-prompt; full page reload after One Tap login ensures clean state. `google_sub` field added to User schema (private, unique, nullable). TDD: 8 Jest tests for service, 4 for controller; 3 Vitest tests for composable, plugin tests for GTAP-08.
+
+**User Onboarding (since v1.45):** `/onboarding` page with dedicated minimal-chrome layout (logo only); `OnboardingDefault.vue` wraps `FormProfile` with `onboardingMode` prop + `@success` emit; `OnboardingThankyou.vue` with "Crear mi primer anuncio" + "Volver a Waldo" buttons (returns via `appStore.referer`); `onboarding-guard.global.ts` client-only middleware redirects incomplete profiles to `/onboarding` (escape routes: `/login`, `/registro`, `/logout`), reverse-guards complete profiles away; `meStore.reset()` after profile save prevents stale-cache redirect loop; One Tap suppressed on `/onboarding` via `startsWith` guard; referer middleware excludes `/onboarding` from persisted referer; 24+ Vitest tests.
 
 **Session persistence (since v1.42–v1.43):** Root cause: `@nuxtjs/strapi` plugin `fetchUser()` SSR catch calls `setToken(null)` on any `/users/me` error; fix: removed dead `auth.populate` joins (`ad_reservations.ad`, `ad_featured_reservations.ad`). Cookie replacement: `useStrapiAuth().logout()` in `FormLogin.vue` line 149 replaces `existingCookie.value = null` to respect `COOKIE_DOMAIN` attribute. Both apps have lean `auth.populate`: `["role", "commune", "region", "business_region", "business_commune"]` only.
 
@@ -482,6 +473,17 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ La nueva cookie de manager persiste al refrescar en website — v1.43
 - ✓ No quedan cookies zombie de `waldo_jwt` con distintos `domain` scopes — v1.43
 
+## Validated Requirements (v1.45)
+
+- ✓ `/onboarding` and `/onboarding/thankyou` use dedicated onboarding layout with centered Waldo logo, no header/footer/navigation — v1.45
+- ✓ `OnboardingDefault` component uses BEM classes `onboarding onboarding--default`; `OnboardingThankyou` uses `onboarding onboarding--thankyou` — v1.45
+- ✓ `/onboarding` page reuses `FormProfile` for profile completion; emit refactor is backward-compatible — v1.45
+- ✓ Authenticated users with incomplete profiles are redirected to `/onboarding` on any non-exempt page; complete-profile users are redirected away from `/onboarding` — v1.45
+- ✓ Onboarding guard is client-only (SSR-safe); auth pages (`/login`, `/registro`, `/logout`) exempt — v1.45
+- ✓ `/onboarding/thankyou` shows thank-you message with "Crear mi primer anuncio" → `/anunciar` and "Volver a Waldo" → `appStore.referer` — v1.45
+- ✓ Google One Tap suppressed on `/onboarding` routes; `/onboarding` excluded from referer history; guard saves pre-redirect URL — v1.45
+- ✓ 24+ Vitest tests covering onboarding components, middleware, and integration — v1.45
+
 ## Validated Requirements (v1.44)
 
 - ✓ CSP `connect-src` + `frame-src` include `https://accounts.google.com/gsi/`; `GOOGLE_CLIENT_ID` in Strapi `.env` and `.env.example` — v1.44
@@ -497,4 +499,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ Google redirect button (`/login/google`) coexists with One Tap without conflict — v1.44
 
 ---
-*Last updated: 2026-03-19 after v1.45 milestone started*
+*Last updated: 2026-03-20 after v1.45 milestone*
