@@ -31,7 +31,8 @@ export default defineNuxtPlugin(() => {
 
   // Route guard — skip on auth pages where One Tap should not appear
   const route = useRoute();
-  if (route.path.startsWith("/login/")) return;
+  if (route.path.startsWith("/login/") || route.path.startsWith("/onboarding"))
+    return;
 
   // Instantiate composables at plugin root level (AGENTS.md: setup-level instantiation required)
   const client = useApiClient();
