@@ -409,19 +409,6 @@ class PaymentController {
   });
 
   proCreate = this.controllerWrapper(async (ctx: Context) => {
-    const proService = new ProService();
-    const result = await proService.createSubscription(ctx);
-    ctx.body = { data: result };
-  });
-
-  proResponse = this.controllerWrapper(async (ctx: Context) => {
-    const { data } = ctx.request.body;
-    const userId = ctx.state.user.id;
-
-    ctx.body = { data };
-  });
-
-  proInscriptionStart = this.controllerWrapper(async (ctx: Context) => {
     const user = await getCurrentUser(ctx);
 
     if (!user.documentId) {
@@ -430,7 +417,7 @@ class PaymentController {
     }
 
     const username = buildOneclickUsername(user.documentId);
-    const responseUrl = `${process.env.FRONTEND_URL}/payments/pro-inscription/finish`;
+    const responseUrl = `${process.env.APP_URL}/api/payments/pro-response`;
 
     const oneclickService = new OneclickService();
     const result = await oneclickService.startInscription(
@@ -445,7 +432,7 @@ class PaymentController {
     }
 
     // Store the inscription token on the user record so we can resolve the user
-    // in proInscriptionFinish when Transbank redirects back (no JWT present on redirect)
+    // in proResponse when Transbank redirects back (no JWT present on redirect)
     await strapi.entityService.update(
       "plugin::users-permissions.user",
       user.id,
@@ -461,13 +448,13 @@ class PaymentController {
     ctx.body = { data: { token: result.token, urlWebpay: result.urlWebpay } };
   });
 
-  proInscriptionFinish = this.controllerWrapper(async (ctx: Context) => {
+  proResponse = this.controllerWrapper(async (ctx: Context) => {
     // Transbank redirects here via GET after card enrollment
     const { TBK_TOKEN } = ctx.query;
 
     // Cancelled case: user cancelled at Transbank — no TBK_TOKEN present
     if (!TBK_TOKEN) {
-      ctx.redirect(`${process.env.FRONTEND_URL}/pagar/error?reason=cancelled`);
+      ctx.redirect(`${process.env.FRONTEND_URL}/pro/error?reason=cancelled`);
       return;
     }
 
@@ -476,18 +463,18 @@ class PaymentController {
 
     // Rejected case: Transbank rejected the inscription
     if (!result.success || !result.tbkUser) {
-      ctx.redirect(`${process.env.FRONTEND_URL}/pagar/error?reason=rejected`);
+      ctx.redirect(`${process.env.FRONTEND_URL}/pro/error?reason=rejected`);
       return;
     }
 
-    // Resolve the user by the inscription token stored during proInscriptionStart.
+    // Resolve the user by the inscription token stored during proCreate.
     // No JWT is available here — Transbank redirects without an Authorization header.
     const user = await strapi.db
       .query("plugin::users-permissions.user")
       .findOne({ where: { pro_inscription_token: String(TBK_TOKEN) } });
 
     if (!user) {
-      ctx.redirect(`${process.env.FRONTEND_URL}/pagar/error?reason=rejected`);
+      ctx.redirect(`${process.env.FRONTEND_URL}/pro/error?reason=rejected`);
       return;
     }
 
@@ -511,7 +498,7 @@ class PaymentController {
       }
     );
 
-    ctx.redirect(`${process.env.FRONTEND_URL}/pro/gracias?inscribed=true`);
+    ctx.redirect(`${process.env.FRONTEND_URL}/pro/gracias`);
   });
 
   thankyou = this.controllerWrapper(async (ctx: Context) => {

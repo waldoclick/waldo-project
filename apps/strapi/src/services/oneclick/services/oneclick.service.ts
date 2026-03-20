@@ -20,7 +20,7 @@ export class OneclickService {
       return {
         success: true,
         token: response.token,
-        urlWebpay: response.urlWebpay,
+        urlWebpay: response.url_webpay,
       };
     } catch (error) {
       logger.error("OneclickService.startInscription failed", { error });
@@ -38,7 +38,7 @@ export class OneclickService {
       const response = await inscription.finish(token);
 
       // Log raw SDK response in integration to verify field names (research open question 1)
-      if (process.env.WEBPAY_ENVIRONMENT !== "production") {
+      if (process.env.ONECLICK_ENVIRONMENT !== "production") {
         logger.info("OneclickService.finishInscription raw SDK response", {
           response,
         });
@@ -46,9 +46,9 @@ export class OneclickService {
 
       return {
         success: true,
-        tbkUser: response.tbkUser,
-        cardType: response.cardType,
-        last4CardDigits: response.last4CardDigits,
+        tbkUser: response.tbk_user,
+        cardType: response.card_type,
+        last4CardDigits: response.card_number,
       };
     } catch (error) {
       logger.error("OneclickService.finishInscription failed", { error });

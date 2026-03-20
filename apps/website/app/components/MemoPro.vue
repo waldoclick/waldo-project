@@ -39,7 +39,7 @@ const handleProSubscription = async () => {
   }
 
   try {
-    const response = await apiClient("payments/pro-inscription/start", {
+    const response = await apiClient("payments/pro", {
       method: "POST",
       body: { data: {} },
     });

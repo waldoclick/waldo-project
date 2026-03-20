@@ -44,22 +44,6 @@ const routes: RouteConfig[] = [
     },
   },
   {
-    method: "POST",
-    path: "/payments/pro",
-    handler: "payment.proCreate",
-    config: {
-      policies: [],
-    },
-  },
-  {
-    method: "GET",
-    path: "/payments/pro-response",
-    handler: "payment.proResponse",
-    config: {
-      policies: [],
-    },
-  },
-  {
     method: "GET",
     path: "/payments/thankyou/:documentId",
     handler: "payment.thankyou",
@@ -69,8 +53,8 @@ const routes: RouteConfig[] = [
   },
   {
     method: "POST",
-    path: "/payments/pro-inscription/start",
-    handler: "payment.proInscriptionStart",
+    path: "/payments/pro",
+    handler: "payment.proCreate",
     config: {
       policies: [],
     },
@@ -79,8 +63,8 @@ const routes: RouteConfig[] = [
     // GET is required — Transbank redirects via GET after card enrollment.
     // No auth policy: Transbank redirects carry no Authorization header.
     method: "GET",
-    path: "/payments/pro-inscription/finish",
-    handler: "payment.proInscriptionFinish",
+    path: "/payments/pro-response",
+    handler: "payment.proResponse",
     config: {
       policies: [],
     },
