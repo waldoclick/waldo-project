@@ -50,6 +50,12 @@ function buildUrl(
 export default cachedEventHandler(
   async (event) => {
     const config = useRuntimeConfig(event);
+
+    if (config.public.blockSearchEngines) {
+      setHeader(event, "Content-Type", "text/plain; charset=utf-8");
+      return "Sitemap blocked in this environment.";
+    }
+
     const apiUrl = config.public.apiUrl as string;
     const baseUrl = config.public.baseUrl as string;
 
