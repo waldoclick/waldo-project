@@ -57,29 +57,29 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INSC-01 | — | Pending |
-| INSC-02 | — | Pending |
-| INSC-03 | — | Pending |
-| INSC-04 | — | Pending |
-| CHRG-01 | — | Pending |
-| CHRG-02 | — | Pending |
-| CHRG-03 | — | Pending |
-| CHRG-04 | — | Pending |
-| CHRG-05 | — | Pending |
-| CANC-01 | — | Pending |
-| CANC-02 | — | Pending |
-| CANC-03 | — | Pending |
-| CANC-04 | — | Pending |
-| FRNT-01 | — | Pending |
-| FRNT-02 | — | Pending |
-| FRNT-03 | — | Pending |
-| FRNT-04 | — | Pending |
+| INSC-01 | Phase 102 | Pending |
+| INSC-02 | Phase 102 | Pending |
+| INSC-03 | Phase 102 | Pending |
+| INSC-04 | Phase 102 | Pending |
+| CHRG-01 | Phase 103 | Pending |
+| CHRG-02 | Phase 103 | Pending |
+| CHRG-03 | Phase 103 | Pending |
+| CHRG-04 | Phase 103 | Pending |
+| CHRG-05 | Phase 103 | Pending |
+| CANC-01 | Phase 104 | Pending |
+| CANC-02 | Phase 104 | Pending |
+| CANC-03 | Phase 104 | Pending |
+| CANC-04 | Phase 104 | Pending |
+| FRNT-01 | Phase 102 | Pending |
+| FRNT-02 | Phase 102 | Pending |
+| FRNT-03 | Phase 104 | Pending |
+| FRNT-04 | Phase 104 | Pending |
 
 **Coverage:**
 - v1.46 requirements: 17 total
-- Mapped to phases: 0
-- Unmapped: 17
+- Mapped to phases: 17
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-20*
-*Last updated: 2026-03-20 after initial definition*
+*Last updated: 2026-03-20 — traceability completed during roadmap creation*

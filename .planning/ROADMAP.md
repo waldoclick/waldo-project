@@ -23,7 +23,58 @@
 - ✅ **v1.38 GA4 Analytics Audit & Implementation** — Phases 083–085 (shipped 2026-03-14). See `.planning/milestones/v1.38-ROADMAP.md`
 - ✅ **v1.39 Unified API Client** — Phases 089–090 (shipped 2026-03-15). See `.planning/milestones/v1.39-ROADMAP.md`
 - ✅ **v1.40 Shared Authentication Session** — Phases 091–092 (shipped 2026-03-16). See `.planning/milestones/v1.40-ROADMAP.md`
+- 🚧 **v1.46 PRO Subscriptions (Webpay Oneclick)** — Phases 102–104 (in progress)
 
 ## Phases
 
-(No active phases — all milestones shipped. Use `/gsd:new-milestone` to start next.)
+### 🚧 v1.46 PRO Subscriptions (Webpay Oneclick)
+
+**Milestone goal:** Users can subscribe to a monthly PRO plan via Webpay Oneclick Mall — card registration, automatic monthly charges, and cancellation.
+
+- [ ] **Phase 102: Oneclick Service + Inscription Flow** - Backend Oneclick service and end-to-end card enrollment with frontend redirect and return handling
+- [ ] **Phase 103: Monthly Charging Cron** - subscription-payment content type, daily charge cron, 3-day retry logic, and idempotency guard
+- [ ] **Phase 104: Cancellation + Account Management** - Cancel endpoint, period-end expiry, card deletion from Transbank, and account UI
+
+## Phase Details
+
+### Phase 102: Oneclick Service + Inscription Flow
+**Goal**: Users can enroll their card in Webpay Oneclick Mall and get confirmed as PRO subscribers
+**Depends on**: Nothing (first phase of milestone)
+**Requirements**: INSC-01, INSC-02, INSC-03, INSC-04, FRNT-01, FRNT-02
+**Success Criteria** (what must be TRUE):
+  1. User clicks "Hazte PRO" and is redirected to the Transbank card enrollment page
+  2. After completing enrollment on Transbank, user is redirected back and their `pro_status` is set to `active`
+  3. User's card type and masked card number are stored and visible on the confirmation page
+  4. If the user cancels or the enrollment fails, they land on an error page with a retry option
+**Plans**: TBD
+
+### Phase 103: Monthly Charging Cron
+**Goal**: PRO subscribers are charged automatically each month without any manual action
+**Depends on**: Phase 102
+**Requirements**: CHRG-01, CHRG-02, CHRG-03, CHRG-04, CHRG-05
+**Success Criteria** (what must be TRUE):
+  1. A daily cron job runs at 5 AM and charges all active PRO users whose billing period has expired
+  2. Each successful charge creates a `subscription-payment` record and extends `pro_expires_at` by 30 days
+  3. A failed charge is retried on day 1 and day 3 before deactivating the subscription on day 4
+  4. The charge amount comes from `PRO_MONTHLY_PRICE` env var — changing the var changes the charge with no code deploy
+  5. Running the cron twice in the same day does not double-charge any user
+**Plans**: TBD
+
+### Phase 104: Cancellation + Account Management
+**Goal**: PRO subscribers can cancel their subscription and see their subscription status at any time
+**Depends on**: Phase 102
+**Requirements**: CANC-01, CANC-02, CANC-03, CANC-04, FRNT-03, FRNT-04
+**Success Criteria** (what must be TRUE):
+  1. An active subscriber can cancel from their account page with a Swal confirmation dialog
+  2. After cancellation, PRO features remain active until `pro_expires_at` (no immediate cutoff)
+  3. When the billing period expires after cancellation, `pro_status` flips to `inactive` and PRO features are disabled
+  4. The account page shows subscription status, masked card info, and next charge date for active subscribers
+**Plans**: TBD
+
+## Progress
+
+| Phase | Milestone | Plans Complete | Status | Completed |
+|-------|-----------|----------------|--------|-----------|
+| 102. Oneclick Service + Inscription Flow | v1.46 | 0/? | Not started | - |
+| 103. Monthly Charging Cron | v1.46 | 0/? | Not started | - |
+| 104. Cancellation + Account Management | v1.46 | 0/? | Not started | - |
