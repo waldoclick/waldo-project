@@ -4,7 +4,11 @@ import freeAdService from "../services/free-ad.service";
 import checkoutService from "../services/checkout.service";
 import OrderUtils from "../utils/order.utils";
 import { ProService } from "../services/pro.service";
-import { documentDetails } from "../utils/user.utils";
+import { documentDetails, getCurrentUser } from "../utils/user.utils";
+import {
+  OneclickService,
+  buildOneclickUsername,
+} from "../../../services/oneclick";
 import generalUtils from "../utils/general.utils";
 import logger from "../../../utils/logtail";
 import { IWebpayCommitData } from "../../../services/transbank/types";
@@ -415,6 +419,99 @@ class PaymentController {
     const userId = ctx.state.user.id;
 
     ctx.body = { data };
+  });
+
+  proInscriptionStart = this.controllerWrapper(async (ctx: Context) => {
+    const user = await getCurrentUser(ctx);
+
+    if (!user.documentId) {
+      ctx.throw(500, "User documentId is missing");
+      return;
+    }
+
+    const username = buildOneclickUsername(user.documentId);
+    const responseUrl = `${process.env.FRONTEND_URL}/payments/pro-inscription/finish`;
+
+    const oneclickService = new OneclickService();
+    const result = await oneclickService.startInscription(
+      username,
+      String(user.email),
+      responseUrl
+    );
+
+    if (!result.success) {
+      ctx.throw(500, "Error starting inscription");
+      return;
+    }
+
+    // Store the inscription token on the user record so we can resolve the user
+    // in proInscriptionFinish when Transbank redirects back (no JWT present on redirect)
+    await strapi.entityService.update(
+      "plugin::users-permissions.user",
+      user.id,
+      {
+        data: {
+          pro_inscription_token: String(result.token),
+        } as unknown as Parameters<
+          typeof strapi.entityService.update
+        >[2]["data"],
+      }
+    );
+
+    ctx.body = { data: { token: result.token, urlWebpay: result.urlWebpay } };
+  });
+
+  proInscriptionFinish = this.controllerWrapper(async (ctx: Context) => {
+    // Transbank redirects here via GET after card enrollment
+    const { TBK_TOKEN } = ctx.query;
+
+    // Cancelled case: user cancelled at Transbank — no TBK_TOKEN present
+    if (!TBK_TOKEN) {
+      ctx.redirect(`${process.env.FRONTEND_URL}/pagar/error?reason=cancelled`);
+      return;
+    }
+
+    const oneclickService = new OneclickService();
+    const result = await oneclickService.finishInscription(String(TBK_TOKEN));
+
+    // Rejected case: Transbank rejected the inscription
+    if (!result.success || !result.tbkUser) {
+      ctx.redirect(`${process.env.FRONTEND_URL}/pagar/error?reason=rejected`);
+      return;
+    }
+
+    // Resolve the user by the inscription token stored during proInscriptionStart.
+    // No JWT is available here — Transbank redirects without an Authorization header.
+    const user = await strapi.db
+      .query("plugin::users-permissions.user")
+      .findOne({ where: { pro_inscription_token: String(TBK_TOKEN) } });
+
+    if (!user) {
+      ctx.redirect(`${process.env.FRONTEND_URL}/pagar/error?reason=rejected`);
+      return;
+    }
+
+    // Success: update user record with subscription data and clear the inscription token
+    const proExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    await strapi.entityService.update(
+      "plugin::users-permissions.user",
+      user.id,
+      {
+        data: {
+          pro: true,
+          pro_status: "active",
+          tbk_user: result.tbkUser,
+          pro_card_type: result.cardType,
+          pro_card_last4: result.last4CardDigits,
+          pro_expires_at: proExpiresAt,
+          pro_inscription_token: null,
+        } as unknown as Parameters<
+          typeof strapi.entityService.update
+        >[2]["data"],
+      }
+    );
+
+    ctx.redirect(`${process.env.FRONTEND_URL}/pro/gracias?inscribed=true`);
   });
 
   thankyou = this.controllerWrapper(async (ctx: Context) => {
