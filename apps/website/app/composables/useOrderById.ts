@@ -7,13 +7,24 @@ import { useApiClient } from "#imports";
 export async function useOrderById(documentId: string) {
   const client = useApiClient();
   if (!documentId) {
-    throw new Error("Missing documentId");
+    throw createError({ statusCode: 404, message: "Missing documentId" });
   }
-  const response = (await client(`payments/thankyou/${documentId}`, {
-    method: "GET",
-  })) as { data: unknown };
-  if (!response.data) {
-    throw new Error("Order not found");
+  try {
+    const response = (await client(`payments/thankyou/${documentId}`, {
+      method: "GET",
+    })) as { data: unknown };
+    if (!response.data) {
+      throw createError({ statusCode: 404, message: "Orden no encontrada" });
+    }
+    return response.data;
+  } catch (error: unknown) {
+    const statusCode =
+      (error as { statusCode?: number }).statusCode ||
+      (error as { status?: number }).status ||
+      404;
+    throw createError({
+      statusCode,
+      message: "Orden no encontrada",
+    });
   }
-  return response.data;
 }
