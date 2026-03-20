@@ -13,7 +13,8 @@ export default defineNuxtRouteMiddleware((to, from) => {
     import.meta.client &&
     !excludedRefererRoutes.has(from.fullPath) &&
     !from.fullPath.startsWith("/cuenta") &&
-    !from.fullPath.startsWith("/login")
+    !from.fullPath.startsWith("/login") &&
+    !from.fullPath.startsWith("/onboarding")
   ) {
     const appStore = useAppStore();
     appStore.setReferer(from.fullPath);
