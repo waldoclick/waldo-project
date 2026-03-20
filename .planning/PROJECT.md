@@ -370,6 +370,19 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
            | Full page reload after One Tap login (`window.location.reload()`) | Ensures all SSR-hydrated components pick up auth state cleanly; simpler than reactive propagation across all layouts — v1.44 | ✓ Good |
            | Dynamic import for `createUserReservations` in auth-one-tap controller | Avoids circular dep between `src/api/` and `src/extensions/`; Jest mock correctly intercepts — v1.44 | ✓ Good |
 
+## Current Milestone: v1.46 PRO Subscriptions (Webpay Oneclick)
+
+**Goal:** Users can subscribe to a monthly PRO plan via Webpay Oneclick Mall — card registration, automatic monthly charges, and cancellation.
+
+**Target features:**
+- Webpay Oneclick Mall service in Strapi (inscription, authorization, deletion)
+- `subscription-payment` content type for charge history and audit
+- Monthly cron job for automatic charges with 3-day retry logic
+- Frontend "Hazte PRO" flow: Swal → redirect to Transbank → return handling
+- Cancellation with period-end expiry (`pro_status: cancelled_pending`)
+- User schema additions: `oneclick_tbk_user`, `oneclick_card_type`, `oneclick_card_number`, `pro_status`, `pro_expires_at`
+- Price from `PRO_MONTHLY_PRICE` env var (currently $1.000 CLP)
+
 ## Current State
 
 **Last shipped:** v1.45 (2026-03-20) — User Onboarding: dedicated onboarding flow for new users with incomplete profiles, global guard middleware, One Tap suppression on onboarding routes
