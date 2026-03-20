@@ -61,7 +61,10 @@ Plans:
   3. A failed charge is retried on day 1 and day 3 before deactivating the subscription on day 4
   4. The charge amount comes from `PRO_MONTHLY_PRICE` env var — changing the var changes the charge with no code deploy
   5. Running the cron twice in the same day does not double-charge any user
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 103-01-PLAN.md — subscription-payment content type + OneclickService.authorizeCharge() + env vars
+- [ ] 103-02-PLAN.md — SubscriptionChargeService cron class + tests + cron registration
 
 ### Phase 104: Cancellation + Account Management
 **Goal**: PRO subscribers can cancel their subscription and see their subscription status at any time
@@ -79,5 +82,5 @@ Plans:
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 102. Oneclick Service + Inscription Flow | 2/2 | Complete   | 2026-03-20 | - |
-| 103. Monthly Charging Cron | v1.46 | 0/? | Not started | - |
+| 103. Monthly Charging Cron | v1.46 | 0/2 | Not started | - |
 | 104. Cancellation + Account Management | v1.46 | 0/? | Not started | - |
