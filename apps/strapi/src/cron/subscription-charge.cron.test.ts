@@ -2,11 +2,9 @@ import { SubscriptionChargeService } from "./subscription-charge.cron";
 
 // Mock logger to prevent actual log output during tests
 jest.mock("../utils/logtail", () => ({
-  default: {
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
-  },
+  info: jest.fn(),
+  warn: jest.fn(),
+  error: jest.fn(),
 }));
 
 // Mock OneclickService
