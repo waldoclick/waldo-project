@@ -32,7 +32,7 @@
 
 - [x] **Phase 099: Onboarding UI** - Layout, pages, and components for the onboarding flow (completed 2026-03-19)
 - [x] **Phase 100: Guard** - Middleware that intercepts navigation and enforces profile completion (completed 2026-03-19)
-- [ ] **Phase 101: Integration** - Wire One Tap suppression, referer exclusion, and pre-redirect URL storage
+- [x] **Phase 101: Integration** - Wire One Tap suppression, referer exclusion, and pre-redirect URL storage (completed 2026-03-20)
 
 ## Phase Details
 
@@ -72,7 +72,7 @@ Plans:
   1. Google One Tap overlay does not appear on `/onboarding` or `/onboarding/thankyou`
   2. "Volver a Waldo" on the thank-you page returns the user to the page they were visiting before being redirected to onboarding
   3. Navigating through `/onboarding` pages does not pollute `appStore.referer` with onboarding URLs
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 Plans:
 - [ ] 101-01-PLAN.md — One Tap suppression, referer exclusion, and INTEG-03 verification
 
@@ -82,4 +82,4 @@ Plans:
 |-------|-----------|----------------|--------|-----------|
 | 099. Onboarding UI | 3/3 | Complete    | 2026-03-19 | - |
 | 100. Guard | 1/1 | Complete    | 2026-03-19 | - |
-| 101. Integration | v1.45 | 0/1 | Not started | - |
+| 101. Integration | 1/1 | Complete   | 2026-03-20 | - |
