@@ -13,6 +13,14 @@ export interface IOneclickFinishResponse {
   error?: unknown;
 }
 
+export interface IOneclickAuthorizeResponse {
+  success: boolean;
+  authorizationCode?: string;
+  responseCode?: number;
+  rawResponse?: unknown;
+  error?: unknown;
+}
+
 /**
  * Builds the Oneclick username from a Strapi documentId.
  * Pattern: "user-{documentId}" — max 29 chars (5 + 24), well within the 40-char SDK limit.
