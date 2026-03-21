@@ -62,12 +62,13 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useUser } from "@/composables/useUser";
+import type { User } from "@/types/user";
 
 const props = defineProps<{ modelValue: boolean }>();
 const emit = defineEmits<{ (e: "update:modelValue", value: boolean): void }>();
 
-const user = useStrapiUser();
-const { canRequestInvoice } = useUser(user.value);
+const user = useStrapiUser<User>();
+const { canRequestInvoice } = useUser();
 const isInvoice = ref(props.modelValue);
 
 const updateInvoice = () => {
