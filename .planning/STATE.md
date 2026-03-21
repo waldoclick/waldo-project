@@ -4,7 +4,7 @@ milestone: v1.46
 milestone_name: PRO Subscriptions (Webpay Oneclick)
 status: executing
 stopped_at: Completed 103.1-01-PLAN.md
-last_updated: "2026-03-21T19:03:06.359Z"
+last_updated: "2026-03-21T19:06:26.429Z"
 last_activity: 2026-03-21
 progress:
   total_phases: 4
@@ -25,7 +25,7 @@ See: .planning/PROJECT.md (updated 2026-03-20)
 
 ## Position
 
-Phase: 104 of 104 (cancellation + account management)
+Phase: 104 of 104 (cancellation account management)
 Plan: Not started
 Status: In progress
 Last activity: 2026-03-21

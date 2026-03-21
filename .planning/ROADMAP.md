@@ -103,5 +103,5 @@ Plans:
 |-------|-----------|----------------|--------|-----------|
 | 102. Oneclick Service + Inscription Flow | 2/2 | Complete   | 2026-03-20 | - |
 | 103. Monthly Charging Cron | 1/2 | 2/2 | Complete    | 2026-03-20 |
-| 103.1. Remove pro boolean | v1.46 | 2/2 | Complete   | 2026-03-21 |
+| 103.1. Remove pro boolean | v1.46 | 2/2 | Complete    | 2026-03-21 |
 | 104. Cancellation + Account Management | v1.46 | 0/? | Not started | - |
