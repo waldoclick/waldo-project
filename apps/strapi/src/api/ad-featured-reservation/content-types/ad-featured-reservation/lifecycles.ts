@@ -19,7 +19,7 @@ async function recalculateAdSortPriority(adId: number): Promise<void> {
   const priority = computeSortPriority(
     fullAd as {
       ad_featured_reservation?: unknown;
-      user?: { pro?: boolean } | null;
+      user?: { pro_status?: string } | null;
     }
   );
 
