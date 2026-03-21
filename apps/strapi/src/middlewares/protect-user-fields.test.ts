@@ -2,7 +2,6 @@
 
 import protectUserFields from "./protect-user-fields";
 
-const PLAN_START_EPOCH = Date.now();
 
 function createMiddleware() {
   return protectUserFields({}, { strapi: {} as any });
