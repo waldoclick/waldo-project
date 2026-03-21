@@ -57,8 +57,8 @@ Requirements for PRO Subscriptions (Webpay Oneclick) milestone. Each maps to roa
 - [x] **CHECKOUT-07**: `/pro/pagar/gracias` page shows payment receipt fetched by `order.documentId` from URL
 - [x] **CHECKOUT-08**: All PRO checkout components use `--pro` BEM modifiers on existing SCSS (no new SCSS files)
 - [x] **CHECKOUT-09**: PRO checkout components do not reference `adStore` or ad-specific logic
-- [ ] **CHECKOUT-10**: `MemoPro.vue` navigates to `/pro/pagar` instead of calling `POST /payments/pro` directly
-- [ ] **CHECKOUT-11**: Old `/pro/gracias` page remains functional for backward compatibility
+- [x] **CHECKOUT-10**: `MemoPro.vue` navigates to `/pro/pagar` instead of calling `POST /payments/pro` directly
+- [x] **CHECKOUT-11**: Old `/pro/gracias` page remains functional for backward compatibility
 
 ## Future Requirements
 

@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: PRO Subscriptions (Webpay Oneclick)
 status: executing
-stopped_at: Completed 105-01-PLAN.md
-last_updated: "2026-03-21T21:50:52.035Z"
+stopped_at: Completed 105-03-PLAN.md
+last_updated: "2026-03-21T21:54:28.359Z"
 last_activity: 2026-03-21
 progress:
   total_phases: 5
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 11
-  completed_plans: 10
-  percent: 82
+  completed_plans: 11
+  percent: 100
 ---
 
 # Session State
@@ -31,7 +31,7 @@ Status: In progress
 Last activity: 2026-03-21
 
 ```
-Progress: [████████░░] 82%
+Progress: [██████████] 100%
 ```
 
 ## Accumulated Context
@@ -66,6 +66,8 @@ Progress: [████████░░] 82%
 - [105-01] Order+Facto creation is non-fatal in proResponse and chargeUser — subscription/renewal continues on document failure
 - [105-01] Cron uses isInvoice=false (boleta) by default — invoice preference storage for recurring charges is deferred
 - [105-01] proResponse redirects to /pro/pagar/gracias?order={documentId}; fallback to /pro/gracias if order creation fails
+- [105-03] MemoPro Swal+API replaced with navigateTo('/pro/pagar') — checkout page owns the full subscription flow
+- [105-03] PRO checkout pages exclude ad analytics (adStore, useAdAnalytics) — PRO is a subscription, not an ad purchase
 
 ### Quick Tasks Completed
 
@@ -85,6 +87,6 @@ Progress: [████████░░] 82%
 
 ## Session Continuity
 
-Last session: 2026-03-21T21:50:52.033Z
-Stopped at: Completed 105-01-PLAN.md
+Last session: 2026-03-21T21:54:28.357Z
+Stopped at: Completed 105-03-PLAN.md
 Resume file: None
