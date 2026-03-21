@@ -112,10 +112,10 @@ Plans:
   4. `/pro/pagar/gracias` shows payment receipt fetched by order documentId
   5. Monthly charge cron also creates order + Facto boleta per successful charge
   6. Old `/pro/gracias` page remains functional for backward compatibility
-**Plans:** 1/3 plans executed
+**Plans:** 2/3 plans executed
 
 Plans:
-- [ ] 105-01-PLAN.md — Backend: user schema (pro_pending_invoice) + proCreate/proResponse order+Facto + cron order+Facto
+- [x] 105-01-PLAN.md — Backend: user schema (pro_pending_invoice) + proCreate/proResponse order+Facto + cron order+Facto
 - [x] 105-02-PLAN.md — Frontend components: rename ResumePro, create PRO checkout components, SCSS modifiers
 - [ ] 105-03-PLAN.md — Frontend pages + wiring: /pro/pagar, /pro/pagar/gracias, MemoPro navigation change
 
@@ -127,4 +127,4 @@ Plans:
 | 103. Monthly Charging Cron | 1/2 | 2/2 | Complete    | 2026-03-20 |
 | 103.1. Remove pro boolean | v1.46 | 2/2 | Complete    | 2026-03-21 |
 | 104. Cancellation + Account Management | 2/2 | Complete   | 2026-03-21 |  |
-| 105. PRO subscription checkout page | v1.46 | 1/3 | In Progress|  |
+| 105. PRO subscription checkout page | v1.46 | 2/3 | In Progress|  |
