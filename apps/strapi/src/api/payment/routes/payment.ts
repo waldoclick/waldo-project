@@ -69,6 +69,14 @@ const routes: RouteConfig[] = [
       policies: [],
     },
   },
+  {
+    method: "POST",
+    path: "/payments/pro-cancel",
+    handler: "payment.proCancel",
+    config: {
+      policies: [],
+    },
+  },
 ];
 
 export default {

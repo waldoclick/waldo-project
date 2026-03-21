@@ -4,6 +4,7 @@ import freeAdService from "../services/free-ad.service";
 import checkoutService from "../services/checkout.service";
 import OrderUtils from "../utils/order.utils";
 import { ProService } from "../services/pro.service";
+import { ProCancellationService } from "../services/pro-cancellation.service";
 import { documentDetails, getCurrentUser } from "../utils/user.utils";
 import {
   OneclickService,
@@ -528,6 +529,38 @@ class PaymentController {
     }
 
     ctx.redirect(`${process.env.FRONTEND_URL}/pro/gracias`);
+  });
+
+  proCancel = this.controllerWrapper(async (ctx: Context) => {
+    const user = await getCurrentUser(ctx);
+
+    if (!user.documentId) {
+      ctx.throw(500, "User documentId is missing");
+      return;
+    }
+
+    if ((user as { pro_status?: string }).pro_status !== "active") {
+      ctx.status = 400;
+      ctx.body = {
+        success: false,
+        message: "User does not have an active PRO subscription",
+      };
+      return;
+    }
+
+    const cancellationService = new ProCancellationService();
+    const result = await cancellationService.cancelSubscription(
+      user.id as number,
+      user.documentId
+    );
+
+    if (!result.success) {
+      ctx.status = 400;
+      ctx.body = { success: false, message: result.error };
+      return;
+    }
+
+    ctx.body = { data: { success: true } };
   });
 
   thankyou = this.controllerWrapper(async (ctx: Context) => {

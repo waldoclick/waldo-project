@@ -10,6 +10,7 @@ import {
   IOneclickStartResponse,
   IOneclickFinishResponse,
   IOneclickAuthorizeResponse,
+  IOneclickDeleteResponse,
   buildOneclickUsername,
 } from "../types/oneclick.types";
 
@@ -60,6 +61,24 @@ export class OneclickService {
       };
     } catch (error) {
       logger.error("OneclickService.finishInscription failed", { error });
+      return { success: false, error };
+    }
+  }
+
+  /**
+   * Deletes the Oneclick Mall card inscription from Transbank.
+   * Calls SDK inscription.delete() and returns a structured response.
+   * Should be called during PRO subscription cancellation.
+   */
+  async deleteInscription(
+    tbkUser: string,
+    userDocumentId: string
+  ): Promise<IOneclickDeleteResponse> {
+    try {
+      await inscription.delete(tbkUser, buildOneclickUsername(userDocumentId));
+      return { success: true };
+    } catch (error) {
+      logger.error("OneclickService.deleteInscription failed", { error });
       return { success: false, error };
     }
   }
