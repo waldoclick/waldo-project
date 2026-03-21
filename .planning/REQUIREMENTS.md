@@ -22,6 +22,16 @@ Requirements for PRO Subscriptions (Webpay Oneclick) milestone. Each maps to roa
 - [x] **CHRG-04**: Charge amount is read from `PRO_MONTHLY_PRICE` env var (not hardcoded)
 - [x] **CHRG-05**: Idempotency guard prevents double-charging for the same billing period
 
+### PRO Single Source of Truth (Phase 103.1)
+
+- [ ] **PRO-SINGLE-01**: `computeSortPriority` uses `pro_status === "active"` instead of `pro` boolean to determine PRO status
+- [ ] **PRO-SINGLE-02**: `sanitizeAdForPublic` exposes `pro_status` instead of `pro` in the public API user object
+- [ ] **PRO-SINGLE-03**: Inscription handler (`proResponse`) does not write `pro: true` to user records
+- [ ] **PRO-SINGLE-04**: Subscription charge cron deactivation does not write `pro: false` to user records
+- [ ] **PRO-SINGLE-05**: Website User type definition uses `pro_status` and does not contain `pro: boolean`
+- [ ] **PRO-SINGLE-06**: All website PRO page gates and components check `pro_status === "active"` instead of `user.pro`
+- [ ] **PRO-SINGLE-07**: Dashboard user display and components check `pro_status` instead of `pro` boolean
+
 ### Cancellation
 
 - [ ] **CANC-01**: User can cancel their PRO subscription from their account page
@@ -66,6 +76,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CHRG-03 | Phase 103 | Complete |
 | CHRG-04 | Phase 103 | Complete |
 | CHRG-05 | Phase 103 | Complete |
+| PRO-SINGLE-01 | Phase 103.1 | Pending |
+| PRO-SINGLE-02 | Phase 103.1 | Pending |
+| PRO-SINGLE-03 | Phase 103.1 | Pending |
+| PRO-SINGLE-04 | Phase 103.1 | Pending |
+| PRO-SINGLE-05 | Phase 103.1 | Pending |
+| PRO-SINGLE-06 | Phase 103.1 | Pending |
+| PRO-SINGLE-07 | Phase 103.1 | Pending |
 | CANC-01 | Phase 104 | Pending |
 | CANC-02 | Phase 104 | Pending |
 | CANC-03 | Phase 104 | Pending |
@@ -76,10 +93,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | FRNT-04 | Phase 104 | Pending |
 
 **Coverage:**
-- v1.46 requirements: 17 total
-- Mapped to phases: 17
+- v1.46 requirements: 24 total
+- Mapped to phases: 24
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-20*
-*Last updated: 2026-03-20 — traceability completed during roadmap creation*
+*Last updated: 2026-03-21 — added PRO-SINGLE requirements for Phase 103.1*

@@ -33,6 +33,7 @@
 
 - [x] **Phase 102: Oneclick Service + Inscription Flow** - Backend Oneclick service and end-to-end card enrollment with frontend redirect and return handling (completed 2026-03-20)
 - [x] **Phase 103: Monthly Charging Cron** - subscription-payment content type, daily charge cron, 3-day retry logic, and idempotency guard (completed 2026-03-20)
+- [ ] **Phase 103.1: Remove pro boolean** - Eliminate dual source of truth by replacing all pro boolean usage with pro_status enum
 - [ ] **Phase 104: Cancellation + Account Management** - Cancel endpoint, period-end expiry, card deletion from Transbank, and account UI
 
 ## Phase Details
@@ -66,6 +67,25 @@ Plans:
 - [x] 103-01-PLAN.md — subscription-payment content type + OneclickService.authorizeCharge() + env vars
 - [x] 103-02-PLAN.md — SubscriptionChargeService cron class + tests + cron registration
 
+### Phase 103.1: Remove pro boolean — use pro_status as single source of truth (INSERTED)
+
+**Goal:** All application code uses `pro_status === "active"` as the single source of truth for PRO membership — the `pro` boolean is no longer read or written anywhere
+**Requirements**: PRO-SINGLE-01, PRO-SINGLE-02, PRO-SINGLE-03, PRO-SINGLE-04, PRO-SINGLE-05, PRO-SINGLE-06, PRO-SINGLE-07
+**Depends on:** Phase 103
+**Success Criteria** (what must be TRUE):
+  1. No server-side code writes `pro: true` or `pro: false` to user records
+  2. `computeSortPriority` determines PRO status from `pro_status`, not `pro` boolean
+  3. `sanitizeAdForPublic` returns `pro_status` in the user object instead of `pro`
+  4. All website PRO page gates check `pro_status !== "active"` instead of `!user.pro`
+  5. All website/dashboard components use `pro_status === "active"` instead of `user.pro`
+  6. User type definitions no longer contain the `pro: boolean` field
+  7. All existing tests pass with updated mocks
+**Plans:** 2 plans
+
+Plans:
+- [ ] 103.1-01-PLAN.md — Strapi backend: computeSortPriority, sanitize-ad, payment writes, cron writes, protect-user-fields, and tests
+- [ ] 103.1-02-PLAN.md — Frontend: website + dashboard type definitions, page gates, and component updates
+
 ### Phase 104: Cancellation + Account Management
 **Goal**: PRO subscribers can cancel their subscription and see their subscription status at any time
 **Depends on**: Phase 102
@@ -83,4 +103,5 @@ Plans:
 |-------|-----------|----------------|--------|-----------|
 | 102. Oneclick Service + Inscription Flow | 2/2 | Complete   | 2026-03-20 | - |
 | 103. Monthly Charging Cron | 1/2 | 2/2 | Complete    | 2026-03-20 |
+| 103.1. Remove pro boolean | v1.46 | 0/2 | Not started | - |
 | 104. Cancellation + Account Management | v1.46 | 0/? | Not started | - |
