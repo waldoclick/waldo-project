@@ -139,7 +139,7 @@ const { data: adsData } = await useAsyncData<AdsData>(
 
     const sortParams =
       order === "featured" || order === undefined
-        ? ["ad_featured_reservation.id:desc", "createdAt:desc"]
+        ? ["sort_priority:asc", "createdAt:desc"]
         : ["createdAt:desc"];
 
     const filtersParams = {
@@ -160,7 +160,7 @@ const { data: adsData } = await useAsyncData<AdsData>(
       relatedLoading = true;
       try {
         await adsStore.loadAds({}, { page: 1, pageSize: 12 }, [
-          "ad_featured_reservation.id:desc",
+          "sort_priority:asc",
           "createdAt:desc",
         ]);
         relatedAds = adsStore.ads;
