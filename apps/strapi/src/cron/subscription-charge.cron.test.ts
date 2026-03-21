@@ -16,6 +16,26 @@ jest.mock("../services/oneclick", () => ({
 
 const mockAuthorizeCharge = jest.fn();
 
+// Mock order.utils
+const mockCreateAdOrder = jest.fn();
+jest.mock("../api/payment/utils/order.utils", () => ({
+  __esModule: true,
+  default: { createAdOrder: mockCreateAdOrder },
+}));
+
+// Mock general.utils
+const mockGenerateFactoDocument = jest.fn();
+jest.mock("../api/payment/utils/general.utils", () => ({
+  __esModule: true,
+  default: { generateFactoDocument: mockGenerateFactoDocument },
+}));
+
+// Mock user.utils documentDetails
+const mockDocumentDetails = jest.fn();
+jest.mock("../api/payment/utils/user.utils", () => ({
+  documentDetails: mockDocumentDetails,
+}));
+
 // Mock strapi global
 const mockFindMany = jest.fn();
 const mockCreate = jest.fn();
@@ -444,6 +464,104 @@ describe("SubscriptionChargeService", () => {
 
       // Assert: strapi.db.query was used to find and potentially update the ad
       expect((global as any).strapi.db.query).toHaveBeenCalledWith("api::ad.ad");
+    });
+  });
+
+  describe("chargeUser order+Facto creation", () => {
+    it("chargeUser creates order + Facto document on successful charge", async () => {
+      // Arrange
+      const user = makeUser();
+      mockFindMany
+        .mockResolvedValueOnce([user]) // expired users
+        .mockResolvedValueOnce([]) // idempotency: no approved payment
+        .mockResolvedValueOnce([]) // retry candidates
+        .mockResolvedValueOnce([]) // deactivation candidates
+        .mockResolvedValueOnce([]); // Step 4: cancelled expired users
+
+      mockAuthorizeCharge.mockResolvedValueOnce({
+        success: true,
+        authorizationCode: "AUTH-ORDER",
+        responseCode: 0,
+        rawResponse: { details: [{ response_code: 0, authorization_code: "AUTH-ORDER" }] },
+      });
+      mockCreate.mockResolvedValueOnce({ id: 50 });
+      mockUpdate.mockResolvedValueOnce({});
+      mockDocumentDetails.mockResolvedValueOnce({
+        name: "Test User",
+        rut: "12345678-9",
+        address: "Calle 1",
+        address_number: 100,
+        postal_code: "7500000",
+      });
+      mockGenerateFactoDocument.mockResolvedValueOnce({ id: "facto-cron-1" });
+      mockCreateAdOrder.mockResolvedValueOnce({ success: true, order: { documentId: "order-cron-1" } });
+
+      // Act
+      await service.chargeExpiredSubscriptions();
+
+      // Assert
+      expect(mockDocumentDetails).toHaveBeenCalledWith(user.id, false);
+      expect(mockGenerateFactoDocument).toHaveBeenCalledWith(
+        expect.objectContaining({
+          isInvoice: false,
+          items: expect.arrayContaining([
+            expect.objectContaining({ name: "Suscripcion PRO mensual" }),
+          ]),
+        })
+      );
+      expect(mockCreateAdOrder).toHaveBeenCalledWith(
+        expect.objectContaining({
+          amount: 9990,
+          userId: user.id,
+          is_invoice: false,
+        })
+      );
+    });
+
+    it("chargeUser extends pro_expires_at even when order creation fails", async () => {
+      // Arrange
+      const user = makeUser();
+      mockFindMany
+        .mockResolvedValueOnce([user]) // expired users
+        .mockResolvedValueOnce([]) // idempotency: no approved payment
+        .mockResolvedValueOnce([]) // retry candidates
+        .mockResolvedValueOnce([]) // deactivation candidates
+        .mockResolvedValueOnce([]); // Step 4: cancelled expired users
+
+      mockAuthorizeCharge.mockResolvedValueOnce({
+        success: true,
+        authorizationCode: "AUTH-FAIL-ORDER",
+        responseCode: 0,
+        rawResponse: { details: [{ response_code: 0, authorization_code: "AUTH-FAIL-ORDER" }] },
+      });
+      mockCreate.mockResolvedValueOnce({ id: 51 });
+      mockUpdate.mockResolvedValueOnce({});
+      mockDocumentDetails.mockResolvedValueOnce({
+        name: "Test User",
+        rut: "12345678-9",
+        address: "Calle 1",
+        address_number: 100,
+        postal_code: "7500000",
+      });
+      // Simulate Facto/order failure
+      mockGenerateFactoDocument.mockRejectedValueOnce(new Error("Facto service unavailable"));
+
+      // Act
+      const result = await service.chargeExpiredSubscriptions();
+
+      // Assert: cron still succeeds
+      expect(result.success).toBe(true);
+
+      // Assert: pro_expires_at was extended (update called with pro_expires_at)
+      expect(mockUpdate).toHaveBeenCalledWith(
+        "plugin::users-permissions.user",
+        user.id,
+        expect.objectContaining({
+          data: expect.objectContaining({
+            pro_expires_at: expect.any(Date),
+          }),
+        })
+      );
     });
   });
 
