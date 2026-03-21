@@ -5,7 +5,8 @@
 .bar {
   &--announcement,
   &--checkout,
-  &--packs {
+  &--packs,
+  &--pro {
     position: fixed;
     bottom: 0;
     left: 0;

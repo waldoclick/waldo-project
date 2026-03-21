@@ -267,7 +267,8 @@
     }
   }
 
-  &--gateway {
+  &--gateway,
+  &--pro-gateway {
     padding: 20px;
     border: 2px solid $gainsboro;
     border-radius: 4px;
@@ -314,7 +315,8 @@
   }
 
   &--featured,
-  &--invoice {
+  &--invoice,
+  &--pro-invoice {
     padding: 20px;
     border: 2px solid $gainsboro;
     border-radius: 4px;
