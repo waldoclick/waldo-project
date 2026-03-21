@@ -13,6 +13,7 @@ import generalUtils from "../utils/general.utils";
 import logger from "../../../utils/logtail";
 import { IWebpayCommitData } from "../../../services/transbank/types";
 import { PackType, FeaturedType } from "../types/payment.type";
+import { computeSortPriority } from "../../ad/services/ad";
 
 interface WebpayAdResult {
   success: boolean;
@@ -497,6 +498,35 @@ class PaymentController {
         >[2]["data"],
       }
     );
+
+    // Recalculate sort_priority for user's featured ads (pro=true changes priority from 1 to 0)
+    try {
+      const userFeaturedAds = await strapi.db.query("api::ad.ad").findMany({
+        where: { user: { id: user.id } },
+        populate: { ad_featured_reservation: true, user: true },
+        limit: -1,
+      });
+      for (const ad of userFeaturedAds) {
+        const priority = computeSortPriority(
+          ad as {
+            ad_featured_reservation?: unknown;
+            user?: { pro?: boolean } | null;
+          }
+        );
+        const adRecord = ad as Record<string, unknown>;
+        if (adRecord.sort_priority !== priority) {
+          await strapi.db.query("api::ad.ad").update({
+            where: { id: adRecord.id },
+            data: { sort_priority: priority },
+          });
+        }
+      }
+    } catch (sortError) {
+      logger.error(
+        "proResponse: sort_priority recalculation failed on pro activation",
+        { userId: user.id, error: sortError }
+      );
+    }
 
     ctx.redirect(`${process.env.FRONTEND_URL}/pro/gracias`);
   });

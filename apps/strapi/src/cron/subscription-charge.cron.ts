@@ -1,6 +1,7 @@
 import { ICronjobResult } from "./ad-expiry.cron";
 import { OneclickService } from "../services/oneclick";
 import logger from "../utils/logtail";
+import { computeSortPriority } from "../api/ad/services/ad";
 
 interface ProUser {
   id: number;
@@ -162,6 +163,35 @@ export class SubscriptionChargeService {
             >[2]["data"],
           }
         );
+
+        // Recalculate sort_priority for user's featured ads (pro=false changes priority from 0 to 1)
+        try {
+          const userFeaturedAds = await strapi.db.query("api::ad.ad").findMany({
+            where: { user: { id: user.id } },
+            populate: { ad_featured_reservation: true, user: true },
+            limit: -1,
+          });
+          for (const ad of userFeaturedAds) {
+            const priority = computeSortPriority(
+              ad as {
+                ad_featured_reservation?: unknown;
+                user?: { pro?: boolean } | null;
+              }
+            );
+            const adRecord = ad as Record<string, unknown>;
+            if (adRecord.sort_priority !== priority) {
+              await strapi.db.query("api::ad.ad").update({
+                where: { id: adRecord.id },
+                data: { sort_priority: priority },
+              });
+            }
+          }
+        } catch (sortError) {
+          logger.error(
+            "SubscriptionChargeService: sort_priority recalculation failed on deactivation",
+            { userId: user.id, error: sortError }
+          );
+        }
 
         // Mark payment record as deactivated
         await (strapi.entityService.update as Function)(
