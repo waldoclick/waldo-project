@@ -25,6 +25,11 @@ interface ExhaustedPaymentRecord {
   user: { id: number; documentId: string };
 }
 
+interface CancelledUser {
+  id: number;
+  documentId: string;
+}
+
 /**
  * SubscriptionChargeService handles the daily billing loop for PRO subscribers.
  *
@@ -205,6 +210,74 @@ export class SubscriptionChargeService {
 
         logger.info(
           `SubscriptionChargeService: deactivated PRO subscription for user ${user.id}`
+        );
+      }
+
+      // Step 4: Deactivate cancelled subscriptions whose pro_expires_at has passed (CANC-04)
+      const expiredCancelledUsers = (await strapi.entityService.findMany(
+        "plugin::users-permissions.user",
+        {
+          filters: {
+            pro_status: { $eq: "cancelled" },
+            pro_expires_at: { $lte: `${today}T23:59:59.999Z` },
+          } as unknown as Record<string, unknown>,
+          fields: ["id", "documentId"] as Parameters<
+            typeof strapi.entityService.findMany
+          >[1]["fields"],
+          pagination: { pageSize: -1 },
+        }
+      )) as CancelledUser[];
+
+      logger.info(
+        `SubscriptionChargeService: found ${expiredCancelledUsers.length} expired cancelled PRO users to deactivate`
+      );
+
+      for (const user of expiredCancelledUsers) {
+        await strapi.entityService.update(
+          "plugin::users-permissions.user",
+          user.id,
+          {
+            data: {
+              pro_status: "inactive",
+              pro_expires_at: null,
+              tbk_user: null,
+            } as unknown as Parameters<
+              typeof strapi.entityService.update
+            >[2]["data"],
+          }
+        );
+
+        // Recalculate sort_priority for user's featured ads (CANC-04)
+        try {
+          const userFeaturedAds = await strapi.db.query("api::ad.ad").findMany({
+            where: { user: { id: user.id } },
+            populate: { ad_featured_reservation: true, user: true },
+            limit: -1,
+          });
+          for (const ad of userFeaturedAds) {
+            const priority = computeSortPriority(
+              ad as {
+                ad_featured_reservation?: unknown;
+                user?: { pro_status?: string } | null;
+              }
+            );
+            const adRecord = ad as Record<string, unknown>;
+            if (adRecord.sort_priority !== priority) {
+              await strapi.db.query("api::ad.ad").update({
+                where: { id: adRecord.id },
+                data: { sort_priority: priority },
+              });
+            }
+          }
+        } catch (sortError) {
+          logger.error(
+            "SubscriptionChargeService: sort_priority recalculation failed on cancelled deactivation",
+            { userId: user.id, error: sortError }
+          );
+        }
+
+        logger.info(
+          `SubscriptionChargeService: deactivated expired cancelled PRO subscription for user ${user.id}`
         );
       }
 
