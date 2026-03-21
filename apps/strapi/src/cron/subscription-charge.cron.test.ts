@@ -20,12 +20,20 @@ const mockAuthorizeCharge = jest.fn();
 const mockFindMany = jest.fn();
 const mockCreate = jest.fn();
 const mockUpdate = jest.fn();
+const mockDbQueryFindMany = jest.fn().mockResolvedValue([]);
+const mockDbQueryUpdate = jest.fn();
 
 (global as any).strapi = {
   entityService: {
     findMany: mockFindMany,
     create: mockCreate,
     update: mockUpdate,
+  },
+  db: {
+    query: jest.fn().mockReturnValue({
+      findMany: mockDbQueryFindMany,
+      update: mockDbQueryUpdate,
+    }),
   },
   log: {
     info: jest.fn(),
@@ -71,7 +79,8 @@ describe("SubscriptionChargeService", () => {
         .mockResolvedValueOnce([user]) // expired users
         .mockResolvedValueOnce([]) // idempotency check: no approved payment
         .mockResolvedValueOnce([]) // retry candidates
-        .mockResolvedValueOnce([]); // deactivation candidates
+        .mockResolvedValueOnce([]) // deactivation candidates
+        .mockResolvedValueOnce([]); // Step 4: cancelled expired users
 
       mockAuthorizeCharge.mockResolvedValueOnce({
         success: true,
@@ -114,7 +123,8 @@ describe("SubscriptionChargeService", () => {
         .mockResolvedValueOnce([user]) // expired users
         .mockResolvedValueOnce([]) // idempotency: no approved payment
         .mockResolvedValueOnce([]) // retry candidates
-        .mockResolvedValueOnce([]); // deactivation candidates
+        .mockResolvedValueOnce([]) // deactivation candidates
+        .mockResolvedValueOnce([]); // Step 4: cancelled expired users
 
       const authResponse = {
         success: true,
@@ -172,7 +182,8 @@ describe("SubscriptionChargeService", () => {
         .mockResolvedValueOnce([user]) // expired users
         .mockResolvedValueOnce([existingApprovedPayment]) // idempotency: approved payment found
         .mockResolvedValueOnce([]) // retry candidates
-        .mockResolvedValueOnce([]); // deactivation candidates
+        .mockResolvedValueOnce([]) // deactivation candidates
+        .mockResolvedValueOnce([]); // Step 4: cancelled expired users
 
       // Act
       const result = await service.chargeExpiredSubscriptions();
@@ -192,7 +203,8 @@ describe("SubscriptionChargeService", () => {
         .mockResolvedValueOnce([user]) // expired users
         .mockResolvedValueOnce([]) // idempotency: no approved payment
         .mockResolvedValueOnce([]) // retry candidates
-        .mockResolvedValueOnce([]); // deactivation candidates
+        .mockResolvedValueOnce([]) // deactivation candidates
+        .mockResolvedValueOnce([]); // Step 4: cancelled expired users
 
       mockAuthorizeCharge.mockResolvedValueOnce({
         success: false,
@@ -247,7 +259,8 @@ describe("SubscriptionChargeService", () => {
       mockFindMany
         .mockResolvedValueOnce([]) // no new expired users (empty to isolate retry test)
         .mockResolvedValueOnce([failedPayment]) // retry candidates
-        .mockResolvedValueOnce([]); // deactivation candidates
+        .mockResolvedValueOnce([]) // deactivation candidates
+        .mockResolvedValueOnce([]); // Step 4: cancelled expired users
 
       mockAuthorizeCharge.mockResolvedValueOnce({
         success: true,
@@ -301,7 +314,8 @@ describe("SubscriptionChargeService", () => {
       mockFindMany
         .mockResolvedValueOnce([]) // no new expired users
         .mockResolvedValueOnce([]) // retry candidates (charge_attempts < 3)
-        .mockResolvedValueOnce([exhaustedPayment]); // deactivation candidates (charge_attempts >= 3)
+        .mockResolvedValueOnce([exhaustedPayment]) // deactivation candidates (charge_attempts >= 3)
+        .mockResolvedValueOnce([]); // Step 4: cancelled expired users
 
       mockUpdate.mockResolvedValueOnce({}).mockResolvedValueOnce({});
 
@@ -334,6 +348,105 @@ describe("SubscriptionChargeService", () => {
     });
   });
 
+  describe("CANC-04: Step 4 cancelled-expiry sweep", () => {
+    it("finds users with pro_status=cancelled and pro_expires_at <= today, deactivates them with pro_status=inactive, pro_expires_at=null, tbk_user=null", async () => {
+      // Arrange
+      const cancelledUser = { id: 55, documentId: "cancelleduserid12345678" };
+      mockFindMany
+        .mockResolvedValueOnce([]) // Step 1: no expired active users
+        .mockResolvedValueOnce([]) // Step 2: no retry candidates
+        .mockResolvedValueOnce([]) // Step 3: no deactivation candidates
+        .mockResolvedValueOnce([cancelledUser]); // Step 4: cancelled expired users
+
+      mockUpdate.mockResolvedValueOnce({});
+
+      // Act
+      const result = await service.chargeExpiredSubscriptions();
+
+      // Assert
+      expect(result.success).toBe(true);
+      expect(mockFindMany).toHaveBeenCalledWith(
+        "plugin::users-permissions.user",
+        expect.objectContaining({
+          filters: expect.objectContaining({
+            pro_status: { $eq: "cancelled" },
+          }),
+        })
+      );
+      expect(mockUpdate).toHaveBeenCalledWith(
+        "plugin::users-permissions.user",
+        cancelledUser.id,
+        expect.objectContaining({
+          data: expect.objectContaining({
+            pro_status: "inactive",
+            pro_expires_at: null,
+            tbk_user: null,
+          }),
+        })
+      );
+    });
+
+    it("does NOT call authorizeCharge for cancelled users (card already deleted)", async () => {
+      // Arrange
+      const cancelledUser = { id: 55, documentId: "cancelleduserid12345678" };
+      mockFindMany
+        .mockResolvedValueOnce([]) // Step 1: no expired active users
+        .mockResolvedValueOnce([]) // Step 2: no retry candidates
+        .mockResolvedValueOnce([]) // Step 3: no deactivation candidates
+        .mockResolvedValueOnce([cancelledUser]); // Step 4: cancelled expired users
+
+      mockUpdate.mockResolvedValueOnce({});
+
+      // Act
+      await service.chargeExpiredSubscriptions();
+
+      // Assert: authorizeCharge must never be called for cancelled users
+      expect(mockAuthorizeCharge).not.toHaveBeenCalled();
+    });
+
+    it("skips cancelled users whose pro_expires_at is in the future (not yet expired)", async () => {
+      // Arrange — Step 4 returns empty (no expired cancelled users)
+      mockFindMany
+        .mockResolvedValueOnce([]) // Step 1: no expired active users
+        .mockResolvedValueOnce([]) // Step 2: no retry candidates
+        .mockResolvedValueOnce([]) // Step 3: no deactivation candidates
+        .mockResolvedValueOnce([]); // Step 4: no cancelled expired users (all future)
+
+      // Act
+      const result = await service.chargeExpiredSubscriptions();
+
+      // Assert: no updates performed for cancelled users
+      expect(result.success).toBe(true);
+      expect(mockUpdate).not.toHaveBeenCalled();
+    });
+
+    it("recalculates sort_priority for deactivated cancelled users' ads", async () => {
+      // Arrange
+      const cancelledUser = { id: 55, documentId: "cancelleduserid12345678" };
+      const mockAd = {
+        id: 100,
+        sort_priority: 0,
+        ad_featured_reservation: null,
+        user: { id: 55, pro_status: "cancelled" },
+      };
+      mockFindMany
+        .mockResolvedValueOnce([]) // Step 1: no expired active users
+        .mockResolvedValueOnce([]) // Step 2: no retry candidates
+        .mockResolvedValueOnce([]) // Step 3: no deactivation candidates
+        .mockResolvedValueOnce([cancelledUser]); // Step 4: cancelled expired users
+
+      mockUpdate.mockResolvedValueOnce({});
+      mockDbQueryFindMany.mockResolvedValueOnce([mockAd]);
+      mockDbQueryUpdate.mockResolvedValueOnce({});
+
+      // Act
+      await service.chargeExpiredSubscriptions();
+
+      // Assert: strapi.db.query was used to find and potentially update the ad
+      expect((global as any).strapi.db.query).toHaveBeenCalledWith("api::ad.ad");
+    });
+  });
+
   describe("CHRG-04: PRO_MONTHLY_PRICE env var", () => {
     it("throws a descriptive error if PRO_MONTHLY_PRICE is not set", async () => {
       // Arrange
@@ -355,7 +468,8 @@ describe("SubscriptionChargeService", () => {
         .mockResolvedValueOnce([user])
         .mockResolvedValueOnce([])
         .mockResolvedValueOnce([])
-        .mockResolvedValueOnce([]);
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([]); // Step 4: cancelled expired users
 
       mockAuthorizeCharge.mockResolvedValueOnce({
         success: true,
