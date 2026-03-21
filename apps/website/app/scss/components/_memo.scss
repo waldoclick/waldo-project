@@ -7,7 +7,7 @@
     align-items: center;
     gap: 20px;
     background-color: rgba($light_peach, 0.2);
-    padding: 15px;
+    padding: 25px;
     border-radius: 8px;
     border: 2px dashed $light_peach;
     font-size: 15px;
@@ -43,11 +43,6 @@
           font-weight: 600;
           text-transform: uppercase;
 
-          &--active {
-            background-color: $magic_mint;
-            color: $charcoal;
-          }
-
           &--cancelled {
             background-color: $platinum;
             color: $davys_grey;
@@ -71,17 +66,17 @@
 }
 
 .btn--cancel {
+  margin-left: auto;
   background-color: transparent;
-  border: 1px solid $silver;
-  color: $davys_grey;
+  border: 1px solid $charcoal;
+  color: $charcoal;
   padding: 8px 16px;
   border-radius: 4px;
   font-size: 14px;
   cursor: pointer;
 
   &:hover {
-    border-color: $red_salsa;
-    color: $red_salsa;
+    background-color: $light_peach;
   }
 
   &:disabled {

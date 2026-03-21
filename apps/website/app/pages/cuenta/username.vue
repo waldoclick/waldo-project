@@ -6,19 +6,6 @@
 
 <script setup lang="ts">
 import AccountUsername from "@/components/AccountUsername.vue";
-import type { User } from "@/types/user";
-
-const user = useStrapiUser<User>();
-
-// Validar si es usuario PRO
-if (user.value?.pro_status !== "active") {
-  showError({
-    statusCode: 403,
-    message: "Función exclusiva para cuentas PRO",
-    statusMessage:
-      "Personaliza tu nombre de usuario y construye tu marca personal con una cuenta PRO. Crea una identidad única y memorable para tus compradores potenciales.",
-  });
-}
 
 const { $setSEO, $setStructuredData } = useNuxtApp();
 const config = useRuntimeConfig();

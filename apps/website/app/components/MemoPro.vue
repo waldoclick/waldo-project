@@ -11,7 +11,11 @@
           Únete a nuestra comunidad de usuarios destacados.
         </p>
       </div>
-      <button class="btn btn--buy" title="Hazte PRO" @click="handleProSubscription">
+      <button
+        class="btn btn--buy"
+        title="Hazte PRO"
+        @click="handleProSubscription"
+      >
         Hazte PRO
       </button>
     </template>
@@ -20,18 +24,27 @@
     <template v-else>
       <div class="memo--pro__text">
         <p class="memo--pro__text__status">
-          <span class="memo--pro__text__status__badge" :class="statusBadgeClass">
-            {{ statusLabel }}
+          <span
+            v-if="user?.pro_status === 'cancelled'"
+            class="memo--pro__text__status__badge memo--pro__text__status__badge--cancelled"
+          >
+            Cancelada
           </span>
           Suscripción PRO
         </p>
         <p class="memo--pro__text__card">
           {{ user?.pro_card_type }} **** {{ user?.pro_card_last4 }}
         </p>
-        <p v-if="user?.pro_status === 'active' && nextChargeDate" class="memo--pro__text__date">
+        <p
+          v-if="user?.pro_status === 'active' && nextChargeDate"
+          class="memo--pro__text__date"
+        >
           Próxima fecha de cobro: {{ nextChargeDate }}
         </p>
-        <p v-if="user?.pro_status === 'cancelled' && expiryDate" class="memo--pro__text__date">
+        <p
+          v-if="user?.pro_status === 'cancelled' && expiryDate"
+          class="memo--pro__text__date"
+        >
           Activo hasta: {{ expiryDate }}
         </p>
       </div>
@@ -42,7 +55,7 @@
         :disabled="cancelling"
         @click="handleCancelSubscription"
       >
-        {{ cancelling ? 'Cancelando...' : 'Cancelar' }}
+        {{ cancelling ? "Cancelando..." : "Cancelar" }}
       </button>
     </template>
   </div>
@@ -66,18 +79,11 @@ const user = useStrapiUser<User>();
 const { fetchUser } = useStrapiAuth();
 const cancelling = ref(false);
 
-const isSubscribed = computed(() =>
-  user.value?.pro_status === "active" || user.value?.pro_status === "cancelled",
+const isSubscribed = computed(
+  () =>
+    user.value?.pro_status === "active" ||
+    user.value?.pro_status === "cancelled",
 );
-
-const statusLabel = computed(() =>
-  user.value?.pro_status === "active" ? "Activa" : "Cancelada",
-);
-
-const statusBadgeClass = computed(() => ({
-  "memo--pro__text__status__badge--active": user.value?.pro_status === "active",
-  "memo--pro__text__status__badge--cancelled": user.value?.pro_status === "cancelled",
-}));
 
 const formatDate = (dateStr: string | null): string | null => {
   if (!dateStr) return null;
@@ -89,8 +95,12 @@ const formatDate = (dateStr: string | null): string | null => {
   });
 };
 
-const nextChargeDate = computed(() => formatDate(user.value?.pro_expires_at ?? null));
-const expiryDate = computed(() => formatDate(user.value?.pro_expires_at ?? null));
+const nextChargeDate = computed(() =>
+  formatDate(user.value?.pro_expires_at ?? null),
+);
+const expiryDate = computed(() =>
+  formatDate(user.value?.pro_expires_at ?? null),
+);
 
 const handleProSubscription = async () => {
   const result = await Swal.fire({
@@ -148,7 +158,10 @@ const handleCancelSubscription = async () => {
 
   cancelling.value = true;
   try {
-    await apiClient("payments/pro-cancel", { method: "POST", body: { data: {} } });
+    await apiClient("payments/pro-cancel", {
+      method: "POST",
+      body: { data: {} },
+    });
     await fetchUser();
   } catch (error) {
     console.error("Error cancelling PRO subscription:", error);

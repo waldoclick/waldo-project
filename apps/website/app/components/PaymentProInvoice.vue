@@ -6,7 +6,10 @@
       perfil de empresa.
       <NuxtLink to="/cuenta/perfil/editar">Edita tu perfil aquí</NuxtLink>.
     </div>
-    <div v-else-if="!canRequestInvoice" class="payment--pro-invoice__description">
+    <div
+      v-else-if="!canRequestInvoice"
+      class="payment--pro-invoice__description"
+    >
       <strong>Importante:</strong> Para solicitar factura, debes completar todos
       los datos de tu empresa.
       <NuxtLink to="/cuenta/perfil/editar">Completa tu perfil aquí</NuxtLink>.
