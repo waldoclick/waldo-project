@@ -17,7 +17,6 @@ export interface User {
   address: string | null;
   address_number: string | null;
   birthdate: string | null;
-  pro: boolean;
   pro_status: "active" | "inactive" | "cancelled" | null;
   pro_card_type: string | null;
   pro_card_last4: string | null;

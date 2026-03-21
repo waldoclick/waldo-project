@@ -11,7 +11,7 @@ import type { User } from "@/types/user";
 const user = useStrapiUser<User>();
 
 // Validar si es usuario PRO
-if (!user.value?.pro) {
+if (user.value?.pro_status !== "active") {
   showError({
     statusCode: 403,
     message: "Función exclusiva para cuentas PRO",
