@@ -16,25 +16,31 @@ jest.mock("../services/oneclick", () => ({
 
 const mockAuthorizeCharge = jest.fn();
 
-// Mock order.utils
-const mockCreateAdOrder = jest.fn();
+// Mock order.utils — use jest.fn() in factory to avoid TDZ hoisting issue
 jest.mock("../api/payment/utils/order.utils", () => ({
   __esModule: true,
-  default: { createAdOrder: mockCreateAdOrder },
+  default: { createAdOrder: jest.fn() },
 }));
 
 // Mock general.utils
-const mockGenerateFactoDocument = jest.fn();
 jest.mock("../api/payment/utils/general.utils", () => ({
   __esModule: true,
-  default: { generateFactoDocument: mockGenerateFactoDocument },
+  default: { generateFactoDocument: jest.fn() },
 }));
 
 // Mock user.utils documentDetails
-const mockDocumentDetails = jest.fn();
 jest.mock("../api/payment/utils/user.utils", () => ({
-  documentDetails: mockDocumentDetails,
+  documentDetails: jest.fn(),
 }));
+
+// Import mocked modules to get typed references
+import orderUtilsMock from "../api/payment/utils/order.utils";
+import generalUtilsMock from "../api/payment/utils/general.utils";
+import * as userUtilsMock from "../api/payment/utils/user.utils";
+
+const mockCreateAdOrder = orderUtilsMock.createAdOrder as jest.Mock;
+const mockGenerateFactoDocument = generalUtilsMock.generateFactoDocument as jest.Mock;
+const mockDocumentDetails = userUtilsMock.documentDetails as jest.Mock;
 
 // Mock strapi global
 const mockFindMany = jest.fn();
