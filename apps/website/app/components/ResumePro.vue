@@ -1,10 +1,7 @@
 <template>
   <section class="resume resume--pro">
     <div class="resume--pro__container">
-      <div
-        v-if="showIcon || title || description"
-        class="resume--pro__header"
-      >
+      <div v-if="showIcon || title || description" class="resume--pro__header">
         <div v-if="showIcon" class="resume--pro__header__icon">
           <IconCheckCircle :size="24" />
         </div>
@@ -24,9 +21,7 @@
           <!-- Bloque: Comprobante de pago -->
           <div class="resume--pro__box">
             <div class="resume--pro__subtitle">
-              <h2 class="resume--pro__subtitle__title">
-                Comprobante de pago
-              </h2>
+              <h2 class="resume--pro__subtitle__title">Comprobante de pago</h2>
             </div>
             <div class="resume--pro__details">
               <div class="resume--pro__grid">
@@ -121,7 +116,10 @@ defineProps({
 });
 
 // Format currency amount as CLP
-const getFormattedPrice = (price: number | null | undefined, currency = "CLP") => {
+const getFormattedPrice = (
+  price: number | null | undefined,
+  currency = "CLP",
+) => {
   if (!price && price !== 0) return "No especificado";
   return new Intl.NumberFormat("es-CL", {
     style: "currency",

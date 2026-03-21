@@ -2,7 +2,14 @@
   <section class="checkout checkout--pro">
     <div class="checkout--pro__container">
       <ClientOnly>
-        <FormPro @form-submitted="handleFormSubmitted" @update:is-invoice="(val: boolean) => { isInvoice = val; }" />
+        <FormPro
+          @form-submitted="handleFormSubmitted"
+          @update:is-invoice="
+            (val: boolean) => {
+              isInvoice = val;
+            }
+          "
+        />
       </ClientOnly>
     </div>
   </section>
@@ -31,23 +38,30 @@ const handleFormSubmitted = async () => {
   if (!result.isConfirmed) return;
 
   try {
-    const response = await apiClient<{ data: { urlWebpay?: string; token?: string } }>(
-      "payments/pro",
-      {
-        method: "POST",
-        body: { data: { is_invoice: isInvoice.value } },
-      },
-    );
+    const response = await apiClient<{
+      data: { urlWebpay?: string; token?: string };
+    }>("payments/pro", {
+      method: "POST",
+      body: { data: { is_invoice: isInvoice.value } },
+    });
 
     if (response?.data?.urlWebpay && response?.data?.token) {
       // Oneclick uses GET redirect — NOT POST form like Webpay Plus
       window.location.href = `${response.data.urlWebpay}?TBK_TOKEN=${response.data.token}`;
     } else {
-      Swal.fire("Error", "La respuesta de la API no contiene la informacion necesaria para el pago.", "error");
+      Swal.fire(
+        "Error",
+        "La respuesta de la API no contiene la informacion necesaria para el pago.",
+        "error",
+      );
     }
   } catch (error) {
     console.error("Error creating PRO subscription:", error);
-    Swal.fire("Error", "Hubo un error al procesar la suscripcion. Por favor, intentalo de nuevo.", "error");
+    Swal.fire(
+      "Error",
+      "Hubo un error al procesar la suscripcion. Por favor, intentalo de nuevo.",
+      "error",
+    );
   }
 };
 </script>

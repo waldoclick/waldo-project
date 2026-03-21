@@ -12,10 +12,7 @@
       </nuxt-link>
     </div>
 
-    <div
-      v-if="appConfig.features.pro"
-      class="account--main__become_pro"
-    >
+    <div v-if="appConfig.features.pro" class="account--main__become_pro">
       <MemoPro />
     </div>
 

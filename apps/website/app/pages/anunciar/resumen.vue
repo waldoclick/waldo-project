@@ -16,6 +16,7 @@
       :show-steps="false"
       :summary-text="paymentSummaryText"
       :primary-label="primaryButtonLabel"
+      :primary-disabled="isCreating"
       @primary="confirmPay"
       @back="router.push('/anunciar/galeria-de-imagenes')"
     />
@@ -42,6 +43,7 @@ const { fetchUser } = useStrapiAuth();
 const { uploadFiles, transformUrl } = useImageProxy();
 const { getPendingFiles, clearAll: clearPendingUploads } = usePendingUploads();
 const isUploadingImages = ref(false);
+const isCreating = ref(false);
 
 // Define SEO
 const { $setSEO, $setStructuredData } = useNuxtApp();
@@ -88,9 +90,10 @@ const prepareSummary = () => {
   };
 };
 
-const primaryButtonLabel = computed(() =>
-  hasToPay.value ? "Continuar al pago" : "Crear anuncio",
-);
+const primaryButtonLabel = computed(() => {
+  if (isCreating.value) return "Creando\u2026";
+  return hasToPay.value ? "Continuar al pago" : "Crear anuncio";
+});
 
 // Solo se usa para anuncios gratuitos ahora
 const swalCopy = computed(() => {
@@ -166,62 +169,67 @@ const uploadPendingImages = async (): Promise<boolean> => {
 };
 
 const confirmPay = async () => {
-  // Upload pending images first — abort if any upload fails
-  const uploaded = await uploadPendingImages();
-  if (!uploaded) return;
+  isCreating.value = true;
+  try {
+    // Upload pending images first — abort if any upload fails
+    const uploaded = await uploadPendingImages();
+    if (!uploaded) return;
 
-  // Si hay que pagar, guardar draft y navegar directo a pagar sin confirmación
-  if (hasToPay.value) {
-    try {
-      const draftResponse = await apiClient<{ data: { id: number } }>(
-        "ads/save-draft",
-        {
-          method: "POST",
-          body: { data: { ad: adStore.ad } },
-        },
-      );
-      adStore.updateAdId(draftResponse.data.id);
-      router.push("/pagar");
-    } catch {
-      Swal.fire({
-        title: "Error",
-        text: "Hubo un problema al guardar el anuncio. Por favor, inténtalo de nuevo.",
-        icon: "error",
-        confirmButtonText: "Aceptar",
-      });
+    // Si hay que pagar, guardar draft y navegar directo a pagar sin confirmación
+    if (hasToPay.value) {
+      try {
+        const draftResponse = await apiClient<{ data: { id: number } }>(
+          "ads/save-draft",
+          {
+            method: "POST",
+            body: { data: { ad: adStore.ad } },
+          },
+        );
+        adStore.updateAdId(draftResponse.data.id);
+        router.push("/pagar");
+      } catch {
+        Swal.fire({
+          title: "Error",
+          text: "Hubo un problema al guardar el anuncio. Por favor, inténtalo de nuevo.",
+          icon: "error",
+          confirmButtonText: "Aceptar",
+        });
+      }
+      return;
     }
-    return;
-  }
 
-  // Si es gratuito, mostrar confirmación antes de crear
-  const result = await Swal.fire({
-    title: swalCopy.value.title,
-    text: swalCopy.value.text,
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonText: swalCopy.value.confirm,
-    cancelButtonText: "Cancelar",
-  });
+    // Si es gratuito, mostrar confirmación antes de crear
+    const result = await Swal.fire({
+      title: swalCopy.value.title,
+      text: swalCopy.value.text,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: swalCopy.value.confirm,
+      cancelButtonText: "Cancelar",
+    });
 
-  if (result.isConfirmed) {
-    try {
-      const draftResponse = await apiClient<{ data: { id: number } }>(
-        "ads/save-draft",
-        {
-          method: "POST",
-          body: { data: { ad: adStore.ad } },
-        },
-      );
-      adStore.updateAdId(draftResponse.data.id);
-      await handleFreeCreation();
-    } catch {
-      Swal.fire({
-        title: "Error",
-        text: "Hubo un problema al guardar el anuncio. Por favor, inténtalo de nuevo.",
-        icon: "error",
-        confirmButtonText: "Aceptar",
-      });
+    if (result.isConfirmed) {
+      try {
+        const draftResponse = await apiClient<{ data: { id: number } }>(
+          "ads/save-draft",
+          {
+            method: "POST",
+            body: { data: { ad: adStore.ad } },
+          },
+        );
+        adStore.updateAdId(draftResponse.data.id);
+        await handleFreeCreation();
+      } catch {
+        Swal.fire({
+          title: "Error",
+          text: "Hubo un problema al guardar el anuncio. Por favor, inténtalo de nuevo.",
+          icon: "error",
+          confirmButtonText: "Aceptar",
+        });
+      }
     }
+  } finally {
+    isCreating.value = false;
   }
 };
 

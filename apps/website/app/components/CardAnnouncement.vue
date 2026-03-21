@@ -81,7 +81,11 @@
         </NuxtLink>
       </div>
       <div
-        v-if="user && route.params.slug !== getUser.username && getUser.pro_status === 'active'"
+        v-if="
+          user &&
+          route.params.slug !== getUser.username &&
+          getUser.pro_status === 'active'
+        "
         class="card--announcement__info__by"
         aria-label="Información del vendedor"
       >

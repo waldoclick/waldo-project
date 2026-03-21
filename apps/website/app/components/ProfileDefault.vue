@@ -5,7 +5,13 @@
         <SidebarProfile :user="user" />
       </div>
       <div class="profile--default__content">
-        <MemoPro v-if="appConfig.features.pro && isProfileOwner && user.pro_status !== 'active'" />
+        <MemoPro
+          v-if="
+            appConfig.features.pro &&
+            isProfileOwner &&
+            user.pro_status !== 'active'
+          "
+        />
 
         <MemoDefault
           v-if="

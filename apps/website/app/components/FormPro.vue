@@ -31,7 +31,10 @@
         />
       </button>
       <div v-show="open.invoice" class="form--pro__field__content">
-        <PaymentProInvoice v-model="isInvoice" @update:model-value="handleIsInvoiceUpdate" />
+        <PaymentProInvoice
+          v-model="isInvoice"
+          @update:model-value="handleIsInvoiceUpdate"
+        />
       </div>
     </div>
 
