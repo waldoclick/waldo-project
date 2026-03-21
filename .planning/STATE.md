@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: PRO Subscriptions (Webpay Oneclick)
 status: executing
-stopped_at: "Checkpoint: 104-02 Task 2 awaiting human-verify"
-last_updated: "2026-03-21T19:51:40.447Z"
+stopped_at: Completed 105-02-PLAN.md
+last_updated: "2026-03-21T21:46:14.426Z"
 last_activity: 2026-03-21
 progress:
-  total_phases: 4
+  total_phases: 5
   completed_phases: 4
-  total_plans: 8
-  completed_plans: 8
-  percent: 50
+  total_plans: 11
+  completed_plans: 9
+  percent: 82
 ---
 
 # Session State
@@ -21,17 +21,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-20)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 104 — cancellation-account-management
+**Current focus:** Phase 105 — pro-subscription-checkout-page
 
 ## Position
 
-Phase: 104 of 104 (cancellation account management)
-Plan: 1 of 1 completed
+Phase: 105 of 105 (pro-subscription-checkout-page)
+Plan: 2 of 3 completed
 Status: In progress
 Last activity: 2026-03-21
 
 ```
-Progress: [█████░░░░░] 50%
+Progress: [████████░░] 82%
 ```
 
 ## Accumulated Context
@@ -59,6 +59,9 @@ Progress: [█████░░░░░] 50%
 - [104-01] Cancellation proceeds even if Transbank deleteInscription fails — user intent is cancellation, card deletion is best-effort
 - [104-01] pro_expires_at is intentionally NOT cleared on cancellation — subscription expires at period end (CANC-02)
 - [104-01] Step 4 in cron sweeps expired cancelled users and deactivates them without calling authorizeCharge (card already deleted)
+- [105-02] ResumePro.vue naming conflict resolved by renaming old card enrollment component to ResumeProCard.vue, freeing the name for payment receipt
+- [105-02] PRO checkout components use no adStore — state passed via props/emits and v-model for isInvoice
+- [105-02] CheckoutPro uses window.location.href GET redirect for Oneclick (not POST form like Webpay Plus)
 
 ### Quick Tasks Completed
 
@@ -70,6 +73,7 @@ Progress: [█████░░░░░] 50%
 ### Roadmap Evolution
 
 - Phase 103.1 inserted after Phase 103: Remove pro boolean — use pro_status as single source of truth (URGENT)
+- Phase 105 added: PRO subscription checkout page
 
 ### Blockers/Concerns (open)
 
@@ -77,6 +81,6 @@ Progress: [█████░░░░░] 50%
 
 ## Session Continuity
 
-Last session: 2026-03-21T19:51:40.445Z
-Stopped at: Checkpoint: 104-02 Task 2 awaiting human-verify
+Last session: 2026-03-21T21:46:14.424Z
+Stopped at: Completed 105-02-PLAN.md
 Resume file: None

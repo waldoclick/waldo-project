@@ -53,10 +53,10 @@ Requirements for PRO Subscriptions (Webpay Oneclick) milestone. Each maps to roa
 - [ ] **CHECKOUT-03**: `proResponse` redirects to `/pro/pagar/gracias?order={documentId}` (not `/pro/gracias`)
 - [ ] **CHECKOUT-04**: Monthly charge cron creates an order + Facto boleta document per successful charge
 - [ ] **CHECKOUT-05**: Cron order/Facto creation failure does not block `pro_expires_at` extension
-- [ ] **CHECKOUT-06**: `/pro/pagar` page exists with boleta/factura and gateway sections (no ad preview, no packs)
-- [ ] **CHECKOUT-07**: `/pro/pagar/gracias` page shows payment receipt fetched by `order.documentId` from URL
-- [ ] **CHECKOUT-08**: All PRO checkout components use `--pro` BEM modifiers on existing SCSS (no new SCSS files)
-- [ ] **CHECKOUT-09**: PRO checkout components do not reference `adStore` or ad-specific logic
+- [x] **CHECKOUT-06**: `/pro/pagar` page exists with boleta/factura and gateway sections (no ad preview, no packs)
+- [x] **CHECKOUT-07**: `/pro/pagar/gracias` page shows payment receipt fetched by `order.documentId` from URL
+- [x] **CHECKOUT-08**: All PRO checkout components use `--pro` BEM modifiers on existing SCSS (no new SCSS files)
+- [x] **CHECKOUT-09**: PRO checkout components do not reference `adStore` or ad-specific logic
 - [ ] **CHECKOUT-10**: `MemoPro.vue` navigates to `/pro/pagar` instead of calling `POST /payments/pro` directly
 - [ ] **CHECKOUT-11**: Old `/pro/gracias` page remains functional for backward compatibility
 
