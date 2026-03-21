@@ -66,13 +66,6 @@ import { computed, ref } from "vue";
 import { Crown } from "lucide-vue-next";
 import type { User } from "@/types/user";
 
-interface ProSubscriptionResponse {
-  data?: {
-    urlWebpay?: string;
-    token?: string;
-  };
-}
-
 const { Swal } = useSweetAlert2();
 const apiClient = useApiClient();
 const user = useStrapiUser<User>();
@@ -102,46 +95,8 @@ const expiryDate = computed(() =>
   formatDate(user.value?.pro_expires_at ?? null),
 );
 
-const handleProSubscription = async () => {
-  const result = await Swal.fire({
-    title: "Confirmar suscripción PRO",
-    text: "¿Está seguro de proceder con la suscripción PRO?",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonText: "Sí, proceder",
-    cancelButtonText: "No, cancelar",
-  });
-
-  if (!result.isConfirmed) {
-    return;
-  }
-
-  try {
-    const response = await apiClient<ProSubscriptionResponse>("payments/pro", {
-      method: "POST",
-      body: { data: {} },
-    });
-
-    // Redirección GET a Transbank Oneclick con TBK_TOKEN en URL
-    if (response?.data?.urlWebpay && response?.data?.token) {
-      const redirectUrl = `${response.data.urlWebpay}?TBK_TOKEN=${response.data.token}`;
-      window.location.href = redirectUrl;
-    } else {
-      console.error("Respuesta inválida de la API para Oneclick", response);
-      Swal.fire(
-        "Error",
-        "La respuesta de la API no contiene la información necesaria para el pago.",
-        "error",
-      );
-    }
-  } catch (error) {
-    console.error("Error creating PRO subscription:", error);
-    Swal.fire(
-      "Error",
-      "Hubo un error al procesar la suscripción. Por favor, inténtalo de nuevo.",
-      "error",
-    );
-  }
+const handleProSubscription = () => {
+  navigateTo("/pro/pagar");
 };
 
 const handleCancelSubscription = async () => {
