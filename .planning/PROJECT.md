@@ -513,4 +513,7 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ Google redirect button (`/login/google`) coexists with One Tap without conflict — v1.44
 
 ---
-*Last updated: 2026-03-20 after v1.45 milestone*
+- ✓ `pro` boolean removed from all Strapi backend code and frontend type definitions; `pro_status` enum is the single source of truth for PRO membership state — v1.46 (phase 103.1)
+
+---
+*Last updated: 2026-03-21 after v1.46 phase 103.1*
