@@ -24,10 +24,10 @@ Requirements for PRO Subscriptions (Webpay Oneclick) milestone. Each maps to roa
 
 ### PRO Single Source of Truth (Phase 103.1)
 
-- [ ] **PRO-SINGLE-01**: `computeSortPriority` uses `pro_status === "active"` instead of `pro` boolean to determine PRO status
-- [ ] **PRO-SINGLE-02**: `sanitizeAdForPublic` exposes `pro_status` instead of `pro` in the public API user object
-- [ ] **PRO-SINGLE-03**: Inscription handler (`proResponse`) does not write `pro: true` to user records
-- [ ] **PRO-SINGLE-04**: Subscription charge cron deactivation does not write `pro: false` to user records
+- [x] **PRO-SINGLE-01**: `computeSortPriority` uses `pro_status === "active"` instead of `pro` boolean to determine PRO status
+- [x] **PRO-SINGLE-02**: `sanitizeAdForPublic` exposes `pro_status` instead of `pro` in the public API user object
+- [x] **PRO-SINGLE-03**: Inscription handler (`proResponse`) does not write `pro: true` to user records
+- [x] **PRO-SINGLE-04**: Subscription charge cron deactivation does not write `pro: false` to user records
 - [x] **PRO-SINGLE-05**: Website User type definition uses `pro_status` and does not contain `pro: boolean`
 - [x] **PRO-SINGLE-06**: All website PRO page gates and components check `pro_status === "active"` instead of `user.pro`
 - [x] **PRO-SINGLE-07**: Dashboard user display and components check `pro_status` instead of `pro` boolean
@@ -76,10 +76,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CHRG-03 | Phase 103 | Complete |
 | CHRG-04 | Phase 103 | Complete |
 | CHRG-05 | Phase 103 | Complete |
-| PRO-SINGLE-01 | Phase 103.1 | Pending |
-| PRO-SINGLE-02 | Phase 103.1 | Pending |
-| PRO-SINGLE-03 | Phase 103.1 | Pending |
-| PRO-SINGLE-04 | Phase 103.1 | Pending |
+| PRO-SINGLE-01 | Phase 103.1 | Complete |
+| PRO-SINGLE-02 | Phase 103.1 | Complete |
+| PRO-SINGLE-03 | Phase 103.1 | Complete |
+| PRO-SINGLE-04 | Phase 103.1 | Complete |
 | PRO-SINGLE-05 | Phase 103.1 | Complete |
 | PRO-SINGLE-06 | Phase 103.1 | Complete |
 | PRO-SINGLE-07 | Phase 103.1 | Complete |
