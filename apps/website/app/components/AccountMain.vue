@@ -12,7 +12,10 @@
       </nuxt-link>
     </div>
 
-    <div v-if="!user?.pro" class="account--main__become_pro">
+    <div
+      v-if="appConfig.features.pro && !user?.pro"
+      class="account--main__become_pro"
+    >
       <MemoPro />
     </div>
 
@@ -96,6 +99,7 @@ const { getPackBannerText } = usePacks();
 const user = useStrapiUser<User>();
 const { sanitizeText } = useSanitize();
 const { packs, loadPacks } = usePacksList();
+const appConfig = useAppConfiguration();
 
 onMounted(() => loadPacks());
 
