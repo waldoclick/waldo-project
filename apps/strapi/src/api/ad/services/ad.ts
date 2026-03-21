@@ -90,14 +90,73 @@ function computeAdStatus(ad: unknown): AdStatus {
 }
 
 /**
- * Helper function to transform sort parameter from string to object format
- * @param {string|object} sort - Sort parameter (e.g., "createdAt:asc" or {createdAt: "asc"})
- * @returns {object} Transformed sort object for Strapi query
+ * Compute the sort priority for an ad based on featured status and PRO user status.
+ * 0 = featured ad from PRO user (highest priority)
+ * 1 = featured ad from normal user
+ * 2 = not featured (default)
+ */
+export function computeSortPriority(ad: {
+  ad_featured_reservation?: unknown;
+  user?: { pro?: boolean } | null;
+}): number {
+  const isFeatured =
+    ad.ad_featured_reservation != null &&
+    typeof ad.ad_featured_reservation === "object" &&
+    "id" in (ad.ad_featured_reservation as Record<string, unknown>);
+  if (!isFeatured) return 2;
+  const isPro = !!(
+    ad.user &&
+    typeof ad.user === "object" &&
+    (ad.user as { pro?: boolean }).pro
+  );
+  return isPro ? 0 : 1;
+}
+
+/**
+ * Recalculate sort_priority for all existing ads.
+ * Called from bootstrap to backfill existing data.
+ * Returns the number of ads updated.
+ */
+export async function recalculateSortPriorities(): Promise<number> {
+  const ads = await strapi.db.query("api::ad.ad").findMany({
+    populate: { ad_featured_reservation: true, user: true },
+    limit: -1,
+  });
+  let updated = 0;
+  for (const ad of ads) {
+    const priority = computeSortPriority(
+      ad as {
+        ad_featured_reservation?: unknown;
+        user?: { pro?: boolean } | null;
+      }
+    );
+    const adRecord = ad as Record<string, unknown>;
+    if (adRecord.sort_priority !== priority) {
+      await strapi.db.query("api::ad.ad").update({
+        where: { id: adRecord.id },
+        data: { sort_priority: priority },
+      });
+      updated++;
+    }
+  }
+  return updated;
+}
+
+/**
+ * Helper function to transform sort parameter from string to object format.
+ * Supports both a single sort string and an array of sort strings.
+ * @param {string|string[]|object} sort - Sort parameter (e.g., "createdAt:asc", ["sort_priority:asc","createdAt:desc"])
+ * @returns {object|object[]} Transformed sort object or array for Strapi db.query
  */
 function transformSortParameter(sort: unknown): unknown {
   if (!sort) return { createdAt: "desc" };
 
-  // If already an object, return as is
+  // If it's an array, map each element through the single-item parse logic
+  if (Array.isArray(sort)) {
+    return sort.map((item) => transformSortParameter(item));
+  }
+
+  // If already a plain object, return as is
   if (typeof sort === "object" && !Array.isArray(sort)) {
     return sort;
   }
