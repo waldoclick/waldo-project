@@ -23,7 +23,7 @@ export interface User {
   address?: string;
   address_number?: string;
   postal_code?: string;
-  pro?: boolean;
+  pro_status?: "active" | "inactive" | "cancelled" | null;
   is_company?: boolean;
   business_name?: string;
   business_type?: string;
