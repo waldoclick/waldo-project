@@ -486,7 +486,6 @@ class PaymentController {
       user.id,
       {
         data: {
-          pro: true,
           pro_status: "active",
           tbk_user: result.tbkUser,
           pro_card_type: result.cardType,
@@ -510,7 +509,7 @@ class PaymentController {
         const priority = computeSortPriority(
           ad as {
             ad_featured_reservation?: unknown;
-            user?: { pro?: boolean } | null;
+            user?: { pro_status?: string } | null;
           }
         );
         const adRecord = ad as Record<string, unknown>;
