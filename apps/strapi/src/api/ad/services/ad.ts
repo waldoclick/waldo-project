@@ -97,7 +97,7 @@ function computeAdStatus(ad: unknown): AdStatus {
  */
 export function computeSortPriority(ad: {
   ad_featured_reservation?: unknown;
-  user?: { pro?: boolean } | null;
+  user?: { pro_status?: string } | null;
 }): number {
   const isFeatured =
     ad.ad_featured_reservation != null &&
@@ -107,7 +107,7 @@ export function computeSortPriority(ad: {
   const isPro = !!(
     ad.user &&
     typeof ad.user === "object" &&
-    (ad.user as { pro?: boolean }).pro
+    (ad.user as { pro_status?: string }).pro_status === "active"
   );
   return isPro ? 0 : 1;
 }
@@ -127,7 +127,7 @@ export async function recalculateSortPriorities(): Promise<number> {
     const priority = computeSortPriority(
       ad as {
         ad_featured_reservation?: unknown;
-        user?: { pro?: boolean } | null;
+        user?: { pro_status?: string } | null;
       }
     );
     const adRecord = ad as Record<string, unknown>;

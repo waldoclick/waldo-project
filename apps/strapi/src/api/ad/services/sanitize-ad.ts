@@ -22,7 +22,7 @@ export function sanitizeAdForPublic(
         lastname: user.lastname,
         email: user.email,
         phone: user.phone,
-        pro: user.pro,
+        pro_status: user.pro_status,
         is_company: user.is_company,
         business_name: user.business_name,
         createdAt: user.createdAt,
