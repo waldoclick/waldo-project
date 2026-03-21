@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-03-20)
 Phase: 104 of 104 (cancellation + account management)
 Plan: Not started
 Status: In progress
-Last activity: 2026-03-20
+Last activity: 2026-03-21 - Completed quick task 260321-hje: Protect pro fields in user update endpoint
 
 ```
 Progress: [█████░░░░░] 44%
@@ -56,6 +56,12 @@ Progress: [█████░░░░░] 44%
 - [102-02] fetchUser comes from useStrapiAuth() not useStrapi() — consistent with all components (resumen.vue, FormProfile.vue, etc.)
 - [103-01] MallTransaction instantiated per-call in authorizeCharge() (not singleton) for testability and avoiding module-level state
 - [103-01] authorizeCharge() takes parentBuyOrder/childBuyOrder as parameters — caller controls buy_order uniqueness per retry attempt
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260321-hje | Protect pro fields in user update endpoint and verify oneclick pro status management | 2026-03-21 | 9768011b | [260321-hje-protect-pro-fields](./quick/260321-hje-protect-pro-fields-in-user-update-endpoi/) |
 
 ### Blockers/Concerns (open)
 
