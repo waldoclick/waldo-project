@@ -2,7 +2,7 @@
   <div class="page">
     <HeaderDefault :show-search="true" />
     <HeroFake />
-    <ResumePro
+    <ResumeProCard
       v-if="proData"
       title="Tu suscripcion PRO esta activa"
       description="Tu tarjeta ha sido registrada exitosamente. Ya puedes disfrutar de todos los beneficios PRO."
@@ -22,7 +22,7 @@ import type { User } from "@/types/user";
 
 import HeaderDefault from "@/components/HeaderDefault.vue";
 import HeroFake from "@/components/HeroFake.vue";
-import ResumePro from "@/components/ResumePro.vue";
+import ResumeProCard from "@/components/ResumeProCard.vue";
 import FooterDefault from "@/components/FooterDefault.vue";
 
 $setSEO({
