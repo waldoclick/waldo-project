@@ -4,6 +4,7 @@ import populateFaqs from "../seeders/faqs";
 import populatePacks from "../seeders/packs";
 import populateRegions from "../seeders/regions";
 import populateAdDraftMigration from "../seeders/ad-draft-migration";
+import { recalculateSortPriorities } from "./api/ad/services/ad";
 
 export default {
   /**
@@ -27,21 +28,28 @@ export default {
 
     if (!runSeeders) {
       console.log("⏭️ Seeders deshabilitados (APP_RUN_SEEDERS=false)");
-      return;
+    } else {
+      console.log("🌱 Ejecutando seeders...");
+
+      try {
+        await populateCategories(strapi);
+        await populateConditions(strapi);
+        await populateFaqs(strapi);
+        await populatePacks(strapi);
+        await populateRegions(strapi);
+        await populateAdDraftMigration(strapi);
+        console.log("✅ Seeders completados exitosamente");
+      } catch (error) {
+        console.error("❌ Error ejecutando seeders:", error);
+      }
     }
 
-    console.log("🌱 Ejecutando seeders...");
-
+    // Backfill sort_priority for all existing ads on every start
     try {
-      await populateCategories(strapi);
-      await populateConditions(strapi);
-      await populateFaqs(strapi);
-      await populatePacks(strapi);
-      await populateRegions(strapi);
-      await populateAdDraftMigration(strapi);
-      console.log("✅ Seeders completados exitosamente");
+      const updated = await recalculateSortPriorities();
+      console.log(`sort_priority backfill complete: ${updated} ads updated`);
     } catch (error) {
-      console.error("❌ Error ejecutando seeders:", error);
+      console.error("Error backfilling sort_priority:", error);
     }
   },
 };

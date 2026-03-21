@@ -184,6 +184,11 @@
     },
     "reason_for_deactivation": {
       "type": "text"
+    },
+    "sort_priority": {
+      "type": "integer",
+      "required": true,
+      "default": 2
     }
   }
 }
