@@ -46,6 +46,20 @@ Requirements for PRO Subscriptions (Webpay Oneclick) milestone. Each maps to roa
 - [x] **FRNT-03**: Account page shows subscription status (active/cancelled), card info, and next charge date
 - [x] **FRNT-04**: Cancel button with Swal confirmation available on account page for active subscribers
 
+### Checkout (Phase 105)
+
+- [ ] **CHECKOUT-01**: `proCreate` accepts `is_invoice` from request body and stores it as `pro_pending_invoice` on user record
+- [ ] **CHECKOUT-02**: `proResponse` creates an order record + Facto document after successful inscription
+- [ ] **CHECKOUT-03**: `proResponse` redirects to `/pro/pagar/gracias?order={documentId}` (not `/pro/gracias`)
+- [ ] **CHECKOUT-04**: Monthly charge cron creates an order + Facto boleta document per successful charge
+- [ ] **CHECKOUT-05**: Cron order/Facto creation failure does not block `pro_expires_at` extension
+- [ ] **CHECKOUT-06**: `/pro/pagar` page exists with boleta/factura and gateway sections (no ad preview, no packs)
+- [ ] **CHECKOUT-07**: `/pro/pagar/gracias` page shows payment receipt fetched by `order.documentId` from URL
+- [ ] **CHECKOUT-08**: All PRO checkout components use `--pro` BEM modifiers on existing SCSS (no new SCSS files)
+- [ ] **CHECKOUT-09**: PRO checkout components do not reference `adStore` or ad-specific logic
+- [ ] **CHECKOUT-10**: `MemoPro.vue` navigates to `/pro/pagar` instead of calling `POST /payments/pro` directly
+- [ ] **CHECKOUT-11**: Old `/pro/gracias` page remains functional for backward compatibility
+
 ## Future Requirements
 
 (None deferred for this milestone)
@@ -60,6 +74,7 @@ Requirements for PRO Subscriptions (Webpay Oneclick) milestone. Each maps to roa
 | Annual billing option | Monthly only for v1; annual can be added later |
 | Dashboard admin subscription management | Admin can toggle `pro` directly in Strapi admin panel |
 | Email receipt for each monthly charge | Deferred to future; payment record in DB is sufficient for now |
+| Storing user boleta/factura preference for cron reuse | Deferred to future; cron uses boleta by default |
 
 ## Traceability
 
@@ -91,12 +106,23 @@ Which phases cover which requirements. Updated during roadmap creation.
 | FRNT-02 | Phase 102 | Complete |
 | FRNT-03 | Phase 104 | Complete |
 | FRNT-04 | Phase 104 | Complete |
+| CHECKOUT-01 | Phase 105 | Planned |
+| CHECKOUT-02 | Phase 105 | Planned |
+| CHECKOUT-03 | Phase 105 | Planned |
+| CHECKOUT-04 | Phase 105 | Planned |
+| CHECKOUT-05 | Phase 105 | Planned |
+| CHECKOUT-06 | Phase 105 | Planned |
+| CHECKOUT-07 | Phase 105 | Planned |
+| CHECKOUT-08 | Phase 105 | Planned |
+| CHECKOUT-09 | Phase 105 | Planned |
+| CHECKOUT-10 | Phase 105 | Planned |
+| CHECKOUT-11 | Phase 105 | Planned |
 
 **Coverage:**
-- v1.46 requirements: 24 total
-- Mapped to phases: 24
+- v1.46 requirements: 35 total
+- Mapped to phases: 35
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-20*
-*Last updated: 2026-03-21 — added PRO-SINGLE requirements for Phase 103.1*
+*Last updated: 2026-03-21 — added CHECKOUT requirements for Phase 105*

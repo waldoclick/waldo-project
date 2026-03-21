@@ -23,7 +23,7 @@
 - ✅ **v1.38 GA4 Analytics Audit & Implementation** — Phases 083–085 (shipped 2026-03-14). See `.planning/milestones/v1.38-ROADMAP.md`
 - ✅ **v1.39 Unified API Client** — Phases 089–090 (shipped 2026-03-15). See `.planning/milestones/v1.39-ROADMAP.md`
 - ✅ **v1.40 Shared Authentication Session** — Phases 091–092 (shipped 2026-03-16). See `.planning/milestones/v1.40-ROADMAP.md`
-- 🚧 **v1.46 PRO Subscriptions (Webpay Oneclick)** — Phases 102–104 (in progress)
+- 🚧 **v1.46 PRO Subscriptions (Webpay Oneclick)** — Phases 102–105 (in progress)
 
 ## Phases
 
@@ -101,6 +101,24 @@ Plans:
 - [x] 104-01-PLAN.md — Backend: deleteInscription, ProCancellationService, cancel endpoint, cron Step 4 sweep, tests
 - [ ] 104-02-PLAN.md — Frontend: MemoPro.vue dual-purpose (invite + subscription status/cancel)
 
+### Phase 105: PRO subscription checkout page
+**Goal:** Dedicated checkout page for PRO subscriptions that collects boleta/factura preference and creates order records with Facto tax documents
+**Depends on:** Phase 104
+**Requirements**: CHECKOUT-01, CHECKOUT-02, CHECKOUT-03, CHECKOUT-04, CHECKOUT-05, CHECKOUT-06, CHECKOUT-07, CHECKOUT-08, CHECKOUT-09, CHECKOUT-10, CHECKOUT-11
+**Success Criteria** (what must be TRUE):
+  1. MemoPro "Hazte PRO" navigates to `/pro/pagar` instead of calling API directly
+  2. `/pro/pagar` shows boleta/factura toggle (open by default) and gateway section (Oneclick)
+  3. Completing the flow creates an order record + Facto document and redirects to `/pro/pagar/gracias?order={documentId}`
+  4. `/pro/pagar/gracias` shows payment receipt fetched by order documentId
+  5. Monthly charge cron also creates order + Facto boleta per successful charge
+  6. Old `/pro/gracias` page remains functional for backward compatibility
+**Plans:** 3 plans
+
+Plans:
+- [ ] 105-01-PLAN.md — Backend: user schema (pro_pending_invoice) + proCreate/proResponse order+Facto + cron order+Facto
+- [ ] 105-02-PLAN.md — Frontend components: rename ResumePro, create PRO checkout components, SCSS modifiers
+- [ ] 105-03-PLAN.md — Frontend pages + wiring: /pro/pagar, /pro/pagar/gracias, MemoPro navigation change
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -109,3 +127,4 @@ Plans:
 | 103. Monthly Charging Cron | 1/2 | 2/2 | Complete    | 2026-03-20 |
 | 103.1. Remove pro boolean | v1.46 | 2/2 | Complete    | 2026-03-21 |
 | 104. Cancellation + Account Management | 2/2 | Complete   | 2026-03-21 |  |
+| 105. PRO subscription checkout page | v1.46 | 0/3 | Planned | - |
