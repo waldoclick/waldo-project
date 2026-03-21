@@ -1,5 +1,3 @@
-import paymentController from "./payment";
-
 // Mock logger
 jest.mock("../../../utils/logtail", () => ({
   info: jest.fn(),
@@ -7,25 +5,26 @@ jest.mock("../../../utils/logtail", () => ({
   error: jest.fn(),
 }));
 
-// Mock order.utils
-const mockCreateAdOrder = jest.fn();
+// Mock order.utils — use jest.fn() inside factory so hoisting works
 jest.mock("../utils/order.utils", () => ({
   __esModule: true,
-  default: { createAdOrder: mockCreateAdOrder },
+  default: { createAdOrder: jest.fn() },
 }));
 
 // Mock general.utils
-const mockGenerateFactoDocument = jest.fn();
 jest.mock("../utils/general.utils", () => ({
   __esModule: true,
-  default: { generateFactoDocument: mockGenerateFactoDocument },
+  default: { generateFactoDocument: jest.fn() },
 }));
 
 // Mock user.utils
-const mockDocumentDetails = jest.fn();
 jest.mock("../utils/user.utils", () => ({
-  documentDetails: mockDocumentDetails,
-  getCurrentUser: jest.fn(),
+  documentDetails: jest.fn(),
+  getCurrentUser: jest.fn().mockResolvedValue({
+    id: 10,
+    documentId: "userdoc123456789012345",
+    email: "user@example.com",
+  }),
 }));
 
 // Mock ad.service
@@ -62,21 +61,32 @@ jest.mock("../../ad/services/ad", () => ({
 }));
 
 // Mock oneclick service
-const mockStartInscription = jest.fn();
-const mockFinishInscription = jest.fn();
 jest.mock("../../../services/oneclick", () => ({
   OneclickService: jest.fn().mockImplementation(() => ({
-    startInscription: mockStartInscription,
-    finishInscription: mockFinishInscription,
+    startInscription: jest.fn(),
+    finishInscription: jest.fn(),
   })),
   buildOneclickUsername: jest.fn().mockReturnValue("user-doc123"),
 }));
+
+// Import after mocks are declared (jest.mock hoisting handles the rest)
+import paymentController from "./payment";
+import orderUtilsDefault from "../utils/order.utils";
+import generalUtilsDefault from "../utils/general.utils";
+import * as userUtils from "../utils/user.utils";
+import { OneclickService } from "../../../services/oneclick";
+
+// Typed references to the mock functions
+const mockCreateAdOrder = orderUtilsDefault.createAdOrder as jest.Mock;
+const mockGenerateFactoDocument = generalUtilsDefault.generateFactoDocument as jest.Mock;
+const mockDocumentDetails = userUtils.documentDetails as jest.Mock;
+const mockGetCurrentUser = userUtils.getCurrentUser as jest.Mock;
 
 // Mock strapi global
 const mockEntityServiceFindOne = jest.fn();
 const mockEntityServiceUpdate = jest.fn();
 const mockDbQueryFindOne = jest.fn();
-const mockDbQueryFindMany = jest.fn();
+const mockDbQueryFindMany = jest.fn().mockResolvedValue([]);
 const mockDbQueryUpdate = jest.fn();
 
 (global as any).strapi = {
@@ -89,7 +99,7 @@ const mockDbQueryUpdate = jest.fn();
   db: {
     query: jest.fn().mockReturnValue({
       findOne: mockDbQueryFindOne,
-      findMany: mockDbQueryFindMany.mockResolvedValue([]),
+      findMany: mockDbQueryFindMany,
       update: mockDbQueryUpdate,
     }),
   },
@@ -112,19 +122,41 @@ const makeCtx = (overrides: Record<string, unknown> = {}) => ({
 });
 
 describe("PaymentController: proCreate", () => {
+  let mockStartInscription: jest.Mock;
+  let mockFinishInscription: jest.Mock;
+
+  const defaultUser = {
+    id: 10,
+    documentId: "userdoc123456789012345",
+    email: "user@example.com",
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
     process.env.APP_URL = "http://localhost:1337";
+
+    // Reset OneclickService mock instance methods
+    mockStartInscription = jest.fn();
+    mockFinishInscription = jest.fn();
+    (OneclickService as jest.MockedClass<typeof OneclickService>).mockImplementation(() => ({
+      startInscription: mockStartInscription,
+      finishInscription: mockFinishInscription,
+    }) as any);
+
+    // Re-setup getCurrentUser since clearAllMocks clears its return value
+    mockGetCurrentUser.mockResolvedValue(defaultUser);
+
+    // Re-attach strapi mock (cleared by clearAllMocks)
+    mockDbQueryFindMany.mockResolvedValue([]);
+    (global as any).strapi.db.query.mockReturnValue({
+      findOne: mockDbQueryFindOne,
+      findMany: mockDbQueryFindMany,
+      update: mockDbQueryUpdate,
+    });
   });
 
   it("proCreate stores pro_pending_invoice=true when is_invoice=true in request body", async () => {
     // Arrange
-    const user = {
-      id: 10,
-      documentId: "userdoc123456789012345",
-      email: "user@example.com",
-    };
-    mockEntityServiceFindOne.mockResolvedValueOnce(user);
     mockStartInscription.mockResolvedValueOnce({
       success: true,
       token: "tbk-token-abc",
@@ -142,7 +174,7 @@ describe("PaymentController: proCreate", () => {
     // Assert
     expect(mockEntityServiceUpdate).toHaveBeenCalledWith(
       "plugin::users-permissions.user",
-      user.id,
+      defaultUser.id,
       expect.objectContaining({
         data: expect.objectContaining({
           pro_pending_invoice: true,
@@ -153,12 +185,6 @@ describe("PaymentController: proCreate", () => {
 
   it("proCreate stores pro_pending_invoice=false when is_invoice is omitted", async () => {
     // Arrange
-    const user = {
-      id: 10,
-      documentId: "userdoc123456789012345",
-      email: "user@example.com",
-    };
-    mockEntityServiceFindOne.mockResolvedValueOnce(user);
     mockStartInscription.mockResolvedValueOnce({
       success: true,
       token: "tbk-token-xyz",
@@ -176,7 +202,7 @@ describe("PaymentController: proCreate", () => {
     // Assert
     expect(mockEntityServiceUpdate).toHaveBeenCalledWith(
       "plugin::users-permissions.user",
-      user.id,
+      defaultUser.id,
       expect.objectContaining({
         data: expect.objectContaining({
           pro_pending_invoice: false,
@@ -187,11 +213,28 @@ describe("PaymentController: proCreate", () => {
 });
 
 describe("PaymentController: proResponse", () => {
+  let mockStartInscription: jest.Mock;
+  let mockFinishInscription: jest.Mock;
+
   beforeEach(() => {
     jest.clearAllMocks();
     process.env.FRONTEND_URL = "https://waldo.cl";
     process.env.PRO_MONTHLY_PRICE = "9990";
     process.env.PAYMENT_GATEWAY = "transbank";
+
+    mockStartInscription = jest.fn();
+    mockFinishInscription = jest.fn();
+    (OneclickService as jest.MockedClass<typeof OneclickService>).mockImplementation(() => ({
+      startInscription: mockStartInscription,
+      finishInscription: mockFinishInscription,
+    }) as any);
+
+    mockDbQueryFindMany.mockResolvedValue([]);
+    (global as any).strapi.db.query.mockReturnValue({
+      findOne: mockDbQueryFindOne,
+      findMany: mockDbQueryFindMany,
+      update: mockDbQueryUpdate,
+    });
   });
 
   it("proResponse creates order + Facto document after successful inscription", async () => {

@@ -2,6 +2,9 @@ import { ICronjobResult } from "./ad-expiry.cron";
 import { OneclickService } from "../services/oneclick";
 import logger from "../utils/logtail";
 import { computeSortPriority } from "../api/ad/services/ad";
+import orderUtils from "../api/payment/utils/order.utils";
+import generalUtils from "../api/payment/utils/general.utils";
+import { documentDetails } from "../api/payment/utils/user.utils";
 
 interface ProUser {
   id: number;
@@ -386,6 +389,31 @@ export class SubscriptionChargeService {
           >[2]["data"],
         }
       );
+
+      // Create order + Facto document for this charge (boleta by default — user preference storage is deferred)
+      try {
+        const userDocDetails = await documentDetails(user.id, false);
+        const chargeItems = [{ name: "Suscripcion PRO mensual", price: amount, quantity: 1 }];
+        const factoDoc = await generalUtils.generateFactoDocument({
+          isInvoice: false,
+          userDetails: userDocDetails,
+          items: chargeItems,
+        });
+        await orderUtils.createAdOrder({
+          amount,
+          buy_order: parentBuyOrder,
+          userId: user.id,
+          is_invoice: false,
+          payment_method: process.env.PAYMENT_GATEWAY ?? "transbank",
+          payment_response: result.rawResponse,
+          document_details: userDocDetails,
+          items: chargeItems,
+          document_response: factoDoc,
+        });
+      } catch (orderError) {
+        // Non-fatal: charge was successful, order creation failure must not block pro_expires_at extension
+        logger.error("SubscriptionChargeService: order/Facto creation failed", { userId: user.id, error: orderError });
+      }
 
       logger.info(
         `SubscriptionChargeService: successfully charged user ${user.id} (attempt ${attempt})`
