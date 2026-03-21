@@ -34,10 +34,10 @@ Requirements for PRO Subscriptions (Webpay Oneclick) milestone. Each maps to roa
 
 ### Cancellation
 
-- [ ] **CANC-01**: User can cancel their PRO subscription from their account page
-- [ ] **CANC-02**: Cancelled subscription remains active until `pro_expires_at` (period-end expiry)
-- [ ] **CANC-03**: Card inscription is deleted from Transbank on cancellation
-- [ ] **CANC-04**: After period expires, `pro_status` is set to `inactive` and PRO features are disabled
+- [x] **CANC-01**: User can cancel their PRO subscription from their account page
+- [x] **CANC-02**: Cancelled subscription remains active until `pro_expires_at` (period-end expiry)
+- [x] **CANC-03**: Card inscription is deleted from Transbank on cancellation
+- [x] **CANC-04**: After period expires, `pro_status` is set to `inactive` and PRO features are disabled
 
 ### Frontend
 
@@ -83,10 +83,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PRO-SINGLE-05 | Phase 103.1 | Complete |
 | PRO-SINGLE-06 | Phase 103.1 | Complete |
 | PRO-SINGLE-07 | Phase 103.1 | Complete |
-| CANC-01 | Phase 104 | Pending |
-| CANC-02 | Phase 104 | Pending |
-| CANC-03 | Phase 104 | Pending |
-| CANC-04 | Phase 104 | Pending |
+| CANC-01 | Phase 104 | Complete |
+| CANC-02 | Phase 104 | Complete |
+| CANC-03 | Phase 104 | Complete |
+| CANC-04 | Phase 104 | Complete |
 | FRNT-01 | Phase 102 | Complete |
 | FRNT-02 | Phase 102 | Complete |
 | FRNT-03 | Phase 104 | Pending |

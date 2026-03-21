@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: PRO Subscriptions (Webpay Oneclick)
 status: executing
-stopped_at: Completed 103.1-01-PLAN.md
-last_updated: "2026-03-21T19:06:26.429Z"
+stopped_at: Completed 104-01-PLAN.md
+last_updated: "2026-03-21T19:46:27.000Z"
 last_activity: 2026-03-21
 progress:
   total_phases: 4
   completed_phases: 3
-  total_plans: 6
-  completed_plans: 6
-  percent: 44
+  total_plans: 8
+  completed_plans: 7
+  percent: 50
 ---
 
 # Session State
@@ -21,17 +21,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-20)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 103.1 — remove-pro-boolean-use-pro-status-as-single-source-of-truth
+**Current focus:** Phase 104 — cancellation-account-management
 
 ## Position
 
 Phase: 104 of 104 (cancellation account management)
-Plan: Not started
+Plan: 1 of 1 completed
 Status: In progress
 Last activity: 2026-03-21
 
 ```
-Progress: [█████░░░░░] 44%
+Progress: [█████░░░░░] 50%
 ```
 
 ## Accumulated Context
@@ -56,6 +56,9 @@ Progress: [█████░░░░░] 44%
 - [102-02] fetchUser comes from useStrapiAuth() not useStrapi() — consistent with all components (resumen.vue, FormProfile.vue, etc.)
 - [103-01] MallTransaction instantiated per-call in authorizeCharge() (not singleton) for testability and avoiding module-level state
 - [103-01] authorizeCharge() takes parentBuyOrder/childBuyOrder as parameters — caller controls buy_order uniqueness per retry attempt
+- [104-01] Cancellation proceeds even if Transbank deleteInscription fails — user intent is cancellation, card deletion is best-effort
+- [104-01] pro_expires_at is intentionally NOT cleared on cancellation — subscription expires at period end (CANC-02)
+- [104-01] Step 4 in cron sweeps expired cancelled users and deactivates them without calling authorizeCharge (card already deleted)
 
 ### Quick Tasks Completed
 
@@ -74,6 +77,6 @@ Progress: [█████░░░░░] 44%
 
 ## Session Continuity
 
-Last session: 2026-03-21T19:03:06.357Z
-Stopped at: Completed 103.1-01-PLAN.md
+Last session: 2026-03-21T19:46:27.000Z
+Stopped at: Completed 104-01-PLAN.md
 Resume file: None
