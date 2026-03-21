@@ -3,7 +3,8 @@
 @use "../base/container";
 
 .checkout {
-  &--default {
+  &--default,
+  &--pro {
     min-height: calc(100vh - 180px);
     background-color: white;
     padding: 140px 20px 120px;

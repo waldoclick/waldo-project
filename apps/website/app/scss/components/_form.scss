@@ -40,7 +40,8 @@ input:-webkit-autofill {
     margin-bottom: 30px;
   }
 
-  &--checkout {
+  &--checkout,
+  &--pro {
     &__header {
       &__title {
         font-style: normal;
