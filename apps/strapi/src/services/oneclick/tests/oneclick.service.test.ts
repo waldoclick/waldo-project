@@ -6,12 +6,14 @@ jest.mock("transbank-sdk", () => {
   const mockStart = jest.fn();
   const mockFinish = jest.fn();
   const mockAuthorize = jest.fn();
+  const mockDelete = jest.fn();
 
   return {
     Oneclick: {
       MallInscription: jest.fn().mockImplementation(() => ({
         start: mockStart,
         finish: mockFinish,
+        delete: mockDelete,
       })),
       MallTransaction: jest.fn().mockImplementation(() => ({
         authorize: mockAuthorize,
@@ -32,6 +34,7 @@ jest.mock("transbank-sdk", () => {
     __mockStart: mockStart,
     __mockFinish: mockFinish,
     __mockAuthorize: mockAuthorize,
+    __mockDelete: mockDelete,
   };
 });
 
@@ -224,6 +227,40 @@ describe("OneclickService", () => {
       expect(result.success).toBe(false);
       expect(result.error).toBe(sdkError);
       expect(result.authorizationCode).toBeUndefined();
+    });
+  });
+
+  describe("deleteInscription", () => {
+    const tbkUserToken = "tbk-user-stored-token";
+    const userDocId = "abc123xyz456789012345678";
+
+    it("calls inscription.delete with tbkUser and buildOneclickUsername(userDocumentId) and returns { success: true }", async () => {
+      // Arrange
+      transbankSdk.__mockDelete.mockResolvedValueOnce(undefined);
+
+      // Act
+      const result = await service.deleteInscription(tbkUserToken, userDocId);
+
+      // Assert
+      expect(result.success).toBe(true);
+      expect(result.error).toBeUndefined();
+      expect(transbankSdk.__mockDelete).toHaveBeenCalledWith(
+        tbkUserToken,
+        buildOneclickUsername(userDocId)
+      );
+    });
+
+    it("returns { success: false, error } when SDK throws", async () => {
+      // Arrange
+      const sdkError = new Error("Transbank delete failed");
+      transbankSdk.__mockDelete.mockRejectedValueOnce(sdkError);
+
+      // Act
+      const result = await service.deleteInscription(tbkUserToken, userDocId);
+
+      // Assert
+      expect(result.success).toBe(false);
+      expect(result.error).toBe(sdkError);
     });
   });
 });
