@@ -80,11 +80,11 @@ Plans:
   5. All website/dashboard components use `pro_status === "active"` instead of `user.pro`
   6. User type definitions no longer contain the `pro: boolean` field
   7. All existing tests pass with updated mocks
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
 - [ ] 103.1-01-PLAN.md — Strapi backend: computeSortPriority, sanitize-ad, payment writes, cron writes, protect-user-fields, and tests
-- [ ] 103.1-02-PLAN.md — Frontend: website + dashboard type definitions, page gates, and component updates
+- [x] 103.1-02-PLAN.md — Frontend: website + dashboard type definitions, page gates, and component updates
 
 ### Phase 104: Cancellation + Account Management
 **Goal**: PRO subscribers can cancel their subscription and see their subscription status at any time
@@ -103,5 +103,5 @@ Plans:
 |-------|-----------|----------------|--------|-----------|
 | 102. Oneclick Service + Inscription Flow | 2/2 | Complete   | 2026-03-20 | - |
 | 103. Monthly Charging Cron | 1/2 | 2/2 | Complete    | 2026-03-20 |
-| 103.1. Remove pro boolean | v1.46 | 0/2 | Not started | - |
+| 103.1. Remove pro boolean | v1.46 | 1/2 | In Progress|  |
 | 104. Cancellation + Account Management | v1.46 | 0/? | Not started | - |

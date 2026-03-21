@@ -28,9 +28,9 @@ Requirements for PRO Subscriptions (Webpay Oneclick) milestone. Each maps to roa
 - [ ] **PRO-SINGLE-02**: `sanitizeAdForPublic` exposes `pro_status` instead of `pro` in the public API user object
 - [ ] **PRO-SINGLE-03**: Inscription handler (`proResponse`) does not write `pro: true` to user records
 - [ ] **PRO-SINGLE-04**: Subscription charge cron deactivation does not write `pro: false` to user records
-- [ ] **PRO-SINGLE-05**: Website User type definition uses `pro_status` and does not contain `pro: boolean`
-- [ ] **PRO-SINGLE-06**: All website PRO page gates and components check `pro_status === "active"` instead of `user.pro`
-- [ ] **PRO-SINGLE-07**: Dashboard user display and components check `pro_status` instead of `pro` boolean
+- [x] **PRO-SINGLE-05**: Website User type definition uses `pro_status` and does not contain `pro: boolean`
+- [x] **PRO-SINGLE-06**: All website PRO page gates and components check `pro_status === "active"` instead of `user.pro`
+- [x] **PRO-SINGLE-07**: Dashboard user display and components check `pro_status` instead of `pro` boolean
 
 ### Cancellation
 
@@ -80,9 +80,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PRO-SINGLE-02 | Phase 103.1 | Pending |
 | PRO-SINGLE-03 | Phase 103.1 | Pending |
 | PRO-SINGLE-04 | Phase 103.1 | Pending |
-| PRO-SINGLE-05 | Phase 103.1 | Pending |
-| PRO-SINGLE-06 | Phase 103.1 | Pending |
-| PRO-SINGLE-07 | Phase 103.1 | Pending |
+| PRO-SINGLE-05 | Phase 103.1 | Complete |
+| PRO-SINGLE-06 | Phase 103.1 | Complete |
+| PRO-SINGLE-07 | Phase 103.1 | Complete |
 | CANC-01 | Phase 104 | Pending |
 | CANC-02 | Phase 104 | Pending |
 | CANC-03 | Phase 104 | Pending |

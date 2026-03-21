@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: PRO Subscriptions (Webpay Oneclick)
 status: executing
-stopped_at: Completed 103-02-PLAN.md
-last_updated: "2026-03-20T21:22:06.284Z"
-last_activity: 2026-03-20
+stopped_at: Completed 103.1-02-PLAN.md
+last_updated: "2026-03-21T18:56:50.194Z"
+last_activity: 2026-03-21
 progress:
-  total_phases: 3
+  total_phases: 4
   completed_phases: 2
-  total_plans: 4
-  completed_plans: 4
+  total_plans: 6
+  completed_plans: 5
   percent: 44
 ---
 
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-20)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 103 — monthly-charging-cron
+**Current focus:** Phase 103.1 — remove-pro-boolean-use-pro-status-as-single-source-of-truth
 
 ## Position
 
 Phase: 104 of 104 (cancellation + account management)
 Plan: Not started
 Status: In progress
-Last activity: 2026-03-21 - Completed quick task 260321-hje: Protect pro fields in user update endpoint
+Last activity: 2026-03-21
 
 ```
 Progress: [█████░░░░░] 44%
@@ -64,12 +64,16 @@ Progress: [█████░░░░░] 44%
 | 260321-hje | Protect pro fields in user update endpoint and verify oneclick pro status management | 2026-03-21 | 9768011b | [260321-hje-protect-pro-fields](./quick/260321-hje-protect-pro-fields-in-user-update-endpoi/) |
 | 260321-k2b | Add sort_priority field to ads for featured+PRO ordering in /anuncios listing | 2026-03-21 | 679271a1 | [260321-k2b-add-sort-priority](./quick/260321-k2b-add-sort-priority-field-to-ads-for-featu/) |
 
+### Roadmap Evolution
+
+- Phase 103.1 inserted after Phase 103: Remove pro boolean — use pro_status as single source of truth (URGENT)
+
 ### Blockers/Concerns (open)
 
 - Oneclick Mall must be contracted separately with Transbank for production (separate from Webpay Plus)
 
 ## Session Continuity
 
-Last session: 2026-03-21T00:00:00.000Z
-Stopped at: Completed quick task 260321-k2b
+Last session: 2026-03-21T18:56:50.191Z
+Stopped at: Completed 103.1-02-PLAN.md
 Resume file: None
