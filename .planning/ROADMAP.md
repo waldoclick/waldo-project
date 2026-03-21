@@ -34,7 +34,7 @@
 - [x] **Phase 102: Oneclick Service + Inscription Flow** - Backend Oneclick service and end-to-end card enrollment with frontend redirect and return handling (completed 2026-03-20)
 - [x] **Phase 103: Monthly Charging Cron** - subscription-payment content type, daily charge cron, 3-day retry logic, and idempotency guard (completed 2026-03-20)
 - [x] **Phase 103.1: Remove pro boolean** - Eliminate dual source of truth by replacing all pro boolean usage with pro_status enum (completed 2026-03-21)
-- [ ] **Phase 104: Cancellation + Account Management** - Cancel endpoint, period-end expiry, card deletion from Transbank, and account UI
+- [x] **Phase 104: Cancellation + Account Management** - Cancel endpoint, period-end expiry, card deletion from Transbank, and account UI (completed 2026-03-21)
 
 ## Phase Details
 
@@ -95,7 +95,7 @@ Plans:
   2. After cancellation, PRO features remain active until `pro_expires_at` (no immediate cutoff)
   3. When the billing period expires after cancellation, `pro_status` flips to `inactive` and PRO features are disabled
   4. The account page shows subscription status, masked card info, and next charge date for active subscribers
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
 - [x] 104-01-PLAN.md — Backend: deleteInscription, ProCancellationService, cancel endpoint, cron Step 4 sweep, tests
@@ -108,4 +108,4 @@ Plans:
 | 102. Oneclick Service + Inscription Flow | 2/2 | Complete   | 2026-03-20 | - |
 | 103. Monthly Charging Cron | 1/2 | 2/2 | Complete    | 2026-03-20 |
 | 103.1. Remove pro boolean | v1.46 | 2/2 | Complete    | 2026-03-21 |
-| 104. Cancellation + Account Management | v1.46 | 1/2 | In Progress|  |
+| 104. Cancellation + Account Management | 2/2 | Complete   | 2026-03-21 |  |
