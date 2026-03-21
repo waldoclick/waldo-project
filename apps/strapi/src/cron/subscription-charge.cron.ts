@@ -155,7 +155,6 @@ export class SubscriptionChargeService {
           {
             data: {
               pro_status: "inactive",
-              pro: false,
               pro_expires_at: null,
               tbk_user: null,
             } as unknown as Parameters<
@@ -175,7 +174,7 @@ export class SubscriptionChargeService {
             const priority = computeSortPriority(
               ad as {
                 ad_featured_reservation?: unknown;
-                user?: { pro?: boolean } | null;
+                user?: { pro_status?: string } | null;
               }
             );
             const adRecord = ad as Record<string, unknown>;

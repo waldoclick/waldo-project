@@ -288,7 +288,7 @@ describe("SubscriptionChargeService", () => {
   });
 
   describe("CHRG-03 (deactivation): After 3 failed attempts, deactivates user", () => {
-    it("sets pro_status=inactive, pro=false, pro_expires_at=null, tbk_user=null after 3 failures", async () => {
+    it("sets pro_status=inactive, pro_expires_at=null, tbk_user=null after 3 failures", async () => {
       // Arrange
       const user = makeUser();
       const exhaustedPayment = {
@@ -308,14 +308,13 @@ describe("SubscriptionChargeService", () => {
       // Act
       await service.chargeExpiredSubscriptions();
 
-      // Assert: deactivates user
+      // Assert: deactivates user using pro_status only (pro boolean no longer written)
       expect(mockUpdate).toHaveBeenCalledWith(
         "plugin::users-permissions.user",
         user.id,
         expect.objectContaining({
           data: expect.objectContaining({
             pro_status: "inactive",
-            pro: false,
             pro_expires_at: null,
             tbk_user: null,
           }),

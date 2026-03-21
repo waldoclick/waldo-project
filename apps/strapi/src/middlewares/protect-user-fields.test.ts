@@ -23,17 +23,17 @@ function createContext(
 }
 
 describe("protect-user-fields middleware", () => {
-  // Test 1: strips pro field, keeps firstname
-  it("strips pro from body.data when PUT /api/users/:id, keeps safe fields", async () => {
+  // Test 1: strips pro_status field, keeps firstname
+  it("strips pro_status from body.data when PUT /api/users/:id, keeps safe fields", async () => {
     const middleware = createMiddleware();
     const ctx = createContext("PUT", "/api/users/123", {
-      data: { pro: true, firstname: "Alice" },
+      data: { pro_status: "active", firstname: "Alice" },
     });
     const next = jest.fn().mockResolvedValue(undefined);
 
     await middleware(ctx as any, next);
 
-    expect((ctx.request.body as any).data).not.toHaveProperty("pro");
+    expect((ctx.request.body as any).data).not.toHaveProperty("pro_status");
     expect((ctx.request.body as any).data).toHaveProperty("firstname", "Alice");
     expect(next).toHaveBeenCalled();
   });
@@ -105,13 +105,13 @@ describe("protect-user-fields middleware", () => {
   it("does NOT strip fields for GET /api/users/me", async () => {
     const middleware = createMiddleware();
     const ctx = createContext("GET", "/api/users/me", {
-      data: { pro: true },
+      data: { pro_status: "active" },
     });
     const next = jest.fn().mockResolvedValue(undefined);
 
     await middleware(ctx as any, next);
 
-    expect((ctx.request.body as any).data).toHaveProperty("pro", true);
+    expect((ctx.request.body as any).data).toHaveProperty("pro_status", "active");
     expect(next).toHaveBeenCalled();
   });
 
@@ -143,7 +143,7 @@ describe("protect-user-fields middleware", () => {
   it("always calls next() even when stripping fields", async () => {
     const middleware = createMiddleware();
     const ctx = createContext("PUT", "/api/users/123", {
-      data: { pro: true },
+      data: { pro_status: "active" },
     });
     const next = jest.fn().mockResolvedValue(undefined);
 
@@ -157,13 +157,13 @@ describe("protect-user-fields middleware", () => {
     const middleware = createMiddleware();
     const ctx = createContext("PUT", "/api/users/123", {
       firstname: "Alice",
-      pro: true,
+      pro_status: "active",
     });
     const next = jest.fn().mockResolvedValue(undefined);
 
     await middleware(ctx as any, next);
 
-    expect(ctx.request.body).not.toHaveProperty("pro");
+    expect(ctx.request.body).not.toHaveProperty("pro_status");
     expect(ctx.request.body).toHaveProperty("firstname", "Alice");
     expect(next).toHaveBeenCalled();
   });
