@@ -33,7 +33,7 @@
 
 - [x] **Phase 102: Oneclick Service + Inscription Flow** - Backend Oneclick service and end-to-end card enrollment with frontend redirect and return handling (completed 2026-03-20)
 - [x] **Phase 103: Monthly Charging Cron** - subscription-payment content type, daily charge cron, 3-day retry logic, and idempotency guard (completed 2026-03-20)
-- [ ] **Phase 103.1: Remove pro boolean** - Eliminate dual source of truth by replacing all pro boolean usage with pro_status enum
+- [x] **Phase 103.1: Remove pro boolean** - Eliminate dual source of truth by replacing all pro boolean usage with pro_status enum (completed 2026-03-21)
 - [ ] **Phase 104: Cancellation + Account Management** - Cancel endpoint, period-end expiry, card deletion from Transbank, and account UI
 
 ## Phase Details
@@ -80,10 +80,10 @@ Plans:
   5. All website/dashboard components use `pro_status === "active"` instead of `user.pro`
   6. User type definitions no longer contain the `pro: boolean` field
   7. All existing tests pass with updated mocks
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
-- [ ] 103.1-01-PLAN.md — Strapi backend: computeSortPriority, sanitize-ad, payment writes, cron writes, protect-user-fields, and tests
+- [x] 103.1-01-PLAN.md — Strapi backend: computeSortPriority, sanitize-ad, payment writes, cron writes, protect-user-fields, and tests
 - [x] 103.1-02-PLAN.md — Frontend: website + dashboard type definitions, page gates, and component updates
 
 ### Phase 104: Cancellation + Account Management
@@ -103,5 +103,5 @@ Plans:
 |-------|-----------|----------------|--------|-----------|
 | 102. Oneclick Service + Inscription Flow | 2/2 | Complete   | 2026-03-20 | - |
 | 103. Monthly Charging Cron | 1/2 | 2/2 | Complete    | 2026-03-20 |
-| 103.1. Remove pro boolean | v1.46 | 1/2 | In Progress|  |
+| 103.1. Remove pro boolean | v1.46 | 2/2 | Complete   | 2026-03-21 |
 | 104. Cancellation + Account Management | v1.46 | 0/? | Not started | - |
