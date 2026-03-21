@@ -48,11 +48,11 @@ Requirements for PRO Subscriptions (Webpay Oneclick) milestone. Each maps to roa
 
 ### Checkout (Phase 105)
 
-- [ ] **CHECKOUT-01**: `proCreate` accepts `is_invoice` from request body and stores it as `pro_pending_invoice` on user record
-- [ ] **CHECKOUT-02**: `proResponse` creates an order record + Facto document after successful inscription
-- [ ] **CHECKOUT-03**: `proResponse` redirects to `/pro/pagar/gracias?order={documentId}` (not `/pro/gracias`)
-- [ ] **CHECKOUT-04**: Monthly charge cron creates an order + Facto boleta document per successful charge
-- [ ] **CHECKOUT-05**: Cron order/Facto creation failure does not block `pro_expires_at` extension
+- [x] **CHECKOUT-01**: `proCreate` accepts `is_invoice` from request body and stores it as `pro_pending_invoice` on user record
+- [x] **CHECKOUT-02**: `proResponse` creates an order record + Facto document after successful inscription
+- [x] **CHECKOUT-03**: `proResponse` redirects to `/pro/pagar/gracias?order={documentId}` (not `/pro/gracias`)
+- [x] **CHECKOUT-04**: Monthly charge cron creates an order + Facto boleta document per successful charge
+- [x] **CHECKOUT-05**: Cron order/Facto creation failure does not block `pro_expires_at` extension
 - [x] **CHECKOUT-06**: `/pro/pagar` page exists with boleta/factura and gateway sections (no ad preview, no packs)
 - [x] **CHECKOUT-07**: `/pro/pagar/gracias` page shows payment receipt fetched by `order.documentId` from URL
 - [x] **CHECKOUT-08**: All PRO checkout components use `--pro` BEM modifiers on existing SCSS (no new SCSS files)

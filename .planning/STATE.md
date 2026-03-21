@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: PRO Subscriptions (Webpay Oneclick)
 status: executing
-stopped_at: Completed 105-02-PLAN.md
-last_updated: "2026-03-21T21:46:14.426Z"
+stopped_at: Completed 105-01-PLAN.md
+last_updated: "2026-03-21T21:50:52.035Z"
 last_activity: 2026-03-21
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 11
-  completed_plans: 9
+  completed_plans: 10
   percent: 82
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-03-20)
 ## Position
 
 Phase: 105 of 105 (pro-subscription-checkout-page)
-Plan: 2 of 3 completed
+Plan: 3 of 3 completed
 Status: In progress
 Last activity: 2026-03-21
 
@@ -62,6 +62,10 @@ Progress: [████████░░] 82%
 - [105-02] ResumePro.vue naming conflict resolved by renaming old card enrollment component to ResumeProCard.vue, freeing the name for payment receipt
 - [105-02] PRO checkout components use no adStore — state passed via props/emits and v-model for isInvoice
 - [105-02] CheckoutPro uses window.location.href GET redirect for Oneclick (not POST form like Webpay Plus)
+- [105-01] pro_pending_invoice stored on user to thread is_invoice from proCreate through Transbank GET redirect (no JWT present)
+- [105-01] Order+Facto creation is non-fatal in proResponse and chargeUser — subscription/renewal continues on document failure
+- [105-01] Cron uses isInvoice=false (boleta) by default — invoice preference storage for recurring charges is deferred
+- [105-01] proResponse redirects to /pro/pagar/gracias?order={documentId}; fallback to /pro/gracias if order creation fails
 
 ### Quick Tasks Completed
 
@@ -81,6 +85,6 @@ Progress: [████████░░] 82%
 
 ## Session Continuity
 
-Last session: 2026-03-21T21:46:14.424Z
-Stopped at: Completed 105-02-PLAN.md
+Last session: 2026-03-21T21:50:52.033Z
+Stopped at: Completed 105-01-PLAN.md
 Resume file: None
