@@ -62,6 +62,7 @@ Progress: [█████░░░░░] 44%
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 260321-hje | Protect pro fields in user update endpoint and verify oneclick pro status management | 2026-03-21 | 9768011b | [260321-hje-protect-pro-fields](./quick/260321-hje-protect-pro-fields-in-user-update-endpoi/) |
+| 260321-k2b | Add sort_priority field to ads for featured+PRO ordering in /anuncios listing | 2026-03-21 | 679271a1 | [260321-k2b-add-sort-priority](./quick/260321-k2b-add-sort-priority-field-to-ads-for-featu/) |
 
 ### Blockers/Concerns (open)
 
@@ -69,6 +70,6 @@ Progress: [█████░░░░░] 44%
 
 ## Session Continuity
 
-Last session: 2026-03-20T21:17:15.363Z
-Stopped at: Completed 103-02-PLAN.md
+Last session: 2026-03-21T00:00:00.000Z
+Stopped at: Completed quick task 260321-k2b
 Resume file: None
