@@ -357,6 +357,7 @@ export default defineNuxtConfig({
       sentryDebug: process.env.SENTRY_DEBUG === "true",
       logRocketAppId: process.env.LOGROCKET_APP_ID || "myogth/waldo",
       devMode: process.env.DEV_MODE === "true",
+      enablePro: process.env.ENABLE_PRO === "true",
       zohoChat: process.env.ZOHO_CHAT?.trim() === "true",
       zohoWidgetCode: process.env.ZOHO_WIDGET_CODE || "",
     },
