@@ -69,6 +69,7 @@ export default ({ env }) => [
   "global::upload",
   // "global::recaptcha", // Movido a Nuxt Nitro proxy
   ...(env("ENABLE_CACHE", "false") === "true" ? ["global::cache"] : []),
+  "global::protect-user-fields",
   "global::user-registration",
   "global::hide-admin-redirect",
 ];
