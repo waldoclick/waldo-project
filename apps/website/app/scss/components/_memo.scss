@@ -23,4 +23,69 @@
       line-height: 1.5;
     }
   }
+
+  &--pro {
+    &__text {
+      line-height: 1.5;
+
+      &__status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+        font-size: 16px;
+
+        &__badge {
+          display: inline-block;
+          padding: 2px 8px;
+          border-radius: 4px;
+          font-size: 12px;
+          font-weight: 600;
+          text-transform: uppercase;
+
+          &--active {
+            background-color: $magic_mint;
+            color: $charcoal;
+          }
+
+          &--cancelled {
+            background-color: $platinum;
+            color: $davys_grey;
+          }
+        }
+      }
+
+      &__card {
+        font-size: 14px;
+        color: $davys_grey;
+        margin-top: 4px;
+      }
+
+      &__date {
+        font-size: 13px;
+        color: $davys_grey;
+        margin-top: 2px;
+      }
+    }
+  }
+}
+
+.btn--cancel {
+  background-color: transparent;
+  border: 1px solid $silver;
+  color: $davys_grey;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+
+  &:hover {
+    border-color: $red_salsa;
+    color: $red_salsa;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }
