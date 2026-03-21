@@ -1,6 +1,6 @@
 <template>
   <section class="hero hero--profile">
-    <div v-if="user?.pro && user?.cover" class="hero--profile__image">
+    <div v-if="user?.pro_status === 'active' && user?.cover" class="hero--profile__image">
       <img
         class="hero--profile__image__image"
         :src="getCoverUrl || ''"

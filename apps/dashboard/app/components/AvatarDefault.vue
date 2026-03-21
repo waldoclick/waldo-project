@@ -1,7 +1,7 @@
 <template>
   <div class="avatar" :class="`avatar--${size}`">
     <NuxtImg
-      v-if="(user as any)?.pro && (user as any)?.avatar"
+      v-if="(user as any)?.pro_status === 'active' && (user as any)?.avatar"
       :src="getAvatarUrl"
       :alt="getInitials"
       class="avatar__image"

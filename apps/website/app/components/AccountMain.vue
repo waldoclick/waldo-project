@@ -13,7 +13,7 @@
     </div>
 
     <div
-      v-if="appConfig.features.pro && !user?.pro"
+      v-if="appConfig.features.pro && user?.pro_status !== 'active'"
       class="account--main__become_pro"
     >
       <MemoPro />

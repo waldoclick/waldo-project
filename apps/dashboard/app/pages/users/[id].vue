@@ -58,7 +58,7 @@
           <CardInfo
             v-if="item"
             title="Pro"
-            :description="formatBoolean(item.pro)"
+            :description="item.pro_status ?? 'inactive'"
           />
           <CardInfo
             v-if="item"

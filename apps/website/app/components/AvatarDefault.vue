@@ -6,7 +6,7 @@
     :title="getInitials"
   >
     <NuxtImg
-      v-if="(user as any)?.pro && (user as any)?.avatar"
+      v-if="(user as any)?.pro_status === 'active' && (user as any)?.avatar"
       :src="getAvatarUrl"
       :alt="getInitials"
       class="avatar__image"
