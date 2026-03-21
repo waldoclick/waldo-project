@@ -61,7 +61,7 @@
       <div class="account--profile__grid">
         <CardInfo
           :title="`Tipo de perfil`"
-          :description="user.pro ? 'Pro' : 'Estándar'"
+          :description="user.pro_status === 'active' ? 'Pro' : 'Estándar'"
         />
         <CardInfo
           :title="`Tipo de usuario`"

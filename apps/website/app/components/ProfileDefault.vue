@@ -5,13 +5,13 @@
         <SidebarProfile :user="user" />
       </div>
       <div class="profile--default__content">
-        <MemoPro v-if="appConfig.features.pro && isProfileOwner && !user.pro" />
+        <MemoPro v-if="appConfig.features.pro && isProfileOwner && user.pro_status !== 'active'" />
 
         <MemoDefault
           v-if="
             appConfig.features.pro &&
             isProfileOwner &&
-            user.pro &&
+            user.pro_status === 'active' &&
             (!user.avatar || !user.cover)
           "
           :icon="IconImage"
