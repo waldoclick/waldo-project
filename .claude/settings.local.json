@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(yarn workspace:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(git ls-tree:*)"
     ]
   }
 }
