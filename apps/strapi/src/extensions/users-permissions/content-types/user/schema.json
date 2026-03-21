@@ -189,6 +189,10 @@
       "type": "string",
       "private": true
     },
+    "pro_pending_invoice": {
+      "type": "boolean",
+      "default": false
+    },
     "ad_reservations": {
       "type": "relation",
       "relation": "oneToMany",
