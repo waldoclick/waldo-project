@@ -436,7 +436,9 @@ class PaymentController {
     // Store the inscription token on the user record so we can resolve the user
     // in proResponse when Transbank redirects back (no JWT present on redirect).
     // Also persist the invoice preference so proResponse can create the correct document.
-    const { data: reqData } = ctx.request.body as { data?: { is_invoice?: boolean } };
+    const { data: reqData } = ctx.request.body as {
+      data?: { is_invoice?: boolean };
+    };
     await strapi.entityService.update(
       "plugin::users-permissions.user",
       user.id,
@@ -484,7 +486,9 @@ class PaymentController {
     }
 
     // Read invoice preference stored during proCreate
-    const isInvoice = Boolean((user as Record<string, unknown>).pro_pending_invoice ?? false);
+    const isInvoice = Boolean(
+      (user as Record<string, unknown>).pro_pending_invoice ?? false
+    );
 
     // Success: update user record with subscription data, clear inscription token and invoice flag
     const proExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
@@ -499,7 +503,6 @@ class PaymentController {
           pro_card_last4: result.last4CardDigits,
           pro_expires_at: proExpiresAt,
           pro_inscription_token: null,
-          pro_pending_invoice: false,
         } as unknown as Parameters<
           typeof strapi.entityService.update
         >[2]["data"],
@@ -508,7 +511,9 @@ class PaymentController {
 
     // Create order + Facto document for the PRO inscription (non-fatal: inscription was successful)
     const proMonthlyPrice = parseInt(process.env.PRO_MONTHLY_PRICE ?? "0", 10);
-    const proItems = [{ name: "Suscripcion PRO mensual", price: proMonthlyPrice, quantity: 1 }];
+    const proItems = [
+      { name: "Suscripcion PRO mensual", price: proMonthlyPrice, quantity: 1 },
+    ];
 
     let proOrder: { documentId?: string } | undefined;
     try {
@@ -524,7 +529,11 @@ class PaymentController {
         userId: user.id,
         is_invoice: isInvoice,
         payment_method: process.env.PAYMENT_GATEWAY ?? "transbank",
-        payment_response: { inscription: true, tbk_user: result.tbkUser, card_type: result.cardType },
+        payment_response: {
+          inscription: true,
+          tbk_user: result.tbkUser,
+          card_type: result.cardType,
+        },
         document_details: userDocDetails,
         items: proItems,
         document_response: factoDoc,
@@ -533,7 +542,10 @@ class PaymentController {
         proOrder = orderResult.order as { documentId?: string };
       }
     } catch (orderError) {
-      logger.error("proResponse: order/Facto creation failed", { userId: user.id, error: orderError });
+      logger.error("proResponse: order/Facto creation failed", {
+        userId: user.id,
+        error: orderError,
+      });
       // Non-fatal: inscription was successful
     }
 
@@ -567,7 +579,9 @@ class PaymentController {
     }
 
     if (proOrder?.documentId) {
-      ctx.redirect(`${process.env.FRONTEND_URL}/pro/pagar/gracias?order=${proOrder.documentId}`);
+      ctx.redirect(
+        `${process.env.FRONTEND_URL}/pro/pagar/gracias?order=${proOrder.documentId}`
+      );
     } else {
       // Fallback: order creation failed, still redirect but to legacy page
       ctx.redirect(`${process.env.FRONTEND_URL}/pro/gracias`);

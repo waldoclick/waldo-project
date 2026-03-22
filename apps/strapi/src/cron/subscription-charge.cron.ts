@@ -390,12 +390,17 @@ export class SubscriptionChargeService {
         }
       );
 
-      // Create order + Facto document for this charge (boleta by default — user preference storage is deferred)
+      // Create order + Facto document for this charge — reuse user's last invoice preference from checkout
+      const isInvoice = Boolean(
+        (user as Record<string, unknown>).pro_pending_invoice ?? false
+      );
       try {
-        const userDocDetails = await documentDetails(user.id, false);
-        const chargeItems = [{ name: "Suscripcion PRO mensual", price: amount, quantity: 1 }];
+        const userDocDetails = await documentDetails(user.id, isInvoice);
+        const chargeItems = [
+          { name: "Suscripcion PRO mensual", price: amount, quantity: 1 },
+        ];
         const factoDoc = await generalUtils.generateFactoDocument({
-          isInvoice: false,
+          isInvoice,
           userDetails: userDocDetails,
           items: chargeItems,
         });
@@ -403,7 +408,7 @@ export class SubscriptionChargeService {
           amount,
           buy_order: parentBuyOrder,
           userId: user.id,
-          is_invoice: false,
+          is_invoice: isInvoice,
           payment_method: process.env.PAYMENT_GATEWAY ?? "transbank",
           payment_response: result.rawResponse,
           document_details: userDocDetails,
@@ -412,7 +417,10 @@ export class SubscriptionChargeService {
         });
       } catch (orderError) {
         // Non-fatal: charge was successful, order creation failure must not block pro_expires_at extension
-        logger.error("SubscriptionChargeService: order/Facto creation failed", { userId: user.id, error: orderError });
+        logger.error("SubscriptionChargeService: order/Facto creation failed", {
+          userId: user.id,
+          error: orderError,
+        });
       }
 
       logger.info(
