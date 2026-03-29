@@ -62,7 +62,7 @@ const emit = defineEmits<{
 }>();
 
 const { Swal } = useSweetAlert2();
-const strapi = useStrapi();
+const apiClient = useApiClient();
 
 const users = ref<IAuthUser[]>([]);
 const usersLoading = ref(false);
@@ -113,9 +113,12 @@ async function searchUsers(q: string) {
       fields: ["id", "firstname", "lastname", "username"],
       pagination: { pageSize: 20 },
     };
-    const response = await strapi.find("users", params);
+    const response = await apiClient("users", {
+      method: "GET",
+      params: params as unknown as Record<string, unknown>,
+    }) as IAuthUser[] | { data: IAuthUser[] };
     users.value = (
-      Array.isArray(response) ? response : ((response as any).data ?? [])
+      Array.isArray(response) ? response : ((response as { data: IAuthUser[] }).data ?? [])
     ) as IAuthUser[];
   } catch (e) {
     console.error("[FormGift] searchUsers error:", e);
@@ -141,9 +144,8 @@ async function handleSubmit() {
   if (!isConfirmed) return;
 
   sending.value = true;
-  const strapiClient = useApiClient();
   try {
-    await strapiClient(`/${props.endpoint}/gift`, {
+    await apiClient(`/${props.endpoint}/gift`, {
       method: "POST",
       body: { userId, quantity },
     });

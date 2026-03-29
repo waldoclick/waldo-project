@@ -121,7 +121,6 @@ const emit = defineEmits<{
 const { Swal } = useSweetAlert2();
 const router = useRouter();
 const route = useRoute();
-const strapi = useStrapi();
 const apiClient = useApiClient();
 
 const sending = ref(false);
@@ -220,10 +219,13 @@ const handleSubmit = async (values: any) => {
       let packId = props.pack?.id;
 
       if (!packId && documentId) {
-        const lookupResponse = await strapi.find("ad-packs", {
-          filters: { documentId: { $eq: documentId } },
-          pagination: { pageSize: 1 },
-        } as Record<string, unknown>);
+        const lookupResponse = await apiClient("ad-packs", {
+          method: "GET",
+          params: {
+            filters: { documentId: { $eq: documentId } },
+            pagination: { pageSize: 1 },
+          } as unknown as Record<string, unknown>,
+        }) as { data: Array<{ id: number }> };
         const lookupData = Array.isArray(lookupResponse.data)
           ? (lookupResponse.data as Array<{ id: number }>)
           : [];

@@ -71,7 +71,6 @@ const emit = defineEmits<{
 const { Swal } = useSweetAlert2();
 const router = useRouter();
 const route = useRoute();
-const strapi = useStrapi();
 const apiClient = useApiClient();
 const { toSlug } = useSlugify();
 
@@ -115,10 +114,13 @@ const hydrateForm = () => {
 
 const fetchRegions = async () => {
   try {
-    const response = await strapi.find("regions", {
-      pagination: { pageSize: 200 },
-      sort: "name:asc",
-    } as Record<string, unknown>);
+    const response = await apiClient("regions", {
+      method: "GET",
+      params: {
+        pagination: { pageSize: 200 },
+        sort: "name:asc",
+      } as unknown as Record<string, unknown>,
+    }) as { data: RegionOption[] };
     regions.value = Array.isArray(response.data)
       ? (response.data as RegionOption[])
       : [];
@@ -152,10 +154,13 @@ const handleSubmit = async (values: any) => {
       let communeId = props.commune?.id;
 
       if (!communeId && documentId) {
-        const lookupResponse = await strapi.find("communes", {
-          filters: { documentId: { $eq: documentId } },
-          pagination: { pageSize: 1 },
-        } as Record<string, unknown>);
+        const lookupResponse = await apiClient("communes", {
+          method: "GET",
+          params: {
+            filters: { documentId: { $eq: documentId } },
+            pagination: { pageSize: 1 },
+          } as unknown as Record<string, unknown>,
+        }) as { data: Array<{ id: number }> };
         const lookupData = Array.isArray(lookupResponse.data)
           ? (lookupResponse.data as Array<{ id: number }>)
           : [];

@@ -4,18 +4,16 @@ import { ref } from "vue";
 export const useMeStore = defineStore("me", () => {
   const me = ref<Record<string, unknown> | null>(null);
 
-  const strapi = useStrapi();
   const apiClient = useApiClient();
 
   const loadMe = async () => {
     try {
-      const response = await strapi.find("users/me", {
-        populate: {
-          commune: {
-            populate: "region",
-          },
-        },
-      } as Record<string, unknown>);
+      const response = await apiClient("users/me", {
+        method: "GET",
+        params: {
+          populate: { commune: { populate: "region" } },
+        } as unknown as Record<string, unknown>,
+      });
       me.value = response as unknown as Record<string, unknown>; // Asegurarse de asignar correctamente los datos
     } catch (_error) {
       console.error("Error loading user data:", _error);
