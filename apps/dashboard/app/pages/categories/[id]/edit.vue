@@ -40,6 +40,7 @@ definePageMeta({
 
 const route = useRoute();
 const category = ref<any>(null);
+const apiClient = useApiClient();
 
 const title = computed(() => category.value?.name || "Categoría");
 const breadcrumbs = computed(() => [
@@ -62,22 +63,18 @@ const { data: categoryData } = await useAsyncData(
     const id = route.params.id;
     if (!id) return null;
 
-    const strapi = useStrapi();
-    const response = await strapi.find("categories", {
-      filters: { documentId: { $eq: id } },
-      populate: ["icon"],
-    } as Record<string, unknown>);
+    const response = await apiClient("categories", {
+      method: "GET",
+      params: { filters: { documentId: { $eq: id } }, populate: ["icon"] } as unknown as Record<string, unknown>,
+    }) as { data: unknown[] };
     const data = Array.isArray(response.data) ? response.data[0] : null;
     if (data) return data;
 
-    const fallbackResponse = await strapi.findOne(
-      "categories",
-      id as string,
-      {
-        populate: ["icon"],
-      } as Record<string, unknown>,
-    );
-    return (fallbackResponse.data as unknown) || null;
+    const fallback = await apiClient(`categories/${id}`, {
+      method: "GET",
+      params: { populate: ["icon"] } as unknown as Record<string, unknown>,
+    }) as { data: unknown };
+    return (fallback.data as unknown) || null;
   },
 );
 
