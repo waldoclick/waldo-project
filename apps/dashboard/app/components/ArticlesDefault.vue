@@ -138,6 +138,7 @@ const paginationMeta = ref<{
 
 const { Swal } = useSweetAlert2();
 const strapi = useStrapi();
+const apiClient = useApiClient();
 const router = useRouter();
 
 const fetchArticles = async () => {
@@ -183,7 +184,7 @@ const handleDeleteArticle = async (article: Article) => {
   });
   if (!result.isConfirmed) return;
   try {
-    await strapi.delete("articles", article.documentId || String(article.id));
+    await apiClient(`/articles/${article.documentId || article.id}`, { method: "DELETE" });
     await fetchArticles();
     await Swal.fire("Eliminado", "El artículo fue eliminado.", "success");
   } catch {

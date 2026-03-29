@@ -82,6 +82,7 @@ definePageMeta({
 
 const route = useRoute();
 const strapi = useStrapi();
+const apiClient = useApiClient();
 const { Swal } = useSweetAlert2();
 
 const article = ref<ArticleData | null>(null);
@@ -115,9 +116,10 @@ const handleTogglePublish = async () => {
       ? null
       : new Date().toISOString();
 
-    await strapi.update("articles", documentId, {
-      publishedAt: newPublishedAt,
-    } as unknown as Parameters<typeof strapi.update>[2]);
+    await apiClient(`/articles/${documentId}`, {
+      method: "PUT",
+      body: { data: { publishedAt: newPublishedAt } },
+    });
 
     article.value = { ...article.value, publishedAt: newPublishedAt };
 
