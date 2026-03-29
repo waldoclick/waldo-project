@@ -62,10 +62,10 @@ Requirements for PRO Subscriptions (Webpay Oneclick) milestone. Each maps to roa
 
 ### Registration Consent (Phase 106)
 
-- [ ] **REG-01**: Registration step 2 shows two required checkboxes (age confirmation + terms acceptance) that block form submission when unchecked
-- [ ] **REG-02**: Checked checkboxes send `accepted_age_confirmation: true` and `accepted_terms: true` in the registration API body
-- [ ] **REG-03**: `registerUserLocal` rejects registration when `accepted_age_confirmation !== true` or `accepted_terms !== true`
-- [ ] **REG-04**: Both `accepted_age_confirmation` and `accepted_terms` boolean fields are stored on the Strapi user record with `default: false`
+- [x] **REG-01**: Registration step 2 shows two required checkboxes (age confirmation + terms acceptance) that block form submission when unchecked
+- [x] **REG-02**: Checked checkboxes send `accepted_age_confirmation: true` and `accepted_terms: true` in the registration API body
+- [x] **REG-03**: `registerUserLocal` rejects registration when `accepted_age_confirmation !== true` or `accepted_terms !== true`
+- [x] **REG-04**: Both `accepted_age_confirmation` and `accepted_terms` boolean fields are stored on the Strapi user record with `default: false`
 
 ## Future Requirements
 

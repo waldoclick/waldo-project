@@ -139,8 +139,8 @@ Plans:
   2. Form cannot submit unless both checkboxes are checked (yup validation)
   3. Server-side registerUserLocal rejects requests where either consent field is not `true`
   4. Both boolean fields are stored on the user record in Strapi
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 
 Plans:
-- [ ] 106-01-PLAN.md — Strapi backend: user schema boolean fields + registerUserLocal validation + tests
-- [ ] 106-02-PLAN.md — Website frontend: FormRegister type + checkboxes + yup validation + tests
+- [x] 106-01-PLAN.md — Strapi backend: user schema boolean fields + registerUserLocal validation + tests
+- [x] 106-02-PLAN.md — Website frontend: FormRegister type + checkboxes + yup validation + tests
