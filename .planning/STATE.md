@@ -1,16 +1,15 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.47
-milestone_name: (planning)
-status: idle
-stopped_at: v1.46 milestone archived
-last_updated: "2026-03-29T00:00:00.000Z"
-last_activity: 2026-03-29 - Completed quick task 260329-pa1: fix CSP violations in staging
+milestone: v1.46
+milestone_name: milestone
+status: unknown
+stopped_at: Completed 107-01-PLAN.md
+last_updated: "2026-03-29T22:28:58.785Z"
 progress:
-  total_phases: 0
+  total_phases: 1
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_plans: 4
+  completed_plans: 1
   percent: 0
 ---
 
@@ -21,14 +20,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Planning next milestone
+**Current focus:** Phase 107 — dashboard-recaptcha-validation-all-routes
 
 ## Position
 
 Milestone v1.46 PRO Subscriptions archived. Ready to start next milestone.
 
 ```
-Progress: [          ] 0%
+Progress: [███░░░░░░░] 25%
 ```
 
 ## Accumulated Context
@@ -38,6 +37,12 @@ Progress: [          ] 0%
 - All business logic lives in Strapi; dashboard and website are stateless HTTP clients
 - `pro_status === "active"` is the single source of truth for PRO membership (no `pro` boolean)
 - Oneclick Mall must be contracted separately with Transbank for production (separate from Webpay Plus)
+- Method-based reCAPTCHA guard (POST/PUT/DELETE) replaces allowlist-based guard — simpler and protects all future mutations automatically (107-01)
+- Dashboard vitest config aligned with website pattern (happy-dom + stubs) to fix broken nuxt environment (107-01)
+
+### Roadmap Evolution
+
+- Phase 107 added: en el dashboard hay que validar todas las rutas POST, PUT y DELETE igual como en el website
 
 ### Blockers/Concerns (open)
 
@@ -52,6 +57,6 @@ Progress: [          ] 0%
 
 ## Session Continuity
 
-Last session: 2026-03-29
-Stopped at: v1.46 milestone complete — archived to .planning/milestones/v1.46-ROADMAP.md
+Last session: 2026-03-29T22:28:58.784Z
+Stopped at: Completed 107-01-PLAN.md
 Resume file: None
