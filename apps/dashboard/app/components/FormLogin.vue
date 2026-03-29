@@ -78,15 +78,12 @@ import { Field, Form, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 const { Swal } = useSweetAlert2();
 import { useRouter } from "vue-router";
-import { useNuxtApp } from "#app";
-
 const sending = ref(false);
 const showResendSection = ref<boolean>(false);
 const unconfirmedEmail = ref<string>("");
 const resending = ref<boolean>(false);
 const router = useRouter();
-const { $recaptcha } = useNuxtApp();
-const client = useStrapiClient();
+const client = useApiClient();
 const pendingToken = useState<string>("pendingToken", () => "");
 
 const schema = yup.object({
@@ -164,18 +161,14 @@ const handleSubmit = async (values: Record<string, unknown>) => {
   sending.value = true;
 
   try {
-    // Execute reCAPTCHA v3
-    const token = await $recaptcha.execute("submit");
-
     // Call POST /api/auth/local directly — backend now returns { pendingToken, email }
     // (useStrapiAuth().login() is NOT used because it expects a JWT, not a pendingToken)
+    // X-Recaptcha-Token is injected automatically by useApiClient
     const response = await client("/auth/local", {
       method: "POST",
-      headers: { "X-Recaptcha-Token": token ?? "" },
       body: {
         identifier: values.email as string,
         password: values.password as string,
-        // recaptchaToken removed — now sent as X-Recaptcha-Token header
       },
     });
 

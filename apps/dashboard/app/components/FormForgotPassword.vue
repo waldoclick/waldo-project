@@ -33,7 +33,6 @@ import { useRouter } from "vue-router";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 const { Swal } = useSweetAlert2();
-import { useNuxtApp } from "#app";
 
 // Define validation schema using yup
 const schema = yup.object({
@@ -48,20 +47,16 @@ const form = ref({
 });
 
 const loading = ref(false);
-const client = useStrapiClient();
+const client = useApiClient();
 const router = useRouter();
-const { $recaptcha } = useNuxtApp();
 
 const onSubmit = async (values: any) => {
   loading.value = true;
 
   try {
-    // Execute reCAPTCHA v3
-    const token = await $recaptcha.execute("submit");
-
+    // X-Recaptcha-Token is injected automatically by useApiClient
     await client("/auth/forgot-password", {
       method: "POST",
-      headers: { "X-Recaptcha-Token": token ?? "" },
       body: { email: values.email as string, context: "dashboard" },
     });
 
