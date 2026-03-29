@@ -1,37 +1,34 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.46
-milestone_name: PRO Subscriptions (Webpay Oneclick)
-status: executing
-stopped_at: Completed 106-01-PLAN.md
-last_updated: "2026-03-29T16:07:37.013Z"
+milestone: v1.47
+milestone_name: (planning)
+status: idle
+stopped_at: v1.46 milestone archived
+last_updated: "2026-03-29T00:00:00.000Z"
 last_activity: 2026-03-29
 progress:
-  total_phases: 6
-  completed_phases: 6
-  total_plans: 13
-  completed_plans: 13
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Session State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-20)
+See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 106 — registration-form-age-and-terms-checkboxes-with-strapi-user-model-booleans
+**Current focus:** Planning next milestone
 
 ## Position
 
-Phase: 105 of 105 (pro-subscription-checkout-page)
-Plan: 3 of 3 completed
-Status: In progress
-Last activity: 2026-03-29 - Completed quick task 260329-mva: LightboxTerms global component with user composable consent check
+Milestone v1.46 PRO Subscriptions archived. Ready to start next milestone.
 
 ```
-Progress: [██████████] 100%
+Progress: [          ] 0%
 ```
 
 ## Accumulated Context
@@ -39,57 +36,16 @@ Progress: [██████████] 100%
 ### Key Decisions (carry forward)
 
 - All business logic lives in Strapi; dashboard and website are stateless HTTP clients
-- `transbank-sdk@5.0.0` already installed — includes `Oneclick.MallInscription` and `Oneclick.MallTransaction`
-- Oneclick Mall requires separate commerce codes — `ONECLICK_COMMERCE_CODE` and `ONECLICK_CHILD_COMMERCE_CODE`
-- `username` must be identical across inscription.start(), transaction.authorize(), and inscription.delete() — use `user-{documentId}`
-- Flow service kept but unused — Oneclick replaces Flow for PRO subscriptions
-- `MemoPro.vue` already has Swal + `POST /payments/pro` wired — needs rewiring to Oneclick start endpoint
-- Price via `PRO_MONTHLY_PRICE` env var (not hardcoded)
-- `pro` boolean already on User schema — extend with `pro_status` enum and `pro_expires_at`
-- Cron schedule: 5 AM daily (after existing crons at 1–4 AM); file name: `subscription-charge.cron.ts`
-- Idempotency: check for existing `subscription-payment` record for current period before charging
-- Sandbox credentials available in SDK source (`597055555541` parent, `597055555542` child)
-- [102-01] ONECLICK_API_KEY falls back to WEBPAY_API_KEY in integration (separate for production)
-- [102-01] User resolved in proInscriptionFinish via pro_inscription_token DB lookup — no JWT on Transbank GET redirect
-- [102-01] buildOneclickUsername exported from types module for Phase 104 (inscription.delete) reuse
-- [102-01] pro_inscription_token cleared on finish to prevent token replay
-- [102-02] fetchUser comes from useStrapiAuth() not useStrapi() — consistent with all components (resumen.vue, FormProfile.vue, etc.)
-- [103-01] MallTransaction instantiated per-call in authorizeCharge() (not singleton) for testability and avoiding module-level state
-- [103-01] authorizeCharge() takes parentBuyOrder/childBuyOrder as parameters — caller controls buy_order uniqueness per retry attempt
-- [104-01] Cancellation proceeds even if Transbank deleteInscription fails — user intent is cancellation, card deletion is best-effort
-- [104-01] pro_expires_at is intentionally NOT cleared on cancellation — subscription expires at period end (CANC-02)
-- [104-01] Step 4 in cron sweeps expired cancelled users and deactivates them without calling authorizeCharge (card already deleted)
-- [105-02] ResumePro.vue naming conflict resolved by renaming old card enrollment component to ResumeProCard.vue, freeing the name for payment receipt
-- [105-02] PRO checkout components use no adStore — state passed via props/emits and v-model for isInvoice
-- [105-02] CheckoutPro uses window.location.href GET redirect for Oneclick (not POST form like Webpay Plus)
-- [105-01] pro_pending_invoice stored on user to thread is_invoice from proCreate through Transbank GET redirect (no JWT present)
-- [105-01] Order+Facto creation is non-fatal in proResponse and chargeUser — subscription/renewal continues on document failure
-- [105-01] Cron uses isInvoice=false (boleta) by default — invoice preference storage for recurring charges is deferred
-- [105-01] proResponse redirects to /pro/pagar/gracias?order={documentId}; fallback to /pro/gracias if order creation fails
-- [105-03] MemoPro Swal+API replaced with navigateTo('/pro/pagar') — checkout page owns the full subscription flow
-- [105-03] PRO checkout pages exclude ad analytics (adStore, useAdAnalytics) — PRO is a subscription, not an ad purchase
-
-### Quick Tasks Completed
-
-| # | Description | Date | Commit | Directory |
-|---|-------------|------|--------|-----------|
-| 260321-hje | Protect pro fields in user update endpoint and verify oneclick pro status management | 2026-03-21 | 9768011b | [260321-hje-protect-pro-fields](./quick/260321-hje-protect-pro-fields-in-user-update-endpoi/) |
-| 260321-k2b | Add sort_priority field to ads for featured+PRO ordering in /anuncios listing | 2026-03-21 | 679271a1 | [260321-k2b-add-sort-priority](./quick/260321-k2b-add-sort-priority-field-to-ads-for-featu/) |
-| 260329-gdf | fix TS2352 error in subscription-charge.cron.ts ProUser cast | 2026-03-29 | f072f9b6 | [260329-gdf-fix-ts2352](./quick/260329-gdf-fix-ts2352-error-in-subscription-charge-/) |
-| 260329-mva | LightboxTerms global component with user composable consent check | 2026-03-29 | 8401d020 | [260329-mva-lightboxterms-global-component-with-user](./quick/260329-mva-lightboxterms-global-component-with-user/) |
-
-### Roadmap Evolution
-
-- Phase 103.1 inserted after Phase 103: Remove pro boolean — use pro_status as single source of truth (URGENT)
-- Phase 105 added: PRO subscription checkout page
-- Phase 106 added: Registration form age and terms checkboxes with Strapi user model booleans
+- `pro_status === "active"` is the single source of truth for PRO membership (no `pro` boolean)
+- Oneclick Mall must be contracted separately with Transbank for production (separate from Webpay Plus)
 
 ### Blockers/Concerns (open)
 
-- Oneclick Mall must be contracted separately with Transbank for production (separate from Webpay Plus)
+- Oneclick Mall must be contracted separately with Transbank for production
+- Dashboard "Recuperar contraseña" reCAPTCHA bug: `FormForgotPassword.vue` in dashboard does not send reCAPTCHA token (pre-existing bug from v1.37)
 
 ## Session Continuity
 
-Last session: 2026-03-29T16:07:37.011Z
-Stopped at: Completed 106-01-PLAN.md
+Last session: 2026-03-29
+Stopped at: v1.46 milestone complete — archived to .planning/milestones/v1.46-ROADMAP.md
 Resume file: None

@@ -201,7 +201,7 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - Anthropic Claude AI Service (v1.33): `apps/strapi/src/services/anthropic/` — `AnthropicService` class wraps `@anthropic-ai/sdk`, uses `claude-sonnet-4-5` model, implements `web_search` tool via Brave Search API; tool loop until `stop_reason === "end_turn"`; `POST /api/ia/claude` endpoint accepts `{ prompt }`, returns `{ text }`
 - 2-Step Login Verification (v1.36): `verification-code` content type (5 fields); `overrideAuthLocal` intercepts `POST /api/auth/local` — returns `{ pendingToken, email }`, no JWT; `GET /auth/:provider/callback` bypassed via `ctx.method === "GET"` guard; `POST /api/auth/verify-code` (15-min expiry, max 3 attempts); `POST /api/auth/resend-code` (60s rate limit); `verification-code-cleanup` daily cron 4 AM; `verification-code.mjml` Spanish email; dashboard `/auth/verify-code` with `FormVerifyCode.vue` (6-digit input, 60s countdown, setToken + role check); website `/login/verificar` with same pattern; 5 additional cron jobs now active (verification-code-cleanup added)
 - Shared Authentication Session (since v1.40): cookie `waldo_jwt` is identical in both apps — conditional `COOKIE_DOMAIN` domain spread in both `nuxt.config.ts` strapi.cookie blocks enables shared JWT across `.waldo.click` subdomains in production; when unset (local dev), host-only cookies issued unchanged; both `useLogout.ts` composables clear the pre-migration host-only `waldo_jwt` cookie before `strapiLogout()`; `COOKIE_DOMAIN` documented as commented-out examples in both `.env.example` files; dashboard `useLogout.ts` composable centralizes all dashboard logout logic (3 call sites migrated)
-- PRO Subscriptions via Webpay Oneclick (v1.46): `subscription-payment` content type with 12 fields (period_start, period_end, amount, status, charge_attempts, next_charge_attempt, user, order, response_code, response_message, authorization_code, card_last4); `OneclickService.authorizeCharge()` wraps `MallTransaction.authorize()` with idempotency key; `SubscriptionChargeService` daily cron (5 AM America/Santiago) queries `pro_status=active` + `pro_expires_at <= today`, charges via Oneclick, retries on failure (3 attempts, exponential backoff), deactivates exhausted users (`pro_status=inactive`, `pro=false`, `tbk_user=null`); idempotency guard prevents double-charging via period_start check; `PRO_MONTHLY_PRICE` env var validated at startup; 18 unit tests (8 cron + 10 oneclick service)
+- PRO Subscriptions (since v1.46): Full Webpay Oneclick Mall lifecycle — `OneclickService` (inscription.start/finish, deleteInscription, authorizeCharge); `subscription-payment` content type (12 fields: period_start, period_end, amount, status, charge_attempts, next_charge_attempt, user, order, response_code, response_message, authorization_code, card_last4); `SubscriptionChargeService` daily cron (5 AM) with 3-day retry + Step 4 expired-cancelled sweep; `ProCancellationService` with best-effort `deleteInscription` (non-fatal); PRO checkout flow: `/pro/pagar` (boleta/factura toggle + Oneclick gateway) → `/pro/pagar/gracias?order={documentId}` with `ResumePro.vue` receipt; `pro_pending_invoice` user field threads invoice preference through Transbank redirect; monthly cron creates order + Facto boleta per successful charge (non-fatal); `pro_status` is single source of truth (no `pro` boolean); `accepted_age_confirmation` + `accepted_terms` boolean fields on User with `registerUserLocal` server-side validation; registration step 2 has `.oneOf([true])` yup-guarded checkboxes
 
 ## Constraints
 
@@ -370,24 +370,27 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
            | `google-one-tap.client.ts` plugin suffix ensures SSR exclusion | No `if (import.meta.client)` guard needed inside the plugin — v1.44 | ✓ Good |
            | Full page reload after One Tap login (`window.location.reload()`) | Ensures all SSR-hydrated components pick up auth state cleanly; simpler than reactive propagation across all layouts — v1.44 | ✓ Good |
            | Dynamic import for `createUserReservations` in auth-one-tap controller | Avoids circular dep between `src/api/` and `src/extensions/`; Jest mock correctly intercepts — v1.44 | ✓ Good |
-
-## Current Milestone: v1.46 PRO Subscriptions (Webpay Oneclick)
-
-**Goal:** Users can subscribe to a monthly PRO plan via Webpay Oneclick Mall — card registration, automatic monthly charges, and cancellation.
-
-**Target features:**
-- Webpay Oneclick Mall service in Strapi (inscription, authorization, deletion)
-- `subscription-payment` content type for charge history and audit
-- Monthly cron job for automatic charges with 3-day retry logic
-- Frontend "Hazte PRO" flow: Swal → redirect to Transbank → return handling
-- Cancellation with period-end expiry (`pro_status: cancelled_pending`)
-- User schema additions: `oneclick_tbk_user`, `oneclick_card_type`, `oneclick_card_number`, `pro_status`, `pro_expires_at`
-- Price from `PRO_MONTHLY_PRICE` env var (currently $1.000 CLP)
+           | `Oneclick.MallInscription` / `MallTransaction` (not `WebpayPlus`) for PRO | Oneclick Mall is the correct SDK class for recurring subscription card enrollment; `WebpayPlus` is single-charge only — v1.46 | ✓ Good |
+           | `username` identical across all Oneclick calls (inscription.start, transaction.authorize, inscription.delete) | Transbank Oneclick requires the same username throughout the subscription lifecycle; `user-{documentId}` is stable — v1.46 | ✓ Good |
+           | User resolved in `proInscriptionFinish` via `pro_inscription_token` DB lookup | Transbank GET redirect carries no JWT; token stored at inscription start is the only safe user identifier — v1.46 | ✓ Good |
+           | `pro_inscription_token` cleared after finish | Prevents token replay; one-time use — v1.46 | ✓ Good |
+           | `MallTransaction` instantiated per-call in `authorizeCharge()` | Not a singleton — avoids module-level state; each charge call is fully independent and testable in isolation — v1.46 | ✓ Good |
+           | Cancellation proceeds even if Transbank `deleteInscription` fails | User intent is cancellation; card deletion is best-effort; subscription must be cancelled regardless of Transbank availability — v1.46 | ✓ Good |
+           | `pro_expires_at` NOT cleared on cancellation | Period-end expiry (CANC-02); subscriber keeps PRO access until the paid period expires — v1.46 | ✓ Good |
+           | Step 4 cron sweeps expired cancelled users without calling `authorizeCharge` | Card already deleted; sweep only flips `pro_status` to `inactive` — no Transbank call needed — v1.46 | ✓ Good |
+           | `pro_pending_invoice` stored on user to thread `is_invoice` through Transbank redirect | No JWT on Transbank GET redirect; user field is the only durable transport across the inscription flow — v1.46 | ✓ Good |
+           | Order + Facto creation non-fatal in `proResponse` and `chargeUser` | Subscription continuation is the critical operation; document failure must not block PRO activation or renewal — v1.46 | ✓ Good |
+           | Cron uses `isInvoice=false` (boleta) by default | Invoice preference for recurring charges deferred; boleta is correct default for most users — v1.46 | ✓ Good |
+           | `ResumePro.vue` renamed to `ResumeProCard.vue` to free name for payment receipt | Naming conflict resolved cleanly; `ResumePro.vue` now owns the order receipt display — v1.46 | ✓ Good |
+           | `MemoPro.vue` navigates to `/pro/pagar` instead of calling API directly | Checkout page owns the full subscription flow; MemoPro becomes a navigation trigger only — v1.46 | ✓ Good |
+           | PRO checkout pages exclude `adStore` and `useAdAnalytics` | PRO is a subscription, not an ad purchase; no ad store state needed — v1.46 | ✓ Good |
+           | `accepted_age_confirmation` and `accepted_terms` as `boolean` fields (not `datetime`) | `createdAt` on user record serves as acceptance timestamp; explicit timestamp deferred — v1.46 | ✓ Good |
+           | `.oneOf([true])` yup validation for consent checkboxes | Blocks form submission unless explicitly checked; `required()` alone accepts any truthy value — v1.46 | ✓ Good |
 
 ## Current State
 
-**Last shipped:** v1.45 (2026-03-20) — User Onboarding: dedicated onboarding flow for new users with incomplete profiles, global guard middleware, One Tap suppression on onboarding routes
-**Also shipped recently:** v1.44 (2026-03-19) — Google One Tap Sign-In; v1.43 (2026-03-19) — Cross-App Session Replacement; v1.42 (2026-03-18) — Dashboard Session Persistence
+**Last shipped:** v1.46 (2026-03-29) — PRO Subscriptions (Webpay Oneclick): full subscription lifecycle — Oneclick Mall inscription, daily charge cron with 3-day retry, cancellation with period-end expiry, PRO checkout page with Facto tax documents, registration consent checkboxes
+**Also shipped recently:** v1.45 (2026-03-20) — User Onboarding; v1.44 (2026-03-19) — Google One Tap Sign-In; v1.43 (2026-03-19) — Cross-App Session Replacement
 
 **Email Authentication (since v1.37):** `overrideForgotPassword` fully replaces Strapi's built-in — sends branded `reset-password.mjml` routed to website or dashboard based on `context` field in POST body; `DASHBOARD_URL` env var drives dashboard reset URL. `FormRegister.vue` JWT guard redirects to `/registro/confirmar` (no `setToken` call without JWT); `/registro/confirmar` page with resend button + 60s countdown; `FormLogin.vue` (both apps) shows inline resend section for unconfirmed accounts. Idempotent migration seeder (`user-confirmed-migration.ts`) + cron-runner registration; production DB migrated to `confirmed=true`; Strapi Admin Panel `email_confirmation: ON`, `email_confirmation_redirection: https://waldo.click/login`; smoke-test passed (REGV-01, REGV-02, REGV-06).
 
@@ -512,8 +515,23 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ `disableAutoSelect()` called in `useLogout.ts` before `strapiLogout()` — no post-logout re-prompt — v1.44
 - ✓ Google redirect button (`/login/google`) coexists with One Tap without conflict — v1.44
 
----
-- ✓ `pro` boolean removed from all Strapi backend code and frontend type definitions; `pro_status` enum is the single source of truth for PRO membership state — v1.46 (phase 103.1)
+## Validated Requirements (v1.46)
+
+- ✓ Users can enroll their card via Webpay Oneclick Mall inscription flow; `tbk_user` token and card info stored on user record, `pro_status: active` set on success — v1.46
+- ✓ Failed or cancelled inscription redirects to error page with retry option — v1.46
+- ✓ Daily 5 AM cron charges active PRO users with expired `pro_expires_at`; each successful charge creates `subscription-payment` record + extends period by 30 days — v1.46
+- ✓ Failed charges retried over 3 days; exhausted users deactivated (`pro_status: inactive`, `tbk_user: null`) — v1.46
+- ✓ `PRO_MONTHLY_PRICE` env var controls charge amount (no hardcoding) — v1.46
+- ✓ Idempotency guard prevents double-charging via `period_start` check — v1.46
+- ✓ `pro_status === "active"` is single source of truth; `pro` boolean eliminated from all code paths — v1.46
+- ✓ Users can cancel PRO subscription; cancellation is period-end (PRO features active until `pro_expires_at`); card deleted from Transbank on cancel — v1.46
+- ✓ Account page shows subscription status, masked card info, next charge date; cancel button with Swal confirmation — v1.46
+- ✓ `/pro/pagar` checkout page with boleta/factura toggle; `/pro/pagar/gracias` receipt page fetched by `order.documentId` — v1.46
+- ✓ `proCreate` / `proResponse` create Strapi order + Facto document; monthly cron also creates order + boleta per successful charge (non-fatal) — v1.46
+- ✓ `MemoPro.vue` navigates to `/pro/pagar` instead of calling API directly — v1.46
+- ✓ Old `/pro/gracias` remains functional for backward compatibility — v1.46
+- ✓ Registration step 2 shows required age confirmation and terms checkboxes (`.oneOf([true])` yup validation); server rejects if either field not `true` — v1.46
+- ✓ `accepted_age_confirmation` and `accepted_terms` boolean fields stored on Strapi user record (`default: false`) — v1.46
 
 ---
-*Last updated: 2026-03-21 after v1.46 phase 103.1*
+*Last updated: 2026-03-29 after v1.46 milestone*
