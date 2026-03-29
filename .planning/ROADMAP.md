@@ -68,9 +68,9 @@ Plans:
 **Goal:** Replace every remaining `strapi.find()` and `strapi.findOne()` call (66 calls across 49 files) in the dashboard with `apiClient(url, { method: "GET", params: ... })`, eliminating the dual-resource pattern so all HTTP goes through `useApiClient`.
 **Requirements**: [RDR-108-01, RDR-108-02, RDR-108-03]
 **Depends on:** Phase 107
-**Plans:** 3 plans
+**Plans:** 1/3 plans executed
 
 Plans:
 - [ ] 108-01-PLAN.md — Migrate store and all 29 components to apiClient GET
-- [ ] 108-02-PLAN.md — Migrate all 19 pages to apiClient GET
+- [x] 108-02-PLAN.md — Migrate all 19 pages to apiClient GET
 - [ ] 108-03-PLAN.md — Final verification sweep (grep + typecheck + tests)

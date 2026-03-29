@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 107-04-PLAN.md
-last_updated: "2026-03-29T22:49:47.674Z"
+stopped_at: Completed 108-02-PLAN.md
+last_updated: "2026-03-29T23:28:02.918Z"
 progress:
-  total_phases: 1
+  total_phases: 2
   completed_phases: 1
-  total_plans: 4
-  completed_plans: 4
+  total_plans: 7
+  completed_plans: 5
   percent: 100
 ---
 
@@ -20,7 +20,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 107 — dashboard-recaptcha-validation-all-routes
+**Current focus:** Phase 108 — dashboard-replace-nuxtjs-strapi-sdk-with-useapiclient-for-all-reads
 
 ## Position
 
@@ -45,10 +45,13 @@ Progress: [██████████] 100%
 - Keep useStrapi() for read operations (find/findOne), replace only mutations with useApiClient() — FormPassword exception: useStrapi removed entirely (107-03)
 - Remove useStrapi() from a component entirely when no read operations remain after migrating mutations — applied to FormArticle.vue (107-04)
 - Custom Strapi action endpoints (approve/reject/banned) do NOT wrap body in { data: ... }; standard content-type updates MUST use { data: payload } (107-04)
+- useApiClient() must be declared at setup scope (outside useAsyncData) when replacing strapi.find/findOne — the captured apiClient variable is used inside callbacks (108-02)
+- users/[id] endpoint returns user object directly (no { data: T } wrapper); normalizeUser() handles both response shapes — no special-casing needed (108-02)
 
 ### Roadmap Evolution
 
 - Phase 107 added: en el dashboard hay que validar todas las rutas POST, PUT y DELETE igual como en el website
+- Phase 108 added: dashboard replace nuxtjs-strapi sdk with useApiClient for all reads — eliminate dual-resource pattern, all HTTP through one composable
 
 ### Blockers/Concerns (open)
 
@@ -62,6 +65,6 @@ Progress: [██████████] 100%
 
 ## Session Continuity
 
-Last session: 2026-03-29T22:44:57.765Z
-Stopped at: Completed 107-04-PLAN.md
+Last session: 2026-03-29T23:28:02.916Z
+Stopped at: Completed 108-02-PLAN.md
 Resume file: None
