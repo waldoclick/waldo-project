@@ -13,7 +13,7 @@
     width: 100%;
     border-top: 4px solid rgba($silver, 0.4);
     background-color: white;
-    z-index: 3;
+    z-index: 1;
 
     @include screen-small {
       position: relative;
