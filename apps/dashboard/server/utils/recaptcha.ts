@@ -1,12 +1,6 @@
-// apps/dashboard/server/utils/recaptcha.ts
-// Dashboard only protects auth routes — no contacts or public registration
 import { createError } from "h3";
 
-export const RECAPTCHA_PROTECTED_ROUTES = [
-  "auth/local",
-  "auth/forgot-password",
-  "auth/reset-password",
-] as const;
+const RECAPTCHA_PROTECTED_METHODS = ["POST", "PUT", "DELETE"];
 
 export async function verifyRecaptchaToken(
   token: string | null | undefined,
@@ -19,19 +13,23 @@ export async function verifyRecaptchaToken(
     });
   }
 
-  const result = await $fetch<{ success: boolean; score: number }>(
-    "https://www.google.com/recaptcha/api/siteverify",
-    {
-      method: "POST",
-      body: new URLSearchParams({
-        secret: secretKey,
-        response: token,
-      }).toString(),
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    },
-  );
+  const result = await $fetch<{
+    success: boolean;
+    score: number;
+    "error-codes"?: string[];
+  }>("https://www.google.com/recaptcha/api/siteverify", {
+    method: "POST",
+    body: new URLSearchParams({
+      secret: secretKey,
+      response: token,
+    }).toString(),
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+  });
 
   if (!result.success || result.score <= 0.5) {
+    console.warn(
+      `[recaptcha] Verification failed. success=${result.success}, score=${result.score ?? "n/a"}, error-codes=${(result["error-codes"] ?? []).join(",")}`,
+    );
     throw createError({
       statusCode: 400,
       statusMessage: "reCAPTCHA verification failed. Please try again.",
@@ -40,9 +38,8 @@ export async function verifyRecaptchaToken(
 }
 
 export function isRecaptchaProtectedRoute(
-  fullPath: string,
+  _fullPath: string,
   method: string,
 ): boolean {
-  if (method !== "POST") return false;
-  return RECAPTCHA_PROTECTED_ROUTES.some((route) => fullPath.startsWith(route));
+  return RECAPTCHA_PROTECTED_METHODS.includes(method.toUpperCase());
 }
