@@ -69,7 +69,7 @@ import { formatFullName } from "@/utils/string";
 import { ShoppingBag, ExternalLink } from "lucide-vue-next";
 import type { Order, OrderUser } from "@/types/order";
 
-const strapi = useStrapi();
+const apiClient = useApiClient();
 
 const open = ref(false);
 const loading = ref(true);
@@ -81,11 +81,14 @@ const panelRef = ref<HTMLElement | null>(null);
 const fetchOrders = async () => {
   try {
     loading.value = true;
-    const res = (await strapi.find("orders", {
-      pagination: { page: 1, pageSize: 10 },
-      sort: "createdAt:desc",
-      populate: ["user"],
-    } as Record<string, unknown>)) as unknown as { data?: Order[] };
+    const res = (await apiClient("orders", {
+      method: "GET",
+      params: {
+        pagination: { page: 1, pageSize: 10 },
+        sort: "createdAt:desc",
+        populate: ["user"],
+      } as unknown as Record<string, unknown>,
+    })) as { data?: Order[] };
     orders.value = Array.isArray(res.data) ? res.data : [];
   } catch (error) {
     console.error("Error fetching recent orders:", error);

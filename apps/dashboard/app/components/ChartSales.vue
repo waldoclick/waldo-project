@@ -172,6 +172,7 @@ const monthNames = [
   "Dic",
 ];
 
+const apiClient = useApiClient();
 const selectedYear = ref<number>(new Date().getFullYear());
 const availableYears = ref<number[]>([]);
 const monthlySalesCache = ref<Record<number, SalesByMonthData[]>>({});
@@ -184,13 +185,12 @@ const fetchSalesForYear = async (year: number) => {
   if (monthlySalesCache.value[year]) return;
   try {
     loading.value = true;
-    const strapi = useStrapi();
-    const res = await strapi.find(
-      "orders/sales-by-month" as any,
-      { year } as any,
-    );
-    const rawData = Array.isArray((res as any).data)
-      ? ((res as any).data as Array<{ month: number; total: number }>)
+    const res = await apiClient("orders/sales-by-month", {
+      method: "GET",
+      params: { year } as unknown as Record<string, unknown>,
+    }) as { data: Array<{ month: number; total: number }> };
+    const rawData = Array.isArray(res.data)
+      ? (res.data as Array<{ month: number; total: number }>)
       : [];
     const mapped: SalesByMonthData[] = Array.from({ length: 12 }, (_, i) => {
       const entry = rawData.find((d) => d.month === i);

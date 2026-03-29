@@ -38,6 +38,7 @@ interface Indicator {
   unit: string;
 }
 
+const apiClient = useApiClient();
 const indicators = ref<Indicator[]>([]);
 
 // Función para obtener el icono correspondiente según el código del indicador
@@ -77,13 +78,11 @@ const getShortName = (code: string) => {
 // Cargar los indicadores al montar el componente
 onMounted(async () => {
   try {
-    const strapi = useStrapi();
-    const response = await strapi.find<{
-      data: Indicator[];
-      meta: { timestamp: string };
-    }>("indicators");
+    const response = await apiClient("indicators", {
+      method: "GET",
+    }) as { data: Indicator[]; meta: { timestamp: string } };
 
-    indicators.value = (response.data as unknown as Indicator[]) || [];
+    indicators.value = (response.data as Indicator[]) || [];
   } catch (error) {
     console.error("Error fetching indicators:", error);
   }

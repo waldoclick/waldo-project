@@ -84,7 +84,7 @@ type PendingAd = Omit<Ad, "user"> & {
   user?: { username?: string; email?: string };
 };
 
-const strapi = useStrapi();
+const apiClient = useApiClient();
 
 const open = ref(false);
 const loading = ref(true);
@@ -97,11 +97,14 @@ const panelRef = ref<HTMLElement | null>(null);
 const fetchPendings = async () => {
   try {
     loading.value = true;
-    const res = (await strapi.find("ads/pendings", {
-      pagination: { page: 1, pageSize: 10 },
-      sort: "createdAt:asc",
-      populate: ["user"],
-    } as Record<string, unknown>)) as unknown as {
+    const res = (await apiClient("ads/pendings", {
+      method: "GET",
+      params: {
+        pagination: { page: 1, pageSize: 10 },
+        sort: "createdAt:asc",
+        populate: ["user"],
+      } as unknown as Record<string, unknown>,
+    })) as {
       data?: PendingAd[];
       meta?: { pagination?: { total?: number } };
     };
