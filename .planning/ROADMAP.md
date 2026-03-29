@@ -49,3 +49,16 @@
 | 104. Cancellation + Account Management | v1.46 | 2/2 | Complete | 2026-03-21 |
 | 105. PRO subscription checkout page | v1.46 | 3/3 | Complete | 2026-03-21 |
 | 106. Registration form age and terms checkboxes | v1.46 | 2/2 | Complete | 2026-03-29 |
+
+### Phase 107: Dashboard reCAPTCHA validation on all POST/PUT/DELETE routes
+
+**Goal:** Protect every mutating API call in the dashboard with reCAPTCHA v3, matching the website's existing pattern. Update server-side guard from allowlist (3 auth routes) to method-based (all POST/PUT/DELETE), add useApiClient composable, and migrate all 19+ call sites.
+**Requirements**: [RCP-107-01, RCP-107-02, RCP-107-03, RCP-107-04, RCP-107-05, RCP-107-06, RCP-107-07, RCP-107-08]
+**Depends on:** Phase 106
+**Plans:** 4 plans
+
+Plans:
+- [ ] 107-01-PLAN.md — Foundation: server guard + useApiClient composable + tests
+- [ ] 107-02-PLAN.md — Migrate useStrapiClient direct calls (auth forms + 4 components)
+- [ ] 107-03-PLAN.md — Migrate useStrapi SDK calls (6 CRUD forms + FormPassword + me.store)
+- [ ] 107-04-PLAN.md — Migrate remaining pages and components (ads, articles)
