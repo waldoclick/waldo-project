@@ -40,6 +40,7 @@ definePageMeta({
 
 const route = useRoute();
 const commune = ref<any>(null);
+const apiClient = useApiClient();
 
 const title = computed(() => commune.value?.name || "Comuna");
 const breadcrumbs = computed(() => [
@@ -62,22 +63,18 @@ const { data: communeData } = await useAsyncData(
     const id = route.params.id;
     if (!id) return null;
 
-    const strapi = useStrapi();
-    const response = await strapi.find("communes", {
-      filters: { documentId: { $eq: id } },
-      populate: "region",
-    } as Record<string, unknown>);
+    const response = await apiClient("communes", {
+      method: "GET",
+      params: { filters: { documentId: { $eq: id } }, populate: "region" } as unknown as Record<string, unknown>,
+    }) as { data: unknown[] };
     const data = Array.isArray(response.data) ? response.data[0] : null;
     if (data) return data;
 
-    const fallbackResponse = await strapi.findOne(
-      "communes",
-      id as string,
-      {
-        populate: "region",
-      } as Record<string, unknown>,
-    );
-    return (fallbackResponse.data as unknown) || null;
+    const fallback = await apiClient(`communes/${id}`, {
+      method: "GET",
+      params: { populate: "region" } as unknown as Record<string, unknown>,
+    }) as { data: unknown };
+    return (fallback.data as unknown) || null;
   },
 );
 

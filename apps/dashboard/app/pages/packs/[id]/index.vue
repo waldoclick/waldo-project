@@ -74,6 +74,7 @@ definePageMeta({
 
 const route = useRoute();
 const item = ref<any>(null);
+const apiClient = useApiClient();
 
 const title = computed(() => item.value?.name || "Pack");
 const breadcrumbs = computed(() => [
@@ -87,15 +88,15 @@ const { data: packData } = await useAsyncData(
     const id = route.params.id;
     if (!id) return null;
 
-    const strapi = useStrapi();
-    const response = await strapi.find("ad-packs", {
-      filters: { documentId: { $eq: id } },
-    } as Record<string, unknown>);
+    const response = await apiClient("ad-packs", {
+      method: "GET",
+      params: { filters: { documentId: { $eq: id } } } as unknown as Record<string, unknown>,
+    }) as { data: unknown[] };
     const data = Array.isArray(response.data) ? response.data[0] : null;
     if (data) return data;
 
-    const fallbackResponse = await strapi.findOne("ad-packs", id as string);
-    return (fallbackResponse.data as unknown) || null;
+    const fallback = await apiClient(`ad-packs/${id}`, { method: "GET" }) as { data: unknown };
+    return (fallback.data as unknown) || null;
   },
 );
 

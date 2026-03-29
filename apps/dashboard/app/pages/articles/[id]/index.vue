@@ -144,6 +144,7 @@ definePageMeta({
 
 const route = useRoute();
 const article = ref<ArticleData | null>(null);
+const apiClient = useApiClient();
 
 const title = computed(() => article.value?.title || "Artículo");
 const breadcrumbs = computed(() => [
@@ -157,22 +158,18 @@ const { data: articleData } = await useAsyncData(
     const id = route.params.id;
     if (!id) return null;
 
-    const strapi = useStrapi();
-    const response = await strapi.find("articles", {
-      filters: { documentId: { $eq: id } },
-      populate: ["cover", "gallery"],
-    } as Record<string, unknown>);
+    const response = await apiClient("articles", {
+      method: "GET",
+      params: { filters: { documentId: { $eq: id } }, populate: ["cover", "gallery"] } as unknown as Record<string, unknown>,
+    }) as { data: ArticleData[] };
     const data = Array.isArray(response.data) ? response.data[0] : null;
     if (data) return data as ArticleData;
 
-    const fallbackResponse = await strapi.findOne(
-      "articles",
-      id as string,
-      {
-        populate: ["cover", "gallery"],
-      } as Record<string, unknown>,
-    );
-    return (fallbackResponse.data as unknown as ArticleData) || null;
+    const fallback = await apiClient(`articles/${id}`, {
+      method: "GET",
+      params: { populate: ["cover", "gallery"] } as unknown as Record<string, unknown>,
+    }) as { data: ArticleData };
+    return (fallback.data as unknown as ArticleData) || null;
   },
 );
 

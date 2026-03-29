@@ -66,6 +66,7 @@ definePageMeta({
 
 const route = useRoute();
 const item = ref<any>(null);
+const apiClient = useApiClient();
 
 const title = computed(() =>
   item.value?.id ? `Destacado #${item.value.id}` : "Destacado",
@@ -81,39 +82,22 @@ const { data: featuredData } = await useAsyncData(
     const id = route.params.id;
     if (!id) return null;
     try {
-      const strapi = useStrapi();
-      const response = await strapi.find("ad-featured-reservations", {
-        filters: {
-          id: {
-            $eq: id,
-          },
-        },
-        populate: {
-          user: {
-            fields: ["username"],
-          },
-          ad: {
-            fields: ["name"],
-          },
-        },
-      } as Record<string, unknown>);
+      const response = await apiClient("ad-featured-reservations", {
+        method: "GET",
+        params: {
+          filters: { id: { $eq: id } },
+          populate: { user: { fields: ["username"] }, ad: { fields: ["name"] } },
+        } as unknown as Record<string, unknown>,
+      }) as { data: unknown[] };
       const data = Array.isArray(response.data) ? response.data[0] : null;
       if (data) return data;
 
-      const fallback = await strapi.findOne(
-        "ad-featured-reservations",
-        id as string,
-        {
-          populate: {
-            user: {
-              fields: ["username"],
-            },
-            ad: {
-              fields: ["name"],
-            },
-          },
-        } as Record<string, unknown>,
-      );
+      const fallback = await apiClient(`ad-featured-reservations/${id}`, {
+        method: "GET",
+        params: {
+          populate: { user: { fields: ["username"] }, ad: { fields: ["name"] } },
+        } as unknown as Record<string, unknown>,
+      }) as { data: unknown };
       return (fallback.data as unknown) || null;
     } catch (error) {
       console.error("Error fetching featured reservation:", error);
