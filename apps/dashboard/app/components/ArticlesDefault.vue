@@ -137,7 +137,6 @@ const paginationMeta = ref<{
 } | null>(null);
 
 const { Swal } = useSweetAlert2();
-const strapi = useStrapi();
 const apiClient = useApiClient();
 const router = useRouter();
 
@@ -159,7 +158,10 @@ const fetchArticles = async () => {
       };
     }
 
-    const response = await strapi.find("articles", searchParams);
+    const response = await apiClient("articles", {
+      method: "GET",
+      params: searchParams as unknown as Record<string, unknown>,
+    }) as { data: Article[]; meta: { pagination: typeof paginationMeta.value } };
     allArticles.value = Array.isArray(response.data)
       ? (response.data as Article[])
       : [];

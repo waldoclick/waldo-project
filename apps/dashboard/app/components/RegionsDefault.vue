@@ -115,6 +115,7 @@ const handleFiltersChange = (newFilters: {
   settingsStore.setFilters(section, newFilters);
 };
 
+const apiClient = useApiClient();
 const allRegions = ref<Region[]>([]);
 const loading = ref(false);
 const paginationMeta = ref<{
@@ -127,7 +128,6 @@ const paginationMeta = ref<{
 const fetchRegions = async () => {
   try {
     loading.value = true;
-    const strapi = useStrapi();
 
     const searchParams: Record<string, unknown> = {
       pagination: {
@@ -146,7 +146,10 @@ const fetchRegions = async () => {
       };
     }
 
-    const response = await strapi.find("regions", searchParams);
+    const response = await apiClient("regions", {
+      method: "GET",
+      params: searchParams as unknown as Record<string, unknown>,
+    }) as { data: Region[]; meta: { pagination: typeof paginationMeta.value } };
     allRegions.value = Array.isArray(response.data)
       ? (response.data as Region[])
       : [];

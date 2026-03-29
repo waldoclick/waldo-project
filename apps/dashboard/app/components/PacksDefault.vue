@@ -110,6 +110,7 @@ const handleFiltersChange = (newFilters: {
   settingsStore.setFilters(section, newFilters);
 };
 
+const apiClient = useApiClient();
 const allPacks = ref<Pack[]>([]);
 const loading = ref(false);
 const paginationMeta = ref<{
@@ -122,7 +123,6 @@ const paginationMeta = ref<{
 const fetchPacks = async () => {
   try {
     loading.value = true;
-    const strapi = useStrapi();
 
     const searchParams: Record<string, unknown> = {
       pagination: {
@@ -141,7 +141,10 @@ const fetchPacks = async () => {
       };
     }
 
-    const response = await strapi.find("ad-packs", searchParams);
+    const response = await apiClient("ad-packs", {
+      method: "GET",
+      params: searchParams as unknown as Record<string, unknown>,
+    }) as { data: Pack[]; meta: { pagination: typeof paginationMeta.value } };
     allPacks.value = Array.isArray(response.data)
       ? (response.data as Pack[])
       : [];
