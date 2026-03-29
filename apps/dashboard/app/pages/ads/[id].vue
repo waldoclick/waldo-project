@@ -218,7 +218,7 @@ const { public: publicConfig } = useRuntimeConfig();
 const websiteUrl =
   (publicConfig.websiteUrl as string) || "http://localhost:3000";
 const strapi = useStrapi();
-const strapiClient = useStrapiClient();
+const apiClient = useApiClient();
 const { Swal } = useSweetAlert2();
 
 const title = computed(() => item.value?.name || "Anuncio");
@@ -304,7 +304,7 @@ const handleApprove = async () => {
   const adId = item.value?.id ?? route.params.id;
   if (!adId) return;
   try {
-    await strapiClient(`/ads/${adId}/approve`, {
+    await apiClient(`/ads/${adId}/approve`, {
       method: "PUT",
     });
     await fetchAd();
@@ -318,7 +318,7 @@ const handleReject = async (reason: string) => {
   if (!item.value?.id) return;
   isRejecting.value = true;
   try {
-    await strapiClient(`/ads/${item.value.id}/reject`, {
+    await apiClient(`/ads/${item.value.id}/reject`, {
       method: "PUT",
       body: { reason_rejected: reason },
     });
@@ -337,7 +337,7 @@ const handleBanned = async (reason: string) => {
   if (!item.value?.id) return;
   isBanning.value = true;
   try {
-    await strapiClient(`/ads/${item.value.id}/banned`, {
+    await apiClient(`/ads/${item.value.id}/banned`, {
       method: "PUT",
       body: { reason_for_ban: reason },
     });
@@ -397,11 +397,12 @@ const handleDeleteImage = async ({ image }: { image: { id?: number } }) => {
       return;
     }
 
-    await strapi.update("ads", adDocumentId, {
-      gallery: updatedGallery,
-    } as Record<string, unknown>);
+    await apiClient(`/ads/${adDocumentId}`, {
+      method: "PUT",
+      body: { data: { gallery: updatedGallery } },
+    });
 
-    await strapi.delete("upload/files", String(image.id));
+    await apiClient(`/upload/files/${image.id}`, { method: "DELETE" });
 
     await fetchAd();
     await Swal.fire("Éxito", "Imagen eliminada correctamente.", "success");
