@@ -94,7 +94,7 @@ import * as yup from "yup";
 import type { User } from "@/types/user";
 
 const { Swal } = useSweetAlert2();
-const strapi = useStrapi();
+const apiClient = useApiClient();
 const user = useStrapiUser() as Ref<User | null>;
 
 const sending = ref(false);
@@ -139,10 +139,10 @@ const form = ref({
 const handleSubmit = async (values: any) => {
   sending.value = true;
   try {
-    await strapi.update("users", user.value!.id, {
-      password: values.newPassword,
-      currentPassword: values.currentPassword,
-    } as unknown as Parameters<typeof strapi.update>[2]);
+    await apiClient(`/users/${user.value!.id}`, {
+      method: "PUT",
+      body: { data: { password: values.newPassword, currentPassword: values.currentPassword } },
+    });
     form.value = { currentPassword: "", newPassword: "", confirmPassword: "" };
     formKey.value++;
     Swal.fire("Éxito", "Contraseña cambiada con éxito.", "success");
