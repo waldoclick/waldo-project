@@ -40,7 +40,7 @@ import { useAppStore } from "@/stores/app.store";
 const { Swal } = useSweetAlert2();
 const router = useRouter();
 const { logInfo } = useLogger();
-const client = useStrapiClient();
+const client = useApiClient();
 
 // Transient pendingToken set by FormLogin.vue
 const pendingToken = useState<string>("pendingToken");
