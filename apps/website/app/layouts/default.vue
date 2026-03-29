@@ -7,6 +7,7 @@
     <LightboxAdblock />
     <LightboxSearch />
     <LightboxLogin />
+    <LightboxTerms />
   </div>
 </template>
 
@@ -17,4 +18,5 @@ import LightboxCookies from "@/components/LightboxCookies.vue";
 import LightboxAdblock from "@/components/LightboxAdblock.vue";
 import LightboxSearch from "@/components/LightboxSearch.vue";
 import LightboxLogin from "@/components/LightboxLogin.vue";
+import LightboxTerms from "@/components/LightboxTerms.vue";
 </script>
