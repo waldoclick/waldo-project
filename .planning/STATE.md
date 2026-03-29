@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: PRO Subscriptions (Webpay Oneclick)
 status: executing
-stopped_at: Completed 105-03-PLAN.md
-last_updated: "2026-03-21T21:54:28.359Z"
-last_activity: 2026-03-21
+stopped_at: Completed 106-01-PLAN.md
+last_updated: "2026-03-29T16:07:37.013Z"
+last_activity: 2026-03-29
 progress:
-  total_phases: 5
-  completed_phases: 5
-  total_plans: 11
-  completed_plans: 11
+  total_phases: 6
+  completed_phases: 6
+  total_plans: 13
+  completed_plans: 13
   percent: 100
 ---
 
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-20)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 105 — pro-subscription-checkout-page
+**Current focus:** Phase 106 — registration-form-age-and-terms-checkboxes-with-strapi-user-model-booleans
 
 ## Position
 
 Phase: 105 of 105 (pro-subscription-checkout-page)
 Plan: 3 of 3 completed
 Status: In progress
-Last activity: 2026-03-29 - Completed quick task 260329-gdf: fix TS2352 error in subscription-charge.cron.ts ProUser cast
+Last activity: 2026-03-29
 
 ```
 Progress: [██████████] 100%
@@ -81,6 +81,7 @@ Progress: [██████████] 100%
 
 - Phase 103.1 inserted after Phase 103: Remove pro boolean — use pro_status as single source of truth (URGENT)
 - Phase 105 added: PRO subscription checkout page
+- Phase 106 added: Registration form age and terms checkboxes with Strapi user model booleans
 
 ### Blockers/Concerns (open)
 
@@ -88,6 +89,6 @@ Progress: [██████████] 100%
 
 ## Session Continuity
 
-Last session: 2026-03-21T21:54:28.357Z
-Stopped at: Completed 105-03-PLAN.md
+Last session: 2026-03-29T16:07:37.011Z
+Stopped at: Completed 106-01-PLAN.md
 Resume file: None
