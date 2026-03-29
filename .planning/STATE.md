@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 107-01-PLAN.md
-last_updated: "2026-03-29T22:28:58.785Z"
+stopped_at: Completed 107-02-PLAN.md
+last_updated: "2026-03-29T22:33:36.787Z"
 progress:
   total_phases: 1
   completed_phases: 0
   total_plans: 4
-  completed_plans: 1
-  percent: 0
+  completed_plans: 2
+  percent: 25
 ---
 
 # Session State
@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 Milestone v1.46 PRO Subscriptions archived. Ready to start next milestone.
 
 ```
-Progress: [███░░░░░░░] 25%
+Progress: [█████░░░░░] 50%
 ```
 
 ## Accumulated Context
@@ -39,6 +39,8 @@ Progress: [███░░░░░░░] 25%
 - Oneclick Mall must be contracted separately with Transbank for production (separate from Webpay Plus)
 - Method-based reCAPTCHA guard (POST/PUT/DELETE) replaces allowlist-based guard — simpler and protects all future mutations automatically (107-01)
 - Dashboard vitest config aligned with website pattern (happy-dom + stubs) to fix broken nuxt environment (107-01)
+- useApiClient is a drop-in for useStrapiClient — only the initialization line changes, no call-site changes needed (107-02)
+- Never call useStrapiClient() directly in components for mutating requests — use useApiClient() instead (107-02)
 
 ### Roadmap Evolution
 
@@ -47,7 +49,6 @@ Progress: [███░░░░░░░] 25%
 ### Blockers/Concerns (open)
 
 - Oneclick Mall must be contracted separately with Transbank for production
-- Dashboard "Recuperar contraseña" reCAPTCHA bug: `FormForgotPassword.vue` in dashboard does not send reCAPTCHA token (pre-existing bug from v1.37)
 
 ### Quick Tasks Completed
 
@@ -57,6 +58,6 @@ Progress: [███░░░░░░░] 25%
 
 ## Session Continuity
 
-Last session: 2026-03-29T22:28:58.784Z
-Stopped at: Completed 107-01-PLAN.md
+Last session: 2026-03-29T22:33:36.785Z
+Stopped at: Completed 107-02-PLAN.md
 Resume file: None
