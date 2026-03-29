@@ -216,6 +216,14 @@
       "relation": "oneToMany",
       "target": "api::ad.ad",
       "mappedBy": "user"
+    },
+    "accepted_age_confirmation": {
+      "type": "boolean",
+      "default": false
+    },
+    "accepted_terms": {
+      "type": "boolean",
+      "default": false
     }
   }
 }
