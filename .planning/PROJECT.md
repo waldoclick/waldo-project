@@ -406,7 +406,7 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 
 **Webpay receipt (since v1.26):** `/pagar/gracias` shows 8-field Webpay receipt via `ResumeOrder.vue`; fetches by `order.documentId`.
 
-**Unified API Client (since v1.39):** `useApiClient` composable handles all HTTP methods — POST/PUT/DELETE inject `X-Recaptcha-Token`; GET passes through cleanly. All 12 website stores, 3 composables (`useStrapi`, `useOrderById`, `usePacksList`), and 5 pages/components migrated from `@nuxtjs/strapi` SDK; Strapi SDK now used for auth only. Calling convention: `client(url, { method: 'GET', params })` returns raw body (no `.data` wrapper). 9 Vitest tests. `apps/dashboard` migration deferred.
+**Unified API Client (since v1.39, dashboard completed Phase 107):** `useApiClient` composable handles all HTTP methods — POST/PUT/DELETE inject `X-Recaptcha-Token`; GET passes through cleanly. Website: all 12 stores, 3 composables, 5 pages/components migrated. Dashboard: server guard expanded from 3 auth routes to all POST/PUT/DELETE; 19 components/stores migrated (auth forms, CRUD admin forms, me.store, ads page, article pages). Strapi SDK now used for auth only in both apps. 55 Vitest tests (dashboard). 9 Vitest tests (website).
 
 **Google One Tap (since v1.44):** `google-one-tap.client.ts` Nuxt plugin initializes GIS on app startup (SSR-safe via `.client.ts` suffix); `useGoogleOneTap.ts` composable exposes `promptIfEligible()` with auth guard + route guard + GIS guard; `POST /api/auth/google-one-tap` Strapi endpoint verifies Google credential JWT via `google-auth-library`, finds or creates user by `google_sub` field (email fallback for existing accounts), grants 3 free ad slots to new users, bypasses 2-step verification, returns `{ jwt, user }`; `useLogout.ts` calls `disableAutoSelect()` before `strapiLogout()` to prevent post-logout re-prompt; full page reload after One Tap login ensures clean state. `google_sub` field added to User schema (private, unique, nullable). TDD: 8 Jest tests for service, 4 for controller; 3 Vitest tests for composable, plugin tests for GTAP-08.
 
@@ -416,7 +416,16 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 
 ## Known Issues / Tech Debt
 
-- **Dashboard "Recuperar contraseña" reCAPTCHA bug:** `FormForgotPassword.vue` in dashboard does not send reCAPTCHA token — form submits without it. Pre-existing bug identified during v1.37 smoke testing. Needs investigation (reCAPTCHA middleware vs. controller interception).
+## Validated Requirements (Phase 107 — dashboard reCAPTCHA all routes)
+
+- ✓ Dashboard server reCAPTCHA guard expanded from 3 auth routes to all POST/PUT/DELETE (method-based, not route-based) — Phase 107
+- ✓ `useApiClient` composable added to dashboard — auto-injects `X-Recaptcha-Token` on mutating calls — Phase 107
+- ✓ 3 auth forms (FormLogin, FormForgotPassword, FormResetPassword) migrated to `useApiClient`; manual `$recaptcha.execute` calls removed — Phase 107
+- ✓ 4 non-auth components (FormEdit, FormVerifyCode, FormGift, LightBoxArticles) migrated — Phase 107
+- ✓ 6 CRUD admin forms (FormFaq, FormCommune, FormRegion, FormCategory, FormPack, FormCondition) + FormPassword + me.store migrated — Phase 107
+- ✓ Ads detail page (approve/reject/banned/update/delete-image) + articles pages (edit, list, FormArticle) migrated — Phase 107
+- ✓ Zero unprotected `useStrapiClient`/`strapi.create`/`strapi.update`/`strapi.delete` calls remain in `apps/dashboard/app/` — Phase 107
+- ✓ 55 Vitest tests pass (13 server guard + 7 composable + 35 pre-existing); `vitest.config.ts` fixed to `happy-dom` — Phase 107
 
 ## Validated Requirements (v1.40)
 
@@ -534,4 +543,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ `accepted_age_confirmation` and `accepted_terms` boolean fields stored on Strapi user record (`default: false`) — v1.46
 
 ---
-*Last updated: 2026-03-29 after v1.46 milestone*
+*Last updated: 2026-03-29 after Phase 107 (dashboard reCAPTCHA all routes)*
