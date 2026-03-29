@@ -128,3 +128,19 @@ Plans:
 | 103.1. Remove pro boolean | v1.46 | 2/2 | Complete    | 2026-03-21 |
 | 104. Cancellation + Account Management | 2/2 | Complete   | 2026-03-21 |  |
 | 105. PRO subscription checkout page | v1.46 | 3/3 | Complete   | 2026-03-21 |
+
+### Phase 106: Registration form age and terms checkboxes with Strapi user model booleans
+
+**Goal:** Users must confirm they are of legal age and accept terms/privacy policy via required checkboxes during registration, with consent stored as boolean fields on the Strapi user model
+**Requirements**: REG-01, REG-02, REG-03, REG-04
+**Depends on:** Phase 105
+**Success Criteria** (what must be TRUE):
+  1. Registration step 2 shows two required checkboxes: age confirmation and terms acceptance
+  2. Form cannot submit unless both checkboxes are checked (yup validation)
+  3. Server-side registerUserLocal rejects requests where either consent field is not `true`
+  4. Both boolean fields are stored on the user record in Strapi
+**Plans:** 2 plans
+
+Plans:
+- [ ] 106-01-PLAN.md — Strapi backend: user schema boolean fields + registerUserLocal validation + tests
+- [ ] 106-02-PLAN.md — Website frontend: FormRegister type + checkboxes + yup validation + tests

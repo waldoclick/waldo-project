@@ -60,6 +60,13 @@ Requirements for PRO Subscriptions (Webpay Oneclick) milestone. Each maps to roa
 - [x] **CHECKOUT-10**: `MemoPro.vue` navigates to `/pro/pagar` instead of calling `POST /payments/pro` directly
 - [x] **CHECKOUT-11**: Old `/pro/gracias` page remains functional for backward compatibility
 
+### Registration Consent (Phase 106)
+
+- [ ] **REG-01**: Registration step 2 shows two required checkboxes (age confirmation + terms acceptance) that block form submission when unchecked
+- [ ] **REG-02**: Checked checkboxes send `accepted_age_confirmation: true` and `accepted_terms: true` in the registration API body
+- [ ] **REG-03**: `registerUserLocal` rejects registration when `accepted_age_confirmation !== true` or `accepted_terms !== true`
+- [ ] **REG-04**: Both `accepted_age_confirmation` and `accepted_terms` boolean fields are stored on the Strapi user record with `default: false`
+
 ## Future Requirements
 
 (None deferred for this milestone)
@@ -75,6 +82,7 @@ Requirements for PRO Subscriptions (Webpay Oneclick) milestone. Each maps to roa
 | Dashboard admin subscription management | Admin can toggle `pro` directly in Strapi admin panel |
 | Email receipt for each monthly charge | Deferred to future; payment record in DB is sufficient for now |
 | Storing user boleta/factura preference for cron reuse | Deferred to future; cron uses boleta by default |
+| Consent timestamps | `createdAt` on user record serves as acceptance timestamp; explicit `accepted_terms_at` deferred |
 
 ## Traceability
 
@@ -117,12 +125,16 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CHECKOUT-09 | Phase 105 | Planned |
 | CHECKOUT-10 | Phase 105 | Planned |
 | CHECKOUT-11 | Phase 105 | Planned |
+| REG-01 | Phase 106 | Planned |
+| REG-02 | Phase 106 | Planned |
+| REG-03 | Phase 106 | Planned |
+| REG-04 | Phase 106 | Planned |
 
 **Coverage:**
-- v1.46 requirements: 35 total
-- Mapped to phases: 35
+- v1.46 requirements: 39 total
+- Mapped to phases: 39
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-20*
-*Last updated: 2026-03-21 — added CHECKOUT requirements for Phase 105*
+*Last updated: 2026-03-29 — added REG requirements for Phase 106*
