@@ -11,6 +11,7 @@ interface ProUser {
   documentId: string;
   tbk_user: string;
   pro_expires_at: string;
+  pro_pending_invoice?: boolean;
 }
 
 interface FailedPaymentRecord {
@@ -391,9 +392,7 @@ export class SubscriptionChargeService {
       );
 
       // Create order + Facto document for this charge — reuse user's last invoice preference from checkout
-      const isInvoice = Boolean(
-        (user as Record<string, unknown>).pro_pending_invoice ?? false
-      );
+      const isInvoice = Boolean(user.pro_pending_invoice ?? false);
       try {
         const userDocDetails = await documentDetails(user.id, isInvoice);
         const chargeItems = [
