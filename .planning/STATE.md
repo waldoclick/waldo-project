@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 107-02-PLAN.md
-last_updated: "2026-03-29T22:33:36.787Z"
+stopped_at: Completed 107-03-PLAN.md
+last_updated: "2026-03-29T22:41:08.435Z"
 progress:
   total_phases: 1
   completed_phases: 0
   total_plans: 4
-  completed_plans: 2
-  percent: 25
+  completed_plans: 3
+  percent: 75
 ---
 
 # Session State
@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 Milestone v1.46 PRO Subscriptions archived. Ready to start next milestone.
 
 ```
-Progress: [█████░░░░░] 50%
+Progress: [████████░░] 75%
 ```
 
 ## Accumulated Context
@@ -41,6 +41,8 @@ Progress: [█████░░░░░] 50%
 - Dashboard vitest config aligned with website pattern (happy-dom + stubs) to fix broken nuxt environment (107-01)
 - useApiClient is a drop-in for useStrapiClient — only the initialization line changes, no call-site changes needed (107-02)
 - Never call useStrapiClient() directly in components for mutating requests — use useApiClient() instead (107-02)
+- Use apiClient typed generic apiClient<{ data: T }>() for response shape inference — avoids response.data type errors (107-03)
+- Keep useStrapi() for read operations (find/findOne), replace only mutations with useApiClient() — FormPassword exception: useStrapi removed entirely (107-03)
 
 ### Roadmap Evolution
 
@@ -58,6 +60,6 @@ Progress: [█████░░░░░] 50%
 
 ## Session Continuity
 
-Last session: 2026-03-29T22:33:36.785Z
-Stopped at: Completed 107-02-PLAN.md
+Last session: 2026-03-29T22:41:08.433Z
+Stopped at: Completed 107-03-PLAN.md
 Resume file: None
