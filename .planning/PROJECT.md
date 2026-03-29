@@ -416,6 +416,14 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 
 ## Known Issues / Tech Debt
 
+## Validated Requirements (Phase 108 — dashboard replace nuxtjs-strapi sdk with useApiClient for all reads)
+
+- ✓ Zero `strapi.find()`/`strapi.findOne()` calls remain in `apps/dashboard/app/` — Phase 108
+- ✓ Zero `useStrapi()` instantiations for data fetching — all 30 components + 1 store + 19 pages migrated to `useApiClient` — Phase 108
+- ✓ `useApiClient()` always called at setup scope (never inside `useAsyncData`, `watch`, or `onMounted` callbacks) — Phase 108
+- ✓ `useStrapiUser()`, `useStrapiToken()`, and `useStrapiClient` (auth/upload infrastructure) intentionally out of scope and untouched — Phase 108
+- ✓ 55 Vitest tests pass; TypeScript typecheck exits 0; `gtm.client.ts` pre-existing strict-mode error fixed — Phase 108
+
 ## Validated Requirements (Phase 107 — dashboard reCAPTCHA all routes)
 
 - ✓ Dashboard server reCAPTCHA guard expanded from 3 auth routes to all POST/PUT/DELETE (method-based, not route-based) — Phase 107
@@ -543,4 +551,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ `accepted_age_confirmation` and `accepted_terms` boolean fields stored on Strapi user record (`default: false`) — v1.46
 
 ---
-*Last updated: 2026-03-29 after Phase 107 (dashboard reCAPTCHA all routes)*
+*Last updated: 2026-03-29 after Phase 108 (dashboard replace nuxtjs-strapi sdk with useApiClient for all reads)*
