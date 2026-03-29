@@ -2,6 +2,11 @@
 @use "../abstracts/variables" as *;
 @use "../base/container";
 
+.swal2-backdrop-show {
+  @include lightbox-backdrop;
+  // position: fixed;
+}
+
 .swal2-container {
   .swal2-title {
     font-size: 1.5em;

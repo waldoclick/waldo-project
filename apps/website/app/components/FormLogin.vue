@@ -5,68 +5,66 @@
     @submit="handleSubmit"
   >
     <div class="form form--login">
-      <div>
-        <!-- Email -->
-        <div class="form-group">
-          <label class="form-label" for="email">Correo Electrónico</label>
-          <Field
-            v-model="form.email"
-            name="email"
-            type="email"
-            class="form-control"
-            autocomplete="email"
-          />
-          <ErrorMessage name="email" />
-        </div>
+      <!-- Email -->
+      <div class="form-group">
+        <label class="form-label" for="email">Correo Electrónico</label>
+        <Field
+          v-model="form.email"
+          name="email"
+          type="email"
+          class="form-control"
+          autocomplete="email"
+        />
+        <ErrorMessage name="email" />
+      </div>
 
-        <!-- Password -->
-        <div class="form-group form-group--password">
-          <label class="form-label" for="password">Contraseña</label>
-          <Field
-            v-model="form.password"
-            name="password"
-            :type="passwordType"
-            class="form-control"
-            autocomplete="current-password"
-          />
-          <button
-            class="form-group--password__show-password"
-            type="button"
-            :title="`Mostrar/ocultar contraseña`"
-            @click="handleShowPassword"
-          >
-            <strong v-if="passwordType !== 'password'">Ocultar</strong>
-            <strong v-else>Mostrar</strong>
-          </button>
-          <ErrorMessage name="password" />
-        </div>
-
+      <!-- Password -->
+      <div class="form-group form-group--password">
+        <label class="form-label" for="password">Contraseña</label>
+        <Field
+          v-model="form.password"
+          name="password"
+          :type="passwordType"
+          class="form-control"
+          autocomplete="current-password"
+        />
         <button
-          :disabled="!meta.valid || sending"
-          :title="`Iniciar Sesión`"
-          type="submit"
-          class="btn btn--block btn--primary"
+          class="form-group--password__show-password"
+          type="button"
+          :title="`Mostrar/ocultar contraseña`"
+          @click="handleShowPassword"
         >
-          <span v-if="!sending">Iniciar Sesión</span>
-          <span v-if="sending">Iniciando sesión...</span>
+          <strong v-if="passwordType !== 'password'">Ocultar</strong>
+          <strong v-else>Mostrar</strong>
         </button>
+        <ErrorMessage name="password" />
+      </div>
 
-        <div v-if="showResendSection" class="form__resend-confirmation">
-          <p>
-            Tu cuenta (<strong>{{ unconfirmedEmail }}</strong
-            >) no ha sido confirmada. Revisa tu bandeja de entrada o solicita un
-            nuevo correo de confirmación.
-          </p>
-          <button
-            type="button"
-            :disabled="resending"
-            class="btn btn--block btn--secondary"
-            @click="handleResendConfirmation"
-          >
-            <span v-if="!resending">Reenviar confirmación</span>
-            <span v-if="resending">Enviando...</span>
-          </button>
-        </div>
+      <button
+        :disabled="!meta.valid || sending"
+        :title="`Iniciar Sesión`"
+        type="submit"
+        class="btn btn--block btn--primary"
+      >
+        <span v-if="!sending">Iniciar Sesión</span>
+        <span v-if="sending">Iniciando sesión...</span>
+      </button>
+
+      <div v-if="showResendSection" class="form__resend-confirmation">
+        <p>
+          Tu cuenta (<strong>{{ unconfirmedEmail }}</strong
+          >) no ha sido confirmada. Revisa tu bandeja de entrada o solicita un
+          nuevo correo de confirmación.
+        </p>
+        <button
+          type="button"
+          :disabled="resending"
+          class="btn btn--block btn--secondary"
+          @click="handleResendConfirmation"
+        >
+          <span v-if="!resending">Reenviar confirmación</span>
+          <span v-if="resending">Enviando...</span>
+        </button>
       </div>
     </div>
   </Form>
