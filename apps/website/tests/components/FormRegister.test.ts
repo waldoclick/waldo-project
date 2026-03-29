@@ -34,6 +34,15 @@ global.useSweetAlert2 = vi.fn(() => ({
   Swal: { fire: mockSwalFire },
 }));
 
+// ─── Mock useAdAnalytics ──────────────────────────────────────────────────
+const mockSignUp = vi.fn();
+global.useAdAnalytics = vi.fn(() => ({
+  signUp: mockSignUp,
+}));
+
+// ─── Mock useApiClient ────────────────────────────────────────────────────
+global.useApiClient = vi.fn(() => mockClient);
+
 // ─── Mock #app (provides useNuxtApp with $recaptcha) ─────────────────────
 // The component imports useNuxtApp from "#app" — we intercept at the module level.
 const mockRecaptchaExecute = vi.fn().mockResolvedValue("mock-recaptcha-token");
@@ -89,6 +98,7 @@ vi.mock("yup", () => ({
   })),
   boolean: vi.fn(() => ({
     required: vi.fn().mockReturnThis(),
+    oneOf: vi.fn().mockReturnThis(),
   })),
   ref: vi.fn(),
 }));
@@ -99,6 +109,11 @@ vi.mock("@/composables/useRut", () => ({
     formatRut: vi.fn((v: string) => v),
     validateRut: vi.fn(() => true),
   }),
+}));
+
+// ─── Mock useApiClient ────────────────────────────────────────────────────
+vi.mock("@/composables/useApiClient", () => ({
+  useApiClient: () => mockClient,
 }));
 
 // ─── Import component AFTER all mocks (vi.mock is hoisted by Vitest) ─────
@@ -221,5 +236,71 @@ describe("FormRegister.vue — no-JWT redirect behavior (REGV-03)", () => {
 
     // Assert: registrationEmail shared state populated with submitted email
     expect(registrationEmailRef.value).toBe("myemail@test.com");
+  });
+});
+
+describe("FormRegister.vue — consent checkboxes (REG-01, REG-02)", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    registrationEmailRef.value = "";
+    global.useRouter = vi.fn(() => ({ push: mockPush }));
+    global.useRoute = vi.fn(() => ({}));
+    global.useStrapiClient = vi.fn(() => mockClient);
+    global.useStrapiAuth = vi.fn(() => ({
+      register: mockRegister,
+      setToken: mockSetToken,
+    }));
+    global.useState = vi.fn((key: string, init?: () => string) => {
+      if (key === "registrationEmail") return registrationEmailRef;
+      return ref(init ? init() : "");
+    });
+    global.useSweetAlert2 = vi.fn(() => ({
+      Swal: { fire: mockSwalFire },
+    }));
+    mockRecaptchaExecute.mockResolvedValue("mock-recaptcha-token");
+  });
+
+  it("Test 5: form initializes accepted_age_confirmation and accepted_terms as false", () => {
+    const wrapper = buildWrapper();
+    const vm = wrapper.vm as unknown as {
+      form: { accepted_age_confirmation: boolean; accepted_terms: boolean };
+    };
+    expect(vm.form.accepted_age_confirmation).toBe(false);
+    expect(vm.form.accepted_terms).toBe(false);
+  });
+
+  it("Test 6: consent fields are included in API body on submit (not deleted like confirm_password)", async () => {
+    mockClient.mockResolvedValue({
+      jwt: "token",
+      user: { id: 1, email: "test@example.com" },
+    });
+
+    const wrapper = buildWrapper();
+    const vm = wrapper.vm as unknown as {
+      step: number;
+      form: {
+        email: string;
+        username: string;
+        confirm_password?: string;
+        accepted_age_confirmation: boolean;
+        accepted_terms: boolean;
+      };
+      handleSubmit: () => Promise<void>;
+    };
+
+    vm.step = 2;
+    vm.form.email = "test@example.com";
+    vm.form.accepted_age_confirmation = true;
+    vm.form.accepted_terms = true;
+
+    await vm.handleSubmit();
+    await new Promise((r) => setTimeout(r, 0));
+
+    // The API call body should include consent fields
+    const callBody = mockClient.mock.calls[0]?.[1]?.body;
+    expect(callBody).toHaveProperty("accepted_age_confirmation", true);
+    expect(callBody).toHaveProperty("accepted_terms", true);
+    // confirm_password should NOT be in the body
+    expect(callBody).not.toHaveProperty("confirm_password");
   });
 });
