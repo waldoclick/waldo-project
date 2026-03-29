@@ -73,6 +73,7 @@ const { Swal } = useSweetAlert2();
 const router = useRouter();
 const route = useRoute();
 const strapi = useStrapi();
+const apiClient = useApiClient();
 
 const sending = ref(false);
 const lastHydratedId = ref<string | number | null>(null);
@@ -144,11 +145,10 @@ const handleSubmit = async (values: any) => {
         return;
       }
 
-      const response = await strapi.update(
-        "faqs",
-        faqId,
-        payload as unknown as Parameters<typeof strapi.update>[2],
-      );
+      const response = await apiClient(`/faqs/${faqId}`, {
+        method: "PUT",
+        body: { data: payload },
+      });
       const responseData = response.data as unknown as {
         id?: number;
         documentId?: string;
@@ -170,10 +170,10 @@ const handleSubmit = async (values: any) => {
         router.push(`/faqs/${updatedId}`);
       }
     } else {
-      const response = await strapi.create(
-        "faqs",
-        payload as unknown as Parameters<typeof strapi.create>[1],
-      );
+      const response = await apiClient("/faqs", {
+        method: "POST",
+        body: { data: payload },
+      });
       const createdData = response.data as unknown as {
         id?: number;
         documentId?: string;

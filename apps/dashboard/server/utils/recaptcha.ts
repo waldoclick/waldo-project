@@ -1,6 +1,6 @@
 import { createError } from "h3";
 
-const RECAPTCHA_PROTECTED_METHODS = ["POST", "PUT", "DELETE"];
+const RECAPTCHA_PROTECTED_METHODS = new Set(["POST", "PUT", "DELETE"]);
 
 export async function verifyRecaptchaToken(
   token: string | null | undefined,
@@ -41,5 +41,5 @@ export function isRecaptchaProtectedRoute(
   _fullPath: string,
   method: string,
 ): boolean {
-  return RECAPTCHA_PROTECTED_METHODS.includes(method.toUpperCase());
+  return RECAPTCHA_PROTECTED_METHODS.has(method.toUpperCase());
 }

@@ -55,9 +55,9 @@ describe("verifyRecaptchaToken", () => {
   });
 
   it("throws 400 when token is empty string", async () => {
-    await expect(
-      verifyRecaptchaToken("", "fake-secret"),
-    ).rejects.toMatchObject({ statusCode: 400 });
+    await expect(verifyRecaptchaToken("", "fake-secret")).rejects.toMatchObject(
+      { statusCode: 400 },
+    );
   });
 
   it("throws 400 when token is only whitespace", async () => {
@@ -83,7 +83,7 @@ describe("verifyRecaptchaToken", () => {
   it("throws 400 when Google returns success=false", async () => {
     mockFetch.mockResolvedValueOnce({
       success: false,
-      score: 0.0,
+      score: 0,
       "error-codes": ["invalid-input-response"],
     });
     await expect(
@@ -95,7 +95,7 @@ describe("verifyRecaptchaToken", () => {
     const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
     mockFetch.mockResolvedValueOnce({
       success: false,
-      score: 0.0,
+      score: 0,
       "error-codes": ["invalid-input-response"],
     });
     await expect(

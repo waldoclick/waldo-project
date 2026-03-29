@@ -78,7 +78,9 @@ describe("useApiClient", () => {
     expect(mockClient).toHaveBeenCalledWith(
       "/test",
       expect.not.objectContaining({
-        headers: expect.objectContaining({ "X-Recaptcha-Token": expect.any(String) }),
+        headers: expect.objectContaining({
+          "X-Recaptcha-Token": expect.any(String),
+        }),
       }),
     );
   });
@@ -94,7 +96,9 @@ describe("useApiClient", () => {
       expect.objectContaining({ method: "POST" }),
     );
     // No X-Recaptcha-Token header when token fetch fails
-    const callArgs = mockClient.mock.calls[0][1] as { headers?: Record<string, string> };
+    const callArgs = mockClient.mock.calls[0][1] as {
+      headers?: Record<string, string>;
+    };
     expect(callArgs.headers?.["X-Recaptcha-Token"]).toBeUndefined();
   });
 

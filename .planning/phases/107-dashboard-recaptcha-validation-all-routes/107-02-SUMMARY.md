@@ -105,3 +105,17 @@ None - no external service configuration required.
 ---
 *Phase: 107-dashboard-recaptcha-validation-all-routes*
 *Completed: 2026-03-29*
+
+## Self-Check: PASSED
+
+- FormLogin.vue: FOUND, contains useApiClient, no useStrapiClient, no $recaptcha.execute
+- FormForgotPassword.vue: FOUND, contains useApiClient, no useStrapiClient, no $recaptcha.execute
+- FormResetPassword.vue: FOUND, contains useApiClient, no useStrapiClient, no $recaptcha.execute
+- FormEdit.vue: FOUND, contains useApiClient, no useStrapiClient
+- FormVerifyCode.vue: FOUND, contains useApiClient, no useStrapiClient
+- FormGift.vue: FOUND, contains useApiClient, no useStrapiClient
+- LightBoxArticles.vue: FOUND, contains useApiClient, no useStrapiClient
+- 107-02-SUMMARY.md: FOUND
+- Commit 0684f766: FOUND (auth forms migration)
+- Commit e067a142: FOUND (non-auth components migration)
+- All 55 vitest tests passed
