@@ -1,5 +1,26 @@
 ## v1.41 Ad Preview Error Handling (Shipped: 2026-03-18)
 
+## v1.46 PRO Subscriptions (Shipped: 2026-03-29)
+
+**Phases completed:** 6 phases, 13 plans, 25 tasks
+
+**Key accomplishments:**
+
+- Webpay Oneclick Mall inscription backend with OneclickService class, two API routes, and User schema extension for PRO subscription card enrollment
+- MemoPro.vue rewired to Transbank Oneclick start endpoint; /pro/gracias page shows registered card type and last 4 digits after enrollment
+- subscription-payment content type with 12 attributes, OneclickService.authorizeCharge() wrapping MallTransaction.authorize() with 3 unit tests, and env var documentation for ONECLICK_CHILD_COMMERCE_CODE and PRO_MONTHLY_PRICE
+- SubscriptionChargeService cron class with 8 unit tests covering expired user charging, idempotency guards, retry scheduling, deactivation logic, and PRO_MONTHLY_PRICE env var validation
+- Eliminated dual-source-of-truth: all Strapi backend code now reads/writes pro_status exclusively, with no code path writing pro: true or pro: false
+- Replaced all frontend reads of user.pro boolean with user.pro_status === "active" checks across website and dashboard — 13 files updated, type definitions cleaned up
+- One-liner:
+- One-liner:
+- 1. [Rule 1 - Bug] Fixed Jest mock hoisting in both test files
+- One-liner:
+- Two Nuxt pages (/pro/pagar, /pro/pagar/gracias) plus MemoPro navigation refactor completing the user-facing PRO subscription checkout flow
+- Age confirmation and terms acceptance checkboxes added to registration step 2 with yup .oneOf([true]) blocking validation and NuxtLink to privacy policy
+
+---
+
 ## v1.45 User Onboarding (Shipped: 2026-03-20)
 
 **Phases completed:** 3 phases (099–101), 5 plans
@@ -8,6 +29,7 @@
 **Files changed:** 48 files, +4,573 / −82
 
 **Key accomplishments:**
+
 - Dedicated onboarding layout (`layouts/onboarding.vue`) with minimal chrome — logo only, no header/footer/navigation; BEM SCSS for `onboarding--default` and `onboarding--thankyou` modifiers
 - `FormProfile` emit refactor — `defineEmits(["success"]) + defineProps({ onboardingMode })` enables parent-controlled post-submit navigation; backward-compatible (AccountEdit unchanged)
 - `OnboardingDefault` and `OnboardingThankyou` components with full Vitest coverage (12 tests); `/onboarding` preloads regions/communes via `useAsyncData`
@@ -27,6 +49,7 @@
 **Files changed:** 74 files, +9,374 / −1,234
 
 **Key accomplishments:**
+
 - Root-caused SSR session persistence bug — dead `auth.populate` joins caused `setToken(null)` on `fetchUser()` SSR failure; purely subtractive fix (removed unused `ad_reservations.ad` and `ad_featured_reservations.ad`)
 - Fixed cookie replacement on session swap — `useStrapiAuth().logout()` respects `COOKIE_DOMAIN` attribute; eliminates zombie cookies after manager login
 - Added GIS CSP entries (`connect-src` + `frame-src`) and `GOOGLE_CLIENT_ID` env var for Google One Tap
@@ -43,6 +66,7 @@
 **Phases completed:** 2 phases, 2 plans, 0 tasks
 
 **Key accomplishments:**
+
 - (none recorded)
 
 ---
@@ -53,6 +77,7 @@
 **Files changed:** 14 files, +1,929 / -68
 
 **Key accomplishments:**
+
 - `createError({ statusCode: 404/500, fatal: true })` lanzado dentro de `useAsyncData` en `[slug].vue` — el website nunca más devuelve 500 en `/anuncios/[slug]`; `watchEffect` + `showError` + `getErrorMessage` eliminados completamente
 - `default: () => null` agregado a `useAsyncData` — elimina estado `undefined` durante hidratación SSR (AGENTS.md compliance)
 - `try/catch` + `strapi.log.error` en controller `findBySlug` — errores inesperados de DB devuelven respuesta limpia sin stack trace expuesto
@@ -71,6 +96,7 @@
 **Files changed:** 22 files, +1,362 / -44
 
 **Key accomplishments:**
+
 - `useLogout.ts` composable created in dashboard — resets appStore, meStore, searchStore, then calls `strapiLogout()` + `navigateTo('/auth/login')`; `meStore.reset()` action added; 3 scattered call sites (DropdownUser.vue, FormVerifyCode.vue, guard.global.ts) migrated
 - Conditional `COOKIE_DOMAIN` domain spread added to both `nuxt.config.ts` strapi.cookie blocks — production emits `Set-Cookie: waldo_jwt=...; Domain=.waldo.click`; local dev unaffected (host-only cookies unchanged)
 - Old host-only `waldo_jwt` cleanup injected into both `useLogout.ts` composables via `if (import.meta.client)` guard — eliminates zombie sessions post-migration
@@ -92,6 +118,7 @@
 **Git range:** `4035b8c` → `96653c4`
 
 **Key accomplishments:**
+
 - Confirmed `useApiClient` GET passthrough is correct without source changes; added 1 GET-with-params test to document the contract (9 tests total)
 - Migrated 5 reference-data stores (filter, regions, communes, conditions, faqs) from `strapi.find()` to `useApiClient` with cache guards preserved
 - Migrated 4 primary content stores (ads, related, articles, categories) and 3 user/business stores (me, user, indicator)
@@ -110,6 +137,7 @@
 **Git range:** `bccfada` → `026f06c`
 
 **Key accomplishments:**
+
 - Fixed GA4 ecommerce bugs: `Number()` coercion on Strapi biginteger revenue fields and `||` fallback for `item_id` — GA4 now shows real revenue instead of $0
 - Added `purchase` event (value: 0) on free ad creation at `/anunciar/gracias` via `watch(adData)` + `purchaseFired` guard — TDD (17 tests)
 - Added `viewItemListPublic`, `viewItem`, `search` events to `useAdAnalytics.ts` via TDD (23 tests) and wired into ad listing/detail pages with SSR-safe guard patterns
@@ -126,6 +154,7 @@
 **Phases completed:** 4 phases, 6 plans, 0 tasks
 
 **Key accomplishments:**
+
 - (none recorded)
 
 ---
@@ -137,6 +166,7 @@
 **Files changed:** 26 files, 1,599 insertions, 163 deletions
 
 **Key accomplishments:**
+
 - `verification-code` content type (userId, code, expiresAt, attempts, pendingToken); `overrideAuthLocal` intercepts `POST /api/auth/local` — returns `{ pendingToken, email }` instead of JWT; Google OAuth bypassed via `ctx.method === "GET"` guard
 - `POST /api/auth/verify-code` validates 6-digit code (15-min expiry, max 3 attempts, single-use) and issues JWT on success; `POST /api/auth/resend-code` rate-limited to 60s
 - `verification-code.mjml` Spanish email template with 32px bold code display; daily cleanup cron at 4 AM (`deleteMany` expired records)
@@ -157,6 +187,7 @@
 **Files changed:** 35 files, 3,298 insertions, 71 deletions
 
 **Key accomplishments:**
+
 - `GET /api/users/authenticated` endpoint added to users-permissions plugin extension — server-side Authenticated role filter via `strapi.db.query`, returns `{ id, firstName, lastName }` only (no sensitive fields)
 - `POST /api/ad-reservations/gift` and `POST /api/ad-featured-reservations/gift` endpoints implemented — create N reservation records assigned to any authenticated user, with non-fatal MJML email notification
 - `gift-reservation.mjml` email template created with `name`, `quantity`, `type` variables in Spanish
@@ -172,6 +203,7 @@
 **Phases completed:** 2 phases, 4 plans, 0 tasks
 
 **Key accomplishments:**
+
 - (none recorded)
 
 ---
@@ -181,6 +213,7 @@
 **Phases completed:** 1 phases, 1 plans, 0 tasks
 
 **Key accomplishments:**
+
 - (none recorded)
 
 ---
@@ -190,6 +223,7 @@
 **Phases completed:** 2 phases, 2 plans, 0 tasks
 
 **Key accomplishments:**
+
 - (none recorded)
 
 ---
@@ -199,6 +233,7 @@
 **Phases completed:** 4 phases, 8 plans, 0 tasks
 
 **Key accomplishments:**
+
 - (none recorded)
 
 ---
@@ -208,6 +243,7 @@
 **Phases completed:** 2 phases, 3 plans, 0 tasks
 
 **Key accomplishments:**
+
 - (none recorded)
 
 ---
@@ -217,6 +253,7 @@
 **Phases completed:** 1 phases, 2 plans, 0 tasks
 
 **Key accomplishments:**
+
 - (none recorded)
 
 ---
@@ -226,6 +263,7 @@
 **Git range:** `5e4da12` → `b1de40b`
 
 **Key accomplishments:**
+
 - `purchase()` method + `PurchaseOrderData` interface added to `useAdAnalytics` via TDD (12 tests passing)
 - `pushEvent()` flow discriminator param added — distinguishes `ad_creation` vs `pack_purchase` GA4 flows
 - `watch(orderData, { immediate: true })` + `purchaseFired` guard wired in `/pagar/gracias.vue` — fires exactly once per visit with all non-undefined values
@@ -242,6 +280,7 @@
 **Timeline:** 2026-03-09 → 2026-03-11
 
 **Key accomplishments:**
+
 - Webpay redirect now uses `order.documentId` (not `adId`) — thank-you flow is order-centric
 - `prepareSummary()` extended with all 8 mandatory Webpay fields (amount, auth code, date/time, payment type, last 4 digits, order number, merchant info)
 - `ResumeOrder.vue` displays `CardInfo` components for all Webpay receipt fields with Spanish labels and "No disponible" fallbacks

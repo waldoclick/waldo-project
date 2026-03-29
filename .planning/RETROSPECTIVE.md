@@ -2,6 +2,51 @@
 
 *A living document updated after each milestone. Lessons feed forward into future planning.*
 
+## Milestone: v1.46 — PRO Subscriptions
+
+**Shipped:** 2026-03-29
+**Phases:** 6 (102–106, including 103.1 decimal) | **Plans:** 13 | **Timeline:** 9 days (2026-03-20 → 2026-03-29)
+
+### What Was Built
+- `OneclickService` in Strapi — full Webpay Oneclick Mall inscription, charge, and deletion lifecycle
+- `SubscriptionChargeService` daily cron (5 AM) with 3-day retry logic, idempotency guard, and Step 4 expired-cancelled sweep
+- `ProCancellationService` with best-effort Transbank card deletion on cancel
+- `subscription-payment` content type for charge history and audit (12 fields)
+- PRO checkout flow: `/pro/pagar` with boleta/factura toggle → `/pro/pagar/gracias` with `ResumePro.vue` order receipt
+- `pro_status` as single source of truth — `pro` boolean removed from all backend + frontend code paths
+- Registration consent checkboxes (age confirmation + terms) with server-side validation in `registerUserLocal`
+- `LightboxTerms` global component for displaying current terms to existing users
+
+### What Worked
+- Decimal phase 103.1 pattern worked well for an urgent cross-cutting refactor — inserting it between 103 and 104 kept the milestone scope coherent
+- TDD (Jest RED→GREEN) for `ProCancellationService` and subscription charge cron confirmed test coverage before integration
+- `pro_pending_invoice` user field as transport mechanism across Transbank GET redirect (no JWT available) — clean solution for threading state through an external redirect
+- Non-fatal pattern for Order+Facto creation (try/catch in both `proResponse` and `chargeUser`) keeps subscription flow independent of billing document failures — resilient to Facto API outages
+- Phase 106 (registration consent) was a natural extension of the PRO subscription milestone — consent fields needed before public launch
+
+### What Was Inefficient
+- `ResumePro.vue` naming conflict required a rename to `ResumeProCard.vue` before the new `ResumePro.vue` could be created — adding a rename task mid-phase added overhead; could have been anticipated in research
+- Phase 105 had 3 plans (backend, frontend components, frontend pages) — the component/page split in 105-02 and 105-03 was useful, but the checkout components were small enough to fold into a single plan
+- `LightboxTerms` quick task (260329-mva) was added after Phase 106 completed — would have fit naturally as a 106-03 plan
+
+### Patterns Established
+- **`pro_inscription_token` one-time use pattern**: store token at start, clear after finish — prevents replay attacks for external redirect flows
+- **Non-fatal billing document pattern**: Order+Facto creation wrapped in try/catch; subscription continuation is the critical operation; document failure is a soft error logged but not propagated
+- **Period-end cancellation pattern**: `pro_expires_at` NOT cleared on cancel; cron Step 4 sweeps expired-cancelled users separately from charging step
+- **User field as redirect transport**: store transient value (e.g., `pro_pending_invoice`) on user before external redirect, read on return — works when no JWT or session is available
+
+### Key Lessons
+1. **Name conflicts in rename-heavy refactors should be pre-detected in research.** The `ResumePro.vue` → `ResumeProCard.vue` rename was discovered during execution, not planning — a quick grep in research would have caught it.
+2. **Decimal phases are the right pattern for cross-cutting urgent work.** 103.1 was urgent (dual source of truth is a bug risk), affected many files, but didn't fit cleanly into any existing phase — inserting it as 103.1 was cleaner than stretching 103 or 104.
+3. **Consent checkboxes require `.oneOf([true])` not just `required()`.** Yup's `required()` accepts any truthy value; a pre-checked or programmatically set checkbox would pass. `.oneOf([true])` is the correct constraint for explicit opt-in validation.
+
+### Cost Observations
+- Model mix: ~75% opus, ~25% sonnet
+- Sessions: ~15 (9 days, multiple plan+execute cycles)
+- Notable: Phase 103.1 was executed as an insertion mid-milestone without disrupting the overall arc; 18 unit tests across OneclickService and SubscriptionChargeService written TDD
+
+---
+
 ## Milestone: v1.45 — User Onboarding
 
 **Shipped:** 2026-03-20
