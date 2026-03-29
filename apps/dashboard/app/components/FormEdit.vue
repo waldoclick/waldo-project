@@ -72,7 +72,7 @@ import * as yup from "yup";
 import type { User } from "@/types/user";
 
 const { Swal } = useSweetAlert2();
-const client = useStrapiClient();
+const client = useApiClient();
 const { fetchUser } = useStrapiAuth();
 const user = useStrapiUser() as Ref<User | null>;
 

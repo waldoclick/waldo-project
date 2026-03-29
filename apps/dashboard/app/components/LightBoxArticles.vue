@@ -207,7 +207,7 @@ const emit = defineEmits<{
   (event: "close" | "created"): void;
 }>();
 
-const client = useStrapiClient();
+const client = useApiClient();
 const { Swal } = useSweetAlert2();
 const searchStore = useSearchStore();
 const articlesStore = useArticlesStore();

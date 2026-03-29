@@ -141,7 +141,7 @@ async function handleSubmit() {
   if (!isConfirmed) return;
 
   sending.value = true;
-  const strapiClient = useStrapiClient();
+  const strapiClient = useApiClient();
   try {
     await strapiClient(`/${props.endpoint}/gift`, {
       method: "POST",
