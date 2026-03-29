@@ -74,7 +74,8 @@ export const registerUserLocal = (registerController) => async (ctx) => {
   try {
     // Extraer los datos del cuerpo de la solicitud
     // Note: confirm_password is validated and deleted by FormRegister.vue before submission
-    const { is_company, firstname, lastname, email, rut, password, username } =
+    const { is_company, firstname, lastname, email, rut, password, username,
+            accepted_age_confirmation, accepted_terms } =
       ctx.request.body;
 
     // Validar que todos los campos requeridos estén presentes
@@ -85,7 +86,9 @@ export const registerUserLocal = (registerController) => async (ctx) => {
       !email ||
       !rut ||
       !password ||
-      !username
+      !username ||
+      accepted_age_confirmation !== true ||
+      accepted_terms !== true
     ) {
       return ctx.badRequest("All fields are required");
     }
@@ -99,6 +102,8 @@ export const registerUserLocal = (registerController) => async (ctx) => {
       email,
       password,
       username,
+      accepted_age_confirmation,
+      accepted_terms,
     };
 
     // Reemplazar el cuerpo de la solicitud con los datos del usuario
