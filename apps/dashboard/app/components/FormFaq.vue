@@ -72,7 +72,6 @@ const emit = defineEmits<{
 const { Swal } = useSweetAlert2();
 const router = useRouter();
 const route = useRoute();
-const strapi = useStrapi();
 const apiClient = useApiClient();
 
 const sending = ref(false);
@@ -125,10 +124,13 @@ const handleSubmit = async (values: any) => {
       let faqId = props.faq?.id;
 
       if (!faqId && documentId) {
-        const lookupResponse = await strapi.find("faqs", {
-          filters: { documentId: { $eq: documentId } },
-          pagination: { pageSize: 1 },
-        } as Record<string, unknown>);
+        const lookupResponse = await apiClient("faqs", {
+          method: "GET",
+          params: {
+            filters: { documentId: { $eq: documentId } },
+            pagination: { pageSize: 1 },
+          } as unknown as Record<string, unknown>,
+        }) as { data: Array<{ id: number }> };
         const lookupData = Array.isArray(lookupResponse.data)
           ? (lookupResponse.data as Array<{ id: number }>)
           : [];
