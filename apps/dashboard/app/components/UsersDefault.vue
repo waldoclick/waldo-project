@@ -106,6 +106,7 @@ const handleFiltersChange = (newFilters: {
 };
 
 // Estado
+const apiClient = useApiClient();
 const allUsers = ref<User[]>([]);
 const loading = ref(false);
 const paginationMeta = ref<{
@@ -119,7 +120,6 @@ const paginationMeta = ref<{
 const fetchUsers = async () => {
   try {
     loading.value = true;
-    const strapi = useStrapi();
 
     const searchParams: Record<string, unknown> = {
       pagination: {
@@ -141,7 +141,10 @@ const fetchUsers = async () => {
       };
     }
 
-    const rawResponse = await strapi.find("users", searchParams);
+    const rawResponse = await apiClient("users", {
+      method: "GET",
+      params: searchParams as unknown as Record<string, unknown>,
+    });
     const response = rawResponse as unknown as {
       data?: User[];
       results?: User[];

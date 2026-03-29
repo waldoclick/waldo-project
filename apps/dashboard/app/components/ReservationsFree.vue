@@ -105,6 +105,7 @@ const handleFiltersChange = (newFilters: {
 };
 
 // Estado
+const apiClient = useApiClient();
 const allReservations = ref<Reservation[]>([]);
 const loading = ref(false);
 const paginationMeta = ref<{
@@ -118,7 +119,6 @@ const paginationMeta = ref<{
 const fetchFreeReservations = async () => {
   try {
     loading.value = true;
-    const strapi = useStrapi();
 
     const searchParams: Record<string, unknown> = {
       pagination: {
@@ -150,7 +150,10 @@ const fetchFreeReservations = async () => {
       ];
     }
 
-    const response = await strapi.find("ad-reservations", searchParams);
+    const response = await apiClient("ad-reservations", {
+      method: "GET",
+      params: searchParams as unknown as Record<string, unknown>,
+    }) as { data: Reservation[]; meta: { pagination: typeof paginationMeta.value } };
     allReservations.value = Array.isArray(response.data)
       ? (response.data as Reservation[])
       : [];

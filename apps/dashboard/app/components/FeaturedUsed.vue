@@ -110,6 +110,7 @@ const handleFiltersChange = (newFilters: {
 };
 
 // Estado
+const apiClient = useApiClient();
 const allFeatured = ref<Featured[]>([]);
 const loading = ref(false);
 const paginationMeta = ref<{
@@ -123,7 +124,6 @@ const paginationMeta = ref<{
 const fetchUsedFeatured = async () => {
   try {
     loading.value = true;
-    const strapi = useStrapi();
 
     const searchParams: Record<string, unknown> = {
       pagination: {
@@ -159,10 +159,10 @@ const fetchUsedFeatured = async () => {
       ];
     }
 
-    const response = await strapi.find(
-      "ad-featured-reservations",
-      searchParams,
-    );
+    const response = await apiClient("ad-featured-reservations", {
+      method: "GET",
+      params: searchParams as unknown as Record<string, unknown>,
+    }) as { data: Featured[]; meta: { pagination: typeof paginationMeta.value } };
     allFeatured.value = Array.isArray(response.data)
       ? (response.data as Featured[])
       : [];

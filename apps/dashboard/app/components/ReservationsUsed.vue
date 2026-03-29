@@ -78,7 +78,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
-import { useStrapi } from "#imports";
 import { Eye } from "lucide-vue-next";
 import { useSettingsStore } from "@/stores/settings.store";
 import SearchDefault from "@/components/SearchDefault.vue";
@@ -111,6 +110,7 @@ const handleFiltersChange = (newFilters: {
 };
 
 // Estado
+const apiClient = useApiClient();
 const allReservations = ref<ReservationRow[]>([]);
 const loading = ref(false);
 
@@ -118,7 +118,6 @@ const loading = ref(false);
 const fetchUsedReservations = async () => {
   try {
     loading.value = true;
-    const strapi = useStrapi();
 
     const searchParams: Record<string, unknown> = {
       pagination: {
@@ -155,7 +154,10 @@ const fetchUsedReservations = async () => {
       };
     }
 
-    const response = await strapi.find("ad-reservations", searchParams);
+    const response = await apiClient("ad-reservations", {
+      method: "GET",
+      params: searchParams as unknown as Record<string, unknown>,
+    }) as { data: ReservationRow[]; meta: { pagination: unknown } };
     const reservations = Array.isArray(response.data)
       ? (response.data as ReservationRow[])
       : [];
