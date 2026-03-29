@@ -167,10 +167,10 @@ const fetchFaqs = async () => {
       };
     }
 
-    const response = await apiClient("faqs", {
+    const response = (await apiClient("faqs", {
       method: "GET",
       params: searchParams as unknown as Record<string, unknown>,
-    }) as { data: Faq[]; meta: { pagination: typeof paginationMeta.value } };
+    })) as { data: Faq[]; meta: { pagination: typeof paginationMeta.value } };
     allFaqs.value = Array.isArray(response.data)
       ? (response.data as Faq[])
       : [];

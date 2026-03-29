@@ -141,7 +141,12 @@ const handleSubmit = async (values: any) => {
   try {
     await apiClient(`/users/${user.value!.id}`, {
       method: "PUT",
-      body: { data: { password: values.newPassword, currentPassword: values.currentPassword } },
+      body: {
+        data: {
+          password: values.newPassword,
+          currentPassword: values.currentPassword,
+        },
+      },
     });
     form.value = { currentPassword: "", newPassword: "", confirmPassword: "" };
     formKey.value++;

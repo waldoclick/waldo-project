@@ -82,22 +82,28 @@ const { data: reservationData } = await useAsyncData(
     const id = route.params.id;
     if (!id) return null;
     try {
-      const response = await apiClient("ad-reservations", {
+      const response = (await apiClient("ad-reservations", {
         method: "GET",
         params: {
           filters: { id: { $eq: id } },
-          populate: { user: { fields: ["username"] }, ad: { fields: ["name"] } },
+          populate: {
+            user: { fields: ["username"] },
+            ad: { fields: ["name"] },
+          },
         } as unknown as Record<string, unknown>,
-      }) as { data: unknown[] };
+      })) as { data: unknown[] };
       const data = Array.isArray(response.data) ? response.data[0] : null;
       if (data) return data;
 
-      const fallback = await apiClient(`ad-reservations/${id}`, {
+      const fallback = (await apiClient(`ad-reservations/${id}`, {
         method: "GET",
         params: {
-          populate: { user: { fields: ["username"] }, ad: { fields: ["name"] } },
+          populate: {
+            user: { fields: ["username"] },
+            ad: { fields: ["name"] },
+          },
         } as unknown as Record<string, unknown>,
-      }) as { data: unknown };
+      })) as { data: unknown };
       return (fallback.data as unknown) || null;
     } catch (error) {
       console.error("Error fetching reservation:", error);

@@ -139,10 +139,13 @@ const fetchConditions = async () => {
       };
     }
 
-    const response = await apiClient("conditions", {
+    const response = (await apiClient("conditions", {
       method: "GET",
       params: searchParams as unknown as Record<string, unknown>,
-    }) as { data: Condition[]; meta: { pagination: typeof paginationMeta.value } };
+    })) as {
+      data: Condition[];
+      meta: { pagination: typeof paginationMeta.value };
+    };
     allConditions.value = Array.isArray(response.data)
       ? (response.data as Condition[])
       : [];

@@ -15,7 +15,7 @@ export default defineNuxtPlugin({
       // GTM function with better error handling
       function gtag(...args: any[]) {
         try {
-          window.dataLayer.push(args);
+          window.dataLayer?.push(args);
         } catch (error) {
           console.warn("GTM error:", error);
         }

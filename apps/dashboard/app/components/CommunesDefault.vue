@@ -144,10 +144,13 @@ const fetchCommunes = async () => {
       };
     }
 
-    const response = await apiClient("communes", {
+    const response = (await apiClient("communes", {
       method: "GET",
       params: searchParams as unknown as Record<string, unknown>,
-    }) as { data: Commune[]; meta: { pagination: typeof paginationMeta.value } };
+    })) as {
+      data: Commune[];
+      meta: { pagination: typeof paginationMeta.value };
+    };
     allCommunes.value = Array.isArray(response.data)
       ? (response.data as Commune[])
       : [];

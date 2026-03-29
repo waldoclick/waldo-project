@@ -78,9 +78,9 @@ const getShortName = (code: string) => {
 // Cargar los indicadores al montar el componente
 onMounted(async () => {
   try {
-    const response = await apiClient("indicators", {
+    const response = (await apiClient("indicators", {
       method: "GET",
-    }) as { data: Indicator[]; meta: { timestamp: string } };
+    })) as { data: Indicator[]; meta: { timestamp: string } };
 
     indicators.value = (response.data as Indicator[]) || [];
   } catch (error) {

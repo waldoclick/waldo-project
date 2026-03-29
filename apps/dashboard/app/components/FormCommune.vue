@@ -114,13 +114,13 @@ const hydrateForm = () => {
 
 const fetchRegions = async () => {
   try {
-    const response = await apiClient("regions", {
+    const response = (await apiClient("regions", {
       method: "GET",
       params: {
         pagination: { pageSize: 200 },
         sort: "name:asc",
       } as unknown as Record<string, unknown>,
-    }) as { data: RegionOption[] };
+    })) as { data: RegionOption[] };
     regions.value = Array.isArray(response.data)
       ? (response.data as RegionOption[])
       : [];
@@ -154,13 +154,13 @@ const handleSubmit = async (values: any) => {
       let communeId = props.commune?.id;
 
       if (!communeId && documentId) {
-        const lookupResponse = await apiClient("communes", {
+        const lookupResponse = (await apiClient("communes", {
           method: "GET",
           params: {
             filters: { documentId: { $eq: documentId } },
             pagination: { pageSize: 1 },
           } as unknown as Record<string, unknown>,
-        }) as { data: Array<{ id: number }> };
+        })) as { data: Array<{ id: number }> };
         const lookupData = Array.isArray(lookupResponse.data)
           ? (lookupResponse.data as Array<{ id: number }>)
           : [];
@@ -177,7 +177,9 @@ const handleSubmit = async (values: any) => {
         return;
       }
 
-      const response = await apiClient<{ data: { id?: number; documentId?: string } }>(`/communes/${communeId}`, {
+      const response = await apiClient<{
+        data: { id?: number; documentId?: string };
+      }>(`/communes/${communeId}`, {
         method: "PUT",
         body: { data: payload },
       });
@@ -204,7 +206,9 @@ const handleSubmit = async (values: any) => {
         router.push(`/communes/${updatedId}`);
       }
     } else {
-      const response = await apiClient<{ data: { id?: number; documentId?: string } }>("/communes", {
+      const response = await apiClient<{
+        data: { id?: number; documentId?: string };
+      }>("/communes", {
         method: "POST",
         body: { data: payload },
       });

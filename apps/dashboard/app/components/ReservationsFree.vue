@@ -150,10 +150,13 @@ const fetchFreeReservations = async () => {
       ];
     }
 
-    const response = await apiClient("ad-reservations", {
+    const response = (await apiClient("ad-reservations", {
       method: "GET",
       params: searchParams as unknown as Record<string, unknown>,
-    }) as { data: Reservation[]; meta: { pagination: typeof paginationMeta.value } };
+    })) as {
+      data: Reservation[];
+      meta: { pagination: typeof paginationMeta.value };
+    };
     allReservations.value = Array.isArray(response.data)
       ? (response.data as Reservation[])
       : [];

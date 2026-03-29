@@ -147,7 +147,7 @@ const fetchUserReservations = async () => {
 
   try {
     loading.value = true;
-    const response = await apiClient("ad-reservations", {
+    const response = (await apiClient("ad-reservations", {
       method: "GET",
       params: {
         filters: {
@@ -159,7 +159,10 @@ const fetchUserReservations = async () => {
         },
         sort: "createdAt:desc",
       } as unknown as Record<string, unknown>,
-    }) as { data: Reservation[]; meta: { pagination: typeof paginationMeta.value } };
+    })) as {
+      data: Reservation[];
+      meta: { pagination: typeof paginationMeta.value };
+    };
 
     allReservations.value = Array.isArray(response.data)
       ? (response.data as Reservation[])

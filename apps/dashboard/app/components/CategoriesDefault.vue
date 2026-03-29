@@ -150,10 +150,13 @@ const fetchCategories = async () => {
       };
     }
 
-    const response = await apiClient("categories", {
+    const response = (await apiClient("categories", {
       method: "GET",
       params: searchParams as unknown as Record<string, unknown>,
-    }) as { data: Category[]; meta: { pagination: typeof paginationMeta.value } };
+    })) as {
+      data: Category[];
+      meta: { pagination: typeof paginationMeta.value };
+    };
     allCategories.value = Array.isArray(response.data)
       ? (response.data as Category[])
       : [];
@@ -161,9 +164,9 @@ const fetchCategories = async () => {
       null) as typeof paginationMeta.value;
 
     // Fetch all ad counts in a single request
-    const countsResponse = await apiClient("categories/ad-counts", {
+    const countsResponse = (await apiClient("categories/ad-counts", {
       method: "GET",
-    }) as { data: Array<{ categoryId: number; count: number }> };
+    })) as { data: Array<{ categoryId: number; count: number }> };
     const countsData = Array.isArray(countsResponse.data)
       ? countsResponse.data
       : [];

@@ -133,7 +133,7 @@ const fetchUserAds = async () => {
 
   try {
     loading.value = true;
-    const response = await apiClient("ads", {
+    const response = (await apiClient("ads", {
       method: "GET",
       params: {
         filters: {
@@ -154,7 +154,7 @@ const fetchUserAds = async () => {
           },
         },
       } as unknown as Record<string, unknown>,
-    }) as { data: Ad[]; meta: { pagination: typeof paginationMeta.value } };
+    })) as { data: Ad[]; meta: { pagination: typeof paginationMeta.value } };
 
     allAds.value = Array.isArray(response.data) ? (response.data as Ad[]) : [];
     paginationMeta.value = (response.meta?.pagination ||

@@ -415,7 +415,7 @@ const fetchAd = async () => {
   const id = route.params.id;
   if (!id) return;
   try {
-    const response = await apiClient(`ads/${id}`, {
+    const response = (await apiClient(`ads/${id}`, {
       method: "GET",
       params: {
         populate: {
@@ -425,7 +425,7 @@ const fetchAd = async () => {
           gallery: true,
         },
       } as unknown as Record<string, unknown>,
-    }) as { data: Ad };
+    })) as { data: Ad };
     if (response.data) {
       item.value = response.data as unknown as Ad;
     }

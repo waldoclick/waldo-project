@@ -113,12 +113,14 @@ async function searchUsers(q: string) {
       fields: ["id", "firstname", "lastname", "username"],
       pagination: { pageSize: 20 },
     };
-    const response = await apiClient("users", {
+    const response = (await apiClient("users", {
       method: "GET",
       params: params as unknown as Record<string, unknown>,
-    }) as IAuthUser[] | { data: IAuthUser[] };
+    })) as IAuthUser[] | { data: IAuthUser[] };
     users.value = (
-      Array.isArray(response) ? response : ((response as { data: IAuthUser[] }).data ?? [])
+      Array.isArray(response)
+        ? response
+        : ((response as { data: IAuthUser[] }).data ?? [])
     ) as IAuthUser[];
   } catch (e) {
     console.error("[FormGift] searchUsers error:", e);

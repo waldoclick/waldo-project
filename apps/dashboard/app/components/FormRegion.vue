@@ -95,13 +95,13 @@ const handleSubmit = async (values: any) => {
       let regionId = props.region?.id;
 
       if (!regionId && documentId) {
-        const lookupResponse = await apiClient("regions", {
+        const lookupResponse = (await apiClient("regions", {
           method: "GET",
           params: {
             filters: { documentId: { $eq: documentId } },
             pagination: { pageSize: 1 },
           } as unknown as Record<string, unknown>,
-        }) as { data: Array<{ id: number }> };
+        })) as { data: Array<{ id: number }> };
         const lookupData = Array.isArray(lookupResponse.data)
           ? (lookupResponse.data as Array<{ id: number }>)
           : [];
@@ -118,7 +118,9 @@ const handleSubmit = async (values: any) => {
         return;
       }
 
-      const response = await apiClient<{ data: { id?: number; documentId?: string } }>(`/regions/${regionId}`, {
+      const response = await apiClient<{
+        data: { id?: number; documentId?: string };
+      }>(`/regions/${regionId}`, {
         method: "PUT",
         body: { data: payload },
       });
@@ -138,7 +140,9 @@ const handleSubmit = async (values: any) => {
         router.push(`/regions/${updatedId}`);
       }
     } else {
-      const response = await apiClient<{ data: { id?: number; documentId?: string } }>("/regions", {
+      const response = await apiClient<{
+        data: { id?: number; documentId?: string };
+      }>("/regions", {
         method: "POST",
         body: { data: payload },
       });

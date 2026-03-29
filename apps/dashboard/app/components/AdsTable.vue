@@ -218,10 +218,10 @@ const fetchAds = async () => {
       };
     }
 
-    const response = await apiClient(props.endpoint, {
+    const response = (await apiClient(props.endpoint, {
       method: "GET",
       params: searchParams as unknown as Record<string, unknown>,
-    }) as { data: Ad[]; meta: { pagination: typeof paginationMeta.value } };
+    })) as { data: Ad[]; meta: { pagination: typeof paginationMeta.value } };
     allAds.value = Array.isArray(response.data) ? (response.data as Ad[]) : [];
 
     // Guardar información de paginación de Strapi
