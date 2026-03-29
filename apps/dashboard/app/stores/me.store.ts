@@ -5,6 +5,7 @@ export const useMeStore = defineStore("me", () => {
   const me = ref<Record<string, unknown> | null>(null);
 
   const strapi = useStrapi();
+  const apiClient = useApiClient();
 
   const loadMe = async () => {
     try {
@@ -45,7 +46,10 @@ export const useMeStore = defineStore("me", () => {
 
   const saveUsername = async (data: any) => {
     try {
-      const response = await strapi.update("users/username", data);
+      const response = await apiClient("/users/username", {
+        method: "PUT",
+        body: { data },
+      });
       return response;
     } catch (error) {
       console.error("Error al guardar el username:", error);
