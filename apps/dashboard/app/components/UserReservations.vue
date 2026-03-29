@@ -62,6 +62,7 @@ const props = defineProps<{
   userName?: string;
 }>();
 
+const apiClient = useApiClient();
 const pageSize = 10;
 const currentPage = ref(1);
 const allReservations = ref<Reservation[]>([]);
@@ -146,17 +147,19 @@ const fetchUserReservations = async () => {
 
   try {
     loading.value = true;
-    const strapi = useStrapi();
-    const response = await strapi.find("ad-reservations", {
-      filters: {
-        $or: buildUserFilters(userId, props.userName),
-      },
-      pagination: {
-        page: currentPage.value,
-        pageSize,
-      },
-      sort: "createdAt:desc",
-    } as Record<string, unknown>);
+    const response = await apiClient("ad-reservations", {
+      method: "GET",
+      params: {
+        filters: {
+          $or: buildUserFilters(userId, props.userName),
+        },
+        pagination: {
+          page: currentPage.value,
+          pageSize,
+        },
+        sort: "createdAt:desc",
+      } as unknown as Record<string, unknown>,
+    }) as { data: Reservation[]; meta: { pagination: typeof paginationMeta.value } };
 
     allReservations.value = Array.isArray(response.data)
       ? (response.data as Reservation[])

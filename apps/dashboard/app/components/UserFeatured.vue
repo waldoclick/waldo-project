@@ -61,6 +61,7 @@ const props = defineProps<{
   userId: string | number;
 }>();
 
+const apiClient = useApiClient();
 const pageSize = 10;
 const currentPage = ref(1);
 const allFeatured = ref<Featured[]>([]);
@@ -115,27 +116,29 @@ const fetchUserFeatured = async () => {
 
   try {
     loading.value = true;
-    const strapi = useStrapi();
-    const response = await strapi.find("ad-featured-reservations", {
-      filters: {
-        user: {
-          id: {
-            $eq: userId,
+    const response = await apiClient("ad-featured-reservations", {
+      method: "GET",
+      params: {
+        filters: {
+          user: {
+            id: {
+              $eq: userId,
+            },
+          },
+          ad: {
+            $null: true,
+          },
+          price: {
+            $eq: "0",
           },
         },
-        ad: {
-          $null: true,
+        pagination: {
+          page: currentPage.value,
+          pageSize,
         },
-        price: {
-          $eq: "0",
-        },
-      },
-      pagination: {
-        page: currentPage.value,
-        pageSize,
-      },
-      sort: "createdAt:desc",
-    } as Record<string, unknown>);
+        sort: "createdAt:desc",
+      } as unknown as Record<string, unknown>,
+    }) as { data: Featured[]; meta: { pagination: typeof paginationMeta.value } };
 
     allFeatured.value = Array.isArray(response.data)
       ? (response.data as Featured[])

@@ -69,6 +69,7 @@ const props = defineProps<{
   userId: string | number;
 }>();
 
+const apiClient = useApiClient();
 const pageSize = 10;
 const currentPage = ref(1);
 const allAds = ref<Ad[]>([]);
@@ -132,26 +133,28 @@ const fetchUserAds = async () => {
 
   try {
     loading.value = true;
-    const strapi = useStrapi();
-    const response = await strapi.find("ads", {
-      filters: {
-        user: {
-          id: {
-            $eq: userId,
+    const response = await apiClient("ads", {
+      method: "GET",
+      params: {
+        filters: {
+          user: {
+            id: {
+              $eq: userId,
+            },
           },
         },
-      },
-      pagination: {
-        page: currentPage.value,
-        pageSize,
-      },
-      sort: "createdAt:desc",
-      populate: {
-        gallery: {
-          fields: ["url", "formats"],
+        pagination: {
+          page: currentPage.value,
+          pageSize,
         },
-      },
-    } as Record<string, unknown>);
+        sort: "createdAt:desc",
+        populate: {
+          gallery: {
+            fields: ["url", "formats"],
+          },
+        },
+      } as unknown as Record<string, unknown>,
+    }) as { data: Ad[]; meta: { pagination: typeof paginationMeta.value } };
 
     allAds.value = Array.isArray(response.data) ? (response.data as Ad[]) : [];
     paginationMeta.value = (response.meta?.pagination ||
