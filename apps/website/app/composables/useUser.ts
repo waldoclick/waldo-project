@@ -1,5 +1,6 @@
 import { computed } from "vue";
 import type { User, AdReservation, AdFeaturedReservation } from "@/types/user";
+import { useUserStore } from "@/stores/user.store";
 
 export const useUser = () => {
   const user = useStrapiUser<User>();
@@ -110,6 +111,26 @@ export const useUser = () => {
     return user.value?.orders || [];
   };
 
+  // Returns true when user is not logged in (lightbox is only for authenticated users)
+  // or when both consent booleans are explicitly true
+  const hasAcceptedTerms = computed(() => {
+    if (!user.value) return true;
+    return (
+      user.value.accepted_age_confirmation === true &&
+      user.value.accepted_terms === true
+    );
+  });
+
+  const acceptTerms = async (): Promise<void> => {
+    const userStore = useUserStore();
+    const { fetchUser } = useStrapiAuth();
+    await userStore.updateUserProfile(String(user.value!.id), {
+      accepted_age_confirmation: true,
+      accepted_terms: true,
+    });
+    await fetchUser();
+  };
+
   return {
     canRequestInvoice,
     getAdReservations,
@@ -118,5 +139,7 @@ export const useUser = () => {
     getFeaturedAdReservationsText,
     getUserAds,
     getUserOrders,
+    hasAcceptedTerms,
+    acceptTerms,
   };
 };

@@ -345,17 +345,22 @@ input:-webkit-autofill {
     // background-color: red;
     &-input {
       margin-top: 0px;
+      flex-shrink: 0;
       height: 20px;
       width: 20px;
       border: 2px solid $charcoal;
-      border-radius: 100%;
+      border-radius: 4px;
       -webkit-appearance: none;
+      appearance: none;
       transition: 0.3s;
       cursor: pointer;
 
       &:checked {
-        background: $light_peach;
-        // border: 4.5px solid $charcoal;
+        background-color: $light_peach;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23313338' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' d='M2 8l4 4 8-8'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 65%;
       }
     }
 
@@ -367,6 +372,11 @@ input:-webkit-autofill {
       letter-spacing: 0.25px;
       color: $charcoal;
       padding-left: 10px;
+
+      a {
+        color: $dodger_blue;
+        text-decoration: underline;
+      }
     }
   }
 }

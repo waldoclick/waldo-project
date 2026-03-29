@@ -21,6 +21,8 @@ export interface User {
   pro_card_type: string | null;
   pro_card_last4: string | null;
   pro_expires_at: string | null;
+  accepted_age_confirmation: boolean;
+  accepted_terms: boolean;
   postal_code: string | null;
   commune: {
     id: number;
