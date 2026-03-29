@@ -2,7 +2,6 @@
 
 import protectUserFields from "./protect-user-fields";
 
-
 function createMiddleware() {
   return protectUserFields({}, { strapi: {} as any });
 }
@@ -110,7 +109,10 @@ describe("protect-user-fields middleware", () => {
 
     await middleware(ctx as any, next);
 
-    expect((ctx.request.body as any).data).toHaveProperty("pro_status", "active");
+    expect((ctx.request.body as any).data).toHaveProperty(
+      "pro_status",
+      "active"
+    );
     expect(next).toHaveBeenCalled();
   });
 

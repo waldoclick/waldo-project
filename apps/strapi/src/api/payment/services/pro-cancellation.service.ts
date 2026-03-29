@@ -59,7 +59,9 @@ export class ProCancellationService {
         data: {
           pro_status: "cancelled",
           tbk_user: null,
-        } as unknown as Parameters<typeof strapi.entityService.update>[2]["data"],
+        } as unknown as Parameters<
+          typeof strapi.entityService.update
+        >[2]["data"],
       }
     );
 
