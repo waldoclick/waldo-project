@@ -2,7 +2,7 @@
 phase: 108
 slug: dashboard-replace-nuxtjs-strapi-sdk-with-useapiclient-for-all-reads
 status: draft
-nyquist_compliant: false
+nyquist_compliant: true
 wave_0_complete: false
 created: 2026-03-29
 ---
@@ -38,19 +38,19 @@ created: 2026-03-29
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 108-01-01 | 01 | 1 | SDK→useApiClient stores | typecheck | `yarn workspace dashboard typecheck` | ✅ | ⬜ pending |
-| 108-01-02 | 01 | 1 | SDK→useApiClient pages | typecheck | `yarn workspace dashboard typecheck` | ✅ | ⬜ pending |
-| 108-01-03 | 01 | 1 | SDK→useApiClient components | typecheck | `yarn workspace dashboard typecheck` | ✅ | ⬜ pending |
-| 108-02-01 | 02 | 2 | No remaining strapi.find/findOne | grep | `grep -r "strapi\.find\|strapi\.findOne" apps/dashboard/app` | ✅ | ⬜ pending |
-| 108-02-02 | 02 | 2 | useApiClient called at setup scope | manual | Review migrated files | N/A | ⬜ pending |
-
-*Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
+| 108-01-01 | 01 | 1 | SDK->useApiClient store + forms | typecheck | `yarn workspace dashboard typecheck` | yes | pending |
+| 108-01-02 | 01 | 1 | SDK->useApiClient list/table components | typecheck | `yarn workspace dashboard typecheck` | yes | pending |
+| 108-01-03 | 01 | 1 | SDK->useApiClient stats/dropdown components | typecheck | `yarn workspace dashboard typecheck` | yes | pending |
+| 108-01-04 | 01 | 1 | SDK->useApiClient user/reservation components | typecheck | `yarn workspace dashboard typecheck` | yes | pending |
+| 108-02-01 | 02 | 1 | SDK->useApiClient dual-pattern pages | typecheck | `yarn workspace dashboard typecheck` | yes | pending |
+| 108-02-02 | 02 | 1 | SDK->useApiClient single-call pages | typecheck | `yarn workspace dashboard typecheck` | yes | pending |
+| 108-03-01 | 03 | 2 | No remaining strapi.find/findOne + full suite | grep + vitest | `grep -rn "strapi\.find" apps/dashboard/app/ && yarn workspace dashboard test` | yes | pending |
 
 ---
 
 ## Wave 0 Requirements
 
-*Existing infrastructure covers all phase requirements — vitest and typecheck are already configured in the dashboard app.*
+*Existing infrastructure covers all phase requirements -- vitest and typecheck are already configured in the dashboard app.*
 
 ---
 
@@ -65,11 +65,11 @@ created: 2026-03-29
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all MISSING references
-- [ ] No watch-mode flags
-- [ ] Feedback latency < 30s
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [x] All tasks have `<automated>` verify or Wave 0 dependencies
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify
+- [x] Wave 0 covers all MISSING references
+- [x] No watch-mode flags
+- [x] Feedback latency < 30s
+- [x] `nyquist_compliant: true` set in frontmatter
 
-**Approval:** pending
+**Approval:** approved
