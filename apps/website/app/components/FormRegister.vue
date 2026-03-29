@@ -109,6 +109,39 @@
         />
         <ErrorMessage name="confirm_password" />
       </div>
+
+      <div class="form-check" style="margin-bottom: 10px;">
+        <Field
+          id="accepted_age_confirmation"
+          v-model="form.accepted_age_confirmation"
+          name="accepted_age_confirmation"
+          type="checkbox"
+          class="form-check-input"
+          :value="true"
+          :unchecked-value="false"
+        />
+        <label class="form-check-label" for="accepted_age_confirmation">
+          Confirmo que soy mayor de edad
+        </label>
+      </div>
+      <ErrorMessage name="accepted_age_confirmation" class="form__error" />
+
+      <div class="form-check" style="margin-bottom: 10px;">
+        <Field
+          id="accepted_terms"
+          v-model="form.accepted_terms"
+          name="accepted_terms"
+          type="checkbox"
+          class="form-check-input"
+          :value="true"
+          :unchecked-value="false"
+        />
+        <label class="form-check-label" for="accepted_terms">
+          Acepto los términos y las
+          <NuxtLink to="/politicas-de-privacidad" target="_blank">políticas de privacidad</NuxtLink>
+        </label>
+      </div>
+      <ErrorMessage name="accepted_terms" class="form__error" />
     </div>
 
     <div class="form__send">
@@ -159,6 +192,8 @@ const form = ref<FormRegister>({
   rut: "",
   password: "",
   username: "",
+  accepted_age_confirmation: false,
+  accepted_terms: false,
 });
 
 const step = ref(1);
@@ -217,6 +252,14 @@ const getSchema = () => {
             [yup.ref("password"), undefined],
             "Las contraseñas deben coincidir",
           ),
+        accepted_age_confirmation: yup
+          .boolean()
+          .oneOf([true], "Debes confirmar que eres mayor de edad")
+          .required("Debes confirmar que eres mayor de edad"),
+        accepted_terms: yup
+          .boolean()
+          .oneOf([true], "Debes aceptar los términos y políticas de privacidad")
+          .required("Debes aceptar los términos y políticas de privacidad"),
       });
 };
 
