@@ -201,7 +201,7 @@
     }
 
     &__backdrop {
-      @include lightbox-backdrop;
+      @include backdrop;
     }
 
     &__box {
@@ -327,7 +327,7 @@
     }
 
     &__backdrop {
-      @include lightbox-backdrop;
+      @include backdrop;
     }
 
     &__box {
@@ -441,7 +441,7 @@
     }
 
     &__backdrop {
-      @include lightbox-backdrop;
+      @include backdrop;
       transition:
         backdrop-filter 0.3s ease,
         background-color 0.3s ease;
@@ -530,7 +530,7 @@
     }
 
     &__backdrop {
-      @include lightbox-backdrop;
+      @include backdrop;
       transition:
         backdrop-filter 0.3s ease,
         background-color 0.3s ease;

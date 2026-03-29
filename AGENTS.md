@@ -166,6 +166,13 @@ Never use colors outside this palette. Do not invent or approximate colors — u
   - Correct: `upload--media` (block `upload`, modifier `media`)
   - Wrong: `upload-media` (looks like a block but is really a compound — not valid BEM)
 
+#### No standalone compound class names — always use hierarchy
+- **NEVER** create standalone classes with hyphens like `lightbox-backdrop`, `section-user`, `modal-overlay` — these are not valid BEM and break the namespace
+- Every class must belong to a BEM hierarchy: if the parent is `.lightbox--demo`, its children are `.lightbox--demo__box`, `.lightbox--demo__box__title`, etc.
+- If a child element needs a class, it gets it from the parent's namespace — never a new freestanding hyphenated name
+  - Correct: `.lightbox--demo__backdrop`, `.lightbox--demo__box`, `.lightbox--demo__box__title`
+  - Wrong: `.lightbox-backdrop`, `.section-user`, `.modal-overlay` (standalone compound names)
+
 #### BEM Modifier Encapsulation
 - A block modifier (`block--modifier`) is its **own namespace** — all its children must be prefixed with the modifier, not the base block
   - Correct: `form--checkout__field`, `form--checkout__field__title`

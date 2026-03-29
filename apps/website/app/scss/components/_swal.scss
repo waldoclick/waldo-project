@@ -3,7 +3,7 @@
 @use "../base/container";
 
 .swal2-backdrop-show {
-  @include lightbox-backdrop;
+  @include backdrop;
   // position: fixed;
 }
 
