@@ -78,7 +78,8 @@ import { OneclickService } from "../../../services/oneclick";
 
 // Typed references to the mock functions
 const mockCreateAdOrder = orderUtilsDefault.createAdOrder as jest.Mock;
-const mockGenerateFactoDocument = generalUtilsDefault.generateFactoDocument as jest.Mock;
+const mockGenerateFactoDocument =
+  generalUtilsDefault.generateFactoDocument as jest.Mock;
 const mockDocumentDetails = userUtils.documentDetails as jest.Mock;
 const mockGetCurrentUser = userUtils.getCurrentUser as jest.Mock;
 
@@ -138,10 +139,15 @@ describe("PaymentController: proCreate", () => {
     // Reset OneclickService mock instance methods
     mockStartInscription = jest.fn();
     mockFinishInscription = jest.fn();
-    (OneclickService as jest.MockedClass<typeof OneclickService>).mockImplementation(() => ({
-      startInscription: mockStartInscription,
-      finishInscription: mockFinishInscription,
-    }) as any);
+    (
+      OneclickService as jest.MockedClass<typeof OneclickService>
+    ).mockImplementation(
+      () =>
+        ({
+          startInscription: mockStartInscription,
+          finishInscription: mockFinishInscription,
+        } as any)
+    );
 
     // Re-setup getCurrentUser since clearAllMocks clears its return value
     mockGetCurrentUser.mockResolvedValue(defaultUser);
@@ -224,10 +230,15 @@ describe("PaymentController: proResponse", () => {
 
     mockStartInscription = jest.fn();
     mockFinishInscription = jest.fn();
-    (OneclickService as jest.MockedClass<typeof OneclickService>).mockImplementation(() => ({
-      startInscription: mockStartInscription,
-      finishInscription: mockFinishInscription,
-    }) as any);
+    (
+      OneclickService as jest.MockedClass<typeof OneclickService>
+    ).mockImplementation(
+      () =>
+        ({
+          startInscription: mockStartInscription,
+          finishInscription: mockFinishInscription,
+        } as any)
+    );
 
     mockDbQueryFindMany.mockResolvedValue([]);
     (global as any).strapi.db.query.mockReturnValue({
@@ -309,7 +320,13 @@ describe("PaymentController: proResponse", () => {
     });
     mockDbQueryFindOne.mockResolvedValueOnce(user);
     mockEntityServiceUpdate.mockResolvedValueOnce({});
-    mockDocumentDetails.mockResolvedValueOnce({ name: "Test User", rut: "12345678-9", address: "Calle 1", address_number: 100, postal_code: "7500000" });
+    mockDocumentDetails.mockResolvedValueOnce({
+      name: "Test User",
+      rut: "12345678-9",
+      address: "Calle 1",
+      address_number: 100,
+      postal_code: "7500000",
+    });
     mockGenerateFactoDocument.mockResolvedValueOnce({ id: "facto-doc-2" });
     mockCreateAdOrder.mockResolvedValueOnce({
       success: true,
@@ -344,7 +361,13 @@ describe("PaymentController: proResponse", () => {
     });
     mockDbQueryFindOne.mockResolvedValueOnce(user);
     mockEntityServiceUpdate.mockResolvedValueOnce({});
-    mockDocumentDetails.mockResolvedValueOnce({ name: "Test User", rut: "12345678-9", address: "Calle 1", address_number: 100, postal_code: "7500000" });
+    mockDocumentDetails.mockResolvedValueOnce({
+      name: "Test User",
+      rut: "12345678-9",
+      address: "Calle 1",
+      address_number: 100,
+      postal_code: "7500000",
+    });
     mockGenerateFactoDocument.mockResolvedValueOnce({ id: "facto-doc-3" });
     mockCreateAdOrder.mockResolvedValueOnce({
       success: true,
@@ -385,7 +408,13 @@ describe("PaymentController: proResponse", () => {
     });
     mockDbQueryFindOne.mockResolvedValueOnce(user);
     mockEntityServiceUpdate.mockResolvedValueOnce({});
-    mockDocumentDetails.mockResolvedValueOnce({ name: "Test User", rut: "12345678-9", address: "Calle 1", address_number: 100, postal_code: "7500000" });
+    mockDocumentDetails.mockResolvedValueOnce({
+      name: "Test User",
+      rut: "12345678-9",
+      address: "Calle 1",
+      address_number: 100,
+      postal_code: "7500000",
+    });
     mockGenerateFactoDocument.mockResolvedValueOnce({ id: "facto-doc-4" });
     // Simulate order creation failure
     mockCreateAdOrder.mockRejectedValueOnce(new Error("Order creation failed"));
@@ -398,8 +427,6 @@ describe("PaymentController: proResponse", () => {
     await (paymentController as any).proResponse(ctx);
 
     // Assert: fallback redirect
-    expect(ctx.redirect).toHaveBeenCalledWith(
-      "https://waldo.cl/pro/gracias"
-    );
+    expect(ctx.redirect).toHaveBeenCalledWith("https://waldo.cl/pro/gracias");
   });
 });

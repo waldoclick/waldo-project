@@ -39,7 +39,8 @@ import generalUtilsMock from "../api/payment/utils/general.utils";
 import * as userUtilsMock from "../api/payment/utils/user.utils";
 
 const mockCreateAdOrder = orderUtilsMock.createAdOrder as jest.Mock;
-const mockGenerateFactoDocument = generalUtilsMock.generateFactoDocument as jest.Mock;
+const mockGenerateFactoDocument =
+  generalUtilsMock.generateFactoDocument as jest.Mock;
 const mockDocumentDetails = userUtilsMock.documentDetails as jest.Mock;
 
 // Mock strapi global
@@ -469,7 +470,9 @@ describe("SubscriptionChargeService", () => {
       await service.chargeExpiredSubscriptions();
 
       // Assert: strapi.db.query was used to find and potentially update the ad
-      expect((global as any).strapi.db.query).toHaveBeenCalledWith("api::ad.ad");
+      expect((global as any).strapi.db.query).toHaveBeenCalledWith(
+        "api::ad.ad"
+      );
     });
   });
 
@@ -488,7 +491,9 @@ describe("SubscriptionChargeService", () => {
         success: true,
         authorizationCode: "AUTH-ORDER",
         responseCode: 0,
-        rawResponse: { details: [{ response_code: 0, authorization_code: "AUTH-ORDER" }] },
+        rawResponse: {
+          details: [{ response_code: 0, authorization_code: "AUTH-ORDER" }],
+        },
       });
       mockCreate.mockResolvedValueOnce({ id: 50 });
       mockUpdate.mockResolvedValueOnce({});
@@ -500,7 +505,10 @@ describe("SubscriptionChargeService", () => {
         postal_code: "7500000",
       });
       mockGenerateFactoDocument.mockResolvedValueOnce({ id: "facto-cron-1" });
-      mockCreateAdOrder.mockResolvedValueOnce({ success: true, order: { documentId: "order-cron-1" } });
+      mockCreateAdOrder.mockResolvedValueOnce({
+        success: true,
+        order: { documentId: "order-cron-1" },
+      });
 
       // Act
       await service.chargeExpiredSubscriptions();
@@ -538,7 +546,11 @@ describe("SubscriptionChargeService", () => {
         success: true,
         authorizationCode: "AUTH-FAIL-ORDER",
         responseCode: 0,
-        rawResponse: { details: [{ response_code: 0, authorization_code: "AUTH-FAIL-ORDER" }] },
+        rawResponse: {
+          details: [
+            { response_code: 0, authorization_code: "AUTH-FAIL-ORDER" },
+          ],
+        },
       });
       mockCreate.mockResolvedValueOnce({ id: 51 });
       mockUpdate.mockResolvedValueOnce({});
@@ -550,7 +562,9 @@ describe("SubscriptionChargeService", () => {
         postal_code: "7500000",
       });
       // Simulate Facto/order failure
-      mockGenerateFactoDocument.mockRejectedValueOnce(new Error("Facto service unavailable"));
+      mockGenerateFactoDocument.mockRejectedValueOnce(
+        new Error("Facto service unavailable")
+      );
 
       // Act
       const result = await service.chargeExpiredSubscriptions();

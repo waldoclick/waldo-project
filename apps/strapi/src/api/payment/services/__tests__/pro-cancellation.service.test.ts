@@ -45,7 +45,10 @@ describe("ProCancellationService", () => {
 
     it("fetches user tbk_user, calls deleteInscription, updates user with pro_status=cancelled and tbk_user=null, returns { success: true }", async () => {
       // Arrange
-      mockFindOne.mockResolvedValueOnce({ id: userId, tbk_user: "tbk-token-xyz" });
+      mockFindOne.mockResolvedValueOnce({
+        id: userId,
+        tbk_user: "tbk-token-xyz",
+      });
       mockDeleteInscription.mockResolvedValueOnce({ success: true });
       mockUpdate.mockResolvedValueOnce({});
 
@@ -57,9 +60,14 @@ describe("ProCancellationService", () => {
       expect(mockFindOne).toHaveBeenCalledWith(
         "plugin::users-permissions.user",
         userId,
-        expect.objectContaining({ fields: expect.arrayContaining(["tbk_user"]) })
+        expect.objectContaining({
+          fields: expect.arrayContaining(["tbk_user"]),
+        })
       );
-      expect(mockDeleteInscription).toHaveBeenCalledWith("tbk-token-xyz", userDocumentId);
+      expect(mockDeleteInscription).toHaveBeenCalledWith(
+        "tbk-token-xyz",
+        userDocumentId
+      );
       expect(mockUpdate).toHaveBeenCalledWith(
         "plugin::users-permissions.user",
         userId,
@@ -74,7 +82,10 @@ describe("ProCancellationService", () => {
 
     it("does NOT change pro_expires_at — period-end expiry must be preserved (CANC-02)", async () => {
       // Arrange
-      mockFindOne.mockResolvedValueOnce({ id: userId, tbk_user: "tbk-token-xyz" });
+      mockFindOne.mockResolvedValueOnce({
+        id: userId,
+        tbk_user: "tbk-token-xyz",
+      });
       mockDeleteInscription.mockResolvedValueOnce({ success: true });
       mockUpdate.mockResolvedValueOnce({});
 
@@ -103,7 +114,10 @@ describe("ProCancellationService", () => {
 
     it("proceeds with cancellation and sets pro_status=cancelled even if Transbank deleteInscription fails", async () => {
       // Arrange
-      mockFindOne.mockResolvedValueOnce({ id: userId, tbk_user: "tbk-token-xyz" });
+      mockFindOne.mockResolvedValueOnce({
+        id: userId,
+        tbk_user: "tbk-token-xyz",
+      });
       mockDeleteInscription.mockResolvedValueOnce({
         success: false,
         error: new Error("Transbank unavailable"),
@@ -129,7 +143,10 @@ describe("ProCancellationService", () => {
 
     it("sets pro_status to 'cancelled' (British spelling, per schema enum)", async () => {
       // Arrange
-      mockFindOne.mockResolvedValueOnce({ id: userId, tbk_user: "tbk-token-xyz" });
+      mockFindOne.mockResolvedValueOnce({
+        id: userId,
+        tbk_user: "tbk-token-xyz",
+      });
       mockDeleteInscription.mockResolvedValueOnce({ success: true });
       mockUpdate.mockResolvedValueOnce({});
 
