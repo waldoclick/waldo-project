@@ -4,12 +4,12 @@ milestone: v1.46
 milestone_name: milestone
 status: unknown
 stopped_at: Completed 108-02-PLAN.md
-last_updated: "2026-03-29T23:28:02.918Z"
+last_updated: "2026-03-29T23:32:58.533Z"
 progress:
   total_phases: 2
   completed_phases: 1
   total_plans: 7
-  completed_plans: 5
+  completed_plans: 6
   percent: 100
 ---
 
@@ -45,6 +45,8 @@ Progress: [██████████] 100%
 - Keep useStrapi() for read operations (find/findOne), replace only mutations with useApiClient() — FormPassword exception: useStrapi removed entirely (107-03)
 - Remove useStrapi() from a component entirely when no read operations remain after migrating mutations — applied to FormArticle.vue (107-04)
 - Custom Strapi action endpoints (approve/reject/banned) do NOT wrap body in { data: ... }; standard content-type updates MUST use { data: payload } (107-04)
+- useApiClient() replaces useStrapi() for all GET reads in dashboard — eliminates dual-resource pattern, all HTTP through one composable (108-01)
+- useApiClient() must always be declared at setup scope, never inside watch/onMounted/fetch function callbacks (108-01)
 - useApiClient() must be declared at setup scope (outside useAsyncData) when replacing strapi.find/findOne — the captured apiClient variable is used inside callbacks (108-02)
 - users/[id] endpoint returns user object directly (no { data: T } wrapper); normalizeUser() handles both response shapes — no special-casing needed (108-02)
 
@@ -65,6 +67,6 @@ Progress: [██████████] 100%
 
 ## Session Continuity
 
-Last session: 2026-03-29T23:28:02.916Z
-Stopped at: Completed 108-02-PLAN.md
+Last session: 2026-03-29T23:44:00.000Z
+Stopped at: Completed 108-01-PLAN.md (parallel agent)
 Resume file: None
