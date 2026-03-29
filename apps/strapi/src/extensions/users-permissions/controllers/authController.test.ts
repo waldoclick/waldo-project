@@ -8,6 +8,7 @@ import {
   verifyCode,
   resendCode,
   overrideForgotPassword,
+  registerUserLocal,
 } from "./authController";
 
 // --- Mock sendMjmlEmail ---
@@ -788,5 +789,104 @@ describe("overrideForgotPassword", () => {
       expect(ctx.badRequest).toHaveBeenCalledWith("Email is required");
       expect(mockSendMjmlEmail).not.toHaveBeenCalled();
     });
+  });
+});
+
+describe("registerUserLocal", () => {
+  const validBody = {
+    is_company: false,
+    firstname: "Test",
+    lastname: "User",
+    email: "test@example.com",
+    rut: "12345678-9",
+    password: "password123",
+    username: "testuser",
+    accepted_age_confirmation: true,
+    accepted_terms: true,
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    // Mock strapi.db for createUserReservations
+    (global as unknown as Record<string, unknown>).strapi = {
+      ...(global as unknown as Record<string, unknown>).strapi as object,
+      db: {
+        query: (contentType: string) => {
+          if (contentType === "api::ad-reservation.ad-reservation") {
+            return { findMany: jest.fn().mockResolvedValue([]), create: jest.fn().mockResolvedValue({}) };
+          }
+          if (contentType === "api::ad-featured-reservation.ad-featured-reservation") {
+            return { create: jest.fn().mockResolvedValue({}) };
+          }
+          if (contentType === "plugin::users-permissions.user") {
+            return { findOne: jest.fn().mockResolvedValue(null), update: mockUserUpdate };
+          }
+          return strapiQueryMock(contentType);
+        },
+      },
+      log: { error: jest.fn() },
+    };
+  });
+
+  it("returns 400 when accepted_age_confirmation is not true", async () => {
+    // Arrange
+    const mockRegister = jest.fn();
+    const handler = registerUserLocal(mockRegister);
+    const ctx = makeCtx({ ...validBody, accepted_age_confirmation: false });
+
+    // Act
+    await handler(ctx);
+
+    // Assert
+    expect(ctx.badRequest).toHaveBeenCalledWith("All fields are required");
+    expect(mockRegister).not.toHaveBeenCalled();
+  });
+
+  it("returns 400 when accepted_terms is not true", async () => {
+    // Arrange
+    const mockRegister = jest.fn();
+    const handler = registerUserLocal(mockRegister);
+    const ctx = makeCtx({ ...validBody, accepted_terms: false });
+
+    // Act
+    await handler(ctx);
+
+    // Assert
+    expect(ctx.badRequest).toHaveBeenCalledWith("All fields are required");
+    expect(mockRegister).not.toHaveBeenCalled();
+  });
+
+  it("calls original registerController when both consent fields are true", async () => {
+    // Arrange
+    const mockRegister = jest.fn(async (ctx) => {
+      ctx.response.body = { jwt: "token", user: { id: 1, email: "test@example.com" } };
+    });
+    const handler = registerUserLocal(mockRegister);
+    const ctx = makeCtx(validBody);
+
+    // Act
+    await handler(ctx);
+
+    // Assert
+    expect(mockRegister).toHaveBeenCalled();
+    expect(ctx.badRequest).not.toHaveBeenCalled();
+  });
+
+  it("passes accepted_age_confirmation and accepted_terms in userData to original controller", async () => {
+    // Arrange
+    const mockRegister = jest.fn(async (ctx) => {
+      ctx.response.body = { jwt: "token", user: { id: 1 } };
+    });
+    const handler = registerUserLocal(mockRegister);
+    const ctx = makeCtx(validBody);
+
+    // Act
+    await handler(ctx);
+
+    // Assert: registerUserLocal replaces ctx.request.body with userData
+    expect(ctx.request.body).toEqual(expect.objectContaining({
+      accepted_age_confirmation: true,
+      accepted_terms: true,
+    }));
   });
 });
