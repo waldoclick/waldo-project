@@ -18,7 +18,7 @@ export const useAppConfiguration = () => {
       sentry: !!config.public.sentryDsn,
       recaptcha: !!config.public.recaptchaSiteKey,
       logRocket: !!config.public.logRocketAppId,
-      pro: !!config.public.enablePro,
+      pro: !!config.public.proEnable,
     },
 
     // Environment
