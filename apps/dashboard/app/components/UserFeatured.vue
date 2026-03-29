@@ -116,7 +116,7 @@ const fetchUserFeatured = async () => {
 
   try {
     loading.value = true;
-    const response = await apiClient("ad-featured-reservations", {
+    const response = (await apiClient("ad-featured-reservations", {
       method: "GET",
       params: {
         filters: {
@@ -138,7 +138,10 @@ const fetchUserFeatured = async () => {
         },
         sort: "createdAt:desc",
       } as unknown as Record<string, unknown>,
-    }) as { data: Featured[]; meta: { pagination: typeof paginationMeta.value } };
+    })) as {
+      data: Featured[];
+      meta: { pagination: typeof paginationMeta.value };
+    };
 
     allFeatured.value = Array.isArray(response.data)
       ? (response.data as Featured[])

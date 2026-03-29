@@ -96,13 +96,13 @@ const handleSubmit = async (values: any) => {
       let conditionId = props.condition?.id;
 
       if (!conditionId && documentId) {
-        const lookupResponse = await apiClient("conditions", {
+        const lookupResponse = (await apiClient("conditions", {
           method: "GET",
           params: {
             filters: { documentId: { $eq: documentId } },
             pagination: { pageSize: 1 },
           } as unknown as Record<string, unknown>,
-        }) as { data: Array<{ id: number }> };
+        })) as { data: Array<{ id: number }> };
         const lookupData = Array.isArray(lookupResponse.data)
           ? (lookupResponse.data as Array<{ id: number }>)
           : [];
@@ -119,7 +119,9 @@ const handleSubmit = async (values: any) => {
         return;
       }
 
-      const response = await apiClient<{ data: { id?: number; documentId?: string } }>(`/conditions/${conditionId}`, {
+      const response = await apiClient<{
+        data: { id?: number; documentId?: string };
+      }>(`/conditions/${conditionId}`, {
         method: "PUT",
         body: { data: payload },
       });
@@ -143,7 +145,9 @@ const handleSubmit = async (values: any) => {
         router.push(`/conditions/${updatedId}`);
       }
     } else {
-      const response = await apiClient<{ data: { id?: number; documentId?: string } }>("/conditions", {
+      const response = await apiClient<{
+        data: { id?: number; documentId?: string };
+      }>("/conditions", {
         method: "POST",
         body: { data: payload },
       });

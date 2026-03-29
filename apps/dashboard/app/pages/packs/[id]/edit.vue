@@ -63,14 +63,19 @@ const { data: packData } = await useAsyncData(
     const id = route.params.id;
     if (!id) return null;
 
-    const response = await apiClient("ad-packs", {
+    const response = (await apiClient("ad-packs", {
       method: "GET",
-      params: { filters: { documentId: { $eq: id } } } as unknown as Record<string, unknown>,
-    }) as { data: unknown[] };
+      params: { filters: { documentId: { $eq: id } } } as unknown as Record<
+        string,
+        unknown
+      >,
+    })) as { data: unknown[] };
     const data = Array.isArray(response.data) ? response.data[0] : null;
     if (data) return data;
 
-    const fallback = await apiClient(`ad-packs/${id}`, { method: "GET" }) as { data: unknown };
+    const fallback = (await apiClient(`ad-packs/${id}`, { method: "GET" })) as {
+      data: unknown;
+    };
     return (fallback.data as unknown) || null;
   },
 );

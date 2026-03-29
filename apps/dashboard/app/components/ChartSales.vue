@@ -185,10 +185,10 @@ const fetchSalesForYear = async (year: number) => {
   if (monthlySalesCache.value[year]) return;
   try {
     loading.value = true;
-    const res = await apiClient("orders/sales-by-month", {
+    const res = (await apiClient("orders/sales-by-month", {
       method: "GET",
       params: { year } as unknown as Record<string, unknown>,
-    }) as { data: Array<{ month: number; total: number }> };
+    })) as { data: Array<{ month: number; total: number }> };
     const rawData = Array.isArray(res.data)
       ? (res.data as Array<{ month: number; total: number }>)
       : [];

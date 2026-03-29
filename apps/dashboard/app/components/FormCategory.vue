@@ -115,14 +115,14 @@ const handleSubmit = async (values: any) => {
       let categoryId = props.category?.id;
 
       if (!categoryId && documentId) {
-        const lookupResponse = await apiClient("categories", {
+        const lookupResponse = (await apiClient("categories", {
           method: "GET",
           params: {
             filters: { documentId: { $eq: documentId } },
             pagination: { pageSize: 1 },
             populate: ["icon"],
           } as unknown as Record<string, unknown>,
-        }) as { data: Array<{ id: number }> };
+        })) as { data: Array<{ id: number }> };
         const lookupData = Array.isArray(lookupResponse.data)
           ? (lookupResponse.data as Array<{ id: number }>)
           : [];
@@ -140,7 +140,9 @@ const handleSubmit = async (values: any) => {
         return;
       }
 
-      const response = await apiClient<{ data: { id?: number; documentId?: string } }>(`/categories/${categoryId}`, {
+      const response = await apiClient<{
+        data: { id?: number; documentId?: string };
+      }>(`/categories/${categoryId}`, {
         method: "PUT",
         body: { data: payload },
       });
@@ -166,7 +168,9 @@ const handleSubmit = async (values: any) => {
         router.push(`/categories/${updatedId}`);
       }
     } else {
-      const response = await apiClient<{ data: { id?: number; documentId?: string } }>("/categories", {
+      const response = await apiClient<{
+        data: { id?: number; documentId?: string };
+      }>("/categories", {
         method: "POST",
         body: { data: payload },
       });

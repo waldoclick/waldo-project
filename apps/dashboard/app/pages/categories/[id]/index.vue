@@ -73,17 +73,20 @@ const { data: categoryData } = await useAsyncData(
     const id = route.params.id;
     if (!id) return null;
 
-    const response = await apiClient("categories", {
+    const response = (await apiClient("categories", {
       method: "GET",
-      params: { filters: { documentId: { $eq: id } }, populate: ["icon"] } as unknown as Record<string, unknown>,
-    }) as { data: unknown[] };
+      params: {
+        filters: { documentId: { $eq: id } },
+        populate: ["icon"],
+      } as unknown as Record<string, unknown>,
+    })) as { data: unknown[] };
     const data = Array.isArray(response.data) ? response.data[0] : null;
     if (data) return data;
 
-    const fallback = await apiClient(`categories/${id}`, {
+    const fallback = (await apiClient(`categories/${id}`, {
       method: "GET",
       params: { populate: ["icon"] } as unknown as Record<string, unknown>,
-    }) as { data: unknown };
+    })) as { data: unknown };
     return (fallback.data as unknown) || null;
   },
 );

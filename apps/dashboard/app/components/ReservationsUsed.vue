@@ -154,10 +154,10 @@ const fetchUsedReservations = async () => {
       };
     }
 
-    const response = await apiClient("ad-reservations", {
+    const response = (await apiClient("ad-reservations", {
       method: "GET",
       params: searchParams as unknown as Record<string, unknown>,
-    }) as { data: ReservationRow[]; meta: { pagination: unknown } };
+    })) as { data: ReservationRow[]; meta: { pagination: unknown } };
     const reservations = Array.isArray(response.data)
       ? (response.data as ReservationRow[])
       : [];

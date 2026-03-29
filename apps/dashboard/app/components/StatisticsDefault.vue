@@ -183,9 +183,9 @@ const countsLoading = ref(true);
 onMounted(async () => {
   try {
     countsLoading.value = true;
-    const res = await apiClient("indicators/dashboard-stats", {
+    const res = (await apiClient("indicators/dashboard-stats", {
       method: "GET",
-    }) as { data: typeof counts.value };
+    })) as { data: typeof counts.value };
     const data = res.data;
     if (data) {
       counts.value = {

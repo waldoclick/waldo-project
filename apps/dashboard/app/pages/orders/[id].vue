@@ -153,7 +153,10 @@ const { data: orderData } = await useAsyncData(
     try {
       const response = await apiClient(`orders/${id}`, {
         method: "GET",
-        params: { populate: { user: true, ad: true } } as unknown as Record<string, unknown>,
+        params: { populate: { user: true, ad: true } } as unknown as Record<
+          string,
+          unknown
+        >,
       });
       return normalizeOrder(response);
     } catch (error) {

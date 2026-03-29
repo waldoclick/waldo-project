@@ -219,13 +219,13 @@ const handleSubmit = async (values: any) => {
       let packId = props.pack?.id;
 
       if (!packId && documentId) {
-        const lookupResponse = await apiClient("ad-packs", {
+        const lookupResponse = (await apiClient("ad-packs", {
           method: "GET",
           params: {
             filters: { documentId: { $eq: documentId } },
             pagination: { pageSize: 1 },
           } as unknown as Record<string, unknown>,
-        }) as { data: Array<{ id: number }> };
+        })) as { data: Array<{ id: number }> };
         const lookupData = Array.isArray(lookupResponse.data)
           ? (lookupResponse.data as Array<{ id: number }>)
           : [];
@@ -242,7 +242,9 @@ const handleSubmit = async (values: any) => {
         return;
       }
 
-      const response = await apiClient<{ data: { id?: number; documentId?: string } }>(`/ad-packs/${packId}`, {
+      const response = await apiClient<{
+        data: { id?: number; documentId?: string };
+      }>(`/ad-packs/${packId}`, {
         method: "PUT",
         body: { data: payload },
       });
@@ -268,7 +270,9 @@ const handleSubmit = async (values: any) => {
         router.push(`/packs/${updatedId}`);
       }
     } else {
-      const response = await apiClient<{ data: { id?: number; documentId?: string } }>("/ad-packs", {
+      const response = await apiClient<{
+        data: { id?: number; documentId?: string };
+      }>("/ad-packs", {
         method: "POST",
         body: { data: payload },
       });

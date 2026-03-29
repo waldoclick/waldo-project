@@ -146,10 +146,13 @@ const fetchRegions = async () => {
       };
     }
 
-    const response = await apiClient("regions", {
+    const response = (await apiClient("regions", {
       method: "GET",
       params: searchParams as unknown as Record<string, unknown>,
-    }) as { data: Region[]; meta: { pagination: typeof paginationMeta.value } };
+    })) as {
+      data: Region[];
+      meta: { pagination: typeof paginationMeta.value };
+    };
     allRegions.value = Array.isArray(response.data)
       ? (response.data as Region[])
       : [];

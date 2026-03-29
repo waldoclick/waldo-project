@@ -230,10 +230,9 @@ const handleSubmit = async (values: Record<string, unknown>) => {
         return;
       }
 
-      const response = await apiClient<{ data: { id?: number; documentId?: string } }>(
-        `/articles/${documentId}`,
-        { method: "PUT", body: { data: payload } },
-      );
+      const response = await apiClient<{
+        data: { id?: number; documentId?: string };
+      }>(`/articles/${documentId}`, { method: "PUT", body: { data: payload } });
       const responseData = response.data;
       const updatedArticle = {
         ...props.article,
@@ -261,7 +260,9 @@ const handleSubmit = async (values: Record<string, unknown>) => {
         router.push(`/articles/${updatedId}`);
       }
     } else {
-      const response = await apiClient<{ data: { id?: number; documentId?: string } }>("/articles?status=draft", {
+      const response = await apiClient<{
+        data: { id?: number; documentId?: string };
+      }>("/articles?status=draft", {
         method: "POST",
         body: { data: payload },
       });

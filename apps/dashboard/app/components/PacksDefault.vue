@@ -141,10 +141,10 @@ const fetchPacks = async () => {
       };
     }
 
-    const response = await apiClient("ad-packs", {
+    const response = (await apiClient("ad-packs", {
       method: "GET",
       params: searchParams as unknown as Record<string, unknown>,
-    }) as { data: Pack[]; meta: { pagination: typeof paginationMeta.value } };
+    })) as { data: Pack[]; meta: { pagination: typeof paginationMeta.value } };
     allPacks.value = Array.isArray(response.data)
       ? (response.data as Pack[])
       : [];

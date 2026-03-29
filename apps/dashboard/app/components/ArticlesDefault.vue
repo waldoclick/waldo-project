@@ -158,10 +158,13 @@ const fetchArticles = async () => {
       };
     }
 
-    const response = await apiClient("articles", {
+    const response = (await apiClient("articles", {
       method: "GET",
       params: searchParams as unknown as Record<string, unknown>,
-    }) as { data: Article[]; meta: { pagination: typeof paginationMeta.value } };
+    })) as {
+      data: Article[];
+      meta: { pagination: typeof paginationMeta.value };
+    };
     allArticles.value = Array.isArray(response.data)
       ? (response.data as Article[])
       : [];
@@ -186,7 +189,9 @@ const handleDeleteArticle = async (article: Article) => {
   });
   if (!result.isConfirmed) return;
   try {
-    await apiClient(`/articles/${article.documentId || article.id}`, { method: "DELETE" });
+    await apiClient(`/articles/${article.documentId || article.id}`, {
+      method: "DELETE",
+    });
     await fetchArticles();
     await Swal.fire("Eliminado", "El artículo fue eliminado.", "success");
   } catch {
