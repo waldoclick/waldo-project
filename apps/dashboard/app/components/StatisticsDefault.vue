@@ -140,7 +140,6 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { useStrapi } from "#imports";
 import ChartSales from "@/components/ChartSales.vue";
 import CardStat from "@/components/CardStat.vue";
 import {
@@ -178,17 +177,16 @@ const counts = ref({
   comunas: 0,
 });
 
+const apiClient = useApiClient();
 const countsLoading = ref(true);
 
 onMounted(async () => {
-  const strapi = useStrapi();
   try {
     countsLoading.value = true;
-    const res = await strapi.find(
-      "indicators/dashboard-stats" as any,
-      {} as any,
-    );
-    const data = (res as any).data as typeof counts.value;
+    const res = await apiClient("indicators/dashboard-stats", {
+      method: "GET",
+    }) as { data: typeof counts.value };
+    const data = res.data;
     if (data) {
       counts.value = {
         pending: data.pending ?? 0,
