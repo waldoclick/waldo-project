@@ -166,6 +166,7 @@ definePageMeta({
 const route = useRoute();
 const item = ref<User | null>(null);
 const { formatRut } = useRut();
+const apiClient = useApiClient();
 
 const title = computed(() => item.value?.username || "Usuario");
 const breadcrumbs = computed(() => [
@@ -197,30 +198,18 @@ const { data: userData } = await useAsyncData(
     const id = route.params.id;
     if (!id) return null;
     try {
-      const strapi = useStrapi();
-      const response = await strapi.findOne(
-        "users",
-        id as string,
-        {
+      const response = await apiClient(`users/${id}`, {
+        method: "GET",
+        params: {
           populate: {
-            role: {
-              fields: ["name"],
-            },
-            region: {
-              fields: ["name"],
-            },
-            commune: {
-              fields: ["name"],
-            },
-            business_region: {
-              fields: ["name"],
-            },
-            business_commune: {
-              fields: ["name"],
-            },
+            role: { fields: ["name"] },
+            region: { fields: ["name"] },
+            commune: { fields: ["name"] },
+            business_region: { fields: ["name"] },
+            business_commune: { fields: ["name"] },
           },
-        } as Record<string, unknown>,
-      );
+        } as unknown as Record<string, unknown>,
+      });
       return normalizeUser(response);
     } catch (error) {
       console.error("Error fetching user:", error);
