@@ -5,7 +5,7 @@ milestone_name: (planning)
 status: idle
 stopped_at: v1.46 milestone archived
 last_updated: "2026-03-29T00:00:00.000Z"
-last_activity: 2026-03-29
+last_activity: 2026-03-29 - Completed quick task 260329-pa1: fix CSP violations in staging
 progress:
   total_phases: 0
   completed_phases: 0
@@ -43,6 +43,12 @@ Progress: [          ] 0%
 
 - Oneclick Mall must be contracted separately with Transbank for production
 - Dashboard "Recuperar contraseña" reCAPTCHA bug: `FormForgotPassword.vue` in dashboard does not send reCAPTCHA token (pre-existing bug from v1.37)
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260329-pa1 | fix CSP violations in staging - add missing script-src connect-src worker-src directives for Google GTM reCAPTCHA Hotjar Cloudflare Sentry | 2026-03-29 | f5ead3f9 | [260329-pa1-fix-csp-violations-in-staging-add-missin](./quick/260329-pa1-fix-csp-violations-in-staging-add-missin/) |
 
 ## Session Continuity
 
