@@ -74,7 +74,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useAsyncData } from "nuxt/app";
-import { useStrapi } from "#imports";
 import { Eye } from "lucide-vue-next";
 import { formatCurrency } from "@/utils/price";
 import { getPaymentMethod } from "@/utils/string";
@@ -90,7 +89,7 @@ import type { Order, OrdersListResponse } from "@/types/order";
 
 const settingsStore = useSettingsStore();
 const section = "orders" as const;
-const strapi = useStrapi();
+const apiClient = useApiClient();
 
 const filters = computed(() => settingsStore.getOrdersFilters);
 
@@ -115,15 +114,17 @@ const { data: ordersResponse } = await useAsyncData(
   queryKey,
   async (): Promise<OrdersListResponse> => {
     try {
-      const res = (await strapi.find("orders", {
-        pagination: {
-          page: settingsStore.orders.currentPage,
-          pageSize: settingsStore.orders.pageSize,
-        },
-
-        sort: sortParam.value as string,
-        populate: ["user", "ad"],
-      } as Record<string, unknown>)) as unknown as {
+      const res = (await apiClient("orders", {
+        method: "GET",
+        params: {
+          pagination: {
+            page: settingsStore.orders.currentPage,
+            pageSize: settingsStore.orders.pageSize,
+          },
+          sort: sortParam.value as string,
+          populate: ["user", "ad"],
+        } as unknown as Record<string, unknown>,
+      })) as {
         data?: Order[];
         meta?: {
           pagination?: { page: number; pageCount?: number; total: number };

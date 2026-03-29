@@ -112,6 +112,7 @@ const handleFiltersChange = (newFilters: {
   settingsStore.setFilters(section, newFilters);
 };
 
+const apiClient = useApiClient();
 const allCommunes = ref<Commune[]>([]);
 const loading = ref(false);
 const paginationMeta = ref<{
@@ -124,7 +125,6 @@ const paginationMeta = ref<{
 const fetchCommunes = async () => {
   try {
     loading.value = true;
-    const strapi = useStrapi();
 
     const searchParams: Record<string, unknown> = {
       pagination: {
@@ -144,7 +144,10 @@ const fetchCommunes = async () => {
       };
     }
 
-    const response = await strapi.find("communes", searchParams);
+    const response = await apiClient("communes", {
+      method: "GET",
+      params: searchParams as unknown as Record<string, unknown>,
+    }) as { data: Commune[]; meta: { pagination: typeof paginationMeta.value } };
     allCommunes.value = Array.isArray(response.data)
       ? (response.data as Commune[])
       : [];

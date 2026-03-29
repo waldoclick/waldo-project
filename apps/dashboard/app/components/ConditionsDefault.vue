@@ -109,6 +109,7 @@ const handleFiltersChange = (newFilters: {
   settingsStore.setFilters(section, newFilters);
 };
 
+const apiClient = useApiClient();
 const allConditions = ref<Condition[]>([]);
 const loading = ref(false);
 const paginationMeta = ref<{
@@ -121,7 +122,6 @@ const paginationMeta = ref<{
 const fetchConditions = async () => {
   try {
     loading.value = true;
-    const strapi = useStrapi();
 
     const searchParams: Record<string, unknown> = {
       pagination: {
@@ -139,7 +139,10 @@ const fetchConditions = async () => {
       };
     }
 
-    const response = await strapi.find("conditions", searchParams);
+    const response = await apiClient("conditions", {
+      method: "GET",
+      params: searchParams as unknown as Record<string, unknown>,
+    }) as { data: Condition[]; meta: { pagination: typeof paginationMeta.value } };
     allConditions.value = Array.isArray(response.data)
       ? (response.data as Condition[])
       : [];

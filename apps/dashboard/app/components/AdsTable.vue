@@ -155,6 +155,7 @@ const { public: publicConfig } = useRuntimeConfig();
 const websiteUrl = publicConfig.websiteUrl as string;
 
 const settingsStore = useSettingsStore();
+const apiClient = useApiClient();
 
 // Computed accessor for the current section's settings
 const sectionSettings = computed(() => settingsStore[props.section]);
@@ -187,7 +188,6 @@ const paginationMeta = ref<{
 const fetchAds = async () => {
   try {
     loading.value = true;
-    const strapi = useStrapi();
     const section = sectionSettings.value;
 
     const searchParams: Record<string, unknown> = {
@@ -218,7 +218,10 @@ const fetchAds = async () => {
       };
     }
 
-    const response = await strapi.find(props.endpoint, searchParams);
+    const response = await apiClient(props.endpoint, {
+      method: "GET",
+      params: searchParams as unknown as Record<string, unknown>,
+    }) as { data: Ad[]; meta: { pagination: typeof paginationMeta.value } };
     allAds.value = Array.isArray(response.data) ? (response.data as Ad[]) : [];
 
     // Guardar información de paginación de Strapi

@@ -119,6 +119,7 @@ const handleFiltersChange = (newFilters: {
   settingsStore.setFilters(section, newFilters);
 };
 
+const apiClient = useApiClient();
 const allCategories = ref<Category[]>([]);
 const adsCountByCategory = ref<Record<number, number>>({});
 const loading = ref(false);
@@ -132,7 +133,6 @@ const paginationMeta = ref<{
 const fetchCategories = async () => {
   try {
     loading.value = true;
-    const strapi = useStrapi();
 
     const searchParams: Record<string, unknown> = {
       pagination: {
@@ -150,7 +150,10 @@ const fetchCategories = async () => {
       };
     }
 
-    const response = await strapi.find("categories", searchParams);
+    const response = await apiClient("categories", {
+      method: "GET",
+      params: searchParams as unknown as Record<string, unknown>,
+    }) as { data: Category[]; meta: { pagination: typeof paginationMeta.value } };
     allCategories.value = Array.isArray(response.data)
       ? (response.data as Category[])
       : [];
@@ -158,15 +161,11 @@ const fetchCategories = async () => {
       null) as typeof paginationMeta.value;
 
     // Fetch all ad counts in a single request
-    const countsResponse = await strapi.find(
-      "categories/ad-counts" as any,
-      {} as any,
-    );
-    const countsData = Array.isArray((countsResponse as any).data)
-      ? ((countsResponse as any).data as Array<{
-          categoryId: number;
-          count: number;
-        }>)
+    const countsResponse = await apiClient("categories/ad-counts", {
+      method: "GET",
+    }) as { data: Array<{ categoryId: number; count: number }> };
+    const countsData = Array.isArray(countsResponse.data)
+      ? countsResponse.data
       : [];
     const counts: Record<number, number> = {};
     for (const entry of countsData) {
