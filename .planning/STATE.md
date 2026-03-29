@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-03-20)
 Phase: 105 of 105 (pro-subscription-checkout-page)
 Plan: 3 of 3 completed
 Status: In progress
-Last activity: 2026-03-29
+Last activity: 2026-03-29 - Completed quick task 260329-mva: LightboxTerms global component with user composable consent check
 
 ```
 Progress: [██████████] 100%
@@ -76,6 +76,7 @@ Progress: [██████████] 100%
 | 260321-hje | Protect pro fields in user update endpoint and verify oneclick pro status management | 2026-03-21 | 9768011b | [260321-hje-protect-pro-fields](./quick/260321-hje-protect-pro-fields-in-user-update-endpoi/) |
 | 260321-k2b | Add sort_priority field to ads for featured+PRO ordering in /anuncios listing | 2026-03-21 | 679271a1 | [260321-k2b-add-sort-priority](./quick/260321-k2b-add-sort-priority-field-to-ads-for-featu/) |
 | 260329-gdf | fix TS2352 error in subscription-charge.cron.ts ProUser cast | 2026-03-29 | f072f9b6 | [260329-gdf-fix-ts2352](./quick/260329-gdf-fix-ts2352-error-in-subscription-charge-/) |
+| 260329-mva | LightboxTerms global component with user composable consent check | 2026-03-29 | 8401d020 | [260329-mva-lightboxterms-global-component-with-user](./quick/260329-mva-lightboxterms-global-component-with-user/) |
 
 ### Roadmap Evolution
 
