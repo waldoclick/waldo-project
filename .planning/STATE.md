@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 107-03-PLAN.md
-last_updated: "2026-03-29T22:41:08.435Z"
+stopped_at: Completed 107-04-PLAN.md
+last_updated: "2026-03-29T22:44:57.767Z"
 progress:
   total_phases: 1
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 4
-  completed_plans: 3
-  percent: 75
+  completed_plans: 4
+  percent: 100
 ---
 
 # Session State
@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 Milestone v1.46 PRO Subscriptions archived. Ready to start next milestone.
 
 ```
-Progress: [████████░░] 75%
+Progress: [██████████] 100%
 ```
 
 ## Accumulated Context
@@ -43,6 +43,8 @@ Progress: [████████░░] 75%
 - Never call useStrapiClient() directly in components for mutating requests — use useApiClient() instead (107-02)
 - Use apiClient typed generic apiClient<{ data: T }>() for response shape inference — avoids response.data type errors (107-03)
 - Keep useStrapi() for read operations (find/findOne), replace only mutations with useApiClient() — FormPassword exception: useStrapi removed entirely (107-03)
+- Remove useStrapi() from a component entirely when no read operations remain after migrating mutations — applied to FormArticle.vue (107-04)
+- Custom Strapi action endpoints (approve/reject/banned) do NOT wrap body in { data: ... }; standard content-type updates MUST use { data: payload } (107-04)
 
 ### Roadmap Evolution
 
@@ -60,6 +62,6 @@ Progress: [████████░░] 75%
 
 ## Session Continuity
 
-Last session: 2026-03-29T22:41:08.433Z
-Stopped at: Completed 107-03-PLAN.md
+Last session: 2026-03-29T22:44:57.765Z
+Stopped at: Completed 107-04-PLAN.md
 Resume file: None
