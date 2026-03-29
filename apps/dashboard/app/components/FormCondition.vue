@@ -50,6 +50,7 @@ const { Swal } = useSweetAlert2();
 const router = useRouter();
 const route = useRoute();
 const strapi = useStrapi();
+const apiClient = useApiClient();
 const { toSlug } = useSlugify();
 
 const sending = ref(false);
@@ -116,15 +117,11 @@ const handleSubmit = async (values: any) => {
         return;
       }
 
-      const response = await strapi.update(
-        "conditions",
-        conditionId,
-        payload as unknown as Parameters<typeof strapi.update>[2],
-      );
-      const responseData = response.data as unknown as {
-        id?: number;
-        documentId?: string;
-      };
+      const response = await apiClient<{ data: { id?: number; documentId?: string } }>(`/conditions/${conditionId}`, {
+        method: "PUT",
+        body: { data: payload },
+      });
+      const responseData = response.data;
       const updatedCondition = {
         ...props.condition,
         ...responseData,
@@ -144,14 +141,11 @@ const handleSubmit = async (values: any) => {
         router.push(`/conditions/${updatedId}`);
       }
     } else {
-      const response = await strapi.create(
-        "conditions",
-        payload as unknown as Parameters<typeof strapi.create>[1],
-      );
-      const createdData = response.data as unknown as {
-        id?: number;
-        documentId?: string;
-      };
+      const response = await apiClient<{ data: { id?: number; documentId?: string } }>("/conditions", {
+        method: "POST",
+        body: { data: payload },
+      });
+      const createdData = response.data;
       emit("saved", (createdData as ConditionData) || ({} as ConditionData));
       await Swal.fire("Éxito", "Condición creada correctamente.", "success");
       const createdId = createdData?.documentId || createdData?.id;

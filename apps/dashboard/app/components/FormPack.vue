@@ -122,6 +122,7 @@ const { Swal } = useSweetAlert2();
 const router = useRouter();
 const route = useRoute();
 const strapi = useStrapi();
+const apiClient = useApiClient();
 
 const sending = ref(false);
 const lastHydratedId = ref<string | number | null>(null);
@@ -239,15 +240,11 @@ const handleSubmit = async (values: any) => {
         return;
       }
 
-      const response = await strapi.update(
-        "ad-packs",
-        packId,
-        payload as unknown as Parameters<typeof strapi.update>[2],
-      );
-      const responseData = response.data as unknown as {
-        id?: number;
-        documentId?: string;
-      };
+      const response = await apiClient<{ data: { id?: number; documentId?: string } }>(`/ad-packs/${packId}`, {
+        method: "PUT",
+        body: { data: payload },
+      });
+      const responseData = response.data;
       const updatedPack = {
         ...props.pack,
         ...responseData,
@@ -269,14 +266,11 @@ const handleSubmit = async (values: any) => {
         router.push(`/packs/${updatedId}`);
       }
     } else {
-      const response = await strapi.create(
-        "ad-packs",
-        payload as unknown as Parameters<typeof strapi.create>[1],
-      );
-      const createdData = response.data as unknown as {
-        id?: number;
-        documentId?: string;
-      };
+      const response = await apiClient<{ data: { id?: number; documentId?: string } }>("/ad-packs", {
+        method: "POST",
+        body: { data: payload },
+      });
+      const createdData = response.data;
       emit("saved", (createdData as PackData) || ({} as PackData));
       await Swal.fire("Éxito", "Pack creado correctamente.", "success");
       const createdId = createdData?.documentId || createdData?.id;
