@@ -201,14 +201,7 @@
     }
 
     &__backdrop {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      background-color: rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(2px);
-      z-index: 1;
+      @include lightbox-backdrop;
     }
 
     &__box {
@@ -334,14 +327,7 @@
     }
 
     &__backdrop {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      background-color: rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(2px);
-      z-index: 1;
+      @include lightbox-backdrop;
     }
 
     &__box {
@@ -376,40 +362,6 @@
         color: $dodger_blue;
         text-decoration: underline;
       }
-    }
-
-    &__checkboxes {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-
-      &__row {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 8px;
-
-        label {
-          font-size: 14px;
-          color: $charcoal;
-          cursor: pointer;
-
-          a {
-            color: $dodger_blue;
-            text-decoration: underline;
-          }
-        }
-
-        input[type="checkbox"] {
-          cursor: pointer;
-          flex-shrink: 0;
-        }
-      }
-    }
-
-    &__actions {
-      display: flex;
-      justify-content: flex-end;
     }
   }
 
@@ -489,14 +441,7 @@
     }
 
     &__backdrop {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      background-color: rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(2px);
-      z-index: 1;
+      @include lightbox-backdrop;
       transition:
         backdrop-filter 0.3s ease,
         background-color 0.3s ease;
@@ -585,14 +530,7 @@
     }
 
     &__backdrop {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      background-color: rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(2px);
-      z-index: 1;
+      @include lightbox-backdrop;
       transition:
         backdrop-filter 0.3s ease,
         background-color 0.3s ease;
