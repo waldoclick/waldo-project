@@ -217,7 +217,6 @@ const item = ref<Ad | null>(null);
 const { public: publicConfig } = useRuntimeConfig();
 const websiteUrl =
   (publicConfig.websiteUrl as string) || "http://localhost:3000";
-const strapi = useStrapi();
 const apiClient = useApiClient();
 const { Swal } = useSweetAlert2();
 
@@ -416,18 +415,17 @@ const fetchAd = async () => {
   const id = route.params.id;
   if (!id) return;
   try {
-    const response = await strapi.findOne(
-      "ads",
-      id as string,
-      {
+    const response = await apiClient(`ads/${id}`, {
+      method: "GET",
+      params: {
         populate: {
           category: true,
           condition: true,
           commune: true,
           gallery: true,
         },
-      } as Record<string, unknown>,
-    );
+      } as unknown as Record<string, unknown>,
+    }) as { data: Ad };
     if (response.data) {
       item.value = response.data as unknown as Ad;
     }

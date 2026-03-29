@@ -125,7 +125,7 @@ definePageMeta({
 const route = useRoute();
 const orderId = computed(() => String(route.params.id || ""));
 const order = ref<Order | null>(null);
-const strapi = useStrapi();
+const apiClient = useApiClient();
 
 const title = computed(() =>
   orderId.value ? `Orden #${orderId.value}` : "Orden",
@@ -151,13 +151,10 @@ const { data: orderData } = await useAsyncData(
     const id = route.params.id;
     if (!id) return null;
     try {
-      const response = await strapi.findOne(
-        "orders",
-        id as string,
-        {
-          populate: { user: true, ad: true },
-        } as Record<string, unknown>,
-      );
+      const response = await apiClient(`orders/${id}`, {
+        method: "GET",
+        params: { populate: { user: true, ad: true } } as unknown as Record<string, unknown>,
+      });
       return normalizeOrder(response);
     } catch (error) {
       console.error("Error fetching order:", error);
