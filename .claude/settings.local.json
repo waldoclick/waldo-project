@@ -3,7 +3,14 @@
     "allow": [
       "Bash(yarn workspace:*)",
       "Bash(ls:*)",
-      "Bash(git ls-tree:*)"
+      "Bash(git ls-tree:*)",
+      "Bash(git push:*)",
+      "Bash(grep -r \"pro_status\\\\|pro === \\\\|pro !== \\\\|\\\\.pro\\\\b\" /home/gab/Code/waldo-project/apps/website/app/components/Account*.vue /home/gab/Code/waldo-project/apps/website/app/pages/cuenta/*.vue)",
+      "Bash(xargs cat:*)",
+      "Bash(find /home/gab/Code/waldo-project/apps/website/app/scss -name _gallery.scss -o -name *gallery*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Skill(gsd:complete-milestone)"
     ]
   }
 }
