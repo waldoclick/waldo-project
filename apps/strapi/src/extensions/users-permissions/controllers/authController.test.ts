@@ -809,17 +809,26 @@ describe("registerUserLocal", () => {
     jest.clearAllMocks();
     // Mock strapi.db for createUserReservations
     (global as unknown as Record<string, unknown>).strapi = {
-      ...(global as unknown as Record<string, unknown>).strapi as object,
+      ...((global as unknown as Record<string, unknown>).strapi as object),
       db: {
         query: (contentType: string) => {
           if (contentType === "api::ad-reservation.ad-reservation") {
-            return { findMany: jest.fn().mockResolvedValue([]), create: jest.fn().mockResolvedValue({}) };
+            return {
+              findMany: jest.fn().mockResolvedValue([]),
+              create: jest.fn().mockResolvedValue({}),
+            };
           }
-          if (contentType === "api::ad-featured-reservation.ad-featured-reservation") {
+          if (
+            contentType ===
+            "api::ad-featured-reservation.ad-featured-reservation"
+          ) {
             return { create: jest.fn().mockResolvedValue({}) };
           }
           if (contentType === "plugin::users-permissions.user") {
-            return { findOne: jest.fn().mockResolvedValue(null), update: mockUserUpdate };
+            return {
+              findOne: jest.fn().mockResolvedValue(null),
+              update: mockUserUpdate,
+            };
           }
           return strapiQueryMock(contentType);
         },
@@ -859,7 +868,10 @@ describe("registerUserLocal", () => {
   it("calls original registerController when both consent fields are true", async () => {
     // Arrange
     const mockRegister = jest.fn(async (ctx) => {
-      ctx.response.body = { jwt: "token", user: { id: 1, email: "test@example.com" } };
+      ctx.response.body = {
+        jwt: "token",
+        user: { id: 1, email: "test@example.com" },
+      };
     });
     const handler = registerUserLocal(mockRegister);
     const ctx = makeCtx(validBody);
@@ -884,9 +896,11 @@ describe("registerUserLocal", () => {
     await handler(ctx);
 
     // Assert: registerUserLocal replaces ctx.request.body with userData
-    expect(ctx.request.body).toEqual(expect.objectContaining({
-      accepted_age_confirmation: true,
-      accepted_terms: true,
-    }));
+    expect(ctx.request.body).toEqual(
+      expect.objectContaining({
+        accepted_age_confirmation: true,
+        accepted_terms: true,
+      })
+    );
   });
 });

@@ -74,9 +74,17 @@ export const registerUserLocal = (registerController) => async (ctx) => {
   try {
     // Extraer los datos del cuerpo de la solicitud
     // Note: confirm_password is validated and deleted by FormRegister.vue before submission
-    const { is_company, firstname, lastname, email, rut, password, username,
-            accepted_age_confirmation, accepted_terms } =
-      ctx.request.body;
+    const {
+      is_company,
+      firstname,
+      lastname,
+      email,
+      rut,
+      password,
+      username,
+      accepted_age_confirmation,
+      accepted_terms,
+    } = ctx.request.body;
 
     // Validar que todos los campos requeridos estén presentes
     if (
