@@ -55,10 +55,10 @@
 **Goal:** Protect every mutating API call in the dashboard with reCAPTCHA v3, matching the website's existing pattern. Update server-side guard from allowlist (3 auth routes) to method-based (all POST/PUT/DELETE), add useApiClient composable, and migrate all 19+ call sites.
 **Requirements**: [RCP-107-01, RCP-107-02, RCP-107-03, RCP-107-04, RCP-107-05, RCP-107-06, RCP-107-07, RCP-107-08]
 **Depends on:** Phase 106
-**Plans:** 3/4 plans executed
+**Plans:** 4/4 plans complete
 
 Plans:
 - [x] 107-01-PLAN.md — Foundation: server guard + useApiClient composable + tests
 - [x] 107-02-PLAN.md — Migrate useStrapiClient direct calls (auth forms + 4 components)
 - [x] 107-03-PLAN.md — Migrate useStrapi SDK calls (6 CRUD forms + FormPassword + me.store)
-- [ ] 107-04-PLAN.md — Migrate remaining pages and components (ads, articles)
+- [x] 107-04-PLAN.md — Migrate remaining pages and components (ads, articles)
