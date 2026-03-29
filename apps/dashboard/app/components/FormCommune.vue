@@ -72,6 +72,7 @@ const { Swal } = useSweetAlert2();
 const router = useRouter();
 const route = useRoute();
 const strapi = useStrapi();
+const apiClient = useApiClient();
 const { toSlug } = useSlugify();
 
 const regions = ref<RegionOption[]>([]);
@@ -171,15 +172,11 @@ const handleSubmit = async (values: any) => {
         return;
       }
 
-      const response = await strapi.update(
-        "communes",
-        communeId,
-        payload as unknown as Parameters<typeof strapi.update>[2],
-      );
-      const responseData = response.data as unknown as {
-        id?: number;
-        documentId?: string;
-      };
+      const response = await apiClient<{ data: { id?: number; documentId?: string } }>(`/communes/${communeId}`, {
+        method: "PUT",
+        body: { data: payload },
+      });
+      const responseData = response.data;
       const updatedCommune: CommuneData = {
         ...props.commune,
         ...responseData,
@@ -202,14 +199,11 @@ const handleSubmit = async (values: any) => {
         router.push(`/communes/${updatedId}`);
       }
     } else {
-      const response = await strapi.create(
-        "communes",
-        payload as unknown as Parameters<typeof strapi.create>[1],
-      );
-      const createdData = response.data as unknown as {
-        id?: number;
-        documentId?: string;
-      };
+      const response = await apiClient<{ data: { id?: number; documentId?: string } }>("/communes", {
+        method: "POST",
+        body: { data: payload },
+      });
+      const createdData = response.data;
       emit("saved", (createdData as CommuneData) || ({} as CommuneData));
       await Swal.fire("Éxito", "Comuna creada correctamente.", "success");
       const createdId = createdData?.documentId || createdData?.id;

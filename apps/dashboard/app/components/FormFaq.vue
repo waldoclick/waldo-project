@@ -145,14 +145,11 @@ const handleSubmit = async (values: any) => {
         return;
       }
 
-      const response = await apiClient(`/faqs/${faqId}`, {
+      const response = await apiClient<{ data: { id?: number; documentId?: string } }>(`/faqs/${faqId}`, {
         method: "PUT",
         body: { data: payload },
       });
-      const responseData = response.data as unknown as {
-        id?: number;
-        documentId?: string;
-      };
+      const responseData = response.data;
       const updatedFaq = {
         ...props.faq,
         ...responseData,
@@ -170,14 +167,11 @@ const handleSubmit = async (values: any) => {
         router.push(`/faqs/${updatedId}`);
       }
     } else {
-      const response = await apiClient("/faqs", {
+      const response = await apiClient<{ data: { id?: number; documentId?: string } }>("/faqs", {
         method: "POST",
         body: { data: payload },
       });
-      const createdData = response.data as unknown as {
-        id?: number;
-        documentId?: string;
-      };
+      const createdData = response.data;
       emit("saved", (createdData as FaqData) || ({} as FaqData));
       await Swal.fire("Éxito", "FAQ creado correctamente.", "success");
       const createdId = createdData?.documentId || createdData?.id;

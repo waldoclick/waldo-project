@@ -50,6 +50,7 @@ const { Swal } = useSweetAlert2();
 const router = useRouter();
 const route = useRoute();
 const strapi = useStrapi();
+const apiClient = useApiClient();
 const { toSlug } = useSlugify();
 
 const sending = ref(false);
@@ -115,15 +116,11 @@ const handleSubmit = async (values: any) => {
         return;
       }
 
-      const response = await strapi.update(
-        "regions",
-        regionId,
-        payload as unknown as Parameters<typeof strapi.update>[2],
-      );
-      const responseData = response.data as unknown as {
-        id?: number;
-        documentId?: string;
-      };
+      const response = await apiClient<{ data: { id?: number; documentId?: string } }>(`/regions/${regionId}`, {
+        method: "PUT",
+        body: { data: payload },
+      });
+      const responseData = response.data;
       const updatedRegion = {
         ...props.region,
         ...responseData,
@@ -139,14 +136,11 @@ const handleSubmit = async (values: any) => {
         router.push(`/regions/${updatedId}`);
       }
     } else {
-      const response = await strapi.create(
-        "regions",
-        payload as unknown as Parameters<typeof strapi.create>[1],
-      );
-      const createdData = response.data as unknown as {
-        id?: number;
-        documentId?: string;
-      };
+      const response = await apiClient<{ data: { id?: number; documentId?: string } }>("/regions", {
+        method: "POST",
+        body: { data: payload },
+      });
+      const createdData = response.data;
       emit("saved", (createdData as RegionData) || ({} as RegionData));
       await Swal.fire("Éxito", "Región creada correctamente.", "success");
       const createdId = createdData?.documentId || createdData?.id;
