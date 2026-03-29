@@ -85,10 +85,14 @@ export default defineNuxtConfig({
           process.env.API_URL || "http://localhost:1337",
           "https://*.logrocket.io",
           "https://*.lr-ingest.io",
+          "https://*.lgrckt-in.com",
           "https://*.sentry.io",
           "https://*.ingest.sentry.io",
           "https://www.google-analytics.com",
+          "https://region1.google-analytics.com",
+          "https://www.googletagmanager.com",
           "https://cloudflareinsights.com",
+          "https://static.cloudflareinsights.com",
         ],
 
         "frame-src": [
