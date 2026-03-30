@@ -12,7 +12,9 @@
       "Bash(git commit:*)",
       "Skill(gsd:complete-milestone)",
       "Bash(grep -rn \"PRO_ENABLED\\\\|FEATURE_PRO\\\\|SHOW_PRO\\\\|PRO_ENABLE\\\\|proEnabled\\\\|isProEnabled\\\\|pro_enabled\\\\|proFeature\\\\|PRO_FEATURE\" apps/ --include=*.ts --include=*.vue --include=*.env --include=*.env.example --include=nuxt.config.ts)",
-      "Skill(gsd:execute-phase)"
+      "Skill(gsd:execute-phase)",
+      "Skill(gsd:add-phase)",
+      "Bash(node:*)"
     ]
   }
 }
