@@ -286,6 +286,32 @@ export default defineNuxtConfig({
 
   // 4. Environment Configuration
   runtimeConfig: {
+    // Server-side strapi config — mirrors runtimeConfig.public.strapi for SSR composables.
+    // The import.meta.server ? useRuntimeConfig() : useRuntimeConfig().public ternary
+    // requires this key to exist server-side (module removal will no longer inject it).
+    strapi: {
+      url: process.env.API_URL || "http://localhost:1337",
+      prefix: "/api",
+      cookieName: "waldo_jwt",
+      cookie: {
+        path: "/",
+        maxAge: process.env.SESSION_MAX_AGE
+          ? Number.parseInt(process.env.SESSION_MAX_AGE)
+          : 604800,
+        ...(process.env.COOKIE_DOMAIN
+          ? { domain: process.env.COOKIE_DOMAIN }
+          : {}),
+      },
+      auth: {
+        populate: [
+          "role",
+          "commune",
+          "region",
+          "business_region",
+          "business_commune",
+        ],
+      },
+    },
     public: {
       // Override strapi.url for the client-side: use the Nitro proxy (BASE_URL) so the
       // browser never calls Strapi directly (avoids CORS). Server-side keeps using
