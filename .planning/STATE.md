@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 109-02-PLAN.md
-last_updated: "2026-03-30T01:10:00.000Z"
+stopped_at: Completed 110-01-PLAN.md
+last_updated: "2026-03-30T02:12:20.423Z"
 progress:
-  total_phases: 3
-  completed_phases: 3
-  total_plans: 9
-  completed_plans: 9
-  percent: 89
+  total_phases: 4
+  completed_phases: 4
+  total_plans: 10
+  completed_plans: 10
+  percent: 100
 ---
 
 # Session State
@@ -20,7 +20,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 109 — eliminate-nuxtjs-strapi-dependency-from-website-and-dashboard
+**Current focus:** Phase 110 — fix-ssr-data-loading-in-ads-detail-page-and-dashboard-home-stats
 
 ## Position
 
@@ -57,12 +57,15 @@ Progress: [██████████] 100%
 - Top-level strapi: module option block must be removed from nuxt.config.ts when @nuxtjs/strapi is removed — was module config (not runtimeConfig); leaving it causes TS2353; runtimeConfig.strapi blocks must be preserved for composable runtime access (109-02)
 - config.strapi as Record<string, unknown> cast pattern resolves runtimeConfig public/server union type — runtimeConfig.public.strapi only has {url:string} declared but server-side has full shape; cast to Record resolves both branches (109-02)
 - @nuxtjs/strapi is fully eliminated from dashboard — zero useStrapiX references in apps/dashboard/; all session management via custom useSessionX composables (109-02)
+- watch(() => true, fn, { immediate: true }) is the correct pattern for SSR data loading in dashboard components — replaces onMounted which is client-only and causes hydration flash (110-01)
+- useAdsStore() must be instantiated at setup scope before useAsyncData, not inside the callback — composable context is only available at setup time (110-01)
 
 ### Roadmap Evolution
 
 - Phase 107 added: en el dashboard hay que validar todas las rutas POST, PUT y DELETE igual como en el website
 - Phase 108 added: dashboard replace nuxtjs-strapi sdk with useApiClient for all reads — eliminate dual-resource pattern, all HTTP through one composable
 - Phase 109 added: Eliminate @nuxtjs/strapi dependency from dashboard only — replace useStrapiUser() with custom session composable, useStrapiToken() with direct cookie read, useStrapiClient() inside useApiClient with native $fetch
+- Phase 110 added: Fix SSR data loading in ads detail page and dashboard home stats
 
 ### Blockers/Concerns (open)
 
@@ -76,6 +79,6 @@ Progress: [██████████] 100%
 
 ## Session Continuity
 
-Last session: 2026-03-30T01:10:00Z
-Stopped at: Completed 109-02-PLAN.md
+Last session: 2026-03-30T02:13:00Z
+Stopped at: Completed 110-01-PLAN.md
 Resume file: None

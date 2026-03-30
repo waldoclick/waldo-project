@@ -91,7 +91,7 @@ Plans:
 **Goal:** Fix two SSR data-loading violations: replace client-only onMounted with watch(immediate:true) in dashboard stats components, and move useAdsStore to setup scope in ads detail page.
 **Requirements**: [SSR-110-01, SSR-110-02]
 **Depends on:** Phase 109
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
-- [ ] 110-01-PLAN.md — Fix onMounted in dashboard stats + useAdsStore scope in [slug].vue
+- [x] 110-01-PLAN.md — Fix onMounted in dashboard stats + useAdsStore scope in [slug].vue
