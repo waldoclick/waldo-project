@@ -290,6 +290,26 @@ export default defineNuxtConfig({
           process.env.API_DISABLE_PROXY === "true"
             ? process.env.API_URL || "http://localhost:1337"
             : process.env.BASE_URL || "http://localhost:3001",
+        prefix: "/api",
+        cookieName: "waldo_jwt",
+        cookie: {
+          path: "/",
+          maxAge: process.env.SESSION_MAX_AGE
+            ? Number.parseInt(process.env.SESSION_MAX_AGE)
+            : 604800,
+          ...(process.env.COOKIE_DOMAIN
+            ? { domain: process.env.COOKIE_DOMAIN }
+            : {}),
+        },
+        auth: {
+          populate: [
+            "role",
+            "commune",
+            "region",
+            "business_region",
+            "business_commune",
+          ],
+        },
       },
       apiUrl: process.env.API_URL || "http://localhost:1337",
       sessionMaxAge: process.env.SESSION_MAX_AGE || "86400", // Valor por defecto de 1 día
@@ -429,6 +449,21 @@ export default defineNuxtConfig({
 
   // Vite Configuration
   vite: {
+    optimizeDeps: {
+      include: [
+        "@vue/devtools-core",
+        "@vue/devtools-kit",
+        "js-cookie",
+        "logrocket",
+        "floating-vue",
+        "dompurify",
+        "vue-awesome-paginate",
+        "qs",
+        "vue-chartjs",
+        "chart.js",
+        "chartjs-plugin-annotation",
+      ],
+    },
     css: {
       preprocessorOptions: {
         scss: {
