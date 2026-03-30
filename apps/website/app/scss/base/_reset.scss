@@ -54,3 +54,7 @@ button {
   white-space: nowrap;
   border-width: 0;
 }
+
+#nuxt-loading-indicator {
+  z-index: 100 !important;
+}
