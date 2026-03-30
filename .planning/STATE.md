@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 109-01-PLAN.md
-last_updated: "2026-03-30T00:53:11.469Z"
+stopped_at: Completed 109-02-PLAN.md
+last_updated: "2026-03-30T01:10:00.000Z"
 progress:
   total_phases: 3
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 9
-  completed_plans: 8
-  percent: 100
+  completed_plans: 9
+  percent: 89
 ---
 
 # Session State
@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 Milestone v1.46 PRO Subscriptions archived. Ready to start next milestone.
 
 ```
-Progress: [█████████░] 89%
+Progress: [██████████] 100%
 ```
 
 ## Accumulated Context
@@ -54,6 +54,9 @@ Progress: [█████████░] 89%
 - useSessionToken caches in nuxt._cookies[cookieName] — required pattern for FormVerifyCode.vue to clear the cookie ref on login (109-01)
 - useSessionClient uses qs.stringify with encodeValuesOnly: true — produces bracket notation for Strapi nested filters; key brackets are NOT URL-encoded (encodeValuesOnly only encodes values) (109-01)
 - vi.stubGlobal used for Nuxt auto-imported composables in vitest tests — auto-imports are globals, not importable symbols; vi.mock of the module path alone is insufficient (109-01)
+- Top-level strapi: module option block must be removed from nuxt.config.ts when @nuxtjs/strapi is removed — was module config (not runtimeConfig); leaving it causes TS2353; runtimeConfig.strapi blocks must be preserved for composable runtime access (109-02)
+- config.strapi as Record<string, unknown> cast pattern resolves runtimeConfig public/server union type — runtimeConfig.public.strapi only has {url:string} declared but server-side has full shape; cast to Record resolves both branches (109-02)
+- @nuxtjs/strapi is fully eliminated from dashboard — zero useStrapiX references in apps/dashboard/; all session management via custom useSessionX composables (109-02)
 
 ### Roadmap Evolution
 
@@ -73,6 +76,6 @@ Progress: [█████████░] 89%
 
 ## Session Continuity
 
-Last session: 2026-03-30T00:53:11.467Z
-Stopped at: Completed 109-01-PLAN.md
+Last session: 2026-03-30T01:10:00Z
+Stopped at: Completed 109-02-PLAN.md
 Resume file: None

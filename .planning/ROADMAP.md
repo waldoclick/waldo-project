@@ -80,8 +80,8 @@ Plans:
 **Goal:** Replace all 4 @nuxtjs/strapi composables (useStrapiUser, useStrapiToken, useStrapiClient, useStrapiAuth) with project-owned session composables, add a custom startup plugin, and remove the @nuxtjs/strapi module from the dashboard entirely.
 **Requirements**: [REQ-109-01, REQ-109-02, REQ-109-03, REQ-109-04, REQ-109-05]
 **Depends on:** Phase 108
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
 - [x] 109-01-PLAN.md — Create session composables, startup plugin, add qs dependency, unit tests
-- [ ] 109-02-PLAN.md — Swap all consumer files, update test mocks, remove @nuxtjs/strapi module
+- [x] 109-02-PLAN.md — Swap all consumer files, update test mocks, remove @nuxtjs/strapi module
