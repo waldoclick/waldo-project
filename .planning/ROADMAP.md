@@ -75,7 +75,7 @@ Plans:
 - [x] 108-02-PLAN.md — Migrate all 19 pages to apiClient GET
 - [x] 108-03-PLAN.md — Final verification sweep (grep + typecheck + tests)
 
-### Phase 109: Eliminate nuxtjs-strapi dependency from website and dashboard
+### Phase 109: Eliminate nuxtjs-strapi dependency from dashboard
 
 **Goal:** [To be planned]
 **Requirements**: TBD
