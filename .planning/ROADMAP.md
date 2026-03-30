@@ -85,3 +85,13 @@ Plans:
 Plans:
 - [x] 109-01-PLAN.md — Create session composables, startup plugin, add qs dependency, unit tests
 - [x] 109-02-PLAN.md — Swap all consumer files, update test mocks, remove @nuxtjs/strapi module
+
+### Phase 110: Fix SSR data loading in ads detail page and dashboard home stats
+
+**Goal:** Fix two SSR data-loading violations: replace client-only onMounted with watch(immediate:true) in dashboard stats components, and move useAdsStore to setup scope in ads detail page.
+**Requirements**: [SSR-110-01, SSR-110-02]
+**Depends on:** Phase 109
+**Plans:** 1 plan
+
+Plans:
+- [ ] 110-01-PLAN.md — Fix onMounted in dashboard stats + useAdsStore scope in [slug].vue
