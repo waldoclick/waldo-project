@@ -1,14 +1,14 @@
-import { useStrapiClient, useNuxtApp } from "#imports";
+import { useNuxtApp } from "#imports";
 
 /**
- * useApiClient — drop-in replacement for useStrapiClient() that automatically
+ * useApiClient — wrapper around useSessionClient() that automatically
  * injects X-Recaptcha-Token on POST, PUT and DELETE requests.
  *
  * Falls back gracefully when $recaptcha is unavailable (SSR, adblocker).
  * Caller-supplied headers are always preserved.
  */
 export function useApiClient() {
-  const client = useStrapiClient();
+  const client = useSessionClient();
   const nuxtApp = useNuxtApp();
 
   const MUTATING_METHODS = ["POST", "PUT", "DELETE"] as const;

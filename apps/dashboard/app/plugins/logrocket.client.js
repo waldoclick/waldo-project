@@ -8,7 +8,7 @@ export default defineNuxtPlugin(() => {
   LogRocket.init(appId);
 
   // Obtener usuario de Strapi
-  const user = useStrapiUser();
+  const user = useSessionUser();
   // console.log("[LogRocket] Usuario inicial:", user.value);
 
   // Función para identificar usuario en LogRocket

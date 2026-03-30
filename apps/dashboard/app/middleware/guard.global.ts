@@ -15,7 +15,7 @@ export default defineNuxtRouteMiddleware((to, _from) => {
     return;
   }
 
-  const user = useStrapiUser() as Ref<User | null>;
+  const user = useSessionUser<User>();
   if (!user.value) {
     useCookie("redirect", { path: "/" }).value = to.fullPath;
     return navigateTo("/auth/login");

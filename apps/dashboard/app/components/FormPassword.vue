@@ -95,7 +95,7 @@ import type { User } from "@/types/user";
 
 const { Swal } = useSweetAlert2();
 const apiClient = useApiClient();
-const user = useStrapiUser() as Ref<User | null>;
+const user = useSessionUser<User>();
 
 const sending = ref(false);
 const formKey = ref(0);

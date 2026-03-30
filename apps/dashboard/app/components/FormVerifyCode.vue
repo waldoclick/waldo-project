@@ -138,13 +138,13 @@ const handleVerify = async () => {
     if (nuxtApp._cookies?.[config.strapi.cookieName]) {
       delete nuxtApp._cookies[config.strapi.cookieName];
     }
-    const { setToken, fetchUser } = useStrapiAuth();
+    const { setToken, fetchUser } = useSessionAuth();
     const { logout } = useLogout();
     setToken(response.jwt);
     await fetchUser();
 
     // Manager role check — same cast pattern as guard.global.ts
-    const user = useStrapiUser() as Ref<User | null>;
+    const user = useSessionUser<User>();
     if (!user.value || user.value.role?.name?.toLowerCase() !== "manager") {
       await logout();
       Swal.fire(

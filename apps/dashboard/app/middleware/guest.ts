@@ -1,7 +1,7 @@
 import type { User } from "@/types/user";
 
 export default defineNuxtRouteMiddleware((_to, _from) => {
-  const user = useStrapiUser() as Ref<User | null>;
+  const user = useSessionUser<User>();
   if (!user.value) return;
 
   // Only redirect to dashboard home if the user is a manager.
