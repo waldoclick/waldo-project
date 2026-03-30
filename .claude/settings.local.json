@@ -16,7 +16,9 @@
       "Skill(gsd:add-phase)",
       "Bash(node:*)",
       "Bash(head -5 find /home/gab/Code/waldo-project/apps/dashboard/app -name *header* -o -name *Header* -o -name *navbar* -o -name *Navbar*)",
-      "Bash(grep -n \"z-index\\\\|nuxt-loading\\\\|#nuxt-loading\" /home/gab/Code/waldo-project/apps/dashboard/app/scss/components/_header.scss /home/gab/Code/waldo-project/apps/dashboard/app/scss/base/*.scss)"
+      "Bash(grep -n \"z-index\\\\|nuxt-loading\\\\|#nuxt-loading\" /home/gab/Code/waldo-project/apps/dashboard/app/scss/components/_header.scss /home/gab/Code/waldo-project/apps/dashboard/app/scss/base/*.scss)",
+      "WebFetch(domain:stitch.withgoogle.com)",
+      "Bash(claude mcp:*)"
     ]
   }
 }
