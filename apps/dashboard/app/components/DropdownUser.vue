@@ -51,7 +51,7 @@ import type { User } from "@/types/user";
 
 const { Swal } = useSweetAlert2();
 
-const user = useStrapiUser() as Ref<User | null>;
+const user = useSessionUser<User>();
 const { logout } = useLogout();
 
 const isOpen = ref(false);

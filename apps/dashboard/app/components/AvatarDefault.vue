@@ -31,7 +31,7 @@ if (!validSizes.includes(size)) {
 }
 
 // Obtener el usuario logueado
-const loggedUser = useStrapiUser();
+const loggedUser = useSessionUser();
 
 // Computed para obtener las iniciales
 const getInitials = computed(() => {

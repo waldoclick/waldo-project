@@ -146,8 +146,8 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       cancelButtonText: "Cancelar",
     });
     if (!confirmed.isConfirmed) return;
-    const { logout: strapiLogout } = useStrapiAuth();
-    await strapiLogout();
+    const { logout: sessionLogout } = useSessionAuth();
+    sessionLogout();
   }
 
   // Clear the nuxt._cookies cache so setToken() writes a fresh cookie
@@ -162,7 +162,7 @@ const handleSubmit = async (values: Record<string, unknown>) => {
 
   try {
     // Call POST /api/auth/local directly — backend now returns { pendingToken, email }
-    // (useStrapiAuth().login() is NOT used because it expects a JWT, not a pendingToken)
+    // (useSessionAuth().login() is NOT used because it expects a JWT, not a pendingToken)
     // X-Recaptcha-Token is injected automatically by useApiClient
     const response = await client("/auth/local", {
       method: "POST",

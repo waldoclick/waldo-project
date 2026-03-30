@@ -1,4 +1,4 @@
-import { useRuntimeConfig, useStrapiToken } from "#imports";
+import { useRuntimeConfig } from "#imports";
 
 export function useImageProxy() {
   const config = useRuntimeConfig();
@@ -49,7 +49,7 @@ export function useImageProxy() {
     type: string,
     recaptchaToken?: string,
   ) => {
-    const token = useStrapiToken();
+    const token = useSessionToken();
     const formData = new FormData();
     formData.append("files", file);
     formData.append("type", type);
