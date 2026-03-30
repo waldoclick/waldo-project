@@ -3,8 +3,11 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 const mockClient = vi.fn().mockResolvedValue({});
 const mockExecute = vi.fn().mockResolvedValue("fake-recaptcha-token");
 
+// useSessionClient is a Nuxt auto-import (global in the composable context),
+// not an importable module symbol — vi.stubGlobal is required here.
+vi.stubGlobal("useSessionClient", () => mockClient);
+
 vi.mock("#imports", () => ({
-  useStrapiClient: () => mockClient,
   useNuxtApp: () => ({ $recaptcha: { execute: mockExecute } }),
 }));
 

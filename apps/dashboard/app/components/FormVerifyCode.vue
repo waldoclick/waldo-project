@@ -134,9 +134,13 @@ const handleVerify = async () => {
     // Clear the nuxt._cookies cache first — the module caches the cookie ref on init
     // and won't re-read document.cookie if it was externally cleared (e.g. logout in another tab)
     const nuxtApp = useNuxtApp();
-    const config = useRuntimeConfig().public;
-    if (nuxtApp._cookies?.[config.strapi.cookieName]) {
-      delete nuxtApp._cookies[config.strapi.cookieName];
+    const strapiPublicConfig = useRuntimeConfig().public.strapi as Record<
+      string,
+      unknown
+    >;
+    const cookieName = strapiPublicConfig.cookieName as string;
+    if (nuxtApp._cookies?.[cookieName]) {
+      delete nuxtApp._cookies[cookieName];
     }
     const { setToken, fetchUser } = useSessionAuth();
     const { logout } = useLogout();

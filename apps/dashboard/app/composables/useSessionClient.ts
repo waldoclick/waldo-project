@@ -6,7 +6,8 @@ export const useSessionClient = () => {
   const config = import.meta.server
     ? useRuntimeConfig()
     : useRuntimeConfig().public;
-  const baseURL = `${config.strapi.url as string}${config.strapi.prefix as string}`;
+  const strapiConfig = config.strapi as Record<string, unknown>;
+  const baseURL = `${strapiConfig.url as string}${strapiConfig.prefix as string}`;
   const token = useSessionToken();
 
   return async <T = unknown>(
@@ -36,6 +37,6 @@ export const useSessionClient = () => {
         ...headers,
         ...((fetchOptions.headers as Record<string, string>) ?? {}),
       },
-    });
+    } as Parameters<typeof $fetch>[1]) as Promise<T>;
   };
 };
