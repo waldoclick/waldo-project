@@ -77,10 +77,11 @@ Plans:
 
 ### Phase 109: Eliminate nuxtjs-strapi dependency from dashboard
 
-**Goal:** [To be planned]
-**Requirements**: TBD
+**Goal:** Replace all 4 @nuxtjs/strapi composables (useStrapiUser, useStrapiToken, useStrapiClient, useStrapiAuth) with project-owned session composables, add a custom startup plugin, and remove the @nuxtjs/strapi module from the dashboard entirely.
+**Requirements**: [REQ-109-01, REQ-109-02, REQ-109-03, REQ-109-04, REQ-109-05]
 **Depends on:** Phase 108
-**Plans:** 0 plans
+**Plans:** 2 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 109 to break down)
+- [ ] 109-01-PLAN.md — Create session composables, startup plugin, add qs dependency, unit tests
+- [ ] 109-02-PLAN.md — Swap all consumer files, update test mocks, remove @nuxtjs/strapi module
