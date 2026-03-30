@@ -139,7 +139,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, watch } from "vue";
 import ChartSales from "@/components/ChartSales.vue";
 import CardStat from "@/components/CardStat.vue";
 import {
@@ -180,37 +180,41 @@ const counts = ref({
 const apiClient = useApiClient();
 const countsLoading = ref(true);
 
-onMounted(async () => {
-  try {
-    countsLoading.value = true;
-    const res = (await apiClient("indicators/dashboard-stats", {
-      method: "GET",
-    })) as { data: typeof counts.value };
-    const data = res.data;
-    if (data) {
-      counts.value = {
-        pending: data.pending ?? 0,
-        published: data.published ?? 0,
-        archived: data.archived ?? 0,
-        rejected: data.rejected ?? 0,
-        reservasUsadas: data.reservasUsadas ?? 0,
-        reservasLibres: data.reservasLibres ?? 0,
-        destacadosUsados: data.destacadosUsados ?? 0,
-        destacadosLibres: data.destacadosLibres ?? 0,
-        ordenes: data.ordenes ?? 0,
-        usuarios: data.usuarios ?? 0,
-        categorias: data.categorias ?? 0,
-        condiciones: data.condiciones ?? 0,
-        faqs: data.faqs ?? 0,
-        packs: data.packs ?? 0,
-        regiones: data.regiones ?? 0,
-        comunas: data.comunas ?? 0,
-      };
+watch(
+  () => true,
+  async () => {
+    try {
+      countsLoading.value = true;
+      const res = (await apiClient("indicators/dashboard-stats", {
+        method: "GET",
+      })) as { data: typeof counts.value };
+      const data = res.data;
+      if (data) {
+        counts.value = {
+          pending: data.pending ?? 0,
+          published: data.published ?? 0,
+          archived: data.archived ?? 0,
+          rejected: data.rejected ?? 0,
+          reservasUsadas: data.reservasUsadas ?? 0,
+          reservasLibres: data.reservasLibres ?? 0,
+          destacadosUsados: data.destacadosUsados ?? 0,
+          destacadosLibres: data.destacadosLibres ?? 0,
+          ordenes: data.ordenes ?? 0,
+          usuarios: data.usuarios ?? 0,
+          categorias: data.categorias ?? 0,
+          condiciones: data.condiciones ?? 0,
+          faqs: data.faqs ?? 0,
+          packs: data.packs ?? 0,
+          regiones: data.regiones ?? 0,
+          comunas: data.comunas ?? 0,
+        };
+      }
+    } catch (error) {
+      console.error("Error fetching statistics counts:", error);
+    } finally {
+      countsLoading.value = false;
     }
-  } catch (error) {
-    console.error("Error fetching statistics counts:", error);
-  } finally {
-    countsLoading.value = false;
-  }
-});
+  },
+  { immediate: true },
+);
 </script>

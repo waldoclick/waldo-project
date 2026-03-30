@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { formatCurrency } from "@/utils/price";
 import {
@@ -75,16 +75,19 @@ const getShortName = (code: string) => {
   return names[code as keyof typeof names] || code.toUpperCase();
 };
 
-// Cargar los indicadores al montar el componente
-onMounted(async () => {
-  try {
-    const response = (await apiClient("indicators", {
-      method: "GET",
-    })) as { data: Indicator[]; meta: { timestamp: string } };
+watch(
+  () => true,
+  async () => {
+    try {
+      const response = (await apiClient("indicators", {
+        method: "GET",
+      })) as { data: Indicator[]; meta: { timestamp: string } };
 
-    indicators.value = (response.data as Indicator[]) || [];
-  } catch (error) {
-    console.error("Error fetching indicators:", error);
-  }
-});
+      indicators.value = (response.data as Indicator[]) || [];
+    } catch (error) {
+      console.error("Error fetching indicators:", error);
+    }
+  },
+  { immediate: true },
+);
 </script>
