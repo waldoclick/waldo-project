@@ -71,12 +71,11 @@ const config = useRuntimeConfig();
 const historyStore = useHistoryStore();
 const relatedStore = useRelatedStore();
 const indicatorStore = useIndicatorStore();
+const adsStore = useAdsStore();
 
 const { data: adData, refresh } = await useAsyncData<AdPageData | null>(
   `ad-${route.params.slug}`,
   async () => {
-    const adsStore = useAdsStore();
-
     let result: { ad: AdWithPriceData; access: AdAccess } | null = null;
     try {
       result = (await adsStore.loadAdBySlug(route.params.slug as string)) as {
