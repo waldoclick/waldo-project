@@ -55,6 +55,7 @@ Progress: [██████████] 100%
 
 - Phase 107 added: en el dashboard hay que validar todas las rutas POST, PUT y DELETE igual como en el website
 - Phase 108 added: dashboard replace nuxtjs-strapi sdk with useApiClient for all reads — eliminate dual-resource pattern, all HTTP through one composable
+- Phase 109 added: Eliminate @nuxtjs/strapi dependency completely — replace useStrapiUser() with custom session composable, useStrapiToken() with direct cookie read, useStrapiClient() inside useApiClient with native $fetch, remaining useStrapi().create() in website with useApiClient
 
 ### Blockers/Concerns (open)
 
