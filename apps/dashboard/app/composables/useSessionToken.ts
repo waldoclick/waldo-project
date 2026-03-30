@@ -6,8 +6,9 @@ export const useSessionToken = (): Ref<string | null> => {
   const config = import.meta.server
     ? useRuntimeConfig()
     : useRuntimeConfig().public;
-  const cookieName = config.strapi.cookieName as string;
-  const cookieOptions = config.strapi.cookie as Record<string, unknown>;
+  const strapiConfig = config.strapi as Record<string, unknown>;
+  const cookieName = strapiConfig.cookieName as string;
+  const cookieOptions = strapiConfig.cookie as Record<string, unknown>;
 
   nuxt._cookies = nuxt._cookies || {};
   if (nuxt._cookies[cookieName]) {

@@ -153,9 +153,13 @@ const handleSubmit = async (values: Record<string, unknown>) => {
   // Clear the nuxt._cookies cache so setToken() writes a fresh cookie
   // regardless of any stale ref left from a previous session in another tab
   const nuxtApp = useNuxtApp();
-  const strapiConfig = useRuntimeConfig().public;
-  if (nuxtApp._cookies?.[strapiConfig.strapi.cookieName]) {
-    delete nuxtApp._cookies[strapiConfig.strapi.cookieName];
+  const strapiPublicConfig = useRuntimeConfig().public.strapi as Record<
+    string,
+    unknown
+  >;
+  const cookieName = strapiPublicConfig.cookieName as string;
+  if (nuxtApp._cookies?.[cookieName]) {
+    delete nuxtApp._cookies[cookieName];
   }
 
   sending.value = true;

@@ -16,8 +16,9 @@ export const useSessionAuth = () => {
   const fetchUser = async (): Promise<typeof user> => {
     if (token.value) {
       try {
+        const strapiConfig = config.strapi as Record<string, unknown>;
         user.value = await client<User>("/users/me", {
-          params: config.strapi.auth as Record<string, unknown>,
+          params: strapiConfig.auth as Record<string, unknown>,
         });
       } catch {
         setToken(null);

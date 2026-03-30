@@ -18,7 +18,6 @@ export default defineNuxtConfig({
     "nuxt-security",
     "@nuxt/test-utils/module",
     "@nuxt/eslint",
-    "@nuxtjs/strapi",
     "@pinia/nuxt",
     "@pinia-plugin-persistedstate/nuxt",
     "@sentry/nuxt/module",
@@ -225,36 +224,6 @@ export default defineNuxtConfig({
 
   // 2. Styles Configuration
   css: ["@/scss/app.scss"],
-
-  // 3. Modules Configuration
-  // strapi.url for the module registration uses API_URL (direct).
-  // At runtime, useStrapiUrl() reads from runtimeConfig: server-side gets runtimeConfig.strapi.url
-  // (API_URL direct — no self-proxy loop), client-side gets runtimeConfig.public.strapi.url
-  // (BASE_URL through the Nitro proxy for CORS safety).
-  strapi: {
-    url: process.env.API_URL || "http://localhost:1337",
-    prefix: "/api",
-    version: "v5",
-    cookie: {
-      path: "/",
-      maxAge: process.env.SESSION_MAX_AGE
-        ? Number.parseInt(process.env.SESSION_MAX_AGE)
-        : 604800, // Valor por defecto de 1 semana
-      ...(process.env.COOKIE_DOMAIN
-        ? { domain: process.env.COOKIE_DOMAIN }
-        : {}),
-    },
-    cookieName: "waldo_jwt",
-    auth: {
-      populate: [
-        "role",
-        "commune",
-        "region",
-        "business_region",
-        "business_commune",
-      ],
-    },
-  },
 
   pinia: {
     // Pinia Configuration
