@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 108-03-PLAN.md
-last_updated: "2026-03-29T23:40:19.481Z"
+stopped_at: Completed 109-01-PLAN.md
+last_updated: "2026-03-30T00:53:11.469Z"
 progress:
-  total_phases: 2
+  total_phases: 3
   completed_phases: 2
-  total_plans: 7
-  completed_plans: 7
+  total_plans: 9
+  completed_plans: 8
   percent: 100
 ---
 
@@ -20,14 +20,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 108 — dashboard-replace-nuxtjs-strapi-sdk-with-useapiclient-for-all-reads
+**Current focus:** Phase 109 — eliminate-nuxtjs-strapi-dependency-from-website-and-dashboard
 
 ## Position
 
 Milestone v1.46 PRO Subscriptions archived. Ready to start next milestone.
 
 ```
-Progress: [██████████] 100%
+Progress: [█████████░] 89%
 ```
 
 ## Accumulated Context
@@ -50,6 +50,10 @@ Progress: [██████████] 100%
 - useApiClient() must be declared at setup scope (outside useAsyncData) when replacing strapi.find/findOne — the captured apiClient variable is used inside callbacks (108-02)
 - users/[id] endpoint returns user object directly (no { data: T } wrapper); normalizeUser() handles both response shapes — no special-casing needed (108-02)
 - Phase 108 migration verified complete — zero strapi.find/findOne calls remain across entire dashboard app directory; TypeScript compiles clean; all 55 tests pass (108-03)
+- useSessionUser state key is "session_user" (not "strapi_user") — FormVerifyCode.vue clears this exact cache key; changing it would break login flow (109-01)
+- useSessionToken caches in nuxt._cookies[cookieName] — required pattern for FormVerifyCode.vue to clear the cookie ref on login (109-01)
+- useSessionClient uses qs.stringify with encodeValuesOnly: true — produces bracket notation for Strapi nested filters; key brackets are NOT URL-encoded (encodeValuesOnly only encodes values) (109-01)
+- vi.stubGlobal used for Nuxt auto-imported composables in vitest tests — auto-imports are globals, not importable symbols; vi.mock of the module path alone is insufficient (109-01)
 
 ### Roadmap Evolution
 
@@ -69,6 +73,6 @@ Progress: [██████████] 100%
 
 ## Session Continuity
 
-Last session: 2026-03-29T23:36:16.563Z
-Stopped at: Completed 108-03-PLAN.md
+Last session: 2026-03-30T00:53:11.467Z
+Stopped at: Completed 109-01-PLAN.md
 Resume file: None
