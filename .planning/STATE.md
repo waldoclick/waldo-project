@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-stopped_at: Completed quick task 260404-nms
-last_updated: "2026-04-04T19:35:00.000Z"
+stopped_at: Completed quick task 260404-nt5
+last_updated: "2026-04-04T20:00:00.000Z"
 progress:
   total_phases: 5
   completed_phases: 5
@@ -85,9 +85,10 @@ Progress: [██████████] 100%
 | 260404-mbi | privacy policy maintainer in dashboard following FAQ pattern | 2026-04-04 | eaba7f45 | [260404-mbi-privacy-policy-maintainer-in-dashboard-f](./quick/260404-mbi-privacy-policy-maintainer-in-dashboard-f/) |
 | 260404-mmr | policies list remove pagination, add vuedraggable drag-and-drop reorder persisting order to Strapi | 2026-04-04 | e608ebc8 | [260404-mmr-policies-list-remove-pagination-show-all](./quick/260404-mmr-policies-list-remove-pagination-show-all/) |
 | 260404-nms | fix policy detail and edit pages showing empty data - replace documentId filter with numeric id filter, fix FormPolicy post-save redirect | 2026-04-04 | f026572a | [260404-nms-al-ver-o-editar-una-politica-est-n-vacia](./quick/260404-nms-al-ver-o-editar-una-politica-est-n-vacia/) |
+| 260404-nt5 | add order field to FAQ schema and drag-and-drop reorder in FaqsDefault.vue matching PoliciesDefault pattern | 2026-04-04 | a8ae2eab | [260404-nt5-en-faq-agregar-order-field-drag-and-drop](./quick/260404-nt5-en-faq-agregar-order-field-drag-and-drop/) |
 
 ## Session Continuity
 
-Last session: 2026-04-04T19:12:10.019Z
-Stopped at: Completed quick task 260404-mbi
+Last session: 2026-04-04T20:00:00.000Z
+Stopped at: Completed quick task 260404-nt5
 Resume file: None
