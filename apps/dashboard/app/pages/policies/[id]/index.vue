@@ -70,19 +70,14 @@ const { data: policyData } = await useAsyncData(
 
     const response = (await apiClient("policies", {
       method: "GET",
-      params: { filters: { documentId: { $eq: id } } } as unknown as Record<
+      params: { filters: { id: { $eq: Number(id) } } } as unknown as Record<
         string,
         unknown
       >,
     })) as { data: unknown[] };
-    const data = Array.isArray(response.data) ? response.data[0] : null;
-    if (data) return data;
-
-    const fallback = (await apiClient(`policies/${id}`, {
-      method: "GET",
-    })) as { data: unknown };
-    return (fallback.data as unknown) || null;
+    return Array.isArray(response.data) ? response.data[0] : null;
   },
+  { default: () => null },
 );
 
 item.value = policyData.value ?? null;
