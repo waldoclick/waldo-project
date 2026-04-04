@@ -297,25 +297,6 @@ const faqs = [
     `,
   },
   {
-    title: "16. Fuerza mayor",
-    text: `
-      <p>Waldo.click® no será responsable en caso de no cumplir alguno de
-      los términos anteriores en caso de obstáculos que van más allá de
-      su influencia (por ejemplo, protestas, cierres, desorden en la
-      comunicación de datos, incendios, robos, sabotaje, vandalismo y
-      cualquier otro evento no esperado).</p>
-    `,
-  },
-  {
-    title: "17. Aceptación de Términos y Condiciones",
-    text: `
-      <p>Estas condiciones obligatorias tendrán efecto una vez que sean
-      aceptadas, teniendo validez indefinida. Waldo.click® puede privar
-      la utilización de los Servicios de Marketing en línea en caso de
-      considerar que un usuario no esté cumpliendo lo anterior.</p>
-    `,
-  },
-  {
     title: "18. Información de contacto",
     text: `
       <p>Waldo.click® |
