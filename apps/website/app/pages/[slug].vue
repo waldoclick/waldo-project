@@ -81,52 +81,27 @@ const {
     const username = String(route.params.slug || "");
     const adsStore = useAdsStore();
 
-    try {
-      // Primero intentamos cargar el usuario
-      await userStore.loadUser(username);
+    await userStore.loadUser(username);
 
-      // Si no existe el usuario, lanzar error 404 directamente
-      if (
-        !userStore.user ||
-        typeof userStore.user !== "object" ||
-        !userStore.user.id
-      ) {
-        throw createError({
-          statusCode: 404,
-          message: "Página no encontrada",
-          statusMessage: "Lo sentimos, la página que buscas no existe.",
-        });
-      }
-
-      const paginationParams = { pageSize: 12, page: currentPage.value };
-      const sortParams = ["createdAt:desc"];
-      const filtersParams = {
-        active: { $eq: true },
-        remaining_days: { $gt: 0 },
-        user: { username: { $eq: username } },
-      };
-
-      // Solo cargamos los anuncios si existe el usuario
-      await adsStore.loadAds(filtersParams, paginationParams, sortParams);
-
-      return {
-        user: userStore.user,
-        ads: adsStore.ads,
-        pagination: adsStore.pagination,
-      };
-    } catch (err) {
-      // Si el error ya es un createError, lo relanzamos
-      if ((err as any)?.statusCode) {
-        throw err;
-      }
-      // Si es otro tipo de error, lanzamos un 404 genérico
-      console.error("Error loading user data:", err);
-      throw createError({
-        statusCode: 404,
-        message: "Página no encontrada",
-        statusMessage: "Lo sentimos, la página que buscas no existe.",
-      });
+    if (!userStore.user?.id) {
+      return null;
     }
+
+    const paginationParams = { pageSize: 12, page: currentPage.value };
+    const sortParams = ["createdAt:desc"];
+    const filtersParams = {
+      active: { $eq: true },
+      remaining_days: { $gt: 0 },
+      user: { username: { $eq: username } },
+    };
+
+    await adsStore.loadAds(filtersParams, paginationParams, sortParams);
+
+    return {
+      user: userStore.user,
+      ads: adsStore.ads,
+      pagination: adsStore.pagination,
+    };
   },
   {
     watch: [() => route.params.slug, currentPage],
@@ -135,8 +110,12 @@ const {
   },
 );
 
-if (error.value) {
-  throw error.value;
+if (!adsData.value) {
+  throw createError({
+    statusCode: 404,
+    message: "Página no encontrada",
+    statusMessage: "Lo sentimos, la página que buscas no existe.",
+  });
 }
 
 // Observar los datos para cambios dinámicos (solo en cliente)
