@@ -22,7 +22,19 @@
       "Bash(grep -r \"mostrar\\\\|#\\\\|color\\\\|\\\\$\" apps/website/app/components/FormPassword.vue apps/website/assets/scss/ -l)",
       "Bash(grep -n \"mostrar\\\\|color\\\\|#\\\\|\\\\$\" apps/website/app/components/FormPassword.vue)",
       "Bash(grep -n \"show-password\\\\|password\\\\|color\\\\|#\\\\|\\\\$\" apps/website/app/scss/components/_form.scss)",
-      "Bash(xargs grep:*)"
+      "Bash(xargs grep:*)",
+      "Bash([ -f \"/home/gab/Code/waldo-project/apps/strapi/src/api/policy/content-types/policy/schema.json\" ])",
+      "Bash([ -f \"/home/gab/Code/waldo-project/apps/strapi/seeders/policies.ts\" ])",
+      "Bash(git -C /home/gab/Code/waldo-project log --oneline --all)",
+      "Bash(git:*)",
+      "Bash(yarn test:*)",
+      "Bash([ -f \"/home/gab/Code/waldo-project/apps/website/app/types/policy.d.ts\" ])",
+      "Bash([ -f \"/home/gab/Code/waldo-project/apps/website/app/stores/policies.store.ts\" ])",
+      "Bash([ -f \"/home/gab/Code/waldo-project/apps/website/tests/stores/policies.store.test.ts\" ])",
+      "Bash([ -f \"/home/gab/Code/waldo-project/apps/website/tests/components/PoliciesDefault.test.ts\" ])",
+      "Bash(echo \"exit:$?\")",
+      "Bash(python3 -c ':*)",
+      "Skill(gsd:quick)"
     ]
   }
 }
