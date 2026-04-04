@@ -75,7 +75,7 @@ const {
   pending,
   error,
 } = await useAsyncData<ProfileData | null>(
-  () => `adsData-${route.params.slug}`,
+  `adsData-${slug}`,
   async () => {
     const userStore = useUserStore();
     const username = String(route.params.slug || "");
