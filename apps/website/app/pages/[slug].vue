@@ -111,7 +111,7 @@ const {
 );
 
 if (!adsData.value) {
-  throw createError({
+  showError({
     statusCode: 404,
     message: "Página no encontrada",
     statusMessage: "Lo sentimos, la página que buscas no existe.",
