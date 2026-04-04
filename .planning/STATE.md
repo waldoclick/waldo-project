@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 110-01-PLAN.md
-last_updated: "2026-03-30T02:15:52.120Z"
+stopped_at: Completed 111-01-PLAN.md (checkpoint:human-action — Task 3 requires Strapi admin permissions grant)
+last_updated: "2026-04-04T17:45:08Z"
 progress:
-  total_phases: 4
+  total_phases: 5
   completed_phases: 4
-  total_plans: 10
-  completed_plans: 10
-  percent: 100
+  total_plans: 12
+  completed_plans: 11
+  percent: 92
 ---
 
 # Session State
@@ -20,14 +20,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 110 — fix-ssr-data-loading-in-ads-detail-page-and-dashboard-home-stats
+**Current focus:** Phase 111 — haz-que-sean-administrables-desde-strapi-y-usa-la-misma-informacion-para-completar-el-seeder
 
 ## Position
 
 Milestone v1.46 PRO Subscriptions archived. Ready to start next milestone.
 
 ```
-Progress: [██████████] 100%
+Progress: [█████████░] 92%
 ```
 
 ## Accumulated Context
@@ -59,6 +59,8 @@ Progress: [██████████] 100%
 - @nuxtjs/strapi is fully eliminated from dashboard — zero useStrapiX references in apps/dashboard/; all session management via custom useSessionX composables (109-02)
 - watch(() => true, fn, { immediate: true }) is the correct pattern for SSR data loading in dashboard components — replaces onMounted which is client-only and causes hydration flash (110-01)
 - useAdsStore() must be instantiated at setup scope before useAsyncData, not inside the callback — composable context is only available at setup time (110-01)
+- Used richtext (not text) for Strapi policy text field because content contains multi-paragraph HTML with p and a tags (111-01)
+- order integer field allows editors to control policy display sequence from Strapi admin independently of creation order (111-01)
 
 ### Roadmap Evolution
 
@@ -66,6 +68,7 @@ Progress: [██████████] 100%
 - Phase 108 added: dashboard replace nuxtjs-strapi sdk with useApiClient for all reads — eliminate dual-resource pattern, all HTTP through one composable
 - Phase 109 added: Eliminate @nuxtjs/strapi dependency from dashboard only — replace useStrapiUser() with custom session composable, useStrapiToken() with direct cookie read, useStrapiClient() inside useApiClient with native $fetch
 - Phase 110 added: Fix SSR data loading in ads detail page and dashboard home stats
+- Phase 111 added: haz que sean administrables desde strapi y usa la misma informacion para completar el seeder
 
 ### Blockers/Concerns (open)
 
@@ -79,6 +82,6 @@ Progress: [██████████] 100%
 
 ## Session Continuity
 
-Last session: 2026-03-30T02:13:00Z
-Stopped at: Completed 110-01-PLAN.md
+Last session: 2026-04-04T17:45:08Z
+Stopped at: Completed 111-01-PLAN.md
 Resume file: None
