@@ -16,7 +16,7 @@
       "required": true
     },
     "text": {
-      "type": "richtext"
+      "type": "text"
     },
     "order": {
       "type": "integer"
