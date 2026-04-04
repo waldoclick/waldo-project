@@ -4,7 +4,7 @@ import type { Core } from "@strapi/strapi";
 const policiesData = [
   {
     order: 1,
-    title: "1. Información general sobre el Servicio de Marketing en línea:",
+    title: "Información general sobre el Servicio de Marketing en línea",
     text: `
       <p>Waldo.click® consiste en un mercado en línea donde el usuario
       puede buscar y publicar anuncios de Activos Industriales, Equipos,
@@ -36,7 +36,7 @@ const policiesData = [
   },
   {
     order: 2,
-    title: "2. Registrarse como usuario en Waldo.click®",
+    title: "Registrarse como usuario en Waldo.click®",
     text: `
       <p>Si desea registrarse como usuario en el servicio de Marketing en
       línea Waldo.click®, ingrese los datos de usuario solicitados y
@@ -67,7 +67,7 @@ const policiesData = [
   },
   {
     order: 3,
-    title: "3. Protección de datos",
+    title: "Protección de datos",
     text: `
       <p>Waldo.click® respeta la privacidad de los usuarios y las empresas
       con medios de seguridad razonables para evitar el abuso de los
@@ -87,7 +87,7 @@ const policiesData = [
   },
   {
     order: 4,
-    title: "4. Anuncios y publicaciones",
+    title: "Anuncios y publicaciones",
     text: `
       <p>Los anuncios que publique en Waldo.click® se traducirán como la
       solicitud del Servicio de Marketing en línea. No existe una
@@ -153,7 +153,7 @@ const policiesData = [
   },
   {
     order: 5,
-    title: "5. Información sobre Artículos Publicados",
+    title: "Información sobre Artículos Publicados",
     text: `
       <p>Es necesario que los usuarios de Waldo.click® expresen datos
       certeros sobre el estado de los artículos en venta, es completa
@@ -167,7 +167,7 @@ const policiesData = [
   },
   {
     order: 6,
-    title: "6. Propiedad Intelectual",
+    title: "Propiedad Intelectual",
     text: `
       <p>Los documentos, imágenes, aplicaciones y otro contenido disponible
       en el Servicio de Marketing en línea, está protegido por leyes
@@ -178,7 +178,7 @@ const policiesData = [
   },
   {
     order: 7,
-    title: "7. Cobros y facturación",
+    title: "Cobros y facturación",
     text: `
       <p>El usuario se puede registrar de manera gratuita; con esto,
       conseguirá publicar tres 3 anuncios gratuitos (para siempre),
@@ -193,7 +193,7 @@ const policiesData = [
   },
   {
     order: 8,
-    title: "8. Sobre compensación por daños y responsabilidad limitada",
+    title: "Sobre compensación por daños y responsabilidad limitada",
     text: `
       <p>Waldo.click® no puede garantizar que el Servicio de Marketing en
       línea funcione libre de errores o que los servidores no sean
@@ -219,7 +219,7 @@ const policiesData = [
   },
   {
     order: 9,
-    title: "9. Disponibilidad",
+    title: "Disponibilidad",
     text: `
       <p>Waldo.click® tiene derecho a hacer cualquier modificación en la
       información, contenido, usabilidad, funcionamiento u otro en la
@@ -231,7 +231,7 @@ const policiesData = [
   },
   {
     order: 10,
-    title: "10. Modificación de Términos y Condiciones",
+    title: "Modificación de Términos y Condiciones",
     text: `
       <p>Waldo.click® está en búsqueda constante de mejoras e innovación
       del portal, nuevas funcionalidad y proveedores. Por lo que
@@ -243,7 +243,7 @@ const policiesData = [
   },
   {
     order: 11,
-    title: "11. Ayúdanos a mejorar",
+    title: "Ayúdanos a mejorar",
     text: `
       <p>En caso de encontrar una publicación con errores o un artículo que
       ya está vendido, agradeceremos avisarnos por medio de los botones
@@ -253,7 +253,7 @@ const policiesData = [
   },
   {
     order: 12,
-    title: "12. No validez de los términos",
+    title: "No validez de los términos",
     text: `
       <p>Si una de estas condiciones no se considera válida, predominará el
       alcance de la ley local.</p>
@@ -261,7 +261,7 @@ const policiesData = [
   },
   {
     order: 13,
-    title: "13. Fuerza mayor",
+    title: "Fuerza mayor",
     text: `
       <p>Waldo.click® no será responsable en caso de no cumplir alguno de
       los términos anteriores en caso de obstáculos que van más allá de
@@ -272,7 +272,7 @@ const policiesData = [
   },
   {
     order: 14,
-    title: "14. Aceptación de Términos y Condiciones",
+    title: "Aceptación de Términos y Condiciones",
     text: `
       <p>Estas condiciones obligatorias tendrán efecto una vez que sean
       aceptadas, teniendo validez indefinida. Waldo.click® puede privar
@@ -282,7 +282,7 @@ const policiesData = [
   },
   {
     order: 15,
-    title: "15. Invalidez de los términos",
+    title: "Invalidez de los términos",
     text: `
       <p>Si una de estas condiciones no se considera válida, predominará el
       alcance de la ley local.</p>
@@ -290,7 +290,7 @@ const policiesData = [
   },
   {
     order: 16,
-    title: "18. Información de contacto",
+    title: "Información de contacto",
     text: `
       <p>Waldo.click® |
       <a href="mailto:contacto@Waldo.click®">contacto@Waldo.click®</a>
@@ -308,7 +308,7 @@ const populatePolicies = async (strapi: Core.Strapi): Promise<void> => {
     try {
       const existing = await strapi.db
         .query("api::policy.policy")
-        .findMany({ where: { title: policy.title } });
+        .findMany({ where: { order: policy.order } });
 
       if (existing.length > 0) {
         console.log(`Politica ya existe: ${policy.title}`);
