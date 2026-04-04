@@ -18,7 +18,11 @@
       "Bash(head -5 find /home/gab/Code/waldo-project/apps/dashboard/app -name *header* -o -name *Header* -o -name *navbar* -o -name *Navbar*)",
       "Bash(grep -n \"z-index\\\\|nuxt-loading\\\\|#nuxt-loading\" /home/gab/Code/waldo-project/apps/dashboard/app/scss/components/_header.scss /home/gab/Code/waldo-project/apps/dashboard/app/scss/base/*.scss)",
       "WebFetch(domain:stitch.withgoogle.com)",
-      "Bash(claude mcp:*)"
+      "Bash(claude mcp:*)",
+      "Bash(grep -r \"mostrar\\\\|#\\\\|color\\\\|\\\\$\" apps/website/app/components/FormPassword.vue apps/website/assets/scss/ -l)",
+      "Bash(grep -n \"mostrar\\\\|color\\\\|#\\\\|\\\\$\" apps/website/app/components/FormPassword.vue)",
+      "Bash(grep -n \"show-password\\\\|password\\\\|color\\\\|#\\\\|\\\\$\" apps/website/app/scss/components/_form.scss)",
+      "Bash(xargs grep:*)"
     ]
   }
 }
