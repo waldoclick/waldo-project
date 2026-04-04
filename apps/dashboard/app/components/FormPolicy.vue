@@ -107,25 +107,7 @@ const handleSubmit = async (values: any) => {
     };
 
     if (isEditMode.value) {
-      const routeId = route.params.id;
-      const documentId =
-        props.policy?.documentId ||
-        (typeof routeId === "string" ? routeId : undefined);
-      let policyId = props.policy?.id;
-
-      if (!policyId && documentId) {
-        const lookupResponse = (await apiClient("policies", {
-          method: "GET",
-          params: {
-            filters: { documentId: { $eq: documentId } },
-            pagination: { pageSize: 1 },
-          } as unknown as Record<string, unknown>,
-        })) as { data: Array<{ id: number }> };
-        const lookupData = Array.isArray(lookupResponse.data)
-          ? (lookupResponse.data as Array<{ id: number }>)
-          : [];
-        policyId = lookupData[0]?.id;
-      }
+      const policyId = props.policy?.id || Number(route.params.id);
 
       if (!policyId) {
         await Swal.fire(
@@ -160,7 +142,7 @@ const handleSubmit = async (values: any) => {
         "Politica actualizada correctamente.",
         "success",
       );
-      const updatedId = responseData?.documentId || responseData?.id;
+      const updatedId = responseData?.id || responseData?.documentId;
       if (updatedId) {
         router.push(`/policies/${updatedId}`);
       }
@@ -187,7 +169,7 @@ const handleSubmit = async (values: any) => {
       const createdData = response.data;
       emit("saved", (createdData as PolicyData) || ({} as PolicyData));
       await Swal.fire("Éxito", "Politica creada correctamente.", "success");
-      const createdId = createdData?.documentId || createdData?.id;
+      const createdId = createdData?.id || createdData?.documentId;
       if (createdId) {
         router.push(`/policies/${createdId}`);
       } else {
