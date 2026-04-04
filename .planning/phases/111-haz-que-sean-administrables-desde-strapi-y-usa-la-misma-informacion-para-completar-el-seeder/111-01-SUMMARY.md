@@ -55,7 +55,7 @@ completed: 2026-04-04
 - **Duration:** 3 min
 - **Started:** 2026-04-04T17:42:12Z
 - **Completed:** 2026-04-04T17:45:08Z
-- **Tasks:** 2 of 3 completed (Task 3 is a human-action checkpoint)
+- **Tasks:** 3 of 3 completed
 - **Files modified:** 6
 
 ## Accomplishments
@@ -70,7 +70,7 @@ Each task was committed atomically:
 
 1. **Task 1: Create policy content type and API scaffold** - `dc8b37e0` (feat)
 2. **Task 2: Create policies seeder and register in bootstrap** - `3bce503d` (feat)
-3. **Task 3: Enable public access for policies endpoint** - Checkpoint (human-action required)
+3. **Task 3: Enable public access for policies endpoint** - Human-action completed (Strapi admin permissions granted)
 
 ## Files Created/Modified
 - `apps/strapi/src/api/policy/content-types/policy/schema.json` - Policy collection type schema with title, text (richtext), order (integer)
@@ -95,21 +95,13 @@ None.
 
 ## User Setup Required
 
-**Task 3 requires manual Strapi admin configuration:**
-
-1. Start Strapi: `yarn workspace @waldo/strapi develop`
-2. Open Strapi Admin panel
-3. Navigate to: Settings -> Users and Permissions -> Roles -> Public
-4. Find "Policy" in the permissions list
-5. Enable "find" and "findOne" checkboxes
-6. Click Save
-7. Verify: `curl -s -o /dev/null -w "%{http_code}" http://localhost:1337/api/policies` should return `200`
+None — Task 3 (Strapi admin permissions grant) was completed manually by the operator. Public role now has `find` and `findOne` permissions on the `policies` endpoint.
 
 ## Next Phase Readiness
-- Policy content type is fully registered and will appear in Strapi Admin on next startup
+- Policy content type is fully registered and appears in Strapi Admin
 - Seeder will auto-populate 16 policies when `APP_RUN_SEEDERS=true`
-- Public endpoint `/api/policies` requires human Task 3 (Strapi admin permissions grant) before website can consume it
-- Once Task 3 is complete, website PoliciesDefault.vue can be updated to fetch from API instead of hardcoded data
+- Public endpoint `/api/policies` is accessible to unauthenticated requests (Task 3 done)
+- Website PoliciesDefault.vue can now be updated to fetch from `/api/policies` instead of hardcoded data
 
 ---
 *Phase: 111-haz-que-sean-administrables-desde-strapi-y-usa-la-misma-informacion-para-completar-el-seeder*
