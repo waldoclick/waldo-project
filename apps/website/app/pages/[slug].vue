@@ -84,7 +84,11 @@ const {
     await userStore.loadUser(username);
 
     if (!userStore.user?.id) {
-      return null;
+      throw createError({
+        statusCode: 404,
+        message: "Página no encontrada",
+        fatal: true,
+      });
     }
 
     const paginationParams = { pageSize: 12, page: currentPage.value };
@@ -107,16 +111,17 @@ const {
     watch: [() => route.params.slug, currentPage],
     server: true,
     lazy: false,
+    default: () => null,
   },
 );
 
-if (!adsData.value) {
-  showError({
-    statusCode: 404,
-    message: "Página no encontrada",
-    statusMessage: "Lo sentimos, la página que buscas no existe.",
-  });
-}
+// Cannot re-throw error.value in setup (fires in SSR → 500).
+// onMounted is client-only.
+onMounted(() => {
+  if (!adsData.value) {
+    showError({ statusCode: 404, message: "Página no encontrada" });
+  }
+});
 
 // Observar los datos para cambios dinámicos (solo en cliente)
 if (import.meta.client) {
