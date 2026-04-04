@@ -294,6 +294,17 @@
           <li
             class="menu--default__subitem"
             :class="{
+              'menu--default__subitem--active': isRouteActive('/terms'),
+            }"
+          >
+            <NuxtLink to="/terms" class="menu--default__sublink">
+              <ScrollText class="menu--default__subicon" />
+              <span>Condiciones de Uso</span>
+            </NuxtLink>
+          </li>
+          <li
+            class="menu--default__subitem"
+            :class="{
               'menu--default__subitem--active': isRouteActive('/packs'),
             }"
           >
@@ -366,6 +377,7 @@ import {
   HelpCircle,
   Box,
   Shield,
+  ScrollText,
   MapPin,
   Building,
   Newspaper,
@@ -391,6 +403,7 @@ const isMantenedoresActive = computed(() => {
     isRouteActive("/conditions") ||
     isRouteActive("/faqs") ||
     isRouteActive("/policies") ||
+    isRouteActive("/terms") ||
     isRouteActive("/packs") ||
     isRouteActive("/regions") ||
     isRouteActive("/communes") ||
@@ -418,6 +431,7 @@ watch(
       path.startsWith("/conditions") ||
       path.startsWith("/faqs") ||
       path.startsWith("/policies") ||
+      path.startsWith("/terms") ||
       path.startsWith("/packs") ||
       path.startsWith("/regions") ||
       path.startsWith("/communes") ||

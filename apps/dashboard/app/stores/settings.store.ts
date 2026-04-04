@@ -24,6 +24,7 @@ interface SettingsState {
   conditions: SectionSettings;
   faqs: SectionSettings;
   policies: SectionSettings;
+  terms: SectionSettings;
   packs: SectionSettings;
   regions: SectionSettings;
   communes: SectionSettings;
@@ -56,6 +57,10 @@ export const useSettingsStore = defineStore(
     const conditions = ref<SectionSettings>({ ...defaultSectionSettings });
     const faqs = ref<SectionSettings>({ ...defaultSectionSettings });
     const policies = ref<SectionSettings>({
+      ...defaultSectionSettings,
+      sortBy: "order:asc",
+    });
+    const terms = ref<SectionSettings>({
       ...defaultSectionSettings,
       sortBy: "order:asc",
     });
@@ -138,6 +143,11 @@ export const useSettingsStore = defineStore(
     const getPoliciesFilters = computed(() => ({
       sortBy: policies.value.sortBy,
       pageSize: policies.value.pageSize,
+    }));
+
+    const getTermsFilters = computed(() => ({
+      sortBy: terms.value.sortBy,
+      pageSize: terms.value.pageSize,
     }));
 
     const getPacksFilters = computed(() => ({
@@ -232,6 +242,8 @@ export const useSettingsStore = defineStore(
           return faqs;
         case "policies":
           return policies;
+        case "terms":
+          return terms;
         case "packs":
           return packs;
         case "regions":
@@ -262,6 +274,7 @@ export const useSettingsStore = defineStore(
       conditions,
       faqs,
       policies,
+      terms,
       packs,
       regions,
       communes,
@@ -282,6 +295,7 @@ export const useSettingsStore = defineStore(
       getConditionsFilters,
       getFaqsFilters,
       getPoliciesFilters,
+      getTermsFilters,
       getPacksFilters,
       getRegionsFilters,
       getCommunesFilters,
