@@ -4,6 +4,7 @@ import populateFaqs from "../seeders/faqs";
 import populatePacks from "../seeders/packs";
 import populateRegions from "../seeders/regions";
 import populateAdDraftMigration from "../seeders/ad-draft-migration";
+import populatePolicies from "../seeders/policies";
 import { recalculateSortPriorities } from "./api/ad/services/ad";
 
 export default {
@@ -38,6 +39,7 @@ export default {
         await populatePacks(strapi);
         await populateRegions(strapi);
         await populateAdDraftMigration(strapi);
+        await populatePolicies(strapi);
         console.log("✅ Seeders completados exitosamente");
       } catch (error) {
         console.error("❌ Error ejecutando seeders:", error);
