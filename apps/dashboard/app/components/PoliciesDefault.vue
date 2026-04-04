@@ -23,82 +23,98 @@
       </p>
 
       <div class="policies--default__table-wrapper">
-        <TableDefault :columns="tableColumns">
-          <draggable
-            v-model="allPolicies"
-            tag="template"
-            item-key="id"
-            handle=".policies--default__drag"
-            :disabled="!isDraggable"
-            @end="handleReorder"
-          >
-            <template #item="{ element: policy }">
-              <TableRow :key="policy.id">
-                <TableCell>
-                  <button
-                    class="policies--default__drag"
-                    :class="{
-                      'policies--default__drag--disabled': !isDraggable,
-                    }"
-                    :disabled="!isDraggable"
-                    title="Arrastrar para reordenar"
-                  >
-                    <GripVertical class="policies--default__drag__icon" />
-                  </button>
-                </TableCell>
-                <TableCell>{{ policy.id }}</TableCell>
-                <TableCell>
-                  <div
-                    v-if="policy.title"
-                    v-tooltip="
-                      stripHtml(policy.title).length > 60
-                        ? stripHtml(policy.title)
-                        : ''
-                    "
-                    class="policies--default__question"
-                  >
-                    {{ truncateText(policy.title, 60) }}
-                  </div>
-                  <div v-else class="policies--default__question">-</div>
-                </TableCell>
-                <TableCell>
-                  <div
-                    v-if="policy.text"
-                    v-tooltip="
-                      stripHtml(policy.text).length > 80
-                        ? stripHtml(policy.text)
-                        : ''
-                    "
-                    class="policies--default__answer"
-                  >
-                    {{ truncateText(policy.text, 80) }}
-                  </div>
-                  <div v-else class="policies--default__answer">-</div>
-                </TableCell>
-                <TableCell>{{ policy.order ?? "-" }}</TableCell>
-                <TableCell>{{ formatDate(policy.updatedAt) }}</TableCell>
-                <TableCell align="right">
-                  <div class="policies--default__actions">
+        <div class="table table--default">
+          <table class="table--default__table">
+            <thead class="table--default__header">
+              <tr class="table--default__row">
+                <th class="table--default__head"></th>
+                <th class="table--default__head">ID</th>
+                <th class="table--default__head">Título</th>
+                <th class="table--default__head">Contenido</th>
+                <th class="table--default__head">Orden</th>
+                <th class="table--default__head">Fecha</th>
+                <th class="table--default__head table--default__head--right">
+                  Acciones
+                </th>
+              </tr>
+            </thead>
+            <draggable
+              v-model="allPolicies"
+              tag="tbody"
+              item-key="id"
+              handle=".policies--default__drag"
+              :disabled="!isDraggable"
+              class="table--default__body"
+              @end="handleReorder"
+            >
+              <template #item="{ element: policy }">
+                <TableRow :key="policy.id">
+                  <TableCell>
                     <button
-                      class="policies--default__action"
-                      title="Ver Politica"
-                      @click="handleViewPolicy(policy.id)"
+                      class="policies--default__drag"
+                      :class="{
+                        'policies--default__drag--disabled': !isDraggable,
+                      }"
+                      :disabled="!isDraggable"
+                      title="Arrastrar para reordenar"
                     >
-                      <Eye class="policies--default__action__icon" />
+                      <GripVertical class="policies--default__drag__icon" />
                     </button>
-                    <button
-                      class="policies--default__action"
-                      title="Editar Politica"
-                      @click="handleEditPolicy(policy.id)"
+                  </TableCell>
+                  <TableCell>{{ policy.id }}</TableCell>
+                  <TableCell>
+                    <div
+                      v-if="policy.title"
+                      v-tooltip="
+                        stripHtml(policy.title).length > 60
+                          ? stripHtml(policy.title)
+                          : ''
+                      "
+                      class="policies--default__question"
                     >
-                      <Pencil class="policies--default__action__icon" />
-                    </button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            </template>
-          </draggable>
-        </TableDefault>
+                      {{ truncateText(policy.title, 60) }}
+                    </div>
+                    <div v-else class="policies--default__question">-</div>
+                  </TableCell>
+                  <TableCell>
+                    <div
+                      v-if="policy.text"
+                      v-tooltip="
+                        stripHtml(policy.text).length > 80
+                          ? stripHtml(policy.text)
+                          : ''
+                      "
+                      class="policies--default__answer"
+                    >
+                      {{ truncateText(policy.text, 80) }}
+                    </div>
+                    <div v-else class="policies--default__answer">-</div>
+                  </TableCell>
+                  <TableCell>{{ policy.order ?? "-" }}</TableCell>
+                  <TableCell>{{ formatDate(policy.updatedAt) }}</TableCell>
+                  <TableCell align="right">
+                    <div class="policies--default__actions">
+                      <button
+                        class="policies--default__action"
+                        title="Ver Politica"
+                        @click="handleViewPolicy(policy.id)"
+                      >
+                        <Eye class="policies--default__action__icon" />
+                      </button>
+                      <button
+                        class="policies--default__action"
+                        title="Editar Politica"
+                        @click="handleEditPolicy(policy.id)"
+                      >
+                        <Pencil class="policies--default__action__icon" />
+                      </button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              </template>
+            </draggable>
+          </table>
+        </div>
 
         <div
           v-if="allPolicies.length === 0 && !loading"
@@ -125,7 +141,6 @@ import draggable from "vuedraggable";
 import { useSettingsStore } from "@/stores/settings.store";
 import SearchDefault from "@/components/SearchDefault.vue";
 import FilterDefault from "@/components/FilterDefault.vue";
-import TableDefault from "@/components/TableDefault.vue";
 import TableRow from "@/components/TableRow.vue";
 import TableCell from "@/components/TableCell.vue";
 
@@ -224,16 +239,6 @@ const handleReorder = async () => {
     saving.value = false;
   }
 };
-
-const tableColumns = [
-  { label: "" },
-  { label: "ID" },
-  { label: "Título" },
-  { label: "Contenido" },
-  { label: "Orden" },
-  { label: "Fecha" },
-  { label: "Acciones", align: "right" as const },
-];
 
 const sortOptions = [
   { value: "order:asc", label: "Orden asc." },
