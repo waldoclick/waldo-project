@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 111-01-PLAN.md
-last_updated: "2026-04-04T18:11:11.108Z"
+stopped_at: Completed 111-02-PLAN.md
+last_updated: "2026-04-04T18:21:23.767Z"
 progress:
   total_phases: 5
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 12
-  completed_plans: 11
+  completed_plans: 12
   percent: 92
 ---
 
@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 Milestone v1.46 PRO Subscriptions archived. Ready to start next milestone.
 
 ```
-Progress: [█████████░] 92%
+Progress: [██████████] 100%
 ```
 
 ## Accumulated Context
@@ -61,6 +61,8 @@ Progress: [█████████░] 92%
 - useAdsStore() must be instantiated at setup scope before useAsyncData, not inside the callback — composable context is only available at setup time (110-01)
 - Used richtext (not text) for Strapi policy text field because content contains multi-paragraph HTML with p and a tags (111-01)
 - order integer field allows editors to control policy display sequence from Strapi admin independently of creation order (111-01)
+- policy.d.ts uses order: number | null instead of featured: boolean — policies have explicit ordering, not featured flag (111-02)
+- default: () => [] added to useAsyncData in politicas-de-privacidad.vue per CLAUDE.md rule to eliminate T|undefined from return type (111-02)
 
 ### Roadmap Evolution
 
@@ -82,6 +84,6 @@ Progress: [█████████░] 92%
 
 ## Session Continuity
 
-Last session: 2026-04-04T18:11:11.106Z
-Stopped at: Completed 111-01-PLAN.md
+Last session: 2026-04-04T18:21:23.764Z
+Stopped at: Completed 111-02-PLAN.md
 Resume file: None
