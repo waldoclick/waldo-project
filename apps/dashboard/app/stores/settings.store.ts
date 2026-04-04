@@ -55,7 +55,10 @@ export const useSettingsStore = defineStore(
     const categories = ref<SectionSettings>({ ...defaultSectionSettings });
     const conditions = ref<SectionSettings>({ ...defaultSectionSettings });
     const faqs = ref<SectionSettings>({ ...defaultSectionSettings });
-    const policies = ref<SectionSettings>({ ...defaultSectionSettings });
+    const policies = ref<SectionSettings>({
+      ...defaultSectionSettings,
+      sortBy: "order:asc",
+    });
     const packs = ref<SectionSettings>({ ...defaultSectionSettings });
     const regions = ref<SectionSettings>({ ...defaultSectionSettings });
     const communes = ref<SectionSettings>({ ...defaultSectionSettings });
