@@ -30,7 +30,7 @@
           aria-label="Leer condiciones de uso"
           title="Leer condiciones de uso"
         >
-          <IconShield class="menu--about__icon" aria-hidden="true" />
+          <IconScrollText class="menu--about__icon" aria-hidden="true" />
           <span>Condiciones de uso</span>
         </nuxt-link>
       </li>
@@ -64,6 +64,7 @@
 import {
   HelpCircle as IconHelpCircle,
   Shield as IconShield,
+  ScrollText as IconScrollText,
   MessageSquare as IconMessageSquare,
   Map as IconMap,
 } from "lucide-vue-next";
