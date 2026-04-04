@@ -1,5 +1,5 @@
 <template>
-  <PoliciesDefault />
+  <PoliciesDefault :policies="policies || []" />
 </template>
 
 <script setup lang="ts">
@@ -14,6 +14,19 @@ import PoliciesDefault from "@/components/PoliciesDefault.vue";
 definePageMeta({
   layout: "about",
 });
+
+// Cargar policies — useAsyncData integra con el ciclo SSR de Nuxt;
+// el cache guard del store evita peticiones duplicadas.
+const policiesStore = usePoliciesStore();
+
+const { data: policies } = await useAsyncData(
+  "policies",
+  async () => {
+    await policiesStore.loadPolicies();
+    return policiesStore.policies || [];
+  },
+  { default: () => [], immediate: true, server: true },
+);
 
 $setSEO({
   title: "Políticas de Privacidad",
