@@ -204,8 +204,8 @@ const tableColumns = [
 ];
 
 const sortOptions = [
-  { value: "order:asc", label: "Orden ascendente" },
-  { value: "order:desc", label: "Orden descendente" },
+  { value: "order:asc", label: "Orden asc." },
+  { value: "order:desc", label: "Orden desc." },
   { value: "createdAt:desc", label: "Más recientes" },
   { value: "createdAt:asc", label: "Más antiguos" },
   { value: "title:asc", label: "Título A-Z" },
