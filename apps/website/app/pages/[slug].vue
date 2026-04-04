@@ -84,11 +84,14 @@ const {
     await userStore.loadUser(username);
 
     if (!userStore.user?.id) {
-      throw createError({
-        statusCode: 404,
-        message: "Página no encontrada",
-        fatal: true,
-      });
+      if (import.meta.server) {
+        throw createError({
+          statusCode: 404,
+          message: "Página no encontrada",
+          fatal: true,
+        });
+      }
+      return null;
     }
 
     const paginationParams = { pageSize: 12, page: currentPage.value };
