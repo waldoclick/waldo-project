@@ -15,9 +15,14 @@
         <span>Políticas de privacidad</span>
       </NuxtLink>
     </li>
-    <li>
+    <!-- <li>
       <NuxtLink to="/contacto">
         <span>Contáctanos</span>
+      </NuxtLink>
+    </li> -->
+    <li>
+      <NuxtLink to="/condiciones-de-uso">
+        <span>Condiciones de uso</span>
       </NuxtLink>
     </li>
   </ul>

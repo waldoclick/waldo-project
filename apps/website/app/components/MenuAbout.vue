@@ -25,6 +25,17 @@
       </li>
       <li class="menu--about__item">
         <nuxt-link
+          to="/condiciones-de-uso"
+          class="menu--about__link"
+          aria-label="Leer condiciones de uso"
+          title="Leer condiciones de uso"
+        >
+          <IconShield class="menu--about__icon" aria-hidden="true" />
+          <span>Condiciones de uso</span>
+        </nuxt-link>
+      </li>
+      <li class="menu--about__item">
+        <nuxt-link
           to="/contacto"
           class="menu--about__link"
           aria-label="Contactar con el equipo de soporte"
