@@ -135,6 +135,10 @@ const {
   },
 );
 
+if (error.value) {
+  throw error.value;
+}
+
 // Observar los datos para cambios dinámicos (solo en cliente)
 if (import.meta.client) {
   watchEffect(() => {
