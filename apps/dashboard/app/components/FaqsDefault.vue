@@ -13,72 +13,118 @@
         <FilterDefault
           :model-value="filters"
           :sort-options="sortOptions"
-          :page-sizes="[10, 25, 50, 100]"
           class="faqs--default__filters"
           @update:model-value="handleFiltersChange"
         />
       </div>
 
+      <p v-if="!isDraggable" class="faqs--default__drag-note">
+        El arrastre para reordenar no esta disponible mientras se filtra.
+      </p>
+
       <div class="faqs--default__table-wrapper">
-        <TableDefault :columns="tableColumns">
-          <TableRow v-for="faq in paginatedFaqs" :key="faq.id">
-            <TableCell>{{ faq.id }}</TableCell>
-            <TableCell>
-              <div
-                v-if="faq.title"
-                v-tooltip="
-                  stripHtml(faq.title).length > 60 ? stripHtml(faq.title) : ''
-                "
-                class="faqs--default__question"
-              >
-                {{ truncateText(faq.title, 60) }}
-              </div>
-              <div v-else class="faqs--default__question">-</div>
-            </TableCell>
-            <TableCell>
-              <div
-                v-if="faq.text"
-                v-tooltip="
-                  stripHtml(faq.text).length > 80 ? stripHtml(faq.text) : ''
-                "
-                class="faqs--default__answer"
-              >
-                {{ truncateText(faq.text, 80) }}
-              </div>
-              <div v-else class="faqs--default__answer">-</div>
-            </TableCell>
-            <TableCell>
-              <BadgeDefault v-if="faq.featured" variant="default">
-                Destacado
-              </BadgeDefault>
-              <BadgeDefault v-else variant="outline">
-                No destacado
-              </BadgeDefault>
-            </TableCell>
-            <TableCell>{{ formatDate(faq.updatedAt) }}</TableCell>
-            <TableCell align="right">
-              <div class="faqs--default__actions">
-                <button
-                  class="faqs--default__action"
-                  title="Ver FAQ"
-                  @click="handleViewFaq(faq.id)"
-                >
-                  <Eye class="faqs--default__action__icon" />
-                </button>
-                <button
-                  class="faqs--default__action"
-                  title="Editar FAQ"
-                  @click="handleEditFaq(faq.id)"
-                >
-                  <Pencil class="faqs--default__action__icon" />
-                </button>
-              </div>
-            </TableCell>
-          </TableRow>
-        </TableDefault>
+        <div class="table table--default">
+          <table class="table--default__table">
+            <thead class="table--default__header">
+              <tr class="table--default__row">
+                <th class="table--default__head"></th>
+                <th class="table--default__head">Orden</th>
+                <th class="table--default__head">Pregunta</th>
+                <th class="table--default__head">Respuesta</th>
+                <th class="table--default__head">Destacado</th>
+                <th class="table--default__head">Fecha</th>
+                <th class="table--default__head table--default__head--right">
+                  Acciones
+                </th>
+              </tr>
+            </thead>
+            <draggable
+              v-model="allFaqs"
+              tag="tbody"
+              item-key="id"
+              handle=".faqs--default__drag"
+              :disabled="!isDraggable"
+              class="table--default__body"
+              @end="handleReorder"
+            >
+              <template #item="{ element: faq }">
+                <TableRow :key="faq.id">
+                  <TableCell>
+                    <button
+                      class="faqs--default__drag"
+                      :class="{
+                        'faqs--default__drag--disabled': !isDraggable,
+                      }"
+                      :disabled="!isDraggable"
+                      title="Arrastrar para reordenar"
+                    >
+                      <GripVertical class="faqs--default__drag__icon" />
+                    </button>
+                  </TableCell>
+                  <TableCell>{{ faq.order ?? "-" }}</TableCell>
+                  <TableCell>
+                    <div
+                      v-if="faq.title"
+                      v-tooltip="
+                        stripHtml(faq.title).length > 60
+                          ? stripHtml(faq.title)
+                          : ''
+                      "
+                      class="faqs--default__question"
+                    >
+                      {{ truncateText(faq.title, 60) }}
+                    </div>
+                    <div v-else class="faqs--default__question">-</div>
+                  </TableCell>
+                  <TableCell>
+                    <div
+                      v-if="faq.text"
+                      v-tooltip="
+                        stripHtml(faq.text).length > 80
+                          ? stripHtml(faq.text)
+                          : ''
+                      "
+                      class="faqs--default__answer"
+                    >
+                      {{ truncateText(faq.text, 80) }}
+                    </div>
+                    <div v-else class="faqs--default__answer">-</div>
+                  </TableCell>
+                  <TableCell>
+                    <BadgeDefault v-if="faq.featured" variant="default">
+                      Destacado
+                    </BadgeDefault>
+                    <BadgeDefault v-else variant="outline">
+                      No destacado
+                    </BadgeDefault>
+                  </TableCell>
+                  <TableCell>{{ formatDate(faq.updatedAt) }}</TableCell>
+                  <TableCell align="right">
+                    <div class="faqs--default__actions">
+                      <button
+                        class="faqs--default__action"
+                        title="Ver FAQ"
+                        @click="handleViewFaq(faq.id)"
+                      >
+                        <Eye class="faqs--default__action__icon" />
+                      </button>
+                      <button
+                        class="faqs--default__action"
+                        title="Editar FAQ"
+                        @click="handleEditFaq(faq.id)"
+                      >
+                        <Pencil class="faqs--default__action__icon" />
+                      </button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              </template>
+            </draggable>
+          </table>
+        </div>
 
         <div
-          v-if="paginatedFaqs.length === 0 && !loading"
+          v-if="allFaqs.length === 0 && !loading"
           class="faqs--default__empty"
         >
           <p>No se encontraron FAQs</p>
@@ -89,16 +135,12 @@
         </div>
       </div>
 
-      <PaginationDefault
-        :current-page="settingsStore.faqs.currentPage"
-        :total-pages="totalPages"
-        :total-records="totalRecords"
-        :page-size="settingsStore.faqs.pageSize"
-        class="faqs--default__pagination"
-        @page-change="
-          (page: number) => settingsStore.setCurrentPage(section, page)
-        "
-      />
+      <div class="faqs--default__footer">
+        <p v-if="!loading" class="faqs--default__count">
+          {{ allFaqs.length }} registro{{ allFaqs.length !== 1 ? "s" : "" }}
+        </p>
+        <p v-if="saving" class="faqs--default__saving">Guardando orden...</p>
+      </div>
     </div>
   </section>
 </template>
@@ -106,22 +148,24 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
-import { Eye, Pencil } from "lucide-vue-next";
+import { Eye, Pencil, GripVertical } from "lucide-vue-next";
+import draggable from "vuedraggable";
 import { useSettingsStore } from "@/stores/settings.store";
 import SearchDefault from "@/components/SearchDefault.vue";
 import FilterDefault from "@/components/FilterDefault.vue";
-import TableDefault from "@/components/TableDefault.vue";
 import TableRow from "@/components/TableRow.vue";
 import TableCell from "@/components/TableCell.vue";
 import BadgeDefault from "@/components/BadgeDefault.vue";
-import PaginationDefault from "@/components/PaginationDefault.vue";
 
 interface Faq {
   id: number;
+  documentId: string;
   title: string;
   text: string;
   featured: boolean;
+  order: number | null;
   updatedAt: string;
+  createdAt: string;
 }
 
 const settingsStore = useSettingsStore();
@@ -139,22 +183,16 @@ const handleFiltersChange = (newFilters: {
 const apiClient = useApiClient();
 const allFaqs = ref<Faq[]>([]);
 const loading = ref(false);
-const paginationMeta = ref<{
-  page: number;
-  pageSize: number;
-  pageCount: number;
-  total: number;
-} | null>(null);
+const saving = ref(false);
+
+const isDraggable = computed(() => !settingsStore.faqs.searchTerm);
 
 const fetchFaqs = async () => {
   try {
     loading.value = true;
 
     const searchParams: Record<string, unknown> = {
-      pagination: {
-        page: settingsStore.faqs.currentPage,
-        pageSize: settingsStore.faqs.pageSize,
-      },
+      pagination: { pageSize: 200 },
       sort: settingsStore.faqs.sortBy,
     };
 
@@ -170,12 +208,12 @@ const fetchFaqs = async () => {
     const response = (await apiClient("faqs", {
       method: "GET",
       params: searchParams as unknown as Record<string, unknown>,
-    })) as { data: Faq[]; meta: { pagination: typeof paginationMeta.value } };
+    })) as {
+      data: Faq[];
+    };
     allFaqs.value = Array.isArray(response.data)
       ? (response.data as Faq[])
       : [];
-    paginationMeta.value = (response.meta?.pagination ||
-      null) as typeof paginationMeta.value;
   } catch (error) {
     console.error("Error fetching faqs:", error);
     allFaqs.value = [];
@@ -184,26 +222,41 @@ const fetchFaqs = async () => {
   }
 };
 
-const paginatedFaqs = computed(() => allFaqs.value);
+const handleReorder = async () => {
+  if (!isDraggable.value) return;
+  saving.value = true;
+  try {
+    const updates = allFaqs.value.map((faq, index) => ({
+      documentId: faq.documentId,
+      order: index + 1,
+    }));
 
-const totalPages = computed(() => {
-  return paginationMeta.value?.pageCount || 1;
-});
+    await Promise.all(
+      updates.map((u) =>
+        apiClient(`/faqs/${u.documentId}`, {
+          method: "PUT",
+          body: { data: { order: u.order } },
+        }),
+      ),
+    );
 
-const totalRecords = computed(() => {
-  return paginationMeta.value?.total || 0;
-});
-
-const tableColumns = [
-  { label: "ID" },
-  { label: "Pregunta" },
-  { label: "Respuesta" },
-  { label: "Destacado" },
-  { label: "Fecha" },
-  { label: "Acciones", align: "right" as const },
-];
+    // Update local state to reflect new order values
+    allFaqs.value = allFaqs.value.map((faq, index) => ({
+      ...faq,
+      order: index + 1,
+    }));
+  } catch (error) {
+    console.error("Error saving faq order:", error);
+    // Re-fetch to restore server state on failure
+    await fetchFaqs();
+  } finally {
+    saving.value = false;
+  }
+};
 
 const sortOptions = [
+  { value: "order:asc", label: "Orden asc." },
+  { value: "order:desc", label: "Orden desc." },
   { value: "createdAt:desc", label: "Más recientes" },
   { value: "createdAt:asc", label: "Más antiguos" },
   { value: "title:asc", label: "Título A-Z" },
@@ -241,12 +294,7 @@ const handleEditFaq = (faqId: number) => {
 };
 
 watch(
-  [
-    () => settingsStore.faqs.searchTerm,
-    () => settingsStore.faqs.sortBy,
-    () => settingsStore.faqs.pageSize,
-    () => settingsStore.faqs.currentPage,
-  ],
+  [() => settingsStore.faqs.searchTerm, () => settingsStore.faqs.sortBy],
   () => {
     fetchFaqs();
   },

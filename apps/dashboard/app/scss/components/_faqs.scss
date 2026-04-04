@@ -102,8 +102,57 @@
       }
     }
 
-    &__pagination {
-      margin-top: 16px;
+    &__drag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: none;
+      cursor: grab;
+      border-radius: 4px;
+      color: $davys_grey;
+
+      &:active {
+        cursor: grabbing;
+      }
+
+      &--disabled {
+        cursor: not-allowed;
+        opacity: 0.3;
+      }
+
+      &__icon {
+        width: 16px;
+        height: 16px;
+      }
+    }
+
+    &__drag-note {
+      font-size: 13px;
+      color: $davys_grey;
+      margin: 0;
+      padding: 0 4px;
+    }
+
+    &__footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    &__count {
+      font-size: 13px;
+      color: $davys_grey;
+      margin: 0;
+    }
+
+    &__saving {
+      font-size: 13px;
+      color: $davys_grey;
+      margin: 0;
     }
   }
 }
