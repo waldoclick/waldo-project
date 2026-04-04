@@ -28,10 +28,9 @@
             <thead class="table--default__header">
               <tr class="table--default__row">
                 <th class="table--default__head"></th>
-                <th class="table--default__head">ID</th>
+                <th class="table--default__head">Orden</th>
                 <th class="table--default__head">Título</th>
                 <th class="table--default__head">Contenido</th>
-                <th class="table--default__head">Orden</th>
                 <th class="table--default__head">Fecha</th>
                 <th class="table--default__head table--default__head--right">
                   Acciones
@@ -61,7 +60,7 @@
                       <GripVertical class="policies--default__drag__icon" />
                     </button>
                   </TableCell>
-                  <TableCell>{{ policy.id }}</TableCell>
+                  <TableCell>{{ policy.order ?? "-" }}</TableCell>
                   <TableCell>
                     <div
                       v-if="policy.title"
@@ -90,7 +89,6 @@
                     </div>
                     <div v-else class="policies--default__answer">-</div>
                   </TableCell>
-                  <TableCell>{{ policy.order ?? "-" }}</TableCell>
                   <TableCell>{{ formatDate(policy.updatedAt) }}</TableCell>
                   <TableCell align="right">
                     <div class="policies--default__actions">
