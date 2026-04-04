@@ -24,16 +24,6 @@
         <ErrorMessage name="text" />
       </div>
 
-      <div class="form__group">
-        <label class="form__label" for="order">Orden</label>
-        <Field
-          v-model.number="form.order"
-          name="order"
-          type="number"
-          class="form__control"
-        />
-      </div>
-
       <div class="form__send">
         <button
           :disabled="sending || !meta.valid"
@@ -175,6 +165,19 @@ const handleSubmit = async (values: any) => {
         router.push(`/policies/${updatedId}`);
       }
     } else {
+      const lastResponse = (await apiClient("policies", {
+        method: "GET",
+        params: {
+          sort: "order:desc",
+          pagination: { pageSize: 1 },
+        } as unknown as Record<string, unknown>,
+      })) as { data: Array<{ order: number | null }> };
+      const lastOrder =
+        Array.isArray(lastResponse.data) && lastResponse.data[0]?.order != null
+          ? lastResponse.data[0].order
+          : 0;
+      payload.order = lastOrder + 1;
+
       const response = await apiClient<{
         data: { id?: number; documentId?: string };
       }>("/policies", {
