@@ -101,8 +101,8 @@ Plans:
 **Goal:** Create a `policy` collection type in Strapi so editors can manage privacy policy text from the admin panel, write a seeder that pre-populates all 16 policy sections from the current hardcoded data, and refactor the website frontend to fetch policies from the API instead of a static array.
 **Requirements**: [POL-01, POL-02, POL-03, POL-04, POL-05, POL-06, POL-07]
 **Depends on:** Phase 110
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
-- [ ] 111-01-PLAN.md — Strapi policy content type + seeder + bootstrap registration
+- [x] 111-01-PLAN.md — Strapi policy content type + seeder + bootstrap registration
 - [ ] 111-02-PLAN.md — Website type, store, page and component refactor to use Strapi data
