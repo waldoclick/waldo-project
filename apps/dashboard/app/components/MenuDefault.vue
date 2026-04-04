@@ -283,6 +283,17 @@
           <li
             class="menu--default__subitem"
             :class="{
+              'menu--default__subitem--active': isRouteActive('/policies'),
+            }"
+          >
+            <NuxtLink to="/policies" class="menu--default__sublink">
+              <Shield class="menu--default__subicon" />
+              <span>Politicas</span>
+            </NuxtLink>
+          </li>
+          <li
+            class="menu--default__subitem"
+            :class="{
               'menu--default__subitem--active': isRouteActive('/packs'),
             }"
           >
@@ -354,6 +365,7 @@ import {
   FileCheck,
   HelpCircle,
   Box,
+  Shield,
   MapPin,
   Building,
   Newspaper,
@@ -378,6 +390,7 @@ const isMantenedoresActive = computed(() => {
     isRouteActive("/categories") ||
     isRouteActive("/conditions") ||
     isRouteActive("/faqs") ||
+    isRouteActive("/policies") ||
     isRouteActive("/packs") ||
     isRouteActive("/regions") ||
     isRouteActive("/communes") ||
@@ -404,6 +417,7 @@ watch(
       path.startsWith("/categories") ||
       path.startsWith("/conditions") ||
       path.startsWith("/faqs") ||
+      path.startsWith("/policies") ||
       path.startsWith("/packs") ||
       path.startsWith("/regions") ||
       path.startsWith("/communes") ||
