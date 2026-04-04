@@ -82,6 +82,7 @@ Progress: [██████████] 100%
 |---|-------------|------|--------|-----------|
 | 260329-pa1 | fix CSP violations in staging - add missing script-src connect-src worker-src directives for Google GTM reCAPTCHA Hotjar Cloudflare Sentry | 2026-03-29 | f5ead3f9 | [260329-pa1-fix-csp-violations-in-staging-add-missin](./quick/260329-pa1-fix-csp-violations-in-staging-add-missin/) |
 | 260404-lpv | fix blank page on non-existent root slugs - rethrow useAsyncData error.value in [slug].vue so Nuxt routes to error.vue with 404 | 2026-04-04 | 3ba48296 | [260404-lpv-la-pagina-historial-no-existe-pero-no-mu](./quick/260404-lpv-la-pagina-historial-no-existe-pero-no-mu/) |
+| 260404-mbi | privacy policy maintainer in dashboard following FAQ pattern | 2026-04-04 | eaba7f45 | [260404-mbi-privacy-policy-maintainer-in-dashboard-f](./quick/260404-mbi-privacy-policy-maintainer-in-dashboard-f/) |
 
 ## Session Continuity
 
