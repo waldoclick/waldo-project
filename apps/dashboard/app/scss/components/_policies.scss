@@ -136,11 +136,23 @@
       padding: 0 4px;
     }
 
+    &__footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    &__count {
+      font-size: 13px;
+      color: $davys_grey;
+      margin: 0;
+    }
+
     &__saving {
       font-size: 13px;
       color: $davys_grey;
-      text-align: center;
-      padding: 8px 0;
+      margin: 0;
     }
   }
 }
