@@ -126,7 +126,16 @@
         </div>
       </div>
 
-      <p v-if="saving" class="policies--default__saving">Guardando orden...</p>
+      <div class="policies--default__footer">
+        <p v-if="!loading" class="policies--default__count">
+          {{ allPolicies.length }} registro{{
+            allPolicies.length !== 1 ? "s" : ""
+          }}
+        </p>
+        <p v-if="saving" class="policies--default__saving">
+          Guardando orden...
+        </p>
+      </div>
     </div>
   </section>
 </template>

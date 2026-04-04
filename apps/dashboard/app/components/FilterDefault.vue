@@ -31,7 +31,10 @@
       </div>
 
       <!-- Page Size Filter -->
-      <div class="filter--default__pagesize">
+      <div
+        v-if="pageSizes && pageSizes.length > 0"
+        class="filter--default__pagesize"
+      >
         <button
           class="filter--default__button"
           @click="isPageSizeOpen = !isPageSizeOpen"
