@@ -135,7 +135,7 @@ export class FlowService {
   }
 
   async getPaymentStatus(token: string): Promise<IFlowPaymentStatusResponse> {
-    const endpoint = `${this.config.apiBaseUrl}/payment/getStatus`;
+    const _endpoint = `${this.config.apiBaseUrl}/payment/getStatus`;
     const params: Record<string, string> = {
       apiKey: this.config.apiKey,
       token: token,

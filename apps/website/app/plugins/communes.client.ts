@@ -1,6 +1,6 @@
 import { useCommunesStore } from "@/stores/communes.store";
 
-export default defineNuxtPlugin(async (nuxtApp) => {
+export default defineNuxtPlugin(async (_nuxtApp) => {
   // Solo cargar en el cliente
   if (import.meta.client) {
     const communesStore = useCommunesStore();

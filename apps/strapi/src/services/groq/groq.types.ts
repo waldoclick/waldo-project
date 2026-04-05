@@ -7,5 +7,5 @@ export interface GroqResponse {
 }
 
 export interface IGroqService {
-  generate(request: GroqRequest): Promise<GroqResponse>;
+  generate(_request: GroqRequest): Promise<GroqResponse>;
 }

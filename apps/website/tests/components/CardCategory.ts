@@ -1,6 +1,4 @@
-import { describe, it, expect } from "vitest";
-import { mount } from "@vue/test-utils";
-import CardCategory from "@/components/CardCategory.vue";
+import { describe, it } from "vitest";
 
 describe("CardCategory", () => {
   it("renders correctly", () => {

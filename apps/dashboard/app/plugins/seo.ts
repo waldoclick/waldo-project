@@ -21,7 +21,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 // Add type declaration for better TypeScript support
 declare module "#app" {
   interface NuxtApp {
-    $setSEO: (params: {
+    $setSEO: (_params: {
       title: string;
       description: string;
       imageUrl?: string;
