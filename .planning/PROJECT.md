@@ -389,7 +389,8 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 
 ## Current State
 
-**Last shipped:** v1.46 (2026-03-29) — PRO Subscriptions (Webpay Oneclick): full subscription lifecycle — Oneclick Mall inscription, daily charge cron with 3-day retry, cancellation with period-end expiry, PRO checkout page with Facto tax documents, registration consent checkboxes
+**Last shipped:** v1.46 (2026-04-05) — Phase 112 complete: Ad wizard ownership validation — server-side ownership guards on saveDraft/update/delete in Strapi; client-side userId tracking with wizard reset guard in anunciar/index.vue
+**v1.46 PRO Subscriptions (2026-03-29):** Webpay Oneclick full subscription lifecycle — Oneclick Mall inscription, daily charge cron with 3-day retry, cancellation with period-end expiry, PRO checkout page with Facto tax documents, registration consent checkboxes
 **Also shipped recently:** v1.45 (2026-03-20) — User Onboarding; v1.44 (2026-03-19) — Google One Tap Sign-In; v1.43 (2026-03-19) — Cross-App Session Replacement
 
 **Email Authentication (since v1.37):** `overrideForgotPassword` fully replaces Strapi's built-in — sends branded `reset-password.mjml` routed to website or dashboard based on `context` field in POST body; `DASHBOARD_URL` env var drives dashboard reset URL. `FormRegister.vue` JWT guard redirects to `/registro/confirmar` (no `setToken` call without JWT); `/registro/confirmar` page with resend button + 60s countdown; `FormLogin.vue` (both apps) shows inline resend section for unconfirmed accounts. Idempotent migration seeder (`user-confirmed-migration.ts`) + cron-runner registration; production DB migrated to `confirmed=true`; Strapi Admin Panel `email_confirmation: ON`, `email_confirmation_redirection: https://waldo.click/login`; smoke-test passed (REGV-01, REGV-02, REGV-06).
@@ -551,4 +552,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ `accepted_age_confirmation` and `accepted_terms` boolean fields stored on Strapi user record (`default: false`) — v1.46
 
 ---
-*Last updated: 2026-03-29 after Phase 108 (dashboard replace nuxtjs-strapi sdk with useApiClient for all reads)*
+*Last updated: 2026-04-05 after Phase 112 (fix-ad-wizard-ownership-validation)*
