@@ -78,7 +78,7 @@ export default cachedEventHandler(
 
     // Anuncios activos
     try {
-      const adsRes = await fetch(`${apiUrl}/api/ads/actives`);
+      const adsRes = await fetch(`${apiUrl}/api/ads/catalog`);
       if (adsRes.ok) {
         const adsData = await adsRes.json();
         const ads: AdEntry[] = adsData.data || [];
