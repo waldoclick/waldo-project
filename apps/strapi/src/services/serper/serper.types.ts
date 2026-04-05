@@ -17,5 +17,5 @@ export interface SerperSearchResponse {
 }
 
 export interface ISerperService {
-  searchNews(request: SerperSearchRequest): Promise<SerperSearchResponse>;
+  searchNews(_request: SerperSearchRequest): Promise<SerperSearchResponse>;
 }

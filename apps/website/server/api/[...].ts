@@ -79,9 +79,10 @@ export default defineEventHandler(async (event) => {
     headers["Content-Type"] = contentType;
   }
 
-  const cookie = getHeader(event, "cookie");
-  if (cookie) {
-    headers["Cookie"] = cookie;
+  const cookies = parseCookies(event);
+  const jwt = cookies["waldo_jwt"];
+  if (jwt) {
+    headers["Cookie"] = `waldo_jwt=${jwt}`;
   }
 
   // Forward the request

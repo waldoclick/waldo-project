@@ -10,9 +10,9 @@ export interface IGoogleAuthService {
 }
 
 export interface IGoogleSheetsService {
-  appendToSheet(data: unknown[]): Promise<void>;
+  appendToSheet(_data: unknown[]): Promise<void>;
 }
 
 export interface IGoogleRecaptchaService {
-  verifyToken(token: string): Promise<boolean>;
+  verifyToken(_token: string): Promise<boolean>;
 }

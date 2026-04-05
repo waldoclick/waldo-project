@@ -1,4 +1,4 @@
-import { OrderData, OrderResponse } from "../types/payment.type";
+import { OrderResponse } from "../types/payment.type";
 
 interface CreateOrderParams {
   amount: number;

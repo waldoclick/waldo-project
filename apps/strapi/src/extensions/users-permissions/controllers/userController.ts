@@ -210,13 +210,17 @@ export const getUserDataWithFilters = async (ctx) => {
 
   // Sanitize sensitive fields without calling getDetailedUserData (avoids N+1)
   const sanitizedUsers = (users as Record<string, unknown>[]).map((user) => {
-    const { password, resetPasswordToken, confirmationToken, ...safe } =
-      user as {
-        password?: unknown;
-        resetPasswordToken?: unknown;
-        confirmationToken?: unknown;
-        [key: string]: unknown;
-      };
+    const {
+      password: _password,
+      resetPasswordToken: _resetPasswordToken,
+      confirmationToken: _confirmationToken,
+      ...safe
+    } = user as {
+      password?: unknown;
+      resetPasswordToken?: unknown;
+      confirmationToken?: unknown;
+      [key: string]: unknown;
+    };
     return safe;
   });
 

@@ -159,7 +159,7 @@ const handleSubmit = async (values: Record<string, unknown>) => {
   >;
   const cookieName = strapiPublicConfig.cookieName as string;
   if (nuxtApp._cookies?.[cookieName]) {
-    delete nuxtApp._cookies[cookieName];
+    Reflect.deleteProperty(nuxtApp._cookies, cookieName);
   }
 
   sending.value = true;

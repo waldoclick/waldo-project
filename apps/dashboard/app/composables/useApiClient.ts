@@ -29,7 +29,7 @@ export function useApiClient() {
         // $recaptcha is a client-only plugin — undefined on SSR
         recaptchaToken = await (
           nuxtApp.$recaptcha as
-            | { execute: (action: string) => Promise<string> }
+            | { execute: (_action: string) => Promise<string> }
             | undefined
         )?.execute("submit");
       } catch {

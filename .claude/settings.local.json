@@ -36,7 +36,24 @@
       "Bash(python3 -c ':*)",
       "Skill(gsd:quick)",
       "Bash(npx --prefix apps/strapi @mapbox/node-pre-gyp rebuild --directory node_modules/better-sqlite3)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Read(//tmp/**)",
+      "Skill(gsd:plan-phase)",
+      "Bash(xargs -I{} chmod 644 \"/home/gab/Code/waldo-project/{}\")",
+      "Bash(sed -n '158,167p' /home/gab/Code/waldo-project/apps/dashboard/app/components/FormLogin.vue)",
+      "Bash(sed -n '139,148p' /home/gab/Code/waldo-project/apps/dashboard/app/components/FormVerifyCode.vue)",
+      "Bash(grep -n \"useAsyncData\\\\|loadAd\\\\|client\\\\|route.params\" /home/gab/Code/waldo-project/apps/dashboard/app/pages/ads/[id].vue)",
+      "Bash(grep -n \"href\\\\|to.*id\\\\|item.*id\\\\|row.*id\\\\|ads/\\\\${\" /home/gab/Code/waldo-project/apps/dashboard/app/components/AdsTable.vue)",
+      "Bash(sqlite3 /home/gab/Code/waldo-project/apps/strapi/.tmp/data.db ':*)",
+      "Bash(sqlite3:*)",
+      "Bash(grep -E \"\\\\.\\(ts|js|json\\)$\")",
+      "Bash(yarn build:*)",
+      "Bash(grep -n \"useSessionToken\\\\|useSessionUser\" /home/gab/Code/waldo-project/apps/dashboard/app/composables/useSessionAuth.ts /home/gab/Code/waldo-project/apps/dashboard/app/composables/*.ts)",
+      "Bash(curl -s \"http://localhost:3000/api/ads/catalog?pagination[pageSize]=3&pagination[page]=1\" -v)",
+      "Bash(grep -rn \"STRAPI_TOKEN\\\\|strapi_token\\\\|token\" /home/gab/Code/waldo-project/apps/website/.env*)",
+      "Bash(grep -rn \"persist\" /home/gab/Code/waldo-project/apps/website/app/stores/*.ts)",
+      "Bash(grep -E \"\\\\.ts$\")",
+      "Bash(find . -name \"package.json\" -path \"*/apps/strapi/*\" -exec cat {} \\\\;)"
     ]
   }
 }

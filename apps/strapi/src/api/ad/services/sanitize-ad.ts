@@ -71,6 +71,8 @@ export function sanitizeAdForPublic(
     publishedAt: adFields.publishedAt,
     needs_payment: adFields.needs_payment,
     featured: adFields.featured,
+    reason_for_rejection: adFields.reason_for_rejection,
+    reason_for_ban: adFields.reason_for_ban,
     // Relations
     user: safeUser,
     gallery: adFields.gallery,

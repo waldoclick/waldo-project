@@ -8,7 +8,7 @@ declare module "#app" {
       errorDetails: Array<{ type: string; message: string }>;
     }>;
     $recaptcha?: {
-      execute: (action: string) => Promise<string | undefined>;
+      execute: (_action: string) => Promise<string | undefined>;
     };
   }
 }

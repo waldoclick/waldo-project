@@ -33,6 +33,7 @@ export interface PurchaseOrderData {
 }
 
 // Crear objetos de análisis a partir de los datos del store
+
 const createPackAnalyticsItem = (packId: number | string) => {
   return {
     item_id: packId.toString(),
