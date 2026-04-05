@@ -13,7 +13,6 @@ export default {
       method: "GET",
       path: "/ads/catalog",
       handler: "ad.catalog",
-      config: { auth: false },
     },
     {
       method: "GET",

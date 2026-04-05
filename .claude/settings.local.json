@@ -47,7 +47,11 @@
       "Bash(sqlite3 /home/gab/Code/waldo-project/apps/strapi/.tmp/data.db ':*)",
       "Bash(sqlite3:*)",
       "Bash(grep -E \"\\\\.\\(ts|js|json\\)$\")",
-      "Bash(yarn build:*)"
+      "Bash(yarn build:*)",
+      "Bash(grep -n \"useSessionToken\\\\|useSessionUser\" /home/gab/Code/waldo-project/apps/dashboard/app/composables/useSessionAuth.ts /home/gab/Code/waldo-project/apps/dashboard/app/composables/*.ts)",
+      "Bash(curl -s \"http://localhost:3000/api/ads/catalog?pagination[pageSize]=3&pagination[page]=1\" -v)",
+      "Bash(grep -rn \"STRAPI_TOKEN\\\\|strapi_token\\\\|token\" /home/gab/Code/waldo-project/apps/website/.env*)",
+      "Bash(grep -rn \"persist\" /home/gab/Code/waldo-project/apps/website/app/stores/*.ts)"
     ]
   }
 }

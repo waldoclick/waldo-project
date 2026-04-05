@@ -117,3 +117,13 @@ Plans:
 Plans:
 - [x] 112-01-PLAN.md — Backend ownership checks: saveDraft update guard + controller update/delete overrides
 - [x] 112-02-PLAN.md — Frontend ownership guard: userId field in ad store + wizard entry reset
+
+### Phase 113: Fix stale session cookie leaking authenticated requests after logout
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 112
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 113 to break down)
