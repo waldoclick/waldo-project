@@ -94,8 +94,9 @@ export const useUserStore = defineStore("user", () => {
         data: Ad[];
         meta: { pagination: { total: number } };
       };
-      ads.value = typed.data as unknown as Ad[];
-      return typed;
+      const adsWithStatus = typed.data.map((ad) => ({ ...ad, status }));
+      ads.value = adsWithStatus as unknown as Ad[];
+      return { data: adsWithStatus as unknown as Ad[], meta: typed.meta };
     } catch {
       ads.value = [];
       return null;
