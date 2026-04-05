@@ -16,8 +16,8 @@ export default defineNuxtConfig({
 
   // 1. Basic Configuration
   modules: [
-    // Solo incluir nuxt-security si no estamos en modo local
-    ...(process.env.NODE_ENV !== "local" ? ["nuxt-security"] : []),
+    // Solo incluir nuxt-security en producción
+    ...(process.env.NODE_ENV === "production" ? ["nuxt-security"] : []),
     "@nuxt/test-utils/module",
     "@nuxt/eslint",
     "@nuxtjs/strapi",
@@ -32,8 +32,8 @@ export default defineNuxtConfig({
   ],
 
   // Security configuration - using nuxt-security defaults with customizations
-  // Solo aplicar configuración de seguridad si no estamos en modo local
-  ...(process.env.NODE_ENV !== "local" && {
+  // Solo aplicar configuración de seguridad en producción
+  ...(process.env.NODE_ENV === "production" && {
     security: {
       nonce: false,
       rateLimiter: {
@@ -178,7 +178,7 @@ export default defineNuxtConfig({
   site: {
     name: "Waldo.click®",
     defaultLocale: "es",
-    ...(process.env.NODE_ENV !== "local" && { url: process.env.BASE_URL }),
+    ...(process.env.NODE_ENV === "production" && { url: process.env.BASE_URL }),
   },
 
   ssr: true,
@@ -430,7 +430,7 @@ export default defineNuxtConfig({
     typeCheck: true,
   },
 
-  devtools: { enabled: process.env.NODE_ENV === "development" },
+  devtools: { enabled: process.env.NODE_ENV !== "production" },
 
   // Nuxt 4 optimizations
   experimental: {
@@ -463,17 +463,26 @@ export default defineNuxtConfig({
         },
       },
     },
+    optimizeDeps: {
+      include: [
+        "@vue/devtools-core",
+        "@vue/devtools-kit",
+        "js-cookie",
+        "logrocket",
+        "lucide-vue-next",
+        "@vueuse/core",
+        "floating-vue",
+        "dompurify",
+        "vue-awesome-paginate",
+        "marked",
+        "vee-validate",
+        "yup",
+        "sweetalert2/dist/sweetalert2.js",
+      ],
+    },
   },
 
   image: {
-    // Configuración para evitar event handlers inline
-    // onError: false, // Deshabilitar onerror inline
-    // quality: 80,
-    // format: ["webp"],
-    // provider: "ipx",
-    // ipx: {
-    //   maxAge: 60 * 60 * 24 * 7, // 7 días
-    //   dir: "public",
-    // },
+    provider: "ipx",
   },
 });
