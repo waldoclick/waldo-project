@@ -53,7 +53,8 @@
       "Bash(grep -rn \"STRAPI_TOKEN\\\\|strapi_token\\\\|token\" /home/gab/Code/waldo-project/apps/website/.env*)",
       "Bash(grep -rn \"persist\" /home/gab/Code/waldo-project/apps/website/app/stores/*.ts)",
       "Bash(grep -E \"\\\\.ts$\")",
-      "Bash(find . -name \"package.json\" -path \"*/apps/strapi/*\" -exec cat {} \\\\;)"
+      "Bash(find . -name \"package.json\" -path \"*/apps/strapi/*\" -exec cat {} \\\\;)",
+      "Bash(grep:*)"
     ]
   }
 }
