@@ -112,8 +112,8 @@ Plans:
 **Goal:** Prevent a logged-in user from continuing another user's ad wizard flow (persisted in localStorage) by: (1) storing the owner's userId in the ad.store and resetting early at wizard entry if it doesn't match the current user, (2) adding ownership validation in Strapi's saveDraft update path, and (3) overriding the inherited CRUD update/delete handlers in the ad controller to verify ownership before allowing modifications.
 **Requirements**: [SEC-112-01, SEC-112-02, SEC-112-03]
 **Depends on:** Phase 111
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
-- [ ] 112-01-PLAN.md — Backend ownership checks: saveDraft update guard + controller update/delete overrides
+- [x] 112-01-PLAN.md — Backend ownership checks: saveDraft update guard + controller update/delete overrides
 - [ ] 112-02-PLAN.md — Frontend ownership guard: userId field in ad store + wizard entry reset
