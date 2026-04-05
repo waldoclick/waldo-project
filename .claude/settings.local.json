@@ -46,7 +46,8 @@
       "Bash(grep -n \"href\\\\|to.*id\\\\|item.*id\\\\|row.*id\\\\|ads/\\\\${\" /home/gab/Code/waldo-project/apps/dashboard/app/components/AdsTable.vue)",
       "Bash(sqlite3 /home/gab/Code/waldo-project/apps/strapi/.tmp/data.db ':*)",
       "Bash(sqlite3:*)",
-      "Bash(grep -E \"\\\\.\\(ts|js|json\\)$\")"
+      "Bash(grep -E \"\\\\.\\(ts|js|json\\)$\")",
+      "Bash(yarn build:*)"
     ]
   }
 }
