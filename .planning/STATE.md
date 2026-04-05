@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-stopped_at: Completed quick task 260404-ouo
-last_updated: "2026-04-04T17:45:00.000Z"
+stopped_at: Completed quick task 260405-jn2 - Fix hero background image via IPX sharp native binary rebuild
+last_updated: "2026-04-05T18:16:30.404Z"
 progress:
   total_phases: 5
   completed_phases: 5
@@ -88,9 +88,10 @@ Progress: [██████████] 100%
 | 260404-nt5 | add order field to FAQ schema and drag-and-drop reorder in FaqsDefault.vue matching PoliciesDefault pattern | 2026-04-04 | a8ae2eab | [260404-nt5-en-faq-agregar-order-field-drag-and-drop](./quick/260404-nt5-en-faq-agregar-order-field-drag-and-drop/) |
 | 260404-o0g | Condiciones de Uso feature: Strapi term collection type, dashboard CRUD at /terms, website /condiciones-de-uso page | 2026-04-04 | c23d4a97 | [260404-o0g-hay-que-hacer-un-nuevo-collect-type-y-un](./quick/260404-o0g-hay-que-hacer-un-nuevo-collect-type-y-un/) |
 | 260404-ouo | Fix [slug].vue showing 404 for existing users - replace arrow function key with plain template literal in useAsyncData | 2026-04-04 | 1606c1ce | [260404-ouo-en-home-gab-code-waldo-project-apps-webs](./quick/260404-ouo-en-home-gab-code-waldo-project-apps-webs/) |
+| 260405-jn2 | Fix hero background image - rebuild IPX bundled sharp native binary, switch PictureDefault to NuxtImg, add postinstall to prevent regression | 2026-04-05 | 6f3cbfee | [260405-jn2-revisa-porque-la-imagen-del-herohome-no-](./quick/260405-jn2-revisa-porque-la-imagen-del-herohome-no-/) |
 
 ## Session Continuity
 
-Last session: 2026-04-04T20:53:37.000Z
-Stopped at: Completed quick task 260404-ouo - Fix [slug].vue showing 404 for existing users
+Last session: 2026-04-05T18:16:30.397Z
+Stopped at: Completed quick task 260405-jn2 - Fix hero background image via IPX sharp native binary rebuild
 Resume file: None
