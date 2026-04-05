@@ -9,9 +9,9 @@ declare global {
     google: {
       accounts: {
         id: {
-          initialize: (config: Record<string, unknown>) => void;
+          initialize: (_config: Record<string, unknown>) => void;
           prompt: (
-            callback?: (notification: GoogleOneTapNotification) => void,
+            _callback?: (_notification: GoogleOneTapNotification) => void,
           ) => void;
           disableAutoSelect: () => void;
         };
@@ -24,7 +24,7 @@ declare global {
         ready: () => void;
         afterReady?: () => void;
         privacy?: {
-          updateCookieConsent: (types: string[]) => void;
+          updateCookieConsent: (_types: string[]) => void;
         };
         [key: string]: unknown;
       };
