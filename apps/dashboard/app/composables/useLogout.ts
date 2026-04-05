@@ -16,7 +16,10 @@ export const useLogout = () => {
 
     // Clear the old host-only cookie (pre-migration, no domain attr) to prevent zombie sessions
     if (import.meta.client) {
-      document.cookie = "waldo_jwt=; path=/; max-age=0";
+      const { cookie: cookieOpts } = useRuntimeConfig().public.strapi as {
+        cookie: { path: string; domain?: string };
+      };
+      document.cookie = `waldo_jwt=; path=${cookieOpts.path}; max-age=0${cookieOpts.domain ? `; domain=${cookieOpts.domain}` : ""}`;
     }
 
     sessionLogout();
