@@ -170,9 +170,10 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
         delete options.pagination;
       }
 
+      const userId = ctx.state.user?.id ?? null;
       const activeAds = await strapi
         .service("api::ad.ad")
-        .activeAds(options, ctxIsManager(ctx));
+        .activeAds(options, ctxIsManager(ctx), userId);
       return activeAds;
     } catch (error) {
       ctx.throw(500, error);
@@ -208,9 +209,10 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
         delete options.pagination;
       }
 
+      const userId = ctx.state.user?.id ?? null;
       const pendingAds = await strapi
         .service("api::ad.ad")
-        .pendingAds(options, ctxIsManager(ctx));
+        .pendingAds(options, ctxIsManager(ctx), userId);
       return pendingAds;
     } catch (error) {
       ctx.throw(500, error);
@@ -246,9 +248,10 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
         delete options.pagination;
       }
 
+      const userId = ctx.state.user?.id ?? null;
       const archivedAds = await strapi
         .service("api::ad.ad")
-        .archivedAds(options, ctxIsManager(ctx));
+        .archivedAds(options, ctxIsManager(ctx), userId);
       return archivedAds;
     } catch (error) {
       ctx.throw(500, error);
@@ -281,9 +284,10 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
         delete options.pagination;
       }
 
+      const userId = ctx.state.user?.id ?? null;
       const bannedAds = await strapi
         .service("api::ad.ad")
-        .bannedAds(options, ctxIsManager(ctx));
+        .bannedAds(options, ctxIsManager(ctx), userId);
       return bannedAds;
     } catch (error) {
       ctx.throw(500, error);
@@ -319,9 +323,10 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
         delete options.pagination;
       }
 
+      const userId = ctx.state.user?.id ?? null;
       const rejectedAds = await strapi
         .service("api::ad.ad")
-        .rejectedAds(options, ctxIsManager(ctx));
+        .rejectedAds(options, ctxIsManager(ctx), userId);
       return rejectedAds;
     } catch (error) {
       ctx.throw(500, error);
@@ -355,9 +360,10 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
         delete options.pagination;
       }
 
+      const userId = ctx.state.user?.id ?? null;
       const draftAds = await strapi
         .service("api::ad.ad")
-        .draftAds(options, ctxIsManager(ctx));
+        .draftAds(options, ctxIsManager(ctx), userId);
       return draftAds;
     } catch (error) {
       ctx.throw(500, error);
