@@ -92,6 +92,7 @@ Progress: [██████████] 100%
 | 260404-ouo | Fix [slug].vue showing 404 for existing users - replace arrow function key with plain template literal in useAsyncData | 2026-04-04 | 1606c1ce | [260404-ouo-en-home-gab-code-waldo-project-apps-webs](./quick/260404-ouo-en-home-gab-code-waldo-project-apps-webs/) |
 | 260405-jn2 | Fix hero background image - rebuild IPX bundled sharp native binary, switch PictureDefault to NuxtImg, add postinstall to prevent regression | 2026-04-05 | 6f3cbfee | [260405-jn2-revisa-porque-la-imagen-del-herohome-no-](./quick/260405-jn2-revisa-porque-la-imagen-del-herohome-no-/) |
 | 260405-gdl | Fix all Codacy best-practice unused-code warnings across monorepo (website, dashboard, strapi) | 2026-04-05 | ed920f97 | [260405-gdl-fix-all-codacy-best-practice-unused-code](./quick/260405-gdl-fix-all-codacy-best-practice-unused-code/) |
+| 260405-mj9 | Refactor website ad listings to use shared status-specific endpoints; add userId role-based filtering to Strapi service/controllers | 2026-04-05 | cf045415 | [260405-mj9-refactor-website-ad-listings-to-use-shar](./quick/260405-mj9-refactor-website-ad-listings-to-use-shar/) |
 
 ## Session Continuity
 
