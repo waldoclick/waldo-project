@@ -60,19 +60,31 @@ export const useUserStore = defineStore("user", () => {
     }
   };
 
+  const STATUS_ENDPOINT_MAP: Record<string, string> = {
+    published: "ads/actives",
+    review: "ads/pendings",
+    expired: "ads/archiveds",
+    rejected: "ads/rejecteds",
+    banned: "ads/banneds",
+  };
+
   const loadUserAds = async (
-    filters = {},
+    status: string,
     pagination = DEFAULT_PAGINATION,
     sort = [],
   ): Promise<{
     data: Ad[];
     meta: { pagination: { total: number } };
   } | null> => {
+    const endpoint = STATUS_ENDPOINT_MAP[status];
+    if (!endpoint) {
+      console.error(`Unknown ad status: ${status}`);
+      return null;
+    }
     try {
-      const response = await client("ads/me", {
+      const response = await client(endpoint, {
         method: "GET",
         params: {
-          filters,
           pagination,
           sort,
           populate: "*",
