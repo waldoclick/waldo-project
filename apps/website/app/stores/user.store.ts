@@ -156,7 +156,7 @@ export const useUserStore = defineStore("user", () => {
     banned: number;
   }> => {
     try {
-      const response = await client("ads/me/counts", { method: "GET" });
+      const response = await client("ads/count", { method: "GET" });
       return response as unknown as {
         published: number;
         review: number;
