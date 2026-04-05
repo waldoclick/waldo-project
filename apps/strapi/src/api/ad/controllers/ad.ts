@@ -181,6 +181,44 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
   },
 
   /**
+   * Get all active advertisements (public catalog)
+   *
+   * Retrieves a paginated list of all active advertisements without authentication.
+   * Bypasses user filtering by passing isManager=true and userId=null.
+   *
+   * @route GET /api/ads/catalog
+   */
+  async catalog(ctx: Context) {
+    try {
+      const query = ctx.query as Record<string, unknown>;
+      const pagination = query.pagination as Record<string, string> | undefined;
+
+      // Extract pagination parameters from query.pagination
+      const options: Record<string, unknown> = {
+        ...query,
+        page: pagination?.page
+          ? parseInt(pagination.page, 10)
+          : (query.page as number) || 1,
+        pageSize: pagination?.pageSize
+          ? parseInt(pagination.pageSize, 10)
+          : (query.pageSize as number) || 25,
+      };
+
+      // Remove pagination object if it exists to avoid conflicts
+      if (options.pagination) {
+        delete options.pagination;
+      }
+
+      const activeAds = await strapi
+        .service("api::ad.ad")
+        .activeAds(options, true, null);
+      return activeAds;
+    } catch (error) {
+      ctx.throw(500, error);
+    }
+  },
+
+  /**
    * Get pending advertisements
    *
    * Retrieves a paginated list of advertisements pending approval.
