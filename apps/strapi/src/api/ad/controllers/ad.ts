@@ -80,7 +80,9 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
   async update(ctx: Context) {
     const userId = ctx.state.user?.id;
     if (!userId) {
-      return ctx.unauthorized("You must be authenticated to update an advertisement");
+      return ctx.unauthorized(
+        "You must be authenticated to update an advertisement"
+      );
     }
 
     const { id } = ctx.params;
@@ -96,7 +98,9 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
 
     const isOwner = ad.user?.id?.toString() === userId.toString();
     if (!isOwner && !ctxIsManager(ctx)) {
-      return ctx.forbidden("You don't have permission to update this advertisement");
+      return ctx.forbidden(
+        "You don't have permission to update this advertisement"
+      );
     }
 
     return await super.update(ctx);
@@ -112,7 +116,9 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
   async delete(ctx: Context) {
     const userId = ctx.state.user?.id;
     if (!userId) {
-      return ctx.unauthorized("You must be authenticated to delete an advertisement");
+      return ctx.unauthorized(
+        "You must be authenticated to delete an advertisement"
+      );
     }
 
     const { id } = ctx.params;
@@ -128,7 +134,9 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
 
     const isOwner = ad.user?.id?.toString() === userId.toString();
     if (!isOwner && !ctxIsManager(ctx)) {
-      return ctx.forbidden("You don't have permission to delete this advertisement");
+      return ctx.forbidden(
+        "You don't have permission to delete this advertisement"
+      );
     }
 
     return await super.delete(ctx);

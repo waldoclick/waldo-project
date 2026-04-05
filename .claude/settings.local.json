@@ -39,7 +39,9 @@
       "Bash(npm run:*)",
       "Read(//tmp/**)",
       "Skill(gsd:plan-phase)",
-      "Bash(xargs -I{} chmod 644 \"/home/gab/Code/waldo-project/{}\")"
+      "Bash(xargs -I{} chmod 644 \"/home/gab/Code/waldo-project/{}\")",
+      "Bash(sed -n '158,167p' /home/gab/Code/waldo-project/apps/dashboard/app/components/FormLogin.vue)",
+      "Bash(sed -n '139,148p' /home/gab/Code/waldo-project/apps/dashboard/app/components/FormVerifyCode.vue)"
     ]
   }
 }
