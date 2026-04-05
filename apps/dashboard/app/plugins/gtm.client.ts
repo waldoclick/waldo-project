@@ -13,13 +13,13 @@ export default defineNuxtPlugin({
       window.dataLayer = window.dataLayer || [];
 
       // GTM function with better error handling
-      function gtag(...args: any[]) {
+      const gtag = (...args: any[]) => {
         try {
           window.dataLayer?.push(args);
         } catch (error) {
           console.warn("GTM error:", error);
         }
-      }
+      };
 
       // Configure GTM
       gtag("js", new Date());
