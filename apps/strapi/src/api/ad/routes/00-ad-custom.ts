@@ -11,11 +11,6 @@ export default {
     },
     {
       method: "GET",
-      path: "/ads/me",
-      handler: "ad.me",
-    },
-    {
-      method: "GET",
       path: "/ads/actives",
       handler: "ad.actives",
     },
