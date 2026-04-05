@@ -428,26 +428,30 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
   },
 
   /**
-   * Get counts of user's advertisements grouped by status
+   * Get counts of advertisements grouped by status
    *
-   * Returns a single object with counts for all 5 statuses in parallel,
-   * avoiding the need for 5 separate API calls.
+   * Returns a single object with counts for all 5 statuses in parallel.
+   * Managers see counts for ALL ads. Authenticated users see only their own.
    *
-   * @route GET /api/ads/me/counts
+   * @route GET /api/ads/count
    */
-  async meCounts(ctx: Context) {
+  async count(ctx: Context) {
     try {
-      if (!ctx.state.user?.id) {
+      const isManager = ctxIsManager(ctx);
+      const userId: number | undefined = ctx.state.user?.id;
+
+      if (!isManager && !userId) {
         return ctx.unauthorized(
           "Debes estar autenticado para ver tus anuncios."
         );
       }
-      const userId: number = ctx.state.user.id;
+
+      const userFilter = isManager ? {} : { user: userId };
 
       const [published, review, expired, rejected, banned] = await Promise.all([
         strapi.entityService.count("api::ad.ad", {
           filters: {
-            user: userId,
+            ...userFilter,
             active: true,
             banned: false,
             rejected: false,
@@ -456,7 +460,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
         }),
         strapi.entityService.count("api::ad.ad", {
           filters: {
-            user: userId,
+            ...userFilter,
             active: false,
             banned: false,
             rejected: false,
@@ -466,7 +470,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
         }),
         strapi.entityService.count("api::ad.ad", {
           filters: {
-            user: userId,
+            ...userFilter,
             active: false,
             banned: false,
             rejected: false,
@@ -474,13 +478,13 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
           } as unknown as Record<string, unknown>,
         }),
         strapi.entityService.count("api::ad.ad", {
-          filters: { user: userId, rejected: true } as unknown as Record<
+          filters: { ...userFilter, rejected: true } as unknown as Record<
             string,
             unknown
           >,
         }),
         strapi.entityService.count("api::ad.ad", {
-          filters: { user: userId, banned: true } as unknown as Record<
+          filters: { ...userFilter, banned: true } as unknown as Record<
             string,
             unknown
           >,

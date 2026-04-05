@@ -6,8 +6,8 @@ export default {
   routes: [
     {
       method: "GET",
-      path: "/ads/me/counts",
-      handler: "ad.meCounts",
+      path: "/ads/count",
+      handler: "ad.count",
     },
     {
       method: "GET",
