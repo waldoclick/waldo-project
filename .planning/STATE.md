@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-stopped_at: Completed quick task 260405-jn2 - Fix hero background image via IPX sharp native binary rebuild
-last_updated: "2026-04-05T18:16:30.404Z"
+stopped_at: Completed 112-01-PLAN.md - Ad ownership validation in saveDraft, update, delete
+last_updated: "2026-04-05T19:09:36.440Z"
 progress:
-  total_phases: 5
+  total_phases: 6
   completed_phases: 5
-  total_plans: 12
-  completed_plans: 12
+  total_plans: 14
+  completed_plans: 13
   percent: 100
 ---
 
@@ -20,7 +20,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 111 — haz-que-sean-administrables-desde-strapi-y-usa-la-misma-informacion-para-completar-el-seeder
+**Current focus:** Phase 112 — fix-ad-wizard-ownership-validation
 
 ## Position
 
@@ -92,6 +92,6 @@ Progress: [██████████] 100%
 
 ## Session Continuity
 
-Last session: 2026-04-05T18:16:30.397Z
-Stopped at: Completed quick task 260405-jn2 - Fix hero background image via IPX sharp native binary rebuild
+Last session: 2026-04-05T19:09:36.437Z
+Stopped at: Completed 112-01-PLAN.md - Ad ownership validation in saveDraft, update, delete
 Resume file: None
