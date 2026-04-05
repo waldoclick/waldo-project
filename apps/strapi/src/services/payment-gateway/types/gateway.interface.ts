@@ -15,11 +15,11 @@ export interface IGatewayCommitResponse {
 
 export interface IPaymentGateway {
   createTransaction(
-    amount: number,
-    orderId: string,
-    sessionId: string,
-    returnUrl: string
+    _amount: number,
+    _orderId: string,
+    _sessionId: string,
+    _returnUrl: string
   ): Promise<IGatewayInitResponse>;
 
-  commitTransaction(gatewayRef: string): Promise<IGatewayCommitResponse>;
+  commitTransaction(_gatewayRef: string): Promise<IGatewayCommitResponse>;
 }

@@ -10,7 +10,6 @@ import {
 } from "./interfaces";
 import fs from "fs";
 import path from "path";
-import { HttpClient } from "./http-client";
 
 /**
  * Servicio para obtener indicadores económicos de mi-indicador.cl

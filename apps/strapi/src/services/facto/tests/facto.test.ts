@@ -1,14 +1,4 @@
 import { FactoConfig } from "../config/facto.config";
-import { factoService } from "../factories/facto.factory";
-import { ElectronicInvoiceService } from "../services/electronic-invoice.service";
-import { ElectronicTicketService } from "../services/electronic-ticket.service";
-import {
-  IFactoDocumentHeader,
-  IFactoDocumentDetail,
-  IFactoDocumentTotals,
-  IFactoLegacyResponse,
-  IFactoDocument,
-} from "../types/index";
 import dotenv from "dotenv";
 import generalUtils from "../../../api/payment/utils/general.utils";
 
@@ -37,12 +27,8 @@ describe("Facto Service Connection", () => {
 });
 
 describe("Facto Document Factory", () => {
-  let invoiceService: ElectronicInvoiceService;
-  let ticketService: ElectronicTicketService;
-
   beforeEach(() => {
-    invoiceService = new ElectronicInvoiceService();
-    ticketService = new ElectronicTicketService();
+    // Services are instantiated in individual test cases as needed
   });
 
   // it("should create and emit an electronic invoice successfully", async () => {

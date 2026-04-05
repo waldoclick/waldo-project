@@ -188,7 +188,7 @@ async function getAdvertisements(
   options: AdQueryOptions,
   defaultFilters: Record<string, unknown>,
   status: string,
-  postProcessFilter?: (ads: unknown[]) => unknown[],
+  postProcessFilter?: (_ads: unknown[]) => unknown[],
   isManager: boolean = false
 ) {
   try {
@@ -1177,7 +1177,10 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
 
       const isOwner = existingAd.user?.id?.toString() === userId.toString();
       if (!isOwner) {
-        return { success: false, message: "You don't have permission to update this advertisement" };
+        return {
+          success: false,
+          message: "You don't have permission to update this advertisement",
+        };
       }
 
       await strapi.entityService.update("api::ad.ad", adId, {

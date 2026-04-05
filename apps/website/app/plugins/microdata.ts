@@ -25,6 +25,6 @@ export default defineNuxtPlugin(() => {
 
 declare module "#app" {
   interface NuxtApp {
-    $setStructuredData: (data: object) => void;
+    $setStructuredData: (_data: object) => void;
   }
 }

@@ -1,9 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
-import sass from "sass";
-// import { feedbackIntegration } from "@sentry/integrations";
-import * as Sentry from "@sentry/nuxt";
-
 export default defineNuxtConfig({
   // Compatibility date for Nuxt features
   compatibilityDate: "2024-04-03",

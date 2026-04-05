@@ -1,5 +1,3 @@
-import { ref } from "vue";
-
 export function useRut() {
   // Formatea el RUT
   const formatRut = (rut: string | undefined): string => {

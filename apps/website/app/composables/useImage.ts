@@ -68,7 +68,7 @@ export function useImageProxy() {
     try {
       recaptchaToken = await (
         $recaptcha as
-          | { execute: (action: string) => Promise<string> }
+          | { execute: (_action: string) => Promise<string> }
           | undefined
       )?.execute("submit");
     } catch {

@@ -15,7 +15,7 @@ export default factories.createCoreController(
       const ip = contactService.getClientIp(ctx);
 
       const { data } = ctx.request.body;
-      const { recaptchaToken, ...contactData } = data;
+      const { recaptchaToken: _recaptchaToken, ...contactData } = data;
 
       try {
         const contact = await contactService.createContact({

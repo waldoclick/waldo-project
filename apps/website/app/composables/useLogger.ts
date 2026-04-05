@@ -1,7 +1,7 @@
 // import * as Sentry from "@sentry/nuxt";
 
 export function useLogger() {
-  const logError = (error: any) => {
+  const logError = (_error: unknown) => {
     // Sentry.captureException(new Error(`Uh oh, something broke, here's the error: '${error}'`));
   };
 

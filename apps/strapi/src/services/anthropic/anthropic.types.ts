@@ -7,5 +7,5 @@ export interface AnthropicResponse {
 }
 
 export interface IAnthropicService {
-  generate(request: AnthropicRequest): Promise<AnthropicResponse>;
+  generate(_request: AnthropicRequest): Promise<AnthropicResponse>;
 }
