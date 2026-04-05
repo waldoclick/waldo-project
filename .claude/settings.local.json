@@ -36,7 +36,8 @@
       "Bash(python3 -c ':*)",
       "Skill(gsd:quick)",
       "Bash(npx --prefix apps/strapi @mapbox/node-pre-gyp rebuild --directory node_modules/better-sqlite3)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(xargs -I{} chmod 644 \"/home/gab/Code/waldo-project/{}\")"
     ]
   }
 }
