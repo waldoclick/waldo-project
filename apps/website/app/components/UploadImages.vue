@@ -201,7 +201,7 @@ const removeUploadedImage = async (image) => {
   document.body.style.cursor = "wait";
 
   try {
-    await apiClient(`/api/ads/upload/${image.id}`, { method: "DELETE" });
+    await apiClient(`/ads/upload/${image.id}`, { method: "DELETE" });
     adStore.removeFromGallery(image);
     toast.success("¡Listo! La imagen fue eliminada");
   } catch {
