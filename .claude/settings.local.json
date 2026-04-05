@@ -41,7 +41,12 @@
       "Skill(gsd:plan-phase)",
       "Bash(xargs -I{} chmod 644 \"/home/gab/Code/waldo-project/{}\")",
       "Bash(sed -n '158,167p' /home/gab/Code/waldo-project/apps/dashboard/app/components/FormLogin.vue)",
-      "Bash(sed -n '139,148p' /home/gab/Code/waldo-project/apps/dashboard/app/components/FormVerifyCode.vue)"
+      "Bash(sed -n '139,148p' /home/gab/Code/waldo-project/apps/dashboard/app/components/FormVerifyCode.vue)",
+      "Bash(grep -n \"useAsyncData\\\\|loadAd\\\\|client\\\\|route.params\" /home/gab/Code/waldo-project/apps/dashboard/app/pages/ads/[id].vue)",
+      "Bash(grep -n \"href\\\\|to.*id\\\\|item.*id\\\\|row.*id\\\\|ads/\\\\${\" /home/gab/Code/waldo-project/apps/dashboard/app/components/AdsTable.vue)",
+      "Bash(sqlite3 /home/gab/Code/waldo-project/apps/strapi/.tmp/data.db ':*)",
+      "Bash(sqlite3:*)",
+      "Bash(grep -E \"\\\\.\\(ts|js|json\\)$\")"
     ]
   }
 }
