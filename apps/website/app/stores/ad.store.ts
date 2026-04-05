@@ -21,6 +21,7 @@ const initialState = structuredClone({
   pack: 1 as PackType,
   featured: false as FeaturedType,
   is_invoice: false,
+  userId: null as number | null,
   ad: {
     ad_id: null as number | null,
     price: 0,
@@ -198,6 +199,7 @@ export const useAdStore = defineStore("ad", {
       this.featured = false;
       this.is_invoice = false;
       this.step = 1;
+      this.userId = null;
       this.analytics.view_item_list = [];
       this.analytics.pack_selected = null;
       this.analytics.featured_selected = null;
