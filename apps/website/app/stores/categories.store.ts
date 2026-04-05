@@ -2,11 +2,7 @@
 
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
-import type {
-  Category,
-  CategoryResponse,
-  CategoryState,
-} from "@/types/category";
+import type { Category, CategoryResponse } from "@/types/category";
 import { useApiClient } from "#imports";
 
 const DEFAULT_CACHE_MINUTES = 30;

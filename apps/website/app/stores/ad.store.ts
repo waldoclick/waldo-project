@@ -1,11 +1,5 @@
 import { defineStore } from "pinia";
-import type {
-  AdForm,
-  PackType,
-  FeaturedType,
-  GalleryItem,
-  AdState,
-} from "@/types/ad";
+import type { PackType, FeaturedType, GalleryItem } from "@/types/ad";
 
 export interface AnalyticsItem {
   item_id?: number | string;
