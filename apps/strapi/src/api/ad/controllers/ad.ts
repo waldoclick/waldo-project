@@ -672,6 +672,10 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    */
   async upload(ctx: Context) {
     try {
+      if (!ctx.state.user?.id) {
+        return ctx.unauthorized("You must be authenticated to upload images");
+      }
+
       const { files } = ctx.request.files as Record<string, unknown>;
 
       if (!files) {
