@@ -460,6 +460,7 @@
       box-shadow: 0 0 30px rgba($charcoal, 0.1);
       transform: translateY(-20px) scale(0.95);
       transition: transform 0.3s ease;
+      z-index: 101;
 
       &__close {
         margin-bottom: 20px;
@@ -548,6 +549,7 @@
       display: flex;
       flex-direction: column;
       gap: 30px;
+      z-index: 101;
     }
 
     &__title {
