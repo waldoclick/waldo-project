@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 112-01-PLAN.md - Ad ownership validation in saveDraft, update, delete
-last_updated: "2026-04-05T19:09:36.440Z"
+stopped_at: Completed 112-02-PLAN.md - Ad wizard ownership guard (frontend)
+last_updated: "2026-04-05T19:12:04.873Z"
 progress:
   total_phases: 6
-  completed_phases: 5
+  completed_phases: 6
   total_plans: 14
-  completed_plans: 13
+  completed_plans: 14
   percent: 100
 ---
 
@@ -63,6 +63,8 @@ Progress: [██████████] 100%
 - order integer field allows editors to control policy display sequence from Strapi admin independently of creation order (111-01)
 - policy.d.ts uses order: number | null instead of featured: boolean — policies have explicit ordering, not featured flag (111-02)
 - default: () => [] added to useAsyncData in politicas-de-privacidad.vue per CLAUDE.md rule to eliminate T|undefined from return type (111-02)
+- Ownership guard in anunciar/index.vue placed AFTER useAsyncData because meStore.loadMe() runs inside that block — placing it before would mean meStore.me is null, incorrectly resetting every user's draft (112-02)
+- userId stored at top-level of AdState (not inside ad object) and written directly as adStore.userId — it is a store identity field, not a form field; no dedicated action/getter needed (112-02)
 
 ### Roadmap Evolution
 
@@ -92,6 +94,6 @@ Progress: [██████████] 100%
 
 ## Session Continuity
 
-Last session: 2026-04-05T19:09:36.437Z
-Stopped at: Completed 112-01-PLAN.md - Ad ownership validation in saveDraft, update, delete
+Last session: 2026-04-05T19:12:04.870Z
+Stopped at: Completed 112-02-PLAN.md - Ad wizard ownership guard (frontend)
 Resume file: None
