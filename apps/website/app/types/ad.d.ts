@@ -110,6 +110,7 @@ export interface AdState {
   pack: PackType;
   featured: FeaturedType;
   is_invoice: boolean;
+  userId: number | null;
   ad: AdForm;
   company: Company;
 }
