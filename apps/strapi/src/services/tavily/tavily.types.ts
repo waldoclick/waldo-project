@@ -17,5 +17,5 @@ export interface TavilySearchResponse {
 }
 
 export interface ITavilyService {
-  searchNews(request: TavilySearchRequest): Promise<TavilySearchResponse>;
+  searchNews(_request: TavilySearchRequest): Promise<TavilySearchResponse>;
 }

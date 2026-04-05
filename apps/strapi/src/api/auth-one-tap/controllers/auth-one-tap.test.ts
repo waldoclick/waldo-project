@@ -46,16 +46,16 @@ const mockSanitizeOutput = jest.fn((user) => ({
 };
 
 // --- Mock ctx factory ---
-let ctxBody: unknown = null;
+let _ctxBody: unknown = null;
 const makeCtx = (body: Record<string, unknown> = {}) => ({
   request: { body },
   state: { auth: null },
   body: null as unknown,
   badRequest: jest.fn((msg: string) => {
-    ctxBody = { error: { status: 400, message: msg } };
+    _ctxBody = { error: { status: 400, message: msg } };
   }),
   unauthorized: jest.fn((msg: string) => {
-    ctxBody = { error: { status: 401, message: msg } };
+    _ctxBody = { error: { status: 401, message: msg } };
   }),
 });
 
@@ -73,7 +73,7 @@ const EXISTING_USER = { id: 42, email: "alice@example.com", username: "alice" };
 describe("GTAP-06: googleOneTap controller — issues JWT directly (no pendingToken)", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    ctxBody = null;
+    _ctxBody = null;
   });
 
   it("returns { jwt, user } for a valid credential — NOT { pendingToken, email }", async () => {

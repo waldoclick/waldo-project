@@ -1,4 +1,4 @@
-import { Commune, Category, StrapiFilter } from "../types/filter.types";
+import { Commune, Category } from "../types/filter.types";
 
 export class FilterService {
   async getCommunes(): Promise<Commune[]> {
