@@ -1165,6 +1165,21 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
         return { success: true, id: newAd.id };
       }
 
+      // Ownership check: verify the ad belongs to the requesting user (per SEC-112-02)
+      const existingAd = await strapi.db.query("api::ad.ad").findOne({
+        where: { id: adId },
+        populate: ["user"],
+      });
+
+      if (!existingAd) {
+        return { success: false, message: "Advertisement not found" };
+      }
+
+      const isOwner = existingAd.user?.id?.toString() === userId.toString();
+      if (!isOwner) {
+        return { success: false, message: "You don't have permission to update this advertisement" };
+      }
+
       await strapi.entityService.update("api::ad.ad", adId, {
         data: {
           ...adPayload,
