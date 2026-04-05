@@ -93,9 +93,10 @@ Progress: [██████████] 100%
 | 260405-jn2 | Fix hero background image - rebuild IPX bundled sharp native binary, switch PictureDefault to NuxtImg, add postinstall to prevent regression | 2026-04-05 | 6f3cbfee | [260405-jn2-revisa-porque-la-imagen-del-herohome-no-](./quick/260405-jn2-revisa-porque-la-imagen-del-herohome-no-/) |
 | 260405-gdl | Fix all Codacy best-practice unused-code warnings across monorepo (website, dashboard, strapi) | 2026-04-05 | ed920f97 | [260405-gdl-fix-all-codacy-best-practice-unused-code](./quick/260405-gdl-fix-all-codacy-best-practice-unused-code/) |
 | 260405-mj9 | Refactor website ad listings to use shared status-specific endpoints; add userId role-based filtering to Strapi service/controllers | 2026-04-05 | cf045415 | [260405-mj9-refactor-website-ad-listings-to-use-shar](./quick/260405-mj9-refactor-website-ad-listings-to-use-shar/) |
+| 260405-mt9 | Replace /ads/me/counts with shared /ads/count using role-based filtering — managers see all ads, authenticated users see their own | 2026-04-05 | cb703d1c | [260405-mt9-replace-ads-me-counts-with-shared-ads-co](./quick/260405-mt9-replace-ads-me-counts-with-shared-ads-co/) |
 
 ## Session Continuity
 
-Last session: 2026-04-05T20:13:30.000Z
-Stopped at: Completed quick task 260405-mj9 - refactor website ad listings to use shared endpoints with role-based access control
+Last session: 2026-04-05T20:17:27.000Z
+Stopped at: Completed quick task 260405-mt9 - replace ads/me/counts with shared ads/count endpoint with role-based access control
 Resume file: None
