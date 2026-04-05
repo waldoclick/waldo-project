@@ -188,7 +188,7 @@ async function getAdvertisements(
   options: AdQueryOptions,
   defaultFilters: Record<string, unknown>,
   status: string,
-  postProcessFilter?: (ads: unknown[]) => unknown[],
+  postProcessFilter?: (_ads: unknown[]) => unknown[],
   isManager: boolean = false
 ) {
   try {

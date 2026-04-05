@@ -57,10 +57,10 @@ export interface IZohoContact {
 }
 
 export interface IZohoService {
-  createLead(lead: ZohoLead): Promise<unknown[]>;
-  createDeal(deal: ZohoDeal): Promise<string>;
-  updateContactStats(contactId: string, stats: IContactStats): Promise<void>;
-  createContact(contact: {
+  createLead(_lead: ZohoLead): Promise<unknown[]>;
+  createDeal(_deal: ZohoDeal): Promise<string>;
+  updateContactStats(_contactId: string, _stats: IContactStats): Promise<void>;
+  createContact(_contact: {
     First_Name: string;
     Last_Name: string;
     Email: string;
@@ -77,10 +77,10 @@ export interface IZohoService {
     Other_State?: string;
     Other_City?: string;
   }): Promise<IZohoContact>;
-  findContact(email: string): Promise<IZohoContact | null>;
+  findContact(_email: string): Promise<IZohoContact | null>;
   updateContact(
-    id: string,
-    contact: {
+    _id: string,
+    _contact: {
       First_Name?: string;
       Last_Name?: string;
       User_ID?: string;

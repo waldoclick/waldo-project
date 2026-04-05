@@ -7,5 +7,5 @@ export interface DeepSeekResponse {
 }
 
 export interface IDeepSeekService {
-  generate(request: DeepSeekRequest): Promise<DeepSeekResponse>;
+  generate(_request: DeepSeekRequest): Promise<DeepSeekResponse>;
 }

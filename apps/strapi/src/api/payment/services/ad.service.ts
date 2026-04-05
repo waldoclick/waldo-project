@@ -1,5 +1,4 @@
 import PaymentUtils from "../utils";
-import ad from "../../ad/services/ad";
 import { getPaymentGateway } from "../../../services/payment-gateway";
 import { AdData, PackType, FeaturedType, Details } from "../types/payment.type";
 import logger from "../../../utils/logtail";
