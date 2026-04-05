@@ -7,7 +7,7 @@ import "pinia-plugin-persistedstate";
 declare module "#app" {
   interface NuxtApp {
     $recaptcha: {
-      execute: (action: string) => Promise<string>;
+      execute: (_action: string) => Promise<string>;
     };
     $cookies: typeof Cookies;
     $checkSiteHealth: () => Promise<{
@@ -20,7 +20,7 @@ declare module "#app" {
 declare module "vue" {
   interface ComponentCustomProperties {
     $recaptcha: {
-      execute: (action: string) => Promise<string>;
+      execute: (_action: string) => Promise<string>;
     };
     $cookies: typeof Cookies;
     $checkSiteHealth: () => Promise<{
