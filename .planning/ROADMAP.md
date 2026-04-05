@@ -106,3 +106,24 @@ Plans:
 Plans:
 - [x] 111-01-PLAN.md — Strapi policy content type + seeder + bootstrap registration
 - [x] 111-02-PLAN.md — Website type, store, page and component refactor to use Strapi data
+
+### Phase 112: Fix ad wizard ownership validation
+
+**Goal:** Prevent a logged-in user from continuing another user's ad wizard flow (persisted in localStorage) by: (1) storing the owner's userId in the ad.store and resetting early at wizard entry if it doesn't match the current user, (2) adding ownership validation in Strapi's saveDraft update path, and (3) overriding the inherited CRUD update/delete handlers in the ad controller to verify ownership before allowing modifications.
+**Requirements**: [SEC-112-01, SEC-112-02, SEC-112-03]
+**Depends on:** Phase 111
+**Plans:** 2/2 plans complete
+
+Plans:
+- [x] 112-01-PLAN.md — Backend ownership checks: saveDraft update guard + controller update/delete overrides
+- [x] 112-02-PLAN.md — Frontend ownership guard: userId field in ad store + wizard entry reset
+
+### Phase 113: Fix stale session cookie leaking authenticated requests after logout
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 112
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 113 to break down)

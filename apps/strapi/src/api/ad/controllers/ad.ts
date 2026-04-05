@@ -70,6 +70,78 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
     return response;
   },
   /**
+   * Update an advertisement
+   *
+   * Overrides the default update to verify ownership before allowing modifications.
+   * Only the ad owner or a manager can update an ad.
+   *
+   * @route PUT /api/ads/:id
+   */
+  async update(ctx: Context) {
+    const userId = ctx.state.user?.id;
+    if (!userId) {
+      return ctx.unauthorized(
+        "You must be authenticated to update an advertisement"
+      );
+    }
+
+    const { id } = ctx.params;
+
+    const ad = await strapi.db.query("api::ad.ad").findOne({
+      where: { id },
+      populate: ["user"],
+    });
+
+    if (!ad) {
+      return ctx.notFound("Advertisement not found");
+    }
+
+    const isOwner = ad.user?.id?.toString() === userId.toString();
+    if (!isOwner && !ctxIsManager(ctx)) {
+      return ctx.forbidden(
+        "You don't have permission to update this advertisement"
+      );
+    }
+
+    return await super.update(ctx);
+  },
+  /**
+   * Delete an advertisement
+   *
+   * Overrides the default delete to verify ownership before allowing deletion.
+   * Only the ad owner or a manager can delete an ad.
+   *
+   * @route DELETE /api/ads/:id
+   */
+  async delete(ctx: Context) {
+    const userId = ctx.state.user?.id;
+    if (!userId) {
+      return ctx.unauthorized(
+        "You must be authenticated to delete an advertisement"
+      );
+    }
+
+    const { id } = ctx.params;
+
+    const ad = await strapi.db.query("api::ad.ad").findOne({
+      where: { id },
+      populate: ["user"],
+    });
+
+    if (!ad) {
+      return ctx.notFound("Advertisement not found");
+    }
+
+    const isOwner = ad.user?.id?.toString() === userId.toString();
+    if (!isOwner && !ctxIsManager(ctx)) {
+      return ctx.forbidden(
+        "You don't have permission to delete this advertisement"
+      );
+    }
+
+    return await super.delete(ctx);
+  },
+  /**
    * Get active advertisements
    *
    * Retrieves a paginated list of active advertisements.
@@ -98,9 +170,48 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
         delete options.pagination;
       }
 
+      const userId = ctx.state.user?.id ?? null;
       const activeAds = await strapi
         .service("api::ad.ad")
-        .activeAds(options, ctxIsManager(ctx));
+        .activeAds(options, ctxIsManager(ctx), userId);
+      return activeAds;
+    } catch (error) {
+      ctx.throw(500, error);
+    }
+  },
+
+  /**
+   * Get all active advertisements (public catalog)
+   *
+   * Retrieves a paginated list of all active advertisements without authentication.
+   * Bypasses user filtering by passing isManager=true and userId=null.
+   *
+   * @route GET /api/ads/catalog
+   */
+  async catalog(ctx: Context) {
+    try {
+      const query = ctx.query as Record<string, unknown>;
+      const pagination = query.pagination as Record<string, string> | undefined;
+
+      // Extract pagination parameters from query.pagination
+      const options: Record<string, unknown> = {
+        ...query,
+        page: pagination?.page
+          ? parseInt(pagination.page, 10)
+          : (query.page as number) || 1,
+        pageSize: pagination?.pageSize
+          ? parseInt(pagination.pageSize, 10)
+          : (query.pageSize as number) || 25,
+      };
+
+      // Remove pagination object if it exists to avoid conflicts
+      if (options.pagination) {
+        delete options.pagination;
+      }
+
+      const activeAds = await strapi
+        .service("api::ad.ad")
+        .activeAds(options, true, null);
       return activeAds;
     } catch (error) {
       ctx.throw(500, error);
@@ -136,9 +247,10 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
         delete options.pagination;
       }
 
+      const userId = ctx.state.user?.id ?? null;
       const pendingAds = await strapi
         .service("api::ad.ad")
-        .pendingAds(options, ctxIsManager(ctx));
+        .pendingAds(options, ctxIsManager(ctx), userId);
       return pendingAds;
     } catch (error) {
       ctx.throw(500, error);
@@ -174,9 +286,10 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
         delete options.pagination;
       }
 
+      const userId = ctx.state.user?.id ?? null;
       const archivedAds = await strapi
         .service("api::ad.ad")
-        .archivedAds(options, ctxIsManager(ctx));
+        .archivedAds(options, ctxIsManager(ctx), userId);
       return archivedAds;
     } catch (error) {
       ctx.throw(500, error);
@@ -209,9 +322,10 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
         delete options.pagination;
       }
 
+      const userId = ctx.state.user?.id ?? null;
       const bannedAds = await strapi
         .service("api::ad.ad")
-        .bannedAds(options, ctxIsManager(ctx));
+        .bannedAds(options, ctxIsManager(ctx), userId);
       return bannedAds;
     } catch (error) {
       ctx.throw(500, error);
@@ -247,9 +361,10 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
         delete options.pagination;
       }
 
+      const userId = ctx.state.user?.id ?? null;
       const rejectedAds = await strapi
         .service("api::ad.ad")
-        .rejectedAds(options, ctxIsManager(ctx));
+        .rejectedAds(options, ctxIsManager(ctx), userId);
       return rejectedAds;
     } catch (error) {
       ctx.throw(500, error);
@@ -283,9 +398,10 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
         delete options.pagination;
       }
 
+      const userId = ctx.state.user?.id ?? null;
       const draftAds = await strapi
         .service("api::ad.ad")
-        .draftAds(options, ctxIsManager(ctx));
+        .draftAds(options, ctxIsManager(ctx), userId);
       return draftAds;
     } catch (error) {
       ctx.throw(500, error);
@@ -350,26 +466,30 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
   },
 
   /**
-   * Get counts of user's advertisements grouped by status
+   * Get counts of advertisements grouped by status
    *
-   * Returns a single object with counts for all 5 statuses in parallel,
-   * avoiding the need for 5 separate API calls.
+   * Returns a single object with counts for all 5 statuses in parallel.
+   * Managers see counts for ALL ads. Authenticated users see only their own.
    *
-   * @route GET /api/ads/me/counts
+   * @route GET /api/ads/count
    */
-  async meCounts(ctx: Context) {
+  async count(ctx: Context) {
     try {
-      if (!ctx.state.user?.id) {
+      const isManager = ctxIsManager(ctx);
+      const userId: number | undefined = ctx.state.user?.id;
+
+      if (!isManager && !userId) {
         return ctx.unauthorized(
           "Debes estar autenticado para ver tus anuncios."
         );
       }
-      const userId: number = ctx.state.user.id;
+
+      const userFilter = isManager ? {} : { user: userId };
 
       const [published, review, expired, rejected, banned] = await Promise.all([
         strapi.entityService.count("api::ad.ad", {
           filters: {
-            user: userId,
+            ...userFilter,
             active: true,
             banned: false,
             rejected: false,
@@ -378,7 +498,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
         }),
         strapi.entityService.count("api::ad.ad", {
           filters: {
-            user: userId,
+            ...userFilter,
             active: false,
             banned: false,
             rejected: false,
@@ -388,7 +508,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
         }),
         strapi.entityService.count("api::ad.ad", {
           filters: {
-            user: userId,
+            ...userFilter,
             active: false,
             banned: false,
             rejected: false,
@@ -396,13 +516,13 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
           } as unknown as Record<string, unknown>,
         }),
         strapi.entityService.count("api::ad.ad", {
-          filters: { user: userId, rejected: true } as unknown as Record<
+          filters: { ...userFilter, rejected: true } as unknown as Record<
             string,
             unknown
           >,
         }),
         strapi.entityService.count("api::ad.ad", {
-          filters: { user: userId, banned: true } as unknown as Record<
+          filters: { ...userFilter, banned: true } as unknown as Record<
             string,
             unknown
           >,
@@ -410,171 +530,6 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
       ]);
 
       return ctx.send({ published, review, expired, rejected, banned });
-    } catch (error) {
-      return ctx.internalServerError("Internal server error");
-    }
-  },
-
-  /**
-   * Get user's advertisements
-   *
-   * Retrieves a paginated list of advertisements for the authenticated user.
-   * Supports filtering by status (published, review, expired, rejected, pending_payment).
-   *
-   * @route GET /api/ads/me
-   */
-  async me(ctx: Context) {
-    try {
-      // Ensure ctx.state.user is defined
-      if (!ctx.state.user || !ctx.state.user.id) {
-        return ctx.unauthorized(
-          "Debes estar autenticado para ver tus anuncios."
-        );
-      }
-
-      // Get the logged-in user's ID
-      const userId: number = ctx.state.user.id;
-
-      // Extract Strapi query parameters from ctx.query
-      const {
-        filters: rawFilters = {},
-        pagination = {},
-        sort = {},
-        populate = "*",
-      } = ctx.query as QueryParams;
-
-      const filters = rawFilters as Record<string, unknown>;
-
-      // Validate pagination
-      const page = parseInt(pagination.page as string, 10) || 1;
-      const pageSize = parseInt(pagination.pageSize as string, 10) || 10;
-
-      if (page <= 0 || pageSize <= 0) {
-        return ctx.badRequest(
-          "Invalid pagination parameters. Page and pageSize must be positive integers."
-        );
-      }
-
-      // Extract status from filters
-      const status = filters?.status as string | undefined;
-
-      // Validate status is required
-      if (!status) {
-        return ctx.badRequest("Status parameter is required");
-      }
-
-      // Validate status
-      const validStatuses = [
-        "published",
-        "review",
-        "expired",
-        "rejected",
-        "banned",
-        "pending_payment",
-      ];
-      if (status && !validStatuses.includes(status)) {
-        return ctx.badRequest(
-          `Invalid status parameter. Allowed values are: ${validStatuses.join(
-            ", "
-          )}`
-        );
-      }
-
-      // Ensure filters is an object
-      const filterClause: Record<string, unknown> = {
-        user: userId, // Filter by user ID
-      };
-
-      // Remove status from filters if it exists
-      const { status: _, ...restFilters } = filters as Record<string, unknown>;
-
-      // Add any other valid filters
-      if (typeof restFilters === "object") {
-        Object.assign(filterClause, restFilters);
-      }
-
-      // Add conditions based on the status parameter
-      switch (status) {
-        case "published":
-          filterClause.active = true;
-          filterClause.banned = false;
-          filterClause.rejected = false;
-          filterClause.remaining_days = { $gt: 0 };
-          break;
-        case "review":
-          filterClause.active = false;
-          filterClause.banned = false;
-          filterClause.rejected = false;
-          filterClause.remaining_days = { $gt: 0 };
-          filterClause.$or = [
-            {
-              is_paid: true,
-              order: { $ne: null },
-            },
-            {
-              is_paid: false,
-            },
-          ];
-          break;
-        case "pending_payment":
-          filterClause.active = false;
-          filterClause.banned = false;
-          filterClause.rejected = false;
-          filterClause.remaining_days = { $gt: 0 };
-          filterClause.is_paid = true;
-          filterClause.order = null;
-          break;
-        case "expired":
-          filterClause.active = false;
-          filterClause.banned = false;
-          filterClause.rejected = false;
-          filterClause.remaining_days = 0;
-          break;
-        case "rejected":
-          filterClause.rejected = true;
-          break;
-        case "banned":
-          filterClause.banned = true;
-          break;
-        default:
-          // No additional conditions for other statuses
-          break;
-      }
-
-      // Fetch ads for the logged-in user with the specified conditions
-      const ads = await strapi.entityService.findMany("api::ad.ad", {
-        filters: filterClause,
-        populate: populate as unknown as Record<string, unknown>,
-        start: (page - 1) * pageSize,
-        limit: pageSize,
-        sort: sort as unknown as Parameters<
-          typeof strapi.entityService.findMany
-        >[1]["sort"],
-      });
-
-      // Add status from filters to each ad
-      const adsWithStatus = ads.map((ad) => ({
-        ...ad,
-        status: status || "unknown",
-      }));
-
-      // Fetch the total count of ads matching the filters
-      const count = await strapi.entityService.count("api::ad.ad", {
-        filters: filterClause,
-      });
-
-      // Return the ads along with meta information
-      return ctx.send({
-        data: adsWithStatus,
-        meta: {
-          pagination: {
-            page,
-            pageSize,
-            pageCount: Math.ceil(count / pageSize),
-            total: count,
-          },
-        } as PaginationMeta,
-      });
     } catch (error) {
       return ctx.internalServerError("Internal server error");
     }
@@ -590,6 +545,10 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    */
   async upload(ctx: Context) {
     try {
+      if (!ctx.state.user?.id) {
+        return ctx.unauthorized("You must be authenticated to upload images");
+      }
+
       const { files } = ctx.request.files as Record<string, unknown>;
 
       if (!files) {

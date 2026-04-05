@@ -140,7 +140,7 @@ const handleVerify = async () => {
     >;
     const cookieName = strapiPublicConfig.cookieName as string;
     if (nuxtApp._cookies?.[cookieName]) {
-      delete nuxtApp._cookies[cookieName];
+      Reflect.deleteProperty(nuxtApp._cookies, cookieName);
     }
     const { setToken, fetchUser } = useSessionAuth();
     const { logout } = useLogout();

@@ -7,5 +7,5 @@ export interface GeminiResponse {
 }
 
 export interface IGeminiService {
-  generate(request: GeminiRequest): Promise<GeminiResponse>;
+  generate(_request: GeminiRequest): Promise<GeminiResponse>;
 }

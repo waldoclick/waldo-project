@@ -1,24 +1,10 @@
 import { Context } from "koa";
 import {
-  FlowService,
   flowServiceFactory,
   IFlowSubscriptionRequest,
-  IFlowSubscriptionResponse,
   IFlowCustomerCreateRequest,
 } from "../../../services/flow";
 import { getCurrentUser, updateUserFlowData } from "../utils/user.utils";
-import { IFlowInvoice } from "../../../services/flow";
-
-// Helper para dividir apellido
-const splitLastName = (
-  lastName: string | undefined
-): { firstLastName: string; secondLastName: string } => {
-  if (!lastName) return { firstLastName: "", secondLastName: "" };
-  const parts = lastName.trim().split(/\s+/);
-  const firstLastName = parts[0] || "";
-  const secondLastName = parts.slice(1).join(" ") || "";
-  return { firstLastName, secondLastName };
-};
 
 export class ProService {
   constructor() {

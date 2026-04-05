@@ -53,6 +53,15 @@ const { data: initData } = await useAsyncData(
   { default: () => ({ packs: [] as Pack[] }) },
 );
 
+// Ownership guard: reset wizard if draft belongs to a different user (per SEC-112-01)
+// Placed after useAsyncData so meStore.me is guaranteed populated by loadMe()
+if (adStore.ad.ad_id && adStore.userId !== meStore.me?.id) {
+  adStore.$reset();
+}
+
+// Track current user as draft owner for future ownership checks
+adStore.userId = meStore.me?.id ?? null;
+
 // onMounted: analytics-only — GA4 view_item_list event must fire client-side
 onMounted(() => {
   // Build analytics item list from pre-loaded packs store

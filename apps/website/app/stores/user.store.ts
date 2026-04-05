@@ -60,19 +60,31 @@ export const useUserStore = defineStore("user", () => {
     }
   };
 
+  const STATUS_ENDPOINT_MAP: Record<string, string> = {
+    published: "ads/actives",
+    review: "ads/pendings",
+    expired: "ads/archiveds",
+    rejected: "ads/rejecteds",
+    banned: "ads/banneds",
+  };
+
   const loadUserAds = async (
-    filters = {},
+    status: string,
     pagination = DEFAULT_PAGINATION,
     sort = [],
   ): Promise<{
     data: Ad[];
     meta: { pagination: { total: number } };
   } | null> => {
+    const endpoint = STATUS_ENDPOINT_MAP[status];
+    if (!endpoint) {
+      console.error(`Unknown ad status: ${status}`);
+      return null;
+    }
     try {
-      const response = await client("ads/me", {
+      const response = await client(endpoint, {
         method: "GET",
         params: {
-          filters,
           pagination,
           sort,
           populate: "*",
@@ -82,8 +94,9 @@ export const useUserStore = defineStore("user", () => {
         data: Ad[];
         meta: { pagination: { total: number } };
       };
-      ads.value = typed.data as unknown as Ad[];
-      return typed;
+      const adsWithStatus = typed.data.map((ad) => ({ ...ad, status }));
+      ads.value = adsWithStatus as unknown as Ad[];
+      return { data: adsWithStatus as unknown as Ad[], meta: typed.meta };
     } catch {
       ads.value = [];
       return null;
@@ -144,7 +157,7 @@ export const useUserStore = defineStore("user", () => {
     banned: number;
   }> => {
     try {
-      const response = await client("ads/me/counts", { method: "GET" });
+      const response = await client("ads/count", { method: "GET" });
       return response as unknown as {
         published: number;
         review: number;

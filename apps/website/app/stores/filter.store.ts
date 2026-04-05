@@ -4,7 +4,6 @@ import type {
   FilterCommune,
   FilterCategory,
   FilterResponse,
-  FilterState,
 } from "@/types/filter";
 
 const DEFAULT_CACHE_MINUTES = 30;

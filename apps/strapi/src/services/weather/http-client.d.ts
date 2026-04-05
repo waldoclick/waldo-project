@@ -1,3 +1,3 @@
 export declare class HttpClient {
-  get<T>(url: string): Promise<T>;
+  get<T>(_url: string): Promise<T>;
 }

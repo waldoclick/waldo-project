@@ -46,7 +46,7 @@ const loadAds = async () => {
   isLoading.value = true;
   try {
     const response = await userStore.loadUserAds(
-      { status: currentFilter.value },
+      currentFilter.value,
       { page: currentPage.value, pageSize: pagination.value.pageSize },
       ["createdAt:desc"] as unknown as never[], // pass sort as a separate parameter
     );

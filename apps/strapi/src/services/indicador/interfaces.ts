@@ -32,7 +32,7 @@ export interface IndicadorResponse {
 
 // Cliente HTTP para obtener los datos
 export interface IHttpClient {
-  get<T>(url: string): Promise<T>;
+  get<T>(_url: string): Promise<T>;
 }
 
 // Interfaz para el formato de respuesta en inglés
@@ -68,6 +68,6 @@ export class ConversionError extends Error {
  */
 export interface IIndicadorService {
   getIndicators(): Promise<IndicatorsResponse>;
-  getIndicator(code: string): Promise<Indicator | null>;
-  convert(amount: number, from: Currency, to: Currency): Promise<number>;
+  getIndicator(_code: string): Promise<Indicator | null>;
+  convert(_amount: number, _from: Currency, _to: Currency): Promise<number>;
 }

@@ -188,8 +188,9 @@ async function getAdvertisements(
   options: AdQueryOptions,
   defaultFilters: Record<string, unknown>,
   status: string,
-  postProcessFilter?: (ads: unknown[]) => unknown[],
-  isManager: boolean = false
+  postProcessFilter?: (_ads: unknown[]) => unknown[],
+  isManager: boolean = false,
+  userId: number | null = null
 ) {
   try {
     // Merge default filters with any additional filters provided
@@ -197,6 +198,11 @@ async function getAdvertisements(
       ...defaultFilters,
       ...((options.filters as Record<string, unknown>) || {}),
     };
+
+    // Role-based access: non-managers see only their own ads
+    if (!isManager && userId) {
+      filters.user = { id: { $eq: userId } };
+    }
 
     // Define default relations to populate
     const defaultPopulate = {
@@ -388,7 +394,11 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
    *   pageSize: 10
    * });
    */
-  async activeAds(options: AdQueryOptions = {}, isManager: boolean = false) {
+  async activeAds(
+    options: AdQueryOptions = {},
+    isManager: boolean = false,
+    userId: number | null = null
+  ) {
     const defaultFilters = {
       active: { $eq: true },
       banned: { $eq: false },
@@ -401,7 +411,8 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
       defaultFilters,
       "active",
       undefined,
-      isManager
+      isManager,
+      userId
     );
   },
 
@@ -425,7 +436,11 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
    * // Get all pending ads for approval
    * const pendingAds = await strapi.service("api::ad.ad").pendingAds();
    */
-  async pendingAds(options: AdQueryOptions = {}, isManager: boolean = false) {
+  async pendingAds(
+    options: AdQueryOptions = {},
+    isManager: boolean = false,
+    userId: number | null = null
+  ) {
     const defaultFilters = {
       active: { $eq: false },
       banned: { $eq: false },
@@ -439,7 +454,8 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
       defaultFilters,
       "pending",
       undefined,
-      isManager
+      isManager,
+      userId
     );
   },
 
@@ -463,7 +479,11 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
    * // Get all archived ads
    * const archivedAds = await strapi.service("api::ad.ad").archivedAds();
    */
-  async archivedAds(options: AdQueryOptions = {}, isManager: boolean = false) {
+  async archivedAds(
+    options: AdQueryOptions = {},
+    isManager: boolean = false,
+    userId: number | null = null
+  ) {
     const defaultFilters = {
       active: { $eq: false },
       banned: { $eq: false },
@@ -476,7 +496,8 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
       defaultFilters,
       "archived",
       undefined,
-      isManager
+      isManager,
+      userId
     );
   },
 
@@ -488,7 +509,11 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
    * @param {Object} options - Query options for filtering and pagination
    * @returns {Promise<Object>} Paginated list of banned advertisements
    */
-  async bannedAds(options: AdQueryOptions = {}, isManager: boolean = false) {
+  async bannedAds(
+    options: AdQueryOptions = {},
+    isManager: boolean = false,
+    userId: number | null = null
+  ) {
     const defaultFilters = {
       banned: { $eq: true },
     };
@@ -498,7 +523,8 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
       defaultFilters,
       "banned",
       undefined,
-      isManager
+      isManager,
+      userId
     );
   },
 
@@ -520,7 +546,11 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
    * // Get all rejected ads
    * const rejectedAds = await strapi.service("api::ad.ad").rejectedAds();
    */
-  async rejectedAds(options: AdQueryOptions = {}, isManager: boolean = false) {
+  async rejectedAds(
+    options: AdQueryOptions = {},
+    isManager: boolean = false,
+    userId: number | null = null
+  ) {
     const defaultFilters = {
       rejected: { $eq: true },
     };
@@ -530,7 +560,8 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
       defaultFilters,
       "rejected",
       undefined,
-      isManager
+      isManager,
+      userId
     );
   },
 
@@ -540,7 +571,11 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
    * Ads that have draft === true. The draft field is the authoritative
    * source of truth for draft state.
    */
-  async draftAds(options: AdQueryOptions = {}, isManager: boolean = false) {
+  async draftAds(
+    options: AdQueryOptions = {},
+    isManager: boolean = false,
+    userId: number | null = null
+  ) {
     const defaultFilters = {
       draft: { $eq: true },
     };
@@ -550,7 +585,8 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
       defaultFilters,
       "draft",
       undefined,
-      isManager
+      isManager,
+      userId
     );
   },
 
@@ -1163,6 +1199,24 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
         });
 
         return { success: true, id: newAd.id };
+      }
+
+      // Ownership check: verify the ad belongs to the requesting user (per SEC-112-02)
+      const existingAd = await strapi.db.query("api::ad.ad").findOne({
+        where: { id: adId },
+        populate: ["user"],
+      });
+
+      if (!existingAd) {
+        return { success: false, message: "Advertisement not found" };
+      }
+
+      const isOwner = existingAd.user?.id?.toString() === userId.toString();
+      if (!isOwner) {
+        return {
+          success: false,
+          message: "You don't have permission to update this advertisement",
+        };
       }
 
       await strapi.entityService.update("api::ad.ad", adId, {

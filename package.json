@@ -17,6 +17,7 @@
     "test": "turbo run test",
     "codacy": "turbo run codacy",
     "prepare": "husky",
+    "postinstall": "(cd node_modules/ipx/node_modules/sharp && npm install --ignore-scripts=false --foreground-scripts --silent) 2>/dev/null || true",
     "strapi:upgrade": "cd apps/strapi && NPM_REGISTRY_URL=https://registry.npmjs.org/ npx @strapi/upgrade latest"
   },
   "devDependencies": {
