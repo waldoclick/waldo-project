@@ -70,6 +70,70 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
     return response;
   },
   /**
+   * Update an advertisement
+   *
+   * Overrides the default update to verify ownership before allowing modifications.
+   * Only the ad owner or a manager can update an ad.
+   *
+   * @route PUT /api/ads/:id
+   */
+  async update(ctx: Context) {
+    const userId = ctx.state.user?.id;
+    if (!userId) {
+      return ctx.unauthorized("You must be authenticated to update an advertisement");
+    }
+
+    const { id } = ctx.params;
+
+    const ad = await strapi.db.query("api::ad.ad").findOne({
+      where: { id },
+      populate: ["user"],
+    });
+
+    if (!ad) {
+      return ctx.notFound("Advertisement not found");
+    }
+
+    const isOwner = ad.user?.id?.toString() === userId.toString();
+    if (!isOwner && !ctxIsManager(ctx)) {
+      return ctx.forbidden("You don't have permission to update this advertisement");
+    }
+
+    return await super.update(ctx);
+  },
+  /**
+   * Delete an advertisement
+   *
+   * Overrides the default delete to verify ownership before allowing deletion.
+   * Only the ad owner or a manager can delete an ad.
+   *
+   * @route DELETE /api/ads/:id
+   */
+  async delete(ctx: Context) {
+    const userId = ctx.state.user?.id;
+    if (!userId) {
+      return ctx.unauthorized("You must be authenticated to delete an advertisement");
+    }
+
+    const { id } = ctx.params;
+
+    const ad = await strapi.db.query("api::ad.ad").findOne({
+      where: { id },
+      populate: ["user"],
+    });
+
+    if (!ad) {
+      return ctx.notFound("Advertisement not found");
+    }
+
+    const isOwner = ad.user?.id?.toString() === userId.toString();
+    if (!isOwner && !ctxIsManager(ctx)) {
+      return ctx.forbidden("You don't have permission to delete this advertisement");
+    }
+
+    return await super.delete(ctx);
+  },
+  /**
    * Get active advertisements
    *
    * Retrieves a paginated list of active advertisements.
