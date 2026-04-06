@@ -60,9 +60,10 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
+import type { User } from "@/types/user";
 
 const { acceptTerms } = useUser();
-const user = useStrapiUser();
+const user = useStrapiUser<User>();
 
 const needsAgeConfirmation = computed(
   () => !user.value?.accepted_age_confirmation,
