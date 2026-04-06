@@ -49,25 +49,28 @@ const mockCreate = jest.fn();
 const mockUpdate = jest.fn();
 const mockDbQueryFindMany = jest.fn().mockResolvedValue([]);
 const mockDbQueryUpdate = jest.fn();
+const mockDbQuery = jest.fn().mockReturnValue({
+  findMany: mockDbQueryFindMany,
+  update: mockDbQueryUpdate,
+});
 
-(global as any).strapi = {
-  entityService: {
-    findMany: mockFindMany,
-    create: mockCreate,
-    update: mockUpdate,
+Object.assign(global, {
+  strapi: {
+    entityService: {
+      findMany: mockFindMany,
+      create: mockCreate,
+      update: mockUpdate,
+    },
+    db: {
+      query: mockDbQuery,
+    },
+    log: {
+      info: jest.fn(),
+      error: jest.fn(),
+      warn: jest.fn(),
+    },
   },
-  db: {
-    query: jest.fn().mockReturnValue({
-      findMany: mockDbQueryFindMany,
-      update: mockDbQueryUpdate,
-    }),
-  },
-  log: {
-    info: jest.fn(),
-    error: jest.fn(),
-    warn: jest.fn(),
-  },
-};
+});
 
 // Sample user data
 const makeUser = (
@@ -470,9 +473,7 @@ describe("SubscriptionChargeService", () => {
       await service.chargeExpiredSubscriptions();
 
       // Assert: strapi.db.query was used to find and potentially update the ad
-      expect((global as any).strapi.db.query).toHaveBeenCalledWith(
-        "api::ad.ad"
-      );
+      expect(mockDbQuery).toHaveBeenCalledWith("api::ad.ad");
     });
   });
 

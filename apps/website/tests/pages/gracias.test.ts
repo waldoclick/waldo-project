@@ -10,9 +10,31 @@ import { describe, it, expect } from "vitest";
  * The actual implementation in gracias.vue will be updated to match these specs.
  */
 
+interface OrderSummaryData {
+  documentId?: string;
+  amount?: number;
+  totalAmount?: number;
+  currency?: string;
+  status?: string;
+  payment_type?: string;
+  paymentMethod?: string;
+  paidAt?: string;
+  createdAt?: string;
+  payment_response?: {
+    buy_order?: string;
+    authorization_code?: string;
+    payment_type_code?: string;
+    card_detail?: { card_number?: string };
+    commerce_code?: string;
+  };
+  user?: { email?: string; fullName?: string; username?: string };
+}
+
 // Current prepareSummary function from gracias.vue (line 122-147)
 // Updated in GREEN phase to add the new Webpay fields
-function prepareSummary(data: any): Record<string, any> | undefined {
+function prepareSummary(
+  data: OrderSummaryData | null | undefined,
+): Record<string, unknown> | undefined {
   if (!data) return undefined;
   return {
     documentId: data.documentId,

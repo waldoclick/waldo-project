@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from "@jest/globals";
 import { IndicadorService } from "./indicador.service";
 import { HttpClient } from "./http-client";
 import { ConversionError } from "./interfaces";
+import type { Currency } from "./interfaces";
 import path from "path";
 
 describe("IndicadorService", () => {
@@ -96,11 +97,11 @@ describe("IndicadorService", () => {
 
     it("debería lanzar error si se proporciona una moneda no soportada", async () => {
       await expect(
-        service.convert(100000, "CLP", "JPY" as any)
+        service.convert(100000, "CLP", "JPY" as unknown as Currency)
       ).rejects.toThrow(ConversionError);
 
       await expect(
-        service.convert(100000, "GBP" as any, "USD")
+        service.convert(100000, "GBP" as unknown as Currency, "USD")
       ).rejects.toThrow(ConversionError);
     });
   });

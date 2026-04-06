@@ -26,7 +26,7 @@ global.useAppStore = vi.fn(() => ({ setReferer: mockSetReferer }));
 
 // Use dynamic import so globals are set before the guard module evaluates.
 
-let guard: any;
+let guard: (...args: unknown[]) => unknown = () => {};
 
 beforeAll(async () => {
   const mod = await import("@/middleware/onboarding-guard.global");

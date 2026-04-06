@@ -134,19 +134,15 @@ export const useUserStore = defineStore("user", () => {
     userId: string,
     userData: Record<string, unknown>,
   ) => {
-    try {
-      // Verificar si los datos vienen envueltos en 'data' y extraerlos
-      const dataToSend = userData.data ? userData.data : userData;
+    // Verificar si los datos vienen envueltos en 'data' y extraerlos
+    const dataToSend = userData.data ? userData.data : userData;
 
-      const response = await client(`/users/${userId}`, {
-        method: "PUT",
-        body: dataToSend as Record<string, unknown>,
-      });
+    const response = await client(`/users/${userId}`, {
+      method: "PUT",
+      body: dataToSend as Record<string, unknown>,
+    });
 
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    return response;
   };
 
   const loadUserAdCounts = async (): Promise<{
