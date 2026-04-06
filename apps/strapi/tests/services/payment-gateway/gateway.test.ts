@@ -10,16 +10,16 @@
  */
 
 // Prevent Transbank SDK initialization during tests
-jest.mock("../../transbank/services/transbank.service");
+jest.mock("../../../src/services/transbank/services/transbank.service");
 
-import { getPaymentGateway } from "../registry";
+import { getPaymentGateway } from "../../../src/services/payment-gateway/registry";
 import {
   IGatewayInitResponse,
   IGatewayCommitResponse,
   IPaymentGateway,
-} from "../types/gateway.interface";
-import { TransbankAdapter } from "../adapters/transbank.adapter";
-import { TransbankService } from "../../transbank/services/transbank.service";
+} from "../../../src/services/payment-gateway/types/gateway.interface";
+import { TransbankAdapter } from "../../../src/services/payment-gateway/adapters/transbank.adapter";
+import { TransbankService } from "../../../src/services/transbank/services/transbank.service";
 
 // ─── Environment isolation helpers ───────────────────────────────────────────
 

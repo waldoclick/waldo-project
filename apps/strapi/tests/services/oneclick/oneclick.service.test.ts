@@ -1,5 +1,5 @@
-import { OneclickService } from "../services/oneclick.service";
-import { buildOneclickUsername } from "../types/oneclick.types";
+import { OneclickService } from "../../../src/services/oneclick/services/oneclick.service";
+import { buildOneclickUsername } from "../../../src/services/oneclick/types/oneclick.types";
 
 // Mock transbank-sdk to isolate OneclickService from actual SDK calls
 jest.mock("transbank-sdk", () => {
@@ -39,7 +39,7 @@ jest.mock("transbank-sdk", () => {
 });
 
 // Mock logger to prevent actual log output during tests
-jest.mock("../../../utils/logtail", () => ({
+jest.mock("../../../src/utils/logtail", () => ({
   info: jest.fn(),
   warn: jest.fn(),
   error: jest.fn(),

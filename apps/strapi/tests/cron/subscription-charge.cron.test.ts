@@ -1,14 +1,14 @@
-import { SubscriptionChargeService } from "../subscription-charge.cron";
+import { SubscriptionChargeService } from "../../src/cron/subscription-charge.cron";
 
 // Mock logger to prevent actual log output during tests
-jest.mock("../../utils/logtail", () => ({
+jest.mock("../../src/utils/logtail", () => ({
   info: jest.fn(),
   warn: jest.fn(),
   error: jest.fn(),
 }));
 
 // Mock OneclickService
-jest.mock("../../services/oneclick", () => ({
+jest.mock("../../src/services/oneclick", () => ({
   OneclickService: jest.fn().mockImplementation(() => ({
     authorizeCharge: mockAuthorizeCharge,
   })),
@@ -17,26 +17,26 @@ jest.mock("../../services/oneclick", () => ({
 const mockAuthorizeCharge = jest.fn();
 
 // Mock order.utils — use jest.fn() in factory to avoid TDZ hoisting issue
-jest.mock("../../api/payment/utils/order.utils", () => ({
+jest.mock("../../src/api/payment/utils/order.utils", () => ({
   __esModule: true,
   default: { createAdOrder: jest.fn() },
 }));
 
 // Mock general.utils
-jest.mock("../../api/payment/utils/general.utils", () => ({
+jest.mock("../../src/api/payment/utils/general.utils", () => ({
   __esModule: true,
   default: { generateFactoDocument: jest.fn() },
 }));
 
 // Mock user.utils documentDetails
-jest.mock("../../api/payment/utils/user.utils", () => ({
+jest.mock("../../src/api/payment/utils/user.utils", () => ({
   documentDetails: jest.fn(),
 }));
 
 // Import mocked modules to get typed references
-import orderUtilsMock from "../../api/payment/utils/order.utils";
-import generalUtilsMock from "../../api/payment/utils/general.utils";
-import * as userUtilsMock from "../../api/payment/utils/user.utils";
+import orderUtilsMock from "../../src/api/payment/utils/order.utils";
+import generalUtilsMock from "../../src/api/payment/utils/general.utils";
+import * as userUtilsMock from "../../src/api/payment/utils/user.utils";
 
 const mockCreateAdOrder = orderUtilsMock.createAdOrder as jest.Mock;
 const mockGenerateFactoDocument =
