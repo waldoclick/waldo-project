@@ -54,7 +54,8 @@
       "Bash(grep -rn \"persist\" /home/gab/Code/waldo-project/apps/website/app/stores/*.ts)",
       "Bash(grep -E \"\\\\.ts$\")",
       "Bash(find . -name \"package.json\" -path \"*/apps/strapi/*\" -exec cat {} \\\\;)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(npx vue-tsc:*)"
     ]
   }
 }
