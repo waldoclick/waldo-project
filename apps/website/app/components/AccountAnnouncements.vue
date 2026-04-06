@@ -108,12 +108,10 @@ import EmptyState from "@/components/EmptyState.vue";
 import LoadingDefault from "@/components/LoadingDefault.vue";
 import ButtonCreate from "@/components/ButtonCreate.vue";
 import { ref } from "vue";
+import type { Component } from "vue";
 
 // Definir la interfaz localmente para evitar errores de importación
-interface Announcement {
-  id: number;
-  [key: string]: any; // Permitir cualquier propiedad adicional
-}
+type Announcement = Record<string, unknown> & { id: number };
 
 type FilterType = "published" | "review" | "expired" | "rejected" | "banned";
 
@@ -133,7 +131,7 @@ const props = defineProps<{
     value: FilterType;
     label: string;
     count: number;
-    icon: any; // Tipo para el componente de icono
+    icon: Component;
   }>;
 }>();
 

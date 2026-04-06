@@ -125,9 +125,7 @@ const { data: adData, refresh } = await useAsyncData<AdPageData | null>(
 
         if (result?.data) {
           const resultData = result.data as unknown as { result: number };
-          const resultMeta = (result as any).meta as
-            | { timestamp: string }
-            | undefined;
+          const resultMeta = (result as unknown as { meta?: { timestamp: string } }).meta;
           ad.priceData.convertedPrice = resultData.result;
           ad.priceData.convertedTimestamp = resultMeta?.timestamp;
           ad.priceData.convertedCurrency =

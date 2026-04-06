@@ -10,9 +10,11 @@
 </template>
 
 <script setup lang="ts">
+import type { Component } from "vue";
+
 defineProps<{
   to: string | object;
-  iconComponent: any;
+  iconComponent: Component;
   title: string;
   description: string;
   linkText: string;
