@@ -77,6 +77,7 @@ Progress: [██████████] 100%
 - Phase 111 added: haz que sean administrables desde strapi y usa la misma informacion para completar el seeder
 - Phase 114 added: Fix Codacy best-practice warnings — replace any with unknown, Function type, and require statements across monorepo
 - Phase 115 added: Fix remaining any and Function type violations
+- Phase 116 added: Enforce centralized test directory structure
 
 ### Blockers/Concerns (open)
 
