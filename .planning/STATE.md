@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-stopped_at: Completed quick task 260405-uxm - Move function declaration to function body root in gtm.client.ts
-last_updated: "2026-04-06T02:18:27.147Z"
+stopped_at: Completed 114-01-PLAN.md — fix any types in website app
+last_updated: "2026-04-06T03:01:17.538Z"
 progress:
-  total_phases: 7
+  total_phases: 8
   completed_phases: 6
-  total_plans: 14
-  completed_plans: 14
+  total_plans: 18
+  completed_plans: 15
   percent: 100
 ---
 
@@ -20,7 +20,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 112 — fix-ad-wizard-ownership-validation
+**Current focus:** Phase 114 — fix-codacy-best-practice-warnings-replace-any-with-unknown-function-type-and-require-statements-across-monorepo
 
 ## Position
 
@@ -73,6 +73,7 @@ Progress: [██████████] 100%
 - Phase 109 added: Eliminate @nuxtjs/strapi dependency from dashboard only — replace useStrapiUser() with custom session composable, useStrapiToken() with direct cookie read, useStrapiClient() inside useApiClient with native $fetch
 - Phase 110 added: Fix SSR data loading in ads detail page and dashboard home stats
 - Phase 111 added: haz que sean administrables desde strapi y usa la misma informacion para completar el seeder
+- Phase 114 added: Fix Codacy best-practice warnings — replace any with unknown, Function type, and require statements across monorepo
 
 ### Blockers/Concerns (open)
 
@@ -100,6 +101,6 @@ Progress: [██████████] 100%
 
 ## Session Continuity
 
-Last session: 2026-04-06T02:18:27.145Z
-Stopped at: Completed quick task 260405-uxm - convert gtag function declaration to arrow function expression in gtm.client.ts
+Last session: 2026-04-06T03:01:17.535Z
+Stopped at: Completed 114-01-PLAN.md — fix any types in website app
 Resume file: None
