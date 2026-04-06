@@ -5,7 +5,7 @@ dotenv.config();
 
 export default defineConfig({
   e2e: {
-    setupNodeEvents(_on, config) {
+    setupNodeEvents(_on, _config) {
       // implement node event listeners here
     },
     baseUrl: process.env.BASE_URL,

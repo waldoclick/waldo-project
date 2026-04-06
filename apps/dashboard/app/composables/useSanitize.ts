@@ -41,7 +41,7 @@ export const useSanitize = () => {
     const win = window as unknown as Record<string, unknown>;
     if (typeof window !== "undefined" && win.DOMPurify) {
       const purify = win.DOMPurify as {
-        sanitize: (html: string, config: Record<string, unknown>) => string;
+        sanitize: (_html: string, _config: Record<string, unknown>) => string;
       };
       return purify.sanitize(html, {
         ALLOWED_TAGS: allowedTags,
