@@ -16,6 +16,7 @@
 
 <script setup lang="ts">
 import { ref, watch } from "vue";
+import type { Component } from "vue";
 import AccountAnnouncements from "@/components/AccountAnnouncements.vue";
 import type { Ad } from "@/types/ad";
 import { useUserStore } from "@/stores/user.store";
@@ -24,7 +25,7 @@ import { CheckCircle, Clock, AlertCircle, XCircle, Ban } from "lucide-vue-next";
 type FilterType = "published" | "review" | "expired" | "rejected" | "banned";
 
 const tabs = ref<
-  { value: FilterType; label: string; count: number; icon: any }[]
+  { value: FilterType; label: string; count: number; icon: Component }[]
 >([
   { value: "published", label: "Activos", count: 0, icon: CheckCircle },
   { value: "review", label: "En revisión", count: 0, icon: Clock },

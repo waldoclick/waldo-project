@@ -70,8 +70,8 @@ export interface User {
   };
   ad_reservations?: AdReservation[];
   ad_featured_reservations?: AdFeaturedReservation[];
-  ads?: any[];
-  orders?: any[];
+  ads?: Record<string, unknown>[];
+  orders?: Record<string, unknown>[];
   freeAdReservationsCount?: number;
   paidAdReservationsCount?: number;
   adFeaturedReservationsCount?: number;

@@ -1,3 +1,4 @@
+import type { Component } from "vue";
 import {
   ChevronRight as IconChevronRight,
   Pickaxe as IconPickaxe,
@@ -18,7 +19,7 @@ export const useIcons = () => {
   const getCategoryIcon = (category: string) => {
     const slug = category?.toLowerCase() || "";
 
-    const iconMap: { [key: string]: any } = {
+    const iconMap: Record<string, Component> = {
       mineria: IconPickaxe,
       salud: IconHeartPulse,
       silvicultura: IconTrees,

@@ -69,7 +69,6 @@ interface Order {
   is_invoice: boolean;
   createdAt: string;
   updatedAt: string;
-  [key: string]: any; // Permitir cualquier propiedad adicional
 }
 
 interface Pagination {

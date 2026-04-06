@@ -17,11 +17,12 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import type { Component } from "vue";
 import { useSanitize } from "@/composables/useSanitize";
 
 // Define las propiedades del componente
 const props = defineProps<{
-  icon: any;
+  icon: Component;
   title: string;
   description: string;
 }>();

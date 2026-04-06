@@ -365,7 +365,7 @@ const handleDeactivateSubmit = async (reason: string) => {
   }
 };
 
-const handlePushImage = (response: any) => {
+const handlePushImage = (response: GalleryItem & { id: number | string }) => {
   const imageUrl = response.formats?.thumbnail?.url || response.url;
   const newImage: GalleryItem = {
     id: String(response.id),
