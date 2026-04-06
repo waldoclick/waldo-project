@@ -227,6 +227,24 @@
     }
   }
 
+  &--outline {
+    background: $white;
+    color: $charcoal;
+    border: 1px solid $silver;
+
+    &:hover,
+    &:focus {
+      background: $cultured;
+      border-color: $charcoal;
+      outline: none;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
   // &.btn--login {
   //   &--desktop {
   //     display: flex;
