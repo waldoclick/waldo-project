@@ -24,7 +24,7 @@ export function useExportCsv() {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
     } catch {
-      await Swal.fire("Error", "No se pudo exportar las órdenes.", "error");
+      await Swal.fire("Error", "No se pudieron exportar las órdenes.", "error");
     } finally {
       isExporting.value = false;
     }
