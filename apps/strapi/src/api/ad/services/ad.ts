@@ -674,11 +674,11 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
       // Fires only on first-publish transition (EVT-02 guard).
       // No Deal created — only Contact stats updated.
       if (isFirstPublish) {
-        const _zohoEmail = ad.user?.email;
+        const zohoEmail = ad.user?.email;
         Promise.resolve()
           .then(async () => {
-            if (!_zohoEmail) return;
-            const contact = await zohoService.findContact(_zohoEmail);
+            if (!zohoEmail) return;
+            const contact = await zohoService.findContact(zohoEmail);
             if (!contact) {
               logger.info(
                 "Zoho contact not found for ad approval — skipping CRM sync",
