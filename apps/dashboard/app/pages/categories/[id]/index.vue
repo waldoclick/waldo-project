@@ -47,13 +47,19 @@ import BoxContent from "@/components/BoxContent.vue";
 import BoxInformation from "@/components/BoxInformation.vue";
 import CardInfo from "@/components/CardInfo.vue";
 import { useImageProxy } from "@/composables/useImage";
+import type { CategoryData } from "@/components/FormCategory.vue";
+
+interface CategoryRecord extends CategoryData {
+  createdAt?: string;
+  updatedAt?: string;
+}
 
 definePageMeta({
   layout: "dashboard",
 });
 
 const route = useRoute();
-const item = ref<any>(null);
+const item = ref<CategoryRecord | null>(null);
 const { transformUrl } = useImageProxy();
 const apiClient = useApiClient();
 

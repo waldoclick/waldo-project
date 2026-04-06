@@ -47,13 +47,19 @@ import HeroDefault from "@/components/HeroDefault.vue";
 import BoxContent from "@/components/BoxContent.vue";
 import BoxInformation from "@/components/BoxInformation.vue";
 import CardInfo from "@/components/CardInfo.vue";
+import type { PolicyData } from "@/components/FormPolicy.vue";
+
+interface PolicyRecord extends PolicyData {
+  createdAt?: string;
+  updatedAt?: string;
+}
 
 definePageMeta({
   layout: "dashboard",
 });
 
 const route = useRoute();
-const item = ref<any>(null);
+const item = ref<PolicyRecord | null>(null);
 const apiClient = useApiClient();
 
 const title = computed(() => item.value?.title || "Politica");

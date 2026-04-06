@@ -47,13 +47,19 @@ import HeroDefault from "@/components/HeroDefault.vue";
 import BoxContent from "@/components/BoxContent.vue";
 import BoxInformation from "@/components/BoxInformation.vue";
 import CardInfo from "@/components/CardInfo.vue";
+import type { FaqData } from "@/components/FormFaq.vue";
+
+interface FaqRecord extends FaqData {
+  createdAt?: string;
+  updatedAt?: string;
+}
 
 definePageMeta({
   layout: "dashboard",
 });
 
 const route = useRoute();
-const item = ref<any>(null);
+const item = ref<FaqRecord | null>(null);
 const apiClient = useApiClient();
 
 const title = computed(() => item.value?.title || "FAQ");

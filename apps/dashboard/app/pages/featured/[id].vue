@@ -60,12 +60,23 @@ import BoxContent from "@/components/BoxContent.vue";
 import BoxInformation from "@/components/BoxInformation.vue";
 import CardInfo from "@/components/CardInfo.vue";
 
+interface FeaturedRecord {
+  id: number;
+  price: number;
+  total_days: number;
+  description?: string;
+  createdAt: string;
+  updatedAt: string;
+  user?: { username: string };
+  ad?: { name: string } | null;
+}
+
 definePageMeta({
   layout: "dashboard",
 });
 
 const route = useRoute();
-const item = ref<any>(null);
+const item = ref<FeaturedRecord | null>(null);
 const apiClient = useApiClient();
 
 const title = computed(() =>
@@ -112,5 +123,5 @@ const { data: featuredData } = await useAsyncData(
   },
 );
 
-item.value = featuredData.value ?? null;
+item.value = (featuredData.value as FeaturedRecord | null) ?? null;
 </script>
