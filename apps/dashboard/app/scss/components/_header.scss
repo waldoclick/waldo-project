@@ -52,10 +52,15 @@
     @include screen-large {
       left: 0;
       width: 100%;
+      justify-content: space-between;
 
       &__left {
         display: flex;
         align-items: center;
+      }
+
+      @include screen-small {
+        padding: 0 16px;
       }
     }
   }

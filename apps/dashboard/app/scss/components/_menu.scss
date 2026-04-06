@@ -172,5 +172,19 @@
       flex-shrink: 0;
       transition: color 0.2s ease;
     }
+
+    @include screen-small {
+      &__logo {
+        padding: 0 16px;
+      }
+
+      &__link {
+        padding: 11px 16px;
+      }
+
+      &__sublink {
+        padding: 11px 16px;
+      }
+    }
   }
 }
