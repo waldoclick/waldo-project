@@ -167,16 +167,10 @@ export const useUserStore = defineStore("user", () => {
   };
 
   const deactivateAd = async (adDocumentId: string, reason?: string) => {
-    try {
-      const response = await client(`ads/${adDocumentId}/deactivate`, {
-        method: "PUT",
-        body: { reason_for_deactivation: reason ?? null },
-      });
-
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    return client(`ads/${adDocumentId}/deactivate`, {
+      method: "PUT",
+      body: { reason_for_deactivation: reason ?? null },
+    });
   };
 
   const reset = () => {

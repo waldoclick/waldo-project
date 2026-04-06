@@ -1,9 +1,11 @@
 // protect-user-fields.test.ts
 
+import type { Context } from "koa";
+import type { Core } from "@strapi/strapi";
 import protectUserFields from "./protect-user-fields";
 
 function createMiddleware() {
-  return protectUserFields({}, { strapi: {} as any });
+  return protectUserFields({}, { strapi: {} as unknown as Core.Strapi });
 }
 
 function createContext(
@@ -29,10 +31,10 @@ describe("protect-user-fields middleware", () => {
     });
     const next = jest.fn().mockResolvedValue(undefined);
 
-    await middleware(ctx as any, next);
+    await middleware(ctx as unknown as Context, next);
 
-    expect((ctx.request.body as any).data).not.toHaveProperty("pro_status");
-    expect((ctx.request.body as any).data).toHaveProperty("firstname", "Alice");
+    expect(ctx.request.body.data).not.toHaveProperty("pro_status");
+    expect(ctx.request.body.data).toHaveProperty("firstname", "Alice");
     expect(next).toHaveBeenCalled();
   });
 
@@ -49,12 +51,12 @@ describe("protect-user-fields middleware", () => {
     });
     const next = jest.fn().mockResolvedValue(undefined);
 
-    await middleware(ctx as any, next);
+    await middleware(ctx as unknown as Context, next);
 
-    expect((ctx.request.body as any).data).not.toHaveProperty("pro_status");
-    expect((ctx.request.body as any).data).not.toHaveProperty("pro_expires_at");
-    expect((ctx.request.body as any).data).not.toHaveProperty("tbk_user");
-    expect((ctx.request.body as any).data).toHaveProperty("lastname", "Smith");
+    expect(ctx.request.body.data).not.toHaveProperty("pro_status");
+    expect(ctx.request.body.data).not.toHaveProperty("pro_expires_at");
+    expect(ctx.request.body.data).not.toHaveProperty("tbk_user");
+    expect(ctx.request.body.data).toHaveProperty("lastname", "Smith");
     expect(next).toHaveBeenCalled();
   });
 
@@ -66,12 +68,12 @@ describe("protect-user-fields middleware", () => {
     });
     const next = jest.fn().mockResolvedValue(undefined);
 
-    await middleware(ctx as any, next);
+    await middleware(ctx as unknown as Context, next);
 
-    expect((ctx.request.body as any).data).not.toHaveProperty("username");
-    expect((ctx.request.body as any).data).not.toHaveProperty("avatar");
-    expect((ctx.request.body as any).data).not.toHaveProperty("cover");
-    expect((ctx.request.body as any).data).toHaveProperty("phone", "123");
+    expect(ctx.request.body.data).not.toHaveProperty("username");
+    expect(ctx.request.body.data).not.toHaveProperty("avatar");
+    expect(ctx.request.body.data).not.toHaveProperty("cover");
+    expect(ctx.request.body.data).toHaveProperty("phone", "123");
     expect(next).toHaveBeenCalled();
   });
 
@@ -89,13 +91,13 @@ describe("protect-user-fields middleware", () => {
     });
     const next = jest.fn().mockResolvedValue(undefined);
 
-    await middleware(ctx as any, next);
+    await middleware(ctx as unknown as Context, next);
 
-    expect((ctx.request.body as any).data).not.toHaveProperty("role");
-    expect((ctx.request.body as any).data).not.toHaveProperty("provider");
-    expect((ctx.request.body as any).data).not.toHaveProperty("confirmed");
-    expect((ctx.request.body as any).data).not.toHaveProperty("blocked");
-    expect((ctx.request.body as any).data).toHaveProperty("address", "Main St");
+    expect(ctx.request.body.data).not.toHaveProperty("role");
+    expect(ctx.request.body.data).not.toHaveProperty("provider");
+    expect(ctx.request.body.data).not.toHaveProperty("confirmed");
+    expect(ctx.request.body.data).not.toHaveProperty("blocked");
+    expect(ctx.request.body.data).toHaveProperty("address", "Main St");
     expect(next).toHaveBeenCalled();
   });
 
@@ -107,12 +109,9 @@ describe("protect-user-fields middleware", () => {
     });
     const next = jest.fn().mockResolvedValue(undefined);
 
-    await middleware(ctx as any, next);
+    await middleware(ctx as unknown as Context, next);
 
-    expect((ctx.request.body as any).data).toHaveProperty(
-      "pro_status",
-      "active"
-    );
+    expect(ctx.request.body.data).toHaveProperty("pro_status", "active");
     expect(next).toHaveBeenCalled();
   });
 
@@ -129,9 +128,9 @@ describe("protect-user-fields middleware", () => {
     });
     const next = jest.fn().mockResolvedValue(undefined);
 
-    await middleware(ctx as any, next);
+    await middleware(ctx as unknown as Context, next);
 
-    expect((ctx.request.body as any).data).toEqual({
+    expect(ctx.request.body.data).toEqual({
       firstname: "Bob",
       lastname: "Jones",
       phone: "555-1234",
@@ -148,7 +147,7 @@ describe("protect-user-fields middleware", () => {
     });
     const next = jest.fn().mockResolvedValue(undefined);
 
-    await middleware(ctx as any, next);
+    await middleware(ctx as unknown as Context, next);
 
     expect(next).toHaveBeenCalledTimes(1);
   });
@@ -162,7 +161,7 @@ describe("protect-user-fields middleware", () => {
     });
     const next = jest.fn().mockResolvedValue(undefined);
 
-    await middleware(ctx as any, next);
+    await middleware(ctx as unknown as Context, next);
 
     expect(ctx.request.body).not.toHaveProperty("pro_status");
     expect(ctx.request.body).toHaveProperty("firstname", "Alice");
