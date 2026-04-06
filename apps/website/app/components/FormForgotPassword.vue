@@ -50,13 +50,13 @@ const loading = ref(false);
 const apiClient = useApiClient();
 const router = useRouter();
 
-const onSubmit = async (values: any) => {
+const onSubmit = async (values: Record<string, unknown>) => {
   loading.value = true;
 
   try {
     await apiClient("/auth/forgot-password", {
       method: "POST",
-      body: { email: values.email, context: "website" },
+      body: { email: values.email as string, context: "website" },
     });
 
     Swal.fire(

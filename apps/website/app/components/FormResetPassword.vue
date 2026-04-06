@@ -91,16 +91,16 @@ const passwordType = ref("password");
 const apiClient = useApiClient();
 const router = useRouter();
 
-const onSubmit = async (values: any) => {
+const onSubmit = async (values: Record<string, unknown>) => {
   loading.value = true;
 
   try {
     await apiClient("/auth/reset-password", {
       method: "POST",
       body: {
-        code: values.code,
-        password: values.password,
-        passwordConfirmation: values.password,
+        code: values.code as string,
+        password: values.password as string,
+        passwordConfirmation: values.password as string,
       },
     });
 

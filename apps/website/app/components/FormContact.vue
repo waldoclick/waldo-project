@@ -192,17 +192,17 @@ const handleTextArea = (e: Event) => {
 };
 
 // Handle Strapi submission
-const submitToStrapi = async (values: any) => {
+const submitToStrapi = async (values: Record<string, unknown>) => {
   try {
     await apiClient("/contacts", {
       method: "POST",
       body: {
         data: {
-          fullname: values.name,
-          email: values.email,
-          company: values.company,
-          phone: values.phone,
-          message: values.message,
+          fullname: values.name as string,
+          email: values.email as string,
+          company: values.company as string,
+          phone: values.phone as string,
+          message: values.message as string,
         },
       },
     });

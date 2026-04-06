@@ -1,6 +1,6 @@
 import { defineNuxtPlugin } from "#app";
 
-export default defineNuxtPlugin((nuxtApp: any) => {
+export default defineNuxtPlugin((nuxtApp) => {
   function checkSiteHealth() {
     return detectAdBlock().then((adBlockDetected) => {
       const result = {

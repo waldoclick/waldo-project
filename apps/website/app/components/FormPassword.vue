@@ -92,16 +92,16 @@ const loading = ref(false);
 const passwordType = ref("password");
 const router = useRouter();
 
-const handleSubmit = async (values: any) => {
+const handleSubmit = async (values: Record<string, unknown>) => {
   loading.value = true;
 
   try {
     await apiClient("auth/change-password", {
       method: "POST",
       body: {
-        currentPassword: values.current_password,
-        password: values.password,
-        passwordConfirmation: values.password_confirmation,
+        currentPassword: values.current_password as string,
+        password: values.password as string,
+        passwordConfirmation: values.password_confirmation as string,
         // recaptchaToken removed — useApiClient injects X-Recaptcha-Token header automatically
       },
     });
@@ -114,7 +114,7 @@ const handleSubmit = async (values: any) => {
   }
 };
 
-const handleError = (error: any) => {
+const handleError = (_error: unknown) => {
   Swal.fire("Error", "Hubo un error. Por favor, inténtalo de nuevo.", "error");
 };
 

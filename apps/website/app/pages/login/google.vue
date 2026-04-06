@@ -54,10 +54,11 @@ const authenticate = async () => {
 
       router.push(redirectTo);
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Mostrar el mensaje de error y redirigir a /login
+    const err = error as { response?: { data?: { error?: { details?: { error?: { message?: string }; message?: string } } } } };
     const errorMessage =
-      error.response?.data?.error?.details?.error?.message ||
+      err.response?.data?.error?.details?.error?.message ||
       "Error desconocido durante la autenticación.";
     Swal.fire("Error", errorMessage, "error");
     router.push("/login");
