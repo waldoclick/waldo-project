@@ -34,7 +34,10 @@ export default {
     interface CronTask {
       task: (ctx: { strapi: typeof strapi }) => Promise<void>;
     }
-    const cronTasks = strapi.config.get("cron-tasks") as Record<string, CronTask>;
+    const cronTasks = strapi.config.get("cron-tasks") as Record<
+      string,
+      CronTask
+    >;
     const task = cronTasks?.[taskKey];
 
     if (!task) {

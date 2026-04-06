@@ -112,23 +112,27 @@ export const saveSubscriptionData = async (
       console.log(
         `Suscripción de ${providerName} ${providerSubId} ya existe (${existing[0].id}). Actualizando...`
       );
-      savedSubscription = await strapi.entityService.update(
+      savedSubscription = (await strapi.entityService.update(
         strapiApiId as Parameters<typeof strapi.entityService.update>[0],
         existing[0].id,
         {
-          data: subscriptionDataToSave as unknown as Parameters<typeof strapi.entityService.update>[2]["data"],
+          data: subscriptionDataToSave as unknown as Parameters<
+            typeof strapi.entityService.update
+          >[2]["data"],
         }
-      ) as Record<string, unknown>;
+      )) as Record<string, unknown>;
     } else {
       console.log(
         `Creando nueva entrada para suscripción de ${providerName} ${providerSubId}...`
       );
-      savedSubscription = await strapi.entityService.create(
+      savedSubscription = (await strapi.entityService.create(
         strapiApiId as Parameters<typeof strapi.entityService.create>[0],
         {
-          data: subscriptionDataToSave as unknown as Parameters<typeof strapi.entityService.create>[1]["data"],
+          data: subscriptionDataToSave as unknown as Parameters<
+            typeof strapi.entityService.create
+          >[1]["data"],
         }
-      ) as Record<string, unknown>;
+      )) as Record<string, unknown>;
     }
 
     console.log(
@@ -141,6 +145,10 @@ export const saveSubscriptionData = async (
       `Error al guardar datos de suscripción genéricos (${providerName}) ${providerSubId} en Strapi:`,
       error
     );
-    throw new Error(`Error saving generic subscription data: ${error instanceof Error ? error.message : String(error)}`);
+    throw new Error(
+      `Error saving generic subscription data: ${
+        error instanceof Error ? error.message : String(error)
+      }`
+    );
   }
 };

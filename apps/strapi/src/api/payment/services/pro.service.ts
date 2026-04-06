@@ -36,7 +36,8 @@ export class ProService {
       const flowService = flowServiceFactory(ctx.strapi);
       let customerId: string | undefined = undefined;
       // Define explicitly that we expect flow_customer_data or null/undefined
-      let flowCustomerData = (user as unknown as Record<string, unknown>).flow_customer_data as Record<string, unknown> | null | undefined;
+      let flowCustomerData = (user as unknown as Record<string, unknown>)
+        .flow_customer_data as Record<string, unknown> | null | undefined;
 
       // 2. Check if Flow customer data exists and has customerId
       if (flowCustomerData && flowCustomerData.customerId) {
@@ -82,7 +83,10 @@ export class ProService {
         }
 
         customerId = customerResponse.customerId;
-        flowCustomerData = customerResponse as unknown as Record<string, unknown>; // Store the newly created data
+        flowCustomerData = customerResponse as unknown as Record<
+          string,
+          unknown
+        >; // Store the newly created data
 
         // 4b. Save the *entire* Flow customer response object to Strapi user
         try {
@@ -94,7 +98,9 @@ export class ProService {
           // Log the error but potentially continue, as we have the customerId needed for subscription
           console.error(
             "Error al guardar flow_customer_data en Strapi (continuando con la suscripción):",
-            updateError instanceof Error ? updateError.message : String(updateError)
+            updateError instanceof Error
+              ? updateError.message
+              : String(updateError)
           );
         }
       }

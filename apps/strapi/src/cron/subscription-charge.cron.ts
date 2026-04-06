@@ -87,7 +87,9 @@ export class SubscriptionChargeService {
 
         // Idempotency check: skip if already approved for this period
         const existingApproved = await strapi.entityService.findMany(
-          "api::subscription-payment.subscription-payment" as Parameters<typeof strapi.entityService.findMany>[0],
+          "api::subscription-payment.subscription-payment" as Parameters<
+            typeof strapi.entityService.findMany
+          >[0],
           {
             filters: {
               user: { id: user.id },
@@ -110,14 +112,18 @@ export class SubscriptionChargeService {
 
       // Step 2: Retry failed charges with charge_attempts < 3 whose next_charge_attempt <= today
       const retryRecords = (await strapi.entityService.findMany(
-        "api::subscription-payment.subscription-payment" as Parameters<typeof strapi.entityService.findMany>[0],
+        "api::subscription-payment.subscription-payment" as Parameters<
+          typeof strapi.entityService.findMany
+        >[0],
         {
           filters: {
             status: "failed",
             charge_attempts: { $lt: 3 },
             next_charge_attempt: { $lte: today },
           } as unknown as Record<string, unknown>,
-          populate: ["user"] as unknown as Parameters<typeof strapi.entityService.findMany>[1]["populate"],
+          populate: ["user"] as unknown as Parameters<
+            typeof strapi.entityService.findMany
+          >[1]["populate"],
           pagination: { pageSize: -1 },
         }
       )) as FailedPaymentRecord[];
@@ -141,13 +147,17 @@ export class SubscriptionChargeService {
 
       // Step 3: Deactivate exhausted subscriptions (charge_attempts >= 3)
       const exhaustedRecords = (await strapi.entityService.findMany(
-        "api::subscription-payment.subscription-payment" as Parameters<typeof strapi.entityService.findMany>[0],
+        "api::subscription-payment.subscription-payment" as Parameters<
+          typeof strapi.entityService.findMany
+        >[0],
         {
           filters: {
             status: "failed",
             charge_attempts: { $gte: 3 },
           } as unknown as Record<string, unknown>,
-          populate: ["user"] as unknown as Parameters<typeof strapi.entityService.findMany>[1]["populate"],
+          populate: ["user"] as unknown as Parameters<
+            typeof strapi.entityService.findMany
+          >[1]["populate"],
           pagination: { pageSize: -1 },
         }
       )) as ExhaustedPaymentRecord[];
@@ -205,12 +215,16 @@ export class SubscriptionChargeService {
 
         // Mark payment record as deactivated
         await strapi.entityService.update(
-          "api::subscription-payment.subscription-payment" as Parameters<typeof strapi.entityService.update>[0],
+          "api::subscription-payment.subscription-payment" as Parameters<
+            typeof strapi.entityService.update
+          >[0],
           record.id,
           {
             data: {
               status: "deactivated",
-            } as unknown as Parameters<typeof strapi.entityService.update>[2]["data"],
+            } as unknown as Parameters<
+              typeof strapi.entityService.update
+            >[2]["data"],
           }
         );
 

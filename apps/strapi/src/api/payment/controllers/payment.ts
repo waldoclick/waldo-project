@@ -33,13 +33,14 @@ class PaymentController {
     ctx.body = { success: false, message: e?.message };
   };
 
-  private controllerWrapper = (handler: (ctx: Context) => Promise<void>) => async (ctx: Context) => {
-    try {
-      await handler(ctx);
-    } catch (error) {
-      this.errorHandler(ctx, error);
-    }
-  };
+  private controllerWrapper =
+    (handler: (ctx: Context) => Promise<void>) => async (ctx: Context) => {
+      try {
+        await handler(ctx);
+      } catch (error) {
+        this.errorHandler(ctx, error);
+      }
+    };
 
   adCreate = this.controllerWrapper(async (ctx: Context) => {
     const { data } = ctx.request.body;
