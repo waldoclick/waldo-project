@@ -140,3 +140,13 @@ Plans:
 - [x] 114-02-PLAN.md — Fix all `any` violations in dashboard app (~30 files)
 - [x] 114-03-PLAN.md — Fix all `any`/`Function` violations in strapi app (~20 files)
 - [x] 114-04-PLAN.md — Final monorepo verification sweep (typecheck + tests + grep)
+
+### Phase 115: Fix remaining any and Function type violations
+
+**Goal:** Fix 12 residual `any` violations missed by Phase 114's grep patterns: 2 `Array<any>` prop annotations in IntroduceAuth.vue (website + dashboard) and 10 `ref<any>(null)` reactive state declarations in dashboard detail pages. Pure type-annotation refactoring with zero runtime behavior changes.
+**Requirements**: [TYPE-001, TYPE-002]
+**Depends on:** Phase 114
+**Plans:** 1 plan
+
+Plans:
+- [ ] 115-01-PLAN.md — Fix all 12 `Array<any>` and `ref<any>` violations across website and dashboard
