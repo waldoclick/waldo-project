@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 114-04 - final verification sweep (zero any/Function violations across all three apps)
-last_updated: "2026-04-06T03:17:27.580Z"
+stopped_at: Completed 115-01 - replace Array<any> and ref<any> with typed interfaces (12 files, zero any violations remaining)
+last_updated: "2026-04-06T00:25:00.000Z"
 progress:
-  total_phases: 8
-  completed_phases: 7
-  total_plans: 18
-  completed_plans: 18
+  total_phases: 9
+  completed_phases: 8
+  total_plans: 19
+  completed_plans: 19
   percent: 100
 ---
 
@@ -20,7 +20,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 114 — fix-codacy-best-practice-warnings-replace-any-with-unknown-function-type-and-require-statements-across-monorepo
+**Current focus:** Phase 115 — fix-remaining-any-and-function-type-violations
 
 ## Position
 
@@ -65,6 +65,8 @@ Progress: [██████████] 100%
 - default: () => [] added to useAsyncData in politicas-de-privacidad.vue per CLAUDE.md rule to eliminate T|undefined from return type (111-02)
 - Ownership guard in anunciar/index.vue placed AFTER useAsyncData because meStore.loadMe() runs inside that block — placing it before would mean meStore.me is null, incorrectly resetting every user's draft (112-02)
 - userId stored at top-level of AdState (not inside ad object) and written directly as adStore.userId — it is a store identity field, not a form field; no dedicated action/getter needed (112-02)
+- CommuneRecord uses Omit<CommuneData, 'region'> to override region shape — base has region.id (form use) but detail page needs region.name (display) (115-01)
+- Cast useAsyncData.value as TypedInterface | null on assignment when async return includes unknown[] elements — packs/featured/reservations detail pages (115-01)
 
 ### Roadmap Evolution
 
@@ -74,6 +76,7 @@ Progress: [██████████] 100%
 - Phase 110 added: Fix SSR data loading in ads detail page and dashboard home stats
 - Phase 111 added: haz que sean administrables desde strapi y usa la misma informacion para completar el seeder
 - Phase 114 added: Fix Codacy best-practice warnings — replace any with unknown, Function type, and require statements across monorepo
+- Phase 115 added: Fix remaining any and Function type violations
 
 ### Blockers/Concerns (open)
 
