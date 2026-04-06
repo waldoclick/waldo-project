@@ -112,10 +112,11 @@ Progress: [██████████] 100%
 | 260406-d4s | Fix Codacy unused-code warnings: ESLint argsIgnorePattern for _ prefix and remove dead code | 2026-04-06 | 1e585882 | [260406-d4s-fix-codacy-unused-code-warnings-eslint-a](./quick/260406-d4s-fix-codacy-unused-code-warnings-eslint-a/) |
 | 260406-dbk | Fix remaining Codacy unused-code warnings across website, dashboard, strapi — remove dead code, prefix unused params, rename private constructor fields | 2026-04-06 | c439eaa1 | [260406-dbk-fix-remaining-codacy-unused-code-warning](./quick/260406-dbk-fix-remaining-codacy-unused-code-warning/) |
 | 260406-es8 | Fix Codacy still flagging _-prefixed vars — disable base no-unused-vars, configure @typescript-eslint/no-unused-vars with all ignore patterns in .eslintrc.json | 2026-04-06 | 1f436255 | [260406-es8-fix-codacy-still-flagging-prefixed-vars-](./quick/260406-es8-fix-codacy-still-flagging-prefixed-vars-/) |
+| 260406-r0g | fix pagination not resetting to page 1 when search filter changes | 2026-04-06 | 246b1233 | [260406-r0g-fix-pagination-not-resetting-to-page-1-w](./quick/260406-r0g-fix-pagination-not-resetting-to-page-1-w/) |
 
 ## Session Continuity
 
-Last activity: 2026-04-06
+Last activity: 2026-04-06 - Completed quick task 260406-r0g: fix pagination not resetting to page 1 when search filter changes
 Last session: 2026-04-06T22:56:31.898Z
 Stopped at: Completed 119-02-PLAN.md — awaiting human-verify checkpoint (Task 2)
 Resume file: None
