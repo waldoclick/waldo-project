@@ -1,5 +1,5 @@
 import { vi, describe, it, expect, beforeEach } from "vitest";
-import type { PurchaseOrderData, PurchaseOrderItem } from "./useAdAnalytics";
+import type { PurchaseOrderData, PurchaseOrderItem } from "@/composables/useAdAnalytics";
 
 // Mock the ad store
 vi.mock("@/stores/ad.store", () => ({
@@ -28,7 +28,7 @@ beforeEach(() => {
 
 describe("useAdAnalytics - pushEvent flow param", () => {
   it("uses 'ad_creation' as default flow when no flow param is passed", async () => {
-    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { useAdAnalytics } = await import("@/composables/useAdAnalytics");
     const { pushEvent } = useAdAnalytics();
 
     pushEvent("view_item_list", []);
@@ -40,7 +40,7 @@ describe("useAdAnalytics - pushEvent flow param", () => {
   });
 
   it("uses provided flow param when passed explicitly", async () => {
-    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { useAdAnalytics } = await import("@/composables/useAdAnalytics");
     const { pushEvent } = useAdAnalytics();
 
     pushEvent("purchase", [], {}, "pack_purchase");
@@ -52,7 +52,7 @@ describe("useAdAnalytics - pushEvent flow param", () => {
   });
 
   it("still accepts 3-argument form (backward compatible)", async () => {
-    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { useAdAnalytics } = await import("@/composables/useAdAnalytics");
     const { pushEvent } = useAdAnalytics();
 
     pushEvent("step_view", [], { step_number: 1 });
@@ -67,7 +67,7 @@ describe("useAdAnalytics - pushEvent flow param", () => {
 
 describe("useAdAnalytics - purchase()", () => {
   it("uses order.id as transaction_id (gateway-agnostic)", async () => {
-    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { useAdAnalytics } = await import("@/composables/useAdAnalytics");
     const { purchase } = useAdAnalytics();
 
     const order: PurchaseOrderData = {
@@ -97,7 +97,7 @@ describe("useAdAnalytics - purchase()", () => {
   });
 
   it("uses empty string for transaction_id when id is absent", async () => {
-    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { useAdAnalytics } = await import("@/composables/useAdAnalytics");
     const { purchase } = useAdAnalytics();
 
     const order: PurchaseOrderData = { amount: 5000 };
@@ -112,7 +112,7 @@ describe("useAdAnalytics - purchase()", () => {
   });
 
   it("uses totalAmount as fallback when amount is absent", async () => {
-    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { useAdAnalytics } = await import("@/composables/useAdAnalytics");
     const { purchase } = useAdAnalytics();
 
     const order: PurchaseOrderData = {
@@ -130,7 +130,7 @@ describe("useAdAnalytics - purchase()", () => {
   });
 
   it("defaults to 0 when neither amount nor totalAmount is present", async () => {
-    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { useAdAnalytics } = await import("@/composables/useAdAnalytics");
     const { purchase } = useAdAnalytics();
 
     const order: PurchaseOrderData = { documentId: "doc123" };
@@ -145,7 +145,7 @@ describe("useAdAnalytics - purchase()", () => {
   });
 
   it("defaults currency to CLP when absent", async () => {
-    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { useAdAnalytics } = await import("@/composables/useAdAnalytics");
     const { purchase } = useAdAnalytics();
 
     const order: PurchaseOrderData = { documentId: "doc123", amount: 5000 };
@@ -160,7 +160,7 @@ describe("useAdAnalytics - purchase()", () => {
   });
 
   it("maps order.items to GA4 items when present", async () => {
-    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { useAdAnalytics } = await import("@/composables/useAdAnalytics");
     const { purchase } = useAdAnalytics();
 
     const orderItems: PurchaseOrderItem[] = [
@@ -204,7 +204,7 @@ describe("useAdAnalytics - purchase()", () => {
   });
 
   it("falls back to single generic item when order.items is absent", async () => {
-    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { useAdAnalytics } = await import("@/composables/useAdAnalytics");
     const { purchase } = useAdAnalytics();
 
     const order: PurchaseOrderData = {
@@ -233,7 +233,7 @@ describe("useAdAnalytics - purchase()", () => {
   });
 
   it("purchase event has no undefined values in ecommerce payload", async () => {
-    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { useAdAnalytics } = await import("@/composables/useAdAnalytics");
     const { purchase } = useAdAnalytics();
 
     const order: PurchaseOrderData = {};
@@ -252,7 +252,7 @@ describe("useAdAnalytics - purchase()", () => {
   });
 
   it("coerces string amount to number (Strapi biginteger fix)", async () => {
-    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { useAdAnalytics } = await import("@/composables/useAdAnalytics");
     const { purchase } = useAdAnalytics();
 
     const order: PurchaseOrderData = {
@@ -272,7 +272,7 @@ describe("useAdAnalytics - purchase()", () => {
   });
 
   it("coerces string '0' amount to numeric 0 (Strapi biginteger fix)", async () => {
-    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { useAdAnalytics } = await import("@/composables/useAdAnalytics");
     const { purchase } = useAdAnalytics();
 
     const order: PurchaseOrderData = {
@@ -292,7 +292,7 @@ describe("useAdAnalytics - purchase()", () => {
   });
 
   it("generic fallback item uses empty item_id when documentId is also absent", async () => {
-    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { useAdAnalytics } = await import("@/composables/useAdAnalytics");
     const { purchase } = useAdAnalytics();
 
     const order: PurchaseOrderData = {
@@ -312,7 +312,7 @@ describe("useAdAnalytics - purchase()", () => {
   });
 
   it("handles free ad purchase with value: 0 (ECOM-03)", async () => {
-    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { useAdAnalytics } = await import("@/composables/useAdAnalytics");
     const { purchase } = useAdAnalytics();
 
     const order: PurchaseOrderData = {
@@ -334,7 +334,7 @@ describe("useAdAnalytics - purchase()", () => {
   });
 
   it("uses ad documentId as item_id for free ad purchase fallback (ECOM-03)", async () => {
-    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { useAdAnalytics } = await import("@/composables/useAdAnalytics");
     const { purchase } = useAdAnalytics();
 
     const order: PurchaseOrderData = {
@@ -357,7 +357,7 @@ describe("useAdAnalytics - purchase()", () => {
 
 describe("useAdAnalytics - existing methods unchanged", () => {
   it("exports all existing methods", async () => {
-    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { useAdAnalytics } = await import("@/composables/useAdAnalytics");
     const analytics = useAdAnalytics();
 
     expect(typeof analytics.viewItemList).toBe("function");
@@ -385,7 +385,7 @@ describe("useAdAnalytics - existing methods unchanged", () => {
 
 describe("useAdAnalytics - viewItemListPublic()", () => {
   it("pushes view_item_list event with flow='ad_discovery' and mapped items", async () => {
-    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { useAdAnalytics } = await import("@/composables/useAdAnalytics");
     const { viewItemListPublic } = useAdAnalytics();
 
     const ad = {
@@ -417,7 +417,7 @@ describe("useAdAnalytics - viewItemListPublic()", () => {
   });
 
   it("does NOT push an event when ads array is empty", async () => {
-    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { useAdAnalytics } = await import("@/composables/useAdAnalytics");
     const { viewItemListPublic } = useAdAnalytics();
 
     viewItemListPublic([]);
@@ -429,7 +429,7 @@ describe("useAdAnalytics - viewItemListPublic()", () => {
   });
 
   it("uses 'Unknown' for item_category when category is a number", async () => {
-    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { useAdAnalytics } = await import("@/composables/useAdAnalytics");
     const { viewItemListPublic } = useAdAnalytics();
 
     const ad = {
@@ -453,7 +453,7 @@ describe("useAdAnalytics - viewItemListPublic()", () => {
 
 describe("useAdAnalytics - viewItem()", () => {
   it("pushes view_item event with flow='ad_discovery' and exactly 1 item", async () => {
-    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { useAdAnalytics } = await import("@/composables/useAdAnalytics");
     const { viewItem } = useAdAnalytics();
 
     const ad = {
@@ -480,7 +480,7 @@ describe("useAdAnalytics - viewItem()", () => {
   });
 
   it("uses category.name when category is an object, 'Unknown' when numeric", async () => {
-    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { useAdAnalytics } = await import("@/composables/useAdAnalytics");
     const { viewItem } = useAdAnalytics();
 
     viewItem({
@@ -502,7 +502,7 @@ describe("useAdAnalytics - viewItem()", () => {
 
 describe("useAdAnalytics - search()", () => {
   it("pushes search event with search_term and flow='ad_discovery', no ecommerce block", async () => {
-    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { useAdAnalytics } = await import("@/composables/useAdAnalytics");
     const { search } = useAdAnalytics();
 
     search("grúa horquilla");
@@ -520,7 +520,7 @@ describe("useAdAnalytics - search()", () => {
 
 describe("useAdAnalytics - contactSeller()", () => {
   it("pushes contact event with method='email' and flow='user_engagement', no ecommerce block", async () => {
-    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { useAdAnalytics } = await import("@/composables/useAdAnalytics");
     const { contactSeller } = useAdAnalytics();
 
     contactSeller("email");
@@ -536,7 +536,7 @@ describe("useAdAnalytics - contactSeller()", () => {
   });
 
   it("pushes contact event with method='phone' and flow='user_engagement', no ecommerce block", async () => {
-    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { useAdAnalytics } = await import("@/composables/useAdAnalytics");
     const { contactSeller } = useAdAnalytics();
 
     contactSeller("phone");
@@ -554,7 +554,7 @@ describe("useAdAnalytics - contactSeller()", () => {
 
 describe("useAdAnalytics - generateLead()", () => {
   it("pushes generate_lead event with flow='user_engagement', no ecommerce block", async () => {
-    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { useAdAnalytics } = await import("@/composables/useAdAnalytics");
     const { generateLead } = useAdAnalytics();
 
     generateLead();
@@ -571,7 +571,7 @@ describe("useAdAnalytics - generateLead()", () => {
 
 describe("useAdAnalytics - signUp()", () => {
   it("pushes sign_up event with method='email' and flow='user_lifecycle', no ecommerce block", async () => {
-    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { useAdAnalytics } = await import("@/composables/useAdAnalytics");
     const { signUp } = useAdAnalytics();
 
     signUp();
@@ -589,7 +589,7 @@ describe("useAdAnalytics - signUp()", () => {
 
 describe("useAdAnalytics - login()", () => {
   it("pushes login event with method='email' and flow='user_lifecycle', no ecommerce block", async () => {
-    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { useAdAnalytics } = await import("@/composables/useAdAnalytics");
     const { login } = useAdAnalytics();
 
     login("email");
@@ -605,7 +605,7 @@ describe("useAdAnalytics - login()", () => {
   });
 
   it("pushes login event with method='google' and flow='user_lifecycle', no ecommerce block", async () => {
-    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { useAdAnalytics } = await import("@/composables/useAdAnalytics");
     const { login } = useAdAnalytics();
 
     login("google");
@@ -623,7 +623,7 @@ describe("useAdAnalytics - login()", () => {
 
 describe("useAdAnalytics - articleView()", () => {
   it("pushes article_view event with article_id, article_title, article_category and flow='content_engagement', no ecommerce block", async () => {
-    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { useAdAnalytics } = await import("@/composables/useAdAnalytics");
     const { articleView } = useAdAnalytics();
 
     articleView("post-123", "Cómo vender tu maquinaria", "Consejos");
@@ -641,7 +641,7 @@ describe("useAdAnalytics - articleView()", () => {
   });
 
   it("passes article_id as-is without coercion (number stays number)", async () => {
-    const { useAdAnalytics } = await import("./useAdAnalytics");
+    const { useAdAnalytics } = await import("@/composables/useAdAnalytics");
     const { articleView } = useAdAnalytics();
 
     articleView(42, "Mercado de maquinaria 2026", "Mercado");

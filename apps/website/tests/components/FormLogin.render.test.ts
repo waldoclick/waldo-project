@@ -7,7 +7,8 @@ describe("<FormLogin />", () => {
     const wrapper = mount(FormLogin);
     await wrapper.vm.$nextTick(); // Ensure DOM is updated
 
+    const _submitButton = wrapper.find('button[type="submit"]');
     // Verificar si el botón está realmente deshabilitado
-    // expect(wrapper.find('button[type="submit"]').element.disabled).toBe(true)
+    // expect(submitButton.element.disabled).toBe(true)
   });
 });

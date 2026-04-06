@@ -32,7 +32,7 @@ describe("useGoogleOneTap — promptIfEligible()", () => {
 
   it("does NOT call prompt() when user is authenticated", async () => {
     mockUser.value = { id: 1, email: "user@test.com" };
-    const { useGoogleOneTap } = await import("./useGoogleOneTap");
+    const { useGoogleOneTap } = await import("@/composables/useGoogleOneTap");
     const { promptIfEligible } = useGoogleOneTap();
     promptIfEligible();
     expect(mockPrompt).not.toHaveBeenCalled();
@@ -43,7 +43,7 @@ describe("useGoogleOneTap — promptIfEligible()", () => {
     async (path) => {
       mockUser.value = null;
       mockRoutePath.value = path;
-      const { useGoogleOneTap } = await import("./useGoogleOneTap");
+      const { useGoogleOneTap } = await import("@/composables/useGoogleOneTap");
       const { promptIfEligible } = useGoogleOneTap();
       promptIfEligible();
       expect(mockPrompt).not.toHaveBeenCalled();
@@ -53,7 +53,7 @@ describe("useGoogleOneTap — promptIfEligible()", () => {
   it("calls prompt() for unauthenticated user on public route", async () => {
     mockUser.value = null;
     mockRoutePath.value = "/";
-    const { useGoogleOneTap } = await import("./useGoogleOneTap");
+    const { useGoogleOneTap } = await import("@/composables/useGoogleOneTap");
     const { promptIfEligible } = useGoogleOneTap();
     promptIfEligible();
     expect(mockPrompt).toHaveBeenCalledOnce();

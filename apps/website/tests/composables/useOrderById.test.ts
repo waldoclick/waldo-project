@@ -12,7 +12,7 @@ vi.mock("#imports", () => ({
 }));
 
 // Import after mock is registered
-const { useOrderById } = await import("./useOrderById");
+const { useOrderById } = await import("@/composables/useOrderById");
 
 describe("useOrderById", () => {
   beforeEach(() => {
