@@ -53,7 +53,7 @@ import { Field, Form, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 import { useRoute, useRouter } from "vue-router";
 
-interface FaqData {
+export interface FaqData {
   id?: number;
   documentId?: string;
   title?: string;

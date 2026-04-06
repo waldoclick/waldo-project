@@ -43,7 +43,7 @@ import { Field, Form, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 import { useRoute, useRouter } from "vue-router";
 
-interface TermData {
+export interface TermData {
   id?: number;
   documentId?: string;
   title?: string;

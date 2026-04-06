@@ -33,13 +33,19 @@ import BoxContent from "@/components/BoxContent.vue";
 import BoxInformation from "@/components/BoxInformation.vue";
 import CardInfo from "@/components/CardInfo.vue";
 import FormPolicy from "@/components/FormPolicy.vue";
+import type { PolicyData } from "@/components/FormPolicy.vue";
+
+interface PolicyRecord extends PolicyData {
+  createdAt?: string;
+  updatedAt?: string;
+}
 
 definePageMeta({
   layout: "dashboard",
 });
 
 const route = useRoute();
-const policy = ref<any>(null);
+const policy = ref<PolicyRecord | null>(null);
 const apiClient = useApiClient();
 
 const title = computed(() => policy.value?.title || "Politica");
@@ -51,7 +57,7 @@ const breadcrumbs = computed(() => [
   { label: "Editar" },
 ]);
 
-const handlePolicySaved = (updatedPolicy: any) => {
+const handlePolicySaved = (updatedPolicy: PolicyData) => {
   if (updatedPolicy) {
     policy.value = updatedPolicy;
   }

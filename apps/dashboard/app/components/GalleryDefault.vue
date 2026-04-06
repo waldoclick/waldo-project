@@ -43,10 +43,11 @@ import { ref, computed } from "vue";
 import VueEasyLightbox from "vue-easy-lightbox/dist/external-css/vue-easy-lightbox.esm.min.js";
 import { useImageProxy } from "@/composables/useImage";
 import { X as IconX } from "lucide-vue-next";
+import type { AdGalleryItem } from "@/types/ad";
 
 const props = defineProps({
   images: {
-    type: Array as () => Array<{ id?: number; url: string; formats?: any }>,
+    type: Array as () => AdGalleryItem[],
     required: true,
     default: () => [],
   },
@@ -65,7 +66,7 @@ const emit = defineEmits<{
   (
     e: "image-delete",
     payload: {
-      image: { id?: number; url: string; formats?: any };
+      image: AdGalleryItem;
       index: number;
     },
   ): void;
@@ -84,7 +85,7 @@ const imgs = computed(() =>
     : [],
 );
 
-const getImageUrl = (image: { id?: number; url: string; formats?: any }) => {
+const getImageUrl = (image: AdGalleryItem) => {
   if (!image) return "";
   // Usar formato thumbnail si existe, sino la URL original
   const imageUrl = image.formats?.thumbnail?.url || image.url;
@@ -102,7 +103,7 @@ const handleImageClick = (imageIndex: number) => {
 };
 
 const handleImageDelete = (
-  image: { id?: number; url: string; formats?: any },
+  image: AdGalleryItem,
   imageIndex: number,
 ) => {
   emit("image-delete", { image, index: imageIndex });

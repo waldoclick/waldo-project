@@ -60,6 +60,7 @@ import {
   LineElement,
   PointElement,
 } from "chart.js";
+import type { Chart, TooltipItem } from "chart.js";
 import annotationPlugin from "chartjs-plugin-annotation";
 
 ChartJS.register(
@@ -76,7 +77,7 @@ ChartJS.register(
 
 const gridAndHoverPlugin = {
   id: "gridAndHover",
-  afterDraw: (chart: any) => {
+  afterDraw: (chart: Chart) => {
     const ctx = chart.ctx;
     const chartArea = chart.chartArea;
     const scales = chart.scales;
@@ -126,13 +127,13 @@ const gridAndHoverPlugin = {
       tooltip.dataPoints.length > 0
     ) {
       const barPoint = tooltip.dataPoints.find(
-        (dp: any) => dp.datasetIndex === 0,
+        (dp) => dp.datasetIndex === 0,
       );
       if (barPoint && barPoint.dataIndex !== undefined) {
         const meta = chart.getDatasetMeta(0);
-        if (meta && meta.data && meta.data[barPoint.dataIndex]) {
-          const bar = meta.data[barPoint.dataIndex];
-          const barX = bar.x;
+        const barElement = meta?.data?.[barPoint.dataIndex];
+        if (barElement) {
+          const barX = barElement.x;
           if (typeof barX === "number" && !Number.isNaN(barX)) {
             ctx.save();
             ctx.strokeStyle = "rgba(200, 200, 200, 0.6)";
@@ -335,15 +336,15 @@ const chartOptions = computed(() => ({
       titleFont: { size: 11, weight: "normal" as const },
       bodyFont: { size: 11, weight: "normal" as const },
       callbacks: {
-        title: (context: any[]) =>
-          context?.length ? getFullMonthName(context[0].label) : "",
-        label: (context: any) =>
+        title: (context: TooltipItem<"bar">[]) =>
+          context?.length && context[0] ? getFullMonthName(context[0].label) : "",
+        label: (context: TooltipItem<"bar">) =>
           context.datasetIndex === 0 ? formatCurrency(context.parsed.y) : "",
-        afterLabel: (context: any) =>
+        afterLabel: (context: TooltipItem<"bar">) =>
           context.datasetIndex === 0 ? "Monto" : "",
         labelTextColor: () => "#000",
       },
-      filter: (tooltipItem: any) => tooltipItem.datasetIndex === 0,
+      filter: (tooltipItem: TooltipItem<"bar">) => tooltipItem.datasetIndex === 0,
       caretSize: 0,
       caretPadding: 0,
       cornerRadius: 4,
@@ -370,7 +371,7 @@ const chartOptions = computed(() => ({
       },
       ticks: {
         font: { size: 11 },
-        callback: (value: any) => formatCompactCurrency(value),
+        callback: (value: number | string) => formatCompactCurrency(Number(value)),
       },
       width: 60,
     },

@@ -98,7 +98,7 @@ import { Field, Form, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 import { useRoute, useRouter } from "vue-router";
 
-interface PackData {
+export interface PackData {
   id?: number;
   documentId?: string;
   name?: string;

@@ -32,7 +32,7 @@ import * as yup from "yup";
 import { useRoute, useRouter } from "vue-router";
 import { useSlugify } from "@/composables/useSlugify";
 
-interface ConditionData {
+export interface ConditionData {
   id?: number;
   documentId?: string;
   name?: string;

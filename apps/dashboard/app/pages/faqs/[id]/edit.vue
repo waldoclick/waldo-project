@@ -33,13 +33,19 @@ import BoxContent from "@/components/BoxContent.vue";
 import BoxInformation from "@/components/BoxInformation.vue";
 import CardInfo from "@/components/CardInfo.vue";
 import FormFaq from "@/components/FormFaq.vue";
+import type { FaqData } from "@/components/FormFaq.vue";
+
+interface FaqRecord extends FaqData {
+  createdAt?: string;
+  updatedAt?: string;
+}
 
 definePageMeta({
   layout: "dashboard",
 });
 
 const route = useRoute();
-const faq = ref<any>(null);
+const faq = ref<FaqRecord | null>(null);
 const apiClient = useApiClient();
 
 const title = computed(() => faq.value?.title || "FAQ");
@@ -51,7 +57,7 @@ const breadcrumbs = computed(() => [
   { label: "Editar" },
 ]);
 
-const handleFaqSaved = (updatedFaq: any) => {
+const handleFaqSaved = (updatedFaq: FaqData) => {
   if (updatedFaq) {
     faq.value = updatedFaq;
   }
