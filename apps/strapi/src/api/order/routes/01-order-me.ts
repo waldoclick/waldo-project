@@ -6,6 +6,11 @@ export default {
   routes: [
     {
       method: "GET",
+      path: "/orders/export-csv",
+      handler: "order.exportCsv",
+    },
+    {
+      method: "GET",
       path: "/orders/sales-by-month",
       handler: "order.salesByMonth",
     },

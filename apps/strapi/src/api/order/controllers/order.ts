@@ -11,6 +11,16 @@ interface StrapiOrder {
   amount: string | number;
 }
 
+interface ExportOrder {
+  id: number;
+  amount: string | number;
+  payment_method: string;
+  is_invoice: boolean;
+  createdAt: string;
+  user?: { username?: string; email?: string };
+  ad?: { name?: string } | null;
+}
+
 export default factories.createCoreController(
   "api::order.order",
   ({ strapi }) => ({
@@ -214,6 +224,51 @@ export default factories.createCoreController(
         }));
 
         return ctx.send({ data, meta: { year } });
+      } catch (error) {
+        ctx.throw(500, error);
+      }
+    },
+
+    async exportCsv(ctx: Context) {
+      try {
+        const orders = await strapi.entityService.findMany("api::order.order", {
+          populate: ["user", "ad"] as unknown as Record<string, unknown>,
+          limit: -1,
+          sort: { createdAt: "desc" } as unknown as Parameters<
+            typeof strapi.entityService.findMany
+          >[1]["sort"],
+        });
+
+        const rows = (orders as unknown as ExportOrder[]).map((o) => [
+          String(o.id),
+          o.user?.username ?? "",
+          o.user?.email ?? "",
+          o.ad?.name ?? "",
+          String(o.amount),
+          o.payment_method ?? "",
+          o.is_invoice ? "Factura" : "Boleta",
+          o.createdAt,
+        ]);
+
+        const headers = [
+          "ID",
+          "Cliente",
+          "Email",
+          "Anuncio",
+          "Monto",
+          "Método de Pago",
+          "Tipo",
+          "Fecha",
+        ];
+        const csv = [headers, ...rows]
+          .map((row) =>
+            row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(",")
+          )
+          .join("\r\n");
+
+        ctx.set("Content-Type", "text/csv; charset=utf-8");
+        ctx.set("Content-Disposition", 'attachment; filename="orders.csv"');
+        ctx.body = csv;
       } catch (error) {
         ctx.throw(500, error);
       }
