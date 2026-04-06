@@ -385,7 +385,7 @@ class CheckoutService {
       }
 
       // 12. Zoho CRM sync — floating promise, non-blocking
-      const _amount = wepbayResponse.response?.amount;
+      const amount = wepbayResponse.response?.amount;
       Promise.resolve()
         .then(async () => {
           if (!userId) return;
@@ -399,14 +399,14 @@ class CheckoutService {
             const closingDate = new Date().toISOString().split("T")[0];
             await zohoService.createDeal({
               dealName: `Checkout Payment - ${adId}`,
-              amount: _amount,
+              amount: amount,
               contactId: contact.id,
               type: "Ad Payment",
               closingDate,
               leadSource: "Website",
             });
             await zohoService.updateContactStats(contact.id, {
-              Total_Spent__c: _amount,
+              Total_Spent__c: amount,
             });
           }
         })

@@ -470,15 +470,15 @@ class AdService {
 
       // Zoho CRM sync — floating promise (must not block redirect in adResponse controller)
       // Capture values before any potential reassignment in the method above
-      const _zohoEmail = adData.ad?.user?.email;
-      const _zohoAmount = wepbayResponse.response?.amount;
+      const zohoEmail = adData.ad?.user?.email;
+      const zohoAmount = wepbayResponse.response?.amount;
 
       // Publish the ad — clear draft flag now that payment is confirmed
       await PaymentUtils.ad.publishAd(Number(adId));
       Promise.resolve()
         .then(async () => {
-          if (!_zohoEmail) return;
-          const contact = await zohoService.findContact(_zohoEmail);
+          if (!zohoEmail) return;
+          const contact = await zohoService.findContact(zohoEmail);
           if (!contact) {
             logger.info(
               "Zoho contact not found for ad payment — skipping CRM sync",
@@ -491,14 +491,14 @@ class AdService {
           const closingDate = new Date().toISOString().split("T")[0];
           await zohoService.createDeal({
             dealName: `Ad Payment - ${adId}`,
-            amount: _zohoAmount,
+            amount: zohoAmount,
             contactId: contact.id,
             type: "Ad Payment",
             closingDate,
             leadSource: "Website",
           });
           await zohoService.updateContactStats(contact.id, {
-            Total_Spent__c: _zohoAmount,
+            Total_Spent__c: zohoAmount,
           });
         })
         .catch((zohoError) => {
