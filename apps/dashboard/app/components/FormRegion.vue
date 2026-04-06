@@ -78,13 +78,13 @@ const hydrateForm = () => {
   lastHydratedId.value = props.region?.id || props.region?.documentId || null;
 };
 
-const handleSubmit = async (values: any) => {
+const handleSubmit = async (values: Record<string, unknown>) => {
   sending.value = true;
 
   try {
     const payload = {
-      name: values.name.trim(),
-      slug: toSlug(values.name),
+      name: (values.name as string).trim(),
+      slug: toSlug(values.name as string),
     };
 
     if (isEditMode.value) {

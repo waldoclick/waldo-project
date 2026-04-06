@@ -136,15 +136,15 @@ const form = ref({
   confirmPassword: "",
 });
 
-const handleSubmit = async (values: any) => {
+const handleSubmit = async (values: Record<string, unknown>) => {
   sending.value = true;
   try {
     await apiClient(`/users/${user.value!.id}`, {
       method: "PUT",
       body: {
         data: {
-          password: values.newPassword,
-          currentPassword: values.currentPassword,
+          password: values.newPassword as string,
+          currentPassword: values.currentPassword as string,
         },
       },
     });

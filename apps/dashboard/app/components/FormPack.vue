@@ -182,14 +182,14 @@ const hydrateForm = () => {
   lastHydratedId.value = props.pack?.id || props.pack?.documentId || null;
 };
 
-const handleSubmit = async (values: any) => {
+const handleSubmit = async (values: Record<string, unknown>) => {
   sending.value = true;
 
   try {
     const payload = {
-      name: values.name.trim(),
-      text: values.text?.trim() || "",
-      description: values.description?.trim() || "",
+      name: (values.name as string).trim(),
+      text: (values.text as string | undefined)?.trim() || "",
+      description: (values.description as string | undefined)?.trim() || "",
       price: toNumber(values.price),
       total_days: toNumber(values.total_days),
       total_ads: toNumber(values.total_ads),

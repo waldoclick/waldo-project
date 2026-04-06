@@ -44,8 +44,8 @@ export default defineEventHandler(async (event) => {
         statusMessage: "Credenciales incorrectas",
       });
     }
-  } catch (error: any) {
-    if (error.statusCode) {
+  } catch (error: unknown) {
+    if (error instanceof Error && "statusCode" in error) {
       throw error;
     }
 

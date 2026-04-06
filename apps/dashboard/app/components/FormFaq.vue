@@ -106,13 +106,13 @@ const hydrateForm = () => {
   lastHydratedId.value = props.faq?.id || props.faq?.documentId || null;
 };
 
-const handleSubmit = async (values: any) => {
+const handleSubmit = async (values: Record<string, unknown>) => {
   sending.value = true;
 
   try {
     const payload = {
-      title: values.title.trim(),
-      text: values.text.trim(),
+      title: (values.title as string).trim(),
+      text: (values.text as string).trim(),
       featured: Boolean(values.featured),
     };
 
