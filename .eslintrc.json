@@ -19,7 +19,8 @@
   },
   "plugins": ["vue", "@typescript-eslint"],
   "rules": {
-    "no-unused-vars": ["warn", {
+    "no-unused-vars": "off", // Disabled — @typescript-eslint/no-unused-vars is authoritative for TS files
+    "@typescript-eslint/no-unused-vars": ["warn", {
       "argsIgnorePattern": "^_",
       "varsIgnorePattern": "^_",
       "caughtErrorsIgnorePattern": "^_",
