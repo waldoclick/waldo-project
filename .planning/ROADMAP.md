@@ -150,3 +150,13 @@ Plans:
 
 Plans:
 - [x] 115-01-PLAN.md — Fix all 12 `Array<any>` and `ref<any>` violations across website and dashboard
+
+### Phase 116: Enforce centralized test directory structure
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 115
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 116 to break down)
