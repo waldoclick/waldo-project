@@ -161,3 +161,13 @@ Plans:
 Plans:
 - [x] 116-01-PLAN.md — Move website co-located tests to tests/, delete dead files, update imports
 - [x] 116-02-PLAN.md — Rename Strapi __tests__ to tests/, move flat co-located tests, update imports
+
+### Phase 117: Enforce root-level tests directory for website — move all test files to apps/website/tests following the Mandatory Testing Directory Rule. Preserve mirrored folder structure. Zero test logic changes.
+
+**Goal:** Formally verify that all 23 website test files reside exclusively under apps/website/tests/ with mirrored folder structure, confirming the Mandatory Testing Directory Rule is enforced. Verification-only phase — structural work completed in Phase 116.
+**Requirements**: [STRUCT-117-WEB]
+**Depends on:** Phase 116
+**Plans:** 1 plan
+
+Plans:
+- [ ] 117-01-PLAN.md — Verify website test directory compliance and close phase
