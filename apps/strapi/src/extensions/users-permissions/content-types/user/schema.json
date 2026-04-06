@@ -224,6 +224,10 @@
     "accepted_terms": {
       "type": "boolean",
       "default": false
+    },
+    "accepted_usage_terms": {
+      "type": "boolean",
+      "default": false
     }
   }
 }

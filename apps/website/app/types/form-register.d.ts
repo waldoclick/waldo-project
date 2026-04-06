@@ -9,4 +9,5 @@ export interface FormRegister {
   username: string;
   accepted_age_confirmation: boolean;
   accepted_terms: boolean;
+  accepted_usage_terms: boolean;
 }
