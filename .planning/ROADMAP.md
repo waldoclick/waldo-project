@@ -153,10 +153,11 @@ Plans:
 
 ### Phase 116: Enforce centralized test directory structure
 
-**Goal:** [To be planned]
-**Requirements**: TBD
+**Goal:** Move all co-located test files to centralized `tests/` directories across the monorepo. Website: move 9 test files from `app/composables/` and `app/components/` to `tests/`, delete 4 dead test-shaped files, update imports to use `@/` alias. Strapi: rename 4 `__tests__/` directories to `tests/`, move 12 flat co-located test files into `tests/` subdirectories, update relative imports. Dashboard already compliant. Zero test logic changes — pure file relocation.
+**Requirements**: [STRUCT-116-WEB, STRUCT-116-STRAPI]
 **Depends on:** Phase 115
-**Plans:** 0 plans
+**Plans:** 2 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 116 to break down)
+- [ ] 116-01-PLAN.md — Move website co-located tests to tests/, delete dead files, update imports
+- [ ] 116-02-PLAN.md — Rename Strapi __tests__ to tests/, move flat co-located tests, update imports
