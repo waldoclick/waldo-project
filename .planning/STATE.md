@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 118-02-PLAN.md
-last_updated: "2026-04-06T19:32:04.716Z"
+stopped_at: Completed 119-01-PLAN.md
+last_updated: "2026-04-06T22:53:04Z"
 last_activity: 2026-04-06
 progress:
-  total_phases: 12
+  total_phases: 13
   completed_phases: 11
-  total_plans: 24
-  completed_plans: 24
-  percent: 100
+  total_plans: 27
+  completed_plans: 25
+  percent: 93
 ---
 
 # Session State
@@ -21,7 +21,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 118 — enforce-root-level-tests-directory-for-strapi-move-all-test-files-to-apps-strapi-tests-mirroring-the-source-folder-structure-zero-test-logic-changes
+**Current focus:** Phase 119 — export-orders-to-csv-from-dashboard-orders-page
 
 ## Position
 
@@ -68,6 +68,9 @@ Progress: [██████████] 100%
 - userId stored at top-level of AdState (not inside ad object) and written directly as adStore.userId — it is a store identity field, not a form field; no dedicated action/getter needed (112-02)
 - CommuneRecord uses Omit<CommuneData, 'region'> to override region shape — base has region.id (form use) but detail page needs region.name (display) (115-01)
 - Cast useAsyncData.value as TypedInterface | null on assignment when async return includes unknown[] elements — packs/featured/reservations detail pages (115-01)
+- ordersTocsv utility kept for unit testing isolation; runtime CSV export calls Strapi endpoint directly without client-side re-serialization (119-01)
+- /orders/export-csv route declared first in 01-order-me.ts to prevent :id wildcard from capturing the static path segment (119-01)
+- ExportOrder interface defined locally in controller alongside StrapiOrder — avoids coupling with shared types (119-01)
 
 ### Roadmap Evolution
 
@@ -81,6 +84,7 @@ Progress: [██████████] 100%
 - Phase 116 added: Enforce centralized test directory structure
 - Phase 117 added: Enforce root-level tests directory for website — move all test files to apps/website/tests/
 - Phase 117 completed: verification-only closure — website test directory structure confirmed compliant after Phase 116 moves
+- Phase 119 added: export orders to CSV from dashboard orders page
 
 ### Blockers/Concerns (open)
 
@@ -112,6 +116,6 @@ Progress: [██████████] 100%
 ## Session Continuity
 
 Last activity: 2026-04-06
-Last session: 2026-04-06T19:29:38.195Z
-Stopped at: Completed 118-02-PLAN.md
+Last session: 2026-04-06T22:53:04Z
+Stopped at: Completed 119-01-PLAN.md
 Resume file: None
