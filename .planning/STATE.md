@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 117-01-PLAN.md
-last_updated: "2026-04-06T18:45:46.038Z"
+stopped_at: Completed 118-01-PLAN.md
+last_updated: "2026-04-06T19:18:46.487Z"
 last_activity: 2026-04-06
 progress:
-  total_phases: 11
+  total_phases: 12
   completed_phases: 10
-  total_plans: 22
-  completed_plans: 22
+  total_plans: 24
+  completed_plans: 23
   percent: 100
 ---
 
@@ -21,7 +21,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 117 complete — website test directory structure verified compliant; all 23 test files in apps/website/tests/
+**Current focus:** Phase 118 — enforce-root-level-tests-directory-for-strapi-move-all-test-files-to-apps-strapi-tests-mirroring-the-source-folder-structure-zero-test-logic-changes
 
 ## Position
 
@@ -112,6 +112,6 @@ Progress: [██████████] 100%
 ## Session Continuity
 
 Last activity: 2026-04-06
-Last session: 2026-04-06T18:42:53.605Z
-Stopped at: Completed 117-01-PLAN.md
+Last session: 2026-04-06T19:18:46.485Z
+Stopped at: Completed 118-01-PLAN.md
 Resume file: None
