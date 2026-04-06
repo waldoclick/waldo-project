@@ -231,10 +231,38 @@ export default factories.createCoreController(
 
     async exportCsv(ctx: Context) {
       try {
+        const { _q, sort: sortParam } = ctx.query as {
+          _q?: string;
+          sort?: string;
+        };
+
+        let sort: Record<string, string> = { createdAt: "desc" };
+        if (sortParam) {
+          const [field, direction] = sortParam.split(":");
+          sort = { [field]: direction?.toLowerCase() ?? "desc" };
+        }
+
+        let filters: Record<string, unknown> = {};
+        if (_q) {
+          const numericId = parseInt(_q, 10);
+          const idFilter = !isNaN(numericId) ? { id: { $eq: numericId } } : {};
+          filters = {
+            $or: [
+              ...(Object.keys(idFilter).length ? [idFilter] : []),
+              { user: { username: { $containsi: _q } } },
+              { ad: { name: { $containsi: _q } } },
+              { buy_order: { $containsi: _q } },
+            ],
+          };
+        }
+
         const orders = await strapi.entityService.findMany("api::order.order", {
+          filters: filters as unknown as Parameters<
+            typeof strapi.entityService.findMany
+          >[1]["filters"],
           populate: ["user", "ad"] as unknown as Record<string, unknown>,
           limit: -1,
-          sort: { createdAt: "desc" } as unknown as Parameters<
+          sort: sort as unknown as Parameters<
             typeof strapi.entityService.findMany
           >[1]["sort"],
         });
