@@ -52,7 +52,10 @@
           </TableRow>
         </TableDefault>
 
-        <div v-if="filteredOrders.length === 0" class="orders--default__empty">
+        <div
+          v-if="paginatedOrders.length === 0 && !loading"
+          class="orders--default__empty"
+        >
           <p>No se encontraron órdenes</p>
         </div>
       </div>
@@ -72,8 +75,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import { useAsyncData } from "nuxt/app";
+import { ref, computed, watch } from "vue";
 import { Eye } from "lucide-vue-next";
 import { formatCurrency } from "@/utils/price";
 import { getPaymentMethod } from "@/utils/string";
@@ -85,7 +87,7 @@ import TableRow from "@/components/TableRow.vue";
 import TableCell from "@/components/TableCell.vue";
 import BadgeDefault from "@/components/BadgeDefault.vue";
 import PaginationDefault from "@/components/PaginationDefault.vue";
-import type { Order, OrdersListResponse } from "@/types/order";
+import type { Order } from "@/types/order";
 
 const settingsStore = useSettingsStore();
 const section = "orders" as const;
@@ -100,91 +102,88 @@ const handleFiltersChange = (newFilters: {
   settingsStore.setFilters(section, newFilters);
 };
 
-const sortParam = computed(() => {
-  const [field, direction] = settingsStore.orders.sortBy.split(":");
-  return `${field}:${direction}`;
-});
+const allOrders = ref<Order[]>([]);
+const loading = ref(false);
+const paginationMeta = ref<{
+  page: number;
+  pageSize: number;
+  pageCount: number;
+  total: number;
+} | null>(null);
 
-const queryKey = computed(
-  () =>
-    `orders-${settingsStore.orders.currentPage}-${settingsStore.orders.pageSize}-${sortParam.value}`,
-);
+const fetchOrders = async () => {
+  try {
+    loading.value = true;
+    const sectionSettings = settingsStore.orders;
+    const [field, direction] = sectionSettings.sortBy.split(":");
 
-const { data: ordersResponse } = await useAsyncData(
-  queryKey,
-  async (): Promise<OrdersListResponse> => {
-    try {
-      const res = (await apiClient("orders", {
-        method: "GET",
-        params: {
-          pagination: {
-            page: settingsStore.orders.currentPage,
-            pageSize: settingsStore.orders.pageSize,
-          },
-          sort: sortParam.value as string,
-          populate: ["user", "ad"],
-        } as unknown as Record<string, unknown>,
-      })) as {
-        data?: Order[];
-        meta?: {
-          pagination?: { page: number; pageCount?: number; total: number };
-        };
-      };
-      const pagination = res.meta?.pagination;
-      const total = pagination?.total ?? 0;
-      const pageSize = settingsStore.orders.pageSize;
-      const pageCount =
-        pagination?.pageCount ?? (Math.ceil(total / pageSize) || 1);
-      return {
-        data: Array.isArray(res.data) ? res.data : [],
-        meta: {
-          pagination: {
-            page: pagination?.page ?? 1,
-            pageCount,
-            total,
-          },
-        },
-      };
-    } catch (error) {
-      console.error("Error fetching orders:", error);
-      return {
-        data: [],
-        meta: { pagination: { page: 1, pageCount: 0, total: 0 } },
+    const searchParams: Record<string, unknown> = {
+      pagination: {
+        page: sectionSettings.currentPage,
+        pageSize: sectionSettings.pageSize,
+      },
+      sort: `${field}:${direction}`,
+      populate: ["user", "ad"],
+    };
+
+    if (sectionSettings.searchTerm) {
+      searchParams.filters = {
+        $or: [
+          { "user.username": { $containsi: sectionSettings.searchTerm } },
+          { "ad.name": { $containsi: sectionSettings.searchTerm } },
+          { buy_order: { $containsi: sectionSettings.searchTerm } },
+        ],
       };
     }
+
+    const response = (await apiClient("orders", {
+      method: "GET",
+      params: searchParams as unknown as Record<string, unknown>,
+    })) as {
+      data?: Order[];
+      meta?: {
+        pagination?: { page: number; pageCount?: number; total: number };
+      };
+    };
+
+    allOrders.value = Array.isArray(response.data) ? response.data : [];
+    const pagination = response.meta?.pagination;
+    const total = pagination?.total ?? 0;
+    const pageSize = sectionSettings.pageSize;
+    const pageCount =
+      pagination?.pageCount ?? (Math.ceil(total / pageSize) || 1);
+    paginationMeta.value = {
+      page: pagination?.page ?? 1,
+      pageSize,
+      pageCount,
+      total,
+    };
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    allOrders.value = [];
+    paginationMeta.value = null;
+  } finally {
+    loading.value = false;
+  }
+};
+
+const paginatedOrders = computed(() => allOrders.value);
+const totalPages = computed(() => paginationMeta.value?.pageCount ?? 0);
+const totalRecords = computed(() => paginationMeta.value?.total ?? 0);
+
+// watch(immediate: true) is the sole data-loading trigger — not onMounted
+watch(
+  [
+    () => settingsStore.orders.searchTerm,
+    () => settingsStore.orders.sortBy,
+    () => settingsStore.orders.pageSize,
+    () => settingsStore.orders.currentPage,
+  ],
+  () => {
+    fetchOrders();
   },
+  { immediate: true },
 );
-
-const orders = computed<Order[]>(() => {
-  const data = ordersResponse.value?.data;
-  return Array.isArray(data) ? data : [];
-});
-
-const totalPages = computed(
-  () => ordersResponse.value?.meta?.pagination?.pageCount ?? 0,
-);
-const totalRecords = computed(
-  () => ordersResponse.value?.meta?.pagination?.total ?? 0,
-);
-
-const filteredOrders = computed(() => {
-  const term = settingsStore.orders.searchTerm?.toLowerCase();
-  if (!term) return orders.value;
-  return orders.value.filter((order) => {
-    const id = String(order.id);
-    const username = order.user?.username?.toLowerCase() || "";
-    const adName = order.ad?.name?.toLowerCase() || "";
-    const buyOrder = (order.buy_order ?? "").toLowerCase();
-    return (
-      id.includes(term) ||
-      username.includes(term) ||
-      adName.includes(term) ||
-      buyOrder.includes(term)
-    );
-  });
-});
-
-const paginatedOrders = computed(() => filteredOrders.value);
 
 const tableColumns = [
   { label: "Orden" },
