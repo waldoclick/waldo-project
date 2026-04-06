@@ -204,8 +204,7 @@ const RESEND_COOLDOWN_MS = 60 * 1000; // 60 seconds
 const VC_UID = "api::verification-code.verification-code";
 
 /** Generates a 6-digit numeric code as a string */
-const generateCode = (): string =>
-  Math.floor(100000 + Math.random() * 900000).toString();
+const generateCode = (): string => crypto.randomInt(100000, 1000000).toString();
 
 /**
  * Wraps the original auth.local (callback) controller with 2-step verification.
