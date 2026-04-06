@@ -2,10 +2,9 @@
   <div :class="{ 'is-open': isOpen }" class="lightbox lightbox--terms">
     <div class="lightbox--terms__backdrop" />
     <div class="lightbox--terms__box" role="dialog" aria-modal="true">
-      <div class="lightbox--terms__title">Confirmación de edad y términos</div>
+      <div class="lightbox--terms__title">Términos pendientes</div>
       <div class="lightbox--terms__text">
-        Para continuar usando el sitio debes confirmar que eres mayor de edad y
-        aceptar los siguientes términos.
+        Para continuar necesitas aceptar los siguientes términos.
       </div>
       <FormTerms />
     </div>
