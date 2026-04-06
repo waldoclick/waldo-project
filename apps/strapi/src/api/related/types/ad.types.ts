@@ -36,7 +36,7 @@ export interface Ad {
     pack?: number;
     featured?: boolean;
     is_invoice?: boolean;
-    [key: string]: any;
+    [key: string]: unknown;
   };
   category?: {
     id: number;

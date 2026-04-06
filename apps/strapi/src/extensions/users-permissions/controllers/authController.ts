@@ -67,8 +67,8 @@ export const createUserReservations = async (user) => {
 /**
  * Registers a new user and creates additional records in the "ad-reservation" and "ad-featured-reservation" collections.
  *
- * @param {Function} registerController - The original register controller function.
- * @returns {Function} A new controller function that registers the user and creates additional records.
+ * @param {(...args: unknown[]) => Promise<unknown>} registerController - The original register controller function.
+ * @returns {(...args: unknown[]) => Promise<unknown>} A new controller function that registers the user and creates additional records.
  */
 export const registerUserLocal = (registerController) => async (ctx) => {
   try {
@@ -176,8 +176,8 @@ export const registerUserLocal = (registerController) => async (ctx) => {
 /**
  * Handles OAuth user registration and creates additional records in the "ad-reservation" and "ad-featured-reservation" collections.
  *
- * @param {Function} callbackController - The original callback controller function for OAuth.
- * @returns {Function} A new controller function that handles OAuth registration and creates additional records.
+ * @param {(...args: unknown[]) => Promise<unknown>} callbackController - The original callback controller function for OAuth.
+ * @returns {(...args: unknown[]) => Promise<unknown>} A new controller function that handles OAuth registration and creates additional records.
  */
 export const registerUserAuth = (callbackController) => async (ctx) => {
   try {

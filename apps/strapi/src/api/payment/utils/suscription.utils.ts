@@ -1,5 +1,14 @@
 import { IFlowSubscriptionResponse } from "../../../services/flow";
 
+interface ProviderSubscriptionData {
+  subscriptionId?: string;
+  customerId?: string;
+  planId?: string;
+  status?: number;
+  next_invoice_date?: string;
+  [key: string]: unknown;
+}
+
 // Map Provider status to Strapi status - This might need to become more complex
 // or passed as a callback if statuses vary significantly between providers.
 const mapProviderStatusToStrapi = (
@@ -41,9 +50,9 @@ const mapProviderStatusToStrapi = (
  */
 export const saveSubscriptionData = async (
   userId: number | string,
-  providerName: string, // Added providerName parameter
-  providerSubscriptionData: any // Use 'any' for now, or a generic interface
-): Promise<any> => {
+  providerName: string,
+  providerSubscriptionData: ProviderSubscriptionData
+): Promise<unknown> => {
   const strapiApiId = "api::suscription.suscription";
   // Extract provider-specific IDs - requires knowing the structure or using a more generic input object
   // Assuming structure based on previous Flow example for now
@@ -97,26 +106,29 @@ export const saveSubscriptionData = async (
       limit: 1,
     });
 
-    let savedSubscription: any;
+    let savedSubscription: Record<string, unknown> | null = null;
 
     if (existing && existing.length > 0) {
       console.log(
         `Suscripción de ${providerName} ${providerSubId} ya existe (${existing[0].id}). Actualizando...`
       );
       savedSubscription = await strapi.entityService.update(
-        strapiApiId,
+        strapiApiId as Parameters<typeof strapi.entityService.update>[0],
         existing[0].id,
         {
-          data: subscriptionDataToSave as any,
+          data: subscriptionDataToSave as unknown as Parameters<typeof strapi.entityService.update>[2]["data"],
         }
-      );
+      ) as Record<string, unknown>;
     } else {
       console.log(
         `Creando nueva entrada para suscripción de ${providerName} ${providerSubId}...`
       );
-      savedSubscription = await strapi.entityService.create(strapiApiId, {
-        data: subscriptionDataToSave as any,
-      });
+      savedSubscription = await strapi.entityService.create(
+        strapiApiId as Parameters<typeof strapi.entityService.create>[0],
+        {
+          data: subscriptionDataToSave as unknown as Parameters<typeof strapi.entityService.create>[1]["data"],
+        }
+      ) as Record<string, unknown>;
     }
 
     console.log(
@@ -124,11 +136,11 @@ export const saveSubscriptionData = async (
       savedSubscription
     );
     return savedSubscription;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(
       `Error al guardar datos de suscripción genéricos (${providerName}) ${providerSubId} en Strapi:`,
       error
     );
-    throw new Error(`Error saving generic subscription data: ${error.message}`);
+    throw new Error(`Error saving generic subscription data: ${error instanceof Error ? error.message : String(error)}`);
   }
 };

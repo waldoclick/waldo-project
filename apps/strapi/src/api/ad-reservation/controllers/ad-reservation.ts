@@ -48,18 +48,19 @@ export default factories.createCoreController(
               },
             }
           );
-          createdIds.push((record as any).id);
+          createdIds.push((record as Record<string, unknown>).id as number);
         }
 
         // Send email notification (non-fatal)
         try {
+          const userRecord = user as Record<string, unknown>;
           await sendMjmlEmail(
             strapi,
             "gift-reservation",
-            (user as any).email,
+            String(userRecord.email),
             "Has recibido reservas de avisos",
             {
-              name: (user as any).firstName || (user as any).email,
+              name: userRecord.firstName || userRecord.email,
               quantity,
               type: "reserva(s) de avisos",
             }
