@@ -199,7 +199,7 @@ const tableColumns = [
 const sortOptions = [
   { value: "createdAt:desc", label: "Más recientes" },
   { value: "createdAt:asc", label: "Más antiguos" },
-  { value: "ad.name:asc", label: "Título A-Z" },
-  { value: "ad.name:desc", label: "Título Z-A" },
+  { value: "amount:asc", label: "Monto menor" },
+  { value: "amount:desc", label: "Monto mayor" },
 ];
 </script>
