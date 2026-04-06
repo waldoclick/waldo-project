@@ -91,7 +91,7 @@ export class BackupService {
       strapi.log.info(`Command: ${sanitizedCommand}`);
 
       // Execute the backup shell command. stderr warnings from mysqldump/pg_dump are non-fatal.
-      const { stdout: _stdout, stderr } = await execAsync(backupCommand);
+      const { stderr } = await execAsync(backupCommand);
 
       if (stderr && !stderr.includes("Warning")) {
         strapi.log.warn(`Backup stderr: ${stderr}`);

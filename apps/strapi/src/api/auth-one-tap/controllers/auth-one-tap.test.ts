@@ -46,17 +46,12 @@ const mockSanitizeOutput = jest.fn((user) => ({
 };
 
 // --- Mock ctx factory ---
-let _ctxBody: unknown = null;
 const makeCtx = (body: Record<string, unknown> = {}) => ({
   request: { body },
   state: { auth: null },
   body: null as unknown,
-  badRequest: jest.fn((msg: string) => {
-    _ctxBody = { error: { status: 400, message: msg } };
-  }),
-  unauthorized: jest.fn((msg: string) => {
-    _ctxBody = { error: { status: 401, message: msg } };
-  }),
+  badRequest: jest.fn(),
+  unauthorized: jest.fn(),
 });
 
 const VALID_PAYLOAD = {

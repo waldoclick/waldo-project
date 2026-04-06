@@ -34,7 +34,7 @@ class PaymentController {
   };
 
   private controllerWrapper =
-    (handler: (ctx: Context) => Promise<void>) => async (ctx: Context) => {
+    (handler: (_ctx: Context) => Promise<void>) => async (ctx: Context) => {
       try {
         await handler(ctx);
       } catch (error) {

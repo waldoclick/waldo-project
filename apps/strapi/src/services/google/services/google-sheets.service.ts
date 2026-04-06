@@ -3,11 +3,11 @@ import { IGoogleSheetsService } from "../types/google.types";
 import { GoogleAuthService } from "./google-auth.service";
 
 export class GoogleSheetsService implements IGoogleSheetsService {
-  constructor(private readonly authService: GoogleAuthService) {}
+  constructor(private readonly _authService: GoogleAuthService) {}
 
   async appendToSheet(data: unknown[]): Promise<void> {
     try {
-      const auth = await this.authService.authenticate();
+      const auth = await this._authService.authenticate();
       const sheets = google.sheets({ version: "v4", auth });
       const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID;
       const range = "Hoja 1!A1:A";

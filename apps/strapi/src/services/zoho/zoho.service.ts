@@ -13,7 +13,7 @@ import {
 import { ZohoHttpClient } from "./http-client";
 
 export class ZohoService implements IZohoService {
-  constructor(private httpClient: ZohoHttpClient) {}
+  constructor(private _httpClient: ZohoHttpClient) {}
 
   /**
    * Creates a new lead in Zoho CRM
@@ -23,7 +23,7 @@ export class ZohoService implements IZohoService {
    */
   async createLead(lead: ZohoLead): Promise<unknown[]> {
     try {
-      const response = await this.httpClient.post<{ data: unknown[] }>(
+      const response = await this._httpClient.post<{ data: unknown[] }>(
         "/crm/v5/Leads",
         {
           data: [
@@ -70,7 +70,7 @@ export class ZohoService implements IZohoService {
     Other_City?: string;
   }): Promise<IZohoContact> {
     try {
-      const response = await this.httpClient.post<{ data: unknown[] }>(
+      const response = await this._httpClient.post<{ data: unknown[] }>(
         "/crm/v5/Contacts",
         {
           data: [
@@ -112,7 +112,7 @@ export class ZohoService implements IZohoService {
    */
   async findContact(email: string): Promise<IZohoContact | null> {
     try {
-      const response = await this.httpClient.get<{ data?: unknown[] }>(
+      const response = await this._httpClient.get<{ data?: unknown[] }>(
         "/crm/v5/Contacts/search",
         {
           criteria: `(Email:equals:${email})`,
@@ -159,7 +159,7 @@ export class ZohoService implements IZohoService {
     }
   ): Promise<IZohoContact> {
     try {
-      const response = await this.httpClient.put<{ data: unknown[] }>(
+      const response = await this._httpClient.put<{ data: unknown[] }>(
         `/crm/v5/Contacts/${id}`,
         {
           data: [
@@ -197,7 +197,7 @@ export class ZohoService implements IZohoService {
    */
   async createDeal(deal: ZohoDeal): Promise<string> {
     try {
-      const response = await this.httpClient.post<{
+      const response = await this._httpClient.post<{
         data: Array<{ details: { id: string } }>;
       }>("/crm/v5/Deals", {
         data: [
@@ -234,7 +234,7 @@ export class ZohoService implements IZohoService {
       const cleanStats = Object.fromEntries(
         Object.entries(stats).filter(([, v]) => v !== undefined)
       );
-      await this.httpClient.put<{ data: unknown[] }>(
+      await this._httpClient.put<{ data: unknown[] }>(
         `/crm/v5/Contacts/${contactId}`,
         { data: [cleanStats] }
       );

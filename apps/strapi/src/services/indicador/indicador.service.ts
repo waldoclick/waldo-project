@@ -20,7 +20,7 @@ export class IndicadorService implements IIndicadorService {
   private cachedIndicators: Indicator[] = [];
   private initializationPromise: Promise<void>;
 
-  constructor(private readonly httpClient: IHttpClient, cachePath?: string) {
+  constructor(private readonly _httpClient: IHttpClient, cachePath?: string) {
     const dataDir = "data";
     const dataFile = "indicators.json";
     this.cachePath = cachePath || path.join(process.cwd(), dataDir, dataFile);
@@ -133,7 +133,7 @@ export class IndicadorService implements IIndicadorService {
   private async updateAndGetIndicators(): Promise<IndicatorsResponse> {
     try {
       // Obtener datos frescos de la API
-      const response = await this.httpClient.get<IndicadorResponse>(
+      const response = await this._httpClient.get<IndicadorResponse>(
         this.baseUrl
       );
 

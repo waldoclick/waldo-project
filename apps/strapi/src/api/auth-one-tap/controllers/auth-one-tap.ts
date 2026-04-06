@@ -40,7 +40,7 @@ export default {
       const { createUserReservations } = await import(
         "../../../extensions/users-permissions/controllers/authController"
       );
-      (createUserReservations as (user: unknown) => Promise<unknown>)(
+      (createUserReservations as (_user: unknown) => Promise<unknown>)(
         user
       ).catch((err: unknown) =>
         strapi.log.error(

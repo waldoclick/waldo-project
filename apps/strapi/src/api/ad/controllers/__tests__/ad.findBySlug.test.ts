@@ -18,14 +18,14 @@ jest.mock("../../services/sanitize-ad", () => ({
 }));
 
 // ─── Capture the controller extension via factories mock ─────────────────────
-let capturedExtension: Record<string, (...args: unknown[]) => unknown> = {};
+let capturedExtension: Record<string, (..._args: unknown[]) => unknown> = {};
 jest.mock("@strapi/strapi", () => ({
   factories: {
     createCoreController: jest.fn(
-      (_uid: string, fn: (...args: unknown[]) => unknown) => {
+      (_uid: string, fn: (..._args: unknown[]) => unknown) => {
         capturedExtension = fn({
           strapi: (global as unknown as { strapi: object }).strapi,
-        }) as Record<string, (...args: unknown[]) => unknown>;
+        }) as Record<string, (..._args: unknown[]) => unknown>;
         return capturedExtension;
       }
     ),

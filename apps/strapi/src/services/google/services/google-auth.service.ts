@@ -5,15 +5,15 @@ import { GoogleConfig } from "../config/google.config";
 import { JWT } from "google-auth-library";
 
 export class GoogleAuthService implements IGoogleAuthService {
-  constructor(private readonly config: GoogleConfig) {}
+  constructor(private readonly _config: GoogleConfig) {}
 
   async authenticate(): Promise<JWT> {
     console.log(
       "Authenticating with Google Sheets...",
-      this.config.getCredentialsPath()
+      this._config.getCredentialsPath()
     );
     const credentials = JSON.parse(
-      readFileSync(this.config.getCredentialsPath(), "utf8")
+      readFileSync(this._config.getCredentialsPath(), "utf8")
     );
     const { client_email, private_key } = credentials;
 
@@ -25,7 +25,7 @@ export class GoogleAuthService implements IGoogleAuthService {
       client_email,
       null,
       private_key.replace(/\\n/g, "\n"),
-      this.config.getScopes()
+      this._config.getScopes()
     );
     await auth.authorize();
     return auth;
