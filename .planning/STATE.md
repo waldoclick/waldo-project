@@ -102,10 +102,11 @@ Progress: [██████████] 100%
 | 260405-tf1 | Add accepted_usage_terms field to Strapi schema; three-checkbox consent flow (age + privacy policy + usage terms) in FormRegister, FormTerms, LightboxTerms | 2026-04-05 | 760645bb | [260405-tf1-en-el-registro-y-en-el-lightbox-de-acept](./quick/260405-tf1-en-el-registro-y-en-el-lightbox-de-acept/) |
 | 260405-uxm | Move function declaration to function body root in gtm.client.ts | 2026-04-06 | e55c1c9c | [260405-uxm-move-function-declaration-to-function-bo](./quick/260405-uxm-move-function-declaration-to-function-bo/) |
 | 260406-d4s | Fix Codacy unused-code warnings: ESLint argsIgnorePattern for _ prefix and remove dead code | 2026-04-06 | 1e585882 | [260406-d4s-fix-codacy-unused-code-warnings-eslint-a](./quick/260406-d4s-fix-codacy-unused-code-warnings-eslint-a/) |
+| 260406-dbk | Fix remaining Codacy unused-code warnings across website, dashboard, strapi — remove dead code, prefix unused params, rename private constructor fields | 2026-04-06 | c439eaa1 | [260406-dbk-fix-remaining-codacy-unused-code-warning](./quick/260406-dbk-fix-remaining-codacy-unused-code-warning/) |
 
 ## Session Continuity
 
-Last activity: 2026-04-06 - Completed quick task 260406-d4s: Fix Codacy unused-code warnings: ESLint argsIgnorePattern for _ prefix and remove dead code
-Last session: 2026-04-06T04:05:45.008Z
+Last activity: 2026-04-06 - Completed quick task 260406-dbk: Fix remaining Codacy unused-code warnings across website, dashboard, strapi
+Last session: 2026-04-06T14:34:34Z
 Stopped at: Completed 115-01-PLAN.md
 Resume file: None
