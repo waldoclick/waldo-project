@@ -171,3 +171,14 @@ Plans:
 
 Plans:
 - [x] 117-01-PLAN.md — Verify website test directory compliance and close phase
+
+### Phase 118: Enforce root-level tests directory for Strapi — move all test files to apps/strapi/tests/ mirroring the source folder structure. Zero test logic changes.
+
+**Goal:** Move all 27 Strapi test files from their scattered locations inside src/ (nested within each service/controller/api directory) to a single root-level apps/strapi/tests/ directory, mirroring the source folder structure. Update all relative imports. Zero test logic changes — pure file relocation.
+**Requirements**: [STRUCT-118-STRAPI]
+**Depends on:** Phase 117
+**Plans:** 2 plans
+
+Plans:
+- [ ] 118-01-PLAN.md — Jest config + git mv all 27 files + rewrite api/ test imports
+- [ ] 118-02-PLAN.md — Rewrite remaining 14 test imports + full test suite verification
