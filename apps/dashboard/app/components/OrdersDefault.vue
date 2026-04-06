@@ -129,8 +129,8 @@ const fetchOrders = async () => {
     if (sectionSettings.searchTerm) {
       searchParams.filters = {
         $or: [
-          { "user.username": { $containsi: sectionSettings.searchTerm } },
-          { "ad.name": { $containsi: sectionSettings.searchTerm } },
+          { user: { username: { $containsi: sectionSettings.searchTerm } } },
+          { ad: { name: { $containsi: sectionSettings.searchTerm } } },
           { buy_order: { $containsi: sectionSettings.searchTerm } },
         ],
       };
