@@ -151,6 +151,21 @@ None - no external service configuration required.
 - All future website test files must be placed in `apps/website/tests/{subdirectory}/` — never co-located under `app/`
 - The 17 pre-existing test failures (createError not defined, recaptcha-proxy module resolution) remain open for a future remediation phase if desired
 
+## Self-Check: PASSED
+
+| Item | Status |
+|------|--------|
+| `117-01-SUMMARY.md` exists | FOUND |
+| `ROADMAP.md` exists | FOUND |
+| `STATE.md` exists | FOUND |
+| ROADMAP.md contains `1/1 plans complete` | PASS |
+| ROADMAP.md contains `STRUCT-117-WEB` | PASS |
+| SUMMARY.md contains `all checks PASSED` | PASS |
+| STATE.md contains `Completed 117-01-PLAN.md` | PASS |
+| STATE.md Roadmap Evolution contains `Phase 117 completed` | PASS |
+| Task 1 commit `989353e4` | FOUND |
+| Task 2 commit `8ff86762` | FOUND |
+
 ---
 *Phase: 117-enforce-root-level-tests-directory*
 *Completed: 2026-04-06*
