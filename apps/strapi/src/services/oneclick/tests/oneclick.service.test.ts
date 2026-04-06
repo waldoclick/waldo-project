@@ -45,10 +45,16 @@ jest.mock("../../../utils/logtail", () => ({
   error: jest.fn(),
 }));
 
+interface TransbankSdkMock {
+  __mockStart: jest.Mock;
+  __mockFinish: jest.Mock;
+  __mockAuthorize: jest.Mock;
+  __mockDelete: jest.Mock;
+}
+
 describe("OneclickService", () => {
   let service: OneclickService;
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const transbankSdk = require("transbank-sdk");
+  const transbankSdk = jest.requireMock<TransbankSdkMock>("transbank-sdk");
 
   beforeEach(() => {
     jest.clearAllMocks();

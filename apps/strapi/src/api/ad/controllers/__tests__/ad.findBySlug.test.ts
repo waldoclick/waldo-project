@@ -18,15 +18,17 @@ jest.mock("../../services/sanitize-ad", () => ({
 }));
 
 // ─── Capture the controller extension via factories mock ─────────────────────
-let capturedExtension: Record<string, Function> = {};
+let capturedExtension: Record<string, (...args: unknown[]) => unknown> = {};
 jest.mock("@strapi/strapi", () => ({
   factories: {
-    createCoreController: jest.fn((_uid: string, fn: Function) => {
-      capturedExtension = fn({
-        strapi: (global as unknown as { strapi: object }).strapi,
-      });
-      return capturedExtension;
-    }),
+    createCoreController: jest.fn(
+      (_uid: string, fn: (...args: unknown[]) => unknown) => {
+        capturedExtension = fn({
+          strapi: (global as unknown as { strapi: object }).strapi,
+        }) as Record<string, (...args: unknown[]) => unknown>;
+        return capturedExtension;
+      }
+    ),
   },
 }));
 
@@ -41,6 +43,7 @@ const mockLogError = jest.fn();
 
 // ─── Import controller (triggers jest.mock side effects) ─────────────────────
 import "../../controllers/ad";
+import { sanitizeAdForPublic } from "../../services/sanitize-ad";
 
 // ─── Build a mock Koa context ─────────────────────────────────────────────────
 function makeCtx(overrides: Partial<object> = {}) {
@@ -119,13 +122,14 @@ describe("findBySlug controller handler", () => {
     };
     mockFindBySlug.mockResolvedValueOnce(publicResult);
     const ctx = makeCtx();
-    const { sanitizeAdForPublic } = require("../../services/sanitize-ad");
 
     // Act
     await capturedExtension.findBySlug(ctx);
 
     // Assert
-    expect(sanitizeAdForPublic).toHaveBeenCalledWith(publicResult.ad);
+    expect(jest.mocked(sanitizeAdForPublic)).toHaveBeenCalledWith(
+      publicResult.ad
+    );
     expect(ctx.send).toHaveBeenCalled();
     expect(ctx.notFound).not.toHaveBeenCalled();
   });

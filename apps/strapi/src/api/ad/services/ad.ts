@@ -275,7 +275,9 @@ async function getAdvertisements(
     // Sanitize for non-manager users — strip sensitive user/order/payment fields
     const processedAds = isManager
       ? filteredAds
-      : filteredAds.map((ad) => sanitizeAdForPublic(ad as Record<string, any>));
+      : filteredAds.map((ad) =>
+          sanitizeAdForPublic(ad as Record<string, unknown>)
+        );
 
     // Calculate pagination metadata
     const pageCount = Math.ceil(total / pageSize);
@@ -1023,7 +1025,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
 
     if (!ad) return null;
 
-    const adRecord = ad as Record<string, any>;
+    const adRecord = ad as Record<string, unknown>;
     const status = computeAdStatus(ad);
 
     // Step 2: public (no token)
@@ -1042,10 +1044,12 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
       .query("plugin::users-permissions.user")
       .findOne({ where: { id: userId }, populate: ["role"] });
 
-    const userRecord = user as Record<string, any>;
-    const roleName = ((userRecord?.role?.name as string) ?? "").toLowerCase();
+    const userRecord = user as Record<string, unknown>;
+    const userRole = userRecord?.role as Record<string, unknown> | undefined;
+    const roleName = ((userRole?.name as string) ?? "").toLowerCase();
     const isManager = roleName === "manager";
-    const isOwner = adRecord.user?.id === userId;
+    const isOwner =
+      (adRecord.user as Record<string, unknown> | undefined)?.id === userId;
 
     const statusLabels: Record<string, string> = {
       active: "activo",
@@ -1118,8 +1122,9 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
 
     if (!ad) return null;
 
-    const adRecord = ad as Record<string, any>;
-    if (adRecord.user?.id !== userId) return null;
+    const adRecord = ad as Record<string, unknown>;
+    if ((adRecord.user as Record<string, unknown> | undefined)?.id !== userId)
+      return null;
 
     return ad;
   },

@@ -8,9 +8,20 @@
  * to public and authenticated (non-manager) responses.
  */
 export function sanitizeAdForPublic(
-  ad: Record<string, any>
-): Record<string, any> {
-  const { user, order, ad_featured_reservation, ...adFields } = ad;
+  ad: Record<string, unknown>
+): Record<string, unknown> {
+  const {
+    user: userRaw,
+    order: orderRaw,
+    ad_featured_reservation: featuredRaw,
+    ...adFields
+  } = ad;
+  const user = userRaw as Record<string, unknown> | null | undefined;
+  const order = orderRaw as Record<string, unknown> | null | undefined;
+  const ad_featured_reservation = featuredRaw as
+    | Record<string, unknown>
+    | null
+    | undefined;
 
   // User: keep only what is needed to display the seller card
   const safeUser = user

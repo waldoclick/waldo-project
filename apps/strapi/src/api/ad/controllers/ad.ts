@@ -14,8 +14,9 @@ import { sanitizeAdForPublic } from "../services/sanitize-ad";
 
 /** Returns true if ctx.state.user has the manager role. */
 const ctxIsManager = (ctx: Context): boolean => {
-  const role = (ctx.state.user as Record<string, any>)?.role;
-  return (role?.name ?? "").toLowerCase() === "manager";
+  const user = ctx.state.user as Record<string, unknown>;
+  const role = user?.role as Record<string, unknown> | undefined;
+  return ((role?.name as string) ?? "").toLowerCase() === "manager";
 };
 
 interface PaginationMeta {
@@ -799,7 +800,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
       const adData =
         result.access.role === "manager"
           ? result.ad
-          : sanitizeAdForPublic(result.ad as Record<string, any>);
+          : sanitizeAdForPublic(result.ad as Record<string, unknown>);
 
       return ctx.send({ data: adData, access: result.access });
     } catch (error) {
