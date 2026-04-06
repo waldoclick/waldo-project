@@ -1,24 +1,24 @@
 // Mock logger
-jest.mock("../../../../utils/logtail", () => ({
+jest.mock("../../../../src/utils/logtail", () => ({
   info: jest.fn(),
   warn: jest.fn(),
   error: jest.fn(),
 }));
 
 // Mock order.utils — use jest.fn() inside factory so hoisting works
-jest.mock("../../utils/order.utils", () => ({
+jest.mock("../../../../src/api/payment/utils/order.utils", () => ({
   __esModule: true,
   default: { createAdOrder: jest.fn() },
 }));
 
 // Mock general.utils
-jest.mock("../../utils/general.utils", () => ({
+jest.mock("../../../../src/api/payment/utils/general.utils", () => ({
   __esModule: true,
   default: { generateFactoDocument: jest.fn() },
 }));
 
 // Mock user.utils
-jest.mock("../../utils/user.utils", () => ({
+jest.mock("../../../../src/api/payment/utils/user.utils", () => ({
   documentDetails: jest.fn(),
   getCurrentUser: jest.fn().mockResolvedValue({
     id: 10,
@@ -28,40 +28,43 @@ jest.mock("../../utils/user.utils", () => ({
 }));
 
 // Mock ad.service
-jest.mock("../../services/ad.service", () => ({
+jest.mock("../../../../src/api/payment/services/ad.service", () => ({
   __esModule: true,
   default: {},
 }));
 
 // Mock free-ad.service
-jest.mock("../../services/free-ad.service", () => ({
+jest.mock("../../../../src/api/payment/services/free-ad.service", () => ({
   __esModule: true,
   default: {},
 }));
 
 // Mock checkout.service
-jest.mock("../../services/checkout.service", () => ({
+jest.mock("../../../../src/api/payment/services/checkout.service", () => ({
   __esModule: true,
   default: {},
 }));
 
 // Mock pro.service
-jest.mock("../../services/pro.service", () => ({
+jest.mock("../../../../src/api/payment/services/pro.service", () => ({
   ProService: jest.fn(),
 }));
 
 // Mock pro-cancellation.service
-jest.mock("../../services/pro-cancellation.service", () => ({
-  ProCancellationService: jest.fn(),
-}));
+jest.mock(
+  "../../../../src/api/payment/services/pro-cancellation.service",
+  () => ({
+    ProCancellationService: jest.fn(),
+  })
+);
 
 // Mock ad/services/ad
-jest.mock("../../../ad/services/ad", () => ({
+jest.mock("../../../../src/api/ad/services/ad", () => ({
   computeSortPriority: jest.fn().mockReturnValue(0),
 }));
 
 // Mock oneclick service
-jest.mock("../../../../services/oneclick", () => ({
+jest.mock("../../../../src/services/oneclick", () => ({
   OneclickService: jest.fn().mockImplementation(() => ({
     startInscription: jest.fn(),
     finishInscription: jest.fn(),
@@ -70,11 +73,11 @@ jest.mock("../../../../services/oneclick", () => ({
 }));
 
 // Import after mocks are declared (jest.mock hoisting handles the rest)
-import paymentController from "../payment";
-import orderUtilsDefault from "../../utils/order.utils";
-import generalUtilsDefault from "../../utils/general.utils";
-import * as userUtils from "../../utils/user.utils";
-import { OneclickService } from "../../../../services/oneclick";
+import paymentController from "../../../../src/api/payment/controllers/payment";
+import orderUtilsDefault from "../../../../src/api/payment/utils/order.utils";
+import generalUtilsDefault from "../../../../src/api/payment/utils/general.utils";
+import * as userUtils from "../../../../src/api/payment/utils/user.utils";
+import { OneclickService } from "../../../../src/services/oneclick";
 
 // Typed references to the mock functions
 const mockCreateAdOrder = orderUtilsDefault.createAdOrder as jest.Mock;

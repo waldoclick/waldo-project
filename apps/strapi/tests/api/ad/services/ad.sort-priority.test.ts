@@ -1,4 +1,4 @@
-import { computeSortPriority } from "../ad";
+import { computeSortPriority } from "../../../../src/api/ad/services/ad";
 
 describe("computeSortPriority", () => {
   describe("not featured: returns 2 regardless of pro_status", () => {

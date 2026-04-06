@@ -10,7 +10,7 @@ jest.mock("jsonwebtoken", () => ({
 }));
 
 // ─── Mock sanitizeAdForPublic ────────────────────────────────────────────────
-jest.mock("../../services/sanitize-ad", () => ({
+jest.mock("../../../../src/api/ad/services/sanitize-ad", () => ({
   sanitizeAdForPublic: jest.fn((ad: Record<string, unknown>) => ({
     ...ad,
     sanitized: true,
@@ -42,8 +42,8 @@ const mockLogError = jest.fn();
 };
 
 // ─── Import controller (triggers jest.mock side effects) ─────────────────────
-import "../../controllers/ad";
-import { sanitizeAdForPublic } from "../../services/sanitize-ad";
+import "../../../../src/api/ad/controllers/ad";
+import { sanitizeAdForPublic } from "../../../../src/api/ad/services/sanitize-ad";
 
 // ─── Build a mock Koa context ─────────────────────────────────────────────────
 function makeCtx(overrides: Partial<object> = {}) {

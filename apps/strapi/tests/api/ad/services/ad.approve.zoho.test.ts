@@ -41,13 +41,13 @@ Object.assign(global, { strapi });
 
 // ─── Mock email service ───────────────────────────────────────────────────────
 
-jest.mock("../../../../services/mjml", () => ({
+jest.mock("../../../../src/services/mjml", () => ({
   sendMjmlEmail: jest.fn().mockResolvedValue(undefined),
 }));
 
 // ─── Mock Zoho service barrel ─────────────────────────────────────────────────
 
-jest.mock("../../../../services/zoho", () => ({
+jest.mock("../../../../src/services/zoho", () => ({
   zohoService: {
     findContact: jest.fn(),
     updateContactStats: jest.fn().mockResolvedValue(undefined),
@@ -55,8 +55,8 @@ jest.mock("../../../../services/zoho", () => ({
   },
 }));
 
-import { zohoService } from "../../../../services/zoho";
-import adServiceFactory from "../ad";
+import { zohoService } from "../../../../src/services/zoho";
+import adServiceFactory from "../../../../src/api/ad/services/ad";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 

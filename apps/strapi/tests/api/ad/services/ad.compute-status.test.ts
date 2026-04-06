@@ -33,13 +33,13 @@
 
 // ─── Mock email service ───────────────────────────────────────────────────────
 
-jest.mock("../../../../services/mjml", () => ({
+jest.mock("../../../../src/services/mjml", () => ({
   sendMjmlEmail: jest.fn().mockResolvedValue(undefined),
 }));
 
 // ─── Mock Zoho service ───────────────────────────────────────────────────────
 
-jest.mock("../../../../services/zoho", () => ({
+jest.mock("../../../../src/services/zoho", () => ({
   zohoService: {
     findContact: jest.fn().mockResolvedValue(null),
     updateContactStats: jest.fn().mockResolvedValue({}),
@@ -49,7 +49,7 @@ jest.mock("../../../../services/zoho", () => ({
 
 // ─── Mock logger ─────────────────────────────────────────────────────────────
 
-jest.mock("../../../../utils/logtail", () => ({
+jest.mock("../../../../src/utils/logtail", () => ({
   default: {
     info: jest.fn(),
     error: jest.fn(),
@@ -59,7 +59,7 @@ jest.mock("../../../../utils/logtail", () => ({
 
 // ─── Import factory ──────────────────────────────────────────────────────────
 
-import adServiceFactory from "../ad";
+import adServiceFactory from "../../../../src/api/ad/services/ad";
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
 

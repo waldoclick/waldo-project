@@ -11,13 +11,13 @@
 
 // ─── Mock heavy dependencies to prevent import-time errors ───────────────────
 
-jest.mock("../../../../services/transbank");
-jest.mock("../../utils");
-jest.mock("../../../../utils/logtail");
+jest.mock("../../../../src/services/transbank");
+jest.mock("../../../../src/api/payment/utils");
+jest.mock("../../../../src/utils/logtail");
 
 // ─── Mock the payment-gateway barrel ─────────────────────────────────────────
 
-jest.mock("../../../../services/payment-gateway", () => ({
+jest.mock("../../../../src/services/payment-gateway", () => ({
   getPaymentGateway: jest.fn().mockReturnValue({
     createTransaction: jest.fn().mockResolvedValue({
       success: true,
@@ -35,9 +35,9 @@ jest.mock("../../../../services/payment-gateway", () => ({
   }),
 }));
 
-import { getPaymentGateway } from "../../../../services/payment-gateway";
-import packService from "../pack.service";
-import PaymentUtils from "../../utils";
+import { getPaymentGateway } from "../../../../src/services/payment-gateway";
+import packService from "../../../../src/api/payment/services/pack.service";
+import PaymentUtils from "../../../../src/api/payment/utils";
 
 // ─── Test setup ──────────────────────────────────────────────────────────────
 

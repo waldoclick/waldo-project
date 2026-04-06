@@ -27,7 +27,7 @@ interface MockStrapi {
 
 // ─── Mock heavy dependencies ─────────────────────────────────────────────────
 
-jest.mock("../../../../services/payment-gateway", () => ({
+jest.mock("../../../../src/services/payment-gateway", () => ({
   getPaymentGateway: jest.fn().mockReturnValue({
     commitTransaction: jest.fn().mockResolvedValue({
       success: true,
@@ -40,10 +40,10 @@ jest.mock("../../../../services/payment-gateway", () => ({
   }),
 }));
 
-jest.mock("../../utils");
-jest.mock("../../../../utils/logtail");
+jest.mock("../../../../src/api/payment/utils");
+jest.mock("../../../../src/utils/logtail");
 
-jest.mock("../../../../services/zoho", () => ({
+jest.mock("../../../../src/services/zoho", () => ({
   zohoService: {
     findContact: jest.fn(),
     createDeal: jest.fn().mockResolvedValue("deal-zoho-id-1"),
@@ -51,10 +51,10 @@ jest.mock("../../../../services/zoho", () => ({
   },
 }));
 
-import { getPaymentGateway } from "../../../../services/payment-gateway";
-import { zohoService } from "../../../../services/zoho";
-import packService from "../pack.service";
-import PaymentUtils from "../../utils";
+import { getPaymentGateway } from "../../../../src/services/payment-gateway";
+import { zohoService } from "../../../../src/services/zoho";
+import packService from "../../../../src/api/payment/services/pack.service";
+import PaymentUtils from "../../../../src/api/payment/utils";
 
 // ─── Test setup ──────────────────────────────────────────────────────────────
 

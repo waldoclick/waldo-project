@@ -5,7 +5,7 @@
  * Requirements covered: BLOG-01
  */
 
-import lifecycles from "../lifecycles";
+import lifecycles from "../../../../../src/api/article/content-types/article/lifecycles";
 import type { Event } from "@strapi/database/dist/lifecycles";
 
 // Mock the global strapi object used by beforeUpdate
