@@ -96,14 +96,14 @@ const hydrateForm = () => {
   lastHydratedId.value = props.policy?.id || props.policy?.documentId || null;
 };
 
-const handleSubmit = async (values: any) => {
+const handleSubmit = async (values: Record<string, unknown>) => {
   sending.value = true;
 
   try {
     const payload = {
-      title: values.title.trim(),
-      text: values.text.trim(),
-      order: values.order ?? null,
+      title: (values.title as string).trim(),
+      text: (values.text as string).trim(),
+      order: (values.order as number | null | undefined) ?? null,
     };
 
     if (isEditMode.value) {

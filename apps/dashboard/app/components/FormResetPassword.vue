@@ -88,7 +88,7 @@ const passwordType = ref("password");
 const client = useApiClient();
 const router = useRouter();
 
-const onSubmit = async (values: any) => {
+const onSubmit = async (values: Record<string, unknown>) => {
   loading.value = true;
 
   try {

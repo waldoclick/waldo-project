@@ -130,14 +130,14 @@ const fetchRegions = async () => {
   }
 };
 
-const handleSubmit = async (values: any) => {
+const handleSubmit = async (values: Record<string, unknown>) => {
   sending.value = true;
 
   try {
     const payload = {
-      name: values.name.trim(),
+      name: (values.name as string).trim(),
       region: normalizeRegionId(values.region),
-      slug: toSlug(values.name),
+      slug: toSlug(values.name as string),
     };
 
     if (!payload.region) {

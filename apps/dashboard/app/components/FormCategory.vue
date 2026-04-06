@@ -97,14 +97,14 @@ const hydrateForm = () => {
     props.category?.id || props.category?.documentId || null;
 };
 
-const handleSubmit = async (values: any) => {
+const handleSubmit = async (values: Record<string, unknown>) => {
   sending.value = true;
 
   try {
     const payload = {
-      name: values.name.trim(),
-      color: values.color.trim(),
-      slug: toSlug(values.name),
+      name: (values.name as string).trim(),
+      color: (values.color as string).trim(),
+      slug: toSlug(values.name as string),
     };
 
     if (isEditMode.value) {

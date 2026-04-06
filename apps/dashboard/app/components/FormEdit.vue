@@ -95,16 +95,16 @@ const form = ref({
   username: user.value?.username ?? "",
 });
 
-const handleSubmit = async (values: any) => {
+const handleSubmit = async (values: Record<string, unknown>) => {
   sending.value = true;
   try {
     await client(`/users/${user.value!.id}`, {
       method: "PUT",
       body: {
-        firstname: values.firstname,
-        lastname: values.lastname,
-        email: values.email,
-        username: values.username,
+        firstname: values.firstname as string,
+        lastname: values.lastname as string,
+        email: values.email as string,
+        username: values.username as string,
       },
     });
     await fetchUser();

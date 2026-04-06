@@ -13,7 +13,7 @@ export default defineNuxtPlugin({
       window.dataLayer = window.dataLayer || [];
 
       // GTM function with better error handling
-      const gtag = (...args: any[]) => {
+      const gtag = (...args: unknown[]) => {
         try {
           window.dataLayer?.push(args);
         } catch (error) {
