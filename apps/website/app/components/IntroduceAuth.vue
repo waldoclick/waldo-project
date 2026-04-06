@@ -38,7 +38,7 @@ import IconCheck from "/images/icon-check-circle.svg";
 const props = defineProps<{
   title: string;
   subtitle?: string;
-  list?: Array<any>;
+  list?: string[];
 }>();
 
 // Composable para sanitización

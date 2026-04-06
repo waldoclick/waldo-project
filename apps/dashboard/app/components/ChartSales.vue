@@ -126,9 +126,7 @@ const gridAndHoverPlugin = {
       tooltip.dataPoints &&
       tooltip.dataPoints.length > 0
     ) {
-      const barPoint = tooltip.dataPoints.find(
-        (dp) => dp.datasetIndex === 0,
-      );
+      const barPoint = tooltip.dataPoints.find((dp) => dp.datasetIndex === 0);
       if (barPoint && barPoint.dataIndex !== undefined) {
         const meta = chart.getDatasetMeta(0);
         const barElement = meta?.data?.[barPoint.dataIndex];
@@ -337,14 +335,17 @@ const chartOptions = computed(() => ({
       bodyFont: { size: 11, weight: "normal" as const },
       callbacks: {
         title: (context: TooltipItem<"bar">[]) =>
-          context?.length && context[0] ? getFullMonthName(context[0].label) : "",
+          context?.length && context[0]
+            ? getFullMonthName(context[0].label)
+            : "",
         label: (context: TooltipItem<"bar">) =>
           context.datasetIndex === 0 ? formatCurrency(context.parsed.y) : "",
         afterLabel: (context: TooltipItem<"bar">) =>
           context.datasetIndex === 0 ? "Monto" : "",
         labelTextColor: () => "#000",
       },
-      filter: (tooltipItem: TooltipItem<"bar">) => tooltipItem.datasetIndex === 0,
+      filter: (tooltipItem: TooltipItem<"bar">) =>
+        tooltipItem.datasetIndex === 0,
       caretSize: 0,
       caretPadding: 0,
       cornerRadius: 4,
@@ -371,7 +372,8 @@ const chartOptions = computed(() => ({
       },
       ticks: {
         font: { size: 11 },
-        callback: (value: number | string) => formatCompactCurrency(Number(value)),
+        callback: (value: number | string) =>
+          formatCompactCurrency(Number(value)),
       },
       width: 60,
     },
