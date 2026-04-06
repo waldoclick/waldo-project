@@ -127,3 +127,16 @@ Plans:
 
 Plans:
 - [ ] TBD (run /gsd:plan-phase 113 to break down)
+
+### Phase 114: Fix Codacy best-practice warnings — replace any with unknown, Function type, and require statements across monorepo
+
+**Goal:** Replace all `any` type annotations (~83 instances), `Function` type usage (6 instances), with proper TypeScript types across the monorepo (website, dashboard, strapi). Pure type-annotation refactoring with zero runtime behavior changes.
+**Requirements**: [CBP-01, CBP-02, CBP-03, CBP-04]
+**Depends on:** Phase 113
+**Plans:** 4 plans
+
+Plans:
+- [ ] 114-01-PLAN.md — Fix all `any` violations in website app (~20 files)
+- [ ] 114-02-PLAN.md — Fix all `any` violations in dashboard app (~30 files)
+- [ ] 114-03-PLAN.md — Fix all `any`/`Function` violations in strapi app (~20 files)
+- [ ] 114-04-PLAN.md — Final monorepo verification sweep (typecheck + tests + grep)
