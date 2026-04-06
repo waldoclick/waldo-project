@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 116-02-PLAN.md
-last_updated: "2026-04-06T16:51:17.446Z"
+stopped_at: Completed 117-01-PLAN.md
+last_updated: "2026-04-06T17:48:00.000Z"
 last_activity: 2026-04-06
 progress:
-  total_phases: 10
+  total_phases: 11
   completed_phases: 9
-  total_plans: 21
+  total_plans: 22
   completed_plans: 21
   percent: 100
 ---
@@ -21,7 +21,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 116 — enforce-centralized-test-directory-structure
+**Current focus:** Phase 117 complete — website test directory structure verified compliant; all 23 test files in apps/website/tests/
 
 ## Position
 
@@ -79,6 +79,8 @@ Progress: [██████████] 100%
 - Phase 114 added: Fix Codacy best-practice warnings — replace any with unknown, Function type, and require statements across monorepo
 - Phase 115 added: Fix remaining any and Function type violations
 - Phase 116 added: Enforce centralized test directory structure
+- Phase 117 added: Enforce root-level tests directory for website — move all test files to apps/website/tests/
+- Phase 117 completed: verification-only closure — website test directory structure confirmed compliant after Phase 116 moves
 
 ### Blockers/Concerns (open)
 
@@ -111,5 +113,5 @@ Progress: [██████████] 100%
 
 Last activity: 2026-04-06
 Last session: 2026-04-06T16:31:51.553Z
-Stopped at: Completed 116-02-PLAN.md
+Stopped at: Completed 117-01-PLAN.md
 Resume file: None
