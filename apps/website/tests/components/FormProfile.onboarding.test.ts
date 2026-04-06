@@ -232,7 +232,7 @@ describe("FormProfile.vue — onboarding mode (FORM-02, FORM-03)", () => {
   it("emits 'success' after successful save (FORM-02)", async () => {
     const wrapper = buildWrapper({ onboardingMode: true });
     const vm = wrapper.vm as unknown as {
-      handleSubmit: (values: unknown) => Promise<void>;
+      handleSubmit: (_values: unknown) => Promise<void>;
     };
 
     await vm.handleSubmit({
@@ -256,7 +256,7 @@ describe("FormProfile.vue — onboarding mode (FORM-02, FORM-03)", () => {
   it("does NOT redirect to /cuenta/perfil when onboardingMode is true (FORM-02)", async () => {
     const wrapper = buildWrapper({ onboardingMode: true });
     const vm = wrapper.vm as unknown as {
-      handleSubmit: (values: unknown) => Promise<void>;
+      handleSubmit: (_values: unknown) => Promise<void>;
     };
 
     await vm.handleSubmit({
@@ -280,7 +280,7 @@ describe("FormProfile.vue — onboarding mode (FORM-02, FORM-03)", () => {
   it("DOES redirect to /cuenta/perfil when onboardingMode is false (backward compat) (FORM-03)", async () => {
     const wrapper = buildWrapper({ onboardingMode: false });
     const vm = wrapper.vm as unknown as {
-      handleSubmit: (values: unknown) => Promise<void>;
+      handleSubmit: (_values: unknown) => Promise<void>;
     };
 
     await vm.handleSubmit({

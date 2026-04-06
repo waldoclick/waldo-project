@@ -1,6 +1,5 @@
 export default defineEventHandler(async (event) => {
   // Get the path after /api/images/
-  const _path = getRouterParam(event, "images") || "";
   const fullPath = event.node.req.url?.replace("/api/images/", "") || "";
 
   // Build the Strapi uploads URL

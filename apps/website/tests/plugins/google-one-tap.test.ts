@@ -20,7 +20,7 @@ vi.mock("#imports", () => ({
 // ─── Mock #app ──────────────────────────────────────────────────────────────
 const mockReloadNuxtApp = vi.fn();
 vi.mock("#app", () => ({
-  defineNuxtPlugin: (fn: (...args: unknown[]) => unknown) => fn,
+  defineNuxtPlugin: (fn: (..._args: unknown[]) => unknown) => fn,
   reloadNuxtApp: mockReloadNuxtApp,
 }));
 
@@ -31,10 +31,10 @@ vi.mock("@/composables/useApiClient", () => ({
 
 describe("google-one-tap.client.ts plugin", () => {
   let capturedCallback:
-    | ((response: { credential: string }) => Promise<void>)
+    | ((_response: { credential: string }) => Promise<void>)
     | null = null;
   const mockInitialize = vi.fn((config: Record<string, unknown>) => {
-    capturedCallback = config.callback as (response: {
+    capturedCallback = config.callback as (_response: {
       credential: string;
     }) => Promise<void>;
   });

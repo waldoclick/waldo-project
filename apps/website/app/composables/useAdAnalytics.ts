@@ -32,28 +32,6 @@ export interface PurchaseOrderData {
   };
 }
 
-// Crear objetos de análisis a partir de los datos del store
-
-const createPackAnalyticsItem = (packId: number | string) => {
-  return {
-    item_id: packId.toString(),
-    item_name: `Pack ${packId}`,
-    item_category: "Pack",
-    price: 0,
-    currency: "CLP",
-  } as AnalyticsItem;
-};
-
-const createFeaturedAnalyticsItem = (featuredValue: boolean) => {
-  return {
-    item_id: featuredValue ? "featured" : "not_featured",
-    item_name: featuredValue ? "Destacado" : "Sin destacar",
-    item_category: "Destacado",
-    price: 0,
-    currency: "CLP",
-  } as AnalyticsItem;
-};
-
 export interface DataLayerEvent {
   event: string;
   flow: string;

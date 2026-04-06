@@ -80,7 +80,7 @@ async function triggerSubmit(
 ): Promise<void> {
   await (
     vm as {
-      handleSubmit: (v: Record<string, unknown>) => Promise<void>;
+      handleSubmit: (_v: Record<string, unknown>) => Promise<void>;
     }
   ).handleSubmit({ email, password });
 }
