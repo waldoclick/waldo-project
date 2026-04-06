@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach } from "@jest/globals";
-import { IndicadorService } from "./indicador.service";
-import { HttpClient } from "./http-client";
-import { ConversionError } from "./interfaces";
-import type { Currency } from "./interfaces";
+import { IndicadorService } from "../indicador.service";
+import { HttpClient } from "../http-client";
+import { ConversionError } from "../interfaces";
+import type { Currency } from "../interfaces";
 import path from "path";
 
 describe("IndicadorService", () => {
