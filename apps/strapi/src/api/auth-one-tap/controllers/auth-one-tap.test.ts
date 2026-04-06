@@ -68,7 +68,6 @@ const EXISTING_USER = { id: 42, email: "alice@example.com", username: "alice" };
 describe("GTAP-06: googleOneTap controller — issues JWT directly (no pendingToken)", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    _ctxBody = null;
   });
 
   it("returns { jwt, user } for a valid credential — NOT { pendingToken, email }", async () => {
