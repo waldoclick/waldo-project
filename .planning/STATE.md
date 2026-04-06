@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-stopped_at: Completed quick task 260405-uxm - convert gtag function declaration to arrow function expression in gtm.client.ts
+stopped_at: Completed quick task 260405-uxm - Move function declaration to function body root in gtm.client.ts
 last_updated: "2026-04-06T02:18:27.147Z"
 progress:
   total_phases: 7
@@ -96,6 +96,7 @@ Progress: [██████████] 100%
 | 260405-mt9 | Replace /ads/me/counts with shared /ads/count using role-based filtering — managers see all ads, authenticated users see their own | 2026-04-05 | cb703d1c | [260405-mt9-replace-ads-me-counts-with-shared-ads-co](./quick/260405-mt9-replace-ads-me-counts-with-shared-ads-co/) |
 | 260405-njc | Add public GET /ads/catalog endpoint in Strapi bypassing user filtering; update website store and sitemap to use it instead of /ads/actives | 2026-04-05 | caff3e0b | [260405-njc-add-ads-catalog-public-endpoint-for-acti](./quick/260405-njc-add-ads-catalog-public-endpoint-for-acti/) |
 | 260405-tf1 | Add accepted_usage_terms field to Strapi schema; three-checkbox consent flow (age + privacy policy + usage terms) in FormRegister, FormTerms, LightboxTerms | 2026-04-05 | 760645bb | [260405-tf1-en-el-registro-y-en-el-lightbox-de-acept](./quick/260405-tf1-en-el-registro-y-en-el-lightbox-de-acept/) |
+| 260405-uxm | Move function declaration to function body root in gtm.client.ts | 2026-04-06 | e55c1c9c | [260405-uxm-move-function-declaration-to-function-bo](./quick/260405-uxm-move-function-declaration-to-function-bo/) |
 
 ## Session Continuity
 
