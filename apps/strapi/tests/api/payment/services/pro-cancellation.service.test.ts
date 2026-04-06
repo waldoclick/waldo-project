@@ -1,7 +1,7 @@
-import { ProCancellationService } from "../pro-cancellation.service";
+import { ProCancellationService } from "../../../../src/api/payment/services/pro-cancellation.service";
 
 // Mock logger
-jest.mock("../../../../utils/logtail", () => ({
+jest.mock("../../../../src/utils/logtail", () => ({
   info: jest.fn(),
   warn: jest.fn(),
   error: jest.fn(),
@@ -9,7 +9,7 @@ jest.mock("../../../../utils/logtail", () => ({
 
 // Mock OneclickService
 const mockDeleteInscription = jest.fn();
-jest.mock("../../../../services/oneclick", () => ({
+jest.mock("../../../../src/services/oneclick", () => ({
   OneclickService: jest.fn().mockImplementation(() => ({
     deleteInscription: mockDeleteInscription,
   })),

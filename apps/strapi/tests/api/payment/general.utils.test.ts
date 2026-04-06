@@ -1,7 +1,7 @@
 // src/api/payment/tests/ensureFreeReservations.test.ts
 
 import { createStrapi } from "@strapi/strapi";
-import generalUtils from "../utils/general.utils";
+import generalUtils from "../../../src/api/payment/utils/general.utils";
 
 let instance: Awaited<ReturnType<typeof createStrapi>>;
 
