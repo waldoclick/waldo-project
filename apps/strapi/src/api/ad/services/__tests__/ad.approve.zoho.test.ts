@@ -30,13 +30,14 @@ const mockAd = {
   },
 };
 
-(global as any).strapi = {
+const strapi = {
   contentType: jest.fn().mockReturnValue({}),
   query: jest.fn().mockReturnValue({
     findOne: jest.fn().mockResolvedValue(mockAd),
     update: jest.fn().mockResolvedValue({}),
   }),
 };
+Object.assign(global, { strapi });
 
 // ─── Mock email service ───────────────────────────────────────────────────────
 
@@ -109,7 +110,9 @@ describe("approveAd — Zoho CRM wiring (EVT-01, EVT-02)", () => {
     // zohoService has no createDeal in the mock — any call would throw
     // Verify updateContactStats was called (sync ran) but no Deal was created
     expect(zohoService.updateContactStats).toHaveBeenCalledTimes(1);
-    expect((zohoService as any).createDeal).toBeUndefined();
+    expect(
+      (zohoService as unknown as Record<string, unknown>).createDeal
+    ).toBeUndefined();
   });
 
   it("Test 3 — Guard: re-approve (ad.active=true) does NOT fire Zoho sync (EVT-02)", async () => {

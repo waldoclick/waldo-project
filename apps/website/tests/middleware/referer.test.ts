@@ -11,7 +11,7 @@ global.defineNuxtRouteMiddleware = (fn: unknown) => fn;
 const mockSetReferer = vi.fn();
 global.useAppStore = vi.fn(() => ({ setReferer: mockSetReferer }));
 
-let middleware: any;
+let middleware: (...args: unknown[]) => unknown = () => {};
 
 beforeAll(async () => {
   const mod = await import("@/middleware/referer.global");

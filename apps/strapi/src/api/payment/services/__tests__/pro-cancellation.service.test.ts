@@ -19,17 +19,19 @@ jest.mock("../../../../services/oneclick", () => ({
 const mockFindOne = jest.fn();
 const mockUpdate = jest.fn();
 
-(global as any).strapi = {
-  entityService: {
-    findOne: mockFindOne,
-    update: mockUpdate,
+Object.assign(global, {
+  strapi: {
+    entityService: {
+      findOne: mockFindOne,
+      update: mockUpdate,
+    },
+    log: {
+      info: jest.fn(),
+      error: jest.fn(),
+      warn: jest.fn(),
+    },
   },
-  log: {
-    info: jest.fn(),
-    error: jest.fn(),
-    warn: jest.fn(),
-  },
-};
+});
 
 describe("ProCancellationService", () => {
   let service: ProCancellationService;

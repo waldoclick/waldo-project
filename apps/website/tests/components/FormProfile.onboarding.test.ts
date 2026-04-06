@@ -209,10 +209,12 @@ describe("FormProfile.vue — onboarding mode (FORM-02, FORM-03)", () => {
     const wrapper = buildWrapper();
     // If the component has defineEmits(['success']), the emits option will include 'success'
     expect(
-      wrapper.vm.$options?.emits ?? (wrapper.vm as any).__emits,
+      wrapper.vm.$options?.emits ??
+        (wrapper.vm as unknown as { __emits?: unknown }).__emits,
     ).toBeTruthy();
     const emitsOption =
-      wrapper.vm.$options?.emits ?? (wrapper.vm as any).__emits;
+      wrapper.vm.$options?.emits ??
+      (wrapper.vm as unknown as { __emits?: unknown }).__emits;
     const hasSuccess = Array.isArray(emitsOption)
       ? emitsOption.includes("success")
       : "success" in emitsOption;

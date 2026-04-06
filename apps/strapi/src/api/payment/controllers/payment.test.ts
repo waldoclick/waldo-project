@@ -89,27 +89,30 @@ const mockEntityServiceUpdate = jest.fn();
 const mockDbQueryFindOne = jest.fn();
 const mockDbQueryFindMany = jest.fn().mockResolvedValue([]);
 const mockDbQueryUpdate = jest.fn();
+const mockDbQuery = jest.fn().mockReturnValue({
+  findOne: mockDbQueryFindOne,
+  findMany: mockDbQueryFindMany,
+  update: mockDbQueryUpdate,
+});
 
-(global as any).strapi = {
-  entityService: {
-    findOne: mockEntityServiceFindOne,
-    update: mockEntityServiceUpdate,
-    findMany: jest.fn(),
-    create: jest.fn(),
+Object.assign(global, {
+  strapi: {
+    entityService: {
+      findOne: mockEntityServiceFindOne,
+      update: mockEntityServiceUpdate,
+      findMany: jest.fn(),
+      create: jest.fn(),
+    },
+    db: {
+      query: mockDbQuery,
+    },
+    log: {
+      info: jest.fn(),
+      error: jest.fn(),
+      warn: jest.fn(),
+    },
   },
-  db: {
-    query: jest.fn().mockReturnValue({
-      findOne: mockDbQueryFindOne,
-      findMany: mockDbQueryFindMany,
-      update: mockDbQueryUpdate,
-    }),
-  },
-  log: {
-    info: jest.fn(),
-    error: jest.fn(),
-    warn: jest.fn(),
-  },
-};
+});
 
 const makeCtx = (overrides: Record<string, unknown> = {}) => ({
   state: { user: { id: 10 } },
@@ -146,7 +149,7 @@ describe("PaymentController: proCreate", () => {
         ({
           startInscription: mockStartInscription,
           finishInscription: mockFinishInscription,
-        } as any)
+        } as unknown as OneclickService)
     );
 
     // Re-setup getCurrentUser since clearAllMocks clears its return value
@@ -154,7 +157,7 @@ describe("PaymentController: proCreate", () => {
 
     // Re-attach strapi mock (cleared by clearAllMocks)
     mockDbQueryFindMany.mockResolvedValue([]);
-    (global as any).strapi.db.query.mockReturnValue({
+    mockDbQuery.mockReturnValue({
       findOne: mockDbQueryFindOne,
       findMany: mockDbQueryFindMany,
       update: mockDbQueryUpdate,
@@ -175,7 +178,9 @@ describe("PaymentController: proCreate", () => {
     });
 
     // Act
-    await (paymentController as any).proCreate(ctx);
+    await paymentController.proCreate(
+      ctx as unknown as Parameters<typeof paymentController.proCreate>[0]
+    );
 
     // Assert
     expect(mockEntityServiceUpdate).toHaveBeenCalledWith(
@@ -203,7 +208,9 @@ describe("PaymentController: proCreate", () => {
     });
 
     // Act
-    await (paymentController as any).proCreate(ctx);
+    await paymentController.proCreate(
+      ctx as unknown as Parameters<typeof paymentController.proCreate>[0]
+    );
 
     // Assert
     expect(mockEntityServiceUpdate).toHaveBeenCalledWith(
@@ -237,11 +244,11 @@ describe("PaymentController: proResponse", () => {
         ({
           startInscription: mockStartInscription,
           finishInscription: mockFinishInscription,
-        } as any)
+        } as unknown as OneclickService)
     );
 
     mockDbQueryFindMany.mockResolvedValue([]);
-    (global as any).strapi.db.query.mockReturnValue({
+    mockDbQuery.mockReturnValue({
       findOne: mockDbQueryFindOne,
       findMany: mockDbQueryFindMany,
       update: mockDbQueryUpdate,
@@ -281,7 +288,9 @@ describe("PaymentController: proResponse", () => {
     });
 
     // Act
-    await (paymentController as any).proResponse(ctx);
+    await paymentController.proResponse(
+      ctx as unknown as Parameters<typeof paymentController.proResponse>[0]
+    );
 
     // Assert
     expect(mockDocumentDetails).toHaveBeenCalledWith(user.id, false);
@@ -338,7 +347,9 @@ describe("PaymentController: proResponse", () => {
     });
 
     // Act
-    await (paymentController as any).proResponse(ctx);
+    await paymentController.proResponse(
+      ctx as unknown as Parameters<typeof paymentController.proResponse>[0]
+    );
 
     // Assert
     expect(ctx.redirect).toHaveBeenCalledWith(
@@ -379,7 +390,9 @@ describe("PaymentController: proResponse", () => {
     });
 
     // Act
-    await (paymentController as any).proResponse(ctx);
+    await paymentController.proResponse(
+      ctx as unknown as Parameters<typeof paymentController.proResponse>[0]
+    );
 
     // Assert: the user update call includes pro_pending_invoice: false
     expect(mockEntityServiceUpdate).toHaveBeenCalledWith(
@@ -424,7 +437,9 @@ describe("PaymentController: proResponse", () => {
     });
 
     // Act
-    await (paymentController as any).proResponse(ctx);
+    await paymentController.proResponse(
+      ctx as unknown as Parameters<typeof paymentController.proResponse>[0]
+    );
 
     // Assert: fallback redirect
     expect(ctx.redirect).toHaveBeenCalledWith("https://waldo.cl/pro/gracias");

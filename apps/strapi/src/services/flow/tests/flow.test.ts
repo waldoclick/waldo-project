@@ -1,9 +1,10 @@
 import { flowServiceFactory } from "../factories/flow.factory";
 import { FlowService } from "../services/flow.service";
 import { IFlowPaymentOrderRequest } from "../types/flow.types"; // Import request type
+import type { Core } from "@strapi/strapi";
 
 // Mock Strapi instance
-const mockStrapi = {} as any;
+const mockStrapi = {} as unknown as Core.Strapi;
 
 describe("FlowService", () => {
   let flowService: FlowService;

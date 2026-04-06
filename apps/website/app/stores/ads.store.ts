@@ -26,7 +26,7 @@ export const useAdsStore = defineStore(
     };
 
     const loadAds = async (
-      filtersParams: Record<string, any> = {},
+      filtersParams: Record<string, unknown> = {},
       paginationParams: { page: number; pageSize: number } = DEFAULT_PAGINATION,
       sortParams: string[] = [],
     ) => {

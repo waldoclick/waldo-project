@@ -6,14 +6,17 @@
  */
 
 import lifecycles from "../lifecycles";
+import type { Event } from "@strapi/database/dist/lifecycles";
 
 // Mock the global strapi object used by beforeUpdate
 const mockFindOne = jest.fn();
-(global as any).strapi = {
-  entityService: {
-    findOne: mockFindOne,
+Object.assign(global, {
+  strapi: {
+    entityService: {
+      findOne: mockFindOne,
+    },
   },
-};
+});
 
 describe("Article lifecycles", () => {
   describe("beforeCreate", () => {
@@ -22,7 +25,7 @@ describe("Article lifecycles", () => {
       const event = { params: { data: { title: "Hello World" } } };
 
       // Act
-      await lifecycles.beforeCreate(event as any);
+      await lifecycles.beforeCreate(event as unknown as Event);
 
       // Assert
       expect(event.params.data).toHaveProperty("slug", "hello-world");
@@ -33,7 +36,7 @@ describe("Article lifecycles", () => {
       const event = { params: { data: { title: "¡Artículo Español!" } } };
 
       // Act
-      await lifecycles.beforeCreate(event as any);
+      await lifecycles.beforeCreate(event as unknown as Event);
 
       // Assert
       expect(event.params.data).toHaveProperty("slug", "articulo-espanol");
@@ -44,10 +47,12 @@ describe("Article lifecycles", () => {
       const event = { params: { data: { header: "some header" } } };
 
       // Act
-      await lifecycles.beforeCreate(event as any);
+      await lifecycles.beforeCreate(event as unknown as Event);
 
       // Assert
-      expect((event.params.data as any).slug).toBeUndefined();
+      expect(
+        (event.params.data as Record<string, unknown>).slug
+      ).toBeUndefined();
     });
   });
 
@@ -67,7 +72,7 @@ describe("Article lifecycles", () => {
       };
 
       // Act
-      await lifecycles.beforeUpdate(event as any);
+      await lifecycles.beforeUpdate(event as unknown as Event);
 
       // Assert
       expect(event.params.data).toHaveProperty("slug", "new-title");
@@ -84,10 +89,12 @@ describe("Article lifecycles", () => {
       };
 
       // Act
-      await lifecycles.beforeUpdate(event as any);
+      await lifecycles.beforeUpdate(event as unknown as Event);
 
       // Assert
-      expect((event.params.data as any).slug).toBeUndefined();
+      expect(
+        (event.params.data as Record<string, unknown>).slug
+      ).toBeUndefined();
     });
 
     it("does not touch slug when no title in update data", async () => {
@@ -100,11 +107,13 @@ describe("Article lifecycles", () => {
       };
 
       // Act
-      await lifecycles.beforeUpdate(event as any);
+      await lifecycles.beforeUpdate(event as unknown as Event);
 
       // Assert
       expect(mockFindOne).not.toHaveBeenCalled();
-      expect((event.params.data as any).slug).toBeUndefined();
+      expect(
+        (event.params.data as Record<string, unknown>).slug
+      ).toBeUndefined();
     });
   });
 });
