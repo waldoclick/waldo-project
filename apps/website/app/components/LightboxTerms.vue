@@ -5,10 +5,7 @@
       <div class="lightbox--terms__title">Confirmación de edad y términos</div>
       <div class="lightbox--terms__text">
         Para continuar usando el sitio debes confirmar que eres mayor de edad y
-        aceptar nuestros términos y
-        <NuxtLink to="/politicas-de-privacidad" target="_blank"
-          >políticas de privacidad</NuxtLink
-        >.
+        aceptar los siguientes términos.
       </div>
       <FormTerms />
     </div>

@@ -117,7 +117,8 @@ export const useUser = () => {
     if (!user.value) return true;
     return (
       user.value.accepted_age_confirmation === true &&
-      user.value.accepted_terms === true
+      user.value.accepted_terms === true &&
+      user.value.accepted_usage_terms === true
     );
   });
 
@@ -127,6 +128,7 @@ export const useUser = () => {
     await userStore.updateUserProfile(String(user.value!.id), {
       accepted_age_confirmation: true,
       accepted_terms: true,
+      accepted_usage_terms: true,
     });
     await fetchUser();
   };

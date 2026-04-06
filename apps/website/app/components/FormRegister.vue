@@ -140,13 +140,34 @@
             :unchecked-value="false"
           />
           <label class="form-check-label" for="accepted_terms">
-            Acepto los términos y las
+            Acepto las
             <NuxtLink to="/politicas-de-privacidad" target="_blank"
               >políticas de privacidad</NuxtLink
             >
           </label>
         </div>
         <ErrorMessage name="accepted_terms" />
+      </div>
+
+      <div class="form-group">
+        <div class="form-check">
+          <Field
+            id="accepted_usage_terms"
+            v-model="form.accepted_usage_terms"
+            name="accepted_usage_terms"
+            type="checkbox"
+            class="form-check-input"
+            :value="true"
+            :unchecked-value="false"
+          />
+          <label class="form-check-label" for="accepted_usage_terms">
+            Acepto las
+            <NuxtLink to="/condiciones-de-uso" target="_blank"
+              >condiciones de uso</NuxtLink
+            >
+          </label>
+        </div>
+        <ErrorMessage name="accepted_usage_terms" />
       </div>
     </div>
 
@@ -200,6 +221,7 @@ const form = ref<FormRegister>({
   username: "",
   accepted_age_confirmation: false,
   accepted_terms: false,
+  accepted_usage_terms: false,
 });
 
 const step = ref(1);
@@ -264,8 +286,12 @@ const getSchema = () => {
           .required("Debes confirmar que eres mayor de edad"),
         accepted_terms: yup
           .boolean()
-          .oneOf([true], "Debes aceptar los términos y políticas de privacidad")
-          .required("Debes aceptar los términos y políticas de privacidad"),
+          .oneOf([true], "Debes aceptar las políticas de privacidad")
+          .required("Debes aceptar las políticas de privacidad"),
+        accepted_usage_terms: yup
+          .boolean()
+          .oneOf([true], "Debes aceptar las condiciones de uso")
+          .required("Debes aceptar las condiciones de uso"),
       });
 };
 

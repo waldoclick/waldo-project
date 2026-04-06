@@ -22,9 +22,25 @@
           class="form-check-input"
         />
         <label class="form-check-label" for="terms-accepted">
-          Acepto los términos y las
+          Acepto las
           <NuxtLink to="/politicas-de-privacidad" target="_blank"
             >políticas de privacidad</NuxtLink
+          >
+        </label>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="form-check">
+        <input
+          id="terms-usage-accepted"
+          v-model="usageTermsAccepted"
+          type="checkbox"
+          class="form-check-input"
+        />
+        <label class="form-check-label" for="terms-usage-accepted">
+          Acepto las
+          <NuxtLink to="/condiciones-de-uso" target="_blank"
+            >condiciones de uso</NuxtLink
           >
         </label>
       </div>
@@ -49,10 +65,15 @@ const { acceptTerms } = useUser();
 
 const ageConfirmed = ref(false);
 const termsAccepted = ref(false);
+const usageTermsAccepted = ref(false);
 const loading = ref(false);
 
 const canSubmit = computed(
-  () => ageConfirmed.value && termsAccepted.value && !loading.value,
+  () =>
+    ageConfirmed.value &&
+    termsAccepted.value &&
+    usageTermsAccepted.value &&
+    !loading.value,
 );
 
 async function handleAccept() {
