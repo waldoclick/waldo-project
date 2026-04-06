@@ -3,13 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 115-01-PLAN.md
-last_updated: "2026-04-06T04:08:18.182Z"
+stopped_at: Completed 116-01-PLAN.md
+last_updated: "2026-04-06T16:23:02.362Z"
+last_activity: 2026-04-06
 progress:
-  total_phases: 9
+  total_phases: 10
   completed_phases: 8
-  total_plans: 19
-  completed_plans: 19
+  total_plans: 21
+  completed_plans: 20
   percent: 100
 ---
 
@@ -20,7 +21,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 115 — fix-remaining-any-and-function-type-violations
+**Current focus:** Phase 116 — enforce-centralized-test-directory-structure
 
 ## Position
 
@@ -108,7 +109,7 @@ Progress: [██████████] 100%
 
 ## Session Continuity
 
-Last activity: 2026-04-06 - Completed quick task 260406-es8: Fix Codacy still flagging _-prefixed vars
-Last session: 2026-04-06T14:34:34Z
-Stopped at: Completed quick task 260406-es8
+Last activity: 2026-04-06
+Last session: 2026-04-06T16:23:02.356Z
+Stopped at: Completed 116-01-PLAN.md
 Resume file: None
