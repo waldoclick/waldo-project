@@ -1,7 +1,7 @@
 // apps/website/server/utils/recaptcha.ts
 import { createError } from "h3";
 
-const RECAPTCHA_PROTECTED_METHODS = ["POST", "PUT", "DELETE"];
+const RECAPTCHA_PROTECTED_METHODS = new Set(["POST", "PUT", "DELETE"]);
 
 /**
  * Verifies a reCAPTCHA v3 token against Google's siteverify API.
@@ -46,5 +46,5 @@ export function isRecaptchaProtectedRoute(
   _fullPath: string,
   method: string,
 ): boolean {
-  return RECAPTCHA_PROTECTED_METHODS.includes(method.toUpperCase());
+  return RECAPTCHA_PROTECTED_METHODS.has(method.toUpperCase());
 }

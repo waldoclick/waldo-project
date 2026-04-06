@@ -15,6 +15,7 @@ const props = withDefaults(
   }>(),
   {
     title: "Tipo de publicación",
+    text: undefined,
   },
 );
 </script>
