@@ -84,7 +84,23 @@ export const updateUser = async (ctx: Context) => {
       {
         data,
       }
-    )) as any; // Type assertion to handle relations
+    )) as unknown as {
+      id: number;
+      email: string;
+      firstname: string;
+      lastname: string;
+      username: string;
+      phone: string | null;
+      birthdate: string | null;
+      address: string | null;
+      address_number: string | null;
+      postal_code: string | null;
+      commune: { name: string; region: { name: string } } | null;
+      business_address: string | null;
+      business_address_number: string | null;
+      business_postal_code: string | null;
+      business_commune: { name: string; region: { name: string } } | null;
+    };
 
     // Buscar contacto en Zoho y crear si no existe, o actualizar si existe
     try {

@@ -32,7 +32,7 @@
           class="profile--default__content__list"
         >
           <template v-for="ad in ads" :key="ad.id">
-            <CardAnnouncement :all="ad as any" />
+            <CardAnnouncement :all="ad" />
           </template>
         </div>
 

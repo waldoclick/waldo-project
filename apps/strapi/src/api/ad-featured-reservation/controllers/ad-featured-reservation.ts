@@ -35,7 +35,7 @@ export default factories.createCoreController(
 
         const createdIds: number[] = [];
         for (let i = 0; i < quantity; i++) {
-          const record = await strapi.entityService.create(
+          const record = (await strapi.entityService.create(
             "api::ad-featured-reservation.ad-featured-reservation",
             {
               data: {
@@ -45,18 +45,23 @@ export default factories.createCoreController(
                 publishedAt: new Date(),
               },
             }
-          );
-          createdIds.push((record as any).id);
+          )) as unknown as { id: number };
+          createdIds.push(record.id);
         }
+
+        const typedUser = user as unknown as {
+          email: string;
+          firstName: string | null;
+        };
 
         try {
           await sendMjmlEmail(
             strapi,
             "gift-reservation",
-            (user as any).email,
+            typedUser.email,
             "Has recibido destacados para avisos",
             {
-              name: (user as any).firstName || (user as any).email,
+              name: typedUser.firstName || typedUser.email,
               quantity,
               type: "destacado(s) para avisos",
             }
