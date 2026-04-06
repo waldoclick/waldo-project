@@ -41,7 +41,7 @@ beforeEach(() => {
 
 describe("useLogout", () => {
   it("calls all 6 store resets on logout()", async () => {
-    const { useLogout } = await import("./useLogout");
+    const { useLogout } = await import("@/composables/useLogout");
     const { logout } = useLogout();
 
     await logout();
@@ -55,7 +55,7 @@ describe("useLogout", () => {
   });
 
   it("calls navigateTo('/') after auth logout", async () => {
-    const { useLogout } = await import("./useLogout");
+    const { useLogout } = await import("@/composables/useLogout");
     const { logout } = useLogout();
 
     await logout();
@@ -69,7 +69,7 @@ describe("useLogout", () => {
   });
 
   it("calls all store resets before auth logout", async () => {
-    const { useLogout } = await import("./useLogout");
+    const { useLogout } = await import("@/composables/useLogout");
     const { logout } = useLogout();
 
     await logout();
@@ -86,7 +86,7 @@ describe("useLogout", () => {
   });
 
   it("calls navigateTo with exactly '/'", async () => {
-    const { useLogout } = await import("./useLogout");
+    const { useLogout } = await import("@/composables/useLogout");
     const { logout } = useLogout();
 
     await logout();
@@ -107,7 +107,7 @@ describe("GTAP-12: disableAutoSelect() before strapiLogout()", () => {
   });
 
   it("calls disableAutoSelect() before strapiLogout()", async () => {
-    const { useLogout } = await import("./useLogout");
+    const { useLogout } = await import("@/composables/useLogout");
     const { logout } = useLogout();
     await logout();
 
