@@ -146,7 +146,7 @@ Plans:
 **Goal:** Fix 12 residual `any` violations missed by Phase 114's grep patterns: 2 `Array<any>` prop annotations in IntroduceAuth.vue (website + dashboard) and 10 `ref<any>(null)` reactive state declarations in dashboard detail pages. Pure type-annotation refactoring with zero runtime behavior changes.
 **Requirements**: [TYPE-001, TYPE-002]
 **Depends on:** Phase 114
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
-- [ ] 115-01-PLAN.md — Fix all 12 `Array<any>` and `ref<any>` violations across website and dashboard
+- [x] 115-01-PLAN.md — Fix all 12 `Array<any>` and `ref<any>` violations across website and dashboard
