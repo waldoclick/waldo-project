@@ -54,6 +54,12 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  to: undefined,
+  href: undefined,
+  target: undefined,
+  rel: undefined,
+  title: undefined,
+  ariaLabel: undefined,
   iconSize: 18,
   type: "button",
   customClass: "",
