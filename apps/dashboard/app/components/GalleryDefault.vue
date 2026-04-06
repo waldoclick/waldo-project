@@ -102,10 +102,7 @@ const handleImageClick = (imageIndex: number) => {
   visible.value = true;
 };
 
-const handleImageDelete = (
-  image: AdGalleryItem,
-  imageIndex: number,
-) => {
+const handleImageDelete = (image: AdGalleryItem, imageIndex: number) => {
   emit("image-delete", { image, index: imageIndex });
 };
 </script>
