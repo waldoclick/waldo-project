@@ -36,7 +36,7 @@ export class ProService {
       const flowService = flowServiceFactory(ctx.strapi);
       let customerId: string | undefined = undefined;
       // Define explicitly that we expect flow_customer_data or null/undefined
-      let flowCustomerData = (user as any).flow_customer_data; // Cast to any or add to UserData interface
+      let flowCustomerData = (user as unknown as Record<string, unknown>).flow_customer_data as Record<string, unknown> | null | undefined;
 
       // 2. Check if Flow customer data exists and has customerId
       if (flowCustomerData && flowCustomerData.customerId) {
@@ -44,7 +44,7 @@ export class ProService {
           "Flow customerId encontrado en el usuario de Strapi:",
           flowCustomerData.customerId
         );
-        customerId = flowCustomerData.customerId;
+        customerId = String(flowCustomerData.customerId);
       } else {
         console.log(
           "flow_customer_data no encontrado o incompleto en el usuario. Creando cliente en Flow..."
@@ -82,7 +82,7 @@ export class ProService {
         }
 
         customerId = customerResponse.customerId;
-        flowCustomerData = customerResponse; // Store the newly created data
+        flowCustomerData = customerResponse as unknown as Record<string, unknown>; // Store the newly created data
 
         // 4b. Save the *entire* Flow customer response object to Strapi user
         try {
@@ -90,11 +90,11 @@ export class ProService {
           console.log(
             "Datos del cliente de Flow guardados en el usuario de Strapi."
           );
-        } catch (updateError: any) {
+        } catch (updateError: unknown) {
           // Log the error but potentially continue, as we have the customerId needed for subscription
           console.error(
             "Error al guardar flow_customer_data en Strapi (continuando con la suscripción):",
-            updateError.message
+            updateError instanceof Error ? updateError.message : String(updateError)
           );
         }
       }
@@ -207,7 +207,7 @@ export class ProService {
             "Token no encontrado en los parámetros de paymentLink."
           );
         }
-      } catch (parseError: any) {
+      } catch (parseError: unknown) {
         console.error(
           "Error al parsear el paymentLink:",
           paymentLink,
@@ -219,22 +219,23 @@ export class ProService {
       // 9. Return the final URL and Token
       console.log(`Retornando URL: ${url}, Token: ${token}`);
       return { url, token };
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const e = error as Record<string, unknown>;
       console.error(
         "Error en ProService.createSubscription (Flow Subscription):",
         {
-          message: error.message,
-          status: error.status,
-          details: error.error || error.details,
+          message: e.message,
+          status: e.status,
+          details: e.error || e.details,
         }
       );
-      const status = typeof error.status === "number" ? error.status : 500;
+      const status = typeof e.status === "number" ? e.status : 500;
       const message =
-        typeof error.message === "string"
-          ? error.message
+        typeof e.message === "string"
+          ? e.message
           : "Error al crear la suscripción Pro con Flow";
-      const expose = error.expose === true;
-      const errorDetails = error.error || error.details || error;
+      const expose = e.expose === true;
+      const errorDetails = e.error || e.details || error;
       ctx.throw(status, message, { expose, error: errorDetails });
     }
   }

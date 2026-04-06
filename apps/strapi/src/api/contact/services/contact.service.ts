@@ -4,11 +4,13 @@ import { getClientIp } from "request-ip";
 import { zohoService } from "../../../services/zoho/index";
 import logger from "../../../utils/logtail/index";
 import { sendMjmlEmail } from "../../../services/mjml";
+import type { Core } from "@strapi/strapi";
+import type { Context } from "koa";
 
 export class ContactService {
-  constructor(private readonly strapi: any) {}
+  constructor(private readonly strapi: Core.Strapi) {}
 
-  getClientIp(ctx: any): string {
+  getClientIp(ctx: Context): string {
     return getClientIp(ctx.request) || ctx.ip;
   }
 

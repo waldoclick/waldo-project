@@ -3,13 +3,14 @@
  */
 
 import slugify from "slugify";
+import type { Event } from "@strapi/database/dist/lifecycles";
 
 export default {
   /**
    * Triggered before creating a condition
    * Generates the slug from the name
    */
-  async beforeCreate(event: any) {
+  async beforeCreate(event: Event) {
     const { data } = event.params;
 
     // Si el nombre está presente, generar el slug siempre
@@ -22,7 +23,7 @@ export default {
    * Triggered before updating a condition
    * Updates the slug if the name has changed
    */
-  async beforeUpdate(event: any) {
+  async beforeUpdate(event: Event) {
     const { data, where } = event.params;
 
     // Si el nombre está siendo actualizado, generar el slug
