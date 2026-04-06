@@ -45,6 +45,8 @@ Monorepo orchestrated with Turbo. Package manager: **Yarn** (never npm).
 - Codacy configured at root (`.codacy.yaml`) — covers ESLint, Stylelint, duplication, complexity
 - Run with: `yarn codacy` from root (via Turbo)
 - Do **not** create per-app `.codacy.yaml` files — root config is the only one
+- **Never leave unused variables or imports** — delete them, do not rename with `_` prefix (Codacy flags `_`-prefixed vars too unless `argsIgnorePattern` is configured, which it is not)
+- This applies to function parameters as well — if a parameter is unused, remove it or restructure the function signature
 
 ---
 
@@ -220,9 +222,21 @@ Never use colors outside this palette. Do not invent or approximate colors — u
 
 ## Testing Rules
 
-### Nuxt apps
+### Mandatory Testing Directory Rule
+**All test files must live in the root-level `tests/` directory of their app — never co-located with source files.**
+
+| App | Test root | Mirror pattern |
+|-----|-----------|----------------|
+| `apps/website` | `apps/website/tests/` | mirrors `app/` structure |
+| `apps/dashboard` | `apps/dashboard/tests/` | mirrors `app/` structure |
+| `apps/strapi` | `apps/strapi/tests/` | mirrors `src/` structure |
+
+- Never create test files inside `app/`, `src/`, or any subdirectory alongside production code
+- File name and folder structure must mirror the source — e.g. `src/services/foo/foo.service.ts` → `tests/services/foo/foo.service.test.ts`
+- Relative imports inside test files must cross the `tests/ → app/` or `tests/ → src/` boundary explicitly (e.g. `../../src/services/foo`)
+
+### Nuxt apps (website & dashboard)
 - Use Vitest with `@nuxt/test-utils`
-- Unit tests live in `tests/utils/{name}.test.ts` for utility functions
 - All utility functions must have 100% unit test coverage at creation time
 
 ### Strapi
