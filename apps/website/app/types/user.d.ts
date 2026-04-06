@@ -23,6 +23,7 @@ export interface User {
   pro_expires_at: string | null;
   accepted_age_confirmation: boolean;
   accepted_terms: boolean;
+  accepted_usage_terms: boolean;
   postal_code: string | null;
   commune: {
     id: number;
