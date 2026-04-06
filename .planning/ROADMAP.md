@@ -177,8 +177,8 @@ Plans:
 **Goal:** Move all 27 Strapi test files from their scattered locations inside src/ (nested within each service/controller/api directory) to a single root-level apps/strapi/tests/ directory, mirroring the source folder structure. Update all relative imports. Zero test logic changes — pure file relocation.
 **Requirements**: [STRUCT-118-STRAPI]
 **Depends on:** Phase 117
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
-- [ ] 118-01-PLAN.md — Jest config + git mv all 27 files + rewrite api/ test imports
+- [x] 118-01-PLAN.md — Jest config + git mv all 27 files + rewrite api/ test imports
 - [ ] 118-02-PLAN.md — Rewrite remaining 14 test imports + full test suite verification
