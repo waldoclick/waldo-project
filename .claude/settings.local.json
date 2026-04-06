@@ -69,7 +69,20 @@
       "Bash(curl -Ls https://github.com/codacy/codacy-analysis-cli/releases/download/7.10.1/codacy-analysis-cli-assembly.jar -o /usr/local/bin/codacy-analysis-cli.jar)",
       "Bash(docker run:*)",
       "Bash(docker wait:*)",
-      "Bash(echo \"exit code: $?\")"
+      "Bash(echo \"exit code: $?\")",
+      "Bash(npx jest:*)",
+      "Bash(timeout 60 node_modules/.bin/jest --passWithNoTests --testPathPattern=\"ad.findBySlug|ad.compute-status|auth-one-tap\")",
+      "Bash(timeout 60 node_modules/.bin/jest --passWithNoTests --testPathPattern=\"auth-one-tap\")",
+      "Bash(timeout 90 node_modules/.bin/jest --passWithNoTests)",
+      "Bash(timeout 90 node_modules/.bin/jest --passWithNoTests --runInBand)",
+      "Bash(timeout 90 node_modules/.bin/jest --passWithNoTests --runInBand --testPathIgnorePatterns=\"general.utils.test\")",
+      "Bash(timeout 60 node_modules/.bin/jest --passWithNoTests --runInBand --testPathPattern=\"payment/controllers/payment.test\")",
+      "Bash(npx tsc:*)",
+      "Bash(npx nuxi:*)",
+      "Bash(echo \"Exit: $?\")",
+      "Bash([ -f \"/home/gab/Code/waldo-project/apps/website/app/composables/useAdAnalytics.ts\" ])",
+      "Bash([ -f \"/home/gab/Code/waldo-project/apps/strapi/src/services/google/services/google-auth.service.ts\" ])",
+      "Bash([ -f \"/home/gab/Code/waldo-project/.planning/quick/260406-dbk-fix-remaining-codacy-unused-code-warning/260406-dbk-SUMMARY.md\" ])"
     ]
   }
 }
