@@ -89,7 +89,7 @@ export default (
  */
 function stripProtectedFields(
   obj: Record<string, unknown>,
-  userId: string | undefined
+  _userId: string | undefined
 ): string[] {
   const stripped: string[] = [];
 

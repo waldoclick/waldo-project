@@ -352,13 +352,13 @@ export class SubscriptionChargeService {
 
     // Alias for subscription-payment entity service calls — bypasses unregistered content type
     const subPaymentCreate = strapi.entityService.create as (
-      uid: string,
-      params: { data: Record<string, unknown> }
+      _uid: string,
+      _params: { data: Record<string, unknown> }
     ) => Promise<unknown>;
     const subPaymentUpdate = strapi.entityService.update as (
-      uid: string,
-      id: number,
-      params: { data: Record<string, unknown> }
+      _uid: string,
+      _id: number,
+      _params: { data: Record<string, unknown> }
     ) => Promise<unknown>;
 
     if (result.success) {

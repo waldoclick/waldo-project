@@ -79,11 +79,11 @@ type MockStrapi = {
 describe("computeAdStatus — draft status", () => {
   type AdService = {
     findOne: (
-      id: string | number,
-      options?: object
+      _id: string | number,
+      _options?: object
     ) => Promise<{ status: string } | null>;
-    draftAds: (options?: object) => Promise<unknown>;
-    abandonedAds?: (options?: object) => Promise<unknown>;
+    draftAds: (_options?: object) => Promise<unknown>;
+    abandonedAds?: (_options?: object) => Promise<unknown>;
   };
 
   const mockStrapi = (global as unknown as { strapi: MockStrapi }).strapi;

@@ -1,5 +1,3 @@
-import { IFlowSubscriptionResponse } from "../../../services/flow";
-
 interface ProviderSubscriptionData {
   subscriptionId?: string;
   customerId?: string;

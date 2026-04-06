@@ -19,25 +19,6 @@ const ctxIsManager = (ctx: Context): boolean => {
   return ((role?.name as string) ?? "").toLowerCase() === "manager";
 };
 
-interface PaginationMeta {
-  pagination: {
-    page: number;
-    pageSize: number;
-    pageCount: number;
-    total: number;
-  };
-}
-
-interface QueryParams {
-  filters?: unknown;
-  pagination?: {
-    page?: string;
-    pageSize?: string;
-  };
-  sort?: unknown;
-  populate?: unknown;
-}
-
 /**
  * Advertisement Controller Factory
  *
