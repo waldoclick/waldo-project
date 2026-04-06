@@ -55,7 +55,18 @@
       "Bash(grep -E \"\\\\.ts$\")",
       "Bash(find . -name \"package.json\" -path \"*/apps/strapi/*\" -exec cat {} \\\\;)",
       "Bash(grep:*)",
-      "Bash(npx vue-tsc:*)"
+      "Bash(npx vue-tsc:*)",
+      "Bash(yarn codacy:*)",
+      "Bash(gh pr:*)",
+      "Bash(curl -L https://coverage.codacy.com/get.sh --help)",
+      "Bash(curl -Ls https://github.com/codacy/codacy-analysis-cli/releases/latest/download/codacy-analysis-cli)",
+      "Bash(pip show:*)",
+      "Bash(npm list:*)",
+      "Bash(curl -Ls https://api.github.com/repos/codacy/codacy-analysis-cli/releases/latest)",
+      "Bash(java -version)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d.get\\('scripts', {}\\), indent=2\\)\\)\")",
+      "Bash(docker --version)",
+      "Bash(curl -Ls https://github.com/codacy/codacy-analysis-cli/releases/download/7.10.1/codacy-analysis-cli-assembly.jar -o /usr/local/bin/codacy-analysis-cli.jar)"
     ]
   }
 }
