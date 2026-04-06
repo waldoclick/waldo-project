@@ -33,13 +33,19 @@ import BoxContent from "@/components/BoxContent.vue";
 import BoxInformation from "@/components/BoxInformation.vue";
 import CardInfo from "@/components/CardInfo.vue";
 import FormRegion from "@/components/FormRegion.vue";
+import type { RegionData } from "@/components/FormRegion.vue";
+
+interface RegionRecord extends RegionData {
+  createdAt?: string;
+  updatedAt?: string;
+}
 
 definePageMeta({
   layout: "dashboard",
 });
 
 const route = useRoute();
-const region = ref<any>(null);
+const region = ref<RegionRecord | null>(null);
 const apiClient = useApiClient();
 
 const title = computed(() => region.value?.name || "Región");
@@ -51,7 +57,7 @@ const breadcrumbs = computed(() => [
   { label: "Editar" },
 ]);
 
-const handleRegionSaved = (updatedRegion: any) => {
+const handleRegionSaved = (updatedRegion: RegionData) => {
   if (updatedRegion) {
     region.value = updatedRegion;
   }

@@ -18,12 +18,13 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import type { User } from "@/types/user";
 import StatsDefault from "@/components/StatsDefault.vue";
 
-const user = useSessionUser();
+const user = useSessionUser<User>();
 
 const userName = computed(() => {
-  return (user.value as any)?.firstname || "Usuario";
+  return user.value?.firstname || "Usuario";
 });
 
 const greeting = computed(() => {

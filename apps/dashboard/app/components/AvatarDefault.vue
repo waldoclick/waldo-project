@@ -1,7 +1,7 @@
 <template>
   <div class="avatar" :class="`avatar--${size}`">
     <NuxtImg
-      v-if="(user as any)?.pro_status === 'active' && (user as any)?.avatar"
+      v-if="user?.pro_status === 'active' && user?.avatar"
       :src="getAvatarUrl"
       :alt="getInitials"
       class="avatar__image"
@@ -14,11 +14,19 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import type { User } from "@/types/user";
+
+interface UserWithAvatar extends User {
+  avatar?: {
+    url?: string;
+    formats?: Record<string, { url: string } | undefined>;
+  };
+}
 
 // Define las propiedades del componente
 const props = defineProps<{
   size?: string;
-  user?: any;
+  user?: UserWithAvatar;
 }>();
 
 // Define las propiedades con valores por defecto
@@ -36,10 +44,10 @@ const loggedUser = useSessionUser();
 // Computed para obtener las iniciales
 const getInitials = computed(() => {
   const user = props.user || loggedUser.value;
-  const firstname = (user as any)?.firstname || "";
-  const lastname = (user as any)?.lastname || "";
+  const firstname = user?.firstname || "";
+  const lastname = user?.lastname || "";
   if (!firstname && !lastname) {
-    const email = (user as any)?.email || "";
+    const email = user?.email || "";
     return email ? email.slice(0, 2).toUpperCase() : "WA";
   }
   return `${firstname.charAt(0).toUpperCase()}${lastname
@@ -48,11 +56,11 @@ const getInitials = computed(() => {
 });
 
 // Computed para obtener el usuario actual
-const user = computed(() => props.user || loggedUser.value);
+const user = computed((): UserWithAvatar | null => props.user || (loggedUser.value as UserWithAvatar | null));
 
 // Computed para obtener la URL del avatar
 const getAvatarUrl = computed(() => {
-  const avatar = (user.value as any)?.avatar;
+  const avatar = user.value?.avatar;
   if (!avatar) return "";
 
   // Usar el formato según el tamaño del avatar

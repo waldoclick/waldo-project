@@ -33,13 +33,19 @@ import BoxContent from "@/components/BoxContent.vue";
 import BoxInformation from "@/components/BoxInformation.vue";
 import CardInfo from "@/components/CardInfo.vue";
 import FormCondition from "@/components/FormCondition.vue";
+import type { ConditionData } from "@/components/FormCondition.vue";
+
+interface ConditionRecord extends ConditionData {
+  createdAt?: string;
+  updatedAt?: string;
+}
 
 definePageMeta({
   layout: "dashboard",
 });
 
 const route = useRoute();
-const condition = ref<any>(null);
+const condition = ref<ConditionRecord | null>(null);
 const apiClient = useApiClient();
 
 const title = computed(() => condition.value?.name || "Condición");
@@ -51,7 +57,7 @@ const breadcrumbs = computed(() => [
   { label: "Editar" },
 ]);
 
-const handleConditionSaved = (updatedCondition: any) => {
+const handleConditionSaved = (updatedCondition: ConditionData) => {
   if (updatedCondition) {
     condition.value = updatedCondition;
   }

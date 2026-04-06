@@ -33,13 +33,19 @@ import BoxContent from "@/components/BoxContent.vue";
 import BoxInformation from "@/components/BoxInformation.vue";
 import CardInfo from "@/components/CardInfo.vue";
 import FormCommune from "@/components/FormCommune.vue";
+import type { CommuneData } from "@/components/FormCommune.vue";
+
+interface CommuneRecord extends CommuneData {
+  createdAt?: string;
+  updatedAt?: string;
+}
 
 definePageMeta({
   layout: "dashboard",
 });
 
 const route = useRoute();
-const commune = ref<any>(null);
+const commune = ref<CommuneRecord | null>(null);
 const apiClient = useApiClient();
 
 const title = computed(() => commune.value?.name || "Comuna");
@@ -51,7 +57,7 @@ const breadcrumbs = computed(() => [
   { label: "Editar" },
 ]);
 
-const handleCommuneSaved = (updatedCommune: any) => {
+const handleCommuneSaved = (updatedCommune: CommuneData) => {
   if (updatedCommune) {
     commune.value = updatedCommune;
   }

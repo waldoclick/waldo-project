@@ -33,13 +33,19 @@ import BoxContent from "@/components/BoxContent.vue";
 import BoxInformation from "@/components/BoxInformation.vue";
 import CardInfo from "@/components/CardInfo.vue";
 import FormPack from "@/components/FormPack.vue";
+import type { PackData } from "@/components/FormPack.vue";
+
+interface PackRecord extends PackData {
+  createdAt?: string;
+  updatedAt?: string;
+}
 
 definePageMeta({
   layout: "dashboard",
 });
 
 const route = useRoute();
-const pack = ref<any>(null);
+const pack = ref<PackRecord | null>(null);
 const apiClient = useApiClient();
 
 const title = computed(() => pack.value?.name || "Pack");
@@ -51,7 +57,7 @@ const breadcrumbs = computed(() => [
   { label: "Editar" },
 ]);
 
-const handlePackSaved = (updatedPack: any) => {
+const handlePackSaved = (updatedPack: PackData) => {
   if (updatedPack) {
     pack.value = updatedPack;
   }

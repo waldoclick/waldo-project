@@ -32,7 +32,7 @@ import * as yup from "yup";
 import { useRoute, useRouter } from "vue-router";
 import { useSlugify } from "@/composables/useSlugify";
 
-interface RegionData {
+export interface RegionData {
   id?: number;
   documentId?: string;
   name?: string;

@@ -33,13 +33,19 @@ import BoxContent from "@/components/BoxContent.vue";
 import BoxInformation from "@/components/BoxInformation.vue";
 import CardInfo from "@/components/CardInfo.vue";
 import FormCategory from "@/components/FormCategory.vue";
+import type { CategoryData } from "@/components/FormCategory.vue";
+
+interface CategoryRecord extends CategoryData {
+  createdAt?: string;
+  updatedAt?: string;
+}
 
 definePageMeta({
   layout: "dashboard",
 });
 
 const route = useRoute();
-const category = ref<any>(null);
+const category = ref<CategoryRecord | null>(null);
 const apiClient = useApiClient();
 
 const title = computed(() => category.value?.name || "Categoría");
@@ -51,7 +57,7 @@ const breadcrumbs = computed(() => [
   { label: "Editar" },
 ]);
 
-const handleCategorySaved = (updatedCategory: any) => {
+const handleCategorySaved = (updatedCategory: CategoryData) => {
   if (updatedCategory) {
     category.value = updatedCategory;
   }

@@ -53,7 +53,7 @@ interface RegionOption {
   name: string;
 }
 
-interface CommuneData {
+export interface CommuneData {
   id?: number;
   documentId?: string;
   name?: string;

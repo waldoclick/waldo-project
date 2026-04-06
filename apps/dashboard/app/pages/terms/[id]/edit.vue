@@ -33,13 +33,19 @@ import BoxContent from "@/components/BoxContent.vue";
 import BoxInformation from "@/components/BoxInformation.vue";
 import CardInfo from "@/components/CardInfo.vue";
 import FormTerm from "@/components/FormTerm.vue";
+import type { TermData } from "@/components/FormTerm.vue";
+
+interface TermRecord extends TermData {
+  createdAt?: string;
+  updatedAt?: string;
+}
 
 definePageMeta({
   layout: "dashboard",
 });
 
 const route = useRoute();
-const term = ref<any>(null);
+const term = ref<TermRecord | null>(null);
 const apiClient = useApiClient();
 
 const title = computed(() => term.value?.title || "Condicion de Uso");
@@ -51,7 +57,7 @@ const breadcrumbs = computed(() => [
   { label: "Editar" },
 ]);
 
-const handleTermSaved = (updatedTerm: any) => {
+const handleTermSaved = (updatedTerm: TermData) => {
   if (updatedTerm) {
     term.value = updatedTerm;
   }

@@ -7,6 +7,7 @@ export type AdStatus =
   | "abandoned";
 
 export interface AdGalleryItem {
+  id?: number;
   url: string;
   formats?: {
     thumbnail?: { url: string };
