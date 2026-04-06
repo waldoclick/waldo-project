@@ -2,9 +2,9 @@ import dotenv from "dotenv";
 import path from "path";
 
 // Cargar variables de entorno desde el archivo .env
-dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
+dotenv.config({ path: path.resolve(__dirname, "../../../../.env") });
 
-import weatherService from "./index";
+import weatherService from "../index";
 
 describe("WeatherService", () => {
   it("should get weather data for Santiago", async () => {

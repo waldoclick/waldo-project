@@ -13,7 +13,7 @@ jest.mock("google-auth-library", () => ({
 }));
 
 import { OAuth2Client } from "google-auth-library";
-import { GoogleOneTapService } from "./google-one-tap.service";
+import { GoogleOneTapService } from "../google-one-tap.service";
 
 // --- Strapi global mock ---
 const mockUserFindOne = jest.fn();

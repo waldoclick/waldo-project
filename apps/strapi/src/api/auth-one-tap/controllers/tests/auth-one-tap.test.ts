@@ -6,7 +6,7 @@
  */
 
 // Mock the GoogleOneTapService BEFORE imports
-jest.mock("../../../services/google-one-tap", () => ({
+jest.mock("../../../../services/google-one-tap", () => ({
   googleOneTapService: {
     verifyCredential: jest.fn(),
     findOrCreateUser: jest.fn(),
@@ -15,14 +15,14 @@ jest.mock("../../../services/google-one-tap", () => ({
 
 // Mock authController import (createUserReservations)
 jest.mock(
-  "../../../extensions/users-permissions/controllers/authController",
+  "../../../../extensions/users-permissions/controllers/authController",
   () => ({
     createUserReservations: jest.fn().mockResolvedValue(undefined),
   })
 );
 
-import controller from "./auth-one-tap";
-import { googleOneTapService } from "../../../services/google-one-tap";
+import controller from "../auth-one-tap";
+import { googleOneTapService } from "../../../../services/google-one-tap";
 
 // --- Strapi global mock ---
 const mockJwtIssue = jest.fn(() => "test-jwt-token");

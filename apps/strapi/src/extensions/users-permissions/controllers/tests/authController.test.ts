@@ -9,13 +9,13 @@ import {
   resendCode,
   overrideForgotPassword,
   registerUserLocal,
-} from "./authController";
+} from "../authController";
 
 // --- Mock sendMjmlEmail ---
-jest.mock("../../../services/mjml", () => ({
+jest.mock("../../../../services/mjml", () => ({
   sendMjmlEmail: jest.fn().mockResolvedValue(undefined),
 }));
-import { sendMjmlEmail } from "../../../services/mjml";
+import { sendMjmlEmail } from "../../../../services/mjml";
 const mockSendMjmlEmail = sendMjmlEmail as jest.MockedFunction<
   typeof sendMjmlEmail
 >;
