@@ -552,4 +552,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ `accepted_age_confirmation` and `accepted_terms` boolean fields stored on Strapi user record (`default: false`) — v1.46
 
 ---
-*Last updated: 2026-04-06 after Phase 117 (enforce-root-level-tests-directory-for-website — verification-only closure, all 23 website test files confirmed in apps/website/tests/)*
+*Last updated: 2026-04-06 after Phase 118 (enforce-root-level-tests-directory-for-strapi — 27 test files moved from scattered src/ locations to apps/strapi/tests/ with mirrored structure, all imports updated, 22/27 tests passing baseline preserved)*
