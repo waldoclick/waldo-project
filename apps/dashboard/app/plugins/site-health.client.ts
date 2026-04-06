@@ -79,11 +79,10 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   function isLocalStorageAvailable() {
     try {
-      const testKey = "testKey";
       const storage = window.localStorage;
-      storage.setItem(testKey, "testValue");
-      const isAvailable = storage.getItem(testKey) === "testValue";
-      storage.removeItem(testKey);
+      storage.setItem("testKey", "testValue");
+      const isAvailable = storage.getItem("testKey") === "testValue";
+      storage.removeItem("testKey");
       return isAvailable;
     } catch {
       return false;
