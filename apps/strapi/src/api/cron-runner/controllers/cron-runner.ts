@@ -31,7 +31,10 @@ export default {
       );
     }
 
-    const cronTasks = strapi.config.get("cron-tasks") as Record<string, any>;
+    interface CronTask {
+      task: (ctx: { strapi: typeof strapi }) => Promise<void>;
+    }
+    const cronTasks = strapi.config.get("cron-tasks") as Record<string, CronTask>;
     const task = cronTasks?.[taskKey];
 
     if (!task) {
@@ -50,10 +53,11 @@ export default {
         cron: name,
         message: `Cron "${name}" ran successfully.`,
       };
-    } catch (error: any) {
-      strapi.log.error(`[cron-runner] Cron "${name}" failed: ${error.message}`);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      strapi.log.error(`[cron-runner] Cron "${name}" failed: ${message}`);
       return ctx.internalServerError(
-        `Cron "${name}" threw an error: ${error.message}`
+        `Cron "${name}" threw an error: ${message}`
       );
     }
   },

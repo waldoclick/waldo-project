@@ -1,13 +1,23 @@
 import { renderEmail } from "./index";
+import type { Core } from "@strapi/strapi";
 
 const EMAIL_PREFIX = "Waldo.click®: ";
 
+interface EmailOptions {
+  to: string | string[];
+  from: string;
+  subject: string;
+  text: string;
+  html: string;
+  replyTo?: string;
+}
+
 export async function sendMjmlEmail(
-  strapi: any,
+  strapi: Core.Strapi,
   template: string,
   to: string | string[],
   subject: string,
-  data: Record<string, any>
+  data: Record<string, unknown>
 ) {
   try {
     // Agregar variables del entorno automáticamente
@@ -26,7 +36,7 @@ export async function sendMjmlEmail(
       : `${EMAIL_PREFIX}${subject}`;
 
     // Configurar Reply-To si hay un email de contacto en los datos
-    const emailOptions: any = {
+    const emailOptions: EmailOptions = {
       to,
       from: "no-reply@waldo.click",
       subject: fullSubject,
@@ -36,7 +46,7 @@ export async function sendMjmlEmail(
 
     // Si hay un email de contacto en los datos, configurar Reply-To
     if (data.email) {
-      emailOptions.replyTo = data.email;
+      emailOptions.replyTo = String(data.email);
     }
 
     await strapi.plugins["email"].services.email.send(emailOptions);

@@ -3,12 +3,13 @@
  */
 
 import { sendNewAdNotification } from "../../../../services/slack";
+import type { Event } from "@strapi/database/dist/lifecycles";
 
 export default {
   /**
    * Triggered after creating a new ad
    */
-  async afterCreate(event: any) {
+  async afterCreate(event: Event) {
     const { result } = event;
 
     console.log("📝 Datos del aviso:", {

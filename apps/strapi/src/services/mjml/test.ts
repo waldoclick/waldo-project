@@ -1,6 +1,7 @@
 import { renderEmail } from "./index";
+import type { Core } from "@strapi/strapi";
 
-export async function testEmail(strapi: any, testEmail: string) {
+export async function testEmail(strapi: Core.Strapi, testEmail: string) {
   try {
     // Renderizar el template MJML
     const html = renderEmail("welcome", {
