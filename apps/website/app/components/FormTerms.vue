@@ -1,6 +1,6 @@
 <template>
   <form class="form form--terms" @submit.prevent="handleAccept">
-    <div class="form-group">
+    <div v-if="needsAgeConfirmation" class="form-group">
       <div class="form-check">
         <input
           id="terms-age-confirmation"
@@ -13,7 +13,7 @@
         </label>
       </div>
     </div>
-    <div class="form-group">
+    <div v-if="needsTerms" class="form-group">
       <div class="form-check">
         <input
           id="terms-accepted"
@@ -29,7 +29,7 @@
         </label>
       </div>
     </div>
-    <div class="form-group">
+    <div v-if="needsUsageTerms" class="form-group">
       <div class="form-check">
         <input
           id="terms-usage-accepted"
@@ -62,6 +62,13 @@
 import { ref, computed } from "vue";
 
 const { acceptTerms } = useUser();
+const user = useStrapiUser();
+
+const needsAgeConfirmation = computed(
+  () => !user.value?.accepted_age_confirmation,
+);
+const needsTerms = computed(() => !user.value?.accepted_terms);
+const needsUsageTerms = computed(() => !user.value?.accepted_usage_terms);
 
 const ageConfirmed = ref(false);
 const termsAccepted = ref(false);
@@ -70,9 +77,9 @@ const loading = ref(false);
 
 const canSubmit = computed(
   () =>
-    ageConfirmed.value &&
-    termsAccepted.value &&
-    usageTermsAccepted.value &&
+    (!needsAgeConfirmation.value || ageConfirmed.value) &&
+    (!needsTerms.value || termsAccepted.value) &&
+    (!needsUsageTerms.value || usageTermsAccepted.value) &&
     !loading.value,
 );
 
