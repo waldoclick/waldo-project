@@ -1,5 +1,8 @@
 import { vi, describe, it, expect, beforeEach } from "vitest";
-import type { PurchaseOrderData, PurchaseOrderItem } from "@/composables/useAdAnalytics";
+import type {
+  PurchaseOrderData,
+  PurchaseOrderItem,
+} from "@/composables/useAdAnalytics";
 
 // Mock the ad store
 vi.mock("@/stores/ad.store", () => ({

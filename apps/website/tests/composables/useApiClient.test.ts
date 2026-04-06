@@ -130,7 +130,8 @@ describe("useApiClient", () => {
     }));
     // Re-import with new mock
     vi.resetModules();
-    const { useApiClient: useApiClientSSR } = await import("@/composables/useApiClient");
+    const { useApiClient: useApiClientSSR } =
+      await import("@/composables/useApiClient");
     const apiClient = useApiClientSSR();
     await expect(
       apiClient("/auth/local", { method: "POST", body: {} }),
