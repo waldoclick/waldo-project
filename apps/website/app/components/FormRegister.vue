@@ -370,9 +370,10 @@ const handleSubmit = async () => {
       }
     } catch (error) {
       console.error(error);
+      const err = error as { error?: { message?: string; details?: { error?: { message?: string } } } };
       const strapiMessage =
-        (error as any).error?.details?.error?.message ||
-        (error as any).error?.message ||
+        err.error?.details?.error?.message ||
+        err.error?.message ||
         "";
       if (strapiMessage === "Email or Username are already taken") {
         Swal.fire("Error", "El correo electrónico ya está en uso.", "error");

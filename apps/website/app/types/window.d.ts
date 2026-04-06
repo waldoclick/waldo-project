@@ -1,9 +1,11 @@
 export {};
 
 import type { DataLayerEvent } from "~/composables/useAdAnalytics";
+import type DOMPurify from "dompurify";
 
 declare global {
   interface Window {
+    DOMPurify: typeof DOMPurify;
     // dataLayer accepts GA4 analytics events, GTM consent commands (array format), and plain objects
     dataLayer: (DataLayerEvent | Record<string, unknown> | unknown[])[];
     google: {

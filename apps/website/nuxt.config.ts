@@ -274,7 +274,7 @@ export default defineNuxtConfig({
           defer: true,
         },
       ],
-    } as any,
+    } as Record<string, unknown>,
   },
 
   // 2. Styles Configuration

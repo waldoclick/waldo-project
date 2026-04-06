@@ -27,8 +27,9 @@ const authenticate = async () => {
       router.push("/anuncios");
     }
   } catch (error) {
+    const err = error as { response?: { data?: { error?: { details?: { error?: { message?: string }; message?: string } } } } };
     const errorMessage =
-      (error as any)?.response?.data?.error?.details?.error?.message ||
+      err?.response?.data?.error?.details?.error?.message ||
       "Error desconocido durante la autenticación.";
     Swal.fire("Error", errorMessage, "error");
     router.push("/login");

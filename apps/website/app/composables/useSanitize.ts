@@ -40,8 +40,8 @@ export const useSanitize = () => {
     }
 
     // En el cliente, usar DOMPurify si está disponible
-    if (typeof window !== "undefined" && (window as any).DOMPurify) {
-      return (window as any).DOMPurify.sanitize(html, {
+    if (typeof window !== "undefined" && window.DOMPurify) {
+      return window.DOMPurify.sanitize(html, {
         ALLOWED_TAGS: allowedTags,
         ALLOWED_ATTR: allowedAttrs,
         KEEP_CONTENT: true,
