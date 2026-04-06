@@ -56,7 +56,15 @@ const authenticate = async () => {
     }
   } catch (error: unknown) {
     // Mostrar el mensaje de error y redirigir a /login
-    const err = error as { response?: { data?: { error?: { details?: { error?: { message?: string }; message?: string } } } } };
+    const err = error as {
+      response?: {
+        data?: {
+          error?: {
+            details?: { error?: { message?: string }; message?: string };
+          };
+        };
+      };
+    };
     const errorMessage =
       err.response?.data?.error?.details?.error?.message ||
       "Error desconocido durante la autenticación.";
