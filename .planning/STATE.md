@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 114-01-PLAN.md — fix any types in website app
-last_updated: "2026-04-06T03:01:17.538Z"
+stopped_at: Completed 114-03 - Fix Strapi any/Function type annotations across 22 files
+last_updated: "2026-04-06T03:05:14.628Z"
 progress:
   total_phases: 8
   completed_phases: 6
   total_plans: 18
-  completed_plans: 15
+  completed_plans: 16
   percent: 100
 ---
 
@@ -101,6 +101,6 @@ Progress: [██████████] 100%
 
 ## Session Continuity
 
-Last session: 2026-04-06T03:01:17.535Z
-Stopped at: Completed 114-01-PLAN.md — fix any types in website app
+Last session: 2026-04-06T03:05:14.625Z
+Stopped at: Completed 114-03 - Fix Strapi any/Function type annotations across 22 files
 Resume file: None
