@@ -188,8 +188,8 @@ Plans:
 **Goal:** Add a CSV export feature to the dashboard orders page: a Strapi `GET /orders/export-csv` endpoint that returns all orders as CSV, a client-side `ordersTocsv()` utility with full test coverage, a `useExportCsv` composable for the Blob download trigger, and an "Exportar CSV" button in the orders page header.
 **Requirements**: [CSV-STRAPI-01, CSV-UTIL-01, CSV-UI-01, CSV-DOWNLOAD-01]
 **Depends on:** Phase 118
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
-- [ ] 119-01-PLAN.md — Strapi exportCsv endpoint + dashboard CSV utility with tests
+- [x] 119-01-PLAN.md — Strapi exportCsv endpoint + dashboard CSV utility with tests
 - [ ] 119-02-PLAN.md — Dashboard useExportCsv composable + UI button + human verification
