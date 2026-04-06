@@ -103,10 +103,11 @@ Progress: [██████████] 100%
 | 260405-uxm | Move function declaration to function body root in gtm.client.ts | 2026-04-06 | e55c1c9c | [260405-uxm-move-function-declaration-to-function-bo](./quick/260405-uxm-move-function-declaration-to-function-bo/) |
 | 260406-d4s | Fix Codacy unused-code warnings: ESLint argsIgnorePattern for _ prefix and remove dead code | 2026-04-06 | 1e585882 | [260406-d4s-fix-codacy-unused-code-warnings-eslint-a](./quick/260406-d4s-fix-codacy-unused-code-warnings-eslint-a/) |
 | 260406-dbk | Fix remaining Codacy unused-code warnings across website, dashboard, strapi — remove dead code, prefix unused params, rename private constructor fields | 2026-04-06 | c439eaa1 | [260406-dbk-fix-remaining-codacy-unused-code-warning](./quick/260406-dbk-fix-remaining-codacy-unused-code-warning/) |
+| 260406-es8 | Fix Codacy still flagging _-prefixed vars — disable base no-unused-vars, configure @typescript-eslint/no-unused-vars with all ignore patterns in .eslintrc.json | 2026-04-06 | 1f436255 | [260406-es8-fix-codacy-still-flagging-prefixed-vars-](./quick/260406-es8-fix-codacy-still-flagging-prefixed-vars-/) |
 
 ## Session Continuity
 
-Last activity: 2026-04-06 - Completed quick task 260406-dbk: Fix remaining Codacy unused-code warnings across website, dashboard, strapi
+Last activity: 2026-04-06 - Completed quick task 260406-es8: Fix Codacy still flagging _-prefixed vars
 Last session: 2026-04-06T14:34:34Z
-Stopped at: Completed 115-01-PLAN.md
+Stopped at: Completed quick task 260406-es8
 Resume file: None
