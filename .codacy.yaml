@@ -63,4 +63,5 @@ ignore:
   - "**/cypress/**"
   - "**/*.config.js"
   - "**/*.config.ts"
+  - "**/jest.setup.ts"
 
