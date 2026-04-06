@@ -17,6 +17,14 @@
           class="orders--default__filters"
           @update:model-value="handleFiltersChange"
         />
+        <button
+          class="orders--default__export"
+          :disabled="isExporting"
+          @click="exportOrders"
+        >
+          <Download class="orders--default__export__icon" />
+          <span>{{ isExporting ? "Exportando..." : "Exportar CSV" }}</span>
+        </button>
       </div>
 
       <div class="orders--default__table-wrapper">
@@ -74,7 +82,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useAsyncData } from "nuxt/app";
-import { Eye } from "lucide-vue-next";
+import { Eye, Download } from "lucide-vue-next";
 import { formatCurrency } from "@/utils/price";
 import { getPaymentMethod } from "@/utils/string";
 import { useSettingsStore } from "@/stores/settings.store";
@@ -90,6 +98,7 @@ import type { Order, OrdersListResponse } from "@/types/order";
 const settingsStore = useSettingsStore();
 const section = "orders" as const;
 const apiClient = useApiClient();
+const { exportOrders, isExporting } = useExportCsv();
 
 const filters = computed(() => settingsStore.getOrdersFilters);
 
