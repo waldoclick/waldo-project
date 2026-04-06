@@ -3,7 +3,7 @@
     <HeroDefault title="Órdenes" :breadcrumbs="breadcrumbs">
       <template #actions>
         <button
-          class="btn btn--icon"
+          class="btn btn--outline"
           :disabled="isExporting"
           title="Exportar CSV"
           @click="exportOrders"
