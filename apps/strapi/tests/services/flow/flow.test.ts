@@ -1,6 +1,6 @@
-import { flowServiceFactory } from "../factories/flow.factory";
-import { FlowService } from "../services/flow.service";
-import { IFlowPaymentOrderRequest } from "../types/flow.types"; // Import request type
+import { flowServiceFactory } from "../../../src/services/flow/factories/flow.factory";
+import { FlowService } from "../../../src/services/flow/services/flow.service";
+import { IFlowPaymentOrderRequest } from "../../../src/services/flow/types/flow.types"; // Import request type
 import type { Core } from "@strapi/strapi";
 
 // Mock Strapi instance

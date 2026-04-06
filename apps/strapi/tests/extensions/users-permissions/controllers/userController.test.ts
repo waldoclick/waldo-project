@@ -5,7 +5,7 @@
 import {
   getUserDataWithFilters,
   getAuthenticatedUsers,
-} from "../userController";
+} from "../../../../src/extensions/users-permissions/controllers/userController";
 
 // Mock strapi global
 const mockFindOne = jest.fn();

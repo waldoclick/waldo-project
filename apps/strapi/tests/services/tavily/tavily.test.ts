@@ -1,4 +1,4 @@
-import { TavilyService } from "../tavily.service";
+import { TavilyService } from "../../../src/services/tavily/tavily.service";
 
 // Save and restore TAVILY_API_KEY around each test
 let savedKey: string | undefined;

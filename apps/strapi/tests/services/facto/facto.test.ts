@@ -1,6 +1,6 @@
-import { FactoConfig } from "../config/facto.config";
+import { FactoConfig } from "../../../src/services/facto/config/facto.config";
 import dotenv from "dotenv";
-import generalUtils from "../../../api/payment/utils/general.utils";
+import generalUtils from "../../../src/api/payment/utils/general.utils";
 
 // Cargar variables de entorno
 dotenv.config();

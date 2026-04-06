@@ -2,7 +2,7 @@
 
 import type { Context } from "koa";
 import type { Core } from "@strapi/strapi";
-import protectUserFields from "../protect-user-fields";
+import protectUserFields from "../../src/middlewares/protect-user-fields";
 
 function createMiddleware() {
   return protectUserFields({}, { strapi: {} as unknown as Core.Strapi });

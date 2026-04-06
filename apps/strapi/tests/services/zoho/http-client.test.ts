@@ -5,8 +5,8 @@
 
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
-import { ZohoHttpClient } from "../http-client";
-import { ZohoConfig } from "../interfaces";
+import { ZohoHttpClient } from "../../../src/services/zoho/http-client";
+import { ZohoConfig } from "../../../src/services/zoho/interfaces";
 
 const mockConfig: ZohoConfig = {
   clientId: "test-client-id",
