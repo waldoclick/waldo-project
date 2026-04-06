@@ -47,13 +47,21 @@ import HeroDefault from "@/components/HeroDefault.vue";
 import BoxContent from "@/components/BoxContent.vue";
 import BoxInformation from "@/components/BoxInformation.vue";
 import CardInfo from "@/components/CardInfo.vue";
+import type { CommuneData } from "@/components/FormCommune.vue";
+
+interface CommuneRecord extends Omit<CommuneData, "region"> {
+  slug?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  region?: { id?: number; name?: string };
+}
 
 definePageMeta({
   layout: "dashboard",
 });
 
 const route = useRoute();
-const commune = ref<any>(null);
+const commune = ref<CommuneRecord | null>(null);
 const apiClient = useApiClient();
 
 const title = computed(() => commune.value?.name || "Comuna");

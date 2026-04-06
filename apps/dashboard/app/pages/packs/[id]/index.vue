@@ -67,13 +67,14 @@ import HeroDefault from "@/components/HeroDefault.vue";
 import BoxContent from "@/components/BoxContent.vue";
 import BoxInformation from "@/components/BoxInformation.vue";
 import CardInfo from "@/components/CardInfo.vue";
+import type { Pack } from "@/types/pack";
 
 definePageMeta({
   layout: "dashboard",
 });
 
 const route = useRoute();
-const item = ref<any>(null);
+const item = ref<Pack | null>(null);
 const apiClient = useApiClient();
 
 const title = computed(() => item.value?.name || "Pack");
@@ -105,5 +106,5 @@ const { data: packData } = await useAsyncData(
   },
 );
 
-item.value = packData.value ?? null;
+item.value = (packData.value as Pack | null) ?? null;
 </script>

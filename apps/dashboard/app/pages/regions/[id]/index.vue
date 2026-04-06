@@ -42,13 +42,20 @@ import HeroDefault from "@/components/HeroDefault.vue";
 import BoxContent from "@/components/BoxContent.vue";
 import BoxInformation from "@/components/BoxInformation.vue";
 import CardInfo from "@/components/CardInfo.vue";
+import type { RegionData } from "@/components/FormRegion.vue";
+
+interface RegionRecord extends RegionData {
+  slug?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
 
 definePageMeta({
   layout: "dashboard",
 });
 
 const route = useRoute();
-const item = ref<any>(null);
+const item = ref<RegionRecord | null>(null);
 const apiClient = useApiClient();
 
 const title = computed(() => item.value?.name || "Región");
