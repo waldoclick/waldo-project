@@ -82,7 +82,10 @@
       "Bash(echo \"Exit: $?\")",
       "Bash([ -f \"/home/gab/Code/waldo-project/apps/website/app/composables/useAdAnalytics.ts\" ])",
       "Bash([ -f \"/home/gab/Code/waldo-project/apps/strapi/src/services/google/services/google-auth.service.ts\" ])",
-      "Bash([ -f \"/home/gab/Code/waldo-project/.planning/quick/260406-dbk-fix-remaining-codacy-unused-code-warning/260406-dbk-SUMMARY.md\" ])"
+      "Bash([ -f \"/home/gab/Code/waldo-project/.planning/quick/260406-dbk-fix-remaining-codacy-unused-code-warning/260406-dbk-SUMMARY.md\" ])",
+      "Bash(yarn strapi:upgrade)",
+      "Bash(NPM_CONFIG_REGISTRY=https://registry.npmjs.org/ npx --yes @strapi/upgrade@latest latest)",
+      "Bash(yarn install:*)"
     ]
   }
 }
