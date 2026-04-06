@@ -6,6 +6,21 @@ import { format } from "date-fns";
 
 const execAsync = promisify(exec);
 
+interface DatabaseConnectionDetails {
+  host?: string;
+  port?: number;
+  database?: string;
+  user?: string;
+  password?: string;
+  filename?: string;
+  schema?: string;
+}
+
+interface DatabaseConnectionConfig {
+  client?: string;
+  connection?: DatabaseConnectionDetails;
+}
+
 export interface ICronjobResult {
   success: boolean;
   results?: string;
@@ -29,7 +44,7 @@ export class BackupService {
       await this.ensureBackupDirectory();
 
       // Access DB config via the Strapi v5 config API. strapi.config.get('database') returns the full database config object.
-      const dbConfig = (strapi.config.get("database") as { connection: any })
+      const dbConfig = (strapi.config.get("database") as { connection: DatabaseConnectionConfig })
         .connection;
       const client = dbConfig.client;
 
@@ -93,11 +108,11 @@ export class BackupService {
         success: true,
         results: `Backup created successfully: ${backupFileName}`,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       strapi.log.error("Error creando backup:", error);
       return {
         success: false,
-        error: `Failed to create backup: ${error.message}`,
+        error: `Failed to create backup: ${error instanceof Error ? error.message : String(error)}`,
       };
     }
   }
@@ -110,7 +125,7 @@ export class BackupService {
     }
   }
 
-  private buildMySQLBackupCommand(config: any, timestamp: string): string {
+  private buildMySQLBackupCommand(config: DatabaseConnectionConfig, timestamp: string): string {
     const {
       host = "localhost",
       port = 3306,
@@ -128,7 +143,7 @@ export class BackupService {
     return `mysqldump -h ${host} -P ${port} -u ${user} -p${password} ${database} > ${backupPath}`;
   }
 
-  private buildPostgreSQLBackupCommand(config: any, timestamp: string): string {
+  private buildPostgreSQLBackupCommand(config: DatabaseConnectionConfig, timestamp: string): string {
     const {
       host = "localhost",
       port = 5432,
@@ -147,7 +162,7 @@ export class BackupService {
     return `PGPASSWORD=${password} pg_dump -h ${host} -p ${port} -U ${user} -d ${database} -n ${schema} > ${backupPath}`;
   }
 
-  private buildSQLiteBackupCommand(config: any, timestamp: string): string {
+  private buildSQLiteBackupCommand(config: DatabaseConnectionConfig, timestamp: string): string {
     const { filename } = config.connection;
     const backupPath = path.join(
       this.backupDir,
@@ -163,8 +178,8 @@ export class BackupService {
       const compressedPath = `${backupPath}.gz`;
       await execAsync(`gzip "${backupPath}"`);
       strapi.log.info(`Backup compressed: ${compressedPath}`);
-    } catch (error) {
-      strapi.log.warn(`Could not compress backup: ${error.message}`);
+    } catch (error: unknown) {
+      strapi.log.warn(`Could not compress backup: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -195,8 +210,8 @@ export class BackupService {
           `${deletedCount} old backup(s) deleted (older than ${this.maxBackupDays} days)`
         );
       }
-    } catch (error) {
-      strapi.log.error(`Error cleaning old backups: ${error.message}`);
+    } catch (error: unknown) {
+      strapi.log.error(`Error cleaning old backups: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 }

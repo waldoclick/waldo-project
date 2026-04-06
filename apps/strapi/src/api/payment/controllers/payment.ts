@@ -33,7 +33,7 @@ class PaymentController {
     ctx.body = { success: false, message: e?.message };
   };
 
-  private controllerWrapper = (handler: Function) => async (ctx: Context) => {
+  private controllerWrapper = (handler: (ctx: Context) => Promise<void>) => async (ctx: Context) => {
     try {
       await handler(ctx);
     } catch (error) {
@@ -640,8 +640,9 @@ class PaymentController {
       return;
     }
 
-    const orderRecord = order as Record<string, any>;
-    if (orderRecord.user?.id !== userId) {
+    const orderRecord = order as Record<string, unknown>;
+    const orderUser = orderRecord.user as Record<string, unknown> | undefined;
+    if (orderUser?.id !== userId) {
       ctx.status = 403;
       ctx.body = { success: false, message: "Access denied" };
       return;

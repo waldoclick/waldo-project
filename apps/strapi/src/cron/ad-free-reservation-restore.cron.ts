@@ -1,6 +1,15 @@
 import logger from "../utils/logtail";
 import { sendMjmlEmail } from "../services/mjml";
 
+interface AdReservationRecord {
+  id: number;
+  ad?: {
+    remaining_days: number;
+    banned: boolean;
+    rejected: boolean;
+  } | null;
+}
+
 export interface ICronjobResult {
   success: boolean;
   results?: string;
@@ -17,13 +26,18 @@ export default class UserCronService {
 
       logger.info("=== STARTING FREE AD RESTORATION ===");
 
+      interface UserRecord {
+        id: number;
+        username: string;
+        email: string;
+      }
       const allUsers = (await strapi.entityService.findMany(
         "plugin::users-permissions.user",
         {
           fields: ["id", "username", "email"],
           pagination: { pageSize: -1 },
         }
-      )) as any[];
+      )) as UserRecord[];
 
       logger.info(`Processing ${allUsers.length} users`);
 
@@ -49,10 +63,10 @@ export default class UserCronService {
                 };
               }
               return null;
-            } catch (error) {
+            } catch (error: unknown) {
               logger.error("Error restoring free reservations for user", {
                 userId,
-                error: error.message,
+                error: error instanceof Error ? error.message : String(error),
               });
               return null;
             }
@@ -132,7 +146,7 @@ export default class UserCronService {
             ad: true,
           },
         }
-      )) as any[];
+      )) as AdReservationRecord[];
 
       const availableReservations = currentReservations.filter(
         (r) => !r.ad
@@ -175,10 +189,10 @@ export default class UserCronService {
         neededReservations,
         totalAfterRestore: totalReservations + neededReservations,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error("Error restoring user free reservations", {
         userId,
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
       });
       throw error;
     }

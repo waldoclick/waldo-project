@@ -86,16 +86,17 @@ export class SubscriptionChargeService {
         const periodStart = user.pro_expires_at.split("T")[0];
 
         // Idempotency check: skip if already approved for this period
-        const existingApproved = await (
-          strapi.entityService.findMany as Function
-        )("api::subscription-payment.subscription-payment", {
-          filters: {
-            user: { id: user.id },
-            period_start: periodStart,
-            status: "approved",
-          },
-          pagination: { pageSize: 1 },
-        });
+        const existingApproved = await strapi.entityService.findMany(
+          "api::subscription-payment.subscription-payment" as Parameters<typeof strapi.entityService.findMany>[0],
+          {
+            filters: {
+              user: { id: user.id },
+              period_start: periodStart,
+              status: "approved",
+            } as unknown as Record<string, unknown>,
+            pagination: { pageSize: 1 },
+          }
+        );
 
         if ((existingApproved as unknown[]).length > 0) {
           logger.info(
@@ -108,15 +109,15 @@ export class SubscriptionChargeService {
       }
 
       // Step 2: Retry failed charges with charge_attempts < 3 whose next_charge_attempt <= today
-      const retryRecords = (await (strapi.entityService.findMany as Function)(
-        "api::subscription-payment.subscription-payment",
+      const retryRecords = (await strapi.entityService.findMany(
+        "api::subscription-payment.subscription-payment" as Parameters<typeof strapi.entityService.findMany>[0],
         {
           filters: {
             status: "failed",
             charge_attempts: { $lt: 3 },
             next_charge_attempt: { $lte: today },
-          },
-          populate: ["user"],
+          } as unknown as Record<string, unknown>,
+          populate: ["user"] as unknown as Parameters<typeof strapi.entityService.findMany>[1]["populate"],
           pagination: { pageSize: -1 },
         }
       )) as FailedPaymentRecord[];
@@ -139,16 +140,17 @@ export class SubscriptionChargeService {
       }
 
       // Step 3: Deactivate exhausted subscriptions (charge_attempts >= 3)
-      const exhaustedRecords = (await (
-        strapi.entityService.findMany as Function
-      )("api::subscription-payment.subscription-payment", {
-        filters: {
-          status: "failed",
-          charge_attempts: { $gte: 3 },
-        },
-        populate: ["user"],
-        pagination: { pageSize: -1 },
-      })) as ExhaustedPaymentRecord[];
+      const exhaustedRecords = (await strapi.entityService.findMany(
+        "api::subscription-payment.subscription-payment" as Parameters<typeof strapi.entityService.findMany>[0],
+        {
+          filters: {
+            status: "failed",
+            charge_attempts: { $gte: 3 },
+          } as unknown as Record<string, unknown>,
+          populate: ["user"] as unknown as Parameters<typeof strapi.entityService.findMany>[1]["populate"],
+          pagination: { pageSize: -1 },
+        }
+      )) as ExhaustedPaymentRecord[];
 
       logger.info(
         `SubscriptionChargeService: found ${exhaustedRecords.length} exhausted subscriptions to deactivate`
@@ -202,13 +204,13 @@ export class SubscriptionChargeService {
         }
 
         // Mark payment record as deactivated
-        await (strapi.entityService.update as Function)(
-          "api::subscription-payment.subscription-payment",
+        await strapi.entityService.update(
+          "api::subscription-payment.subscription-payment" as Parameters<typeof strapi.entityService.update>[0],
           record.id,
           {
             data: {
               status: "deactivated",
-            },
+            } as unknown as Parameters<typeof strapi.entityService.update>[2]["data"],
           }
         );
 
@@ -335,8 +337,15 @@ export class SubscriptionChargeService {
     );
 
     // Alias for subscription-payment entity service calls — bypasses unregistered content type
-    const subPaymentCreate = strapi.entityService.create as Function;
-    const subPaymentUpdate = strapi.entityService.update as Function;
+    const subPaymentCreate = strapi.entityService.create as (
+      uid: string,
+      params: { data: Record<string, unknown> }
+    ) => Promise<unknown>;
+    const subPaymentUpdate = strapi.entityService.update as (
+      uid: string,
+      id: number,
+      params: { data: Record<string, unknown> }
+    ) => Promise<unknown>;
 
     if (result.success) {
       if (existingRecordId) {
