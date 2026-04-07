@@ -15,12 +15,14 @@
       </main>
       <FooterDefault />
     </div>
+    <MenuMobile />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
 import MenuDefault from "@/components/MenuDefault.vue";
+import MenuMobile from "@/components/MenuMobile.vue";
 import HeaderDefault from "@/components/HeaderDefault.vue";
 import FooterDefault from "@/components/FooterDefault.vue";
 

@@ -7,6 +7,10 @@
     align-items: center;
     gap: 12px;
 
+    @include screen-small {
+      display: none;
+    }
+
     &__trigger {
       position: relative;
       display: flex;
