@@ -300,6 +300,11 @@
       align-items: center;
       cursor: pointer;
 
+      @include screen-small {
+        min-width: 0;
+        padding: 7px 8px;
+      }
+
       &.is-open {
         border-radius: 4px 4px 0 0;
         border-bottom: 1px solid #e5e5e5;
@@ -318,6 +323,10 @@
         color: #1a1a1a;
         text-align: left;
 
+        @include screen-small {
+          display: none;
+        }
+
         &__name {
           font-weight: 600;
           font-size: 14px;
@@ -335,6 +344,10 @@
         height: 20px;
         margin-left: 10px;
         color: #1a1a1a;
+
+        @include screen-small {
+          display: none;
+        }
       }
     }
 
