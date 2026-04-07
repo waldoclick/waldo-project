@@ -16,7 +16,7 @@
       <FooterDefault />
     </div>
     <div class="layout--dashboard__mobile">
-      <MenuMobile />
+      <MenuMobile @toggle-sidebar="isSidebarOpen = !isSidebarOpen" />
     </div>
   </div>
 </template>
