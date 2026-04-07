@@ -89,10 +89,6 @@
         transform: translateX(-100%);
         transition: transform 0.25s ease;
         z-index: 30;
-
-        @include screen-small {
-          width: 100vw;
-        }
       }
 
       &__content {
@@ -101,6 +97,10 @@
 
       &__main {
         padding-top: 64px;
+
+        @include screen-small {
+          padding-bottom: 64px;
+        }
       }
 
       &__overlay {
