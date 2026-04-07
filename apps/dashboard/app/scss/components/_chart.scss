@@ -93,6 +93,14 @@
       height: 400px;
       position: relative;
 
+      @include screen-medium {
+        height: 280px;
+      }
+
+      @include screen-small {
+        height: 220px;
+      }
+
       :deep(.chartjs-tooltip) {
         background-color: #fff !important;
         border: 1px solid #ccc !important;
@@ -130,6 +138,14 @@
       align-items: center;
       justify-content: center;
       height: 400px;
+
+      @include screen-medium {
+        height: 280px;
+      }
+
+      @include screen-small {
+        height: 220px;
+      }
       color: #6b7280;
       font-size: 14px;
     }
