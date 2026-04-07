@@ -8,15 +8,15 @@
     <div class="layout--dashboard__menu">
       <MenuDefault @close="isSidebarOpen = false" />
     </div>
+    <div class="layout--dashboard__mobile">
+      <MenuMobile @toggle-sidebar="isSidebarOpen = !isSidebarOpen" />
+    </div>
     <div class="layout--dashboard__content">
       <HeaderDefault @toggle-sidebar="isSidebarOpen = !isSidebarOpen" />
       <main class="layout--dashboard__main">
         <slot />
       </main>
       <FooterDefault />
-    </div>
-    <div class="layout--dashboard__mobile">
-      <MenuMobile @toggle-sidebar="isSidebarOpen = !isSidebarOpen" />
     </div>
   </div>
 </template>

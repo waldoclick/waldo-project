@@ -60,6 +60,10 @@
     padding: 30px 0;
     border-bottom: 1px solid #e5e5e5;
 
+    @include screen-small {
+      padding: 20px 0;
+    }
+
     &__container {
       @extend .container;
     }
@@ -76,6 +80,14 @@
       color: #1a1a1a;
       margin: 0;
       line-height: 1.2;
+
+      @include screen-medium {
+        font-size: 26px;
+      }
+
+      @include screen-small {
+        font-size: 22px;
+      }
     }
 
     &__bottom {
