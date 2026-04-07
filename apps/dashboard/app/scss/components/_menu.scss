@@ -187,6 +187,18 @@
       height: 100%;
       color: $davys_grey;
       text-decoration: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition:
+        color 0.15s,
+        background-color 0.15s;
+
+      &:hover {
+        color: $charcoal;
+        background-color: $cultured;
+      }
 
       &.router-link-active,
       &.router-link-exact-active {
