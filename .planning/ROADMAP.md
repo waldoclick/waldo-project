@@ -120,13 +120,11 @@ Plans:
 
 ### Phase 113: Fix stale session cookie leaking authenticated requests after logout
 
-**Goal:** [To be planned]
-**Requirements**: TBD
+**Goal:** SKIPPED — issue resolved as side effect of Phase 109 (@nuxtjs/strapi elimination). Session cookie lifecycle now managed entirely by custom useSessionToken composable.
+**Requirements**: N/A
 **Depends on:** Phase 112
-**Plans:** 0 plans
-
-Plans:
-- [ ] TBD (run /gsd:plan-phase 113 to break down)
+**Plans:** 0 plans (skipped)
+**Status:** Skipped — 2026-04-07
 
 ### Phase 114: Fix Codacy best-practice warnings — replace any with unknown, Function type, and require statements across monorepo
 
