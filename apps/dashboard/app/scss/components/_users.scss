@@ -42,7 +42,7 @@
       background-color: #ffffff;
       border: 1px solid #e5e5e5;
       border-radius: 4px;
-      overflow: hidden;
+      overflow-x: auto;
     }
 
     &__empty,
@@ -103,7 +103,7 @@
     &__table-wrapper {
       border: none;
       border-radius: 0;
-      overflow: hidden;
+      overflow-x: auto;
     }
 
     .table--default__header {
