@@ -59,7 +59,6 @@
       }
 
       @include screen-small {
-        justify-content: flex-start;
         padding: 0 16px;
 
         &__left {

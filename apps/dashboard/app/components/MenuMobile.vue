@@ -1,5 +1,12 @@
 <template>
   <nav class="menu menu--mobile">
+    <button
+      class="menu--mobile__link"
+      title="Menú"
+      @click="emit('toggle-sidebar')"
+    >
+      <Menu :size="22" class="menu--mobile__icon" />
+    </button>
     <NuxtLink to="/orders" class="menu--mobile__link" title="Órdenes">
       <ShoppingBag :size="22" class="menu--mobile__icon" />
     </NuxtLink>
@@ -13,5 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import { ShoppingBag, Bell, Newspaper } from "lucide-vue-next";
+import { Menu, ShoppingBag, Bell, Newspaper } from "lucide-vue-next";
+
+const emit = defineEmits<{ (e: "toggle-sidebar"): void }>();
 </script>
