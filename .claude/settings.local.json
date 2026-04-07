@@ -94,7 +94,9 @@
       "Bash(curl:*)",
       "WebSearch",
       "WebFetch(domain:github.com)",
-      "WebFetch(domain:www.transbankdevelopers.cl)"
+      "WebFetch(domain:www.transbankdevelopers.cl)",
+      "Bash(yarn tsc:*)",
+      "Bash(yarn nuxt:*)"
     ]
   }
 }

@@ -64,6 +64,11 @@
       left: 0;
       height: 100vh;
       z-index: 20;
+      border-right: 1px solid #e5e5e5;
+
+      @include screen-small {
+        height: calc(100vh - 64px);
+      }
     }
 
     &__content {
