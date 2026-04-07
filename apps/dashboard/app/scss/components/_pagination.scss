@@ -8,6 +8,12 @@
     justify-content: space-between;
     width: 100%;
 
+    @include screen-small {
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
     &__info {
       font-size: 14px;
       color: #6b7280;
@@ -63,6 +69,10 @@
 
       &--page {
         min-width: 40px;
+
+        @include screen-small {
+          display: none;
+        }
       }
     }
 
@@ -72,6 +82,10 @@
       justify-content: center;
       width: 40px;
       height: 36px;
+
+      @include screen-small {
+        display: none;
+      }
 
       &__icon {
         width: 16px;
