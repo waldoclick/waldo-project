@@ -84,6 +84,44 @@
       display: none; // Hidden on desktop always
     }
 
+    &__mobile {
+      display: none;
+
+      @include screen-small {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 64px;
+        background-color: #ffffff;
+        border-top: 1px solid #e5e5e5;
+        z-index: 20;
+        align-items: center;
+
+        &__nav {
+          display: flex;
+          width: 100%;
+          height: 100%;
+        }
+
+        &__link {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex: 1;
+          height: 100%;
+          color: $davys_grey;
+          text-decoration: none;
+
+          &.router-link-active,
+          &.router-link-exact-active {
+            color: $charcoal;
+          }
+        }
+      }
+    }
+
     @include screen-large {
       &__menu {
         transform: translateX(-100%);
