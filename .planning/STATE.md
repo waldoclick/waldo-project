@@ -116,10 +116,11 @@ Progress: [██████████] 100%
 | 260406-raw | haz que el layout del dashboard funcione de manera responsive, solo el layout, debe funcionar en tablet y celulares. Solo eso | 2026-04-06 | dbbb2a05 | [260406-raw-haz-que-el-layout-del-dashboard-funcione](./quick/260406-raw-haz-que-el-layout-del-dashboard-funcione/) |
 | 260406-t1o | make tables responsive with horizontal scroll and white-space nowrap on cells | 2026-04-07 | — | [260406-t1o-make-tables-responsive-with-horizontal-s](./quick/260406-t1o-make-tables-responsive-with-horizontal-s/) |
 | 260406-t82 | fix responsive: tables overflow with horizontal scroll, mobile menu overlaps content | 2026-04-07 | f8e3ed83 | [260406-t82-fix-responsive-tables-overflow-with-hori](./quick/260406-t82-fix-responsive-tables-overflow-with-hori/) |
+| 260406-tjg | fix responsive layout of dashboard home page | 2026-04-07 | 4bde8d74 | [260406-tjg-fix-responsive-layout-of-dashboard-home-](./quick/260406-tjg-fix-responsive-layout-of-dashboard-home-/) |
 
 ## Session Continuity
 
-Last activity: 2026-04-07 - Completed quick task 260406-t82: fix responsive: tables overflow with horizontal scroll, mobile menu overlaps content
+Last activity: 2026-04-07 - Completed quick task 260406-tjg: fix responsive layout of dashboard home page
 Last session: 2026-04-06T23:43:35.915Z
 Stopped at: None
 Resume file: None
