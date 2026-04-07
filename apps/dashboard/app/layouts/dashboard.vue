@@ -15,7 +15,9 @@
       </main>
       <FooterDefault />
     </div>
-    <MenuMobile />
+    <div class="layout--dashboard__mobile">
+      <MenuMobile />
+    </div>
   </div>
 </template>
 
