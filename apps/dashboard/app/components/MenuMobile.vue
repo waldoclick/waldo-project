@@ -2,10 +2,11 @@
   <nav class="menu menu--mobile">
     <button
       class="menu--mobile__link"
-      title="Menú"
+      :title="sidebarOpen ? 'Cerrar menú' : 'Menú'"
       @click="emit('toggle-sidebar')"
     >
-      <Menu :size="22" class="menu--mobile__icon" />
+      <X v-if="sidebarOpen" :size="22" class="menu--mobile__icon" />
+      <Menu v-else :size="22" class="menu--mobile__icon" />
     </button>
     <NuxtLink to="/orders" class="menu--mobile__link" title="Órdenes">
       <ShoppingBag :size="22" class="menu--mobile__icon" />
@@ -20,7 +21,8 @@
 </template>
 
 <script setup lang="ts">
-import { Menu, ShoppingBag, Bell, Newspaper } from "lucide-vue-next";
+import { Menu, X, ShoppingBag, Bell, Newspaper } from "lucide-vue-next";
 
+defineProps<{ sidebarOpen: boolean }>();
 const emit = defineEmits<{ (e: "toggle-sidebar"): void }>();
 </script>

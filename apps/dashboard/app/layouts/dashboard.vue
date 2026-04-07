@@ -3,16 +3,20 @@
     class="layout layout--dashboard"
     :class="{ 'layout--dashboard--open': isSidebarOpen }"
   >
-    <!-- Overlay: visible on mobile when sidebar is open -->
-    <div class="layout--dashboard__overlay" @click="isSidebarOpen = false" />
     <div class="layout--dashboard__menu">
       <MenuDefault @close="isSidebarOpen = false" />
     </div>
     <div class="layout--dashboard__mobile">
-      <MenuMobile @toggle-sidebar="isSidebarOpen = !isSidebarOpen" />
+      <MenuMobile
+        :sidebar-open="isSidebarOpen"
+        @toggle-sidebar="isSidebarOpen = !isSidebarOpen"
+      />
     </div>
     <div class="layout--dashboard__content">
-      <HeaderDefault @toggle-sidebar="isSidebarOpen = !isSidebarOpen" />
+      <HeaderDefault
+        :sidebar-open="isSidebarOpen"
+        @toggle-sidebar="isSidebarOpen = !isSidebarOpen"
+      />
       <main class="layout--dashboard__main">
         <slot />
       </main>
