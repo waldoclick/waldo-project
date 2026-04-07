@@ -117,10 +117,11 @@ Progress: [██████████] 100%
 | 260406-t1o | make tables responsive with horizontal scroll and white-space nowrap on cells | 2026-04-07 | — | [260406-t1o-make-tables-responsive-with-horizontal-s](./quick/260406-t1o-make-tables-responsive-with-horizontal-s/) |
 | 260406-t82 | fix responsive: tables overflow with horizontal scroll, mobile menu overlaps content | 2026-04-07 | f8e3ed83 | [260406-t82-fix-responsive-tables-overflow-with-hori](./quick/260406-t82-fix-responsive-tables-overflow-with-hori/) |
 | 260406-tjg | fix responsive layout of dashboard home page | 2026-04-07 | 4bde8d74 | [260406-tjg-fix-responsive-layout-of-dashboard-home-](./quick/260406-tjg-fix-responsive-layout-of-dashboard-home-/) |
+| 260406-tue | quita el overlay cuando se abre el menu default y que el menu quede al 100% de la pantalla al abrir | 2026-04-07 | 32030ee1 | [260406-tue-quita-el-overlay-cuando-se-abre-el-menu-](./quick/260406-tue-quita-el-overlay-cuando-se-abre-el-menu-/) |
 
 ## Session Continuity
 
-Last activity: 2026-04-07 - Completed quick task 260406-tjg: fix responsive layout of dashboard home page
+Last activity: 2026-04-07 - Completed quick task 260406-tue: quita el overlay cuando se abre el menu default y que el menu quede al 100% de la pantalla al abrir
 Last session: 2026-04-06T23:43:35.915Z
 Stopped at: None
 Resume file: None
