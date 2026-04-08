@@ -17,6 +17,7 @@
       :summary-text="paymentSummaryText"
       :primary-label="primaryButtonLabel"
       :primary-disabled="isCreating"
+      :primary-loading="isCreating"
       @primary="confirmPay"
       @back="router.push('/anunciar/galeria-de-imagenes')"
     />
@@ -27,6 +28,7 @@
 import { onMounted, computed, ref } from "vue";
 import { useRouter } from "vue-router";
 const { Swal } = useSweetAlert2();
+const toast = useToast();
 import { useAdStore } from "@/stores/ad.store";
 import { useAdAnalytics } from "@/composables/useAdAnalytics";
 import { useAdPaymentSummary } from "@/composables/useAdPaymentSummary";
@@ -42,7 +44,6 @@ const apiClient = useApiClient();
 const { fetchUser } = useStrapiAuth();
 const { uploadFiles, transformUrl } = useImageProxy();
 const { getPendingFiles, clearAll: clearPendingUploads } = usePendingUploads();
-const isUploadingImages = ref(false);
 const isCreating = ref(false);
 
 // Define SEO
@@ -140,7 +141,6 @@ const uploadPendingImages = async (): Promise<boolean> => {
   const pending = getPendingFiles();
   if (pending.length === 0) return true;
 
-  isUploadingImages.value = true;
   try {
     const files = pending.map(({ file }) => file);
     const results = await uploadFiles(files, "gallery");
@@ -163,12 +163,11 @@ const uploadPendingImages = async (): Promise<boolean> => {
       confirmButtonText: "Aceptar",
     });
     return false;
-  } finally {
-    isUploadingImages.value = false;
   }
 };
 
 const confirmPay = async () => {
+  toast.info("Publicando tu anuncio...");
   isCreating.value = true;
   try {
     // Upload pending images first — abort if any upload fails
