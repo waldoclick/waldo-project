@@ -103,7 +103,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
       );
     }
 
-    const { id } = ctx.params;
+    const id = Number(ctx.params.id);
 
     const ad = await strapi.db.query("api::ad.ad").findOne({
       where: { id },
@@ -571,7 +571,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
   async deleteUpload(ctx: Context) {
     try {
       const fileId = Number(ctx.params.id);
-      const userId = ctx.state.user?.id;
+      const userId = Number(ctx.state.user?.id);
 
       if (!userId) {
         return ctx.unauthorized("You must be authenticated to delete an image");

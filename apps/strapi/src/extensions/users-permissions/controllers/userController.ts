@@ -94,10 +94,10 @@ const getDetailedUserData = async (user) => {
  * @returns {Object} The detailed user data.
  */
 export const getUserData = async (ctx) => {
-  const userId = ctx.state.user.id;
+  const userId = Number(ctx.state.user.id);
 
   // Call the original controller
-  const user = await strapi.query("plugin::users-permissions.user").findOne({
+  const user = await strapi.db.query("plugin::users-permissions.user").findOne({
     where: { id: userId },
     populate: {
       role: true,
@@ -129,10 +129,10 @@ export const getUserData = async (ctx) => {
  * @returns {Object} The detailed user data.
  */
 export const getUserDataById = async (ctx) => {
-  const userId = ctx.params.id;
+  const userId = Number(ctx.params.id);
 
   // Call the original controller
-  const user = await strapi.query("plugin::users-permissions.user").findOne({
+  const user = await strapi.db.query("plugin::users-permissions.user").findOne({
     where: { id: userId },
     populate: {
       role: true,

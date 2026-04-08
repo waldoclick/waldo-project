@@ -5,7 +5,7 @@ export default {
       path: "/ia/gemini",
       handler: "ia.gemini",
       config: {
-        policies: [],
+        policies: ["global::isManager"],
       },
     },
     {
@@ -13,7 +13,7 @@ export default {
       path: "/ia/groq",
       handler: "ia.groq",
       config: {
-        policies: [],
+        policies: ["global::isManager"],
       },
     },
     {
@@ -21,7 +21,7 @@ export default {
       path: "/ia/deepseek",
       handler: "ia.deepseek",
       config: {
-        policies: [],
+        policies: ["global::isManager"],
       },
     },
     {
@@ -29,7 +29,7 @@ export default {
       path: "/ia/claude",
       handler: "ia.claude",
       config: {
-        policies: [],
+        policies: ["global::isManager"],
       },
     },
   ],

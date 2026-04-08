@@ -64,11 +64,13 @@ export default {
       method: "PUT",
       path: "/ads/:id/approve",
       handler: "ad.approveAd",
+      config: { policies: ["global::isManager"] },
     },
     {
       method: "PUT",
       path: "/ads/:id/reject",
       handler: "ad.rejectAd",
+      config: { policies: ["global::isManager"] },
     },
     {
       method: "POST",
@@ -84,6 +86,7 @@ export default {
       method: "PUT",
       path: "/ads/:id/banned",
       handler: "ad.bannedAd",
+      config: { policies: ["global::isManager"] },
     },
     {
       method: "PUT",

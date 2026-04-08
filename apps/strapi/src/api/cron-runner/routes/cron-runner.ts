@@ -11,6 +11,7 @@ export default {
       method: "POST",
       path: "/cron-runner/:name", // e.g. user-cron, ad-cron, cleanup-cron, backup-cron
       handler: "cron-runner.run",
+      config: { policies: ["global::isManager"] },
     },
   ],
 };

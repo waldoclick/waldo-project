@@ -225,7 +225,7 @@ export const overrideAuthLocal = (originalController) => async (ctx) => {
   if (!jwt) return;
 
   // Credentials valid — intercept the response
-  const userId: number = ctx.response.body.user.id;
+  const userId: number = Number(ctx.response.body.user.id);
   const email: string = ctx.response.body.user.email;
   const name: string =
     ctx.response.body.user.firstname ||

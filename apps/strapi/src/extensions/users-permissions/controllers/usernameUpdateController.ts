@@ -1,7 +1,7 @@
 import { differenceInDays } from "date-fns";
 
 export const updateUsername = async (ctx) => {
-  const userId = ctx.state.user.id;
+  const userId = Number(ctx.state.user.id);
   const { username } = ctx.request.body.data;
 
   if (!userId) {
@@ -9,7 +9,7 @@ export const updateUsername = async (ctx) => {
   }
 
   // Obtener usuario actual con su última fecha de cambio
-  const currentUser = await strapi
+  const currentUser = await strapi.db
     .query("plugin::users-permissions.user")
     .findOne({ where: { id: userId } });
 
@@ -80,7 +80,7 @@ export const updateUsername = async (ctx) => {
 
   try {
     // Check if username already exists
-    const existingUser = await strapi
+    const existingUser = await strapi.db
       .query("plugin::users-permissions.user")
       .findOne({ where: { username } });
 

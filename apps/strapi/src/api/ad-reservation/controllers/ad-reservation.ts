@@ -10,7 +10,7 @@ export default factories.createCoreController(
   () => ({
     async gift(ctx: Context): Promise<void> {
       const body = ctx.request.body as { userId?: number; quantity?: number };
-      const userId = body?.userId;
+      const userId = Number(body?.userId);
       const quantity = body?.quantity;
 
       if (!userId || !quantity || quantity < 1) {
