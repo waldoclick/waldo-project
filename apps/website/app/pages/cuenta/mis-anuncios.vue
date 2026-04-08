@@ -28,7 +28,7 @@ const tabs = ref<
   { value: FilterType; label: string; count: number; icon: Component }[]
 >([
   { value: "published", label: "Activos", count: 0, icon: CheckCircle },
-  { value: "review", label: "En revisión", count: 0, icon: Clock },
+  { value: "review", label: "Pendientes", count: 0, icon: Clock },
   { value: "expired", label: "Expirados", count: 0, icon: AlertCircle },
   { value: "rejected", label: "Rechazados", count: 0, icon: XCircle },
   { value: "banned", label: "Baneados", count: 0, icon: Ban },

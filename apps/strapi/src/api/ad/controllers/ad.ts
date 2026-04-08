@@ -484,8 +484,9 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
             active: false,
             banned: false,
             rejected: false,
+            draft: false,
             remaining_days: { $gt: 0 },
-            $or: [{ is_paid: true, order: { $ne: null } }, { is_paid: false }],
+            ad_reservation: { $ne: null },
           } as unknown as Record<string, unknown>,
         }),
         strapi.entityService.count("api::ad.ad", {
