@@ -12,7 +12,7 @@ const config = useRuntimeConfig();
 
 definePageMeta({
   layout: "account",
-  middleware: "auth",
+  middleware: ["auth", "pro"],
 });
 
 $setSEO({

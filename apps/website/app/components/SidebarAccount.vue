@@ -60,21 +60,21 @@
           <span>Mi perfil</span>
         </nuxt-link>
       </li>
-      <li class="sidebar--account__menu__item">
+      <li v-if="appConfig.features.pro" class="sidebar--account__menu__item">
         <nuxt-link to="/cuenta/username" title="Nombre de usuario">
           <IconAtSign :size="20" />
           <span>Nombre de usuario</span>
           <b>PRO</b>
         </nuxt-link>
       </li>
-      <li class="sidebar--account__menu__item">
+      <li v-if="appConfig.features.pro" class="sidebar--account__menu__item">
         <nuxt-link to="/cuenta/avatar" title="Foto de perfil">
           <IconCamera :size="20" />
           <span>Foto de perfil</span>
           <b>PRO</b>
         </nuxt-link>
       </li>
-      <li class="sidebar--account__menu__item">
+      <li v-if="appConfig.features.pro" class="sidebar--account__menu__item">
         <nuxt-link to="/cuenta/cover" title="Portada">
           <IconImage :size="20" />
           <span>Portada</span>
@@ -117,6 +117,8 @@ import {
 
 // components
 import AvatarDefault from "@/components/AvatarDefault.vue";
+
+const appConfig = useAppConfiguration();
 
 // Obtener el usuario desde Strapi
 const user = useStrapiUser<User>();

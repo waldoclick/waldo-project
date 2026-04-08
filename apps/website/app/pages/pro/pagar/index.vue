@@ -10,7 +10,7 @@ import HeaderDefault from "@/components/HeaderDefault.vue";
 import CheckoutPro from "@/components/CheckoutPro.vue";
 
 definePageMeta({
-  middleware: "auth",
+  middleware: ["auth", "pro"],
 });
 
 useSeoMeta({ robots: "noindex, nofollow" });
