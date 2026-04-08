@@ -118,10 +118,11 @@ Progress: [██████████] 100%
 | 260406-t82 | fix responsive: tables overflow with horizontal scroll, mobile menu overlaps content | 2026-04-07 | f8e3ed83 | [260406-t82-fix-responsive-tables-overflow-with-hori](./quick/260406-t82-fix-responsive-tables-overflow-with-hori/) |
 | 260406-tjg | fix responsive layout of dashboard home page | 2026-04-07 | 4bde8d74 | [260406-tjg-fix-responsive-layout-of-dashboard-home-](./quick/260406-tjg-fix-responsive-layout-of-dashboard-home-/) |
 | 260406-tue | quita el overlay cuando se abre el menu default y que el menu quede al 100% de la pantalla al abrir | 2026-04-07 | 32030ee1 | [260406-tue-quita-el-overlay-cuando-se-abre-el-menu-](./quick/260406-tue-quita-el-overlay-cuando-se-abre-el-menu-/) |
+| 260408-npv | add loading toast and button spinner when creating ad on resumen page | 2026-04-08 | faf632dc | [260408-npv-add-loading-toast-and-button-spinner-whe](./quick/260408-npv-add-loading-toast-and-button-spinner-whe/) |
 
 ## Session Continuity
 
-Last activity: 2026-04-07 - Completed quick task 260406-tue: quita el overlay cuando se abre el menu default y que el menu quede al 100% de la pantalla al abrir
-Last session: 2026-04-06T23:43:35.915Z
+Last activity: 2026-04-08 - Completed quick task 260408-npv: add loading toast and button spinner when creating ad on resumen page
+Last session: 2026-04-08T00:00:00.000Z
 Stopped at: None
 Resume file: None
