@@ -56,9 +56,15 @@
     }
   }
 
+  &__spinner {
+    animation: spin 1s linear infinite;
+    flex-shrink: 0;
+  }
+
   &--primary {
     background: $charcoal;
     color: $light_peach;
+    gap: 8px;
 
     &:not(:disabled):not(.disabled):active,
     &:active {

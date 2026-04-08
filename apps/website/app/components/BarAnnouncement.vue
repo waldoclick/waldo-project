@@ -39,6 +39,11 @@
               :title="primaryLabel"
               @click="emit('primary')"
             >
+              <IconLoader2
+                v-if="primaryLoading"
+                :size="16"
+                class="btn__spinner"
+              />
               <span>{{ primaryLabel }}</span>
             </button>
           </div>
@@ -50,6 +55,7 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted } from "vue";
+import { Loader2 as IconLoader2 } from "lucide-vue-next";
 import SummaryDefault from "@/components/SummaryDefault.vue";
 
 const props = withDefaults(
@@ -61,6 +67,7 @@ const props = withDefaults(
     summaryText?: string;
     primaryLabel: string;
     primaryDisabled?: boolean;
+    primaryLoading?: boolean;
     backDisabled?: boolean;
     showBack?: boolean;
   }>(),
@@ -71,6 +78,7 @@ const props = withDefaults(
     showSteps: true,
     summaryText: "",
     primaryDisabled: false,
+    primaryLoading: false,
     backDisabled: false,
     showBack: true,
   },
