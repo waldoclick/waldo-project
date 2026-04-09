@@ -99,7 +99,8 @@
       "Bash(yarn nuxt:*)",
       "Bash(xxd /home/gab/Code/waldo-project/apps/strapi/src/policies/isAuthenticated.ts)",
       "Bash(echo \"\")",
-      "Bash(echo \"ONECLICK_CHILD_COMMERCE_CODE=597055555542\")"
+      "Bash(echo \"ONECLICK_CHILD_COMMERCE_CODE=597055555542\")",
+      "Skill(gsd:verify-work)"
     ]
   }
 }

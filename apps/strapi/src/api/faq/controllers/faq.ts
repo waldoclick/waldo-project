@@ -76,9 +76,18 @@ export default {
   async update(ctx) {
     const { id } = ctx.params;
     const { data } = ctx.request.body;
-    const faq = await strapi.db
-      .query("api::faq.faq")
-      .update({ where: { id }, data });
+    const numericId = Number(id);
+    const isNumericId =
+      Number.isInteger(numericId) &&
+      numericId > 0 &&
+      String(numericId) === String(id);
+    const faq = isNumericId
+      ? await strapi.db
+          .query("api::faq.faq")
+          .update({ where: { id: numericId }, data })
+      : await strapi.db
+          .query("api::faq.faq")
+          .update({ where: { documentId: id }, data });
     return { data: faq };
   },
 
