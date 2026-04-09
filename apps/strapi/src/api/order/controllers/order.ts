@@ -141,8 +141,8 @@ export default factories.createCoreController(
         const {
           filters = {},
           pagination = {},
-          sort = [{ createdAt: "desc" }],
-          populate: populateParam = "*",
+          sort: rawSort,
+          populate: rawPopulate,
         } = ctx.query as QueryParams;
 
         // Validar y convertir parámetros de paginación
@@ -155,9 +155,68 @@ export default factories.createCoreController(
           );
         }
 
-        // Normalize populate: db.query requires true (not "*") for all relations
-        const populate =
-          !populateParam || populateParam === "*" ? true : populateParam;
+        // Normalize sort: db.query requires { field: 'asc'|'desc' } or array of such objects.
+        // Clients may send sort as "createdAt:desc" (string) or ["createdAt:desc"] (array of strings).
+        let sort: Record<string, unknown> = { createdAt: "desc" };
+        if (rawSort) {
+          if (typeof rawSort === "string") {
+            const [field, direction] = rawSort.split(":");
+            sort = { [field]: direction ? direction.toLowerCase() : "desc" };
+          } else if (Array.isArray(rawSort) && rawSort.length > 0) {
+            const firstSort = rawSort[0];
+            if (typeof firstSort === "string" && firstSort.includes(":")) {
+              const [f, d] = firstSort.split(":");
+              sort = { [f]: d.toLowerCase() };
+            } else if (firstSort && typeof firstSort === "object") {
+              sort = firstSort as Record<string, unknown>;
+            }
+          } else if (typeof rawSort === "object" && !Array.isArray(rawSort)) {
+            const keys = Object.keys(rawSort as object);
+            const isArrayLike =
+              keys.length > 0 && keys.every((k) => /^\d+$/.test(k));
+            if (isArrayLike) {
+              // { '0': 'createdAt:desc' } → parse first entry
+              const firstEntry = Object.values(
+                rawSort as Record<string, string>
+              )[0];
+              if (typeof firstEntry === "string" && firstEntry.includes(":")) {
+                const [f, d] = firstEntry.split(":");
+                sort = { [f]: d.toLowerCase() };
+              }
+            } else {
+              sort = rawSort as Record<string, unknown>;
+            }
+          }
+        }
+
+        // Normalize populate: db.query requires true or object, never array or "*".
+        let populate: true | Record<string, unknown>;
+        if (!rawPopulate || rawPopulate === "*") {
+          populate = true;
+        } else if (typeof rawPopulate === "string") {
+          populate = { [rawPopulate]: true };
+        } else if (Array.isArray(rawPopulate)) {
+          populate = (rawPopulate as string[]).reduce((acc, key) => {
+            acc[key] = true;
+            return acc;
+          }, {} as Record<string, unknown>);
+        } else if (typeof rawPopulate === "object") {
+          const keys = Object.keys(rawPopulate as object);
+          const isArrayLike =
+            keys.length > 0 && keys.every((k) => /^\d+$/.test(k));
+          if (isArrayLike) {
+            populate = Object.values(
+              rawPopulate as Record<string, string>
+            ).reduce((acc, key) => {
+              acc[key] = true;
+              return acc;
+            }, {} as Record<string, unknown>);
+          } else {
+            populate = rawPopulate as Record<string, unknown>;
+          }
+        } else {
+          populate = true;
+        }
 
         // Construir filtros
         const filterClause = {
@@ -168,7 +227,7 @@ export default factories.createCoreController(
         // Obtener órdenes del usuario con paginación
         const orders = await strapi.db.query("api::order.order").findMany({
           where: filterClause,
-          populate: populate as unknown as Record<string, unknown>,
+          populate,
           offset: (page - 1) * pageSize,
           limit: pageSize,
           orderBy: sort,
@@ -192,7 +251,7 @@ export default factories.createCoreController(
           },
         });
       } catch (error) {
-        return ctx.internalServerError("Internal server error");
+        ctx.throw(500, error);
       }
     },
 
