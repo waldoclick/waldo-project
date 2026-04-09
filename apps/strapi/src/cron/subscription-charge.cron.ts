@@ -288,7 +288,10 @@ export class SubscriptionChargeService {
           >[1]["populate"],
           pagination: { pageSize: -1 },
         }
-      )) as Array<{ id: number; user: { id: number; documentId: string } }>;
+      )) as unknown as Array<{
+        id: number;
+        user: { id: number; documentId: string };
+      }>;
 
       logger.info(
         `SubscriptionChargeService: found ${expiredCancelledPayments.length} expired cancelled payment records to process`
