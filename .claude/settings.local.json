@@ -101,7 +101,12 @@
       "Bash(echo \"\")",
       "Bash(echo \"ONECLICK_CHILD_COMMERCE_CODE=597055555542\")",
       "Skill(gsd:verify-work)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(sed -i 's|router\\\\.push\\(\"/faqs\"\\)|router.push\\(\"/maintenance/faqs\"\\)|g' apps/dashboard/app/components/FormFaq.vue)",
+      "Bash(sed -i 's|router\\\\.push\\(\"/communes\"\\)|router.push\\(\"/maintenance/communes\"\\)|g' apps/dashboard/app/components/FormCommune.vue)",
+      "Bash(sed -i 's|router\\\\.push\\(\"/regions\"\\)|router.push\\(\"/maintenance/regions\"\\)|g' apps/dashboard/app/components/FormRegion.vue)",
+      "Bash(sed -i 's|router\\\\.push\\(\"/categories\"\\)|router.push\\(\"/maintenance/categories\"\\)|g' apps/dashboard/app/components/FormCategory.vue)",
+      "Bash(sed -i 's|router\\\\.push\\(\"/terms\"\\)|router.push\\(\"/maintenance/terms\"\\)|g' apps/dashboard/app/components/FormTerm.vue)"
     ]
   }
 }
