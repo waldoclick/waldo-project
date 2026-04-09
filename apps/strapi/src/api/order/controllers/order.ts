@@ -49,24 +49,19 @@ export default factories.createCoreController(
           ) {
             sort = query.sort as Record<string, unknown>;
           } else if (Array.isArray(query.sort) && query.sort.length > 0) {
-            // Si viene como array, tomar el primer elemento
             const firstSort = query.sort[0];
-            if (typeof firstSort === "object") {
+            if (typeof firstSort === "string" && firstSort.includes(":")) {
+              const [f, d] = firstSort.split(":");
+              sort = { [f]: d.toLowerCase() };
+            } else if (firstSort && typeof firstSort === "object") {
               sort = firstSort;
             }
           }
         }
 
-        // Manejar populate: si viene como objeto (populate[user]=true), convertirlo a formato correcto
-        let populate: string | Record<string, unknown> = "*";
-        if (query.populate) {
-          if (typeof query.populate === "string") {
-            populate = query.populate;
-          } else if (typeof query.populate === "object") {
-            // Si viene como objeto, usar "*" para evitar filtros implícitos
-            populate = "*";
-          }
-        }
+        // Normalize populate: db.query requires true (not "*") for all relations
+        const populate =
+          !query.populate || query.populate === "*" ? true : query.populate;
 
         // Obtener órdenes con paginación
         const orders = await strapi.db.query("api::order.order").findMany({
@@ -118,7 +113,7 @@ export default factories.createCoreController(
           filters = {},
           pagination = {},
           sort = [{ createdAt: "desc" }],
-          populate = "*",
+          populate: populateParam = "*",
         } = ctx.query as QueryParams;
 
         // Validar y convertir parámetros de paginación
@@ -130,6 +125,10 @@ export default factories.createCoreController(
             "Invalid pagination parameters. Page and pageSize must be positive integers."
           );
         }
+
+        // Normalize populate: db.query requires true (not "*") for all relations
+        const populate =
+          !populateParam || populateParam === "*" ? true : populateParam;
 
         // Construir filtros
         const filterClause = {
