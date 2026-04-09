@@ -59,17 +59,37 @@ export default factories.createCoreController(
           }
         }
 
-        // Normalize populate: db.query requires true or object, never array or "*"
+        // Normalize populate: db.query requires true or object, never array, "*", or string.
+        // qs.stringify encodes arrays as bracket notation (populate[0]=user&populate[1]=ad)
+        // which Strapi parses back as { '0': 'user', '1': 'ad' } — not a JS array.
         let populate: true | Record<string, unknown>;
-        if (!query.populate || query.populate === "*") {
+        const rawPopulate = query.populate;
+        if (!rawPopulate || rawPopulate === "*") {
           populate = true;
-        } else if (Array.isArray(query.populate)) {
-          populate = (query.populate as string[]).reduce((acc, key) => {
+        } else if (typeof rawPopulate === "string") {
+          populate = { [rawPopulate]: true };
+        } else if (Array.isArray(rawPopulate)) {
+          populate = (rawPopulate as string[]).reduce((acc, key) => {
             acc[key] = true;
             return acc;
           }, {} as Record<string, unknown>);
+        } else if (typeof rawPopulate === "object") {
+          const keys = Object.keys(rawPopulate as object);
+          const isArrayLike =
+            keys.length > 0 && keys.every((k) => /^\d+$/.test(k));
+          if (isArrayLike) {
+            // { '0': 'user', '1': 'ad' } → { user: true, ad: true }
+            populate = Object.values(
+              rawPopulate as Record<string, string>
+            ).reduce((acc, key) => {
+              acc[key] = true;
+              return acc;
+            }, {} as Record<string, unknown>);
+          } else {
+            populate = rawPopulate as Record<string, unknown>;
+          }
         } else {
-          populate = query.populate as Record<string, unknown>;
+          populate = true;
         }
 
         // Obtener órdenes con paginación
