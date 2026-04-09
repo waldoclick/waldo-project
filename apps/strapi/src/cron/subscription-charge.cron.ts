@@ -65,26 +65,21 @@ export class SubscriptionChargeService {
       const today = new Date().toISOString().split("T")[0];
 
       // Step 1: Charge active PRO users whose billing period has ended
-      const duePayments = (await strapi.entityService.findMany(
-        "api::subscription-payment.subscription-payment" as Parameters<
-          typeof strapi.entityService.findMany
-        >[0],
-        {
-          filters: {
+      const duePayments = (await strapi.db
+        .query("api::subscription-payment.subscription-payment")
+        .findMany({
+          where: {
             status: { $eq: "approved" },
             period_end: { $lte: today },
             user: { pro_status: { $eq: "active" } },
-          } as unknown as Record<string, unknown>,
+          },
           populate: {
             user: {
               populate: ["subscription_pro"],
             },
-          } as unknown as Parameters<
-            typeof strapi.entityService.findMany
-          >[1]["populate"],
-          pagination: { pageSize: -1 },
-        }
-      )) as DuePaymentRecord[];
+          },
+          limit: -1,
+        })) as DuePaymentRecord[];
 
       logger.info(
         `SubscriptionChargeService: found ${duePayments.length} due subscription payments to charge`
@@ -111,26 +106,21 @@ export class SubscriptionChargeService {
       }
 
       // Step 2: Retry failed charges with charge_attempts < 3 whose next_charge_attempt <= today
-      const retryRecords = (await strapi.entityService.findMany(
-        "api::subscription-payment.subscription-payment" as Parameters<
-          typeof strapi.entityService.findMany
-        >[0],
-        {
-          filters: {
+      const retryRecords = (await strapi.db
+        .query("api::subscription-payment.subscription-payment")
+        .findMany({
+          where: {
             status: "failed",
             charge_attempts: { $lt: 3 },
             next_charge_attempt: { $lte: today },
-          } as unknown as Record<string, unknown>,
+          },
           populate: {
             user: {
               populate: ["subscription_pro"],
             },
-          } as unknown as Parameters<
-            typeof strapi.entityService.findMany
-          >[1]["populate"],
-          pagination: { pageSize: -1 },
-        }
-      )) as FailedPaymentRecord[];
+          },
+          limit: -1,
+        })) as FailedPaymentRecord[];
 
       logger.info(
         `SubscriptionChargeService: found ${retryRecords.length} failed payments to retry`
@@ -158,21 +148,16 @@ export class SubscriptionChargeService {
       }
 
       // Step 3: Deactivate exhausted subscriptions (charge_attempts >= 3)
-      const exhaustedRecords = (await strapi.entityService.findMany(
-        "api::subscription-payment.subscription-payment" as Parameters<
-          typeof strapi.entityService.findMany
-        >[0],
-        {
-          filters: {
+      const exhaustedRecords = (await strapi.db
+        .query("api::subscription-payment.subscription-payment")
+        .findMany({
+          where: {
             status: "failed",
             charge_attempts: { $gte: 3 },
-          } as unknown as Record<string, unknown>,
-          populate: ["user"] as unknown as Parameters<
-            typeof strapi.entityService.findMany
-          >[1]["populate"],
-          pagination: { pageSize: -1 },
-        }
-      )) as ExhaustedPaymentRecord[];
+          },
+          populate: ["user"],
+          limit: -1,
+        })) as ExhaustedPaymentRecord[];
 
       logger.info(
         `SubscriptionChargeService: found ${exhaustedRecords.length} exhausted subscriptions to deactivate`
@@ -182,17 +167,10 @@ export class SubscriptionChargeService {
         const user = record.user;
 
         // Deactivate user
-        await strapi.entityService.update(
-          "plugin::users-permissions.user",
-          user.id,
-          {
-            data: {
-              pro_status: "inactive",
-            } as unknown as Parameters<
-              typeof strapi.entityService.update
-            >[2]["data"],
-          }
-        );
+        await strapi.db.query("plugin::users-permissions.user").update({
+          where: { id: user.id },
+          data: { pro_status: "inactive" },
+        });
 
         // Clear subscription-pro tbk_user on deactivation
         try {
@@ -200,18 +178,12 @@ export class SubscriptionChargeService {
             .query("api::subscription-pro.subscription-pro")
             .findOne({ where: { user: { id: user.id } } });
           if (subPro) {
-            const subProUpdate = strapi.entityService.update as (
-              _uid: string,
-              _id: number,
-              _params: { data: Record<string, unknown> }
-            ) => Promise<unknown>;
-            await subProUpdate(
-              "api::subscription-pro.subscription-pro",
-              (subPro as { id: number }).id,
-              {
+            await strapi.db
+              .query("api::subscription-pro.subscription-pro")
+              .update({
+                where: { id: (subPro as { id: number }).id },
                 data: { tbk_user: null },
-              }
-            );
+              });
           }
         } catch (subProError) {
           logger.error(
@@ -253,19 +225,12 @@ export class SubscriptionChargeService {
         }
 
         // Mark payment record as deactivated
-        await strapi.entityService.update(
-          "api::subscription-payment.subscription-payment" as Parameters<
-            typeof strapi.entityService.update
-          >[0],
-          record.id,
-          {
-            data: {
-              status: "deactivated",
-            } as unknown as Parameters<
-              typeof strapi.entityService.update
-            >[2]["data"],
-          }
-        );
+        await strapi.db
+          .query("api::subscription-payment.subscription-payment")
+          .update({
+            where: { id: record.id },
+            data: { status: "deactivated" },
+          });
 
         logger.info(
           `SubscriptionChargeService: deactivated PRO subscription for user ${user.id}`
@@ -273,22 +238,17 @@ export class SubscriptionChargeService {
       }
 
       // Step 4: Deactivate cancelled subscriptions whose period has ended (CANC-04)
-      const expiredCancelledPayments = (await strapi.entityService.findMany(
-        "api::subscription-payment.subscription-payment" as Parameters<
-          typeof strapi.entityService.findMany
-        >[0],
-        {
-          filters: {
+      const expiredCancelledPayments = (await strapi.db
+        .query("api::subscription-payment.subscription-payment")
+        .findMany({
+          where: {
             status: { $eq: "approved" },
             period_end: { $lte: today },
             user: { pro_status: { $eq: "cancelled" } },
-          } as unknown as Record<string, unknown>,
-          populate: ["user"] as unknown as Parameters<
-            typeof strapi.entityService.findMany
-          >[1]["populate"],
-          pagination: { pageSize: -1 },
-        }
-      )) as unknown as Array<{
+          },
+          populate: ["user"],
+          limit: -1,
+        })) as unknown as Array<{
         id: number;
         user: { id: number; documentId: string };
       }>;
@@ -307,17 +267,10 @@ export class SubscriptionChargeService {
         }
         processedCancelledUserIds.add(user.id);
 
-        await strapi.entityService.update(
-          "plugin::users-permissions.user",
-          user.id,
-          {
-            data: {
-              pro_status: "inactive",
-            } as unknown as Parameters<
-              typeof strapi.entityService.update
-            >[2]["data"],
-          }
-        );
+        await strapi.db.query("plugin::users-permissions.user").update({
+          where: { id: user.id },
+          data: { pro_status: "inactive" },
+        });
 
         // Recalculate sort_priority for user's featured ads (CANC-04)
         try {
@@ -413,24 +366,13 @@ export class SubscriptionChargeService {
       childBuyOrder
     );
 
-    // Alias for subscription-payment entity service calls — bypasses unregistered content type
-    const subPaymentCreate = strapi.entityService.create as (
-      _uid: string,
-      _params: { data: Record<string, unknown> }
-    ) => Promise<unknown>;
-    const subPaymentUpdate = strapi.entityService.update as (
-      _uid: string,
-      _id: number,
-      _params: { data: Record<string, unknown> }
-    ) => Promise<unknown>;
-
     if (result.success) {
       if (existingRecordId) {
         // Update existing failed record to approved
-        await subPaymentUpdate(
-          "api::subscription-payment.subscription-payment",
-          existingRecordId,
-          {
+        await strapi.db
+          .query("api::subscription-payment.subscription-payment")
+          .update({
+            where: { id: existingRecordId },
             data: {
               status: "approved",
               authorization_code: result.authorizationCode,
@@ -440,13 +382,12 @@ export class SubscriptionChargeService {
               charge_attempts: attempt,
               period_end: newPeriodEndStr,
             },
-          }
-        );
+          });
       } else {
         // Create new approved payment record
-        await subPaymentCreate(
-          "api::subscription-payment.subscription-payment",
-          {
+        await strapi.db
+          .query("api::subscription-payment.subscription-payment")
+          .create({
             data: {
               user: user.id,
               amount,
@@ -461,8 +402,7 @@ export class SubscriptionChargeService {
               charged_at: new Date(),
               charge_attempts: attempt,
             },
-          }
-        );
+          });
       }
 
       // Create order + Facto document for this charge — invoice preference from subscription-pro
@@ -513,10 +453,10 @@ export class SubscriptionChargeService {
 
       if (existingRecordId) {
         // Update existing failed record with new attempt info
-        await subPaymentUpdate(
-          "api::subscription-payment.subscription-payment",
-          existingRecordId,
-          {
+        await strapi.db
+          .query("api::subscription-payment.subscription-payment")
+          .update({
+            where: { id: existingRecordId },
             data: {
               charge_attempts: attempt,
               next_charge_attempt: nextRetryDateStr,
@@ -524,13 +464,12 @@ export class SubscriptionChargeService {
               payment_response: result.rawResponse,
               period_end: newPeriodEndStr,
             },
-          }
-        );
+          });
       } else {
         // Create new failed payment record
-        await subPaymentCreate(
-          "api::subscription-payment.subscription-payment",
-          {
+        await strapi.db
+          .query("api::subscription-payment.subscription-payment")
+          .create({
             data: {
               user: user.id,
               amount,
@@ -544,8 +483,7 @@ export class SubscriptionChargeService {
               charge_attempts: attempt,
               next_charge_attempt: nextRetryDateStr,
             },
-          }
-        );
+          });
       }
 
       logger.info(
