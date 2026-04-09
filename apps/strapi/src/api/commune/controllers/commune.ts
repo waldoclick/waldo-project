@@ -14,20 +14,17 @@ export default {
     const filters = query.filters || {};
 
     // Get communes with pagination
-    const communes = await strapi.entityService.findMany(
-      "api::commune.commune",
-      {
-        filters,
-        populate: query.populate || "*",
-        start: (page - 1) * pageSize,
-        limit: pageSize,
-        sort: query.sort || { name: "asc" },
-      }
-    );
+    const communes = await strapi.db.query("api::commune.commune").findMany({
+      where: filters,
+      populate: query.populate || "*",
+      offset: (page - 1) * pageSize,
+      limit: pageSize,
+      orderBy: query.sort || { name: "asc" },
+    });
 
     // Get total count
-    const total = await strapi.entityService.count("api::commune.commune", {
-      filters,
+    const total = await strapi.db.query("api::commune.commune").count({
+      where: filters,
     });
 
     // Calculate pagination values
@@ -48,43 +45,29 @@ export default {
 
   async findOne(ctx) {
     const { id } = ctx.params;
-    const commune = await strapi.entityService.findOne(
-      "api::commune.commune",
-      id,
-      {
-        populate: ["region"],
-      }
-    );
+    const commune = await strapi.db.query("api::commune.commune").findOne({
+      where: { id },
+      populate: ["region"],
+    });
     return { data: commune };
   },
 
   async create(ctx) {
     const { data } = ctx.request.body;
-    const commune = await strapi.entityService.create("api::commune.commune", {
-      data,
-    });
+    const commune = await strapi.db.query("api::commune.commune").create({ data });
     return { data: commune };
   },
 
   async update(ctx) {
     const { id } = ctx.params;
     const { data } = ctx.request.body;
-    const commune = await strapi.entityService.update(
-      "api::commune.commune",
-      id,
-      {
-        data,
-      }
-    );
+    const commune = await strapi.db.query("api::commune.commune").update({ where: { id }, data });
     return { data: commune };
   },
 
   async delete(ctx) {
     const { id } = ctx.params;
-    const commune = await strapi.entityService.delete(
-      "api::commune.commune",
-      id
-    );
+    const commune = await strapi.db.query("api::commune.commune").delete({ where: { id } });
     return { data: commune };
   },
 };

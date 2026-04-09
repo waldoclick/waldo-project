@@ -14,17 +14,17 @@ export default {
     const filters = query.filters || {};
 
     // Get FAQs with pagination
-    const faqs = await strapi.entityService.findMany("api::faq.faq", {
-      filters,
+    const faqs = await strapi.db.query("api::faq.faq").findMany({
+      where: filters,
       populate: query.populate || "*",
-      start: (page - 1) * pageSize,
+      offset: (page - 1) * pageSize,
       limit: pageSize,
-      sort: query.sort || { createdAt: "desc" },
+      orderBy: query.sort || { createdAt: "desc" },
     });
 
     // Get total count
-    const total = await strapi.entityService.count("api::faq.faq", {
-      filters,
+    const total = await strapi.db.query("api::faq.faq").count({
+      where: filters,
     });
 
     // Calculate pagination values
@@ -45,30 +45,26 @@ export default {
 
   async findOne(ctx) {
     const { id } = ctx.params;
-    const faq = await strapi.entityService.findOne("api::faq.faq", id);
+    const faq = await strapi.db.query("api::faq.faq").findOne({ where: { id } });
     return { data: faq };
   },
 
   async create(ctx) {
     const { data } = ctx.request.body;
-    const faq = await strapi.entityService.create("api::faq.faq", {
-      data,
-    });
+    const faq = await strapi.db.query("api::faq.faq").create({ data });
     return { data: faq };
   },
 
   async update(ctx) {
     const { id } = ctx.params;
     const { data } = ctx.request.body;
-    const faq = await strapi.entityService.update("api::faq.faq", id, {
-      data,
-    });
+    const faq = await strapi.db.query("api::faq.faq").update({ where: { id }, data });
     return { data: faq };
   },
 
   async delete(ctx) {
     const { id } = ctx.params;
-    const faq = await strapi.entityService.delete("api::faq.faq", id);
+    const faq = await strapi.db.query("api::faq.faq").delete({ where: { id } });
     return { data: faq };
   },
 };
