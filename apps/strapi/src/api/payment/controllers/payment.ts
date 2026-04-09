@@ -490,9 +490,51 @@ class PaymentController {
       (user as Record<string, unknown>).pro_pending_invoice ?? false
     );
 
-    // Success: update user record with subscription data, clear inscription token and invoice flag
-    // pro_expires_at = 1st of next month (calendar billing)
+    // Calculate prorated price for the remaining days in the current month
+    const proMonthlyPrice = parseInt(process.env.PRO_MONTHLY_PRICE ?? "0", 10);
     const now = new Date();
+    const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    const daysRemaining = daysInMonth - now.getDate() + 1;
+    const proratedPrice = Math.ceil((daysRemaining / daysInMonth) * proMonthlyPrice);
+
+    // CHARGE FIRST — before activating the user (SUB-CHARGE-01)
+    const todayCompact = now.toISOString().split("T")[0].replace(/-/g, "");
+    const chargeResult = await oneclickService.authorizeCharge(
+      (user as { documentId: string }).documentId,
+      result.tbkUser,
+      proratedPrice,
+      `pro-inscription-${user.id}-${todayCompact}`,
+      `c-${user.id}-${todayCompact}-1`
+    );
+
+    if (!chargeResult.success) {
+      logger.error("proResponse: first-month charge failed", {
+        userId: user.id,
+        responseCode: chargeResult.responseCode,
+      });
+      ctx.redirect(`${process.env.FRONTEND_URL}/pro/error?reason=charge-failed`);
+      return;
+    }
+
+    // Charge succeeded — now create subscription-pro record (SUB-CHARGE-02)
+    const subProCreate = strapi.entityService.create as (
+      _uid: string,
+      _params: { data: Record<string, unknown> }
+    ) => Promise<unknown>;
+
+    await subProCreate("api::subscription-pro.subscription-pro", {
+      data: {
+        user: user.id,
+        tbk_user: result.tbkUser,
+        card_type: result.cardType,
+        card_last4: result.last4CardDigits,
+        inscription_token: null,
+        pending_invoice: isInvoice,
+        publishedAt: new Date(),
+      },
+    });
+
+    // Activate user and set expiry (card data also written to user temporarily — will be removed in Plan 03)
     const proExpiresAt = new Date(now.getFullYear(), now.getMonth() + 1, 1);
     await strapi.entityService.update(
       "plugin::users-permissions.user",
@@ -511,25 +553,9 @@ class PaymentController {
       }
     );
 
-    // Prorated price: (days remaining in month including today) / (days in month) * monthly price
-    const proMonthlyPrice = parseInt(process.env.PRO_MONTHLY_PRICE ?? "0", 10);
-    const daysInMonth = new Date(
-      now.getFullYear(),
-      now.getMonth() + 1,
-      0
-    ).getDate();
-    const daysRemaining = daysInMonth - now.getDate() + 1;
-    const proratedPrice = Math.ceil(
-      (daysRemaining / daysInMonth) * proMonthlyPrice
-    );
-
-    // Create order + Facto document for the PRO inscription (non-fatal: inscription was successful)
+    // Create order + Facto document (non-fatal: charge and activation were successful)
     const proItems = [
-      {
-        name: `Suscripcion PRO (${daysRemaining} dias)`,
-        price: proratedPrice,
-        quantity: 1,
-      },
+      { name: `Suscripcion PRO (${daysRemaining} dias)`, price: proratedPrice, quantity: 1 },
     ];
 
     let proOrder: { documentId?: string } | undefined;
@@ -550,6 +576,7 @@ class PaymentController {
           inscription: true,
           tbk_user: result.tbkUser,
           card_type: result.cardType,
+          charge: chargeResult.rawResponse,
         },
         document_details: userDocDetails,
         items: proItems,
@@ -563,10 +590,9 @@ class PaymentController {
         userId: user.id,
         error: orderError,
       });
-      // Non-fatal: inscription was successful
     }
 
-    // Recalculate sort_priority for user's featured ads (pro=true changes priority from 1 to 0)
+    // Recalculate sort_priority for user's featured ads
     try {
       const userFeaturedAds = await strapi.db.query("api::ad.ad").findMany({
         where: { user: { id: user.id } },
@@ -600,7 +626,6 @@ class PaymentController {
         `${process.env.FRONTEND_URL}/pro/pagar/gracias?order=${proOrder.documentId}`
       );
     } else {
-      // Fallback: order creation failed, still redirect but to legacy page
       ctx.redirect(`${process.env.FRONTEND_URL}/pro/gracias`);
     }
   });
