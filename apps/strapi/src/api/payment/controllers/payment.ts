@@ -441,33 +441,20 @@ class PaymentController {
     };
     const isInvoicePref = Boolean(reqData?.is_invoice ?? false);
 
-    const subProUpsert = strapi.entityService.create as (
-      _uid: string,
-      _params: { data: Record<string, unknown> }
-    ) => Promise<unknown>;
-    const subProUpsertUpdate = strapi.entityService.update as (
-      _uid: string,
-      _id: number,
-      _params: { data: Record<string, unknown> }
-    ) => Promise<unknown>;
-
     const existingSubPro = (await strapi.db
       .query("api::subscription-pro.subscription-pro")
       .findOne({ where: { user: { id: user.id } } })) as { id: number } | null;
 
     if (existingSubPro) {
-      await subProUpsertUpdate(
-        "api::subscription-pro.subscription-pro",
-        existingSubPro.id,
-        {
-          data: {
-            inscription_token: String(result.token),
-            pending_invoice: isInvoicePref,
-          },
-        }
-      );
+      await strapi.db.query("api::subscription-pro.subscription-pro").update({
+        where: { id: existingSubPro.id },
+        data: {
+          inscription_token: String(result.token),
+          pending_invoice: isInvoicePref,
+        },
+      });
     } else {
-      await subProUpsert("api::subscription-pro.subscription-pro", {
+      await strapi.db.query("api::subscription-pro.subscription-pro").create({
         data: {
           user: user.id,
           inscription_token: String(result.token),
