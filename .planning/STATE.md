@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 121-03-PLAN.md
-last_updated: "2026-04-09T02:31:14.817Z"
+stopped_at: Completed 122-01-PLAN.md
+last_updated: "2026-04-09T03:51:32.803Z"
 last_activity: 2026-04-09
 progress:
-  total_phases: 15
+  total_phases: 16
   completed_phases: 14
-  total_plans: 34
-  completed_plans: 34
+  total_plans: 38
+  completed_plans: 35
   percent: 100
 ---
 
@@ -21,7 +21,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 121 — clean-subscription-data-model-move-pro-expires-at-out-of-user-into-subscription-payment-as-period-end
+**Current focus:** Phase 122 — migrate-strapi-entityservice-to-strapi-db-query-for-strapi-v5-compatibility
 
 ## Position
 
@@ -128,7 +128,7 @@ Progress: [██████████] 100%
 
 ## Session Continuity
 
-Last activity: 2026-04-08
-Last session: 2026-04-08T00:00:00Z
-Stopped at: Completed 260408-w1e-PLAN.md
+Last activity: 2026-04-09
+Last session: 2026-04-09T03:51:32.801Z
+Stopped at: Completed 122-01-PLAN.md
 Resume file: None
