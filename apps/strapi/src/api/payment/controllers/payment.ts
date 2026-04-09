@@ -612,11 +612,25 @@ class PaymentController {
           card_type: result.cardType,
           charge: chargeResult.rawResponse,
           // Flattened for receipt display (page reads payment_response.* directly)
-          authorization_code:
-            chargeResult.rawResponse?.details?.[0]?.authorization_code,
-          payment_type_code:
-            chargeResult.rawResponse?.details?.[0]?.payment_type_code,
-          card_detail: chargeResult.rawResponse?.card_detail,
+          authorization_code: (
+            chargeResult.rawResponse as {
+              details?: Array<{
+                authorization_code?: string;
+                payment_type_code?: string;
+              }>;
+              card_detail?: { card_number?: string };
+            } | null
+          )?.details?.[0]?.authorization_code,
+          payment_type_code: (
+            chargeResult.rawResponse as {
+              details?: Array<{ payment_type_code?: string }>;
+            } | null
+          )?.details?.[0]?.payment_type_code,
+          card_detail: (
+            chargeResult.rawResponse as {
+              card_detail?: { card_number?: string };
+            } | null
+          )?.card_detail,
         },
         document_details: userDocDetails,
         items: proItems,
