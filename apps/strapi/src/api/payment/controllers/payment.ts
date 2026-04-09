@@ -544,63 +544,44 @@ class PaymentController {
     }
 
     // Charge succeeded — update subscription-pro record with card data (SUB-CHARGE-02)
-    const subProUpdate = strapi.entityService.update as (
-      _uid: string,
-      _id: number,
-      _params: { data: Record<string, unknown> }
-    ) => Promise<unknown>;
-
-    await subProUpdate(
-      "api::subscription-pro.subscription-pro",
-      subProRecord.id,
-      {
-        data: {
-          tbk_user: result.tbkUser,
-          card_type: result.cardType,
-          card_last4: result.last4CardDigits,
-          inscription_token: null,
-        },
-      }
-    );
+    await strapi.db.query("api::subscription-pro.subscription-pro").update({
+      where: { id: subProRecord.id },
+      data: {
+        tbk_user: result.tbkUser,
+        card_type: result.cardType,
+        card_last4: result.last4CardDigits,
+        inscription_token: null,
+      },
+    });
 
     // Create first subscription-payment record with period_end (SUB-MODEL-121-04)
     const proExpiresAt = new Date(now.getFullYear(), now.getMonth() + 1, 1);
     const proExpiresAtStr = proExpiresAt.toISOString().split("T")[0];
 
-    const paymentCreate = strapi.entityService.create as (
-      _uid: string,
-      _params: { data: Record<string, unknown> }
-    ) => Promise<unknown>;
-
-    await paymentCreate("api::subscription-payment.subscription-payment", {
-      data: {
-        user: user.id,
-        amount: proratedPrice,
-        status: "approved",
-        parent_buy_order: `pro-inscription-${user.id}-${todayCompact}`,
-        child_buy_order: `c-${user.id}-${todayCompact}-1`,
-        authorization_code: chargeResult.authorizationCode,
-        response_code: chargeResult.responseCode,
-        payment_response: chargeResult.rawResponse,
-        period_start: now.toISOString().split("T")[0],
-        period_end: proExpiresAtStr,
-        charged_at: new Date(),
-        charge_attempts: 1,
-      },
-    });
+    await strapi.db
+      .query("api::subscription-payment.subscription-payment")
+      .create({
+        data: {
+          user: user.id,
+          amount: proratedPrice,
+          status: "approved",
+          parent_buy_order: `pro-inscription-${user.id}-${todayCompact}`,
+          child_buy_order: `c-${user.id}-${todayCompact}-1`,
+          authorization_code: chargeResult.authorizationCode,
+          response_code: chargeResult.responseCode,
+          payment_response: chargeResult.rawResponse,
+          period_start: now.toISOString().split("T")[0],
+          period_end: proExpiresAtStr,
+          charged_at: new Date(),
+          charge_attempts: 1,
+        },
+      });
 
     // Activate user — only pro_status (billing period tracked via subscription-payment.period_end)
-    await strapi.entityService.update(
-      "plugin::users-permissions.user",
-      user.id,
-      {
-        data: {
-          pro_status: "active",
-        } as unknown as Parameters<
-          typeof strapi.entityService.update
-        >[2]["data"],
-      }
-    );
+    await strapi.db.query("plugin::users-permissions.user").update({
+      where: { id: user.id },
+      data: { pro_status: "active" },
+    });
 
     // Create order + Facto document (non-fatal: charge and activation were successful)
     const proItems = [
