@@ -220,10 +220,13 @@ Plans:
 
 ### Phase 122: Migrate strapi.entityService to strapi.db.query for Strapi v5 compatibility
 
-**Goal:** [To be planned]
-**Requirements**: TBD
+**Goal:** Replace every `strapi.entityService` call with `strapi.db.query()` across all Strapi source files (28 production files + 7 test files). Mechanical API substitution: filters->where, start->offset, sort->orderBy, fields->select, pagination->limit. Remove all TypeScript cast artifacts. Zero functional regressions. Zero TypeScript errors.
+**Requirements**: [MIG-01, MIG-02, MIG-03, MIG-04]
 **Depends on:** Phase 121
-**Plans:** 0 plans
+**Plans:** 4 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 122 to break down)
+- [ ] 122-01-PLAN.md — Migrate 6 CRUD controllers + 5 lifecycle hooks (mechanical replacements)
+- [ ] 122-02-PLAN.md — Migrate payment utils + ad service + order controller + gift controllers
+- [ ] 122-03-PLAN.md — Migrate 4 cron files + user-registration middleware
+- [ ] 122-04-PLAN.md — Update 7 test file mocks + final verification sweep
