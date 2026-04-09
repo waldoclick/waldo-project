@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 120-03-PLAN.md
-last_updated: "2026-04-09T00:49:39.956Z"
+stopped_at: Completed 120-04-PLAN.md
+last_updated: "2026-04-09T01:07:47.301Z"
 last_activity: 2026-04-09
 progress:
   total_phases: 14
-  completed_phases: 12
+  completed_phases: 13
   total_plans: 31
-  completed_plans: 30
+  completed_plans: 31
   percent: 100
 ---
 
@@ -35,6 +35,7 @@ Progress: [██████████] 100%
 
 ### Key Decisions (carry forward)
 
+- mockImplementation routing pattern used for strapi.db.query in Jest tests to dispatch different mock objects per UID — enables independent assertions for different content types (120-04)
 - All business logic lives in Strapi; dashboard and website are stateless HTTP clients
 - `pro_status === "active"` is the single source of truth for PRO membership (no `pro` boolean)
 - Oneclick Mall must be contracted separately with Transbank for production (separate from Webpay Plus)
@@ -124,6 +125,6 @@ Progress: [██████████] 100%
 ## Session Continuity
 
 Last activity: 2026-04-09
-Last session: 2026-04-09T00:49:39.953Z
-Stopped at: Completed 120-03-PLAN.md
+Last session: 2026-04-09T01:07:47.298Z
+Stopped at: Completed 120-04-PLAN.md
 Resume file: None
