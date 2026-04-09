@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
-status: complete
-stopped_at: null
-last_updated: "2026-04-06T23:43:35.921Z"
-last_activity: "2026-04-06 - Completed quick task 260406-r0g: fix pagination not resetting to page 1 when search filter changes"
+status: unknown
+stopped_at: Completed 120-00-PLAN.md
+last_updated: "2026-04-09T00:44:35.688Z"
+last_activity: 2026-04-09
 progress:
-  total_phases: 13
-  completed_phases: 13
-  total_plans: 26
-  completed_plans: 26
+  total_phases: 14
+  completed_phases: 12
+  total_plans: 31
+  completed_plans: 27
   percent: 100
 ---
 
@@ -21,7 +21,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 119 — export-orders-to-csv-from-dashboard-orders-page
+**Current focus:** Phase 120 — refactor-pro-subscription-model-subscription-pro-collection-type-move-card-data-out-of-user-fix-charge-before-activate-order-calendar-billing
 
 ## Position
 
@@ -123,7 +123,7 @@ Progress: [██████████] 100%
 
 ## Session Continuity
 
-Last activity: 2026-04-08 - Completed quick task 260408-npv: add loading toast and button spinner when creating ad on resumen page
-Last session: 2026-04-08T00:00:00.000Z
-Stopped at: None
+Last activity: 2026-04-09
+Last session: 2026-04-09T00:44:35.686Z
+Stopped at: Completed 120-00-PLAN.md
 Resume file: None
