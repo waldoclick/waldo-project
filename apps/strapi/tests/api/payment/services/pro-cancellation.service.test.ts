@@ -15,15 +15,33 @@ jest.mock("../../../../src/services/oneclick", () => ({
   })),
 }));
 
-// Mock strapi global
-const mockFindOne = jest.fn();
-const mockUpdate = jest.fn();
+// Mock strapi global — service uses strapi.db.query for subscription-pro reads
+const mockSubProFindOne = jest.fn();
+const mockSubProEntityUpdate = jest.fn();
+const mockUserEntityUpdate = jest.fn();
+
+// Factory that routes db.query calls to uid-specific mocks
+const mockDbQuery = jest.fn().mockImplementation((uid: string) => {
+  if (uid === "api::subscription-pro.subscription-pro") {
+    return { findOne: mockSubProFindOne };
+  }
+  return {};
+});
 
 Object.assign(global, {
   strapi: {
     entityService: {
-      findOne: mockFindOne,
-      update: mockUpdate,
+      update: jest
+        .fn()
+        .mockImplementation((uid: string, _id: number, _params: unknown) => {
+          if (uid === "api::subscription-pro.subscription-pro") {
+            return mockSubProEntityUpdate(uid, _id, _params);
+          }
+          return mockUserEntityUpdate(uid, _id, _params);
+        }),
+    },
+    db: {
+      query: mockDbQuery,
     },
     log: {
       info: jest.fn(),
@@ -45,32 +63,45 @@ describe("ProCancellationService", () => {
     const userId = 42;
     const userDocumentId = "abc123xyz456789012345678";
 
-    it("fetches user tbk_user, calls deleteInscription, updates user with pro_status=cancelled and tbk_user=null, returns { success: true }", async () => {
+    it("fetches tbk_user from subscription-pro, calls deleteInscription, clears subscription-pro tbk_user, updates user with pro_status=cancelled and tbk_user=null, returns { success: true }", async () => {
       // Arrange
-      mockFindOne.mockResolvedValueOnce({
-        id: userId,
+      mockSubProFindOne.mockResolvedValueOnce({
+        id: 10,
         tbk_user: "tbk-token-xyz",
       });
       mockDeleteInscription.mockResolvedValueOnce({ success: true });
-      mockUpdate.mockResolvedValueOnce({});
+      mockSubProEntityUpdate.mockResolvedValueOnce({});
+      mockUserEntityUpdate.mockResolvedValueOnce({});
 
       // Act
       const result = await service.cancelSubscription(userId, userDocumentId);
 
       // Assert
       expect(result.success).toBe(true);
-      expect(mockFindOne).toHaveBeenCalledWith(
-        "plugin::users-permissions.user",
-        userId,
+      expect(mockDbQuery).toHaveBeenCalledWith(
+        "api::subscription-pro.subscription-pro"
+      );
+      expect(mockSubProFindOne).toHaveBeenCalledWith(
         expect.objectContaining({
-          fields: expect.arrayContaining(["tbk_user"]),
+          where: { user: { id: userId } },
         })
       );
       expect(mockDeleteInscription).toHaveBeenCalledWith(
         "tbk-token-xyz",
         userDocumentId
       );
-      expect(mockUpdate).toHaveBeenCalledWith(
+      // subscription-pro tbk_user is cleared
+      expect(mockSubProEntityUpdate).toHaveBeenCalledWith(
+        "api::subscription-pro.subscription-pro",
+        10,
+        expect.objectContaining({
+          data: expect.objectContaining({
+            tbk_user: null,
+          }),
+        })
+      );
+      // User is updated with pro_status=cancelled and tbk_user=null (dual-write)
+      expect(mockUserEntityUpdate).toHaveBeenCalledWith(
         "plugin::users-permissions.user",
         userId,
         expect.objectContaining({
@@ -84,25 +115,26 @@ describe("ProCancellationService", () => {
 
     it("does NOT change pro_expires_at — period-end expiry must be preserved (CANC-02)", async () => {
       // Arrange
-      mockFindOne.mockResolvedValueOnce({
-        id: userId,
+      mockSubProFindOne.mockResolvedValueOnce({
+        id: 10,
         tbk_user: "tbk-token-xyz",
       });
       mockDeleteInscription.mockResolvedValueOnce({ success: true });
-      mockUpdate.mockResolvedValueOnce({});
+      mockSubProEntityUpdate.mockResolvedValueOnce({});
+      mockUserEntityUpdate.mockResolvedValueOnce({});
 
       // Act
       await service.cancelSubscription(userId, userDocumentId);
 
-      // Assert: update must NOT include pro_expires_at
-      const updateCall = mockUpdate.mock.calls[0];
-      const updateData = updateCall[2].data;
+      // Assert: user update must NOT include pro_expires_at
+      const userUpdateCall = mockUserEntityUpdate.mock.calls[0];
+      const updateData = userUpdateCall[2].data;
       expect(updateData).not.toHaveProperty("pro_expires_at");
     });
 
-    it("returns { success: false, error } when user has no tbk_user (no active inscription)", async () => {
-      // Arrange
-      mockFindOne.mockResolvedValueOnce({ id: userId, tbk_user: null });
+    it("returns { success: false, error } when subscription-pro record has no tbk_user (no active inscription)", async () => {
+      // Arrange — subscription-pro exists but tbk_user is null
+      mockSubProFindOne.mockResolvedValueOnce({ id: 10, tbk_user: null });
 
       // Act
       const result = await service.cancelSubscription(userId, userDocumentId);
@@ -111,27 +143,42 @@ describe("ProCancellationService", () => {
       expect(result.success).toBe(false);
       expect(result.error).toBe("User has no active inscription");
       expect(mockDeleteInscription).not.toHaveBeenCalled();
-      expect(mockUpdate).not.toHaveBeenCalled();
+      expect(mockSubProEntityUpdate).not.toHaveBeenCalled();
+      expect(mockUserEntityUpdate).not.toHaveBeenCalled();
+    });
+
+    it("returns { success: false, error } when subscription-pro record does not exist", async () => {
+      // Arrange — no subscription-pro record for this user
+      mockSubProFindOne.mockResolvedValueOnce(null);
+
+      // Act
+      const result = await service.cancelSubscription(userId, userDocumentId);
+
+      // Assert
+      expect(result.success).toBe(false);
+      expect(result.error).toBe("User has no active inscription");
+      expect(mockDeleteInscription).not.toHaveBeenCalled();
     });
 
     it("proceeds with cancellation and sets pro_status=cancelled even if Transbank deleteInscription fails", async () => {
       // Arrange
-      mockFindOne.mockResolvedValueOnce({
-        id: userId,
+      mockSubProFindOne.mockResolvedValueOnce({
+        id: 10,
         tbk_user: "tbk-token-xyz",
       });
       mockDeleteInscription.mockResolvedValueOnce({
         success: false,
         error: new Error("Transbank unavailable"),
       });
-      mockUpdate.mockResolvedValueOnce({});
+      mockSubProEntityUpdate.mockResolvedValueOnce({});
+      mockUserEntityUpdate.mockResolvedValueOnce({});
 
       // Act
       const result = await service.cancelSubscription(userId, userDocumentId);
 
       // Assert: cancellation proceeds regardless of Transbank failure
       expect(result.success).toBe(true);
-      expect(mockUpdate).toHaveBeenCalledWith(
+      expect(mockUserEntityUpdate).toHaveBeenCalledWith(
         "plugin::users-permissions.user",
         userId,
         expect.objectContaining({
@@ -145,19 +192,36 @@ describe("ProCancellationService", () => {
 
     it("sets pro_status to 'cancelled' (British spelling, per schema enum)", async () => {
       // Arrange
-      mockFindOne.mockResolvedValueOnce({
-        id: userId,
+      mockSubProFindOne.mockResolvedValueOnce({
+        id: 10,
         tbk_user: "tbk-token-xyz",
       });
       mockDeleteInscription.mockResolvedValueOnce({ success: true });
-      mockUpdate.mockResolvedValueOnce({});
+      mockSubProEntityUpdate.mockResolvedValueOnce({});
+      mockUserEntityUpdate.mockResolvedValueOnce({});
 
       // Act
       await service.cancelSubscription(userId, userDocumentId);
 
       // Assert: must be 'cancelled' not 'canceled'
-      const updateCall = mockUpdate.mock.calls[0];
-      expect(updateCall[2].data.pro_status).toBe("cancelled");
+      const userUpdateCall = mockUserEntityUpdate.mock.calls[0];
+      expect(userUpdateCall[2].data.pro_status).toBe("cancelled");
+    });
+
+    it("queries subscription-pro with correct uid (api::subscription-pro.subscription-pro)", async () => {
+      // Arrange
+      mockSubProFindOne.mockResolvedValueOnce({ id: 10, tbk_user: "tok" });
+      mockDeleteInscription.mockResolvedValueOnce({ success: true });
+      mockSubProEntityUpdate.mockResolvedValueOnce({});
+      mockUserEntityUpdate.mockResolvedValueOnce({});
+
+      // Act
+      await service.cancelSubscription(userId, userDocumentId);
+
+      // Assert: correct UID used for db.query
+      expect(mockDbQuery).toHaveBeenCalledWith(
+        "api::subscription-pro.subscription-pro"
+      );
     });
   });
 });

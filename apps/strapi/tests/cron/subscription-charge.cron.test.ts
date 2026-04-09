@@ -72,19 +72,19 @@ Object.assign(global, {
   },
 });
 
-// Sample user data
+// Sample user data — tbk_user lives in subscription_pro (canonical source after migration)
 const makeUser = (
   overrides: Partial<{
     id: number;
     documentId: string;
-    tbk_user: string;
+    subscription_pro: { tbk_user: string } | null;
     pro_expires_at: string;
   }> = {}
 ) => ({
   id: 42,
   documentId: "abc123xyz456789012345678",
-  tbk_user: "tbk-user-stored-token",
   pro_expires_at: "2026-02-20T00:00:00.000Z",
+  subscription_pro: { tbk_user: "tbk-user-stored-token" },
   ...overrides,
 });
 
@@ -137,11 +137,51 @@ describe("SubscriptionChargeService", () => {
       );
       expect(mockAuthorizeCharge).toHaveBeenCalledWith(
         user.documentId,
-        user.tbk_user,
+        user.subscription_pro!.tbk_user,
         9990,
         expect.stringContaining("pro-42-"),
         expect.stringContaining("c-42-")
       );
+    });
+  });
+
+  describe("CHRG-01b: Users with missing subscription_pro.tbk_user are skipped", () => {
+    it("skips user and logs warn when subscription_pro is null", async () => {
+      // Arrange
+      const userNoSubPro = makeUser({ subscription_pro: null });
+      mockFindMany
+        .mockResolvedValueOnce([userNoSubPro]) // expired users
+        .mockResolvedValueOnce([]) // idempotency check: no approved payment
+        .mockResolvedValueOnce([]) // retry candidates
+        .mockResolvedValueOnce([]) // deactivation candidates
+        .mockResolvedValueOnce([]); // Step 4: cancelled expired users
+
+      // Act
+      const result = await service.chargeExpiredSubscriptions();
+
+      // Assert: skipped, no charge attempted
+      expect(result.success).toBe(true);
+      expect(mockAuthorizeCharge).not.toHaveBeenCalled();
+      expect(mockCreate).not.toHaveBeenCalled();
+    });
+
+    it("skips user and logs warn when subscription_pro.tbk_user is falsy", async () => {
+      // Arrange
+      const userEmptyTbk = makeUser({ subscription_pro: { tbk_user: "" } });
+      mockFindMany
+        .mockResolvedValueOnce([userEmptyTbk]) // expired users
+        .mockResolvedValueOnce([]) // idempotency check: no approved payment
+        .mockResolvedValueOnce([]) // retry candidates
+        .mockResolvedValueOnce([]) // deactivation candidates
+        .mockResolvedValueOnce([]); // Step 4: cancelled expired users
+
+      // Act
+      const result = await service.chargeExpiredSubscriptions();
+
+      // Assert: skipped, no charge attempted
+      expect(result.success).toBe(true);
+      expect(mockAuthorizeCharge).not.toHaveBeenCalled();
+      expect(mockCreate).not.toHaveBeenCalled();
     });
   });
 
@@ -282,8 +322,8 @@ describe("SubscriptionChargeService", () => {
         user: {
           id: user.id,
           documentId: user.documentId,
-          tbk_user: user.tbk_user,
           pro_expires_at: user.pro_expires_at,
+          subscription_pro: { tbk_user: user.subscription_pro!.tbk_user },
         },
       };
       mockFindMany
