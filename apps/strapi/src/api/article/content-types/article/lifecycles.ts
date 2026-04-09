@@ -25,11 +25,10 @@ export default {
   async beforeUpdate(event: Event) {
     const { data, where } = event.params;
     if (data.title) {
-      const existingArticle = await strapi.entityService.findOne(
-        "api::article.article",
-        where.id,
-        { fields: ["title"] }
-      );
+      const existingArticle = await strapi.db.query("api::article.article").findOne({
+        where: { id: where.id },
+        select: ["title"],
+      });
       if (existingArticle && existingArticle.title !== data.title) {
         data.slug = slugify(data.title, { lower: true, strict: true });
       }

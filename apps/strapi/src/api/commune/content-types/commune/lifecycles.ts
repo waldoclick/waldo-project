@@ -16,11 +16,10 @@ export default {
     // Si el nombre está siendo actualizado, generar el slug
     if (data.name) {
       // Obtener la comuna actual para comparar
-      const existingCommune = await strapi.entityService.findOne(
-        "api::commune.commune",
-        where.id,
-        { fields: ["name"] }
-      );
+      const existingCommune = await strapi.db.query("api::commune.commune").findOne({
+        where: { id: where.id },
+        select: ["name"],
+      });
 
       // Solo actualizar el slug si el nombre cambió
       if (existingCommune && existingCommune.name !== data.name) {

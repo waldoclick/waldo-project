@@ -16,11 +16,10 @@ export default {
     // Si el nombre está siendo actualizado, generar el slug
     if (data.name) {
       // Obtener la región actual para comparar
-      const existingRegion = await strapi.entityService.findOne(
-        "api::region.region",
-        where.id,
-        { fields: ["name"] }
-      );
+      const existingRegion = await strapi.db.query("api::region.region").findOne({
+        where: { id: where.id },
+        select: ["name"],
+      });
 
       // Solo actualizar el slug si el nombre cambió
       if (existingRegion && existingRegion.name !== data.name) {

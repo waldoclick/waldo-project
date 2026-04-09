@@ -29,11 +29,10 @@ export default {
     // Si el nombre está siendo actualizado, generar el slug
     if (data.name) {
       // Obtener la condición actual para comparar
-      const existingCondition = await strapi.entityService.findOne(
-        "api::condition.condition",
-        where.id,
-        { fields: ["name"] }
-      );
+      const existingCondition = await strapi.db.query("api::condition.condition").findOne({
+        where: { id: where.id },
+        select: ["name"],
+      });
 
       // Solo actualizar el slug si el nombre cambió
       if (existingCondition && existingCondition.name !== data.name) {

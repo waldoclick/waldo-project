@@ -16,11 +16,10 @@ export default {
     // Si el nombre está siendo actualizado, generar el slug
     if (data.name) {
       // Obtener la categoría actual para comparar
-      const existingCategory = await strapi.entityService.findOne(
-        "api::category.category",
-        where.id,
-        { fields: ["name"] }
-      );
+      const existingCategory = await strapi.db.query("api::category.category").findOne({
+        where: { id: where.id },
+        select: ["name"],
+      });
 
       // Solo actualizar el slug si el nombre cambió
       if (existingCategory && existingCategory.name !== data.name) {
