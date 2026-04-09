@@ -85,6 +85,7 @@ Progress: [██████████] 100%
 - Phase 117 added: Enforce root-level tests directory for website — move all test files to apps/website/tests/
 - Phase 117 completed: verification-only closure — website test directory structure confirmed compliant after Phase 116 moves
 - Phase 119 added: export orders to CSV from dashboard orders page
+- Phase 120 added: Refactor PRO subscription model: subscription-pro collection type, move card data out of user, fix charge-before-activate order, calendar billing
 
 ### Blockers/Concerns (open)
 

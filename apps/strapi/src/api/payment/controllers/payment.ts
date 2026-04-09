@@ -491,7 +491,9 @@ class PaymentController {
     );
 
     // Success: update user record with subscription data, clear inscription token and invoice flag
-    const proExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    // pro_expires_at = 1st of next month (calendar billing)
+    const now = new Date();
+    const proExpiresAt = new Date(now.getFullYear(), now.getMonth() + 1, 1);
     await strapi.entityService.update(
       "plugin::users-permissions.user",
       user.id,
@@ -509,10 +511,25 @@ class PaymentController {
       }
     );
 
-    // Create order + Facto document for the PRO inscription (non-fatal: inscription was successful)
+    // Prorated price: (days remaining in month including today) / (days in month) * monthly price
     const proMonthlyPrice = parseInt(process.env.PRO_MONTHLY_PRICE ?? "0", 10);
+    const daysInMonth = new Date(
+      now.getFullYear(),
+      now.getMonth() + 1,
+      0
+    ).getDate();
+    const daysRemaining = daysInMonth - now.getDate() + 1;
+    const proratedPrice = Math.ceil(
+      (daysRemaining / daysInMonth) * proMonthlyPrice
+    );
+
+    // Create order + Facto document for the PRO inscription (non-fatal: inscription was successful)
     const proItems = [
-      { name: "Suscripcion PRO mensual", price: proMonthlyPrice, quantity: 1 },
+      {
+        name: `Suscripcion PRO (${daysRemaining} dias)`,
+        price: proratedPrice,
+        quantity: 1,
+      },
     ];
 
     let proOrder: { documentId?: string } | undefined;
@@ -524,7 +541,7 @@ class PaymentController {
         items: proItems,
       });
       const orderResult = await OrderUtils.createAdOrder({
-        amount: proMonthlyPrice,
+        amount: proratedPrice,
         buy_order: `pro-inscription-${user.id}-${Date.now()}`,
         userId: user.id,
         is_invoice: isInvoice,

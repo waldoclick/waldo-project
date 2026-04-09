@@ -400,8 +400,13 @@ export class SubscriptionChargeService {
         );
       }
 
-      // Extend pro_expires_at by 30 days
-      const newExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+      // Extend pro_expires_at to 1st of next month (calendar billing)
+      const currentExpiry = new Date(user.pro_expires_at);
+      const newExpiresAt = new Date(
+        currentExpiry.getFullYear(),
+        currentExpiry.getMonth() + 1,
+        1
+      );
       await strapi.entityService.update(
         "plugin::users-permissions.user",
         user.id,
