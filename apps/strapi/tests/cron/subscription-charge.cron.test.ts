@@ -49,9 +49,20 @@ const mockCreate = jest.fn();
 const mockUpdate = jest.fn();
 const mockDbQueryFindMany = jest.fn().mockResolvedValue([]);
 const mockDbQueryUpdate = jest.fn();
-const mockDbQuery = jest.fn().mockReturnValue({
-  findMany: mockDbQueryFindMany,
-  update: mockDbQueryUpdate,
+const mockDbQueryFindOne = jest.fn().mockResolvedValue(null);
+const mockDbQuery = jest.fn().mockImplementation((uid: string) => {
+  if (uid === "api::ad.ad") {
+    return {
+      findMany: mockDbQueryFindMany,
+      update: mockDbQueryUpdate,
+    };
+  }
+  // subscription-pro and others
+  return {
+    findOne: mockDbQueryFindOne,
+    findMany: mockDbQueryFindMany,
+    update: mockDbQueryUpdate,
+  };
 });
 
 Object.assign(global, {
@@ -77,13 +88,11 @@ const makeUser = (
   overrides: Partial<{
     id: number;
     documentId: string;
-    subscription_pro: { tbk_user: string } | null;
-    pro_expires_at: string;
+    subscription_pro: { tbk_user: string; pending_invoice?: boolean } | null;
   }> = {}
 ) => ({
   id: 42,
   documentId: "abc123xyz456789012345678",
-  pro_expires_at: "2026-02-20T00:00:00.000Z",
   subscription_pro: { tbk_user: "tbk-user-stored-token" },
   ...overrides,
 });
@@ -97,20 +106,20 @@ describe("SubscriptionChargeService", () => {
     service = new SubscriptionChargeService();
   });
 
-  describe("CHRG-01: chargeExpiredSubscriptions queries expired active PRO users", () => {
-    it("queries users with pro_status=active and pro_expires_at <= today, then calls authorizeCharge for each", async () => {
+  describe("CHRG-01: chargeExpiredSubscriptions queries due subscription-payment records", () => {
+    it("queries subscription-payment records with period_end <= today and status=approved, then calls authorizeCharge for each", async () => {
       // Arrange
       const user = makeUser();
-      // findMany call 1: expired active users
-      // findMany call 2: idempotency check (no existing approved payment)
-      // findMany call 3: retry candidates
-      // findMany call 4: deactivation candidates
+      const duePayment = { id: 1, period_end: "2026-02-20", user };
+      // Step 1: due payments from subscription-payment
+      // Step 2: retry candidates (failed with charge_attempts < 3)
+      // Step 3: exhausted records (charge_attempts >= 3)
+      // Step 4: expired cancelled payments
       mockFindMany
-        .mockResolvedValueOnce([user]) // expired users
-        .mockResolvedValueOnce([]) // idempotency check: no approved payment
-        .mockResolvedValueOnce([]) // retry candidates
-        .mockResolvedValueOnce([]) // deactivation candidates
-        .mockResolvedValueOnce([]); // Step 4: cancelled expired users
+        .mockResolvedValueOnce([duePayment]) // Step 1: due subscription payments
+        .mockResolvedValueOnce([]) // Step 2: retry candidates
+        .mockResolvedValueOnce([]) // Step 3: exhausted candidates
+        .mockResolvedValueOnce([]); // Step 4: expired cancelled payments
 
       mockAuthorizeCharge.mockResolvedValueOnce({
         success: true,
@@ -128,10 +137,12 @@ describe("SubscriptionChargeService", () => {
       // Assert
       expect(result.success).toBe(true);
       expect(mockFindMany).toHaveBeenCalledWith(
-        "plugin::users-permissions.user",
+        "api::subscription-payment.subscription-payment",
         expect.objectContaining({
           filters: expect.objectContaining({
-            pro_status: { $eq: "active" },
+            status: { $eq: "approved" },
+            period_end: { $lte: expect.any(String) },
+            user: { pro_status: { $eq: "active" } },
           }),
         })
       );
@@ -149,12 +160,16 @@ describe("SubscriptionChargeService", () => {
     it("skips user and logs warn when subscription_pro is null", async () => {
       // Arrange
       const userNoSubPro = makeUser({ subscription_pro: null });
+      const duePayment = {
+        id: 1,
+        period_end: "2026-02-20",
+        user: userNoSubPro,
+      };
       mockFindMany
-        .mockResolvedValueOnce([userNoSubPro]) // expired users
-        .mockResolvedValueOnce([]) // idempotency check: no approved payment
-        .mockResolvedValueOnce([]) // retry candidates
-        .mockResolvedValueOnce([]) // deactivation candidates
-        .mockResolvedValueOnce([]); // Step 4: cancelled expired users
+        .mockResolvedValueOnce([duePayment]) // Step 1: due payments
+        .mockResolvedValueOnce([]) // Step 2: retry candidates
+        .mockResolvedValueOnce([]) // Step 3: exhausted candidates
+        .mockResolvedValueOnce([]); // Step 4: expired cancelled payments
 
       // Act
       const result = await service.chargeExpiredSubscriptions();
@@ -168,12 +183,16 @@ describe("SubscriptionChargeService", () => {
     it("skips user and logs warn when subscription_pro.tbk_user is falsy", async () => {
       // Arrange
       const userEmptyTbk = makeUser({ subscription_pro: { tbk_user: "" } });
+      const duePayment = {
+        id: 1,
+        period_end: "2026-02-20",
+        user: userEmptyTbk,
+      };
       mockFindMany
-        .mockResolvedValueOnce([userEmptyTbk]) // expired users
-        .mockResolvedValueOnce([]) // idempotency check: no approved payment
-        .mockResolvedValueOnce([]) // retry candidates
-        .mockResolvedValueOnce([]) // deactivation candidates
-        .mockResolvedValueOnce([]); // Step 4: cancelled expired users
+        .mockResolvedValueOnce([duePayment]) // Step 1: due payments
+        .mockResolvedValueOnce([]) // Step 2: retry candidates
+        .mockResolvedValueOnce([]) // Step 3: exhausted candidates
+        .mockResolvedValueOnce([]); // Step 4: expired cancelled payments
 
       // Act
       const result = await service.chargeExpiredSubscriptions();
@@ -185,16 +204,16 @@ describe("SubscriptionChargeService", () => {
     });
   });
 
-  describe("CHRG-02: Successful charge creates approved subscription-payment and extends pro_expires_at", () => {
-    it("creates subscription-payment with status=approved and updates user pro_expires_at +30 days", async () => {
+  describe("CHRG-02: Successful charge creates approved subscription-payment with period_end", () => {
+    it("creates subscription-payment with status=approved and period_end — does NOT update user pro_status (already active)", async () => {
       // Arrange
       const user = makeUser();
+      const duePayment = { id: 1, period_end: "2026-02-20", user };
       mockFindMany
-        .mockResolvedValueOnce([user]) // expired users
-        .mockResolvedValueOnce([]) // idempotency: no approved payment
-        .mockResolvedValueOnce([]) // retry candidates
-        .mockResolvedValueOnce([]) // deactivation candidates
-        .mockResolvedValueOnce([]); // Step 4: cancelled expired users
+        .mockResolvedValueOnce([duePayment]) // Step 1: due payments
+        .mockResolvedValueOnce([]) // Step 2: retry candidates
+        .mockResolvedValueOnce([]) // Step 3: exhausted candidates
+        .mockResolvedValueOnce([]); // Step 4: expired cancelled payments
 
       const authResponse = {
         success: true,
@@ -206,12 +225,11 @@ describe("SubscriptionChargeService", () => {
       };
       mockAuthorizeCharge.mockResolvedValueOnce(authResponse);
       mockCreate.mockResolvedValueOnce({ id: 10 });
-      mockUpdate.mockResolvedValueOnce({});
 
       // Act
       await service.chargeExpiredSubscriptions();
 
-      // Assert: creates approved payment record
+      // Assert: creates new approved payment record with period_end
       expect(mockCreate).toHaveBeenCalledWith(
         "api::subscription-payment.subscription-payment",
         expect.objectContaining({
@@ -222,59 +240,34 @@ describe("SubscriptionChargeService", () => {
             authorization_code: "AUTH456",
             response_code: 0,
             charge_attempts: 1,
+            period_end: expect.any(String),
           }),
         })
       );
 
-      // Assert: extends pro_expires_at by ~30 days
-      expect(mockUpdate).toHaveBeenCalledWith(
+      // Assert: NO user update for period extension (cron no longer writes pro_expires_at on user)
+      expect(mockUpdate).not.toHaveBeenCalledWith(
         "plugin::users-permissions.user",
         user.id,
         expect.objectContaining({
           data: expect.objectContaining({
-            pro_expires_at: expect.any(Date),
+            pro_status: "active",
           }),
         })
       );
     });
   });
 
-  describe("CHRG-05: Idempotency — skips user if approved payment already exists for same period_start", () => {
-    it("does not call authorizeCharge if an approved subscription-payment already exists for the period", async () => {
+  describe("CHRG-03 (first failure): Failed charge creates subscription-payment with status=failed and period_end", () => {
+    it("creates failed payment record with charge_attempts=1, next_charge_attempt=tomorrow, and period_end", async () => {
       // Arrange
       const user = makeUser();
-      const existingApprovedPayment = {
-        id: 5,
-        status: "approved",
-        period_start: "2026-02-20",
-      };
+      const duePayment = { id: 1, period_end: "2026-02-20", user };
       mockFindMany
-        .mockResolvedValueOnce([user]) // expired users
-        .mockResolvedValueOnce([existingApprovedPayment]) // idempotency: approved payment found
-        .mockResolvedValueOnce([]) // retry candidates
-        .mockResolvedValueOnce([]) // deactivation candidates
-        .mockResolvedValueOnce([]); // Step 4: cancelled expired users
-
-      // Act
-      const result = await service.chargeExpiredSubscriptions();
-
-      // Assert
-      expect(result.success).toBe(true);
-      expect(mockAuthorizeCharge).not.toHaveBeenCalled();
-      expect(mockCreate).not.toHaveBeenCalled();
-    });
-  });
-
-  describe("CHRG-03 (first failure): Failed charge creates subscription-payment with status=failed and next_charge_attempt=tomorrow", () => {
-    it("creates failed payment record with charge_attempts=1 and next_charge_attempt set to tomorrow", async () => {
-      // Arrange
-      const user = makeUser();
-      mockFindMany
-        .mockResolvedValueOnce([user]) // expired users
-        .mockResolvedValueOnce([]) // idempotency: no approved payment
-        .mockResolvedValueOnce([]) // retry candidates
-        .mockResolvedValueOnce([]) // deactivation candidates
-        .mockResolvedValueOnce([]); // Step 4: cancelled expired users
+        .mockResolvedValueOnce([duePayment]) // Step 1: due payments
+        .mockResolvedValueOnce([]) // Step 2: retry candidates
+        .mockResolvedValueOnce([]) // Step 3: exhausted candidates
+        .mockResolvedValueOnce([]); // Step 4: expired cancelled payments
 
       mockAuthorizeCharge.mockResolvedValueOnce({
         success: false,
@@ -294,6 +287,7 @@ describe("SubscriptionChargeService", () => {
             status: "failed",
             charge_attempts: 1,
             next_charge_attempt: expect.any(String),
+            period_end: expect.any(String),
           }),
         })
       );
@@ -310,7 +304,7 @@ describe("SubscriptionChargeService", () => {
   });
 
   describe("CHRG-03 (retry): Finds failed payments with charge_attempts < 3 and retries authorize", () => {
-    it("retries failed payment, updates record on success, and extends pro_expires_at", async () => {
+    it("retries failed payment, updates record on success with period_end — does NOT update user pro_status", async () => {
       // Arrange
       const user = makeUser();
       const failedPayment = {
@@ -319,18 +313,18 @@ describe("SubscriptionChargeService", () => {
         charge_attempts: 1,
         next_charge_attempt: "2026-03-19",
         period_start: "2026-02-20",
+        period_end: "2026-03-01",
         user: {
           id: user.id,
           documentId: user.documentId,
-          pro_expires_at: user.pro_expires_at,
           subscription_pro: { tbk_user: user.subscription_pro!.tbk_user },
         },
       };
       mockFindMany
-        .mockResolvedValueOnce([]) // no new expired users (empty to isolate retry test)
-        .mockResolvedValueOnce([failedPayment]) // retry candidates
-        .mockResolvedValueOnce([]) // deactivation candidates
-        .mockResolvedValueOnce([]); // Step 4: cancelled expired users
+        .mockResolvedValueOnce([]) // Step 1: no new due payments (isolates retry test)
+        .mockResolvedValueOnce([failedPayment]) // Step 2: retry candidates
+        .mockResolvedValueOnce([]) // Step 3: exhausted candidates
+        .mockResolvedValueOnce([]); // Step 4: expired cancelled payments
 
       mockAuthorizeCharge.mockResolvedValueOnce({
         success: true,
@@ -340,12 +334,12 @@ describe("SubscriptionChargeService", () => {
           details: [{ response_code: 0, authorization_code: "RETRY-AUTH" }],
         },
       });
-      mockUpdate.mockResolvedValueOnce({}).mockResolvedValueOnce({});
+      mockUpdate.mockResolvedValueOnce({});
 
       // Act
       await service.chargeExpiredSubscriptions();
 
-      // Assert: updates existing record to approved
+      // Assert: updates existing record to approved with period_end
       expect(mockUpdate).toHaveBeenCalledWith(
         "api::subscription-payment.subscription-payment",
         failedPayment.id,
@@ -353,25 +347,22 @@ describe("SubscriptionChargeService", () => {
           data: expect.objectContaining({
             status: "approved",
             authorization_code: "RETRY-AUTH",
+            period_end: expect.any(String),
           }),
         })
       );
 
-      // Assert: extends pro_expires_at
-      expect(mockUpdate).toHaveBeenCalledWith(
+      // Assert: cron does NOT update user pro_status on retry success (user is already active)
+      expect(mockUpdate).not.toHaveBeenCalledWith(
         "plugin::users-permissions.user",
         user.id,
-        expect.objectContaining({
-          data: expect.objectContaining({
-            pro_expires_at: expect.any(Date),
-          }),
-        })
+        expect.anything()
       );
     });
   });
 
   describe("CHRG-03 (deactivation): After 3 failed attempts, deactivates user", () => {
-    it("sets pro_status=inactive, pro_expires_at=null, tbk_user=null after 3 failures", async () => {
+    it("sets pro_status=inactive after 3 failures — does NOT set pro_expires_at or tbk_user on user", async () => {
       // Arrange
       const user = makeUser();
       const exhaustedPayment = {
@@ -382,30 +373,36 @@ describe("SubscriptionChargeService", () => {
         user: { id: user.id, documentId: user.documentId },
       };
       mockFindMany
-        .mockResolvedValueOnce([]) // no new expired users
-        .mockResolvedValueOnce([]) // retry candidates (charge_attempts < 3)
-        .mockResolvedValueOnce([exhaustedPayment]) // deactivation candidates (charge_attempts >= 3)
-        .mockResolvedValueOnce([]); // Step 4: cancelled expired users
+        .mockResolvedValueOnce([]) // Step 1: no new due payments
+        .mockResolvedValueOnce([]) // Step 2: no retry candidates
+        .mockResolvedValueOnce([exhaustedPayment]) // Step 3: deactivation candidates
+        .mockResolvedValueOnce([]); // Step 4: expired cancelled payments
 
       mockUpdate.mockResolvedValueOnce({}).mockResolvedValueOnce({});
 
       // Act
       await service.chargeExpiredSubscriptions();
 
-      // Assert: deactivates user using pro_status only (pro boolean no longer written)
+      // Assert: deactivates user using pro_status only (pro_expires_at and tbk_user not touched on user)
       expect(mockUpdate).toHaveBeenCalledWith(
         "plugin::users-permissions.user",
         user.id,
         expect.objectContaining({
           data: expect.objectContaining({
             pro_status: "inactive",
-            pro_expires_at: null,
-            tbk_user: null,
           }),
         })
       );
 
-      // Assert: marks payment as deactivated
+      // Assert: user update does NOT include pro_expires_at or tbk_user
+      const userUpdateCall = mockUpdate.mock.calls.find(
+        (call) => call[0] === "plugin::users-permissions.user"
+      );
+      expect(userUpdateCall).toBeDefined();
+      expect(userUpdateCall![2].data).not.toHaveProperty("pro_expires_at");
+      expect(userUpdateCall![2].data).not.toHaveProperty("tbk_user");
+
+      // Assert: marks payment record as deactivated
       expect(mockUpdate).toHaveBeenCalledWith(
         "api::subscription-payment.subscription-payment",
         exhaustedPayment.id,
@@ -419,14 +416,15 @@ describe("SubscriptionChargeService", () => {
   });
 
   describe("CANC-04: Step 4 cancelled-expiry sweep", () => {
-    it("finds users with pro_status=cancelled and pro_expires_at <= today, deactivates them with pro_status=inactive, pro_expires_at=null, tbk_user=null", async () => {
+    it("finds subscription-payment records with status=approved, period_end <= today, and user pro_status=cancelled — deactivates user with pro_status=inactive", async () => {
       // Arrange
       const cancelledUser = { id: 55, documentId: "cancelleduserid12345678" };
+      const cancelledPayment = { id: 100, user: cancelledUser };
       mockFindMany
-        .mockResolvedValueOnce([]) // Step 1: no expired active users
+        .mockResolvedValueOnce([]) // Step 1: no due payments
         .mockResolvedValueOnce([]) // Step 2: no retry candidates
-        .mockResolvedValueOnce([]) // Step 3: no deactivation candidates
-        .mockResolvedValueOnce([cancelledUser]); // Step 4: cancelled expired users
+        .mockResolvedValueOnce([]) // Step 3: no exhausted candidates
+        .mockResolvedValueOnce([cancelledPayment]); // Step 4: expired cancelled payments
 
       mockUpdate.mockResolvedValueOnce({});
 
@@ -436,10 +434,12 @@ describe("SubscriptionChargeService", () => {
       // Assert
       expect(result.success).toBe(true);
       expect(mockFindMany).toHaveBeenCalledWith(
-        "plugin::users-permissions.user",
+        "api::subscription-payment.subscription-payment",
         expect.objectContaining({
           filters: expect.objectContaining({
-            pro_status: { $eq: "cancelled" },
+            status: { $eq: "approved" },
+            period_end: { $lte: expect.any(String) },
+            user: { pro_status: { $eq: "cancelled" } },
           }),
         })
       );
@@ -449,21 +449,28 @@ describe("SubscriptionChargeService", () => {
         expect.objectContaining({
           data: expect.objectContaining({
             pro_status: "inactive",
-            pro_expires_at: null,
-            tbk_user: null,
           }),
         })
       );
+
+      // Assert: user update does NOT include pro_expires_at or tbk_user
+      const userUpdateCall = mockUpdate.mock.calls.find(
+        (call) => call[0] === "plugin::users-permissions.user"
+      );
+      expect(userUpdateCall).toBeDefined();
+      expect(userUpdateCall![2].data).not.toHaveProperty("pro_expires_at");
+      expect(userUpdateCall![2].data).not.toHaveProperty("tbk_user");
     });
 
     it("does NOT call authorizeCharge for cancelled users (card already deleted)", async () => {
       // Arrange
       const cancelledUser = { id: 55, documentId: "cancelleduserid12345678" };
+      const cancelledPayment = { id: 100, user: cancelledUser };
       mockFindMany
-        .mockResolvedValueOnce([]) // Step 1: no expired active users
+        .mockResolvedValueOnce([]) // Step 1: no due payments
         .mockResolvedValueOnce([]) // Step 2: no retry candidates
-        .mockResolvedValueOnce([]) // Step 3: no deactivation candidates
-        .mockResolvedValueOnce([cancelledUser]); // Step 4: cancelled expired users
+        .mockResolvedValueOnce([]) // Step 3: no exhausted candidates
+        .mockResolvedValueOnce([cancelledPayment]); // Step 4: expired cancelled payments
 
       mockUpdate.mockResolvedValueOnce({});
 
@@ -474,18 +481,18 @@ describe("SubscriptionChargeService", () => {
       expect(mockAuthorizeCharge).not.toHaveBeenCalled();
     });
 
-    it("skips cancelled users whose pro_expires_at is in the future (not yet expired)", async () => {
-      // Arrange — Step 4 returns empty (no expired cancelled users)
+    it("Step 4 returns empty when no expired cancelled payments exist", async () => {
+      // Arrange — Step 4 returns empty (no expired cancelled payments)
       mockFindMany
-        .mockResolvedValueOnce([]) // Step 1: no expired active users
+        .mockResolvedValueOnce([]) // Step 1: no due payments
         .mockResolvedValueOnce([]) // Step 2: no retry candidates
-        .mockResolvedValueOnce([]) // Step 3: no deactivation candidates
-        .mockResolvedValueOnce([]); // Step 4: no cancelled expired users (all future)
+        .mockResolvedValueOnce([]) // Step 3: no exhausted candidates
+        .mockResolvedValueOnce([]); // Step 4: no expired cancelled payments
 
       // Act
       const result = await service.chargeExpiredSubscriptions();
 
-      // Assert: no updates performed for cancelled users
+      // Assert: no updates performed
       expect(result.success).toBe(true);
       expect(mockUpdate).not.toHaveBeenCalled();
     });
@@ -493,6 +500,7 @@ describe("SubscriptionChargeService", () => {
     it("recalculates sort_priority for deactivated cancelled users' ads", async () => {
       // Arrange
       const cancelledUser = { id: 55, documentId: "cancelleduserid12345678" };
+      const cancelledPayment = { id: 100, user: cancelledUser };
       const mockAd = {
         id: 100,
         sort_priority: 0,
@@ -500,10 +508,10 @@ describe("SubscriptionChargeService", () => {
         user: { id: 55, pro_status: "cancelled" },
       };
       mockFindMany
-        .mockResolvedValueOnce([]) // Step 1: no expired active users
+        .mockResolvedValueOnce([]) // Step 1: no due payments
         .mockResolvedValueOnce([]) // Step 2: no retry candidates
-        .mockResolvedValueOnce([]) // Step 3: no deactivation candidates
-        .mockResolvedValueOnce([cancelledUser]); // Step 4: cancelled expired users
+        .mockResolvedValueOnce([]) // Step 3: no exhausted candidates
+        .mockResolvedValueOnce([cancelledPayment]); // Step 4: expired cancelled payments
 
       mockUpdate.mockResolvedValueOnce({});
       mockDbQueryFindMany.mockResolvedValueOnce([mockAd]);
@@ -515,18 +523,41 @@ describe("SubscriptionChargeService", () => {
       // Assert: strapi.db.query was used to find and potentially update the ad
       expect(mockDbQuery).toHaveBeenCalledWith("api::ad.ad");
     });
+
+    it("deduplicates users when multiple cancelled payment records exist for same user", async () => {
+      // Arrange — two payment records for same cancelled user
+      const cancelledUser = { id: 55, documentId: "cancelleduserid12345678" };
+      const cancelledPayment1 = { id: 100, user: cancelledUser };
+      const cancelledPayment2 = { id: 101, user: cancelledUser };
+      mockFindMany
+        .mockResolvedValueOnce([]) // Step 1
+        .mockResolvedValueOnce([]) // Step 2
+        .mockResolvedValueOnce([]) // Step 3
+        .mockResolvedValueOnce([cancelledPayment1, cancelledPayment2]); // Step 4
+
+      mockUpdate.mockResolvedValue({});
+
+      // Act
+      await service.chargeExpiredSubscriptions();
+
+      // Assert: user update called only once despite two payment records
+      const userUpdateCalls = mockUpdate.mock.calls.filter(
+        (call) => call[0] === "plugin::users-permissions.user"
+      );
+      expect(userUpdateCalls).toHaveLength(1);
+    });
   });
 
   describe("chargeUser order+Facto creation", () => {
     it("chargeUser creates order + Facto document on successful charge", async () => {
       // Arrange
       const user = makeUser();
+      const duePayment = { id: 1, period_end: "2026-02-20", user };
       mockFindMany
-        .mockResolvedValueOnce([user]) // expired users
-        .mockResolvedValueOnce([]) // idempotency: no approved payment
-        .mockResolvedValueOnce([]) // retry candidates
-        .mockResolvedValueOnce([]) // deactivation candidates
-        .mockResolvedValueOnce([]); // Step 4: cancelled expired users
+        .mockResolvedValueOnce([duePayment]) // Step 1: due payments
+        .mockResolvedValueOnce([]) // Step 2: retry candidates
+        .mockResolvedValueOnce([]) // Step 3: exhausted candidates
+        .mockResolvedValueOnce([]); // Step 4: expired cancelled payments
 
       mockAuthorizeCharge.mockResolvedValueOnce({
         success: true,
@@ -537,7 +568,6 @@ describe("SubscriptionChargeService", () => {
         },
       });
       mockCreate.mockResolvedValueOnce({ id: 50 });
-      mockUpdate.mockResolvedValueOnce({});
       mockDocumentDetails.mockResolvedValueOnce({
         name: "Test User",
         rut: "12345678-9",
@@ -573,15 +603,15 @@ describe("SubscriptionChargeService", () => {
       );
     });
 
-    it("chargeUser extends pro_expires_at even when order creation fails", async () => {
+    it("creates subscription-payment with period_end even when order creation fails", async () => {
       // Arrange
       const user = makeUser();
+      const duePayment = { id: 1, period_end: "2026-02-20", user };
       mockFindMany
-        .mockResolvedValueOnce([user]) // expired users
-        .mockResolvedValueOnce([]) // idempotency: no approved payment
-        .mockResolvedValueOnce([]) // retry candidates
-        .mockResolvedValueOnce([]) // deactivation candidates
-        .mockResolvedValueOnce([]); // Step 4: cancelled expired users
+        .mockResolvedValueOnce([duePayment]) // Step 1: due payments
+        .mockResolvedValueOnce([]) // Step 2: retry candidates
+        .mockResolvedValueOnce([]) // Step 3: exhausted candidates
+        .mockResolvedValueOnce([]); // Step 4: expired cancelled payments
 
       mockAuthorizeCharge.mockResolvedValueOnce({
         success: true,
@@ -594,7 +624,6 @@ describe("SubscriptionChargeService", () => {
         },
       });
       mockCreate.mockResolvedValueOnce({ id: 51 });
-      mockUpdate.mockResolvedValueOnce({});
       mockDocumentDetails.mockResolvedValueOnce({
         name: "Test User",
         rut: "12345678-9",
@@ -613,13 +642,12 @@ describe("SubscriptionChargeService", () => {
       // Assert: cron still succeeds
       expect(result.success).toBe(true);
 
-      // Assert: pro_expires_at was extended (update called with pro_expires_at)
-      expect(mockUpdate).toHaveBeenCalledWith(
-        "plugin::users-permissions.user",
-        user.id,
+      // Assert: subscription-payment was created with period_end (before the order failure)
+      expect(mockCreate).toHaveBeenCalledWith(
+        "api::subscription-payment.subscription-payment",
         expect.objectContaining({
           data: expect.objectContaining({
-            pro_expires_at: expect.any(Date),
+            period_end: expect.any(String),
           }),
         })
       );
@@ -643,12 +671,12 @@ describe("SubscriptionChargeService", () => {
       // Arrange
       process.env.PRO_MONTHLY_PRICE = "14990";
       const user = makeUser();
+      const duePayment = { id: 1, period_end: "2026-02-20", user };
       mockFindMany
-        .mockResolvedValueOnce([user])
-        .mockResolvedValueOnce([])
-        .mockResolvedValueOnce([])
-        .mockResolvedValueOnce([])
-        .mockResolvedValueOnce([]); // Step 4: cancelled expired users
+        .mockResolvedValueOnce([duePayment]) // Step 1: due payments
+        .mockResolvedValueOnce([]) // Step 2: retry candidates
+        .mockResolvedValueOnce([]) // Step 3: exhausted candidates
+        .mockResolvedValueOnce([]); // Step 4: expired cancelled payments
 
       mockAuthorizeCharge.mockResolvedValueOnce({
         success: true,
@@ -657,7 +685,6 @@ describe("SubscriptionChargeService", () => {
         rawResponse: {},
       });
       mockCreate.mockResolvedValueOnce({ id: 30 });
-      mockUpdate.mockResolvedValueOnce({});
 
       // Act
       await service.chargeExpiredSubscriptions();
