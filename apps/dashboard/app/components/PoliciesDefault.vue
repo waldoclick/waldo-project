@@ -224,14 +224,10 @@ const handleReorder = async () => {
       order: index + 1,
     }));
 
-    await Promise.all(
-      updates.map((u) =>
-        apiClient(`/policies/${u.documentId}`, {
-          method: "PUT",
-          body: { data: { order: u.order } },
-        }),
-      ),
-    );
+    await apiClient("/policies/reorder", {
+      method: "POST",
+      body: { data: updates },
+    });
 
     // Update local state to reflect new order values
     allPolicies.value = allPolicies.value.map((policy, index) => ({
