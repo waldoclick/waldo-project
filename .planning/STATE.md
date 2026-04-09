@@ -132,6 +132,7 @@ Progress: [██████████] 100%
 | 260409-hvh | fix orders 500 - normalize array populate to object in order controller find method | 2026-04-09 | 798c69a9 | [260409-hvh-fix-orders-500-normalize-array-populate-](./quick/260409-hvh-fix-orders-500-normalize-array-populate-/) |
 | 260409-i26 | fix 500 error on orders/me endpoint - normalize sort and populate params | 2026-04-09 | 28b4565d | [260409-i26-fix-500-error-on-orders-me-endpoint](./quick/260409-i26-fix-500-error-on-orders-me-endpoint/) |
 | 260409-kru | split layout--dashboard__menu into logo + rail (MenuMain 3 icons) + nav (MenuDefault) | 2026-04-09 | 889b104f | [260409-kru-split-layout-dashboard-menu-into-rail-me](./quick/260409-kru-split-layout-dashboard-menu-into-rail-me/) |
+| 260409-nhj | create MenuMaintenance flat links, move maintenance pages to /maintenance, wire icon switching | 2026-04-09 | 5e6e243e | [260409-nhj-create-menumaintenance-with-flat-links-m](./quick/260409-nhj-create-menumaintenance-with-flat-links-m/) |
 
 ## Session Continuity
 
