@@ -45,7 +45,9 @@ export default {
 
   async findOne(ctx) {
     const { id } = ctx.params;
-    const faq = await strapi.db.query("api::faq.faq").findOne({ where: { id } });
+    const faq = await strapi.db
+      .query("api::faq.faq")
+      .findOne({ where: { id } });
     return { data: faq };
   },
 
@@ -58,7 +60,9 @@ export default {
   async update(ctx) {
     const { id } = ctx.params;
     const { data } = ctx.request.body;
-    const faq = await strapi.db.query("api::faq.faq").update({ where: { id }, data });
+    const faq = await strapi.db
+      .query("api::faq.faq")
+      .update({ where: { id }, data });
     return { data: faq };
   },
 

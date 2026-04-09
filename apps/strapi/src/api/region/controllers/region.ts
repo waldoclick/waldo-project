@@ -61,13 +61,17 @@ export default {
   async update(ctx) {
     const { id } = ctx.params;
     const { data } = ctx.request.body;
-    const region = await strapi.db.query("api::region.region").update({ where: { id }, data });
+    const region = await strapi.db
+      .query("api::region.region")
+      .update({ where: { id }, data });
     return { data: region };
   },
 
   async delete(ctx) {
     const { id } = ctx.params;
-    const region = await strapi.db.query("api::region.region").delete({ where: { id } });
+    const region = await strapi.db
+      .query("api::region.region")
+      .delete({ where: { id } });
     return { data: region };
   },
 };

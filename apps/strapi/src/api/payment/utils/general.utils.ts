@@ -170,16 +170,14 @@ class GeneralUtils {
       // Create new reservations if needed
       if (neededReservations > 0) {
         for (let i = 0; i < neededReservations; i++) {
-          await strapi.db
-            .query("api::ad-reservation.ad-reservation")
-            .create({
-              data: {
-                price: 0,
-                total_days: 15,
-                user: userId,
-                publishedAt: new Date(),
-              },
-            });
+          await strapi.db.query("api::ad-reservation.ad-reservation").create({
+            data: {
+              price: 0,
+              total_days: 15,
+              user: userId,
+              publishedAt: new Date(),
+            },
+          });
           summary.neededReservations++;
         }
       }

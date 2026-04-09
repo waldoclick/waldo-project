@@ -45,26 +45,34 @@ export default {
 
   async findOne(ctx) {
     const { id } = ctx.params;
-    const adPack = await strapi.db.query("api::ad-pack.ad-pack").findOne({ where: { id } });
+    const adPack = await strapi.db
+      .query("api::ad-pack.ad-pack")
+      .findOne({ where: { id } });
     return { data: adPack };
   },
 
   async create(ctx) {
     const { data } = ctx.request.body;
-    const adPack = await strapi.db.query("api::ad-pack.ad-pack").create({ data });
+    const adPack = await strapi.db
+      .query("api::ad-pack.ad-pack")
+      .create({ data });
     return { data: adPack };
   },
 
   async update(ctx) {
     const { id } = ctx.params;
     const { data } = ctx.request.body;
-    const adPack = await strapi.db.query("api::ad-pack.ad-pack").update({ where: { id }, data });
+    const adPack = await strapi.db
+      .query("api::ad-pack.ad-pack")
+      .update({ where: { id }, data });
     return { data: adPack };
   },
 
   async delete(ctx) {
     const { id } = ctx.params;
-    const adPack = await strapi.db.query("api::ad-pack.ad-pack").delete({ where: { id } });
+    const adPack = await strapi.db
+      .query("api::ad-pack.ad-pack")
+      .delete({ where: { id } });
     return { data: adPack };
   },
 };

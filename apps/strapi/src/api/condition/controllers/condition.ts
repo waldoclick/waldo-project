@@ -14,13 +14,15 @@ export default {
     const filters = query.filters || {};
 
     // Get conditions with pagination
-    const conditions = await strapi.db.query("api::condition.condition").findMany({
-      where: filters,
-      populate: query.populate || "*",
-      offset: (page - 1) * pageSize,
-      limit: pageSize,
-      orderBy: query.sort || { name: "asc" },
-    });
+    const conditions = await strapi.db
+      .query("api::condition.condition")
+      .findMany({
+        where: filters,
+        populate: query.populate || "*",
+        offset: (page - 1) * pageSize,
+        limit: pageSize,
+        orderBy: query.sort || { name: "asc" },
+      });
 
     // Get total count
     const total = await strapi.db.query("api::condition.condition").count({
@@ -45,26 +47,34 @@ export default {
 
   async findOne(ctx) {
     const { id } = ctx.params;
-    const condition = await strapi.db.query("api::condition.condition").findOne({ where: { id } });
+    const condition = await strapi.db
+      .query("api::condition.condition")
+      .findOne({ where: { id } });
     return { data: condition };
   },
 
   async create(ctx) {
     const { data } = ctx.request.body;
-    const condition = await strapi.db.query("api::condition.condition").create({ data });
+    const condition = await strapi.db
+      .query("api::condition.condition")
+      .create({ data });
     return { data: condition };
   },
 
   async update(ctx) {
     const { id } = ctx.params;
     const { data } = ctx.request.body;
-    const condition = await strapi.db.query("api::condition.condition").update({ where: { id }, data });
+    const condition = await strapi.db
+      .query("api::condition.condition")
+      .update({ where: { id }, data });
     return { data: condition };
   },
 
   async delete(ctx) {
     const { id } = ctx.params;
-    const condition = await strapi.db.query("api::condition.condition").delete({ where: { id } });
+    const condition = await strapi.db
+      .query("api::condition.condition")
+      .delete({ where: { id } });
     return { data: condition };
   },
 };

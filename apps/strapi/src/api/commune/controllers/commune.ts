@@ -54,20 +54,26 @@ export default {
 
   async create(ctx) {
     const { data } = ctx.request.body;
-    const commune = await strapi.db.query("api::commune.commune").create({ data });
+    const commune = await strapi.db
+      .query("api::commune.commune")
+      .create({ data });
     return { data: commune };
   },
 
   async update(ctx) {
     const { id } = ctx.params;
     const { data } = ctx.request.body;
-    const commune = await strapi.db.query("api::commune.commune").update({ where: { id }, data });
+    const commune = await strapi.db
+      .query("api::commune.commune")
+      .update({ where: { id }, data });
     return { data: commune };
   },
 
   async delete(ctx) {
     const { id } = ctx.params;
-    const commune = await strapi.db.query("api::commune.commune").delete({ where: { id } });
+    const commune = await strapi.db
+      .query("api::commune.commune")
+      .delete({ where: { id } });
     return { data: commune };
   },
 };

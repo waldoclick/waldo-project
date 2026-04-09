@@ -14,13 +14,15 @@ export default {
     const filters = query.filters || {};
 
     // Get categories with pagination
-    const categories = await strapi.db.query("api::category.category").findMany({
-      where: filters,
-      populate: query.populate || "*",
-      offset: (page - 1) * pageSize,
-      limit: pageSize,
-      orderBy: query.sort || { name: "asc" },
-    });
+    const categories = await strapi.db
+      .query("api::category.category")
+      .findMany({
+        where: filters,
+        populate: query.populate || "*",
+        offset: (page - 1) * pageSize,
+        limit: pageSize,
+        orderBy: query.sort || { name: "asc" },
+      });
 
     // Get total count
     const total = await strapi.db.query("api::category.category").count({
@@ -45,36 +47,46 @@ export default {
 
   async findOne(ctx) {
     const { id } = ctx.params;
-    const category = await strapi.db.query("api::category.category").findOne({ where: { id } });
+    const category = await strapi.db
+      .query("api::category.category")
+      .findOne({ where: { id } });
     return { data: category };
   },
 
   async create(ctx) {
     const { data } = ctx.request.body;
-    const category = await strapi.db.query("api::category.category").create({ data });
+    const category = await strapi.db
+      .query("api::category.category")
+      .create({ data });
     return { data: category };
   },
 
   async update(ctx) {
     const { id } = ctx.params;
     const { data } = ctx.request.body;
-    const category = await strapi.db.query("api::category.category").update({ where: { id }, data });
+    const category = await strapi.db
+      .query("api::category.category")
+      .update({ where: { id }, data });
     return { data: category };
   },
 
   async delete(ctx) {
     const { id } = ctx.params;
-    const category = await strapi.db.query("api::category.category").delete({ where: { id } });
+    const category = await strapi.db
+      .query("api::category.category")
+      .delete({ where: { id } });
     return { data: category };
   },
 
   async adCounts(ctx) {
     try {
       // Fetch all category IDs in one query
-      const categories = await strapi.db.query("api::category.category").findMany({
-        select: ["id"],
-        limit: -1,
-      });
+      const categories = await strapi.db
+        .query("api::category.category")
+        .findMany({
+          select: ["id"],
+          limit: -1,
+        });
 
       // Count ads per category using parallel DB queries — one count call
       // per category, but all launched in parallel (not sequentially)
