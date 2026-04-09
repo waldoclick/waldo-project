@@ -27,6 +27,8 @@ interface SettingsState {
   terms: SectionSettings;
   packs: SectionSettings;
   regions: SectionSettings;
+  subscriptionPayments: SectionSettings;
+  subscriptionPros: SectionSettings;
   communes: SectionSettings;
   articles: SectionSettings;
 }
@@ -66,6 +68,12 @@ export const useSettingsStore = defineStore(
     });
     const packs = ref<SectionSettings>({ ...defaultSectionSettings });
     const regions = ref<SectionSettings>({ ...defaultSectionSettings });
+    const subscriptionPayments = ref<SectionSettings>({
+      ...defaultSectionSettings,
+    });
+    const subscriptionPros = ref<SectionSettings>({
+      ...defaultSectionSettings,
+    });
     const communes = ref<SectionSettings>({ ...defaultSectionSettings });
     const articles = ref<SectionSettings>({ ...defaultSectionSettings });
 
@@ -153,6 +161,16 @@ export const useSettingsStore = defineStore(
     const getPacksFilters = computed(() => ({
       sortBy: packs.value.sortBy,
       pageSize: packs.value.pageSize,
+    }));
+
+    const getSubscriptionPaymentsFilters = computed(() => ({
+      sortBy: subscriptionPayments.value.sortBy,
+      pageSize: subscriptionPayments.value.pageSize,
+    }));
+
+    const getSubscriptionProsFilters = computed(() => ({
+      sortBy: subscriptionPros.value.sortBy,
+      pageSize: subscriptionPros.value.pageSize,
     }));
 
     const getRegionsFilters = computed(() => ({
@@ -248,6 +266,10 @@ export const useSettingsStore = defineStore(
           return packs;
         case "regions":
           return regions;
+        case "subscriptionPayments":
+          return subscriptionPayments;
+        case "subscriptionPros":
+          return subscriptionPros;
         case "communes":
           return communes;
         case "articles":
@@ -279,6 +301,8 @@ export const useSettingsStore = defineStore(
       regions,
       communes,
       articles,
+      subscriptionPayments,
+      subscriptionPros,
       // Getters
       getOrdersFilters,
       getAdsPendingsFilters,
@@ -297,6 +321,8 @@ export const useSettingsStore = defineStore(
       getPoliciesFilters,
       getTermsFilters,
       getPacksFilters,
+      getSubscriptionPaymentsFilters,
+      getSubscriptionProsFilters,
       getRegionsFilters,
       getCommunesFilters,
       getArticlesFilters,
