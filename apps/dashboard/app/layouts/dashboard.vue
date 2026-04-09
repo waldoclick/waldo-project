@@ -55,7 +55,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
+import { useRoute } from "vue-router";
 import MenuDefault from "@/components/MenuDefault.vue";
 import MenuUsers from "@/components/MenuUsers.vue";
 import MenuMaintenance from "@/components/MenuMaintenance.vue";
@@ -64,6 +65,25 @@ import MenuMobile from "@/components/MenuMobile.vue";
 import HeaderDefault from "@/components/HeaderDefault.vue";
 import FooterDefault from "@/components/FooterDefault.vue";
 
+const route = useRoute();
+
+const resolveActiveMenu = (
+  path: string,
+): "default" | "users" | "maintenance" => {
+  if (path.startsWith("/users")) return "users";
+  if (path.startsWith("/maintenance")) return "maintenance";
+  return "default";
+};
+
 const isSidebarOpen = ref(false);
-const activeMenu = ref<"default" | "users" | "maintenance">("default");
+const activeMenu = ref<"default" | "users" | "maintenance">(
+  resolveActiveMenu(route.path),
+);
+
+watch(
+  () => route.path,
+  (path) => {
+    activeMenu.value = resolveActiveMenu(path);
+  },
+);
 </script>
