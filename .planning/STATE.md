@@ -130,6 +130,7 @@ Progress: [██████████] 100%
 | 260409-ea4 | Add bulk reorder endpoint to FAQs, policies, and terms in Strapi and update dashboard components | 2026-04-09 | 6b54691e | [260409-ea4-add-bulk-reorder-endpoint-to-faqs-polici](./quick/260409-ea4-add-bulk-reorder-endpoint-to-faqs-polici/) |
 | 260409-h79 | Crear vistas de subscription en el dashboard siguiendo exactamente el patrón existente de packs | 2026-04-09 | f9243ec4 | [260409-h79-crear-vistas-de-subscription-en-el-dashb](./quick/260409-h79-crear-vistas-de-subscription-en-el-dashb/) |
 | 260409-hvh | fix orders 500 - normalize array populate to object in order controller find method | 2026-04-09 | 798c69a9 | [260409-hvh-fix-orders-500-normalize-array-populate-](./quick/260409-hvh-fix-orders-500-normalize-array-populate-/) |
+| 260409-i26 | fix 500 error on orders/me endpoint - normalize sort and populate params | 2026-04-09 | 28b4565d | [260409-i26-fix-500-error-on-orders-me-endpoint](./quick/260409-i26-fix-500-error-on-orders-me-endpoint/) |
 
 ## Session Continuity
 
