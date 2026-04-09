@@ -4,7 +4,12 @@
     :class="{ 'layout--dashboard--open': isSidebarOpen }"
   >
     <div class="layout--dashboard__menu">
-      <MenuDefault @close="isSidebarOpen = false" />
+      <div class="layout--dashboard__menu__rail">
+        <MenuMain />
+      </div>
+      <div class="layout--dashboard__menu__nav">
+        <MenuDefault @close="isSidebarOpen = false" />
+      </div>
     </div>
     <div class="layout--dashboard__mobile">
       <MenuMobile
@@ -28,6 +33,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import MenuDefault from "@/components/MenuDefault.vue";
+import MenuMain from "@/components/MenuMain.vue";
 import MenuMobile from "@/components/MenuMobile.vue";
 import HeaderDefault from "@/components/HeaderDefault.vue";
 import FooterDefault from "@/components/FooterDefault.vue";
