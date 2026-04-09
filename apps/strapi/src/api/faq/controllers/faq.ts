@@ -13,13 +13,29 @@ export default {
     // Build filters
     const filters = query.filters || {};
 
+    // Normalize populate: db.query requires true (not "*") for all relations
+    const populate =
+      !query.populate || query.populate === "*" ? true : query.populate;
+
+    // Normalize orderBy: db.query requires object { field: dir }, not "field:dir" string
+    let orderBy: Record<string, string> = { createdAt: "desc" };
+    if (query.sort) {
+      const s = Array.isArray(query.sort) ? query.sort[0] : query.sort;
+      if (typeof s === "string" && s.includes(":")) {
+        const [f, d] = s.split(":");
+        orderBy = { [f]: d.toLowerCase() };
+      } else if (s && typeof s === "object") {
+        orderBy = s as Record<string, string>;
+      }
+    }
+
     // Get FAQs with pagination
     const faqs = await strapi.db.query("api::faq.faq").findMany({
       where: filters,
-      populate: query.populate || "*",
+      populate: populate as unknown as Record<string, unknown>,
       offset: (page - 1) * pageSize,
       limit: pageSize,
-      orderBy: query.sort || { createdAt: "desc" },
+      orderBy,
     });
 
     // Get total count
