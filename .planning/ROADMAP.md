@@ -205,3 +205,15 @@ Plans:
 - [x] 120-02-PLAN.md — Fix charge-before-activate in proResponse + subscription-pro record creation
 - [x] 120-03-PLAN.md — Update cron + cancellation service + middleware to use subscription-pro
 - [x] 120-04-PLAN.md — Update tests + full verification sweep
+
+### Phase 121: Clean subscription data model — move pro_expires_at out of user into subscription-payment as period_end
+
+**Goal:** Complete the subscription data model cleanup by removing `pro_expires_at` from the user schema and adding `period_end` to `subscription-payment`. The user entity retains only `pro_status`. The cron billing loop is refactored to query active subscription-payment records by `period_end` instead of filtering users by `pro_expires_at`. The initial inscription charge in `proResponse` creates the first subscription-payment record with `period_end`. All renewals are tracked exclusively in `subscription-payment` rows, one per billing period.
+**Requirements**: [SUB-MODEL-121-01, SUB-MODEL-121-02, SUB-MODEL-121-03, SUB-MODEL-121-04]
+**Depends on:** Phase 120
+**Plans:** 3 plans
+
+Plans:
+- [ ] 121-01-PLAN.md — Schema changes + migration + middleware + proResponse subscription-payment creation
+- [ ] 121-02-PLAN.md — Cron rewrite: Step 1 + Step 4 + chargeUser to use period_end from subscription-payment
+- [ ] 121-03-PLAN.md — Test updates + proResponse test implementation + final verification sweep
