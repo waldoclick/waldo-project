@@ -69,23 +69,17 @@ export default factories.createCoreController(
         }
 
         // Obtener órdenes con paginación
-        const orders = await strapi.entityService.findMany("api::order.order", {
-          filters: filters as unknown as Parameters<
-            typeof strapi.entityService.findMany
-          >[1]["filters"],
+        const orders = await strapi.db.query("api::order.order").findMany({
+          where: filters,
           populate: populate as unknown as Record<string, unknown>,
-          start: (page - 1) * pageSize,
+          offset: (page - 1) * pageSize,
           limit: pageSize,
-          sort: sort as unknown as Parameters<
-            typeof strapi.entityService.findMany
-          >[1]["sort"],
+          orderBy: sort,
         });
 
         // Obtener el total de registros
-        const total = await strapi.entityService.count("api::order.order", {
-          filters: filters as unknown as Parameters<
-            typeof strapi.entityService.count
-          >[1]["filters"],
+        const total = await strapi.db.query("api::order.order").count({
+          where: filters,
         });
 
         // Calcular paginación
@@ -144,23 +138,17 @@ export default factories.createCoreController(
         };
 
         // Obtener órdenes del usuario con paginación
-        const orders = await strapi.entityService.findMany("api::order.order", {
-          filters: filterClause as unknown as Parameters<
-            typeof strapi.entityService.findMany
-          >[1]["filters"],
-          populate: populate as unknown as Parameters<
-            typeof strapi.entityService.findMany
-          >[1]["populate"],
-          start: (page - 1) * pageSize,
+        const orders = await strapi.db.query("api::order.order").findMany({
+          where: filterClause,
+          populate: populate as unknown as Record<string, unknown>,
+          offset: (page - 1) * pageSize,
           limit: pageSize,
-          sort: sort as unknown as Parameters<
-            typeof strapi.entityService.findMany
-          >[1]["sort"],
+          orderBy: sort,
         });
 
         // Obtener el total de registros
-        const total = await strapi.entityService.count("api::order.order", {
-          filters: filterClause,
+        const total = await strapi.db.query("api::order.order").count({
+          where: filterClause,
         });
 
         // Retornar las órdenes con la información de paginación
@@ -190,16 +178,14 @@ export default factories.createCoreController(
         const startDate = new Date(`${year}-01-01T00:00:00.000Z`);
         const endDate = new Date(`${year + 1}-01-01T00:00:00.000Z`);
 
-        const orders = await strapi.entityService.findMany("api::order.order", {
-          filters: {
+        const orders = await strapi.db.query("api::order.order").findMany({
+          where: {
             createdAt: {
               $gte: startDate.toISOString(),
               $lt: endDate.toISOString(),
             },
-          } as unknown as Parameters<
-            typeof strapi.entityService.findMany
-          >[1]["filters"],
-          fields: ["amount", "createdAt"],
+          },
+          select: ["amount", "createdAt"],
           limit: -1, // fetch all matching orders without pagination
         });
 
@@ -256,15 +242,11 @@ export default factories.createCoreController(
           };
         }
 
-        const orders = await strapi.entityService.findMany("api::order.order", {
-          filters: filters as unknown as Parameters<
-            typeof strapi.entityService.findMany
-          >[1]["filters"],
+        const orders = await strapi.db.query("api::order.order").findMany({
+          where: filters,
           populate: ["user", "ad"] as unknown as Record<string, unknown>,
           limit: -1,
-          sort: sort as unknown as Parameters<
-            typeof strapi.entityService.findMany
-          >[1]["sort"],
+          orderBy: sort,
         });
 
         const rows = (orders as unknown as ExportOrder[]).map((o) => [

@@ -469,17 +469,17 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
       const userFilter = isManager ? {} : { user: userId };
 
       const [published, review, expired, rejected, banned] = await Promise.all([
-        strapi.entityService.count("api::ad.ad", {
-          filters: {
+        strapi.db.query("api::ad.ad").count({
+          where: {
             ...userFilter,
             active: true,
             banned: false,
             rejected: false,
             remaining_days: { $gt: 0 },
-          } as unknown as Record<string, unknown>,
+          },
         }),
-        strapi.entityService.count("api::ad.ad", {
-          filters: {
+        strapi.db.query("api::ad.ad").count({
+          where: {
             ...userFilter,
             active: false,
             banned: false,
@@ -487,28 +487,22 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
             draft: false,
             remaining_days: { $gt: 0 },
             ad_reservation: { $ne: null },
-          } as unknown as Record<string, unknown>,
+          },
         }),
-        strapi.entityService.count("api::ad.ad", {
-          filters: {
+        strapi.db.query("api::ad.ad").count({
+          where: {
             ...userFilter,
             active: false,
             banned: false,
             rejected: false,
             remaining_days: 0,
-          } as unknown as Record<string, unknown>,
+          },
         }),
-        strapi.entityService.count("api::ad.ad", {
-          filters: { ...userFilter, rejected: true } as unknown as Record<
-            string,
-            unknown
-          >,
+        strapi.db.query("api::ad.ad").count({
+          where: { ...userFilter, rejected: true },
         }),
-        strapi.entityService.count("api::ad.ad", {
-          filters: { ...userFilter, banned: true } as unknown as Record<
-            string,
-            unknown
-          >,
+        strapi.db.query("api::ad.ad").count({
+          where: { ...userFilter, banned: true },
         }),
       ]);
 

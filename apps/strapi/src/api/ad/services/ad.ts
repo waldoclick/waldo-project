@@ -776,18 +776,18 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
 
       // Liberar reservas asociadas al anuncio rechazado
       if (ad.ad_reservation?.id) {
-        await strapi.entityService.update(
-          "api::ad-reservation.ad-reservation",
-          ad.ad_reservation.id,
-          { data: { ad: null } as unknown as Record<string, unknown> }
-        );
+        await strapi.db.query("api::ad-reservation.ad-reservation").update({
+          where: { id: ad.ad_reservation.id },
+          data: { ad: null },
+        });
       }
       if (ad.ad_featured_reservation?.id) {
-        await strapi.entityService.update(
-          "api::ad-featured-reservation.ad-featured-reservation",
-          ad.ad_featured_reservation.id,
-          { data: { ad: null } as unknown as Record<string, unknown> }
-        );
+        await strapi.db
+          .query("api::ad-featured-reservation.ad-featured-reservation")
+          .update({
+            where: { id: ad.ad_featured_reservation.id },
+            data: { ad: null },
+          });
       }
 
       // Enviar email de rechazo al usuario
@@ -885,18 +885,18 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
 
       // Liberar reservas asociadas al anuncio baneado
       if (ad.ad_reservation?.id) {
-        await strapi.entityService.update(
-          "api::ad-reservation.ad-reservation",
-          ad.ad_reservation.id,
-          { data: { ad: null } as unknown as Record<string, unknown> }
-        );
+        await strapi.db.query("api::ad-reservation.ad-reservation").update({
+          where: { id: ad.ad_reservation.id },
+          data: { ad: null },
+        });
       }
       if (ad.ad_featured_reservation?.id) {
-        await strapi.entityService.update(
-          "api::ad-featured-reservation.ad-featured-reservation",
-          ad.ad_featured_reservation.id,
-          { data: { ad: null } as unknown as Record<string, unknown> }
-        );
+        await strapi.db
+          .query("api::ad-featured-reservation.ad-featured-reservation")
+          .update({
+            where: { id: ad.ad_featured_reservation.id },
+            data: { ad: null },
+          });
       }
 
       // Enviar email de baneo al usuario
@@ -1224,13 +1224,12 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
         };
       }
 
-      await strapi.entityService.update("api::ad.ad", adId, {
+      await strapi.db.query("api::ad.ad").update({
+        where: { id: adId },
         data: {
           ...adPayload,
           draft: true,
-        } as unknown as Parameters<
-          typeof strapi.entityService.update
-        >[2]["data"],
+        },
       });
 
       logger.info("Borrador de anuncio actualizado", {
