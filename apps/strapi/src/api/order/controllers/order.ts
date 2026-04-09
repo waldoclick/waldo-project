@@ -59,14 +59,23 @@ export default factories.createCoreController(
           }
         }
 
-        // Normalize populate: db.query requires true (not "*") for all relations
-        const populate =
-          !query.populate || query.populate === "*" ? true : query.populate;
+        // Normalize populate: db.query requires true or object, never array or "*"
+        let populate: true | Record<string, unknown>;
+        if (!query.populate || query.populate === "*") {
+          populate = true;
+        } else if (Array.isArray(query.populate)) {
+          populate = (query.populate as string[]).reduce((acc, key) => {
+            acc[key] = true;
+            return acc;
+          }, {} as Record<string, unknown>);
+        } else {
+          populate = query.populate as Record<string, unknown>;
+        }
 
         // Obtener órdenes con paginación
         const orders = await strapi.db.query("api::order.order").findMany({
           where: filters,
-          populate: populate as unknown as Record<string, unknown>,
+          populate,
           offset: (page - 1) * pageSize,
           limit: pageSize,
           orderBy: sort,
