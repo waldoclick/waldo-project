@@ -129,6 +129,7 @@ Progress: [██████████] 100%
 | 260408-w1e | restore active badge in MemoPro for active PRO subscriptions and guard card line when card data is null | 2026-04-08 | b14a2ebf | [260408-w1e-en-el-banner-de-pro-cuando-pro-esta-acti](./quick/260408-w1e-en-el-banner-de-pro-cuando-pro-esta-acti/) |
 | 260409-ea4 | Add bulk reorder endpoint to FAQs, policies, and terms in Strapi and update dashboard components | 2026-04-09 | 6b54691e | [260409-ea4-add-bulk-reorder-endpoint-to-faqs-polici](./quick/260409-ea4-add-bulk-reorder-endpoint-to-faqs-polici/) |
 | 260409-h79 | Crear vistas de subscription en el dashboard siguiendo exactamente el patrón existente de packs | 2026-04-09 | f9243ec4 | [260409-h79-crear-vistas-de-subscription-en-el-dashb](./quick/260409-h79-crear-vistas-de-subscription-en-el-dashb/) |
+| 260409-hvh | fix orders 500 - normalize array populate to object in order controller find method | 2026-04-09 | 798c69a9 | [260409-hvh-fix-orders-500-normalize-array-populate-](./quick/260409-hvh-fix-orders-500-normalize-array-populate-/) |
 
 ## Session Continuity
 
