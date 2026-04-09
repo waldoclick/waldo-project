@@ -389,7 +389,8 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 
 ## Current State
 
-**Last shipped:** v1.46 (2026-04-05) — Phase 112 complete: Ad wizard ownership validation — server-side ownership guards on saveDraft/update/delete in Strapi; client-side userId tracking with wizard reset guard in anunciar/index.vue
+**Last shipped:** Phase 120 complete (2026-04-09) — PRO subscription model refactor: `subscription-pro` collection type created, card data migrated out of user, charge-before-activate ordering fixed, cron/cancellation read path migrated, 39 tests passing
+**Previously shipped:** v1.46 (2026-04-05) — Phase 112 complete: Ad wizard ownership validation — server-side ownership guards on saveDraft/update/delete in Strapi; client-side userId tracking with wizard reset guard in anunciar/index.vue
 **v1.46 PRO Subscriptions (2026-03-29):** Webpay Oneclick full subscription lifecycle — Oneclick Mall inscription, daily charge cron with 3-day retry, cancellation with period-end expiry, PRO checkout page with Facto tax documents, registration consent checkboxes
 **Also shipped recently:** v1.45 (2026-03-20) — User Onboarding; v1.44 (2026-03-19) — Google One Tap Sign-In; v1.43 (2026-03-19) — Cross-App Session Replacement
 
@@ -551,5 +552,18 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ Registration step 2 shows required age confirmation and terms checkboxes (`.oneOf([true])` yup validation); server rejects if either field not `true` — v1.46
 - ✓ `accepted_age_confirmation` and `accepted_terms` boolean fields stored on Strapi user record (`default: false`) — v1.46
 
+## Validated Requirements (Phase 120 — PRO subscription model refactor)
+
+- ✓ `subscription-pro` collection type created with 6 attributes and oneToOne relation to User — Phase 120
+- ✓ Orphaned `pro` boolean removed from user schema — Phase 120
+- ✓ Idempotent bootstrap migration copies card data from existing PRO users to `subscription-pro` records — Phase 120
+- ✓ `proResponse` charges user before activating PRO status; failed charge redirects to `/pro/error?reason=charge-failed` without activation — Phase 120
+- ✓ Successful PRO inscription creates a `subscription-pro` record in addition to updating the user — Phase 120
+- ✓ Pro error page handles `charge-failed` reason with descriptive title and message — Phase 120
+- ✓ Cron reads `tbk_user` from `subscription_pro` relation (not user fields); null guard skips users without it — Phase 120
+- ✓ Cancellation service reads and clears `tbk_user` on `subscription-pro` record; dual-writes `pro_status` to user entity — Phase 120
+- ✓ `PROTECTED_USER_FIELDS` unchanged — card fields retained on user schema during dual-write transition — Phase 120
+- ✓ All 39 tests pass: cron, cancellation, middleware, bootstrap migration — Phase 120
+
 ---
-*Last updated: 2026-04-06 after Phase 118 (enforce-root-level-tests-directory-for-strapi — 27 test files moved from scattered src/ locations to apps/strapi/tests/ with mirrored structure, all imports updated, 22/27 tests passing baseline preserved)*
+*Last updated: 2026-04-09 after Phase 120 (PRO subscription model refactor — subscription-pro collection type, charge-before-activate fix, cron/cancellation read-path migration, 39 tests passing)*
