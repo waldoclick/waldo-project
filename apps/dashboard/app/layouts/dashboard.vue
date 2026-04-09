@@ -24,6 +24,10 @@
             v-if="activeMenu === 'default'"
             @close="isSidebarOpen = false"
           />
+          <MenuUsers
+            v-else-if="activeMenu === 'users'"
+            @close="isSidebarOpen = false"
+          />
           <MenuMaintenance
             v-else-if="activeMenu === 'maintenance'"
             @close="isSidebarOpen = false"
@@ -53,6 +57,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import MenuDefault from "@/components/MenuDefault.vue";
+import MenuUsers from "@/components/MenuUsers.vue";
 import MenuMaintenance from "@/components/MenuMaintenance.vue";
 import MenuMain from "@/components/MenuMain.vue";
 import MenuMobile from "@/components/MenuMobile.vue";
@@ -60,5 +65,5 @@ import HeaderDefault from "@/components/HeaderDefault.vue";
 import FooterDefault from "@/components/FooterDefault.vue";
 
 const isSidebarOpen = ref(false);
-const activeMenu = ref<"default" | "maintenance">("default");
+const activeMenu = ref<"default" | "users" | "maintenance">("default");
 </script>

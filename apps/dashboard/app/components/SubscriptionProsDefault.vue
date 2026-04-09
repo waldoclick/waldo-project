@@ -197,7 +197,7 @@ const sortOptions = [
 const router = useRouter();
 
 const handleViewItem = (itemId: number) => {
-  router.push(`/subscription-pros/${itemId}`);
+  router.push(`/users/subscription-pros/${itemId}`);
 };
 
 watch(

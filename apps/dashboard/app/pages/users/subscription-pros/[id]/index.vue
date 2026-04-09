@@ -64,7 +64,7 @@ const apiClient = useApiClient();
 
 const title = computed(() => item.value?.user?.email || "Subscripción PRO");
 const breadcrumbs = computed(() => [
-  { label: "Subscripciones PRO", to: "/subscription-pros" },
+  { label: "Subscripciones PRO", to: "/users/subscription-pros" },
   ...(item.value?.user?.email ? [{ label: item.value.user.email }] : []),
 ]);
 

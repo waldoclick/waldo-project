@@ -106,7 +106,9 @@
       "Bash(sed -i 's|router\\\\.push\\(\"/communes\"\\)|router.push\\(\"/maintenance/communes\"\\)|g' apps/dashboard/app/components/FormCommune.vue)",
       "Bash(sed -i 's|router\\\\.push\\(\"/regions\"\\)|router.push\\(\"/maintenance/regions\"\\)|g' apps/dashboard/app/components/FormRegion.vue)",
       "Bash(sed -i 's|router\\\\.push\\(\"/categories\"\\)|router.push\\(\"/maintenance/categories\"\\)|g' apps/dashboard/app/components/FormCategory.vue)",
-      "Bash(sed -i 's|router\\\\.push\\(\"/terms\"\\)|router.push\\(\"/maintenance/terms\"\\)|g' apps/dashboard/app/components/FormTerm.vue)"
+      "Bash(sed -i 's|router\\\\.push\\(\"/terms\"\\)|router.push\\(\"/maintenance/terms\"\\)|g' apps/dashboard/app/components/FormTerm.vue)",
+      "Bash(sort echo:*)",
+      "Skill(gsd:resume-work)"
     ]
   }
 }

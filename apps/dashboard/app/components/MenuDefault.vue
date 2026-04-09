@@ -203,75 +203,12 @@
           </li>
         </ul>
       </li>
-
-      <!-- Usuarios -->
-      <li
-        class="menu--default__item"
-        :class="{ 'menu--default__item--active': isRouteActive('/users') }"
-      >
-        <NuxtLink to="/users" class="menu--default__link">
-          <Users class="menu--default__icon" />
-          <span>Usuarios</span>
-        </NuxtLink>
-      </li>
-
-      <!-- Subscripciones PRO -->
-      <li
-        class="menu--default__item"
-        :class="{
-          'menu--default__item--active': isSubscripcionesActive,
-          'menu--default__item--expanded': openMenu === 'subscripciones',
-        }"
-      >
-        <button
-          class="menu--default__link menu--default__link--button"
-          @click="toggleMenu('subscripciones')"
-        >
-          <CreditCard class="menu--default__icon" />
-          <span>Subscripciones PRO</span>
-          <ChevronDown
-            v-if="openMenu === 'subscripciones'"
-            class="menu--default__arrow"
-          />
-          <ChevronRight v-else class="menu--default__arrow" />
-        </button>
-        <ul v-if="openMenu === 'subscripciones'" class="menu--default__sublist">
-          <li
-            class="menu--default__subitem"
-            :class="{
-              'menu--default__subitem--active':
-                isRouteActive('/subscription-pros'),
-            }"
-          >
-            <NuxtLink to="/subscription-pros" class="menu--default__sublink">
-              <BadgeCheck class="menu--default__subicon" />
-              <span>Suscripciones</span>
-            </NuxtLink>
-          </li>
-          <li
-            class="menu--default__subitem"
-            :class="{
-              'menu--default__subitem--active': isRouteActive(
-                '/subscription-payments',
-              ),
-            }"
-          >
-            <NuxtLink
-              to="/subscription-payments"
-              class="menu--default__sublink"
-            >
-              <Receipt class="menu--default__subicon" />
-              <span>Pagos</span>
-            </NuxtLink>
-          </li>
-        </ul>
-      </li>
     </ul>
   </nav>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import {
   LayoutDashboard,
@@ -279,7 +216,6 @@ import {
   FileText,
   Calendar,
   Star,
-  Users,
   ChevronRight,
   ChevronDown,
   Clock,
@@ -289,9 +225,6 @@ import {
   XCircle,
   XOctagon,
   Circle,
-  CreditCard,
-  BadgeCheck,
-  Receipt,
 } from "lucide-vue-next";
 
 const emit = defineEmits<{ (e: "close"): void }>();
@@ -306,14 +239,6 @@ const isRouteActive = (path: string): boolean => {
   }
   return route.path.startsWith(path);
 };
-
-// Detectar si alguna subscripción está activa
-const isSubscripcionesActive = computed(() => {
-  return (
-    isRouteActive("/subscription-pros") ||
-    isRouteActive("/subscription-payments")
-  );
-});
 
 // Toggle del menú (solo uno abierto a la vez)
 const toggleMenu = (menu: string) => {
@@ -330,11 +255,6 @@ watch(
       openMenu.value = "reservations";
     } else if (path.startsWith("/featured")) {
       openMenu.value = "featured";
-    } else if (
-      path.startsWith("/subscription-pros") ||
-      path.startsWith("/subscription-payments")
-    ) {
-      openMenu.value = "subscripciones";
     } else {
       openMenu.value = null;
     }

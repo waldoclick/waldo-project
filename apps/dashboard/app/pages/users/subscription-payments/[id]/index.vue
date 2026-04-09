@@ -101,7 +101,7 @@ const apiClient = useApiClient();
 
 const title = computed(() => `Pago #${item.value?.id ?? ""}`);
 const breadcrumbs = computed(() => [
-  { label: "Pagos de subscripción", to: "/subscription-payments" },
+  { label: "Pagos de subscripción", to: "/users/subscription-payments" },
   ...(item.value ? [{ label: `Pago #${item.value.id}` }] : []),
 ]);
 

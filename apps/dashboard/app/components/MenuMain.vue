@@ -11,8 +11,9 @@
     <button
       type="button"
       class="menu--main__btn"
+      :class="{ 'menu--main__btn--active': activeMenu === 'users' }"
       aria-label="Usuarios"
-      @click="emit('select', 'default')"
+      @click="emit('select', 'users')"
     >
       <Users class="menu--main__icon" />
     </button>
@@ -31,8 +32,8 @@
 <script setup lang="ts">
 import { LayoutDashboard, Users, Settings } from "lucide-vue-next";
 
-defineProps<{ activeMenu: "default" | "maintenance" }>();
+defineProps<{ activeMenu: "default" | "users" | "maintenance" }>();
 const emit = defineEmits<{
-  (e: "select", panel: "default" | "maintenance"): void;
+  (e: "select", panel: "default" | "users" | "maintenance"): void;
 }>();
 </script>

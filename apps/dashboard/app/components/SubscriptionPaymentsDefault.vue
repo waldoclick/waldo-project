@@ -219,7 +219,7 @@ const sortOptions = [
 const router = useRouter();
 
 const handleViewItem = (itemId: number) => {
-  router.push(`/subscription-payments/${itemId}`);
+  router.push(`/users/subscription-payments/${itemId}`);
 };
 
 watch(
