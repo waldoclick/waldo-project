@@ -611,6 +611,12 @@ class PaymentController {
           tbk_user: result.tbkUser,
           card_type: result.cardType,
           charge: chargeResult.rawResponse,
+          // Flattened for receipt display (page reads payment_response.* directly)
+          authorization_code:
+            chargeResult.rawResponse?.details?.[0]?.authorization_code,
+          payment_type_code:
+            chargeResult.rawResponse?.details?.[0]?.payment_type_code,
+          card_detail: chargeResult.rawResponse?.card_detail,
         },
         document_details: userDocDetails,
         items: proItems,
