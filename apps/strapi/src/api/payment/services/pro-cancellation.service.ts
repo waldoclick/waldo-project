@@ -50,27 +50,14 @@ export class ProCancellationService {
     }
 
     // 3. Clear subscription-pro tbk_user (card enrollment is deleted)
-    const subProUpdate = strapi.entityService.update as (
-      _uid: string,
-      _id: number,
-      _params: { data: Record<string, unknown> }
-    ) => Promise<unknown>;
-    await subProUpdate("api::subscription-pro.subscription-pro", subPro.id, {
-      data: { tbk_user: null },
-    });
+    await strapi.db
+      .query("api::subscription-pro.subscription-pro")
+      .update({ where: { id: subPro.id }, data: { tbk_user: null } });
 
     // 4. Update user: set cancelled status
-    await strapi.entityService.update(
-      "plugin::users-permissions.user",
-      userId,
-      {
-        data: {
-          pro_status: "cancelled",
-        } as unknown as Parameters<
-          typeof strapi.entityService.update
-        >[2]["data"],
-      }
-    );
+    await strapi.db
+      .query("plugin::users-permissions.user")
+      .update({ where: { id: userId }, data: { pro_status: "cancelled" } });
 
     return { success: true };
   }
