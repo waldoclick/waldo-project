@@ -58,12 +58,16 @@ const mockDocumentDetails = userUtilsMock.documentDetails as jest.Mock;
 // Mock strapi global — use routing pattern to dispatch by UID
 const mockSubProFindOne = jest.fn();
 const mockAdFindMany = jest.fn().mockResolvedValue([]);
-const mockEntityServiceCreate = jest.fn();
-const mockEntityServiceUpdate = jest.fn();
+const mockSubProUpdate = jest.fn();
+const mockUserUpdate = jest.fn();
+const mockDocumentsCreate = jest.fn();
 
 const mockDbQuery = jest.fn().mockImplementation((uid: string) => {
   if (uid === "api::subscription-pro.subscription-pro") {
-    return { findOne: mockSubProFindOne };
+    return { findOne: mockSubProFindOne, update: mockSubProUpdate };
+  }
+  if (uid === "plugin::users-permissions.user") {
+    return { update: mockUserUpdate };
   }
   if (uid === "api::ad.ad") {
     return {
@@ -76,13 +80,12 @@ const mockDbQuery = jest.fn().mockImplementation((uid: string) => {
 
 Object.assign(global, {
   strapi: {
-    entityService: {
-      create: mockEntityServiceCreate,
-      update: mockEntityServiceUpdate,
-    },
     db: {
       query: mockDbQuery,
     },
+    documents: jest.fn().mockImplementation(() => ({
+      create: mockDocumentsCreate,
+    })),
     log: {
       info: jest.fn(),
       error: jest.fn(),
@@ -151,6 +154,26 @@ describe("proResponse charge-before-activate", () => {
     process.env.PRO_MONTHLY_PRICE = "9990";
     process.env.FRONTEND_URL = "https://waldo.cl";
     mockAdFindMany.mockResolvedValue([]);
+    mockDbQuery.mockImplementation((uid: string) => {
+      if (uid === "api::subscription-pro.subscription-pro") {
+        return { findOne: mockSubProFindOne, update: mockSubProUpdate };
+      }
+      if (uid === "plugin::users-permissions.user") {
+        return { update: mockUserUpdate };
+      }
+      if (uid === "api::ad.ad") {
+        return {
+          findMany: mockAdFindMany,
+          update: jest.fn().mockResolvedValue({}),
+        };
+      }
+      return {};
+    });
+    (
+      strapi as unknown as { documents: jest.Mock }
+    ).documents.mockImplementation(() => ({
+      create: mockDocumentsCreate,
+    }));
   });
 
   describe("successful inscription + charge", () => {
@@ -165,11 +188,11 @@ describe("proResponse charge-before-activate", () => {
       );
       mockSubProFindOne.mockResolvedValueOnce(subPro);
       mockAuthorizeCharge.mockResolvedValueOnce(makeAuthorizeChargeSuccess());
-      mockEntityServiceUpdate.mockResolvedValue({});
-      mockEntityServiceCreate.mockResolvedValueOnce({
-        id: 200,
+      mockSubProUpdate.mockResolvedValue({});
+      mockDocumentsCreate.mockResolvedValueOnce({
         documentId: "payment-doc-id",
       });
+      mockUserUpdate.mockResolvedValue({});
       mockDocumentDetails.mockResolvedValueOnce({ name: "Test User" });
       mockGenerateFactoDocument.mockResolvedValueOnce({ id: "facto-1" });
       mockCreateAdOrder.mockResolvedValueOnce({
@@ -192,14 +215,8 @@ describe("proResponse charge-before-activate", () => {
       // Assert: user pro_status update came AFTER authorizeCharge
       const authorizeChargeCallOrder =
         mockAuthorizeCharge.mock.invocationCallOrder[0];
-      const userUpdateCalls = mockEntityServiceUpdate.mock.calls.filter(
-        (call) => call[0] === "plugin::users-permissions.user"
-      );
-      expect(userUpdateCalls.length).toBeGreaterThan(0);
-      const userUpdateCallOrder =
-        mockEntityServiceUpdate.mock.invocationCallOrder[
-          mockEntityServiceUpdate.mock.calls.indexOf(userUpdateCalls[0])
-        ];
+      expect(mockUserUpdate.mock.calls.length).toBeGreaterThan(0);
+      const userUpdateCallOrder = mockUserUpdate.mock.invocationCallOrder[0];
       expect(authorizeChargeCallOrder).toBeLessThan(userUpdateCallOrder);
     });
 
@@ -214,8 +231,11 @@ describe("proResponse charge-before-activate", () => {
       );
       mockSubProFindOne.mockResolvedValueOnce(subPro);
       mockAuthorizeCharge.mockResolvedValueOnce(makeAuthorizeChargeSuccess());
-      mockEntityServiceUpdate.mockResolvedValue({});
-      mockEntityServiceCreate.mockResolvedValueOnce({ id: 200 });
+      mockSubProUpdate.mockResolvedValue({});
+      mockDocumentsCreate.mockResolvedValueOnce({
+        documentId: "payment-doc-id",
+      });
+      mockUserUpdate.mockResolvedValue({});
       mockDocumentDetails.mockResolvedValueOnce({ name: "Test User" });
       mockGenerateFactoDocument.mockResolvedValueOnce({ id: "facto-1" });
       mockCreateAdOrder.mockResolvedValueOnce({
@@ -227,10 +247,9 @@ describe("proResponse charge-before-activate", () => {
       await PaymentController.proResponse(ctx as unknown as Context);
 
       // Assert: subscription-pro updated with tbk_user, card data, inscription_token cleared
-      expect(mockEntityServiceUpdate).toHaveBeenCalledWith(
-        "api::subscription-pro.subscription-pro",
-        subPro.id,
+      expect(mockSubProUpdate).toHaveBeenCalledWith(
         expect.objectContaining({
+          where: { id: subPro.id },
           data: expect.objectContaining({
             tbk_user: "tbk-card-token-xyz",
             card_type: "Visa",
@@ -252,8 +271,11 @@ describe("proResponse charge-before-activate", () => {
       );
       mockSubProFindOne.mockResolvedValueOnce(subPro);
       mockAuthorizeCharge.mockResolvedValueOnce(makeAuthorizeChargeSuccess());
-      mockEntityServiceUpdate.mockResolvedValue({});
-      mockEntityServiceCreate.mockResolvedValueOnce({ id: 200 });
+      mockSubProUpdate.mockResolvedValue({});
+      mockDocumentsCreate.mockResolvedValueOnce({
+        documentId: "payment-doc-id",
+      });
+      mockUserUpdate.mockResolvedValue({});
       mockDocumentDetails.mockResolvedValueOnce({ name: "Test User" });
       mockGenerateFactoDocument.mockResolvedValueOnce({ id: "facto-1" });
       mockCreateAdOrder.mockResolvedValueOnce({
@@ -265,15 +287,16 @@ describe("proResponse charge-before-activate", () => {
       await PaymentController.proResponse(ctx as unknown as Context);
 
       // Assert: user updated with pro_status=active only
-      const userUpdateCall = mockEntityServiceUpdate.mock.calls.find(
-        (call) => call[0] === "plugin::users-permissions.user"
+      expect(mockUserUpdate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: subPro.user.id },
+          data: expect.objectContaining({ pro_status: "active" }),
+        })
       );
+      const userUpdateCall = mockUserUpdate.mock.calls[0];
       expect(userUpdateCall).toBeDefined();
-      expect(userUpdateCall![2].data).toEqual(
-        expect.objectContaining({ pro_status: "active" })
-      );
       // Must NOT include pro_expires_at (field no longer exists on user)
-      expect(userUpdateCall![2].data).not.toHaveProperty("pro_expires_at");
+      expect(userUpdateCall[0].data).not.toHaveProperty("pro_expires_at");
     });
 
     it("should create first subscription-payment with period_end and status=approved", async () => {
@@ -287,8 +310,11 @@ describe("proResponse charge-before-activate", () => {
       );
       mockSubProFindOne.mockResolvedValueOnce(subPro);
       mockAuthorizeCharge.mockResolvedValueOnce(makeAuthorizeChargeSuccess());
-      mockEntityServiceUpdate.mockResolvedValue({});
-      mockEntityServiceCreate.mockResolvedValueOnce({ id: 200 });
+      mockSubProUpdate.mockResolvedValue({});
+      mockDocumentsCreate.mockResolvedValueOnce({
+        documentId: "payment-doc-id",
+      });
+      mockUserUpdate.mockResolvedValue({});
       mockDocumentDetails.mockResolvedValueOnce({ name: "Test User" });
       mockGenerateFactoDocument.mockResolvedValueOnce({ id: "facto-1" });
       mockCreateAdOrder.mockResolvedValueOnce({
@@ -300,8 +326,7 @@ describe("proResponse charge-before-activate", () => {
       await PaymentController.proResponse(ctx as unknown as Context);
 
       // Assert: subscription-payment created with period_end and all required fields
-      expect(mockEntityServiceCreate).toHaveBeenCalledWith(
-        "api::subscription-payment.subscription-payment",
+      expect(mockDocumentsCreate).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({
             user: subPro.user.id,
@@ -326,8 +351,11 @@ describe("proResponse charge-before-activate", () => {
       );
       mockSubProFindOne.mockResolvedValueOnce(subPro);
       mockAuthorizeCharge.mockResolvedValueOnce(makeAuthorizeChargeSuccess());
-      mockEntityServiceUpdate.mockResolvedValue({});
-      mockEntityServiceCreate.mockResolvedValueOnce({ id: 200 });
+      mockSubProUpdate.mockResolvedValue({});
+      mockDocumentsCreate.mockResolvedValueOnce({
+        documentId: "payment-doc-id",
+      });
+      mockUserUpdate.mockResolvedValue({});
       mockDocumentDetails.mockResolvedValueOnce({ name: "Test User" });
       mockGenerateFactoDocument.mockResolvedValueOnce({ id: "facto-1" });
       mockCreateAdOrder.mockResolvedValueOnce({
@@ -366,10 +394,7 @@ describe("proResponse charge-before-activate", () => {
       await PaymentController.proResponse(ctx as unknown as Context);
 
       // Assert: user was NOT updated (pro_status remains unchanged)
-      const userUpdateCall = mockEntityServiceUpdate.mock.calls.find(
-        (call) => call[0] === "plugin::users-permissions.user"
-      );
-      expect(userUpdateCall).toBeUndefined();
+      expect(mockUserUpdate).not.toHaveBeenCalled();
     });
 
     it("should NOT update subscription-pro with card data when charge fails", async () => {
@@ -392,10 +417,7 @@ describe("proResponse charge-before-activate", () => {
       await PaymentController.proResponse(ctx as unknown as Context);
 
       // Assert: subscription-pro was NOT updated with card data
-      const subProUpdateCall = mockEntityServiceUpdate.mock.calls.find(
-        (call) => call[0] === "api::subscription-pro.subscription-pro"
-      );
-      expect(subProUpdateCall).toBeUndefined();
+      expect(mockSubProUpdate).not.toHaveBeenCalled();
     });
 
     it("should redirect to /pro/error?reason=charge-failed when charge fails", async () => {

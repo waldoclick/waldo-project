@@ -21,16 +21,13 @@ const mockDbQuery = jest.fn().mockImplementation((uid: string) => {
     return { findMany: mockUserFindMany };
   }
   if (uid === "api::subscription-pro.subscription-pro") {
-    return { findOne: mockSubProFindOne };
+    return { findOne: mockSubProFindOne, create: mockCreate };
   }
   return {};
 });
 
 Object.assign(global, {
   strapi: {
-    entityService: {
-      create: mockCreate,
-    },
     db: {
       query: mockDbQuery,
     },
@@ -79,7 +76,6 @@ describe("migrateSubscriptionPro", () => {
 
       // Assert: correct field mapping for active user
       expect(mockCreate).toHaveBeenCalledWith(
-        "api::subscription-pro.subscription-pro",
         expect.objectContaining({
           data: expect.objectContaining({
             user: activeUser.id,
@@ -94,7 +90,6 @@ describe("migrateSubscriptionPro", () => {
 
       // Assert: correct field mapping for cancelled user
       expect(mockCreate).toHaveBeenCalledWith(
-        "api::subscription-pro.subscription-pro",
         expect.objectContaining({
           data: expect.objectContaining({
             user: cancelledUser.id,
@@ -160,7 +155,6 @@ describe("migrateSubscriptionPro", () => {
       // Assert: create called only once (for newUser, not migratedUser)
       expect(mockCreate).toHaveBeenCalledTimes(1);
       expect(mockCreate).toHaveBeenCalledWith(
-        "api::subscription-pro.subscription-pro",
         expect.objectContaining({
           data: expect.objectContaining({
             user: newUser.id,
@@ -217,7 +211,6 @@ describe("migrateSubscriptionPro", () => {
 
       // Assert: publishedAt is a Date object
       expect(mockCreate).toHaveBeenCalledWith(
-        "api::subscription-pro.subscription-pro",
         expect.objectContaining({
           data: expect.objectContaining({
             publishedAt: expect.any(Date),

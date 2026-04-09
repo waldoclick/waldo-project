@@ -15,7 +15,7 @@ jest.mock("../../../../src/services/oneclick", () => ({
   })),
 }));
 
-// Mock strapi global — service uses strapi.db.query for subscription-pro reads
+// Mock strapi global — service uses strapi.db.query for all operations
 const mockSubProFindOne = jest.fn();
 const mockSubProEntityUpdate = jest.fn();
 const mockUserEntityUpdate = jest.fn();
@@ -23,23 +23,16 @@ const mockUserEntityUpdate = jest.fn();
 // Factory that routes db.query calls to uid-specific mocks
 const mockDbQuery = jest.fn().mockImplementation((uid: string) => {
   if (uid === "api::subscription-pro.subscription-pro") {
-    return { findOne: mockSubProFindOne };
+    return { findOne: mockSubProFindOne, update: mockSubProEntityUpdate };
+  }
+  if (uid === "plugin::users-permissions.user") {
+    return { update: mockUserEntityUpdate };
   }
   return {};
 });
 
 Object.assign(global, {
   strapi: {
-    entityService: {
-      update: jest
-        .fn()
-        .mockImplementation((uid: string, _id: number, _params: unknown) => {
-          if (uid === "api::subscription-pro.subscription-pro") {
-            return mockSubProEntityUpdate(uid, _id, _params);
-          }
-          return mockUserEntityUpdate(uid, _id, _params);
-        }),
-    },
     db: {
       query: mockDbQuery,
     },
@@ -92,9 +85,8 @@ describe("ProCancellationService", () => {
       );
       // subscription-pro tbk_user is cleared
       expect(mockSubProEntityUpdate).toHaveBeenCalledWith(
-        "api::subscription-pro.subscription-pro",
-        10,
         expect.objectContaining({
+          where: { id: 10 },
           data: expect.objectContaining({
             tbk_user: null,
           }),
@@ -102,9 +94,8 @@ describe("ProCancellationService", () => {
       );
       // User is updated with pro_status=cancelled only (tbk_user cleared on subscription-pro, not user)
       expect(mockUserEntityUpdate).toHaveBeenCalledWith(
-        "plugin::users-permissions.user",
-        userId,
         expect.objectContaining({
+          where: { id: userId },
           data: expect.objectContaining({
             pro_status: "cancelled",
           }),
@@ -112,7 +103,7 @@ describe("ProCancellationService", () => {
       );
       // tbk_user is NOT set on user — it is cleared on subscription-pro record instead
       const userUpdateCall = mockUserEntityUpdate.mock.calls[0];
-      expect(userUpdateCall[2].data).not.toHaveProperty("tbk_user");
+      expect(userUpdateCall[0].data).not.toHaveProperty("tbk_user");
     });
 
     it("does NOT include pro_expires_at in user update (field no longer exists on user model)", async () => {
@@ -130,7 +121,7 @@ describe("ProCancellationService", () => {
 
       // Assert: user update must NOT include pro_expires_at
       const userUpdateCall = mockUserEntityUpdate.mock.calls[0];
-      const updateData = userUpdateCall[2].data;
+      const updateData = userUpdateCall[0].data;
       expect(updateData).not.toHaveProperty("pro_expires_at");
     });
 
@@ -181,9 +172,8 @@ describe("ProCancellationService", () => {
       // Assert: cancellation proceeds regardless of Transbank failure
       expect(result.success).toBe(true);
       expect(mockUserEntityUpdate).toHaveBeenCalledWith(
-        "plugin::users-permissions.user",
-        userId,
         expect.objectContaining({
+          where: { id: userId },
           data: expect.objectContaining({
             pro_status: "cancelled",
           }),
@@ -206,7 +196,7 @@ describe("ProCancellationService", () => {
 
       // Assert: must be 'cancelled' not 'canceled'
       const userUpdateCall = mockUserEntityUpdate.mock.calls[0];
-      expect(userUpdateCall[2].data.pro_status).toBe("cancelled");
+      expect(userUpdateCall[0].data.pro_status).toBe("cancelled");
     });
 
     it("queries subscription-pro with correct uid (api::subscription-pro.subscription-pro)", async () => {

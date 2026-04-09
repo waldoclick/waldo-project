@@ -12,8 +12,13 @@ import type { Event } from "@strapi/database/dist/lifecycles";
 const mockFindOne = jest.fn();
 Object.assign(global, {
   strapi: {
-    entityService: {
-      findOne: mockFindOne,
+    db: {
+      query: jest.fn().mockImplementation((uid: string) => {
+        if (uid === "api::article.article") {
+          return { findOne: mockFindOne };
+        }
+        return {};
+      }),
     },
   },
 });

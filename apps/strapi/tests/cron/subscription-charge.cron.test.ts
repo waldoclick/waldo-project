@@ -46,11 +46,22 @@ const mockDocumentDetails = userUtilsMock.documentDetails as jest.Mock;
 // Mock strapi global
 const mockFindMany = jest.fn();
 const mockCreate = jest.fn();
-const mockUpdate = jest.fn();
+const mockSubPayUpdate = jest.fn();
+const mockUserUpdate = jest.fn();
 const mockDbQueryFindMany = jest.fn().mockResolvedValue([]);
 const mockDbQueryUpdate = jest.fn();
 const mockDbQueryFindOne = jest.fn().mockResolvedValue(null);
 const mockDbQuery = jest.fn().mockImplementation((uid: string) => {
+  if (uid === "api::subscription-payment.subscription-payment") {
+    return {
+      findMany: mockFindMany,
+      create: mockCreate,
+      update: mockSubPayUpdate,
+    };
+  }
+  if (uid === "plugin::users-permissions.user") {
+    return { update: mockUserUpdate };
+  }
   if (uid === "api::ad.ad") {
     return {
       findMany: mockDbQueryFindMany,
@@ -67,11 +78,6 @@ const mockDbQuery = jest.fn().mockImplementation((uid: string) => {
 
 Object.assign(global, {
   strapi: {
-    entityService: {
-      findMany: mockFindMany,
-      create: mockCreate,
-      update: mockUpdate,
-    },
     db: {
       query: mockDbQuery,
     },
@@ -137,9 +143,8 @@ describe("SubscriptionChargeService", () => {
       // Assert
       expect(result.success).toBe(true);
       expect(mockFindMany).toHaveBeenCalledWith(
-        "api::subscription-payment.subscription-payment",
         expect.objectContaining({
-          filters: expect.objectContaining({
+          where: expect.objectContaining({
             status: { $eq: "approved" },
             period_end: { $lte: expect.any(String) },
             user: { pro_status: { $eq: "active" } },
@@ -231,7 +236,6 @@ describe("SubscriptionChargeService", () => {
 
       // Assert: creates new approved payment record with period_end
       expect(mockCreate).toHaveBeenCalledWith(
-        "api::subscription-payment.subscription-payment",
         expect.objectContaining({
           data: expect.objectContaining({
             user: user.id,
@@ -246,9 +250,7 @@ describe("SubscriptionChargeService", () => {
       );
 
       // Assert: NO user update for period extension (cron no longer writes pro_expires_at on user)
-      expect(mockUpdate).not.toHaveBeenCalledWith(
-        "plugin::users-permissions.user",
-        user.id,
+      expect(mockUserUpdate).not.toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({
             pro_status: "active",
@@ -281,7 +283,6 @@ describe("SubscriptionChargeService", () => {
 
       // Assert
       expect(mockCreate).toHaveBeenCalledWith(
-        "api::subscription-payment.subscription-payment",
         expect.objectContaining({
           data: expect.objectContaining({
             status: "failed",
@@ -293,7 +294,7 @@ describe("SubscriptionChargeService", () => {
       );
 
       // next_charge_attempt should be tomorrow (1 day from today)
-      const createCall = mockCreate.mock.calls[0][1];
+      const createCall = mockCreate.mock.calls[0][0];
       const nextAttemptDate = new Date(createCall.data.next_charge_attempt);
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
@@ -334,16 +335,15 @@ describe("SubscriptionChargeService", () => {
           details: [{ response_code: 0, authorization_code: "RETRY-AUTH" }],
         },
       });
-      mockUpdate.mockResolvedValueOnce({});
+      mockSubPayUpdate.mockResolvedValueOnce({});
 
       // Act
       await service.chargeExpiredSubscriptions();
 
       // Assert: updates existing record to approved with period_end
-      expect(mockUpdate).toHaveBeenCalledWith(
-        "api::subscription-payment.subscription-payment",
-        failedPayment.id,
+      expect(mockSubPayUpdate).toHaveBeenCalledWith(
         expect.objectContaining({
+          where: { id: failedPayment.id },
           data: expect.objectContaining({
             status: "approved",
             authorization_code: "RETRY-AUTH",
@@ -353,11 +353,7 @@ describe("SubscriptionChargeService", () => {
       );
 
       // Assert: cron does NOT update user pro_status on retry success (user is already active)
-      expect(mockUpdate).not.toHaveBeenCalledWith(
-        "plugin::users-permissions.user",
-        user.id,
-        expect.anything()
-      );
+      expect(mockUserUpdate).not.toHaveBeenCalled();
     });
   });
 
@@ -378,16 +374,16 @@ describe("SubscriptionChargeService", () => {
         .mockResolvedValueOnce([exhaustedPayment]) // Step 3: deactivation candidates
         .mockResolvedValueOnce([]); // Step 4: expired cancelled payments
 
-      mockUpdate.mockResolvedValueOnce({}).mockResolvedValueOnce({});
+      mockUserUpdate.mockResolvedValueOnce({});
+      mockSubPayUpdate.mockResolvedValueOnce({});
 
       // Act
       await service.chargeExpiredSubscriptions();
 
       // Assert: deactivates user using pro_status only (pro_expires_at and tbk_user not touched on user)
-      expect(mockUpdate).toHaveBeenCalledWith(
-        "plugin::users-permissions.user",
-        user.id,
+      expect(mockUserUpdate).toHaveBeenCalledWith(
         expect.objectContaining({
+          where: { id: user.id },
           data: expect.objectContaining({
             pro_status: "inactive",
           }),
@@ -395,18 +391,15 @@ describe("SubscriptionChargeService", () => {
       );
 
       // Assert: user update does NOT include pro_expires_at or tbk_user
-      const userUpdateCall = mockUpdate.mock.calls.find(
-        (call) => call[0] === "plugin::users-permissions.user"
-      );
+      const userUpdateCall = mockUserUpdate.mock.calls[0];
       expect(userUpdateCall).toBeDefined();
-      expect(userUpdateCall![2].data).not.toHaveProperty("pro_expires_at");
-      expect(userUpdateCall![2].data).not.toHaveProperty("tbk_user");
+      expect(userUpdateCall[0].data).not.toHaveProperty("pro_expires_at");
+      expect(userUpdateCall[0].data).not.toHaveProperty("tbk_user");
 
       // Assert: marks payment record as deactivated
-      expect(mockUpdate).toHaveBeenCalledWith(
-        "api::subscription-payment.subscription-payment",
-        exhaustedPayment.id,
+      expect(mockSubPayUpdate).toHaveBeenCalledWith(
         expect.objectContaining({
+          where: { id: exhaustedPayment.id },
           data: expect.objectContaining({
             status: "deactivated",
           }),
@@ -426,7 +419,7 @@ describe("SubscriptionChargeService", () => {
         .mockResolvedValueOnce([]) // Step 3: no exhausted candidates
         .mockResolvedValueOnce([cancelledPayment]); // Step 4: expired cancelled payments
 
-      mockUpdate.mockResolvedValueOnce({});
+      mockUserUpdate.mockResolvedValueOnce({});
 
       // Act
       const result = await service.chargeExpiredSubscriptions();
@@ -434,19 +427,17 @@ describe("SubscriptionChargeService", () => {
       // Assert
       expect(result.success).toBe(true);
       expect(mockFindMany).toHaveBeenCalledWith(
-        "api::subscription-payment.subscription-payment",
         expect.objectContaining({
-          filters: expect.objectContaining({
+          where: expect.objectContaining({
             status: { $eq: "approved" },
             period_end: { $lte: expect.any(String) },
             user: { pro_status: { $eq: "cancelled" } },
           }),
         })
       );
-      expect(mockUpdate).toHaveBeenCalledWith(
-        "plugin::users-permissions.user",
-        cancelledUser.id,
+      expect(mockUserUpdate).toHaveBeenCalledWith(
         expect.objectContaining({
+          where: { id: cancelledUser.id },
           data: expect.objectContaining({
             pro_status: "inactive",
           }),
@@ -454,12 +445,10 @@ describe("SubscriptionChargeService", () => {
       );
 
       // Assert: user update does NOT include pro_expires_at or tbk_user
-      const userUpdateCall = mockUpdate.mock.calls.find(
-        (call) => call[0] === "plugin::users-permissions.user"
-      );
+      const userUpdateCall = mockUserUpdate.mock.calls[0];
       expect(userUpdateCall).toBeDefined();
-      expect(userUpdateCall![2].data).not.toHaveProperty("pro_expires_at");
-      expect(userUpdateCall![2].data).not.toHaveProperty("tbk_user");
+      expect(userUpdateCall[0].data).not.toHaveProperty("pro_expires_at");
+      expect(userUpdateCall[0].data).not.toHaveProperty("tbk_user");
     });
 
     it("does NOT call authorizeCharge for cancelled users (card already deleted)", async () => {
@@ -472,7 +461,7 @@ describe("SubscriptionChargeService", () => {
         .mockResolvedValueOnce([]) // Step 3: no exhausted candidates
         .mockResolvedValueOnce([cancelledPayment]); // Step 4: expired cancelled payments
 
-      mockUpdate.mockResolvedValueOnce({});
+      mockUserUpdate.mockResolvedValueOnce({});
 
       // Act
       await service.chargeExpiredSubscriptions();
@@ -494,7 +483,7 @@ describe("SubscriptionChargeService", () => {
 
       // Assert: no updates performed
       expect(result.success).toBe(true);
-      expect(mockUpdate).not.toHaveBeenCalled();
+      expect(mockUserUpdate).not.toHaveBeenCalled();
     });
 
     it("recalculates sort_priority for deactivated cancelled users' ads", async () => {
@@ -513,7 +502,7 @@ describe("SubscriptionChargeService", () => {
         .mockResolvedValueOnce([]) // Step 3: no exhausted candidates
         .mockResolvedValueOnce([cancelledPayment]); // Step 4: expired cancelled payments
 
-      mockUpdate.mockResolvedValueOnce({});
+      mockUserUpdate.mockResolvedValueOnce({});
       mockDbQueryFindMany.mockResolvedValueOnce([mockAd]);
       mockDbQueryUpdate.mockResolvedValueOnce({});
 
@@ -535,16 +524,13 @@ describe("SubscriptionChargeService", () => {
         .mockResolvedValueOnce([]) // Step 3
         .mockResolvedValueOnce([cancelledPayment1, cancelledPayment2]); // Step 4
 
-      mockUpdate.mockResolvedValue({});
+      mockUserUpdate.mockResolvedValue({});
 
       // Act
       await service.chargeExpiredSubscriptions();
 
       // Assert: user update called only once despite two payment records
-      const userUpdateCalls = mockUpdate.mock.calls.filter(
-        (call) => call[0] === "plugin::users-permissions.user"
-      );
-      expect(userUpdateCalls).toHaveLength(1);
+      expect(mockUserUpdate.mock.calls).toHaveLength(1);
     });
   });
 
@@ -644,7 +630,6 @@ describe("SubscriptionChargeService", () => {
 
       // Assert: subscription-payment was created with period_end (before the order failure)
       expect(mockCreate).toHaveBeenCalledWith(
-        "api::subscription-payment.subscription-payment",
         expect.objectContaining({
           data: expect.objectContaining({
             period_end: expect.any(String),

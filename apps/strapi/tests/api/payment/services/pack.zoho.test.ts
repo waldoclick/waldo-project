@@ -13,15 +13,18 @@
 
 // ─── Mock strapi global before imports ───────────────────────────────────────
 
-interface MockStrapi {
-  entityService: {
-    findOne: jest.Mock;
-  };
-}
+const mockUserFindOne = jest
+  .fn()
+  .mockResolvedValue({ email: "user@example.com" });
 
-(global as unknown as { strapi: MockStrapi }).strapi = {
-  entityService: {
-    findOne: jest.fn().mockResolvedValue({ email: "user@example.com" }),
+(global as unknown as { strapi: unknown }).strapi = {
+  db: {
+    query: jest.fn().mockImplementation((uid: string) => {
+      if (uid === "plugin::users-permissions.user") {
+        return { findOne: mockUserFindOne };
+      }
+      return {};
+    }),
   },
 };
 
@@ -100,11 +103,7 @@ beforeEach(() => {
   ).mockResolvedValue({ success: true });
 
   // Reset strapi global mock
-  (
-    global as unknown as { strapi: MockStrapi }
-  ).strapi.entityService.findOne.mockResolvedValue({
-    email: "user@example.com",
-  });
+  mockUserFindOne.mockResolvedValue({ email: "user@example.com" });
 
   // Default: contact found
   (zohoService.findContact as jest.Mock).mockResolvedValue({

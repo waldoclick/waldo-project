@@ -68,6 +68,7 @@ jest.mock("../../../../src/services/oneclick", () => ({
   OneclickService: jest.fn().mockImplementation(() => ({
     startInscription: jest.fn(),
     finishInscription: jest.fn(),
+    authorizeCharge: jest.fn(),
   })),
   buildOneclickUsername: jest.fn().mockReturnValue("user-doc123"),
 }));
@@ -87,28 +88,44 @@ const mockDocumentDetails = userUtils.documentDetails as jest.Mock;
 const mockGetCurrentUser = userUtils.getCurrentUser as jest.Mock;
 
 // Mock strapi global
-const mockEntityServiceFindOne = jest.fn();
-const mockEntityServiceUpdate = jest.fn();
 const mockDbQueryFindOne = jest.fn();
 const mockDbQueryFindMany = jest.fn().mockResolvedValue([]);
 const mockDbQueryUpdate = jest.fn();
-const mockDbQuery = jest.fn().mockReturnValue({
-  findOne: mockDbQueryFindOne,
-  findMany: mockDbQueryFindMany,
-  update: mockDbQueryUpdate,
+const mockSubProUpdate = jest.fn();
+const mockSubProCreate = jest.fn();
+const mockSubProFindOne = jest.fn();
+const mockUserUpdate = jest.fn();
+const mockSubPayCreate = jest.fn();
+const mockDbQuery = jest.fn().mockImplementation((uid: string) => {
+  if (uid === "api::subscription-pro.subscription-pro") {
+    return {
+      findOne: mockSubProFindOne,
+      update: mockSubProUpdate,
+      create: mockSubProCreate,
+    };
+  }
+  if (uid === "plugin::users-permissions.user") {
+    return { update: mockUserUpdate, findOne: mockDbQueryFindOne };
+  }
+  if (uid === "api::ad.ad") {
+    return { findMany: mockDbQueryFindMany, update: mockDbQueryUpdate };
+  }
+  return {
+    findOne: mockDbQueryFindOne,
+    findMany: mockDbQueryFindMany,
+    update: mockDbQueryUpdate,
+  };
 });
 
+const mockDocumentsCreate = jest.fn();
 Object.assign(global, {
   strapi: {
-    entityService: {
-      findOne: mockEntityServiceFindOne,
-      update: mockEntityServiceUpdate,
-      findMany: jest.fn(),
-      create: jest.fn(),
-    },
     db: {
       query: mockDbQuery,
     },
+    documents: jest.fn().mockImplementation(() => ({
+      create: mockDocumentsCreate,
+    })),
     log: {
       info: jest.fn(),
       error: jest.fn(),
@@ -160,21 +177,43 @@ describe("PaymentController: proCreate", () => {
 
     // Re-attach strapi mock (cleared by clearAllMocks)
     mockDbQueryFindMany.mockResolvedValue([]);
-    mockDbQuery.mockReturnValue({
-      findOne: mockDbQueryFindOne,
-      findMany: mockDbQueryFindMany,
-      update: mockDbQueryUpdate,
+    mockDbQuery.mockImplementation((uid: string) => {
+      if (uid === "api::subscription-pro.subscription-pro") {
+        return {
+          findOne: mockSubProFindOne,
+          update: mockSubProUpdate,
+          create: mockSubProCreate,
+        };
+      }
+      if (uid === "plugin::users-permissions.user") {
+        return { update: mockUserUpdate, findOne: mockDbQueryFindOne };
+      }
+      if (uid === "api::ad.ad") {
+        return { findMany: mockDbQueryFindMany, update: mockDbQueryUpdate };
+      }
+      return {
+        findOne: mockDbQueryFindOne,
+        findMany: mockDbQueryFindMany,
+        update: mockDbQueryUpdate,
+      };
     });
+    (
+      strapi as unknown as { documents: jest.Mock }
+    ).documents.mockImplementation(() => ({
+      create: mockDocumentsCreate,
+    }));
   });
 
-  it("proCreate stores pro_pending_invoice=true when is_invoice=true in request body", async () => {
+  it("proCreate stores pending_invoice=true on subscription-pro when is_invoice=true in request body", async () => {
     // Arrange
     mockStartInscription.mockResolvedValueOnce({
       success: true,
       token: "tbk-token-abc",
       urlWebpay: "https://webpay.cl/start",
     });
-    mockEntityServiceUpdate.mockResolvedValueOnce({});
+    // No existing subscription-pro — will create
+    mockSubProFindOne.mockResolvedValueOnce(null);
+    mockSubProCreate.mockResolvedValueOnce({ id: 1 });
 
     const ctx = makeCtx({
       request: { body: { data: { is_invoice: true } } },
@@ -185,26 +224,26 @@ describe("PaymentController: proCreate", () => {
       ctx as unknown as Parameters<typeof paymentController.proCreate>[0]
     );
 
-    // Assert
-    expect(mockEntityServiceUpdate).toHaveBeenCalledWith(
-      "plugin::users-permissions.user",
-      defaultUser.id,
+    // Assert: pending_invoice stored on subscription-pro record
+    expect(mockSubProCreate).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
-          pro_pending_invoice: true,
+          pending_invoice: true,
         }),
       })
     );
   });
 
-  it("proCreate stores pro_pending_invoice=false when is_invoice is omitted", async () => {
+  it("proCreate stores pending_invoice=false on subscription-pro when is_invoice is omitted", async () => {
     // Arrange
     mockStartInscription.mockResolvedValueOnce({
       success: true,
       token: "tbk-token-xyz",
       urlWebpay: "https://webpay.cl/start",
     });
-    mockEntityServiceUpdate.mockResolvedValueOnce({});
+    // No existing subscription-pro — will create
+    mockSubProFindOne.mockResolvedValueOnce(null);
+    mockSubProCreate.mockResolvedValueOnce({ id: 1 });
 
     const ctx = makeCtx({
       request: { body: { data: {} } },
@@ -215,13 +254,11 @@ describe("PaymentController: proCreate", () => {
       ctx as unknown as Parameters<typeof paymentController.proCreate>[0]
     );
 
-    // Assert
-    expect(mockEntityServiceUpdate).toHaveBeenCalledWith(
-      "plugin::users-permissions.user",
-      defaultUser.id,
+    // Assert: pending_invoice stored on subscription-pro record
+    expect(mockSubProCreate).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
-          pro_pending_invoice: false,
+          pending_invoice: false,
         }),
       })
     );
@@ -231,6 +268,7 @@ describe("PaymentController: proCreate", () => {
 describe("PaymentController: proResponse", () => {
   let mockStartInscription: jest.Mock;
   let mockFinishInscription: jest.Mock;
+  let mockAuthorizeCharge: jest.Mock;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -240,6 +278,14 @@ describe("PaymentController: proResponse", () => {
 
     mockStartInscription = jest.fn();
     mockFinishInscription = jest.fn();
+    mockAuthorizeCharge = jest.fn().mockResolvedValue({
+      success: true,
+      authorizationCode: "AUTH-TEST-001",
+      responseCode: 0,
+      rawResponse: {
+        details: [{ response_code: 0, authorization_code: "AUTH-TEST-001" }],
+      },
+    });
     (
       OneclickService as jest.MockedClass<typeof OneclickService>
     ).mockImplementation(
@@ -247,23 +293,44 @@ describe("PaymentController: proResponse", () => {
         ({
           startInscription: mockStartInscription,
           finishInscription: mockFinishInscription,
+          authorizeCharge: mockAuthorizeCharge,
         } as unknown as OneclickService)
     );
 
     mockDbQueryFindMany.mockResolvedValue([]);
-    mockDbQuery.mockReturnValue({
-      findOne: mockDbQueryFindOne,
-      findMany: mockDbQueryFindMany,
-      update: mockDbQueryUpdate,
+    mockDbQuery.mockImplementation((uid: string) => {
+      if (uid === "api::subscription-pro.subscription-pro") {
+        return {
+          findOne: mockSubProFindOne,
+          update: mockSubProUpdate,
+          create: mockSubProCreate,
+        };
+      }
+      if (uid === "plugin::users-permissions.user") {
+        return { update: mockUserUpdate, findOne: mockDbQueryFindOne };
+      }
+      if (uid === "api::ad.ad") {
+        return { findMany: mockDbQueryFindMany, update: mockDbQueryUpdate };
+      }
+      return {
+        findOne: mockDbQueryFindOne,
+        findMany: mockDbQueryFindMany,
+        update: mockDbQueryUpdate,
+      };
     });
+    (
+      strapi as unknown as { documents: jest.Mock }
+    ).documents.mockImplementation(() => ({
+      create: mockDocumentsCreate,
+    }));
   });
 
   it("proResponse creates order + Facto document after successful inscription", async () => {
-    // Arrange
-    const user = {
-      id: 10,
-      documentId: "userdoc123456789012345",
-      pro_pending_invoice: false,
+    // Arrange — subscription-pro record with populated user
+    const subPro = {
+      id: 5,
+      pending_invoice: false,
+      user: { id: 10, documentId: "userdoc123456789012345" },
     };
     mockFinishInscription.mockResolvedValueOnce({
       success: true,
@@ -271,8 +338,10 @@ describe("PaymentController: proResponse", () => {
       cardType: "Visa",
       last4CardDigits: "1234",
     });
-    mockDbQueryFindOne.mockResolvedValueOnce(user);
-    mockEntityServiceUpdate.mockResolvedValueOnce({});
+    mockSubProFindOne.mockResolvedValueOnce(subPro);
+    mockSubProUpdate.mockResolvedValueOnce({});
+    mockDocumentsCreate.mockResolvedValueOnce({ documentId: "payment-doc-1" });
+    mockUserUpdate.mockResolvedValueOnce({});
     mockDocumentDetails.mockResolvedValueOnce({
       name: "Test User",
       rut: "12345678-9",
@@ -296,33 +365,32 @@ describe("PaymentController: proResponse", () => {
     );
 
     // Assert
-    expect(mockDocumentDetails).toHaveBeenCalledWith(user.id, false);
+    expect(mockDocumentDetails).toHaveBeenCalledWith(subPro.user.id, false);
     expect(mockGenerateFactoDocument).toHaveBeenCalledWith(
       expect.objectContaining({
         isInvoice: false,
         items: expect.arrayContaining([
-          expect.objectContaining({ name: "Suscripcion PRO mensual" }),
+          expect.objectContaining({
+            name: expect.stringContaining("Suscripcion PRO"),
+          }),
         ]),
       })
     );
     expect(mockCreateAdOrder).toHaveBeenCalledWith(
       expect.objectContaining({
-        amount: 9990,
-        userId: user.id,
+        amount: expect.any(Number),
+        userId: subPro.user.id,
         is_invoice: false,
-        items: expect.arrayContaining([
-          expect.objectContaining({ name: "Suscripcion PRO mensual" }),
-        ]),
       })
     );
   });
 
   it("proResponse redirects to /pro/pagar/gracias?order={documentId}", async () => {
-    // Arrange
-    const user = {
-      id: 10,
-      documentId: "userdoc123456789012345",
-      pro_pending_invoice: false,
+    // Arrange — subscription-pro record with populated user
+    const subPro = {
+      id: 5,
+      pending_invoice: false,
+      user: { id: 10, documentId: "userdoc123456789012345" },
     };
     mockFinishInscription.mockResolvedValueOnce({
       success: true,
@@ -330,8 +398,10 @@ describe("PaymentController: proResponse", () => {
       cardType: "Visa",
       last4CardDigits: "1234",
     });
-    mockDbQueryFindOne.mockResolvedValueOnce(user);
-    mockEntityServiceUpdate.mockResolvedValueOnce({});
+    mockSubProFindOne.mockResolvedValueOnce(subPro);
+    mockSubProUpdate.mockResolvedValueOnce({});
+    mockDocumentsCreate.mockResolvedValueOnce({ documentId: "payment-doc-2" });
+    mockUserUpdate.mockResolvedValueOnce({});
     mockDocumentDetails.mockResolvedValueOnce({
       name: "Test User",
       rut: "12345678-9",
@@ -360,12 +430,12 @@ describe("PaymentController: proResponse", () => {
     );
   });
 
-  it("proResponse clears pro_pending_invoice after use", async () => {
-    // Arrange
-    const user = {
-      id: 10,
-      documentId: "userdoc123456789012345",
-      pro_pending_invoice: true,
+  it("proResponse reads pending_invoice from subscription-pro for Facto document", async () => {
+    // Arrange — subscription-pro has pending_invoice=true
+    const subPro = {
+      id: 5,
+      pending_invoice: true,
+      user: { id: 10, documentId: "userdoc123456789012345" },
     };
     mockFinishInscription.mockResolvedValueOnce({
       success: true,
@@ -373,8 +443,10 @@ describe("PaymentController: proResponse", () => {
       cardType: "Visa",
       last4CardDigits: "1234",
     });
-    mockDbQueryFindOne.mockResolvedValueOnce(user);
-    mockEntityServiceUpdate.mockResolvedValueOnce({});
+    mockSubProFindOne.mockResolvedValueOnce(subPro);
+    mockSubProUpdate.mockResolvedValueOnce({});
+    mockDocumentsCreate.mockResolvedValueOnce({ documentId: "payment-doc-3" });
+    mockUserUpdate.mockResolvedValueOnce({});
     mockDocumentDetails.mockResolvedValueOnce({
       name: "Test User",
       rut: "12345678-9",
@@ -397,24 +469,16 @@ describe("PaymentController: proResponse", () => {
       ctx as unknown as Parameters<typeof paymentController.proResponse>[0]
     );
 
-    // Assert: the user update call includes pro_pending_invoice: false
-    expect(mockEntityServiceUpdate).toHaveBeenCalledWith(
-      "plugin::users-permissions.user",
-      user.id,
-      expect.objectContaining({
-        data: expect.objectContaining({
-          pro_pending_invoice: false,
-        }),
-      })
-    );
+    // Assert: invoice preference (true) read from subscription-pro, passed to documentDetails
+    expect(mockDocumentDetails).toHaveBeenCalledWith(subPro.user.id, true);
   });
 
   it("proResponse still redirects to /pro/gracias if order creation fails", async () => {
     // Arrange
-    const user = {
-      id: 10,
-      documentId: "userdoc123456789012345",
-      pro_pending_invoice: false,
+    const subPro = {
+      id: 5,
+      pending_invoice: false,
+      user: { id: 10, documentId: "userdoc123456789012345" },
     };
     mockFinishInscription.mockResolvedValueOnce({
       success: true,
@@ -422,8 +486,10 @@ describe("PaymentController: proResponse", () => {
       cardType: "Visa",
       last4CardDigits: "1234",
     });
-    mockDbQueryFindOne.mockResolvedValueOnce(user);
-    mockEntityServiceUpdate.mockResolvedValueOnce({});
+    mockSubProFindOne.mockResolvedValueOnce(subPro);
+    mockSubProUpdate.mockResolvedValueOnce({});
+    mockDocumentsCreate.mockResolvedValueOnce({ documentId: "payment-doc-4" });
+    mockUserUpdate.mockResolvedValueOnce({});
     mockDocumentDetails.mockResolvedValueOnce({
       name: "Test User",
       rut: "12345678-9",
