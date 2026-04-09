@@ -9,7 +9,6 @@ import { documentDetails } from "../api/payment/utils/user.utils";
 interface ProUser {
   id: number;
   documentId: string;
-  pro_expires_at: string;
   subscription_pro?: { tbk_user?: string; pending_invoice?: boolean } | null;
 }
 
@@ -19,6 +18,7 @@ interface FailedPaymentRecord {
   charge_attempts: number;
   next_charge_attempt: string;
   period_start: string;
+  period_end: string;
   user: ProUser;
 }
 
@@ -28,17 +28,19 @@ interface ExhaustedPaymentRecord {
   user: { id: number; documentId: string };
 }
 
-interface CancelledUser {
+interface DuePaymentRecord {
   id: number;
-  documentId: string;
+  documentId?: string;
+  period_end: string;
+  user: ProUser;
 }
 
 /**
  * SubscriptionChargeService handles the daily billing loop for PRO subscribers.
  *
  * Responsibilities:
- * 1. Charge active PRO users whose billing period has expired (CHRG-01, CHRG-02)
- * 2. Skip users already charged for the current period — idempotency guard (CHRG-05)
+ * 1. Charge active PRO users whose billing period has ended (CHRG-01, CHRG-02)
+ * 2. No idempotency check needed — the period_end query is self-guarding (renewed records have future period_end)
  * 3. Retry failed charges on day 1 and day 3 after expiry (CHRG-03)
  * 4. Deactivate subscriptions after 3 consecutive failed charge attempts (CHRG-03)
  * 5. Read charge amount from PRO_MONTHLY_PRICE env var (CHRG-04)
@@ -62,53 +64,34 @@ export class SubscriptionChargeService {
 
       const today = new Date().toISOString().split("T")[0];
 
-      // Step 1: Charge newly expired active PRO users
-      const expiredUsers = (await strapi.entityService.findMany(
-        "plugin::users-permissions.user",
+      // Step 1: Charge active PRO users whose billing period has ended
+      const duePayments = (await strapi.entityService.findMany(
+        "api::subscription-payment.subscription-payment" as Parameters<
+          typeof strapi.entityService.findMany
+        >[0],
         {
           filters: {
-            pro_status: { $eq: "active" },
-            pro_expires_at: { $lte: `${today}T23:59:59.999Z` },
+            status: { $eq: "approved" },
+            period_end: { $lte: today },
+            user: { pro_status: { $eq: "active" } },
           } as unknown as Record<string, unknown>,
-          fields: ["id", "documentId", "pro_expires_at"] as Parameters<
-            typeof strapi.entityService.findMany
-          >[1]["fields"],
-          populate: ["subscription_pro"] as unknown as Parameters<
+          populate: {
+            user: {
+              populate: ["subscription_pro"],
+            },
+          } as unknown as Parameters<
             typeof strapi.entityService.findMany
           >[1]["populate"],
           pagination: { pageSize: -1 },
         }
-      )) as ProUser[];
+      )) as DuePaymentRecord[];
 
       logger.info(
-        `SubscriptionChargeService: found ${expiredUsers.length} expired active PRO users`
+        `SubscriptionChargeService: found ${duePayments.length} due subscription payments to charge`
       );
 
-      for (const user of expiredUsers) {
-        const periodStart = user.pro_expires_at.split("T")[0];
-
-        // Idempotency check: skip if already approved for this period
-        const existingApproved = await strapi.entityService.findMany(
-          "api::subscription-payment.subscription-payment" as Parameters<
-            typeof strapi.entityService.findMany
-          >[0],
-          {
-            filters: {
-              user: { id: user.id },
-              period_start: periodStart,
-              status: "approved",
-            } as unknown as Record<string, unknown>,
-            pagination: { pageSize: 1 },
-          }
-        );
-
-        if ((existingApproved as unknown[]).length > 0) {
-          logger.info(
-            `SubscriptionChargeService: user ${user.id} already charged for period ${periodStart}, skipping`
-          );
-          continue;
-        }
-
+      for (const record of duePayments) {
+        const user = record.user;
         const tbkUser = user.subscription_pro?.tbk_user;
         if (!tbkUser) {
           logger.warn(
@@ -120,7 +103,7 @@ export class SubscriptionChargeService {
 
         await this.chargeUser(
           { ...user, tbk_user: tbkUser, pending_invoice: pendingInvoice },
-          periodStart,
+          record.period_end,
           today,
           amount,
           1
@@ -166,7 +149,7 @@ export class SubscriptionChargeService {
         const attempt = record.charge_attempts + 1;
         await this.chargeUser(
           { ...user, tbk_user: tbkUser, pending_invoice: pendingInvoice },
-          record.period_start,
+          record.period_end,
           today,
           amount,
           attempt,
@@ -205,7 +188,6 @@ export class SubscriptionChargeService {
           {
             data: {
               pro_status: "inactive",
-              pro_expires_at: null,
             } as unknown as Parameters<
               typeof strapi.entityService.update
             >[2]["data"],
@@ -290,33 +272,44 @@ export class SubscriptionChargeService {
         );
       }
 
-      // Step 4: Deactivate cancelled subscriptions whose pro_expires_at has passed (CANC-04)
-      const expiredCancelledUsers = (await strapi.entityService.findMany(
-        "plugin::users-permissions.user",
+      // Step 4: Deactivate cancelled subscriptions whose period has ended (CANC-04)
+      const expiredCancelledPayments = (await strapi.entityService.findMany(
+        "api::subscription-payment.subscription-payment" as Parameters<
+          typeof strapi.entityService.findMany
+        >[0],
         {
           filters: {
-            pro_status: { $eq: "cancelled" },
-            pro_expires_at: { $lte: `${today}T23:59:59.999Z` },
+            status: { $eq: "approved" },
+            period_end: { $lte: today },
+            user: { pro_status: { $eq: "cancelled" } },
           } as unknown as Record<string, unknown>,
-          fields: ["id", "documentId"] as Parameters<
+          populate: ["user"] as unknown as Parameters<
             typeof strapi.entityService.findMany
-          >[1]["fields"],
+          >[1]["populate"],
           pagination: { pageSize: -1 },
         }
-      )) as CancelledUser[];
+      )) as Array<{ id: number; user: { id: number; documentId: string } }>;
 
       logger.info(
-        `SubscriptionChargeService: found ${expiredCancelledUsers.length} expired cancelled PRO users to deactivate`
+        `SubscriptionChargeService: found ${expiredCancelledPayments.length} expired cancelled payment records to process`
       );
 
-      for (const user of expiredCancelledUsers) {
+      // Deduplicate by user ID — a cancelled user may have multiple past approved rows
+      const processedCancelledUserIds = new Set<number>();
+
+      for (const record of expiredCancelledPayments) {
+        const user = record.user;
+        if (processedCancelledUserIds.has(user.id)) {
+          continue;
+        }
+        processedCancelledUserIds.add(user.id);
+
         await strapi.entityService.update(
           "plugin::users-permissions.user",
           user.id,
           {
             data: {
               pro_status: "inactive",
-              pro_expires_at: null,
             } as unknown as Parameters<
               typeof strapi.entityService.update
             >[2]["data"],
@@ -375,11 +368,11 @@ export class SubscriptionChargeService {
 
   /**
    * Charges a single user via OneclickService and persists the result.
-   * On success: creates/updates subscription-payment as approved and extends pro_expires_at.
+   * On success: creates/updates subscription-payment as approved with new period_end.
    * On failure: creates/updates subscription-payment as failed with next retry date.
    *
    * @param user - The PRO user to charge (with tbk_user at top level, sourced from subscription_pro)
-   * @param periodStart - ISO date string (YYYY-MM-DD) for the subscription period being charged
+   * @param periodEnd - ISO date string (YYYY-MM-DD) of the old period_end from the record being renewed
    * @param today - ISO date string (YYYY-MM-DD) for today
    * @param amount - Charge amount in CLP (from PRO_MONTHLY_PRICE env var)
    * @param attempt - Current attempt number (1-based)
@@ -387,7 +380,7 @@ export class SubscriptionChargeService {
    */
   private async chargeUser(
     user: ProUser & { tbk_user: string; pending_invoice: boolean },
-    periodStart: string,
+    periodEnd: string,
     today: string,
     amount: number,
     attempt: number,
@@ -396,6 +389,17 @@ export class SubscriptionChargeService {
     const todayCompact = today.replace(/-/g, "");
     const parentBuyOrder = `pro-${user.id}-${todayCompact}`;
     const childBuyOrder = `c-${user.id}-${todayCompact}-${attempt}`;
+
+    // Compute new period boundaries from the old period_end
+    const currentPeriodEnd = new Date(periodEnd);
+    const newPeriodEnd = new Date(
+      currentPeriodEnd.getFullYear(),
+      currentPeriodEnd.getMonth() + 1,
+      1
+    );
+    const newPeriodEndStr = newPeriodEnd.toISOString().split("T")[0];
+    // The new period starts where the old period ended
+    const newPeriodStart = periodEnd;
 
     const oneclickService = new OneclickService();
     const result = await oneclickService.authorizeCharge(
@@ -431,6 +435,7 @@ export class SubscriptionChargeService {
               payment_response: result.rawResponse,
               charged_at: new Date(),
               charge_attempts: attempt,
+              period_end: newPeriodEndStr,
             },
           }
         );
@@ -448,32 +453,14 @@ export class SubscriptionChargeService {
               authorization_code: result.authorizationCode,
               response_code: result.responseCode,
               payment_response: result.rawResponse,
-              period_start: periodStart,
+              period_start: newPeriodStart,
+              period_end: newPeriodEndStr,
               charged_at: new Date(),
               charge_attempts: attempt,
             },
           }
         );
       }
-
-      // Extend pro_expires_at to 1st of next month (calendar billing)
-      const currentExpiry = new Date(user.pro_expires_at);
-      const newExpiresAt = new Date(
-        currentExpiry.getFullYear(),
-        currentExpiry.getMonth() + 1,
-        1
-      );
-      await strapi.entityService.update(
-        "plugin::users-permissions.user",
-        user.id,
-        {
-          data: {
-            pro_expires_at: newExpiresAt,
-          } as unknown as Parameters<
-            typeof strapi.entityService.update
-          >[2]["data"],
-        }
-      );
 
       // Create order + Facto document for this charge — invoice preference from subscription-pro
       const isInvoice = user.pending_invoice;
@@ -499,7 +486,7 @@ export class SubscriptionChargeService {
           document_response: factoDoc,
         });
       } catch (orderError) {
-        // Non-fatal: charge was successful, order creation failure must not block pro_expires_at extension
+        // Non-fatal: charge was successful, order creation failure must not block period extension
         logger.error("SubscriptionChargeService: order/Facto creation failed", {
           userId: user.id,
           error: orderError,
@@ -532,6 +519,7 @@ export class SubscriptionChargeService {
               next_charge_attempt: nextRetryDateStr,
               response_code: result.responseCode,
               payment_response: result.rawResponse,
+              period_end: newPeriodEndStr,
             },
           }
         );
@@ -548,7 +536,8 @@ export class SubscriptionChargeService {
               child_buy_order: childBuyOrder,
               response_code: result.responseCode,
               payment_response: result.rawResponse,
-              period_start: periodStart,
+              period_start: newPeriodStart,
+              period_end: newPeriodEndStr,
               charge_attempts: attempt,
               next_charge_attempt: nextRetryDateStr,
             },
