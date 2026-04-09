@@ -217,3 +217,13 @@ Plans:
 - [x] 121-01-PLAN.md — Schema changes + migration + middleware + proResponse subscription-payment creation
 - [x] 121-02-PLAN.md — Cron rewrite: Step 1 + Step 4 + chargeUser to use period_end from subscription-payment
 - [x] 121-03-PLAN.md — Test updates + proResponse test implementation + final verification sweep
+
+### Phase 122: Migrate strapi.entityService to strapi.db.query for Strapi v5 compatibility
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 121
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 122 to break down)

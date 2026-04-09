@@ -89,6 +89,7 @@ Progress: [██████████] 100%
 - Phase 117 completed: verification-only closure — website test directory structure confirmed compliant after Phase 116 moves
 - Phase 119 added: export orders to CSV from dashboard orders page
 - Phase 120 added: Refactor PRO subscription model: subscription-pro collection type, move card data out of user, fix charge-before-activate order, calendar billing
+- Phase 122 added: Migrate strapi.entityService to strapi.db.query for Strapi v5 compatibility
 
 ### Blockers/Concerns (open)
 
