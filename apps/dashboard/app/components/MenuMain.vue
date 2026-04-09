@@ -1,12 +1,28 @@
 <template>
   <nav class="menu menu--main">
-    <button type="button" class="menu--main__btn" aria-label="Dashboard">
+    <button
+      type="button"
+      class="menu--main__btn"
+      aria-label="Dashboard"
+      @click="emit('select', 'default')"
+    >
       <LayoutDashboard class="menu--main__icon" />
     </button>
-    <button type="button" class="menu--main__btn" aria-label="Usuarios">
+    <button
+      type="button"
+      class="menu--main__btn"
+      aria-label="Usuarios"
+      @click="emit('select', 'default')"
+    >
       <Users class="menu--main__icon" />
     </button>
-    <button type="button" class="menu--main__btn" aria-label="Mantenedores">
+    <button
+      type="button"
+      class="menu--main__btn"
+      :class="{ 'menu--main__btn--active': activeMenu === 'maintenance' }"
+      aria-label="Mantenedores"
+      @click="emit('select', 'maintenance')"
+    >
       <Settings class="menu--main__icon" />
     </button>
   </nav>
@@ -14,4 +30,9 @@
 
 <script setup lang="ts">
 import { LayoutDashboard, Users, Settings } from "lucide-vue-next";
+
+defineProps<{ activeMenu: "default" | "maintenance" }>();
+const emit = defineEmits<{
+  (e: "select", panel: "default" | "maintenance"): void;
+}>();
 </script>

@@ -266,153 +266,6 @@
           </li>
         </ul>
       </li>
-
-      <!-- Mantenedores -->
-      <li
-        class="menu--default__item"
-        :class="{
-          'menu--default__item--active': isMantenedoresActive,
-          'menu--default__item--expanded': openMenu === 'mantenedores',
-        }"
-      >
-        <button
-          class="menu--default__link menu--default__link--button"
-          @click="toggleMenu('mantenedores')"
-        >
-          <Settings class="menu--default__icon" />
-          <span>Mantenedores</span>
-          <ChevronDown
-            v-if="openMenu === 'mantenedores'"
-            class="menu--default__arrow"
-          />
-          <ChevronRight v-else class="menu--default__arrow" />
-        </button>
-        <ul v-if="openMenu === 'mantenedores'" class="menu--default__sublist">
-          <li
-            class="menu--default__subitem"
-            :class="{
-              'menu--default__subitem--active': isRouteActive('/categories'),
-            }"
-          >
-            <NuxtLink to="/categories" class="menu--default__sublink">
-              <Tag class="menu--default__subicon" />
-              <span>Categorías</span>
-            </NuxtLink>
-          </li>
-          <li
-            class="menu--default__subitem"
-            :class="{
-              'menu--default__subitem--active': isRouteActive('/conditions'),
-            }"
-          >
-            <NuxtLink to="/conditions" class="menu--default__sublink">
-              <FileCheck class="menu--default__subicon" />
-              <span>Condiciones</span>
-            </NuxtLink>
-          </li>
-          <li
-            class="menu--default__subitem"
-            :class="{
-              'menu--default__subitem--active': isRouteActive('/packs'),
-            }"
-          >
-            <NuxtLink to="/packs" class="menu--default__sublink">
-              <Box class="menu--default__subicon" />
-              <span>Packs</span>
-            </NuxtLink>
-          </li>
-          <li
-            class="menu--default__subitem"
-            :class="{
-              'menu--default__subitem--active': isRouteActive('/regions'),
-            }"
-          >
-            <NuxtLink to="/regions" class="menu--default__sublink">
-              <MapPin class="menu--default__subicon" />
-              <span>Regiones</span>
-            </NuxtLink>
-          </li>
-          <li
-            class="menu--default__subitem"
-            :class="{
-              'menu--default__subitem--active': isRouteActive('/communes'),
-            }"
-          >
-            <NuxtLink to="/communes" class="menu--default__sublink">
-              <Building class="menu--default__subicon" />
-              <span>Comunas</span>
-            </NuxtLink>
-          </li>
-          <li
-            class="menu--default__subitem"
-            :class="{
-              'menu--default__subitem--active': isRouteActive('/articles'),
-            }"
-          >
-            <NuxtLink to="/articles" class="menu--default__sublink">
-              <Newspaper class="menu--default__subicon" />
-              <span>Artículos</span>
-            </NuxtLink>
-          </li>
-        </ul>
-      </li>
-
-      <!-- Legales -->
-      <li
-        class="menu--default__item"
-        :class="{
-          'menu--default__item--active': isLegalesActive,
-          'menu--default__item--expanded': openMenu === 'legales',
-        }"
-      >
-        <button
-          class="menu--default__link menu--default__link--button"
-          @click="toggleMenu('legales')"
-        >
-          <Scale class="menu--default__icon" />
-          <span>Legales</span>
-          <ChevronDown
-            v-if="openMenu === 'legales'"
-            class="menu--default__arrow"
-          />
-          <ChevronRight v-else class="menu--default__arrow" />
-        </button>
-        <ul v-if="openMenu === 'legales'" class="menu--default__sublist">
-          <li
-            class="menu--default__subitem"
-            :class="{
-              'menu--default__subitem--active': isRouteActive('/faqs'),
-            }"
-          >
-            <NuxtLink to="/faqs" class="menu--default__sublink">
-              <HelpCircle class="menu--default__subicon" />
-              <span>Preguntas frecuentes</span>
-            </NuxtLink>
-          </li>
-          <li
-            class="menu--default__subitem"
-            :class="{
-              'menu--default__subitem--active': isRouteActive('/policies'),
-            }"
-          >
-            <NuxtLink to="/policies" class="menu--default__sublink">
-              <Shield class="menu--default__subicon" />
-              <span>Políticas de privacidad</span>
-            </NuxtLink>
-          </li>
-          <li
-            class="menu--default__subitem"
-            :class="{
-              'menu--default__subitem--active': isRouteActive('/terms'),
-            }"
-          >
-            <NuxtLink to="/terms" class="menu--default__sublink">
-              <ScrollText class="menu--default__subicon" />
-              <span>Condiciones de Uso</span>
-            </NuxtLink>
-          </li>
-        </ul>
-      </li>
     </ul>
   </nav>
 </template>
@@ -427,7 +280,6 @@ import {
   Calendar,
   Star,
   Users,
-  Settings,
   ChevronRight,
   ChevronDown,
   Clock,
@@ -437,16 +289,6 @@ import {
   XCircle,
   XOctagon,
   Circle,
-  Tag,
-  FileCheck,
-  HelpCircle,
-  Box,
-  Shield,
-  ScrollText,
-  Scale,
-  MapPin,
-  Building,
-  Newspaper,
   CreditCard,
   BadgeCheck,
   Receipt,
@@ -465,32 +307,11 @@ const isRouteActive = (path: string): boolean => {
   return route.path.startsWith(path);
 };
 
-// Detectar si algún mantenedor está activo
-const isMantenedoresActive = computed(() => {
-  return (
-    isRouteActive("/categories") ||
-    isRouteActive("/conditions") ||
-    isRouteActive("/packs") ||
-    isRouteActive("/regions") ||
-    isRouteActive("/communes") ||
-    isRouteActive("/articles")
-  );
-});
-
 // Detectar si alguna subscripción está activa
 const isSubscripcionesActive = computed(() => {
   return (
     isRouteActive("/subscription-pros") ||
     isRouteActive("/subscription-payments")
-  );
-});
-
-// Detectar si algún legal está activo
-const isLegalesActive = computed(() => {
-  return (
-    isRouteActive("/faqs") ||
-    isRouteActive("/policies") ||
-    isRouteActive("/terms")
   );
 });
 
@@ -510,25 +331,10 @@ watch(
     } else if (path.startsWith("/featured")) {
       openMenu.value = "featured";
     } else if (
-      path.startsWith("/categories") ||
-      path.startsWith("/conditions") ||
-      path.startsWith("/packs") ||
-      path.startsWith("/regions") ||
-      path.startsWith("/communes") ||
-      path.startsWith("/articles")
-    ) {
-      openMenu.value = "mantenedores";
-    } else if (
       path.startsWith("/subscription-pros") ||
       path.startsWith("/subscription-payments")
     ) {
       openMenu.value = "subscripciones";
-    } else if (
-      path.startsWith("/faqs") ||
-      path.startsWith("/policies") ||
-      path.startsWith("/terms")
-    ) {
-      openMenu.value = "legales";
     } else {
       openMenu.value = null;
     }
