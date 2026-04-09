@@ -75,6 +75,23 @@ const getDetailedUserData = async (user) => {
 
   const totalAdsCount = publishedAdsCount + inReviewAdsCount + rejectedAdsCount;
 
+  // Fetch card data from subscription-pro (card_type, card_last4)
+  const subPro = (await strapi.db
+    .query("api::subscription-pro.subscription-pro")
+    .findOne({
+      where: { user: { id: user.id } },
+      select: ["card_type", "card_last4"],
+    })) as { card_type?: string | null; card_last4?: string | null } | null;
+
+  // Fetch period_end from the latest approved subscription-payment (replaces pro_expires_at)
+  const latestPayment = (await strapi.db
+    .query("api::subscription-payment.subscription-payment")
+    .findOne({
+      where: { user: { id: user.id }, status: "approved" },
+      select: ["period_end"],
+      orderBy: { period_end: "desc" },
+    })) as { period_end?: string | null } | null;
+
   // Combine additional data with user data
   return {
     ...user,
@@ -85,6 +102,11 @@ const getDetailedUserData = async (user) => {
     inReviewAdsCount,
     rejectedAdsCount,
     totalAdsCount,
+    // PRO card info (from subscription-pro, was previously on user)
+    pro_card_type: subPro?.card_type ?? null,
+    pro_card_last4: subPro?.card_last4 ?? null,
+    // PRO period end (from subscription-payment, replaces user.pro_expires_at)
+    pro_expires_at: latestPayment?.period_end ?? null,
   };
 };
 
