@@ -10,7 +10,7 @@ export class ProCancellationService {
    * 2. Deletes the card inscription from Transbank (proceeds even if this fails — user intent is cancellation)
    * 3. Clears tbk_user on the subscription-pro record (card enrollment is deleted)
    * 4. Updates user: pro_status → "cancelled", tbk_user → null (dual-write until user fields removed)
-   *    NOTE: pro_expires_at is intentionally NOT modified — subscription expires at period end (CANC-02)
+   *    NOTE: period_end on subscription-payment determines when the cancelled subscription expires (CANC-02)
    *
    * @param userId - Numeric Strapi user ID
    * @param userDocumentId - Strapi user documentId (used to build Oneclick username)

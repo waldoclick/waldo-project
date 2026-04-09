@@ -576,15 +576,39 @@ class PaymentController {
       }
     );
 
-    // Activate user and set expiry
+    // Create first subscription-payment record with period_end (SUB-MODEL-121-04)
     const proExpiresAt = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    const proExpiresAtStr = proExpiresAt.toISOString().split("T")[0];
+
+    const paymentCreate = strapi.entityService.create as (
+      _uid: string,
+      _params: { data: Record<string, unknown> }
+    ) => Promise<unknown>;
+
+    await paymentCreate("api::subscription-payment.subscription-payment", {
+      data: {
+        user: user.id,
+        amount: proratedPrice,
+        status: "approved",
+        parent_buy_order: `pro-inscription-${user.id}-${todayCompact}`,
+        child_buy_order: `c-${user.id}-${todayCompact}-1`,
+        authorization_code: chargeResult.authorizationCode,
+        response_code: chargeResult.responseCode,
+        payment_response: chargeResult.rawResponse,
+        period_start: now.toISOString().split("T")[0],
+        period_end: proExpiresAtStr,
+        charged_at: new Date(),
+        charge_attempts: 1,
+      },
+    });
+
+    // Activate user — only pro_status (billing period tracked via subscription-payment.period_end)
     await strapi.entityService.update(
       "plugin::users-permissions.user",
       user.id,
       {
         data: {
           pro_status: "active",
-          pro_expires_at: proExpiresAt,
         } as unknown as Parameters<
           typeof strapi.entityService.update
         >[2]["data"],
