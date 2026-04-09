@@ -22,6 +22,7 @@
       <div class="packs--default__table-wrapper">
         <TableDefault :columns="tableColumns">
           <TableRow v-for="pack in paginatedPacks" :key="pack.id">
+            <TableCell>{{ pack.id }}</TableCell>
             <TableCell>
               <div class="packs--default__name">
                 {{ pack.name || "-" }}
@@ -169,6 +170,7 @@ const totalRecords = computed(() => {
 });
 
 const tableColumns = [
+  { label: "ID" },
   { label: "Pack" },
   { label: "Precio" },
   { label: "Duración" },
