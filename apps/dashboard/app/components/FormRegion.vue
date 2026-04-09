@@ -153,7 +153,7 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       if (createdId) {
         router.push(`/regions/${createdId}`);
       } else {
-        router.push("/regions");
+        router.push("/maintenance/regions");
       }
     }
   } catch (error) {

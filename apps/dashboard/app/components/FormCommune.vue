@@ -219,7 +219,7 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       if (createdId) {
         router.push(`/communes/${createdId}`);
       } else {
-        router.push("/communes");
+        router.push("/maintenance/communes");
       }
     }
   } catch (error) {

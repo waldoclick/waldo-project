@@ -181,7 +181,7 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       if (createdId) {
         router.push(`/categories/${createdId}`);
       } else {
-        router.push("/categories");
+        router.push("/maintenance/categories");
       }
     }
   } catch (error) {

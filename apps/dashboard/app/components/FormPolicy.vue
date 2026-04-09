@@ -173,7 +173,7 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       if (createdId) {
         router.push(`/policies/${createdId}`);
       } else {
-        router.push("/policies");
+        router.push("/maintenance/policies");
       }
     }
   } catch (error) {
