@@ -96,4 +96,31 @@ export default {
     const faq = await strapi.db.query("api::faq.faq").delete({ where: { id } });
     return { data: faq };
   },
+
+  async reorder(ctx) {
+    const { data } = ctx.request.body as {
+      data?: Array<{ documentId?: string; order?: number }>;
+    };
+    if (!Array.isArray(data) || data.length === 0) {
+      return ctx.badRequest("data must be a non-empty array");
+    }
+    // Validate every entry
+    for (const entry of data) {
+      if (!entry.documentId || typeof entry.documentId !== "string") {
+        return ctx.badRequest("Every entry must have a string documentId");
+      }
+      if (typeof entry.order !== "number" || !Number.isFinite(entry.order)) {
+        return ctx.badRequest("Every entry must have a numeric order");
+      }
+    }
+    await Promise.all(
+      data.map((entry) =>
+        strapi.db.query("api::faq.faq").update({
+          where: { documentId: entry.documentId },
+          data: { order: entry.order },
+        })
+      )
+    );
+    return { data: { count: data.length } };
+  },
 };
