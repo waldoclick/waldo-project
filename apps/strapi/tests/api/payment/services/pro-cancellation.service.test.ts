@@ -100,20 +100,22 @@ describe("ProCancellationService", () => {
           }),
         })
       );
-      // User is updated with pro_status=cancelled and tbk_user=null (dual-write)
+      // User is updated with pro_status=cancelled only (tbk_user cleared on subscription-pro, not user)
       expect(mockUserEntityUpdate).toHaveBeenCalledWith(
         "plugin::users-permissions.user",
         userId,
         expect.objectContaining({
           data: expect.objectContaining({
             pro_status: "cancelled",
-            tbk_user: null,
           }),
         })
       );
+      // tbk_user is NOT set on user — it is cleared on subscription-pro record instead
+      const userUpdateCall = mockUserEntityUpdate.mock.calls[0];
+      expect(userUpdateCall[2].data).not.toHaveProperty("tbk_user");
     });
 
-    it("does NOT change pro_expires_at — period-end expiry must be preserved (CANC-02)", async () => {
+    it("does NOT include pro_expires_at in user update (field no longer exists on user model)", async () => {
       // Arrange
       mockSubProFindOne.mockResolvedValueOnce({
         id: 10,
@@ -184,7 +186,6 @@ describe("ProCancellationService", () => {
         expect.objectContaining({
           data: expect.objectContaining({
             pro_status: "cancelled",
-            tbk_user: null,
           }),
         })
       );

@@ -38,14 +38,12 @@ describe("protect-user-fields middleware", () => {
     expect(next).toHaveBeenCalled();
   });
 
-  // Test 2: strips pro_status, pro_expires_at, tbk_user — keeps lastname
-  it("strips pro_status, pro_expires_at, tbk_user from body.data, keeps lastname", async () => {
+  // Test 2: strips pro_status — keeps lastname
+  it("strips pro_status from body.data, keeps lastname", async () => {
     const middleware = createMiddleware();
     const ctx = createContext("PUT", "/api/users/123", {
       data: {
         pro_status: "active",
-        pro_expires_at: "2026-01-01",
-        tbk_user: "token123",
         lastname: "Smith",
       },
     });
@@ -54,8 +52,6 @@ describe("protect-user-fields middleware", () => {
     await middleware(ctx as unknown as Context, next);
 
     expect(ctx.request.body.data).not.toHaveProperty("pro_status");
-    expect(ctx.request.body.data).not.toHaveProperty("pro_expires_at");
-    expect(ctx.request.body.data).not.toHaveProperty("tbk_user");
     expect(ctx.request.body.data).toHaveProperty("lastname", "Smith");
     expect(next).toHaveBeenCalled();
   });
@@ -152,8 +148,10 @@ describe("protect-user-fields middleware", () => {
     expect(next).toHaveBeenCalledTimes(1);
   });
 
-  // Test 8: card enrollment fields — still protected even though canonical source moved to subscription-pro
-  it("strips pro_card_type, pro_card_last4, pro_inscription_token from body.data (card fields remain protected)", async () => {
+  // Test 8: card enrollment fields (pro_card_type, pro_card_last4, pro_inscription_token) were removed
+  // from PROTECTED_USER_FIELDS as part of the subscription-pro migration — they now live on subscription-pro,
+  // not on the user record. Verify they are NOT stripped (they are safe to pass through).
+  it("does NOT strip pro_card_type, pro_card_last4, pro_inscription_token (no longer protected — moved to subscription-pro)", async () => {
     const middleware = createMiddleware();
     const ctx = createContext("PUT", "/api/users/123", {
       data: {
@@ -167,24 +165,25 @@ describe("protect-user-fields middleware", () => {
 
     await middleware(ctx as unknown as Context, next);
 
-    expect(ctx.request.body.data).not.toHaveProperty("pro_card_type");
-    expect(ctx.request.body.data).not.toHaveProperty("pro_card_last4");
-    expect(ctx.request.body.data).not.toHaveProperty("pro_inscription_token");
+    // These fields are no longer in PROTECTED_USER_FIELDS — they pass through
+    expect(ctx.request.body.data).toHaveProperty("pro_card_type", "Visa");
+    expect(ctx.request.body.data).toHaveProperty("pro_card_last4", "1234");
+    expect(ctx.request.body.data).toHaveProperty(
+      "pro_inscription_token",
+      "insc-token-abc"
+    );
     expect(ctx.request.body.data).toHaveProperty("firstname", "Alice");
     expect(next).toHaveBeenCalled();
   });
 
-  // Test 9: complete PROTECTED_USER_FIELDS list — all 13 fields are stripped
-  it("strips all 13 protected fields: pro_status, pro_expires_at, tbk_user, pro_card_type, pro_card_last4, pro_inscription_token, username, avatar, cover, role, provider, confirmed, blocked", async () => {
+  // Test 9: complete PROTECTED_USER_FIELDS list — all 8 fields are stripped
+  // After Phase 121: pro_expires_at removed (field deleted from user schema).
+  // After Phase 120: tbk_user, pro_card_type, pro_card_last4, pro_inscription_token moved to subscription-pro.
+  it("strips all 8 protected fields: pro_status, username, avatar, cover, role, provider, confirmed, blocked", async () => {
     const middleware = createMiddleware();
     const ctx = createContext("PUT", "/api/users/123", {
       data: {
         pro_status: "active",
-        pro_expires_at: "2026-05-01",
-        tbk_user: "tok",
-        pro_card_type: "Visa",
-        pro_card_last4: "4321",
-        pro_inscription_token: "insc",
         username: "hack",
         avatar: 5,
         cover: 3,
@@ -201,11 +200,6 @@ describe("protect-user-fields middleware", () => {
 
     const protectedFields = [
       "pro_status",
-      "pro_expires_at",
-      "tbk_user",
-      "pro_card_type",
-      "pro_card_last4",
-      "pro_inscription_token",
       "username",
       "avatar",
       "cover",
