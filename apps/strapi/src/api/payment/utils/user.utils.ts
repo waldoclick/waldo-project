@@ -46,20 +46,17 @@ export const getCurrentUser = async (ctx: Context): Promise<UserData> => {
     throw new Error("No hay usuario autenticado");
   }
 
-  const user = await strapi.entityService.findOne(
-    "plugin::users-permissions.user",
-    ctx.state.user.id,
-    {
-      populate: {
-        commune: {
-          populate: ["region"],
-        },
-        business_commune: {
-          populate: ["region"],
-        },
+  const user = await strapi.db.query("plugin::users-permissions.user").findOne({
+    where: { id: ctx.state.user.id },
+    populate: {
+      commune: {
+        populate: ["region"],
       },
-    }
-  );
+      business_commune: {
+        populate: ["region"],
+      },
+    },
+  });
 
   return user;
 };
@@ -75,10 +72,10 @@ export const documentDetails = async (
   isInvoice: boolean
 ): Promise<BillingDetails> => {
   try {
-    const user = (await strapi.entityService.findOne(
-      "plugin::users-permissions.user",
-      userId,
-      {
+    const user = (await strapi.db
+      .query("plugin::users-permissions.user")
+      .findOne({
+        where: { id: userId },
         populate: {
           commune: {
             populate: ["region"],
@@ -87,8 +84,7 @@ export const documentDetails = async (
             populate: ["region"],
           },
         },
-      }
-    )) as UserData;
+      })) as UserData;
 
     if (!user) {
       throw new Error("Usuario no encontrado");
