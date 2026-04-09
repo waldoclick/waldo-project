@@ -7,7 +7,6 @@ import populateAdDraftMigration from "../seeders/ad-draft-migration";
 import populatePolicies from "../seeders/policies";
 import populateTerms from "../seeders/terms";
 import { recalculateSortPriorities } from "./api/ad/services/ad";
-import { migrateSubscriptionPro } from "./bootstrap/migrate-subscription-pro";
 
 export default {
   /**
@@ -55,13 +54,6 @@ export default {
       console.log(`sort_priority backfill complete: ${updated} ads updated`);
     } catch (error) {
       console.error("Error backfilling sort_priority:", error);
-    }
-
-    // One-time migration: copy card enrollment data to subscription-pro records
-    try {
-      await migrateSubscriptionPro();
-    } catch (error) {
-      console.error("Error running migrateSubscriptionPro:", error);
     }
   },
 };

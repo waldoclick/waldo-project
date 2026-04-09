@@ -13,11 +13,6 @@ import type { Core } from "@strapi/strapi";
  * PRO subscription fields — managed exclusively by the payment system and cron jobs:
  *   pro_status, pro_expires_at
  *
- * Card enrollment fields — canonical data now lives on subscription-pro collection,
- * but these fields remain on the user schema (dual-write) and MUST stay protected
- * until a future phase drops them from the user schema entirely:
- *   tbk_user, pro_card_type, pro_card_last4, pro_inscription_token
- *
  * Profile fields with dedicated endpoints (username: 90-day cooldown, avatar/cover: file upload):
  *   username, avatar, cover
  *
@@ -27,10 +22,6 @@ import type { Core } from "@strapi/strapi";
 const PROTECTED_USER_FIELDS = [
   "pro_status",
   "pro_expires_at",
-  "tbk_user",
-  "pro_card_type",
-  "pro_card_last4",
-  "pro_inscription_token",
   "username",
   "avatar",
   "cover",

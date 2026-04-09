@@ -21,12 +21,12 @@ export class ProCancellationService {
     userDocumentId: string
   ): Promise<{ success: boolean; error?: string }> {
     // 1. Fetch tbk_user from subscription-pro (not from user)
-    const subPro = await strapi.db
+    const subPro = (await strapi.db
       .query("api::subscription-pro.subscription-pro")
       .findOne({
         where: { user: { id: userId } },
         select: ["id", "tbk_user"],
-      }) as { id: number; tbk_user?: string | null } | null;
+      })) as { id: number; tbk_user?: string | null } | null;
 
     if (!subPro?.tbk_user) {
       return { success: false, error: "User has no active inscription" };
@@ -59,14 +59,13 @@ export class ProCancellationService {
       data: { tbk_user: null },
     });
 
-    // 4. Update user: set cancelled, clear tbk_user on user too (dual-write until user fields removed)
+    // 4. Update user: set cancelled status
     await strapi.entityService.update(
       "plugin::users-permissions.user",
       userId,
       {
         data: {
           pro_status: "cancelled",
-          tbk_user: null,
         } as unknown as Parameters<
           typeof strapi.entityService.update
         >[2]["data"],

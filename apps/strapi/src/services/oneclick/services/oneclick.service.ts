@@ -124,7 +124,12 @@ export class OneclickService {
         rawResponse: response,
       };
     } catch (error) {
-      logger.error("OneclickService.authorizeCharge failed", { error });
+      const err = error as Error;
+      logger.error("OneclickService.authorizeCharge failed", {
+        message: err?.message,
+        stack: err?.stack,
+        raw: JSON.stringify(error),
+      });
       return { success: false, error };
     }
   }

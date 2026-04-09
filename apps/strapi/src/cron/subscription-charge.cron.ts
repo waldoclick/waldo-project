@@ -10,8 +10,7 @@ interface ProUser {
   id: number;
   documentId: string;
   pro_expires_at: string;
-  pro_pending_invoice?: boolean;
-  subscription_pro?: { tbk_user?: string } | null;
+  subscription_pro?: { tbk_user?: string; pending_invoice?: boolean } | null;
 }
 
 interface FailedPaymentRecord {
@@ -71,7 +70,7 @@ export class SubscriptionChargeService {
             pro_status: { $eq: "active" },
             pro_expires_at: { $lte: `${today}T23:59:59.999Z` },
           } as unknown as Record<string, unknown>,
-          fields: ["id", "documentId", "pro_expires_at", "pro_pending_invoice"] as Parameters<
+          fields: ["id", "documentId", "pro_expires_at"] as Parameters<
             typeof strapi.entityService.findMany
           >[1]["fields"],
           populate: ["subscription_pro"] as unknown as Parameters<
@@ -117,8 +116,15 @@ export class SubscriptionChargeService {
           );
           continue;
         }
+        const pendingInvoice = user.subscription_pro?.pending_invoice ?? false;
 
-        await this.chargeUser({ ...user, tbk_user: tbkUser }, periodStart, today, amount, 1);
+        await this.chargeUser(
+          { ...user, tbk_user: tbkUser, pending_invoice: pendingInvoice },
+          periodStart,
+          today,
+          amount,
+          1
+        );
       }
 
       // Step 2: Retry failed charges with charge_attempts < 3 whose next_charge_attempt <= today
@@ -156,9 +162,10 @@ export class SubscriptionChargeService {
           );
           continue;
         }
+        const pendingInvoice = user.subscription_pro?.pending_invoice ?? false;
         const attempt = record.charge_attempts + 1;
         await this.chargeUser(
-          { ...user, tbk_user: tbkUser },
+          { ...user, tbk_user: tbkUser, pending_invoice: pendingInvoice },
           record.period_start,
           today,
           amount,
@@ -199,7 +206,6 @@ export class SubscriptionChargeService {
             data: {
               pro_status: "inactive",
               pro_expires_at: null,
-              tbk_user: null,
             } as unknown as Parameters<
               typeof strapi.entityService.update
             >[2]["data"],
@@ -217,15 +223,22 @@ export class SubscriptionChargeService {
               _id: number,
               _params: { data: Record<string, unknown> }
             ) => Promise<unknown>;
-            await subProUpdate("api::subscription-pro.subscription-pro", (subPro as { id: number }).id, {
-              data: { tbk_user: null },
-            });
+            await subProUpdate(
+              "api::subscription-pro.subscription-pro",
+              (subPro as { id: number }).id,
+              {
+                data: { tbk_user: null },
+              }
+            );
           }
         } catch (subProError) {
-          logger.error("SubscriptionChargeService: failed to clear subscription-pro on deactivation", {
-            userId: user.id,
-            error: subProError,
-          });
+          logger.error(
+            "SubscriptionChargeService: failed to clear subscription-pro on deactivation",
+            {
+              userId: user.id,
+              error: subProError,
+            }
+          );
         }
 
         // Recalculate sort_priority for user's featured ads (pro=false changes priority from 0 to 1)
@@ -304,7 +317,6 @@ export class SubscriptionChargeService {
             data: {
               pro_status: "inactive",
               pro_expires_at: null,
-              tbk_user: null,
             } as unknown as Parameters<
               typeof strapi.entityService.update
             >[2]["data"],
@@ -374,7 +386,7 @@ export class SubscriptionChargeService {
    * @param existingRecordId - Numeric ID of existing failed payment record to update (if retrying)
    */
   private async chargeUser(
-    user: ProUser & { tbk_user: string },
+    user: ProUser & { tbk_user: string; pending_invoice: boolean },
     periodStart: string,
     today: string,
     amount: number,
@@ -463,8 +475,8 @@ export class SubscriptionChargeService {
         }
       );
 
-      // Create order + Facto document for this charge — reuse user's last invoice preference from checkout
-      const isInvoice = Boolean(user.pro_pending_invoice ?? false);
+      // Create order + Facto document for this charge — invoice preference from subscription-pro
+      const isInvoice = user.pending_invoice;
       try {
         const userDocDetails = await documentDetails(user.id, isInvoice);
         const chargeItems = [

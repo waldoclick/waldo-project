@@ -433,24 +433,49 @@ class PaymentController {
       return;
     }
 
-    // Store the inscription token on the user record so we can resolve the user
-    // in proResponse when Transbank redirects back (no JWT present on redirect).
-    // Also persist the invoice preference so proResponse can create the correct document.
+    // Store the inscription token on subscription-pro so proResponse can resolve the user
+    // when Transbank redirects back (no JWT present on redirect).
+    // Also persist the invoice preference so proResponse creates the correct document.
     const { data: reqData } = ctx.request.body as {
       data?: { is_invoice?: boolean };
     };
-    await strapi.entityService.update(
-      "plugin::users-permissions.user",
-      user.id,
-      {
+    const isInvoicePref = Boolean(reqData?.is_invoice ?? false);
+
+    const subProUpsert = strapi.entityService.create as (
+      _uid: string,
+      _params: { data: Record<string, unknown> }
+    ) => Promise<unknown>;
+    const subProUpsertUpdate = strapi.entityService.update as (
+      _uid: string,
+      _id: number,
+      _params: { data: Record<string, unknown> }
+    ) => Promise<unknown>;
+
+    const existingSubPro = (await strapi.db
+      .query("api::subscription-pro.subscription-pro")
+      .findOne({ where: { user: { id: user.id } } })) as { id: number } | null;
+
+    if (existingSubPro) {
+      await subProUpsertUpdate(
+        "api::subscription-pro.subscription-pro",
+        existingSubPro.id,
+        {
+          data: {
+            inscription_token: String(result.token),
+            pending_invoice: isInvoicePref,
+          },
+        }
+      );
+    } else {
+      await subProUpsert("api::subscription-pro.subscription-pro", {
         data: {
-          pro_inscription_token: String(result.token),
-          pro_pending_invoice: Boolean(reqData?.is_invoice ?? false),
-        } as unknown as Parameters<
-          typeof strapi.entityService.update
-        >[2]["data"],
-      }
-    );
+          user: user.id,
+          inscription_token: String(result.token),
+          pending_invoice: isInvoicePref,
+          publishedAt: new Date(),
+        },
+      });
+    }
 
     ctx.body = { data: { token: result.token, urlWebpay: result.urlWebpay } };
   });
@@ -474,28 +499,41 @@ class PaymentController {
       return;
     }
 
-    // Resolve the user by the inscription token stored during proCreate.
+    // Resolve the user via the inscription token stored in subscription-pro during proCreate.
     // No JWT is available here — Transbank redirects without an Authorization header.
-    const user = await strapi.db
-      .query("plugin::users-permissions.user")
-      .findOne({ where: { pro_inscription_token: String(TBK_TOKEN) } });
+    const subProRecord = (await strapi.db
+      .query("api::subscription-pro.subscription-pro")
+      .findOne({
+        where: { inscription_token: String(TBK_TOKEN) },
+        populate: ["user"],
+      })) as {
+      id: number;
+      pending_invoice?: boolean;
+      user: { id: number; documentId: string };
+    } | null;
 
-    if (!user) {
+    if (!subProRecord?.user) {
       ctx.redirect(`${process.env.FRONTEND_URL}/pro/error?reason=rejected`);
       return;
     }
 
+    const user = subProRecord.user;
+
     // Read invoice preference stored during proCreate
-    const isInvoice = Boolean(
-      (user as Record<string, unknown>).pro_pending_invoice ?? false
-    );
+    const isInvoice = Boolean(subProRecord.pending_invoice ?? false);
 
     // Calculate prorated price for the remaining days in the current month
     const proMonthlyPrice = parseInt(process.env.PRO_MONTHLY_PRICE ?? "0", 10);
     const now = new Date();
-    const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    const daysInMonth = new Date(
+      now.getFullYear(),
+      now.getMonth() + 1,
+      0
+    ).getDate();
     const daysRemaining = daysInMonth - now.getDate() + 1;
-    const proratedPrice = Math.ceil((daysRemaining / daysInMonth) * proMonthlyPrice);
+    const proratedPrice = Math.ceil(
+      (daysRemaining / daysInMonth) * proMonthlyPrice
+    );
 
     // CHARGE FIRST — before activating the user (SUB-CHARGE-01)
     const todayCompact = now.toISOString().split("T")[0].replace(/-/g, "");
@@ -512,29 +550,33 @@ class PaymentController {
         userId: user.id,
         responseCode: chargeResult.responseCode,
       });
-      ctx.redirect(`${process.env.FRONTEND_URL}/pro/error?reason=charge-failed`);
+      ctx.redirect(
+        `${process.env.FRONTEND_URL}/pro/error?reason=charge-failed`
+      );
       return;
     }
 
-    // Charge succeeded — now create subscription-pro record (SUB-CHARGE-02)
-    const subProCreate = strapi.entityService.create as (
+    // Charge succeeded — update subscription-pro record with card data (SUB-CHARGE-02)
+    const subProUpdate = strapi.entityService.update as (
       _uid: string,
+      _id: number,
       _params: { data: Record<string, unknown> }
     ) => Promise<unknown>;
 
-    await subProCreate("api::subscription-pro.subscription-pro", {
-      data: {
-        user: user.id,
-        tbk_user: result.tbkUser,
-        card_type: result.cardType,
-        card_last4: result.last4CardDigits,
-        inscription_token: null,
-        pending_invoice: isInvoice,
-        publishedAt: new Date(),
-      },
-    });
+    await subProUpdate(
+      "api::subscription-pro.subscription-pro",
+      subProRecord.id,
+      {
+        data: {
+          tbk_user: result.tbkUser,
+          card_type: result.cardType,
+          card_last4: result.last4CardDigits,
+          inscription_token: null,
+        },
+      }
+    );
 
-    // Activate user and set expiry (card data also written to user temporarily — will be removed in Plan 03)
+    // Activate user and set expiry
     const proExpiresAt = new Date(now.getFullYear(), now.getMonth() + 1, 1);
     await strapi.entityService.update(
       "plugin::users-permissions.user",
@@ -542,11 +584,7 @@ class PaymentController {
       {
         data: {
           pro_status: "active",
-          tbk_user: result.tbkUser,
-          pro_card_type: result.cardType,
-          pro_card_last4: result.last4CardDigits,
           pro_expires_at: proExpiresAt,
-          pro_inscription_token: null,
         } as unknown as Parameters<
           typeof strapi.entityService.update
         >[2]["data"],
@@ -555,7 +593,11 @@ class PaymentController {
 
     // Create order + Facto document (non-fatal: charge and activation were successful)
     const proItems = [
-      { name: `Suscripcion PRO (${daysRemaining} dias)`, price: proratedPrice, quantity: 1 },
+      {
+        name: `Suscripcion PRO (${daysRemaining} dias)`,
+        price: proratedPrice,
+        quantity: 1,
+      },
     ];
 
     let proOrder: { documentId?: string } | undefined;
