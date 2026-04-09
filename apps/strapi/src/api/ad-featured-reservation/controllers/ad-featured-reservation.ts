@@ -35,17 +35,16 @@ export default factories.createCoreController(
 
         const createdIds: number[] = [];
         for (let i = 0; i < quantity; i++) {
-          const record = (await strapi.entityService.create(
-            "api::ad-featured-reservation.ad-featured-reservation",
-            {
+          const record = (await strapi.db
+            .query("api::ad-featured-reservation.ad-featured-reservation")
+            .create({
               data: {
                 price: 0,
                 user: userId,
                 description: `Gifted featured reservation — ${new Date().toISOString()}`,
                 publishedAt: new Date(),
               },
-            }
-          )) as unknown as { id: number };
+            })) as unknown as { id: number };
           createdIds.push(record.id);
         }
 

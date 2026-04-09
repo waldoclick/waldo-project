@@ -48,11 +48,9 @@ class OrderUtils {
 
       // console.log("orderData", orderData);
 
-      const order = await strapi.entityService.create("api::order.order", {
-        data: orderData as unknown as Parameters<
-          typeof strapi.entityService.create
-        >[1]["data"],
-      });
+      const order = await strapi.db
+        .query("api::order.order")
+        .create({ data: orderData });
 
       return {
         success: true,
@@ -74,7 +72,8 @@ class OrderUtils {
    */
   public async getOrderById(id: number): Promise<OrderResponse> {
     try {
-      const order = await strapi.entityService.findOne("api::order.order", id, {
+      const order = await strapi.db.query("api::order.order").findOne({
+        where: { id },
         populate: ["user", "ad"],
       });
 
@@ -109,17 +108,12 @@ class OrderUtils {
     documentResponse: unknown
   ): Promise<OrderResponse> {
     try {
-      const order = await strapi.entityService.update(
-        "api::order.order",
-        orderId,
-        {
-          data: {
-            document_response: documentResponse,
-          } as unknown as Parameters<
-            typeof strapi.entityService.update
-          >[2]["data"],
-        }
-      );
+      const order = await strapi.db.query("api::order.order").update({
+        where: { id: orderId },
+        data: {
+          document_response: documentResponse,
+        },
+      });
 
       return {
         success: true,

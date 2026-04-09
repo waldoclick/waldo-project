@@ -71,13 +71,12 @@ class AdUtils {
     adData: Partial<AdData> & { details?: unknown }
   ) {
     try {
-      const updatedAd = await strapi.entityService.update("api::ad.ad", adId, {
+      const updatedAd = await strapi.db.query("api::ad.ad").update({
+        where: { id: adId },
         data: {
           ...adData,
           currency: adData.currency as "CLP" | "USD",
-        } as unknown as Parameters<
-          typeof strapi.entityService.update
-        >[2]["data"],
+        },
       });
       return updatedAd;
     } catch (error) {
@@ -129,10 +128,11 @@ class AdUtils {
     adReservationId: string | number
   ) {
     try {
-      const ad = await strapi.entityService.update("api::ad.ad", adId, {
+      const ad = await strapi.db.query("api::ad.ad").update({
+        where: { id: adId },
         data: {
           ad_reservation: adReservationId,
-        } as unknown as Record<string, unknown>,
+        },
       });
 
       return { success: true, ad };
@@ -153,10 +153,11 @@ class AdUtils {
     adFeaturedReservationId: number
   ) {
     try {
-      const ad = await strapi.entityService.update("api::ad.ad", adId, {
+      const ad = await strapi.db.query("api::ad.ad").update({
+        where: { id: adId },
         data: {
           ad_featured_reservation: adFeaturedReservationId,
-        } as unknown as Record<string, unknown>,
+        },
       });
 
       return { success: true, ad };
@@ -174,10 +175,11 @@ class AdUtils {
    */
   public async publishAd(adId: number) {
     try {
-      const ad = await strapi.entityService.update("api::ad.ad", adId, {
+      const ad = await strapi.db.query("api::ad.ad").update({
+        where: { id: adId },
         data: {
           draft: false,
-        } as unknown as Record<string, unknown>,
+        },
       });
 
       return { success: true, ad };
@@ -195,11 +197,12 @@ class AdUtils {
    */
   public async updateAdDates(adId: number, total_days: number) {
     try {
-      const ad = await strapi.entityService.update("api::ad.ad", adId, {
+      const ad = await strapi.db.query("api::ad.ad").update({
+        where: { id: adId },
         data: {
           duration_days: total_days,
           remaining_days: total_days,
-        } as unknown as Record<string, unknown>,
+        },
       });
 
       return { success: true, ad };

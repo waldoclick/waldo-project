@@ -134,14 +134,14 @@ class GeneralUtils {
   public async ensureFreeReservations(userId: string) {
     try {
       // Get all reservations for the user
-      const reservations = (await strapi.entityService.findMany(
-        "api::ad-reservation.ad-reservation",
-        {
-          filters: {
+      const reservations = (await strapi.db
+        .query("api::ad-reservation.ad-reservation")
+        .findMany({
+          where: {
             user: { id: { $eq: userId } },
             price: 0,
             $or: [
-              { ad: null },
+              { ad: { id: { $null: true } } },
               {
                 ad: {
                   remaining_days: { $gt: 0 },
@@ -150,8 +150,8 @@ class GeneralUtils {
             ],
           },
           populate: ["ad"],
-        }
-      )) as AdReservation[];
+          limit: -1,
+        })) as AdReservation[];
 
       const availableReservations = reservations.filter((r) => !r.ad).length;
       const activeReservations = reservations.filter(
@@ -170,17 +170,16 @@ class GeneralUtils {
       // Create new reservations if needed
       if (neededReservations > 0) {
         for (let i = 0; i < neededReservations; i++) {
-          await strapi.entityService.create(
-            "api::ad-reservation.ad-reservation",
-            {
+          await strapi.db
+            .query("api::ad-reservation.ad-reservation")
+            .create({
               data: {
                 price: 0,
                 total_days: 15,
                 user: userId,
                 publishedAt: new Date(),
               },
-            }
-          );
+            });
           summary.neededReservations++;
         }
       }

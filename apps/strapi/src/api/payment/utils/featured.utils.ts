@@ -79,12 +79,9 @@ class FeaturedUtils {
         data.ad = adId;
       }
 
-      const adFeaturedReservation = await strapi.entityService.create(
-        "api::ad-featured-reservation.ad-featured-reservation",
-        {
-          data,
-        }
-      );
+      const adFeaturedReservation = await strapi.db
+        .query("api::ad-featured-reservation.ad-featured-reservation")
+        .create({ data });
 
       return {
         success: true,

@@ -18,17 +18,16 @@ class ReservationUtils {
     try {
       const price = isFree ? "0" : { $ne: "0" };
 
-      const reservations = await strapi.entityService.findMany(
-        "api::ad-reservation.ad-reservation",
-        {
-          filters: {
+      const reservations = await strapi.db
+        .query("api::ad-reservation.ad-reservation")
+        .findMany({
+          where: {
             user: { id: { $eq: userId } },
             price,
             ad: { id: { $null: true } },
           },
           populate: ["user", "ad"],
-        }
-      );
+        });
 
       return reservations as unknown as AdReservation[];
     } catch (error) {
@@ -113,12 +112,9 @@ class ReservationUtils {
         data.ad = adId;
       }
 
-      const adReservation = await strapi.entityService.create(
-        "api::ad-reservation.ad-reservation",
-        {
-          data,
-        }
-      );
+      const adReservation = await strapi.db
+        .query("api::ad-reservation.ad-reservation")
+        .create({ data });
 
       return {
         success: true,

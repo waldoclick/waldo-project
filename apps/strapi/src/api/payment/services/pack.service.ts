@@ -165,10 +165,9 @@ class PackService {
 
       // Zoho CRM sync — await is safe here (this method is called before a redirect, not from one)
       try {
-        const user = await strapi.entityService.findOne(
-          "plugin::users-permissions.user",
-          userId
-        );
+        const user = await strapi.db
+          .query("plugin::users-permissions.user")
+          .findOne({ where: { id: userId } });
         const contact = user?.email
           ? await zohoService.findContact(user.email)
           : null;

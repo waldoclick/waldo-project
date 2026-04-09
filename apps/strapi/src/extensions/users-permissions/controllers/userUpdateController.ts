@@ -78,13 +78,9 @@ export const updateUser = async (ctx: Context) => {
     }
 
     // Update user in Strapi
-    const updatedUser = (await strapi.entityService.update(
-      "plugin::users-permissions.user",
-      id,
-      {
-        data,
-      }
-    )) as unknown as {
+    const updatedUser = (await strapi.db
+      .query("plugin::users-permissions.user")
+      .update({ where: { id }, data })) as unknown as {
       id: number;
       email: string;
       firstname: string;
