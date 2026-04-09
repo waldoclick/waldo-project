@@ -127,10 +127,11 @@ Progress: [██████████] 100%
 | 260406-tue | quita el overlay cuando se abre el menu default y que el menu quede al 100% de la pantalla al abrir | 2026-04-07 | 32030ee1 | [260406-tue-quita-el-overlay-cuando-se-abre-el-menu-](./quick/260406-tue-quita-el-overlay-cuando-se-abre-el-menu-/) |
 | 260408-npv | add loading toast and button spinner when creating ad on resumen page | 2026-04-08 | faf632dc | [260408-npv-add-loading-toast-and-button-spinner-whe](./quick/260408-npv-add-loading-toast-and-button-spinner-whe/) |
 | 260408-w1e | restore active badge in MemoPro for active PRO subscriptions and guard card line when card data is null | 2026-04-08 | b14a2ebf | [260408-w1e-en-el-banner-de-pro-cuando-pro-esta-acti](./quick/260408-w1e-en-el-banner-de-pro-cuando-pro-esta-acti/) |
+| 260409-ea4 | Add bulk reorder endpoint to FAQs, policies, and terms in Strapi and update dashboard components | 2026-04-09 | 6b54691e | [260409-ea4-add-bulk-reorder-endpoint-to-faqs-polici](./quick/260409-ea4-add-bulk-reorder-endpoint-to-faqs-polici/) |
 
 ## Session Continuity
 
 Last activity: 2026-04-09
 Last session: 2026-04-09T14:23:16.244Z
-Stopped at: Completed 260409-ea4-PLAN.md
+Stopped at: Completed quick task 260409-ea4: bulk reorder endpoint for faqs/policies/terms
 Resume file: None
