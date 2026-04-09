@@ -133,6 +133,8 @@ Progress: [██████████] 100%
 | 260409-i26 | fix 500 error on orders/me endpoint - normalize sort and populate params | 2026-04-09 | 28b4565d | [260409-i26-fix-500-error-on-orders-me-endpoint](./quick/260409-i26-fix-500-error-on-orders-me-endpoint/) |
 | 260409-kru | split layout--dashboard__menu into logo + rail (MenuMain 3 icons) + nav (MenuDefault) | 2026-04-09 | 889b104f | [260409-kru-split-layout-dashboard-menu-into-rail-me](./quick/260409-kru-split-layout-dashboard-menu-into-rail-me/) |
 | 260409-nhj | create MenuMaintenance flat links, move maintenance pages to /maintenance, wire icon switching | 2026-04-09 | 5e6e243e | [260409-nhj-create-menumaintenance-with-flat-links-m](./quick/260409-nhj-create-menumaintenance-with-flat-links-m/) |
+| 260409-pr8 | create MenuUsers, move subscription-pros and subscription-payments to pages/users/, wire Users icon in MenuMain | 2026-04-09 | 38df84e4 | [—](./quick/) |
+| 260409-qg2 | fix active menu panel not persisting on page refresh | 2026-04-09 | 38df84e4 | [260409-qg2-fix-active-menu-panel-not-persisting-on-](./quick/260409-qg2-fix-active-menu-panel-not-persisting-on-/) |
 
 ## Session Continuity
 
