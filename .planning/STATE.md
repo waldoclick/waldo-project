@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 121-01-PLAN.md
-last_updated: "2026-04-09T02:02:28.247Z"
+stopped_at: Completed 121-02-PLAN.md
+last_updated: "2026-04-09T02:06:32.585Z"
 last_activity: 2026-04-09
 progress:
   total_phases: 15
   completed_phases: 13
   total_plans: 34
-  completed_plans: 32
+  completed_plans: 33
   percent: 100
 ---
 
@@ -35,6 +35,8 @@ Progress: [██████████] 100%
 
 ### Key Decisions (carry forward)
 
+- Self-guarding period_end query in Step 1 eliminates idempotency check: renewed subscription-payment records have period_end in the future and won't appear in results (121-02)
+- chargeUser periodEnd param replaces periodStart: old period_end is input; newPeriodEnd computed as first of next month; step 4 deduplicates cancelled users with Set<number> (121-02)
 - mockImplementation routing pattern used for strapi.db.query in Jest tests to dispatch different mock objects per UID — enables independent assertions for different content types (120-04)
 - All business logic lives in Strapi; dashboard and website are stateless HTTP clients
 - `pro_status === "active"` is the single source of truth for PRO membership (no `pro` boolean)
@@ -125,6 +127,6 @@ Progress: [██████████] 100%
 ## Session Continuity
 
 Last activity: 2026-04-09
-Last session: 2026-04-09T02:02:28.245Z
-Stopped at: Completed 121-01-PLAN.md
+Last session: 2026-04-09T02:06:32.583Z
+Stopped at: Completed 121-02-PLAN.md
 Resume file: None
