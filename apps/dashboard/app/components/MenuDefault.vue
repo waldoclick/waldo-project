@@ -1,16 +1,5 @@
 <template>
   <nav class="menu menu--default">
-    <div class="menu--default__logo">
-      <NuxtLink to="/" title="Waldo.click">
-        <NuxtImg
-          loading="lazy"
-          decoding="async"
-          src="/images/logo-black.svg"
-          alt="Waldo.click"
-          title="Waldo.click"
-        />
-      </NuxtLink>
-    </div>
     <ul class="menu--default__list">
       <!-- Dashboard -->
       <li

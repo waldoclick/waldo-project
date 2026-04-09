@@ -6,27 +6,6 @@
     display: flex;
     flex-direction: column;
 
-    &__logo {
-      height: 64px;
-      padding: 0 24px;
-      border-bottom: 1px solid #e5e5e5;
-      display: flex;
-      align-items: center;
-
-      a {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        text-decoration: none;
-        color: inherit;
-
-        img {
-          height: 32px;
-          width: auto;
-        }
-      }
-    }
-
     &__list {
       list-style: none;
       margin: 0;
@@ -168,6 +147,39 @@
       color: #6b7280;
       flex-shrink: 0;
       transition: color 0.2s ease;
+    }
+  }
+
+  &--main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 0;
+    gap: 8px;
+
+    &__btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      background: none;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      color: #1a1a1a;
+      transition: background-color 0.15s ease;
+
+      &:hover {
+        background-color: #f5f5f5;
+      }
+    }
+
+    &__icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
     }
   }
 

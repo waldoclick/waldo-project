@@ -4,11 +4,24 @@
     :class="{ 'layout--dashboard--open': isSidebarOpen }"
   >
     <div class="layout--dashboard__menu">
-      <div class="layout--dashboard__menu__rail">
-        <MenuMain />
+      <div class="layout--dashboard__menu__logo">
+        <NuxtLink to="/" title="Waldo.click">
+          <NuxtImg
+            loading="lazy"
+            decoding="async"
+            src="/images/logo-black.svg"
+            alt="Waldo.click"
+            title="Waldo.click"
+          />
+        </NuxtLink>
       </div>
-      <div class="layout--dashboard__menu__nav">
-        <MenuDefault @close="isSidebarOpen = false" />
+      <div class="layout--dashboard__menu__panels">
+        <div class="layout--dashboard__menu__rail">
+          <MenuMain />
+        </div>
+        <div class="layout--dashboard__menu__nav">
+          <MenuDefault @close="isSidebarOpen = false" />
+        </div>
       </div>
     </div>
     <div class="layout--dashboard__mobile">
