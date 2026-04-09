@@ -40,45 +40,45 @@ export class AdService {
       const today = new Date().toISOString().split("T")[0];
 
       // Fetch all active ads that still have remaining days. These are candidates for today's decrement.
-      const ads = (await strapi.entityService.findMany("api::ad.ad", {
-        filters: {
+      const ads = (await strapi.db.query("api::ad.ad").findMany({
+        where: {
           remaining_days: { $gt: 0 },
           active: true,
         },
-        pagination: { pageSize: -1 },
+        limit: -1,
       })) as Ad[];
 
       for (const ad of ads) {
         // Check the remainings collection for a record created today for this ad.
         // If one exists, this ad was already decremented in a prior run today — skip it.
-        const existingRemaining = await strapi.entityService.findMany(
-          "api::remaining.remaining",
-          {
-            filters: {
+        const existingRemaining = await strapi.db
+          .query("api::remaining.remaining")
+          .findMany({
+            where: {
               ad: { id: ad.id },
               createdAt: {
                 $gte: `${today}T00:00:00.000Z`,
                 $lte: `${today}T23:59:59.999Z`,
               },
             },
-          }
-        );
+          });
 
         if (existingRemaining.length === 0) {
           // Compute the new remaining_days count (current minus one).
           const updatedRemainingDays = ad.remaining_days - 1;
 
           // Persist the decrement. If remaining_days reaches 0, set active: false to deactivate the ad.
-          await strapi.entityService.update("api::ad.ad", ad.id, {
+          await strapi.db.query("api::ad.ad").update({
+            where: { id: ad.id },
             data: {
               remaining_days: updatedRemainingDays,
               ...(updatedRemainingDays === 0 && { active: false }),
-            } as unknown as Record<string, unknown>,
+            },
           });
 
           // Record this decrement in the remainings collection. This entry acts as the idempotency
           // guard — prevents double-decrement if the cron runs more than once today.
-          await strapi.entityService.create("api::remaining.remaining", {
+          await strapi.db.query("api::remaining.remaining").create({
             data: {
               ad: ad.id,
             },
@@ -112,19 +112,18 @@ export class AdService {
 
       // Fetch all remainings records created today to build the report payload.
       // Each record links to the ad that was decremented.
-      const remainings = await strapi.entityService.findMany(
-        "api::remaining.remaining",
-        {
-          filters: {
+      const remainings = await strapi.db
+        .query("api::remaining.remaining")
+        .findMany({
+          where: {
             createdAt: {
               $gte: `${today}T00:00:00.000Z`,
               $lte: `${today}T23:59:59.999Z`,
             },
           },
-          sort: { id: "desc" },
+          orderBy: { id: "desc" },
           populate: ["ad"],
-        }
-      );
+        });
 
       const updatedAds = (remainings as unknown as Remaining[])
         .filter((remaining: Remaining) => remaining.ad)

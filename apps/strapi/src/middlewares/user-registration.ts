@@ -277,16 +277,15 @@ export default (
 async function createInitialFreeReservations(userId: string): Promise<void> {
   try {
     // Verificar si el usuario ya tiene reservas gratuitas
-    const existingReservations = await strapi.entityService.findMany(
-      "api::ad-reservation.ad-reservation",
-      {
-        filters: {
+    const existingReservations = await strapi.db
+      .query("api::ad-reservation.ad-reservation")
+      .findMany({
+        where: {
           user: { id: { $eq: userId } },
           price: 0,
         },
-        pagination: { pageSize: 1 },
-      }
-    );
+        limit: 1,
+      });
 
     if (existingReservations.length > 0) {
       logger.info("Usuario ya tiene reservas gratuitas, saltando creación", {
@@ -298,7 +297,7 @@ async function createInitialFreeReservations(userId: string): Promise<void> {
 
     // Crear 3 reservas gratuitas
     for (let i = 0; i < 3; i++) {
-      await strapi.entityService.create("api::ad-reservation.ad-reservation", {
+      await strapi.db.query("api::ad-reservation.ad-reservation").create({
         data: {
           price: 0,
           total_days: 15,

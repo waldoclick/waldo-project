@@ -74,7 +74,7 @@ export class CleanupService {
    * Fetches all upload files that belong to the 'ads' folder in Strapi.
    *
    * Why two steps?
-   * In Strapi v5, `entityService.findMany('plugin::upload.file')` does NOT
+   * In Strapi v5, `db.query('plugin::upload.file')` does NOT
    * support relation-traversal filters (e.g. `folder: { name: 'ads' }`).
    * Passing such a filter silently returns an empty array.
    *
@@ -103,13 +103,10 @@ export class CleanupService {
 
       // Step 2: Filter upload files by the resolved folderPath.
       // This is the supported Strapi v5 pattern for scoping files to a folder.
-      const images = await strapi.entityService.findMany(
-        "plugin::upload.file",
-        {
-          filters: { folderPath: adsFolder.path },
-          pagination: { pageSize: -1 },
-        }
-      );
+      const images = await strapi.db.query("plugin::upload.file").findMany({
+        where: { folderPath: adsFolder.path },
+        limit: -1,
+      });
 
       return (images as unknown as StrapiUploadFile[]) || [];
     } catch (error) {
@@ -128,11 +125,11 @@ export class CleanupService {
   private async getDatabaseImages(): Promise<string[]> {
     try {
       // Fetch all ads with their gallery relations populated
-      const ads = (await strapi.entityService.findMany("api::ad.ad", {
+      const ads = (await strapi.db.query("api::ad.ad").findMany({
         populate: {
           gallery: true,
         },
-        pagination: { pageSize: -1 },
+        limit: -1,
       })) as unknown as StrapiAd[];
 
       const imageUrls: string[] = [];
@@ -182,7 +179,7 @@ export class CleanupService {
   }
 
   /**
-   * Deletes the given orphan images via the Strapi entity service.
+   * Deletes the given orphan images via the Strapi db query API.
    *
    * NOTE: This method exists for manual/administrative use only.
    * It is intentionally NOT called by the cron job — deletion is a
@@ -200,8 +197,10 @@ export class CleanupService {
 
       for (const image of orphanImages) {
         try {
-          // Delete the image file record via Strapi entity service
-          await strapi.entityService.delete("plugin::upload.file", image.id);
+          // Delete the image file record via Strapi db query
+          await strapi.db
+            .query("plugin::upload.file")
+            .delete({ where: { id: image.id } });
 
           deletedImages.push(image.id);
           logger.info(`Image deleted: ${image.id} - ${image.name}`);

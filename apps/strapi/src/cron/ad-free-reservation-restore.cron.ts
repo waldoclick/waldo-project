@@ -31,13 +31,12 @@ export default class UserCronService {
         username: string;
         email: string;
       }
-      const allUsers = (await strapi.entityService.findMany(
-        "plugin::users-permissions.user",
-        {
-          fields: ["id", "username", "email"],
-          pagination: { pageSize: -1 },
-        }
-      )) as UserRecord[];
+      const allUsers = (await strapi.db
+        .query("plugin::users-permissions.user")
+        .findMany({
+          select: ["id", "username", "email"],
+          limit: -1,
+        })) as UserRecord[];
 
       logger.info(`Processing ${allUsers.length} users`);
 
@@ -123,12 +122,12 @@ export default class UserCronService {
       // in use (linked ad has remaining_days > 0 and is not banned or rejected).
       // "In use" covers both active ads (active=true) and pending ads (active=false,
       // remaining_days>0) — both consume a reservation slot.
-      // Note: { ad: { id: { $null: true } } } is the correct Strapi v5 entityService syntax
+      // Note: { ad: { id: { $null: true } } } is the correct Strapi v5 db.query syntax
       // for a null-relation check — plain { ad: null } silently returns zero results.
-      const currentReservations = (await strapi.entityService.findMany(
-        "api::ad-reservation.ad-reservation",
-        {
-          filters: {
+      const currentReservations = (await strapi.db
+        .query("api::ad-reservation.ad-reservation")
+        .findMany({
+          where: {
             user: { id: { $eq: userId } },
             price: 0,
             $or: [
@@ -145,8 +144,7 @@ export default class UserCronService {
           populate: {
             ad: true,
           },
-        }
-      )) as AdReservationRecord[];
+        })) as AdReservationRecord[];
 
       const availableReservations = currentReservations.filter(
         (r) => !r.ad
@@ -161,18 +159,15 @@ export default class UserCronService {
 
       // Create missing free reservations so the user is topped back up to 3.
       for (let i = 0; i < neededReservations; i++) {
-        await strapi.entityService.create(
-          "api::ad-reservation.ad-reservation",
-          {
-            data: {
-              price: 0,
-              total_days: 15,
-              user: userId,
-              description: `Free reservation restored ${new Date().toISOString()}`,
-              publishedAt: new Date(),
-            },
-          }
-        );
+        await strapi.db.query("api::ad-reservation.ad-reservation").create({
+          data: {
+            price: 0,
+            total_days: 15,
+            user: userId,
+            description: `Free reservation restored ${new Date().toISOString()}`,
+            publishedAt: new Date(),
+          },
+        });
       }
 
       logger.info("Free reservations restored for user", {
