@@ -538,12 +538,12 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 
 - ✓ Users can enroll their card via Webpay Oneclick Mall inscription flow; `tbk_user` token and card info stored on user record, `pro_status: active` set on success — v1.46
 - ✓ Failed or cancelled inscription redirects to error page with retry option — v1.46
-- ✓ Daily 5 AM cron charges active PRO users with expired `pro_expires_at`; each successful charge creates `subscription-payment` record + extends period by 30 days — v1.46
+- ✓ Daily 5 AM cron charges active PRO users with expired `period_end` (subscription-payment); each successful charge creates `subscription-payment` record + extends period by 30 days — v1.46 / **updated Phase 121**
 - ✓ Failed charges retried over 3 days; exhausted users deactivated (`pro_status: inactive`, `tbk_user: null`) — v1.46
 - ✓ `PRO_MONTHLY_PRICE` env var controls charge amount (no hardcoding) — v1.46
 - ✓ Idempotency guard prevents double-charging via `period_start` check — v1.46
 - ✓ `pro_status === "active"` is single source of truth; `pro` boolean eliminated from all code paths — v1.46
-- ✓ Users can cancel PRO subscription; cancellation is period-end (PRO features active until `pro_expires_at`); card deleted from Transbank on cancel — v1.46
+- ✓ Users can cancel PRO subscription; cancellation is period-end (PRO features active until `subscription-payment.period_end`); card deleted from Transbank on cancel — v1.46 / **updated Phase 121**
 - ✓ Account page shows subscription status, masked card info, next charge date; cancel button with Swal confirmation — v1.46
 - ✓ `/pro/pagar` checkout page with boleta/factura toggle; `/pro/pagar/gracias` receipt page fetched by `order.documentId` — v1.46
 - ✓ `proCreate` / `proResponse` create Strapi order + Facto document; monthly cron also creates order + boleta per successful charge (non-fatal) — v1.46
@@ -551,6 +551,16 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ Old `/pro/gracias` remains functional for backward compatibility — v1.46
 - ✓ Registration step 2 shows required age confirmation and terms checkboxes (`.oneOf([true])` yup validation); server rejects if either field not `true` — v1.46
 - ✓ `accepted_age_confirmation` and `accepted_terms` boolean fields stored on Strapi user record (`default: false`) — v1.46
+
+## Validated Requirements (Phase 121 — subscription data model cleanup)
+
+- ✓ `pro_expires_at` removed from user schema and all src code — Phase 121
+- ✓ `period_end` (date, required) added to `subscription-payment` schema — Phase 121
+- ✓ DB migration adds `period_end` column to `subscription_payments`, drops `pro_expires_at` from `up_users` — Phase 121
+- ✓ `protect-user-fields` middleware no longer lists `pro_expires_at` — Phase 121
+- ✓ `proResponse` creates subscription-payment with `period_end`; user update only sets `pro_status: "active"` — Phase 121
+- ✓ Cron Step 1 queries subscription-payments by `period_end`; Step 4 queries subscription-payments for cancelled expiry — Phase 121
+- ✓ All test suites updated; `payment-pro-response.test.ts` fully implemented (10 tests) — Phase 121
 
 ## Validated Requirements (Phase 120 — PRO subscription model refactor)
 
@@ -566,4 +576,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ All 39 tests pass: cron, cancellation, middleware, bootstrap migration — Phase 120
 
 ---
-*Last updated: 2026-04-09 after Phase 120 (PRO subscription model refactor — subscription-pro collection type, charge-before-activate fix, cron/cancellation read-path migration, 39 tests passing)*
+*Last updated: 2026-04-09 after Phase 121 (subscription data model cleanup — pro_expires_at removed from user, period_end on subscription-payment, cron + tests updated)*
