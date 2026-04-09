@@ -168,9 +168,6 @@
       "enum": ["active", "inactive", "cancelled"],
       "default": "inactive"
     },
-    "pro_expires_at": {
-      "type": "datetime"
-    },
     "ad_reservations": {
       "type": "relation",
       "relation": "oneToMany",

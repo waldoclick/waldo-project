@@ -45,6 +45,10 @@
       "type": "date",
       "required": true
     },
+    "period_end": {
+      "type": "date",
+      "required": true
+    },
     "charged_at": {
       "type": "datetime"
     },

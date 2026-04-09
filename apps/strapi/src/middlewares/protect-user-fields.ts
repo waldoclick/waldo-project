@@ -11,7 +11,7 @@ import type { Core } from "@strapi/strapi";
  * Fields that must NEVER be settable via the public PUT /api/users/:id endpoint.
  *
  * PRO subscription fields — managed exclusively by the payment system and cron jobs:
- *   pro_status, pro_expires_at
+ *   pro_status
  *
  * Profile fields with dedicated endpoints (username: 90-day cooldown, avatar/cover: file upload):
  *   username, avatar, cover
@@ -21,7 +21,6 @@ import type { Core } from "@strapi/strapi";
  */
 const PROTECTED_USER_FIELDS = [
   "pro_status",
-  "pro_expires_at",
   "username",
   "avatar",
   "cover",
