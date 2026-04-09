@@ -43,6 +43,11 @@
           font-weight: 600;
           text-transform: uppercase;
 
+          &--active {
+            background-color: $magic_mint;
+            color: $charcoal;
+          }
+
           &--cancelled {
             background-color: $platinum;
             color: $davys_grey;

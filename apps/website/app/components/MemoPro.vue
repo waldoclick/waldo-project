@@ -25,6 +25,12 @@
       <div class="memo--pro__text">
         <p class="memo--pro__text__status">
           <span
+            v-if="user?.pro_status === 'active'"
+            class="memo--pro__text__status__badge memo--pro__text__status__badge--active"
+          >
+            Activa
+          </span>
+          <span
             v-if="user?.pro_status === 'cancelled'"
             class="memo--pro__text__status__badge memo--pro__text__status__badge--cancelled"
           >
@@ -32,7 +38,10 @@
           </span>
           Suscripción PRO
         </p>
-        <p class="memo--pro__text__card">
+        <p
+          v-if="user?.pro_card_type && user?.pro_card_last4"
+          class="memo--pro__text__card"
+        >
           {{ user?.pro_card_type }} **** {{ user?.pro_card_last4 }}
         </p>
         <p
