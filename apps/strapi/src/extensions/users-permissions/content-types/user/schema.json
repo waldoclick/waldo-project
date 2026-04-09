@@ -159,10 +159,6 @@
       "relation": "oneToOne",
       "target": "api::commune.commune"
     },
-    "flow_customer_data": {
-      "type": "json",
-      "private": true
-    },
     "pro_status": {
       "type": "enumeration",
       "enum": ["active", "inactive", "cancelled"],

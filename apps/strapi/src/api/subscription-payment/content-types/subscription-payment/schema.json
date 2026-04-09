@@ -4,12 +4,12 @@
   "info": {
     "singularName": "subscription-payment",
     "pluralName": "subscription-payments",
-    "displayName": "Subscription Payment"
+    "displayName": "SubscriptionPayment"
   },
   "options": {
-    "draftAndPublish": false,
-    "timestamps": true
+    "draftAndPublish": false
   },
+  "pluginOptions": {},
   "attributes": {
     "user": {
       "type": "relation",
@@ -22,9 +22,9 @@
     },
     "status": {
       "type": "enumeration",
-      "enum": ["approved", "failed", "deactivated"],
+      "required": true,
       "default": "failed",
-      "required": true
+      "enum": ["approved", "failed", "deactivated"]
     },
     "parent_buy_order": {
       "type": "string"

@@ -65,39 +65,6 @@ export const getCurrentUser = async (ctx: Context): Promise<UserData> => {
 };
 
 /**
- * Updates the flow_customer_data field for a specific user.
- * @param userId The ID of the user to update.
- * @param flowData The Flow customer data object to save.
- * @returns The updated user object.
- */
-export const updateUserFlowData = async (
-  userId: number | string,
-  flowData: unknown
-): Promise<UserData> => {
-  try {
-    const updatedUser = await strapi.entityService.update(
-      "plugin::users-permissions.user",
-      userId,
-      {
-        data: {
-          flow_customer_data: flowData, // Assuming field name is flow_customer_data (type json)
-        } as unknown as Parameters<
-          typeof strapi.entityService.update
-        >[2]["data"],
-        // Optional: Populate fields if you need more than just the ID returned
-        // populate: { ... }
-      }
-    );
-    // Cast or further query might be needed if update doesn't return the full populated UserData
-    return updatedUser as UserData;
-  } catch (error) {
-    // Rethrowing the error to be handled by the calling function (e.g., ProService)
-    // Consider logging the error here using strapi.log.error if needed for production monitoring
-    throw new Error(`Error updating Flow data for user: ${error.message}`);
-  }
-};
-
-/**
  * Obtiene los datos de facturación del usuario
  * @param userId ID del usuario
  * @param isInvoice Si es factura o boleta

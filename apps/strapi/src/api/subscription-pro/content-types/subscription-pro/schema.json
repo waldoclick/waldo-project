@@ -4,9 +4,12 @@
   "info": {
     "singularName": "subscription-pro",
     "pluralName": "subscription-pros",
-    "displayName": "Subscription PRO"
+    "displayName": "SubscriptionPRO"
   },
-  "options": { "draftAndPublish": false, "timestamps": true },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
   "attributes": {
     "user": {
       "type": "relation",
@@ -14,10 +17,23 @@
       "target": "plugin::users-permissions.user",
       "inversedBy": "subscription_pro"
     },
-    "tbk_user": { "type": "string", "private": true },
-    "card_type": { "type": "string" },
-    "card_last4": { "type": "string" },
-    "inscription_token": { "type": "string", "private": true },
-    "pending_invoice": { "type": "boolean", "default": false }
+    "tbk_user": {
+      "type": "string",
+      "private": true
+    },
+    "card_type": {
+      "type": "string"
+    },
+    "card_last4": {
+      "type": "string"
+    },
+    "inscription_token": {
+      "type": "string",
+      "private": true
+    },
+    "pending_invoice": {
+      "type": "boolean",
+      "default": false
+    }
   }
 }
