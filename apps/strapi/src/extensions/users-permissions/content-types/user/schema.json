@@ -128,10 +128,6 @@
       "required": false,
       "allowedTypes": ["images"]
     },
-    "pro": {
-      "type": "boolean",
-      "default": false
-    },
     "postal_code": {
       "type": "string"
     },
@@ -209,6 +205,12 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::order.order",
+      "mappedBy": "user"
+    },
+    "subscription_pro": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::subscription-pro.subscription-pro",
       "mappedBy": "user"
     },
     "ads": {
