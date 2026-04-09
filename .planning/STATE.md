@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 120-04-PLAN.md
-last_updated: "2026-04-09T01:11:52.600Z"
+stopped_at: Completed 121-01-PLAN.md
+last_updated: "2026-04-09T02:02:28.247Z"
 last_activity: 2026-04-09
 progress:
-  total_phases: 14
+  total_phases: 15
   completed_phases: 13
-  total_plans: 31
-  completed_plans: 31
+  total_plans: 34
+  completed_plans: 32
   percent: 100
 ---
 
@@ -21,7 +21,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 120 — refactor-pro-subscription-model-subscription-pro-collection-type-move-card-data-out-of-user-fix-charge-before-activate-order-calendar-billing
+**Current focus:** Phase 121 — clean-subscription-data-model-move-pro-expires-at-out-of-user-into-subscription-payment-as-period-end
 
 ## Position
 
@@ -125,6 +125,6 @@ Progress: [██████████] 100%
 ## Session Continuity
 
 Last activity: 2026-04-09
-Last session: 2026-04-09T01:07:47.298Z
-Stopped at: Completed 120-04-PLAN.md
+Last session: 2026-04-09T02:02:28.245Z
+Stopped at: Completed 121-01-PLAN.md
 Resume file: None
