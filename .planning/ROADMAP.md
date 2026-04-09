@@ -191,3 +191,16 @@ Plans:
 Plans:
 - [x] 119-01-PLAN.md — Strapi exportCsv endpoint + dashboard CSV utility with tests
 - [x] 119-02-PLAN.md — Dashboard useExportCsv composable + UI button + human verification
+
+### Phase 120: Refactor PRO subscription model: subscription-pro collection type, move card data out of user, fix charge-before-activate order, calendar billing
+
+**Goal:** Introduce a `subscription-pro` collection type to own card enrollment data, fix the charge-before-activate ordering bug in proResponse (charge first, activate only on success), migrate cron and cancellation service to read card data from subscription-pro, remove the orphaned `pro` boolean from the user schema, and update all affected tests.
+**Requirements**: [SUB-SCHEMA-01, SUB-SCHEMA-02, SUB-SCHEMA-03, SUB-MIGRATE-01, SUB-CHARGE-01, SUB-CHARGE-02, SUB-ERROR-01, SUB-CRON-01, SUB-CANCEL-01, SUB-PROTECT-01]
+**Depends on:** Phase 119
+**Plans:** 4 plans
+
+Plans:
+- [ ] 120-01-PLAN.md — Create subscription-pro schema + user schema update + bootstrap migration
+- [ ] 120-02-PLAN.md — Fix charge-before-activate in proResponse + subscription-pro record creation
+- [ ] 120-03-PLAN.md — Update cron + cancellation service + middleware to use subscription-pro
+- [ ] 120-04-PLAN.md — Update tests + full verification sweep
