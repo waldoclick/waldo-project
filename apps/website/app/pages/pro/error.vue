@@ -39,6 +39,7 @@ const reason = computed(() => route.query.reason as string | undefined);
 const errorTitle = computed(() => {
   if (reason.value === "cancelled") return "Inscripcion cancelada";
   if (reason.value === "rejected") return "Inscripcion rechazada";
+  if (reason.value === "charge-failed") return "Error en el cobro";
   return "Error en la inscripcion";
 });
 
@@ -47,6 +48,8 @@ const errorDescription = computed(() => {
     return "Cancelaste el registro de tu tarjeta. Puedes intentarlo nuevamente desde tu cuenta.";
   if (reason.value === "rejected")
     return "No se pudo registrar tu tarjeta. Verifica los datos e intenta nuevamente.";
+  if (reason.value === "charge-failed")
+    return "Tu tarjeta fue registrada pero no se pudo realizar el cobro del primer mes. Puedes intentarlo nuevamente desde tu cuenta.";
   return "Ocurrio un problema al registrar tu tarjeta. Por favor, intenta de nuevo mas tarde.";
 });
 </script>
