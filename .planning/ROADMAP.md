@@ -197,9 +197,10 @@ Plans:
 **Goal:** Introduce a `subscription-pro` collection type to own card enrollment data, fix the charge-before-activate ordering bug in proResponse (charge first, activate only on success), migrate cron and cancellation service to read card data from subscription-pro, remove the orphaned `pro` boolean from the user schema, and update all affected tests.
 **Requirements**: [SUB-SCHEMA-01, SUB-SCHEMA-02, SUB-SCHEMA-03, SUB-MIGRATE-01, SUB-CHARGE-01, SUB-CHARGE-02, SUB-ERROR-01, SUB-CRON-01, SUB-CANCEL-01, SUB-PROTECT-01]
 **Depends on:** Phase 119
-**Plans:** 4 plans
+**Plans:** 5 plans
 
 Plans:
+- [ ] 120-00-PLAN.md — Wave 0 test stubs for subscription-pro and payment-pro-response
 - [ ] 120-01-PLAN.md — Create subscription-pro schema + user schema update + bootstrap migration
 - [ ] 120-02-PLAN.md — Fix charge-before-activate in proResponse + subscription-pro record creation
 - [ ] 120-03-PLAN.md — Update cron + cancellation service + middleware to use subscription-pro
