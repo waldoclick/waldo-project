@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 122-03-PLAN.md
-last_updated: "2026-04-09T03:53:04.620Z"
+stopped_at: Completed 122-04-PLAN.md
+last_updated: "2026-04-09T04:23:03.269Z"
 last_activity: 2026-04-09
 progress:
   total_phases: 16
-  completed_phases: 14
+  completed_phases: 15
   total_plans: 38
-  completed_plans: 37
+  completed_plans: 38
   percent: 100
 ---
 
@@ -38,6 +38,8 @@ Progress: [██████████] 100%
 - Self-guarding period_end query in Step 1 eliminates idempotency check: renewed subscription-payment records have period_end in the future and won't appear in results (121-02)
 - chargeUser periodEnd param replaces periodStart: old period_end is input; newPeriodEnd computed as first of next month; step 4 deduplicates cancelled users with Set<number> (121-02)
 - mockImplementation routing pattern used for strapi.db.query in Jest tests to dispatch different mock objects per UID — enables independent assertions for different content types (120-04)
+- Separate update mock functions per UID (mockSubPayUpdate/mockUserUpdate) instead of shared mockUpdate enables clean assertions without UID-based call filtering — required when migrating from entityService to db.query (122-04)
+- Phase 122 migration complete: zero strapi.entityService references in entire apps/strapi/ (src + tests); TypeScript clean; all 55 migrated tests pass (122-04)
 - All business logic lives in Strapi; dashboard and website are stateless HTTP clients
 - `pro_status === "active"` is the single source of truth for PRO membership (no `pro` boolean)
 - Oneclick Mall must be contracted separately with Transbank for production (separate from Webpay Plus)
@@ -129,6 +131,6 @@ Progress: [██████████] 100%
 ## Session Continuity
 
 Last activity: 2026-04-09
-Last session: 2026-04-09T03:53:04.618Z
-Stopped at: Completed 122-03-PLAN.md
+Last session: 2026-04-09T04:23:03.265Z
+Stopped at: Completed 122-04-PLAN.md
 Resume file: None
