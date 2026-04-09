@@ -558,8 +558,8 @@ class PaymentController {
     const proExpiresAt = new Date(now.getFullYear(), now.getMonth() + 1, 1);
     const proExpiresAtStr = proExpiresAt.toISOString().split("T")[0];
 
-    await strapi.db
-      .query("api::subscription-payment.subscription-payment")
+    await strapi
+      .documents("api::subscription-payment.subscription-payment")
       .create({
         data: {
           user: user.id,
@@ -569,12 +569,16 @@ class PaymentController {
           child_buy_order: `c-${user.id}-${todayCompact}-1`,
           authorization_code: chargeResult.authorizationCode,
           response_code: chargeResult.responseCode,
-          payment_response: chargeResult.rawResponse,
+          payment_response: chargeResult.rawResponse as Record<string, unknown>,
           period_start: now.toISOString().split("T")[0],
           period_end: proExpiresAtStr,
           charged_at: new Date(),
           charge_attempts: 1,
-        },
+        } as Parameters<
+          ReturnType<
+            typeof strapi.documents<"api::subscription-payment.subscription-payment">
+          >["create"]
+        >[0]["data"],
       });
 
     // Activate user — only pro_status (billing period tracked via subscription-payment.period_end)
