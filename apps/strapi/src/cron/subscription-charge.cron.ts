@@ -9,9 +9,9 @@ import { documentDetails } from "../api/payment/utils/user.utils";
 interface ProUser {
   id: number;
   documentId: string;
-  tbk_user: string;
   pro_expires_at: string;
   pro_pending_invoice?: boolean;
+  subscription_pro?: { tbk_user?: string } | null;
 }
 
 interface FailedPaymentRecord {
@@ -71,9 +71,12 @@ export class SubscriptionChargeService {
             pro_status: { $eq: "active" },
             pro_expires_at: { $lte: `${today}T23:59:59.999Z` },
           } as unknown as Record<string, unknown>,
-          fields: ["id", "tbk_user", "pro_expires_at"] as Parameters<
+          fields: ["id", "documentId", "pro_expires_at", "pro_pending_invoice"] as Parameters<
             typeof strapi.entityService.findMany
           >[1]["fields"],
+          populate: ["subscription_pro"] as unknown as Parameters<
+            typeof strapi.entityService.findMany
+          >[1]["populate"],
           pagination: { pageSize: -1 },
         }
       )) as ProUser[];
@@ -107,7 +110,15 @@ export class SubscriptionChargeService {
           continue;
         }
 
-        await this.chargeUser(user, periodStart, today, amount, 1);
+        const tbkUser = user.subscription_pro?.tbk_user;
+        if (!tbkUser) {
+          logger.warn(
+            `SubscriptionChargeService: user ${user.id} has no subscription-pro tbk_user, skipping`
+          );
+          continue;
+        }
+
+        await this.chargeUser({ ...user, tbk_user: tbkUser }, periodStart, today, amount, 1);
       }
 
       // Step 2: Retry failed charges with charge_attempts < 3 whose next_charge_attempt <= today
@@ -121,7 +132,11 @@ export class SubscriptionChargeService {
             charge_attempts: { $lt: 3 },
             next_charge_attempt: { $lte: today },
           } as unknown as Record<string, unknown>,
-          populate: ["user"] as unknown as Parameters<
+          populate: {
+            user: {
+              populate: ["subscription_pro"],
+            },
+          } as unknown as Parameters<
             typeof strapi.entityService.findMany
           >[1]["populate"],
           pagination: { pageSize: -1 },
@@ -134,9 +149,16 @@ export class SubscriptionChargeService {
 
       for (const record of retryRecords) {
         const user = record.user;
+        const tbkUser = user.subscription_pro?.tbk_user;
+        if (!tbkUser) {
+          logger.warn(
+            `SubscriptionChargeService: retry user ${user.id} has no subscription-pro tbk_user, skipping`
+          );
+          continue;
+        }
         const attempt = record.charge_attempts + 1;
         await this.chargeUser(
-          user,
+          { ...user, tbk_user: tbkUser },
           record.period_start,
           today,
           amount,
@@ -183,6 +205,28 @@ export class SubscriptionChargeService {
             >[2]["data"],
           }
         );
+
+        // Clear subscription-pro tbk_user on deactivation
+        try {
+          const subPro = await strapi.db
+            .query("api::subscription-pro.subscription-pro")
+            .findOne({ where: { user: { id: user.id } } });
+          if (subPro) {
+            const subProUpdate = strapi.entityService.update as (
+              _uid: string,
+              _id: number,
+              _params: { data: Record<string, unknown> }
+            ) => Promise<unknown>;
+            await subProUpdate("api::subscription-pro.subscription-pro", (subPro as { id: number }).id, {
+              data: { tbk_user: null },
+            });
+          }
+        } catch (subProError) {
+          logger.error("SubscriptionChargeService: failed to clear subscription-pro on deactivation", {
+            userId: user.id,
+            error: subProError,
+          });
+        }
 
         // Recalculate sort_priority for user's featured ads (pro=false changes priority from 0 to 1)
         try {
@@ -322,7 +366,7 @@ export class SubscriptionChargeService {
    * On success: creates/updates subscription-payment as approved and extends pro_expires_at.
    * On failure: creates/updates subscription-payment as failed with next retry date.
    *
-   * @param user - The PRO user to charge
+   * @param user - The PRO user to charge (with tbk_user at top level, sourced from subscription_pro)
    * @param periodStart - ISO date string (YYYY-MM-DD) for the subscription period being charged
    * @param today - ISO date string (YYYY-MM-DD) for today
    * @param amount - Charge amount in CLP (from PRO_MONTHLY_PRICE env var)
@@ -330,7 +374,7 @@ export class SubscriptionChargeService {
    * @param existingRecordId - Numeric ID of existing failed payment record to update (if retrying)
    */
   private async chargeUser(
-    user: ProUser,
+    user: ProUser & { tbk_user: string },
     periodStart: string,
     today: string,
     amount: number,
