@@ -26,14 +26,28 @@
     >
       <Settings class="menu--main__icon" />
     </button>
+    <button
+      type="button"
+      class="menu--main__btn"
+      :class="{ 'menu--main__btn--active': activeMenu === 'integrations' }"
+      aria-label="Integraciones"
+      @click="emit('select', 'integrations')"
+    >
+      <Plug class="menu--main__icon" />
+    </button>
   </nav>
 </template>
 
 <script setup lang="ts">
-import { LayoutDashboard, Users, Settings } from "lucide-vue-next";
+import { LayoutDashboard, Users, Settings, Plug } from "lucide-vue-next";
 
-defineProps<{ activeMenu: "default" | "users" | "maintenance" }>();
+defineProps<{
+  activeMenu: "default" | "users" | "maintenance" | "integrations";
+}>();
 const emit = defineEmits<{
-  (e: "select", panel: "default" | "users" | "maintenance"): void;
+  (
+    e: "select",
+    panel: "default" | "users" | "maintenance" | "integrations",
+  ): void;
 }>();
 </script>
