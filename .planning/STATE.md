@@ -141,10 +141,11 @@ Progress: [██████████] 100%
 | 260409-tig | create search-console and cloudflare API modules (controller + route) following cron-runner pattern | 2026-04-10 | fa96b1f5 | [260409-tig-create-search-console-and-cloudflare-api](./quick/260409-tig-create-search-console-and-cloudflare-api/) |
 | 260409-tns | implement real SearchConsoleService methods (getPerformance/getTopQueries/getTopPages) and CloudflareService.getAnalytics; wire both controllers to return real analytics data | 2026-04-10 | fde1984a | [260409-tns-implement-search-console-and-cloudflare-](./quick/260409-tns-implement-search-console-and-cloudflare-/) |
 | 260409-ujs | add Integrations section to dashboard: Plug rail button, MenuIntegrations panel, /integrations page, layout wiring | 2026-04-09 | 7f614341 | [260409-ujs-add-integrations-section-to-dashboard-me](./quick/260409-ujs-add-integrations-section-to-dashboard-me/) |
+| 260409-x6t | articulos hay que sacarlo de /maintenance y crear una carpeta /articles y agregar un icono de articulos a MenuMain | 2026-04-10 | 81ee855c | [260409-x6t-articulos-hay-que-sacarlo-de-maintenance](./quick/260409-x6t-articulos-hay-que-sacarlo-de-maintenance/) |
 
 ## Session Continuity
 
-Last activity: 2026-04-10
+Last activity: 2026-04-10 - Completed quick task 260409-x6t: articulos hay que sacarlo de /maintenance y crear una carpeta /articles y agregar un icono de articulos a MenuMain
 Last session: 2026-04-10T03:59:40.205Z
-Stopped at: Completed quick task 260409-x6t: promote articles from /maintenance/articles to /articles
+Stopped at: Completed quick task 260409-x6t: articulos hay que sacarlo de /maintenance y crear una carpeta /articles y agregar un icono de articulos a MenuMain
 Resume file: None
