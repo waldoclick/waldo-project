@@ -108,7 +108,8 @@
       "Bash(sed -i 's|router\\\\.push\\(\"/categories\"\\)|router.push\\(\"/maintenance/categories\"\\)|g' apps/dashboard/app/components/FormCategory.vue)",
       "Bash(sed -i 's|router\\\\.push\\(\"/terms\"\\)|router.push\\(\"/maintenance/terms\"\\)|g' apps/dashboard/app/components/FormTerm.vue)",
       "Bash(sort echo:*)",
-      "Skill(gsd:resume-work)"
+      "Skill(gsd:resume-work)",
+      "WebFetch(domain:www.waldo.click)"
     ]
   }
 }

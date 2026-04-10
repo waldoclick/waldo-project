@@ -122,6 +122,8 @@ build
 ############################
 
 credentials.json
+credentials/
+google.json
 
 ############################
 # Backups
