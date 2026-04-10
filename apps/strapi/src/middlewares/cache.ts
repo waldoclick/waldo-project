@@ -88,6 +88,7 @@ const shouldNotCache = (url: string): boolean => {
     url.startsWith("/api/connect") || // No cachear rutas de autenticación
     url.startsWith("/api/auth") || // No cachear rutas de auth
     url.startsWith("/api/orders") || // No cachear órdenes
+    url.startsWith("/api/users") || // No cachear datos de usuario (user-specific)
     url.includes("/callback") || // No cachear callbacks de auth
     url.includes("/uploads")
   )
@@ -114,6 +115,17 @@ const handleRedisOperation = async (operation: () => Promise<unknown>) => {
     console.error("[Redis] Operation failed:", error);
     return null;
   }
+};
+
+const invalidateCollectionCache = async (url: string) => {
+  const segments = url.split("?")[0].split("/");
+  const collectionBase = "/" + segments.slice(1, 3).join("/");
+  await handleRedisOperation(async () => {
+    const keys = await redis?.keys(`cache:*:${collectionBase}*`);
+    if (keys?.length) {
+      await redis?.del(...keys);
+    }
+  });
 };
 
 export default () => {
@@ -159,13 +171,7 @@ export default () => {
     // Para métodos no-GET/HEAD, invalidar cache y continuar
     if (ctx.method !== "GET" && ctx.method !== "HEAD") {
       if (["POST", "PUT", "DELETE", "PATCH"].includes(ctx.method)) {
-        const baseUrl = ctx.url.split("?")[0];
-        await handleRedisOperation(async () => {
-          const keys = await redis?.keys(`cache:*${baseUrl}*`);
-          if (keys?.length) {
-            await redis?.del(...keys);
-          }
-        });
+        await invalidateCollectionCache(ctx.url);
       }
       return await next();
     }
