@@ -68,7 +68,7 @@ export default ({ env }) => [
   // "global::image-converter",
   "global::upload",
   // "global::recaptcha", // Movido a Nuxt Nitro proxy
-  ...(env("REDIS_ENABLE", "false") === "true" ? ["global::cache"] : []),
+  ...(env("REDIS_ENABLED", "false") === "true" ? ["global::cache"] : []),
   "global::protect-user-fields",
   "global::user-registration",
   "global::hide-admin-redirect",

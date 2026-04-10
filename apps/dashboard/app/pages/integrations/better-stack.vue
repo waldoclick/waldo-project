@@ -8,7 +8,7 @@
           rel="noopener noreferrer"
           class="btn btn--primary"
         >
-          <ExternalLink :size="16" />
+          <IconsIconBetterStack style="width: 16px; height: 16px" />
           Better Stack
         </a>
       </template>
@@ -26,7 +26,6 @@
 import HeroDefault from "@/components/HeroDefault.vue";
 import BetterStackMonitors from "@/components/BetterStackMonitors.vue";
 import BetterStackIncidents from "@/components/BetterStackIncidents.vue";
-import { ExternalLink } from "lucide-vue-next";
 
 definePageMeta({
   layout: "dashboard",

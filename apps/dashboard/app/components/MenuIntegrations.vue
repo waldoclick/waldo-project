@@ -81,7 +81,7 @@
           to="/integrations/better-stack"
           class="menu--integrations__link"
         >
-          <Layers class="menu--integrations__icon" />
+          <IconsIconBetterStack class="menu--integrations__icon" />
           <span>Better Stack</span>
         </NuxtLink>
       </li>
@@ -92,7 +92,7 @@
 <script setup lang="ts">
 import { computed, watch } from "vue";
 import { useRoute } from "vue-router";
-import { Plug, Search, Shield, Layers, BarChart2 } from "lucide-vue-next";
+import { Plug, Search, Shield, BarChart2 } from "lucide-vue-next";
 
 const emit = defineEmits<{ (e: "close"): void }>();
 

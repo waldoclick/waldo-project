@@ -1,12 +1,17 @@
+import type { Component } from "vue";
+import IconsBetterstack from "@/components/icons/iconBetterStack.vue";
+
 /**
  * Lista de servicios externos para el menú "Servicios" del header.
- * Todos usan iconos Lucide por nombre (Globe, Search, BarChart2, etc.).
+ * Usar `icon` para iconos Lucide (por nombre) o `component` para componentes Vue custom.
  */
 export interface ServiceItem {
   name: string;
   url: string;
   /** Nombre del componente Lucide (Globe, Search, Rocket, etc.) */
-  icon: string;
+  icon?: string;
+  /** Componente Vue custom a usar como ícono en lugar de Lucide */
+  component?: Component;
   /** Si es true, navega internamente en el dashboard en lugar de abrir en nueva pestaña */
   internal?: boolean;
 }
@@ -47,7 +52,7 @@ export function useServices(): ServiceItem[] {
     {
       name: "Better Stack",
       url: "/integrations/better-stack",
-      icon: "Layers",
+      component: IconsBetterstack,
       internal: true,
     },
     {
@@ -79,11 +84,6 @@ export function useServices(): ServiceItem[] {
       name: "Codacy",
       url: "https://app.codacy.com/organizations/gh/waldoclick",
       icon: "ShieldCheck",
-    },
-    {
-      name: "Better Stack",
-      url: "https://uptime.betterstack.com/team/t324583/incidents",
-      icon: "Layers",
     },
   ];
 }

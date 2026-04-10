@@ -31,8 +31,8 @@
         >
           <span class="dropdown--apps__item__icon">
             <component
-              :is="lucideIcons[service.icon]"
-              :size="32"
+              :is="service.component ?? lucideIcons[service.icon ?? '']"
+              :size="service.component ? undefined : 32"
               class="dropdown--apps__item__icon__svg"
             />
           </span>
@@ -45,7 +45,6 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue";
-import { resolveComponent } from "vue";
 import {
   Grid3X3,
   Globe,
@@ -59,13 +58,12 @@ import {
   MessageCircle,
   ShieldCheck,
   Shield,
-  Layers,
 } from "lucide-vue-next";
 
 const services = useServices();
 const NuxtLink = resolveComponent("NuxtLink");
 
-const lucideIcons: Record<string, any> = {
+const lucideIcons: Record<string, unknown> = {
   Globe,
   Search,
   LayoutGrid,
@@ -77,7 +75,6 @@ const lucideIcons: Record<string, any> = {
   MessageCircle,
   ShieldCheck,
   Shield,
-  Layers,
 };
 
 const open = ref(false);

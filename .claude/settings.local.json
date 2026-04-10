@@ -113,7 +113,8 @@
       "Bash(python3 -m json.tool)",
       "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('OK' if d.get\\('success'\\) else 'ERR: '+str\\(d.get\\('errors'\\)\\)\\)\")",
       "Bash(yarn nuxi:*)",
-      "WebFetch(domain:betterstack.com)"
+      "WebFetch(domain:betterstack.com)",
+      "Bash(redis-cli:*)"
     ]
   }
 }
