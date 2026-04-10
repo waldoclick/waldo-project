@@ -52,20 +52,27 @@ const initRedis = async () => {
 
 // Configuración de TTL por ruta
 const ONE_HOUR = 3600;
+const ONE_DAY = ONE_HOUR * 24;
+const ONE_MINUTE = 60;
 
-const CACHE_CONFIG = {
+const CACHE_CONFIG: Record<string, number> = {
   default: ONE_HOUR * 4,
-  // "/api/connect": 1,
-  // "/api/payments": 1,
-  // "/api/user": 1,
-  // "/api/ads": 1,
-  // "/api/indicators": 3600,
-  // "/api/filter": 60,
-  // "/api/related": 60,
-  // "/api/regions": 86400,
-  // "/api/communes": 86400,
-  // "/api/conditions": 86400,
-  // "/api/categories": 86400,
+
+  // Mantenedores — rarely change, active invalidation on edit
+  "/api/categories": ONE_DAY,
+  "/api/conditions": ONE_DAY,
+  "/api/ad-packs": ONE_DAY,
+  "/api/regions": ONE_DAY,
+  "/api/communes": ONE_DAY,
+  "/api/faqs": ONE_DAY,
+  "/api/policies": ONE_DAY,
+  "/api/terms": ONE_DAY,
+
+  // High-traffic, frequently changing
+  "/api/ads": ONE_MINUTE,
+
+  // Analytics/indicators — moderate freshness
+  "/api/indicators": ONE_HOUR,
 };
 
 const getCacheTTL = (url: string): number => {
