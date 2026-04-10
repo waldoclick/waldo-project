@@ -50,32 +50,6 @@
         gap: 12px;
       }
     }
-
-    &__kpi {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 4px;
-    }
-
-    &__delta {
-      display: inline-block;
-      font-size: 12px;
-      font-weight: 600;
-      padding: 2px 8px;
-      border-radius: 12px;
-      margin-top: 4px;
-
-      &--positive {
-        color: #16a34a;
-        background-color: #dcfce7;
-      }
-
-      &--negative {
-        color: #ff6b6b;
-        background-color: #fee2e2;
-      }
-    }
   }
 
   &--chart {

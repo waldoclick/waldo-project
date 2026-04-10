@@ -163,6 +163,25 @@
       margin-bottom: 24px;
     }
 
+    &__delta {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 12px;
+      margin-bottom: 8px;
+
+      &--positive {
+        color: #16a34a;
+        background-color: #dcfce7;
+      }
+
+      &--negative {
+        color: $red_salsa;
+        background-color: #fee2e2;
+      }
+    }
+
     &__link {
       display: inline-flex;
       align-items: center;

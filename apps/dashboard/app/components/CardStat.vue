@@ -2,6 +2,16 @@
   <article class="card card--stat">
     <div class="card--stat__title">{{ title }}</div>
     <div class="card--stat__value">{{ formattedValue }}</div>
+    <span
+      v-if="delta !== undefined"
+      class="card--stat__delta"
+      :class="
+        deltaPositive
+          ? 'card--stat__delta--positive'
+          : 'card--stat__delta--negative'
+      "
+      >{{ delta }}</span
+    >
     <NuxtLink v-if="link" :to="link.to" class="card--stat__link">
       <ArrowRight :size="12" class="card--stat__link__icon" />
       {{ link.text }}
@@ -25,6 +35,8 @@ import type { Component } from "vue";
 const props = defineProps<{
   title: string;
   value: string | number;
+  delta?: string;
+  deltaPositive?: boolean;
   link?: { text: string; to: string };
   icon: Component;
   iconColor: string;
