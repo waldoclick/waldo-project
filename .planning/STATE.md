@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-stopped_at: "Completed quick task 260409-tns: implement Search Console and Cloudflare analytics services"
-last_updated: "2026-04-10T03:45:00.000Z"
-last_activity: 2026-04-10
+stopped_at: "Completed quick task 260409-ujs: add Integrations section to dashboard menu"
+last_updated: "2026-04-09T00:00:00.000Z"
+last_activity: 2026-04-09
 progress:
   total_phases: 16
   completed_phases: 15
@@ -140,6 +140,7 @@ Progress: [██████████] 100%
 | 260409-taw | create search-console and cloudflare service stubs following google multi-file pattern | 2026-04-10 | b1b3e04c | [260409-taw-add-search-console-and-cloudflare-servic](./quick/260409-taw-add-search-console-and-cloudflare-servic/) |
 | 260409-tig | create search-console and cloudflare API modules (controller + route) following cron-runner pattern | 2026-04-10 | fa96b1f5 | [260409-tig-create-search-console-and-cloudflare-api](./quick/260409-tig-create-search-console-and-cloudflare-api/) |
 | 260409-tns | implement real SearchConsoleService methods (getPerformance/getTopQueries/getTopPages) and CloudflareService.getAnalytics; wire both controllers to return real analytics data | 2026-04-10 | fde1984a | [260409-tns-implement-search-console-and-cloudflare-](./quick/260409-tns-implement-search-console-and-cloudflare-/) |
+| 260409-ujs | add Integrations section to dashboard: Plug rail button, MenuIntegrations panel, /integrations page, layout wiring | 2026-04-09 | 7f614341 | [260409-ujs-add-integrations-section-to-dashboard-me](./quick/260409-ujs-add-integrations-section-to-dashboard-me/) |
 
 ## Session Continuity
 
