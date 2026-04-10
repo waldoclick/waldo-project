@@ -50,9 +50,9 @@ const apiClient = useApiClient();
 
 const title = computed(() => term.value?.title || "Condicion de Uso");
 const breadcrumbs = computed(() => [
-  { label: "Condiciones de Uso", to: "/terms" },
+  { label: "Condiciones de Uso", to: "/maintenance/terms" },
   ...(term.value?.title
-    ? [{ label: term.value.title, to: `/terms/${route.params.id}` }]
+    ? [{ label: term.value.title, to: `/maintenance/terms/${route.params.id}` }]
     : []),
   { label: "Editar" },
 ]);

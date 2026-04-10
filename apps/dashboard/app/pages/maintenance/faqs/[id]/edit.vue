@@ -50,9 +50,9 @@ const apiClient = useApiClient();
 
 const title = computed(() => faq.value?.title || "FAQ");
 const breadcrumbs = computed(() => [
-  { label: "FAQs", to: "/faqs" },
+  { label: "FAQs", to: "/maintenance/faqs" },
   ...(faq.value?.title
-    ? [{ label: faq.value.title, to: `/faqs/${route.params.id}` }]
+    ? [{ label: faq.value.title, to: `/maintenance/faqs/${route.params.id}` }]
     : []),
   { label: "Editar" },
 ]);

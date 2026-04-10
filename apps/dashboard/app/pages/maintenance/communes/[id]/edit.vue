@@ -50,9 +50,14 @@ const apiClient = useApiClient();
 
 const title = computed(() => commune.value?.name || "Comuna");
 const breadcrumbs = computed(() => [
-  { label: "Comunas", to: "/communes" },
+  { label: "Comunas", to: "/maintenance/communes" },
   ...(commune.value?.name
-    ? [{ label: commune.value.name, to: `/communes/${route.params.id}` }]
+    ? [
+        {
+          label: commune.value.name,
+          to: `/maintenance/communes/${route.params.id}`,
+        },
+      ]
     : []),
   { label: "Editar" },
 ]);

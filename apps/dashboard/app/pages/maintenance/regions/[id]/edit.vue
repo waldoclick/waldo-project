@@ -50,9 +50,14 @@ const apiClient = useApiClient();
 
 const title = computed(() => region.value?.name || "Región");
 const breadcrumbs = computed(() => [
-  { label: "Regiones", to: "/regions" },
+  { label: "Regiones", to: "/maintenance/regions" },
   ...(region.value?.name
-    ? [{ label: region.value.name, to: `/regions/${route.params.id}` }]
+    ? [
+        {
+          label: region.value.name,
+          to: `/maintenance/regions/${route.params.id}`,
+        },
+      ]
     : []),
   { label: "Editar" },
 ]);

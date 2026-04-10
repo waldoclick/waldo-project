@@ -50,9 +50,14 @@ const apiClient = useApiClient();
 
 const title = computed(() => policy.value?.title || "Politica");
 const breadcrumbs = computed(() => [
-  { label: "Politicas", to: "/policies" },
+  { label: "Politicas", to: "/maintenance/policies" },
   ...(policy.value?.title
-    ? [{ label: policy.value.title, to: `/policies/${route.params.id}` }]
+    ? [
+        {
+          label: policy.value.title,
+          to: `/maintenance/policies/${route.params.id}`,
+        },
+      ]
     : []),
   { label: "Editar" },
 ]);

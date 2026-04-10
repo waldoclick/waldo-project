@@ -50,9 +50,14 @@ const apiClient = useApiClient();
 
 const title = computed(() => category.value?.name || "Categoría");
 const breadcrumbs = computed(() => [
-  { label: "Categorías", to: "/categories" },
+  { label: "Categorías", to: "/maintenance/categories" },
   ...(category.value?.name
-    ? [{ label: category.value.name, to: `/categories/${route.params.id}` }]
+    ? [
+        {
+          label: category.value.name,
+          to: `/maintenance/categories/${route.params.id}`,
+        },
+      ]
     : []),
   { label: "Editar" },
 ]);
