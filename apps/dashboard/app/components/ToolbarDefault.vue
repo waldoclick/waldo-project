@@ -4,7 +4,7 @@
     <DropdownSales />
     <DropdownPendings />
     <NuxtLink
-      to="/maintenance/articles"
+      to="/articles"
       class="toolbar--default__trigger"
       title="Artículos"
     >

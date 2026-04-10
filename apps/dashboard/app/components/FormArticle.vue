@@ -273,7 +273,7 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       if (createdId) {
         router.push(`/articles/${createdId}/edit`);
       } else {
-        router.push("/maintenance/articles");
+        router.push("/articles");
       }
     }
   } catch (error) {
