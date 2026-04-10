@@ -49,9 +49,12 @@ export class CloudflareService implements ICloudflareService {
     return data;
   }
 
-  private getDateRange(): { startDate: string; endDate: string } {
+  private getDateRange(days: number = 30): {
+    startDate: string;
+    endDate: string;
+  } {
     const endDate = new Date().toISOString().split("T")[0] as string;
-    const startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+    const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000)
       .toISOString()
       .split("T")[0] as string;
     return { startDate, endDate };
@@ -126,14 +129,14 @@ export class CloudflareService implements ICloudflareService {
     }));
   }
 
-  async getThreats(): Promise<CloudflareThreatRow[]> {
-    const { startDate, endDate } = this.getDateRange();
+  async getThreats(days: number = 30): Promise<CloudflareThreatRow[]> {
+    const { startDate, endDate } = this.getDateRange(days);
 
     const data = await this.graphql(`{
       viewer {
         zones(filter: { zoneTag: "${this.zoneId}" }) {
           httpRequests1dGroups(
-            limit: 31
+            limit: ${days + 1}
             filter: { date_geq: "${startDate}", date_leq: "${endDate}" }
             orderBy: [sum_threats_DESC]
           ) {

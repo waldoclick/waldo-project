@@ -22,5 +22,5 @@ export interface CloudflareThreatRow {
 export interface ICloudflareService {
   getTraffic(): Promise<CloudflareTrafficRow[]>;
   getRequests(): Promise<CloudflareRequestRow[]>;
-  getThreats(): Promise<CloudflareThreatRow[]>;
+  getThreats(days: number): Promise<CloudflareThreatRow[]>;
 }
