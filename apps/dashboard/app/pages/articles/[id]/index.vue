@@ -4,7 +4,7 @@
       <template #actions>
         <NuxtLink
           class="btn btn--primary"
-          :to="`/maintenance/articles/${route.params.id}/edit`"
+          :to="`/articles/${route.params.id}/edit`"
         >
           Editar artículo
         </NuxtLink>
@@ -148,7 +148,7 @@ const apiClient = useApiClient();
 
 const title = computed(() => article.value?.title || "Artículo");
 const breadcrumbs = computed(() => [
-  { label: "Artículos", to: "/maintenance/articles" },
+  { label: "Artículos", to: "/articles" },
   ...(article.value?.title ? [{ label: article.value.title }] : []),
 ]);
 

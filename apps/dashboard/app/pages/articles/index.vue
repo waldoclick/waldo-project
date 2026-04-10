@@ -10,7 +10,7 @@
           <Wand2 :size="16" />
           Generar artículo
         </button>
-        <NuxtLink class="btn btn--primary" to="/maintenance/articles/new">
+        <NuxtLink class="btn btn--primary" to="/articles/new">
           Agregar artículo
         </NuxtLink>
       </template>
