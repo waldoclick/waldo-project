@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-stopped_at: "Completed quick task 260409-tig: create search-console and cloudflare API modules"
-last_updated: "2026-04-10T02:00:00.000Z"
+stopped_at: "Completed quick task 260409-tns: implement Search Console and Cloudflare analytics services"
+last_updated: "2026-04-10T03:45:00.000Z"
 last_activity: 2026-04-10
 progress:
   total_phases: 16
@@ -76,6 +76,8 @@ Progress: [██████████] 100%
 - ordersTocsv utility kept for unit testing isolation; runtime CSV export calls Strapi endpoint directly without client-side re-serialization (119-01)
 - /orders/export-csv route declared first in 01-order-me.ts to prevent :id wildcard from capturing the static path segment (119-01)
 - ExportOrder interface defined locally in controller alongside StrapiOrder — avoids coupling with shared types (119-01)
+- Auth.GoogleAuth instantiated per method call (not as instance field) in SearchConsoleService to avoid stale credential caching across requests (260409-tns)
+- Cloudflare analytics response navigated with any cast + inline comment — Cloudflare Analytics API has no public TS types; cacheHitRate and errorRate computed from totals with zero-division guard (260409-tns)
 
 ### Roadmap Evolution
 
@@ -137,6 +139,7 @@ Progress: [██████████] 100%
 | 260409-qg2 | fix active menu panel not persisting on page refresh | 2026-04-09 | 38df84e4 | [260409-qg2-fix-active-menu-panel-not-persisting-on-](./quick/260409-qg2-fix-active-menu-panel-not-persisting-on-/) |
 | 260409-taw | create search-console and cloudflare service stubs following google multi-file pattern | 2026-04-10 | b1b3e04c | [260409-taw-add-search-console-and-cloudflare-servic](./quick/260409-taw-add-search-console-and-cloudflare-servic/) |
 | 260409-tig | create search-console and cloudflare API modules (controller + route) following cron-runner pattern | 2026-04-10 | fa96b1f5 | [260409-tig-create-search-console-and-cloudflare-api](./quick/260409-tig-create-search-console-and-cloudflare-api/) |
+| 260409-tns | implement real SearchConsoleService methods (getPerformance/getTopQueries/getTopPages) and CloudflareService.getAnalytics; wire both controllers to return real analytics data | 2026-04-10 | fde1984a | [260409-tns-implement-search-console-and-cloudflare-](./quick/260409-tns-implement-search-console-and-cloudflare-/) |
 
 ## Session Continuity
 
