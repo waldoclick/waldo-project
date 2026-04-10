@@ -109,7 +109,9 @@
       "Bash(sed -i 's|router\\\\.push\\(\"/terms\"\\)|router.push\\(\"/maintenance/terms\"\\)|g' apps/dashboard/app/components/FormTerm.vue)",
       "Bash(sort echo:*)",
       "Skill(gsd:resume-work)",
-      "WebFetch(domain:www.waldo.click)"
+      "WebFetch(domain:www.waldo.click)",
+      "Bash(python3 -m json.tool)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('OK' if d.get\\('success'\\) else 'ERR: '+str\\(d.get\\('errors'\\)\\)\\)\")"
     ]
   }
 }
