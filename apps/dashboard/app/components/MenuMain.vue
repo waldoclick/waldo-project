@@ -3,7 +3,12 @@
     <NuxtLink to="/" class="menu--main__btn" aria-label="Dashboard">
       <LayoutDashboard class="menu--main__icon" />
     </NuxtLink>
-    <NuxtLink to="/articles" class="menu--main__btn" aria-label="Artículos">
+    <NuxtLink
+      to="/articles"
+      class="menu--main__btn"
+      :class="{ 'menu--main__btn--active': activeMenu === 'articles' }"
+      aria-label="Artículos"
+    >
       <Newspaper class="menu--main__icon" />
     </NuxtLink>
     <NuxtLink
@@ -43,6 +48,6 @@ import {
 } from "lucide-vue-next";
 
 defineProps<{
-  activeMenu: "default" | "users" | "maintenance" | "integrations";
+  activeMenu: "default" | "articles" | "users" | "maintenance" | "integrations";
 }>();
 </script>

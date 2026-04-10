@@ -32,6 +32,10 @@
             v-else-if="activeMenu === 'maintenance'"
             @close="isSidebarOpen = false"
           />
+          <MenuArticles
+            v-else-if="activeMenu === 'articles'"
+            @close="isSidebarOpen = false"
+          />
           <MenuIntegrations
             v-else-if="activeMenu === 'integrations'"
             @close="isSidebarOpen = false"
@@ -62,6 +66,7 @@
 import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import MenuDefault from "@/components/MenuDefault.vue";
+import MenuArticles from "@/components/MenuArticles.vue";
 import MenuUsers from "@/components/MenuUsers.vue";
 import MenuMaintenance from "@/components/MenuMaintenance.vue";
 import MenuIntegrations from "@/components/MenuIntegrations.vue";
@@ -74,7 +79,8 @@ const route = useRoute();
 
 const resolveActiveMenu = (
   path: string,
-): "default" | "users" | "maintenance" | "integrations" => {
+): "default" | "articles" | "users" | "maintenance" | "integrations" => {
+  if (path.startsWith("/articles")) return "articles";
   if (path.startsWith("/users")) return "users";
   if (path.startsWith("/maintenance")) return "maintenance";
   if (path.startsWith("/integrations")) return "integrations";
@@ -82,9 +88,9 @@ const resolveActiveMenu = (
 };
 
 const isSidebarOpen = ref(false);
-const activeMenu = ref<"default" | "users" | "maintenance" | "integrations">(
-  resolveActiveMenu(route.path),
-);
+const activeMenu = ref<
+  "default" | "articles" | "users" | "maintenance" | "integrations"
+>(resolveActiveMenu(route.path));
 
 watch(
   () => route.path,
