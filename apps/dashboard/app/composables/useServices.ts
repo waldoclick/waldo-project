@@ -28,8 +28,9 @@ export function useServices(): ServiceItem[] {
     },
     {
       name: "GA4",
-      url: "https://analytics.google.com/analytics/web/#/a307524661p433494628/reports/intelligenthome?params=_u..nav%3Dmaui",
+      url: "/integrations/google-analytics",
       icon: "BarChart2",
+      internal: true,
     },
     {
       name: "GSC",

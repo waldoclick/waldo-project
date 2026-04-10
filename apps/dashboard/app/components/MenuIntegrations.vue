@@ -32,6 +32,24 @@
         </NuxtLink>
       </li>
 
+      <!-- Google Analytics -->
+      <li
+        class="menu--integrations__item"
+        :class="{
+          'menu--integrations__item--active': isRouteActive(
+            '/integrations/google-analytics',
+          ),
+        }"
+      >
+        <NuxtLink
+          to="/integrations/google-analytics"
+          class="menu--integrations__link"
+        >
+          <BarChart2 class="menu--integrations__icon" />
+          <span>Google Analytics</span>
+        </NuxtLink>
+      </li>
+
       <!-- Cloudflare -->
       <li
         class="menu--integrations__item"
@@ -74,7 +92,7 @@
 <script setup lang="ts">
 import { computed, watch } from "vue";
 import { useRoute } from "vue-router";
-import { Plug, Search, Shield, Layers } from "lucide-vue-next";
+import { Plug, Search, Shield, Layers, BarChart2 } from "lucide-vue-next";
 
 const emit = defineEmits<{ (e: "close"): void }>();
 
@@ -90,6 +108,7 @@ const isIntegrationsRootActive = computed(
     route.path === "/integrations" ||
     (route.path.startsWith("/integrations/") &&
       !route.path.startsWith("/integrations/search-console") &&
+      !route.path.startsWith("/integrations/google-analytics") &&
       !route.path.startsWith("/integrations/cloudflare") &&
       !route.path.startsWith("/integrations/better-stack")),
 );
