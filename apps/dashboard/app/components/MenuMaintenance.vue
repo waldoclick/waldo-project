@@ -88,21 +88,6 @@
         </NuxtLink>
       </li>
 
-      <!-- Artículos -->
-      <li
-        class="menu--maintenance__item"
-        :class="{
-          'menu--maintenance__item--active': isRouteActive(
-            '/maintenance/articles',
-          ),
-        }"
-      >
-        <NuxtLink to="/maintenance/articles" class="menu--maintenance__link">
-          <Newspaper class="menu--maintenance__icon" />
-          <span>Artículos</span>
-        </NuxtLink>
-      </li>
-
       <!-- Preguntas frecuentes -->
       <li
         class="menu--maintenance__item"
@@ -158,7 +143,6 @@ import {
   Box,
   MapPin,
   Building,
-  Newspaper,
   HelpCircle,
   Shield,
   ScrollText,
@@ -179,7 +163,6 @@ const knownSubRoutes = [
   "/maintenance/packs",
   "/maintenance/regions",
   "/maintenance/communes",
-  "/maintenance/articles",
   "/maintenance/faqs",
   "/maintenance/policies",
   "/maintenance/terms",

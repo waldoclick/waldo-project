@@ -3,6 +3,9 @@
     <NuxtLink to="/" class="menu--main__btn" aria-label="Dashboard">
       <LayoutDashboard class="menu--main__icon" />
     </NuxtLink>
+    <NuxtLink to="/articles" class="menu--main__btn" aria-label="Artículos">
+      <Newspaper class="menu--main__icon" />
+    </NuxtLink>
     <NuxtLink
       to="/users"
       class="menu--main__btn"
@@ -31,7 +34,13 @@
 </template>
 
 <script setup lang="ts">
-import { LayoutDashboard, Users, Settings, Plug } from "lucide-vue-next";
+import {
+  LayoutDashboard,
+  Newspaper,
+  Users,
+  Settings,
+  Plug,
+} from "lucide-vue-next";
 
 defineProps<{
   activeMenu: "default" | "users" | "maintenance" | "integrations";
