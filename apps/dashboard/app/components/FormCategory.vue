@@ -165,7 +165,7 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       );
       const updatedId = updatedCategory?.documentId || updatedCategory?.id;
       if (updatedId) {
-        router.push(`/categories/${updatedId}`);
+        router.push(`/maintenance/categories/${updatedId}`);
       }
     } else {
       const response = await apiClient<{
@@ -179,7 +179,7 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       await Swal.fire("Éxito", "Categoría creada correctamente.", "success");
       const createdId = createdData?.documentId || createdData?.id;
       if (createdId) {
-        router.push(`/categories/${createdId}`);
+        router.push(`/maintenance/categories/${createdId}`);
       } else {
         router.push("/maintenance/categories");
       }

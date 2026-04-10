@@ -137,7 +137,7 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       await Swal.fire("Éxito", "Región actualizada correctamente.", "success");
       const updatedId = responseData?.documentId || responseData?.id;
       if (updatedId) {
-        router.push(`/regions/${updatedId}`);
+        router.push(`/maintenance/regions/${updatedId}`);
       }
     } else {
       const response = await apiClient<{
@@ -151,7 +151,7 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       await Swal.fire("Éxito", "Región creada correctamente.", "success");
       const createdId = createdData?.documentId || createdData?.id;
       if (createdId) {
-        router.push(`/regions/${createdId}`);
+        router.push(`/maintenance/regions/${createdId}`);
       } else {
         router.push("/maintenance/regions");
       }

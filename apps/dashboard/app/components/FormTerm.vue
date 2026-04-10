@@ -144,7 +144,7 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       );
       const updatedId = responseData?.id || responseData?.documentId;
       if (updatedId) {
-        router.push(`/terms/${updatedId}`);
+        router.push(`/maintenance/terms/${updatedId}`);
       }
     } else {
       const lastResponse = (await apiClient("terms", {
@@ -171,7 +171,7 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       await Swal.fire("Éxito", "Condicion creada correctamente.", "success");
       const createdId = createdData?.id || createdData?.documentId;
       if (createdId) {
-        router.push(`/terms/${createdId}`);
+        router.push(`/maintenance/terms/${createdId}`);
       } else {
         router.push("/maintenance/terms");
       }
