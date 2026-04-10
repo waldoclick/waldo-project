@@ -1,16 +1,21 @@
-/**
- * Cloudflare Routes
- *
- * Exposes a single endpoint to retrieve Cloudflare analytics data.
- * Access is controlled via the global::isManager policy.
- */
-
 export default {
   routes: [
     {
       method: "GET",
-      path: "/cloudflare",
-      handler: "cloudflare.getData",
+      path: "/cloudflare/traffic",
+      handler: "cloudflare.getTraffic",
+      config: { policies: ["global::isManager"] },
+    },
+    {
+      method: "GET",
+      path: "/cloudflare/requests",
+      handler: "cloudflare.getRequests",
+      config: { policies: ["global::isManager"] },
+    },
+    {
+      method: "GET",
+      path: "/cloudflare/threats",
+      handler: "cloudflare.getThreats",
       config: { policies: ["global::isManager"] },
     },
   ],

@@ -31,6 +31,42 @@
           <span>Search Console</span>
         </NuxtLink>
       </li>
+
+      <!-- Cloudflare -->
+      <li
+        class="menu--integrations__item"
+        :class="{
+          'menu--integrations__item--active': isRouteActive(
+            '/integrations/cloudflare',
+          ),
+        }"
+      >
+        <NuxtLink
+          to="/integrations/cloudflare"
+          class="menu--integrations__link"
+        >
+          <Shield class="menu--integrations__icon" />
+          <span>Cloudflare</span>
+        </NuxtLink>
+      </li>
+
+      <!-- Better Stack -->
+      <li
+        class="menu--integrations__item"
+        :class="{
+          'menu--integrations__item--active': isRouteActive(
+            '/integrations/better-stack',
+          ),
+        }"
+      >
+        <NuxtLink
+          to="/integrations/better-stack"
+          class="menu--integrations__link"
+        >
+          <Layers class="menu--integrations__icon" />
+          <span>Better Stack</span>
+        </NuxtLink>
+      </li>
     </ul>
   </nav>
 </template>
@@ -38,7 +74,7 @@
 <script setup lang="ts">
 import { computed, watch } from "vue";
 import { useRoute } from "vue-router";
-import { Plug, Search } from "lucide-vue-next";
+import { Plug, Search, Shield, Layers } from "lucide-vue-next";
 
 const emit = defineEmits<{ (e: "close"): void }>();
 
@@ -53,7 +89,9 @@ const isIntegrationsRootActive = computed(
   () =>
     route.path === "/integrations" ||
     (route.path.startsWith("/integrations/") &&
-      !route.path.startsWith("/integrations/search-console")),
+      !route.path.startsWith("/integrations/search-console") &&
+      !route.path.startsWith("/integrations/cloudflare") &&
+      !route.path.startsWith("/integrations/better-stack")),
 );
 
 watch(

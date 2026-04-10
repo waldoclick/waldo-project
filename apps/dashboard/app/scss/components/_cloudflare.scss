@@ -2,7 +2,7 @@
 @use "../abstracts/variables" as *;
 @use "../base/container";
 
-.search-console {
+.cloudflare {
   &--page {
     padding: 40px 0;
 
@@ -83,15 +83,14 @@
     }
   }
 
-  &--queries,
-  &--pages {
+  &--requests,
+  &--threats {
     background-color: $white;
     border: 1px solid #e5e5e5;
     border-radius: 4px;
 
     &__header {
-      // margin-bottom: 16px;
-      padding: 24px;
+      padding: 20px;
       border-bottom: 1px solid #e5e5e5;
     }
 
@@ -111,7 +110,7 @@
     }
   }
 
-  &--pages {
+  &--requests {
     &__url {
       display: block;
       max-width: 420px;

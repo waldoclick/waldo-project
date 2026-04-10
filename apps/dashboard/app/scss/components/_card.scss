@@ -70,6 +70,72 @@
     }
   }
 
+  &--monitor {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background-color: $white;
+    border-radius: 4px;
+    border: 1px solid #e5e5e5;
+
+    &__title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: capitalize;
+      color: $davys_grey;
+      margin-bottom: 12px;
+    }
+
+    &__dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background-color: $silver;
+
+      &--up {
+        background-color: #22c55e;
+      }
+
+      &--down {
+        background-color: $red_salsa;
+      }
+
+      &--paused,
+      &--maintenance {
+        background-color: $silver;
+      }
+
+      &--pending,
+      &--validating {
+        background-color: $dodger_blue;
+      }
+    }
+
+    &__value {
+      font-size: 20px;
+      font-weight: 400;
+      line-height: 1.2;
+      color: $jet;
+      margin-bottom: 8px;
+    }
+
+    &__meta {
+      font-size: 12px;
+      color: $silver;
+      word-break: break-all;
+
+      & + & {
+        margin-top: 2px;
+      }
+    }
+  }
+
   &--stat {
     position: relative;
     display: flex;

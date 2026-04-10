@@ -1,0 +1,75 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.better-stack {
+  &--page {
+    padding: 40px 0;
+
+    @include screen-medium {
+      padding: 24px 0;
+    }
+
+    @include screen-small {
+      padding: 16px 0;
+    }
+
+    &__container {
+      @extend .container;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+  }
+
+  &--monitors {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+
+    @include screen-large {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include screen-small {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    &__loading,
+    &__empty {
+      grid-column: 1 / -1;
+      padding: 24px 0;
+      text-align: center;
+      color: $davys_grey;
+      font-size: 14px;
+    }
+  }
+
+  &--incidents {
+    background-color: $white;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+
+    &__header {
+      // margin-bottom: 16px;
+      border-bottom: 1px solid #e5e5e5;
+      padding: 20px;
+    }
+
+    &__title {
+      font-size: 16px;
+      font-weight: 600;
+      color: $eerie_black;
+      margin: 0;
+    }
+
+    &__empty,
+    &__loading {
+      padding: 24px 0;
+      text-align: center;
+      color: $davys_grey;
+      font-size: 14px;
+    }
+  }
+}

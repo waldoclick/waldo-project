@@ -58,6 +58,7 @@ import {
   Activity,
   MessageCircle,
   ShieldCheck,
+  Shield,
   Layers,
 } from "lucide-vue-next";
 
@@ -75,6 +76,7 @@ const lucideIcons: Record<string, any> = {
   Activity,
   MessageCircle,
   ShieldCheck,
+  Shield,
   Layers,
 };
 

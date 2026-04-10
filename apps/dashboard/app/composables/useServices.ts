@@ -38,6 +38,18 @@ export function useServices(): ServiceItem[] {
       internal: true,
     },
     {
+      name: "Cloudflare",
+      url: "/integrations/cloudflare",
+      icon: "Shield",
+      internal: true,
+    },
+    {
+      name: "Better Stack",
+      url: "/integrations/better-stack",
+      icon: "Layers",
+      internal: true,
+    },
+    {
       name: "LogRocket",
       url: "https://app.logrocket.com/myogth/waldo",
       icon: "Rocket",

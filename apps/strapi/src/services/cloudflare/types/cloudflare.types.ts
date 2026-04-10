@@ -1,22 +1,26 @@
-export interface CloudflareTimeseries {
-  since: string;
-  until: string;
-  requests: { all: number; cached: number; uncached: number };
-  bandwidth: { all: number; cached: number; uncached: number };
-  threats: { all: number };
-  pageviews: { all: number };
+export interface CloudflareTrafficRow {
+  date: string;
+  requests: number;
+  bytes: number;
+  pageViews: number;
+  threats: number;
+  cachedRequests: number;
 }
 
-export interface CloudflareAnalytics {
+export interface CloudflareRequestRow {
+  path: string;
   requests: number;
-  bandwidth: number;
+  bytes: number;
+}
+
+export interface CloudflareThreatRow {
+  date: string;
   threats: number;
-  pageviews: number;
-  cacheHitRate: number;
-  errorRate: number;
-  timeseries: CloudflareTimeseries[];
+  requests: number;
 }
 
 export interface ICloudflareService {
-  getAnalytics(): Promise<CloudflareAnalytics>;
+  getTraffic(): Promise<CloudflareTrafficRow[]>;
+  getRequests(): Promise<CloudflareRequestRow[]>;
+  getThreats(): Promise<CloudflareThreatRow[]>;
 }
