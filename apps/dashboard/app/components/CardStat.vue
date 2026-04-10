@@ -1,21 +1,23 @@
 <template>
   <article class="card card--stat">
-    <div class="card--stat__title">{{ title }}</div>
-    <div class="card--stat__value">{{ formattedValue }}</div>
-    <span
-      v-if="delta !== undefined"
-      class="card--stat__delta"
-      :class="
-        deltaPositive
-          ? 'card--stat__delta--positive'
-          : 'card--stat__delta--negative'
-      "
-      >{{ delta }}</span
-    >
-    <NuxtLink v-if="link" :to="link.to" class="card--stat__link">
-      <ArrowRight :size="12" class="card--stat__link__icon" />
-      {{ link.text }}
-    </NuxtLink>
+    <div class="card--stat__body">
+      <div class="card--stat__title">{{ title }}</div>
+      <div class="card--stat__value">{{ formattedValue }}</div>
+      <span
+        v-if="delta !== undefined"
+        class="card--stat__delta"
+        :class="
+          deltaPositive
+            ? 'card--stat__delta--positive'
+            : 'card--stat__delta--negative'
+        "
+        >{{ delta }}</span
+      >
+      <NuxtLink v-if="link" :to="link.to" class="card--stat__link">
+        <ArrowRight :size="12" class="card--stat__link__icon" />
+        {{ link.text }}
+      </NuxtLink>
+    </div>
     <div class="card--stat__icon" :style="{ backgroundColor: iconBgColor }">
       <component
         :is="icon"
