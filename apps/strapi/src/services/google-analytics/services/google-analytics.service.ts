@@ -3,6 +3,8 @@ import {
   IGoogleAnalyticsService,
   GA4StatsRow,
   GA4PageRow,
+  GA4SummaryMetric,
+  GA4Summary,
 } from "../types/google-analytics.types";
 
 export class GoogleAnalyticsService implements IGoogleAnalyticsService {
@@ -68,6 +70,66 @@ export class GoogleAnalyticsService implements IGoogleAnalyticsService {
     });
 
     return rows.sort((a, b) => a.date.localeCompare(b.date));
+  }
+
+  private computeDelta(current: number, previous: number): number {
+    if (previous === 0) return current > 0 ? 100 : 0;
+    return ((current - previous) / previous) * 100;
+  }
+
+  private buildMetric(current: number, previous: number): GA4SummaryMetric {
+    return { current, previous, delta: this.computeDelta(current, previous) };
+  }
+
+  async getSummary(): Promise<GA4Summary> {
+    const client = this.createClient();
+    const now = Date.now();
+    const DAY_MS = 24 * 60 * 60 * 1000;
+
+    const currentStart = new Date(now - 28 * DAY_MS)
+      .toISOString()
+      .split("T")[0] as string;
+    const currentEnd = new Date(now).toISOString().split("T")[0] as string;
+
+    const previousStart = new Date(now - 56 * DAY_MS)
+      .toISOString()
+      .split("T")[0] as string;
+    const previousEnd = new Date(now - 29 * DAY_MS)
+      .toISOString()
+      .split("T")[0] as string;
+
+    const metrics = [
+      { name: "sessions" },
+      { name: "totalUsers" },
+      { name: "bounceRate" },
+      { name: "averageSessionDuration" },
+    ];
+
+    const [[currentResp], [previousResp]] = await Promise.all([
+      client.runReport({
+        property: `properties/${this.propertyId}`,
+        dateRanges: [{ startDate: currentStart, endDate: currentEnd }],
+        metrics,
+      }),
+      client.runReport({
+        property: `properties/${this.propertyId}`,
+        dateRanges: [{ startDate: previousStart, endDate: previousEnd }],
+        metrics,
+      }),
+    ]);
+
+    const cur = currentResp.rows?.[0]?.metricValues ?? [];
+    const prev = previousResp.rows?.[0]?.metricValues ?? [];
+
+    const parse = (arr: typeof cur, i: number) =>
+      parseFloat(arr[i]?.value ?? "0") || 0;
+
+    return {
+      sessions: this.buildMetric(parse(cur, 0), parse(prev, 0)),
+      users: this.buildMetric(parse(cur, 1), parse(prev, 1)),
+      bounceRate: this.buildMetric(parse(cur, 2), parse(prev, 2)),
+      avgDuration: this.buildMetric(parse(cur, 3), parse(prev, 3)),
+    };
   }
 
   async getPages(): Promise<GA4PageRow[]> {

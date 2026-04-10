@@ -2,6 +2,12 @@ export default {
   routes: [
     {
       method: "GET",
+      path: "/google-analytics/summary",
+      handler: "google-analytics.getSummary",
+      config: { policies: ["global::isManager"] },
+    },
+    {
+      method: "GET",
       path: "/google-analytics/stats",
       handler: "google-analytics.getStats",
       config: { policies: ["global::isManager"] },

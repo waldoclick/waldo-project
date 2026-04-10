@@ -2,6 +2,16 @@ import { Context } from "koa";
 import { GoogleAnalyticsService } from "../../../services/google-analytics";
 
 export default {
+  async getSummary(ctx: Context) {
+    try {
+      const service = new GoogleAnalyticsService();
+      ctx.body = await service.getSummary();
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      return ctx.internalServerError(`Google Analytics error: ${message}`);
+    }
+  },
+
   async getStats(ctx: Context) {
     try {
       const service = new GoogleAnalyticsService();
