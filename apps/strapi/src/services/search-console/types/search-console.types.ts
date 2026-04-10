@@ -16,6 +16,6 @@ export interface SearchConsolePerformanceRow {
 
 export interface ISearchConsoleService {
   getPerformance(): Promise<SearchConsolePerformanceRow[]>;
-  getTopQueries(): Promise<SearchConsoleRow[]>;
-  getTopPages(): Promise<SearchConsoleRow[]>;
+  getQueries(): Promise<SearchConsoleRow[]>;
+  getPages(): Promise<SearchConsoleRow[]>;
 }

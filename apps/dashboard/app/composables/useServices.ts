@@ -7,6 +7,8 @@ export interface ServiceItem {
   url: string;
   /** Nombre del componente Lucide (Globe, Search, Rocket, etc.) */
   icon: string;
+  /** Si es true, navega internamente en el dashboard en lugar de abrir en nueva pestaña */
+  internal?: boolean;
 }
 
 export function useServices(): ServiceItem[] {
@@ -31,8 +33,9 @@ export function useServices(): ServiceItem[] {
     },
     {
       name: "GSC",
-      url: "https://search.google.com/search-console?resource_id=sc-domain:waldo.click",
+      url: "/integrations/search-console",
       icon: "Search",
+      internal: true,
     },
     {
       name: "LogRocket",

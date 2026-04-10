@@ -1,0 +1,126 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.search-console {
+  &--page {
+    padding: 40px 0;
+
+    @include screen-medium {
+      padding: 24px 0;
+    }
+
+    @include screen-small {
+      padding: 16px 0;
+    }
+
+    &__container {
+      @extend .container;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    &__loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 300px;
+      color: $davys_grey;
+      font-size: 14px;
+    }
+  }
+
+  &--stats {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    &__kpis {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+
+      @include screen-large {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      @include screen-small {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+    }
+
+    &__chart {
+      background-color: $white;
+      border: 1px solid #e5e5e5;
+      border-radius: 4px;
+      padding: 24px;
+
+      &__header {
+        margin-bottom: 20px;
+      }
+
+      &__title {
+        font-size: 16px;
+        font-weight: 600;
+        color: $eerie_black;
+        margin: 0;
+      }
+
+      &__canvas {
+        height: 300px;
+        position: relative;
+
+        @include screen-medium {
+          height: 220px;
+        }
+
+        @include screen-small {
+          height: 180px;
+        }
+      }
+    }
+  }
+
+  &--queries,
+  &--pages {
+    background-color: $white;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    padding: 24px;
+
+    &__header {
+      margin-bottom: 16px;
+    }
+
+    &__title {
+      font-size: 16px;
+      font-weight: 600;
+      color: $eerie_black;
+      margin: 0;
+    }
+
+    &__empty,
+    &__loading {
+      padding: 24px 0;
+      text-align: center;
+      color: $davys_grey;
+      font-size: 14px;
+    }
+  }
+
+  &--pages {
+    &__url {
+      display: block;
+      max-width: 420px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      @include screen-medium {
+        max-width: 240px;
+      }
+    }
+  }
+}

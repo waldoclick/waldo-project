@@ -1,6 +1,19 @@
 <template>
   <nav class="menu menu--maintenance">
     <ul class="menu--maintenance__list">
+      <!-- Mantenedores -->
+      <li
+        class="menu--maintenance__item"
+        :class="{
+          'menu--maintenance__item--active': isMaintenanceRootActive,
+        }"
+      >
+        <NuxtLink to="/maintenance" class="menu--maintenance__link">
+          <Settings class="menu--maintenance__icon" />
+          <span>Mantenedores</span>
+        </NuxtLink>
+      </li>
+
       <!-- Categorías -->
       <li
         class="menu--maintenance__item"
@@ -136,9 +149,10 @@
 </template>
 
 <script setup lang="ts">
-import { watch } from "vue";
+import { computed, watch } from "vue";
 import { useRoute } from "vue-router";
 import {
+  Settings,
   Tag,
   FileCheck,
   Box,
@@ -158,6 +172,25 @@ const isRouteActive = (path: string): boolean => {
   if (path === "/") return route.path === "/";
   return route.path.startsWith(path);
 };
+
+const knownSubRoutes = [
+  "/maintenance/categories",
+  "/maintenance/conditions",
+  "/maintenance/packs",
+  "/maintenance/regions",
+  "/maintenance/communes",
+  "/maintenance/articles",
+  "/maintenance/faqs",
+  "/maintenance/policies",
+  "/maintenance/terms",
+];
+
+const isMaintenanceRootActive = computed(
+  () =>
+    route.path === "/maintenance" ||
+    (route.path.startsWith("/maintenance/") &&
+      !knownSubRoutes.some((r) => route.path.startsWith(r))),
+);
 
 watch(
   () => route.path,

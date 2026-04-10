@@ -17,7 +17,7 @@
       </div>
       <div class="layout--dashboard__menu__panels">
         <div class="layout--dashboard__menu__rail">
-          <MenuMain :active-menu="activeMenu" @select="activeMenu = $event" />
+          <MenuMain :active-menu="activeMenu" />
         </div>
         <div class="layout--dashboard__menu__nav">
           <MenuDefault

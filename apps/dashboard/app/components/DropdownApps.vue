@@ -13,12 +13,19 @@
       <h3 class="dropdown--apps__panel__title">Servicios</h3>
       <div class="dropdown--apps__panel__divider" />
       <div class="dropdown--apps__grid">
-        <a
+        <component
+          :is="service.internal ? NuxtLink : 'a'"
           v-for="service in services"
           :key="service.name"
-          :href="service.url"
-          target="_blank"
-          rel="noopener noreferrer"
+          v-bind="
+            service.internal
+              ? { to: service.url }
+              : {
+                  href: service.url,
+                  target: '_blank',
+                  rel: 'noopener noreferrer',
+                }
+          "
           class="dropdown--apps__item"
           @click="open = false"
         >
@@ -30,7 +37,7 @@
             />
           </span>
           <span class="dropdown--apps__item__label">{{ service.name }}</span>
-        </a>
+        </component>
       </div>
     </div>
   </div>
@@ -38,6 +45,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue";
+import { resolveComponent } from "vue";
 import {
   Grid3X3,
   Globe,
@@ -54,6 +62,7 @@ import {
 } from "lucide-vue-next";
 
 const services = useServices();
+const NuxtLink = resolveComponent("NuxtLink");
 
 const lucideIcons: Record<string, any> = {
   Globe,

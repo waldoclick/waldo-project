@@ -1,40 +1,32 @@
 <template>
   <nav class="menu menu--main">
-    <button
-      type="button"
-      class="menu--main__btn"
-      aria-label="Dashboard"
-      @click="emit('select', 'default')"
-    >
+    <NuxtLink to="/" class="menu--main__btn" aria-label="Dashboard">
       <LayoutDashboard class="menu--main__icon" />
-    </button>
-    <button
-      type="button"
+    </NuxtLink>
+    <NuxtLink
+      to="/users"
       class="menu--main__btn"
       :class="{ 'menu--main__btn--active': activeMenu === 'users' }"
       aria-label="Usuarios"
-      @click="emit('select', 'users')"
     >
       <Users class="menu--main__icon" />
-    </button>
-    <button
-      type="button"
+    </NuxtLink>
+    <NuxtLink
+      to="/maintenance"
       class="menu--main__btn"
       :class="{ 'menu--main__btn--active': activeMenu === 'maintenance' }"
       aria-label="Mantenedores"
-      @click="emit('select', 'maintenance')"
     >
       <Settings class="menu--main__icon" />
-    </button>
-    <button
-      type="button"
+    </NuxtLink>
+    <NuxtLink
+      to="/integrations"
       class="menu--main__btn"
       :class="{ 'menu--main__btn--active': activeMenu === 'integrations' }"
       aria-label="Integraciones"
-      @click="emit('select', 'integrations')"
     >
       <Plug class="menu--main__icon" />
-    </button>
+    </NuxtLink>
   </nav>
 </template>
 
@@ -43,11 +35,5 @@ import { LayoutDashboard, Users, Settings, Plug } from "lucide-vue-next";
 
 defineProps<{
   activeMenu: "default" | "users" | "maintenance" | "integrations";
-}>();
-const emit = defineEmits<{
-  (
-    e: "select",
-    panel: "default" | "users" | "maintenance" | "integrations",
-  ): void;
 }>();
 </script>
