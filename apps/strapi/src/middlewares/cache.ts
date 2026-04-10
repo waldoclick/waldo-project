@@ -50,20 +50,9 @@ const initRedis = async () => {
   }
 };
 
-// Configuración de TTL por ruta
-const ONE_HOUR = 3600;
+const DEFAULT_TTL = Number(process.env.REDIS_TTL) || 3600 * 4;
 
-const CACHE_CONFIG: Record<string, number> = {
-  default: ONE_HOUR * 4,
-};
-
-const getCacheTTL = (url: string): number => {
-  const matchingRoute = Object.keys(CACHE_CONFIG)
-    .filter((route) => url.startsWith(route))
-    .sort((a, b) => b.length - a.length)[0];
-
-  return matchingRoute ? CACHE_CONFIG[matchingRoute] : CACHE_CONFIG.default;
-};
+const getCacheTTL = (): number => DEFAULT_TTL;
 
 const generateCacheKey = (ctx: Context): string => {
   return `cache:${ctx.method}:${ctx.url}:${JSON.stringify(ctx.query)}`;
@@ -132,7 +121,7 @@ export default () => {
       console.error("[Cache] Redis not available, skipping Redis cache");
       // Solo para métodos GET y HEAD, agregar headers de cache
       if (ctx.method === "GET" || ctx.method === "HEAD") {
-        const ttl = getCacheTTL(ctx.url);
+        const ttl = getCacheTTL();
         ctx.response.set(
           "Cache-Control",
           `public, max-age=${ttl}, s-maxage=${ttl}`
@@ -144,7 +133,7 @@ export default () => {
 
     // Establecer headers de cache SIEMPRE para métodos GET y HEAD
     if (ctx.method === "GET" || ctx.method === "HEAD") {
-      const ttl = getCacheTTL(ctx.url);
+      const ttl = getCacheTTL();
       ctx.response.set(
         "Cache-Control",
         `public, max-age=${ttl}, s-maxage=${ttl}`
@@ -175,7 +164,7 @@ export default () => {
 
     if (cachedResponse) {
       ctx.body = JSON.parse(cachedResponse as string);
-      const ttl = getCacheTTL(ctx.url);
+      const ttl = getCacheTTL();
       ctx.response.set(
         "Cache-Control",
         `public, max-age=${ttl}, s-maxage=${ttl}`
@@ -189,7 +178,7 @@ export default () => {
 
     // Solo guardar en caché si la respuesta fue exitosa
     if (ctx.status === 200 && ctx.body) {
-      const ttl = getCacheTTL(ctx.url);
+      const ttl = getCacheTTL();
       ctx.response.set(
         "Cache-Control",
         `public, max-age=${ttl}, s-maxage=${ttl}`
