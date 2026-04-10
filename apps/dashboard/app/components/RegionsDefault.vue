@@ -41,14 +41,14 @@
                 <button
                   class="regions--default__action"
                   title="Ver región"
-                  @click="handleViewRegion(region.id)"
+                  @click="handleViewRegion(region.documentId)"
                 >
                   <Eye class="regions--default__action__icon" />
                 </button>
                 <button
                   class="regions--default__action"
                   title="Editar región"
-                  @click="handleEditRegion(region.id)"
+                  @click="handleEditRegion(region.documentId)"
                 >
                   <Pencil class="regions--default__action__icon" />
                 </button>
@@ -98,6 +98,7 @@ import PaginationDefault from "@/components/PaginationDefault.vue";
 
 interface Region {
   id: number;
+  documentId: string;
   name: string;
   updatedAt: string;
   communes?: Array<{ id: number; name: string }>;
@@ -197,12 +198,12 @@ const getCommunesCount = (region: Region): number => {
 
 const router = useRouter();
 
-const handleViewRegion = (regionId: number) => {
-  router.push(`/regions/${regionId}`);
+const handleViewRegion = (documentId: string) => {
+  router.push(`/maintenance/regions/${documentId}`);
 };
 
-const handleEditRegion = (regionId: number) => {
-  router.push(`/regions/${regionId}/edit`);
+const handleEditRegion = (documentId: string) => {
+  router.push(`/maintenance/regions/${documentId}/edit`);
 };
 
 watch(

@@ -104,14 +104,14 @@
                       <button
                         class="faqs--default__action"
                         title="Ver FAQ"
-                        @click="handleViewFaq(faq.id)"
+                        @click="handleViewFaq(faq.documentId)"
                       >
                         <Eye class="faqs--default__action__icon" />
                       </button>
                       <button
                         class="faqs--default__action"
                         title="Editar FAQ"
-                        @click="handleEditFaq(faq.id)"
+                        @click="handleEditFaq(faq.documentId)"
                       >
                         <Pencil class="faqs--default__action__icon" />
                       </button>
@@ -281,12 +281,12 @@ const truncateText = (text: string, maxLength: number) => {
 
 const router = useRouter();
 
-const handleViewFaq = (faqId: number) => {
-  router.push(`/faqs/${faqId}`);
+const handleViewFaq = (documentId: string) => {
+  router.push(`/maintenance/faqs/${documentId}`);
 };
 
-const handleEditFaq = (faqId: number) => {
-  router.push(`/faqs/${faqId}/edit`);
+const handleEditFaq = (documentId: string) => {
+  router.push(`/maintenance/faqs/${documentId}/edit`);
 };
 
 watch(

@@ -1,5 +1,6 @@
 export interface Pack {
   id: number;
+  documentId: string;
   name: string;
   text?: string;
   total_days: number;

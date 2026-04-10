@@ -37,14 +37,14 @@
                 <button
                   class="conditions--default__action"
                   title="Ver condición"
-                  @click="handleViewCondition(condition.id)"
+                  @click="handleViewCondition(condition.documentId)"
                 >
                   <Eye class="conditions--default__action__icon" />
                 </button>
                 <button
                   class="conditions--default__action"
                   title="Editar condición"
-                  @click="handleEditCondition(condition.id)"
+                  @click="handleEditCondition(condition.documentId)"
                 >
                   <Pencil class="conditions--default__action__icon" />
                 </button>
@@ -93,6 +93,7 @@ import PaginationDefault from "@/components/PaginationDefault.vue";
 
 interface Condition {
   id: number;
+  documentId: string;
   name: string;
   updatedAt: string;
 }
@@ -185,12 +186,12 @@ const sortOptions = [
 
 const router = useRouter();
 
-const handleViewCondition = (conditionId: number) => {
-  router.push(`/conditions/${conditionId}`);
+const handleViewCondition = (documentId: string) => {
+  router.push(`/maintenance/conditions/${documentId}`);
 };
 
-const handleEditCondition = (conditionId: number) => {
-  router.push(`/conditions/${conditionId}/edit`);
+const handleEditCondition = (documentId: string) => {
+  router.push(`/maintenance/conditions/${documentId}/edit`);
 };
 
 watch(

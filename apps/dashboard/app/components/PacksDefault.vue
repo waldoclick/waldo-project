@@ -42,14 +42,14 @@
                 <button
                   class="packs--default__action"
                   title="Ver pack"
-                  @click="handleViewPack(pack.id)"
+                  @click="handleViewPack(pack.documentId)"
                 >
                   <Eye class="packs--default__action__icon" />
                 </button>
                 <button
                   class="packs--default__action"
                   title="Editar pack"
-                  @click="handleEditPack(pack.id)"
+                  @click="handleEditPack(pack.documentId)"
                 >
                   <Pencil class="packs--default__action__icon" />
                 </button>
@@ -191,12 +191,12 @@ const sortOptions = [
 
 const router = useRouter();
 
-const handleViewPack = (packId: number) => {
-  router.push(`/packs/${packId}`);
+const handleViewPack = (documentId: string) => {
+  router.push(`/maintenance/packs/${documentId}`);
 };
 
-const handleEditPack = (packId: number) => {
-  router.push(`/packs/${packId}/edit`);
+const handleEditPack = (documentId: string) => {
+  router.push(`/maintenance/packs/${documentId}/edit`);
 };
 
 watch(

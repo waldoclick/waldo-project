@@ -95,14 +95,14 @@
                       <button
                         class="policies--default__action"
                         title="Ver Politica"
-                        @click="handleViewPolicy(policy.id)"
+                        @click="handleViewPolicy(policy.documentId)"
                       >
                         <Eye class="policies--default__action__icon" />
                       </button>
                       <button
                         class="policies--default__action"
                         title="Editar Politica"
-                        @click="handleEditPolicy(policy.id)"
+                        @click="handleEditPolicy(policy.documentId)"
                       >
                         <Pencil class="policies--default__action__icon" />
                       </button>
@@ -274,12 +274,12 @@ const truncateText = (text: string, maxLength: number) => {
 
 const router = useRouter();
 
-const handleViewPolicy = (policyId: number) => {
-  router.push(`/policies/${policyId}`);
+const handleViewPolicy = (documentId: string) => {
+  router.push(`/maintenance/policies/${documentId}`);
 };
 
-const handleEditPolicy = (policyId: number) => {
-  router.push(`/policies/${policyId}/edit`);
+const handleEditPolicy = (documentId: string) => {
+  router.push(`/maintenance/policies/${documentId}/edit`);
 };
 
 watch(

@@ -95,14 +95,14 @@
                       <button
                         class="terms--default__action"
                         title="Ver Condicion"
-                        @click="handleViewTerm(term.id)"
+                        @click="handleViewTerm(term.documentId)"
                       >
                         <Eye class="terms--default__action__icon" />
                       </button>
                       <button
                         class="terms--default__action"
                         title="Editar Condicion"
-                        @click="handleEditTerm(term.id)"
+                        @click="handleEditTerm(term.documentId)"
                       >
                         <Pencil class="terms--default__action__icon" />
                       </button>
@@ -270,12 +270,12 @@ const truncateText = (text: string, maxLength: number) => {
 
 const router = useRouter();
 
-const handleViewTerm = (termId: number) => {
-  router.push(`/terms/${termId}`);
+const handleViewTerm = (documentId: string) => {
+  router.push(`/maintenance/terms/${documentId}`);
 };
 
-const handleEditTerm = (termId: number) => {
-  router.push(`/terms/${termId}/edit`);
+const handleEditTerm = (documentId: string) => {
+  router.push(`/maintenance/terms/${documentId}/edit`);
 };
 
 watch(

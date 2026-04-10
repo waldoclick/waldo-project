@@ -51,14 +51,14 @@
                 <button
                   class="categories--default__action"
                   title="Ver categoría"
-                  @click="handleViewCategory(category.id)"
+                  @click="handleViewCategory(category.documentId)"
                 >
                   <Eye class="categories--default__action__icon" />
                 </button>
                 <button
                   class="categories--default__action"
                   title="Editar categoría"
-                  @click="handleEditCategory(category.id)"
+                  @click="handleEditCategory(category.documentId)"
                 >
                   <Pencil class="categories--default__action__icon" />
                 </button>
@@ -215,12 +215,12 @@ const sortOptions = [
 
 const router = useRouter();
 
-const handleViewCategory = (categoryId: number) => {
-  router.push(`/categories/${categoryId}`);
+const handleViewCategory = (documentId: string) => {
+  router.push(`/maintenance/categories/${documentId}`);
 };
 
-const handleEditCategory = (categoryId: number) => {
-  router.push(`/categories/${categoryId}/edit`);
+const handleEditCategory = (documentId: string) => {
+  router.push(`/maintenance/categories/${documentId}/edit`);
 };
 
 const isHexColor = (value?: string) => {

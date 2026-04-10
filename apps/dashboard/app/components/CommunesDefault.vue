@@ -39,14 +39,14 @@
                 <button
                   class="communes--default__action"
                   title="Ver comuna"
-                  @click="handleViewCommune(commune.id)"
+                  @click="handleViewCommune(commune.documentId)"
                 >
                   <Eye class="communes--default__action__icon" />
                 </button>
                 <button
                   class="communes--default__action"
                   title="Editar comuna"
-                  @click="handleEditCommune(commune.id)"
+                  @click="handleEditCommune(commune.documentId)"
                 >
                   <Pencil class="communes--default__action__icon" />
                 </button>
@@ -95,6 +95,7 @@ import PaginationDefault from "@/components/PaginationDefault.vue";
 
 interface Commune {
   id: number;
+  documentId: string;
   name: string;
   updatedAt: string;
   region?: { name: string };
@@ -191,12 +192,12 @@ const sortOptions = [
 
 const router = useRouter();
 
-const handleViewCommune = (communeId: number) => {
-  router.push(`/communes/${communeId}`);
+const handleViewCommune = (documentId: string) => {
+  router.push(`/maintenance/communes/${documentId}`);
 };
 
-const handleEditCommune = (communeId: number) => {
-  router.push(`/communes/${communeId}/edit`);
+const handleEditCommune = (documentId: string) => {
+  router.push(`/maintenance/communes/${documentId}/edit`);
 };
 
 watch(
