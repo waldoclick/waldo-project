@@ -174,8 +174,15 @@ const handleVerify = async () => {
       error?.data?.error?.message ??
       error?.error?.message ??
       "El código es inválido o ha expirado.";
+    const fatal = msg.includes("Maximum attempts") || msg.includes("expired");
     Swal.fire("Error de verificación", msg, "error");
-    router.push("/login");
+    if (fatal) {
+      router.push("/login");
+    } else {
+      digits.value = ["", "", "", "", "", ""];
+      await nextTick();
+      inputRefs.value[0]?.focus();
+    }
   } finally {
     sending.value = false;
   }
