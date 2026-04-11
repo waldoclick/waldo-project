@@ -17,7 +17,7 @@
   // Row of 6 individual digit inputs
   &__digits {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 10px;
     margin-bottom: 30px;
 
