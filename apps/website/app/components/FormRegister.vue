@@ -31,6 +31,7 @@
           type="text"
           class="form-control"
           autocomplete="given-name"
+          maxlength="50"
         />
         <ErrorMessage name="firstname" />
       </div>
@@ -45,6 +46,7 @@
           type="text"
           class="form-control"
           autocomplete="additional-name"
+          maxlength="50"
         />
         <ErrorMessage name="lastname" />
       </div>
@@ -57,6 +59,7 @@
           type="text"
           class="form-control"
           autocomplete="id"
+          maxlength="12"
         />
         <ErrorMessage name="rut" />
       </div>
@@ -71,6 +74,7 @@
           type="text"
           class="form-control"
           autocomplete="email"
+          maxlength="254"
         />
         <ErrorMessage name="email" />
       </div>
@@ -83,6 +87,7 @@
           :type="passwordType"
           class="form-control"
           autocomplete="current-password"
+          maxlength="50"
         />
         <button
           class="form-group--password__show-password"
@@ -106,6 +111,7 @@
           :type="passwordType"
           class="form-control"
           autocomplete="new-password"
+          maxlength="50"
         />
         <ErrorMessage name="confirm_password" />
       </div>
@@ -237,6 +243,7 @@ const getSchema = () => {
         is_company: yup.boolean().required("Tipo es requerido"),
         firstname: yup
           .string()
+          .max(50, "Máximo 50 caracteres")
           .required(() =>
             form.value.is_company
               ? "La Razón Social es requerida"
@@ -248,6 +255,7 @@ const getSchema = () => {
           ),
         lastname: yup
           .string()
+          .max(50, "Máximo 50 caracteres")
           .required(() =>
             form.value.is_company
               ? "El Giro es requerida"
@@ -259,6 +267,7 @@ const getSchema = () => {
           ),
         rut: yup
           .string()
+          .max(12, "Máximo 12 caracteres")
           .required("RUT es requerido")
           .test("is-valid-rut", "RUT no es válido", (value) =>
             validateRut(value || ""),
@@ -267,13 +276,14 @@ const getSchema = () => {
     : yup.object({
         email: yup
           .string()
+          .max(254, "Máximo 254 caracteres")
           .required("Correo electrónico es requerido")
           .email("Correo electrónico no válido"),
         password: yup
           .string()
           .required("Contraseña es requerida")
           .min(6, "Mínimo 6 caracteres")
-          .max(20, "Máximo 20 caracteres"),
+          .max(50, "Máximo 50 caracteres"),
         confirm_password: yup
           .string()
           .oneOf(
