@@ -36,6 +36,7 @@ Thumbs.db
 *.swo
 
 
-
 #Ignore vscode AI rules
 .github/instructions/codacy.instructions.md
+
+apps/strapi/google.json

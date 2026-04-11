@@ -145,10 +145,10 @@ Progress: [██████████] 100%
 | 260410-dxp | Implement Google Analytics 4 API integration in Strapi | 2026-04-10 | 34bcca9d | [260410-dxp-implement-google-analytics-4-api-integra](./quick/260410-dxp-implement-google-analytics-4-api-integra/) |
 | 260410-eh6 | Add Google Analytics dashboard integration with summary endpoint and frontend components | 2026-04-10 | 6540b8be | [260410-eh6-add-google-analytics-dashboard-integrati](./quick/260410-eh6-add-google-analytics-dashboard-integrati/) |
 | 260410-n56 | Fix broken navigation in all 8 dashboard mantenedor sections: add documentId to interfaces, fix router.push to use /maintenance/ prefix and documentId, fix post-save redirects, fix breadcrumbs | 2026-04-10 | 4df97e90 | [260410-n56-fix-error-in-dashboard-mantenedores-view](./quick/260410-n56-fix-error-in-dashboard-mantenedores-view/) |
+| 260411-m0h | Add maxlength limits to all auth form inputs in both apps | 2026-04-11 | fb087c5c | [260411-m0h-add-maxlength-limits-to-all-auth-form-in](./quick/260411-m0h-add-maxlength-limits-to-all-auth-form-in/) |
+| 260411-mpl | Split verification code input into 6 individual OTP digit inputs with auto-advance, backspace nav, paste distribution, and arrow key support | 2026-04-11 | 8a6eb900 | [260411-mpl-split-verification-code-input-into-6-ind](./quick/260411-mpl-split-verification-code-input-into-6-ind/) |
 
 ## Session Continuity
 
-Last activity: 2026-04-10 - Completed quick task 260410-n56: Fix broken navigation in all 8 dashboard mantenedor sections
-Last session: 2026-04-10T20:57:04.999Z
-Stopped at: Completed quick task 260410-n56: fix broken navigation in dashboard mantenedores view
+Last activity: 2026-04-11 - Completed quick task 260411-mpl: Split verification code input into 6 individual OTP digit inputs
 Resume file: None

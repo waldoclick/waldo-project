@@ -12,6 +12,7 @@
         type="text"
         class="form__control"
         autocomplete="email"
+        maxlength="254"
       />
       <ErrorMessage name="email" />
     </div>
@@ -38,6 +39,7 @@ const { Swal } = useSweetAlert2();
 const schema = yup.object({
   email: yup
     .string()
+    .max(254, "Máximo 254 caracteres")
     .email("Correo electrónico no válido")
     .required("Correo electrónico es requerido"),
 });

@@ -12,6 +12,7 @@
         type="text"
         class="form-control"
         autocomplete="email"
+        maxlength="254"
       />
       <ErrorMessage name="email" />
     </div>
@@ -26,6 +27,7 @@
         :type="passwordType"
         class="form-control"
         autocomplete="new-password"
+        maxlength="50"
       />
       <button
         class="form-group--password__show-password"
@@ -61,10 +63,14 @@ const { Swal } = useSweetAlert2();
 const schema = yup.object({
   email: yup
     .string()
+    .max(254, "Máximo 254 caracteres")
     .email("Correo electrónico no válido")
     .required("Correo electrónico es requerido"),
   code: yup.string().required("Código de restablecimiento es requerido"),
-  password: yup.string().required("Nueva contraseña es requerida"),
+  password: yup
+    .string()
+    .max(50, "Máximo 50 caracteres")
+    .required("Nueva contraseña es requerida"),
 });
 
 const route = useRoute();

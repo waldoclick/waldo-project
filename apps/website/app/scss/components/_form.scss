@@ -389,3 +389,42 @@ input:-webkit-autofill {
 .form-control[style*="--textarea-height"] {
   height: var(--textarea-height);
 }
+
+// 6-digit OTP verify code input
+.form--verify {
+  &__label {
+    display: block;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.25px;
+    color: $charcoal;
+    margin-bottom: 10px;
+  }
+
+  &__digits {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+
+    &__input {
+      flex: 1;
+      min-width: 0;
+      height: 48px;
+      border: 2px solid $platinum;
+      border-radius: 4px;
+      background: white;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 600;
+      color: $charcoal;
+      outline: none;
+      transition: border-color 0.2s;
+      padding: 0;
+      caret-color: $charcoal;
+
+      &:focus {
+        border-color: $charcoal;
+      }
+    }
+  }
+}
