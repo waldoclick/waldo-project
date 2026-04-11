@@ -15,6 +15,7 @@
             type="email"
             class="form__control"
             autocomplete="email"
+            maxlength="254"
           />
           <ErrorMessage name="email" />
         </div>
@@ -28,6 +29,7 @@
             :type="passwordType"
             class="form__control"
             autocomplete="current-password"
+            maxlength="50"
           />
           <button
             class="form__group--password__show-password"
@@ -89,9 +91,13 @@ const pendingToken = useState<string>("pendingToken", () => "");
 const schema = yup.object({
   email: yup
     .string()
+    .max(254, "Máximo 254 caracteres")
     .email("Correo electrónico no válido")
     .required("Correo electrónico es requerido"),
-  password: yup.string().required("Contraseña es requerida"),
+  password: yup
+    .string()
+    .max(50, "Máximo 50 caracteres")
+    .required("Contraseña es requerida"),
 });
 
 const form = ref({
