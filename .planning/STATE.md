@@ -96,9 +96,9 @@ Progress: [██████████] 100%
 | 260405-mt9 | Replace /ads/me/counts with shared /ads/count using role-based filtering — managers see all ads, authenticated users see their own | 2026-04-05 | cb703d1c | [260405-mt9-replace-ads-me-counts-with-shared-ads-co](./quick/260405-mt9-replace-ads-me-counts-with-shared-ads-co/) |
 | 260405-njc | Add public GET /ads/catalog endpoint in Strapi bypassing user filtering; update website store and sitemap to use it instead of /ads/actives | 2026-04-05 | caff3e0b | [260405-njc-add-ads-catalog-public-endpoint-for-acti](./quick/260405-njc-add-ads-catalog-public-endpoint-for-acti/) |
 | 260405-tf1 | Add accepted_usage_terms field to Strapi schema; three-checkbox consent flow (age + privacy policy + usage terms) in FormRegister, FormTerms, LightboxTerms | 2026-04-05 | 760645bb | [260405-tf1-en-el-registro-y-en-el-lightbox-de-acept](./quick/260405-tf1-en-el-registro-y-en-el-lightbox-de-acept/) |
+| 260411-m0h | Add maxlength limits to all auth form inputs in both apps | 2026-04-11 | fb087c5c | [260411-m0h-add-maxlength-limits-to-all-auth-form-in](./quick/260411-m0h-add-maxlength-limits-to-all-auth-form-in/) |
 
 ## Session Continuity
 
-Last session: 2026-04-05T21:15:00.000Z
-Stopped at: Completed quick task 260405-tf1 - add usage terms checkbox to registration and terms lightbox
+Last activity: 2026-04-11 - Completed quick task 260411-m0h: Add maxlength limits to all auth form inputs in both apps
 Resume file: None
