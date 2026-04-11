@@ -403,12 +403,12 @@ input:-webkit-autofill {
 
   &__digits {
     display: flex;
-    justify-content: flex-start;
     gap: 10px;
     margin-bottom: 30px;
 
     &__input {
-      width: 48px;
+      flex: 1;
+      min-width: 0;
       height: 48px;
       border: 2px solid $platinum;
       border-radius: 4px;
