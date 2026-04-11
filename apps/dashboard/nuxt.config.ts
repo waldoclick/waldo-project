@@ -459,6 +459,11 @@ export default defineNuxtConfig({
         "vue-chartjs",
         "chart.js",
         "chartjs-plugin-annotation",
+        "vee-validate",
+        "yup",
+        "sweetalert2/dist/sweetalert2.js",
+        "lucide-vue-next",
+        "@vueuse/core",
       ],
     },
     css: {
