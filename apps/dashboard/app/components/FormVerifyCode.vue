@@ -1,19 +1,20 @@
 <template>
   <div class="form form--verify">
-    <div class="form__group">
-      <label class="form__label" for="code">Código de verificación</label>
+    <label class="form--verify__label">Código de verificación</label>
+    <div class="form--verify__digits">
       <input
-        id="code"
-        :value="code"
+        v-for="(_, i) in digits"
+        :key="i"
+        :ref="(el) => setInputRef(el, i)"
+        :value="digits[i]"
         type="text"
         inputmode="numeric"
-        maxlength="6"
-        autocomplete="one-time-code"
-        class="form__control"
-        placeholder="000000"
-        @input="handleInput"
-        @keydown="handleKeydown"
-        @paste="handlePaste"
+        maxlength="1"
+        :autocomplete="i === 0 ? 'one-time-code' : 'off'"
+        class="form--verify__digits__input"
+        @input="handleDigitInput(i, $event)"
+        @keydown="handleDigitKeydown(i, $event)"
+        @paste="handleDigitPaste"
       />
     </div>
 
@@ -30,8 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from "vue";
-import type { Ref } from "vue";
+import { ref, computed, onMounted, onUnmounted, nextTick } from "vue";
 import { useRouter } from "vue-router";
 import { useLogger } from "@/composables/useLogger";
 import type { User } from "@/types/user";
@@ -46,49 +46,78 @@ const client = useApiClient();
 const pendingToken = useState<string>("pendingToken");
 
 // Form state
-const code = ref("");
+const digits = ref<string[]>(["", "", "", "", "", ""]);
+const inputRefs = ref<HTMLInputElement[]>([]);
 const sending = ref(false);
 const resending = ref(false);
+
+// Assembled 6-digit string — feeds into isCodeValid and handleVerify unchanged
+const code = computed(() => digits.value.join(""));
 
 // Code must be exactly 6 digits
 const isCodeValid = computed(() => /^\d{6}$/.test(code.value));
 
-// Only allow digit characters — block everything else at keydown level
-const handleKeydown = (e: KeyboardEvent) => {
-  // Allow: backspace, delete, tab, arrows, home, end, ctrl/cmd+a/c/v/x
-  const allowed = [
-    "Backspace",
-    "Delete",
-    "Tab",
-    "ArrowLeft",
-    "ArrowRight",
-    "Home",
-    "End",
-  ];
-  if (allowed.includes(e.key)) return;
-  if ((e.ctrlKey || e.metaKey) && ["a", "c", "v", "x"].includes(e.key)) return;
-  // Block anything that is not a digit
-  if (!/^\d$/.test(e.key)) e.preventDefault();
+// Track input element refs by index
+const setInputRef = (el: unknown, i: number) => {
+  if (el instanceof HTMLInputElement) {
+    inputRefs.value[i] = el;
+  }
 };
 
-// Strip non-digits on input (handles autocomplete and IME), auto-submit at 6
-const handleInput = (e: Event) => {
-  const input = e.target as HTMLInputElement;
-  const digits = input.value.replace(/\D/g, "").slice(0, 6);
-  code.value = digits;
-  // Keep cursor at end
-  input.value = digits;
-  if (digits.length === 6) handleVerify();
+const handleDigitInput = (index: number, event: Event) => {
+  const input = event.target as HTMLInputElement;
+  const raw = input.value.replace(/\D/g, "");
+  const char = raw.slice(0, 1);
+  digits.value[index] = char;
+  // Keep DOM in sync with single-char value
+  input.value = char;
+  if (char && index < 5) {
+    inputRefs.value[index + 1]?.focus();
+  }
+  if (digits.value.every((d) => d !== "")) {
+    handleVerify();
+  }
 };
 
-// Handle paste: strip non-digits, cap at 6, auto-submit
-const handlePaste = (e: ClipboardEvent) => {
-  e.preventDefault();
-  const pasted = (e.clipboardData?.getData("text") ?? "")
+const handleDigitKeydown = (index: number, event: KeyboardEvent) => {
+  if (event.key === "Backspace") {
+    if (digits.value[index] === "" && index > 0) {
+      inputRefs.value[index - 1]?.focus();
+    }
+    return;
+  }
+  if (event.key === "ArrowLeft") {
+    event.preventDefault();
+    if (index > 0) inputRefs.value[index - 1]?.focus();
+    return;
+  }
+  if (event.key === "ArrowRight") {
+    event.preventDefault();
+    if (index < 5) inputRefs.value[index + 1]?.focus();
+    return;
+  }
+  // Allow: delete, tab, home, end, ctrl/cmd+a/c/v/x
+  const allowed = ["Delete", "Tab", "Home", "End"];
+  if (allowed.includes(event.key)) return;
+  if (
+    (event.ctrlKey || event.metaKey) &&
+    ["a", "c", "v", "x"].includes(event.key)
+  )
+    return;
+  // Block non-digit keys
+  if (!/^\d$/.test(event.key)) event.preventDefault();
+};
+
+const handleDigitPaste = (event: ClipboardEvent) => {
+  event.preventDefault();
+  const pasted = (event.clipboardData?.getData("text") ?? "")
     .replace(/\D/g, "")
     .slice(0, 6);
-  code.value = pasted;
-  (e.target as HTMLInputElement).value = pasted;
+  for (let i = 0; i < 6; i++) {
+    digits.value[i] = pasted[i] ?? "";
+  }
+  const lastFilledIndex = Math.min(pasted.length, 5);
+  inputRefs.value[lastFilledIndex]?.focus();
   if (pasted.length === 6) handleVerify();
 };
 
@@ -114,6 +143,9 @@ onMounted(() => {
     return;
   }
   startCountdown();
+  nextTick(() => {
+    inputRefs.value[0]?.focus();
+  });
 });
 
 onUnmounted(() => {
@@ -174,6 +206,7 @@ const handleVerify = async () => {
       err?.error?.message ??
       "El código es inválido o ha expirado.";
     Swal.fire("Error de verificación", msg, "error");
+    digits.value = ["", "", "", "", "", ""];
     router.push("/auth/login");
   } finally {
     sending.value = false;
