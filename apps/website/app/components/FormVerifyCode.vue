@@ -170,11 +170,11 @@ const handleVerify = async () => {
     appStore.clearReferer();
     router.push(redirectTo);
   } catch (error) {
-    const msg =
-      error?.data?.error?.message ??
-      error?.error?.message ??
-      "El código es inválido o ha expirado.";
-    const fatal = msg.includes("Maximum attempts") || msg.includes("expired");
+    const raw = error?.data?.error?.message ?? error?.error?.message ?? "";
+    const fatal = raw.includes("Maximum attempts") || raw.includes("expired");
+    const msg = fatal
+      ? "Demasiados intentos fallidos o código expirado. Por favor inicia sesión nuevamente."
+      : "El código ingresado es incorrecto. Inténtalo de nuevo.";
     Swal.fire("Error de verificación", msg, "error");
     if (fatal) {
       router.push("/login");

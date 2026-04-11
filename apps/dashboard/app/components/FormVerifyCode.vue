@@ -201,11 +201,11 @@ const handleVerify = async () => {
       data?: { error?: { message?: string } };
       error?: { message?: string };
     };
-    const msg =
-      err?.data?.error?.message ??
-      err?.error?.message ??
-      "El código es inválido o ha expirado.";
-    const fatal = msg.includes("Maximum attempts") || msg.includes("expired");
+    const raw = err?.data?.error?.message ?? err?.error?.message ?? "";
+    const fatal = raw.includes("Maximum attempts") || raw.includes("expired");
+    const msg = fatal
+      ? "Demasiados intentos fallidos o código expirado. Por favor inicia sesión nuevamente."
+      : "El código ingresado es incorrecto. Inténtalo de nuevo.";
     Swal.fire("Error de verificación", msg, "error");
     if (fatal) {
       router.push("/auth/login");
