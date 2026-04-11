@@ -4,6 +4,49 @@
 .form--verify {
   // Modifier-specific layout: stack buttons below the input group
 
+  // Static label above the digits row
+  &__label {
+    display: block;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.25px;
+    color: $charcoal;
+    margin-bottom: 10px;
+  }
+
+  // Row of 6 individual digit inputs
+  &__digits {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 30px;
+
+    &__input {
+      width: 48px;
+      height: 48px;
+      border: 2px solid $platinum;
+      border-radius: 4px;
+      background: white;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 600;
+      color: $charcoal;
+      outline: none;
+      transition: border-color 0.2s;
+      padding: 0;
+      caret-color: $charcoal;
+
+      &::placeholder {
+        color: $platinum;
+        font-weight: normal;
+      }
+
+      &:focus {
+        border-color: $charcoal;
+      }
+    }
+  }
+
   // BEM: __resend is a wrapper <div> around the resend <button>
   // The btn classes live on the <button> inside — not on this element
   &__resend {
