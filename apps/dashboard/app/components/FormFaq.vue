@@ -24,14 +24,17 @@
         <ErrorMessage name="text" />
       </div>
 
-      <div class="form__group form__group--inline">
-        <label class="form__label" for="featured">Destacado</label>
-        <Field
-          v-model="form.featured"
-          name="featured"
-          type="checkbox"
-          class="form__checkbox"
-        />
+      <div class="form__group form__group--checkboxes">
+        <div class="form__check">
+          <Field
+            id="featured"
+            v-model="form.featured"
+            name="featured"
+            type="checkbox"
+            class="form__checkbox"
+          />
+          <label class="form__check__label" for="featured">Destacado</label>
+        </div>
       </div>
 
       <div class="form__send">

@@ -8,21 +8,28 @@ import {
 } from "../types/google-analytics.types";
 
 export class GoogleAnalyticsService implements IGoogleAnalyticsService {
-  private credentialsPath: string;
   private propertyId: string;
 
   constructor() {
-    this.credentialsPath =
-      process.env.GOOGLE_SC_CREDENTIALS_PATH || "./google.json";
     this.propertyId = process.env.GA4_PROPERTY_ID || "";
 
     if (!this.propertyId) {
       throw new Error("GA4_PROPERTY_ID is required");
     }
+    if (!process.env.GOOGLE_CLIENT_EMAIL || !process.env.GOOGLE_PRIVATE_KEY) {
+      throw new Error(
+        "GOOGLE_CLIENT_EMAIL and GOOGLE_PRIVATE_KEY are required"
+      );
+    }
   }
 
   private createClient(): BetaAnalyticsDataClient {
-    return new BetaAnalyticsDataClient({ keyFilename: this.credentialsPath });
+    return new BetaAnalyticsDataClient({
+      credentials: {
+        client_email: process.env.GOOGLE_CLIENT_EMAIL,
+        private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+      },
+    });
   }
 
   private getDateRange(): { startDate: string; endDate: string } {

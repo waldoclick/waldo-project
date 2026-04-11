@@ -7,22 +7,27 @@ import {
 } from "../types/search-console.types";
 
 export class SearchConsoleService implements ISearchConsoleService {
-  private credentialsPath: string;
   private siteUrl: string;
 
   constructor() {
-    this.credentialsPath =
-      process.env.GOOGLE_SC_CREDENTIALS_PATH || "./google.json";
     this.siteUrl = process.env.GOOGLE_SC_SITE_URL || "";
 
     if (!this.siteUrl) {
       throw new Error("GOOGLE_SC_SITE_URL is required");
     }
+    if (!process.env.GOOGLE_CLIENT_EMAIL || !process.env.GOOGLE_PRIVATE_KEY) {
+      throw new Error(
+        "GOOGLE_CLIENT_EMAIL and GOOGLE_PRIVATE_KEY are required"
+      );
+    }
   }
 
   private createClient(): searchconsole_v1.Searchconsole {
     const auth = new Auth.GoogleAuth({
-      keyFile: this.credentialsPath,
+      credentials: {
+        client_email: process.env.GOOGLE_CLIENT_EMAIL,
+        private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+      },
       scopes: ["https://www.googleapis.com/auth/webmasters.readonly"],
     });
     return google.searchconsole({ version: "v1", auth });

@@ -13,29 +13,6 @@
       </div>
 
       <div class="form__group">
-        <label class="form__label" for="text">Texto</label>
-        <Field
-          v-model="form.text"
-          name="text"
-          type="text"
-          class="form__control"
-        />
-        <ErrorMessage name="text" />
-      </div>
-
-      <div class="form__group">
-        <label class="form__label" for="description">Descripción</label>
-        <Field
-          v-model="form.description"
-          as="textarea"
-          name="description"
-          class="form__control"
-          rows="4"
-        />
-        <ErrorMessage name="description" />
-      </div>
-
-      <div class="form__group">
         <label class="form__label" for="price">Precio</label>
         <Field
           v-model="form.price"
@@ -102,8 +79,6 @@ export interface PackData {
   id?: number;
   documentId?: string;
   name?: string;
-  text?: string;
-  description?: string;
   price?: number;
   total_days?: number;
   total_ads?: number;
@@ -148,8 +123,6 @@ const schema = yup.object({
 
 const form = ref({
   name: "",
-  text: "",
-  description: "",
   price: "",
   total_days: "",
   total_ads: "",
@@ -172,8 +145,6 @@ const toNumber = (value: unknown) => {
 const hydrateForm = () => {
   form.value = {
     name: props.pack?.name || "",
-    text: props.pack?.text || "",
-    description: props.pack?.description || "",
     price: props.pack?.price?.toString() ?? "",
     total_days: props.pack?.total_days?.toString() ?? "",
     total_ads: props.pack?.total_ads?.toString() ?? "",
@@ -188,8 +159,6 @@ const handleSubmit = async (values: Record<string, unknown>) => {
   try {
     const payload = {
       name: (values.name as string).trim(),
-      text: (values.text as string | undefined)?.trim() || "",
-      description: (values.description as string | undefined)?.trim() || "",
       price: toNumber(values.price),
       total_days: toNumber(values.total_days),
       total_ads: toNumber(values.total_ads),
@@ -256,8 +225,6 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       };
       form.value = {
         name: payload.name,
-        text: payload.text,
-        description: payload.description,
         price: payload.price.toString(),
         total_days: payload.total_days.toString(),
         total_ads: payload.total_ads.toString(),
