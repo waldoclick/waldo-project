@@ -122,6 +122,7 @@
               name="address_number"
               type="number"
               class="form-control"
+              @input="handleAddressNumberInput"
             />
             <ErrorMessage name="address_number" />
           </div>
@@ -247,6 +248,7 @@
               name="business_address_number"
               type="number"
               class="form-control"
+              @input="handleBusinessAddressNumberInput"
             />
             <ErrorMessage name="business_address_number" />
           </div>
@@ -521,7 +523,10 @@ const schema = yup.object({
     .test("is-valid-address", "Dirección no válida", (value) =>
       isValidAddress(value || ""),
     ),
-  address_number: yup.string().required("Número de Dirección es requerido"),
+  address_number: yup
+    .string()
+    .required("Número de Dirección es requerido")
+    .max(5, "El Número de Dirección no puede tener más de 5 caracteres"),
   postal_code: yup
     .string()
     .nullable()
@@ -597,7 +602,9 @@ const schema = yup.object({
   business_address_number: yup.string().when("is_company", {
     is: true,
     then: (schema) =>
-      schema.required("Número de Dirección Empresa es requerido"),
+      schema
+        .required("Número de Dirección Empresa es requerido")
+        .max(5, "El Número de Dirección Empresa no puede tener más de 5 caracteres"),
     otherwise: (schema) => schema.nullable().optional(),
   }),
   business_postal_code: yup.string().when("is_company", {
@@ -738,6 +745,20 @@ const handleBusinessTypeInput = () => {
   if (form.value.business_type.length > 80) {
     form.value.business_type = form.value.business_type.slice(0, 80);
   }
+};
+
+const handleAddressNumberInput = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  const value = String(target.value || "").slice(0, 5);
+  form.value.address_number = value;
+  target.value = value;
+};
+
+const handleBusinessAddressNumberInput = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  const value = String(target.value || "").slice(0, 5);
+  form.value.business_address_number = value;
+  target.value = value;
 };
 
 const handlePhoneInput = (event) => {
