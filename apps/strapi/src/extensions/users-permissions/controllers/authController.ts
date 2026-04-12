@@ -67,6 +67,14 @@ export const createUserReservations = async (user) => {
 /**
  * Registers a new user and creates additional records in the "ad-reservation" and "ad-featured-reservation" collections.
  *
+ * Per CLAUDE.md: "Use middlewares to extend plugin behavior — custom controllers in plugin extensions
+ * are not supported in Strapi v5". This wrapper strips the three consent booleans
+ * (accepted_age_confirmation, accepted_terms, accepted_usage_terms) from the body forwarded to
+ * Strapi's built-in register action because those custom attributes are not on the plugin's
+ * allow-list and would cause "Invalid parameters: …" errors. After the built-in controller
+ * succeeds, the consent booleans are written directly onto the created user row via
+ * strapi.db.query before any downstream logic runs.
+ *
  * @param {(...args: unknown[]) => Promise<unknown>} registerController - The original register controller function.
  * @returns {(...args: unknown[]) => Promise<unknown>} A new controller function that registers the user and creates additional records.
  */
@@ -84,6 +92,7 @@ export const registerUserLocal = (registerController) => async (ctx) => {
       username,
       accepted_age_confirmation,
       accepted_terms,
+      accepted_usage_terms,
     } = ctx.request.body;
 
     // Validar que todos los campos requeridos estén presentes
@@ -96,13 +105,17 @@ export const registerUserLocal = (registerController) => async (ctx) => {
       !password ||
       !username ||
       accepted_age_confirmation !== true ||
-      accepted_terms !== true
+      accepted_terms !== true ||
+      accepted_usage_terms !== true
     ) {
       return ctx.badRequest("All fields are required");
     }
 
-    // Crear el objeto de datos del usuario
-    const userData = {
+    // Build the forwarded body with ONLY the fields accepted by the built-in register action.
+    // The three accepted_* consent fields are intentionally excluded here — Strapi v5 rejects
+    // custom attributes not on its allow-list with "Invalid parameters: <field-list>".
+    // They will be persisted directly on the user row after registration (see below).
+    const forwardBody = {
       is_company,
       firstname,
       lastname,
@@ -110,18 +123,29 @@ export const registerUserLocal = (registerController) => async (ctx) => {
       email,
       password,
       username,
-      accepted_age_confirmation,
-      accepted_terms,
     };
 
     // Reemplazar el cuerpo de la solicitud con los datos del usuario
-    ctx.request.body = userData;
+    ctx.request.body = forwardBody;
 
     // Llamar al controlador original para registrar al usuario
     await registerController(ctx);
 
     // Obtener el usuario recién creado de `ctx.response.body?.user` o `ctx.state.user`
     const user = ctx.response.body?.user || ctx.state.user;
+
+    // Persist consent booleans directly on the created user row.
+    // Done before createUserReservations so the booleans are present for any downstream logic.
+    if (user?.id) {
+      await strapi.db.query("plugin::users-permissions.user").update({
+        where: { id: user.id },
+        data: {
+          accepted_age_confirmation,
+          accepted_terms,
+          accepted_usage_terms,
+        },
+      });
+    }
 
     // Crear reservas de usuario
     createUserReservations(user);
