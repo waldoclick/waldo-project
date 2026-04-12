@@ -1,3 +1,4 @@
+import process from "process";
 import UserCronService from "../src/cron/ad-free-reservation-restore.cron";
 import { AdService } from "../src/cron/ad-expiry.cron";
 import { CleanupService } from "../src/cron/media-cleanup.cron";
