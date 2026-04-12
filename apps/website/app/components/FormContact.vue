@@ -47,15 +47,9 @@
     <!-- Teléfono -->
     <div class="form-group">
       <label class="form-label" for="phone">Teléfono (opcional)</label>
-      <Field
-        v-model="form.phone"
-        name="phone"
-        as="input"
-        type="tel"
-        placeholder="+56 9 XXXX XXXX"
-        class="form-control"
-        maxlength="20"
-      />
+      <Field v-slot="{ field }" name="phone">
+        <InputPhone v-bind="field" />
+      </Field>
       <ErrorMessage name="phone" />
     </div>
 

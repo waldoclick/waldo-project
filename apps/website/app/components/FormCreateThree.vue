@@ -38,14 +38,9 @@
       <div class="form__field">
         <div class="form-group">
           <label class="form-label" for="phone">* Teléfono</label>
-          <Field
-            v-model="form.phone"
-            name="phone"
-            type="text"
-            class="form-control"
-            maxlength="20"
-            @input="handlePhoneInput"
-          />
+          <Field v-slot="{ field }" name="phone">
+            <InputPhone v-bind="field" />
+          </Field>
           <ErrorMessage name="phone" />
         </div>
       </div>
@@ -216,13 +211,6 @@ const filteredCommunes = computed(() => {
 const handleRegionChange = () => {
   form.value.commune = null; // Resetear la comuna seleccionada
   selectedRegionId.value = form.value.region; // Actualizar la región seleccionada
-};
-
-const handlePhoneInput = (event) => {
-  // Remover caracteres no permitidos
-  const value = event.target.value.replace(/[^\d\s()+-]/g, "");
-  // Limitar a 20 caracteres
-  form.value.phone = value.slice(0, 20);
 };
 
 const handleAddressNumberInput = (event) => {
