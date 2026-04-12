@@ -12,17 +12,10 @@
         <NuxtLink to="/anunciar" class="btn btn--primary btn--block"
           >Crear mi primer anuncio</NuxtLink
         >
-        <NuxtLink :to="returnUrl" class="btn btn--secondary btn--block"
-          >Volver a Waldo</NuxtLink
+        <NuxtLink to="/" class="btn btn--secondary btn--block"
+          >Ir al inicio</NuxtLink
         >
       </div>
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { computed } from "vue";
-
-const appStore = useAppStore();
-const returnUrl = computed(() => appStore.getReferer || "/");
-</script>
