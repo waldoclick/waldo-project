@@ -10,7 +10,8 @@
       <div class="form__description">
         <p>
           Las imágenes son clave para destacar tu anuncio. Elige fotos claras y
-          relevantes que muestren lo que ofreces.
+          relevantes que muestren lo que ofreces, con un tamaño mínimo de
+          750x420 píxeles para que se vean bien en todas las pantallas.
         </p>
       </div>
     </div>
