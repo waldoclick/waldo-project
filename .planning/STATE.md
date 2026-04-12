@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-last_updated: "2026-04-12T00:28:17.083Z"
-last_activity: "2026-04-11 - Completed quick task 260411-sd7: Fix Spanish error messages in FormRegister yup schema"
+last_updated: "2026-04-12T03:29:27.094Z"
+last_activity: 2026-04-12
 progress:
-  total_phases: 16
-  completed_phases: 15
-  total_plans: 38
-  completed_plans: 38
+  total_phases: 17
+  completed_phases: 16
+  total_plans: 39
+  completed_plans: 39
   percent: 100
 ---
 
@@ -20,7 +20,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 122 — migrate-strapi-entityservice-to-strapi-db-query-for-strapi-v5-compatibility
+**Current focus:** Phase 123 — hay-un-error-que-no-has-podido-resolver-al-loguearme-con-un-perfil-que-no-esta-completo-no-me-lleva-al-onboarding-tengo-que-refrescar-para-poder-verlo-por-favor-revisa-bien-antes-de-cambiar-codigo
 
 ## Position
 
@@ -34,6 +34,8 @@ Progress: [██████████] 100%
 
 ### Key Decisions (carry forward)
 
+- navigateTo() instead of router.push() for all post-login redirects in Nuxt 4 — router.push can race or silently abort after async fetchUser() state updates; navigateTo triggers the middleware pipeline reliably (123-01)
+- Profile completeness delegated to onboarding-guard.global.ts — login components call navigateTo(redirectTo) and the guard handles /onboarding redirect; meStore.reset() must precede navigateTo to clear stale persisted cache (123-01)
 - Self-guarding period_end query in Step 1 eliminates idempotency check: renewed subscription-payment records have period_end in the future and won't appear in results (121-02)
 - chargeUser periodEnd param replaces periodStart: old period_end is input; newPeriodEnd computed as first of next month; step 4 deduplicates cancelled users with Set<number> (121-02)
 - mockImplementation routing pattern used for strapi.db.query in Jest tests to dispatch different mock objects per UID — enables independent assertions for different content types (120-04)
@@ -93,6 +95,7 @@ Progress: [██████████] 100%
 - Phase 119 added: export orders to CSV from dashboard orders page
 - Phase 120 added: Refactor PRO subscription model: subscription-pro collection type, move card data out of user, fix charge-before-activate order, calendar billing
 - Phase 122 added: Migrate strapi.entityService to strapi.db.query for Strapi v5 compatibility
+- Phase 123 added: Fix onboarding redirect on login — incomplete profile does not navigate to onboarding without a page refresh
 
 ### Blockers/Concerns (open)
 
@@ -153,5 +156,5 @@ Progress: [██████████] 100%
 
 ## Session Continuity
 
-Last activity: 2026-04-12 - Completed quick task 260411-tcf: replace dynamic referer CTA with deterministic "Ir al inicio" on onboarding thankyou
+Last activity: 2026-04-12
 Resume file: None
