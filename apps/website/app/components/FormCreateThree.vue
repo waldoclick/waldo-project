@@ -1,7 +1,7 @@
 <template>
   <!-- <pre>{{ user }}</pre> -->
   <Form
-    v-slot="{ errors, meta }"
+    v-slot="{ meta }"
     :validation-schema="schema"
     :initial-values="form"
     validate-on-mount
