@@ -44,7 +44,8 @@ const sortedCountries = computed<Country[]>(() => {
 });
 
 const props = defineProps<{
-  modelValue: string;
+  modelValue?: string;
+  value?: string;
 }>();
 
 const emit = defineEmits<{
@@ -73,7 +74,7 @@ function parsePhone(value: string): { dialCode: string; localNumber: string } {
 }
 
 watch(
-  () => props.modelValue,
+  () => props.modelValue ?? props.value ?? "",
   (val) => {
     const parsed = parsePhone(val);
     selectedDialCode.value = parsed.dialCode;
