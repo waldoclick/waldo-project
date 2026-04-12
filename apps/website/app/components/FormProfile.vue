@@ -310,7 +310,7 @@
         </div>
 
         <button
-          :disabled="!meta.valid || sending || !hasChanges"
+          :disabled="!meta.valid || sending || (!onboardingMode && !hasChanges)"
           :title="`Actualizar`"
           type="submit"
           class="btn btn--block btn--buy"
