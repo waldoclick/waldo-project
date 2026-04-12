@@ -5,7 +5,7 @@
       <input
         :value="modelValue"
         :placeholder="placeholder"
-        maxlength="100"
+        maxlength="40"
         class="search--default__input"
         @input="
           $emit('update:modelValue', ($event.target as HTMLInputElement).value)
