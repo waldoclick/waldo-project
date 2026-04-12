@@ -82,6 +82,13 @@ const { data: categories } = await useAsyncData(
 const getTypeClass = computed(() => `search--${props.type || "default"}`);
 
 watch(
+  () => form.value.query,
+  (val) => {
+    if (val.length > 40) form.value.query = val.slice(0, 40);
+  },
+);
+
+watch(
   () => route.query.category,
   (newCategory) => {
     form.value.category = String(newCategory || "");

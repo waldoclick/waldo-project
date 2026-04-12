@@ -8,7 +8,10 @@
         maxlength="40"
         class="search--default__input"
         @input="
-          $emit('update:modelValue', ($event.target as HTMLInputElement).value)
+          $emit(
+            'update:modelValue',
+            ($event.target as HTMLInputElement).value.slice(0, 40),
+          )
         "
       />
       <button
