@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-last_updated: "2026-04-12T20:38:21.808Z"
+last_updated: "2026-04-12T20:42:12.905Z"
 last_activity: 2026-04-12
 progress:
   total_phases: 18
-  completed_phases: 16
+  completed_phases: 17
   total_plans: 41
-  completed_plans: 40
+  completed_plans: 41
   percent: 100
 ---
 
@@ -20,11 +20,11 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 124 — inputphone-component-country-code-selector-phone-number-field (plan 01 complete)
+**Current focus:** Phase 124 — inputphone-component-country-code-selector-phone-number-field (COMPLETE)
 
 ## Position
 
-Phase 124 plan 01 complete — InputPhone component built. Plan 02 (wire into FormProfile, FormCreateThree, FormContact) ready to start.
+Phase 124 complete — InputPhone component built (plan 01) and wired into all three website forms (plan 02). Phase 124 is fully done.
 
 ```
 Progress: [██████████] 100%
@@ -81,6 +81,7 @@ Progress: [██████████] 100%
 - Cloudflare analytics response navigated with any cast + inline comment — Cloudflare Analytics API has no public TS types; cacheHitRate and errorRate computed from totals with zero-division guard (260409-tns)
 - Use @/data/countries.json import alias (not ~/data/) in InputPhone.vue — Vitest config maps ~ to apps/website/ root while @ maps to apps/website/app/; @ alias ensures consistent resolution in both Nuxt and Vitest (124-01)
 - parsePhone uses longest-match via sort(b.dialCode.length - a.dialCode.length) to correctly resolve +1868 (Trinidad) over +1 (US/Canada) — essential for Caribbean/Pacific dialCode disambiguation (124-01)
+- Use <Field v-slot="{ field }"><InputPhone v-bind="field" /></Field> pattern — correct vee-validate wrapping for custom v-model component, keeps name registration without double binding; FormContact.vue had no handlePhoneInput function to delete (124-02)
 
 ### Roadmap Evolution
 
