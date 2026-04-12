@@ -18,11 +18,14 @@ global.navigateTo = mockNavigateTo;
 const mockUser = vi.fn(() => ({ value: { id: 1 } }));
 global.useStrapiUser = mockUser;
 
+const mockStrapiToken = vi.fn(() => ({ value: null }));
+global.useStrapiToken = mockStrapiToken;
+
+const mockFetchUser = vi.fn();
+global.useStrapiAuth = vi.fn(() => ({ fetchUser: mockFetchUser }));
+
 const mockIsProfileComplete = vi.fn();
 global.useMeStore = vi.fn(() => ({ isProfileComplete: mockIsProfileComplete }));
-
-const mockSetReferer = vi.fn();
-global.useAppStore = vi.fn(() => ({ setReferer: mockSetReferer }));
 
 // Use dynamic import so globals are set before the guard module evaluates.
 
@@ -40,6 +43,8 @@ describe("onboarding-guard.global (GUARD-01..04)", () => {
     vi.clearAllMocks();
     mockUser.mockReturnValue({ value: { id: 1 } }); // authenticated
     mockIsProfileComplete.mockResolvedValue(false); // incomplete by default
+    mockStrapiToken.mockReturnValue({ value: null });
+    mockFetchUser.mockReset();
     // Re-sync global.navigateTo with the cleared mock
     global.navigateTo = mockNavigateTo;
   });
@@ -47,15 +52,15 @@ describe("onboarding-guard.global (GUARD-01..04)", () => {
   // GUARD-01: Unauthenticated users pass through
   it("allows unauthenticated users through without calling isProfileComplete (GUARD-01)", async () => {
     mockUser.mockReturnValue({ value: null });
+    mockStrapiToken.mockReturnValue({ value: null });
     await guard(makeTo("/anuncios"), {});
     expect(mockIsProfileComplete).not.toHaveBeenCalled();
     expect(mockNavigateTo).not.toHaveBeenCalled();
   });
 
   // GUARD-01: Authenticated incomplete-profile user on non-exempt page is redirected
-  it("redirects authenticated incomplete-profile user to /onboarding and saves referer (GUARD-01)", async () => {
+  it("redirects authenticated incomplete-profile user to /onboarding (GUARD-01)", async () => {
     await guard(makeTo("/anuncios"), {});
-    expect(mockSetReferer).toHaveBeenCalledWith("/anuncios");
     expect(mockNavigateTo).toHaveBeenCalledWith("/onboarding");
   });
 
@@ -78,11 +83,11 @@ describe("onboarding-guard.global (GUARD-01..04)", () => {
     expect(mockNavigateTo).toHaveBeenCalledWith("/");
   });
 
-  // GUARD-02: Complete-profile user at /onboarding/thankyou is redirected to /
-  it("redirects complete-profile user away from /onboarding/thankyou to / (GUARD-02)", async () => {
+  // GUARD-02: Complete-profile user at /onboarding/thankyou passes through (strict equality, not startsWith)
+  it("allows complete-profile user at /onboarding/thankyou (GUARD-02 strict equality)", async () => {
     mockIsProfileComplete.mockResolvedValue(true);
     await guard(makeTo("/onboarding/thankyou"), {});
-    expect(mockNavigateTo).toHaveBeenCalledWith("/");
+    expect(mockNavigateTo).not.toHaveBeenCalled();
   });
 
   // GUARD-02: Complete-profile user on non-onboarding page passes through
