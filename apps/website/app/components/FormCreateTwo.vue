@@ -97,6 +97,7 @@
           as="textarea"
           name="description"
           class="form-control"
+          maxlength="300"
           @input="handleTextArea"
         />
         <ErrorMessage name="description" />
@@ -190,6 +191,16 @@ const handleTextArea = () => {
     form.value.description = form.value.description.slice(0, maxChars);
   }
 };
+
+// Hard-cap description on every change (covers paste, autofill, programmatic writes)
+watch(
+  () => form.value.description,
+  (value) => {
+    if (value && value.length > maxChars) {
+      form.value.description = value.slice(0, maxChars);
+    }
+  },
+);
 
 // Handle name input
 const handleNameInput = () => {
