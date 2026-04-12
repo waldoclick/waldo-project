@@ -604,7 +604,10 @@ const schema = yup.object({
     then: (schema) =>
       schema
         .required("Número de Dirección Empresa es requerido")
-        .max(5, "El Número de Dirección Empresa no puede tener más de 5 caracteres"),
+        .max(
+          5,
+          "El Número de Dirección Empresa no puede tener más de 5 caracteres",
+        ),
     otherwise: (schema) => schema.nullable().optional(),
   }),
   business_postal_code: yup.string().when("is_company", {
@@ -747,18 +750,16 @@ const handleBusinessTypeInput = () => {
   }
 };
 
-const handleAddressNumberInput = (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  const value = String(target.value || "").slice(0, 5);
+const handleAddressNumberInput = (event) => {
+  const value = String(event.target.value || "").slice(0, 5);
   form.value.address_number = value;
-  target.value = value;
+  event.target.value = value;
 };
 
-const handleBusinessAddressNumberInput = (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  const value = String(target.value || "").slice(0, 5);
+const handleBusinessAddressNumberInput = (event) => {
+  const value = String(event.target.value || "").slice(0, 5);
   form.value.business_address_number = value;
-  target.value = value;
+  event.target.value = value;
 };
 
 const handlePhoneInput = (event) => {
