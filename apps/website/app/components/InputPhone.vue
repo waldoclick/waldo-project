@@ -79,6 +79,10 @@ watch(
     const parsed = parsePhone(val);
     selectedDialCode.value = parsed.dialCode;
     localNumber.value = parsed.localNumber;
+    const composed = parsed.dialCode + parsed.localNumber;
+    if (composed !== val) {
+      emit("update:modelValue", composed);
+    }
   },
   { immediate: true },
 );
