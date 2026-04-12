@@ -683,6 +683,12 @@ const handleSubmit = async (values) => {
     const mappedValues = {
       ...values,
       phone: String(values.phone),
+      address_number: values.address_number
+        ? Number.parseInt(values.address_number, 10)
+        : null,
+      business_address_number: values.business_address_number
+        ? Number.parseInt(values.business_address_number, 10)
+        : null,
     };
 
     // Usar la función del store para actualizar el perfil
@@ -751,15 +757,15 @@ const handleBusinessTypeInput = () => {
 };
 
 const handleAddressNumberInput = (event) => {
-  const value = String(event.target.value || "").slice(0, 5);
-  form.value.address_number = value;
-  event.target.value = value;
+  const sliced = String(event.target.value || "").slice(0, 5);
+  event.target.value = sliced;
+  form.value.address_number = sliced ? Number.parseInt(sliced, 10) : "";
 };
 
 const handleBusinessAddressNumberInput = (event) => {
-  const value = String(event.target.value || "").slice(0, 5);
-  form.value.business_address_number = value;
-  event.target.value = value;
+  const sliced = String(event.target.value || "").slice(0, 5);
+  event.target.value = sliced;
+  form.value.business_address_number = sliced ? Number.parseInt(sliced, 10) : "";
 };
 
 const handlePhoneInput = (event) => {
