@@ -147,8 +147,9 @@ Progress: [██████████] 100%
 | 260411-m0h | Add maxlength limits to all auth form inputs in both apps | 2026-04-11 | fb087c5c | [260411-m0h-add-maxlength-limits-to-all-auth-form-in](./quick/260411-m0h-add-maxlength-limits-to-all-auth-form-in/) |
 | 260411-mpl | Split verification code input into 6 individual OTP digit inputs with auto-advance, backspace nav, paste distribution, and arrow key support | 2026-04-11 | 8a6eb900 | [260411-mpl-split-verification-code-input-into-6-ind](./quick/260411-mpl-split-verification-code-input-into-6-ind/) |
 | 260411-sd7 | Fix Spanish error messages in FormRegister yup schema: typo "Appelido" → "Apellido", add missing article "El" to RUT required and invalid messages | 2026-04-11 | b300acad | [260411-sd7-corregir-textos-formulario-registro-camp](./quick/260411-sd7-corregir-textos-formulario-registro-camp/) |
+| 260411-sox | fix onboarding: botón continuar bloqueado aunque formulario esté completo — hasChanges gate bypassed in onboardingMode | 2026-04-12 | 4b27b01c | [260411-sox-fix-onboarding-boton-continuar-bloqueado](./quick/260411-sox-fix-onboarding-boton-continuar-bloqueado/) |
 
 ## Session Continuity
 
-Last activity: 2026-04-11 - Completed quick task 260411-sd7: Fix Spanish error messages in FormRegister yup schema
+Last activity: 2026-04-12 - Completed quick task 260411-sox: fix onboarding botón continuar bloqueado
 Resume file: None
