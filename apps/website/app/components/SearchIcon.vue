@@ -7,7 +7,7 @@
         decoding="async"
         :src="iconZoomWhite"
         alt="icon-zoom"
-        title="icon-zoom"
+        title="Buscar en Waldo.click®"
       />
       <img
         v-else
@@ -15,7 +15,7 @@
         decoding="async"
         :src="iconZoomBlack"
         alt="icon-zoom-black"
-        title="icon-zoom-black"
+        title="Buscar en Waldo.click®"
       />
     </button>
   </div>
