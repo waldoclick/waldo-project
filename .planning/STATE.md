@@ -156,8 +156,9 @@ Progress: [██████████] 100%
 | 260412-02k | en los inputs de busqueda, en ambos hay que validar la cantidad de texto que se puede buscar | 2026-04-12 | 88dd5140 | [260412-02k-en-los-inputs-de-busqueda-en-ambos-hay-q](./quick/260412-02k-en-los-inputs-de-busqueda-en-ambos-hay-q/) |
 | 260412-0bc | enforce hard 300-char cap on ad description textarea — maxlength attribute + Vue watcher dual-layer | 2026-04-12 | bb0cb627 | [260412-0bc-enforce-300-char-limit-on-ad-description](./quick/260412-0bc-enforce-300-char-limit-on-ad-description/) |
 | 260412-lfh | agregar medidas mínimas 750x420 de forma natural en el texto del paso de subir imágenes al crear anuncio | 2026-04-12 | 5fed8d34 | [260412-lfh-en-el-paso-de-subir-imagenes-para-crear-](./quick/260412-lfh-en-el-paso-de-subir-imagenes-para-crear-/) |
+| 260412-lm7 | limit address_number and business_address_number to 5 chars in FormProfile — yup .max(5) + @input hard-cap handlers | 2026-04-12 | d563c5f2 | [260412-lm7-en-el-formprofile-hay-que-validar-el-num](./quick/260412-lm7-en-el-formprofile-hay-que-validar-el-num/) |
 
 ## Session Continuity
 
-Last activity: 2026-04-12 - Completed quick task 260412-lfh: agregar-medidas-minimas-imagen-en-paso-subir-imagenes
+Last activity: 2026-04-12 - Completed quick task 260412-lm7: limit-address-number-to-5-chars-in-FormProfile
 Resume file: None
