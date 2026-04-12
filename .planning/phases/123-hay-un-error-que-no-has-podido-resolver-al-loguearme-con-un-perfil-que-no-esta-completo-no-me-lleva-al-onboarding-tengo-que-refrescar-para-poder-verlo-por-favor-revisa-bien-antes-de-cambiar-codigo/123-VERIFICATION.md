@@ -1,7 +1,7 @@
 ---
 phase: 123-onboarding-redirect-fix
 verified: 2026-04-11T23:31:30Z
-status: human_needed
+status: passed
 score: 4/4 must-haves verified
 human_verification:
   - test: "Email+OTP login with incomplete profile auto-redirects to /onboarding"
