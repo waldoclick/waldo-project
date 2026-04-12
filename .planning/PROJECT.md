@@ -389,7 +389,8 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 
 ## Current State
 
-**Last shipped:** Phase 120 complete (2026-04-09) — PRO subscription model refactor: `subscription-pro` collection type created, card data migrated out of user, charge-before-activate ordering fixed, cron/cancellation read path migrated, 39 tests passing
+**Last shipped:** Phase 124 complete (2026-04-12) — InputPhone component: reusable `<InputPhone>` Vue 3 composite (country dial-code selector + phone number field) with 29-entry countries.json and 10 passing unit tests; integrated across FormProfile, FormCreateThree, and FormContact
+**Previously shipped:** Phase 120 complete (2026-04-09) — PRO subscription model refactor: `subscription-pro` collection type created, card data migrated out of user, charge-before-activate ordering fixed, cron/cancellation read path migrated, 39 tests passing
 **Previously shipped:** v1.46 (2026-04-05) — Phase 112 complete: Ad wizard ownership validation — server-side ownership guards on saveDraft/update/delete in Strapi; client-side userId tracking with wizard reset guard in anunciar/index.vue
 **v1.46 PRO Subscriptions (2026-03-29):** Webpay Oneclick full subscription lifecycle — Oneclick Mall inscription, daily charge cron with 3-day retry, cancellation with period-end expiry, PRO checkout page with Facto tax documents, registration consent checkboxes
 **Also shipped recently:** v1.45 (2026-03-20) — User Onboarding; v1.44 (2026-03-19) — Google One Tap Sign-In; v1.43 (2026-03-19) — Cross-App Session Replacement
@@ -576,4 +577,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ All 39 tests pass: cron, cancellation, middleware, bootstrap migration — Phase 120
 
 ---
-*Last updated: 2026-04-09 after Phase 121 (subscription data model cleanup — pro_expires_at removed from user, period_end on subscription-payment, cron + tests updated)*
+*Last updated: 2026-04-12 after Phase 124 (InputPhone component — reusable phone input with country dial-code selector integrated across website forms)*
