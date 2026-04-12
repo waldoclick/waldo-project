@@ -3,9 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-stopped_at: "Completed quick task 260410-n56: fix broken navigation in dashboard mantenedores view"
-last_updated: "2026-04-10T20:57:05.007Z"
-last_activity: "2026-04-10 - Completed quick task 260410-n56: Fix broken navigation in all 8 dashboard mantenedor sections"
+last_updated: "2026-04-12T00:28:17.083Z"
+last_activity: "2026-04-11 - Completed quick task 260411-sd7: Fix Spanish error messages in FormRegister yup schema"
 progress:
   total_phases: 16
   completed_phases: 15
@@ -147,8 +146,9 @@ Progress: [██████████] 100%
 | 260410-n56 | Fix broken navigation in all 8 dashboard mantenedor sections: add documentId to interfaces, fix router.push to use /maintenance/ prefix and documentId, fix post-save redirects, fix breadcrumbs | 2026-04-10 | 4df97e90 | [260410-n56-fix-error-in-dashboard-mantenedores-view](./quick/260410-n56-fix-error-in-dashboard-mantenedores-view/) |
 | 260411-m0h | Add maxlength limits to all auth form inputs in both apps | 2026-04-11 | fb087c5c | [260411-m0h-add-maxlength-limits-to-all-auth-form-in](./quick/260411-m0h-add-maxlength-limits-to-all-auth-form-in/) |
 | 260411-mpl | Split verification code input into 6 individual OTP digit inputs with auto-advance, backspace nav, paste distribution, and arrow key support | 2026-04-11 | 8a6eb900 | [260411-mpl-split-verification-code-input-into-6-ind](./quick/260411-mpl-split-verification-code-input-into-6-ind/) |
+| 260411-sd7 | Fix Spanish error messages in FormRegister yup schema: typo "Appelido" → "Apellido", add missing article "El" to RUT required and invalid messages | 2026-04-11 | b300acad | [260411-sd7-corregir-textos-formulario-registro-camp](./quick/260411-sd7-corregir-textos-formulario-registro-camp/) |
 
 ## Session Continuity
 
-Last activity: 2026-04-11 - Completed quick task 260411-mpl: Split verification code input into 6 individual OTP digit inputs
+Last activity: 2026-04-11 - Completed quick task 260411-sd7: Fix Spanish error messages in FormRegister yup schema
 Resume file: None
