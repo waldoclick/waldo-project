@@ -158,6 +158,7 @@ const handleVerify = async () => {
     login("email");
 
     const meStore = useMeStore();
+    meStore.reset(); // Clear any stale cache from a previous session
     const isProfileComplete = await meStore.isProfileComplete();
     if (!isProfileComplete) {
       router.push("/onboarding");

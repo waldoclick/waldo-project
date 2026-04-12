@@ -39,11 +39,11 @@ const authenticate = async () => {
       login("google");
 
       // Verificar si el perfil del usuario está completo
+      meStore.reset(); // Clear any stale cache from a previous session
       const isProfileComplete = await meStore.isProfileComplete();
 
       if (!isProfileComplete) {
-        // Si el perfil no está completo, redirigir a la página de edición de perfil
-        router.push("/cuenta/perfil/editar");
+        router.push("/onboarding");
         return;
       }
 
