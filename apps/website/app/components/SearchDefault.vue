@@ -13,6 +13,7 @@
           name="query"
           type="text"
           placeholder="Escribe…"
+          maxlength="100"
         />
       </div>
     </div>
@@ -99,7 +100,7 @@ watch(
 
 const handleSubmit = () => {
   const queries = {
-    s: form.value.query.toLowerCase() || null,
+    s: form.value.query.slice(0, 100).toLowerCase() || null,
     category: form.value.category || null,
     page: 1,
   };
