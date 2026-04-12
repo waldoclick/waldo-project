@@ -17,7 +17,7 @@
     "test": "turbo run test",
     "codacy": "turbo run codacy",
     "prepare": "husky",
-    "postinstall": "(cd node_modules/ipx/node_modules/sharp && npm install --ignore-scripts=false --foreground-scripts --silent) 2>/dev/null || true && node -e \"const p=require('path'),f=require('fs'),t=p.resolve('node_modules/vite-plugin-checker/dist/checkers/vueTsc/typescript-vue-tsc/lib'),s=p.resolve(require.resolve('typescript'),'../../lib/typescript.js'),d=p.join(t,'typescript.js');try{f.copyFileSync(s,d)}catch(e){}\" 2>/dev/null || true",
+    "postinstall": "(cd node_modules/ipx/node_modules/sharp && npm install --ignore-scripts=false --foreground-scripts --silent) 2>/dev/null || true && node --input-type=module -e \"import{prepareVueTsc}from'./node_modules/vite-plugin-checker/dist/checkers/vueTsc/prepareVueTsc.js';prepareVueTsc().catch(()=>{})\" 2>/dev/null || true",
     "strapi:upgrade": "cd apps/strapi && NPM_REGISTRY_URL=https://registry.npmjs.org/ npx @strapi/upgrade latest"
   },
   "devDependencies": {
