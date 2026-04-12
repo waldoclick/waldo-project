@@ -1,0 +1,55 @@
+@use "../abstracts/variables" as *;
+
+.input {
+  &--phone {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+    border: 2px solid $platinum;
+    border-radius: 4px;
+    background-color: white;
+    transition: border-color 0.3s;
+    overflow: hidden;
+
+    &:focus-within {
+      border-color: $charcoal;
+    }
+
+    &__select {
+      border: none;
+      border-right: 1px solid $platinum;
+      background-color: $ghost_white;
+      color: $charcoal;
+      padding: 0 10px;
+      font-size: 14px;
+      font-family: inherit;
+      cursor: pointer;
+      outline: none;
+      flex-shrink: 0;
+
+      &:focus {
+        outline: none;
+      }
+    }
+
+    &__number {
+      flex: 1;
+      min-width: 0;
+      border: none;
+      background-color: transparent;
+      color: $charcoal;
+      padding: 10px 12px;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+
+      &::placeholder {
+        color: $silver;
+      }
+
+      &:focus {
+        outline: none;
+      }
+    }
+  }
+}
