@@ -259,7 +259,7 @@ const getSchema = () => {
           .required(() =>
             form.value.is_company
               ? "El Giro es requerida"
-              : "El Appelido es requerido",
+              : "El Apellido es requerido",
           )
           .matches(
             /^[\d\s.A-Za-zÁÉÍÑÓÚáéíñóú]+$/,
@@ -268,8 +268,8 @@ const getSchema = () => {
         rut: yup
           .string()
           .max(12, "Máximo 12 caracteres")
-          .required("RUT es requerido")
-          .test("is-valid-rut", "RUT no es válido", (value) =>
+          .required("El RUT es requerido")
+          .test("is-valid-rut", "El RUT no es válido", (value) =>
             validateRut(value || ""),
           ),
       })
