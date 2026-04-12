@@ -153,8 +153,9 @@ Progress: [██████████] 100%
 | 260411-sgs | fix registro: strip accepted_age_confirmation, accepted_terms, accepted_usage_terms from register payload, persist via db.query after registration | 2026-04-12 | b300acad | [260411-sgs-fix-registro-invalid-parameters-accepted](./quick/260411-sgs-fix-registro-invalid-parameters-accepted/) |
 | 260411-sox | fix onboarding: botón continuar bloqueado aunque formulario esté completo — hasChanges gate bypassed in onboardingMode | 2026-04-12 | 4b27b01c | [260411-sox-fix-onboarding-boton-continuar-bloqueado](./quick/260411-sox-fix-onboarding-boton-continuar-bloqueado/) |
 | 260411-tcf | Replace dynamic referer CTA with deterministic "Ir al inicio" → / on OnboardingThankyou; remove script block + unused imports | 2026-04-12 | 8be3884b | [260411-tcf-cuando-un-usuario-inicia-sesion-y-el-per](./quick/260411-tcf-cuando-un-usuario-inicia-sesion-y-el-per/) |
+| 260412-02k | en los inputs de busqueda, en ambos hay que validar la cantidad de texto que se puede buscar | 2026-04-12 | 88dd5140 | [260412-02k-en-los-inputs-de-busqueda-en-ambos-hay-q](./quick/260412-02k-en-los-inputs-de-busqueda-en-ambos-hay-q/) |
 
 ## Session Continuity
 
-Last activity: 2026-04-12
+Last activity: 2026-04-12 - Completed quick task 260412-02k: en los inputs de busqueda, en ambos hay que validar la cantidad de texto que se puede buscar
 Resume file: None
