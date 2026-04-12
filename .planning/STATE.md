@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-last_updated: "2026-04-12T19:27:55.079Z"
-last_activity: "2026-04-12 - Completed quick task 260412-0bc: enforce-300-char-limit-on-ad-description"
+last_updated: "2026-04-12T20:38:21.808Z"
+last_activity: 2026-04-12
 progress:
-  total_phases: 17
+  total_phases: 18
   completed_phases: 16
-  total_plans: 39
-  completed_plans: 39
+  total_plans: 41
+  completed_plans: 40
   percent: 100
 ---
 
@@ -20,11 +20,11 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 123 — hay-un-error-que-no-has-podido-resolver-al-loguearme-con-un-perfil-que-no-esta-completo-no-me-lleva-al-onboarding-tengo-que-refrescar-para-poder-verlo-por-favor-revisa-bien-antes-de-cambiar-codigo
+**Current focus:** Phase 124 — inputphone-component-country-code-selector-phone-number-field (plan 01 complete)
 
 ## Position
 
-Milestone v1.46 PRO Subscriptions archived. Ready to start next milestone.
+Phase 124 plan 01 complete — InputPhone component built. Plan 02 (wire into FormProfile, FormCreateThree, FormContact) ready to start.
 
 ```
 Progress: [██████████] 100%
@@ -79,6 +79,8 @@ Progress: [██████████] 100%
 - ExportOrder interface defined locally in controller alongside StrapiOrder — avoids coupling with shared types (119-01)
 - Auth.GoogleAuth instantiated per method call (not as instance field) in SearchConsoleService to avoid stale credential caching across requests (260409-tns)
 - Cloudflare analytics response navigated with any cast + inline comment — Cloudflare Analytics API has no public TS types; cacheHitRate and errorRate computed from totals with zero-division guard (260409-tns)
+- Use @/data/countries.json import alias (not ~/data/) in InputPhone.vue — Vitest config maps ~ to apps/website/ root while @ maps to apps/website/app/; @ alias ensures consistent resolution in both Nuxt and Vitest (124-01)
+- parsePhone uses longest-match via sort(b.dialCode.length - a.dialCode.length) to correctly resolve +1868 (Trinidad) over +1 (US/Canada) — essential for Caribbean/Pacific dialCode disambiguation (124-01)
 
 ### Roadmap Evolution
 
@@ -160,5 +162,5 @@ Progress: [██████████] 100%
 
 ## Session Continuity
 
-Last activity: 2026-04-12 - Completed quick task 260412-lm7: limit-address-number-to-5-chars-in-FormProfile
+Last activity: 2026-04-12
 Resume file: None
