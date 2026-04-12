@@ -113,21 +113,24 @@ export default {
    * Creates subscription-payment records, retries failed charges on days 1 and 3,
    * and deactivates subscriptions after 3 consecutive failures.
    * Runs daily at 5:00 AM Santiago time (America/Santiago).
+   * Only registered when PRO_ENABLE=true.
    * Calls SubscriptionChargeService.chargeExpiredSubscriptions().
    */
-  subscriptionChargeCron: {
-    task: async ({ strapi }) => {
-      strapi.log.info("=== INICIANDO CRON SUBSCRIPTION CHARGE ===");
-      const service = new SubscriptionChargeService();
-      await service.chargeExpiredSubscriptions();
-      strapi.log.info("=== CRON SUBSCRIPTION CHARGE FINALIZADO ===");
+  ...(process.env.PRO_ENABLE === "true" && {
+    subscriptionChargeCron: {
+      task: async ({ strapi }) => {
+        strapi.log.info("=== INICIANDO CRON SUBSCRIPTION CHARGE ===");
+        const service = new SubscriptionChargeService();
+        await service.chargeExpiredSubscriptions();
+        strapi.log.info("=== CRON SUBSCRIPTION CHARGE FINALIZADO ===");
+      },
+      options: {
+        rule: "0 5 * * *", // Every day at 5:00 AM (America/Santiago)
+        // rule: "* * * * *", // Test
+        tz: "America/Santiago",
+      },
     },
-    options: {
-      rule: "0 5 * * *", // Every day at 5:00 AM (America/Santiago)
-      // rule: "* * * * *", // Test
-      tz: "America/Santiago",
-    },
-  },
+  }),
 
   /**
    * One-time migration: sets confirmed = true on all existing users.
