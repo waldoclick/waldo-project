@@ -230,3 +230,13 @@ Plans:
 - [x] 122-02-PLAN.md — Migrate payment utils + ad service + order controller + gift controllers
 - [x] 122-03-PLAN.md — Migrate 4 cron files + user-registration middleware
 - [x] 122-04-PLAN.md — Update 7 test file mocks + final verification sweep
+
+### Phase 123: Fix onboarding redirect on login — incomplete profile not navigating to /onboarding without refresh
+
+**Goal:** Fix the bug where logging in (email+OTP or Google) with an incomplete profile does not auto-navigate to `/onboarding` — the user must refresh the page manually. Root cause: `FormVerifyCode.vue` and `login/google.vue` use raw `router.push()` which races with the Nuxt middleware pipeline after async `fetchUser()`. Fix replaces `router.push`→`navigateTo` and delegates profile completeness check to the global `onboarding-guard.global.ts` middleware. Also fix two stale test cases in `onboarding-guard.test.ts` that no longer match the current guard implementation.
+**Requirements**: [GUARD-TEST-01, NAV-FIX-01, NAV-FIX-02]
+**Depends on:** Phase 122
+**Plans:** 1 plans
+
+Plans:
+- [ ] 123-01-PLAN.md — Fix stale guard tests + migrate FormVerifyCode and login/google to navigateTo
