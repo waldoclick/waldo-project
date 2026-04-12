@@ -27,17 +27,19 @@ const authenticate = async () => {
     );
     // Redirigir a /anuncios si la autenticación es exitosa
     if (response) {
-      // Clear any stale cache from a previous session so the global
-      // onboarding-guard re-fetches /users/me on the next navigation.
+      // Clear stale cache so isProfileComplete() fetches fresh data from the API.
       meStore.reset();
+      const isComplete = await meStore.isProfileComplete();
 
-      // Use referer if stored, otherwise fall back to /anuncios
+      // Decide destination before the navigation — same rationale as FormVerifyCode:
+      // avoid relying on the guard to intercept (race / same-route no-op risk).
+      if (!isComplete) {
+        await navigateTo("/onboarding");
+        return;
+      }
+
       const redirectTo = appStore.getReferer || "/anuncios";
       appStore.clearReferer();
-
-      // Use navigateTo (not Vue Router's push) so the Nuxt middleware pipeline
-      // runs cleanly — the global onboarding-guard.global.ts will intercept
-      // this navigation and redirect to /onboarding if the profile is incomplete.
       await navigateTo(redirectTo);
     }
   } catch (error) {

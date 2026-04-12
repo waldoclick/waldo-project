@@ -155,21 +155,26 @@ const handleVerify = async () => {
     logInfo("User logged in successfully via 2-step verification.");
     login("email");
 
-    // Clear any stale cache from a previous session so the global
-    // onboarding guard re-fetches /users/me on the next navigation.
+    // Clear stale cache so isProfileComplete() fetches fresh data from the API.
     const meStore = useMeStore();
     meStore.reset();
+    const isComplete = await meStore.isProfileComplete();
 
     const appStore = useAppStore();
     appStore.closeLoginLightbox();
+
+    // Decide destination before the navigation so the guard is never needed
+    // for this post-login redirect. The guard still protects direct URL access
+    // and page refreshes; here we resolve explicitly to avoid a race where
+    // navigateTo(redirectTo) is a same-route no-op (NavigationDuplicated) and
+    // the guard never fires.
+    if (!isComplete) {
+      await navigateTo("/onboarding");
+      return;
+    }
+
     const redirectTo = appStore.getReferer || "/anuncios";
     appStore.clearReferer();
-
-    // Use navigateTo (not Vue Router's push) so the Nuxt middleware pipeline
-    // runs cleanly — the global onboarding-guard.global.ts middleware will
-    // intercept this navigation and redirect to /onboarding if the user's
-    // profile is incomplete. This fixes the bug where after OTP login the
-    // redirect only fired after a manual page refresh.
     await navigateTo(redirectTo);
   } catch (error) {
     const raw = error?.data?.error?.message ?? error?.error?.message ?? "";
