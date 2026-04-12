@@ -282,8 +282,11 @@ const getSchema = () => {
         password: yup
           .string()
           .required("Contraseña es requerida")
-          .min(6, "Mínimo 6 caracteres")
-          .max(50, "Máximo 50 caracteres"),
+          .min(8, "Mínimo 8 caracteres")
+          .max(50, "Máximo 50 caracteres")
+          .matches(/[A-Z]/, "Debe incluir al menos una mayúscula")
+          .matches(/[a-z]/, "Debe incluir al menos una minúscula")
+          .matches(/\d/, "Debe incluir al menos un número"),
         confirm_password: yup
           .string()
           .oneOf(
