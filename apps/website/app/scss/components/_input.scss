@@ -16,11 +16,15 @@
     }
 
     &__select {
+      appearance: none;
       border: none;
       border-right: 1px solid $platinum;
       background-color: $ghost_white;
+      background-image: url("/images/chevron-down.svg");
+      background-position: center right 15px;
+      background-repeat: no-repeat;
       color: $charcoal;
-      padding: 0 28px 0 10px;
+      padding: 0 30px 0 10px;
       font-size: 14px;
       font-family: inherit;
       cursor: pointer;
