@@ -160,7 +160,7 @@ const handleVerify = async () => {
     const meStore = useMeStore();
     const isProfileComplete = await meStore.isProfileComplete();
     if (!isProfileComplete) {
-      router.push("/cuenta/perfil/editar");
+      router.push("/onboarding");
       return;
     }
 
