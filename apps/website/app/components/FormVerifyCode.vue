@@ -32,13 +32,11 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, nextTick } from "vue";
-import { useRouter } from "vue-router";
 import { useAppStore } from "@/stores/app.store";
 import { useMeStore } from "@/stores/me.store";
 import { useLogger } from "@/composables/useLogger";
 
 const { Swal } = useSweetAlert2();
-const router = useRouter();
 const { logInfo } = useLogger();
 const apiClient = useApiClient();
 const { login } = useAdAnalytics();
@@ -126,9 +124,9 @@ const startCountdown = () => {
   }, 1000);
 };
 
-onMounted(() => {
+onMounted(async () => {
   if (!pendingToken.value) {
-    router.replace("/login");
+    await navigateTo("/login", { replace: true });
     return;
   }
   startCountdown();
@@ -157,19 +155,22 @@ const handleVerify = async () => {
     logInfo("User logged in successfully via 2-step verification.");
     login("email");
 
+    // Clear any stale cache from a previous session so the global
+    // onboarding guard re-fetches /users/me on the next navigation.
     const meStore = useMeStore();
-    meStore.reset(); // Clear any stale cache from a previous session
-    const isProfileComplete = await meStore.isProfileComplete();
-    if (!isProfileComplete) {
-      router.push("/onboarding");
-      return;
-    }
+    meStore.reset();
 
     const appStore = useAppStore();
     appStore.closeLoginLightbox();
     const redirectTo = appStore.getReferer || "/anuncios";
     appStore.clearReferer();
-    router.push(redirectTo);
+
+    // Use navigateTo (not Vue Router's push) so the Nuxt middleware pipeline
+    // runs cleanly — the global onboarding-guard.global.ts middleware will
+    // intercept this navigation and redirect to /onboarding if the user's
+    // profile is incomplete. This fixes the bug where after OTP login the
+    // redirect only fired after a manual page refresh.
+    await navigateTo(redirectTo);
   } catch (error) {
     const raw = error?.data?.error?.message ?? error?.error?.message ?? "";
     const fatal = raw.includes("Maximum attempts") || raw.includes("expired");
@@ -178,7 +179,7 @@ const handleVerify = async () => {
       : "El código ingresado es incorrecto. Inténtalo de nuevo.";
     Swal.fire("Error de verificación", msg, "error");
     if (fatal) {
-      router.push("/login");
+      await navigateTo("/login");
     } else {
       digits.value = ["", "", "", "", "", ""];
       await nextTick();
