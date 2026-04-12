@@ -155,8 +155,9 @@ Progress: [██████████] 100%
 | 260411-tcf | Replace dynamic referer CTA with deterministic "Ir al inicio" → / on OnboardingThankyou; remove script block + unused imports | 2026-04-12 | 8be3884b | [260411-tcf-cuando-un-usuario-inicia-sesion-y-el-per](./quick/260411-tcf-cuando-un-usuario-inicia-sesion-y-el-per/) |
 | 260412-02k | en los inputs de busqueda, en ambos hay que validar la cantidad de texto que se puede buscar | 2026-04-12 | 88dd5140 | [260412-02k-en-los-inputs-de-busqueda-en-ambos-hay-q](./quick/260412-02k-en-los-inputs-de-busqueda-en-ambos-hay-q/) |
 | 260412-0bc | enforce hard 300-char cap on ad description textarea — maxlength attribute + Vue watcher dual-layer | 2026-04-12 | bb0cb627 | [260412-0bc-enforce-300-char-limit-on-ad-description](./quick/260412-0bc-enforce-300-char-limit-on-ad-description/) |
+| 260412-lfh | agregar medidas mínimas 750x420 de forma natural en el texto del paso de subir imágenes al crear anuncio | 2026-04-12 | 5fed8d34 | [260412-lfh-en-el-paso-de-subir-imagenes-para-crear-](./quick/260412-lfh-en-el-paso-de-subir-imagenes-para-crear-/) |
 
 ## Session Continuity
 
-Last activity: 2026-04-12 - Completed quick task 260412-0bc: enforce-300-char-limit-on-ad-description
+Last activity: 2026-04-12 - Completed quick task 260412-lfh: agregar-medidas-minimas-imagen-en-paso-subir-imagenes
 Resume file: None
