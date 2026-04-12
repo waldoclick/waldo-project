@@ -240,3 +240,14 @@ Plans:
 
 Plans:
 - [x] 123-01-PLAN.md — Fix stale guard tests + migrate FormVerifyCode and login/google to navigateTo
+
+### Phase 124: InputPhone component — country code selector + phone number field
+
+**Goal:** Create a reusable `InputPhone` Vue component for the dashboard and website that combines a country dial-code selector (defaulting to Chile +56, data from static JSON) with a phone number input. The component stores the combined value (`+56912345678`) in the existing `phone` field — no Strapi schema changes. Replace all standalone phone inputs in forms (FormProfile and any other form that collects a phone number) with `InputPhone`.
+**Requirements**: [PHONE-01, PHONE-02, PHONE-03, PHONE-04, PHONE-05]
+**Depends on:** Phase 123
+**Plans:** 2 plans
+
+Plans:
+- [ ] 124-01-PLAN.md — InputPhone component + countries.json + SCSS + unit tests (website)
+- [ ] 124-02-PLAN.md — Replace phone Field in FormProfile, FormCreateThree, FormContact
