@@ -154,8 +154,9 @@ Progress: [██████████] 100%
 | 260411-sox | fix onboarding: botón continuar bloqueado aunque formulario esté completo — hasChanges gate bypassed in onboardingMode | 2026-04-12 | 4b27b01c | [260411-sox-fix-onboarding-boton-continuar-bloqueado](./quick/260411-sox-fix-onboarding-boton-continuar-bloqueado/) |
 | 260411-tcf | Replace dynamic referer CTA with deterministic "Ir al inicio" → / on OnboardingThankyou; remove script block + unused imports | 2026-04-12 | 8be3884b | [260411-tcf-cuando-un-usuario-inicia-sesion-y-el-per](./quick/260411-tcf-cuando-un-usuario-inicia-sesion-y-el-per/) |
 | 260412-02k | en los inputs de busqueda, en ambos hay que validar la cantidad de texto que se puede buscar | 2026-04-12 | 88dd5140 | [260412-02k-en-los-inputs-de-busqueda-en-ambos-hay-q](./quick/260412-02k-en-los-inputs-de-busqueda-en-ambos-hay-q/) |
+| 260412-0bc | enforce hard 300-char cap on ad description textarea — maxlength attribute + Vue watcher dual-layer | 2026-04-12 | bb0cb627 | [260412-0bc-enforce-300-char-limit-on-ad-description](./quick/260412-0bc-enforce-300-char-limit-on-ad-description/) |
 
 ## Session Continuity
 
-Last activity: 2026-04-12 - Completed quick task 260412-02k: en los inputs de busqueda, en ambos hay que validar la cantidad de texto que se puede buscar
+Last activity: 2026-04-12 - Completed quick task 260412-0bc: enforce-300-char-limit-on-ad-description
 Resume file: None
