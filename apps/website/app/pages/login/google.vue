@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 const { Swal } = useSweetAlert2();
 import { useAppStore } from "@/stores/app.store";
 import { useMeStore } from "@/stores/me.store";
@@ -19,7 +19,6 @@ useSeoMeta({ robots: "noindex, nofollow" });
 const { authenticateProvider } = useStrapiAuth();
 // Obtener la ruta y el router
 const route = useRoute();
-const router = useRouter();
 const appStore = useAppStore();
 const meStore = useMeStore();
 const { logInfo } = useLogger();
@@ -38,21 +37,19 @@ const authenticate = async () => {
       logInfo(`User logged in successfully with Google.`);
       login("google");
 
-      // Verificar si el perfil del usuario está completo
-      meStore.reset(); // Clear any stale cache from a previous session
-      const isProfileComplete = await meStore.isProfileComplete();
-
-      if (!isProfileComplete) {
-        router.push("/onboarding");
-        return;
-      }
+      // Clear any stale cache from a previous session so the global
+      // onboarding-guard re-fetches /users/me on the next navigation.
+      meStore.reset();
 
       // Obtener el referer del store o usar /anuncios como fallback
       const redirectTo = appStore.getReferer || "/anuncios";
       // Limpiar el referer después de usarlo
       appStore.clearReferer();
 
-      router.push(redirectTo);
+      // Use navigateTo (not Vue Router's push) so the Nuxt middleware pipeline
+      // runs cleanly — the global onboarding-guard.global.ts will intercept
+      // this navigation and redirect to /onboarding if the profile is incomplete.
+      await navigateTo(redirectTo);
     }
   } catch (error: unknown) {
     // Mostrar el mensaje de error y redirigir a /login
@@ -69,7 +66,7 @@ const authenticate = async () => {
       err.response?.data?.error?.details?.error?.message ||
       "Error desconocido durante la autenticación.";
     Swal.fire("Error", errorMessage, "error");
-    router.push("/login");
+    await navigateTo("/login");
   }
 };
 
