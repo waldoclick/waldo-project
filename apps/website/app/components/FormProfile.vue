@@ -765,7 +765,9 @@ const handleAddressNumberInput = (event) => {
 const handleBusinessAddressNumberInput = (event) => {
   const sliced = String(event.target.value || "").slice(0, 5);
   event.target.value = sliced;
-  form.value.business_address_number = sliced ? Number.parseInt(sliced, 10) : "";
+  form.value.business_address_number = sliced
+    ? Number.parseInt(sliced, 10)
+    : "";
 };
 
 const handlePhoneInput = (event) => {
