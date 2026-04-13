@@ -89,9 +89,9 @@
               >
                 <span
                   v-tooltip="{
-                    content: `Valor del dólar al ${formatDate(
+                    content: `Valor del dólar hoy ${formatShortDate(
                       all?.priceData.convertedTimestamp,
-                    )}`,
+                    )}: ${usdExchangeRate}`,
                     placement: 'top',
                   }"
                 >
@@ -214,6 +214,29 @@ const formatDate = (timestamp) => {
     year: "numeric",
   });
 };
+
+const formatShortDate = (timestamp) => {
+  if (!timestamp) return "";
+  const date = new Date(timestamp);
+  const day = date.getDate();
+  const month = date.toLocaleString("es-CL", { month: "long" });
+  return `${day} de ${month.charAt(0).toUpperCase() + month.slice(1)}`;
+};
+
+const usdExchangeRate = computed(() => {
+  const priceData = props.all?.priceData;
+  if (!priceData?.convertedPrice || !priceData?.originalPrice) return "";
+  const rate =
+    priceData.originalCurrency === "USD"
+      ? priceData.convertedPrice / priceData.originalPrice
+      : priceData.originalPrice / priceData.convertedPrice;
+  return new Intl.NumberFormat("es-CL", {
+    style: "currency",
+    currency: "CLP",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(Math.round(rate));
+});
 
 const getUserFullName = computed(() => {
   const user = getUserFromAll.value;
