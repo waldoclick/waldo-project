@@ -160,8 +160,9 @@ Progress: [██████████] 100%
 | 260412-0bc | enforce hard 300-char cap on ad description textarea — maxlength attribute + Vue watcher dual-layer | 2026-04-12 | bb0cb627 | [260412-0bc-enforce-300-char-limit-on-ad-description](./quick/260412-0bc-enforce-300-char-limit-on-ad-description/) |
 | 260412-lfh | agregar medidas mínimas 750x420 de forma natural en el texto del paso de subir imágenes al crear anuncio | 2026-04-12 | 5fed8d34 | [260412-lfh-en-el-paso-de-subir-imagenes-para-crear-](./quick/260412-lfh-en-el-paso-de-subir-imagenes-para-crear-/) |
 | 260412-lm7 | limit address_number and business_address_number to 5 chars in FormProfile — yup .max(5) + @input hard-cap handlers | 2026-04-12 | d563c5f2 | [260412-lm7-en-el-formprofile-hay-que-validar-el-num](./quick/260412-lm7-en-el-formprofile-hay-que-validar-el-num/) |
+| 260413-lxd | unique username collision handling — ensureUniqueUsername helper with random 5-digit suffix, wired into registerUserLocal, 4 Jest unit tests | 2026-04-13 | 7d19ca47 | [260413-lxd-unique-username-generation-with-random-5](./quick/260413-lxd-unique-username-generation-with-random-5/) |
 
 ## Session Continuity
 
-Last activity: 2026-04-12
+Last activity: 2026-04-13
 Resume file: None
