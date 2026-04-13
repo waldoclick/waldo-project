@@ -116,7 +116,8 @@
       "WebFetch(domain:betterstack.com)",
       "Bash(redis-cli:*)",
       "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); ads=d.get\\('data',[]\\); print\\(f'Pendientes: {len\\(ads\\)}'\\); [print\\(f' - {a[\\\\\"documentId\\\\\"]} | {a[\\\\\"title\\\\\"]}'\\) for a in ads[:3]]\")",
-      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('status:', d.get\\('data',{}\\).get\\('status','?'\\)\\)\" echo \"\" echo \"=== 3. Cache del catalog después \\(debe ser MISS\\) ===\" curl -s -o /dev/null -w \"X-Cache: %header{x-cache}\\\\n\" \"http://localhost:1337/api/ads/catalog\" echo \"\" echo \"=== 4. Cache del catalog de nuevo \\(debe ser HIT\\) ===\" curl -s -o /dev/null -w \"X-Cache: %header{x-cache}\\\\n\" \"http://localhost:1337/api/ads/catalog\")"
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('status:', d.get\\('data',{}\\).get\\('status','?'\\)\\)\" echo \"\" echo \"=== 3. Cache del catalog después \\(debe ser MISS\\) ===\" curl -s -o /dev/null -w \"X-Cache: %header{x-cache}\\\\n\" \"http://localhost:1337/api/ads/catalog\" echo \"\" echo \"=== 4. Cache del catalog de nuevo \\(debe ser HIT\\) ===\" curl -s -o /dev/null -w \"X-Cache: %header{x-cache}\\\\n\" \"http://localhost:1337/api/ads/catalog\")",
+      "Bash(npx vitest:*)"
     ]
   }
 }

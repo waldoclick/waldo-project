@@ -26,7 +26,7 @@
           name="name"
           type="text"
           class="form-control"
-          maxlength="25"
+          maxlength="50"
           @input="handleNameInput"
         />
         <ErrorMessage name="name" />
@@ -137,7 +137,7 @@ const schema = yup.object({
     .string()
     .required("El título es requerido")
     .min(5, "El título debe tener al menos 5 caracteres")
-    .max(25, "El título debe tener como máximo 25 caracteres")
+    .max(50, "El título debe tener como máximo 50 caracteres")
     .test("is-valid-title", "Título no válido", (value) =>
       isValidText(value || ""),
     ),
@@ -204,8 +204,8 @@ watch(
 
 // Handle name input
 const handleNameInput = () => {
-  if (form.value.name.length > 40) {
-    form.value.name = form.value.name.slice(0, 40);
+  if (form.value.name.length > 50) {
+    form.value.name = form.value.name.slice(0, 50);
   }
 };
 

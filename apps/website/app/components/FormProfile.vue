@@ -53,7 +53,7 @@
               name="firstname"
               type="text"
               class="form-control"
-              maxlength="25"
+              maxlength="50"
               @input="handleFirstnameInput"
             />
             <ErrorMessage name="firstname" />
@@ -67,7 +67,7 @@
               name="lastname"
               type="text"
               class="form-control"
-              maxlength="25"
+              maxlength="50"
               @input="handleLastnameInput"
             />
             <ErrorMessage name="lastname" />
@@ -89,8 +89,16 @@
           <!-- Phone -->
           <div class="form-group">
             <label class="form-label" for="phone">Teléfono *</label>
-            <Field v-slot="{ field }" name="phone">
-              <InputPhone v-bind="field" />
+            <Field v-slot="{ field, handleChange: setPhone }" name="phone">
+              <InputPhone
+                :value="field.value"
+                @update:model-value="
+                  (val) => {
+                    setPhone(val);
+                    form.phone = val;
+                  }
+                "
+              />
             </Field>
             <ErrorMessage name="phone" />
           </div>
@@ -191,7 +199,7 @@
               name="business_name"
               type="text"
               class="form-control"
-              maxlength="25"
+              maxlength="50"
               @input="handleBusinessNameInput"
             />
             <ErrorMessage name="business_name" />
@@ -472,14 +480,14 @@ const schema = yup.object({
   firstname: yup
     .string()
     .required("El Nombre es requerido")
-    .max(25, "El Nombre no puede tener más de 25 caracteres")
+    .max(50, "El Nombre no puede tener más de 50 caracteres")
     .test("is-valid-name", "Nombre no válido", (value) =>
       isValidName(value || ""),
     ),
   lastname: yup
     .string()
     .required("El Apellido es requerido")
-    .max(25, "El Apellido no puede tener más de 25 caracteres")
+    .max(50, "El Apellido no puede tener más de 50 caracteres")
     .test("is-valid-name", "Apellido no válido", (value) =>
       isValidName(value || ""),
     ),
@@ -544,7 +552,7 @@ const schema = yup.object({
     then: (schema) =>
       schema
         .required("Razón Social es requerida")
-        .max(25, "Razón Social no puede tener más de 25 caracteres")
+        .max(50, "Razón Social no puede tener más de 50 caracteres")
         .test("is-valid-name", "Razón Social no válida", (value) =>
           isValidName(value || ""),
         ),
@@ -728,20 +736,20 @@ const handleSubmit = async (values) => {
 };
 
 const handleFirstnameInput = () => {
-  if (form.value.firstname.length > 25) {
-    form.value.firstname = form.value.firstname.slice(0, 25);
+  if (form.value.firstname.length > 50) {
+    form.value.firstname = form.value.firstname.slice(0, 50);
   }
 };
 
 const handleLastnameInput = () => {
-  if (form.value.lastname.length > 25) {
-    form.value.lastname = form.value.lastname.slice(0, 25);
+  if (form.value.lastname.length > 50) {
+    form.value.lastname = form.value.lastname.slice(0, 50);
   }
 };
 
 const handleBusinessNameInput = () => {
-  if (form.value.business_name.length > 25) {
-    form.value.business_name = form.value.business_name.slice(0, 25);
+  if (form.value.business_name.length > 50) {
+    form.value.business_name = form.value.business_name.slice(0, 50);
   }
 };
 

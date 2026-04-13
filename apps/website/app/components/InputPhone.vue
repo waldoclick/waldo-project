@@ -3,7 +3,7 @@
     <select
       v-model="selectedDialCode"
       class="input--phone__select"
-      @change="handleChange"
+      @change.stop="handleChange"
     >
       <option
         v-for="country in sortedCountries"
@@ -14,11 +14,12 @@
       </option>
     </select>
     <input
-      v-model="localNumber"
+      :value="localNumber"
       type="tel"
       class="input--phone__number"
       placeholder="9 XXXX XXXX"
-      @input="handleChange"
+      maxlength="12"
+      @input.stop="handleNumberInput"
     />
   </div>
 </template>
@@ -78,14 +79,24 @@ watch(
   (val) => {
     const parsed = parsePhone(val);
     selectedDialCode.value = parsed.dialCode;
-    localNumber.value = parsed.localNumber;
-    const composed = parsed.dialCode + parsed.localNumber;
+    if (parsed.localNumber !== "" || localNumber.value === "") {
+      localNumber.value = parsed.localNumber;
+    }
+    const composed = parsed.dialCode + localNumber.value;
     if (composed !== val) {
       emit("update:modelValue", composed);
     }
   },
   { immediate: true },
 );
+
+function handleNumberInput(event: Event) {
+  const input = event.target as HTMLInputElement;
+  const cleaned = input.value.replace(/\D/g, "").slice(0, 12);
+  localNumber.value = cleaned;
+  input.value = cleaned;
+  emit("update:modelValue", selectedDialCode.value + cleaned);
+}
 
 function handleChange() {
   emit("update:modelValue", selectedDialCode.value + localNumber.value);
