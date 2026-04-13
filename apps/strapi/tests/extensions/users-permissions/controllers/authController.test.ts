@@ -9,6 +9,7 @@ import {
   resendCode,
   overrideForgotPassword,
   registerUserLocal,
+  ensureUniqueUsername,
 } from "../../../../src/extensions/users-permissions/controllers/authController";
 
 // --- Mock sendMjmlEmail ---
@@ -902,5 +903,74 @@ describe("registerUserLocal", () => {
         accepted_terms: true,
       })
     );
+  });
+});
+
+describe("ensureUniqueUsername", () => {
+  let mockFindOne: jest.Mock;
+
+  beforeEach(() => {
+    mockFindOne = jest.fn();
+    (global as unknown as Record<string, unknown>).strapi = {
+      db: {
+        query: jest.fn(() => ({ findOne: mockFindOne })),
+      },
+    };
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("Test 1 — no collision: returns base username unchanged when findOne returns null", async () => {
+    // Arrange
+    mockFindOne.mockResolvedValueOnce(null);
+
+    // Act
+    const result = await ensureUniqueUsername("gonzalo");
+
+    // Assert
+    expect(result).toBe("gonzalo");
+    expect(mockFindOne).toHaveBeenCalledTimes(1);
+  });
+
+  it("Test 2 — single collision: returns suffixed username when first lookup collides", async () => {
+    // Arrange
+    mockFindOne
+      .mockResolvedValueOnce({ id: 1 }) // base "gonzalo" collides
+      .mockResolvedValueOnce(null); // candidate "gonzaloXXXXX" is free
+
+    // Act
+    const result = await ensureUniqueUsername("gonzalo");
+
+    // Assert
+    expect(result).toMatch(/^gonzalo\d{5}$/);
+    expect(mockFindOne).toHaveBeenCalledTimes(2);
+  });
+
+  it("Test 3 — multiple collisions: retries until a free candidate is found", async () => {
+    // Arrange
+    mockFindOne
+      .mockResolvedValueOnce({ id: 1 }) // base collides
+      .mockResolvedValueOnce({ id: 2 }) // first suffix collides
+      .mockResolvedValueOnce(null); // second suffix is free
+
+    // Act
+    const result = await ensureUniqueUsername("gonzalo");
+
+    // Assert
+    expect(result).toMatch(/^gonzalo\d{5}$/);
+    expect(mockFindOne).toHaveBeenCalledTimes(3);
+  });
+
+  it("Test 4 — max attempts exceeded: throws after 10 retries (11 total findOne calls)", async () => {
+    // Arrange: every lookup returns a collision
+    mockFindOne.mockResolvedValue({ id: 1 });
+
+    // Act & Assert
+    await expect(ensureUniqueUsername("gonzalo")).rejects.toThrow(
+      "Could not generate unique username after 10 attempts"
+    );
+    expect(mockFindOne).toHaveBeenCalledTimes(11); // 1 base + 10 retries
   });
 });
