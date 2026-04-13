@@ -65,6 +65,34 @@ export const createUserReservations = async (user) => {
 };
 
 /**
+ * Ensures a username is unique in the database. If the base username already exists,
+ * appends a random 5-digit numeric suffix (10000–99999) and retries until a unique
+ * candidate is found. Throws after 10 failed attempts (extremely unlikely given 90k space).
+ *
+ * @param {string} base - The desired username (e.g. the email local-part).
+ * @returns {Promise<string>} The unique username to use.
+ */
+export const ensureUniqueUsername = async (base: string): Promise<string> => {
+  const existing = await strapi.db
+    .query("plugin::users-permissions.user")
+    .findOne({ where: { username: base }, select: ["id"] });
+
+  if (!existing) return base;
+
+  const MAX_ATTEMPTS = 10;
+  for (let i = 0; i < MAX_ATTEMPTS; i++) {
+    const suffix = crypto.randomInt(10000, 100000); // 5-digit: 10000–99999
+    const candidate = `${base}${suffix}`;
+    const collision = await strapi.db
+      .query("plugin::users-permissions.user")
+      .findOne({ where: { username: candidate }, select: ["id"] });
+    if (!collision) return candidate;
+  }
+
+  throw new Error("Could not generate unique username after 10 attempts");
+};
+
+/**
  * Registers a new user and creates additional records in the "ad-reservation" and "ad-featured-reservation" collections.
  *
  * Per CLAUDE.md: "Use middlewares to extend plugin behavior — custom controllers in plugin extensions
@@ -111,6 +139,10 @@ export const registerUserLocal = (registerController) => async (ctx) => {
       return ctx.badRequest("All fields are required");
     }
 
+    // Resolve username collisions by appending a random 5-digit suffix.
+    // Strapi is the single source of truth — enforce uniqueness here, not on the client.
+    const uniqueUsername = await ensureUniqueUsername(username);
+
     // Build the forwarded body with ONLY the fields accepted by the built-in register action.
     // The three accepted_* consent fields are intentionally excluded here — Strapi v5 rejects
     // custom attributes not on its allow-list with "Invalid parameters: <field-list>".
@@ -122,7 +154,7 @@ export const registerUserLocal = (registerController) => async (ctx) => {
       rut,
       email,
       password,
-      username,
+      username: uniqueUsername,
     };
 
     // Reemplazar el cuerpo de la solicitud con los datos del usuario
