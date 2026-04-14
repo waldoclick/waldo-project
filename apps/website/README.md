@@ -1,83 +1,53 @@
-# Project Documentation
-
 [![Staging Deployment Status](https://img.shields.io/endpoint?url=https%3A%2F%2Fforge.laravel.com%2Fsite-badges%2F94079fc7-1aeb-4dc2-baa7-2def0ecd7653%3Fdate%3D1%26label%3D1%26commit%3D1&style=for-the-badge)](https://forge.laravel.com/servers/853896/sites/2507559)
 [![Production Deployment Status](https://img.shields.io/endpoint?url=https%3A%2F%2Fforge.laravel.com%2Fsite-badges%2Fc110c271-58ca-4c80-9c6f-979b537c1502%3Fdate%3D1%26label%3D1%26commit%3D1&style=for-the-badge)](https://forge.laravel.com/servers/865606/sites/2550478)
 
-This project includes key documentation to help you work with Nuxt.js and manage packages. Below are links to the available documentation:
+# Website
 
-- [Nuxt.js Guide](./docs/nuxtjs.md)
-- [Package Guide](./docs/package.md)
+Public-facing Nuxt 4 website for the Waldo classified ads platform.
 
-Refer to each section for more detailed information on setup and usage.
+## Prerequisites
 
-## 🚀 Modo Desarrollo
+- Node.js 18+
+- Yarn 1.22.22
+- Strapi running on port 1337 (`apps/strapi`)
 
-Este proyecto incluye un sistema de autenticación para el modo desarrollo que **restringe el acceso** al sitio mientras está en modo desarrollo, permitiendo solo a usuarios autorizados navegar por el sitio.
+## Environment Variables
 
-### Variables de Entorno Requeridas
+See [../../docs/env-vars.md](../../docs/env-vars.md) for the full reference. Minimum required to boot:
 
-Para activar el modo desarrollo, configura las siguientes variables en tu archivo `.env`:
+| Variable               | Purpose                                                                                  |
+| ---------------------- | ---------------------------------------------------------------------------------------- |
+| `API_URL`              | Strapi base URL (e.g. `http://localhost:1337`)                                           |
+| `BASE_URL`             | Website base URL (e.g. `http://localhost:3000`)                                          |
+| `RECAPTCHA_SITE_KEY`   | Google reCAPTCHA v3 site key                                                             |
+| `RECAPTCHA_SECRET_KEY` | Google reCAPTCHA v3 secret key                                                           |
+| `DEV_MODE`             | Optional. Set to `"true"` to restrict all routes to authenticated users via `/dev` login |
+| `DEV_USERNAME`         | Required when `DEV_MODE=true`                                                            |
+| `DEV_PASSWORD`         | Required when `DEV_MODE=true`                                                            |
 
-```bash
-# Activar modo desarrollo (restringe acceso)
-DEV_MODE=true
+## Scripts
 
-# Credenciales de acceso (cambia estos valores por seguridad)
-DEV_USERNAME=admin
-DEV_PASSWORD=tu_contraseña_segura_aqui
-```
+| Command        | What it does                         |
+| -------------- | ------------------------------------ |
+| `yarn dev`     | Start development server (port 3000) |
+| `yarn build`   | Build for production                 |
+| `yarn preview` | Preview the production build locally |
+| `yarn test`    | Run Vitest unit tests                |
+| `yarn lint`    | Run ESLint and Stylelint             |
 
-### Cómo Funciona
+## Port
 
-1. **Activación**: Cuando `DEV_MODE=true`, el middleware global se activa y **restringe el acceso**
-2. **Protección**: Todas las rutas (excepto `/dev`) requieren autenticación previa
-3. **Bots**: Los motores de búsqueda y bots pueden acceder libremente al contenido
-4. **Autenticación**: Los usuarios no autenticados son redirigidos a `/dev` para autenticarse
-5. **Cookie**: Se crea una cookie `devmode` con un token de sesión válido
-6. **Acceso**: Una vez autenticado, el usuario puede navegar libremente por todo el sitio
+3000 — `http://localhost:3000`
 
-### Flujo de Autenticación
+## Source Layout
 
-1. Usuario visita cualquier página del sitio
-2. Si no está autenticado, es **redirigido automáticamente** a `/dev`
-3. Usuario ingresa credenciales de desarrollo en el formulario
-4. Las credenciales se validan contra las variables de entorno del servidor
-5. Si son correctas, se crea una cookie de sesión segura
-6. Usuario es redirigido al inicio y puede navegar libremente por todo el sitio
+See [CLAUDE.md](../../CLAUDE.md) for the canonical Nuxt 4 directory structure. Key directories:
 
-### Propósito del Modo Desarrollo
-
-- **Restringir acceso temporal** al sitio durante desarrollo
-- **Proteger contenido** mientras se realizan cambios o pruebas
-- **Permitir acceso solo a usuarios autorizados** (desarrolladores, testers, etc.)
-- **Mantener SEO intacto** - los motores de búsqueda siempre pueden acceder
-- **Control de acceso granular** mediante credenciales seguras
-
-### Seguridad
-
-- Las credenciales se almacenan **solo en variables de entorno del servidor**
-- **Nunca se envían al cliente** ni se exponen en el código
-- Se genera un **token de sesión único y seguro** para cada login
-- La cookie tiene configuración segura (httpOnly: false para desarrollo, secure: true para producción)
-- **Acceso completamente restringido** para usuarios no autenticados
-
-### Desactivar el Modo Desarrollo
-
-Para desactivar el modo desarrollo y permitir acceso libre, simplemente cambia:
-
-```bash
-DEV_MODE=false
-```
-
-O elimina la variable del archivo `.env`.
-
-### Notas Importantes
-
-- Este sistema **restringe el acceso** al sitio, no lo "habilita"
-- **Solo debe usarse en entornos de desarrollo** donde se necesita control de acceso
-- **Nunca uses credenciales débiles** - este es un sistema de seguridad
-- Los motores de búsqueda **siempre pueden acceder al contenido** (SEO no se ve afectado)
-- La cookie de sesión expira en **7 días** por seguridad
-- **Contacta al administrador** si necesitas acceso y no tienes credenciales
-
-**Last updated:** October 21, 2024
+- `app/pages/` — file-based routes
+- `app/components/` — auto-imported Vue components
+- `app/composables/` — reusable composition logic
+- `app/stores/` — Pinia stores
+- `app/types/` — TypeScript type declarations
+- `app/utils/` — pure formatting utilities
+- `server/` — Nitro server routes and middleware
+- `tests/` — all test files (mirrors `app/` structure)

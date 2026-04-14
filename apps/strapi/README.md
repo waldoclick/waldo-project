@@ -1,118 +1,62 @@
-# Strapi – API y CMS de Waldo
+# Strapi
 
-API y panel de administración (Strapi v5) del proyecto Waldo.
+Backend API and CMS for the Waldo classified ads platform (Strapi v5).
 
-## Desarrollo
+## Prerequisites
 
-```bash
-yarn dev
-```
+- Node.js 18+
+- Yarn 1.22.22
+- PostgreSQL 14+ (or MySQL 8+)
 
-Abre [http://localhost:1337](http://localhost:1337) para el admin y la API.
+## Environment Variables
 
-## Reglas de Anuncios
+See [../../docs/env-vars.md](../../docs/env-vars.md) for the full reference. Minimum required to boot:
 
-### Estados de Anuncios
+| Variable              | Purpose                                        |
+| --------------------- | ---------------------------------------------- |
+| `DATABASE_HOST`       | Database server hostname                       |
+| `DATABASE_PORT`       | Database server port                           |
+| `DATABASE_NAME`       | Database name                                  |
+| `DATABASE_USERNAME`   | Database user                                  |
+| `DATABASE_PASSWORD`   | Database password                              |
+| `APP_KEYS`            | Comma-separated list of 4 session signing keys |
+| `API_TOKEN_SALT`      | Salt for API token generation                  |
+| `ADMIN_JWT_SECRET`    | Secret for the Strapi admin panel JWT          |
+| `TRANSFER_TOKEN_SALT` | Salt for transfer tokens                       |
+| `JWT_SECRET`          | Secret for user authentication tokens          |
 
-Los anuncios pueden tener los siguientes estados. Las condiciones coinciden con los filtros de los endpoints del servicio (`pendingAds`, `activeAds`, `archivedAds`, `bannedAds`, `rejectedAds`, `abandonedAds`) y con el `status` calculado en `findOne`/`findMany`.
+## Scripts
 
-#### **Pendientes**
+| Command        | What it does                                          |
+| -------------- | ----------------------------------------------------- |
+| `yarn develop` | Start development server with auto-reload (port 1337) |
+| `yarn build`   | Build the Strapi admin panel for production           |
+| `yarn start`   | Start in production mode (requires prior build)       |
+| `yarn test`    | Run Jest unit tests                                   |
+| `yarn lint`    | Run ESLint                                            |
 
-- `active = false`
-- `banned = false`
-- `rejected = false`
-- `remaining_days > 0`
-- `ad_reservation != null` (tienen reserva de pago; se pueden aprobar o rechazar)
+## Port
 
-#### **Activos**
+1337 — `http://localhost:1337`
 
-- `active = true`
-- `banned = false`
-- `rejected = false`
-- `remaining_days > 0`
+Admin panel: `http://localhost:1337/admin`
 
-#### **Archivados (expirados)**
+## Source Layout
 
-- `active = false`
-- `banned = false`
-- `rejected = false`
-- `remaining_days = 0`
+See [CLAUDE.md](../../CLAUDE.md) for service file conventions. Key directories:
 
-#### **Baneados**
+- `src/api/` — content type controllers, services, routes
+- `src/extensions/` — Strapi plugin overrides (users-permissions)
+- `src/middlewares/` — global and route-level middlewares
+- `src/crons/` — scheduled jobs (adCron, userCron, backupCron, cleanupCron)
+- `src/plugins/` — custom Strapi plugins
+- `config/` — database, server, middlewares, cron configuration
+- `tests/` — all test files (mirrors `src/` structure)
 
-- `banned = true`
+## Domain Documentation
 
-#### **Rechazados**
-
-- `rejected = true`
-
-#### **Abandonados**
-
-- `active = false`
-- `banned = false`
-- `rejected = false`
-- `ad_reservation = null` (sin reserva; no se pueden aprobar ni rechazar)
-
-En `findOne`/`findMany` el `status` **"abandoned"** se asigna además cuando `remaining_days > 0` e `is_paid = true` (anuncio marcado como pagado pero sin reserva asignada).
-
-### Filtros por Tab
-
-- **Pendientes**: Anuncios con reserva esperando aprobación
-- **Activos**: Anuncios publicados con días restantes
-- **Archivados**: Anuncios que agotaron sus días de publicación (expirados)
-- **Baneados**: Anuncios baneados por el propietario o administrador
-- **Rechazados**: Anuncios rechazados por moderación
-- **Abandonados**: Anuncios sin reserva (pagado pero no completaron la reserva)
-
-### Ordenamiento
-
-- **Pendientes**: Ordenados por fecha de creación (más antiguos primero) para priorizar los más retrasados
-- **Otros tabs**: Ordenados por fecha de creación (más nuevos primero)
-
-## Sistema de Pagos
-
-### Tipos de Pack y Featured
-
-El sistema de pagos utiliza tipos específicos para gestionar diferentes modalidades de pago y activación de características premium:
-
-#### PackType (`PackType`)
-
-Define el tipo de pack que se utilizará para publicar un anuncio:
-
-- **`"free"`**: Utiliza créditos gratuitos de packs disponibles del usuario
-- **`"paid"`**: Utiliza créditos pagados disponibles del usuario
-- **`number`**: Representa el ID de un pack específico que el usuario desea comprar
-- **Nota**: Los valores `true` y `false` están presentes en el tipo pero no se utilizan actualmente
-
-#### FeaturedType (`FeaturedType`)
-
-Define si un anuncio debe aparecer como destacado:
-
-- **`"free"`**: Utiliza créditos gratuitos de featured disponibles del usuario
-- **`true`**: Activa el featured y requiere pago inmediato
-- **`false`**: No activa el featured
-
-### Lógica de Validación
-
-El sistema valida automáticamente la disponibilidad de créditos según el tipo seleccionado:
-
-- Para packs o featured gratuitos: Verifica que el usuario tenga créditos gratuitos disponibles
-- Para packs o featured pagados: Verifica que el usuario tenga créditos pagados disponibles
-- Para packs específicos (número): Valida que el pack existe y calcula el monto a pagar
-- Para featured `true`: Calcula el costo del featured y procesa el pago
-
-### Interfaces Relacionadas
-
-```typescript
-interface Details {
-  pack: PackType;
-  featured: FeaturedType;
-  is_invoice: boolean;
-}
-```
-
-Esta interfaz encapsula los detalles de configuración del anuncio para su publicación.
-
-## Documentación
-
-- [Strapi Documentation](https://docs.strapi.io)
+- [Ad statuses and lifecycle](../../docs/ad-statuses.md)
+- [Payment flow (Webpay + Oneclick)](../../docs/payment-flow.md)
+- [Reservation system](../../docs/reservation-system.md)
+- [Data model](../../docs/data-model.md)
+- [API permissions](../../docs/permissions.md)
