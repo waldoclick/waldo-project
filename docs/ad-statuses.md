@@ -45,13 +45,33 @@ The ad is approved and publicly visible.
 ---
 
 ### `archived`
-The ad has ended — either it expired naturally or the owner deactivated it manually.
+The ad has ended. Covers two distinct scenarios: natural expiry (cron) and manual deactivation by the owner.
 
 **Conditions:** `active=false`, `banned=false`, `rejected=false`, `remaining_days === 0`
 
-**How it starts (two paths):**
-1. **Automatic expiry:** `adCron` decrements `remaining_days` to `0` and sets `active: false`
-2. **Manual deactivation:** Owner calls `deactivateAd()`, which sets `active: false` and `remaining_days: 0`. An optional `reason_for_deactivation` can be stored.
+#### Path 1 — Automatic expiry
+
+**How it starts:** `adCron` runs daily at 1 AM, decrements `remaining_days` by 1. When it reaches `0`, sets `active: false`.
+
+**Who triggers it:** Automated — no user action.
+
+**What changes:** `active: false`, `remaining_days: 0`. Reservation slot is NOT freed (slot remains linked to the expired ad).
+
+**Email:** None.
+
+#### Path 2 — Manual deactivation
+
+**How it starts:** The owner calls `deactivateAd()` while the ad is `active` or `pending`. Sets `active: false` and `remaining_days: 0`. An optional `reason_for_deactivation` can be stored (e.g. "sold").
+
+**Who can trigger it:** Owner only. Managers cannot deactivate on behalf of an owner (use `bannedAd()` instead).
+
+**Guard:** Throws if `active === false && remaining_days === 0` (already archived).
+
+**What changes:** `active: false`, `remaining_days: 0`, `reason_for_deactivation` (optional). Reservation slot is NOT freed.
+
+**Email:** None.
+
+**Note:** Both paths produce the same computed status (`archived`) and the same user-facing label (`expired`). The only audit trail distinguishing them is `reason_for_deactivation`, which is `null` for natural expiry.
 
 ---
 
