@@ -161,8 +161,9 @@ Progress: [██████████] 100%
 | 260412-lfh | agregar medidas mínimas 750x420 de forma natural en el texto del paso de subir imágenes al crear anuncio | 2026-04-12 | 5fed8d34 | [260412-lfh-en-el-paso-de-subir-imagenes-para-crear-](./quick/260412-lfh-en-el-paso-de-subir-imagenes-para-crear-/) |
 | 260412-lm7 | limit address_number and business_address_number to 5 chars in FormProfile — yup .max(5) + @input hard-cap handlers | 2026-04-12 | d563c5f2 | [260412-lm7-en-el-formprofile-hay-que-validar-el-num](./quick/260412-lm7-en-el-formprofile-hay-que-validar-el-num/) |
 | 260413-lxd | unique username collision handling — ensureUniqueUsername helper with random 5-digit suffix, wired into registerUserLocal, 4 Jest unit tests | 2026-04-13 | 7d19ca47 | [260413-lxd-unique-username-generation-with-random-5](./quick/260413-lxd-unique-username-generation-with-random-5/) |
+| 260414-lxu | Documentation restructure: rewrite root README.md as global index, create technical READMEs per app, complete missing docs | 2026-04-14 | 38a59eb6 | [260414-lxu-documentation-restructure-rewrite-root-r](./quick/260414-lxu-documentation-restructure-rewrite-root-r/) |
 
 ## Session Continuity
 
-Last activity: 2026-04-13
+Last activity: 2026-04-14 - Completed quick task 260414-lxu: Documentation restructure
 Resume file: None
