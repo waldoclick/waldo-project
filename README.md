@@ -21,6 +21,7 @@ All business logic lives in Strapi. Website and dashboard are stateless HTTP cli
 - [docs/data-model.md](./docs/data-model.md) — Core entity relationships
 - [docs/env-vars.md](./docs/env-vars.md) — Environment variable reference
 - [docs/deployment.md](./docs/deployment.md) — Laravel Forge deployment runbook
+- [docs/cache.md](./docs/cache.md) — Redis cache in Strapi (TTL, invalidation on writes)
 
 ## Quick Start
 
