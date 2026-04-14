@@ -13,8 +13,10 @@ Legend: ✅ allowed · ❌ denied
 | Method | Endpoint | Public | Authenticated | Manager | Notes |
 | ------ | -------- | ------ | ------------- | ------- | ----- |
 | **Ads** `/api/ads` | | | | | |
+| GET | `/ads` | ❌ | ❌ | ✅ | Core `createCoreRouter` — covered by `/catalog` and `/slug/:slug` |
+| GET | `/ads/:id` | ❌ | ❌ | ✅ | Core `createCoreRouter` — covered by `/slug/:slug` |
 | GET | `/ads/slug/:slug` | ✅ | ✅ | ✅ | `auth: false` — public listing |
-| GET | `/ads/catalog` | ❌ | ✅ | ✅ | |
+| GET | `/ads/catalog` | ✅ | ✅ | ✅ | Public catalog — no JWT required |
 | GET | `/ads/count` | ❌ | ✅ | ✅ | |
 | GET | `/ads/actives` | ❌ | ✅ | ✅ | Owner sees own; manager sees all |
 | GET | `/ads/pendings` | ❌ | ✅ | ✅ | Owner sees own; manager sees all |
