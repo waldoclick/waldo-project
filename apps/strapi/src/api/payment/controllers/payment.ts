@@ -324,11 +324,12 @@ class PaymentController {
       return;
     }
 
-    if (data.pack === "free") {
+    // pack === "free" is only valid when paying for featured only (ad uses a free credit)
+    if (data.pack === "free" && !data.featured) {
       ctx.status = 400;
       ctx.body = {
         success: false,
-        message: "pack must be a valid paid pack name, not 'free'",
+        message: "pack 'free' requires featured=true — nothing to pay",
       };
       return;
     }

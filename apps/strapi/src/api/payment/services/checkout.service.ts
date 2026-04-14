@@ -39,13 +39,37 @@ class CheckoutService {
     userId: string
   ): Promise<InitiateResult> {
     // 1. Validate pack name
-    if (payload.pack === "free") {
+    if (payload.pack === "free" && !payload.featured) {
       return { success: false, message: "Invalid pack" };
     }
 
     const adId = payload.ad_id ?? 0;
     const featuredFlag = payload.featured ? 1 : 0;
     const invoiceFlag = payload.is_invoice ? 1 : 0;
+
+    // pack === "free": user has a free ad credit — only charge featured
+    if (payload.pack === "free") {
+      const amount = Number(process.env.AD_FEATURED_PRICE) || 10000;
+      const buyOrder = `order-${userId}-0-${adId}-${featuredFlag}-${invoiceFlag}`;
+      const sessionId = `session-free-${adId}`;
+      const returnUrl = `${process.env.APP_URL}/api/payments/webpay`;
+
+      const result = await getPaymentGateway().createTransaction(
+        amount,
+        buyOrder,
+        sessionId,
+        returnUrl
+      );
+
+      if (!result.success) {
+        return {
+          success: false,
+          message: String(result.error ?? "Webpay transaction failed"),
+        };
+      }
+
+      return { success: true, url: result.url, token: result.gatewayRef };
+    }
 
     // pack === "paid": user has an existing paid reservation — only charge featured
     if (payload.pack === "paid") {
