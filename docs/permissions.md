@@ -43,24 +43,31 @@ Legend: ✅ allowed · ❌ denied
 | PUT | `/orders/:id` | ❌ | ❌ | ✅ | |
 | DELETE | `/orders/:id` | ❌ | ❌ | ✅ | |
 | **Users** `/api/users` | | | | | |
+| GET | `/users/count` | ❌ | ❌ | ✅ | Strapi built-in |
 | GET | `/users` | ❌ | ✅ | ✅ | Server-side role filter applied |
 | GET | `/users/me` | ❌ | ✅ | ✅ | Strapi built-in |
 | GET | `/users/authenticated` | ❌ | ✅ | ✅ | Minimal fields only |
 | GET | `/users/:id` | ❌ | ✅ | ✅ | Full user data with relations |
+| POST | `/users` | ❌ | ❌ | ✅ | Strapi built-in; admin creates user |
 | PUT | `/users/:id` | ❌ | ✅ | ✅ | Own profile; Strapi built-in |
 | PUT | `/users/me/username` | ❌ | ✅ | ✅ | 90-day cooldown enforced |
 | PUT | `/users/me/avatar` | ❌ | ✅ | ✅ | |
 | PUT | `/users/me/cover` | ❌ | ✅ | ✅ | |
+| DELETE | `/users/:id` | ❌ | ❌ | ✅ | Strapi built-in |
 | **Auth** `/api/auth` | | | | | |
+| GET | `/connect/(.*)` | ✅ | ✅ | ✅ | OAuth provider initiation (Google etc.) |
+| GET | `/auth/:provider/callback` | ✅ | ✅ | ✅ | OAuth callback |
 | POST | `/auth/local` | ✅ | ✅ | ✅ | Step 1: returns `pendingToken` |
 | POST | `/auth/verify-code` | ✅ | ✅ | ✅ | `auth: false` — Step 2: exchanges code for JWT |
 | POST | `/auth/resend-code` | ✅ | ✅ | ✅ | `auth: false` |
+| POST | `/auth/refresh` | ✅ | ✅ | ✅ | Refresh JWT token |
+| POST | `/auth/logout` | ❌ | ✅ | ✅ | |
 | POST | `/auth/local/register` | ✅ | ✅ | ✅ | Strapi built-in |
 | POST | `/auth/forgot-password` | ✅ | ✅ | ✅ | Strapi built-in; custom MJML email |
 | POST | `/auth/reset-password` | ✅ | ✅ | ✅ | Strapi built-in; receives token + new password |
+| POST | `/auth/change-password` | ❌ | ✅ | ✅ | Requires JWT; for logged-in users |
 | GET | `/auth/email-confirmation` | ✅ | ✅ | ✅ | Strapi built-in; token in query param |
 | POST | `/auth/send-email-confirmation` | ✅ | ✅ | ✅ | Strapi built-in; custom MJML email |
-| GET | `/auth/:provider/callback` | ✅ | ✅ | ✅ | OAuth callback (Google etc.) |
 | POST | `/auth/google-one-tap` | ✅ | ✅ | ✅ | `auth: false` — Google One Tap credential exchange |
 | **Payments** `/api/payments` | | | | | |
 | POST | `/payments/free-ad` | ❌ | ✅ | ✅ | |
