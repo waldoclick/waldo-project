@@ -8,14 +8,19 @@ Role definitions:
 
 Legend: ✅ allowed · ❌ denied
 
+Permissions are sourced from the `up_permissions` table in the local database and verified against route definitions.
+
 ---
 
 | Method | Endpoint | Public | Authenticated | Manager | Notes |
 | ------ | -------- | ------ | ------------- | ------- | ----- |
 | **Ads** `/api/ads` | | | | | |
-| GET | `/ads` | ❌ | ❌ | ✅ | Core `createCoreRouter` — covered by `/catalog` and `/slug/:slug` |
-| GET | `/ads/:id` | ❌ | ❌ | ✅ | Core `createCoreRouter` — covered by `/slug/:slug` |
-| GET | `/ads/slug/:slug` | ✅ | ✅ | ✅ | `auth: false` — public listing |
+| GET | `/ads` | ❌ | ❌ | ✅ | Core find — use `/catalog` or `/slug/:slug` instead |
+| GET | `/ads/:id` | ❌ | ❌ | ✅ | Core findOne — use `/slug/:slug` instead |
+| POST | `/ads` | ❌ | ❌ | ✅ | Core create — managers only |
+| PUT | `/ads/:id` | ❌ | ✅ | ✅ | Core update — own ad |
+| DELETE | `/ads/:id` | ❌ | ❌ | ✅ | |
+| GET | `/ads/slug/:slug` | ✅ | ✅ | ✅ | `auth: false` |
 | GET | `/ads/catalog` | ✅ | ✅ | ✅ | Public catalog — no JWT required |
 | GET | `/ads/count` | ❌ | ✅ | ✅ | |
 | GET | `/ads/actives` | ❌ | ✅ | ✅ | Owner sees own; manager sees all |
@@ -27,48 +32,43 @@ Legend: ✅ allowed · ❌ denied
 | GET | `/ads/thankyou/:documentId` | ❌ | ✅ | ✅ | Post-payment confirmation |
 | POST | `/ads/save-draft` | ❌ | ✅ | ✅ | |
 | POST | `/ads/upload` | ❌ | ✅ | ✅ | |
-| DELETE | `/ads/upload/:id` | ❌ | ✅ | ✅ | Owner or manager |
-| DELETE | `/ads/:id` | ❌ | ✅ | ✅ | Owner or manager |
-| PUT | `/ads/:id/deactivate` | ❌ | ✅ | ✅ | Owner only |
+| DELETE | `/ads/upload/:id` | ❌ | ✅ | ✅ | Removes an image from an ad — owner or manager |
+| PUT | `/ads/:id/deactivate` | ❌ | ✅ | ✅ | Owner only (enforced in controller) |
 | PUT | `/ads/:id/approve` | ❌ | ❌ | ✅ | `global::isManager` |
 | PUT | `/ads/:id/reject` | ❌ | ❌ | ✅ | `global::isManager` |
 | PUT | `/ads/:id/banned` | ❌ | ❌ | ✅ | `global::isManager` |
 | **Orders** `/api/orders` | | | | | |
 | GET | `/orders/me` | ❌ | ✅ | ✅ | Own orders only |
-| GET | `/orders/export-csv` | ❌ | ❌ | ✅ | Reporting |
-| GET | `/orders/sales-by-month` | ❌ | ❌ | ✅ | Reporting |
-| GET | `/orders` | ❌ | ❌ | ✅ | |
-| GET | `/orders/:id` | ❌ | ❌ | ✅ | |
+| GET | `/orders/export-csv` | ❌ | ❌ | ❌ | ⚠ Route exists but missing from panel — needs Manager permission |
+| GET | `/orders/sales-by-month` | ❌ | ❌ | ✅ | |
+| GET | `/orders` | ⚠ | ✅ | ✅ | ⚠ Public has panel access — should be removed |
+| GET | `/orders/:id` | ⚠ | ✅ | ✅ | ⚠ Public has panel access — should be removed |
 | POST | `/orders` | ❌ | ❌ | ✅ | |
 | PUT | `/orders/:id` | ❌ | ❌ | ✅ | |
-| DELETE | `/orders/:id` | ❌ | ❌ | ✅ | |
-| **Users** `/api/users` | | | | | |
-| GET | `/users/count` | ❌ | ❌ | ✅ | Strapi built-in |
-| GET | `/users` | ❌ | ✅ | ✅ | Server-side role filter applied |
-| GET | `/users/me` | ❌ | ✅ | ✅ | Strapi built-in |
-| GET | `/users/authenticated` | ❌ | ✅ | ✅ | Minimal fields only |
-| GET | `/users/:id` | ❌ | ✅ | ✅ | Full user data with relations |
-| POST | `/users` | ❌ | ❌ | ✅ | Strapi built-in; admin creates user |
-| PUT | `/users/:id` | ❌ | ✅ | ✅ | Own profile; Strapi built-in |
-| PUT | `/users/me/username` | ❌ | ✅ | ✅ | 90-day cooldown enforced |
-| PUT | `/users/me/avatar` | ❌ | ✅ | ✅ | |
-| PUT | `/users/me/cover` | ❌ | ✅ | ✅ | |
-| DELETE | `/users/:id` | ❌ | ❌ | ✅ | Strapi built-in |
 | **Auth** `/api/auth` | | | | | |
-| GET | `/connect/(.*)` | ✅ | ✅ | ✅ | OAuth provider initiation (Google etc.) |
+| GET | `/connect/(.*)` | ✅ | ✅ | ✅ | OAuth provider initiation |
 | GET | `/auth/:provider/callback` | ✅ | ✅ | ✅ | OAuth callback |
 | POST | `/auth/local` | ✅ | ✅ | ✅ | Step 1: returns `pendingToken` |
 | POST | `/auth/verify-code` | ✅ | ✅ | ✅ | `auth: false` — Step 2: exchanges code for JWT |
 | POST | `/auth/resend-code` | ✅ | ✅ | ✅ | `auth: false` |
-| POST | `/auth/refresh` | ✅ | ✅ | ✅ | Refresh JWT token |
+| POST | `/auth/refresh` | ✅ | ✅ | ✅ | |
 | POST | `/auth/logout` | ❌ | ✅ | ✅ | |
-| POST | `/auth/local/register` | ✅ | ✅ | ✅ | Strapi built-in |
-| POST | `/auth/forgot-password` | ✅ | ✅ | ✅ | Strapi built-in; custom MJML email |
-| POST | `/auth/reset-password` | ✅ | ✅ | ✅ | Strapi built-in; receives token + new password |
+| POST | `/auth/local/register` | ✅ | ✅ | ✅ | Custom MJML email |
+| POST | `/auth/forgot-password` | ✅ | ✅ | ✅ | Custom MJML email |
+| POST | `/auth/reset-password` | ✅ | ✅ | ✅ | Receives token + new password |
 | POST | `/auth/change-password` | ❌ | ✅ | ✅ | Requires JWT; for logged-in users |
-| GET | `/auth/email-confirmation` | ✅ | ✅ | ✅ | Strapi built-in; token in query param |
-| POST | `/auth/send-email-confirmation` | ✅ | ✅ | ✅ | Strapi built-in; custom MJML email |
-| POST | `/auth/google-one-tap` | ✅ | ✅ | ✅ | `auth: false` — Google One Tap credential exchange |
+| GET | `/auth/email-confirmation` | ✅ | ✅ | ✅ | Token in query param |
+| POST | `/auth/send-email-confirmation` | ✅ | ✅ | ✅ | Custom MJML email |
+| POST | `/auth/google-one-tap` | ✅ | ✅ | ✅ | `auth: false` |
+| **Users** `/api/users` | | | | | |
+| GET | `/users` | ✅ | ✅ | ✅ | Server-side role filter applied |
+| GET | `/users/me` | ❌ | ✅ | ✅ | |
+| GET | `/users/authenticated` | ❌ | ✅ | ✅ | Minimal fields only |
+| GET | `/users/:id` | ✅ | ✅ | ✅ | Full user data with relations |
+| PUT | `/users/:id` | ❌ | ✅ | ✅ | Own profile |
+| PUT | `/users/me/username` | ❌ | ✅ | ✅ | 90-day cooldown enforced |
+| PUT | `/users/me/avatar` | ❌ | ✅ | ✅ | |
+| PUT | `/users/me/cover` | ❌ | ✅ | ✅ | |
 | **Payments** `/api/payments` | | | | | |
 | POST | `/payments/free-ad` | ❌ | ✅ | ✅ | |
 | POST | `/payments/checkout` | ❌ | ✅ | ✅ | Unified checkout |
@@ -78,43 +78,26 @@ Legend: ✅ allowed · ❌ denied
 | GET | `/payments/pro-response` | ✅ | ✅ | ✅ | Transbank redirect — no auth header |
 | GET | `/payments/thankyou/:documentId` | ❌ | ✅ | ✅ | |
 | **Upload** `/api/upload` | | | | | |
-| POST | `/upload` | ❌ | ✅ | ✅ | Strapi built-in media upload |
-| GET | `/upload/files` | ❌ | ❌ | ✅ | List all uploaded files |
-| GET | `/upload/files/:id` | ❌ | ❌ | ✅ | |
+| POST | `/upload` | ❌ | ❌ | ✅ | Direct file upload — use `/ads/upload` for ad images |
+| GET | `/upload/files` | ✅ | ✅ | ✅ | |
+| GET | `/upload/files/:id` | ✅ | ✅ | ✅ | |
 | DELETE | `/upload/files/:id` | ❌ | ❌ | ✅ | |
 | **Ad Reservations** `/api/ad-reservations` | | | | | |
-| GET | `/ad-reservations` | ❌ | ❌ | ✅ | |
-| GET | `/ad-reservations/:id` | ❌ | ❌ | ✅ | |
-| POST | `/ad-reservations` | ❌ | ❌ | ✅ | |
-| PUT | `/ad-reservations/:id` | ❌ | ❌ | ✅ | |
-| DELETE | `/ad-reservations/:id` | ❌ | ❌ | ✅ | |
+| GET | `/ad-reservations` | ❌ | ✅ | ✅ | |
+| GET | `/ad-reservations/:id` | ❌ | ✅ | ✅ | |
 | POST | `/ad-reservations/gift` | ❌ | ❌ | ✅ | `global::isManager` |
 | **Ad Featured Reservations** `/api/ad-featured-reservations` | | | | | |
-| GET | `/ad-featured-reservations` | ❌ | ❌ | ✅ | |
-| GET | `/ad-featured-reservations/:id` | ❌ | ❌ | ✅ | |
-| POST | `/ad-featured-reservations` | ❌ | ❌ | ✅ | |
-| PUT | `/ad-featured-reservations/:id` | ❌ | ❌ | ✅ | |
-| DELETE | `/ad-featured-reservations/:id` | ❌ | ❌ | ✅ | |
+| GET | `/ad-featured-reservations` | ❌ | ✅ | ✅ | |
+| GET | `/ad-featured-reservations/:id` | ❌ | ✅ | ✅ | |
 | POST | `/ad-featured-reservations/gift` | ❌ | ❌ | ✅ | `global::isManager` |
-| **Subscriptions** | | | | | |
-| GET | `/subscription-pros` | ❌ | ❌ | ✅ | |
-| GET | `/subscription-pros/:id` | ❌ | ❌ | ✅ | |
-| POST | `/subscription-pros` | ❌ | ❌ | ✅ | |
-| PUT | `/subscription-pros/:id` | ❌ | ❌ | ✅ | |
-| DELETE | `/subscription-pros/:id` | ❌ | ❌ | ✅ | |
-| GET | `/subscription-payments` | ❌ | ❌ | ✅ | |
-| GET | `/subscription-payments/:id` | ❌ | ❌ | ✅ | |
-| POST | `/subscription-payments` | ❌ | ❌ | ✅ | |
-| PUT | `/subscription-payments/:id` | ❌ | ❌ | ✅ | |
-| DELETE | `/subscription-payments/:id` | ❌ | ❌ | ✅ | |
 | **Indicators** `/api/indicators` | | | | | |
-| GET | `/indicators` | ✅ | ✅ | ✅ | `auth: false` |
-| GET | `/indicators/convert` | ✅ | ✅ | ✅ | `auth: false` |
-| GET | `/indicators/:id` | ✅ | ✅ | ✅ | `auth: false` |
-| GET | `/indicators/dashboard-stats` | ❌ | ✅ | ✅ | |
+| GET | `/indicators` | ✅ | ✅ | ✅ | |
+| GET | `/indicators/convert` | ✅ | ✅ | ✅ | |
+| GET | `/indicators/:id` | ✅ | ✅ | ✅ | |
+| GET | `/indicators/dashboard-stats` | ❌ | ❌ | ✅ | |
 | **Categories** `/api/categories` | | | | | |
 | GET | `/categories` | ✅ | ✅ | ✅ | |
-| GET | `/categories/ad-counts` | ✅ | ✅ | ✅ | |
+| GET | `/categories/ad-counts` | ❌ | ❌ | ✅ | |
 | GET | `/categories/:id` | ✅ | ✅ | ✅ | |
 | POST | `/categories` | ❌ | ❌ | ✅ | |
 | PUT | `/categories/:id` | ❌ | ❌ | ✅ | |
@@ -139,12 +122,11 @@ Legend: ✅ allowed · ❌ denied
 | GET | `/ad-packs/:id` | ✅ | ✅ | ✅ | |
 | POST | `/ad-packs` | ❌ | ❌ | ✅ | |
 | PUT | `/ad-packs/:id` | ❌ | ❌ | ✅ | |
-| DELETE | `/ad-packs/:id` | ❌ | ❌ | ✅ | |
 | **Related Ads** `/api/related` | | | | | |
 | GET | `/related/ads` | ✅ | ✅ | ✅ | |
 | GET | `/related/ads/:id` | ✅ | ✅ | ✅ | |
 | **Search** `/api/search` | | | | | |
-| POST | `/search/tavily` | ❌ | ❌ | ✅ | Calls Tavily API |
+| POST | `/search/tavily` | ❌ | ❌ | ✅ | |
 | **Google Analytics** `/api/google-analytics` | | | | | |
 | GET | `/google-analytics/summary` | ❌ | ❌ | ✅ | `global::isManager` |
 | GET | `/google-analytics/stats` | ❌ | ❌ | ✅ | `global::isManager` |
@@ -162,34 +144,70 @@ Legend: ✅ allowed · ❌ denied
 | GET | `/better-stack/incidents` | ❌ | ❌ | ✅ | `global::isManager` |
 | **IA** `/api/ia` | | | | | |
 | POST | `/ia/gemini` | ❌ | ❌ | ✅ | `global::isManager` |
-| POST | `/ia/groq` | ❌ | ❌ | ✅ | `global::isManager` |
+| POST | `/ia/groq` | ❌ | ❌ | ✅ | `global::isManager` — ⚠ Public has panel entry, blocked by policy |
 | POST | `/ia/deepseek` | ❌ | ❌ | ✅ | `global::isManager` |
 | POST | `/ia/claude` | ❌ | ❌ | ✅ | `global::isManager` |
 | **Cron Runner** `/api/cron-runner` | | | | | |
 | POST | `/cron-runner/:name` | ❌ | ❌ | ✅ | `global::isManager` |
+| **Articles** `/api/articles` | | | | | |
+| GET | `/articles` | ✅ | ❌ | ✅ | ⚠ Authenticated has no panel access — likely a gap |
+| GET | `/articles/:id` | ✅ | ❌ | ✅ | ⚠ Same |
+| **FAQs** `/api/faqs` | | | | | |
+| GET | `/faqs` | ✅ | ✅ | ✅ | |
+| GET | `/faqs/:id` | ✅ | ✅ | ✅ | |
+| POST | `/faqs` | ❌ | ❌ | ✅ | |
+| PUT | `/faqs/:id` | ❌ | ❌ | ✅ | |
+| **Conditions** `/api/conditions` | | | | | |
+| GET | `/conditions` | ✅ | ✅ | ✅ | |
+| GET | `/conditions/:id` | ✅ | ✅ | ✅ | |
+| POST | `/conditions` | ❌ | ❌ | ✅ | |
+| PUT | `/conditions/:id` | ❌ | ❌ | ✅ | |
+| DELETE | `/conditions/:id` | ❌ | ❌ | ✅ | |
+| **Terms** `/api/terms` | | | | | |
+| GET | `/terms` | ✅ | ✅ | ✅ | |
+| GET | `/terms/:id` | ✅ | ✅ | ✅ | |
+| POST | `/terms` | ❌ | ❌ | ✅ | |
+| PUT | `/terms/:id` | ❌ | ❌ | ✅ | |
+| **Policies** `/api/policies` | | | | | |
+| GET | `/policies` | ✅ | ✅ | ✅ | |
+| GET | `/policies/:id` | ✅ | ✅ | ✅ | |
+| POST | `/policies` | ❌ | ❌ | ✅ | |
+| PUT | `/policies/:id` | ❌ | ❌ | ✅ | |
+| **Contact** `/api/contacts` | | | | | |
+| POST | `/contacts` | ✅ | ✅ | ✅ | |
+| GET | `/contacts` | ❌ | ❌ | ✅ | |
+| GET | `/contacts/:id` | ❌ | ❌ | ✅ | |
+| PUT | `/contacts/:id` | ❌ | ❌ | ✅ | |
+| DELETE | `/contacts/:id` | ❌ | ❌ | ✅ | |
+| **Remaining** `/api/remainings` | | | | | |
+| GET | `/remainings` | ✅ | ✅ | ✅ | |
+| GET | `/remainings/:id` | ✅ | ✅ | ✅ | |
+| POST | `/remainings` | ❌ | ❌ | ✅ | |
+| PUT | `/remainings/:id` | ❌ | ❌ | ✅ | |
+| DELETE | `/remainings/:id` | ❌ | ❌ | ✅ | |
+| **Subscriptions** | | | | | |
+| ALL | `/subscription-pros` | ❌ | ❌ | ❌ | ⚠ No panel permissions configured |
+| ALL | `/subscription-payments` | ❌ | ❌ | ❌ | ⚠ No panel permissions configured |
 
 ---
 
-## Content
+## Known Issues
 
-These resources use `createCoreRouter` — CRUD permissions are configured in Strapi admin panel. GET endpoints are typically set to Public.
+These panel permissions are wrong and should be corrected in Strapi admin → Settings → Roles & Permissions:
 
-| Resource | Endpoint | Notes |
-| -------- | -------- | ----- |
-| Articles | `/articles` | GETs public |
-| FAQs | `/faqs` | GETs public |
-| Conditions | `/conditions` | GETs public |
-| Terms | `/terms` | GETs public |
-| Policies | `/policies` | GETs public |
-| Contact | `/contacts` | POST public |
-| Remaining | `/remainings` | Internal |
-| Verification Codes | `/verification-codes` | Internal |
+| Issue | Impact |
+| ----- | ------ |
+| `Public` has `order.find` and `order.findOne` | Order data visible to unauthenticated users — security risk |
+| `Public` has `ia.groq` panel entry | Harmless (blocked by `global::isManager` policy) but inconsistent — should be removed |
+| `Manager` missing `order.exportCsv` | `GET /orders/export-csv` returns 403 for everyone — route is unreachable |
+| `Authenticated` missing `article.find` / `article.findOne` | Logged-in users can't read articles; Public can — likely a gap |
+| `subscription-pros` and `subscription-payments` have no permissions | These collections are completely inaccessible via API |
 
 ---
 
 ## Notes
 
-- `auth: false` — bypasses JWT validation entirely. Used for payment gateway callbacks and auth flow steps that precede JWT issuance.
-- `global::isManager` — evaluated before the controller runs. Returns 403 immediately if role is not `manager`.
-- Routes without an explicit policy or `auth: false` are authenticated by default (Strapi rejects requests without a valid JWT).
-- `orders/export-csv` and `orders/sales-by-month` must be set to Manager in Strapi admin panel — they have no hardcoded policy.
+- `auth: false` — bypasses JWT validation entirely. Used for Transbank callbacks and auth steps before JWT issuance.
+- `global::isManager` — evaluated before the controller runs. Returns 403 if role is not `manager`, regardless of panel settings.
+- Routes without explicit policy or `auth: false` require a valid JWT by default (Strapi rejects without one).
+- No Public or Authenticated role has DELETE access to any resource (by design).
