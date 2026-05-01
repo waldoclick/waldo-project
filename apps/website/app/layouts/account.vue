@@ -16,6 +16,7 @@
     <LightboxAdblock />
     <LightboxTerms />
     <LightboxRazon />
+    <LightboxSearch />
   </div>
 </template>
 
@@ -30,4 +31,5 @@ import LightboxCookies from "@/components/LightboxCookies.vue";
 import LightboxAdblock from "@/components/LightboxAdblock.vue";
 import LightboxTerms from "@/components/LightboxTerms.vue";
 import LightboxRazon from "@/components/LightboxRazon.vue";
+import LightboxSearch from "@/components/LightboxSearch.vue";
 </script>
