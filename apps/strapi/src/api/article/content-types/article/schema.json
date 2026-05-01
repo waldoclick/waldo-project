@@ -56,6 +56,10 @@
     "source_url": {
       "type": "string",
       "required": false
+    },
+    "is_published": {
+      "type": "boolean",
+      "default": false
     }
   }
 }

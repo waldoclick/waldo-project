@@ -18,7 +18,7 @@ interface CerebrasApiResponse {
 export class CerebrasService implements ICerebrasService {
   private readonly apiKey: string;
   private readonly baseUrl = "https://api.cerebras.ai/v1/chat/completions";
-  private readonly modelName = "llama-3.3-70b";
+  private readonly modelName = "llama3.1-8b";
 
   constructor() {
     const apiKey = process.env.CEREBRAS_API_KEY ?? "";

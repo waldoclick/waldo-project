@@ -80,8 +80,8 @@ export default {
       ctx.body = { text: result.text };
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);
-      strapi.log.error(`[ia/cerebras] Cerebras API error: ${message}`);
-      throw new ApplicationError(`Cerebras API error: ${message}`);
+      strapi.log.error(`[ia/cerebras] ${message}`);
+      throw new ApplicationError(message);
     }
   },
 

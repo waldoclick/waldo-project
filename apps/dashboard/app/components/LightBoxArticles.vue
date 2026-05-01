@@ -217,7 +217,14 @@ const articlesStore = useArticlesStore();
 const SELECTION_LIMIT = 1;
 
 const currentStep = ref<1 | 2 | 3>(1);
-const query = ref("maquinaria industrial Chile noticias");
+const now = new Date();
+const monthYear = now.toLocaleString("en-US", {
+  month: "long",
+  year: "numeric",
+});
+const query = ref(
+  `latest industrial machinery Chile mining industry news ${monthYear}`,
+);
 const searchResults = ref<ITavilyResult[]>([]);
 const selectedIndexes = ref<Set<number>>(new Set());
 const geminiPrompt = ref(DEFAULT_GEMINI_PROMPT);
@@ -372,13 +379,13 @@ async function handleGenerate() {
         `Date: ${item.date ?? ""}\n` +
         `Content:\n${bodyText}`;
 
-      // 3. Send to Groq
-      const result = await client<{ text: string }>("/ia/groq", {
+      // 3. Send to Cerebras
+      const result = await client<{ text: string }>("/ia/cerebras", {
         method: "POST",
         body: { prompt: fullPrompt },
       });
 
-      // 4. Parse the JSON response — Groq is set to json_object mode so no markdown fences
+      // 4. Parse the JSON response — Cerebras is set to json_object mode so no markdown fences
       const rawText = result.text.trim();
       parsed = JSON.parse(rawText) as {
         title: string;
@@ -419,7 +426,7 @@ async function handleGenerate() {
     }
 
     // 6. Create the article draft in Strapi — source_url always from Tavily, never from AI
-    await client("/articles?status=draft", {
+    await client("/articles", {
       method: "POST",
       body: {
         data: {
@@ -429,6 +436,7 @@ async function handleGenerate() {
           seo_title: parsed!.seo_title,
           seo_description: parsed!.seo_description,
           source_url: item.link,
+          is_published: false,
         },
       },
     });

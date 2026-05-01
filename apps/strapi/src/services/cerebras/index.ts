@@ -1,9 +1,16 @@
 import { CerebrasService } from "./cerebras.service";
 
-const cerebrasService = new CerebrasService();
+let cerebrasService: CerebrasService | null = null;
+
+function getCerebrasService(): CerebrasService {
+  if (!cerebrasService) {
+    cerebrasService = new CerebrasService();
+  }
+  return cerebrasService;
+}
 
 export const generateText = (prompt: string) =>
-  cerebrasService.generate({ prompt });
+  getCerebrasService().generate({ prompt });
 
 export { CerebrasService };
 export type {
