@@ -59,22 +59,16 @@ const generateCacheKey = (ctx: Context): string => {
 };
 
 const shouldNotCache = (url: string): boolean => {
+  if (!url.startsWith("/api/")) return true;
   if (
     url.startsWith("/api/admin") ||
-    url.startsWith("/admin") || // No cachear admin panel
-    url.startsWith("/content-manager") ||
-    url.startsWith("/api/connect") || // No cachear rutas de autenticación
-    url.startsWith("/api/auth") || // No cachear rutas de auth
-    url.startsWith("/api/orders") || // No cachear órdenes
-    url.startsWith("/api/users") || // No cachear datos de usuario (user-specific)
-    url.includes("/callback") || // No cachear callbacks de auth
-    url.includes("/uploads")
+    url.startsWith("/api/connect") ||
+    url.startsWith("/api/auth") ||
+    url.startsWith("/api/orders") ||
+    url.startsWith("/api/users")
   )
     return true;
-
-  const fileExtensions =
-    /\.(jpg|jpeg|png|gif|svg|pdf|doc|docx|xls|xlsx|zip|rar)$/i;
-  return fileExtensions.test(url);
+  return false;
 };
 
 const handleRedisOperation = async (operation: () => Promise<unknown>) => {
@@ -116,22 +110,13 @@ export default () => {
       await initRedis();
     }
 
-    // Si aún no hay Redis después de inicializar, skip Redis cache pero mantener headers HTTP
-    if (!redis) {
-      console.error("[Cache] Redis not available, skipping Redis cache");
-      // Solo para métodos GET y HEAD, agregar headers de cache
-      if (ctx.method === "GET" || ctx.method === "HEAD") {
-        const ttl = getCacheTTL();
-        ctx.response.set(
-          "Cache-Control",
-          `public, max-age=${ttl}, s-maxage=${ttl}`
-        );
-        ctx.response.set("X-Cache", "MISS");
-      }
+    // Rutas que no deben cachearse (admin, content-manager, auth, etc.)
+    // Este guard debe ejecutarse ANTES de establecer cualquier header Cache-Control
+    if (shouldNotCache(ctx.url)) {
       return await next();
     }
 
-    // Establecer headers de cache SIEMPRE para métodos GET y HEAD
+    // Desde aquí, la ruta es cacheable — establecer headers HTTP de cache
     if (ctx.method === "GET" || ctx.method === "HEAD") {
       const ttl = getCacheTTL();
       ctx.response.set(
@@ -141,8 +126,9 @@ export default () => {
       ctx.response.set("X-Cache", "MISS");
     }
 
-    // Si no debemos cachear esta ruta, continuar
-    if (shouldNotCache(ctx.url)) {
+    // Si aún no hay Redis después de inicializar, skip Redis cache pero mantener headers HTTP
+    if (!redis) {
+      console.error("[Cache] Redis not available, skipping Redis cache");
       return await next();
     }
 
@@ -178,14 +164,8 @@ export default () => {
 
     // Solo guardar en caché si la respuesta fue exitosa
     if (ctx.status === 200 && ctx.body) {
-      const ttl = getCacheTTL();
-      ctx.response.set(
-        "Cache-Control",
-        `public, max-age=${ttl}, s-maxage=${ttl}`
-      );
-      ctx.response.set("X-Cache", "MISS");
-
       await handleRedisOperation(async () => {
+        const ttl = getCacheTTL();
         await redis?.set(key, JSON.stringify(ctx.body), "EX", ttl);
       });
     }
