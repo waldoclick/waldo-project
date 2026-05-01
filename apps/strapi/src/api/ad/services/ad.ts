@@ -949,7 +949,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
   ) {
     try {
       const ad = await strapi.db.query("api::ad.ad").findOne({
-        where: { id: adId },
+        where: { documentId: adId },
         populate: ["user"],
       });
 
@@ -970,7 +970,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
       }
 
       await strapi.db.query("api::ad.ad").update({
-        where: { id: adId },
+        where: { documentId: adId },
         data: {
           active: false,
           remaining_days: 0,

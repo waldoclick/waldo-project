@@ -316,10 +316,8 @@ const handleBannedClick = () => {
 };
 
 const handleDeactivate = () => {
-  if (!props.ad?.documentId) return;
-  // Lazy-init store inside handler — safe, never runs during SSR
   const appStore = useAppStore();
-  appStore.openDeactivateLightbox(props.ad.documentId);
+  appStore.openDeactivateLightbox(props.ad.documentId as string);
 };
 
 const handlePushImage = (response: GalleryItem & { id: number | string }) => {

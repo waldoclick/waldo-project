@@ -98,6 +98,7 @@ async function handleSubmit() {
       text: "No se pudo desactivar la publicación. Por favor, intenta nuevamente.",
       icon: "error",
       confirmButtonText: "Aceptar",
+      customClass: { container: "swal--above-lightbox" },
     });
   } finally {
     isSubmitting.value = false;

@@ -15,6 +15,7 @@
     <LightboxCookies />
     <LightboxAdblock />
     <LightboxTerms />
+    <LightboxRazon />
   </div>
 </template>
 
@@ -28,4 +29,5 @@ import HeroFake from "@/components/HeroFake.vue";
 import LightboxCookies from "@/components/LightboxCookies.vue";
 import LightboxAdblock from "@/components/LightboxAdblock.vue";
 import LightboxTerms from "@/components/LightboxTerms.vue";
+import LightboxRazon from "@/components/LightboxRazon.vue";
 </script>

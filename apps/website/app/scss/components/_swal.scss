@@ -21,3 +21,7 @@
     color: $light_peach !important;
   }
 }
+
+.swal--above-lightbox {
+  z-index: 1100 !important;
+}
