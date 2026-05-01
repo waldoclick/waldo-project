@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ 'is-open': isOpen }" class="lightbox lightbox--razon">
+  <div class="lightbox lightbox--razon" :class="{ 'is-open': isOpen }">
     <div class="lightbox--razon__backdrop" @click="handleClose" />
     <div class="lightbox--razon__box" role="dialog" aria-modal="true">
       <button
@@ -10,9 +10,9 @@
       >
         <IconX :size="24" />
       </button>
-      <div class="lightbox--razon__title">{{ title }}</div>
-      <div v-if="description" class="lightbox--razon__text">
-        {{ description }}
+      <div class="lightbox--razon__title">Desactivar publicación</div>
+      <div class="lightbox--razon__text">
+        Esta razón quedará registrada en el anuncio.
       </div>
       <div class="form__group lightbox--razon__field">
         <label class="form__label" :for="textareaId">Razón</label>
@@ -20,13 +20,13 @@
           :id="textareaId"
           v-model="localReason"
           class="form__control"
-          :placeholder="placeholder"
+          placeholder="Escribe la razón..."
           rows="4"
         />
       </div>
       <div class="lightbox--razon__actions">
         <button class="btn btn--secondary" type="button" @click="handleClose">
-          {{ cancelLabel }}
+          Cancelar
         </button>
         <button
           class="btn btn--primary"
@@ -34,7 +34,7 @@
           :disabled="isSubmitDisabled"
           @click="handleSubmit"
         >
-          {{ submitLabel }}
+          Desactivar
         </button>
       </div>
     </div>
@@ -42,57 +42,79 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted, onUnmounted } from "vue";
 import { X as IconX } from "lucide-vue-next";
+import { useAppStore } from "@/stores/app.store";
 
-const props = withDefaults(
-  defineProps<{
-    isOpen: boolean;
-    title: string;
-    description?: string;
-    placeholder?: string;
-    submitLabel?: string;
-    cancelLabel?: string;
-    initialReason?: string;
-    loading?: boolean;
-  }>(),
-  {
-    description: "",
-    placeholder: "Escribe la razón...",
-    submitLabel: "Desactivar",
-    cancelLabel: "Cancelar",
-    initialReason: "",
-    loading: false,
-  },
-);
+const appStore = import.meta.client
+  ? useAppStore()
+  : ({} as ReturnType<typeof useAppStore>);
 
-const emit = defineEmits<{
-  (event: "close"): void;
-  (event: "submit", reason: string): void;
-}>();
+const isOpen = computed(() => appStore.isDeactivateLightboxActive);
 
-const localReason = ref(props.initialReason);
+const DEFAULT_REASON = "Ya vendí el producto.";
+const localReason = ref(DEFAULT_REASON);
+const isSubmitting = ref(false);
+
 const textareaId = `lightbox-razon-${Math.random().toString(36).slice(2)}`;
 
-watch(
-  () => props.isOpen,
-  (isOpen) => {
-    if (isOpen) {
-      localReason.value = props.initialReason || "";
-    }
-  },
-);
-
-const isSubmitDisabled = computed(() => {
-  return props.loading || localReason.value.trim().length === 0;
+watch(isOpen, (opened) => {
+  if (opened) {
+    localReason.value = DEFAULT_REASON;
+  }
 });
 
+const isSubmitDisabled = computed(
+  () => isSubmitting.value || localReason.value.trim().length === 0,
+);
+
 function handleClose() {
-  emit("close");
+  appStore.closeDeactivateLightbox();
 }
 
-function handleSubmit() {
-  if (isSubmitDisabled.value) return;
-  emit("submit", localReason.value.trim());
+async function handleSubmit() {
+  const reason = localReason.value.trim();
+  if (!reason || isSubmitting.value) return;
+  const adDocumentId = appStore.deactivateAdId;
+  if (!adDocumentId) return;
+  isSubmitting.value = true;
+  // Lazy-init stores inside handler — safe, never runs during SSR
+  const userStore = useUserStore();
+  const { Swal } = useSweetAlert2();
+  try {
+    await userStore.deactivateAd(adDocumentId, reason);
+    appStore.closeDeactivateLightbox();
+    await Swal.fire({
+      title: "Publicación desactivada",
+      text: "Tu publicación ha sido desactivada exitosamente.",
+      icon: "success",
+      confirmButtonText: "Aceptar",
+    });
+    window.location.reload();
+  } catch (error) {
+    console.error("Error al desactivar publicación:", error);
+    Swal.fire({
+      title: "Error",
+      text: "No se pudo desactivar la publicación. Por favor, intenta nuevamente.",
+      icon: "error",
+      confirmButtonText: "Aceptar",
+    });
+  } finally {
+    isSubmitting.value = false;
+  }
 }
+
+const handleKeydown = (event: KeyboardEvent) => {
+  if (event.key === "Escape" && isOpen.value) {
+    handleClose();
+  }
+};
+
+onMounted(() => {
+  document.addEventListener("keydown", handleKeydown);
+});
+
+onUnmounted(() => {
+  document.removeEventListener("keydown", handleKeydown);
+});
 </script>
