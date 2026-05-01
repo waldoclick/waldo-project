@@ -38,6 +38,7 @@ export class CerebrasService implements ICerebrasService {
       body: JSON.stringify({
         model: this.modelName,
         messages: [{ role: "user", content: request.prompt }],
+        response_format: { type: "json_object" },
       }),
     });
 

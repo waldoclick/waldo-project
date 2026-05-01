@@ -4,6 +4,7 @@ import { generateText as generateWithGemini } from "../../../services/gemini";
 import { generateWithSearch } from "../../../services/anthropic";
 import { generateText as generateWithDeepSeek } from "../../../services/deepseek";
 import { generateText as generateWithGroq } from "../../../services/groq";
+import { generateText as generateWithCerebras } from "../../../services/cerebras";
 
 const { ApplicationError } = errors;
 
@@ -62,6 +63,25 @@ export default {
       const message = error instanceof Error ? error.message : String(error);
       strapi.log.error(`[ia/deepseek] DeepSeek API error: ${message}`);
       throw new ApplicationError(`DeepSeek API error: ${message}`);
+    }
+  },
+
+  async cerebras(ctx: Context): Promise<void> {
+    const body = ctx.request.body as { prompt?: string };
+    const prompt = body?.prompt?.trim();
+
+    if (!prompt) {
+      ctx.badRequest("Missing required field: prompt");
+      return;
+    }
+
+    try {
+      const result = await generateWithCerebras(prompt);
+      ctx.body = { text: result.text };
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      strapi.log.error(`[ia/cerebras] Cerebras API error: ${message}`);
+      throw new ApplicationError(`Cerebras API error: ${message}`);
     }
   },
 

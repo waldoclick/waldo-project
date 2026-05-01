@@ -26,6 +26,14 @@ export default {
     },
     {
       method: "POST",
+      path: "/ia/cerebras",
+      handler: "ia.cerebras",
+      config: {
+        policies: ["global::isManager"],
+      },
+    },
+    {
+      method: "POST",
       path: "/ia/claude",
       handler: "ia.claude",
       config: {
