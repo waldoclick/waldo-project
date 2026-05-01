@@ -5,6 +5,8 @@ export const useAppStore = defineStore("app", {
   state: (): AppState => ({
     isSearchLightboxActive: false,
     isLoginLightboxActive: false,
+    isDeactivateLightboxActive: false,
+    deactivateAdId: null,
     referer: null,
     contactFormSent: false,
     isMobileMenuOpen: false,
@@ -13,6 +15,8 @@ export const useAppStore = defineStore("app", {
   getters: {
     getIsSearchLightboxActive: (state) => state.isSearchLightboxActive,
     getIsLoginLightboxActive: (state) => state.isLoginLightboxActive,
+    getIsDeactivateLightboxActive: (state) => state.isDeactivateLightboxActive,
+    getDeactivateAdId: (state) => state.deactivateAdId,
     getReferer: (state) => state.referer,
     getContactFormSent: (state) => state.contactFormSent,
   },
@@ -42,6 +46,17 @@ export const useAppStore = defineStore("app", {
 
     toggleLoginLightbox(): void {
       this.isLoginLightboxActive = !this.isLoginLightboxActive;
+    },
+
+    // Acciones para el lightbox de desactivación
+    openDeactivateLightbox(adDocumentId: string): void {
+      this.deactivateAdId = adDocumentId;
+      this.isDeactivateLightboxActive = true;
+    },
+
+    closeDeactivateLightbox(): void {
+      this.isDeactivateLightboxActive = false;
+      this.deactivateAdId = null;
     },
 
     // Acciones para la URL de referencia
