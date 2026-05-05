@@ -13,38 +13,53 @@ const route = useRoute();
 const apiClient = useApiClient();
 const { Swal } = useSweetAlert2();
 
-const confirm = async () => {
-  const confirmation = route.query.confirmation as string | undefined;
+type ConfirmationResult = { ok: true } | { resent: true } | { error: true };
 
-  if (!confirmation) {
-    Swal.fire(
-      "Enlace inválido",
-      "No se encontró un token de confirmación en el enlace.",
-      "error",
-    );
-    await navigateTo("/login");
-    return;
-  }
+const confirmation = route.query.confirmation as string | undefined;
 
-  try {
-    await apiClient(`/auth/email-confirmation?confirmation=${confirmation}`, {
-      method: "GET",
-    });
-    Swal.fire(
+const { data } = await useAsyncData<ConfirmationResult>(
+  "activar-email-confirmation",
+  async () => {
+    if (!confirmation) {
+      return { error: true };
+    }
+    try {
+      const res = await apiClient<{ ok?: boolean; resent?: boolean }>(
+        `/auth/email-confirmation?confirmation=${confirmation}`,
+        { method: "GET" },
+      );
+      if (res?.resent) return { resent: true };
+      return { ok: true };
+    } catch {
+      return { error: true };
+    }
+  },
+  { default: (): ConfirmationResult => ({ error: true }) },
+);
+
+onMounted(async () => {
+  const result = data.value;
+
+  if (result && "ok" in result) {
+    await Swal.fire(
       "¡Cuenta confirmada!",
       "Tu correo electrónico ha sido verificado. Ya puedes iniciar sesión.",
       "success",
     );
-  } catch {
-    Swal.fire(
-      "Error al confirmar",
-      "El enlace es inválido o ya fue utilizado. Solicita un nuevo correo de confirmación.",
+  } else if (result && "resent" in result) {
+    await Swal.fire(
+      "Te hemos enviado un nuevo correo",
+      "El enlace anterior ya había sido utilizado. Revisa tu correo electrónico para confirmar tu cuenta.",
+      "info",
+    );
+  } else {
+    await Swal.fire(
+      "Enlace inválido",
+      "El enlace es inválido o ha expirado. Solicita un nuevo correo de confirmación.",
       "error",
     );
   }
 
   await navigateTo("/login");
-};
-
-confirm();
+});
 </script>
