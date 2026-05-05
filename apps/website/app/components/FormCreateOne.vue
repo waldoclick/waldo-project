@@ -6,7 +6,7 @@
       <div class="form__description">
         <p>
           Elige la forma como quieres publicar, si tienes anuncios úsalos, si no
-          tienes compra uno individual o un Pack, a todos los puedes adjuntar un
+          tienes compra uno individual o un Pack, a todos les puedes adjuntar un
           destacado.
         </p>
       </div>
