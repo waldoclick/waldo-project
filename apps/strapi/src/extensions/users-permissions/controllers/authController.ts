@@ -195,10 +195,8 @@ export const registerUserLocal = (registerController) => async (ctx) => {
 
         if (userWithToken?.confirmationToken) {
           const confirmationUrl = `${
-            process.env.APP_URL || "http://localhost:1337"
-          }/api/auth/email-confirmation?confirmation=${
-            userWithToken.confirmationToken
-          }`;
+            process.env.FRONTEND_URL || "http://localhost:3000"
+          }/registro/activar?confirmation=${userWithToken.confirmationToken}`;
           const name =
             userWithToken.firstname ||
             userWithToken.username ||
@@ -554,8 +552,8 @@ export const overrideSendEmailConfirmation = () => async (ctx) => {
   if (!user || user.confirmed || user.blocked) return ctx.send({ ok: true });
 
   const confirmationUrl = `${
-    process.env.APP_URL || "http://localhost:1337"
-  }/api/auth/email-confirmation?confirmation=${user.confirmationToken}`;
+    process.env.FRONTEND_URL || "http://localhost:3000"
+  }/registro/activar?confirmation=${user.confirmationToken}`;
   const name = user.firstname || user.username || user.email;
 
   try {
@@ -573,6 +571,45 @@ export const overrideSendEmailConfirmation = () => async (ctx) => {
       }: ${err?.message ?? err}`
     );
   }
+
+  ctx.send({ ok: true });
+};
+
+// ─── Email Confirmation Handler ───────────────────────────────────────────────
+
+/**
+ * Replacement for Strapi's built-in emailConfirmation controller.
+ * Returns JSON { ok: true } instead of redirecting, so the frontend can
+ * handle the result (Swal success/error) after calling via the Nuxt proxy.
+ *
+ * Handles GET /api/auth/email-confirmation?confirmation=TOKEN
+ */
+export const overrideEmailConfirmation = () => async (ctx) => {
+  const { confirmation: confirmationToken } = ctx.query as {
+    confirmation?: string;
+  };
+
+  if (!confirmationToken) {
+    return ctx.badRequest("confirmation token is required");
+  }
+
+  const user = await strapi.db.query("plugin::users-permissions.user").findOne({
+    where: { confirmationToken },
+    select: ["id", "confirmed", "blocked"],
+  });
+
+  if (!user || user.blocked) {
+    return ctx.badRequest("Invalid confirmation token");
+  }
+
+  if (user.confirmed) {
+    return ctx.send({ ok: true });
+  }
+
+  await strapi.db.query("plugin::users-permissions.user").update({
+    where: { id: user.id },
+    data: { confirmed: true },
+  });
 
   ctx.send({ ok: true });
 };

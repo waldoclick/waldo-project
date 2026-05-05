@@ -8,6 +8,7 @@ import {
   overrideAuthLocal,
   overrideForgotPassword,
   overrideSendEmailConfirmation,
+  overrideEmailConfirmation,
 } from "./controllers/authController";
 
 export default function (plugin) {
@@ -50,6 +51,8 @@ export default function (plugin) {
     instance.forgotPassword = overrideForgotPassword();
     // Email confirmation resend: full replacement with MJML branded template
     instance.sendEmailConfirmation = overrideSendEmailConfirmation();
+    // Email confirmation handler: returns JSON instead of redirecting so frontend can show Swal
+    instance.emailConfirmation = overrideEmailConfirmation();
     return instance;
   };
 
