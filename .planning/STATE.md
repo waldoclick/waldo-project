@@ -163,6 +163,7 @@ Progress: [██████████] 100%
 | 260413-lxd | unique username collision handling — ensureUniqueUsername helper with random 5-digit suffix, wired into registerUserLocal, 4 Jest unit tests | 2026-04-13 | 7d19ca47 | [260413-lxd-unique-username-generation-with-random-5](./quick/260413-lxd-unique-username-generation-with-random-5/) |
 | 260414-lxu | Documentation restructure: rewrite root README.md as global index, create technical READMEs per app, complete missing docs | 2026-04-14 | 38a59eb6 | [260414-lxu-documentation-restructure-rewrite-root-r](./quick/260414-lxu-documentation-restructure-rewrite-root-r/) |
 | 260504-t98 | Fix email confirmation link pointing to Strapi API directly instead of frontend proxy | 2026-05-05 | bc183da5 | [260504-t98-fix-email-confirmation-link-pointing-to-](./quick/260504-t98-fix-email-confirmation-link-pointing-to-/) |
+| 260504-ue0 | Email confirmation auto-resend + SSR verification — overrideEmailConfirmation returns { resent: true } for confirmed tokens; activar.vue rewritten with useAsyncData SSR-compatible | 2026-05-04 | bcef2a18 | [260504-ue0-email-confirmation-auto-resend-ssr-verif](./quick/260504-ue0-email-confirmation-auto-resend-ssr-verif/) |
 
 ## Session Continuity
 
