@@ -349,15 +349,14 @@ const handleSubmit = async () => {
       const emailParts = form.value.email.split("@");
       form.value.username = emailParts[0] ?? ""; // Asigna el nombre antes del @
 
-      delete form.value.confirm_password;
-
       // Registrar usando useApiClient — auto-injects X-Recaptcha-Token header.
       // Handles email_confirmation active case (response without JWT).
+      // confirm_password is excluded from the payload without mutating form.value
+      // (mutating would clear the field in the UI on error).
+      const { confirm_password: _omit, ...payload } = form.value;
       const response = (await apiClient("/auth/local/register", {
         method: "POST",
-        body: {
-          ...form.value,
-        },
+        body: payload,
       })) as { jwt?: string; user?: { id: number } };
 
       if (response.jwt) {
