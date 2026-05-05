@@ -341,6 +341,17 @@ input:-webkit-autofill {
     cursor: not-allowed;
   }
 
+  &__resend-confirmation {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    p {
+      margin: 0;
+    }
+  }
+
   &-check {
     display: flex;
     align-items: center;
