@@ -595,7 +595,7 @@ export const overrideEmailConfirmation = () => async (ctx) => {
 
   const user = await strapi.db.query("plugin::users-permissions.user").findOne({
     where: { confirmationToken },
-    select: ["id", "confirmed", "blocked"],
+    select: ["id", "email", "username", "firstname", "confirmed", "blocked"],
   });
 
   if (!user || user.blocked) {
@@ -603,12 +603,42 @@ export const overrideEmailConfirmation = () => async (ctx) => {
   }
 
   if (user.confirmed) {
-    return ctx.send({ ok: true });
+    // Generate a fresh token (same pattern as overrideForgotPassword line ~486)
+    const newConfirmationToken = crypto.randomBytes(64).toString("hex");
+
+    await strapi.db.query("plugin::users-permissions.user").update({
+      where: { id: user.id },
+      data: { confirmationToken: newConfirmationToken },
+    });
+
+    const confirmationUrl = `${
+      process.env.FRONTEND_URL || "http://localhost:3000"
+    }/registro/activar?confirmation=${newConfirmationToken}`;
+    const name = user.firstname || user.username || user.email;
+
+    try {
+      await sendMjmlEmail(
+        strapi,
+        "email-confirmation",
+        user.email,
+        "Confirma tu correo electrónico",
+        { name, confirmationUrl }
+      );
+    } catch (err) {
+      // Non-fatal — token is already saved; user can retry sendEmailConfirmation
+      strapi.log.error(
+        `[overrideEmailConfirmation] Failed to resend confirmation email to ${
+          user.email
+        }: ${err?.message ?? err}`
+      );
+    }
+
+    return ctx.send({ resent: true });
   }
 
   await strapi.db.query("plugin::users-permissions.user").update({
     where: { id: user.id },
-    data: { confirmed: true },
+    data: { confirmed: true, confirmationToken: null },
   });
 
   ctx.send({ ok: true });
