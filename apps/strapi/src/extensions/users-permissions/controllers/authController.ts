@@ -106,6 +106,18 @@ export const ensureUniqueUsername = async (base: string): Promise<string> => {
  * @param {(...args: unknown[]) => Promise<unknown>} registerController - The original register controller function.
  * @returns {(...args: unknown[]) => Promise<unknown>} A new controller function that registers the user and creates additional records.
  */
+const validatePasswordStrength = (password: string): string | null => {
+  if (!password || password.length < 8)
+    return "Password must be at least 8 characters";
+  if (password.length > 50) return "Password must be at most 50 characters";
+  if (!/[A-Z]/.test(password))
+    return "Password must include at least one uppercase letter";
+  if (!/[a-z]/.test(password))
+    return "Password must include at least one lowercase letter";
+  if (!/\d/.test(password)) return "Password must include at least one number";
+  return null;
+};
+
 export const registerUserLocal = (registerController) => async (ctx) => {
   try {
     // Extraer los datos del cuerpo de la solicitud
@@ -137,6 +149,11 @@ export const registerUserLocal = (registerController) => async (ctx) => {
       accepted_usage_terms !== true
     ) {
       return ctx.badRequest("All fields are required");
+    }
+
+    const passwordError = validatePasswordStrength(password);
+    if (passwordError) {
+      return ctx.badRequest(passwordError);
     }
 
     // Resolve username collisions by appending a random 5-digit suffix.
@@ -638,8 +655,18 @@ export const overrideEmailConfirmation = () => async (ctx) => {
 
   await strapi.db.query("plugin::users-permissions.user").update({
     where: { id: user.id },
-    data: { confirmed: true, confirmationToken: null },
+    data: { confirmed: true },
   });
 
   ctx.send({ ok: true });
 };
+
+export const overrideChangePassword =
+  (changePasswordController) => async (ctx) => {
+    const { password } = ctx.request.body as { password?: string };
+    const passwordError = validatePasswordStrength(password ?? "");
+    if (passwordError) {
+      return ctx.badRequest(passwordError);
+    }
+    return changePasswordController(ctx);
+  };

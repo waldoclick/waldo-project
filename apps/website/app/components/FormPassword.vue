@@ -75,7 +75,14 @@ const apiClient = useApiClient();
 // Define validation schema using yup
 const schema = yup.object({
   current_password: yup.string().required("Contraseña actual es requerida"),
-  password: yup.string().required("Nueva contraseña es requerida"),
+  password: yup
+    .string()
+    .required("Nueva contraseña es requerida")
+    .min(8, "Mínimo 8 caracteres")
+    .max(50, "Máximo 50 caracteres")
+    .matches(/[A-Z]/, "Debe incluir al menos una mayúscula")
+    .matches(/[a-z]/, "Debe incluir al menos una minúscula")
+    .matches(/\d/, "Debe incluir al menos un número"),
   password_confirmation: yup
     .string()
     .oneOf([yup.ref("password")], "Las contraseñas deben coincidir")

@@ -9,6 +9,7 @@ import {
   overrideForgotPassword,
   overrideSendEmailConfirmation,
   overrideEmailConfirmation,
+  overrideChangePassword,
 } from "./controllers/authController";
 
 export default function (plugin) {
@@ -53,6 +54,9 @@ export default function (plugin) {
     instance.sendEmailConfirmation = overrideSendEmailConfirmation();
     // Email confirmation handler: returns JSON instead of redirecting so frontend can show Swal
     instance.emailConfirmation = overrideEmailConfirmation();
+    instance.changePassword = overrideChangePassword(
+      instance.changePassword.bind(instance)
+    );
     return instance;
   };
 
