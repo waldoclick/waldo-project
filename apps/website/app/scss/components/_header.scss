@@ -74,6 +74,10 @@
       margin-right: 30px;
       position: relative;
       // top: -2px;
+
+      @include screen-small {
+        margin-right: 10px;
+      }
     }
 
     &__logo {
@@ -81,6 +85,15 @@
 
       img {
         min-width: 152px;
+      }
+
+      @include screen-small {
+        margin-right: 10px;
+
+        img {
+          min-width: 0;
+          max-width: 130px;
+        }
       }
     }
 
