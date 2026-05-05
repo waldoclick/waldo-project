@@ -2,6 +2,27 @@
 import crypto from "crypto";
 import { sendMjmlEmail } from "../../../services/mjml";
 
+const RESERVED_USERNAMES = new Set([
+  "login",
+  "registro",
+  "blog",
+  "anuncios",
+  "anunciar",
+  "contacto",
+  "cuenta",
+  "pagar",
+  "pro",
+  "packs",
+  "sitemap",
+  "onboarding",
+  "recuperar-contrasena",
+  "restablecer-contrasena",
+  "preguntas-frecuentes",
+  "condiciones-de-uso",
+  "politicas-de-privacidad",
+  "dev",
+]);
+
 /**
  * Creates user reservations and featured reservations after user registration.
  *
@@ -151,6 +172,10 @@ export const registerUserLocal = (registerController) => async (ctx) => {
       return ctx.badRequest("All fields are required");
     }
 
+    if (RESERVED_USERNAMES.has(username.toLowerCase())) {
+      return ctx.badRequest("Username not available");
+    }
+
     const passwordError = validatePasswordStrength(password);
     if (passwordError) {
       return ctx.badRequest(passwordError);
@@ -257,6 +282,22 @@ export const registerUserAuth = (callbackController) => async (ctx) => {
 
     // Get the authenticated user from `ctx.response.body?.user` or `ctx.state.user`
     const user = ctx.response.body?.user || ctx.state.user;
+
+    if (
+      user?.id &&
+      RESERVED_USERNAMES.has((user.username ?? "").toLowerCase())
+    ) {
+      const suffix = Math.random().toString(36).slice(2, 6);
+      const newUsername = `${user.username}_${suffix}`;
+      await strapi.db.query("plugin::users-permissions.user").update({
+        where: { id: user.id },
+        data: { username: newUsername },
+      });
+      // Reflect corrected username in response body so the frontend doesn't render the reserved name
+      if (ctx.response.body?.user) {
+        ctx.response.body.user.username = newUsername;
+      }
+    }
 
     createUserReservations(user);
   } catch (error) {
