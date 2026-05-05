@@ -167,5 +167,5 @@ Progress: [██████████] 100%
 
 ## Session Continuity
 
-Last activity: 2026-05-05 - Completed quick task 260504-t98: Fix email confirmation link pointing to Strapi API directly instead of frontend proxy
+Last activity: 2026-05-05 - Completed quick task 260504-ue0: Email confirmation auto-resend + SSR verification
 Resume file: None
