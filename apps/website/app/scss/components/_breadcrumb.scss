@@ -10,12 +10,24 @@
     margin: 0;
     list-style: none;
     overflow: hidden;
+
+    @include screen-small {
+      gap: 0.25rem;
+    }
   }
 
   &__item {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+
+    @include screen-small {
+      gap: 0.25rem;
+
+      &:last-child {
+        display: none;
+      }
+    }
   }
 
   &__link {
@@ -45,6 +57,20 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  &__home-icon {
+    display: none;
+
+    @include screen-small {
+      display: block;
+    }
+  }
+
+  &__home-text {
+    @include screen-small {
+      display: none;
+    }
   }
 
   &__separator {

@@ -2,7 +2,10 @@
   <nav class="breadcrumbs">
     <ul class="breadcrumbs__list">
       <li class="breadcrumbs__item">
-        <router-link to="/" class="breadcrumbs__link">Waldo</router-link>
+        <router-link to="/" class="breadcrumbs__link">
+          <Home class="breadcrumbs__home-icon" :size="16" />
+          <span class="breadcrumbs__home-text">Waldo</span>
+        </router-link>
         <ChevronRight class="breadcrumbs__separator" />
       </li>
       <template v-for="(item, index) in items" :key="index">
@@ -22,7 +25,7 @@
 </template>
 
 <script setup>
-import { ChevronRight } from "lucide-vue-next";
+import { ChevronRight, Home } from "lucide-vue-next";
 
 defineProps({
   items: {
