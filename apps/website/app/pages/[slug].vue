@@ -21,6 +21,7 @@ import type { Pagination } from "@/types/pagination";
 import { useRoute } from "nuxt/app";
 import { useAdsStore } from "@/stores/ads.store";
 import { useUserStore } from "~/stores/user.store";
+import { RESERVED_USERNAMES } from "@/shared/constants";
 // components
 import HeaderDefault from "@/components/HeaderDefault.vue";
 import HeroProfile from "@/components/HeroProfile.vue";
@@ -39,25 +40,10 @@ const { $setSEO, $setStructuredData } = useNuxtApp();
 const route = useRoute();
 const config = useRuntimeConfig();
 
-// Excluir rutas que no son perfiles de usuario
-// Estas rutas deben ser manejadas por sus propias páginas específicas
-const excludedRoutes = [
-  "anuncios",
-  "cuenta",
-  "anunciar",
-  "packs",
-  "contacto",
-  "login",
-  "registro",
-  "preguntas-frecuentes",
-  "politicas-de-privacidad",
-  "recuperar-contrasena",
-];
-
 // Si la ruta está excluida, mostrar error 404
 // Esto previene que [slug].vue intercepte rutas que deben ser manejadas por otras páginas
 const slug = String(route.params.slug || "");
-if (excludedRoutes.includes(slug)) {
+if (RESERVED_USERNAMES.includes(slug as (typeof RESERVED_USERNAMES)[number])) {
   throw createError({
     statusCode: 404,
     message: "Página no encontrada",

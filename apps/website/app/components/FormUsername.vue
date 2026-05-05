@@ -43,6 +43,7 @@
 import { ref, computed } from "vue";
 import { Field, Form, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
+import { RESERVED_USERNAMES } from "@/shared/constants";
 const { Swal } = useSweetAlert2();
 import { useMeStore } from "@/stores/me.store";
 import { useStrapiUser } from "#imports";
@@ -95,6 +96,11 @@ const schema = yup.object({
     .matches(
       /^[\w.]+$/,
       "Solo se permiten letras, números, puntos y guiones bajos",
+    )
+    .test(
+      "reserved",
+      "Este nombre de usuario no está disponible",
+      (val) => !RESERVED_USERNAMES.includes(val?.toLowerCase() ?? ""),
     ),
 });
 

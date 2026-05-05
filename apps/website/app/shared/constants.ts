@@ -50,3 +50,24 @@ export const PACK_TYPES = {
   PREMIUM: "premium",
   ENTERPRISE: "enterprise",
 } as const;
+
+export const RESERVED_USERNAMES = [
+  "login",
+  "registro",
+  "blog",
+  "anuncios",
+  "anunciar",
+  "contacto",
+  "cuenta",
+  "pagar",
+  "pro",
+  "packs",
+  "sitemap",
+  "onboarding",
+  "recuperar-contrasena",
+  "restablecer-contrasena",
+  "preguntas-frecuentes",
+  "condiciones-de-uso",
+  "politicas-de-privacidad",
+  "dev",
+] as const;

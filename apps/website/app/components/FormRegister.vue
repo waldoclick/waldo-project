@@ -209,6 +209,7 @@ import { useRouter } from "vue-router";
 import type { Form as VeeForm } from "vee-validate";
 import type { FormRegister } from "@/types/form-register";
 import { useRut } from "@/composables/useRut";
+import { RESERVED_USERNAMES } from "@/shared/constants";
 const { signUp } = useAdAnalytics();
 
 const apiClient = useApiClient();
@@ -348,6 +349,19 @@ const handleSubmit = async () => {
       // Crear el campo username a partir del email
       const emailParts = form.value.email.split("@");
       form.value.username = emailParts[0] ?? ""; // Asigna el nombre antes del @
+
+      if (
+        RESERVED_USERNAMES.includes(
+          form.value.username.toLowerCase() as (typeof RESERVED_USERNAMES)[number],
+        )
+      ) {
+        loading.value = false;
+        return Swal.fire(
+          "Error",
+          "Este nombre de usuario no está disponible",
+          "error",
+        );
+      }
 
       // Registrar usando useApiClient — auto-injects X-Recaptcha-Token header.
       // Handles email_confirmation active case (response without JWT).
