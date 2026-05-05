@@ -35,6 +35,10 @@
       &--is-free {
         grid-template-columns: 108.33px 108.33px 108.33px 108.33px;
         justify-content: center;
+
+        @include screen-small {
+          grid-template-columns: 1fr 1fr;
+        }
       }
     }
 
