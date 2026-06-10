@@ -170,7 +170,7 @@ const chartOptions = computed(() => ({
       bodyFont: { size: 11, weight: "normal" as const },
       callbacks: {
         label: (context: TooltipItem<"bar">) =>
-          `${formatNumber(context.parsed.y)} amenazas`,
+          `${formatNumber(context.parsed.y ?? 0)} amenazas`,
       },
       caretSize: 0,
       cornerRadius: 4,

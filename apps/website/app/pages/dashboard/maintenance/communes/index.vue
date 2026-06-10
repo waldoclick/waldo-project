@@ -12,7 +12,6 @@
 </template>
 
 <script setup lang="ts">
-import HeroDefault from "@/components/HeroDefault.vue";
 import CommunesDefault from "@/components/CommunesDefault.vue";
 
 definePageMeta({

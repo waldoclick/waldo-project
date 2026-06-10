@@ -34,9 +34,6 @@
 
 <script setup lang="ts">
 import { ref, watch } from "vue";
-import TableDefault from "@/components/TableDefault.vue";
-import TableRow from "@/components/TableRow.vue";
-import TableCell from "@/components/TableCell.vue";
 
 interface GA4PageRow {
   page: string;

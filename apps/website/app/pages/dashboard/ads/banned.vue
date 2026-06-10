@@ -10,7 +10,6 @@
 </template>
 
 <script setup lang="ts">
-import HeroDefault from "@/components/HeroDefault.vue";
 import AdsTable from "@/components/AdsTable.vue";
 
 definePageMeta({

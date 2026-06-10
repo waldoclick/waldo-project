@@ -28,12 +28,9 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
-import HeroDefault from "@/components/HeroDefault.vue";
-import BoxContent from "@/components/BoxContent.vue";
-import BoxInformation from "@/components/BoxInformation.vue";
-import CardInfo from "@/components/CardInfo.vue";
 import FormCondition from "@/components/FormCondition.vue";
 import type { ConditionData } from "@/components/FormCondition.vue";
+import { formatDate } from "@/utils/date";
 
 interface ConditionRecord extends ConditionData {
   createdAt?: string;

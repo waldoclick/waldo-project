@@ -24,7 +24,6 @@
 </template>
 
 <script setup lang="ts">
-import HeroDefault from "@/components/HeroDefault.vue";
 import SearchConsoleStats from "@/components/SearchConsoleStats.vue";
 import SearchConsoleQueries from "@/components/SearchConsoleQueries.vue";
 import SearchConsolePages from "@/components/SearchConsolePages.vue";

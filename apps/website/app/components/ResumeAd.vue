@@ -24,7 +24,6 @@
 </template>
 
 <script setup>
-import CardInfo from "@/components/CardInfo.vue";
 </script>
 
 <style scoped>

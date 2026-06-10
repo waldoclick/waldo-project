@@ -28,24 +28,15 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
-import HeroDefault from "@/components/HeroDefault.vue";
-import BoxContent from "@/components/BoxContent.vue";
-import BoxInformation from "@/components/BoxInformation.vue";
-import CardInfo from "@/components/CardInfo.vue";
-import FormPack from "@/components/FormPack.vue";
-import type { PackData } from "@/components/FormPack.vue";
-
-interface PackRecord extends PackData {
-  createdAt?: string;
-  updatedAt?: string;
-}
+import type { PackData } from "@/components/FormPackDashboard.vue";
+import { formatDate } from "@/utils/date";
 
 definePageMeta({
   layout: "dashboard",
 });
 
 const route = useRoute();
-const pack = ref<PackRecord | null>(null);
+const pack = ref<(PackData & { createdAt?: string; updatedAt?: string; name?: string }) | null>(null);
 const apiClient = useApiClient();
 
 const title = computed(() => pack.value?.name || "Pack");
@@ -86,5 +77,5 @@ const { data: packData } = await useAsyncData(
   },
 );
 
-pack.value = packData.value ?? null;
+pack.value = (packData.value as (PackData & { createdAt?: string; updatedAt?: string; name?: string }) | null) ?? null;
 </script>

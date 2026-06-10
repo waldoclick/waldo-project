@@ -1,3 +1,9 @@
+export interface UserRelation {
+  name?: string;
+  id?: number;
+  data?: { id: number; name?: string; attributes?: { name?: string } };
+}
+
 export interface User {
   id: number;
   username: string;
@@ -25,6 +31,7 @@ export interface User {
   accepted_terms: boolean;
   accepted_usage_terms: boolean;
   postal_code: string | null;
+  region?: UserRelation;
   commune: {
     id: number;
     name: string;
@@ -39,6 +46,7 @@ export interface User {
   business_address: string | null;
   business_address_number: string | null;
   business_postal_code: string | null;
+  business_region?: UserRelation;
   business_commune: {
     id: number;
     name: string;

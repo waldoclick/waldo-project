@@ -27,7 +27,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { Wand2 } from "lucide-vue-next";
-import HeroDefault from "@/components/HeroDefault.vue";
 import ArticlesDefault from "@/components/ArticlesDefault.vue";
 import LightBoxArticles from "@/components/LightBoxArticles.vue";
 

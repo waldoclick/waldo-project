@@ -125,11 +125,8 @@ import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
 import { formatCurrency } from "@/utils/price";
 import { formatFullName, getPaymentMethod } from "@/utils/string";
-import HeroDefault from "@/components/HeroDefault.vue";
-import BoxContent from "@/components/BoxContent.vue";
-import BoxInformation from "@/components/BoxInformation.vue";
-import CardInfo from "@/components/CardInfo.vue";
 import type { Order } from "@/types/order";
+import { formatDate } from "@/utils/date";
 
 definePageMeta({
   layout: "dashboard",

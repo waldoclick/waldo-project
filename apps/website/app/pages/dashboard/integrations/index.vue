@@ -5,7 +5,6 @@
 </template>
 
 <script setup lang="ts">
-import HeroDefault from "@/components/HeroDefault.vue";
 
 definePageMeta({
   layout: "dashboard",

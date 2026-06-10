@@ -365,7 +365,7 @@ async function handleGenerate() {
         return;
       }
       if (isConfirmed) {
-        parsed = articlesStore.getAICache(item.link)!.result;
+        parsed = articlesStore.getAICache(item.link)!.result as typeof parsed;
       }
     }
 

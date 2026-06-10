@@ -54,12 +54,9 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
-import HeroDefault from "@/components/HeroDefault.vue";
-import BoxContent from "@/components/BoxContent.vue";
-import BoxInformation from "@/components/BoxInformation.vue";
-import CardInfo from "@/components/CardInfo.vue";
 import { useImageProxy } from "@/composables/useImage";
 import type { CategoryData } from "@/components/FormCategory.vue";
+import { formatDate } from "@/utils/date";
 
 interface CategoryRecord extends CategoryData {
   createdAt?: string;

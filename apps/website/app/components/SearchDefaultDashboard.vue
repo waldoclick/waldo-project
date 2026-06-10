@@ -1,12 +1,12 @@
 <template>
-  <div class="search search--default">
-    <div class="search--default__wrapper">
-      <Search class="search--default__icon" />
+  <div class="search search--dashboard">
+    <div class="search--dashboard__wrapper">
+      <Search class="search--dashboard__icon" />
       <input
         :value="modelValue"
         :placeholder="placeholder"
         maxlength="40"
-        class="search--default__input"
+        class="search--dashboard__input"
         @input="
           $emit(
             'update:modelValue',
@@ -17,11 +17,11 @@
       <button
         v-if="modelValue"
         type="button"
-        class="search--default__clear"
+        class="search--dashboard__clear"
         title="Limpiar búsqueda"
         @click="$emit('update:modelValue', '')"
       >
-        <X class="search--default__clear__icon" />
+        <X class="search--dashboard__clear__icon" />
       </button>
     </div>
   </div>

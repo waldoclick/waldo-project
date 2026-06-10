@@ -133,7 +133,7 @@ const isColorValue = computed(() => {
 function applyHighlight() {
   nextTick(() => {
     if (codeRef.value && isObjectOrArray.value) {
-      hljs.highlightElement(codeRef.value);
+      hljs.highlightElement(codeRef.value as unknown as HTMLElement);
     }
   });
 }

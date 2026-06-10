@@ -60,7 +60,7 @@ const isCodeValid = computed(() => /^\d{6}$/.test(code.value));
 // Track input element refs by index
 const setInputRef = (el: unknown, i: number) => {
   if (el instanceof HTMLInputElement) {
-    inputRefs.value[i] = el;
+    inputRefs.value[i] = el as unknown as HTMLInputElement;
   }
 };
 

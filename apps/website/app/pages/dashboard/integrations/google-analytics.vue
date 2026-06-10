@@ -24,7 +24,6 @@
 </template>
 
 <script setup lang="ts">
-import HeroDefault from "@/components/HeroDefault.vue";
 import GoogleAnalyticsSummary from "@/components/GoogleAnalyticsSummary.vue";
 import GoogleAnalyticsChart from "@/components/GoogleAnalyticsChart.vue";
 import GoogleAnalyticsPages from "@/components/GoogleAnalyticsPages.vue";

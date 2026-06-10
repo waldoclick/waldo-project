@@ -23,7 +23,6 @@
 </template>
 
 <script setup lang="ts">
-import HeroDefault from "@/components/HeroDefault.vue";
 import BetterStackMonitors from "@/components/BetterStackMonitors.vue";
 import BetterStackIncidents from "@/components/BetterStackIncidents.vue";
 

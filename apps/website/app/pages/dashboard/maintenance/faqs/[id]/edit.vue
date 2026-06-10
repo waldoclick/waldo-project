@@ -28,12 +28,9 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
-import HeroDefault from "@/components/HeroDefault.vue";
-import BoxContent from "@/components/BoxContent.vue";
-import BoxInformation from "@/components/BoxInformation.vue";
-import CardInfo from "@/components/CardInfo.vue";
 import FormFaq from "@/components/FormFaq.vue";
 import type { FaqData } from "@/components/FormFaq.vue";
+import { formatDate } from "@/utils/date";
 
 interface FaqRecord extends FaqData {
   createdAt?: string;

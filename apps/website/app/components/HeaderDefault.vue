@@ -74,7 +74,6 @@ import LogoBlack from "@/components/LogoBlack.vue";
 import MenuAuth from "@/components/MenuAuth.vue";
 import MenuDefault from "@/components/MenuDefault.vue";
 import MenuUser from "@/components/MenuUser.vue";
-import SearchDefault from "@/components/SearchDefault.vue";
 import SearchIcon from "@/components/SearchIcon.vue";
 import MobileBar from "@/components/MobileBar.vue";
 import AvatarDefault from "@/components/AvatarDefault.vue";

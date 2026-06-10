@@ -6,7 +6,13 @@ export interface Media {
     thumbnail: {
       url: string;
     };
+    small?: {
+      url: string;
+    };
     medium?: {
+      url: string;
+    };
+    large?: {
       url: string;
     };
   };
@@ -59,7 +65,7 @@ export interface Ad {
     | null;
   address: string;
   address_number: string;
-  condition: number | null;
+  condition: number | { id: number; name: string } | null;
   manufacturer: string;
   model: string;
   year: number;
@@ -74,6 +80,10 @@ export interface Ad {
   reason_for_rejection?: string | null;
   reason_for_ban?: string | null;
   reason_for_deactivation?: string | null;
+  featured?: boolean | null;
+  banned_at?: string | null;
+  rejected_at?: string | null;
+  duration_days?: number | null;
 }
 
 export interface AdResponse {
@@ -104,6 +114,14 @@ export interface Company {
 
 export type PackType = "free" | "paid" | number;
 export type FeaturedType = "free" | true | false;
+
+export type AdStatus =
+  | "pending"
+  | "active"
+  | "archived"
+  | "banned"
+  | "rejected"
+  | "abandoned";
 
 export interface AdState {
   step: number;

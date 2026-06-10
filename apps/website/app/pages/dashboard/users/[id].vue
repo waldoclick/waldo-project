@@ -105,7 +105,7 @@
           <CardInfoDashboard
             v-if="item"
             title="RUT empresa"
-            :description="formatRut(item.business_rut)"
+            :description="item.business_rut ? formatRut(item.business_rut) : '--'"
           />
           <CardInfoDashboard
             v-if="item"
@@ -153,15 +153,9 @@
 import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
 import { formatFullName, formatAddress, formatBoolean } from "@/utils/string";
-import HeroDefault from "@/components/HeroDefault.vue";
-import BoxContent from "@/components/BoxContent.vue";
-import BoxInformation from "@/components/BoxInformation.vue";
-import CardInfo from "@/components/CardInfo.vue";
-import UserAnnouncements from "@/components/UserAnnouncements.vue";
-import UserFeatured from "@/components/UserFeatured.vue";
-import UserReservations from "@/components/UserReservations.vue";
 import { useRut } from "@/composables/useRut";
 import type { User, UserRelation } from "@/types/user";
+import { formatDate, formatDateShort } from "@/utils/date";
 
 definePageMeta({
   layout: "dashboard",
@@ -178,7 +172,7 @@ const breadcrumbs = computed(() => [
   ...(item.value?.username ? [{ label: item.value.username }] : []),
 ]);
 
-const getRelationName = (relation?: UserRelation) => {
+const getRelationName = (relation?: UserRelation | null) => {
   if (!relation) return "--";
   if (typeof relation === "string") return relation;
   if (relation.name) return relation.name;

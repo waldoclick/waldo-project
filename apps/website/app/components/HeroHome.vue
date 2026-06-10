@@ -30,5 +30,4 @@
 
 <script setup lang="ts">
 import PictureDefault from "@/components/PictureDefault.vue";
-import SearchDefault from "@/components/SearchDefault.vue";
 </script>

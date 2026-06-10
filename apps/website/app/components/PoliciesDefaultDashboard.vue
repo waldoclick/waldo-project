@@ -1,11 +1,11 @@
 <template>
-  <section class="policies policies--default">
-    <div class="policies--default__container">
-      <div class="policies--default__header">
+  <section class="policies policies--dashboard">
+    <div class="policies--dashboard__container">
+      <div class="policies--dashboard__header">
         <SearchDefaultDashboard
           :model-value="settingsStore.policies.searchTerm"
           placeholder="Buscar Politicas..."
-          class="policies--default__search"
+          class="policies--dashboard__search"
           @update:model-value="
             (value: string) => settingsStore.setSearchTerm(section, value)
           "
@@ -13,16 +13,16 @@
         <FilterDefault
           :model-value="filters"
           :sort-options="sortOptions"
-          class="policies--default__filters"
+          class="policies--dashboard__filters"
           @update:model-value="handleFiltersChange"
         />
       </div>
 
-      <p v-if="!isDraggable" class="policies--default__drag-note">
+      <p v-if="!isDraggable" class="policies--dashboard__drag-note">
         El arrastre para reordenar no esta disponible mientras se filtra.
       </p>
 
-      <div class="policies--default__table-wrapper">
+      <div class="policies--dashboard__table-wrapper">
         <div class="table table--default">
           <table class="table--default__table">
             <thead class="table--default__header">
@@ -41,7 +41,7 @@
               v-model="allPolicies"
               tag="tbody"
               item-key="id"
-              handle=".policies--default__drag"
+              handle=".policies--dashboard__drag"
               :disabled="!isDraggable"
               class="table--default__body"
               @end="handleReorder"
@@ -50,14 +50,14 @@
                 <TableRow :key="policy.id">
                   <TableCell>
                     <button
-                      class="policies--default__drag"
+                      class="policies--dashboard__drag"
                       :class="{
-                        'policies--default__drag--disabled': !isDraggable,
+                        'policies--dashboard__drag--disabled': !isDraggable,
                       }"
                       :disabled="!isDraggable"
                       title="Arrastrar para reordenar"
                     >
-                      <GripVertical class="policies--default__drag__icon" />
+                      <GripVertical class="policies--dashboard__drag__icon" />
                     </button>
                   </TableCell>
                   <TableCell>{{ policy.order ?? "-" }}</TableCell>
@@ -69,11 +69,11 @@
                           ? stripHtml(policy.title)
                           : ''
                       "
-                      class="policies--default__question"
+                      class="policies--dashboard__question"
                     >
                       {{ truncateText(policy.title, 60) }}
                     </div>
-                    <div v-else class="policies--default__question">-</div>
+                    <div v-else class="policies--dashboard__question">-</div>
                   </TableCell>
                   <TableCell>
                     <div
@@ -83,28 +83,28 @@
                           ? stripHtml(policy.text)
                           : ''
                       "
-                      class="policies--default__answer"
+                      class="policies--dashboard__answer"
                     >
                       {{ truncateText(policy.text, 80) }}
                     </div>
-                    <div v-else class="policies--default__answer">-</div>
+                    <div v-else class="policies--dashboard__answer">-</div>
                   </TableCell>
                   <TableCell>{{ formatDate(policy.updatedAt) }}</TableCell>
                   <TableCell align="right">
-                    <div class="policies--default__actions">
+                    <div class="policies--dashboard__actions">
                       <button
-                        class="policies--default__action"
+                        class="policies--dashboard__action"
                         title="Ver Politica"
                         @click="handleViewPolicy(policy.documentId)"
                       >
-                        <Eye class="policies--default__action__icon" />
+                        <Eye class="policies--dashboard__action__icon" />
                       </button>
                       <button
-                        class="policies--default__action"
+                        class="policies--dashboard__action"
                         title="Editar Politica"
                         @click="handleEditPolicy(policy.documentId)"
                       >
-                        <Pencil class="policies--default__action__icon" />
+                        <Pencil class="policies--dashboard__action__icon" />
                       </button>
                     </div>
                   </TableCell>
@@ -116,23 +116,23 @@
 
         <div
           v-if="allPolicies.length === 0 && !loading"
-          class="policies--default__empty"
+          class="policies--dashboard__empty"
         >
           <p>No se encontraron politicas</p>
         </div>
 
-        <div v-if="loading" class="policies--default__loading">
+        <div v-if="loading" class="policies--dashboard__loading">
           <p>Cargando politicas...</p>
         </div>
       </div>
 
-      <div class="policies--default__footer">
-        <p v-if="!loading" class="policies--default__count">
+      <div class="policies--dashboard__footer">
+        <p v-if="!loading" class="policies--dashboard__count">
           {{ allPolicies.length }} registro{{
             allPolicies.length !== 1 ? "s" : ""
           }}
         </p>
-        <p v-if="saving" class="policies--default__saving">
+        <p v-if="saving" class="policies--dashboard__saving">
           Guardando orden...
         </p>
       </div>
@@ -146,10 +146,7 @@ import { useRouter } from "vue-router";
 import { Eye, Pencil, GripVertical } from "lucide-vue-next";
 import draggable from "vuedraggable";
 import { useSettingsStore } from "@/stores/settings.store";
-import SearchDefault from "@/components/SearchDefault.vue";
-import FilterDefault from "@/components/FilterDefault.vue";
-import TableRow from "@/components/TableRow.vue";
-import TableCell from "@/components/TableCell.vue";
+import { formatDate } from "@/utils/date";
 
 interface Policy {
   id: number;

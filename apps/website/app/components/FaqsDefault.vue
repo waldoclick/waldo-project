@@ -151,11 +151,7 @@ import { useRouter } from "vue-router";
 import { Eye, Pencil, GripVertical } from "lucide-vue-next";
 import draggable from "vuedraggable";
 import { useSettingsStore } from "@/stores/settings.store";
-import SearchDefault from "@/components/SearchDefault.vue";
-import FilterDefault from "@/components/FilterDefault.vue";
-import TableRow from "@/components/TableRow.vue";
-import TableCell from "@/components/TableCell.vue";
-import BadgeDefault from "@/components/BadgeDefault.vue";
+import { formatDate } from "@/utils/date";
 
 interface Faq {
   id: number;

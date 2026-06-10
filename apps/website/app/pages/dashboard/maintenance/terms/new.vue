@@ -15,9 +15,6 @@
 </template>
 
 <script setup lang="ts">
-import HeroDefault from "@/components/HeroDefault.vue";
-import BoxContent from "@/components/BoxContent.vue";
-import BoxInformation from "@/components/BoxInformation.vue";
 import FormTerm from "@/components/FormTerm.vue";
 
 definePageMeta({

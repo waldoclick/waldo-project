@@ -74,7 +74,6 @@
 
 <script setup>
 import { computed } from "vue";
-import CardInfo from "@/components/CardInfo.vue";
 import { Edit as IconEdit } from "lucide-vue-next";
 
 const user = useStrapiUser();

@@ -39,7 +39,6 @@
 
 <script setup lang="ts">
 import type { Article } from "@/types/article";
-import GalleryDefault from "@/components/GalleryDefault.vue";
 import ShareDefault from "@/components/ShareDefault.vue";
 import { useSanitize } from "@/composables/useSanitize";
 

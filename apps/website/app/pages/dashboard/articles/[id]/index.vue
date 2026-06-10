@@ -105,11 +105,8 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
-import HeroDefault from "@/components/HeroDefault.vue";
-import BoxContent from "@/components/BoxContent.vue";
-import BoxInformation from "@/components/BoxInformation.vue";
-import CardInfo from "@/components/CardInfo.vue";
-import GalleryDefault from "@/components/GalleryDefault.vue";
+import { formatDate } from "@/utils/date";
+import type { GalleryItem } from "@/types/ad";
 
 interface MediaItem {
   id?: number;
@@ -181,13 +178,13 @@ const { data: articleData } = await useAsyncData(
 
 article.value = (articleData.value as ArticleData) ?? null;
 
-const coverImages = computed<MediaItem[]>(() => {
+const coverImages = computed<GalleryItem[]>(() => {
   const cover = article.value?.cover;
   if (!cover) return [];
-  return Array.isArray(cover) ? cover : [cover];
+  return (Array.isArray(cover) ? cover : [cover]) as unknown as GalleryItem[];
 });
 
-const galleryImages = computed<MediaItem[]>(() => article.value?.gallery ?? []);
+const galleryImages = computed<GalleryItem[]>(() => (article.value?.gallery ?? []) as unknown as GalleryItem[]);
 </script>
 
 <style scoped>

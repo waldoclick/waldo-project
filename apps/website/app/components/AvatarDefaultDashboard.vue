@@ -16,17 +16,10 @@
 import { computed } from "vue";
 import type { User } from "@/types/user";
 
-interface UserWithAvatar extends User {
-  avatar?: {
-    url?: string;
-    formats?: Record<string, { url: string } | undefined>;
-  };
-}
-
 // Define las propiedades del componente
 const props = defineProps<{
   size?: string;
-  user?: UserWithAvatar;
+  user?: User;
 }>();
 
 // Define las propiedades con valores por defecto
@@ -43,7 +36,7 @@ const loggedUser = useStrapiUser();
 
 // Computed para obtener las iniciales
 const getInitials = computed(() => {
-  const user = props.user || loggedUser.value;
+  const user = props.user || (loggedUser.value as User | null);
   const firstname = user?.firstname || "";
   const lastname = user?.lastname || "";
   if (!firstname && !lastname) {
@@ -57,8 +50,8 @@ const getInitials = computed(() => {
 
 // Computed para obtener el usuario actual
 const user = computed(
-  (): UserWithAvatar | null =>
-    props.user || (loggedUser.value as UserWithAvatar | null),
+  (): User | null =>
+    props.user || (loggedUser.value as User | null),
 );
 
 // Computed para obtener la URL del avatar

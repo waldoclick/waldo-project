@@ -110,14 +110,9 @@
 import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Eye, ExternalLink, Star } from "lucide-vue-next";
-import type { Ad, AdGalleryItem } from "@/types/ad";
+import type { Ad, GalleryItem } from "@/types/ad";
 import { useSettingsStore } from "@/stores/settings.store";
-import SearchDefault from "@/components/SearchDefault.vue";
-import FilterDefault from "@/components/FilterDefault.vue";
-import TableDefault from "@/components/TableDefault.vue";
-import TableRow from "@/components/TableRow.vue";
-import TableCell from "@/components/TableCell.vue";
-import PaginationDefault from "@/components/PaginationDefault.vue";
+import { formatDate } from "@/utils/date";
 
 // SettingsState section keys
 type SettingsSection =
@@ -266,7 +261,7 @@ const sortOptions = [
 
 const { transformUrl } = useImageProxy();
 
-const getImageUrl = (image: AdGalleryItem) => {
+const getImageUrl = (image: GalleryItem) => {
   if (!image) return "";
   const imageUrl = image.formats?.thumbnail?.url || image.url;
   if (!imageUrl) return "";

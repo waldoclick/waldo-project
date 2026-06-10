@@ -1,11 +1,11 @@
 <template>
-  <section class="terms terms--default">
-    <div class="terms--default__container">
-      <div class="terms--default__header">
+  <section class="terms terms--dashboard">
+    <div class="terms--dashboard__container">
+      <div class="terms--dashboard__header">
         <SearchDefaultDashboard
           :model-value="settingsStore.terms.searchTerm"
           placeholder="Buscar Condiciones..."
-          class="terms--default__search"
+          class="terms--dashboard__search"
           @update:model-value="
             (value: string) => settingsStore.setSearchTerm(section, value)
           "
@@ -13,16 +13,16 @@
         <FilterDefault
           :model-value="filters"
           :sort-options="sortOptions"
-          class="terms--default__filters"
+          class="terms--dashboard__filters"
           @update:model-value="handleFiltersChange"
         />
       </div>
 
-      <p v-if="!isDraggable" class="terms--default__drag-note">
+      <p v-if="!isDraggable" class="terms--dashboard__drag-note">
         El arrastre para reordenar no esta disponible mientras se filtra.
       </p>
 
-      <div class="terms--default__table-wrapper">
+      <div class="terms--dashboard__table-wrapper">
         <div class="table table--default">
           <table class="table--default__table">
             <thead class="table--default__header">
@@ -41,7 +41,7 @@
               v-model="allTerms"
               tag="tbody"
               item-key="id"
-              handle=".terms--default__drag"
+              handle=".terms--dashboard__drag"
               :disabled="!isDraggable"
               class="table--default__body"
               @end="handleReorder"
@@ -50,14 +50,14 @@
                 <TableRow :key="term.id">
                   <TableCell>
                     <button
-                      class="terms--default__drag"
+                      class="terms--dashboard__drag"
                       :class="{
-                        'terms--default__drag--disabled': !isDraggable,
+                        'terms--dashboard__drag--disabled': !isDraggable,
                       }"
                       :disabled="!isDraggable"
                       title="Arrastrar para reordenar"
                     >
-                      <GripVertical class="terms--default__drag__icon" />
+                      <GripVertical class="terms--dashboard__drag__icon" />
                     </button>
                   </TableCell>
                   <TableCell>{{ term.order ?? "-" }}</TableCell>
@@ -69,11 +69,11 @@
                           ? stripHtml(term.title)
                           : ''
                       "
-                      class="terms--default__question"
+                      class="terms--dashboard__question"
                     >
                       {{ truncateText(term.title, 60) }}
                     </div>
-                    <div v-else class="terms--default__question">-</div>
+                    <div v-else class="terms--dashboard__question">-</div>
                   </TableCell>
                   <TableCell>
                     <div
@@ -83,28 +83,28 @@
                           ? stripHtml(term.text)
                           : ''
                       "
-                      class="terms--default__answer"
+                      class="terms--dashboard__answer"
                     >
                       {{ truncateText(term.text, 80) }}
                     </div>
-                    <div v-else class="terms--default__answer">-</div>
+                    <div v-else class="terms--dashboard__answer">-</div>
                   </TableCell>
                   <TableCell>{{ formatDate(term.updatedAt) }}</TableCell>
                   <TableCell align="right">
-                    <div class="terms--default__actions">
+                    <div class="terms--dashboard__actions">
                       <button
-                        class="terms--default__action"
+                        class="terms--dashboard__action"
                         title="Ver Condicion"
                         @click="handleViewTerm(term.documentId)"
                       >
-                        <Eye class="terms--default__action__icon" />
+                        <Eye class="terms--dashboard__action__icon" />
                       </button>
                       <button
-                        class="terms--default__action"
+                        class="terms--dashboard__action"
                         title="Editar Condicion"
                         @click="handleEditTerm(term.documentId)"
                       >
-                        <Pencil class="terms--default__action__icon" />
+                        <Pencil class="terms--dashboard__action__icon" />
                       </button>
                     </div>
                   </TableCell>
@@ -116,21 +116,21 @@
 
         <div
           v-if="allTerms.length === 0 && !loading"
-          class="terms--default__empty"
+          class="terms--dashboard__empty"
         >
           <p>No se encontraron condiciones</p>
         </div>
 
-        <div v-if="loading" class="terms--default__loading">
+        <div v-if="loading" class="terms--dashboard__loading">
           <p>Cargando condiciones...</p>
         </div>
       </div>
 
-      <div class="terms--default__footer">
-        <p v-if="!loading" class="terms--default__count">
+      <div class="terms--dashboard__footer">
+        <p v-if="!loading" class="terms--dashboard__count">
           {{ allTerms.length }} registro{{ allTerms.length !== 1 ? "s" : "" }}
         </p>
-        <p v-if="saving" class="terms--default__saving">Guardando orden...</p>
+        <p v-if="saving" class="terms--dashboard__saving">Guardando orden...</p>
       </div>
     </div>
   </section>
@@ -142,10 +142,7 @@ import { useRouter } from "vue-router";
 import { Eye, Pencil, GripVertical } from "lucide-vue-next";
 import draggable from "vuedraggable";
 import { useSettingsStore } from "@/stores/settings.store";
-import SearchDefault from "@/components/SearchDefault.vue";
-import FilterDefault from "@/components/FilterDefault.vue";
-import TableRow from "@/components/TableRow.vue";
-import TableCell from "@/components/TableCell.vue";
+import { formatDate } from "@/utils/date";
 
 interface Term {
   id: number;

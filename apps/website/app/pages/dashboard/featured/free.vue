@@ -20,7 +20,6 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import HeroDefault from "@/components/HeroDefault.vue";
 import FeaturedFree from "@/components/FeaturedFree.vue";
 
 definePageMeta({

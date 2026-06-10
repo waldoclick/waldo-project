@@ -89,13 +89,6 @@ import { Eye } from "lucide-vue-next";
 import { formatDate } from "@/utils/date";
 import { formatCurrency } from "@/utils/price";
 import { useSettingsStore } from "@/stores/settings.store";
-import SearchDefault from "@/components/SearchDefault.vue";
-import FilterDefault from "@/components/FilterDefault.vue";
-import TableDefault from "@/components/TableDefault.vue";
-import TableRow from "@/components/TableRow.vue";
-import TableCell from "@/components/TableCell.vue";
-import BadgeDefault from "@/components/BadgeDefault.vue";
-import PaginationDefault from "@/components/PaginationDefault.vue";
 import type {
   SubscriptionPayment,
   SubscriptionPaymentStatus,

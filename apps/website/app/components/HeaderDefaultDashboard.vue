@@ -1,12 +1,12 @@
 <template>
   <header
     ref="header"
-    class="header header--default"
-    :class="{ 'header--default--hidden': isHeaderHidden }"
+    class="header header--dashboard"
+    :class="{ 'header--dashboard--hidden': isHeaderHidden }"
   >
-    <div class="header--default__left">
+    <div class="header--dashboard__left">
       <button
-        class="header--default__hamburger"
+        class="header--dashboard__hamburger"
         :aria-label="sidebarOpen ? 'Cerrar menú' : 'Abrir menú'"
         @click="emit('toggle-sidebar')"
       >
@@ -14,7 +14,7 @@
         <Menu v-else :size="24" />
       </button>
     </div>
-    <div class="header--default__right">
+    <div class="header--dashboard__right">
       <ToolbarDefault v-if="user" />
       <DropdownUser v-if="user" />
     </div>
@@ -25,8 +25,6 @@
 import { ref, watch } from "vue";
 import { useScroll } from "@vueuse/core";
 import { Menu, X } from "lucide-vue-next";
-import ToolbarDefault from "@/components/ToolbarDefault.vue";
-import DropdownUser from "@/components/DropdownUser.vue";
 
 defineProps<{ sidebarOpen: boolean }>();
 const emit = defineEmits<{ (e: "toggle-sidebar"): void }>();

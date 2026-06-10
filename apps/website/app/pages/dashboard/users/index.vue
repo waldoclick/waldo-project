@@ -6,7 +6,6 @@
 </template>
 
 <script setup lang="ts">
-import HeroDefault from "@/components/HeroDefault.vue";
 import UsersDefault from "@/components/UsersDefault.vue";
 
 definePageMeta({

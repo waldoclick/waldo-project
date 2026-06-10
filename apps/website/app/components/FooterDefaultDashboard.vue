@@ -1,5 +1,5 @@
 <template>
-  <footer class="footer footer--default">
+  <footer class="footer footer--dashboard">
     <p>© {{ currentYear }} Waldo.click®</p>
   </footer>
 </template>

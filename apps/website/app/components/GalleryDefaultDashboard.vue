@@ -1,5 +1,5 @@
 <template>
-  <div class="gallery gallery--default">
+  <div class="gallery gallery--dashboard">
     <client-only>
       <VueEasyLightbox
         :visible="visible"
@@ -10,17 +10,17 @@
       />
     </client-only>
     <div
-      class="gallery--default__container"
-      :class="`gallery--default__container--cols-${columns}`"
+      class="gallery--dashboard__container"
+      :class="`gallery--dashboard__container--cols-${columns}`"
     >
       <div
         v-for="(image, index) in images"
         :key="image.id ?? index"
-        class="gallery--default__item"
+        class="gallery--dashboard__item"
       >
         <button
           type="button"
-          class="gallery--default__delete"
+          class="gallery--dashboard__delete"
           aria-label="Eliminar imagen"
           @click.stop="handleImageDelete(image, index)"
         >
@@ -29,7 +29,7 @@
         <img
           :src="getImageUrl(image)"
           :alt="`${altPrefix} - Imagen ${index + 1}`"
-          class="gallery--default__image"
+          class="gallery--dashboard__image"
           @click="handleImageClick(index)"
         />
       </div>
@@ -43,11 +43,11 @@ import { ref, computed } from "vue";
 import VueEasyLightbox from "vue-easy-lightbox/dist/external-css/vue-easy-lightbox.esm.min.js";
 import { useImageProxy } from "@/composables/useImage";
 import { X as IconX } from "lucide-vue-next";
-import type { AdGalleryItem } from "@/types/ad";
+import type { GalleryItem } from "@/types/ad";
 
 const props = defineProps({
   images: {
-    type: Array as () => AdGalleryItem[],
+    type: Array as () => GalleryItem[],
     required: true,
     default: () => [],
   },
@@ -66,7 +66,7 @@ const emit = defineEmits<{
   (
     e: "image-delete",
     payload: {
-      image: AdGalleryItem;
+      image: GalleryItem;
       index: number;
     },
   ): void;
@@ -85,7 +85,7 @@ const imgs = computed(() =>
     : [],
 );
 
-const getImageUrl = (image: AdGalleryItem) => {
+const getImageUrl = (image: GalleryItem) => {
   if (!image) return "";
   // Usar formato thumbnail si existe, sino la URL original
   const imageUrl = image.formats?.thumbnail?.url || image.url;
@@ -102,7 +102,7 @@ const handleImageClick = (imageIndex: number) => {
   visible.value = true;
 };
 
-const handleImageDelete = (image: AdGalleryItem, imageIndex: number) => {
+const handleImageDelete = (image: GalleryItem, imageIndex: number) => {
   emit("image-delete", { image, index: imageIndex });
 };
 </script>

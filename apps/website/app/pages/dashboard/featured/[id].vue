@@ -59,10 +59,7 @@ import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
 import { formatCurrency } from "@/utils/price";
 import { formatDays } from "@/utils/string";
-import HeroDefault from "@/components/HeroDefault.vue";
-import BoxContent from "@/components/BoxContent.vue";
-import BoxInformation from "@/components/BoxInformation.vue";
-import CardInfo from "@/components/CardInfo.vue";
+import { formatDate } from "@/utils/date";
 
 interface FeaturedRecord {
   id: number;

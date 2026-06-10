@@ -1,11 +1,11 @@
 <template>
-  <section class="packs packs--default">
-    <div class="packs--default__container">
-      <div class="packs--default__header">
+  <section class="packs packs--dashboard">
+    <div class="packs--dashboard__container">
+      <div class="packs--dashboard__header">
         <SearchDefaultDashboard
           :model-value="settingsStore.packs.searchTerm"
           placeholder="Buscar packs..."
-          class="packs--default__search"
+          class="packs--dashboard__search"
           @update:model-value="
             (value: string) => settingsStore.setSearchTerm(section, value)
           "
@@ -14,17 +14,17 @@
           :model-value="filters"
           :sort-options="sortOptions"
           :page-sizes="[10, 25, 50, 100]"
-          class="packs--default__filters"
+          class="packs--dashboard__filters"
           @update:model-value="handleFiltersChange"
         />
       </div>
 
-      <div class="packs--default__table-wrapper">
+      <div class="packs--dashboard__table-wrapper">
         <TableDefault :columns="tableColumns">
           <TableRow v-for="pack in paginatedPacks" :key="pack.id">
             <TableCell>{{ pack.id }}</TableCell>
             <TableCell>
-              <div class="packs--default__name">
+              <div class="packs--dashboard__name">
                 {{ pack.name || "-" }}
               </div>
             </TableCell>
@@ -38,20 +38,20 @@
             <TableCell>{{ pack.total_features || 0 }} destacados</TableCell>
             <TableCell>{{ formatDate(pack.createdAt) }}</TableCell>
             <TableCell align="right">
-              <div class="packs--default__actions">
+              <div class="packs--dashboard__actions">
                 <button
-                  class="packs--default__action"
+                  class="packs--dashboard__action"
                   title="Ver pack"
                   @click="handleViewPack(pack.documentId)"
                 >
-                  <Eye class="packs--default__action__icon" />
+                  <Eye class="packs--dashboard__action__icon" />
                 </button>
                 <button
-                  class="packs--default__action"
+                  class="packs--dashboard__action"
                   title="Editar pack"
                   @click="handleEditPack(pack.documentId)"
                 >
-                  <Pencil class="packs--default__action__icon" />
+                  <Pencil class="packs--dashboard__action__icon" />
                 </button>
               </div>
             </TableCell>
@@ -60,12 +60,12 @@
 
         <div
           v-if="paginatedPacks.length === 0 && !loading"
-          class="packs--default__empty"
+          class="packs--dashboard__empty"
         >
           <p>No se encontraron packs</p>
         </div>
 
-        <div v-if="loading" class="packs--default__loading">
+        <div v-if="loading" class="packs--dashboard__loading">
           <p>Cargando packs...</p>
         </div>
       </div>
@@ -75,7 +75,7 @@
         :total-pages="totalPages"
         :total-records="totalRecords"
         :page-size="settingsStore.packs.pageSize"
-        class="packs--default__pagination"
+        class="packs--dashboard__pagination"
         @page-change="
           (page: number) => settingsStore.setCurrentPage(section, page)
         "
@@ -90,14 +90,8 @@ import { useRouter } from "vue-router";
 import { Eye, Pencil } from "lucide-vue-next";
 import { formatCurrency } from "@/utils/price";
 import { useSettingsStore } from "@/stores/settings.store";
-import SearchDefault from "@/components/SearchDefault.vue";
-import FilterDefault from "@/components/FilterDefault.vue";
-import TableDefault from "@/components/TableDefault.vue";
-import TableRow from "@/components/TableRow.vue";
-import TableCell from "@/components/TableCell.vue";
-import BadgeDefault from "@/components/BadgeDefault.vue";
-import PaginationDefault from "@/components/PaginationDefault.vue";
 import type { Pack } from "@/types/pack";
+import { formatDate } from "@/utils/date";
 
 const settingsStore = useSettingsStore();
 const section = "packs" as const;

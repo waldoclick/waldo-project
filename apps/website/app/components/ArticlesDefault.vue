@@ -99,13 +99,7 @@ import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Eye, Pencil, Trash2 } from "lucide-vue-next";
 import { useSettingsStore } from "@/stores/settings.store";
-import SearchDefault from "@/components/SearchDefault.vue";
-import FilterDefault from "@/components/FilterDefault.vue";
-import TableDefault from "@/components/TableDefault.vue";
-import TableRow from "@/components/TableRow.vue";
-import TableCell from "@/components/TableCell.vue";
-import BadgeDefault from "@/components/BadgeDefault.vue";
-import PaginationDefault from "@/components/PaginationDefault.vue";
+import { formatDate } from "@/utils/date";
 
 interface Article {
   id: number;

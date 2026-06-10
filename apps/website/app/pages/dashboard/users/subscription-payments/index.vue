@@ -9,7 +9,6 @@
 </template>
 
 <script setup lang="ts">
-import HeroDefault from "@/components/HeroDefault.vue";
 import SubscriptionPaymentsDefault from "@/components/SubscriptionPaymentsDefault.vue";
 
 definePageMeta({

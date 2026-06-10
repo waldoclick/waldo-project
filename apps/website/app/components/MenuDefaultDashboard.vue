@@ -1,109 +1,109 @@
 <template>
-  <nav class="menu menu--default">
-    <ul class="menu--default__list">
+  <nav class="menu menu--dashboard">
+    <ul class="menu--dashboard__list">
       <!-- Dashboard -->
       <li
-        class="menu--default__item"
-        :class="{ 'menu--default__item--active': isRouteActive('/') }"
+        class="menu--dashboard__item"
+        :class="{ 'menu--dashboard__item--active': isRouteActive('/') }"
       >
-        <NuxtLink to="/" class="menu--default__link">
-          <LayoutDashboard class="menu--default__icon" />
+        <NuxtLink to="/" class="menu--dashboard__link">
+          <LayoutDashboard class="menu--dashboard__icon" />
           <span>Dashboard</span>
         </NuxtLink>
       </li>
 
       <!-- Órdenes -->
       <li
-        class="menu--default__item"
-        :class="{ 'menu--default__item--active': isRouteActive('/orders') }"
+        class="menu--dashboard__item"
+        :class="{ 'menu--dashboard__item--active': isRouteActive('/orders') }"
       >
-        <NuxtLink to="/orders" class="menu--default__link">
-          <ShoppingCart class="menu--default__icon" />
+        <NuxtLink to="/orders" class="menu--dashboard__link">
+          <ShoppingCart class="menu--dashboard__icon" />
           <span>Órdenes</span>
         </NuxtLink>
       </li>
 
       <!-- Anuncios -->
       <li
-        class="menu--default__item"
+        class="menu--dashboard__item"
         :class="{
-          'menu--default__item--active': isRouteActive('/ads'),
-          'menu--default__item--expanded': openMenu === 'ads',
+          'menu--dashboard__item--active': isRouteActive('/ads'),
+          'menu--dashboard__item--expanded': openMenu === 'ads',
         }"
       >
         <button
-          class="menu--default__link menu--default__link--button"
+          class="menu--dashboard__link menu--dashboard__link--button"
           @click="toggleMenu('ads')"
         >
-          <FileText class="menu--default__icon" />
+          <FileText class="menu--dashboard__icon" />
           <span>Anuncios</span>
-          <ChevronDown v-if="openMenu === 'ads'" class="menu--default__arrow" />
-          <ChevronRight v-else class="menu--default__arrow" />
+          <ChevronDown v-if="openMenu === 'ads'" class="menu--dashboard__arrow" />
+          <ChevronRight v-else class="menu--dashboard__arrow" />
         </button>
-        <ul v-if="openMenu === 'ads'" class="menu--default__sublist">
+        <ul v-if="openMenu === 'ads'" class="menu--dashboard__sublist">
           <li
-            class="menu--default__subitem"
+            class="menu--dashboard__subitem"
             :class="{
-              'menu--default__subitem--active': isRouteActive('/ads/pending'),
+              'menu--dashboard__subitem--active': isRouteActive('/ads/pending'),
             }"
           >
-            <NuxtLink to="/ads/pending" class="menu--default__sublink">
-              <Clock class="menu--default__subicon" />
+            <NuxtLink to="/ads/pending" class="menu--dashboard__sublink">
+              <Clock class="menu--dashboard__subicon" />
               <span>Pendientes</span>
             </NuxtLink>
           </li>
           <li
-            class="menu--default__subitem"
+            class="menu--dashboard__subitem"
             :class="{
-              'menu--default__subitem--active': isRouteActive('/ads/active'),
+              'menu--dashboard__subitem--active': isRouteActive('/ads/active'),
             }"
           >
-            <NuxtLink to="/ads/active" class="menu--default__sublink">
-              <CheckCircle class="menu--default__subicon" />
+            <NuxtLink to="/ads/active" class="menu--dashboard__sublink">
+              <CheckCircle class="menu--dashboard__subicon" />
               <span>Activos</span>
             </NuxtLink>
           </li>
           <li
-            class="menu--default__subitem"
+            class="menu--dashboard__subitem"
             :class="{
-              'menu--default__subitem--active': isRouteActive('/ads/expired'),
+              'menu--dashboard__subitem--active': isRouteActive('/ads/expired'),
             }"
           >
-            <NuxtLink to="/ads/expired" class="menu--default__sublink">
-              <AlertCircle class="menu--default__subicon" />
+            <NuxtLink to="/ads/expired" class="menu--dashboard__sublink">
+              <AlertCircle class="menu--dashboard__subicon" />
               <span>Expirados</span>
             </NuxtLink>
           </li>
           <li
-            class="menu--default__subitem"
+            class="menu--dashboard__subitem"
             :class="{
-              'menu--default__subitem--active': isRouteActive('/ads/banned'),
+              'menu--dashboard__subitem--active': isRouteActive('/ads/banned'),
             }"
           >
-            <NuxtLink to="/ads/banned" class="menu--default__sublink">
-              <Ban class="menu--default__subicon" />
+            <NuxtLink to="/ads/banned" class="menu--dashboard__sublink">
+              <Ban class="menu--dashboard__subicon" />
               <span>Baneados</span>
             </NuxtLink>
           </li>
           <li
-            class="menu--default__subitem"
+            class="menu--dashboard__subitem"
             :class="{
-              'menu--default__subitem--active': isRouteActive('/ads/rejected'),
+              'menu--dashboard__subitem--active': isRouteActive('/ads/rejected'),
             }"
           >
-            <NuxtLink to="/ads/rejected" class="menu--default__sublink">
-              <XCircle class="menu--default__subicon" />
+            <NuxtLink to="/ads/rejected" class="menu--dashboard__sublink">
+              <XCircle class="menu--dashboard__subicon" />
               <span>Rechazados</span>
             </NuxtLink>
           </li>
           <li
-            class="menu--default__subitem"
+            class="menu--dashboard__subitem"
             :class="{
-              'menu--default__subitem--active': isRouteActive('/ads/abandoned'),
+              'menu--dashboard__subitem--active': isRouteActive('/ads/abandoned'),
             }"
           >
-            <NuxtLink to="/ads/abandoned" class="menu--default__sublink">
-              <XOctagon class="menu--default__subicon" />
+            <NuxtLink to="/ads/abandoned" class="menu--dashboard__sublink">
+              <XOctagon class="menu--dashboard__subicon" />
               <span>Borradores</span>
             </NuxtLink>
           </li>
@@ -112,46 +112,46 @@
 
       <!-- Reservas -->
       <li
-        class="menu--default__item"
+        class="menu--dashboard__item"
         :class="{
-          'menu--default__item--active': isRouteActive('/reservations'),
-          'menu--default__item--expanded': openMenu === 'reservations',
+          'menu--dashboard__item--active': isRouteActive('/reservations'),
+          'menu--dashboard__item--expanded': openMenu === 'reservations',
         }"
       >
         <button
-          class="menu--default__link menu--default__link--button"
+          class="menu--dashboard__link menu--dashboard__link--button"
           @click="toggleMenu('reservations')"
         >
-          <Calendar class="menu--default__icon" />
+          <Calendar class="menu--dashboard__icon" />
           <span>Reservas</span>
           <ChevronDown
             v-if="openMenu === 'reservations'"
-            class="menu--default__arrow"
+            class="menu--dashboard__arrow"
           />
-          <ChevronRight v-else class="menu--default__arrow" />
+          <ChevronRight v-else class="menu--dashboard__arrow" />
         </button>
-        <ul v-if="openMenu === 'reservations'" class="menu--default__sublist">
+        <ul v-if="openMenu === 'reservations'" class="menu--dashboard__sublist">
           <li
-            class="menu--default__subitem"
+            class="menu--dashboard__subitem"
             :class="{
-              'menu--default__subitem--active':
+              'menu--dashboard__subitem--active':
                 isRouteActive('/reservations/used'),
             }"
           >
-            <NuxtLink to="/reservations/used" class="menu--default__sublink">
-              <CheckCircle class="menu--default__subicon" />
+            <NuxtLink to="/reservations/used" class="menu--dashboard__sublink">
+              <CheckCircle class="menu--dashboard__subicon" />
               <span>Usadas</span>
             </NuxtLink>
           </li>
           <li
-            class="menu--default__subitem"
+            class="menu--dashboard__subitem"
             :class="{
-              'menu--default__subitem--active':
+              'menu--dashboard__subitem--active':
                 isRouteActive('/reservations/free'),
             }"
           >
-            <NuxtLink to="/reservations/free" class="menu--default__sublink">
-              <Circle class="menu--default__subicon" />
+            <NuxtLink to="/reservations/free" class="menu--dashboard__sublink">
+              <Circle class="menu--dashboard__subicon" />
               <span>Libres</span>
             </NuxtLink>
           </li>
@@ -160,44 +160,44 @@
 
       <!-- Destacados -->
       <li
-        class="menu--default__item"
+        class="menu--dashboard__item"
         :class="{
-          'menu--default__item--active': isRouteActive('/featured'),
-          'menu--default__item--expanded': openMenu === 'featured',
+          'menu--dashboard__item--active': isRouteActive('/featured'),
+          'menu--dashboard__item--expanded': openMenu === 'featured',
         }"
       >
         <button
-          class="menu--default__link menu--default__link--button"
+          class="menu--dashboard__link menu--dashboard__link--button"
           @click="toggleMenu('featured')"
         >
-          <Star class="menu--default__icon" />
+          <Star class="menu--dashboard__icon" />
           <span>Destacados</span>
           <ChevronDown
             v-if="openMenu === 'featured'"
-            class="menu--default__arrow"
+            class="menu--dashboard__arrow"
           />
-          <ChevronRight v-else class="menu--default__arrow" />
+          <ChevronRight v-else class="menu--dashboard__arrow" />
         </button>
-        <ul v-if="openMenu === 'featured'" class="menu--default__sublist">
+        <ul v-if="openMenu === 'featured'" class="menu--dashboard__sublist">
           <li
-            class="menu--default__subitem"
+            class="menu--dashboard__subitem"
             :class="{
-              'menu--default__subitem--active': isRouteActive('/featured/used'),
+              'menu--dashboard__subitem--active': isRouteActive('/featured/used'),
             }"
           >
-            <NuxtLink to="/featured/used" class="menu--default__sublink">
-              <CheckCircle class="menu--default__subicon" />
+            <NuxtLink to="/featured/used" class="menu--dashboard__sublink">
+              <CheckCircle class="menu--dashboard__subicon" />
               <span>Usados</span>
             </NuxtLink>
           </li>
           <li
-            class="menu--default__subitem"
+            class="menu--dashboard__subitem"
             :class="{
-              'menu--default__subitem--active': isRouteActive('/featured/free'),
+              'menu--dashboard__subitem--active': isRouteActive('/featured/free'),
             }"
           >
-            <NuxtLink to="/featured/free" class="menu--default__sublink">
-              <Circle class="menu--default__subicon" />
+            <NuxtLink to="/featured/free" class="menu--dashboard__sublink">
+              <Circle class="menu--dashboard__subicon" />
               <span>Libres</span>
             </NuxtLink>
           </li>

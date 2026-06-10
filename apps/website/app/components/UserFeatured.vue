@@ -46,10 +46,7 @@ import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { Eye } from "lucide-vue-next";
 import { formatCurrency } from "@/utils/price";
-import TableDefault from "@/components/TableDefault.vue";
-import TableRow from "@/components/TableRow.vue";
-import TableCell from "@/components/TableCell.vue";
-import PaginationDefault from "@/components/PaginationDefault.vue";
+import { formatDate } from "@/utils/date";
 
 interface Featured {
   id: number;

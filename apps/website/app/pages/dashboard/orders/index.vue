@@ -18,7 +18,6 @@
 
 <script setup lang="ts">
 import { Download } from "lucide-vue-next";
-import HeroDefault from "@/components/HeroDefault.vue";
 import OrdersDefault from "@/components/OrdersDefault.vue";
 
 definePageMeta({

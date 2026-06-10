@@ -28,12 +28,9 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
-import HeroDefault from "@/components/HeroDefault.vue";
-import BoxContent from "@/components/BoxContent.vue";
-import BoxInformation from "@/components/BoxInformation.vue";
-import CardInfo from "@/components/CardInfo.vue";
 import FormCommune from "@/components/FormCommune.vue";
 import type { CommuneData } from "@/components/FormCommune.vue";
+import { formatDate } from "@/utils/date";
 
 interface CommuneRecord extends CommuneData {
   createdAt?: string;

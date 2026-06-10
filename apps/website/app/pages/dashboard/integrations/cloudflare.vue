@@ -24,7 +24,6 @@
 </template>
 
 <script setup lang="ts">
-import HeroDefault from "@/components/HeroDefault.vue";
 import CloudflareStats from "@/components/CloudflareStats.vue";
 import CloudflareRequests from "@/components/CloudflareRequests.vue";
 import CloudflareThreats from "@/components/CloudflareThreats.vue";

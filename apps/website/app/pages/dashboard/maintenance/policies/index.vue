@@ -15,7 +15,6 @@
 </template>
 
 <script setup lang="ts">
-import HeroDefault from "@/components/HeroDefault.vue";
 import PoliciesDefault from "@/components/PoliciesDefault.vue";
 
 definePageMeta({

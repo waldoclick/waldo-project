@@ -40,7 +40,6 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted } from "vue";
-import SearchDefault from "@/components/SearchDefault.vue";
 import { useAppStore } from "@/stores/app.store";
 import { X as IconX } from "lucide-vue-next";
 

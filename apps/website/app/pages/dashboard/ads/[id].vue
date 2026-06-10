@@ -96,17 +96,17 @@
           <CardInfoDashboard
             v-if="item"
             title="Categoría"
-            :description="item.category?.name || '--'"
+            :description="getRelationName(item.category)"
           />
           <CardInfoDashboard
             v-if="item"
             title="Condición"
-            :description="item.condition?.name || '--'"
+            :description="getRelationName(item.condition)"
           />
           <CardInfoDashboard
             v-if="item"
             title="Comuna"
-            :description="item.commune?.name || '--'"
+            :description="getRelationName(item.commune)"
           />
           <CardInfoDashboard
             v-if="item"
@@ -204,14 +204,9 @@
 import { ref, computed, onMounted, type Component } from "vue";
 import { formatCurrency } from "@/utils/price";
 import { formatAddress } from "@/utils/string";
-import type { Ad, AdStatus } from "@/types/ad";
+import type { Ad, AdStatus, GalleryItem } from "@/types/ad";
 import { useRoute } from "vue-router";
-import HeroDefault from "@/components/HeroDefault.vue";
-import BoxContent from "@/components/BoxContent.vue";
-import BoxInformation from "@/components/BoxInformation.vue";
-import CardInfo from "@/components/CardInfo.vue";
-import GalleryDefault from "@/components/GalleryDefault.vue";
-import LightboxRazon from "@/components/LightboxRazon.vue";
+import { formatDate } from "@/utils/date";
 import {
   Clock,
   CheckCircle,
@@ -228,6 +223,11 @@ definePageMeta({
 
 const route = useRoute();
 const item = ref<Ad | null>(null);
+
+const getRelationName = (relation: number | { name?: string } | null | undefined): string => {
+  if (!relation || typeof relation === "number") return "--";
+  return relation.name || "--";
+};
 const { public: publicConfig } = useRuntimeConfig();
 const websiteUrl =
   (publicConfig.websiteUrl as string) || "http://localhost:3000";
@@ -365,7 +365,7 @@ const handleBanned = async (reason: string) => {
   }
 };
 
-const handleDeleteImage = async ({ image }: { image: { id?: number } }) => {
+const handleDeleteImage = async ({ image }: { image: GalleryItem; index: number }) => {
   if (!item.value?.id) return;
   if (!image?.id) {
     await Swal.fire(
@@ -388,14 +388,15 @@ const handleDeleteImage = async ({ image }: { image: { id?: number } }) => {
   if (!result.isConfirmed) return;
 
   try {
-    const galleryItems = item.value?.gallery as
+    const galleryItems = item.value?.gallery as unknown as
       | Array<{ id?: number; url: string }>
       | undefined;
     const galleryIds =
       galleryItems
         ?.map((g) => g.id)
         .filter((id): id is number => id !== undefined) || [];
-    const updatedGallery = galleryIds.filter((id: number) => id !== image.id);
+    const imageNumericId = Number(image.id);
+    const updatedGallery = galleryIds.filter((id: number) => id !== imageNumericId);
 
     const adDocumentId =
       item.value?.documentId ||
