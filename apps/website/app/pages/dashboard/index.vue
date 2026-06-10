@@ -14,5 +14,5 @@ definePageMeta({
 });
 
 // Esta página está protegida por el middleware global
-// Si no estás autenticado, serás redirigido a /auth/login
+// Si no estás autenticado, serás redirigido a /login
 </script>

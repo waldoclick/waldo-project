@@ -184,7 +184,7 @@ const handleSubmit = async (values: Record<string, unknown>) => {
 
     // Store pendingToken in transient SSR-safe state, then navigate to verify page
     pendingToken.value = (response as { pendingToken: string }).pendingToken;
-    router.push("/auth/verify-code");
+    router.push("/login");
   } catch (error) {
     const errorMessage = (error as { error?: { message?: string } }).error
       ?.message;

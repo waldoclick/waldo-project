@@ -139,7 +139,7 @@ const startCountdown = () => {
 onMounted(() => {
   // Guard: if no pendingToken, user didn't come from the login form — redirect back
   if (!pendingToken.value) {
-    router.replace("/auth/login");
+    router.replace("/login");
     return;
   }
   startCountdown();
@@ -208,7 +208,7 @@ const handleVerify = async () => {
       : "El código ingresado es incorrecto. Inténtalo de nuevo.";
     Swal.fire("Error de verificación", msg, "error");
     if (fatal) {
-      router.push("/auth/login");
+      router.push("/login");
     } else {
       digits.value = ["", "", "", "", "", ""];
       await nextTick();
