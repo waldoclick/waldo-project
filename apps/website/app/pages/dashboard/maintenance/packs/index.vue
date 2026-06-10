@@ -1,12 +1,12 @@
 <template>
   <div>
-    <HeroDefaultDashboard title="Packs" :breadcrumbs="breadcrumbs">
+    <HeroHeaderDashboard title="Packs" :breadcrumbs="breadcrumbs">
       <template #actions>
         <NuxtLink class="btn btn--primary" to="/maintenance/packs/new">
           Agregar pack
         </NuxtLink>
       </template>
-    </HeroDefaultDashboard>
+    </HeroHeaderDashboard>
     <PacksDashboard />
   </div>
 </template>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeroDefaultDashboard title="Artículos" :breadcrumbs="breadcrumbs">
+    <HeroHeaderDashboard title="Artículos" :breadcrumbs="breadcrumbs">
       <template #actions>
         <button
           class="btn btn--announcement"
@@ -14,7 +14,7 @@
           Agregar artículo
         </NuxtLink>
       </template>
-    </HeroDefaultDashboard>
+    </HeroHeaderDashboard>
     <ArticlesDefault ref="articlesRef" />
     <LightBoxArticles
       :is-open="isLightboxOpen"

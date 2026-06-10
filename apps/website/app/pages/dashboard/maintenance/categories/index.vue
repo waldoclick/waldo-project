@@ -1,12 +1,12 @@
 <template>
   <div>
-    <HeroDefaultDashboard title="Categorías" :breadcrumbs="breadcrumbs">
+    <HeroHeaderDashboard title="Categorías" :breadcrumbs="breadcrumbs">
       <template #actions>
         <NuxtLink class="btn btn--primary" to="/maintenance/categories/new">
           Agregar categoría
         </NuxtLink>
       </template>
-    </HeroDefaultDashboard>
+    </HeroHeaderDashboard>
     <CategoriesDefault />
   </div>
 </template>

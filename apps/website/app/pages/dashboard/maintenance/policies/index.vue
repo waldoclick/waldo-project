@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeroDefaultDashboard
+    <HeroHeaderDashboard
       title="Politicas de Privacidad"
       :breadcrumbs="breadcrumbs"
     >
@@ -9,7 +9,7 @@
           Agregar Politica
         </NuxtLink>
       </template>
-    </HeroDefaultDashboard>
+    </HeroHeaderDashboard>
     <PoliciesDashboard />
   </div>
 </template>

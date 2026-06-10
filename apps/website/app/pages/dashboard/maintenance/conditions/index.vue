@@ -1,12 +1,12 @@
 <template>
   <div>
-    <HeroDefaultDashboard title="Condiciones" :breadcrumbs="breadcrumbs">
+    <HeroHeaderDashboard title="Condiciones" :breadcrumbs="breadcrumbs">
       <template #actions>
         <NuxtLink class="btn btn--primary" to="/maintenance/conditions/new">
           Agregar condición
         </NuxtLink>
       </template>
-    </HeroDefaultDashboard>
+    </HeroHeaderDashboard>
     <ConditionsDefault />
   </div>
 </template>

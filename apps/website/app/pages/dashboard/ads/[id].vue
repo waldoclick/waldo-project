@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeroDefaultDashboard :title="title" :breadcrumbs="breadcrumbs">
+    <HeroHeaderDashboard :title="title" :breadcrumbs="breadcrumbs">
       <template v-if="statusIcon" #titlePrefix>
         <component :is="statusIcon" aria-hidden="true" />
       </template>
@@ -39,7 +39,7 @@
           Banear
         </button>
       </template>
-    </HeroDefaultDashboard>
+    </HeroHeaderDashboard>
     <BoxContent>
       <template #content>
         <BoxInformation

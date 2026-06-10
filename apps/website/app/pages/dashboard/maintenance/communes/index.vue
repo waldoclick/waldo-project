@@ -1,12 +1,12 @@
 <template>
   <div>
-    <HeroDefaultDashboard title="Comunas" :breadcrumbs="breadcrumbs">
+    <HeroHeaderDashboard title="Comunas" :breadcrumbs="breadcrumbs">
       <template #actions>
         <NuxtLink class="btn btn--primary" to="/maintenance/communes/new">
           Agregar comuna
         </NuxtLink>
       </template>
-    </HeroDefaultDashboard>
+    </HeroHeaderDashboard>
     <CommunesDefault />
   </div>
 </template>

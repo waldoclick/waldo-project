@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeroDefaultDashboard
+    <HeroHeaderDashboard
       title="Pagos de subscripción"
       :breadcrumbs="breadcrumbs"
     />

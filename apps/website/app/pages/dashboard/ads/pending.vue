@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeroDefaultDashboard title="Pendientes" :breadcrumbs="breadcrumbs" />
+    <HeroHeaderDashboard title="Pendientes" :breadcrumbs="breadcrumbs" />
     <AdsTable
       endpoint="ads/pendings"
       section="adsPendings"

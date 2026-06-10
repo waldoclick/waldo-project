@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeroDefaultDashboard title="Search Console" :breadcrumbs="breadcrumbs">
+    <HeroHeaderDashboard title="Search Console" :breadcrumbs="breadcrumbs">
       <template #actions>
         <a
           href="https://search.google.com/search-console"
@@ -12,7 +12,7 @@
           Search Console
         </a>
       </template>
-    </HeroDefaultDashboard>
+    </HeroHeaderDashboard>
     <div class="search-console search-console--page">
       <div class="search-console--page__container">
         <SearchConsoleStats />

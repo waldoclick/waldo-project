@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeroDefaultDashboard title="Órdenes" :breadcrumbs="breadcrumbs">
+    <HeroHeaderDashboard title="Órdenes" :breadcrumbs="breadcrumbs">
       <template #actions>
         <button
           class="btn btn--outline"
@@ -11,7 +11,7 @@
           <Download :size="16" />
         </button>
       </template>
-    </HeroDefaultDashboard>
+    </HeroHeaderDashboard>
     <OrdersDefault />
   </div>
 </template>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeroDefaultDashboard title="Mi Perfil" :breadcrumbs="breadcrumbs" />
+    <HeroHeaderDashboard title="Mi Perfil" :breadcrumbs="breadcrumbs" />
     <BoxContent>
       <template #content>
         <BoxInformation title="Editar perfil" :columns="1">

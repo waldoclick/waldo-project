@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeroDefaultDashboard title="Integraciones" :breadcrumbs="breadcrumbs" />
+    <HeroHeaderDashboard title="Integraciones" :breadcrumbs="breadcrumbs" />
   </div>
 </template>
 

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeroDefaultDashboard
+    <HeroHeaderDashboard
       title="Nueva Condicion de Uso"
       :breadcrumbs="breadcrumbs"
     />

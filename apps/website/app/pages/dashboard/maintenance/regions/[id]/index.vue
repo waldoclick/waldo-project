@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeroDefaultDashboard :title="title" :breadcrumbs="breadcrumbs">
+    <HeroHeaderDashboard :title="title" :breadcrumbs="breadcrumbs">
       <template #actions>
         <NuxtLink
           class="btn btn--primary"
@@ -9,7 +9,7 @@
           Editar región
         </NuxtLink>
       </template>
-    </HeroDefaultDashboard>
+    </HeroHeaderDashboard>
     <BoxContent>
       <template #content>
         <BoxInformation title="Información" :columns="2">
