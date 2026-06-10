@@ -392,6 +392,93 @@ export default defineNuxtConfig({
   // y para no hacer fetch a Strapi en build-time (lo que ralentizaba la compilación).
   sitemap: false,
 
+  // Dashboard URL Localization redirects: Spanish legacy dashboard URLs → English equivalents
+  // All rules prefixed with /dashboard/ to avoid clashing with public website routes
+  routeRules: {
+    // Ads (anuncios)
+    "/dashboard/anuncios": {
+      redirect: { to: "/dashboard/ads", statusCode: 301 },
+    },
+    "/dashboard/anuncios/pendientes": {
+      redirect: { to: "/dashboard/ads/pending", statusCode: 301 },
+    },
+    "/dashboard/anuncios/activos": {
+      redirect: { to: "/dashboard/ads/active", statusCode: 301 },
+    },
+    "/dashboard/anuncios/expirados": {
+      redirect: { to: "/dashboard/ads/expired", statusCode: 301 },
+    },
+    "/dashboard/anuncios/baneados": {
+      redirect: { to: "/dashboard/ads/banned", statusCode: 301 },
+    },
+    "/dashboard/anuncios/rechazados": {
+      redirect: { to: "/dashboard/ads/rejected", statusCode: 301 },
+    },
+    "/dashboard/anuncios/abandonados": {
+      redirect: { to: "/dashboard/ads/abandoned", statusCode: 301 },
+    },
+    // Orders (ordenes)
+    "/dashboard/ordenes": {
+      redirect: { to: "/dashboard/orders", statusCode: 301 },
+    },
+    // Reservations (reservas)
+    "/dashboard/reservas": {
+      redirect: { to: "/dashboard/reservations", statusCode: 301 },
+    },
+    "/dashboard/reservas/libres": {
+      redirect: { to: "/dashboard/reservations/free", statusCode: 301 },
+    },
+    "/dashboard/reservas/usadas": {
+      redirect: { to: "/dashboard/reservations/used", statusCode: 301 },
+    },
+    // Featured (destacados)
+    "/dashboard/destacados": {
+      redirect: { to: "/dashboard/featured", statusCode: 301 },
+    },
+    "/dashboard/destacados/libres": {
+      redirect: { to: "/dashboard/featured/free", statusCode: 301 },
+    },
+    "/dashboard/destacados/usados": {
+      redirect: { to: "/dashboard/featured/used", statusCode: 301 },
+    },
+    // Users (usuarios)
+    "/dashboard/usuarios": {
+      redirect: { to: "/dashboard/users", statusCode: 301 },
+    },
+    "/dashboard/usuarios/[id]": {
+      redirect: { to: "/dashboard/users/[id]", statusCode: 301 },
+    },
+    // Account (cuenta)
+    "/dashboard/cuenta": {
+      redirect: { to: "/dashboard/account", statusCode: 301 },
+    },
+    "/dashboard/cuenta/perfil": {
+      redirect: { to: "/dashboard/account/profile", statusCode: 301 },
+    },
+    "/dashboard/cuenta/perfil/editar": {
+      redirect: { to: "/dashboard/account/profile/edit", statusCode: 301 },
+    },
+    "/dashboard/cuenta/cambiar-contrasena": {
+      redirect: { to: "/dashboard/account/change-password", statusCode: 301 },
+    },
+    // Categories (categorias)
+    "/dashboard/categorias": {
+      redirect: { to: "/dashboard/categories", statusCode: 301 },
+    },
+    // Conditions (condiciones)
+    "/dashboard/condiciones": {
+      redirect: { to: "/dashboard/conditions", statusCode: 301 },
+    },
+    // Regions (regiones)
+    "/dashboard/regiones": {
+      redirect: { to: "/dashboard/regions", statusCode: 301 },
+    },
+    // Communes (comunas)
+    "/dashboard/comunas": {
+      redirect: { to: "/dashboard/communes", statusCode: 301 },
+    },
+  },
+
   // Robots Configuration
   robots:
     process.env.BLOCK_SEARCH_ENGINES === "true"
@@ -414,6 +501,7 @@ export default defineNuxtConfig({
             "/pagar/**",
             "/contacto/**",
             "/onboarding/**",
+            "/dashboard/",
           ],
           sitemap: `${
             process.env.BASE_URL || "http://localhost:3000"
@@ -474,6 +562,10 @@ export default defineNuxtConfig({
         "vee-validate",
         "yup",
         "sweetalert2/dist/sweetalert2.js",
+        "qs",
+        "vue-chartjs",
+        "chart.js",
+        "chartjs-plugin-annotation",
       ],
     },
   },
