@@ -6,18 +6,14 @@ export default {
   async find(ctx) {
     const { query } = ctx;
 
-    // Extract pagination parameters
     const page = parseInt(query.pagination?.page || "1", 10);
     const pageSize = parseInt(query.pagination?.pageSize || "25", 10);
 
-    // Build filters
     const filters = query.filters || {};
 
-    // Normalize populate: db.query requires true (not "*") for all relations
     const populate =
       !query.populate || query.populate === "*" ? true : query.populate;
 
-    // Normalize orderBy: db.query requires object { field: dir }, not "field:dir" string
     let orderBy: Record<string, string> = { name: "asc" };
     if (query.sort) {
       const s = Array.isArray(query.sort) ? query.sort[0] : query.sort;
@@ -29,7 +25,6 @@ export default {
       }
     }
 
-    // Get categories with pagination
     const categories = await strapi.db
       .query("api::category.category")
       .findMany({
@@ -40,12 +35,10 @@ export default {
         orderBy,
       });
 
-    // Get total count
     const total = await strapi.db.query("api::category.category").count({
       where: filters,
     });
 
-    // Calculate pagination values
     const pageCount = Math.ceil(total / pageSize);
 
     return {
@@ -63,9 +56,9 @@ export default {
 
   async findOne(ctx) {
     const { id: documentId } = ctx.params;
-    const category = await strapi.db
-      .query("api::category.category")
-      .findOne({ where: { documentId } });
+    const category = await strapi
+      .documents("api::category.category")
+      .findOne({ documentId });
     return { data: category };
   },
 
@@ -80,23 +73,22 @@ export default {
   async update(ctx) {
     const { id: documentId } = ctx.params;
     const { data } = ctx.request.body;
-    const category = await strapi.db
-      .query("api::category.category")
-      .update({ where: { documentId }, data });
+    const category = await strapi
+      .documents("api::category.category")
+      .update({ documentId, data });
     return { data: category };
   },
 
   async delete(ctx) {
     const { id: documentId } = ctx.params;
-    const category = await strapi.db
-      .query("api::category.category")
-      .delete({ where: { documentId } });
+    const category = await strapi
+      .documents("api::category.category")
+      .delete({ documentId });
     return { data: category };
   },
 
   async adCounts(ctx) {
     try {
-      // Fetch all category IDs in one query
       const categories = await strapi.db
         .query("api::category.category")
         .findMany({
@@ -104,8 +96,6 @@ export default {
           limit: -1,
         });
 
-      // Count ads per category using parallel DB queries — one count call
-      // per category, but all launched in parallel (not sequentially)
       const results = await Promise.all(
         categories.map(async (category) => {
           const count = await strapi.db.query("api::ad.ad").count({

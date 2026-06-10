@@ -6,18 +6,14 @@ export default {
   async find(ctx) {
     const { query } = ctx;
 
-    // Extract pagination parameters
     const page = parseInt(query.pagination?.page || "1", 10);
     const pageSize = parseInt(query.pagination?.pageSize || "25", 10);
 
-    // Build filters
     const filters = query.filters || {};
 
-    // Normalize populate: db.query requires true (not "*") for all relations
     const populate =
       !query.populate || query.populate === "*" ? true : query.populate;
 
-    // Normalize orderBy: db.query requires object { field: dir }, not "field:dir" string
     let orderBy: Record<string, string> = { name: "asc" };
     if (query.sort) {
       const s = Array.isArray(query.sort) ? query.sort[0] : query.sort;
@@ -29,7 +25,6 @@ export default {
       }
     }
 
-    // Get conditions with pagination
     const conditions = await strapi.db
       .query("api::condition.condition")
       .findMany({
@@ -40,12 +35,10 @@ export default {
         orderBy,
       });
 
-    // Get total count
     const total = await strapi.db.query("api::condition.condition").count({
       where: filters,
     });
 
-    // Calculate pagination values
     const pageCount = Math.ceil(total / pageSize);
 
     return {
@@ -63,9 +56,9 @@ export default {
 
   async findOne(ctx) {
     const { id: documentId } = ctx.params;
-    const condition = await strapi.db
-      .query("api::condition.condition")
-      .findOne({ where: { documentId } });
+    const condition = await strapi
+      .documents("api::condition.condition")
+      .findOne({ documentId });
     return { data: condition };
   },
 
@@ -80,17 +73,17 @@ export default {
   async update(ctx) {
     const { id: documentId } = ctx.params;
     const { data } = ctx.request.body;
-    const condition = await strapi.db
-      .query("api::condition.condition")
-      .update({ where: { documentId }, data });
+    const condition = await strapi
+      .documents("api::condition.condition")
+      .update({ documentId, data });
     return { data: condition };
   },
 
   async delete(ctx) {
     const { id: documentId } = ctx.params;
-    const condition = await strapi.db
-      .query("api::condition.condition")
-      .delete({ where: { documentId } });
+    const condition = await strapi
+      .documents("api::condition.condition")
+      .delete({ documentId });
     return { data: condition };
   },
 };

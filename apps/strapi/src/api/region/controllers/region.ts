@@ -6,18 +6,14 @@ export default {
   async find(ctx) {
     const { query } = ctx;
 
-    // Extract pagination parameters
     const page = parseInt(query.pagination?.page || "1", 10);
     const pageSize = parseInt(query.pagination?.pageSize || "25", 10);
 
-    // Build filters
     const filters = query.filters || {};
 
-    // Normalize populate: db.query requires true (not "*") for all relations
     const populate =
       !query.populate || query.populate === "*" ? true : query.populate;
 
-    // Normalize orderBy: db.query requires object { field: dir }, not "field:dir" string
     let orderBy: Record<string, string> = { name: "asc" };
     if (query.sort) {
       const s = Array.isArray(query.sort) ? query.sort[0] : query.sort;
@@ -29,7 +25,6 @@ export default {
       }
     }
 
-    // Get regions with pagination
     const regions = await strapi.db.query("api::region.region").findMany({
       where: filters,
       populate: populate as unknown as Record<string, unknown>,
@@ -38,12 +33,10 @@ export default {
       orderBy,
     });
 
-    // Get total count
     const total = await strapi.db.query("api::region.region").count({
       where: filters,
     });
 
-    // Calculate pagination values
     const pageCount = Math.ceil(total / pageSize);
 
     return {
@@ -61,10 +54,9 @@ export default {
 
   async findOne(ctx) {
     const { id: documentId } = ctx.params;
-    const region = await strapi.db.query("api::region.region").findOne({
-      where: { documentId },
-      populate: ["communes"],
-    });
+    const region = await strapi
+      .documents("api::region.region")
+      .findOne({ documentId, populate: ["communes"] });
     return { data: region };
   },
 
@@ -77,17 +69,17 @@ export default {
   async update(ctx) {
     const { id: documentId } = ctx.params;
     const { data } = ctx.request.body;
-    const region = await strapi.db
-      .query("api::region.region")
-      .update({ where: { documentId }, data });
+    const region = await strapi
+      .documents("api::region.region")
+      .update({ documentId, data });
     return { data: region };
   },
 
   async delete(ctx) {
     const { id: documentId } = ctx.params;
-    const region = await strapi.db
-      .query("api::region.region")
-      .delete({ where: { documentId } });
+    const region = await strapi
+      .documents("api::region.region")
+      .delete({ documentId });
     return { data: region };
   },
 };

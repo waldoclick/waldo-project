@@ -6,18 +6,14 @@ export default {
   async find(ctx) {
     const { query } = ctx;
 
-    // Extract pagination parameters
     const page = parseInt(query.pagination?.page || "1", 10);
     const pageSize = parseInt(query.pagination?.pageSize || "25", 10);
 
-    // Build filters
     const filters = query.filters || {};
 
-    // Normalize populate: db.query requires true (not "*") for all relations
     const populate =
       !query.populate || query.populate === "*" ? true : query.populate;
 
-    // Normalize orderBy: db.query requires object { field: dir }, not "field:dir" string
     let orderBy: Record<string, string> = { createdAt: "desc" };
     if (query.sort) {
       const s = Array.isArray(query.sort) ? query.sort[0] : query.sort;
@@ -29,7 +25,6 @@ export default {
       }
     }
 
-    // Get policies with pagination
     const policies = await strapi.db.query("api::policy.policy").findMany({
       where: filters,
       populate: populate as unknown as Record<string, unknown>,
@@ -38,12 +33,10 @@ export default {
       orderBy,
     });
 
-    // Get total count
     const total = await strapi.db.query("api::policy.policy").count({
       where: filters,
     });
 
-    // Calculate pagination values
     const pageCount = Math.ceil(total / pageSize);
 
     return {
@@ -61,9 +54,9 @@ export default {
 
   async findOne(ctx) {
     const { id: documentId } = ctx.params;
-    const policy = await strapi.db
-      .query("api::policy.policy")
-      .findOne({ where: { documentId } });
+    const policy = await strapi
+      .documents("api::policy.policy")
+      .findOne({ documentId });
     return { data: policy };
   },
 
@@ -76,17 +69,17 @@ export default {
   async update(ctx) {
     const { id: documentId } = ctx.params;
     const { data } = ctx.request.body;
-    const policy = await strapi.db
-      .query("api::policy.policy")
-      .update({ where: { documentId }, data });
+    const policy = await strapi
+      .documents("api::policy.policy")
+      .update({ documentId, data });
     return { data: policy };
   },
 
   async delete(ctx) {
     const { id: documentId } = ctx.params;
-    const policy = await strapi.db
-      .query("api::policy.policy")
-      .delete({ where: { documentId } });
+    const policy = await strapi
+      .documents("api::policy.policy")
+      .delete({ documentId });
     return { data: policy };
   },
 
@@ -97,7 +90,6 @@ export default {
     if (!Array.isArray(data) || data.length === 0) {
       return ctx.badRequest("data must be a non-empty array");
     }
-    // Validate every entry
     for (const entry of data) {
       if (!entry.documentId || typeof entry.documentId !== "string") {
         return ctx.badRequest("Every entry must have a string documentId");
@@ -108,8 +100,8 @@ export default {
     }
     await Promise.all(
       data.map((entry) =>
-        strapi.db.query("api::policy.policy").update({
-          where: { documentId: entry.documentId },
+        strapi.documents("api::policy.policy").update({
+          documentId: entry.documentId as string,
           data: { order: entry.order },
         }),
       ),
