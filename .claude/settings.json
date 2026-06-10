@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx sass *)",
+      "Bash(sed -i 's|navigateTo\\(\"/ads/pending\"|navigateTo\\(\"/dashboard/ads/pending\"|g' /home/gab/Code/waldo-project/apps/website/app/pages/dashboard/ads/index.vue)",
+      "Bash(sed -i 's|navigateTo\\(\"/reservations/free\"|navigateTo\\(\"/dashboard/reservations/free\"|g' /home/gab/Code/waldo-project/apps/website/app/pages/dashboard/reservations/index.vue)",
+      "Bash(sed -i 's|navigateTo\\(\"/featured/free\"|navigateTo\\(\"/dashboard/featured/free\"|g' /home/gab/Code/waldo-project/apps/website/app/pages/dashboard/featured/index.vue)",
+      "Bash(sed -i 's|to=\"/articles/new\"|to=\"/dashboard/articles/new\"|g' /home/gab/Code/waldo-project/apps/website/app/pages/dashboard/articles/index.vue)",
+      "Bash(sed -i 's|to=\"/maintenance/faqs/new\"|to=\"/dashboard/maintenance/faqs/new\"|g' /home/gab/Code/waldo-project/apps/website/app/pages/dashboard/maintenance/faqs/index.vue)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(npx playwright *)",
+      "Bash(./node_modules/.bin/playwright install *)",
+      "Bash(pkill -f \"nuxt\\\\|node.*3000\")",
+      "Bash(pnpm dev *)",
+      "Bash(echo \"Servidor reiniciando en background, PID: $!\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); [print\\(f'  id={r[\\\\\"id\\\\\"]} documentId={r[\\\\\"documentId\\\\\"]} name={r[\\\\\"name\\\\\"]}'\\) for r in d['data'][:3]]\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(f'name={d[\\\\\"data\\\\\"][\\\\\"name\\\\\"]}'\\)\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('role:', d.get\\('role'\\)\\)\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('Current name:', d['data']['name']\\)\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('Updated name:', d.get\\('data',{}\\).get\\('name','ERROR'\\), '| Full:', json.dumps\\(d\\)[:200]\\)\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('Restored:', d['data']['name']\\)\")",
+      "Bash(pnpm develop *)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); [print\\(r['name']\\) for r in d.get\\('data',[]\\)]\")",
+      "Bash(pkill -f \"strapi develop\")"
+    ]
+  }
+}
