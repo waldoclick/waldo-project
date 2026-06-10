@@ -119,4 +119,17 @@ describe("onboarding-guard.global (GUARD-01..04)", () => {
     expect(mockIsProfileComplete).not.toHaveBeenCalled();
     expect(mockNavigateTo).not.toHaveBeenCalled();
   });
+
+  // GUARD-03: /dashboard/** paths are exempt — managers bypass onboarding
+  it("does NOT redirect to /onboarding when incomplete-profile user is at /dashboard/ads (GUARD-03)", async () => {
+    mockIsProfileComplete.mockResolvedValue(false);
+    await guard(makeTo("/dashboard/ads"), {});
+    expect(mockNavigateTo).not.toHaveBeenCalledWith("/onboarding");
+  });
+
+  it("does NOT redirect to /onboarding when incomplete-profile user is at /dashboard (GUARD-03)", async () => {
+    mockIsProfileComplete.mockResolvedValue(false);
+    await guard(makeTo("/dashboard"), {});
+    expect(mockNavigateTo).not.toHaveBeenCalledWith("/onboarding");
+  });
 });
