@@ -60,10 +60,10 @@ export default {
   },
 
   async findOne(ctx) {
-    const { id } = ctx.params;
+    const { id: documentId } = ctx.params;
     const policy = await strapi.db
       .query("api::policy.policy")
-      .findOne({ where: { id } });
+      .findOne({ where: { documentId } });
     return { data: policy };
   },
 
@@ -74,28 +74,19 @@ export default {
   },
 
   async update(ctx) {
-    const { id } = ctx.params;
+    const { id: documentId } = ctx.params;
     const { data } = ctx.request.body;
-    const numericId = Number(id);
-    const isNumericId =
-      Number.isInteger(numericId) &&
-      numericId > 0 &&
-      String(numericId) === String(id);
-    const policy = isNumericId
-      ? await strapi.db
-          .query("api::policy.policy")
-          .update({ where: { id: numericId }, data })
-      : await strapi.db
-          .query("api::policy.policy")
-          .update({ where: { documentId: id }, data });
+    const policy = await strapi.db
+      .query("api::policy.policy")
+      .update({ where: { documentId }, data });
     return { data: policy };
   },
 
   async delete(ctx) {
-    const { id } = ctx.params;
+    const { id: documentId } = ctx.params;
     const policy = await strapi.db
       .query("api::policy.policy")
-      .delete({ where: { id } });
+      .delete({ where: { documentId } });
     return { data: policy };
   },
 

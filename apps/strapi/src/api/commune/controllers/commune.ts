@@ -60,9 +60,9 @@ export default {
   },
 
   async findOne(ctx) {
-    const { id } = ctx.params;
+    const { id: documentId } = ctx.params;
     const commune = await strapi.db.query("api::commune.commune").findOne({
-      where: { id },
+      where: { documentId },
       populate: ["region"],
     });
     return { data: commune };
@@ -77,19 +77,19 @@ export default {
   },
 
   async update(ctx) {
-    const { id } = ctx.params;
+    const { id: documentId } = ctx.params;
     const { data } = ctx.request.body;
     const commune = await strapi.db
       .query("api::commune.commune")
-      .update({ where: { id }, data });
+      .update({ where: { documentId }, data });
     return { data: commune };
   },
 
   async delete(ctx) {
-    const { id } = ctx.params;
+    const { id: documentId } = ctx.params;
     const commune = await strapi.db
       .query("api::commune.commune")
-      .delete({ where: { id } });
+      .delete({ where: { documentId } });
     return { data: commune };
   },
 };

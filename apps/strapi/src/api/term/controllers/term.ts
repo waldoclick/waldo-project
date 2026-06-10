@@ -60,10 +60,10 @@ export default {
   },
 
   async findOne(ctx) {
-    const { id } = ctx.params;
+    const { id: documentId } = ctx.params;
     const term = await strapi.db
       .query("api::term.term")
-      .findOne({ where: { id } });
+      .findOne({ where: { documentId } });
     return { data: term };
   },
 
@@ -74,28 +74,19 @@ export default {
   },
 
   async update(ctx) {
-    const { id } = ctx.params;
+    const { id: documentId } = ctx.params;
     const { data } = ctx.request.body;
-    const numericId = Number(id);
-    const isNumericId =
-      Number.isInteger(numericId) &&
-      numericId > 0 &&
-      String(numericId) === String(id);
-    const term = isNumericId
-      ? await strapi.db
-          .query("api::term.term")
-          .update({ where: { id: numericId }, data })
-      : await strapi.db
-          .query("api::term.term")
-          .update({ where: { documentId: id }, data });
+    const term = await strapi.db
+      .query("api::term.term")
+      .update({ where: { documentId }, data });
     return { data: term };
   },
 
   async delete(ctx) {
-    const { id } = ctx.params;
+    const { id: documentId } = ctx.params;
     const term = await strapi.db
       .query("api::term.term")
-      .delete({ where: { id } });
+      .delete({ where: { documentId } });
     return { data: term };
   },
 

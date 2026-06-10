@@ -62,10 +62,10 @@ export default {
   },
 
   async findOne(ctx) {
-    const { id } = ctx.params;
+    const { id: documentId } = ctx.params;
     const category = await strapi.db
       .query("api::category.category")
-      .findOne({ where: { id } });
+      .findOne({ where: { documentId } });
     return { data: category };
   },
 
@@ -78,19 +78,19 @@ export default {
   },
 
   async update(ctx) {
-    const { id } = ctx.params;
+    const { id: documentId } = ctx.params;
     const { data } = ctx.request.body;
     const category = await strapi.db
       .query("api::category.category")
-      .update({ where: { id }, data });
+      .update({ where: { documentId }, data });
     return { data: category };
   },
 
   async delete(ctx) {
-    const { id } = ctx.params;
+    const { id: documentId } = ctx.params;
     const category = await strapi.db
       .query("api::category.category")
-      .delete({ where: { id } });
+      .delete({ where: { documentId } });
     return { data: category };
   },
 

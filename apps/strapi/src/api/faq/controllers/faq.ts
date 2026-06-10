@@ -60,10 +60,10 @@ export default {
   },
 
   async findOne(ctx) {
-    const { id } = ctx.params;
+    const { id: documentId } = ctx.params;
     const faq = await strapi.db
       .query("api::faq.faq")
-      .findOne({ where: { id } });
+      .findOne({ where: { documentId } });
     return { data: faq };
   },
 
@@ -74,26 +74,19 @@ export default {
   },
 
   async update(ctx) {
-    const { id } = ctx.params;
+    const { id: documentId } = ctx.params;
     const { data } = ctx.request.body;
-    const numericId = Number(id);
-    const isNumericId =
-      Number.isInteger(numericId) &&
-      numericId > 0 &&
-      String(numericId) === String(id);
-    const faq = isNumericId
-      ? await strapi.db
-          .query("api::faq.faq")
-          .update({ where: { id: numericId }, data })
-      : await strapi.db
-          .query("api::faq.faq")
-          .update({ where: { documentId: id }, data });
+    const faq = await strapi.db
+      .query("api::faq.faq")
+      .update({ where: { documentId }, data });
     return { data: faq };
   },
 
   async delete(ctx) {
-    const { id } = ctx.params;
-    const faq = await strapi.db.query("api::faq.faq").delete({ where: { id } });
+    const { id: documentId } = ctx.params;
+    const faq = await strapi.db
+      .query("api::faq.faq")
+      .delete({ where: { documentId } });
     return { data: faq };
   },
 
