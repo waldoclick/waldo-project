@@ -2,41 +2,13 @@
 @use "../abstracts/variables" as *;
 @use "../base/container";
 
-.packs {
-  &--default {
-    &__container {
-      @extend .container;
-      max-width: 1000px;
-
-      @include screen-large {
-        // padding: 0;
-      }
-    }
-
-    &__title {
-      justify-content: center;
-      margin: 0 auto;
-      text-align: center;
-      margin-bottom: 40px;
-      max-width: 770px;
-    }
-
-    &__list {
-      display: flex;
-      flex-direction: column;
-
-      @include screen-large {
-        gap: 20px;
-        flex-direction: row;
-      }
-
-      @include screen-small {
-        flex-direction: column;
-      }
-    }
-  }
-
-  &--dashboard {
+.ads {
+  &--adsPendings,
+  &--adsActives,
+  &--adsArchived,
+  &--adsBanned,
+  &--adsRejected,
+  &--adsDraft {
     padding: 50px 0;
 
     &__container {
@@ -75,7 +47,7 @@
       background-color: #ffffff;
       border: 1px solid #e5e5e5;
       border-radius: 4px;
-      overflow: hidden;
+      overflow-x: auto;
     }
 
     &__empty,
@@ -86,15 +58,33 @@
       font-size: 14px;
     }
 
+    &__gallery {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      height: 60px;
+
+      &__image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 4px;
+      }
+
+      &__placeholder {
+        color: #9ca3af;
+      }
+    }
+
     &__name {
       font-weight: 500;
       color: #1a1a1a;
     }
 
-    &__actions {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
+    &__user {
+      font-weight: 500;
+      color: #1a1a1a;
     }
 
     &__action {

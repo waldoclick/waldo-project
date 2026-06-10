@@ -80,3 +80,34 @@
 @use "components/summary";
 @use "components/checkout";
 @use "components/onboarding";
+
+// Dashboard-only components
+@use "components/ads";
+@use "components/articles";
+@use "components/badge";
+@use "components/better-stack";
+@use "components/box";
+@use "components/breadcrumbs";
+@use "components/categories";
+@use "components/chart";
+@use "components/cloudflare";
+@use "components/communes";
+@use "components/conditions";
+@use "components/dropdown";
+@use "components/faqs";
+@use "components/featured";
+@use "components/google-analytics";
+@use "components/orders";
+@use "components/pagination";
+@use "components/regions";
+@use "components/reservations";
+@use "components/search-console";
+@use "components/statistics";
+@use "components/stats";
+@use "components/subscription-payments";
+@use "components/subscription-pros";
+@use "components/table";
+@use "components/textarea";
+@use "components/toolbar";
+@use "components/users";
+@use "components/verify-code";

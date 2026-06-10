@@ -2,41 +2,8 @@
 @use "../abstracts/variables" as *;
 @use "../base/container";
 
-.packs {
+.categories {
   &--default {
-    &__container {
-      @extend .container;
-      max-width: 1000px;
-
-      @include screen-large {
-        // padding: 0;
-      }
-    }
-
-    &__title {
-      justify-content: center;
-      margin: 0 auto;
-      text-align: center;
-      margin-bottom: 40px;
-      max-width: 770px;
-    }
-
-    &__list {
-      display: flex;
-      flex-direction: column;
-
-      @include screen-large {
-        gap: 20px;
-        flex-direction: row;
-      }
-
-      @include screen-small {
-        flex-direction: column;
-      }
-    }
-  }
-
-  &--dashboard {
     padding: 50px 0;
 
     &__container {
@@ -89,6 +56,19 @@
     &__name {
       font-weight: 500;
       color: #1a1a1a;
+    }
+
+    &__color {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #1a1a1a;
+
+      &__dot {
+        width: 16px;
+        height: 16px;
+        border-radius: 999px;
+      }
     }
 
     &__actions {

@@ -1,0 +1,43 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.statistics {
+  &--default {
+    padding: 50px 0;
+
+    @include screen-medium {
+      padding: 32px 0;
+    }
+
+    @include screen-small {
+      padding: 24px 0;
+    }
+
+    &__container {
+      @extend .container;
+      display: grid;
+      gap: 24px;
+    }
+
+    &__cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+
+      @include screen-large {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      @include screen-medium {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+      }
+
+      @include screen-small {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+    }
+  }
+}

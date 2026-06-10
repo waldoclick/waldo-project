@@ -2,41 +2,9 @@
 @use "../abstracts/variables" as *;
 @use "../base/container";
 
-.packs {
-  &--default {
-    &__container {
-      @extend .container;
-      max-width: 1000px;
-
-      @include screen-large {
-        // padding: 0;
-      }
-    }
-
-    &__title {
-      justify-content: center;
-      margin: 0 auto;
-      text-align: center;
-      margin-bottom: 40px;
-      max-width: 770px;
-    }
-
-    &__list {
-      display: flex;
-      flex-direction: column;
-
-      @include screen-large {
-        gap: 20px;
-        flex-direction: row;
-      }
-
-      @include screen-small {
-        flex-direction: column;
-      }
-    }
-  }
-
-  &--dashboard {
+.featured {
+  &--used,
+  &--free {
     padding: 50px 0;
 
     &__container {
@@ -86,15 +54,14 @@
       font-size: 14px;
     }
 
-    &__name {
+    &__user {
       font-weight: 500;
       color: #1a1a1a;
     }
 
-    &__actions {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
+    &__ad {
+      font-weight: 500;
+      color: #1a1a1a;
     }
 
     &__action {
