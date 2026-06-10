@@ -42,7 +42,7 @@ This phase moves the `apps/dashboard` Nuxt 4 application wholesale into `apps/we
 
 The highest-risk items are: (a) `typeCheck: true` on website will type-check 73 dashboard pages for the first time — this will surface type errors that need a dedicated wave; (b) Strapi's `DASHBOARD_URL` env var is embedded in live server code for email links, CORS, and password reset — these must be updated in Strapi or redirected; (c) the `MenuUser.vue` in website hardlinks to `dashboardUrl` as an external href — after merge that link must become an internal `/dashboard` route.
 
-The merge does NOT require changes to Strapi's business logic. The @nuxtjs/strapi auth.populate config already includes `"role"`, so `useStrapiUser().value.role` is populated after `fetchUser()` — the dashboard guard can use it immediately.
+The merge does NOT require changes to Strapi's business logic. The `@nuxtjs/strapi` auth.populate config already includes `"role"`, so `useStrapiUser().value.role` is populated after `fetchUser()` — the dashboard guard can use it. The locked decision to keep the SSR role-check skip (`if (!roleName) return`) is honored; however, under the new session system this skip is fail-open rather than a technical necessity (see Open Questions #4).
 
 **Primary recommendation:** Execute in waves: (Wave 0) type infrastructure + new layout; (Wave 1) pages + component moves with renames; (Wave 2) session system migration; (Wave 3) guard updates + login flow; (Wave 4) SCSS merge; (Wave 5) runtime state updates (DASHBOARD_URL); (Wave 6) cleanup and app removal.
 
@@ -96,10 +96,22 @@ yarn workspace waldo-website add -D @types/qs
 | Asset | Dashboard | Website (current) | Post-merge |
 |-------|-----------|-------------------|------------|
 | Pages (.vue) | 73 | — | +73 under `pages/dashboard/` |
-| Components (.vue) | 96 flat files + `icons/` subfolder | 145 flat files + `icons/` subfolder | ~241 (29 renamed + 67 new) |
+| Components (.vue) | 96 flat files + `icons/` subfolder | 145 flat files + `icons/` subfolder | ~241 (28 renamed + 68 new); `icons/` subfolder merged |
 | SCSS component files | 57 | 70 | 70 + 30 new files; 28 files appended |
 | Stores | 5 | 20 | +2 new (`search.store.ts`, `settings.store.ts`) |
 | Composables | 14 | 21 | +3 net (useExportCsv, useServices, useSlugify; 4 session composables dropped) |
+
+### Component Collision Count — Authoritative
+
+Verified by directory listing: **28 files** collide (same filename in both `components/` roots). The CONTEXT.md collision list enumerates 28 items ending with `IconX`; CONTEXT.md says "29" which is an off-by-one.
+
+The `icons/` subfolder shows up in the directory listing as a collision entry because both apps have `components/icons/` directories. Inside:
+- Dashboard `components/icons/`: `IconGtm.vue`, `IconX.vue`, `iconBetterStack.vue`, `iconCloudflare.vue`
+- Website `components/icons/`: `IconWhatsApp.vue`, `IconX.vue`
+
+`IconX.vue` in `components/icons/` is the X (Twitter social logo) — an SVG file with `defineOptions({ name: "IconX" })`. Both apps contain **identical** copies of this file (verified byte-for-byte). This is not the same as the lucide-vue-next `X as IconX` close icon used in LightboxAdblock and similar — those use an explicit `import { X as IconX } from "lucide-vue-next"` in the `<script setup>` block and are NOT auto-imported from `components/icons/`. Since both apps' `components/icons/IconX.vue` are identical, there is no behavioral collision — the dashboard copy is a no-op merge (copy without rename). The three non-colliding dashboard icons (`IconGtm.vue`, `iconBetterStack.vue`, `iconCloudflare.vue`) are imported by path (`@/components/icons/iconBetterStack.vue`) not by Nuxt auto-import, so they copy without conflict.
+
+**Planner action:** Rename the 28 top-level file collisions per CONTEXT.md locked decision 5. The `icons/` subfolder: copy `IconGtm.vue`, `iconBetterStack.vue`, `iconCloudflare.vue` into website's `components/icons/`. Omit `IconX.vue` (already identical in website).
 
 ### SCSS Collision List (28 files — verified)
 Both apps have SCSS files with the same name. Merge strategy: append `&--dashboard` modifier block into website's existing file.
@@ -118,7 +130,22 @@ orders, pagination, regions, reservations, search-console, statistics, stats,
 subscription-payments, subscription-pros, table, textarea, toolbar, users,
 verify-code
 ```
-Note: dashboard SCSS also uses `@use "abstracts/animations"` — website has this file (`_animations.scss`) but app.scss doesn't currently `@use` it. Any dashboard component that uses animation variables/mixins will need this import in website's `app.scss` if not already present.
+
+**SCSS @use dependency check — critical action required for dashboard-only files:**
+
+When copying dashboard-only SCSS files, each file that uses `@extend .container` requires `@use "../base/container"` at the top of the copied file. Website's colliding files already have this import, but dashboard-only files were developed as standalone and need it added explicitly.
+
+Files requiring `@use "../base/container"` to be added on copy (18 files verified):
+```
+_ads.scss, _articles.scss, _better-stack.scss, _box.scss, _categories.scss,
+_communes.scss, _conditions.scss, _faqs.scss, _featured.scss, _orders.scss,
+_policies.scss, _regions.scss, _reservations.scss, _search-console.scss,
+_statistics.scss, _subscription-payments.scss, _subscription-pros.scss
+```
+
+**The _loading.scss collision:** Both apps' `_loading.scss` already have `@use "../abstracts/animations"` — this is the one SCSS `@use` dep that differs from the standard trio (`mixins`, `variables`, `container`). No action needed; both files already have it.
+
+Verify the SCSS merge is correct by running `yarn workspace waldo-website build` after Wave 4 and fixing any Sass compilation errors before proceeding to Wave 5.
 
 ### Recommended Migration Wave Structure
 
@@ -131,15 +158,17 @@ Wave 0 — Infrastructure
   - Patch FormVerifyCode.vue for manager redirect
   - Copy search.store.ts + settings.store.ts into website
 
-Wave 1 — Pages (73 .vue files)
+Wave 1 — Pages (73 .vue files) — use git mv for each file
   - Move dashboard pages → apps/website/app/pages/dashboard/
   - Drop: auth/login.vue, auth/forgot-password.vue, auth/reset-password.vue, auth/verify-code.vue, dev.vue
   - Add definePageMeta({ layout: 'dashboard' }) to all surviving pages (most already have it)
+  - Update all internal links from /auth/login → /login, /auth/forgot-password → /recuperar-contrasena
 
-Wave 2 — Components (96 files → rename 29, copy 67)
-  - Rename 29 colliding components with Dashboard suffix
-  - Copy 67 non-colliding components
-  - Copy icons subfolder (IconGtm.vue, iconBetterStack.vue, iconCloudflare.vue — no collision with IconX.vue; both apps have it, dashboard version gets renamed)
+Wave 2 — Components (96 files → rename 28, copy 68)
+  - Rename 28 colliding top-level components with Dashboard suffix (git mv each)
+  - Update all internal references in dashboard pages/components/layout to renamed names
+  - Copy 68 non-colliding components into website's components/
+  - Copy icons subfolder: IconGtm.vue, iconBetterStack.vue, iconCloudflare.vue (skip IconX.vue — identical)
 
 Wave 3 — Session system migration (replaces useSessionX in 29 files)
   - useSessionUser<User>() → useStrapiUser<User>()
@@ -147,12 +176,14 @@ Wave 3 — Session system migration (replaces useSessionX in 29 files)
   - useSessionAuth() → useStrapiAuth()
   - useSessionClient() → useApiClient()
   - Drop the 4 session composables and session.ts plugin
-  - Migrate useLogout.ts: replace navigateTo("/auth/login") → navigateTo("/login"), reset searchStore too
+  - Migrate useLogout.ts: replace navigateTo("/auth/login") → navigateTo("/login"), add searchStore.clearTavily()
   - Keep useExportCsv.ts, useServices.ts, useSlugify.ts (copy into website)
 
 Wave 4 — SCSS merge
   - 28 colliding files: append &--dashboard blocks
   - 30 non-colliding files: copy + add @use line to app.scss
+  - Add @use "../base/container" to each of the 18 dashboard-only files listed above
+  - Gate: yarn workspace waldo-website build must succeed before Wave 5
 
 Wave 5 — Runtime state (DASHBOARD_URL references)
   - See Runtime State Inventory section below
@@ -189,10 +220,10 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   const roleName = user.value.role?.name?.toLowerCase() ?? null;
 
-  // Role is populated after /users/me. On SSR the @nuxtjs/strapi plugin fetches
-  // /users/me with populate: ["role"] — so role IS available SSR. However, to
-  // match the guard's original safe posture on SSR, skip the role check when
-  // roleName is null to avoid an OOM redirect loop.
+  // Per locked decision 3: keep the SSR role-check skip from the original guard.
+  // Note: under @nuxtjs/strapi, role IS populated on SSR (auth.populate includes "role").
+  // The skip is now fail-open (null role → allow through) rather than load-bearing.
+  // See Open Questions #4 for the tradeoff.
   if (!roleName) return;
 
   if (roleName !== "manager") {
@@ -211,7 +242,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
 if (!profileComplete) {
   if (to.path.startsWith("/onboarding")) return;
-  if (to.path.startsWith("/dashboard")) return;  // ← ADD THIS
+  if (to.path.startsWith("/dashboard")) return;  // ADD THIS
   return navigateTo("/onboarding");
 }
 ```
@@ -225,7 +256,7 @@ const { setToken, fetchUser } = useStrapiAuth();
 setToken(responseRaw.jwt);
 await fetchUser();
 
-// ← INSERT HERE (after fetchUser, before isProfileComplete)
+// INSERT HERE (after fetchUser, before isProfileComplete)
 const loggedUser = useStrapiUser<User>();
 if (loggedUser.value?.role?.name?.toLowerCase() === "manager") {
   await navigateTo("/dashboard");
@@ -269,6 +300,8 @@ Dashboard's `routeRules` redirect Spanish → English paths (e.g., `/anuncios` �
 - **Do NOT copy dashboard's `dev.global.ts` middleware** — locked decision 11.
 - **Do NOT import `useSessionClient` from dashboard** — `useApiClient` in website already handles qs-encoded params via the `useStrapiClient()` call (the qs serialization lives in Strapi's SDK, not website's `useApiClient`). However note: `useSessionClient` had explicit `qs.stringify` — verify each dashboard component that passes complex filter `params` still serializes correctly via `useStrapiClient`.
 - **Do NOT rename SCSS `&--default` modifiers inside the merged file** — dashboard SCSS uses `&--default` (e.g., `hero--default`) as its own modifier name. After merge these become `&--dashboard` ONLY in the new modifier block appended to website's file. The original website modifiers (`&--default`, `&--profile`, etc.) stay untouched.
+- **Do NOT copy dashboard-only SCSS files without verifying `@use` deps** — 18 dashboard-only files use `@extend .container` and need `@use "../base/container"` prepended when copied (see SCSS section above).
+- **Use `git mv` for every file/directory rename or move** — CLAUDE.md mandates this for all page and component renames to preserve Git rename history. Atomic ref updates (all imports to the renamed file updated in the same commit as the `git mv`).
 
 ---
 
@@ -294,7 +327,7 @@ This is a merge/migration phase. Runtime systems outside git must be updated.
 | **Live service config** | Strapi `DASHBOARD_URL` env var used in: (1) CORS `allowedOrigins`, (2) password reset email link builder (`context: "dashboard"` → `DASHBOARD_URL + "/auth/reset-password"`), (3) ad lifecycle email links (`DASHBOARD_URL/ads/${id}`), (4) payment service email (`DASHBOARD_URL/ads/${result.ad.id}`) | After merge: `DASHBOARD_URL` must be changed to `FRONTEND_URL` (same host) in the Strapi `.env` file — OR Strapi's `authController.ts` must be patched so `context: "dashboard"` uses `FRONTEND_URL + "/dashboard/restablecer-contrasena"` and the ad email links point to `FRONTEND_URL/dashboard/ads/${id}`. This is a Strapi code change + env change. |
 | **OS-registered state** | `pm2` process `waldo-dashboard` registered via `apps/dashboard/ecosystem.config.cjs`. Turbo has a `waldo-dashboard#build` task and `waldo-dashboard#dev` task in `turbo.json`. Root `package.json` workspaces includes `"apps/dashboard"`. | Stop and delete pm2 process; remove `waldo-dashboard` entries from `turbo.json`; remove `apps/dashboard` from root `package.json` workspaces. |
 | **Secrets/env vars** | `DASHBOARD_URL` in website's `.env` and `.env.example` (used in `runtimeConfig.public.dashboardUrl`). `BASE_URL` in dashboard's `.env` = port 3001. Dashboard `.env` has `FRONTEND_URL` pointing to website. | After merge: `runtimeConfig.public.dashboardUrl` in website becomes unused (the `MenuUser.vue` link will be an internal NuxtLink). Remove from `runtimeConfig` and `.env.example`. |
-| **Build artifacts** | Dashboard `.nuxt/` and `.output/` build artifacts at `apps/dashboard/.nuxt/` and `apps/dashboard/.output/`. No egg-info or global npm installs. | Delete `apps/dashboard/` directory entirely after migration. Remove `nuxt-compress` from dashboard devDeps (not in website) if any artifact remains. |
+| **Build artifacts** | Dashboard `.nuxt/` and `.output/` build artifacts at `apps/dashboard/.nuxt/` and `apps/dashboard/.output/`. No egg-info or global npm installs. | Delete `apps/dashboard/` directory entirely after migration. |
 
 ### Critical Strapi Action Required
 
@@ -326,9 +359,9 @@ Strapi's `authController.ts` (line 553-558) branches on `context === "dashboard"
 **Warning signs:** TypeScript error `Property 'type' is missing` on role objects.
 
 ### Pitfall 3: Auto-Import Component Name Collision
-**What goes wrong:** Nuxt 4 auto-imports all `.vue` files from `components/`. If both `components/HeroDefault.vue` (website) and `components/HeroDashboard.vue` (migrated dashboard) exist, there is no conflict. BUT if a dashboard component is copied before being renamed, the website's version is silently shadowed (last directory scan wins — behavior is Nuxt-version dependent and not reliable).
+**What goes wrong:** Nuxt 4 auto-imports all `.vue` files from `components/`. If a dashboard component is copied before being renamed, the website's version is silently shadowed (last directory scan wins — behavior is Nuxt-version dependent and not reliable).
 **Why it happens:** Nuxt resolves conflicts by last-writer-wins. There is no build error — the wrong component is silently used.
-**How to avoid:** Rename ALL 29 colliding components BEFORE copying to website. Never have a component with the same name in `apps/website/app/components/` that differs from the dashboard version.
+**How to avoid:** Rename ALL 28 colliding components BEFORE copying to website. Never have a component with the same name in `apps/website/app/components/` that differs from the dashboard version. The icons subfolder collision (`IconX.vue`) is safe to skip rename — both files are identical SVG components.
 **Warning signs:** Dashboard pages rendering website-styled components instead of admin-styled ones.
 
 ### Pitfall 4: useSessionClient qs Serialization Gap
@@ -349,10 +382,11 @@ Strapi's `authController.ts` (line 553-558) branches on `context === "dashboard"
 **How to avoid:** Update all `startsWith` checks to include `/dashboard/` prefix (see Architecture Patterns section). Add automated route test or visual smoke test.
 **Warning signs:** Sidebar always shows the default panel regardless of current section.
 
-### Pitfall 7: SSR Role Check in Dashboard Guard
-**What goes wrong:** The original dashboard guard skips role check when `roleName` is null (SSR safety). The website's `@nuxtjs/strapi` module DOES fetch `/users/me` with `populate: ["role"]` on SSR — so role IS populated. However, there's a brief window during hydration where `useStrapiUser().value` may be null before the SSR payload is transferred. The guard must tolerate this.
-**Why it happens:** SSR and client hydration timing.
-**How to avoid:** Follow Pattern 1 in Architecture section exactly — `if (!roleName) return;` is the safe path. Do NOT change this to throw an error.
+### Pitfall 7: SCSS @use Dependencies Missing in Dashboard-Only Files
+**What goes wrong:** 18 dashboard-only SCSS files use `@extend .container` but do not have `@use "../base/container"` at the top. In the dashboard they compiled because the container module was already loaded by another file in the same compilation context. When these files are copied standalone into website and imported from `app.scss`, the `@extend .container` reference fails with "Undefined variable or selector."
+**Why it happens:** Cross-file `@extend` is fragile — it relies on the target selector being loaded elsewhere in the same compilation. The dashboard's `app.scss` included the container module early; website's may load these new files in a different order.
+**How to avoid:** Add `@use "../base/container"` as the first line of all 18 affected dashboard-only files when copying them. The list is in the SCSS section above. Verify with `yarn workspace waldo-website build`.
+**Warning signs:** Sass compilation error "Can't extend .container: it's not defined" after Wave 4.
 
 ---
 
@@ -364,7 +398,7 @@ Strapi's `authController.ts` (line 553-558) branches on `context === "dashboard"
 strapi: {
   auth: {
     populate: [
-      "role",        // ← role IS populated — guard can check role.name on SSR
+      "role",        // role IS populated on SSR — guard can check role.name
       "commune",
       "region",
       "business_region",
@@ -405,8 +439,8 @@ role?: {
 // useSanitize.ts, useSweetAlert2.ts
 ```
 
-### SCSS double @use — safe, no action needed
-Verified from actual files: both apps' `_layout.scss` already contain duplicate `@use "../abstracts/mixins" as *;` within the same file AND both apps compile successfully today. Sass deduplicates module loads at the compilation stage. The merge strategy (append `&--dashboard` block without adding new `@use` lines) is safe.
+### SCSS double @use — confirmed safe for colliding files
+Verified from actual file inspection: website's `_loading.scss` already has `@use "../abstracts/animations"` — the same import dashboard's version needs. For all 28 colliding SCSS files, the website version's `@use` block already covers what the appended `&--dashboard` modifier block requires. No `@use` additions needed for the append operation. The `@use` risk is confined to the dashboard-only files (copy operation), not the collision append operation.
 
 ---
 
@@ -417,6 +451,7 @@ Verified from actual files: both apps' `_layout.scss` already contain duplicate 
 | Dashboard used custom `useSessionX` composables | Website uses `@nuxtjs/strapi` module | Phase 109 (dashboard), now merging back | Drop 4 composables + 1 plugin |
 | Dashboard `guard.global.ts` checks all routes | New guard uses `startsWith("/dashboard")` fast-exit | This phase | No overhead on public website routes |
 | `MenuUser.vue` links to external `dashboardUrl` | Internal `NuxtLink to="/dashboard"` | This phase | No cross-origin navigation; SSR-compatible link |
+| Dashboard had its own SSR guard with explicit role-skip | Under `@nuxtjs/strapi`, role IS populated on SSR | This phase | The skip is now fail-open, not load-bearing |
 
 ---
 
@@ -436,6 +471,17 @@ Verified from actual files: both apps' `_layout.scss` already contain duplicate 
    - What we know: 22 Spanish→English redirect rules exist in `apps/dashboard/nuxt.config.ts`. These conflict with website's public Spanish routes (`/anuncios` already points to a public page).
    - Recommendation: Drop all dashboard routeRules — they only serve manager muscle memory and clash with website's public routes.
 
+4. **SSR role-check skip is now fail-open (locked decision 3 honored but rationale changed)**
+   - What we know: The original dashboard guard's SSR skip (`if (!roleName) return`) was justified by "role is only populated client-side." Under `@nuxtjs/strapi`, this is no longer true — `auth.populate: ["role"]` means role IS available on SSR after `fetchUser()`. The skip is now fail-open: a manager whose `useStrapiUser()` temporarily returns null (e.g., hydration window) passes through the guard without a redirect, then on the next navigation cycle the guard fires again client-side with role populated. This is the same behavior as the original design but for a different reason.
+   - What's unclear: Whether the planner/user wants fail-closed behavior instead (null role → treat as non-manager → redirect to `/login`).
+   - Recommendation: Honor the lock (keep the SSR skip). If a security review is needed, test: navigate to `/dashboard/ads` directly (no session) on SSR — guard should redirect to `/login`. Navigate as a logged-in non-manager — guard should redirect to `/`. The `if (!roleName) return` only affects the window where `useStrapiUser()` is momentarily null during hydration transfer; the client-side re-run will enforce the role check.
+   - Evidence: `onboarding-guard.global.ts` runs on both SSR and client and already relies on `useStrapiUser()` returning a populated user after `await fetchUser()`. The same pattern is safe for the dashboard guard.
+
+5. **GTM container ID divergence**
+   - What we know: Website uses `GTM-N4B8LDKS`. Dashboard uses `GTM-TC8LS8NQ`.
+   - What this means: After merge, all dashboard pages will be tracked under website's GTM container (`GTM-N4B8LDKS`) since they inherit website's `nuxt.config.ts`. Dashboard events currently flowing to `GTM-TC8LS8NQ` will stop.
+   - Recommendation: Confirm with the team this is intended. Dashboard pages are admin-only — tracking is optional. If dashboard-specific analytics are needed, the GTM container merge is a separate concern outside this phase's scope.
+
 ---
 
 ## Validation Architecture
@@ -451,13 +497,15 @@ Verified from actual files: both apps' `_layout.scss` already contain duplicate 
 ### Phase Requirements → Test Map
 | Req ID | Behavior | Test Type | Automated Command | File Exists? |
 |--------|----------|-----------|-------------------|-------------|
-| AUTH-01 | Manager user redirected to /dashboard after OTP verify | manual-only (requires Strapi role setup) | N/A | N/A |
-| AUTH-02 | Non-manager redirected to /anuncios after OTP verify | manual-only | N/A | N/A |
+| AUTH-01 | Manager user redirected to /dashboard after OTP verify | unit (stub `useStrapiUser` to manager role, assert `navigateTo('/dashboard')`) | `yarn workspace waldo-website test --run tests/components/FormVerifyCode.test.ts` | ❌ Wave 0 |
+| AUTH-02 | Non-manager redirected to /anuncios after OTP verify | unit (stub `useStrapiUser` to regular role) | `yarn workspace waldo-website test --run tests/components/FormVerifyCode.test.ts` | ❌ Wave 0 |
 | GUARD-01 | dashboard-guard redirects unauthenticated to /login for /dashboard/** | unit | `yarn workspace waldo-website test --run tests/middleware/dashboard-guard.test.ts` | ❌ Wave 0 |
 | GUARD-02 | dashboard-guard redirects non-manager to / for /dashboard/** | unit | `yarn workspace waldo-website test --run tests/middleware/dashboard-guard.test.ts` | ❌ Wave 0 |
 | GUARD-03 | onboarding-guard does NOT redirect managers at /dashboard/** | unit | `yarn workspace waldo-website test --run tests/middleware/onboarding-guard.test.ts` | ❌ Wave 0 |
 | SCSS-01 | No Sass compilation errors after SCSS merge | build | `yarn workspace waldo-website build` | — |
 | TYPE-01 | Website typecheck passes after all components migrated | build | `yarn workspace waldo-website nuxi typecheck` | — |
+
+AUTH-01 and AUTH-02 are automatable using `vi.stubGlobal("useStrapiUser", () => ({ value: { role: { name: "manager" } } }))` pattern (consistent with how STATE.md (109-01) documents auto-import stubs with `vi.stubGlobal`).
 
 ### Sampling Rate
 - **Per task commit:** `yarn workspace waldo-website nuxi typecheck`
@@ -465,6 +513,7 @@ Verified from actual files: both apps' `_layout.scss` already contain duplicate 
 - **Phase gate:** Full typecheck + test suite green before `/gsd:verify-work`
 
 ### Wave 0 Gaps
+- [ ] `apps/website/tests/components/FormVerifyCode.test.ts` — covers AUTH-01, AUTH-02
 - [ ] `apps/website/tests/middleware/dashboard-guard.test.ts` — covers GUARD-01, GUARD-02
 - [ ] `apps/website/tests/middleware/onboarding-guard.test.ts` — add GUARD-03 case to existing file (if it exists) or create new
 
@@ -474,10 +523,10 @@ Verified from actual files: both apps' `_layout.scss` already contain duplicate 
 
 ### Primary (HIGH confidence — verified from actual project files)
 - `apps/website/nuxt.config.ts` — strapi auth.populate, vite optimizeDeps, runtimeConfig, robots
-- `apps/dashboard/nuxt.config.ts` — typeCheck: false, vite optimizeDeps, routeRules
+- `apps/dashboard/nuxt.config.ts` — typeCheck: false, vite optimizeDeps, routeRules, GTM container ID
 - `apps/website/package.json` vs `apps/dashboard/package.json` — package diff
 - `apps/dashboard/app/middleware/guard.global.ts` — SSR role check pattern
-- `apps/website/app/middleware/onboarding-guard.global.ts` — exempt path pattern
+- `apps/website/app/middleware/onboarding-guard.global.ts` — exempt path pattern, SSR fetchUser behavior
 - `apps/website/app/components/FormVerifyCode.vue` — manager redirect insertion point
 - `apps/dashboard/app/layouts/dashboard.vue` — resolveActiveMenu function
 - `apps/website/app/types/user.d.ts` — User interface with role shape
@@ -488,9 +537,12 @@ Verified from actual files: both apps' `_layout.scss` already contain duplicate 
 - `turbo.json` + root `package.json` — waldo-dashboard workspace entries
 - `apps/dashboard/ecosystem.config.cjs` — pm2 process name
 - `apps/website/app/components/MenuUser.vue` — dashboardUrl external link
+- `apps/dashboard/app/scss/components/` — @extend .container usage in 18+ files
+- `apps/website/app/scss/components/_hero.scss`, `_loading.scss` — @use dep baseline check
 
 ### Secondary (MEDIUM confidence)
 - Nuxt 4 auto-import collision behavior: based on framework internals + practical observation that last-scanned wins; recommend avoiding the scenario entirely.
+- `vi.stubGlobal` test pattern for `useStrapiUser`: based on STATE.md (109-01) documentation of auto-import stubs.
 
 ---
 
@@ -499,11 +551,14 @@ Verified from actual files: both apps' `_layout.scss` already contain duplicate 
 **Confidence breakdown:**
 - Package diff: HIGH — verified from both `package.json` files
 - SCSS collision list: HIGH — verified from actual directory listings
-- Component collision count: HIGH — verified (28 file collisions + `icons/` subfolder)
+- Component collision count: HIGH — 28 verified (CONTEXT.md off-by-one documented)
 - Role populate on SSR: HIGH — confirmed in `nuxt.config.ts` `auth.populate`
+- SSR role skip fail-open status: HIGH — confirmed `onboarding-guard` runs SSR+client successfully with same pattern
 - DASHBOARD_URL runtime impact: HIGH — grep across all Strapi source files
 - TypeCheck escalation risk: HIGH — dashboard nuxt.config explicitly disables it
-- SCSS double @use safety: HIGH — both apps already compile with duplicate `@use` in same file
+- SCSS @use dep risk: HIGH — verified 18 dashboard-only files use `@extend .container` without `@use "../base/container"`
+- SCSS double @use safety for colliding files: HIGH — both apps already compile with matching `@use` blocks
+- GTM container divergence: HIGH — both nuxt.config files read directly
 
 **Research date:** 2026-06-10
 **Valid until:** 2026-07-10 (stable libraries; Nuxt 4 / @nuxtjs/strapi v2 APIs unlikely to change)
