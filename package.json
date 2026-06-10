@@ -21,7 +21,10 @@
       "ofetch": "^1.4.0",
       "jpeg-js": "^0.4.4",
       "minimist": "^1.2.8",
-      "phin": "^3.7.1"
+      "phin": "^3.7.1",
+      "@types/koa": "2.15.2",
+      "@types/mjml-core": "4.15.2",
+      "@types/mjml>@types/mjml-core": "4.15.2"
     }
   },
   "devDependencies": {

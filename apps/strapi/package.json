@@ -61,6 +61,8 @@
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",
+    "@types/koa": "2.15.2",
+    "@types/mjml-core": "4.15.2",
     "@types/node-cache": "^4.2.5",
     "@types/pg": "^8.15.5",
     "axios-mock-adapter": "^2.1.0",

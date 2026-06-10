@@ -10,7 +10,10 @@ export const renderEmail = (
   data: Record<string, unknown>,
 ) => {
   const mjml = env.render(`${template}.mjml`, data);
-  const { html } = mjml2html(mjml, { minify: true });
+  // @types/mjml-core@5 incorrectly marks mjml2html as async; mjml@4 is sync at runtime
+  const { html } = mjml2html(mjml, { minify: true }) as unknown as {
+    html: string;
+  };
   return html;
 };
 
