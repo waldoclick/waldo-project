@@ -14,7 +14,9 @@ export const useArticlesStore = defineStore("articles", () => {
   });
   const loading = ref<boolean>(false);
   const error = ref<string | null>(null);
-  const aiCache = ref<Map<string, { result: unknown; timestamp: number }>>(new Map());
+  const aiCache = ref<Map<string, { result: unknown; timestamp: number }>>(
+    new Map(),
+  );
 
   const client = useApiClient();
 
@@ -67,5 +69,15 @@ export const useArticlesStore = defineStore("articles", () => {
     aiCache.value.set(key, { result: value, timestamp: Date.now() });
   };
 
-  return { articles, pagination, loading, error, loadArticles, reset, hasAICache, getAICache, setAICache };
+  return {
+    articles,
+    pagination,
+    loading,
+    error,
+    loadArticles,
+    reset,
+    hasAICache,
+    getAICache,
+    setAICache,
+  };
 });

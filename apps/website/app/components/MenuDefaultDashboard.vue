@@ -37,7 +37,10 @@
         >
           <FileText class="menu--dashboard__icon" />
           <span>Anuncios</span>
-          <ChevronDown v-if="openMenu === 'ads'" class="menu--dashboard__arrow" />
+          <ChevronDown
+            v-if="openMenu === 'ads'"
+            class="menu--dashboard__arrow"
+          />
           <ChevronRight v-else class="menu--dashboard__arrow" />
         </button>
         <ul v-if="openMenu === 'ads'" class="menu--dashboard__sublist">
@@ -88,7 +91,8 @@
           <li
             class="menu--dashboard__subitem"
             :class="{
-              'menu--dashboard__subitem--active': isRouteActive('/ads/rejected'),
+              'menu--dashboard__subitem--active':
+                isRouteActive('/ads/rejected'),
             }"
           >
             <NuxtLink to="/ads/rejected" class="menu--dashboard__sublink">
@@ -99,7 +103,8 @@
           <li
             class="menu--dashboard__subitem"
             :class="{
-              'menu--dashboard__subitem--active': isRouteActive('/ads/abandoned'),
+              'menu--dashboard__subitem--active':
+                isRouteActive('/ads/abandoned'),
             }"
           >
             <NuxtLink to="/ads/abandoned" class="menu--dashboard__sublink">
@@ -182,7 +187,8 @@
           <li
             class="menu--dashboard__subitem"
             :class="{
-              'menu--dashboard__subitem--active': isRouteActive('/featured/used'),
+              'menu--dashboard__subitem--active':
+                isRouteActive('/featured/used'),
             }"
           >
             <NuxtLink to="/featured/used" class="menu--dashboard__sublink">
@@ -193,7 +199,8 @@
           <li
             class="menu--dashboard__subitem"
             :class="{
-              'menu--dashboard__subitem--active': isRouteActive('/featured/free'),
+              'menu--dashboard__subitem--active':
+                isRouteActive('/featured/free'),
             }"
           >
             <NuxtLink to="/featured/free" class="menu--dashboard__sublink">

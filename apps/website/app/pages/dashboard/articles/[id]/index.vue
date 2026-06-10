@@ -184,7 +184,9 @@ const coverImages = computed<GalleryItem[]>(() => {
   return (Array.isArray(cover) ? cover : [cover]) as unknown as GalleryItem[];
 });
 
-const galleryImages = computed<GalleryItem[]>(() => (article.value?.gallery ?? []) as unknown as GalleryItem[]);
+const galleryImages = computed<GalleryItem[]>(
+  () => (article.value?.gallery ?? []) as unknown as GalleryItem[],
+);
 </script>
 
 <style scoped>

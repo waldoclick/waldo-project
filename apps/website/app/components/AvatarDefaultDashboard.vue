@@ -50,8 +50,7 @@ const getInitials = computed(() => {
 
 // Computed para obtener el usuario actual
 const user = computed(
-  (): User | null =>
-    props.user || (loggedUser.value as User | null),
+  (): User | null => props.user || (loggedUser.value as User | null),
 );
 
 // Computed para obtener la URL del avatar

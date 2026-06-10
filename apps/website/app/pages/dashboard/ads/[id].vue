@@ -224,7 +224,9 @@ definePageMeta({
 const route = useRoute();
 const item = ref<Ad | null>(null);
 
-const getRelationName = (relation: number | { name?: string } | null | undefined): string => {
+const getRelationName = (
+  relation: number | { name?: string } | null | undefined,
+): string => {
   if (!relation || typeof relation === "number") return "--";
   return relation.name || "--";
 };
@@ -365,7 +367,12 @@ const handleBanned = async (reason: string) => {
   }
 };
 
-const handleDeleteImage = async ({ image }: { image: GalleryItem; index: number }) => {
+const handleDeleteImage = async ({
+  image,
+}: {
+  image: GalleryItem;
+  index: number;
+}) => {
   if (!item.value?.id) return;
   if (!image?.id) {
     await Swal.fire(
@@ -396,7 +403,9 @@ const handleDeleteImage = async ({ image }: { image: GalleryItem; index: number 
         ?.map((g) => g.id)
         .filter((id): id is number => id !== undefined) || [];
     const imageNumericId = Number(image.id);
-    const updatedGallery = galleryIds.filter((id: number) => id !== imageNumericId);
+    const updatedGallery = galleryIds.filter(
+      (id: number) => id !== imageNumericId,
+    );
 
     const adDocumentId =
       item.value?.documentId ||

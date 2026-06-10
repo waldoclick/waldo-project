@@ -36,7 +36,9 @@ definePageMeta({
 });
 
 const route = useRoute();
-const pack = ref<(PackData & { createdAt?: string; updatedAt?: string; name?: string }) | null>(null);
+const pack = ref<
+  (PackData & { createdAt?: string; updatedAt?: string; name?: string }) | null
+>(null);
 const apiClient = useApiClient();
 
 const title = computed(() => pack.value?.name || "Pack");
@@ -77,5 +79,8 @@ const { data: packData } = await useAsyncData(
   },
 );
 
-pack.value = (packData.value as (PackData & { createdAt?: string; updatedAt?: string; name?: string }) | null) ?? null;
+pack.value =
+  (packData.value as
+    | (PackData & { createdAt?: string; updatedAt?: string; name?: string })
+    | null) ?? null;
 </script>

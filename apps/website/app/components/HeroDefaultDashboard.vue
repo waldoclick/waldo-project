@@ -8,7 +8,10 @@
           </div>
           <div class="hero--dashboard__title">
             <h1 class="title">
-              <span v-if="$slots.titlePrefix" class="hero--dashboard__title-icon">
+              <span
+                v-if="$slots.titlePrefix"
+                class="hero--dashboard__title-icon"
+              >
                 <slot name="titlePrefix" />
               </span>
               <span>{{ title }}</span>

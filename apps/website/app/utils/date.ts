@@ -43,7 +43,9 @@ export const formatDate = (dateString: string | undefined | null): string => {
   return rtf.format(-Math.round(diffInYears), "year");
 };
 
-export const formatDateShort = (dateString: string | undefined | null): string => {
+export const formatDateShort = (
+  dateString: string | undefined | null,
+): string => {
   if (!dateString) return "--";
 
   const date = new Date(dateString);

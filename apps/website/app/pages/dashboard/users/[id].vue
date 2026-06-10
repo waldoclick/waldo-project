@@ -105,7 +105,9 @@
           <CardInfoDashboard
             v-if="item"
             title="RUT empresa"
-            :description="item.business_rut ? formatRut(item.business_rut) : '--'"
+            :description="
+              item.business_rut ? formatRut(item.business_rut) : '--'
+            "
           />
           <CardInfoDashboard
             v-if="item"

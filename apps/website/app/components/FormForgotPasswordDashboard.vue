@@ -59,7 +59,7 @@ const onSubmit = async (values: Record<string, unknown>) => {
     // X-Recaptcha-Token is injected automatically by useApiClient
     await client("/auth/forgot-password", {
       method: "POST",
-      body: { email: values.email as string, context: "dashboard" },
+      body: { email: values.email as string, context: "website" },
     });
 
     Swal.fire(
