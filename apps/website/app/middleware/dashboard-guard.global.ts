@@ -7,7 +7,11 @@ export default defineNuxtRouteMiddleware(async (to) => {
     const token = useStrapiToken();
     if (!token.value) return navigateTo("/login");
     const { fetchUser } = useStrapiAuth();
-    await fetchUser();
+    try {
+      await fetchUser();
+    } catch {
+      /* Strapi unavailable — treat as unauthenticated */
+    }
   }
   if (!user.value) return navigateTo("/login");
   const roleName = user.value.role?.name?.toLowerCase() ?? null;

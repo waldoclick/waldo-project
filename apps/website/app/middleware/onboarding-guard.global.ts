@@ -27,12 +27,16 @@ export default defineNuxtRouteMiddleware(async (to) => {
     const token = useStrapiToken();
     if (!token.value) return; // No JWT → not logged in
     const { fetchUser } = useStrapiAuth();
-    await fetchUser();
+    try {
+      await fetchUser();
+    } catch {
+      /* Strapi unavailable — treat as unauthenticated */
+    }
   }
   if (!user.value) return; // Still null after fetch → not logged in
 
   const meStore = useMeStore();
-  const profileComplete = await meStore.isProfileComplete();
+  const profileComplete = await meStore.isProfileComplete().catch(() => false);
 
   if (!profileComplete) {
     // User is already heading to onboarding — allow through to avoid redirect loop
