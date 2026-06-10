@@ -42,12 +42,12 @@ export const updateUser = async (ctx: Context) => {
 
     // Validar campos base primero
     const missingBaseFields = baseRequiredFields.filter(
-      (field) => !data[field]
+      (field) => !data[field],
     );
     if (missingBaseFields.length > 0) {
       ctx.throw(
         400,
-        `Missing required fields: ${missingBaseFields.join(", ")}`
+        `Missing required fields: ${missingBaseFields.join(", ")}`,
       );
     }
 

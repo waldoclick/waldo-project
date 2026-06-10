@@ -65,7 +65,7 @@ export class BackupService {
         case "postgres":
           backupCommand = this.buildPostgreSQLBackupCommand(
             dbConfig,
-            timestamp
+            timestamp,
           );
           backupFileName = `backup_postgres_${timestamp}.sql`;
           break;
@@ -132,7 +132,7 @@ export class BackupService {
 
   private buildMySQLBackupCommand(
     config: DatabaseConnectionConfig,
-    timestamp: string
+    timestamp: string,
   ): string {
     const {
       host = "localhost",
@@ -144,7 +144,7 @@ export class BackupService {
 
     const backupPath = path.join(
       this.backupDir,
-      `backup_mysql_${timestamp}.sql`
+      `backup_mysql_${timestamp}.sql`,
     );
 
     // Build a mysqldump shell command. Password is passed via -p flag (no space).
@@ -153,7 +153,7 @@ export class BackupService {
 
   private buildPostgreSQLBackupCommand(
     config: DatabaseConnectionConfig,
-    timestamp: string
+    timestamp: string,
   ): string {
     const {
       host = "localhost",
@@ -166,7 +166,7 @@ export class BackupService {
 
     const backupPath = path.join(
       this.backupDir,
-      `backup_postgres_${timestamp}.sql`
+      `backup_postgres_${timestamp}.sql`,
     );
 
     // Pass the password via PGPASSWORD env var to avoid an interactive password prompt.
@@ -175,12 +175,12 @@ export class BackupService {
 
   private buildSQLiteBackupCommand(
     config: DatabaseConnectionConfig,
-    timestamp: string
+    timestamp: string,
   ): string {
     const { filename } = config.connection;
     const backupPath = path.join(
       this.backupDir,
-      `backup_sqlite_${timestamp}.db`
+      `backup_sqlite_${timestamp}.db`,
     );
 
     // SQLite backup is a simple file copy — no credentials needed.
@@ -196,7 +196,7 @@ export class BackupService {
       strapi.log.warn(
         `Could not compress backup: ${
           error instanceof Error ? error.message : String(error)
-        }`
+        }`,
       );
     }
   }
@@ -206,7 +206,7 @@ export class BackupService {
       const files = fs.readdirSync(this.backupDir);
       const now = new Date();
       const cutoffDate = new Date(
-        now.getTime() - this.maxBackupDays * 24 * 60 * 60 * 1000
+        now.getTime() - this.maxBackupDays * 24 * 60 * 60 * 1000,
       );
 
       let deletedCount = 0;
@@ -225,14 +225,14 @@ export class BackupService {
 
       if (deletedCount > 0) {
         strapi.log.info(
-          `${deletedCount} old backup(s) deleted (older than ${this.maxBackupDays} days)`
+          `${deletedCount} old backup(s) deleted (older than ${this.maxBackupDays} days)`,
         );
       }
     } catch (error: unknown) {
       strapi.log.error(
         `Error cleaning old backups: ${
           error instanceof Error ? error.message : String(error)
-        }`
+        }`,
       );
     }
   }

@@ -35,7 +35,7 @@ const isValidMobileApiKey = (providedKey: string | undefined): boolean => {
     if (providedKey.length !== validKey.length) return false;
     return crypto.timingSafeEqual(
       Buffer.from(providedKey),
-      Buffer.from(validKey)
+      Buffer.from(validKey),
     );
   });
 };
@@ -93,9 +93,8 @@ export default () => {
       return ctx.badRequest("reCAPTCHA token is required");
     }
 
-    const isValidRecaptcha = await GoogleServices.recaptcha.verifyToken(
-      recaptchaToken
-    );
+    const isValidRecaptcha =
+      await GoogleServices.recaptcha.verifyToken(recaptchaToken);
     if (!isValidRecaptcha) {
       return ctx.badRequest("Security verification failed. Please try again.");
     }

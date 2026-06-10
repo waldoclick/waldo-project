@@ -5,5 +5,5 @@
 import { factories } from "@strapi/strapi";
 
 export default factories.createCoreRouter(
-  "api::subscription-pro.subscription-pro"
+  "api::subscription-pro.subscription-pro",
 );

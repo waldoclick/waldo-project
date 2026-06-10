@@ -63,7 +63,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
     const userId = ctx.state.user?.id;
     if (!userId) {
       return ctx.unauthorized(
-        "You must be authenticated to update an advertisement"
+        "You must be authenticated to update an advertisement",
       );
     }
 
@@ -81,7 +81,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
     const isOwner = ad.user?.id?.toString() === userId.toString();
     if (!isOwner && !ctxIsManager(ctx)) {
       return ctx.forbidden(
-        "You don't have permission to update this advertisement"
+        "You don't have permission to update this advertisement",
       );
     }
 
@@ -99,7 +99,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
     const userId = ctx.state.user?.id;
     if (!userId) {
       return ctx.unauthorized(
-        "You must be authenticated to delete an advertisement"
+        "You must be authenticated to delete an advertisement",
       );
     }
 
@@ -117,7 +117,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
     const isOwner = ad.user?.id?.toString() === userId.toString();
     if (!isOwner && !ctxIsManager(ctx)) {
       return ctx.forbidden(
-        "You don't have permission to delete this advertisement"
+        "You don't have permission to delete this advertisement",
       );
     }
 
@@ -462,7 +462,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
 
       if (!isManager && !userId) {
         return ctx.unauthorized(
-          "Debes estar autenticado para ver tus anuncios."
+          "Debes estar autenticado para ver tus anuncios.",
         );
       }
 
@@ -621,7 +621,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
 
       if (!userId) {
         return ctx.unauthorized(
-          "You must be authenticated to deactivate an advertisement"
+          "You must be authenticated to deactivate an advertisement",
         );
       }
 
@@ -666,7 +666,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
 
       if (!userId) {
         return ctx.unauthorized(
-          "You must be authenticated to save a draft advertisement"
+          "You must be authenticated to save a draft advertisement",
         );
       }
 
@@ -698,7 +698,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
 
       if (!userId) {
         return ctx.unauthorized(
-          "You must be authenticated to deactivate an advertisement"
+          "You must be authenticated to deactivate an advertisement",
         );
       }
 

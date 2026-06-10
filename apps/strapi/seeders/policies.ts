@@ -110,7 +110,7 @@ const populatePolicies = async (strapi: Core.Strapi): Promise<void> => {
     } catch (policyError) {
       console.error(
         `Error creando Politica ${policy.title}:`,
-        policyError.message
+        policyError.message,
       );
     }
   }

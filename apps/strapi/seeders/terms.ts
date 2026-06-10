@@ -75,7 +75,7 @@ const populateTerms = async (strapi: Core.Strapi): Promise<void> => {
     } catch (termError) {
       console.error(
         `Error creando Condición de uso ${term.title}:`,
-        termError.message
+        termError.message,
       );
     }
   }

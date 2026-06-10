@@ -80,7 +80,7 @@ describe("computeAdStatus — draft status", () => {
   type AdService = {
     findOne: (
       _id: string | number,
-      _options?: object
+      _options?: object,
     ) => Promise<{ status: string } | null>;
     draftAds: (_options?: object) => Promise<unknown>;
     abandonedAds?: (_options?: object) => Promise<unknown>;

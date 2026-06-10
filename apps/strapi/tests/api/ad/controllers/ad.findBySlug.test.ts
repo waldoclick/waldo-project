@@ -27,7 +27,7 @@ jest.mock("@strapi/strapi", () => ({
           strapi: (global as unknown as { strapi: object }).strapi,
         }) as Record<string, (..._args: unknown[]) => unknown>;
         return capturedExtension;
-      }
+      },
     ),
   },
 }));
@@ -87,7 +87,7 @@ describe("findBySlug controller handler", () => {
 
     // Assert
     expect(ctx.internalServerError).toHaveBeenCalledWith(
-      "Internal server error"
+      "Internal server error",
     );
     expect(mockLogError).toHaveBeenCalled();
     expect(ctx.send).not.toHaveBeenCalled();
@@ -128,7 +128,7 @@ describe("findBySlug controller handler", () => {
 
     // Assert
     expect(jest.mocked(sanitizeAdForPublic)).toHaveBeenCalledWith(
-      publicResult.ad
+      publicResult.ad,
     );
     expect(ctx.send).toHaveBeenCalled();
     expect(ctx.notFound).not.toHaveBeenCalled();

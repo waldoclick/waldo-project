@@ -29,7 +29,7 @@ const runConfirmedMigration = async (strapi: Core.Strapi): Promise<void> => {
     }
 
     strapi.log.info(
-      `📋 Found ${unconfirmedUsers.length} unconfirmed users — migrating...`
+      `📋 Found ${unconfirmedUsers.length} unconfirmed users — migrating...`,
     );
 
     const ids = unconfirmedUsers.map((u) => u.id);
@@ -40,7 +40,7 @@ const runConfirmedMigration = async (strapi: Core.Strapi): Promise<void> => {
     });
 
     strapi.log.info(
-      `✅ Migration complete: ${ids.length} users set to confirmed=true`
+      `✅ Migration complete: ${ids.length} users set to confirmed=true`,
     );
   } catch (error) {
     const e = error as { message?: string };

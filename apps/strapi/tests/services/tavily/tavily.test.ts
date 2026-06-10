@@ -18,7 +18,7 @@ describe("TavilyService", () => {
       delete process.env.TAVILY_API_KEY;
       // Act & Assert
       expect(() => new TavilyService()).toThrow(
-        "TAVILY_API_KEY environment variable is required"
+        "TAVILY_API_KEY environment variable is required",
       );
     });
   });
@@ -71,7 +71,7 @@ describe("TavilyService", () => {
 
       // Act & Assert
       await expect(service.searchNews({ query: "test" })).rejects.toThrow(
-        "Tavily API error: 401 Unauthorized"
+        "Tavily API error: 401 Unauthorized",
       );
     });
   });

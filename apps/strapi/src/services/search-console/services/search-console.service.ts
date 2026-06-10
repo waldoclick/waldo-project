@@ -17,7 +17,7 @@ export class SearchConsoleService implements ISearchConsoleService {
     }
     if (!process.env.GOOGLE_CLIENT_EMAIL || !process.env.GOOGLE_PRIVATE_KEY) {
       throw new Error(
-        "GOOGLE_CLIENT_EMAIL and GOOGLE_PRIVATE_KEY are required"
+        "GOOGLE_CLIENT_EMAIL and GOOGLE_PRIVATE_KEY are required",
       );
     }
   }

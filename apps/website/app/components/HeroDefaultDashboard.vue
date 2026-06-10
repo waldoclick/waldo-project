@@ -4,7 +4,7 @@
       <div class="hero--dashboard__header">
         <div class="hero--dashboard__content">
           <div class="hero--dashboard__breadcrumbs">
-            <BreadcrumbsDefaultDashboard :items="breadcrumbs" />
+            <BreadcrumbsDashboard :items="breadcrumbs" />
           </div>
           <div class="hero--dashboard__title">
             <h1 class="title">

@@ -9,11 +9,11 @@ export class ElectronicInvoiceService {
   }
 
   public async emitInvoice(
-    document: IFactoDocument
+    document: IFactoDocument,
   ): Promise<IFactoLegacyResponse> {
     if (document.encabezado.tipo_dte !== 33) {
       throw new Error(
-        "Tipo de documento inválido. Se esperaba factura electrónica (33)"
+        "Tipo de documento inválido. Se esperaba factura electrónica (33)",
       );
     }
 
@@ -83,8 +83,8 @@ export class ElectronicInvoiceService {
           reject(
             new Error(
               soapResult.return.resultado.mensaje_error ||
-                "Error al emitir documento"
-            )
+                "Error al emitir documento",
+            ),
           );
           return;
         }

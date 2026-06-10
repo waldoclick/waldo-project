@@ -120,8 +120,8 @@ export default {
         strapi.db.query("api::policy.policy").update({
           where: { documentId: entry.documentId },
           data: { order: entry.order },
-        })
-      )
+        }),
+      ),
     );
     return { data: { count: data.length } };
   },

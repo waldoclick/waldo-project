@@ -143,7 +143,7 @@ describe("processPaidWebpay — Zoho CRM wiring", () => {
       {
         Total_Spent__c: 5000,
         Packs_Purchased__c: 1,
-      }
+      },
     );
   });
 
@@ -151,7 +151,7 @@ describe("processPaidWebpay — Zoho CRM wiring", () => {
     (zohoService.findContact as jest.Mock).mockResolvedValue(null);
 
     const result = (await packService.processPaidWebpay(
-      "pack-token"
+      "pack-token",
     )) as ProcessPaidWebpayResult;
 
     expect(zohoService.createDeal).not.toHaveBeenCalled();
@@ -160,11 +160,11 @@ describe("processPaidWebpay — Zoho CRM wiring", () => {
 
   it("Test 4 — findContact throws: processPaidWebpay still returns success:true", async () => {
     (zohoService.findContact as jest.Mock).mockRejectedValue(
-      new Error("Zoho unavailable")
+      new Error("Zoho unavailable"),
     );
 
     const result = (await packService.processPaidWebpay(
-      "pack-token"
+      "pack-token",
     )) as ProcessPaidWebpayResult;
 
     expect(result.success).toBe(true);

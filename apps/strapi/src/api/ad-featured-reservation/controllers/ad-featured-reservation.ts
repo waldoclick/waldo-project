@@ -15,7 +15,7 @@ export default factories.createCoreController(
 
       if (!userId || !quantity || quantity < 1) {
         ctx.badRequest(
-          "Missing or invalid fields: userId and quantity (>= 1) are required"
+          "Missing or invalid fields: userId and quantity (>= 1) are required",
         );
         return;
       }
@@ -63,11 +63,11 @@ export default factories.createCoreController(
               name: typedUser.firstName || typedUser.email,
               quantity,
               type: "destacado(s) para avisos",
-            }
+            },
           );
         } catch (emailError) {
           strapi.log.error(
-            `[ad-featured-reservation/gift] Email failed: ${emailError}`
+            `[ad-featured-reservation/gift] Email failed: ${emailError}`,
           );
         }
 
@@ -76,9 +76,9 @@ export default factories.createCoreController(
         const message = error instanceof Error ? error.message : String(error);
         strapi.log.error(`[ad-featured-reservation/gift] Error: ${message}`);
         throw new ApplicationError(
-          `Failed to create gift featured reservations: ${message}`
+          `Failed to create gift featured reservations: ${message}`,
         );
       }
     },
-  })
+  }),
 );

@@ -7,7 +7,7 @@
         </NuxtLink>
       </template>
     </HeroDefaultDashboard>
-    <PacksDefaultDashboard />
+    <PacksDashboard />
   </div>
 </template>
 

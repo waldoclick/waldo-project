@@ -20,7 +20,7 @@ async function recalculateAdSortPriority(adId: number): Promise<void> {
     fullAd as {
       ad_featured_reservation?: unknown;
       user?: { pro_status?: string } | null;
-    }
+    },
   );
 
   const adRecord = fullAd as Record<string, unknown>;
@@ -46,7 +46,7 @@ export default {
       } catch (error) {
         console.error(
           "lifecycles(ad-featured-reservation): afterCreate recalculate sort_priority failed",
-          error
+          error,
         );
       }
     }
@@ -68,7 +68,7 @@ export default {
       } catch (error) {
         console.error(
           "lifecycles(ad-featured-reservation): afterUpdate recalculate sort_priority failed",
-          error
+          error,
         );
       }
     }
@@ -88,7 +88,7 @@ export default {
       } catch (error) {
         console.error(
           "lifecycles(ad-featured-reservation): afterDelete recalculate sort_priority failed",
-          error
+          error,
         );
       }
     }

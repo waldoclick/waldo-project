@@ -6,5 +6,5 @@
  */
 import { factories } from "@strapi/strapi";
 export default factories.createCoreController(
-  "api::verification-code.verification-code"
+  "api::verification-code.verification-code",
 );

@@ -95,7 +95,7 @@ const makeUser = (
     id: number;
     documentId: string;
     subscription_pro: { tbk_user: string; pending_invoice?: boolean } | null;
-  }> = {}
+  }> = {},
 ) => ({
   id: 42,
   documentId: "abc123xyz456789012345678",
@@ -149,14 +149,14 @@ describe("SubscriptionChargeService", () => {
             period_end: { $lte: expect.any(String) },
             user: { pro_status: { $eq: "active" } },
           }),
-        })
+        }),
       );
       expect(mockAuthorizeCharge).toHaveBeenCalledWith(
         user.documentId,
         user.subscription_pro!.tbk_user,
         9990,
         expect.stringContaining("pro-42-"),
-        expect.stringContaining("c-42-")
+        expect.stringContaining("c-42-"),
       );
     });
   });
@@ -246,7 +246,7 @@ describe("SubscriptionChargeService", () => {
             charge_attempts: 1,
             period_end: expect.any(String),
           }),
-        })
+        }),
       );
 
       // Assert: NO user update for period extension (cron no longer writes pro_expires_at on user)
@@ -255,7 +255,7 @@ describe("SubscriptionChargeService", () => {
           data: expect.objectContaining({
             pro_status: "active",
           }),
-        })
+        }),
       );
     });
   });
@@ -290,7 +290,7 @@ describe("SubscriptionChargeService", () => {
             next_charge_attempt: expect.any(String),
             period_end: expect.any(String),
           }),
-        })
+        }),
       );
 
       // next_charge_attempt should be tomorrow (1 day from today)
@@ -299,7 +299,7 @@ describe("SubscriptionChargeService", () => {
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
       expect(nextAttemptDate.toISOString().split("T")[0]).toBe(
-        tomorrow.toISOString().split("T")[0]
+        tomorrow.toISOString().split("T")[0],
       );
     });
   });
@@ -349,7 +349,7 @@ describe("SubscriptionChargeService", () => {
             authorization_code: "RETRY-AUTH",
             period_end: expect.any(String),
           }),
-        })
+        }),
       );
 
       // Assert: cron does NOT update user pro_status on retry success (user is already active)
@@ -387,7 +387,7 @@ describe("SubscriptionChargeService", () => {
           data: expect.objectContaining({
             pro_status: "inactive",
           }),
-        })
+        }),
       );
 
       // Assert: user update does NOT include pro_expires_at or tbk_user
@@ -403,7 +403,7 @@ describe("SubscriptionChargeService", () => {
           data: expect.objectContaining({
             status: "deactivated",
           }),
-        })
+        }),
       );
     });
   });
@@ -433,7 +433,7 @@ describe("SubscriptionChargeService", () => {
             period_end: { $lte: expect.any(String) },
             user: { pro_status: { $eq: "cancelled" } },
           }),
-        })
+        }),
       );
       expect(mockUserUpdate).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -441,7 +441,7 @@ describe("SubscriptionChargeService", () => {
           data: expect.objectContaining({
             pro_status: "inactive",
           }),
-        })
+        }),
       );
 
       // Assert: user update does NOT include pro_expires_at or tbk_user
@@ -578,14 +578,14 @@ describe("SubscriptionChargeService", () => {
           items: expect.arrayContaining([
             expect.objectContaining({ name: "Suscripcion PRO mensual" }),
           ]),
-        })
+        }),
       );
       expect(mockCreateAdOrder).toHaveBeenCalledWith(
         expect.objectContaining({
           amount: 9990,
           userId: user.id,
           is_invoice: false,
-        })
+        }),
       );
     });
 
@@ -619,7 +619,7 @@ describe("SubscriptionChargeService", () => {
       });
       // Simulate Facto/order failure
       mockGenerateFactoDocument.mockRejectedValueOnce(
-        new Error("Facto service unavailable")
+        new Error("Facto service unavailable"),
       );
 
       // Act
@@ -634,7 +634,7 @@ describe("SubscriptionChargeService", () => {
           data: expect.objectContaining({
             period_end: expect.any(String),
           }),
-        })
+        }),
       );
     });
   });
@@ -680,7 +680,7 @@ describe("SubscriptionChargeService", () => {
         expect.any(String),
         14990,
         expect.any(String),
-        expect.any(String)
+        expect.any(String),
       );
     });
   });

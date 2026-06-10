@@ -18,7 +18,7 @@ jest.mock(
   "../../../../src/extensions/users-permissions/controllers/authController",
   () => ({
     createUserReservations: jest.fn().mockResolvedValue(undefined),
-  })
+  }),
 );
 
 import controller from "../../../../src/api/auth-one-tap/controllers/auth-one-tap";
@@ -112,7 +112,7 @@ describe("GTAP-06: googleOneTap controller — issues JWT directly (no pendingTo
 
     // Assert
     expect(ctx.unauthorized).toHaveBeenCalledWith(
-      expect.stringContaining("Invalid")
+      expect.stringContaining("Invalid"),
     );
   });
 

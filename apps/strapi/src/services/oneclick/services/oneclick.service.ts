@@ -22,7 +22,7 @@ export class OneclickService {
   async startInscription(
     username: string,
     email: string,
-    responseUrl: string
+    responseUrl: string,
   ): Promise<IOneclickStartResponse> {
     try {
       const response = await inscription.start(username, email, responseUrl);
@@ -72,7 +72,7 @@ export class OneclickService {
    */
   async deleteInscription(
     tbkUser: string,
-    userDocumentId: string
+    userDocumentId: string,
   ): Promise<IOneclickDeleteResponse> {
     try {
       await inscription.delete(tbkUser, buildOneclickUsername(userDocumentId));
@@ -93,7 +93,7 @@ export class OneclickService {
     tbkUser: string,
     amount: number,
     parentBuyOrder: string,
-    childBuyOrder: string
+    childBuyOrder: string,
   ): Promise<IOneclickAuthorizeResponse> {
     try {
       const transaction = new Oneclick.MallTransaction(
@@ -102,19 +102,19 @@ export class OneclickService {
           process.env.ONECLICK_API_KEY,
           process.env.ONECLICK_ENVIRONMENT === "production"
             ? Environment.Production
-            : Environment.Integration
-        )
+            : Environment.Integration,
+        ),
       );
       const detail = new TransactionDetail(
         amount,
         process.env.ONECLICK_CHILD_COMMERCE_CODE!,
-        childBuyOrder
+        childBuyOrder,
       );
       const response = await transaction.authorize(
         buildOneclickUsername(userDocumentId),
         tbkUser,
         parentBuyOrder,
-        [detail]
+        [detail],
       );
       const approved = response?.details?.[0]?.response_code === 0;
       return {

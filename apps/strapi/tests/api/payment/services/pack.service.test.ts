@@ -115,7 +115,7 @@ describe("packPurchase — WIRE-02", () => {
       5000,
       expect.stringContaining("order-"),
       expect.stringContaining("session-"),
-      expect.stringContaining("/api/payments/pack-response")
+      expect.stringContaining("/api/payments/pack-response"),
     );
   });
 
@@ -123,7 +123,7 @@ describe("packPurchase — WIRE-02", () => {
     const result = (await packService.packPurchase(
       1,
       "user-1",
-      false
+      false,
     )) as PackPurchaseResult;
 
     // Will FAIL in RED state: current code uses TransbankServices, not gateway
@@ -134,7 +134,7 @@ describe("packPurchase — WIRE-02", () => {
         success: true,
         gatewayRef: "ref-456",
         url: expect.stringContaining("webpay.cl"),
-      })
+      }),
     );
   });
 });

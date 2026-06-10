@@ -2,7 +2,7 @@
   <section class="regions regions--default">
     <div class="regions--default__container">
       <div class="regions--default__header">
-        <SearchDefaultDashboard
+        <SearchDashboard
           :model-value="settingsStore.regions.searchTerm"
           placeholder="Buscar regiones..."
           class="regions--default__search"
@@ -193,11 +193,11 @@ const getCommunesCount = (region: Region): number => {
 const router = useRouter();
 
 const handleViewRegion = (documentId: string) => {
-  router.push(`/maintenance/regions/${documentId}`);
+  router.push(`/dashboard/maintenance/regions/${documentId}`);
 };
 
 const handleEditRegion = (documentId: string) => {
-  router.push(`/maintenance/regions/${documentId}/edit`);
+  router.push(`/dashboard/maintenance/regions/${documentId}/edit`);
 };
 
 watch(

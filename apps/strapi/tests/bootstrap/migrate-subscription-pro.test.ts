@@ -85,7 +85,7 @@ describe("migrateSubscriptionPro", () => {
             inscription_token: activeUser.pro_inscription_token,
             pending_invoice: false,
           }),
-        })
+        }),
       );
 
       // Assert: correct field mapping for cancelled user
@@ -99,7 +99,7 @@ describe("migrateSubscriptionPro", () => {
             inscription_token: cancelledUser.pro_inscription_token,
             pending_invoice: true,
           }),
-        })
+        }),
       );
     });
   });
@@ -118,7 +118,7 @@ describe("migrateSubscriptionPro", () => {
           where: expect.objectContaining({
             tbk_user: { $notNull: true },
           }),
-        })
+        }),
       );
     });
   });
@@ -160,7 +160,7 @@ describe("migrateSubscriptionPro", () => {
             user: newUser.id,
             tbk_user: newUser.tbk_user,
           }),
-        })
+        }),
       );
     });
   });
@@ -186,7 +186,7 @@ describe("migrateSubscriptionPro", () => {
 
       // Assert: info log contains expected message
       expect(logger.info).toHaveBeenCalledWith(
-        expect.stringContaining("no PRO users to migrate")
+        expect.stringContaining("no PRO users to migrate"),
       );
     });
   });
@@ -215,7 +215,7 @@ describe("migrateSubscriptionPro", () => {
           data: expect.objectContaining({
             publishedAt: expect.any(Date),
           }),
-        })
+        }),
       );
     });
   });

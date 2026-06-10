@@ -41,7 +41,7 @@ export class FactoConfig {
 
           console.log("Configurando credenciales en el cliente");
           client.setSecurity(
-            new soap.BasicAuthSecurity(this.config.user, this.config.password)
+            new soap.BasicAuthSecurity(this.config.user, this.config.password),
           );
 
           this.client = client;
@@ -54,7 +54,7 @@ export class FactoConfig {
   public getClient(): soap.Client {
     if (!this.client) {
       throw new Error(
-        "Cliente SOAP no inicializado. Llame a initializeClient primero."
+        "Cliente SOAP no inicializado. Llame a initializeClient primero.",
       );
     }
     return this.client;

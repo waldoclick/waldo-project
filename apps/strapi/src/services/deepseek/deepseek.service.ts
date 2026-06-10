@@ -43,7 +43,7 @@ export class DeepSeekService implements IDeepSeekService {
 
     if (!response.ok) {
       throw new Error(
-        `DeepSeek API error: ${response.status} ${response.statusText}`
+        `DeepSeek API error: ${response.status} ${response.statusText}`,
       );
     }
 

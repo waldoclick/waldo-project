@@ -17,7 +17,7 @@ export class VerificationCodeCleanupService {
 
       const count = deleted?.count ?? 0;
       strapi.log.info(
-        `[verification-code-cleanup] Deleted ${count} expired verification codes.`
+        `[verification-code-cleanup] Deleted ${count} expired verification codes.`,
       );
 
       return {

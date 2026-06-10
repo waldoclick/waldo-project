@@ -55,7 +55,7 @@ jest.mock(
   "../../../../src/api/payment/services/pro-cancellation.service",
   () => ({
     ProCancellationService: jest.fn(),
-  })
+  }),
 );
 
 // Mock ad/services/ad
@@ -169,7 +169,7 @@ describe("PaymentController: proCreate", () => {
         ({
           startInscription: mockStartInscription,
           finishInscription: mockFinishInscription,
-        } as unknown as OneclickService)
+        }) as unknown as OneclickService,
     );
 
     // Re-setup getCurrentUser since clearAllMocks clears its return value
@@ -221,7 +221,7 @@ describe("PaymentController: proCreate", () => {
 
     // Act
     await paymentController.proCreate(
-      ctx as unknown as Parameters<typeof paymentController.proCreate>[0]
+      ctx as unknown as Parameters<typeof paymentController.proCreate>[0],
     );
 
     // Assert: pending_invoice stored on subscription-pro record
@@ -230,7 +230,7 @@ describe("PaymentController: proCreate", () => {
         data: expect.objectContaining({
           pending_invoice: true,
         }),
-      })
+      }),
     );
   });
 
@@ -251,7 +251,7 @@ describe("PaymentController: proCreate", () => {
 
     // Act
     await paymentController.proCreate(
-      ctx as unknown as Parameters<typeof paymentController.proCreate>[0]
+      ctx as unknown as Parameters<typeof paymentController.proCreate>[0],
     );
 
     // Assert: pending_invoice stored on subscription-pro record
@@ -260,7 +260,7 @@ describe("PaymentController: proCreate", () => {
         data: expect.objectContaining({
           pending_invoice: false,
         }),
-      })
+      }),
     );
   });
 });
@@ -294,7 +294,7 @@ describe("PaymentController: proResponse", () => {
           startInscription: mockStartInscription,
           finishInscription: mockFinishInscription,
           authorizeCharge: mockAuthorizeCharge,
-        } as unknown as OneclickService)
+        }) as unknown as OneclickService,
     );
 
     mockDbQueryFindMany.mockResolvedValue([]);
@@ -361,7 +361,7 @@ describe("PaymentController: proResponse", () => {
 
     // Act
     await paymentController.proResponse(
-      ctx as unknown as Parameters<typeof paymentController.proResponse>[0]
+      ctx as unknown as Parameters<typeof paymentController.proResponse>[0],
     );
 
     // Assert
@@ -374,14 +374,14 @@ describe("PaymentController: proResponse", () => {
             name: expect.stringContaining("Suscripcion PRO"),
           }),
         ]),
-      })
+      }),
     );
     expect(mockCreateAdOrder).toHaveBeenCalledWith(
       expect.objectContaining({
         amount: expect.any(Number),
         userId: subPro.user.id,
         is_invoice: false,
-      })
+      }),
     );
   });
 
@@ -421,12 +421,12 @@ describe("PaymentController: proResponse", () => {
 
     // Act
     await paymentController.proResponse(
-      ctx as unknown as Parameters<typeof paymentController.proResponse>[0]
+      ctx as unknown as Parameters<typeof paymentController.proResponse>[0],
     );
 
     // Assert
     expect(ctx.redirect).toHaveBeenCalledWith(
-      "https://waldo.cl/pro/pagar/gracias?order=order-doc-id-456"
+      "https://waldo.cl/pro/pagar/gracias?order=order-doc-id-456",
     );
   });
 
@@ -466,7 +466,7 @@ describe("PaymentController: proResponse", () => {
 
     // Act
     await paymentController.proResponse(
-      ctx as unknown as Parameters<typeof paymentController.proResponse>[0]
+      ctx as unknown as Parameters<typeof paymentController.proResponse>[0],
     );
 
     // Assert: invoice preference (true) read from subscription-pro, passed to documentDetails
@@ -507,7 +507,7 @@ describe("PaymentController: proResponse", () => {
 
     // Act
     await paymentController.proResponse(
-      ctx as unknown as Parameters<typeof paymentController.proResponse>[0]
+      ctx as unknown as Parameters<typeof paymentController.proResponse>[0],
     );
 
     // Assert: fallback redirect

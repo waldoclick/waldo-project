@@ -234,7 +234,7 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       await Swal.fire("Éxito", "Pack actualizado correctamente.", "success");
       const updatedId = responseData?.documentId || responseData?.id;
       if (updatedId) {
-        router.push(`/maintenance/packs/${updatedId}`);
+        router.push(`/dashboard/maintenance/packs/${updatedId}`);
       }
     } else {
       const response = await apiClient<{
@@ -248,9 +248,9 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       await Swal.fire("Éxito", "Pack creado correctamente.", "success");
       const createdId = createdData?.documentId || createdData?.id;
       if (createdId) {
-        router.push(`/maintenance/packs/${createdId}`);
+        router.push(`/dashboard/maintenance/packs/${createdId}`);
       } else {
-        router.push("/maintenance/packs");
+        router.push("/dashboard/maintenance/packs");
       }
     }
   } catch (error) {

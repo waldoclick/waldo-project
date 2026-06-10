@@ -18,7 +18,7 @@ export class ProCancellationService {
    */
   async cancelSubscription(
     userId: number,
-    userDocumentId: string
+    userDocumentId: string,
   ): Promise<{ success: boolean; error?: string }> {
     // 1. Fetch tbk_user from subscription-pro (not from user)
     const subPro = (await strapi.db
@@ -36,7 +36,7 @@ export class ProCancellationService {
     const oneclickService = new OneclickService();
     const deleteResult = await oneclickService.deleteInscription(
       subPro.tbk_user,
-      userDocumentId
+      userDocumentId,
     );
 
     if (!deleteResult.success) {
@@ -45,7 +45,7 @@ export class ProCancellationService {
         {
           userId,
           error: deleteResult.error,
-        }
+        },
       );
     }
 

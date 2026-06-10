@@ -55,7 +55,7 @@ export default function (plugin) {
     // Email confirmation handler: returns JSON instead of redirecting so frontend can show Swal
     instance.emailConfirmation = overrideEmailConfirmation();
     instance.changePassword = overrideChangePassword(
-      instance.changePassword.bind(instance)
+      instance.changePassword.bind(instance),
     );
     return instance;
   };

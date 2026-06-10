@@ -17,7 +17,7 @@ export async function sendMjmlEmail(
   template: string,
   to: string | string[],
   subject: string,
-  data: Record<string, unknown>
+  data: Record<string, unknown>,
 ) {
   try {
     // Agregar variables del entorno automáticamente

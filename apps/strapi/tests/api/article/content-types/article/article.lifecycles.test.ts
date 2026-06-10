@@ -56,7 +56,7 @@ describe("Article lifecycles", () => {
 
       // Assert
       expect(
-        (event.params.data as Record<string, unknown>).slug
+        (event.params.data as Record<string, unknown>).slug,
       ).toBeUndefined();
     });
   });
@@ -98,7 +98,7 @@ describe("Article lifecycles", () => {
 
       // Assert
       expect(
-        (event.params.data as Record<string, unknown>).slug
+        (event.params.data as Record<string, unknown>).slug,
       ).toBeUndefined();
     });
 
@@ -117,7 +117,7 @@ describe("Article lifecycles", () => {
       // Assert
       expect(mockFindOne).not.toHaveBeenCalled();
       expect(
-        (event.params.data as Record<string, unknown>).slug
+        (event.params.data as Record<string, unknown>).slug,
       ).toBeUndefined();
     });
   });

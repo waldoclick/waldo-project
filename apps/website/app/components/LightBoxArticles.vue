@@ -419,7 +419,7 @@ async function handleGenerate() {
         cancelButtonText: "Cancelar",
       });
       if (dupResult.isConfirmed) {
-        await navigateTo(`/articles/edit/${docId}`);
+        await navigateTo(`/dashboard/articles/${docId}/edit`);
         handleClose();
       }
       return;

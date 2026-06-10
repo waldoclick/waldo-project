@@ -6,7 +6,7 @@ class FreeAdService {
   async processFreeAd(
     adId: number,
     userId: string,
-    pack: "free" | "paid"
+    pack: "free" | "paid",
   ): Promise<{ success: boolean; ad?: unknown; message?: string }> {
     try {
       // 1. Load the ad
@@ -21,7 +21,7 @@ class FreeAdService {
       const creditResult =
         await PaymentUtils.adReservation.getAdReservationAvailable(
           userId,
-          isFreeReservation
+          isFreeReservation,
         );
       if (!creditResult.success || !creditResult.adReservation) {
         return {
@@ -35,14 +35,14 @@ class FreeAdService {
       // 3. Link reservation
       await PaymentUtils.ad.updateAdReservation(
         adId,
-        creditResult.adReservation.id
+        creditResult.adReservation.id,
       );
 
       // 3b. For paid reservations, update ad duration from the reservation's total_days
       if (pack === "paid" && creditResult.adReservation.total_days) {
         await PaymentUtils.ad.updateAdDates(
           adId,
-          creditResult.adReservation.total_days
+          creditResult.adReservation.total_days,
         );
       }
 
@@ -59,7 +59,7 @@ class FreeAdService {
           {
             name: `${result.ad.user.firstname} ${result.ad.user.lastname}`,
             adUrl: `${process.env.FRONTEND_URL}/anuncios/${result.ad.slug}`,
-          }
+          },
         );
 
         const adminEmailsRaw =
@@ -78,7 +78,7 @@ class FreeAdService {
             email: result.ad.user.email,
             slug: result.ad.slug,
             adUrl: `${process.env.FRONTEND_URL}/dashboard/ads/${result.ad.id}`,
-          }
+          },
         );
       } catch (error) {
         logger.error("Error sending free ad creation emails:", { error });

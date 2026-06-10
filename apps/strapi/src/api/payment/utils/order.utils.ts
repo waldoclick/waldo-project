@@ -105,7 +105,7 @@ class OrderUtils {
    */
   public async updateOrderDocumentResponse(
     orderId: number,
-    documentResponse: unknown
+    documentResponse: unknown,
   ): Promise<OrderResponse> {
     try {
       const order = await strapi.db.query("api::order.order").update({

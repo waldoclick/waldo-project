@@ -35,7 +35,7 @@ const USER_UPDATE_PATH_REGEX = /^\/api\/users\/\d+$/;
 
 export default (
   _config: Record<string, unknown>,
-  _context: { strapi: Core.Strapi }
+  _context: { strapi: Core.Strapi },
 ) => {
   return async (ctx: Context, next: () => Promise<void>) => {
     if (
@@ -55,8 +55,8 @@ export default (
           if (stripped.length > 0) {
             console.warn(
               `[protect-user-fields] Stripped protected fields from PUT /api/users/${userId}: ${stripped.join(
-                ", "
-              )}`
+                ", ",
+              )}`,
             );
           }
         } else {
@@ -66,8 +66,8 @@ export default (
           if (stripped.length > 0) {
             console.warn(
               `[protect-user-fields] Stripped protected fields from PUT /api/users/${userId}: ${stripped.join(
-                ", "
-              )}`
+                ", ",
+              )}`,
             );
           }
         }
@@ -84,7 +84,7 @@ export default (
  */
 function stripProtectedFields(
   obj: Record<string, unknown>,
-  _userId: string | undefined
+  _userId: string | undefined,
 ): string[] {
   const stripped: string[] = [];
 

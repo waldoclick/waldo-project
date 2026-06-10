@@ -44,7 +44,7 @@ export class CerebrasService implements ICerebrasService {
 
     if (!response.ok) {
       throw new Error(
-        `Cerebras API error: ${response.status} ${response.statusText}`
+        `Cerebras API error: ${response.status} ${response.statusText}`,
       );
     }
 

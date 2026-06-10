@@ -41,13 +41,13 @@ export default {
         "../../../extensions/users-permissions/controllers/authController"
       );
       (createUserReservations as (_user: unknown) => Promise<unknown>)(
-        user
+        user,
       ).catch((err: unknown) =>
         strapi.log.error(
           `[googleOneTap] createUserReservations failed for user ${
             (user as { id: number }).id
-          }: ${(err as Error)?.message}`
-        )
+          }: ${(err as Error)?.message}`,
+        ),
       );
     }
 
@@ -64,7 +64,7 @@ export default {
       userSchema,
       {
         auth: ctx.state.auth,
-      }
+      },
     );
 
     ctx.body = { jwt, user: sanitizedUser };

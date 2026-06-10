@@ -77,7 +77,7 @@ export class ContactService {
           name: contactData.fullname,
           phone: contactData.phone,
           company: contactData.company,
-        }
+        },
       );
 
       // Enviar notificación a los admins con MJML
@@ -96,7 +96,7 @@ export class ContactService {
           phone: contactData.phone,
           company: contactData.company,
           message: contactData.message,
-        }
+        },
       );
     } catch (error) {
       logger.error("Error sending emails:", error);

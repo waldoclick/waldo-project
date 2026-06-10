@@ -69,14 +69,14 @@ export default class UserCronService {
               });
               return null;
             }
-          })
+          }),
         );
 
         usersWithRestoredAds.push(...results.filter(Boolean));
       }
 
       logger.info(
-        `Restoration complete — users topped up: ${usersWithRestoredAds.length}`
+        `Restoration complete — users topped up: ${usersWithRestoredAds.length}`,
       );
 
       if (usersWithRestoredAds.length > 0) {
@@ -91,7 +91,7 @@ export default class UserCronService {
           "Reporte de restauración de anuncios gratuitos",
           {
             users: usersWithRestoredAds,
-          }
+          },
         );
       }
 
@@ -147,10 +147,11 @@ export default class UserCronService {
         })) as AdReservationRecord[];
 
       const availableReservations = currentReservations.filter(
-        (r) => !r.ad
+        (r) => !r.ad,
       ).length;
       const activeReservations = currentReservations.filter(
-        (r) => r.ad && r.ad.remaining_days > 0 && !r.ad.banned && !r.ad.rejected
+        (r) =>
+          r.ad && r.ad.remaining_days > 0 && !r.ad.banned && !r.ad.rejected,
       ).length;
       const totalReservations = availableReservations + activeReservations;
 

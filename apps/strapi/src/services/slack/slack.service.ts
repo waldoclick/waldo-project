@@ -21,7 +21,7 @@ export class SlackService {
    */
   public async sendNewAdNotification(
     text: string,
-    blocks?: object[]
+    blocks?: object[],
   ): Promise<void> {
     await this.sendMessage(text, blocks);
   }
@@ -53,7 +53,7 @@ export class SlackService {
             Authorization: `Bearer ${this.botToken}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       // console.log('Slack API Response:', JSON.stringify(response.data, null, 2));

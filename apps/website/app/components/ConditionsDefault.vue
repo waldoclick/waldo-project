@@ -2,7 +2,7 @@
   <section class="conditions conditions--default">
     <div class="conditions--default__container">
       <div class="conditions--default__header">
-        <SearchDefaultDashboard
+        <SearchDashboard
           :model-value="settingsStore.conditions.searchTerm"
           placeholder="Buscar condiciones..."
           class="conditions--default__search"
@@ -182,11 +182,11 @@ const sortOptions = [
 const router = useRouter();
 
 const handleViewCondition = (documentId: string) => {
-  router.push(`/maintenance/conditions/${documentId}`);
+  router.push(`/dashboard/maintenance/conditions/${documentId}`);
 };
 
 const handleEditCondition = (documentId: string) => {
-  router.push(`/maintenance/conditions/${documentId}/edit`);
+  router.push(`/dashboard/maintenance/conditions/${documentId}/edit`);
 };
 
 watch(

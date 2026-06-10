@@ -2,7 +2,7 @@
   <section class="ads" :class="`ads--${props.section}`">
     <div :class="`ads--${props.section}__container`">
       <div :class="`ads--${props.section}__header`">
-        <SearchDefaultDashboard
+        <SearchDashboard
           :model-value="sectionSettings.searchTerm"
           placeholder="Buscar anuncios..."
           :class="`ads--${props.section}__search`"
@@ -271,7 +271,7 @@ const getImageUrl = (image: GalleryItem) => {
 const router = useRouter();
 
 const handleViewAd = (adId: number) => {
-  router.push(`/ads/${adId}`);
+  router.push(`/dashboard/ads/${adId}`);
 };
 
 // Watch para recargar cuando cambian los filtros o la búsqueda

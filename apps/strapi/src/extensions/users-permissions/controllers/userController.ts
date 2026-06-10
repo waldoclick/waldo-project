@@ -60,17 +60,17 @@ const getDetailedUserData = async (user) => {
 
   // Count the published ads
   const publishedAdsCount = userAds.results.filter(
-    (ad) => ad.active === true && ad.rejected === false
+    (ad) => ad.active === true && ad.rejected === false,
   ).length;
 
   // Count the ads under review
   const inReviewAdsCount = userAds.results.filter(
-    (ad) => ad.active === false && ad.rejected === false
+    (ad) => ad.active === false && ad.rejected === false,
   ).length;
 
   // Count the rejected ads
   const rejectedAdsCount = userAds.results.filter(
-    (ad) => ad.rejected === true
+    (ad) => ad.rejected === true,
   ).length;
 
   const totalAdsCount = publishedAdsCount + inReviewAdsCount + rejectedAdsCount;
@@ -200,7 +200,7 @@ export const getUserDataWithFilters = async (ctx) => {
   const page = parseInt((pagination as Record<string, string>).page || "1", 10);
   const pageSize = parseInt(
     (pagination as Record<string, string>).pageSize || "25",
-    10
+    10,
   );
 
   // Server-enforced: only return Authenticated users — non-forgeable from client.

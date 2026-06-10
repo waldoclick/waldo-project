@@ -60,7 +60,7 @@ export class WeatherService {
   async find(comuna: string): Promise<WeatherData> {
     const data = this.readData();
     const comunaData = data.find(
-      (d) => d.nombre.toLowerCase() === comuna.toLowerCase()
+      (d) => d.nombre.toLowerCase() === comuna.toLowerCase(),
     );
 
     if (!comunaData) {
@@ -73,7 +73,7 @@ export class WeatherService {
     if (this.shouldUpdate(comunaData)) {
       const weatherData = await this.fetchWeather(comuna);
       const index = data.findIndex(
-        (d) => d.nombre.toLowerCase() === comuna.toLowerCase()
+        (d) => d.nombre.toLowerCase() === comuna.toLowerCase(),
       );
       data[index] = weatherData;
       this.writeData(data);

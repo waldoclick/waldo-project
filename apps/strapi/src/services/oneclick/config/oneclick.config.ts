@@ -11,8 +11,8 @@ const inscription = new Oneclick.MallInscription(
   new Options(
     process.env.ONECLICK_COMMERCE_CODE,
     process.env.ONECLICK_API_KEY,
-    getEnvironment()
-  )
+    getEnvironment(),
+  ),
 );
 
 export default inscription;

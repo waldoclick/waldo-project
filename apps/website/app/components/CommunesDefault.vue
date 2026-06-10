@@ -2,7 +2,7 @@
   <section class="communes communes--default">
     <div class="communes--default__container">
       <div class="communes--default__header">
-        <SearchDefaultDashboard
+        <SearchDashboard
           :model-value="settingsStore.communes.searchTerm"
           placeholder="Buscar comunas..."
           class="communes--default__search"
@@ -188,11 +188,11 @@ const sortOptions = [
 const router = useRouter();
 
 const handleViewCommune = (documentId: string) => {
-  router.push(`/maintenance/communes/${documentId}`);
+  router.push(`/dashboard/maintenance/communes/${documentId}`);
 };
 
 const handleEditCommune = (documentId: string) => {
-  router.push(`/maintenance/communes/${documentId}/edit`);
+  router.push(`/dashboard/maintenance/communes/${documentId}/edit`);
 };
 
 watch(

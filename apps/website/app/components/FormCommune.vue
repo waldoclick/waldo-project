@@ -203,7 +203,7 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       await Swal.fire("Éxito", "Comuna actualizada correctamente.", "success");
       const updatedId = responseData?.documentId || responseData?.id;
       if (updatedId) {
-        router.push(`/maintenance/communes/${updatedId}`);
+        router.push(`/dashboard/maintenance/communes/${updatedId}`);
       }
     } else {
       const response = await apiClient<{
@@ -217,9 +217,9 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       await Swal.fire("Éxito", "Comuna creada correctamente.", "success");
       const createdId = createdData?.documentId || createdData?.id;
       if (createdId) {
-        router.push(`/maintenance/communes/${createdId}`);
+        router.push(`/dashboard/maintenance/communes/${createdId}`);
       } else {
-        router.push("/maintenance/communes");
+        router.push("/dashboard/maintenance/communes");
       }
     }
   } catch (error) {

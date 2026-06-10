@@ -2,7 +2,7 @@
   <section class="reservations reservations--used">
     <div class="reservations--used__container">
       <div class="reservations--used__header">
-        <SearchDefaultDashboard
+        <SearchDashboard
           :model-value="settingsStore.reservations.searchTerm"
           placeholder="Buscar reservas..."
           class="reservations--used__search"
@@ -220,7 +220,7 @@ const router = useRouter();
 
 const handleViewReservation = (reservationId: number) => {
   // Navegar a la página de detalle de la reserva
-  router.push(`/reservations/${reservationId}`);
+  router.push(`/dashboard/reservations/${reservationId}`);
 };
 
 defineExpose({ refresh: fetchUsedReservations });

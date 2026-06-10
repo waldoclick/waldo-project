@@ -162,16 +162,16 @@ export default {
       if (!SUPPORTED_CURRENCIES.includes(from)) {
         return ctx.badRequest(
           `Currency '${from}' is not supported. Supported currencies are: ${SUPPORTED_CURRENCIES.join(
-            ", "
-          )}`
+            ", ",
+          )}`,
         );
       }
 
       if (!SUPPORTED_CURRENCIES.includes(to)) {
         return ctx.badRequest(
           `Currency '${to}' is not supported. Supported currencies are: ${SUPPORTED_CURRENCIES.join(
-            ", "
-          )}`
+            ", ",
+          )}`,
         );
       }
 
@@ -179,7 +179,7 @@ export default {
       const convertedAmount = await indicadorService.convert(
         Number(amount),
         from as Currency,
-        to as Currency
+        to as Currency,
       );
       const indicators = await indicadorService.getIndicators();
 

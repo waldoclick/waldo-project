@@ -2,7 +2,7 @@
   <section class="subscription-pros subscription-pros--default">
     <div class="subscription-pros--default__container">
       <div class="subscription-pros--default__header">
-        <SearchDefaultDashboard
+        <SearchDashboard
           :model-value="settingsStore.subscriptionPros.searchTerm"
           placeholder="Buscar subscripciones PRO..."
           class="subscription-pros--default__search"
@@ -190,7 +190,7 @@ const sortOptions = [
 const router = useRouter();
 
 const handleViewItem = (itemId: number) => {
-  router.push(`/users/subscription-pros/${itemId}`);
+  router.push(`/dashboard/users/subscription-pros/${itemId}`);
 };
 
 watch(

@@ -257,7 +257,7 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       );
       const updatedId = responseData?.documentId || responseData?.id;
       if (updatedId) {
-        router.push(`/articles/${updatedId}`);
+        router.push(`/dashboard/articles/${updatedId}`);
       }
     } else {
       const response = await apiClient<{
@@ -271,9 +271,9 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       await Swal.fire("Éxito", "Artículo creado correctamente.", "success");
       const createdId = createdData?.documentId || createdData?.id;
       if (createdId) {
-        router.push(`/articles/${createdId}/edit`);
+        router.push(`/dashboard/articles/${createdId}/edit`);
       } else {
-        router.push("/articles");
+        router.push("/dashboard/articles");
       }
     }
   } catch (error) {

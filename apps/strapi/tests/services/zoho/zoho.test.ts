@@ -63,7 +63,7 @@ describe("ZohoService", () => {
         email: "john@example.com",
       });
       const body = JSON.parse(
-        mock.history.post.find((r) => r.url?.includes("/Leads"))!.data
+        mock.history.post.find((r) => r.url?.includes("/Leads"))!.data,
       );
       expect(body.data[0].Lead_Status).toBe("New");
     });
@@ -95,7 +95,7 @@ describe("ZohoService", () => {
         Email: "test@example.com",
       });
       const body = JSON.parse(
-        mock.history.post.find((r) => r.url?.includes("/Contacts"))!.data
+        mock.history.post.find((r) => r.url?.includes("/Contacts"))!.data,
       );
       expect(body.data[0].Ads_Published__c).toBe(0);
       expect(body.data[0].Total_Spent__c).toBe(0);
@@ -160,7 +160,7 @@ describe("ZohoService", () => {
       expect(result).toBe("deal-001");
 
       const body = JSON.parse(
-        mock.history.post.find((r) => r.url?.includes("/Deals"))!.data
+        mock.history.post.find((r) => r.url?.includes("/Deals"))!.data,
       );
       expect(body.data[0].Deal_Name).toBe("Pack Premium - juan@example.com");
       expect(body.data[0].Stage).toBe("Cerrado ganado");
@@ -183,7 +183,7 @@ describe("ZohoService", () => {
 
       const body = JSON.parse(
         mock.history.put.find((r) => r.url?.includes("/Contacts/contact-001"))!
-          .data
+          .data,
       );
       expect(body.data[0].Total_Spent__c).toBe(9990);
       expect(body.data[0]).not.toHaveProperty("Ads_Published__c");

@@ -171,7 +171,7 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       await Swal.fire("Éxito", "FAQ actualizado correctamente.", "success");
       const updatedId = responseData?.documentId || responseData?.id;
       if (updatedId) {
-        router.push(`/maintenance/faqs/${updatedId}`);
+        router.push(`/dashboard/maintenance/faqs/${updatedId}`);
       }
     } else {
       const response = await apiClient<{
@@ -185,9 +185,9 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       await Swal.fire("Éxito", "FAQ creado correctamente.", "success");
       const createdId = createdData?.documentId || createdData?.id;
       if (createdId) {
-        router.push(`/maintenance/faqs/${createdId}`);
+        router.push(`/dashboard/maintenance/faqs/${createdId}`);
       } else {
-        router.push("/maintenance/faqs");
+        router.push("/dashboard/maintenance/faqs");
       }
     }
   } catch (error) {

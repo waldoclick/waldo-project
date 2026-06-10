@@ -2,7 +2,7 @@
   <section class="articles articles--default">
     <div class="articles--default__container">
       <div class="articles--default__header">
-        <SearchDefaultDashboard
+        <SearchDashboard
           :model-value="settingsStore.articles.searchTerm"
           placeholder="Buscar artículos..."
           class="articles--default__search"
@@ -225,11 +225,11 @@ const truncateText = (text: string, maxLength: number) => {
 };
 
 const handleViewArticle = (article: Article) => {
-  router.push(`/articles/${article.documentId || article.id}`);
+  router.push(`/dashboard/articles/${article.documentId || article.id}`);
 };
 
 const handleEditArticle = (article: Article) => {
-  router.push(`/articles/${article.documentId || article.id}/edit`);
+  router.push(`/dashboard/articles/${article.documentId || article.id}/edit`);
 };
 
 watch(

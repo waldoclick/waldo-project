@@ -5,5 +5,5 @@
 import { factories } from "@strapi/strapi";
 
 export default factories.createCoreController(
-  "api::subscription-payment.subscription-payment"
+  "api::subscription-payment.subscription-payment",
 );

@@ -40,7 +40,7 @@ export class GroqService implements IGroqService {
 
     if (!response.ok) {
       throw new Error(
-        `Groq API error: ${response.status} ${response.statusText}`
+        `Groq API error: ${response.status} ${response.statusText}`,
       );
     }
 

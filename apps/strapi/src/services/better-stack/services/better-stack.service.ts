@@ -18,7 +18,7 @@ export class BetterStackService implements IBetterStackService {
 
   private async apiFetch<T>(
     path: string,
-    params?: Record<string, string>
+    params?: Record<string, string>,
   ): Promise<T> {
     const url = new URL(`${this.baseUrl}${path}`);
     if (params) {
@@ -34,7 +34,7 @@ export class BetterStackService implements IBetterStackService {
 
     if (!response.ok) {
       throw new Error(
-        `Better Stack API error: ${response.status} ${response.statusText}`
+        `Better Stack API error: ${response.status} ${response.statusText}`,
       );
     }
 
@@ -73,7 +73,7 @@ export class BetterStackService implements IBetterStackService {
           ? Math.round(
               (new Date(resolvedAt).getTime() - new Date(startedAt).getTime()) /
                 1000 /
-                60
+                60,
             )
           : null;
 

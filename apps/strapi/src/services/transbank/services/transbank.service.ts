@@ -11,7 +11,7 @@ export class TransbankService {
     amount: number,
     orderId: string,
     sessionId: string,
-    returnUrl: string
+    returnUrl: string,
   ): Promise<IWebpayInitResponse> {
     try {
       // Log de envío a Transbank
@@ -27,7 +27,7 @@ export class TransbankService {
         orderId,
         sessionId,
         amount,
-        returnUrl
+        returnUrl,
       );
 
       return {
@@ -54,7 +54,7 @@ export class TransbankService {
   }
 
   public async commitTransaction(
-    token: string
+    token: string,
   ): Promise<IWebpayCommitResponse> {
     try {
       const response = await webpay.commit(token);

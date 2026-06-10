@@ -17,13 +17,13 @@ export const updateUsername = async (ctx) => {
   if (currentUser.last_username_change) {
     const daysSinceLastChange = differenceInDays(
       new Date(),
-      new Date(currentUser.last_username_change)
+      new Date(currentUser.last_username_change),
     );
 
     if (daysSinceLastChange < 90) {
       const daysRemaining = 90 - daysSinceLastChange;
       return ctx.badRequest(
-        `No puedes cambiar tu nombre de usuario por ${daysRemaining} días más`
+        `No puedes cambiar tu nombre de usuario por ${daysRemaining} días más`,
       );
     }
   }
@@ -41,7 +41,7 @@ export const updateUsername = async (ctx) => {
     blockedVariations.some((variation) => usernameLower.includes(variation))
   ) {
     return ctx.badRequest(
-      "This username is not allowed as it contains protected brand terms. Please choose a different username."
+      "This username is not allowed as it contains protected brand terms. Please choose a different username.",
     );
   }
 
@@ -62,7 +62,7 @@ export const updateUsername = async (ctx) => {
   const usernameRegex = /^[a-zA-Z0-9][a-zA-Z0-9._]+[a-zA-Z0-9]$/;
   if (!usernameRegex.test(username)) {
     return ctx.badRequest(
-      "Username can only contain letters, numbers, dots and underscores, and must start and end with a letter or number"
+      "Username can only contain letters, numbers, dots and underscores, and must start and end with a letter or number",
     );
   }
 
@@ -74,7 +74,7 @@ export const updateUsername = async (ctx) => {
     username.includes("_.")
   ) {
     return ctx.badRequest(
-      "Username cannot contain consecutive special characters"
+      "Username cannot contain consecutive special characters",
     );
   }
 

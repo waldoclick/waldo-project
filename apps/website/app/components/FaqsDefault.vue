@@ -2,7 +2,7 @@
   <section class="faqs faqs--default">
     <div class="faqs--default__container">
       <div class="faqs--default__header">
-        <SearchDefaultDashboard
+        <SearchDashboard
           :model-value="settingsStore.faqs.searchTerm"
           placeholder="Buscar FAQs..."
           class="faqs--default__search"
@@ -278,11 +278,11 @@ const truncateText = (text: string, maxLength: number) => {
 const router = useRouter();
 
 const handleViewFaq = (documentId: string) => {
-  router.push(`/maintenance/faqs/${documentId}`);
+  router.push(`/dashboard/maintenance/faqs/${documentId}`);
 };
 
 const handleEditFaq = (documentId: string) => {
-  router.push(`/maintenance/faqs/${documentId}/edit`);
+  router.push(`/dashboard/maintenance/faqs/${documentId}/edit`);
 };
 
 watch(

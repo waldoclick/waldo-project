@@ -36,7 +36,7 @@ class CheckoutService {
    */
   async initiateCheckout(
     payload: CheckoutPayload,
-    userId: string
+    userId: string,
   ): Promise<InitiateResult> {
     // 1. Validate pack name
     if (payload.pack === "free" && !payload.featured) {
@@ -58,7 +58,7 @@ class CheckoutService {
         amount,
         buyOrder,
         sessionId,
-        returnUrl
+        returnUrl,
       );
 
       if (!result.success) {
@@ -83,7 +83,7 @@ class CheckoutService {
         amount,
         buyOrder,
         sessionId,
-        returnUrl
+        returnUrl,
       );
 
       if (!result.success) {
@@ -136,7 +136,7 @@ class CheckoutService {
       amount,
       buyOrder,
       sessionId,
-      returnUrl
+      returnUrl,
     );
 
     // 9. Handle failure
@@ -186,7 +186,7 @@ class CheckoutService {
             userId,
             (Number(process.env.AD_FEATURED_PRICE) || 10000).toString(),
             "Paid featured from unified checkout (paid pack)",
-            adId
+            adId,
           );
         }
 
@@ -194,7 +194,7 @@ class CheckoutService {
         const aAdReservationCredit =
           await PaymentUtils.adReservation.getAdReservationAvailable(
             userId,
-            false
+            false,
           );
 
         if (
@@ -234,7 +234,7 @@ class CheckoutService {
             "Failed to create order record for checkout (paid pack)",
             {
               error: (orderError as { message?: string }).message,
-            }
+            },
           );
         }
 
@@ -279,7 +279,7 @@ class CheckoutService {
           userId,
           unitPrice.toString(),
           resolvedTotalDays,
-          "Reservation from unified checkout"
+          "Reservation from unified checkout",
           // Do NOT pass adId here — link is made explicitly in step 8b below
         );
         if (i === 0 && res.success && res.adReservation) {
@@ -304,7 +304,7 @@ class CheckoutService {
               userId,
               "0",
               "Featured reservation from unified checkout",
-              featuredAdId
+              featuredAdId,
             );
           // If linked, also call updateAdFeaturedReservation to make the association explicit
           if (
@@ -320,7 +320,7 @@ class CheckoutService {
             if (reservationRecord.id !== undefined) {
               await PaymentUtils.ad.updateAdFeaturedReservation(
                 adId,
-                reservationRecord.id
+                reservationRecord.id,
               );
             }
           }
@@ -333,7 +333,7 @@ class CheckoutService {
           userId,
           (Number(process.env.AD_FEATURED_PRICE) || 10000).toString(),
           "Paid featured from unified checkout",
-          adId
+          adId,
         );
       }
 
@@ -359,7 +359,7 @@ class CheckoutService {
           packId as unknown as PackType,
           featured as unknown as FeaturedType,
           String(userId),
-          String(adId)
+          String(adId),
         );
         paymentItems = paymentDetails.items;
 
@@ -379,7 +379,7 @@ class CheckoutService {
           {
             adId,
             error: (factoError as { message?: string }).message,
-          }
+          },
         );
       }
 

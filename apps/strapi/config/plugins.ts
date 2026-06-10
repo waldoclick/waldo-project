@@ -45,7 +45,7 @@ export default ({ env }) => ({
           clientSecret: env("GOOGLE_CLIENT_SECRET"),
           callbackURL: env(
             "GOOGLE_CALLBACK_URL",
-            "http://localhost:1337/api/connect/google/callback"
+            "http://localhost:1337/api/connect/google/callback",
           ),
         },
       },

@@ -144,7 +144,7 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       );
       const updatedId = responseData?.id || responseData?.documentId;
       if (updatedId) {
-        router.push(`/maintenance/policies/${updatedId}`);
+        router.push(`/dashboard/maintenance/policies/${updatedId}`);
       }
     } else {
       const lastResponse = (await apiClient("policies", {
@@ -171,9 +171,9 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       await Swal.fire("Éxito", "Politica creada correctamente.", "success");
       const createdId = createdData?.id || createdData?.documentId;
       if (createdId) {
-        router.push(`/maintenance/policies/${createdId}`);
+        router.push(`/dashboard/maintenance/policies/${createdId}`);
       } else {
-        router.push("/maintenance/policies");
+        router.push("/dashboard/maintenance/policies");
       }
     }
   } catch (error) {

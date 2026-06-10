@@ -32,7 +32,7 @@ export class TavilyService implements ITavilyService {
   }
 
   async searchNews(
-    request: TavilySearchRequest
+    request: TavilySearchRequest,
   ): Promise<TavilySearchResponse> {
     const response = await fetch(this.baseUrl, {
       method: "POST",
@@ -50,7 +50,7 @@ export class TavilyService implements ITavilyService {
 
     if (!response.ok) {
       throw new Error(
-        `Tavily API error: ${response.status} ${response.statusText}`
+        `Tavily API error: ${response.status} ${response.statusText}`,
       );
     }
 

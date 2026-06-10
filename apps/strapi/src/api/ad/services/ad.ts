@@ -43,7 +43,7 @@ function computeAdStatus(ad: unknown): AdStatus {
 
   const hasReservationKey = Object.prototype.hasOwnProperty.call(
     adObj,
-    "ad_reservation"
+    "ad_reservation",
   );
 
   if (adObj.draft === true) {
@@ -128,7 +128,7 @@ export async function recalculateSortPriorities(): Promise<number> {
       ad as {
         ad_featured_reservation?: unknown;
         user?: { pro_status?: string } | null;
-      }
+      },
     );
     const adRecord = ad as Record<string, unknown>;
     if (adRecord.sort_priority !== priority) {
@@ -190,7 +190,7 @@ async function getAdvertisements(
   status: string,
   postProcessFilter?: (_ads: unknown[]) => unknown[],
   isManager: boolean = false,
-  userId: number | null = null
+  userId: number | null = null,
 ) {
   try {
     // Merge default filters with any additional filters provided
@@ -276,7 +276,7 @@ async function getAdvertisements(
     const processedAds = isManager
       ? filteredAds
       : filteredAds.map((ad) =>
-          sanitizeAdForPublic(ad as Record<string, unknown>)
+          sanitizeAdForPublic(ad as Record<string, unknown>),
         );
 
     // Calculate pagination metadata
@@ -399,7 +399,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
   async activeAds(
     options: AdQueryOptions = {},
     isManager: boolean = false,
-    userId: number | null = null
+    userId: number | null = null,
   ) {
     const defaultFilters = {
       active: { $eq: true },
@@ -414,7 +414,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
       "active",
       undefined,
       isManager,
-      userId
+      userId,
     );
   },
 
@@ -441,7 +441,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
   async pendingAds(
     options: AdQueryOptions = {},
     isManager: boolean = false,
-    userId: number | null = null
+    userId: number | null = null,
   ) {
     const defaultFilters = {
       active: { $eq: false },
@@ -457,7 +457,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
       "pending",
       undefined,
       isManager,
-      userId
+      userId,
     );
   },
 
@@ -484,7 +484,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
   async archivedAds(
     options: AdQueryOptions = {},
     isManager: boolean = false,
-    userId: number | null = null
+    userId: number | null = null,
   ) {
     const defaultFilters = {
       active: { $eq: false },
@@ -499,7 +499,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
       "archived",
       undefined,
       isManager,
-      userId
+      userId,
     );
   },
 
@@ -514,7 +514,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
   async bannedAds(
     options: AdQueryOptions = {},
     isManager: boolean = false,
-    userId: number | null = null
+    userId: number | null = null,
   ) {
     const defaultFilters = {
       banned: { $eq: true },
@@ -526,7 +526,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
       "banned",
       undefined,
       isManager,
-      userId
+      userId,
     );
   },
 
@@ -551,7 +551,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
   async rejectedAds(
     options: AdQueryOptions = {},
     isManager: boolean = false,
-    userId: number | null = null
+    userId: number | null = null,
   ) {
     const defaultFilters = {
       rejected: { $eq: true },
@@ -563,7 +563,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
       "rejected",
       undefined,
       isManager,
-      userId
+      userId,
     );
   },
 
@@ -576,7 +576,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
   async draftAds(
     options: AdQueryOptions = {},
     isManager: boolean = false,
-    userId: number | null = null
+    userId: number | null = null,
   ) {
     const defaultFilters = {
       draft: { $eq: true },
@@ -588,7 +588,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
       "draft",
       undefined,
       isManager,
-      userId
+      userId,
     );
   },
 
@@ -661,7 +661,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
               name: `${ad.user.firstname} ${ad.user.lastname}`,
               adTitle: ad.name,
               adUrl: `${process.env.FRONTEND_URL}/anuncios/${ad.slug}`,
-            }
+            },
           );
         } else {
           console.error("User data not available for approval email");
@@ -682,7 +682,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
             if (!contact) {
               logger.info(
                 "Zoho contact not found for ad approval — skipping CRM sync",
-                { adId }
+                { adId },
               );
               return;
             }
@@ -695,7 +695,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
           .catch((zohoError) => {
             logger.error(
               "Zoho sync failed for ad approval — approval flow unaffected",
-              { adId, error: zohoError.message }
+              { adId, error: zohoError.message },
             );
           });
       }
@@ -804,7 +804,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
               reason: rejectionReason,
               adReservationReturned: !!ad.ad_reservation?.id,
               featuredReservationReturned: !!ad.ad_featured_reservation?.id,
-            }
+            },
           );
         } else {
           console.error("User data not available for rejection email");
@@ -913,7 +913,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
               reason: reasonForBan ?? undefined,
               adReservationReturned: !!ad.ad_reservation?.id,
               featuredReservationReturned: !!ad.ad_featured_reservation?.id,
-            }
+            },
           );
         } else {
           console.error("User data not available for ban email");
@@ -945,7 +945,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
   async deactivateAd(
     adId: string,
     userId: string,
-    reasonForDeactivation?: string
+    reasonForDeactivation?: string,
   ) {
     try {
       const ad = await strapi.db.query("api::ad.ad").findOne({
@@ -960,7 +960,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
       const isOwner = ad.user?.id?.toString() === userId.toString();
       if (!isOwner) {
         throw new Error(
-          "You don't have permission to deactivate this advertisement"
+          "You don't have permission to deactivate this advertisement",
         );
       }
 
@@ -1144,10 +1144,11 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
       // Extract only schema-known fields, normalizing gallery to ID array
       const galleryRaw = ad.gallery;
       const gallery = Array.isArray(galleryRaw)
-        ? (galleryRaw as Array<{ id?: number | string } | number>).map((item) =>
-            typeof item === "object" && item !== null && "id" in item
-              ? Number(item.id)
-              : Number(item)
+        ? (galleryRaw as Array<{ id?: number | string } | number>).map(
+            (item) =>
+              typeof item === "object" && item !== null && "id" in item
+                ? Number(item.id)
+                : Number(item),
           )
         : [];
 

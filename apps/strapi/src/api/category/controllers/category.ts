@@ -114,7 +114,7 @@ export default {
             },
           });
           return { categoryId: category.id, count };
-        })
+        }),
       );
 
       return ctx.send({ data: results });

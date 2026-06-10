@@ -13,7 +13,7 @@ class PackService {
   public async packPurchase(
     packId: number,
     userId: string,
-    isInvoice: boolean
+    isInvoice: boolean,
   ) {
     try {
       logger.info("Iniciando proceso de compra de pack", {
@@ -55,7 +55,7 @@ class PackService {
         amount,
         buyOrder,
         sessionId,
-        returnUrl
+        returnUrl,
       );
 
       logger.info("Transacción Webpay creada exitosamente", {
@@ -143,7 +143,7 @@ class PackService {
           userId,
           unitPrice.toString(),
           total_days,
-          "Reservation created from pack purchase"
+          "Reservation created from pack purchase",
         );
       }
 
@@ -152,7 +152,7 @@ class PackService {
         await PaymentUtils.adFeaturedReservation.createAdFeaturedReservation(
           userId,
           "0",
-          "Featured reservation created from pack purchase"
+          "Featured reservation created from pack purchase",
         );
       }
 
@@ -188,7 +188,7 @@ class PackService {
         } else {
           logger.info(
             "Zoho contact not found for pack purchase — skipping CRM sync",
-            { userId }
+            { userId },
           );
         }
       } catch (zohoError) {
@@ -197,7 +197,7 @@ class PackService {
           {
             userId,
             error: zohoError.message,
-          }
+          },
         );
       }
 

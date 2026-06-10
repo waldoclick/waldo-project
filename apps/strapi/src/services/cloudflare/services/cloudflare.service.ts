@@ -31,12 +31,12 @@ export class CloudflareService implements ICloudflareService {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ query }),
-      }
+      },
     );
 
     if (!response.ok) {
       throw new Error(
-        `Cloudflare GraphQL error: ${response.status} ${response.statusText}`
+        `Cloudflare GraphQL error: ${response.status} ${response.statusText}`,
       );
     }
 

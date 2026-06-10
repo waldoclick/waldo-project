@@ -8,7 +8,7 @@
  * to public and authenticated (non-manager) responses.
  */
 export function sanitizeAdForPublic(
-  ad: Record<string, unknown>
+  ad: Record<string, unknown>,
 ): Record<string, unknown> {
   const {
     user: userRaw,

@@ -120,13 +120,13 @@ describe("processPaidPayment — WIRE-01", () => {
       1000,
       "order-1",
       "session-1",
-      expect.stringContaining("/api/payments/ad-response")
+      expect.stringContaining("/api/payments/ad-response"),
     );
   });
 
   it("returns success:true with webpay data when transaction succeeds", async () => {
     const result = (await adService.processPaidPayment(
-      1
+      1,
     )) as ProcessPaidPaymentResult;
 
     // Will FAIL in RED state: current code uses TransbankServices, not gateway
@@ -137,7 +137,7 @@ describe("processPaidPayment — WIRE-01", () => {
         success: true,
         gatewayRef: "ref-123",
         url: "https://webpay.cl/redirect",
-      })
+      }),
     );
   });
 });

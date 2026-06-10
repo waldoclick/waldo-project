@@ -10,7 +10,7 @@ export class GoogleOneTapService implements IGoogleOneTapService {
     if (!this.clientId) {
       // Warn only — throwing here kills Strapi startup (pitfall 3 in research)
       console.warn(
-        "[GoogleOneTapService] GOOGLE_CLIENT_ID is not set — endpoint will return 401 for all requests"
+        "[GoogleOneTapService] GOOGLE_CLIENT_ID is not set — endpoint will return 401 for all requests",
       );
     }
     this.client = new OAuth2Client(this.clientId);
@@ -29,7 +29,7 @@ export class GoogleOneTapService implements IGoogleOneTapService {
   }
 
   async findOrCreateUser(
-    payload: TokenPayload
+    payload: TokenPayload,
   ): Promise<{ user: Record<string, unknown>; isNew: boolean }> {
     const { sub, email, given_name, family_name } = payload;
     const normalizedEmail = (email ?? "").toLowerCase();

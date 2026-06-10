@@ -2,7 +2,7 @@
   <section class="policies policies--dashboard">
     <div class="policies--dashboard__container">
       <div class="policies--dashboard__header">
-        <SearchDefaultDashboard
+        <SearchDashboard
           :model-value="settingsStore.policies.searchTerm"
           placeholder="Buscar Politicas..."
           class="policies--dashboard__search"
@@ -272,11 +272,11 @@ const truncateText = (text: string, maxLength: number) => {
 const router = useRouter();
 
 const handleViewPolicy = (documentId: string) => {
-  router.push(`/maintenance/policies/${documentId}`);
+  router.push(`/dashboard/maintenance/policies/${documentId}`);
 };
 
 const handleEditPolicy = (documentId: string) => {
-  router.push(`/maintenance/policies/${documentId}/edit`);
+  router.push(`/dashboard/maintenance/policies/${documentId}/edit`);
 };
 
 watch(

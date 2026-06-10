@@ -34,7 +34,7 @@ const convertToWebP = async (file: unknown): Promise<void> => {
       f.mimetype = "image/webp";
       f.originalFilename = f.originalFilename.replace(
         /\.(jpg|jpeg|png)$/i,
-        ".webp"
+        ".webp",
       );
     }
   } catch (error) {

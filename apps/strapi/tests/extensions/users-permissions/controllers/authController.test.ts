@@ -26,7 +26,9 @@ jest.mock("crypto", () => ({
   ...jest.requireActual("crypto"),
   randomUUID: jest.fn(() => "test-pending-token-uuid"),
   randomBytes: jest.fn(() =>
-    Buffer.from("test-reset-token-hex-64-bytes-padded-to-correct-length!!!!!!!")
+    Buffer.from(
+      "test-reset-token-hex-64-bytes-padded-to-correct-length!!!!!!!",
+    ),
   ),
 }));
 
@@ -170,12 +172,12 @@ describe("overrideAuthLocal", () => {
             attempts: 0,
             pendingToken: "test-pending-token-uuid",
           }),
-        })
+        }),
       );
       // expiresAt is a future datetime string
       const callData = mockVCCreate.mock.calls[0][0].data;
       expect(new Date(callData.expiresAt).getTime()).toBeGreaterThan(
-        Date.now()
+        Date.now(),
       );
     });
 
@@ -207,7 +209,7 @@ describe("overrideAuthLocal", () => {
         expect.objectContaining({
           name: "Alice",
           code: expect.stringMatching(/^\d{6}$/),
-        })
+        }),
       );
     });
 
@@ -360,7 +362,7 @@ describe("verifyCode", () => {
 
       // Assert: attempts incremented, record NOT deleted
       expect(mockVCUpdate).toHaveBeenCalledWith(
-        expect.objectContaining({ data: { attempts: 2 } })
+        expect.objectContaining({ data: { attempts: 2 } }),
       );
       expect(mockVCDelete).not.toHaveBeenCalled();
       expect(ctx.unauthorized).toHaveBeenCalledWith("Invalid code");
@@ -384,7 +386,7 @@ describe("verifyCode", () => {
       expect(mockVCDelete).toHaveBeenCalledWith({ where: { id: 1 } });
       expect(mockVCUpdate).not.toHaveBeenCalled();
       expect(ctx.unauthorized).toHaveBeenCalledWith(
-        "Maximum attempts reached — please login again"
+        "Maximum attempts reached — please login again",
       );
     });
   });
@@ -407,7 +409,7 @@ describe("verifyCode", () => {
       // Assert
       expect(mockVCDelete).toHaveBeenCalledWith({ where: { id: 1 } });
       expect(ctx.unauthorized).toHaveBeenCalledWith(
-        "Verification code has expired"
+        "Verification code has expired",
       );
     });
   });
@@ -434,7 +436,7 @@ describe("verifyCode", () => {
 
       // Assert
       expect(ctx.badRequest).toHaveBeenCalledWith(
-        "pendingToken and code are required"
+        "pendingToken and code are required",
       );
     });
   });
@@ -470,7 +472,7 @@ describe("resendCode", () => {
       expect(ctx.body).toEqual(
         expect.objectContaining({
           error: expect.objectContaining({ status: 429 }),
-        })
+        }),
       );
       expect(mockVCUpdate).not.toHaveBeenCalled();
       expect(mockSendMjmlEmail).not.toHaveBeenCalled();
@@ -507,12 +509,12 @@ describe("resendCode", () => {
             code: expect.stringMatching(/^\d{6}$/),
             attempts: 0,
           }),
-        })
+        }),
       );
       // expiresAt is a future date
       const updateData = mockVCUpdate.mock.calls[0][0].data;
       expect(new Date(updateData.expiresAt).getTime()).toBeGreaterThan(
-        Date.now()
+        Date.now(),
       );
 
       // Assert: email sent
@@ -524,7 +526,7 @@ describe("resendCode", () => {
         expect.objectContaining({
           name: "Bob",
           code: expect.stringMatching(/^\d{6}$/),
-        })
+        }),
       );
 
       // Assert: response is { ok: true }
@@ -600,7 +602,7 @@ describe("overrideForgotPassword", () => {
         expect.objectContaining({
           name: "Carlos",
           resetUrl: expect.stringContaining("token="),
-        })
+        }),
       );
     });
 
@@ -751,7 +753,7 @@ describe("overrideForgotPassword", () => {
           data: expect.objectContaining({
             resetPasswordToken: expect.any(String),
           }),
-        })
+        }),
       );
     });
   });
@@ -901,7 +903,7 @@ describe("registerUserLocal", () => {
       expect.objectContaining({
         accepted_age_confirmation: true,
         accepted_terms: true,
-      })
+      }),
     );
   });
 });
@@ -969,7 +971,7 @@ describe("ensureUniqueUsername", () => {
 
     // Act & Assert
     await expect(ensureUniqueUsername("gonzalo")).rejects.toThrow(
-      "Could not generate unique username after 10 attempts"
+      "Could not generate unique username after 10 attempts",
     );
     expect(mockFindOne).toHaveBeenCalledTimes(11); // 1 base + 10 retries
   });

@@ -69,10 +69,13 @@ export default factories.createCoreController(
         } else if (typeof rawPopulate === "string") {
           populate = { [rawPopulate]: true };
         } else if (Array.isArray(rawPopulate)) {
-          populate = (rawPopulate as string[]).reduce((acc, key) => {
-            acc[key] = true;
-            return acc;
-          }, {} as Record<string, unknown>);
+          populate = (rawPopulate as string[]).reduce(
+            (acc, key) => {
+              acc[key] = true;
+              return acc;
+            },
+            {} as Record<string, unknown>,
+          );
         } else if (typeof rawPopulate === "object") {
           const keys = Object.keys(rawPopulate as object);
           const isArrayLike =
@@ -80,11 +83,14 @@ export default factories.createCoreController(
           if (isArrayLike) {
             // { '0': 'user', '1': 'ad' } → { user: true, ad: true }
             populate = Object.values(
-              rawPopulate as Record<string, string>
-            ).reduce((acc, key) => {
-              acc[key] = true;
-              return acc;
-            }, {} as Record<string, unknown>);
+              rawPopulate as Record<string, string>,
+            ).reduce(
+              (acc, key) => {
+                acc[key] = true;
+                return acc;
+              },
+              {} as Record<string, unknown>,
+            );
           } else {
             populate = rawPopulate as Record<string, unknown>;
           }
@@ -130,7 +136,7 @@ export default factories.createCoreController(
         // Validar que el usuario esté autenticado
         if (!ctx.state.user || !ctx.state.user.id) {
           return ctx.unauthorized(
-            "Debes estar autenticado para ver tus pedidos."
+            "Debes estar autenticado para ver tus pedidos.",
           );
         }
 
@@ -151,7 +157,7 @@ export default factories.createCoreController(
 
         if (page <= 0 || pageSize <= 0) {
           return ctx.badRequest(
-            "Invalid pagination parameters. Page and pageSize must be positive integers."
+            "Invalid pagination parameters. Page and pageSize must be positive integers.",
           );
         }
 
@@ -177,7 +183,7 @@ export default factories.createCoreController(
             if (isArrayLike) {
               // { '0': 'createdAt:desc' } → parse first entry
               const firstEntry = Object.values(
-                rawSort as Record<string, string>
+                rawSort as Record<string, string>,
               )[0];
               if (typeof firstEntry === "string" && firstEntry.includes(":")) {
                 const [f, d] = firstEntry.split(":");
@@ -196,21 +202,27 @@ export default factories.createCoreController(
         } else if (typeof rawPopulate === "string") {
           populate = { [rawPopulate]: true };
         } else if (Array.isArray(rawPopulate)) {
-          populate = (rawPopulate as string[]).reduce((acc, key) => {
-            acc[key] = true;
-            return acc;
-          }, {} as Record<string, unknown>);
+          populate = (rawPopulate as string[]).reduce(
+            (acc, key) => {
+              acc[key] = true;
+              return acc;
+            },
+            {} as Record<string, unknown>,
+          );
         } else if (typeof rawPopulate === "object") {
           const keys = Object.keys(rawPopulate as object);
           const isArrayLike =
             keys.length > 0 && keys.every((k) => /^\d+$/.test(k));
           if (isArrayLike) {
             populate = Object.values(
-              rawPopulate as Record<string, string>
-            ).reduce((acc, key) => {
-              acc[key] = true;
-              return acc;
-            }, {} as Record<string, unknown>);
+              rawPopulate as Record<string, string>,
+            ).reduce(
+              (acc, key) => {
+                acc[key] = true;
+                return acc;
+              },
+              {} as Record<string, unknown>,
+            );
           } else {
             populate = rawPopulate as Record<string, unknown>;
           }
@@ -359,7 +371,9 @@ export default factories.createCoreController(
         ];
         const csv = [headers, ...rows]
           .map((row) =>
-            row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(",")
+            row
+              .map((cell) => `"${String(cell).replace(/"/g, '""')}"`)
+              .join(","),
           )
           .join("\r\n");
 
@@ -403,5 +417,5 @@ export default factories.createCoreController(
         ctx.throw(500, error);
       }
     },
-  })
+  }),
 );

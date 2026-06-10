@@ -13,8 +13,8 @@ const webpay = new WebpayPlus.Transaction(
   new Options(
     process.env.WEBPAY_COMMERCE_CODE,
     process.env.WEBPAY_API_KEY,
-    getEnvironment()
-  )
+    getEnvironment(),
+  ),
 );
 
 export default webpay;

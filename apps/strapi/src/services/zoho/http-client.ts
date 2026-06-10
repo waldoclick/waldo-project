@@ -9,7 +9,10 @@ export class ZohoHttpClient {
   private client: AxiosInstance;
   private accessToken: string | null = null;
 
-  constructor(private config: ZohoConfig, adapter?: AxiosAdapter) {
+  constructor(
+    private config: ZohoConfig,
+    adapter?: AxiosAdapter,
+  ) {
     this.client = axios.create({
       baseURL: config.apiUrl,
       headers: {
@@ -38,13 +41,12 @@ export class ZohoHttpClient {
           originalRequest._retry = true;
           this.accessToken = null;
           await this.refreshAccessToken();
-          originalRequest.headers[
-            "Authorization"
-          ] = `Zoho-oauthtoken ${this.accessToken}`;
+          originalRequest.headers["Authorization"] =
+            `Zoho-oauthtoken ${this.accessToken}`;
           return this.client(originalRequest);
         }
         return Promise.reject(error);
-      }
+      },
     );
   }
 
@@ -60,7 +62,7 @@ export class ZohoHttpClient {
             client_secret: this.config.clientSecret,
             grant_type: "refresh_token",
           },
-        }
+        },
       );
       this.accessToken = response.data.access_token;
     } catch (error) {

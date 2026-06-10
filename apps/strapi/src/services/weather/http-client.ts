@@ -9,7 +9,7 @@ export class HttpClient {
       if (isAxiosError(error) && error.response) {
         const data = error.response.data as { message?: string };
         throw new Error(
-          `API Error: ${data.message || error.response.statusText}`
+          `API Error: ${data.message || error.response.statusText}`,
         );
       }
       throw new Error("Network error");

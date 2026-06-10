@@ -49,7 +49,7 @@ const populateConditions = async (strapi: Core.Strapi): Promise<void> => {
     } catch (conditionError) {
       console.error(
         `❌ Error creando condición ${condition.attributes.name}:`,
-        conditionError.message
+        conditionError.message,
       );
     }
   }

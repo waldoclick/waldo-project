@@ -133,7 +133,7 @@ const populateCategories = async (strapi: Core.Strapi): Promise<void> => {
     } catch (categoryError) {
       console.error(
         `❌ Error creando categoría ${category.attributes.name}:`,
-        categoryError.message
+        categoryError.message,
       );
     }
   }

@@ -38,7 +38,7 @@ export async function migrateSubscriptionPro(): Promise<void> {
 
     if (existing) {
       logger.info(
-        `migrateSubscriptionPro: skipping user ${user.id} — subscription-pro already exists`
+        `migrateSubscriptionPro: skipping user ${user.id} — subscription-pro already exists`,
       );
       continue;
     }
@@ -56,7 +56,7 @@ export async function migrateSubscriptionPro(): Promise<void> {
     });
 
     logger.info(
-      `migrateSubscriptionPro: created subscription-pro for user ${user.id}`
+      `migrateSubscriptionPro: created subscription-pro for user ${user.id}`,
     );
   }
 }

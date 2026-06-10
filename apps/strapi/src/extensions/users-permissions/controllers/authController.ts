@@ -249,7 +249,7 @@ export const registerUserLocal = (registerController) => async (ctx) => {
             "email-confirmation",
             userWithToken.email,
             "Confirma tu correo electrónico",
-            { name, confirmationUrl }
+            { name, confirmationUrl },
           );
         }
       } catch (err) {
@@ -257,7 +257,7 @@ export const registerUserLocal = (registerController) => async (ctx) => {
         strapi.log.error(
           `[registerUserLocal] Failed to send MJML confirmation email: ${
             err?.message ?? err
-          }`
+          }`,
         );
       }
     }
@@ -365,7 +365,7 @@ export const overrideAuthLocal = (originalController) => async (ctx) => {
       "verification-code",
       email,
       "Tu código de verificación",
-      { name, code }
+      { name, code },
     );
   } catch (_) {
     // Non-fatal — user can use resend-code endpoint
@@ -444,7 +444,7 @@ export const verifyCode = async (ctx) => {
   const sanitizedUser = await strapi.contentAPI.sanitize.output(
     user,
     userSchema,
-    { auth: ctx.state.auth }
+    { auth: ctx.state.auth },
   );
 
   ctx.body = { jwt: jwtToken, user: sanitizedUser };
@@ -507,7 +507,7 @@ export const resendCode = async (ctx) => {
       "verification-code",
       email,
       "Tu código de verificación",
-      { name, code: newCode }
+      { name, code: newCode },
     );
   } catch (_) {
     // Non-fatal
@@ -561,13 +561,13 @@ export const overrideForgotPassword = () => async (ctx) => {
       "reset-password",
       user.email,
       "Restablece tu contraseña",
-      { name: user.firstname || user.username || user.email, resetUrl }
+      { name: user.firstname || user.username || user.email, resetUrl },
     );
   } catch (err) {
     strapi.log.error(
       `[overrideForgotPassword] Failed to send reset-password email to ${
         user.email
-      }: ${err?.message ?? err}`
+      }: ${err?.message ?? err}`,
     );
   }
 
@@ -616,13 +616,13 @@ export const overrideSendEmailConfirmation = () => async (ctx) => {
       "email-confirmation",
       user.email,
       "Confirma tu correo electrónico",
-      { name, confirmationUrl }
+      { name, confirmationUrl },
     );
   } catch (err) {
     strapi.log.error(
       `[overrideSendEmailConfirmation] Failed to send confirmation email to ${
         user.email
-      }: ${err?.message ?? err}`
+      }: ${err?.message ?? err}`,
     );
   }
 
@@ -676,14 +676,14 @@ export const overrideEmailConfirmation = () => async (ctx) => {
         "email-confirmation",
         user.email,
         "Confirma tu correo electrónico",
-        { name, confirmationUrl }
+        { name, confirmationUrl },
       );
     } catch (err) {
       // Non-fatal — token is already saved; user can retry sendEmailConfirmation
       strapi.log.error(
         `[overrideEmailConfirmation] Failed to resend confirmation email to ${
           user.email
-        }: ${err?.message ?? err}`
+        }: ${err?.message ?? err}`,
       );
     }
 

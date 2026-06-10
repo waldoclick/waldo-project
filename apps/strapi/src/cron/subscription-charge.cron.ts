@@ -82,7 +82,7 @@ export class SubscriptionChargeService {
         })) as DuePaymentRecord[];
 
       logger.info(
-        `SubscriptionChargeService: found ${duePayments.length} due subscription payments to charge`
+        `SubscriptionChargeService: found ${duePayments.length} due subscription payments to charge`,
       );
 
       for (const record of duePayments) {
@@ -90,7 +90,7 @@ export class SubscriptionChargeService {
         const tbkUser = user.subscription_pro?.tbk_user;
         if (!tbkUser) {
           logger.warn(
-            `SubscriptionChargeService: user ${user.id} has no subscription-pro tbk_user, skipping`
+            `SubscriptionChargeService: user ${user.id} has no subscription-pro tbk_user, skipping`,
           );
           continue;
         }
@@ -101,7 +101,7 @@ export class SubscriptionChargeService {
           record.period_end,
           today,
           amount,
-          1
+          1,
         );
       }
 
@@ -123,7 +123,7 @@ export class SubscriptionChargeService {
         })) as FailedPaymentRecord[];
 
       logger.info(
-        `SubscriptionChargeService: found ${retryRecords.length} failed payments to retry`
+        `SubscriptionChargeService: found ${retryRecords.length} failed payments to retry`,
       );
 
       for (const record of retryRecords) {
@@ -131,7 +131,7 @@ export class SubscriptionChargeService {
         const tbkUser = user.subscription_pro?.tbk_user;
         if (!tbkUser) {
           logger.warn(
-            `SubscriptionChargeService: retry user ${user.id} has no subscription-pro tbk_user, skipping`
+            `SubscriptionChargeService: retry user ${user.id} has no subscription-pro tbk_user, skipping`,
           );
           continue;
         }
@@ -143,7 +143,7 @@ export class SubscriptionChargeService {
           today,
           amount,
           attempt,
-          record.id
+          record.id,
         );
       }
 
@@ -160,7 +160,7 @@ export class SubscriptionChargeService {
         })) as ExhaustedPaymentRecord[];
 
       logger.info(
-        `SubscriptionChargeService: found ${exhaustedRecords.length} exhausted subscriptions to deactivate`
+        `SubscriptionChargeService: found ${exhaustedRecords.length} exhausted subscriptions to deactivate`,
       );
 
       for (const record of exhaustedRecords) {
@@ -191,7 +191,7 @@ export class SubscriptionChargeService {
             {
               userId: user.id,
               error: subProError,
-            }
+            },
           );
         }
 
@@ -207,7 +207,7 @@ export class SubscriptionChargeService {
               ad as {
                 ad_featured_reservation?: unknown;
                 user?: { pro_status?: string } | null;
-              }
+              },
             );
             const adRecord = ad as Record<string, unknown>;
             if (adRecord.sort_priority !== priority) {
@@ -220,7 +220,7 @@ export class SubscriptionChargeService {
         } catch (sortError) {
           logger.error(
             "SubscriptionChargeService: sort_priority recalculation failed on deactivation",
-            { userId: user.id, error: sortError }
+            { userId: user.id, error: sortError },
           );
         }
 
@@ -233,7 +233,7 @@ export class SubscriptionChargeService {
           });
 
         logger.info(
-          `SubscriptionChargeService: deactivated PRO subscription for user ${user.id}`
+          `SubscriptionChargeService: deactivated PRO subscription for user ${user.id}`,
         );
       }
 
@@ -254,7 +254,7 @@ export class SubscriptionChargeService {
       }>;
 
       logger.info(
-        `SubscriptionChargeService: found ${expiredCancelledPayments.length} expired cancelled payment records to process`
+        `SubscriptionChargeService: found ${expiredCancelledPayments.length} expired cancelled payment records to process`,
       );
 
       // Deduplicate by user ID — a cancelled user may have multiple past approved rows
@@ -284,7 +284,7 @@ export class SubscriptionChargeService {
               ad as {
                 ad_featured_reservation?: unknown;
                 user?: { pro_status?: string } | null;
-              }
+              },
             );
             const adRecord = ad as Record<string, unknown>;
             if (adRecord.sort_priority !== priority) {
@@ -297,12 +297,12 @@ export class SubscriptionChargeService {
         } catch (sortError) {
           logger.error(
             "SubscriptionChargeService: sort_priority recalculation failed on cancelled deactivation",
-            { userId: user.id, error: sortError }
+            { userId: user.id, error: sortError },
           );
         }
 
         logger.info(
-          `SubscriptionChargeService: deactivated expired cancelled PRO subscription for user ${user.id}`
+          `SubscriptionChargeService: deactivated expired cancelled PRO subscription for user ${user.id}`,
         );
       }
 
@@ -313,7 +313,7 @@ export class SubscriptionChargeService {
     } catch (error) {
       logger.error(
         "SubscriptionChargeService.chargeExpiredSubscriptions failed",
-        { error }
+        { error },
       );
       return {
         success: false,
@@ -340,7 +340,7 @@ export class SubscriptionChargeService {
     today: string,
     amount: number,
     attempt: number,
-    existingRecordId?: number
+    existingRecordId?: number,
   ): Promise<void> {
     const todayCompact = today.replace(/-/g, "");
     const parentBuyOrder = `pro-${user.id}-${todayCompact}`;
@@ -351,7 +351,7 @@ export class SubscriptionChargeService {
     const newPeriodEnd = new Date(
       currentPeriodEnd.getFullYear(),
       currentPeriodEnd.getMonth() + 1,
-      1
+      1,
     );
     const newPeriodEndStr = newPeriodEnd.toISOString().split("T")[0];
     // The new period starts where the old period ended
@@ -363,7 +363,7 @@ export class SubscriptionChargeService {
       user.tbk_user,
       amount,
       parentBuyOrder,
-      childBuyOrder
+      childBuyOrder,
     );
 
     if (result.success) {
@@ -437,7 +437,7 @@ export class SubscriptionChargeService {
       }
 
       logger.info(
-        `SubscriptionChargeService: successfully charged user ${user.id} (attempt ${attempt})`
+        `SubscriptionChargeService: successfully charged user ${user.id} (attempt ${attempt})`,
       );
     } else {
       // Compute next retry date based on attempt number
@@ -487,7 +487,7 @@ export class SubscriptionChargeService {
       }
 
       logger.info(
-        `SubscriptionChargeService: charge failed for user ${user.id} (attempt ${attempt}), next retry: ${nextRetryDateStr}`
+        `SubscriptionChargeService: charge failed for user ${user.id} (attempt ${attempt}), next retry: ${nextRetryDateStr}`,
       );
     }
   }

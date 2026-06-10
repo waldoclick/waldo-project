@@ -104,7 +104,7 @@ function makeSubPro(
     id: number;
     pending_invoice: boolean;
     user: { id: number; documentId: string };
-  }> = {}
+  }> = {},
 ) {
   return {
     id: 10,
@@ -115,7 +115,7 @@ function makeSubPro(
 }
 
 function makeContext(
-  queryParams: Record<string, string> = {}
+  queryParams: Record<string, string> = {},
 ): Partial<Context> & { redirect: jest.Mock } {
   return {
     query: queryParams,
@@ -184,7 +184,7 @@ describe("proResponse charge-before-activate", () => {
       const subPro = makeSubPro();
 
       mockFinishInscription.mockResolvedValueOnce(
-        makeFinishInscriptionSuccess()
+        makeFinishInscriptionSuccess(),
       );
       mockSubProFindOne.mockResolvedValueOnce(subPro);
       mockAuthorizeCharge.mockResolvedValueOnce(makeAuthorizeChargeSuccess());
@@ -209,7 +209,7 @@ describe("proResponse charge-before-activate", () => {
         "stored-tbk-user-token",
         expect.any(Number),
         expect.stringContaining("pro-inscription-"),
-        expect.stringContaining("c-")
+        expect.stringContaining("c-"),
       );
 
       // Assert: user pro_status update came AFTER authorizeCharge
@@ -227,7 +227,7 @@ describe("proResponse charge-before-activate", () => {
       const subPro = makeSubPro();
 
       mockFinishInscription.mockResolvedValueOnce(
-        makeFinishInscriptionSuccess("tbk-card-token-xyz")
+        makeFinishInscriptionSuccess("tbk-card-token-xyz"),
       );
       mockSubProFindOne.mockResolvedValueOnce(subPro);
       mockAuthorizeCharge.mockResolvedValueOnce(makeAuthorizeChargeSuccess());
@@ -256,7 +256,7 @@ describe("proResponse charge-before-activate", () => {
             card_last4: "4321",
             inscription_token: null,
           }),
-        })
+        }),
       );
     });
 
@@ -267,7 +267,7 @@ describe("proResponse charge-before-activate", () => {
       const subPro = makeSubPro();
 
       mockFinishInscription.mockResolvedValueOnce(
-        makeFinishInscriptionSuccess()
+        makeFinishInscriptionSuccess(),
       );
       mockSubProFindOne.mockResolvedValueOnce(subPro);
       mockAuthorizeCharge.mockResolvedValueOnce(makeAuthorizeChargeSuccess());
@@ -291,7 +291,7 @@ describe("proResponse charge-before-activate", () => {
         expect.objectContaining({
           where: { id: subPro.user.id },
           data: expect.objectContaining({ pro_status: "active" }),
-        })
+        }),
       );
       const userUpdateCall = mockUserUpdate.mock.calls[0];
       expect(userUpdateCall).toBeDefined();
@@ -306,7 +306,7 @@ describe("proResponse charge-before-activate", () => {
       const subPro = makeSubPro();
 
       mockFinishInscription.mockResolvedValueOnce(
-        makeFinishInscriptionSuccess()
+        makeFinishInscriptionSuccess(),
       );
       mockSubProFindOne.mockResolvedValueOnce(subPro);
       mockAuthorizeCharge.mockResolvedValueOnce(makeAuthorizeChargeSuccess());
@@ -336,7 +336,7 @@ describe("proResponse charge-before-activate", () => {
             amount: expect.any(Number),
             charge_attempts: 1,
           }),
-        })
+        }),
       );
     });
 
@@ -347,7 +347,7 @@ describe("proResponse charge-before-activate", () => {
       const subPro = makeSubPro();
 
       mockFinishInscription.mockResolvedValueOnce(
-        makeFinishInscriptionSuccess()
+        makeFinishInscriptionSuccess(),
       );
       mockSubProFindOne.mockResolvedValueOnce(subPro);
       mockAuthorizeCharge.mockResolvedValueOnce(makeAuthorizeChargeSuccess());
@@ -368,7 +368,7 @@ describe("proResponse charge-before-activate", () => {
 
       // Assert: redirect to /pro/pagar/gracias with the order documentId
       expect(ctx.redirect).toHaveBeenCalledWith(
-        "https://waldo.cl/pro/pagar/gracias?order=pro-order-doc-id"
+        "https://waldo.cl/pro/pagar/gracias?order=pro-order-doc-id",
       );
     });
   });
@@ -381,7 +381,7 @@ describe("proResponse charge-before-activate", () => {
       const subPro = makeSubPro();
 
       mockFinishInscription.mockResolvedValueOnce(
-        makeFinishInscriptionSuccess()
+        makeFinishInscriptionSuccess(),
       );
       mockSubProFindOne.mockResolvedValueOnce(subPro);
       mockAuthorizeCharge.mockResolvedValueOnce({
@@ -404,7 +404,7 @@ describe("proResponse charge-before-activate", () => {
       const subPro = makeSubPro();
 
       mockFinishInscription.mockResolvedValueOnce(
-        makeFinishInscriptionSuccess()
+        makeFinishInscriptionSuccess(),
       );
       mockSubProFindOne.mockResolvedValueOnce(subPro);
       mockAuthorizeCharge.mockResolvedValueOnce({
@@ -427,7 +427,7 @@ describe("proResponse charge-before-activate", () => {
       const subPro = makeSubPro();
 
       mockFinishInscription.mockResolvedValueOnce(
-        makeFinishInscriptionSuccess()
+        makeFinishInscriptionSuccess(),
       );
       mockSubProFindOne.mockResolvedValueOnce(subPro);
       mockAuthorizeCharge.mockResolvedValueOnce({
@@ -441,7 +441,7 @@ describe("proResponse charge-before-activate", () => {
 
       // Assert
       expect(ctx.redirect).toHaveBeenCalledWith(
-        "https://waldo.cl/pro/error?reason=charge-failed"
+        "https://waldo.cl/pro/error?reason=charge-failed",
       );
     });
   });
@@ -462,7 +462,7 @@ describe("proResponse charge-before-activate", () => {
 
       // Assert
       expect(ctx.redirect).toHaveBeenCalledWith(
-        "https://waldo.cl/pro/error?reason=rejected"
+        "https://waldo.cl/pro/error?reason=rejected",
       );
       expect(mockAuthorizeCharge).not.toHaveBeenCalled();
     });
@@ -476,7 +476,7 @@ describe("proResponse charge-before-activate", () => {
 
       // Assert
       expect(ctx.redirect).toHaveBeenCalledWith(
-        "https://waldo.cl/pro/error?reason=cancelled"
+        "https://waldo.cl/pro/error?reason=cancelled",
       );
       expect(mockFinishInscription).not.toHaveBeenCalled();
       expect(mockAuthorizeCharge).not.toHaveBeenCalled();

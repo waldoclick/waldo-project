@@ -27,7 +27,7 @@ export default {
     if (!taskKey) {
       const available = Object.keys(CRON_NAME_MAP).join(", ");
       return ctx.badRequest(
-        `Unknown cron job "${name}". Available: ${available}`
+        `Unknown cron job "${name}". Available: ${available}`,
       );
     }
 
@@ -42,7 +42,7 @@ export default {
 
     if (!task) {
       return ctx.internalServerError(
-        `Cron task "${taskKey}" is not registered in cron-tasks.ts.`
+        `Cron task "${taskKey}" is not registered in cron-tasks.ts.`,
       );
     }
 
@@ -60,7 +60,7 @@ export default {
       const message = error instanceof Error ? error.message : String(error);
       strapi.log.error(`[cron-runner] Cron "${name}" failed: ${message}`);
       return ctx.internalServerError(
-        `Cron "${name}" threw an error: ${message}`
+        `Cron "${name}" threw an error: ${message}`,
       );
     }
   },

@@ -151,7 +151,7 @@
           title="Galería de imágenes"
           :columns="1"
         >
-          <GalleryDefaultDashboard
+          <GalleryDashboard
             :images="item.gallery"
             :alt-prefix="item.name"
             :columns="6"

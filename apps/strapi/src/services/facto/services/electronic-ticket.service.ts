@@ -9,11 +9,11 @@ export class ElectronicTicketService {
   }
 
   public async emitTicket(
-    document: IFactoDocument
+    document: IFactoDocument,
   ): Promise<IFactoLegacyResponse> {
     if (document.encabezado.tipo_dte !== 39) {
       throw new Error(
-        "Tipo de documento inválido. Se esperaba boleta electrónica (39)"
+        "Tipo de documento inválido. Se esperaba boleta electrónica (39)",
       );
     }
 
@@ -83,8 +83,8 @@ export class ElectronicTicketService {
           reject(
             new Error(
               soapResult.return.resultado.mensaje_error ||
-                "Error al emitir documento"
-            )
+                "Error al emitir documento",
+            ),
           );
           return;
         }

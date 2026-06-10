@@ -433,7 +433,7 @@ const populateRegions = async (strapi: Core.Strapi): Promise<void> => {
   regionsData.forEach((region) => (totalCommunes += region.communes.length));
 
   console.log(
-    `Procesando ${regionsData.length} regiones y ${totalCommunes} comunas...`
+    `Procesando ${regionsData.length} regiones y ${totalCommunes} comunas...`,
   );
 
   for (const regionData of regionsData) {
@@ -500,19 +500,19 @@ const populateRegions = async (strapi: Core.Strapi): Promise<void> => {
           });
 
           console.log(
-            `✅ Comuna creada: ${communeName} (${regionData.region})`
+            `✅ Comuna creada: ${communeName} (${regionData.region})`,
           );
         } catch (communeError) {
           console.error(
             `❌ Error creando comuna ${communeName}:`,
-            communeError.message
+            communeError.message,
           );
         }
       }
     } catch (regionError) {
       console.error(
         `❌ Error creando región ${regionData.region}:`,
-        regionError.message
+        regionError.message,
       );
     }
   }

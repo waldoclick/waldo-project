@@ -13,7 +13,7 @@
       <div class="dropdown--sales__panel__head">
         <h3 class="dropdown--sales__panel__title">Últimas órdenes</h3>
         <NuxtLink
-          to="/orders"
+          to="/dashboard/orders"
           class="dropdown--sales__panel__link"
           @click="open = false"
         >
@@ -36,7 +36,7 @@
         <NuxtLink
           v-for="(order, index) in orders"
           :key="order.id"
-          :to="`/orders/${order.id}`"
+          :to="`/dashboard/orders/${order.id}`"
           class="dropdown--sales__list__item"
           :class="{
             'dropdown--sales__list__item--border': index < orders.length - 1,

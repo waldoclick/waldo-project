@@ -34,5 +34,5 @@ export default factories.createCoreController(
         return ctx.badRequest(error.message);
       }
     },
-  })
+  }),
 );

@@ -2,7 +2,7 @@
   <section class="subscription-payments subscription-payments--default">
     <div class="subscription-payments--default__container">
       <div class="subscription-payments--default__header">
-        <SearchDefaultDashboard
+        <SearchDashboard
           :model-value="settingsStore.subscriptionPayments.searchTerm"
           placeholder="Buscar pagos de subscripción..."
           class="subscription-payments--default__search"
@@ -212,7 +212,7 @@ const sortOptions = [
 const router = useRouter();
 
 const handleViewItem = (itemId: number) => {
-  router.push(`/users/subscription-payments/${itemId}`);
+  router.push(`/dashboard/users/subscription-payments/${itemId}`);
 };
 
 watch(

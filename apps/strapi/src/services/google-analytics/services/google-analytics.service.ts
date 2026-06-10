@@ -18,7 +18,7 @@ export class GoogleAnalyticsService implements IGoogleAnalyticsService {
     }
     if (!process.env.GOOGLE_CLIENT_EMAIL || !process.env.GOOGLE_PRIVATE_KEY) {
       throw new Error(
-        "GOOGLE_CLIENT_EMAIL and GOOGLE_PRIVATE_KEY are required"
+        "GOOGLE_CLIENT_EMAIL and GOOGLE_PRIVATE_KEY are required",
       );
     }
   }
@@ -62,7 +62,7 @@ export class GoogleAnalyticsService implements IGoogleAnalyticsService {
         rawDate.length === 8
           ? `${rawDate.slice(0, 4)}-${rawDate.slice(4, 6)}-${rawDate.slice(
               6,
-              8
+              8,
             )}`
           : rawDate;
 

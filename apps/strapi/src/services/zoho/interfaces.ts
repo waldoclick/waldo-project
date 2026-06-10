@@ -95,6 +95,6 @@ export interface IZohoService {
       Other_Zip?: string;
       Other_State?: string;
       Other_City?: string;
-    }
+    },
   ): Promise<IZohoContact>;
 }

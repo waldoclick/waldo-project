@@ -13,7 +13,7 @@ class ReservationUtils {
    */
   public async getReservationByUser(
     userId: string,
-    isFree: boolean
+    isFree: boolean,
   ): Promise<AdReservation[] | null> {
     try {
       const price = isFree ? "0" : { $ne: "0" };
@@ -44,7 +44,7 @@ class ReservationUtils {
    */
   public async getAdReservationAvailable(
     userId: string,
-    isFree: boolean
+    isFree: boolean,
   ): Promise<AdReservationsResponse> {
     try {
       const price = isFree ? "0" : { $ne: "0" };
@@ -94,7 +94,7 @@ class ReservationUtils {
     price: string,
     total_days: number,
     description?: string,
-    adId?: number
+    adId?: number,
   ): Promise<AdReservationsResponse> {
     try {
       const data: AdReservationData = {

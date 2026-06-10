@@ -32,7 +32,7 @@ class AdUtils {
       details?: unknown;
       slug?: string;
       user?: unknown;
-    }
+    },
   ) {
     try {
       const adService = strapi.service("api::ad.ad");
@@ -68,7 +68,7 @@ class AdUtils {
   public async updateAd(
     userId: string,
     adId: number,
-    adData: Partial<AdData> & { details?: unknown }
+    adData: Partial<AdData> & { details?: unknown },
   ) {
     try {
       const updatedAd = await strapi.db.query("api::ad.ad").update({
@@ -125,7 +125,7 @@ class AdUtils {
    */
   public async updateAdReservation(
     adId: number,
-    adReservationId: string | number
+    adReservationId: string | number,
   ) {
     try {
       const ad = await strapi.db.query("api::ad.ad").update({
@@ -150,7 +150,7 @@ class AdUtils {
    */
   public async updateAdFeaturedReservation(
     adId: number,
-    adFeaturedReservationId: number
+    adFeaturedReservationId: number,
   ) {
     try {
       const ad = await strapi.db.query("api::ad.ad").update({

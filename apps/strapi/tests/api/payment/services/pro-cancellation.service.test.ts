@@ -72,16 +72,16 @@ describe("ProCancellationService", () => {
       // Assert
       expect(result.success).toBe(true);
       expect(mockDbQuery).toHaveBeenCalledWith(
-        "api::subscription-pro.subscription-pro"
+        "api::subscription-pro.subscription-pro",
       );
       expect(mockSubProFindOne).toHaveBeenCalledWith(
         expect.objectContaining({
           where: { user: { id: userId } },
-        })
+        }),
       );
       expect(mockDeleteInscription).toHaveBeenCalledWith(
         "tbk-token-xyz",
-        userDocumentId
+        userDocumentId,
       );
       // subscription-pro tbk_user is cleared
       expect(mockSubProEntityUpdate).toHaveBeenCalledWith(
@@ -90,7 +90,7 @@ describe("ProCancellationService", () => {
           data: expect.objectContaining({
             tbk_user: null,
           }),
-        })
+        }),
       );
       // User is updated with pro_status=cancelled only (tbk_user cleared on subscription-pro, not user)
       expect(mockUserEntityUpdate).toHaveBeenCalledWith(
@@ -99,7 +99,7 @@ describe("ProCancellationService", () => {
           data: expect.objectContaining({
             pro_status: "cancelled",
           }),
-        })
+        }),
       );
       // tbk_user is NOT set on user — it is cleared on subscription-pro record instead
       const userUpdateCall = mockUserEntityUpdate.mock.calls[0];
@@ -177,7 +177,7 @@ describe("ProCancellationService", () => {
           data: expect.objectContaining({
             pro_status: "cancelled",
           }),
-        })
+        }),
       );
     });
 
@@ -211,7 +211,7 @@ describe("ProCancellationService", () => {
 
       // Assert: correct UID used for db.query
       expect(mockDbQuery).toHaveBeenCalledWith(
-        "api::subscription-pro.subscription-pro"
+        "api::subscription-pro.subscription-pro",
       );
     });
   });

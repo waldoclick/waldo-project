@@ -2,7 +2,7 @@
   <section class="featured featured--used">
     <div class="featured--used__container">
       <div class="featured--used__header">
-        <SearchDefaultDashboard
+        <SearchDashboard
           :model-value="settingsStore.featured.searchTerm"
           placeholder="Buscar destacados..."
           class="featured--used__search"
@@ -212,7 +212,7 @@ const router = useRouter();
 
 const handleViewFeatured = (featuredId: number) => {
   // Navegar a la página de detalle del destacado
-  router.push(`/featured/${featuredId}`);
+  router.push(`/dashboard/featured/${featuredId}`);
 };
 
 defineExpose({ refresh: fetchUsedFeatured });

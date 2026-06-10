@@ -97,7 +97,7 @@ describe("approveAd — Zoho CRM wiring (EVT-01, EVT-02)", () => {
       expect.objectContaining({
         Ads_Published__c: 1,
         Last_Ad_Posted_At__c: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
-      })
+      }),
     );
   });
 
@@ -111,7 +111,7 @@ describe("approveAd — Zoho CRM wiring (EVT-01, EVT-02)", () => {
     // Verify updateContactStats was called (sync ran) but no Deal was created
     expect(zohoService.updateContactStats).toHaveBeenCalledTimes(1);
     expect(
-      (zohoService as unknown as Record<string, unknown>).createDeal
+      (zohoService as unknown as Record<string, unknown>).createDeal,
     ).toBeUndefined();
   });
 
@@ -148,7 +148,7 @@ describe("approveAd — Zoho CRM wiring (EVT-01, EVT-02)", () => {
   it("Test 5 — Zoho sync is non-blocking (floating promise — method returns before Zoho resolves)", async () => {
     // findContact never resolves — if awaited, this test hangs
     (zohoService.findContact as jest.Mock).mockReturnValue(
-      new Promise(() => {})
+      new Promise(() => {}),
     );
 
     const adService = adServiceFactory({ strapi });
@@ -160,7 +160,7 @@ describe("approveAd — Zoho CRM wiring (EVT-01, EVT-02)", () => {
 
   it("Test 6 — Zoho throws: approveAd still returns success", async () => {
     (zohoService.findContact as jest.Mock).mockRejectedValue(
-      new Error("Zoho unavailable")
+      new Error("Zoho unavailable"),
     );
 
     const adService = adServiceFactory({ strapi });

@@ -38,7 +38,7 @@ export class ZohoService implements IZohoService {
               Lead_Status: "New",
             },
           ],
-        }
+        },
       );
       return response.data;
     } catch (error) {
@@ -95,7 +95,7 @@ export class ZohoService implements IZohoService {
               Packs_Purchased__c: 0,
             },
           ],
-        }
+        },
       );
       return response.data[0] as IZohoContact;
     } catch (error) {
@@ -116,7 +116,7 @@ export class ZohoService implements IZohoService {
         "/crm/v5/Contacts/search",
         {
           criteria: `(Email:equals:${email})`,
-        }
+        },
       );
       if (
         response.data &&
@@ -156,7 +156,7 @@ export class ZohoService implements IZohoService {
       Other_Zip?: string;
       Other_State?: string;
       Other_City?: string;
-    }
+    },
   ): Promise<IZohoContact> {
     try {
       const response = await this._httpClient.put<{ data: unknown[] }>(
@@ -180,7 +180,7 @@ export class ZohoService implements IZohoService {
               Other_City: contact.Other_City,
             },
           ],
-        }
+        },
       );
       return response.data[0] as IZohoContact;
     } catch (error) {
@@ -228,15 +228,15 @@ export class ZohoService implements IZohoService {
    */
   async updateContactStats(
     contactId: string,
-    stats: IContactStats
+    stats: IContactStats,
   ): Promise<void> {
     try {
       const cleanStats = Object.fromEntries(
-        Object.entries(stats).filter(([, v]) => v !== undefined)
+        Object.entries(stats).filter(([, v]) => v !== undefined),
       );
       await this._httpClient.put<{ data: unknown[] }>(
         `/crm/v5/Contacts/${contactId}`,
-        { data: [cleanStats] }
+        { data: [cleanStats] },
       );
     } catch (error) {
       throw new Error(`Failed to update contact stats: ${error.message}`);

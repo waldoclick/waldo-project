@@ -51,14 +51,14 @@ describe("getUserDataWithFilters", () => {
 
       // Act
       await getUserDataWithFilters(
-        ctx as unknown as Parameters<typeof getUserDataWithFilters>[0]
+        ctx as unknown as Parameters<typeof getUserDataWithFilters>[0],
       );
 
       // Assert: role filter enforced server-side
       expect(mockFindWithCount).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({ role: { id: 42 } }),
-        })
+        }),
       );
 
       // Assert: ctx.body.data is the array of plain users (no getDetailedUserData enrichment)
@@ -80,7 +80,7 @@ describe("getUserDataWithFilters", () => {
 
       // Act
       await getUserDataWithFilters(
-        ctx as unknown as Parameters<typeof getUserDataWithFilters>[0]
+        ctx as unknown as Parameters<typeof getUserDataWithFilters>[0],
       );
 
       // Assert: offset = (2-1)*10 = 10, limit = 10
@@ -88,7 +88,7 @@ describe("getUserDataWithFilters", () => {
         expect.objectContaining({
           offset: 10,
           limit: 10,
-        })
+        }),
       );
 
       // Assert: meta.pagination reflects correct values
@@ -125,14 +125,14 @@ describe("getUserDataWithFilters", () => {
 
       // Act
       await getUserDataWithFilters(
-        ctx as unknown as Parameters<typeof getUserDataWithFilters>[0]
+        ctx as unknown as Parameters<typeof getUserDataWithFilters>[0],
       );
 
       // Assert: sort parsed into { field: direction } object for strapi.db.query
       expect(mockFindWithCount).toHaveBeenCalledWith(
         expect.objectContaining({
           orderBy: { createdAt: "asc" },
-        })
+        }),
       );
 
       // Assert: client filter merged with role filter in where
@@ -142,7 +142,7 @@ describe("getUserDataWithFilters", () => {
             username: { $containsi: "alice" },
             role: { id: 42 },
           }),
-        })
+        }),
       );
     });
   });
@@ -165,16 +165,16 @@ describe("getAuthenticatedUsers", () => {
 
     // Act
     await getAuthenticatedUsers(
-      ctx as unknown as Parameters<typeof getAuthenticatedUsers>[0]
+      ctx as unknown as Parameters<typeof getAuthenticatedUsers>[0],
     );
 
     // Assert: role looked up by type="authenticated"
     expect(mockFindOne).toHaveBeenCalledWith(
-      expect.objectContaining({ where: { type: "authenticated" } })
+      expect.objectContaining({ where: { type: "authenticated" } }),
     );
     // Assert: users queried with the role id
     expect(mockFindMany).toHaveBeenCalledWith(
-      expect.objectContaining({ where: { role: { id: 42 } } })
+      expect.objectContaining({ where: { role: { id: 42 } } }),
     );
   });
 
@@ -189,7 +189,7 @@ describe("getAuthenticatedUsers", () => {
 
     // Act
     await getAuthenticatedUsers(
-      ctx as unknown as Parameters<typeof getAuthenticatedUsers>[0]
+      ctx as unknown as Parameters<typeof getAuthenticatedUsers>[0],
     );
 
     // Assert: response shape is { data: [...] }
@@ -220,7 +220,7 @@ describe("getAuthenticatedUsers", () => {
 
     // Act
     await getAuthenticatedUsers(
-      ctx as unknown as Parameters<typeof getAuthenticatedUsers>[0]
+      ctx as unknown as Parameters<typeof getAuthenticatedUsers>[0],
     );
 
     // Assert: fallback to empty data, findMany not called

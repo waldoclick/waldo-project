@@ -96,7 +96,7 @@ export class CleanupService {
       // there are no images to check — return an empty set safely.
       if (!adsFolder) {
         logger.warn(
-          "Folder 'ads' not found in Strapi — skipping orphan detection"
+          "Folder 'ads' not found in Strapi — skipping orphan detection",
         );
         return [];
       }
@@ -164,7 +164,7 @@ export class CleanupService {
    */
   private findOrphans(
     strapiImages: StrapiUploadFile[],
-    dbImages: string[]
+    dbImages: string[],
   ): StrapiUploadFile[] {
     const dbImageSet = new Set(dbImages);
 
@@ -187,7 +187,7 @@ export class CleanupService {
    * the orphan list produced by findOrphanImages().
    */
   async deleteOrphanImages(
-    orphanImages: StrapiUploadFile[]
+    orphanImages: StrapiUploadFile[],
   ): Promise<ICronjobResult> {
     try {
       logger.info(`=== DELETING ${orphanImages.length} ORPHAN IMAGES ===`);
@@ -212,7 +212,7 @@ export class CleanupService {
           });
           logger.error(
             `Error deleting image ${image.id} - ${image.name}:`,
-            error
+            error,
           );
         }
       }

@@ -2,7 +2,7 @@
   <section class="orders orders--default">
     <div class="orders--default__container">
       <div class="orders--default__header">
-        <SearchDefaultDashboard
+        <SearchDashboard
           :model-value="settingsStore.orders.searchTerm"
           placeholder="Buscar órdenes..."
           class="orders--default__search"
@@ -44,7 +44,7 @@
               <NuxtLink
                 class="orders--default__action"
                 title="Ver orden"
-                :to="`/orders/${order.id}`"
+                :to="`/dashboard/orders/${order.id}`"
               >
                 <Eye class="orders--default__action__icon" />
               </NuxtLink>

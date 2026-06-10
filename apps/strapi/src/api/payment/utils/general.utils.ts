@@ -30,7 +30,7 @@ class GeneralUtils {
    */
   public async isPaymentRequired(
     pack: PackType,
-    featured: FeaturedType
+    featured: FeaturedType,
   ): Promise<boolean> {
     // Free combinations - no payment required
     if (
@@ -55,7 +55,7 @@ class GeneralUtils {
     pack: PackType,
     featured: FeaturedType,
     userId: string,
-    adId: string
+    adId: string,
   ) {
     let amount = 0;
     const items = [];
@@ -155,7 +155,7 @@ class GeneralUtils {
 
       const availableReservations = reservations.filter((r) => !r.ad).length;
       const activeReservations = reservations.filter(
-        (r) => r.ad && (r.ad as { remaining_days?: number }).remaining_days
+        (r) => r.ad && (r.ad as { remaining_days?: number }).remaining_days,
       ).length;
       const totalReservations = availableReservations + activeReservations;
       const neededReservations = 3 - totalReservations;
@@ -194,7 +194,7 @@ class GeneralUtils {
    */
   public async ensureFreeFeaturedReservations(
     userId: string,
-    quantity: number
+    quantity: number,
   ) {
     try {
       const summary = {
@@ -206,7 +206,7 @@ class GeneralUtils {
         await featuredUtils.createAdFeaturedReservation(
           userId,
           "0",
-          "Free featured reservation created"
+          "Free featured reservation created",
         );
         summary.featuredReservationsCreated++;
       }
@@ -259,7 +259,7 @@ class GeneralUtils {
             total_otrosimpuestos: 0,
             total_final: taxDetails.total_final,
           },
-        }
+        },
       );
 
       console.log("Documento emitido:", documentResponse);
@@ -307,7 +307,7 @@ class GeneralUtils {
     });
 
     console.log(
-      `Total Afecto: ${total_afecto}, Total IVA: ${total_iva}, Total Final: ${total_final}`
+      `Total Afecto: ${total_afecto}, Total IVA: ${total_iva}, Total Final: ${total_final}`,
     );
 
     return {

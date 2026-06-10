@@ -16,7 +16,7 @@ class AdService {
   public async validatePayment(
     pack: PackType,
     featured: FeaturedType,
-    userId: string
+    userId: string,
   ) {
     // validate pack free
     if (pack === "free") {
@@ -52,7 +52,7 @@ class AdService {
       const freeAdFeaturedReservationAvailable =
         await PaymentUtils.adFeaturedReservation.getAdFeaturedReservationAvailable(
           userId,
-          true
+          true,
         );
 
       if (!freeAdFeaturedReservationAvailable.success) {
@@ -88,7 +88,7 @@ class AdService {
           details,
         });
         logger.info(
-          `Nuevo aviso creado con ID ${adData.id} por el usuario ${userId}`
+          `Nuevo aviso creado con ID ${adData.id} por el usuario ${userId}`,
         );
         return { success: true, ad: adData };
       }
@@ -141,7 +141,7 @@ class AdService {
         freeAdFeaturedReservationAvailable =
           await PaymentUtils.adFeaturedReservation.getAdFeaturedReservationAvailable(
             userId,
-            true
+            true,
           );
 
         if (!freeAdFeaturedReservationAvailable.success) {
@@ -162,7 +162,7 @@ class AdService {
 
         await PaymentUtils.ad.updateAdFeaturedReservation(
           adId,
-          adFeaturedReservationId
+          adFeaturedReservationId,
         );
       }
 
@@ -171,7 +171,7 @@ class AdService {
         const aAdReservationCredit =
           await PaymentUtils.adReservation.getAdReservationAvailable(
             userId,
-            false
+            false,
           );
 
         if (
@@ -196,7 +196,7 @@ class AdService {
         const aAdReservationCredit =
           await PaymentUtils.adReservation.getAdReservationAvailable(
             userId,
-            true
+            true,
           );
 
         if (
@@ -228,7 +228,7 @@ class AdService {
           {
             name: `${result.ad.user.firstname} ${result.ad.user.lastname}`,
             adUrl: `${process.env.FRONTEND_URL}/anuncios/${result.ad.slug}`,
-          }
+          },
         );
 
         // Email de notificación al admin
@@ -246,7 +246,7 @@ class AdService {
             email: result.ad.user.email,
             slug: result.ad.slug,
             adUrl: `${process.env.FRONTEND_URL}/dashboard/ads/${result.ad.id}`,
-          }
+          },
         );
       } catch (error) {
         logger.error("Error sending ad creation emails:", {
@@ -286,7 +286,7 @@ class AdService {
         pack,
         featured,
         userId,
-        adId
+        adId,
       );
 
       const returnUrl = `${process.env.APP_URL}/api/payments/ad-response`;
@@ -295,7 +295,7 @@ class AdService {
         paymentDetails.amount,
         paymentDetails.buyOrder,
         paymentDetails.sessionId,
-        returnUrl
+        returnUrl,
       );
 
       // Verificar si la respuesta de Transbank fue exitosa
@@ -349,7 +349,7 @@ class AdService {
           userId,
           featuredPrice.toString(),
           "Featured reservation from payment",
-          Number(adId)
+          Number(adId),
         );
       }
 
@@ -382,7 +382,7 @@ class AdService {
               unitPrice.toString(),
               total_days,
               "Reservation created from pack",
-              i === 0 ? Number(adId) : undefined
+              i === 0 ? Number(adId) : undefined,
             );
 
           logger.info(`Reserva ${i + 1}/${total_ads} creada`, {
@@ -408,7 +408,7 @@ class AdService {
           await PaymentUtils.adFeaturedReservation.createAdFeaturedReservation(
             userId,
             "0", // Precio gratuito para reservas destacadas del pack
-            "Featured reservation created from pack"
+            "Featured reservation created from pack",
           );
         }
 
@@ -422,7 +422,7 @@ class AdService {
 
           await PaymentUtils.ad.updateAdReservation(
             Number(adId),
-            firstReservationId
+            firstReservationId,
           );
 
           logger.info("Primera reserva asignada exitosamente", {
@@ -447,7 +447,7 @@ class AdService {
         const aAdReservationCredit =
           await PaymentUtils.adReservation.getAdReservationAvailable(
             userId,
-            false
+            false,
           );
 
         if (
@@ -464,7 +464,7 @@ class AdService {
 
         await PaymentUtils.ad.updateAdReservation(
           Number(adId),
-          adReservationId
+          adReservationId,
         );
       }
 
@@ -484,7 +484,7 @@ class AdService {
               "Zoho contact not found for ad payment — skipping CRM sync",
               {
                 userId,
-              }
+              },
             );
             return;
           }
@@ -507,7 +507,7 @@ class AdService {
             {
               userId,
               error: zohoError.message,
-            }
+            },
           );
         });
 

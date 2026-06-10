@@ -2,7 +2,7 @@
   <section class="terms terms--dashboard">
     <div class="terms--dashboard__container">
       <div class="terms--dashboard__header">
-        <SearchDefaultDashboard
+        <SearchDashboard
           :model-value="settingsStore.terms.searchTerm"
           placeholder="Buscar Condiciones..."
           class="terms--dashboard__search"
@@ -268,11 +268,11 @@ const truncateText = (text: string, maxLength: number) => {
 const router = useRouter();
 
 const handleViewTerm = (documentId: string) => {
-  router.push(`/maintenance/terms/${documentId}`);
+  router.push(`/dashboard/maintenance/terms/${documentId}`);
 };
 
 const handleEditTerm = (documentId: string) => {
-  router.push(`/maintenance/terms/${documentId}/edit`);
+  router.push(`/dashboard/maintenance/terms/${documentId}/edit`);
 };
 
 watch(

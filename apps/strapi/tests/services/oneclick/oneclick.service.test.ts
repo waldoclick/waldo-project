@@ -75,7 +75,7 @@ describe("OneclickService", () => {
       const result = await service.startInscription(
         "user-abc123",
         "test@example.com",
-        "https://myapp.com/finish"
+        "https://myapp.com/finish",
       );
 
       // Assert
@@ -85,7 +85,7 @@ describe("OneclickService", () => {
       expect(transbankSdk.__mockStart).toHaveBeenCalledWith(
         "user-abc123",
         "test@example.com",
-        "https://myapp.com/finish"
+        "https://myapp.com/finish",
       );
     });
 
@@ -98,7 +98,7 @@ describe("OneclickService", () => {
       const result = await service.startInscription(
         "user-abc123",
         "test@example.com",
-        "https://myapp.com/finish"
+        "https://myapp.com/finish",
       );
 
       // Assert
@@ -172,7 +172,7 @@ describe("OneclickService", () => {
         tbkUser,
         amount,
         parentBuyOrder,
-        childBuyOrder
+        childBuyOrder,
       );
 
       // Assert
@@ -185,7 +185,7 @@ describe("OneclickService", () => {
         parentBuyOrder,
         expect.arrayContaining([
           expect.objectContaining({ amount, buyOrder: childBuyOrder }),
-        ])
+        ]),
       );
     });
 
@@ -206,7 +206,7 @@ describe("OneclickService", () => {
         tbkUser,
         amount,
         parentBuyOrder,
-        childBuyOrder
+        childBuyOrder,
       );
 
       // Assert
@@ -226,7 +226,7 @@ describe("OneclickService", () => {
         tbkUser,
         amount,
         parentBuyOrder,
-        childBuyOrder
+        childBuyOrder,
       );
 
       // Assert
@@ -252,7 +252,7 @@ describe("OneclickService", () => {
       expect(result.error).toBeUndefined();
       expect(transbankSdk.__mockDelete).toHaveBeenCalledWith(
         tbkUserToken,
-        buildOneclickUsername(userDocId)
+        buildOneclickUsername(userDocId),
       );
     });
 

@@ -126,7 +126,7 @@ describe("processPaidWebpay — Zoho CRM wiring (DEAL-03, EVT-03)", () => {
         type: "Ad Payment",
         closingDate: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
         leadSource: "Website",
-      })
+      }),
     );
   });
 
@@ -140,7 +140,7 @@ describe("processPaidWebpay — Zoho CRM wiring (DEAL-03, EVT-03)", () => {
 
     expect(zohoService.updateContactStats).toHaveBeenCalledWith(
       "contact-zoho-2",
-      { Total_Spent__c: 1000 }
+      { Total_Spent__c: 1000 },
     );
 
     // Ensure Packs_Purchased__c is NOT included — ad_paid is not a pack purchase
@@ -162,7 +162,7 @@ describe("processPaidWebpay — Zoho CRM wiring (DEAL-03, EVT-03)", () => {
   it("Test 4 — Zoho sync is non-blocking (method returns before Zoho resolves)", async () => {
     // findContact never resolves — if the method awaits it, this test will hang
     (zohoService.findContact as jest.Mock).mockReturnValue(
-      new Promise(() => {})
+      new Promise(() => {}),
     );
 
     const result = await adService.processPaidWebpay("ad-token");
@@ -173,7 +173,7 @@ describe("processPaidWebpay — Zoho CRM wiring (DEAL-03, EVT-03)", () => {
 
   it("Test 5 — findContact throws → processPaidWebpay still returns success", async () => {
     (zohoService.findContact as jest.Mock).mockRejectedValue(
-      new Error("network error")
+      new Error("network error"),
     );
 
     const result = await adService.processPaidWebpay("ad-token");

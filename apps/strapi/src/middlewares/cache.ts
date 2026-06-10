@@ -121,7 +121,7 @@ export default () => {
       const ttl = getCacheTTL();
       ctx.response.set(
         "Cache-Control",
-        `public, max-age=${ttl}, s-maxage=${ttl}`
+        `public, max-age=${ttl}, s-maxage=${ttl}`,
       );
       ctx.response.set("X-Cache", "MISS");
     }
@@ -143,7 +143,7 @@ export default () => {
     // Intentar obtener de cache
     const key = generateCacheKey(ctx);
     const cachedResponse = await handleRedisOperation(async () =>
-      redis?.get(key)
+      redis?.get(key),
     );
 
     console.log("cachedResponse", cachedResponse);
@@ -153,7 +153,7 @@ export default () => {
       const ttl = getCacheTTL();
       ctx.response.set(
         "Cache-Control",
-        `public, max-age=${ttl}, s-maxage=${ttl}`
+        `public, max-age=${ttl}, s-maxage=${ttl}`,
       );
       ctx.response.set("X-Cache", "HIT");
       return;

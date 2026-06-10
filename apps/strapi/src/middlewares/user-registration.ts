@@ -26,7 +26,7 @@ const processedTokens = new Set<string>();
 
 export default (
   config: Record<string, unknown>,
-  { strapi }: { strapi: Core.Strapi }
+  { strapi }: { strapi: Core.Strapi },
 ) => {
   return async (ctx: Context, next: () => Promise<void>) => {
     await next();
@@ -43,7 +43,7 @@ export default (
             {
               userId: localResponse.user.id,
               email: localResponse.user.email,
-            }
+            },
           );
 
           // Crear 3 reservas gratuitas de anuncios
@@ -52,14 +52,14 @@ export default (
           // Crear 3 reservas gratuitas de destacados
           await PaymentUtils.general.ensureFreeFeaturedReservations(
             localResponse.user.id.toString(),
-            3
+            3,
           );
 
           logger.info(
             "Reservas gratuitas creadas exitosamente para registro local",
             {
               userId: localResponse.user.id,
-            }
+            },
           );
         } catch (error) {
           logger.error("Error creando reservas gratuitas en registro local", {
@@ -191,7 +191,7 @@ export default (
         if (providerResponse?.user) {
           // Verificar si el usuario fue creado recientemente (en los últimos 10 segundos)
           const userCreatedAt = new Date(
-            providerResponse.user.createdAt as string
+            providerResponse.user.createdAt as string,
           );
           const now = new Date();
           const timeDiff = now.getTime() - userCreatedAt.getTime();
@@ -204,25 +204,25 @@ export default (
                 {
                   userId: providerResponse.user.id,
                   email: providerResponse.user.email,
-                }
+                },
               );
 
               // Crear 3 reservas gratuitas de anuncios
               await createInitialFreeReservations(
-                providerResponse.user.id.toString()
+                providerResponse.user.id.toString(),
               );
 
               // Crear reservas gratuitas para anuncios destacados
               await PaymentUtils.general.ensureFreeFeaturedReservations(
                 providerResponse.user.id.toString(),
-                3
+                3,
               );
 
               logger.info(
                 "Reservas gratuitas creadas exitosamente para registro Google",
                 {
                   userId: providerResponse.user.id,
-                }
+                },
               );
             } catch (error) {
               logger.error(
@@ -231,7 +231,7 @@ export default (
                   userId: providerResponse.user.id,
                   error: error.message,
                   stack: error.stack,
-                }
+                },
               );
               // No lanzar error para no fallar el registro
             }

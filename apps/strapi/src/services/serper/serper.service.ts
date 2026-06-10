@@ -31,7 +31,7 @@ export class SerperService implements ISerperService {
   }
 
   async searchNews(
-    request: SerperSearchRequest
+    request: SerperSearchRequest,
   ): Promise<SerperSearchResponse> {
     const response = await fetch(this.baseUrl, {
       method: "POST",
@@ -49,7 +49,7 @@ export class SerperService implements ISerperService {
 
     if (!response.ok) {
       throw new Error(
-        `Serper API error: ${response.status} ${response.statusText}`
+        `Serper API error: ${response.status} ${response.statusText}`,
       );
     }
 

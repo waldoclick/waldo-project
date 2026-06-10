@@ -2,7 +2,7 @@
   <section class="packs packs--dashboard">
     <div class="packs--dashboard__container">
       <div class="packs--dashboard__header">
-        <SearchDefaultDashboard
+        <SearchDashboard
           :model-value="settingsStore.packs.searchTerm"
           placeholder="Buscar packs..."
           class="packs--dashboard__search"
@@ -186,11 +186,11 @@ const sortOptions = [
 const router = useRouter();
 
 const handleViewPack = (documentId: string) => {
-  router.push(`/maintenance/packs/${documentId}`);
+  router.push(`/dashboard/maintenance/packs/${documentId}`);
 };
 
 const handleEditPack = (documentId: string) => {
-  router.push(`/maintenance/packs/${documentId}/edit`);
+  router.push(`/dashboard/maintenance/packs/${documentId}/edit`);
 };
 
 watch(

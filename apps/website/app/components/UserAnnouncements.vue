@@ -107,7 +107,7 @@ const getImageUrl = (image: GalleryItem) => {
 const router = useRouter();
 
 const handleViewAd = (adId: number) => {
-  router.push(`/ads/${adId}`);
+  router.push(`/dashboard/ads/${adId}`);
 };
 
 const handlePageChange = (page: number) => {

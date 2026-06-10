@@ -146,7 +146,7 @@ export class AdService {
           "Reporte diario de actualización de anuncios",
           {
             ads: updatedAds,
-          }
+          },
         );
       }
     } catch (error) {

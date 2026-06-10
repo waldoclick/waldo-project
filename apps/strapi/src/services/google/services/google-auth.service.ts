@@ -10,10 +10,10 @@ export class GoogleAuthService implements IGoogleAuthService {
   async authenticate(): Promise<JWT> {
     console.log(
       "Authenticating with Google Sheets...",
-      this._config.getCredentialsPath()
+      this._config.getCredentialsPath(),
     );
     const credentials = JSON.parse(
-      readFileSync(this._config.getCredentialsPath(), "utf8")
+      readFileSync(this._config.getCredentialsPath(), "utf8"),
     );
     const { client_email, private_key } = credentials;
 
@@ -25,7 +25,7 @@ export class GoogleAuthService implements IGoogleAuthService {
       client_email,
       null,
       private_key.replace(/\\n/g, "\n"),
-      this._config.getScopes()
+      this._config.getScopes(),
     );
     await auth.authorize();
     return auth;

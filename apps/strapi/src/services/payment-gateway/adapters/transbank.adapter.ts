@@ -16,13 +16,13 @@ export class TransbankAdapter implements IPaymentGateway {
     amount: number,
     orderId: string,
     sessionId: string,
-    returnUrl: string
+    returnUrl: string,
   ): Promise<IGatewayInitResponse> {
     const result = await this.service.createTransaction(
       amount,
       orderId,
       sessionId,
-      returnUrl
+      returnUrl,
     );
     return {
       success: result.success,

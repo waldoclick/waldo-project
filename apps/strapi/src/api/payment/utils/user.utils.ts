@@ -69,7 +69,7 @@ export const getCurrentUser = async (ctx: Context): Promise<UserData> => {
  */
 export const documentDetails = async (
   userId: number | string,
-  isInvoice: boolean
+  isInvoice: boolean,
 ): Promise<BillingDetails> => {
   try {
     const user = (await strapi.db

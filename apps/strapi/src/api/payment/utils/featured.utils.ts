@@ -12,7 +12,7 @@ class FeaturedUtils {
    */
   public async getAdFeaturedReservationAvailable(
     userId: string,
-    isFree: boolean
+    isFree: boolean,
   ): Promise<ReservationResponse> {
     try {
       const price = isFree ? "0" : { $ne: "0" };
@@ -62,7 +62,7 @@ class FeaturedUtils {
     userId: string,
     price: string,
     description?: string,
-    adId?: number
+    adId?: number,
   ): Promise<ReservationResponse> {
     try {
       const data: AdFeaturedReservationData = {

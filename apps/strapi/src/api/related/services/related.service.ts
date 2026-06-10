@@ -16,7 +16,7 @@ export class RelatedAdsService {
     if (relatedAds.length < normalizedLimit) {
       const additionalAds = await this.findAdditionalAds(
         id,
-        normalizedLimit - relatedAds.length
+        normalizedLimit - relatedAds.length,
       );
       return [...relatedAds, ...additionalAds];
     }
@@ -27,7 +27,7 @@ export class RelatedAdsService {
   private normalizeLimit(limit: string | number): number {
     return Math.min(
       Math.max(1, Number(limit) || this.MAX_LIMIT),
-      this.MAX_LIMIT
+      this.MAX_LIMIT,
     );
   }
 
@@ -53,7 +53,7 @@ export class RelatedAdsService {
 
   private async findAdditionalAds(
     excludeId: string,
-    limit: number
+    limit: number,
   ): Promise<Ad[]> {
     return (await strapi.documents("api::ad.ad").findMany({
       filters: {

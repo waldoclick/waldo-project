@@ -86,22 +86,22 @@ describe("IndicadorService", () => {
             throw new Error("API Error");
           },
         },
-        path.join(__dirname, "test-cache.json")
+        path.join(__dirname, "test-cache.json"),
       );
 
       // Intentar convertir
       await expect(failingService.convert(100000)).rejects.toThrow(
-        ConversionError
+        ConversionError,
       );
     });
 
     it("debería lanzar error si se proporciona una moneda no soportada", async () => {
       await expect(
-        service.convert(100000, "CLP", "JPY" as unknown as Currency)
+        service.convert(100000, "CLP", "JPY" as unknown as Currency),
       ).rejects.toThrow(ConversionError);
 
       await expect(
-        service.convert(100000, "GBP" as unknown as Currency, "USD")
+        service.convert(100000, "GBP" as unknown as Currency, "USD"),
       ).rejects.toThrow(ConversionError);
     });
   });

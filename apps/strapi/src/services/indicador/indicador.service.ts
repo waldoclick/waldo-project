@@ -20,7 +20,10 @@ export class IndicadorService implements IIndicadorService {
   private cachedIndicators: Indicator[] = [];
   private initializationPromise: Promise<void>;
 
-  constructor(private readonly _httpClient: IHttpClient, cachePath?: string) {
+  constructor(
+    private readonly _httpClient: IHttpClient,
+    cachePath?: string,
+  ) {
     const dataDir = "data";
     const dataFile = "indicators.json";
     this.cachePath = cachePath || path.join(process.cwd(), dataDir, dataFile);
@@ -134,7 +137,7 @@ export class IndicadorService implements IIndicadorService {
     try {
       // Obtener datos frescos de la API
       const response = await this._httpClient.get<IndicadorResponse>(
-        this.baseUrl
+        this.baseUrl,
       );
 
       const indicators: Indicator[] = [];
@@ -165,7 +168,7 @@ export class IndicadorService implements IIndicadorService {
       return result;
     } catch (error) {
       throw new ConversionError(
-        "No se pudieron obtener los indicadores necesarios para la conversión"
+        "No se pudieron obtener los indicadores necesarios para la conversión",
       );
     }
   }
@@ -186,7 +189,7 @@ export class IndicadorService implements IIndicadorService {
     await fs.promises.writeFile(
       this.cachePath,
       JSON.stringify(cacheData, null, 2),
-      "utf-8"
+      "utf-8",
     );
   }
 
@@ -215,7 +218,7 @@ export class IndicadorService implements IIndicadorService {
   public async convert(
     amount: number,
     from: Currency = "CLP",
-    to: Currency = "USD"
+    to: Currency = "USD",
   ): Promise<number> {
     // Si las monedas son iguales, retornar el mismo monto
     if (from === to) return amount;
@@ -229,7 +232,7 @@ export class IndicadorService implements IIndicadorService {
 
     if (!dolar || !euro) {
       throw new ConversionError(
-        "No se pudieron obtener los indicadores necesarios para la conversión"
+        "No se pudieron obtener los indicadores necesarios para la conversión",
       );
     }
 

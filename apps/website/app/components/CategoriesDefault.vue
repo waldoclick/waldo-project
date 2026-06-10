@@ -2,7 +2,7 @@
   <section class="categories categories--default">
     <div class="categories--default__container">
       <div class="categories--default__header">
-        <SearchDefaultDashboard
+        <SearchDashboard
           :model-value="settingsStore.categories.searchTerm"
           placeholder="Buscar categorías..."
           class="categories--default__search"
@@ -210,11 +210,11 @@ const sortOptions = [
 const router = useRouter();
 
 const handleViewCategory = (documentId: string) => {
-  router.push(`/maintenance/categories/${documentId}`);
+  router.push(`/dashboard/maintenance/categories/${documentId}`);
 };
 
 const handleEditCategory = (documentId: string) => {
-  router.push(`/maintenance/categories/${documentId}/edit`);
+  router.push(`/dashboard/maintenance/categories/${documentId}/edit`);
 };
 
 const isHexColor = (value?: string) => {

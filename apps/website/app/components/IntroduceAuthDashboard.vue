@@ -21,7 +21,7 @@
       </div>
     </div>
     <div class="introduce--auth__bg">
-      <PictureDefaultDashboard />
+      <PictureDashboard />
     </div>
   </div>
 </template>

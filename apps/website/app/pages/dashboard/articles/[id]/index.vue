@@ -78,7 +78,7 @@
           title="Portada"
           :columns="1"
         >
-          <GalleryDefaultDashboard
+          <GalleryDashboard
             :images="coverImages"
             alt-prefix="Portada"
             :columns="1"
@@ -90,7 +90,7 @@
           title="Galería"
           :columns="1"
         >
-          <GalleryDefaultDashboard
+          <GalleryDashboard
             :images="galleryImages"
             alt-prefix="Galería"
             :columns="2"

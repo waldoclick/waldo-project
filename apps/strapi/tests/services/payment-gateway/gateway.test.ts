@@ -80,13 +80,13 @@ describe("IPaymentGateway interface — PAY-01, PAY-02", () => {
         _amount: number,
         _orderId: string,
         _sessionId: string,
-        _returnUrl: string
+        _returnUrl: string,
       ): Promise<IGatewayInitResponse> {
         return { success: true, gatewayRef: "dummy-ref", url: "https://dummy" };
       }
 
       async commitTransaction(
-        _gatewayRef: string
+        _gatewayRef: string,
       ): Promise<IGatewayCommitResponse> {
         return { success: true, response: {} };
       }
@@ -120,14 +120,14 @@ describe("TransbankAdapter — PAY-03", () => {
       1000,
       "order-1",
       "session-1",
-      "https://return.url"
+      "https://return.url",
     );
 
     expect(mockCreate).toHaveBeenCalledWith(
       1000,
       "order-1",
       "session-1",
-      "https://return.url"
+      "https://return.url",
     );
     expect(result).toEqual({
       success: true,
@@ -165,7 +165,7 @@ describe("TransbankAdapter — PAY-03", () => {
       500,
       "order-2",
       "session-2",
-      "https://return.url"
+      "https://return.url",
     );
 
     expect(result.success).toBe(false);

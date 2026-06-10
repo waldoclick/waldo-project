@@ -2,7 +2,7 @@
   <section class="users users--default">
     <div class="users--default__container">
       <div class="users--default__header">
-        <SearchDefaultDashboard
+        <SearchDashboard
           :model-value="settingsStore.users.searchTerm"
           placeholder="Buscar usuarios..."
           class="users--default__search"
@@ -220,7 +220,7 @@ const router = useRouter();
 
 const handleViewUser = (userId: number) => {
   // Navegar a la página de detalle del usuario
-  router.push(`/users/${userId}`);
+  router.push(`/dashboard/users/${userId}`);
 };
 
 // Watch para recargar cuando cambian los filtros o la búsqueda

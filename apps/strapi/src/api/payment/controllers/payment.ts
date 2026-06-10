@@ -58,7 +58,7 @@ class PaymentController {
     const validatePayment = await adService.validatePayment(
       pack,
       featured,
-      userId
+      userId,
     );
 
     if (!validatePayment.success) {
@@ -159,7 +159,7 @@ class PaymentController {
     const result = await freeAdService.processFreeAd(
       adId,
       String(userId),
-      pack
+      pack,
     );
 
     if (!result.success) {
@@ -200,7 +200,7 @@ class PaymentController {
 
     // Webpay Plus
     const result = (await adService.processPaidWebpay(
-      token
+      token,
     )) as unknown as WebpayAdResult;
 
     logger.info("Respuesta de Webpay procesada", {
@@ -223,7 +223,7 @@ class PaymentController {
     // Obtener los detalles de facturación del usuario
     const userDocumentDetails = await documentDetails(
       result.ad.user.id,
-      result.ad.details.is_invoice
+      result.ad.details.is_invoice,
     );
 
     logger.info("Detalles de facturación obtenidos", {
@@ -236,7 +236,7 @@ class PaymentController {
       result.ad.details.pack,
       result.ad.details.featured,
       String(result.ad.user.id),
-      String(result.ad.id)
+      String(result.ad.id),
     );
 
     // Emitir boleta o factura usando Facto
@@ -300,7 +300,7 @@ class PaymentController {
       ctx.redirect(
         `${process.env.FRONTEND_URL}/pagar/gracias?order=${
           (order?.order as { documentId?: string })?.documentId
-        }`
+        }`,
       );
     }
 
@@ -360,7 +360,7 @@ class PaymentController {
         featured: data.featured,
         is_invoice: data.is_invoice,
       },
-      userId
+      userId,
     );
 
     if (!result.success) {
@@ -407,7 +407,7 @@ class PaymentController {
     }
 
     ctx.redirect(
-      `${process.env.FRONTEND_URL}/pagar/gracias?order=${result.orderDocumentId}`
+      `${process.env.FRONTEND_URL}/pagar/gracias?order=${result.orderDocumentId}`,
     );
   });
 
@@ -426,7 +426,7 @@ class PaymentController {
     const result = await oneclickService.startInscription(
       username,
       String(user.email),
-      responseUrl
+      responseUrl,
     );
 
     if (!result.success) {
@@ -516,11 +516,11 @@ class PaymentController {
     const daysInMonth = new Date(
       now.getFullYear(),
       now.getMonth() + 1,
-      0
+      0,
     ).getDate();
     const daysRemaining = daysInMonth - now.getDate() + 1;
     const proratedPrice = Math.ceil(
-      (daysRemaining / daysInMonth) * proMonthlyPrice
+      (daysRemaining / daysInMonth) * proMonthlyPrice,
     );
 
     // CHARGE FIRST — before activating the user (SUB-CHARGE-01)
@@ -530,7 +530,7 @@ class PaymentController {
       result.tbkUser,
       proratedPrice,
       `pro-inscription-${user.id}-${todayCompact}`,
-      `c-${user.id}-${todayCompact}-1`
+      `c-${user.id}-${todayCompact}-1`,
     );
 
     if (!chargeResult.success) {
@@ -539,7 +539,7 @@ class PaymentController {
         responseCode: chargeResult.responseCode,
       });
       ctx.redirect(
-        `${process.env.FRONTEND_URL}/pro/error?reason=charge-failed`
+        `${process.env.FRONTEND_URL}/pro/error?reason=charge-failed`,
       );
       return;
     }
@@ -663,7 +663,7 @@ class PaymentController {
           ad as {
             ad_featured_reservation?: unknown;
             user?: { pro_status?: string } | null;
-          }
+          },
         );
         const adRecord = ad as Record<string, unknown>;
         if (adRecord.sort_priority !== priority) {
@@ -676,13 +676,13 @@ class PaymentController {
     } catch (sortError) {
       logger.error(
         "proResponse: sort_priority recalculation failed on pro activation",
-        { userId: user.id, error: sortError }
+        { userId: user.id, error: sortError },
       );
     }
 
     if (proOrder?.documentId) {
       ctx.redirect(
-        `${process.env.FRONTEND_URL}/pro/pagar/gracias?order=${proOrder.documentId}`
+        `${process.env.FRONTEND_URL}/pro/pagar/gracias?order=${proOrder.documentId}`,
       );
     } else {
       ctx.redirect(`${process.env.FRONTEND_URL}/pro/gracias`);
@@ -709,7 +709,7 @@ class PaymentController {
     const cancellationService = new ProCancellationService();
     const result = await cancellationService.cancelSubscription(
       user.id as number,
-      user.documentId
+      user.documentId,
     );
 
     if (!result.success) {

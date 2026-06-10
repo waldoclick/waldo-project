@@ -118,8 +118,8 @@ export default {
         strapi.db.query("api::faq.faq").update({
           where: { documentId: entry.documentId },
           data: { order: entry.order },
-        })
-      )
+        }),
+      ),
     );
     return { data: { count: data.length } };
   },

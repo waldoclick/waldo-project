@@ -26,7 +26,7 @@ export class AnthropicService implements IAnthropicService {
     });
 
     const textBlock = response.content.find(
-      (b): b is Anthropic.Messages.TextBlock => b.type === "text"
+      (b): b is Anthropic.Messages.TextBlock => b.type === "text",
     );
     const text = textBlock?.text ?? "";
     return { text };

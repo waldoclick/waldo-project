@@ -23,13 +23,13 @@ const populateAdDraftMigration = async (strapi: Core.Strapi): Promise<void> => {
 
     if (abandonedAds.length === 0) {
       console.log(
-        "✅ No hay avisos abandonados para migrar (ya migrados o ninguno existe)"
+        "✅ No hay avisos abandonados para migrar (ya migrados o ninguno existe)",
       );
       return;
     }
 
     console.log(
-      `📋 Encontrados ${abandonedAds.length} avisos para migrar a draft: true`
+      `📋 Encontrados ${abandonedAds.length} avisos para migrar a draft: true`,
     );
 
     const ids = abandonedAds.map((ad) => ad.id);
@@ -41,12 +41,12 @@ const populateAdDraftMigration = async (strapi: Core.Strapi): Promise<void> => {
     });
 
     console.log(
-      `✅ Migración completada: ${abandonedAds.length} avisos actualizados a draft: true`
+      `✅ Migración completada: ${abandonedAds.length} avisos actualizados a draft: true`,
     );
   } catch (error) {
     const e = error as { message?: string };
     console.error(
-      `❌ Error en migración de draft: ${e.message ?? "unknown error"}`
+      `❌ Error en migración de draft: ${e.message ?? "unknown error"}`,
     );
     throw error;
   }

@@ -9,7 +9,7 @@ const logtailEndpoint = process.env.LOGTAIL_ENDPOINT;
 
 if (!logtailToken) {
   console.warn(
-    "LOGTAIL_TOKEN no está configurado. Los logs no se enviarán a BetterStack."
+    "LOGTAIL_TOKEN no está configurado. Los logs no se enviarán a BetterStack.",
   );
 }
 
@@ -23,7 +23,7 @@ const logtail = logtailToken
               ? logtailEndpoint
               : `https://${logtailEndpoint}`,
           }
-        : undefined
+        : undefined,
     )
   : null;
 
@@ -32,7 +32,7 @@ const logger = winston.createLogger({
   level: "info",
   format: winston.format.combine(
     winston.format.timestamp(),
-    winston.format.json()
+    winston.format.json(),
   ),
   transports: [
     // Solo agregar el transport de Logtail si está configurado
@@ -46,7 +46,7 @@ const logger = winston.createLogger({
           const metaStr =
             Object.keys(meta).length > 0 ? ` ${JSON.stringify(meta)}` : "";
           return `${timestamp} [${level}]: ${message}${metaStr}`;
-        })
+        }),
       ),
     }),
     // Agregar el transport de archivo con rotación
@@ -57,7 +57,7 @@ const logger = winston.createLogger({
       maxFiles: "90d",
       format: winston.format.combine(
         winston.format.timestamp(),
-        winston.format.json()
+        winston.format.json(),
       ),
     }),
   ],

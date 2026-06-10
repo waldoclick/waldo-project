@@ -35,7 +35,7 @@ export default () => {
           if (!ALLOWED_MIME_TYPES.includes(f.mimetype)) {
             ctx.throw(
               400,
-              `File type not allowed: ${f.mimetype}. Only PNG, JPG and WEBP images are allowed.`
+              `File type not allowed: ${f.mimetype}. Only PNG, JPG and WEBP images are allowed.`,
             );
           }
         }
@@ -44,7 +44,7 @@ export default () => {
         if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
           ctx.throw(
             400,
-            `File type not allowed: ${file.mimetype}. Only PNG, JPG and WEBP images are allowed.`
+            `File type not allowed: ${file.mimetype}. Only PNG, JPG and WEBP images are allowed.`,
           );
         }
       }

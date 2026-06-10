@@ -11,7 +11,7 @@ function createMiddleware() {
 function createContext(
   method: string,
   path: string,
-  body: Record<string, unknown>
+  body: Record<string, unknown>,
 ) {
   return {
     request: {
@@ -170,7 +170,7 @@ describe("protect-user-fields middleware", () => {
     expect(ctx.request.body.data).toHaveProperty("pro_card_last4", "1234");
     expect(ctx.request.body.data).toHaveProperty(
       "pro_inscription_token",
-      "insc-token-abc"
+      "insc-token-abc",
     );
     expect(ctx.request.body.data).toHaveProperty("firstname", "Alice");
     expect(next).toHaveBeenCalled();

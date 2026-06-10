@@ -81,7 +81,7 @@ beforeEach(() => {
     () =>
       ({
         verifyIdToken: mockVerifyIdToken,
-      } as unknown as OAuth2Client)
+      }) as unknown as OAuth2Client,
   );
 
   service = new GoogleOneTapService();
@@ -162,7 +162,7 @@ describe("GTAP-04: findOrCreateUser() — existing user", () => {
     expect(mockUserUpdate).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({ google_sub: "google-sub-123" }),
-      })
+      }),
     );
     expect(result).toEqual({ user: updatedUser, isNew: false });
   });
@@ -211,7 +211,7 @@ describe("GTAP-05: findOrCreateUser() — new user", () => {
           confirmed: true,
           blocked: false,
         }),
-      })
+      }),
     );
   });
 

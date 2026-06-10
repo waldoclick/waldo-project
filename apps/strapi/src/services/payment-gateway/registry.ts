@@ -16,8 +16,8 @@ export function getPaymentGateway(): IPaymentGateway {
   if (!factory) {
     throw new Error(
       `Unknown payment gateway: "${id}". Valid options: ${Object.keys(
-        GATEWAY_FACTORIES
-      ).join(", ")}`
+        GATEWAY_FACTORIES,
+      ).join(", ")}`,
     );
   }
 
@@ -26,8 +26,8 @@ export function getPaymentGateway(): IPaymentGateway {
   if (missingVars.length > 0) {
     throw new Error(
       `Payment gateway "${id}" is missing required environment variables: ${missingVars.join(
-        ", "
-      )}`
+        ", ",
+      )}`,
     );
   }
 
