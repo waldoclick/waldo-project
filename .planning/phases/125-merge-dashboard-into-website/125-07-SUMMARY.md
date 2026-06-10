@@ -43,7 +43,8 @@ key-files:
 key-decisions:
   - "overrideForgotPassword context ternary collapsed: both website and residual dashboard callers now resolve to FRONTEND_URL/restablecer-contrasena — context field removed from destructuring as unused after merge"
   - "dashboardUrl removed from website runtimeConfig.public — MenuUser was the sole consumer; no other reference existed"
-  - "Pre-existing test failures (17/143) and nuxt build failure confirmed as infrastructure constraints (estree-walker ESM-only at root, missing stubs in test env) — present before this plan, not introduced by our changes; vue-tsc --noEmit exits 0 (TypeScript clean)"
+  - "estree-walker@^3 hoisting regression: removing apps/dashboard caused vue-router's bundled @vue/compiler-sfc@3.5.29 to resolve estree-walker from root (now v3, ESM-only), breaking nuxi CJS loader — fixed by adding resolutions:{estree-walker:^2.0.2} to root package.json; nuxi typecheck now exits 0"
+  - "Residual 17 test failures (FormLogin, useLogout, useOrderById, recaptcha-proxy, ResumeOrder) are genuine pre-existing stubs — missing vi.stubGlobal for Nuxt auto-imports (useSweetAlert2, createError) and component-test mismatches unrelated to our changes; not introduced by 125-07"
 
 patterns-established:
   - "No standalone DASHBOARD_URL env var in Strapi email builders — all admin ad links use FRONTEND_URL/dashboard/ads/:id"
@@ -82,6 +83,7 @@ Each task was committed atomically:
 1. **Task 1: MenuUser internal link + FormForgotPasswordDashboard context** - `959e89b4` (feat)
 2. **Task 2: Update Strapi DASHBOARD_URL email/reset URLs** - `6d889f45` (fix)
 3. **Task 3: Remove dashboard workspace, delete apps/dashboard** - `673a32cf` (chore)
+4. **Auto-fix: Pin estree-walker@^2.0.2 via resolutions (regression from workspace removal)** - `e471670e` (fix)
 
 **Plan metadata:** (docs commit follows)
 
@@ -119,12 +121,24 @@ Each task was committed atomically:
 
 ---
 
-**Total deviations:** 1 auto-fixed (1 missing cleanup per CLAUDE.md no-unused rule)
-**Impact on plan:** Minor cleanup required by code quality rules. No scope creep.
+**2. [Rule 3 - Blocking] estree-walker@^2.0.2 resolution required after workspace removal**
+
+- **Found during:** Task 3 verification (nuxi typecheck failure)
+- **Issue:** Removing apps/dashboard caused yarn hoisting regression — `vue-router`'s bundled `@vue/compiler-sfc@3.5.29` resolved `estree-walker` from root, which jumped to v3.0.3 (ESM-only), blocking nuxi CJS loader
+- **Root cause:** Before 125-07, `@vue/compiler-core@3.5.29` hoisted from dashboard pinned `estree-walker@2` at root. With dashboard gone, that constraint was removed.
+- **Fix:** Added `resolutions: { "estree-walker": "^2.0.2" }` to root package.json; re-ran `yarn install --ignore-scripts` to update yarn.lock
+- **Files modified:** package.json, yarn.lock
+- **Commit:** `e471670e`
+
+---
+
+**Total deviations:** 2 auto-fixed (1 missing cleanup per CLAUDE.md no-unused rule + 1 yarn hoisting regression blocking nuxi typecheck)
+**Impact on plan:** Both fixes required for correctness. No scope creep.
 
 ## Issues Encountered
 
-- `nuxi typecheck` and `nuxi build` fail with `No "exports" main defined in estree-walker/package.json` — this is a pre-existing infrastructure constraint (estree-walker v3 is ESM-only, CJS loader can't handle it). Confirmed present before this plan. Used `vue-tsc --noEmit` for TypeScript verification (exits 0).
+- **estree-walker regression (fixed):** Removing apps/dashboard changed yarn's hoisting behavior. Before 125-07, `@vue/compiler-core@3.5.29` (hoisted from dashboard) pinned `estree-walker@2` at root. After removal, root `estree-walker` jumped to v3.0.3 (ESM-only). `vue-router`'s bundled `@vue/compiler-sfc@3.5.29` then resolved `estree-walker` from root and crashed the nuxi CJS loader. Fixed by adding `resolutions: { "estree-walker": "^2.0.2" }` to root package.json. `nuxi typecheck` now exits 0.
+- **Residual 17 test failures (pre-existing):** `FormLogin`, `useLogout`, `useOrderById`, `recaptcha-proxy`, `ResumeOrder` — missing `vi.stubGlobal` stubs for Nuxt auto-imports (`useSweetAlert2`, `createError`) and component-test assertion mismatches. All test files and components existed unchanged at commit `21a7f348` (125-06). Not introduced by 125-07.
 - `yarn install` without `--ignore-scripts` fails due to `nuxt prepare` postinstall hook; `--ignore-scripts` variant succeeds and updates lockfile correctly.
 
 ## User Setup Required
