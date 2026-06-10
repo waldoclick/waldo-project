@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-last_updated: "2026-06-10T15:53:24.457Z"
+last_updated: "2026-06-10T16:02:01.470Z"
 last_activity: 2026-06-10
 progress:
   total_phases: 19
   completed_phases: 17
   total_plans: 48
-  completed_plans: 44
+  completed_plans: 45
   percent: 90
 ---
 
@@ -24,16 +24,18 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 
 ## Position
 
-Phase 125 plan 02 complete — 8 dashboard-exclusive packages installed in website workspace (chart.js, vue-chartjs, chartjs-plugin-annotation, qs, slugify, highlight.js, vuedraggable, @types/qs); vite.optimizeDeps extended with 4 chart/qs entries; 24 /dashboard/-prefixed routeRules + robots /dashboard/ disallow added to nuxt.config.ts.
+Phase 125 plan 04 complete — 4 dashboard-exclusive types (order, subscription-payment, subscription-pro, better-stack) and 3 composables (useExportCsv, useServices, useSlugify) moved to website via git mv; websiteUrl added to runtimeConfig.public; zero useSessionX references remain in apps/website/app — all 9 call sites swapped to useStrapiAuth/useStrapiUser/useStrapiToken.
 
 ```
-Progress: [█████████░] 90%
+Progress: [█████████░] 94%
 ```
 
 ## Accumulated Context
 
 ### Key Decisions (carry forward)
 
+- useStrapiAuth() is the website-native replacement for useSessionAuth() — exposes identical setToken/fetchUser/logout API (verified from @nuxtjs/strapi dist/.d.ts); qs-serialization caveat does not apply — none of the 9 migrated components used useSessionClient (125-04)
+- D-04 session replacement complete: useSessionUser→useStrapiUser, useSessionToken→useStrapiToken, useSessionAuth→useStrapiAuth, useSessionClient→useApiClient (125-04)
 - routeRules /dashboard/ prefix pattern: all 24 dashboard Spanish->English redirects scoped under /dashboard/ namespace in website nuxt.config.ts — prevents collision with public website routes; CONTEXT.md stated "22" but actual count was 24 (125-02)
 - @vueform/multiselect excluded from website install — zero imports in dashboard source confirmed; dead dependency (125-02)
 - vite.optimizeDeps only 4 new entries (qs, vue-chartjs, chart.js, chartjs-plugin-annotation) per D-10 spec — slugify/highlight.js/vuedraggable installed as packages but not in optimizeDeps (125-02)
