@@ -16,6 +16,21 @@
     "strapi:upgrade": "cd apps/strapi && NPM_REGISTRY_URL=https://registry.npmjs.org/ npx @strapi/upgrade latest"
   },
   "pnpm": {
+    "onlyBuiltDependencies": [
+      "@parcel/watcher",
+      "@sentry-internal/node-cpu-profiler",
+      "@sentry/cli",
+      "@swc/core",
+      "better-sqlite3",
+      "core-js",
+      "core-js-pure",
+      "cypress",
+      "esbuild",
+      "protobufjs",
+      "sharp",
+      "unrs-resolver",
+      "vue-demi"
+    ],
     "overrides": {
       "estree-walker": "^2.0.2",
       "ofetch": "^1.4.0",

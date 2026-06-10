@@ -1,6 +1,7 @@
 packages:
   - 'apps/strapi'
   - 'apps/website'
+# pnpm 10+ syntax
 allowBuilds:
   '@parcel/watcher': true
   '@sentry-internal/node-cpu-profiler': true
@@ -15,3 +16,18 @@ allowBuilds:
   sharp: true
   unrs-resolver: true
   vue-demi: true
+# pnpm 9 syntax (fallback for Vercel's default pnpm)
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - '@sentry-internal/node-cpu-profiler'
+  - '@sentry/cli'
+  - '@swc/core'
+  - better-sqlite3
+  - core-js
+  - core-js-pure
+  - cypress
+  - esbuild
+  - protobufjs
+  - sharp
+  - unrs-resolver
+  - vue-demi
