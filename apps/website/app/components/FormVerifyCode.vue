@@ -151,6 +151,12 @@ const handleVerify = async () => {
     setToken(responseRaw.jwt);
     await fetchUser();
 
+    const loggedUser = useStrapiUser();
+    if (loggedUser.value?.role?.name?.toLowerCase() === "manager") {
+      await navigateTo("/dashboard");
+      return;
+    }
+
     pendingToken.value = "";
     logInfo("User logged in successfully via 2-step verification.");
     login("email");
