@@ -37,6 +37,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
   if (!profileComplete) {
     // User is already heading to onboarding — allow through to avoid redirect loop
     if (to.path.startsWith("/onboarding")) return;
+    if (to.path.startsWith("/dashboard")) return; // managers bypass onboarding (D-02)
 
     return navigateTo("/onboarding");
   }
