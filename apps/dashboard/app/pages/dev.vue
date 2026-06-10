@@ -2,13 +2,17 @@
   <div class="page">
     <div class="auth">
       <div class="auth__introduce">
-        <IntroduceAuth :title="title" :subtitle="subtitle" :list="list" />
+        <IntroduceAuthDashboard
+          :title="title"
+          :subtitle="subtitle"
+          :list="list"
+        />
       </div>
       <div class="auth__form">
         <div class="auth__form__inner">
           <h1 class="auth__form__title title">Acceso Restringido</h1>
           <div class="auth__form__fields">
-            <FormDev />
+            <FormDevDashboard />
           </div>
         </div>
       </div>

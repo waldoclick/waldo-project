@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeroDefault :title="title" :breadcrumbs="breadcrumbs" />
+    <HeroDefaultDashboard :title="title" :breadcrumbs="breadcrumbs" />
     <BoxContent>
       <template #content>
         <BoxInformation title="Editar FAQ" :columns="1">
@@ -9,12 +9,12 @@
       </template>
       <template #sidebar>
         <BoxInformation title="Detalles" :columns="1">
-          <CardInfo
+          <CardInfoDashboard
             v-if="faq"
             title="Fecha de creación"
             :description="formatDate(faq.createdAt)"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="faq"
             title="Última modificación"
             :description="formatDate(faq.updatedAt)"

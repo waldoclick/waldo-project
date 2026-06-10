@@ -2,7 +2,7 @@
   <section class="conditions conditions--default">
     <div class="conditions--default__container">
       <div class="conditions--default__header">
-        <SearchDefault
+        <SearchDefaultDashboard
           :model-value="settingsStore.conditions.searchTerm"
           placeholder="Buscar condiciones..."
           class="conditions--default__search"

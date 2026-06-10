@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeroDefault :title="title" :breadcrumbs="breadcrumbs" />
+    <HeroDefaultDashboard :title="title" :breadcrumbs="breadcrumbs" />
     <BoxContent>
       <template #content>
         <BoxInformation title="Editar Condicion de Uso" :columns="1">
@@ -9,12 +9,12 @@
       </template>
       <template #sidebar>
         <BoxInformation title="Detalles" :columns="1">
-          <CardInfo
+          <CardInfoDashboard
             v-if="term"
             title="Fecha de creación"
             :description="formatDate(term.createdAt)"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="term"
             title="Última modificación"
             :description="formatDate(term.updatedAt)"

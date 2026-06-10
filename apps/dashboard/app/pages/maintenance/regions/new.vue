@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeroDefault title="Nueva región" :breadcrumbs="breadcrumbs" />
+    <HeroDefaultDashboard title="Nueva región" :breadcrumbs="breadcrumbs" />
     <BoxContent>
       <template #content>
         <BoxInformation title="Nueva región" :columns="1">

@@ -2,7 +2,7 @@
   <section class="articles articles--default">
     <div class="articles--default__container">
       <div class="articles--default__header">
-        <SearchDefault
+        <SearchDefaultDashboard
           :model-value="settingsStore.articles.searchTerm"
           placeholder="Buscar artículos..."
           class="articles--default__search"

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeroDefault title="Rechazados" :breadcrumbs="breadcrumbs" />
+    <HeroDefaultDashboard title="Rechazados" :breadcrumbs="breadcrumbs" />
     <AdsTable
       endpoint="ads/rejecteds"
       section="adsRejected"

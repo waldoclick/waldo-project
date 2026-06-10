@@ -2,7 +2,7 @@
   <section class="subscription-payments subscription-payments--default">
     <div class="subscription-payments--default__container">
       <div class="subscription-payments--default__header">
-        <SearchDefault
+        <SearchDefaultDashboard
           :model-value="settingsStore.subscriptionPayments.searchTerm"
           placeholder="Buscar pagos de subscripción..."
           class="subscription-payments--default__search"

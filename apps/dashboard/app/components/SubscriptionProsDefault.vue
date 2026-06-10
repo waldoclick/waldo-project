@@ -2,7 +2,7 @@
   <section class="subscription-pros subscription-pros--default">
     <div class="subscription-pros--default__container">
       <div class="subscription-pros--default__header">
-        <SearchDefault
+        <SearchDefaultDashboard
           :model-value="settingsStore.subscriptionPros.searchTerm"
           placeholder="Buscar subscripciones PRO..."
           class="subscription-pros--default__search"

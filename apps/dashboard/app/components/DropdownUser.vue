@@ -7,7 +7,7 @@
       @click="toggleOpen"
     >
       <div class="dropdown--user__button__avatar">
-        <AvatarDefault />
+        <AvatarDefaultDashboard />
       </div>
 
       <div class="dropdown--user__button__greetings">

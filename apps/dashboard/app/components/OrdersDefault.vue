@@ -2,7 +2,7 @@
   <section class="orders orders--default">
     <div class="orders--default__container">
       <div class="orders--default__header">
-        <SearchDefault
+        <SearchDefaultDashboard
           :model-value="settingsStore.orders.searchTerm"
           placeholder="Buscar órdenes..."
           class="orders--default__search"

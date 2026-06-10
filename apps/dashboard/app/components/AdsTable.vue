@@ -2,7 +2,7 @@
   <section class="ads" :class="`ads--${props.section}`">
     <div :class="`ads--${props.section}__container`">
       <div :class="`ads--${props.section}__header`">
-        <SearchDefault
+        <SearchDefaultDashboard
           :model-value="sectionSettings.searchTerm"
           placeholder="Buscar anuncios..."
           :class="`ads--${props.section}__search`"

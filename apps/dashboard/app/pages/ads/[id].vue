@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeroDefault :title="title" :breadcrumbs="breadcrumbs">
+    <HeroDefaultDashboard :title="title" :breadcrumbs="breadcrumbs">
       <template v-if="statusIcon" #titlePrefix>
         <component :is="statusIcon" aria-hidden="true" />
       </template>
@@ -39,7 +39,7 @@
           Banear
         </button>
       </template>
-    </HeroDefault>
+    </HeroDefaultDashboard>
     <BoxContent>
       <template #content>
         <BoxInformation
@@ -50,81 +50,95 @@
           <template #titlePrefix>
             <AlertTriangle aria-hidden="true" />
           </template>
-          <CardInfo
+          <CardInfoDashboard
             v-if="item?.banned_at"
             title="Fecha"
             :description="formatDate(item.banned_at)"
           />
-          <CardInfo title="Detalle" :description="item.reason_for_ban" />
+          <CardInfoDashboard
+            title="Detalle"
+            :description="item.reason_for_ban"
+          />
         </BoxInformation>
         <BoxInformation
           v-if="item?.reason_for_rejection"
           title="Razón del rechazo"
           :columns="1"
         >
-          <CardInfo
+          <CardInfoDashboard
             v-if="item?.rejected_at"
             title="Fecha"
             :description="formatDate(item.rejected_at)"
           />
-          <CardInfo title="Detalle" :description="item.reason_for_rejection" />
+          <CardInfoDashboard
+            title="Detalle"
+            :description="item.reason_for_rejection"
+          />
         </BoxInformation>
         <BoxInformation title="Información" :columns="2">
-          <CardInfo v-if="item" title="Nombre" :description="item.name" />
-          <CardInfo v-if="item" title="Slug" :description="item.slug" />
-          <CardInfo
+          <CardInfoDashboard
+            v-if="item"
+            title="Nombre"
+            :description="item.name"
+          />
+          <CardInfoDashboard
+            v-if="item"
+            title="Slug"
+            :description="item.slug"
+          />
+          <CardInfoDashboard
             v-if="item"
             title="Precio"
             :description="
               formatCurrency(item.price, { currency: item.currency })
             "
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Categoría"
             :description="item.category?.name || '--'"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Condición"
             :description="item.condition?.name || '--'"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Comuna"
             :description="item.commune?.name || '--'"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Dirección"
             :description="formatAddress(item.address, item.address_number)"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Teléfono"
             :description="item.phone || '--'"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Email"
             :description="item.email || '--'"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Duración"
             :description="`${item.duration_days} días`"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Días Restantes"
             :description="`${item.remaining_days} días`"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Moneda"
             :description="item.currency || '--'"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             class="box--information__description__full"
             title="Descripción"
@@ -137,7 +151,7 @@
           title="Galería de imágenes"
           :columns="1"
         >
-          <GalleryDefault
+          <GalleryDefaultDashboard
             :images="item.gallery"
             :alt-prefix="item.name"
             :columns="6"
@@ -147,17 +161,17 @@
       </template>
       <template #sidebar>
         <BoxInformation title="Detalles" :columns="1">
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Estado"
             :description="getStatusText(item)"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Fecha de creación"
             :description="formatDate(item.createdAt)"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Última modificación"
             :description="formatDate(item.updatedAt)"
@@ -165,7 +179,7 @@
         </BoxInformation>
       </template>
     </BoxContent>
-    <LightboxRazon
+    <LightboxRazonDashboard
       :is-open="isRejectLightboxOpen"
       title="Razón del rechazo"
       description="Esta razón se enviará al usuario y quedará registrada en el anuncio."
@@ -174,7 +188,7 @@
       @close="closeRejectLightbox"
       @submit="handleReject"
     />
-    <LightboxRazon
+    <LightboxRazonDashboard
       :is-open="isBanLightboxOpen"
       title="Razón del baneo"
       description="Esta razón quedará registrada en el anuncio."

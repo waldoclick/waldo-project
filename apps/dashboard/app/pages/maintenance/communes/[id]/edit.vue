@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeroDefault :title="title" :breadcrumbs="breadcrumbs" />
+    <HeroDefaultDashboard :title="title" :breadcrumbs="breadcrumbs" />
     <BoxContent>
       <template #content>
         <BoxInformation title="Editar comuna" :columns="1">
@@ -9,12 +9,12 @@
       </template>
       <template #sidebar>
         <BoxInformation title="Detalles" :columns="1">
-          <CardInfo
+          <CardInfoDashboard
             v-if="commune"
             title="Fecha de creación"
             :description="formatDate(commune.createdAt)"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="commune"
             title="Última modificación"
             :description="formatDate(commune.updatedAt)"

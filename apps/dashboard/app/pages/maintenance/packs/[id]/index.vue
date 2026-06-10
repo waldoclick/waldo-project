@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeroDefault :title="title" :breadcrumbs="breadcrumbs">
+    <HeroDefaultDashboard :title="title" :breadcrumbs="breadcrumbs">
       <template #actions>
         <NuxtLink
           class="btn btn--primary"
@@ -9,33 +9,41 @@
           Editar pack
         </NuxtLink>
       </template>
-    </HeroDefault>
+    </HeroDefaultDashboard>
     <BoxContent>
       <template #content>
         <BoxInformation title="Información" :columns="2">
-          <CardInfo v-if="item" title="Nombre" :description="item.name" />
-          <CardInfo
+          <CardInfoDashboard
+            v-if="item"
+            title="Nombre"
+            :description="item.name"
+          />
+          <CardInfoDashboard
             v-if="item"
             title="Descripción"
             :description="item.description"
           />
-          <CardInfo v-if="item" title="Texto" :description="item.text" />
-          <CardInfo
+          <CardInfoDashboard
+            v-if="item"
+            title="Texto"
+            :description="item.text"
+          />
+          <CardInfoDashboard
             v-if="item"
             title="Precio"
             :description="`$${item.price?.toLocaleString('es-CL') || '--'}`"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Duración (días)"
             :description="item.total_days?.toString() || '--'"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Cantidad de anuncios"
             :description="item.total_ads?.toString() || '--'"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Destacados"
             :description="item.total_features?.toString() || '--'"
@@ -44,12 +52,12 @@
       </template>
       <template #sidebar>
         <BoxInformation title="Detalles" :columns="1">
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Fecha de creación"
             :description="formatDate(item.createdAt)"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Última modificación"
             :description="formatDate(item.updatedAt)"

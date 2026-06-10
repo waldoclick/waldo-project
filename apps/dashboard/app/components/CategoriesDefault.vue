@@ -2,7 +2,7 @@
   <section class="categories categories--default">
     <div class="categories--default__container">
       <div class="categories--default__header">
-        <SearchDefault
+        <SearchDefaultDashboard
           :model-value="settingsStore.categories.searchTerm"
           placeholder="Buscar categorías..."
           class="categories--default__search"

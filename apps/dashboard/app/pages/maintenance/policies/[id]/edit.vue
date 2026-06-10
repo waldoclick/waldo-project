@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeroDefault :title="title" :breadcrumbs="breadcrumbs" />
+    <HeroDefaultDashboard :title="title" :breadcrumbs="breadcrumbs" />
     <BoxContent>
       <template #content>
         <BoxInformation title="Editar Politica" :columns="1">
@@ -9,12 +9,12 @@
       </template>
       <template #sidebar>
         <BoxInformation title="Detalles" :columns="1">
-          <CardInfo
+          <CardInfoDashboard
             v-if="policy"
             title="Fecha de creación"
             :description="formatDate(policy.createdAt)"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="policy"
             title="Última modificación"
             :description="formatDate(policy.updatedAt)"

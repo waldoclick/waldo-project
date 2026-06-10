@@ -2,7 +2,7 @@
   <section class="featured featured--free">
     <div class="featured--free__container">
       <div class="featured--free__header">
-        <SearchDefault
+        <SearchDefaultDashboard
           :model-value="settingsStore.featured.searchTerm"
           placeholder="Buscar destacados..."
           class="featured--free__search"

@@ -2,7 +2,7 @@
   <div class="introduce introduce--auth">
     <div class="introduce--auth__content">
       <div class="introduce--auth__logo">
-        <LogoWhite />
+        <LogoWhiteDashboard />
       </div>
       <h2 class="introduce--auth__title" v-html="getTitle" />
       <div class="introduce--auth__details">
@@ -21,7 +21,7 @@
       </div>
     </div>
     <div class="introduce--auth__bg">
-      <PictureDefault />
+      <PictureDefaultDashboard />
     </div>
   </div>
 </template>

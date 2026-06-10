@@ -1,12 +1,12 @@
 <template>
   <div>
-    <HeroDefault title="FAQs" :breadcrumbs="breadcrumbs">
+    <HeroDefaultDashboard title="FAQs" :breadcrumbs="breadcrumbs">
       <template #actions>
         <NuxtLink class="btn btn--primary" to="/maintenance/faqs/new">
           Agregar FAQ
         </NuxtLink>
       </template>
-    </HeroDefault>
+    </HeroDefaultDashboard>
     <FaqsDefault />
   </div>
 </template>

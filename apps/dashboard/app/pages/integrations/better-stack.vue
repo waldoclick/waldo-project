@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeroDefault title="Better Stack" :breadcrumbs="breadcrumbs">
+    <HeroDefaultDashboard title="Better Stack" :breadcrumbs="breadcrumbs">
       <template #actions>
         <a
           href="https://uptime.betterstack.com"
@@ -12,7 +12,7 @@
           Better Stack
         </a>
       </template>
-    </HeroDefault>
+    </HeroDefaultDashboard>
     <div class="better-stack better-stack--page">
       <div class="better-stack--page__container">
         <BetterStackMonitors />

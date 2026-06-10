@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeroDefault title="Expirados" :breadcrumbs="breadcrumbs" />
+    <HeroDefaultDashboard title="Expirados" :breadcrumbs="breadcrumbs" />
     <AdsTable
       endpoint="ads/archiveds"
       section="adsArchived"

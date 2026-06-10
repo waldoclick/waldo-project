@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeroDefault :title="title" :breadcrumbs="breadcrumbs">
+    <HeroDefaultDashboard :title="title" :breadcrumbs="breadcrumbs">
       <template #actions>
         <NuxtLink
           class="btn btn--primary"
@@ -9,16 +9,16 @@
           Editar artículo
         </NuxtLink>
       </template>
-    </HeroDefault>
+    </HeroDefaultDashboard>
     <BoxContent>
       <template #content>
         <BoxInformation title="Información" :columns="1">
-          <CardInfo
+          <CardInfoDashboard
             v-if="article"
             title="Título"
             :description="article.title"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="article"
             title="Encabezado"
             :description="article.header"
@@ -31,12 +31,12 @@
               </div>
             </div>
           </article>
-          <CardInfo
+          <CardInfoDashboard
             v-if="article"
             title="Título SEO"
             :description="article.seo_title"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="article"
             title="Descripción SEO"
             :description="article.seo_description"
@@ -45,17 +45,17 @@
       </template>
       <template #sidebar>
         <BoxInformation title="Detalles" :columns="1">
-          <CardInfo
+          <CardInfoDashboard
             v-if="article"
             title="Fecha de creación"
             :description="formatDate(article.createdAt)"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="article"
             title="Última modificación"
             :description="formatDate(article.updatedAt)"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="article"
             title="Estado"
             :description="article.publishedAt ? 'Publicado' : 'Borrador'"
@@ -78,7 +78,7 @@
           title="Portada"
           :columns="1"
         >
-          <GalleryDefault
+          <GalleryDefaultDashboard
             :images="coverImages"
             alt-prefix="Portada"
             :columns="1"
@@ -90,7 +90,7 @@
           title="Galería"
           :columns="1"
         >
-          <GalleryDefault
+          <GalleryDefaultDashboard
             :images="galleryImages"
             alt-prefix="Galería"
             :columns="2"

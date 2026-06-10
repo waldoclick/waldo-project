@@ -1,11 +1,11 @@
 <template>
-  <section class="policies policies--default">
-    <div class="policies--default__container">
-      <div class="policies--default__header">
-        <SearchDefault
-          :model-value="settingsStore.policies.searchTerm"
-          placeholder="Buscar Politicas..."
-          class="policies--default__search"
+  <section class="terms terms--default">
+    <div class="terms--default__container">
+      <div class="terms--default__header">
+        <SearchDefaultDashboard
+          :model-value="settingsStore.terms.searchTerm"
+          placeholder="Buscar Condiciones..."
+          class="terms--default__search"
           @update:model-value="
             (value: string) => settingsStore.setSearchTerm(section, value)
           "
@@ -13,16 +13,16 @@
         <FilterDefault
           :model-value="filters"
           :sort-options="sortOptions"
-          class="policies--default__filters"
+          class="terms--default__filters"
           @update:model-value="handleFiltersChange"
         />
       </div>
 
-      <p v-if="!isDraggable" class="policies--default__drag-note">
+      <p v-if="!isDraggable" class="terms--default__drag-note">
         El arrastre para reordenar no esta disponible mientras se filtra.
       </p>
 
-      <div class="policies--default__table-wrapper">
+      <div class="terms--default__table-wrapper">
         <div class="table table--default">
           <table class="table--default__table">
             <thead class="table--default__header">
@@ -38,73 +38,73 @@
               </tr>
             </thead>
             <draggable
-              v-model="allPolicies"
+              v-model="allTerms"
               tag="tbody"
               item-key="id"
-              handle=".policies--default__drag"
+              handle=".terms--default__drag"
               :disabled="!isDraggable"
               class="table--default__body"
               @end="handleReorder"
             >
-              <template #item="{ element: policy }">
-                <TableRow :key="policy.id">
+              <template #item="{ element: term }">
+                <TableRow :key="term.id">
                   <TableCell>
                     <button
-                      class="policies--default__drag"
+                      class="terms--default__drag"
                       :class="{
-                        'policies--default__drag--disabled': !isDraggable,
+                        'terms--default__drag--disabled': !isDraggable,
                       }"
                       :disabled="!isDraggable"
                       title="Arrastrar para reordenar"
                     >
-                      <GripVertical class="policies--default__drag__icon" />
+                      <GripVertical class="terms--default__drag__icon" />
                     </button>
                   </TableCell>
-                  <TableCell>{{ policy.order ?? "-" }}</TableCell>
+                  <TableCell>{{ term.order ?? "-" }}</TableCell>
                   <TableCell>
                     <div
-                      v-if="policy.title"
+                      v-if="term.title"
                       v-tooltip="
-                        stripHtml(policy.title).length > 60
-                          ? stripHtml(policy.title)
+                        stripHtml(term.title).length > 60
+                          ? stripHtml(term.title)
                           : ''
                       "
-                      class="policies--default__question"
+                      class="terms--default__question"
                     >
-                      {{ truncateText(policy.title, 60) }}
+                      {{ truncateText(term.title, 60) }}
                     </div>
-                    <div v-else class="policies--default__question">-</div>
+                    <div v-else class="terms--default__question">-</div>
                   </TableCell>
                   <TableCell>
                     <div
-                      v-if="policy.text"
+                      v-if="term.text"
                       v-tooltip="
-                        stripHtml(policy.text).length > 80
-                          ? stripHtml(policy.text)
+                        stripHtml(term.text).length > 80
+                          ? stripHtml(term.text)
                           : ''
                       "
-                      class="policies--default__answer"
+                      class="terms--default__answer"
                     >
-                      {{ truncateText(policy.text, 80) }}
+                      {{ truncateText(term.text, 80) }}
                     </div>
-                    <div v-else class="policies--default__answer">-</div>
+                    <div v-else class="terms--default__answer">-</div>
                   </TableCell>
-                  <TableCell>{{ formatDate(policy.updatedAt) }}</TableCell>
+                  <TableCell>{{ formatDate(term.updatedAt) }}</TableCell>
                   <TableCell align="right">
-                    <div class="policies--default__actions">
+                    <div class="terms--default__actions">
                       <button
-                        class="policies--default__action"
-                        title="Ver Politica"
-                        @click="handleViewPolicy(policy.documentId)"
+                        class="terms--default__action"
+                        title="Ver Condicion"
+                        @click="handleViewTerm(term.documentId)"
                       >
-                        <Eye class="policies--default__action__icon" />
+                        <Eye class="terms--default__action__icon" />
                       </button>
                       <button
-                        class="policies--default__action"
-                        title="Editar Politica"
-                        @click="handleEditPolicy(policy.documentId)"
+                        class="terms--default__action"
+                        title="Editar Condicion"
+                        @click="handleEditTerm(term.documentId)"
                       >
-                        <Pencil class="policies--default__action__icon" />
+                        <Pencil class="terms--default__action__icon" />
                       </button>
                     </div>
                   </TableCell>
@@ -115,26 +115,22 @@
         </div>
 
         <div
-          v-if="allPolicies.length === 0 && !loading"
-          class="policies--default__empty"
+          v-if="allTerms.length === 0 && !loading"
+          class="terms--default__empty"
         >
-          <p>No se encontraron politicas</p>
+          <p>No se encontraron condiciones</p>
         </div>
 
-        <div v-if="loading" class="policies--default__loading">
-          <p>Cargando politicas...</p>
+        <div v-if="loading" class="terms--default__loading">
+          <p>Cargando condiciones...</p>
         </div>
       </div>
 
-      <div class="policies--default__footer">
-        <p v-if="!loading" class="policies--default__count">
-          {{ allPolicies.length }} registro{{
-            allPolicies.length !== 1 ? "s" : ""
-          }}
+      <div class="terms--default__footer">
+        <p v-if="!loading" class="terms--default__count">
+          {{ allTerms.length }} registro{{ allTerms.length !== 1 ? "s" : "" }}
         </p>
-        <p v-if="saving" class="policies--default__saving">
-          Guardando orden...
-        </p>
+        <p v-if="saving" class="terms--default__saving">Guardando orden...</p>
       </div>
     </div>
   </section>
@@ -151,7 +147,7 @@ import FilterDefault from "@/components/FilterDefault.vue";
 import TableRow from "@/components/TableRow.vue";
 import TableCell from "@/components/TableCell.vue";
 
-interface Policy {
+interface Term {
   id: number;
   documentId: string;
   title: string;
@@ -162,9 +158,9 @@ interface Policy {
 }
 
 const settingsStore = useSettingsStore();
-const section = "policies" as const;
+const section = "terms" as const;
 
-const filters = computed(() => settingsStore.getPoliciesFilters);
+const filters = computed(() => settingsStore.getTermsFilters);
 
 const handleFiltersChange = (newFilters: {
   sortBy: string;
@@ -174,42 +170,42 @@ const handleFiltersChange = (newFilters: {
 };
 
 const apiClient = useApiClient();
-const allPolicies = ref<Policy[]>([]);
+const allTerms = ref<Term[]>([]);
 const loading = ref(false);
 const saving = ref(false);
 
-const isDraggable = computed(() => !settingsStore.policies.searchTerm);
+const isDraggable = computed(() => !settingsStore.terms.searchTerm);
 
-const fetchPolicies = async () => {
+const fetchTerms = async () => {
   try {
     loading.value = true;
 
     const searchParams: Record<string, unknown> = {
       pagination: { pageSize: 200 },
-      sort: settingsStore.policies.sortBy,
+      sort: settingsStore.terms.sortBy,
     };
 
-    if (settingsStore.policies.searchTerm) {
+    if (settingsStore.terms.searchTerm) {
       searchParams.filters = {
         $or: [
-          { title: { $containsi: settingsStore.policies.searchTerm } },
-          { text: { $containsi: settingsStore.policies.searchTerm } },
+          { title: { $containsi: settingsStore.terms.searchTerm } },
+          { text: { $containsi: settingsStore.terms.searchTerm } },
         ],
       };
     }
 
-    const response = (await apiClient("policies", {
+    const response = (await apiClient("terms", {
       method: "GET",
       params: searchParams as unknown as Record<string, unknown>,
     })) as {
-      data: Policy[];
+      data: Term[];
     };
-    allPolicies.value = Array.isArray(response.data)
-      ? (response.data as Policy[])
+    allTerms.value = Array.isArray(response.data)
+      ? (response.data as Term[])
       : [];
   } catch (error) {
-    console.error("Error fetching policies:", error);
-    allPolicies.value = [];
+    console.error("Error fetching terms:", error);
+    allTerms.value = [];
   } finally {
     loading.value = false;
   }
@@ -219,25 +215,25 @@ const handleReorder = async () => {
   if (!isDraggable.value) return;
   saving.value = true;
   try {
-    const updates = allPolicies.value.map((policy, index) => ({
-      documentId: policy.documentId,
+    const updates = allTerms.value.map((term, index) => ({
+      documentId: term.documentId,
       order: index + 1,
     }));
 
-    await apiClient("/policies/reorder", {
+    await apiClient("/terms/reorder", {
       method: "POST",
       body: { data: updates },
     });
 
     // Update local state to reflect new order values
-    allPolicies.value = allPolicies.value.map((policy, index) => ({
-      ...policy,
+    allTerms.value = allTerms.value.map((term, index) => ({
+      ...term,
       order: index + 1,
     }));
   } catch (error) {
-    console.error("Error saving policy order:", error);
+    console.error("Error saving term order:", error);
     // Re-fetch to restore server state on failure
-    await fetchPolicies();
+    await fetchTerms();
   } finally {
     saving.value = false;
   }
@@ -274,21 +270,18 @@ const truncateText = (text: string, maxLength: number) => {
 
 const router = useRouter();
 
-const handleViewPolicy = (documentId: string) => {
-  router.push(`/maintenance/policies/${documentId}`);
+const handleViewTerm = (documentId: string) => {
+  router.push(`/maintenance/terms/${documentId}`);
 };
 
-const handleEditPolicy = (documentId: string) => {
-  router.push(`/maintenance/policies/${documentId}/edit`);
+const handleEditTerm = (documentId: string) => {
+  router.push(`/maintenance/terms/${documentId}/edit`);
 };
 
 watch(
-  [
-    () => settingsStore.policies.searchTerm,
-    () => settingsStore.policies.sortBy,
-  ],
+  [() => settingsStore.terms.searchTerm, () => settingsStore.terms.sortBy],
   () => {
-    fetchPolicies();
+    fetchTerms();
   },
   { immediate: true },
 );

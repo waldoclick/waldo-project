@@ -2,7 +2,7 @@
   <section class="packs packs--default">
     <div class="packs--default__container">
       <div class="packs--default__header">
-        <SearchDefault
+        <SearchDefaultDashboard
           :model-value="settingsStore.packs.searchTerm"
           placeholder="Buscar packs..."
           class="packs--default__search"

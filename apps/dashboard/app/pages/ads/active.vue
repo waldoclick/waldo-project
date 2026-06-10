@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeroDefault title="Activos" :breadcrumbs="breadcrumbs" />
+    <HeroDefaultDashboard title="Activos" :breadcrumbs="breadcrumbs" />
     <AdsTable
       endpoint="ads/actives"
       section="adsActives"

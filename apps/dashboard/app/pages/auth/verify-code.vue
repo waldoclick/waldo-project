@@ -2,7 +2,11 @@
   <div class="page">
     <div class="auth">
       <div class="auth__introduce">
-        <IntroduceAuth :title="title" :subtitle="subtitle" :list="list" />
+        <IntroduceAuthDashboard
+          :title="title"
+          :subtitle="subtitle"
+          :list="list"
+        />
       </div>
       <div class="auth__form">
         <div class="auth__form__inner">
@@ -12,7 +16,7 @@
             Ingrésalo a continuación para continuar.
           </div>
           <div class="auth__form__fields">
-            <FormVerifyCode ref="formRef" />
+            <FormVerifyCodeDashboard ref="formRef" />
           </div>
           <div class="auth__form__help">
             <p>
@@ -46,7 +50,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import IntroduceAuth from "@/components/IntroduceAuth.vue";
-import FormVerifyCode from "@/components/FormVerifyCode.vue";
+import type FormVerifyCode from "@/components/FormVerifyCode.vue";
 
 definePageMeta({
   layout: "auth",

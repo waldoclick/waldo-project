@@ -1,8 +1,8 @@
 <template>
   <div class="layout layout--auth">
     <slot />
-    <LightboxCookies />
-    <LightboxAdblock />
+    <LightboxCookiesDashboard />
+    <LightboxAdblockDashboard />
   </div>
 </template>
 

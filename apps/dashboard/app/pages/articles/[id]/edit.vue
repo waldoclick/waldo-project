@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeroDefault :title="title" :breadcrumbs="breadcrumbs" />
+    <HeroDefaultDashboard :title="title" :breadcrumbs="breadcrumbs" />
     <BoxContent>
       <template #content>
         <BoxInformation title="Editar artículo" :columns="1">
@@ -20,17 +20,17 @@
           </button>
         </BoxInformation>
         <BoxInformation title="Detalles" :columns="1">
-          <CardInfo
+          <CardInfoDashboard
             v-if="article"
             title="Estado"
             :description="article.publishedAt ? 'Publicado' : 'Borrador'"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="article"
             title="Fecha de creación"
             :description="formatDate(article.createdAt)"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="article"
             title="Última modificación"
             :description="formatDate(article.updatedAt)"

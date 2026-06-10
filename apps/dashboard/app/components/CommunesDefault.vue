@@ -2,7 +2,7 @@
   <section class="communes communes--default">
     <div class="communes--default__container">
       <div class="communes--default__header">
-        <SearchDefault
+        <SearchDefaultDashboard
           :model-value="settingsStore.communes.searchTerm"
           placeholder="Buscar comunas..."
           class="communes--default__search"

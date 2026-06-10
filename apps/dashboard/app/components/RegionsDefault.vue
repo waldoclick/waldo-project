@@ -2,7 +2,7 @@
   <section class="regions regions--default">
     <div class="regions--default__container">
       <div class="regions--default__header">
-        <SearchDefault
+        <SearchDefaultDashboard
           :model-value="settingsStore.regions.searchTerm"
           placeholder="Buscar regiones..."
           class="regions--default__search"

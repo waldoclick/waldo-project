@@ -1,13 +1,13 @@
 <template>
   <div>
-    <HeroDefault title="Mi Perfil" :breadcrumbs="breadcrumbs" />
+    <HeroDefaultDashboard title="Mi Perfil" :breadcrumbs="breadcrumbs" />
     <BoxContent>
       <template #content>
         <BoxInformation title="Editar perfil" :columns="1">
           <FormEdit />
         </BoxInformation>
         <BoxInformation title="Cambiar contraseña" :columns="1">
-          <FormPassword />
+          <FormPasswordDashboard />
         </BoxInformation>
       </template>
     </BoxContent>

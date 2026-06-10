@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeroDefault title="Nueva categoría" :breadcrumbs="breadcrumbs" />
+    <HeroDefaultDashboard title="Nueva categoría" :breadcrumbs="breadcrumbs" />
     <BoxContent>
       <template #content>
         <BoxInformation title="Nueva categoría" :columns="1">

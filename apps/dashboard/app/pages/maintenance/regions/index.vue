@@ -1,12 +1,12 @@
 <template>
   <div>
-    <HeroDefault title="Regiones" :breadcrumbs="breadcrumbs">
+    <HeroDefaultDashboard title="Regiones" :breadcrumbs="breadcrumbs">
       <template #actions>
         <NuxtLink class="btn btn--primary" to="/maintenance/regions/new">
           Agregar región
         </NuxtLink>
       </template>
-    </HeroDefault>
+    </HeroDefaultDashboard>
     <RegionsDefault />
   </div>
 </template>

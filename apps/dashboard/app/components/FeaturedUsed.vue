@@ -2,7 +2,7 @@
   <section class="featured featured--used">
     <div class="featured--used__container">
       <div class="featured--used__header">
-        <SearchDefault
+        <SearchDefaultDashboard
           :model-value="settingsStore.featured.searchTerm"
           placeholder="Buscar destacados..."
           class="featured--used__search"

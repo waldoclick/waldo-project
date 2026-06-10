@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeroDefault title="Google Analytics" :breadcrumbs="breadcrumbs">
+    <HeroDefaultDashboard title="Google Analytics" :breadcrumbs="breadcrumbs">
       <template #actions>
         <a
           href="https://analytics.google.com"
@@ -12,7 +12,7 @@
           Google Analytics
         </a>
       </template>
-    </HeroDefault>
+    </HeroDefaultDashboard>
     <div class="google-analytics google-analytics--page">
       <div class="google-analytics--page__container">
         <GoogleAnalyticsSummary />

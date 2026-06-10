@@ -20,7 +20,7 @@
           <MenuMain :active-menu="activeMenu" />
         </div>
         <div class="layout--dashboard__menu__nav">
-          <MenuDefault
+          <MenuDefaultDashboard
             v-if="activeMenu === 'default'"
             @close="isSidebarOpen = false"
           />
@@ -44,20 +44,20 @@
       </div>
     </div>
     <div class="layout--dashboard__mobile">
-      <MenuMobile
+      <MenuMobileDashboard
         :sidebar-open="isSidebarOpen"
         @toggle-sidebar="isSidebarOpen = !isSidebarOpen"
       />
     </div>
     <div class="layout--dashboard__content">
-      <HeaderDefault
+      <HeaderDefaultDashboard
         :sidebar-open="isSidebarOpen"
         @toggle-sidebar="isSidebarOpen = !isSidebarOpen"
       />
       <main class="layout--dashboard__main">
         <slot />
       </main>
-      <FooterDefault />
+      <FooterDefaultDashboard />
     </div>
   </div>
 </template>

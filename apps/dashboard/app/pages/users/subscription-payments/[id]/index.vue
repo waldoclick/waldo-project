@@ -1,41 +1,45 @@
 <template>
   <div>
-    <HeroDefault :title="title" :breadcrumbs="breadcrumbs" />
+    <HeroDefaultDashboard :title="title" :breadcrumbs="breadcrumbs" />
     <BoxContent>
       <template #content>
         <BoxInformation title="Información" :columns="2">
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Usuario"
             :description="item.user?.email || '--'"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Monto"
             :description="formatCurrency(item.amount)"
           />
-          <CardInfo v-if="item" title="Estado" :description="item.status" />
-          <CardInfo
+          <CardInfoDashboard
+            v-if="item"
+            title="Estado"
+            :description="item.status"
+          />
+          <CardInfoDashboard
             v-if="item"
             title="Parent buy order"
             :description="item.parent_buy_order || '--'"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Child buy order"
             :description="item.child_buy_order || '--'"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Código de autorización"
             :description="item.authorization_code || '--'"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Código de respuesta"
             :description="item.response_code ?? '--'"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Intentos de cobro"
             :description="item.charge_attempts.toString()"
@@ -44,32 +48,32 @@
       </template>
       <template #sidebar>
         <BoxInformation title="Detalles" :columns="1">
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Período inicio"
             :description="formatDate(item.period_start ?? undefined)"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Período fin"
             :description="formatDate(item.period_end ?? undefined)"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Cobrado el"
             :description="formatDate(item.charged_at ?? undefined)"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Próximo intento"
             :description="formatDate(item.next_charge_attempt ?? undefined)"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Fecha de creación"
             :description="formatDate(item.createdAt)"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Última modificación"
             :description="formatDate(item.updatedAt)"

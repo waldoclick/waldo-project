@@ -2,7 +2,7 @@
   <section class="reservations reservations--free">
     <div class="reservations--free__container">
       <div class="reservations--free__header">
-        <SearchDefault
+        <SearchDefaultDashboard
           :model-value="settingsStore.reservations.searchTerm"
           placeholder="Buscar reservas..."
           class="reservations--free__search"

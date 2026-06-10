@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeroDefault title="Cloudflare" :breadcrumbs="breadcrumbs">
+    <HeroDefaultDashboard title="Cloudflare" :breadcrumbs="breadcrumbs">
       <template #actions>
         <a
           href="https://dash.cloudflare.com"
@@ -12,7 +12,7 @@
           Cloudflare
         </a>
       </template>
-    </HeroDefault>
+    </HeroDefaultDashboard>
     <div class="cloudflare cloudflare--page">
       <div class="cloudflare--page__container">
         <CloudflareStats />

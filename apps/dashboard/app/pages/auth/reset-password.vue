@@ -2,13 +2,16 @@
   <div class="page">
     <div class="auth">
       <div class="auth__introduce">
-        <IntroduceAuth :title="page.data.title" :list="page.data.list" />
+        <IntroduceAuthDashboard
+          :title="page.data.title"
+          :list="page.data.list"
+        />
       </div>
       <div class="auth__form">
         <div class="auth__form__inner">
           <h2 class="auth__form__title title">Restablece tu contraseña</h2>
           <div class="auth__form__fields">
-            <FormResetPassword />
+            <FormResetPasswordDashboard />
           </div>
           <div class="auth__form__help">
             <p>

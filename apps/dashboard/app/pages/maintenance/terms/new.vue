@@ -1,6 +1,9 @@
 <template>
   <div>
-    <HeroDefault title="Nueva Condicion de Uso" :breadcrumbs="breadcrumbs" />
+    <HeroDefaultDashboard
+      title="Nueva Condicion de Uso"
+      :breadcrumbs="breadcrumbs"
+    />
     <BoxContent>
       <template #content>
         <BoxInformation title="Nueva Condicion de Uso" :columns="1">

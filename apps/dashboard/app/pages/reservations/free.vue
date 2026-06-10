@@ -1,12 +1,12 @@
 <template>
   <div>
-    <HeroDefault title="Libres" :breadcrumbs="breadcrumbs">
+    <HeroDefaultDashboard title="Libres" :breadcrumbs="breadcrumbs">
       <template #actions>
         <button class="btn btn--primary" type="button" @click="giftOpen = true">
           Regalar Reservas
         </button>
       </template>
-    </HeroDefault>
+    </HeroDefaultDashboard>
     <ReservationsFree ref="tableRef" />
     <LightboxGift
       :is-open="giftOpen"

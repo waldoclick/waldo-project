@@ -2,7 +2,7 @@
   <section class="faqs faqs--default">
     <div class="faqs--default__container">
       <div class="faqs--default__header">
-        <SearchDefault
+        <SearchDefaultDashboard
           :model-value="settingsStore.faqs.searchTerm"
           placeholder="Buscar FAQs..."
           class="faqs--default__search"

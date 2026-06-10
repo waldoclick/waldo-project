@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeroDefault title="Borradores" :breadcrumbs="breadcrumbs" />
+    <HeroDefaultDashboard title="Borradores" :breadcrumbs="breadcrumbs" />
     <AdsTable endpoint="ads/drafts" section="adsDraft" :show-web-link="true" />
   </div>
 </template>

@@ -1,10 +1,10 @@
 <template>
   <div>
-    <HeroDefault title="Nuevo pack" :breadcrumbs="breadcrumbs" />
+    <HeroDefaultDashboard title="Nuevo pack" :breadcrumbs="breadcrumbs" />
     <BoxContent>
       <template #content>
         <BoxInformation title="Nuevo pack" :columns="1">
-          <FormPack />
+          <FormPackDashboard />
         </BoxInformation>
       </template>
     </BoxContent>

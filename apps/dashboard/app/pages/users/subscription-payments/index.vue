@@ -1,6 +1,9 @@
 <template>
   <div>
-    <HeroDefault title="Pagos de subscripción" :breadcrumbs="breadcrumbs" />
+    <HeroDefaultDashboard
+      title="Pagos de subscripción"
+      :breadcrumbs="breadcrumbs"
+    />
     <SubscriptionPaymentsDefault />
   </div>
 </template>

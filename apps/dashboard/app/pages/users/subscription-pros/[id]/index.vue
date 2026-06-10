@@ -1,25 +1,25 @@
 <template>
   <div>
-    <HeroDefault :title="title" :breadcrumbs="breadcrumbs" />
+    <HeroDefaultDashboard :title="title" :breadcrumbs="breadcrumbs" />
     <BoxContent>
       <template #content>
         <BoxInformation title="Información" :columns="2">
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Usuario"
             :description="item.user?.email || '--'"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Tipo de tarjeta"
             :description="item.card_type || '--'"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Últimos 4 dígitos"
             :description="item.card_last4 || '--'"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Factura pendiente"
             :description="item.pending_invoice ? 'Sí' : 'No'"
@@ -28,12 +28,12 @@
       </template>
       <template #sidebar>
         <BoxInformation title="Detalles" :columns="1">
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Fecha de creación"
             :description="formatDate(item.createdAt)"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Última modificación"
             :description="formatDate(item.updatedAt)"

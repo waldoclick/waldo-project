@@ -1,13 +1,16 @@
 <template>
   <div>
-    <HeroDefault title="Politicas de Privacidad" :breadcrumbs="breadcrumbs">
+    <HeroDefaultDashboard
+      title="Politicas de Privacidad"
+      :breadcrumbs="breadcrumbs"
+    >
       <template #actions>
         <NuxtLink class="btn btn--primary" to="/maintenance/policies/new">
           Agregar Politica
         </NuxtLink>
       </template>
-    </HeroDefault>
-    <PoliciesDefault />
+    </HeroDefaultDashboard>
+    <PoliciesDefaultDashboard />
   </div>
 </template>
 

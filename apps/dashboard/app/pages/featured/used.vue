@@ -1,12 +1,12 @@
 <template>
   <div>
-    <HeroDefault title="Usados" :breadcrumbs="breadcrumbs">
+    <HeroDefaultDashboard title="Usados" :breadcrumbs="breadcrumbs">
       <template #actions>
         <button class="btn btn--primary" type="button" @click="giftOpen = true">
           Regalar Destacados
         </button>
       </template>
-    </HeroDefault>
+    </HeroDefaultDashboard>
     <FeaturedUsed ref="tableRef" />
     <LightboxGift
       :is-open="giftOpen"

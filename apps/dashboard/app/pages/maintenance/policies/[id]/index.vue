@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeroDefault :title="title" :breadcrumbs="breadcrumbs">
+    <HeroDefaultDashboard :title="title" :breadcrumbs="breadcrumbs">
       <template #actions>
         <NuxtLink
           class="btn btn--primary"
@@ -9,13 +9,21 @@
           Editar Politica
         </NuxtLink>
       </template>
-    </HeroDefault>
+    </HeroDefaultDashboard>
     <BoxContent>
       <template #content>
         <BoxInformation title="Información" :columns="1">
-          <CardInfo v-if="item" title="Título" :description="item.title" />
-          <CardInfo v-if="item" title="Contenido" :description="item.text" />
-          <CardInfo
+          <CardInfoDashboard
+            v-if="item"
+            title="Título"
+            :description="item.title"
+          />
+          <CardInfoDashboard
+            v-if="item"
+            title="Contenido"
+            :description="item.text"
+          />
+          <CardInfoDashboard
             v-if="item"
             title="Orden"
             :description="item.order != null ? String(item.order) : 'Sin orden'"
@@ -24,12 +32,12 @@
       </template>
       <template #sidebar>
         <BoxInformation title="Detalles" :columns="1">
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Fecha de creación"
             :description="formatDate(item.createdAt)"
           />
-          <CardInfo
+          <CardInfoDashboard
             v-if="item"
             title="Última modificación"
             :description="formatDate(item.updatedAt)"

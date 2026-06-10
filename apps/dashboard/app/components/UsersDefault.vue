@@ -2,7 +2,7 @@
   <section class="users users--default">
     <div class="users--default__container">
       <div class="users--default__header">
-        <SearchDefault
+        <SearchDefaultDashboard
           :model-value="settingsStore.users.searchTerm"
           placeholder="Buscar usuarios..."
           class="users--default__search"

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeroDefault title="Baneados" :breadcrumbs="breadcrumbs" />
+    <HeroDefaultDashboard title="Baneados" :breadcrumbs="breadcrumbs" />
     <AdsTable
       endpoint="ads/banneds"
       section="adsBanned"
