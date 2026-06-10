@@ -24,15 +24,16 @@
     </button>
 
     <nav class="menu--user__menu" :class="{ 'is-open': isOpen }">
-      <ul class="menu--user__menu__links">
-        <li
-          v-if="user?.role?.type?.toLowerCase() === 'manager'"
-          @click="menuOpen"
-        >
-          <NuxtLink to="/dashboard" title="Ver dashboard"
-            >Ver dashboard</NuxtLink
+      <ul v-if="isManager" class="menu--user__menu__links">
+        <li @click="menuOpen">
+          <NuxtLink
+            :to="isDashboard ? '/' : '/dashboard'"
+            :title="isDashboard ? 'Ir al sitio' : 'Ver dashboard'"
+            >{{ isDashboard ? "Ir al sitio" : "Ver dashboard" }}</NuxtLink
           >
         </li>
+      </ul>
+      <ul class="menu--user__menu__links">
         <li @click="menuOpen">
           <NuxtLink to="/cuenta" title="Mi cuenta">Mi cuenta</NuxtLink>
         </li>
@@ -110,9 +111,14 @@ import AvatarDefault from "@/components/AvatarDefault.vue";
 import type { User } from "@/types/user";
 import { Menu as IconMenu, X as IconX } from "lucide-vue-next";
 
-// Obtener el usuario de Strapi
 const user = useStrapiUser<User>();
 const { logout } = useLogout();
+const route = useRoute();
+
+const isManager = computed(
+  () => user.value?.role?.type?.toLowerCase() === "manager",
+);
+const isDashboard = computed(() => route.path.startsWith("/dashboard"));
 
 // Define las propiedades del componente
 const props = defineProps<{
