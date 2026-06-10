@@ -19,7 +19,7 @@ definePageMeta({
 });
 
 const breadcrumbs = [
-  { label: "Regiones", to: "/maintenance/regions" },
+  { label: "Regiones", to: "/dashboard/maintenance/regions" },
   { label: "Nueva" },
 ];
 </script>

@@ -71,7 +71,7 @@ const apiClient = useApiClient();
 
 const title = computed(() => commune.value?.name || "Comuna");
 const breadcrumbs = computed(() => [
-  { label: "Comunas", to: "/maintenance/communes" },
+  { label: "Comunas", to: "/dashboard/maintenance/communes" },
   ...(commune.value?.name ? [{ label: commune.value.name }] : []),
 ]);
 

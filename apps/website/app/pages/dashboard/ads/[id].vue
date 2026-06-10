@@ -248,12 +248,12 @@ const statusIconMap: Record<AdStatus, Component> = {
 };
 
 const statusBreadcrumbMap: Record<AdStatus, { label: string; to: string }> = {
-  pending: { label: "Pendientes", to: "/ads/pending" },
-  active: { label: "Activos", to: "/ads/active" },
-  archived: { label: "Expirados", to: "/ads/expired" },
-  banned: { label: "Baneados", to: "/ads/banned" },
-  rejected: { label: "Rechazados", to: "/ads/rejected" },
-  abandoned: { label: "Borradores", to: "/ads/abandoned" },
+  pending: { label: "Pendientes", to: "/dashboard/ads/pending" },
+  active: { label: "Activos", to: "/dashboard/ads/active" },
+  archived: { label: "Expirados", to: "/dashboard/ads/expired" },
+  banned: { label: "Baneados", to: "/dashboard/ads/banned" },
+  rejected: { label: "Rechazados", to: "/dashboard/ads/rejected" },
+  abandoned: { label: "Borradores", to: "/dashboard/ads/abandoned" },
 };
 
 const breadcrumbs = computed(() => {
@@ -263,7 +263,7 @@ const breadcrumbs = computed(() => {
   const parent = statusBreadcrumbMap[safeStatus];
 
   return [
-    { label: "Anuncios", to: "/ads/pending" },
+    { label: "Anuncios", to: "/dashboard/ads/pending" },
     { label: parent.label, to: parent.to },
     ...(item.value?.name ? [{ label: item.value.name }] : []),
   ];

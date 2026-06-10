@@ -31,7 +31,7 @@ definePageMeta({
 });
 
 const breadcrumbs = [
-  { label: "Integraciones", to: "/integrations" },
+  { label: "Integraciones", to: "/dashboard/integrations" },
   { label: "Better Stack" },
 ];
 </script>

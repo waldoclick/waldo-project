@@ -84,7 +84,7 @@ const apiClient = useApiClient();
 
 const title = computed(() => item.value?.name || "Pack");
 const breadcrumbs = computed(() => [
-  { label: "Packs", to: "/maintenance/packs" },
+  { label: "Packs", to: "/dashboard/maintenance/packs" },
   ...(item.value?.name ? [{ label: item.value.name }] : []),
 ]);
 

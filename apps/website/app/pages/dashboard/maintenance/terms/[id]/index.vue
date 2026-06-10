@@ -69,7 +69,7 @@ const apiClient = useApiClient();
 
 const title = computed(() => item.value?.title || "Condicion de Uso");
 const breadcrumbs = computed(() => [
-  { label: "Condiciones de Uso", to: "/maintenance/terms" },
+  { label: "Condiciones de Uso", to: "/dashboard/maintenance/terms" },
   ...(item.value?.title ? [{ label: item.value.title }] : []),
 ]);
 

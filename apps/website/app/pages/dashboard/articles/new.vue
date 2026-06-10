@@ -19,7 +19,7 @@ definePageMeta({
 });
 
 const breadcrumbs = [
-  { label: "Artículos", to: "/articles" },
+  { label: "Artículos", to: "/dashboard/articles" },
   { label: "Nuevo" },
 ];
 </script>

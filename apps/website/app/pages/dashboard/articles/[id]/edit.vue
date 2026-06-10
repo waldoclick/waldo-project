@@ -86,7 +86,7 @@ const publishing = ref(false);
 
 const title = computed(() => article.value?.title || "Artículo");
 const breadcrumbs = computed(() => [
-  { label: "Artículos", to: "/articles" },
+  { label: "Artículos", to: "/dashboard/articles" },
   ...(article.value?.title
     ? [{ label: article.value.title, to: `/articles/${route.params.id}` }]
     : []),

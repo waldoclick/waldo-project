@@ -22,7 +22,7 @@ definePageMeta({
 });
 
 const breadcrumbs = [
-  { label: "Condiciones de Uso", to: "/maintenance/terms" },
+  { label: "Condiciones de Uso", to: "/dashboard/maintenance/terms" },
   { label: "Nueva" },
 ];
 </script>

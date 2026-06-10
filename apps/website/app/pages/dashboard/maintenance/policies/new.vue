@@ -19,7 +19,7 @@ definePageMeta({
 });
 
 const breadcrumbs = [
-  { label: "Politicas", to: "/maintenance/policies" },
+  { label: "Politicas", to: "/dashboard/maintenance/policies" },
   { label: "Nueva" },
 ];
 </script>

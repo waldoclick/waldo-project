@@ -47,7 +47,7 @@ const apiClient = useApiClient();
 
 const title = computed(() => condition.value?.name || "Condición");
 const breadcrumbs = computed(() => [
-  { label: "Condiciones", to: "/maintenance/conditions" },
+  { label: "Condiciones", to: "/dashboard/maintenance/conditions" },
   ...(condition.value?.name
     ? [
         {

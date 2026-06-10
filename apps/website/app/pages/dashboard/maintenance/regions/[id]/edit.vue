@@ -47,7 +47,7 @@ const apiClient = useApiClient();
 
 const title = computed(() => region.value?.name || "Región");
 const breadcrumbs = computed(() => [
-  { label: "Regiones", to: "/maintenance/regions" },
+  { label: "Regiones", to: "/dashboard/maintenance/regions" },
   ...(region.value?.name
     ? [
         {

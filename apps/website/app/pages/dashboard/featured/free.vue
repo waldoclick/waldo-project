@@ -27,7 +27,7 @@ definePageMeta({
 });
 
 const breadcrumbs = [
-  { label: "Destacados", to: "/featured/free" },
+  { label: "Destacados", to: "/dashboard/featured/free" },
   { label: "Libres" },
 ];
 

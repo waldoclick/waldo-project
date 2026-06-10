@@ -47,7 +47,7 @@ const apiClient = useApiClient();
 
 const title = computed(() => faq.value?.title || "FAQ");
 const breadcrumbs = computed(() => [
-  { label: "FAQs", to: "/maintenance/faqs" },
+  { label: "FAQs", to: "/dashboard/maintenance/faqs" },
   ...(faq.value?.title
     ? [{ label: faq.value.title, to: `/maintenance/faqs/${route.params.id}` }]
     : []),
