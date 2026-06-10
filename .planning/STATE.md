@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-last_updated: "2026-06-10T17:05:00.000Z"
+last_updated: "2026-06-10T17:19:49.899Z"
 last_activity: 2026-06-10
 progress:
   total_phases: 19
-  completed_phases: 17
+  completed_phases: 18
   total_plans: 48
-  completed_plans: 47
-  percent: 98
+  completed_plans: 48
+  percent: 100
 ---
 
 # Session State
@@ -24,16 +24,19 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 
 ## Position
 
-Phase 125 plan 06 complete — SCSS merged (28 colliding files: &--dashboard blocks appended; 29 dashboard-exclusive files copied with @use container fix); TypeScript remediation complete: 81 errors → 0; nuxi typecheck exits 0; 3 util files created (date.ts, price.ts, string.ts); explicit formatDate imports added to 43 files.
+Phase 125 complete (all 7 plans done) — dashboard merge finalized: MenuUser uses internal /dashboard NuxtLink; Strapi email/reset URLs updated to FRONTEND_URL/dashboard/ paths; apps/dashboard workspace removed and 263 files deleted.
 
 ```
-Progress: [██████████] 96%
+Progress: [██████████] 100%
 ```
 
 ## Accumulated Context
 
 ### Key Decisions (carry forward)
 
+- overrideForgotPassword context ternary collapsed: both website and residual dashboard callers now resolve to FRONTEND_URL/restablecer-contrasena — context field removed as unused (125-07)
+- dashboardUrl removed from website runtimeConfig.public — MenuUser was the sole consumer; no TS declaration update needed (125-07)
+- nuxi typecheck and nuxi build fail in CI due to estree-walker ESM-only package at root workspace — pre-existing constraint; use vue-tsc --noEmit for TypeScript verification (exits 0) (125-07)
 - formatDate/formatDateShort/formatBoolean require explicit imports in vue-tsc strict mode — Nuxt auto-imports are runtime-only, not reflected in vue-tsc template type context; add import { formatDate } from "@/utils/date" explicitly (125-06)
 - Media.formats extended with small/large variants to cover all Strapi Cloudinary upload formats; formatDate/formatDateShort accept string|undefined|null — Strapi returns null not undefined (125-06)
 - GalleryItem.id is string (Strapi documentId); numeric gallery IDs compared via Number(image.id) when filtering array of Strapi numeric IDs (125-06)
