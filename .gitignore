@@ -13,6 +13,7 @@ build/
 .next/
 .nuxt/
 .output/
+.vercel/
 
 # Environment variables
 .env
