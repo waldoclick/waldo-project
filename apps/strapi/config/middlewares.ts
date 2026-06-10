@@ -38,10 +38,7 @@ export default ({ env }) => [
   {
     name: "strapi::cors",
     config: {
-      origin: [
-        env("FRONTEND_URL", "http://localhost:3000"),
-        env("DASHBOARD_URL", "http://localhost:3001"),
-      ],
+      origin: [env("FRONTEND_URL", "http://localhost:3000")],
       methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"],
       headers: [
         "Content-Type",

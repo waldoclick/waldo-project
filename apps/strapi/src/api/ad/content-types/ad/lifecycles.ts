@@ -22,9 +22,9 @@ export default {
 
     // Enviar notificación a Slack con Block Kit
     try {
-      const dashboardUrl =
-        process.env.DASHBOARD_URL || "https://dashboard.waldoclick.dev";
-      const adUrl = `${dashboardUrl}/ads/${result.id}`;
+      const adUrl = `${
+        process.env.FRONTEND_URL || "https://waldo.click"
+      }/dashboard/ads/${result.id}`;
 
       const fallbackText = `🆕 Nuevo anuncio creado: ${result.name} — ${adUrl}`;
 

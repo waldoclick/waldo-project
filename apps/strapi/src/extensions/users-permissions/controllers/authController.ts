@@ -527,9 +527,8 @@ export const resendCode = async (ctx) => {
  * @see .planning/phases/080-password-reset-mjml-context-routing/080-RESEARCH.md
  */
 export const overrideForgotPassword = () => async (ctx) => {
-  const { email, context } = ctx.request.body as {
+  const { email } = ctx.request.body as {
     email?: string;
-    context?: "website" | "dashboard";
   };
 
   if (!email) return ctx.badRequest("Email is required");
@@ -549,15 +548,12 @@ export const overrideForgotPassword = () => async (ctx) => {
     data: { resetPasswordToken },
   });
 
-  const baseUrl =
-    context === "dashboard"
-      ? process.env.DASHBOARD_URL || "https://dashboard.waldo.click"
-      : process.env.FRONTEND_URL || "https://waldo.click";
-
-  const resetPath =
-    context === "dashboard" ? "auth/reset-password" : "restablecer-contrasena";
-
-  const resetUrl = `${baseUrl}/${resetPath}?token=${resetPasswordToken}`;
+  // After dashboard merge, all reset URLs point to the website (FRONTEND_URL).
+  // context:"dashboard" callers (FormForgotPasswordDashboard) now send context:"website";
+  // keeping FRONTEND_URL here ensures any residual context:"dashboard" calls also resolve correctly.
+  const resetUrl = `${
+    process.env.FRONTEND_URL || "https://waldo.click"
+  }/restablecer-contrasena?token=${resetPasswordToken}`;
 
   try {
     await sendMjmlEmail(
