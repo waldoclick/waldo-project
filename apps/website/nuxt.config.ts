@@ -366,6 +366,7 @@ export default defineNuxtConfig({
     },
     // Variables privadas del servidor
     recaptchaSecretKey: process.env.RECAPTCHA_SECRET_KEY, // server-only — for Nitro proxy
+    recaptchaEnabled: process.env.RECAPTCHA_ENABLED !== "false", // set to false to skip verification in dev/testing
     devUsername: process.env.DEV_USERNAME,
     devPassword: process.env.DEV_PASSWORD,
   },

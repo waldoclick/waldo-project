@@ -4,79 +4,56 @@ import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import type { FAQ, FAQResponse } from "@/types/faq";
 
-const CACHE_DURATION = 3600000; // 1 hora en milisegundos
 const PAGE_SIZE = 20;
 
-export const useFaqsStore = defineStore(
-  "faqs",
-  () => {
-    const faqs = ref<FAQ[]>([]);
-    const lastFetchTimestamp = ref<number | null>(null);
-    const loading = ref<boolean>(false);
-    const error = ref<string | null>(null);
+export const useFaqsStore = defineStore("faqs", () => {
+  const faqs = ref<FAQ[]>([]);
+  const loading = ref<boolean>(false);
+  const error = ref<string | null>(null);
 
-    const client = useApiClient();
+  const client = useApiClient();
 
-    const loadFaqs = async () => {
-      const now = Date.now();
+  const loadFaqs = async () => {
+    try {
+      loading.value = true;
+      error.value = null;
 
-      // Verificar si los datos han expirado
-      if (
-        !lastFetchTimestamp.value ||
-        now - lastFetchTimestamp.value > CACHE_DURATION
-      ) {
-        try {
-          loading.value = true;
-          error.value = null;
+      const response = await client("faqs", {
+        method: "GET",
+        params: {
+          pagination: { pageSize: PAGE_SIZE, page: 1 },
+          populate: "*",
+          sort: ["createdAt:asc"],
+        } as unknown as Record<string, unknown>,
+      });
 
-          const response = await client("faqs", {
-            method: "GET",
-            params: {
-              pagination: { pageSize: PAGE_SIZE, page: 1 },
-              populate: "*",
-              sort: ["createdAt:asc"],
-            } as unknown as Record<string, unknown>,
-          });
+      const typedResponse = response as unknown as FAQResponse;
 
-          const typedResponse = response as unknown as FAQResponse;
-
-          if (!typedResponse.data || !Array.isArray(typedResponse.data)) {
-            throw new Error("Formato de datos inválido");
-          }
-
-          // Ordenar por fecha de creación (más antigua primero)
-          faqs.value = typedResponse.data.sort(
-            (a, b) =>
-              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-          );
-          lastFetchTimestamp.value = now;
-        } catch (err) {
-          error.value = "Error al cargar las FAQs";
-          console.error("Error loading FAQs:", err);
-        } finally {
-          loading.value = false;
-        }
+      if (!typedResponse.data || !Array.isArray(typedResponse.data)) {
+        throw new Error("Formato de datos inválido");
       }
-    };
 
-    // Getter para FAQs destacadas
-    const featuredFaqs = computed(() => {
-      return faqs.value.filter((faq) => faq.featured === true);
-    });
+      faqs.value = typedResponse.data.sort(
+        (a, b) =>
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+      );
+    } catch (err) {
+      error.value = "Error al cargar las FAQs";
+      console.error("Error loading FAQs:", err);
+    } finally {
+      loading.value = false;
+    }
+  };
 
-    return {
-      faqs,
-      featuredFaqs,
-      lastFetchTimestamp,
-      loading,
-      error,
-      loadFaqs,
-    };
-  },
-  {
-    // persist: CORRECT — static reference data with 1-hour cache TTL (lastFetchTimestamp); safe to reuse across sessions
-    persist: {
-      storage: persistedState.localStorage,
-    },
-  },
-);
+  const featuredFaqs = computed(() => {
+    return faqs.value.filter((faq) => faq.featured === true);
+  });
+
+  return {
+    faqs,
+    featuredFaqs,
+    loading,
+    error,
+    loadFaqs,
+  };
+});

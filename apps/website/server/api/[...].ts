@@ -48,8 +48,11 @@ export default defineEventHandler(async (event) => {
     return sendRedirect(event, finalUrl, 302);
   }
 
-  // reCAPTCHA validation for protected routes
-  if (isRecaptchaProtectedRoute(fullPath, event.method ?? "")) {
+  // reCAPTCHA validation for protected routes (skipped when RECAPTCHA_ENABLED=false)
+  if (
+    config.recaptchaEnabled &&
+    isRecaptchaProtectedRoute(fullPath, event.method ?? "")
+  ) {
     const recaptchaToken = getHeader(event, "x-recaptcha-token");
     await verifyRecaptchaToken(
       recaptchaToken,

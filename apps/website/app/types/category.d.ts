@@ -27,5 +27,4 @@ export interface CategoryState {
   category: Category | null;
   loading: boolean;
   error: string | null;
-  lastFetch: number;
 }
