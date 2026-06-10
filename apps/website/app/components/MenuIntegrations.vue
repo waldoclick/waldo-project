@@ -8,7 +8,7 @@
           'menu--integrations__item--active': isIntegrationsRootActive,
         }"
       >
-        <NuxtLink to="/integrations" class="menu--integrations__link">
+        <NuxtLink to="/dashboard/integrations" class="menu--integrations__link">
           <Plug class="menu--integrations__icon" />
           <span>Integraciones</span>
         </NuxtLink>
@@ -19,12 +19,12 @@
         class="menu--integrations__item"
         :class="{
           'menu--integrations__item--active': isRouteActive(
-            '/integrations/search-console',
+            '/dashboard/integrations/search-console',
           ),
         }"
       >
         <NuxtLink
-          to="/integrations/search-console"
+          to="/dashboard/integrations/search-console"
           class="menu--integrations__link"
         >
           <Search class="menu--integrations__icon" />
@@ -37,12 +37,12 @@
         class="menu--integrations__item"
         :class="{
           'menu--integrations__item--active': isRouteActive(
-            '/integrations/google-analytics',
+            '/dashboard/integrations/google-analytics',
           ),
         }"
       >
         <NuxtLink
-          to="/integrations/google-analytics"
+          to="/dashboard/integrations/google-analytics"
           class="menu--integrations__link"
         >
           <BarChart2 class="menu--integrations__icon" />
@@ -55,12 +55,12 @@
         class="menu--integrations__item"
         :class="{
           'menu--integrations__item--active': isRouteActive(
-            '/integrations/cloudflare',
+            '/dashboard/integrations/cloudflare',
           ),
         }"
       >
         <NuxtLink
-          to="/integrations/cloudflare"
+          to="/dashboard/integrations/cloudflare"
           class="menu--integrations__link"
         >
           <Shield class="menu--integrations__icon" />
@@ -73,12 +73,12 @@
         class="menu--integrations__item"
         :class="{
           'menu--integrations__item--active': isRouteActive(
-            '/integrations/better-stack',
+            '/dashboard/integrations/better-stack',
           ),
         }"
       >
         <NuxtLink
-          to="/integrations/better-stack"
+          to="/dashboard/integrations/better-stack"
           class="menu--integrations__link"
         >
           <IconsIconBetterStack class="menu--integrations__icon" />
@@ -99,18 +99,19 @@ const emit = defineEmits<{ (e: "close"): void }>();
 const route = useRoute();
 
 const isRouteActive = (path: string): boolean => {
-  if (path === "/") return route.path === "/";
+  if (path === "/dashboard/integrations")
+    return route.path === "/dashboard/integrations";
   return route.path.startsWith(path);
 };
 
 const isIntegrationsRootActive = computed(
   () =>
-    route.path === "/integrations" ||
-    (route.path.startsWith("/integrations/") &&
-      !route.path.startsWith("/integrations/search-console") &&
-      !route.path.startsWith("/integrations/google-analytics") &&
-      !route.path.startsWith("/integrations/cloudflare") &&
-      !route.path.startsWith("/integrations/better-stack")),
+    route.path === "/dashboard/integrations" ||
+    (route.path.startsWith("/dashboard/integrations/") &&
+      !route.path.startsWith("/dashboard/integrations/search-console") &&
+      !route.path.startsWith("/dashboard/integrations/google-analytics") &&
+      !route.path.startsWith("/dashboard/integrations/cloudflare") &&
+      !route.path.startsWith("/dashboard/integrations/better-stack")),
 );
 
 watch(

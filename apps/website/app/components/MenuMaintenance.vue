@@ -8,7 +8,7 @@
           'menu--maintenance__item--active': isMaintenanceRootActive,
         }"
       >
-        <NuxtLink to="/maintenance" class="menu--maintenance__link">
+        <NuxtLink to="/dashboard/maintenance" class="menu--maintenance__link">
           <Settings class="menu--maintenance__icon" />
           <span>Mantenedores</span>
         </NuxtLink>
@@ -19,11 +19,14 @@
         class="menu--maintenance__item"
         :class="{
           'menu--maintenance__item--active': isRouteActive(
-            '/maintenance/categories',
+            '/dashboard/maintenance/categories',
           ),
         }"
       >
-        <NuxtLink to="/maintenance/categories" class="menu--maintenance__link">
+        <NuxtLink
+          to="/dashboard/maintenance/categories"
+          class="menu--maintenance__link"
+        >
           <Tag class="menu--maintenance__icon" />
           <span>Categorías</span>
         </NuxtLink>
@@ -34,11 +37,14 @@
         class="menu--maintenance__item"
         :class="{
           'menu--maintenance__item--active': isRouteActive(
-            '/maintenance/conditions',
+            '/dashboard/maintenance/conditions',
           ),
         }"
       >
-        <NuxtLink to="/maintenance/conditions" class="menu--maintenance__link">
+        <NuxtLink
+          to="/dashboard/maintenance/conditions"
+          class="menu--maintenance__link"
+        >
           <FileCheck class="menu--maintenance__icon" />
           <span>Condiciones</span>
         </NuxtLink>
@@ -48,11 +54,15 @@
       <li
         class="menu--maintenance__item"
         :class="{
-          'menu--maintenance__item--active':
-            isRouteActive('/maintenance/packs'),
+          'menu--maintenance__item--active': isRouteActive(
+            '/dashboard/maintenance/packs',
+          ),
         }"
       >
-        <NuxtLink to="/maintenance/packs" class="menu--maintenance__link">
+        <NuxtLink
+          to="/dashboard/maintenance/packs"
+          class="menu--maintenance__link"
+        >
           <Box class="menu--maintenance__icon" />
           <span>Packs</span>
         </NuxtLink>
@@ -63,11 +73,14 @@
         class="menu--maintenance__item"
         :class="{
           'menu--maintenance__item--active': isRouteActive(
-            '/maintenance/regions',
+            '/dashboard/maintenance/regions',
           ),
         }"
       >
-        <NuxtLink to="/maintenance/regions" class="menu--maintenance__link">
+        <NuxtLink
+          to="/dashboard/maintenance/regions"
+          class="menu--maintenance__link"
+        >
           <MapPin class="menu--maintenance__icon" />
           <span>Regiones</span>
         </NuxtLink>
@@ -78,11 +91,14 @@
         class="menu--maintenance__item"
         :class="{
           'menu--maintenance__item--active': isRouteActive(
-            '/maintenance/communes',
+            '/dashboard/maintenance/communes',
           ),
         }"
       >
-        <NuxtLink to="/maintenance/communes" class="menu--maintenance__link">
+        <NuxtLink
+          to="/dashboard/maintenance/communes"
+          class="menu--maintenance__link"
+        >
           <Building class="menu--maintenance__icon" />
           <span>Comunas</span>
         </NuxtLink>
@@ -92,10 +108,15 @@
       <li
         class="menu--maintenance__item"
         :class="{
-          'menu--maintenance__item--active': isRouteActive('/maintenance/faqs'),
+          'menu--maintenance__item--active': isRouteActive(
+            '/dashboard/maintenance/faqs',
+          ),
         }"
       >
-        <NuxtLink to="/maintenance/faqs" class="menu--maintenance__link">
+        <NuxtLink
+          to="/dashboard/maintenance/faqs"
+          class="menu--maintenance__link"
+        >
           <HelpCircle class="menu--maintenance__icon" />
           <span>Preguntas frecuentes</span>
         </NuxtLink>
@@ -106,11 +127,14 @@
         class="menu--maintenance__item"
         :class="{
           'menu--maintenance__item--active': isRouteActive(
-            '/maintenance/policies',
+            '/dashboard/maintenance/policies',
           ),
         }"
       >
-        <NuxtLink to="/maintenance/policies" class="menu--maintenance__link">
+        <NuxtLink
+          to="/dashboard/maintenance/policies"
+          class="menu--maintenance__link"
+        >
           <Shield class="menu--maintenance__icon" />
           <span>Políticas de privacidad</span>
         </NuxtLink>
@@ -120,11 +144,15 @@
       <li
         class="menu--maintenance__item"
         :class="{
-          'menu--maintenance__item--active':
-            isRouteActive('/maintenance/terms'),
+          'menu--maintenance__item--active': isRouteActive(
+            '/dashboard/maintenance/terms',
+          ),
         }"
       >
-        <NuxtLink to="/maintenance/terms" class="menu--maintenance__link">
+        <NuxtLink
+          to="/dashboard/maintenance/terms"
+          class="menu--maintenance__link"
+        >
           <ScrollText class="menu--maintenance__icon" />
           <span>Condiciones de Uso</span>
         </NuxtLink>
@@ -153,25 +181,26 @@ const emit = defineEmits<{ (e: "close"): void }>();
 const route = useRoute();
 
 const isRouteActive = (path: string): boolean => {
-  if (path === "/") return route.path === "/";
+  if (path === "/dashboard/maintenance")
+    return route.path === "/dashboard/maintenance";
   return route.path.startsWith(path);
 };
 
 const knownSubRoutes = [
-  "/maintenance/categories",
-  "/maintenance/conditions",
-  "/maintenance/packs",
-  "/maintenance/regions",
-  "/maintenance/communes",
-  "/maintenance/faqs",
-  "/maintenance/policies",
-  "/maintenance/terms",
+  "/dashboard/maintenance/categories",
+  "/dashboard/maintenance/conditions",
+  "/dashboard/maintenance/packs",
+  "/dashboard/maintenance/regions",
+  "/dashboard/maintenance/communes",
+  "/dashboard/maintenance/faqs",
+  "/dashboard/maintenance/policies",
+  "/dashboard/maintenance/terms",
 ];
 
 const isMaintenanceRootActive = computed(
   () =>
-    route.path === "/maintenance" ||
-    (route.path.startsWith("/maintenance/") &&
+    route.path === "/dashboard/maintenance" ||
+    (route.path.startsWith("/dashboard/maintenance/") &&
       !knownSubRoutes.some((r) => route.path.startsWith(r))),
 );
 

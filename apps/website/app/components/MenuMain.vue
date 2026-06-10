@@ -1,10 +1,10 @@
 <template>
   <nav class="menu menu--main">
-    <NuxtLink to="/" class="menu--main__btn" aria-label="Dashboard">
+    <NuxtLink to="/dashboard" class="menu--main__btn" aria-label="Dashboard">
       <LayoutDashboard class="menu--main__icon" />
     </NuxtLink>
     <NuxtLink
-      to="/articles"
+      to="/dashboard/articles"
       class="menu--main__btn"
       :class="{ 'menu--main__btn--active': activeMenu === 'articles' }"
       aria-label="Artículos"
@@ -12,7 +12,7 @@
       <Newspaper class="menu--main__icon" />
     </NuxtLink>
     <NuxtLink
-      to="/users"
+      to="/dashboard/users"
       class="menu--main__btn"
       :class="{ 'menu--main__btn--active': activeMenu === 'users' }"
       aria-label="Usuarios"
@@ -20,7 +20,7 @@
       <Users class="menu--main__icon" />
     </NuxtLink>
     <NuxtLink
-      to="/maintenance"
+      to="/dashboard/maintenance"
       class="menu--main__btn"
       :class="{ 'menu--main__btn--active': activeMenu === 'maintenance' }"
       aria-label="Mantenedores"
@@ -28,7 +28,7 @@
       <Settings class="menu--main__icon" />
     </NuxtLink>
     <NuxtLink
-      to="/integrations"
+      to="/dashboard/integrations"
       class="menu--main__btn"
       :class="{ 'menu--main__btn--active': activeMenu === 'integrations' }"
       aria-label="Integraciones"

@@ -4,9 +4,11 @@
       <!-- Dashboard -->
       <li
         class="menu--dashboard__item"
-        :class="{ 'menu--dashboard__item--active': isRouteActive('/') }"
+        :class="{
+          'menu--dashboard__item--active': isRouteActive('/dashboard'),
+        }"
       >
-        <NuxtLink to="/" class="menu--dashboard__link">
+        <NuxtLink to="/dashboard" class="menu--dashboard__link">
           <LayoutDashboard class="menu--dashboard__icon" />
           <span>Dashboard</span>
         </NuxtLink>
@@ -15,9 +17,11 @@
       <!-- Órdenes -->
       <li
         class="menu--dashboard__item"
-        :class="{ 'menu--dashboard__item--active': isRouteActive('/orders') }"
+        :class="{
+          'menu--dashboard__item--active': isRouteActive('/dashboard/orders'),
+        }"
       >
-        <NuxtLink to="/orders" class="menu--dashboard__link">
+        <NuxtLink to="/dashboard/orders" class="menu--dashboard__link">
           <ShoppingCart class="menu--dashboard__icon" />
           <span>Órdenes</span>
         </NuxtLink>
@@ -27,7 +31,7 @@
       <li
         class="menu--dashboard__item"
         :class="{
-          'menu--dashboard__item--active': isRouteActive('/ads'),
+          'menu--dashboard__item--active': isRouteActive('/dashboard/ads'),
           'menu--dashboard__item--expanded': openMenu === 'ads',
         }"
       >
@@ -47,10 +51,15 @@
           <li
             class="menu--dashboard__subitem"
             :class="{
-              'menu--dashboard__subitem--active': isRouteActive('/ads/pending'),
+              'menu--dashboard__subitem--active': isRouteActive(
+                '/dashboard/ads/pending',
+              ),
             }"
           >
-            <NuxtLink to="/ads/pending" class="menu--dashboard__sublink">
+            <NuxtLink
+              to="/dashboard/ads/pending"
+              class="menu--dashboard__sublink"
+            >
               <Clock class="menu--dashboard__subicon" />
               <span>Pendientes</span>
             </NuxtLink>
@@ -58,10 +67,15 @@
           <li
             class="menu--dashboard__subitem"
             :class="{
-              'menu--dashboard__subitem--active': isRouteActive('/ads/active'),
+              'menu--dashboard__subitem--active': isRouteActive(
+                '/dashboard/ads/active',
+              ),
             }"
           >
-            <NuxtLink to="/ads/active" class="menu--dashboard__sublink">
+            <NuxtLink
+              to="/dashboard/ads/active"
+              class="menu--dashboard__sublink"
+            >
               <CheckCircle class="menu--dashboard__subicon" />
               <span>Activos</span>
             </NuxtLink>
@@ -69,10 +83,15 @@
           <li
             class="menu--dashboard__subitem"
             :class="{
-              'menu--dashboard__subitem--active': isRouteActive('/ads/expired'),
+              'menu--dashboard__subitem--active': isRouteActive(
+                '/dashboard/ads/expired',
+              ),
             }"
           >
-            <NuxtLink to="/ads/expired" class="menu--dashboard__sublink">
+            <NuxtLink
+              to="/dashboard/ads/expired"
+              class="menu--dashboard__sublink"
+            >
               <AlertCircle class="menu--dashboard__subicon" />
               <span>Expirados</span>
             </NuxtLink>
@@ -80,10 +99,15 @@
           <li
             class="menu--dashboard__subitem"
             :class="{
-              'menu--dashboard__subitem--active': isRouteActive('/ads/banned'),
+              'menu--dashboard__subitem--active': isRouteActive(
+                '/dashboard/ads/banned',
+              ),
             }"
           >
-            <NuxtLink to="/ads/banned" class="menu--dashboard__sublink">
+            <NuxtLink
+              to="/dashboard/ads/banned"
+              class="menu--dashboard__sublink"
+            >
               <Ban class="menu--dashboard__subicon" />
               <span>Baneados</span>
             </NuxtLink>
@@ -91,11 +115,15 @@
           <li
             class="menu--dashboard__subitem"
             :class="{
-              'menu--dashboard__subitem--active':
-                isRouteActive('/ads/rejected'),
+              'menu--dashboard__subitem--active': isRouteActive(
+                '/dashboard/ads/rejected',
+              ),
             }"
           >
-            <NuxtLink to="/ads/rejected" class="menu--dashboard__sublink">
+            <NuxtLink
+              to="/dashboard/ads/rejected"
+              class="menu--dashboard__sublink"
+            >
               <XCircle class="menu--dashboard__subicon" />
               <span>Rechazados</span>
             </NuxtLink>
@@ -103,11 +131,15 @@
           <li
             class="menu--dashboard__subitem"
             :class="{
-              'menu--dashboard__subitem--active':
-                isRouteActive('/ads/abandoned'),
+              'menu--dashboard__subitem--active': isRouteActive(
+                '/dashboard/ads/abandoned',
+              ),
             }"
           >
-            <NuxtLink to="/ads/abandoned" class="menu--dashboard__sublink">
+            <NuxtLink
+              to="/dashboard/ads/abandoned"
+              class="menu--dashboard__sublink"
+            >
               <XOctagon class="menu--dashboard__subicon" />
               <span>Borradores</span>
             </NuxtLink>
@@ -119,7 +151,9 @@
       <li
         class="menu--dashboard__item"
         :class="{
-          'menu--dashboard__item--active': isRouteActive('/reservations'),
+          'menu--dashboard__item--active': isRouteActive(
+            '/dashboard/reservations',
+          ),
           'menu--dashboard__item--expanded': openMenu === 'reservations',
         }"
       >
@@ -139,11 +173,15 @@
           <li
             class="menu--dashboard__subitem"
             :class="{
-              'menu--dashboard__subitem--active':
-                isRouteActive('/reservations/used'),
+              'menu--dashboard__subitem--active': isRouteActive(
+                '/dashboard/reservations/used',
+              ),
             }"
           >
-            <NuxtLink to="/reservations/used" class="menu--dashboard__sublink">
+            <NuxtLink
+              to="/dashboard/reservations/used"
+              class="menu--dashboard__sublink"
+            >
               <CheckCircle class="menu--dashboard__subicon" />
               <span>Usadas</span>
             </NuxtLink>
@@ -151,11 +189,15 @@
           <li
             class="menu--dashboard__subitem"
             :class="{
-              'menu--dashboard__subitem--active':
-                isRouteActive('/reservations/free'),
+              'menu--dashboard__subitem--active': isRouteActive(
+                '/dashboard/reservations/free',
+              ),
             }"
           >
-            <NuxtLink to="/reservations/free" class="menu--dashboard__sublink">
+            <NuxtLink
+              to="/dashboard/reservations/free"
+              class="menu--dashboard__sublink"
+            >
               <Circle class="menu--dashboard__subicon" />
               <span>Libres</span>
             </NuxtLink>
@@ -167,7 +209,7 @@
       <li
         class="menu--dashboard__item"
         :class="{
-          'menu--dashboard__item--active': isRouteActive('/featured'),
+          'menu--dashboard__item--active': isRouteActive('/dashboard/featured'),
           'menu--dashboard__item--expanded': openMenu === 'featured',
         }"
       >
@@ -187,11 +229,15 @@
           <li
             class="menu--dashboard__subitem"
             :class="{
-              'menu--dashboard__subitem--active':
-                isRouteActive('/featured/used'),
+              'menu--dashboard__subitem--active': isRouteActive(
+                '/dashboard/featured/used',
+              ),
             }"
           >
-            <NuxtLink to="/featured/used" class="menu--dashboard__sublink">
+            <NuxtLink
+              to="/dashboard/featured/used"
+              class="menu--dashboard__sublink"
+            >
               <CheckCircle class="menu--dashboard__subicon" />
               <span>Usados</span>
             </NuxtLink>
@@ -199,11 +245,15 @@
           <li
             class="menu--dashboard__subitem"
             :class="{
-              'menu--dashboard__subitem--active':
-                isRouteActive('/featured/free'),
+              'menu--dashboard__subitem--active': isRouteActive(
+                '/dashboard/featured/free',
+              ),
             }"
           >
-            <NuxtLink to="/featured/free" class="menu--dashboard__sublink">
+            <NuxtLink
+              to="/dashboard/featured/free"
+              class="menu--dashboard__sublink"
+            >
               <Circle class="menu--dashboard__subicon" />
               <span>Libres</span>
             </NuxtLink>
@@ -239,33 +289,27 @@ const emit = defineEmits<{ (e: "close"): void }>();
 const route = useRoute();
 const openMenu = ref<string | null>(null);
 
-// Detectar si una ruta está activa
 const isRouteActive = (path: string): boolean => {
-  if (path === "/") {
-    return route.path === "/";
-  }
+  if (path === "/dashboard") return route.path === "/dashboard";
   return route.path.startsWith(path);
 };
 
-// Toggle del menú (solo uno abierto a la vez)
 const toggleMenu = (menu: string) => {
   openMenu.value = openMenu.value === menu ? null : menu;
 };
 
-// Auto-expandir menú si hay un subitem activo
 watch(
   () => route.path,
   (path) => {
-    if (path.startsWith("/ads")) {
+    if (path.startsWith("/dashboard/ads")) {
       openMenu.value = "ads";
-    } else if (path.startsWith("/reservations")) {
+    } else if (path.startsWith("/dashboard/reservations")) {
       openMenu.value = "reservations";
-    } else if (path.startsWith("/featured")) {
+    } else if (path.startsWith("/dashboard/featured")) {
       openMenu.value = "featured";
     } else {
       openMenu.value = null;
     }
-    // Close sidebar on navigation (no-op on desktop — CSS hides the toggle)
     emit("close");
   },
   { immediate: true },

@@ -5,7 +5,7 @@
   >
     <div class="layout--dashboard__menu">
       <div class="layout--dashboard__menu__logo">
-        <NuxtLink to="/" title="Waldo.click">
+        <NuxtLink to="/dashboard" title="Waldo.click">
           <NuxtImg
             loading="lazy"
             decoding="async"
