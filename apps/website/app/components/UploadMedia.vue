@@ -136,7 +136,7 @@ const handleFileChange = async (event: Event) => {
 };
 
 const uploadToStrapi = async (file: File): Promise<MediaItem | null> => {
-  const token = useSessionToken();
+  const token = useStrapiToken();
   const formData = new FormData();
   formData.append("files", file);
 

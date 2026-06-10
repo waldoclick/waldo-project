@@ -21,7 +21,7 @@ import { computed } from "vue";
 import type { User } from "@/types/user";
 import StatsDefault from "@/components/StatsDefault.vue";
 
-const user = useSessionUser<User>();
+const user = useStrapiUser<User>();
 
 const userName = computed(() => {
   return user.value?.firstname || "Usuario";

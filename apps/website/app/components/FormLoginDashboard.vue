@@ -152,7 +152,7 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       cancelButtonText: "Cancelar",
     });
     if (!confirmed.isConfirmed) return;
-    const { logout: sessionLogout } = useSessionAuth();
+    const { logout: sessionLogout } = useStrapiAuth();
     sessionLogout();
   }
 
@@ -172,7 +172,7 @@ const handleSubmit = async (values: Record<string, unknown>) => {
 
   try {
     // Call POST /api/auth/local directly — backend now returns { pendingToken, email }
-    // (useSessionAuth().login() is NOT used because it expects a JWT, not a pendingToken)
+    // (useStrapiAuth().login() is NOT used because it expects a JWT, not a pendingToken)
     // X-Recaptcha-Token is injected automatically by useApiClient
     const response = await client("/auth/local", {
       method: "POST",
