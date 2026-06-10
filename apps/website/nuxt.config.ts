@@ -378,6 +378,15 @@ export default defineNuxtConfig({
     experimental: {
       wasm: true,
     },
+    externals: {
+      inline: [
+        "@unocss/core",
+        "@unocss/preset-mini",
+        "@unocss/preset-wind3",
+        "@unocss/rule-utils",
+        "@unocss/extractor-arbitrary-variants",
+      ],
+    },
   },
 
   // Dev Server Configuration
@@ -526,7 +535,7 @@ export default defineNuxtConfig({
   },
 
   sentry: {
-    enabled: process.env.NODE_ENV === "production",
+    enabled: process.env.NODE_ENV === "production" && !process.env.CI,
     sourceMapsUploadOptions: {
       org: process.env.SENTRY_ORG,
       project: process.env.SENTRY_PROJECT,
