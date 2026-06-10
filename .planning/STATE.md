@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-last_updated: "2026-06-10T16:10:52.971Z"
+last_updated: "2026-06-10T17:05:00.000Z"
 last_activity: 2026-06-10
 progress:
   total_phases: 19
   completed_phases: 17
   total_plans: 48
-  completed_plans: 46
-  percent: 96
+  completed_plans: 47
+  percent: 98
 ---
 
 # Session State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 
 ## Position
 
-Phase 125 plan 05 complete — 68 dashboard pages moved via git mv to apps/website/app/pages/dashboard/; 5 auth+dev pages dropped (D-01/D-11); all stale /auth/* navigation links rewritten to website routes; dashboard pages tree empty.
+Phase 125 plan 06 complete — SCSS merged (28 colliding files: &--dashboard blocks appended; 29 dashboard-exclusive files copied with @use container fix); TypeScript remediation complete: 81 errors → 0; nuxi typecheck exits 0; 3 util files created (date.ts, price.ts, string.ts); explicit formatDate imports added to 43 files.
 
 ```
 Progress: [██████████] 96%
@@ -34,6 +34,10 @@ Progress: [██████████] 96%
 
 ### Key Decisions (carry forward)
 
+- formatDate/formatDateShort/formatBoolean require explicit imports in vue-tsc strict mode — Nuxt auto-imports are runtime-only, not reflected in vue-tsc template type context; add import { formatDate } from "@/utils/date" explicitly (125-06)
+- Media.formats extended with small/large variants to cover all Strapi Cloudinary upload formats; formatDate/formatDateShort accept string|undefined|null — Strapi returns null not undefined (125-06)
+- GalleryItem.id is string (Strapi documentId); numeric gallery IDs compared via Number(image.id) when filtering array of Strapi numeric IDs (125-06)
+- nuxi typecheck in worktree requires: node <root>/node_modules/.bin/nuxi typecheck run from within worktree apps/website/ — yarn workspace waldo-website nuxi typecheck targets main repo checkout, not worktree (125-06)
 - All 68 surviving dashboard pages already had layout: "dashboard" — the only 5 without it were exactly the 5 dropped (auth+dev); Strapi API calls to /auth/* endpoints intentionally unchanged (backend REST, not navigation) (125-05)
 - useStrapiAuth() is the website-native replacement for useSessionAuth() — exposes identical setToken/fetchUser/logout API (verified from @nuxtjs/strapi dist/.d.ts); qs-serialization caveat does not apply — none of the 9 migrated components used useSessionClient (125-04)
 - D-04 session replacement complete: useSessionUser→useStrapiUser, useSessionToken→useStrapiToken, useSessionAuth→useStrapiAuth, useSessionClient→useApiClient (125-04)
