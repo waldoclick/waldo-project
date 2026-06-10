@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-last_updated: "2026-05-05T03:43:03.707Z"
-last_activity: "2026-05-05 - Completed quick task 260504-ue0: Email confirmation auto-resend + SSR verification"
+last_updated: "2026-06-10T15:09:34.606Z"
+last_activity: 2026-06-10
 progress:
-  total_phases: 18
+  total_phases: 19
   completed_phases: 17
-  total_plans: 41
-  completed_plans: 41
+  total_plans: 48
+  completed_plans: 42
   percent: 100
 ---
 
@@ -20,11 +20,11 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 124 — inputphone-component-country-code-selector-phone-number-field (COMPLETE)
+**Current focus:** Phase 125 — merge-dashboard-into-website
 
 ## Position
 
-Phase 124 complete — InputPhone component built (plan 01) and wired into all three website forms (plan 02). Phase 124 is fully done.
+Phase 125 plan 01 complete — auth foundation for dashboard merge: dashboard-guard.global.ts, onboarding-guard /dashboard exemption, FormVerifyCode manager redirect, dashboard.vue layout, search/settings stores. AUTH-01/02 and GUARD-01/02/03 tests green.
 
 ```
 Progress: [██████████] 100%
@@ -34,6 +34,10 @@ Progress: [██████████] 100%
 
 ### Key Decisions (carry forward)
 
+- dashboard-guard.global.ts uses useStrapiUser/Token/Auth (not useSessionX) — website @nuxtjs/strapi session system wins; SSR fail-open skip preserved: if (!roleName) return allows through during hydration, client re-run enforces role (125-01)
+- onboarding-guard /dashboard exemption: startsWith('/dashboard') early return inside !profileComplete block — not in AUTH_EXEMPT_PATHS (exact-match only) (125-01)
+- FormVerifyCode.vue manager redirect: useStrapiUser() without User generic — component is plain JS SFC, generic syntax is a parse error (125-01)
+- settings.store.ts persist: CORRECT — pure UI preferences, no remote fetch, no TTL guard needed (125-01)
 - navigateTo() instead of router.push() for all post-login redirects in Nuxt 4 — router.push can race or silently abort after async fetchUser() state updates; navigateTo triggers the middleware pipeline reliably (123-01)
 - Profile completeness delegated to onboarding-guard.global.ts — login components call navigateTo(redirectTo) and the guard handles /onboarding redirect; meStore.reset() must precede navigateTo to clear stale persisted cache (123-01)
 - Self-guarding period_end query in Step 1 eliminates idempotency check: renewed subscription-payment records have period_end in the future and won't appear in results (121-02)
@@ -168,5 +172,5 @@ Progress: [██████████] 100%
 
 ## Session Continuity
 
-Last activity: 2026-05-05 - Completed quick task 260504-wqf: Reserved username validation
+Last activity: 2026-06-10
 Resume file: None
