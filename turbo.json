@@ -13,11 +13,6 @@
       "dependsOn": ["waldo-strapi#build"],
       "outputs": [".nuxt/**", ".output/**"]
     },
-    "waldo-dashboard#build": {
-      "dependsOn": ["waldo-website#build"],
-      "outputs": [".nuxt/**", ".output/**"]
-    },
-
     "dev": {
       "cache": false,
       "persistent": true
@@ -29,11 +24,6 @@
     },
 
     "waldo-website#dev": {
-      "cache": false,
-      "persistent": true
-    },
-
-    "waldo-dashboard#dev": {
       "cache": false,
       "persistent": true
     },

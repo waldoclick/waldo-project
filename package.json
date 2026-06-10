@@ -5,8 +5,7 @@
   "packageManager": "yarn@1.22.22",
   "workspaces": [
     "apps/strapi",
-    "apps/website",
-    "apps/dashboard"
+    "apps/website"
   ],
   "scripts": {
     "dev": "lsof -ti:24678,1337,3000,3001 | xargs kill -9 2>/dev/null || true && turbo run dev",

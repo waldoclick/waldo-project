@@ -345,7 +345,6 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       apiUrl: process.env.API_URL || "http://localhost:1337",
-      dashboardUrl: process.env.DASHBOARD_URL || "http://localhost:3001",
       websiteUrl: process.env.WEBSITE_URL || "https://waldo.click",
       sessionMaxAge: process.env.SESSION_MAX_AGE || "86400", // Valor por defecto de 1 día
       baseUrl: process.env.BASE_URL || "http://localhost:3000",
