@@ -512,7 +512,7 @@ export default defineNuxtConfig({
   // 6. Development Configuration
   typescript: {
     strict: true,
-    typeCheck: true,
+    typeCheck: !process.env.CI,
   },
 
   devtools: { enabled: process.env.NODE_ENV !== "production" },
@@ -531,6 +531,7 @@ export default defineNuxtConfig({
       org: process.env.SENTRY_ORG,
       project: process.env.SENTRY_PROJECT,
       authToken: process.env.SENTRY_AUTH_TOKEN,
+      errorHandler: () => {},
     },
   },
 

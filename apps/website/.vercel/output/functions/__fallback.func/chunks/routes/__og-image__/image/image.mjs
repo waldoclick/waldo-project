@@ -1,0 +1,44 @@
+try {
+  let e =
+      "undefined" != typeof global
+        ? global
+        : "undefined" != typeof globalThis
+          ? globalThis
+          : "undefined" != typeof self
+            ? self
+            : {},
+    r = new e.Error().stack;
+  r &&
+    ((e._sentryDebugIds = e._sentryDebugIds || {}),
+    (e._sentryDebugIds[r] = "90718c3b-6b64-458c-93ff-5dedb2628a0e"),
+    (e._sentryDebugIdIdentifier =
+      "sentry-dbid-90718c3b-6b64-458c-93ff-5dedb2628a0e"));
+} catch (e) {}
+import { d as e } from "../../../nitro/nitro.mjs";
+import { i as r } from "../../../_/eventHandlers.mjs";
+import "@unocss/core";
+import "@unocss/preset-wind3";
+import "devalue";
+import "node:crypto";
+import "consola";
+import "node:http";
+import "node:https";
+import "node:events";
+import "node:buffer";
+import "lru-cache";
+import "node:fs";
+import "node:path";
+import "@sentry/core";
+import "vue";
+import "xss";
+import "unhead/server";
+import "unhead/plugins";
+import "unhead/utils";
+import "vue-bundle-renderer/runtime";
+import "vue/server-renderer";
+import "node:url";
+import "ipx";
+import "unhead";
+const t = e(r);
+export { t as default };
+//# sourceMappingURL=image.mjs.map

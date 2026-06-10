@@ -1,0 +1,15 @@
+.hero--dashboard__title .title[data-v-4be6dcf1] {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+.hero--dashboard__title-icon[data-v-4be6dcf1] {
+  display: inline-flex;
+  flex-shrink: 0;
+  height: 24px;
+  width: 24px;
+}
+.hero--dashboard__title-icon[data-v-4be6dcf1] svg {
+  height: 24px;
+  width: 24px;
+}
