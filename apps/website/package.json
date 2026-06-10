@@ -13,7 +13,7 @@
     "build": "NODE_OPTIONS='--max-old-space-size=3072' nuxt build",
     "dev": "nuxt dev --port 3000",
     "start": "pm2 start ecosystem.config.cjs",
-    "production": "yarn build && yarn start",
+    "production": "pnpm build && pnpm start",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
@@ -104,12 +104,5 @@
     "vitest": "^3.0.9",
     "vitest-environment-nuxt": "^1.0.1",
     "vue-tsc": "^3.2.5"
-  },
-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e",
-  "resolutions": {
-    "ofetch": "^1.4.0",
-    "jpeg-js": "^0.4.4",
-    "minimist": "^1.2.8",
-    "phin": "^3.7.1"
   }
 }

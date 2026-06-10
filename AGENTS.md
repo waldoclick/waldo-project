@@ -13,7 +13,7 @@ Classified ads platform (avisos) composed of three apps in a monorepo:
 - **`apps/strapi`** — Backend API and CMS (Strapi v5)
 
 All business logic lives in Strapi. Website and dashboard are stateless HTTP clients.
-Monorepo orchestrated with Turbo. Package manager: **Yarn** (never npm).
+Monorepo orchestrated with Turbo. Package manager: **pnpm** (never npm or yarn).
 
 **Core value:** Users can publish and manage ads reliably, with frictionless payments — regardless of payment gateway.
 
@@ -43,7 +43,7 @@ Monorepo orchestrated with Turbo. Package manager: **Yarn** (never npm).
 
 ### Code Quality (all apps)
 - Codacy configured at root (`.codacy.yaml`) — covers ESLint, Stylelint, duplication, complexity
-- Run with: `yarn codacy` from root (via Turbo)
+- Run with: `pnpm codacy` from root (via Turbo)
 - Do **not** create per-app `.codacy.yaml` files — root config is the only one
 - **Never leave unused variables or imports** — delete them, do not rename with `_` prefix (Codacy flags `_`-prefixed vars too unless `argsIgnorePattern` is configured, which it is not)
 - This applies to function parameters as well — if a parameter is unused, remove it or restructure the function signature
@@ -259,4 +259,4 @@ Never use colors outside this palette. Do not invent or approximate colors — u
 - `git mv` for all Nuxt page directory and file renames (preserves Git rename history)
 - Two-commit pattern for URL migrations: rename first → update all internal refs second
 - Never change Spanish UI labels (breadcrumbs, page titles) in a URL/route migration — they are user-visible content
-- Codacy analysis must pass before committing code quality changes (`yarn codacy`)
+- Codacy analysis must pass before committing code quality changes (`pnpm codacy`)

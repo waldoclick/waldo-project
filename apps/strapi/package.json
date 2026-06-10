@@ -73,6 +73,6 @@
     "uuid": "7337a685-a87a-481e-8811-21c8cde77d9b"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,json,md,yaml,yml}": "yarn format"
+    "*.{js,jsx,ts,tsx,json,md,yaml,yml}": "pnpm format"
   }
 }
