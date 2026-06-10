@@ -4,7 +4,7 @@
       <template #actions>
         <NuxtLink
           class="btn btn--primary"
-          :to="`/maintenance/communes/${route.params.id}/edit`"
+          :to="`/dashboard/maintenance/communes/${route.params.id}/edit`"
         >
           Editar comuna
         </NuxtLink>

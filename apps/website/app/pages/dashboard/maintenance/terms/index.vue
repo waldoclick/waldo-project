@@ -2,7 +2,10 @@
   <div>
     <HeroHeaderDashboard title="Condiciones de Uso" :breadcrumbs="breadcrumbs">
       <template #actions>
-        <NuxtLink class="btn btn--primary" to="/maintenance/terms/new">
+        <NuxtLink
+          class="btn btn--primary"
+          to="/dashboard/maintenance/terms/new"
+        >
           Agregar Condicion
         </NuxtLink>
       </template>

@@ -52,7 +52,7 @@ const breadcrumbs = computed(() => [
     ? [
         {
           label: region.value.name,
-          to: `/maintenance/regions/${route.params.id}`,
+          to: `/dashboard/maintenance/regions/${route.params.id}`,
         },
       ]
     : []),

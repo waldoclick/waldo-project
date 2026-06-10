@@ -4,7 +4,7 @@
       <template #actions>
         <NuxtLink
           class="btn btn--primary"
-          :to="`/maintenance/terms/${route.params.id}/edit`"
+          :to="`/dashboard/maintenance/terms/${route.params.id}/edit`"
         >
           Editar Condicion
         </NuxtLink>

@@ -4,7 +4,7 @@
       <template #actions>
         <NuxtLink
           class="btn btn--primary"
-          :to="`/maintenance/regions/${route.params.id}/edit`"
+          :to="`/dashboard/maintenance/regions/${route.params.id}/edit`"
         >
           Editar región
         </NuxtLink>

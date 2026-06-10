@@ -4,7 +4,7 @@
       <template #actions>
         <NuxtLink
           class="btn btn--primary"
-          :to="`/maintenance/policies/${route.params.id}/edit`"
+          :to="`/dashboard/maintenance/policies/${route.params.id}/edit`"
         >
           Editar Politica
         </NuxtLink>

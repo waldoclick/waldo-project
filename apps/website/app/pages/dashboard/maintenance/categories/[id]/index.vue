@@ -4,7 +4,7 @@
       <template #actions>
         <NuxtLink
           class="btn btn--primary"
-          :to="`/maintenance/categories/${route.params.id}/edit`"
+          :to="`/dashboard/maintenance/categories/${route.params.id}/edit`"
         >
           Editar categoría
         </NuxtLink>

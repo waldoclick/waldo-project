@@ -52,7 +52,7 @@ const breadcrumbs = computed(() => [
     ? [
         {
           label: commune.value.name,
-          to: `/maintenance/communes/${route.params.id}`,
+          to: `/dashboard/maintenance/communes/${route.params.id}`,
         },
       ]
     : []),

@@ -52,7 +52,7 @@ const breadcrumbs = computed(() => [
     ? [
         {
           label: policy.value.title,
-          to: `/maintenance/policies/${route.params.id}`,
+          to: `/dashboard/maintenance/policies/${route.params.id}`,
         },
       ]
     : []),

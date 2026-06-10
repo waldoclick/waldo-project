@@ -49,7 +49,12 @@ const title = computed(() => faq.value?.title || "FAQ");
 const breadcrumbs = computed(() => [
   { label: "FAQs", to: "/dashboard/maintenance/faqs" },
   ...(faq.value?.title
-    ? [{ label: faq.value.title, to: `/maintenance/faqs/${route.params.id}` }]
+    ? [
+        {
+          label: faq.value.title,
+          to: `/dashboard/maintenance/faqs/${route.params.id}`,
+        },
+      ]
     : []),
   { label: "Editar" },
 ]);

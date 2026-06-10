@@ -45,7 +45,12 @@ const title = computed(() => pack.value?.name || "Pack");
 const breadcrumbs = computed(() => [
   { label: "Packs", to: "/dashboard/maintenance/packs" },
   ...(pack.value?.name
-    ? [{ label: pack.value.name, to: `/maintenance/packs/${route.params.id}` }]
+    ? [
+        {
+          label: pack.value.name,
+          to: `/dashboard/maintenance/packs/${route.params.id}`,
+        },
+      ]
     : []),
   { label: "Editar" },
 ]);

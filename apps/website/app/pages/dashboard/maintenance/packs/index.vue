@@ -2,7 +2,10 @@
   <div>
     <HeroHeaderDashboard title="Packs" :breadcrumbs="breadcrumbs">
       <template #actions>
-        <NuxtLink class="btn btn--primary" to="/maintenance/packs/new">
+        <NuxtLink
+          class="btn btn--primary"
+          to="/dashboard/maintenance/packs/new"
+        >
           Agregar pack
         </NuxtLink>
       </template>

@@ -49,7 +49,12 @@ const title = computed(() => term.value?.title || "Condicion de Uso");
 const breadcrumbs = computed(() => [
   { label: "Condiciones de Uso", to: "/dashboard/maintenance/terms" },
   ...(term.value?.title
-    ? [{ label: term.value.title, to: `/maintenance/terms/${route.params.id}` }]
+    ? [
+        {
+          label: term.value.title,
+          to: `/dashboard/maintenance/terms/${route.params.id}`,
+        },
+      ]
     : []),
   { label: "Editar" },
 ]);

@@ -2,7 +2,7 @@
   <div>
     <HeroHeaderDashboard title="FAQs" :breadcrumbs="breadcrumbs">
       <template #actions>
-        <NuxtLink class="btn btn--primary" to="/maintenance/faqs/new">
+        <NuxtLink class="btn btn--primary" to="/dashboard/maintenance/faqs/new">
           Agregar FAQ
         </NuxtLink>
       </template>

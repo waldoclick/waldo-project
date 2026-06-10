@@ -52,7 +52,7 @@ const breadcrumbs = computed(() => [
     ? [
         {
           label: condition.value.name,
-          to: `/maintenance/conditions/${route.params.id}`,
+          to: `/dashboard/maintenance/conditions/${route.params.id}`,
         },
       ]
     : []),
