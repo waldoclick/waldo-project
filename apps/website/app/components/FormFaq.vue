@@ -124,23 +124,8 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       const documentId =
         props.faq?.documentId ||
         (typeof routeId === "string" ? routeId : undefined);
-      let faqId = props.faq?.id;
 
-      if (!faqId && documentId) {
-        const lookupResponse = (await apiClient("faqs", {
-          method: "GET",
-          params: {
-            filters: { documentId: { $eq: documentId } },
-            pagination: { pageSize: 1 },
-          } as unknown as Record<string, unknown>,
-        })) as { data: Array<{ id: number }> };
-        const lookupData = Array.isArray(lookupResponse.data)
-          ? (lookupResponse.data as Array<{ id: number }>)
-          : [];
-        faqId = lookupData[0]?.id;
-      }
-
-      if (!faqId) {
+      if (!documentId) {
         await Swal.fire(
           "Error",
           "No se pudo identificar el FAQ para actualizar.",
@@ -152,7 +137,7 @@ const handleSubmit = async (values: Record<string, unknown>) => {
 
       const response = await apiClient<{
         data: { id?: number; documentId?: string };
-      }>(`/faqs/${faqId}`, {
+      }>(`/faqs/${documentId}`, {
         method: "PUT",
         body: { data: payload },
       });

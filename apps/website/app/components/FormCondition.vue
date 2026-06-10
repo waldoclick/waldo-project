@@ -93,23 +93,8 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       const documentId =
         props.condition?.documentId ||
         (typeof routeId === "string" ? routeId : undefined);
-      let conditionId = props.condition?.id;
 
-      if (!conditionId && documentId) {
-        const lookupResponse = (await apiClient("conditions", {
-          method: "GET",
-          params: {
-            filters: { documentId: { $eq: documentId } },
-            pagination: { pageSize: 1 },
-          } as unknown as Record<string, unknown>,
-        })) as { data: Array<{ id: number }> };
-        const lookupData = Array.isArray(lookupResponse.data)
-          ? (lookupResponse.data as Array<{ id: number }>)
-          : [];
-        conditionId = lookupData[0]?.id;
-      }
-
-      if (!conditionId) {
+      if (!documentId) {
         await Swal.fire(
           "Error",
           "No se pudo identificar la condición para actualizar.",
@@ -121,7 +106,7 @@ const handleSubmit = async (values: Record<string, unknown>) => {
 
       const response = await apiClient<{
         data: { id?: number; documentId?: string };
-      }>(`/conditions/${conditionId}`, {
+      }>(`/conditions/${documentId}`, {
         method: "PUT",
         body: { data: payload },
       });

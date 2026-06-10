@@ -112,25 +112,8 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       const documentId =
         props.category?.documentId ||
         (typeof routeId === "string" ? routeId : undefined);
-      let categoryId = props.category?.id;
 
-      if (!categoryId && documentId) {
-        const lookupResponse = (await apiClient("categories", {
-          method: "GET",
-          params: {
-            filters: { documentId: { $eq: documentId } },
-            pagination: { pageSize: 1 },
-            populate: ["icon"],
-          } as unknown as Record<string, unknown>,
-        })) as { data: Array<{ id: number }> };
-        const lookupData = Array.isArray(lookupResponse.data)
-          ? (lookupResponse.data as Array<{ id: number }>)
-          : [];
-        const lookup = lookupData[0] || null;
-        categoryId = lookup?.id;
-      }
-
-      if (!categoryId) {
+      if (!documentId) {
         await Swal.fire(
           "Error",
           "No se pudo identificar la categoría para actualizar.",
@@ -142,7 +125,7 @@ const handleSubmit = async (values: Record<string, unknown>) => {
 
       const response = await apiClient<{
         data: { id?: number; documentId?: string };
-      }>(`/categories/${categoryId}`, {
+      }>(`/categories/${documentId}`, {
         method: "PUT",
         body: { data: payload },
       });

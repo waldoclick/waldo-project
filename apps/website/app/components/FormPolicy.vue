@@ -107,12 +107,15 @@ const handleSubmit = async (values: Record<string, unknown>) => {
     };
 
     if (isEditMode.value) {
-      const policyId = props.policy?.id || Number(route.params.id);
+      const routeId = route.params.id;
+      const documentId =
+        props.policy?.documentId ||
+        (typeof routeId === "string" ? routeId : undefined);
 
-      if (!policyId) {
+      if (!documentId) {
         await Swal.fire(
           "Error",
-          "No se pudo identificar la Politica para actualizar.",
+          "No se pudo identificar la Política para actualizar.",
           "error",
         );
         sending.value = false;
@@ -121,7 +124,7 @@ const handleSubmit = async (values: Record<string, unknown>) => {
 
       const response = await apiClient<{
         data: { id?: number; documentId?: string };
-      }>(`/policies/${policyId}`, {
+      }>(`/policies/${documentId}`, {
         method: "PUT",
         body: { data: payload },
       });

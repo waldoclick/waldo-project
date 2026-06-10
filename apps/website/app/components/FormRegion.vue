@@ -92,23 +92,8 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       const documentId =
         props.region?.documentId ||
         (typeof routeId === "string" ? routeId : undefined);
-      let regionId = props.region?.id;
 
-      if (!regionId && documentId) {
-        const lookupResponse = (await apiClient("regions", {
-          method: "GET",
-          params: {
-            filters: { documentId: { $eq: documentId } },
-            pagination: { pageSize: 1 },
-          } as unknown as Record<string, unknown>,
-        })) as { data: Array<{ id: number }> };
-        const lookupData = Array.isArray(lookupResponse.data)
-          ? (lookupResponse.data as Array<{ id: number }>)
-          : [];
-        regionId = lookupData[0]?.id;
-      }
-
-      if (!regionId) {
+      if (!documentId) {
         await Swal.fire(
           "Error",
           "No se pudo identificar la región para actualizar.",
@@ -120,7 +105,7 @@ const handleSubmit = async (values: Record<string, unknown>) => {
 
       const response = await apiClient<{
         data: { id?: number; documentId?: string };
-      }>(`/regions/${regionId}`, {
+      }>(`/regions/${documentId}`, {
         method: "PUT",
         body: { data: payload },
       });

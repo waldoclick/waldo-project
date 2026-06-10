@@ -107,12 +107,15 @@ const handleSubmit = async (values: Record<string, unknown>) => {
     };
 
     if (isEditMode.value) {
-      const termId = props.term?.id || Number(route.params.id);
+      const routeId = route.params.id;
+      const documentId =
+        props.term?.documentId ||
+        (typeof routeId === "string" ? routeId : undefined);
 
-      if (!termId) {
+      if (!documentId) {
         await Swal.fire(
           "Error",
-          "No se pudo identificar la Condicion para actualizar.",
+          "No se pudo identificar el Término para actualizar.",
           "error",
         );
         sending.value = false;
@@ -121,7 +124,7 @@ const handleSubmit = async (values: Record<string, unknown>) => {
 
       const response = await apiClient<{
         data: { id?: number; documentId?: string };
-      }>(`/terms/${termId}`, {
+      }>(`/terms/${documentId}`, {
         method: "PUT",
         body: { data: payload },
       });
