@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-last_updated: "2026-06-10T16:02:01.470Z"
+last_updated: "2026-06-10T16:10:52.971Z"
 last_activity: 2026-06-10
 progress:
   total_phases: 19
   completed_phases: 17
   total_plans: 48
-  completed_plans: 45
-  percent: 90
+  completed_plans: 46
+  percent: 96
 ---
 
 # Session State
@@ -24,16 +24,17 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 
 ## Position
 
-Phase 125 plan 04 complete — 4 dashboard-exclusive types (order, subscription-payment, subscription-pro, better-stack) and 3 composables (useExportCsv, useServices, useSlugify) moved to website via git mv; websiteUrl added to runtimeConfig.public; zero useSessionX references remain in apps/website/app — all 9 call sites swapped to useStrapiAuth/useStrapiUser/useStrapiToken.
+Phase 125 plan 05 complete — 68 dashboard pages moved via git mv to apps/website/app/pages/dashboard/; 5 auth+dev pages dropped (D-01/D-11); all stale /auth/* navigation links rewritten to website routes; dashboard pages tree empty.
 
 ```
-Progress: [█████████░] 94%
+Progress: [██████████] 96%
 ```
 
 ## Accumulated Context
 
 ### Key Decisions (carry forward)
 
+- All 68 surviving dashboard pages already had layout: "dashboard" — the only 5 without it were exactly the 5 dropped (auth+dev); Strapi API calls to /auth/* endpoints intentionally unchanged (backend REST, not navigation) (125-05)
 - useStrapiAuth() is the website-native replacement for useSessionAuth() — exposes identical setToken/fetchUser/logout API (verified from @nuxtjs/strapi dist/.d.ts); qs-serialization caveat does not apply — none of the 9 migrated components used useSessionClient (125-04)
 - D-04 session replacement complete: useSessionUser→useStrapiUser, useSessionToken→useStrapiToken, useSessionAuth→useStrapiAuth, useSessionClient→useApiClient (125-04)
 - routeRules /dashboard/ prefix pattern: all 24 dashboard Spanish->English redirects scoped under /dashboard/ namespace in website nuxt.config.ts — prevents collision with public website routes; CONTEXT.md stated "22" but actual count was 24 (125-02)
