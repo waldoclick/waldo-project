@@ -251,3 +251,19 @@ Plans:
 Plans:
 - [x] 124-01-PLAN.md — InputPhone component + countries.json + SCSS + unit tests (website)
 - [x] 124-02-PLAN.md — Replace phone Field in FormProfile, FormCreateThree, FormContact
+
+### Phase 125: Merge dashboard into website as /dashboard
+
+**Goal:** Move the entire `apps/dashboard` Nuxt 4 app into `apps/website` so the dashboard is accessible at `/dashboard/**`. Shared login redirects managers to `/dashboard` after OTP; managers bypass onboarding. New `dashboard.vue` layout, 28 colliding components renamed with `Dashboard` suffix, SCSS merged as `&--dashboard` modifiers, custom session composables replaced by website's `@nuxtjs/strapi` system, and `apps/dashboard` deleted.
+**Requirements**: [AUTH-01, AUTH-02, GUARD-01, GUARD-02, GUARD-03, PKG-01, CFG-01, COMP-01, COMP-02, SESS-01, SESS-02, COMPOSABLE-01, PAGE-01, PAGE-02, SCSS-01, TYPE-01, TYPE-02, RUNTIME-01, CLEANUP-01]
+**Depends on:** Phase 124
+**Plans:** 7 plans
+
+Plans:
+- [ ] 125-01-PLAN.md — Wave 0 stubs + dashboard-guard + onboarding exemption + FormVerifyCode manager redirect + dashboard layout + stores
+- [ ] 125-02-PLAN.md — Package deps + nuxt.config (optimizeDeps, routeRules, robots)
+- [ ] 125-03-PLAN.md — Components migration (rename 28 colliding before copy, move all flat + icons)
+- [ ] 125-04-PLAN.md — Composables migration + session system replacement (useSessionX → useStrapiX)
+- [ ] 125-05-PLAN.md — Pages migration (68 pages → /dashboard prefix, drop auth + dev)
+- [ ] 125-06-PLAN.md — SCSS merge + TypeScript remediation (build + typecheck gates)
+- [ ] 125-07-PLAN.md — Types sweep + MenuUser link + Strapi DASHBOARD_URL + workspace removal + delete dashboard + final gate
