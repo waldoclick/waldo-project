@@ -116,13 +116,12 @@ export default () => {
       return await next();
     }
 
-    // Desde aquí, la ruta es cacheable — establecer headers HTTP de cache
+    // Desde aquí, la ruta es cacheable — cache en Redis + CDN, nunca en browser
     if (ctx.method === "GET" || ctx.method === "HEAD") {
       const ttl = getCacheTTL();
-      ctx.response.set(
-        "Cache-Control",
-        `public, max-age=${ttl}, s-maxage=${ttl}`,
-      );
+      // no-store: browser nunca cachea (evita data stale en dashboard)
+      // s-maxage: CDN (Cloudflare) puede cachear por TTL
+      ctx.response.set("Cache-Control", `no-store, s-maxage=${ttl}`);
       ctx.response.set("X-Cache", "MISS");
     }
 
@@ -146,15 +145,10 @@ export default () => {
       redis?.get(key),
     );
 
-    console.log("cachedResponse", cachedResponse);
-
     if (cachedResponse) {
       ctx.body = JSON.parse(cachedResponse as string);
       const ttl = getCacheTTL();
-      ctx.response.set(
-        "Cache-Control",
-        `public, max-age=${ttl}, s-maxage=${ttl}`,
-      );
+      ctx.response.set("Cache-Control", `no-store, s-maxage=${ttl}`);
       ctx.response.set("X-Cache", "HIT");
       return;
     }
