@@ -16,7 +16,6 @@
 
 <script setup lang="ts">
 import FormEdit from "@/components/FormEdit.vue";
-import FormPassword from "@/components/FormPassword.vue";
 
 definePageMeta({
   layout: "dashboard",
