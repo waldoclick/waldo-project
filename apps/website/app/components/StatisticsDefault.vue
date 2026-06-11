@@ -8,7 +8,7 @@
         <CardStat
           title="Anuncios Pendientes"
           :value="counts.pending"
-          :link="{ text: 'Ver pendientes', to: '/ads/pending' }"
+          :link="{ text: 'Ver pendientes', to: '/dashboard/ads/pending' }"
           :icon="Clock"
           icon-color="#ca8a04"
           icon-bg-color="#fef9c3"
@@ -16,7 +16,7 @@
         <CardStat
           title="Anuncios Publicados"
           :value="counts.published"
-          :link="{ text: 'Ver publicados', to: '/ads/active' }"
+          :link="{ text: 'Ver publicados', to: '/dashboard/ads/active' }"
           :icon="CheckCircle"
           icon-color="#16a34a"
           icon-bg-color="#dcfce7"
@@ -24,7 +24,7 @@
         <CardStat
           title="Anuncios Archivados"
           :value="counts.archived"
-          :link="{ text: 'Ver archivados', to: '/ads/expired' }"
+          :link="{ text: 'Ver archivados', to: '/dashboard/ads/expired' }"
           :icon="Archive"
           icon-color="#2563eb"
           icon-bg-color="#dbeafe"
@@ -32,7 +32,7 @@
         <CardStat
           title="Anuncios Rechazados"
           :value="counts.rejected"
-          :link="{ text: 'Ver rechazados', to: '/ads/rejected' }"
+          :link="{ text: 'Ver rechazados', to: '/dashboard/ads/rejected' }"
           :icon="XCircle"
           icon-color="#dc2626"
           icon-bg-color="#fee2e2"
@@ -40,7 +40,10 @@
         <CardStat
           title="Reservas Usadas"
           :value="counts.reservasUsadas"
-          :link="{ text: 'Ver reservas usadas', to: '/reservations/used' }"
+          :link="{
+            text: 'Ver reservas usadas',
+            to: '/dashboard/reservations/used',
+          }"
           :icon="CheckCircle"
           icon-color="#0d9488"
           icon-bg-color="#ccfbf1"
@@ -48,7 +51,10 @@
         <CardStat
           title="Reservas Libres"
           :value="counts.reservasLibres"
-          :link="{ text: 'Ver reservas libres', to: '/reservations/free' }"
+          :link="{
+            text: 'Ver reservas libres',
+            to: '/dashboard/reservations/free',
+          }"
           :icon="Circle"
           icon-color="#0d9488"
           icon-bg-color="#ccfbf1"
@@ -56,7 +62,10 @@
         <CardStat
           title="Destacados Usados"
           :value="counts.destacadosUsados"
-          :link="{ text: 'Ver destacados usados', to: '/featured/used' }"
+          :link="{
+            text: 'Ver destacados usados',
+            to: '/dashboard/featured/used',
+          }"
           :icon="CheckCircle"
           icon-color="#ca8a04"
           icon-bg-color="#fef9c3"
@@ -64,7 +73,10 @@
         <CardStat
           title="Destacados Libres"
           :value="counts.destacadosLibres"
-          :link="{ text: 'Ver destacados libres', to: '/featured/free' }"
+          :link="{
+            text: 'Ver destacados libres',
+            to: '/dashboard/featured/free',
+          }"
           :icon="Circle"
           icon-color="#ca8a04"
           icon-bg-color="#fef9c3"
@@ -72,7 +84,7 @@
         <CardStat
           title="Órdenes"
           :value="counts.ordenes"
-          :link="{ text: 'Ver órdenes', to: '/orders' }"
+          :link="{ text: 'Ver órdenes', to: '/dashboard/orders' }"
           :icon="ShoppingCart"
           icon-color="#0d9488"
           icon-bg-color="#ccfbf1"
@@ -80,7 +92,7 @@
         <CardStat
           title="Usuarios"
           :value="counts.usuarios"
-          :link="{ text: 'Ver usuarios', to: '/users' }"
+          :link="{ text: 'Ver usuarios', to: '/dashboard/users' }"
           :icon="Users"
           icon-color="#7c3aed"
           icon-bg-color="#ede9fe"
@@ -88,7 +100,10 @@
         <CardStat
           title="Categorías"
           :value="counts.categorias"
-          :link="{ text: 'Ver categorías', to: '/categories' }"
+          :link="{
+            text: 'Ver categorías',
+            to: '/dashboard/maintenance/categories',
+          }"
           :icon="Tag"
           icon-color="#db2777"
           icon-bg-color="#fce7f3"
@@ -96,7 +111,10 @@
         <CardStat
           title="Condiciones"
           :value="counts.condiciones"
-          :link="{ text: 'Ver condiciones', to: '/conditions' }"
+          :link="{
+            text: 'Ver condiciones',
+            to: '/dashboard/maintenance/conditions',
+          }"
           :icon="FileCheck"
           icon-color="#ca8a04"
           icon-bg-color="#fef9c3"
@@ -104,7 +122,7 @@
         <CardStat
           title="FAQ"
           :value="counts.faqs"
-          :link="{ text: 'Ver FAQs', to: '/faqs' }"
+          :link="{ text: 'Ver FAQs', to: '/dashboard/maintenance/faqs' }"
           :icon="HelpCircle"
           icon-color="#7c3aed"
           icon-bg-color="#ede9fe"
@@ -112,7 +130,7 @@
         <CardStat
           title="Packs"
           :value="counts.packs"
-          :link="{ text: 'Ver packs', to: '/packs' }"
+          :link="{ text: 'Ver packs', to: '/dashboard/maintenance/packs' }"
           :icon="Package"
           icon-color="#db2777"
           icon-bg-color="#fce7f3"
@@ -120,7 +138,7 @@
         <CardStat
           title="Regiones"
           :value="counts.regiones"
-          :link="{ text: 'Ver regiones', to: '/regions' }"
+          :link="{ text: 'Ver regiones', to: '/dashboard/maintenance/regions' }"
           :icon="MapPin"
           icon-color="#059669"
           icon-bg-color="#d1fae5"
@@ -128,7 +146,7 @@
         <CardStat
           title="Comunas"
           :value="counts.comunas"
-          :link="{ text: 'Ver comunas', to: '/communes' }"
+          :link="{ text: 'Ver comunas', to: '/dashboard/maintenance/communes' }"
           :icon="Building2"
           icon-color="#0d9488"
           icon-bg-color="#ccfbf1"
