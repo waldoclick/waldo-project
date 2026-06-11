@@ -185,6 +185,7 @@ Progress: [██████████] 100%
 | 260611-pyz | Delete 19 orphaned Phase 125 dashboard-migration components and remove 2 stale explicit imports; vue-tsc clean | 2026-06-11 | eec60978 | [260611-pyz-delete-orphaned-unused-components-and-fi](./quick/260611-pyz-delete-orphaned-unused-components-and-fi/) |
 | 260611-q5u | Consolidate CardInfo and CardInfoDashboard: promote TS superset to replace plain-JS CardInfo, delete CardInfoDashboard, update 25 dashboard pages; vue-tsc clean | 2026-06-11 | 2ba02aed | [260611-q5u-consolidate-cardinfo-and-cardinfodashboa](./quick/260611-q5u-consolidate-cardinfo-and-cardinfodashboa/) |
 | 260611-qtt | Fix 4 security gaps: frameguard, apiUrl exposure, processedTokens memory leak, maxLimit | 2026-06-11 | bda08a0b | [260611-qtt-fix-4-security-gaps-frameguard-apiurl-ex](./quick/260611-qtt-fix-4-security-gaps-frameguard-apiurl-ex/) |
+| 260611-reg | Change Transbank return_url from APP_URL to FRONTEND_URL so callbacks go through Nuxt proxy | 2026-06-11 | 0549f2fa | [260611-reg-change-transbank-return-url-from-app-url](./quick/260611-reg-change-transbank-return-url-from-app-url/) |
 | 260611-reg | Replace APP_URL with FRONTEND_URL in all 5 Transbank return/response URLs across 4 payment files so callbacks route through the Nuxt proxy | 2026-06-11 | 0549f2fa | [260611-reg-change-transbank-return-url-from-app-url](./quick/260611-reg-change-transbank-return-url-from-app-url/) |
 
 ## Session Continuity
