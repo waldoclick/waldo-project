@@ -583,5 +583,12 @@ export default defineNuxtConfig({
 
   image: {
     provider: "ipx",
+    domains: [
+      "api.waldo.click",
+      "www.waldo.click",
+      "waldo.click",
+      "localhost:1337",
+      "localhost:3000",
+    ],
   },
 });
