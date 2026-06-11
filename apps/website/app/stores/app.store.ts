@@ -91,9 +91,9 @@ export const useAppStore = defineStore("app", {
     },
   },
 
-  // persist: REVIEW — referer and contactFormSent are session-scoped; isMobileMenuOpen is volatile UI state that should reset on reload
+  // persist: CORRECT — referer and contactFormSent are intentionally session-scoped across reloads
   persist: {
     storage: persistedState.localStorage,
-    pick: ["referer", "contactFormSent", "isMobileMenuOpen"],
+    pick: ["referer", "contactFormSent"],
   },
 });
