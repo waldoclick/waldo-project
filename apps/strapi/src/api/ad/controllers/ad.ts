@@ -8,12 +8,11 @@
  */
 
 import { factories } from "@strapi/strapi";
-import { Context } from "koa";
 import jwt from "jsonwebtoken";
 import { sanitizeAdForPublic } from "../services/sanitize-ad";
 
 /** Returns true if ctx.state.user has the manager role. */
-const ctxIsManager = (ctx: Context): boolean => {
+const ctxIsManager = (ctx: { state: { user: unknown } }): boolean => {
   const user = ctx.state.user as Record<string, unknown>;
   const role = user?.role as Record<string, unknown> | undefined;
   return ((role?.name as string) ?? "").toLowerCase() === "manager";
@@ -37,7 +36,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    *
    * @route GET /api/ads/:id
    */
-  async findOne(ctx: Context) {
+  async findOne(ctx) {
     // Delegate to the core controller to keep default behavior (sanitization, etc.)
     const response = await super.findOne(ctx);
 
@@ -59,7 +58,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    *
    * @route PUT /api/ads/:id
    */
-  async update(ctx: Context) {
+  async update(ctx) {
     const userId = ctx.state.user?.id;
     if (!userId) {
       return ctx.unauthorized(
@@ -95,7 +94,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    *
    * @route DELETE /api/ads/:id
    */
-  async delete(ctx: Context) {
+  async delete(ctx) {
     const userId = ctx.state.user?.id;
     if (!userId) {
       return ctx.unauthorized(
@@ -131,7 +130,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    *
    * @route GET /api/ads/actives
    */
-  async actives(ctx: Context) {
+  async actives(ctx) {
     try {
       const query = ctx.query as Record<string, unknown>;
       const pagination = query.pagination as Record<string, string> | undefined;
@@ -170,7 +169,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    *
    * @route GET /api/ads/catalog
    */
-  async catalog(ctx: Context) {
+  async catalog(ctx) {
     try {
       const query = ctx.query as Record<string, unknown>;
       const pagination = query.pagination as Record<string, string> | undefined;
@@ -208,7 +207,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    *
    * @route GET /api/ads/pendings
    */
-  async pendings(ctx: Context) {
+  async pendings(ctx) {
     try {
       const query = ctx.query as Record<string, unknown>;
       const pagination = query.pagination as Record<string, string> | undefined;
@@ -247,7 +246,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    *
    * @route GET /api/ads/archiveds
    */
-  async archiveds(ctx: Context) {
+  async archiveds(ctx) {
     try {
       const query = ctx.query as Record<string, unknown>;
       const pagination = query.pagination as Record<string, string> | undefined;
@@ -285,7 +284,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    *
    * @route GET /api/ads/banneds
    */
-  async banneds(ctx: Context) {
+  async banneds(ctx) {
     try {
       const query = ctx.query as Record<string, unknown>;
       const pagination = query.pagination as Record<string, string> | undefined;
@@ -322,7 +321,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    *
    * @route GET /api/ads/rejecteds
    */
-  async rejecteds(ctx: Context) {
+  async rejecteds(ctx) {
     try {
       const query = ctx.query as Record<string, unknown>;
       const pagination = query.pagination as Record<string, string> | undefined;
@@ -361,7 +360,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    *
    * @route GET /api/ads/drafts
    */
-  async drafts(ctx: Context) {
+  async drafts(ctx) {
     try {
       const query = ctx.query as Record<string, unknown>;
       const pagination = query.pagination as Record<string, string> | undefined;
@@ -398,7 +397,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    *
    * @route PUT /api/ads/:id/approve
    */
-  async approveAd(ctx: Context) {
+  async approveAd(ctx) {
     try {
       const { id } = ctx.params;
       const userId = ctx.state.user.id;
@@ -425,7 +424,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    *
    * @route PUT /api/ads/:id/reject
    */
-  async rejectAd(ctx: Context) {
+  async rejectAd(ctx) {
     try {
       const { id } = ctx.params;
       const { reason_rejected } = ctx.request.body;
@@ -455,7 +454,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    *
    * @route GET /api/ads/count
    */
-  async count(ctx: Context) {
+  async count(ctx) {
     try {
       const isManager = ctxIsManager(ctx);
       const userId: number | undefined = ctx.state.user?.id;
@@ -520,7 +519,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    *
    * @route POST /api/ads/upload
    */
-  async upload(ctx: Context) {
+  async upload(ctx) {
     try {
       if (!ctx.state.user?.id) {
         return ctx.unauthorized("You must be authenticated to upload images");
@@ -563,7 +562,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    *
    * @route DELETE /api/ads/upload/:id
    */
-  async deleteUpload(ctx: Context) {
+  async deleteUpload(ctx) {
     try {
       const fileId = Number(ctx.params.id);
       const userId = Number(ctx.state.user?.id);
@@ -613,7 +612,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    *
    * @route PUT /api/ads/:id/banned
    */
-  async bannedAd(ctx: Context) {
+  async bannedAd(ctx) {
     try {
       const { id } = ctx.params;
       const reasonForBan = ctx.request.body?.reason_for_ban;
@@ -656,7 +655,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    *
    * @route POST /api/ads/draft
    */
-  async saveDraft(ctx: Context) {
+  async saveDraft(ctx) {
     try {
       const { data } = ctx.request.body as {
         data?: { ad?: Record<string, unknown> };
@@ -690,7 +689,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
     }
   },
 
-  async deactivateAd(ctx: Context) {
+  async deactivateAd(ctx) {
     try {
       const { id } = ctx.params;
       const reasonForDeactivation = ctx.request.body?.reason_for_deactivation;
@@ -725,7 +724,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    * Uses strapi.db.query to bypass publishedAt — pending ads are valid.
    * @route GET /api/ads/thankyou/:documentId
    */
-  async thankyou(ctx: Context) {
+  async thankyou(ctx) {
     const userId = ctx.state.user?.id;
     if (!userId) return ctx.unauthorized();
 
@@ -745,7 +744,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    *
    * @route GET /api/ads/slug/:slug
    */
-  async findBySlug(ctx: Context) {
+  async findBySlug(ctx) {
     const { slug } = ctx.params;
 
     // Route has auth: false so ctx.state.user is not populated by Strapi middleware.

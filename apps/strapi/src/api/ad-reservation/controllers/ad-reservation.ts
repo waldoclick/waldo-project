@@ -1,5 +1,4 @@
 import { factories } from "@strapi/strapi";
-import { Context } from "koa";
 import { errors } from "@strapi/utils";
 import { sendMjmlEmail } from "../../../services/mjml";
 
@@ -8,7 +7,7 @@ const { ApplicationError } = errors;
 export default factories.createCoreController(
   "api::ad-reservation.ad-reservation",
   () => ({
-    async gift(ctx: Context): Promise<void> {
+    async gift(ctx): Promise<void> {
       const body = ctx.request.body as { userId?: number; quantity?: number };
       const userId = Number(body?.userId);
       const quantity = body?.quantity;

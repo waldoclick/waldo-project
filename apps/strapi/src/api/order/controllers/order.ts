@@ -3,7 +3,6 @@
  */
 
 import { factories } from "@strapi/strapi";
-import type { Context } from "koa";
 import { QueryParams } from "../types";
 
 interface StrapiOrder {
@@ -314,7 +313,7 @@ export default factories.createCoreController(
       }
     },
 
-    async exportCsv(ctx: Context) {
+    async exportCsv(ctx) {
       try {
         const { _q, sort: sortParam } = ctx.query as {
           _q?: string;
@@ -385,7 +384,7 @@ export default factories.createCoreController(
       }
     },
 
-    async findOne(ctx: Context) {
+    async findOne(ctx) {
       try {
         const documentId = ctx.params.documentId ?? ctx.params.id;
         if (!documentId) {
