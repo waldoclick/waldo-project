@@ -36,6 +36,11 @@
     "@strapi/provider-upload-cloudinary": "^5.20.0",
     "@strapi/sdk-plugin": "^5.2.7",
     "@strapi/strapi": "5.41.1",
+    "@strapi/utils": "5.41.1",
+    "axios": "^1.0.0",
+    "google-auth-library": "^9.0.0",
+    "jsonwebtoken": "^9.0.0",
+    "request-ip": "^3.3.0",
     "@types/mjml": "^4.7.4",
     "@types/nunjucks": "^3.2.6",
     "@types/soap": "^0.21.0",
@@ -60,9 +65,11 @@
     "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
+    "@strapi/database": "5.41.1",
     "@strapi/typescript-utils": "5.41.1",
     "@types/jest": "^29.5.14",
     "@types/koa": "2.15.2",
+    "knex": "^3.0.0",
     "@types/mjml-core": "4.15.2",
     "@types/node-cache": "^4.2.5",
     "@types/pg": "^8.15.5",
