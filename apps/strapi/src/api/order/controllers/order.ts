@@ -6,8 +6,8 @@ import { factories } from "@strapi/strapi";
 import { QueryParams } from "../types";
 
 interface StrapiOrder {
-  createdAt: string;
-  amount: string | number;
+  createdAt: string | Date;
+  amount: string | number | bigint;
 }
 
 interface ExportOrder {
@@ -283,8 +283,7 @@ export default factories.createCoreController(
               $lt: endDate.toISOString(),
             },
           },
-          select: ["amount", "createdAt"],
-          limit: -1, // fetch all matching orders without pagination
+          limit: -1,
         });
 
         // Aggregate on the server: sum amount per month (0-indexed months 0-11)
@@ -295,9 +294,11 @@ export default factories.createCoreController(
           const date = new Date(order.createdAt as string);
           const month = date.getUTCMonth();
           const amount =
-            typeof order.amount === "string"
-              ? Number.parseFloat(order.amount as string)
-              : (order.amount as number) || 0;
+            typeof order.amount === "bigint"
+              ? Number(order.amount)
+              : typeof order.amount === "string"
+                ? Number.parseFloat(order.amount)
+                : (order.amount as number) || 0;
           monthlyTotals[month] = (monthlyTotals[month] || 0) + amount;
         }
 

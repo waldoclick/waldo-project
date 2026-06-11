@@ -13,6 +13,7 @@ export default {
       method: "GET",
       path: "/orders/sales-by-month",
       handler: "order.salesByMonth",
+      config: { policies: ["global::isManager"] },
     },
     {
       method: "GET",
