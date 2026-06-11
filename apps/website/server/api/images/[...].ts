@@ -4,7 +4,7 @@ export default defineEventHandler(async (event) => {
 
   // Build the Strapi uploads URL
   const config = useRuntimeConfig();
-  const strapiUrl = `${config.public.apiUrl}/uploads/${fullPath}`;
+  const strapiUrl = `${config.apiUrl}/uploads/${fullPath}`;
 
   // Get query parameters and force WebP format
   const query = getQuery(event);

@@ -68,7 +68,6 @@ import mobileMenuClose from "/images/mobile-menu-close.svg";
 
 // Obtener la configuración de runtime
 const config = useRuntimeConfig();
-const apiUrl = config.public.apiUrl;
 
 // Verificar proveedores de autenticación usando el plugin de Strapi
 const { data: providers, pending: providersPending } = useLazyAsyncData(

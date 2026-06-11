@@ -60,3 +60,11 @@ declare module "nuxt/config" {
     ): import("@nuxt/schema").NuxtConfig;
   }
 }
+
+// apiUrl is conditionally exposed in public runtimeConfig (only when API_DISABLE_PROXY=true).
+// This augmentation keeps existing dev-mode references (UploadMedia, useImage) type-safe.
+declare module "nuxt/schema" {
+  interface PublicRuntimeConfig {
+    apiUrl?: string;
+  }
+}

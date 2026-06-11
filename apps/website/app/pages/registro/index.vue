@@ -57,19 +57,20 @@
 // Define SEO
 const { $setSEO, $setStructuredData } = useNuxtApp();
 const config = useRuntimeConfig();
-const apiUrl = config.public.apiUrl;
 
-// Verificar proveedores de autenticación
+// Verificar proveedores de autenticación usando el plugin de Strapi (sin apiUrl en cliente)
 const { data: providers } = await useAsyncData("providers", async () => {
-  const googleResponse = await fetch(`${apiUrl}/api/connect/google/callback`);
-  // const facebookResponse = await fetch(
-  //   `${apiUrl}/api/connect/facebook/callback`,
-  // );
-
-  return {
-    google: Number(googleResponse.status) === 200,
-    // facebook: Number(facebookResponse.status) === 200,
-  };
+  const { getProviderAuthenticationUrl } = useStrapiAuth();
+  try {
+    const googleUrl = getProviderAuthenticationUrl("google");
+    return {
+      google: !!googleUrl,
+    };
+  } catch {
+    return {
+      google: true,
+    };
+  }
 });
 
 // Components

@@ -345,7 +345,11 @@ export default defineNuxtConfig({
   // 4. Environment Configuration
   runtimeConfig: {
     public: {
-      apiUrl: process.env.API_URL || "http://localhost:1337",
+      // apiUrl is intentionally absent in production (proxy mode) — raw Strapi URL must not ship to browser.
+      // It is present only when API_DISABLE_PROXY=true (dev-direct mode), where direct access is unavoidable.
+      ...(process.env.API_DISABLE_PROXY === "true"
+        ? { apiUrl: process.env.API_URL || "http://localhost:1337" }
+        : {}),
       websiteUrl: process.env.WEBSITE_URL || "https://waldo.click",
       sessionMaxAge: process.env.SESSION_MAX_AGE || "86400", // Valor por defecto de 1 día
       baseUrl: process.env.BASE_URL || "http://localhost:3000",
@@ -366,6 +370,7 @@ export default defineNuxtConfig({
       zohoWidgetCode: process.env.ZOHO_WIDGET_CODE || "",
     },
     // Variables privadas del servidor
+    apiUrl: process.env.API_URL || "http://localhost:1337", // server-only — for Nitro image proxy and sitemap
     recaptchaSecretKey: process.env.RECAPTCHA_SECRET_KEY, // server-only — for Nitro proxy
     recaptchaEnabled: process.env.RECAPTCHA_ENABLED !== "false", // set to false to skip verification in dev/testing
     devUsername: process.env.DEV_USERNAME,
