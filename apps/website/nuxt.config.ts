@@ -25,6 +25,7 @@ export default defineNuxtConfig({
     "@nuxtjs/google-fonts",
     // "@nuxtjs/i18n",
     "@saslavik/nuxt-gtm",
+    "@vercel/speed-insights",
   ],
 
   // Security configuration - using nuxt-security defaults with customizations
