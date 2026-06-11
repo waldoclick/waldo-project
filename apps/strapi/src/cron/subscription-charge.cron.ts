@@ -78,7 +78,6 @@ export class SubscriptionChargeService {
               populate: ["subscription_pro"],
             },
           },
-          limit: -1,
         })) as DuePaymentRecord[];
 
       logger.info(
@@ -119,7 +118,6 @@ export class SubscriptionChargeService {
               populate: ["subscription_pro"],
             },
           },
-          limit: -1,
         })) as FailedPaymentRecord[];
 
       logger.info(
@@ -156,7 +154,6 @@ export class SubscriptionChargeService {
             charge_attempts: { $gte: 3 },
           },
           populate: ["user"],
-          limit: -1,
         })) as ExhaustedPaymentRecord[];
 
       logger.info(
@@ -200,7 +197,6 @@ export class SubscriptionChargeService {
           const userFeaturedAds = await strapi.db.query("api::ad.ad").findMany({
             where: { user: { id: user.id } },
             populate: { ad_featured_reservation: true, user: true },
-            limit: -1,
           });
           for (const ad of userFeaturedAds) {
             const priority = computeSortPriority(
@@ -247,7 +243,6 @@ export class SubscriptionChargeService {
             user: { pro_status: { $eq: "cancelled" } },
           },
           populate: ["user"],
-          limit: -1,
         })) as unknown as Array<{
         id: number;
         user: { id: number; documentId: string };
@@ -277,7 +272,6 @@ export class SubscriptionChargeService {
           const userFeaturedAds = await strapi.db.query("api::ad.ad").findMany({
             where: { user: { id: user.id } },
             populate: { ad_featured_reservation: true, user: true },
-            limit: -1,
           });
           for (const ad of userFeaturedAds) {
             const priority = computeSortPriority(

@@ -283,7 +283,6 @@ export default factories.createCoreController(
               $lt: endDate.toISOString(),
             },
           },
-          limit: -1,
         });
 
         // Aggregate on the server: sum amount per month (0-indexed months 0-11)
@@ -344,7 +343,6 @@ export default factories.createCoreController(
         const orders = await strapi.db.query("api::order.order").findMany({
           where: filters,
           populate: ["user", "ad"] as unknown as Record<string, unknown>,
-          limit: -1,
           orderBy: sort,
         });
 

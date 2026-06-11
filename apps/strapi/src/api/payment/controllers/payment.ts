@@ -656,7 +656,6 @@ class PaymentController {
       const userFeaturedAds = await strapi.db.query("api::ad.ad").findMany({
         where: { user: { id: user.id } },
         populate: { ad_featured_reservation: true, user: true },
-        limit: -1,
       });
       for (const ad of userFeaturedAds) {
         const priority = computeSortPriority(

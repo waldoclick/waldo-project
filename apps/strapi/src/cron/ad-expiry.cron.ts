@@ -45,7 +45,6 @@ export class AdService {
           remaining_days: { $gt: 0 },
           active: true,
         },
-        limit: -1,
       })) as Ad[];
 
       for (const ad of ads) {

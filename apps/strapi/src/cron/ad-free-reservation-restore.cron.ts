@@ -35,7 +35,6 @@ export default class UserCronService {
         .query("plugin::users-permissions.user")
         .findMany({
           select: ["id", "username", "email"],
-          limit: -1,
         })) as UserRecord[];
 
       logger.info(`Processing ${allUsers.length} users`);

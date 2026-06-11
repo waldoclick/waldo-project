@@ -150,7 +150,6 @@ class GeneralUtils {
             ],
           },
           populate: ["ad"],
-          limit: -1,
         })) as AdReservation[];
 
       const availableReservations = reservations.filter((r) => !r.ad).length;

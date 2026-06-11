@@ -105,7 +105,6 @@ export class CleanupService {
       // This is the supported Strapi v5 pattern for scoping files to a folder.
       const images = await strapi.db.query("plugin::upload.file").findMany({
         where: { folderPath: adsFolder.path },
-        limit: -1,
       });
 
       return (images as unknown as StrapiUploadFile[]) || [];
@@ -129,7 +128,6 @@ export class CleanupService {
         populate: {
           gallery: true,
         },
-        limit: -1,
       })) as unknown as StrapiAd[];
 
       const imageUrls: string[] = [];

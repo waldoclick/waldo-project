@@ -93,7 +93,6 @@ export default {
         .query("api::category.category")
         .findMany({
           select: ["id"],
-          limit: -1,
         });
 
       const results = await Promise.all(

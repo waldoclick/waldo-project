@@ -120,7 +120,6 @@ export function computeSortPriority(ad: {
 export async function recalculateSortPriorities(): Promise<number> {
   const ads = await strapi.db.query("api::ad.ad").findMany({
     populate: { ad_featured_reservation: true, user: true },
-    limit: -1,
   });
   let updated = 0;
   for (const ad of ads) {
