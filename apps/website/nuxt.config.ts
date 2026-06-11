@@ -582,7 +582,8 @@ export default defineNuxtConfig({
   },
 
   image: {
-    provider: "ipx",
+    // Vercel's native provider accesses static files from CDN; IPX for local dev
+    provider: process.env.VERCEL ? "vercel" : "ipx",
     domains: [
       "api.waldo.click",
       "www.waldo.click",
