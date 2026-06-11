@@ -21,8 +21,9 @@ interface RegisterResponse {
   jwt?: string;
 }
 
-// Set para rastrear tokens ya procesados
-const processedTokens = new Set<string>();
+// Map to track processed tokens with insertion timestamps (token → timestamp ms)
+const processedTokens = new Map<string, number>();
+const PROCESSED_TOKEN_TTL_MS = 60000;
 
 export default (
   config: Record<string, unknown>,
@@ -184,9 +185,15 @@ export default (
     ) {
       const accessToken = query.access_token as string;
 
+      // Purge expired entries before checking
+      const nowMs = Date.now();
+      for (const [tok, ts] of processedTokens) {
+        if (nowMs - ts > PROCESSED_TOKEN_TTL_MS) processedTokens.delete(tok);
+      }
+
       // Solo procesar si no hemos visto este token antes
       if (accessToken && !processedTokens.has(accessToken)) {
-        processedTokens.add(accessToken);
+        processedTokens.set(accessToken, nowMs);
         const providerResponse = response.body as RegisterResponse;
         if (providerResponse?.user) {
           // Verificar si el usuario fue creado recientemente (en los últimos 10 segundos)
