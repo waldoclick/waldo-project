@@ -182,8 +182,9 @@ Progress: [██████████] 100%
 | 260504-t98 | Fix email confirmation link pointing to Strapi API directly instead of frontend proxy | 2026-05-05 | bc183da5 | [260504-t98-fix-email-confirmation-link-pointing-to-](./quick/260504-t98-fix-email-confirmation-link-pointing-to-/) |
 | 260504-ue0 | Email confirmation auto-resend + SSR verification — overrideEmailConfirmation returns { resent: true } for confirmed tokens; activar.vue rewritten with useAsyncData SSR-compatible | 2026-05-04 | bcef2a18 | [260504-ue0-email-confirmation-auto-resend-ssr-verif](./quick/260504-ue0-email-confirmation-auto-resend-ssr-verif/) |
 | 260504-wqf | Reserved username validation — RESERVED_USERNAMES constant, frontend guards in FormRegister/FormUsername/[slug].vue, backend badRequest in registerUserLocal + suffix in registerUserAuth | 2026-05-05 | bf70340d | [260504-wqf-reserved-username-validation](./quick/260504-wqf-reserved-username-validation/) |
+| 260611-pyz | Delete 19 orphaned Phase 125 dashboard-migration components and remove 2 stale explicit imports; vue-tsc clean | 2026-06-11 | eec60978 | [260611-pyz-delete-orphaned-unused-components-and-fi](./quick/260611-pyz-delete-orphaned-unused-components-and-fi/) |
 
 ## Session Continuity
 
-Last activity: 2026-06-10
+Last activity: 2026-06-11
 Resume file: None
