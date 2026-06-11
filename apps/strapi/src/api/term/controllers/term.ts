@@ -102,7 +102,7 @@ export default {
       data.map((entry) =>
         strapi.documents("api::term.term").update({
           documentId: entry.documentId as string,
-          data: { order: entry.order },
+          data: { order: entry.order } as unknown as Record<string, unknown>,
         }),
       ),
     );
