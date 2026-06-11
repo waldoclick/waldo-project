@@ -4,32 +4,28 @@
     <BoxContent>
       <template #content>
         <BoxInformation title="Información" :columns="2">
-          <CardInfoDashboard
-            v-if="item"
-            title="ID"
-            :description="String(item.id)"
-          />
-          <CardInfoDashboard
+          <CardInfo v-if="item" title="ID" :description="String(item.id)" />
+          <CardInfo
             v-if="item"
             title="Usuario"
             :description="item.user?.username || '--'"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Anuncio"
             :description="item.ad?.name || '--'"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Precio"
             :description="formatCurrency(item.price)"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Días"
             :description="formatDays(item.total_days)"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Descripción"
             :description="item.description || '--'"
@@ -38,12 +34,12 @@
       </template>
       <template #sidebar>
         <BoxInformation title="Detalles" :columns="1">
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Fecha de creación"
             :description="formatDate(item.createdAt)"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Última modificación"
             :description="formatDate(item.updatedAt)"

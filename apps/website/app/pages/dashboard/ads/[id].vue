@@ -50,95 +50,81 @@
           <template #titlePrefix>
             <AlertTriangle aria-hidden="true" />
           </template>
-          <CardInfoDashboard
+          <CardInfo
             v-if="item?.banned_at"
             title="Fecha"
             :description="formatDate(item.banned_at)"
           />
-          <CardInfoDashboard
-            title="Detalle"
-            :description="item.reason_for_ban"
-          />
+          <CardInfo title="Detalle" :description="item.reason_for_ban" />
         </BoxInformation>
         <BoxInformation
           v-if="item?.reason_for_rejection"
           title="Razón del rechazo"
           :columns="1"
         >
-          <CardInfoDashboard
+          <CardInfo
             v-if="item?.rejected_at"
             title="Fecha"
             :description="formatDate(item.rejected_at)"
           />
-          <CardInfoDashboard
-            title="Detalle"
-            :description="item.reason_for_rejection"
-          />
+          <CardInfo title="Detalle" :description="item.reason_for_rejection" />
         </BoxInformation>
         <BoxInformation title="Información" :columns="2">
-          <CardInfoDashboard
-            v-if="item"
-            title="Nombre"
-            :description="item.name"
-          />
-          <CardInfoDashboard
-            v-if="item"
-            title="Slug"
-            :description="item.slug"
-          />
-          <CardInfoDashboard
+          <CardInfo v-if="item" title="Nombre" :description="item.name" />
+          <CardInfo v-if="item" title="Slug" :description="item.slug" />
+          <CardInfo
             v-if="item"
             title="Precio"
             :description="
               formatCurrency(item.price, { currency: item.currency })
             "
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Categoría"
             :description="getRelationName(item.category)"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Condición"
             :description="getRelationName(item.condition)"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Comuna"
             :description="getRelationName(item.commune)"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Dirección"
             :description="formatAddress(item.address, item.address_number)"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Teléfono"
             :description="item.phone || '--'"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Email"
             :description="item.email || '--'"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Duración"
             :description="`${item.duration_days} días`"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Días Restantes"
             :description="`${item.remaining_days} días`"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Moneda"
             :description="item.currency || '--'"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             class="box--information__description__full"
             title="Descripción"
@@ -161,17 +147,17 @@
       </template>
       <template #sidebar>
         <BoxInformation title="Detalles" :columns="1">
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Estado"
             :description="getStatusText(item)"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Fecha de creación"
             :description="formatDate(item.createdAt)"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Última modificación"
             :description="formatDate(item.updatedAt)"

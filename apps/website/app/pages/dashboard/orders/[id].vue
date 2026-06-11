@@ -4,27 +4,23 @@
     <BoxContent>
       <template #content>
         <BoxInformation title="Resumen" :columns="2">
-          <CardInfoDashboard
-            v-if="order"
-            title="ID"
-            :description="String(order.id)"
-          />
-          <CardInfoDashboard
+          <CardInfo v-if="order" title="ID" :description="String(order.id)" />
+          <CardInfo
             v-if="order"
             title="Monto"
             :description="formatCurrency(order.amount)"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="order"
             title="Método de pago"
             :description="getPaymentMethod(order.payment_method)"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="order"
             title="Documento"
             :description="order.is_invoice ? 'Factura' : 'Boleta'"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="order"
             title="Fecha"
             :description="formatDate(order.createdAt)"
@@ -32,36 +28,27 @@
         </BoxInformation>
 
         <BoxInformation v-if="order?.user" title="Cliente" :columns="2">
-          <CardInfoDashboard
+          <CardInfo
             title="Usuario"
             :description="order.user?.username || '--'"
           />
-          <CardInfoDashboard
+          <CardInfo
             title="Correo electrónico"
             :description="order.user?.email || '--'"
           />
-          <CardInfoDashboard
+          <CardInfo
             title="Nombre"
             :description="
               formatFullName(order.user?.firstname, order.user?.lastname)
             "
           />
-          <CardInfoDashboard
-            title="Teléfono"
-            :description="order.user?.phone || '--'"
-          />
+          <CardInfo title="Teléfono" :description="order.user?.phone || '--'" />
         </BoxInformation>
 
         <BoxInformation v-if="order?.ad" title="Anuncio" :columns="2">
-          <CardInfoDashboard
-            title="Nombre"
-            :description="order.ad?.name || '--'"
-          />
-          <CardInfoDashboard
-            title="Slug"
-            :description="order.ad?.slug || '--'"
-          />
-          <CardInfoDashboard title="ID" :description="order.ad?.id || '--'" />
+          <CardInfo title="Nombre" :description="order.ad?.name || '--'" />
+          <CardInfo title="Slug" :description="order.ad?.slug || '--'" />
+          <CardInfo title="ID" :description="order.ad?.id || '--'" />
         </BoxInformation>
 
         <BoxInformation
@@ -69,13 +56,13 @@
           title="Detalle de pago"
           :columns="1"
         >
-          <CardInfoDashboard
+          <CardInfo
             v-if="order?.items"
             title="Items"
             :description="order.items"
             show-copy-button
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="order?.payment_response"
             title="Respuesta de pago"
             :description="order.payment_response"
@@ -88,13 +75,13 @@
           title="Documento tributario"
           :columns="1"
         >
-          <CardInfoDashboard
+          <CardInfo
             v-if="order?.document_details"
             title="Detalle"
             :description="order.document_details"
             show-copy-button
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="order?.document_response"
             title="Respuesta"
             :description="order.document_response"
@@ -104,12 +91,12 @@
       </template>
       <template #sidebar>
         <BoxInformation title="Detalles" :columns="1">
-          <CardInfoDashboard
+          <CardInfo
             v-if="order"
             title="Fecha de creación"
             :description="formatDate(order.createdAt)"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="order"
             title="Última modificación"
             :description="formatDate(order.updatedAt)"

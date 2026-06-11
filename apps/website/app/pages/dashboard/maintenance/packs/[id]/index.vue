@@ -13,37 +13,29 @@
     <BoxContent>
       <template #content>
         <BoxInformation title="Información" :columns="2">
-          <CardInfoDashboard
-            v-if="item"
-            title="Nombre"
-            :description="item.name"
-          />
-          <CardInfoDashboard
+          <CardInfo v-if="item" title="Nombre" :description="item.name" />
+          <CardInfo
             v-if="item"
             title="Descripción"
             :description="item.description"
           />
-          <CardInfoDashboard
-            v-if="item"
-            title="Texto"
-            :description="item.text"
-          />
-          <CardInfoDashboard
+          <CardInfo v-if="item" title="Texto" :description="item.text" />
+          <CardInfo
             v-if="item"
             title="Precio"
             :description="`$${item.price?.toLocaleString('es-CL') || '--'}`"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Duración (días)"
             :description="item.total_days?.toString() || '--'"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Cantidad de anuncios"
             :description="item.total_ads?.toString() || '--'"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Destacados"
             :description="item.total_features?.toString() || '--'"
@@ -52,12 +44,12 @@
       </template>
       <template #sidebar>
         <BoxInformation title="Detalles" :columns="1">
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Fecha de creación"
             :description="formatDate(item.createdAt)"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Última modificación"
             :description="formatDate(item.updatedAt)"

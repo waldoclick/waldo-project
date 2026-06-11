@@ -20,17 +20,17 @@
           </button>
         </BoxInformation>
         <BoxInformation title="Detalles" :columns="1">
-          <CardInfoDashboard
+          <CardInfo
             v-if="article"
             title="Estado"
             :description="article.publishedAt ? 'Publicado' : 'Borrador'"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="article"
             title="Fecha de creación"
             :description="formatDate(article.createdAt)"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="article"
             title="Última modificación"
             :description="formatDate(article.updatedAt)"

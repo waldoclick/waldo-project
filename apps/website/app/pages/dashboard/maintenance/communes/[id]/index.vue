@@ -13,31 +13,23 @@
     <BoxContent>
       <template #content>
         <BoxInformation title="Información" :columns="2">
-          <CardInfoDashboard
-            v-if="commune"
-            title="Nombre"
-            :description="commune.name"
-          />
-          <CardInfoDashboard
+          <CardInfo v-if="commune" title="Nombre" :description="commune.name" />
+          <CardInfo
             v-if="commune"
             title="Región"
             :description="commune.region?.name || '--'"
           />
-          <CardInfoDashboard
-            v-if="commune"
-            title="Slug"
-            :description="commune.slug"
-          />
+          <CardInfo v-if="commune" title="Slug" :description="commune.slug" />
         </BoxInformation>
       </template>
       <template #sidebar>
         <BoxInformation title="Detalles" :columns="1">
-          <CardInfoDashboard
+          <CardInfo
             v-if="commune"
             title="Fecha de creación"
             :description="formatDate(commune.createdAt)"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="commune"
             title="Última modificación"
             :description="formatDate(commune.updatedAt)"

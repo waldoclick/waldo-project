@@ -13,26 +13,18 @@
     <BoxContent>
       <template #content>
         <BoxInformation title="Información" :columns="2">
-          <CardInfoDashboard
-            v-if="item"
-            title="Nombre"
-            :description="item.name"
-          />
-          <CardInfoDashboard
-            v-if="item"
-            title="Slug"
-            :description="item.slug"
-          />
+          <CardInfo v-if="item" title="Nombre" :description="item.name" />
+          <CardInfo v-if="item" title="Slug" :description="item.slug" />
         </BoxInformation>
       </template>
       <template #sidebar>
         <BoxInformation title="Detalles" :columns="1">
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Fecha de creación"
             :description="formatDate(item.createdAt)"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Última modificación"
             :description="formatDate(item.updatedAt)"

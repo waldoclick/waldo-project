@@ -4,72 +4,68 @@
     <BoxContent>
       <template #content>
         <BoxInformation title="Información de usuario" :columns="2">
-          <CardInfoDashboard
-            v-if="item"
-            title="Usuario"
-            :description="item.username"
-          />
-          <CardInfoDashboard
+          <CardInfo v-if="item" title="Usuario" :description="item.username" />
+          <CardInfo
             v-if="item"
             title="Correo electrónico"
             :description="item.email"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Nombre completo"
             :description="formatFullName(item.firstname, item.lastname)"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="RUT"
             :description="formatRut(item.rut)"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Teléfono"
             :description="item.phone || '--'"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Fecha de nacimiento"
             :description="formatDateShort(item.birthdate)"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Dirección"
             :description="formatAddress(item.address, item.address_number)"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Región"
             :description="getRelationName(item.region)"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Comuna"
             :description="getRelationName(item.commune)"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Código postal"
             :description="item.postal_code || '--'"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Rol"
             :description="getRelationName(item.role)"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Pro"
             :description="item.pro_status ?? 'inactive'"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Confirmado"
             :description="formatBoolean(item.confirmed)"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Bloqueado"
             :description="formatBoolean(item.blocked)"
@@ -92,41 +88,41 @@
           title="Información de empresa"
           :columns="2"
         >
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Razón social"
             :description="item.business_name || '--'"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Giro"
             :description="item.business_type || '--'"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="RUT empresa"
             :description="
               item.business_rut ? formatRut(item.business_rut) : '--'
             "
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Dirección empresa"
             :description="
               formatAddress(item.business_address, item.business_address_number)
             "
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Región empresa"
             :description="getRelationName(item.business_region)"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Comuna empresa"
             :description="getRelationName(item.business_commune)"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Código postal empresa"
             :description="item.business_postal_code || '--'"
@@ -135,12 +131,12 @@
       </template>
       <template #sidebar>
         <BoxInformation title="Detalles" :columns="1">
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Fecha de creación"
             :description="formatDate(item.createdAt)"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Última modificación"
             :description="formatDate(item.updatedAt)"
