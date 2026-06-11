@@ -60,6 +60,7 @@
     "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
+    "@strapi/typescript-utils": "5.41.1",
     "@types/jest": "^29.5.14",
     "@types/koa": "2.15.2",
     "@types/mjml-core": "4.15.2",
