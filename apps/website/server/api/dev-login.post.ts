@@ -1,13 +1,8 @@
 export default defineEventHandler(async (event) => {
-  if (!import.meta.dev) {
-    throw createError({ statusCode: 404, statusMessage: "Not Found" });
-  }
-
   try {
     const body = await readBody(event);
     const { username, password } = body;
 
-    // Validar que se proporcionen las credenciales
     if (!username || !password) {
       throw createError({
         statusCode: 400,
@@ -15,29 +10,21 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    // Obtener credenciales del servidor (variables de entorno)
     const config = useRuntimeConfig();
     const devUsername = config.devUsername;
     const devPassword = config.devPassword;
 
-    // Verificar credenciales
     if (username === devUsername && password === devPassword) {
-      // Generar un token de sesión seguro
       const sessionToken = generateSessionToken();
-      console.log("🍪 Estableciendo cookie devmode:", sessionToken);
 
-      // ✅ SEGURO: Establecer cookie desde el servidor
       setCookie(event, "devmode", sessionToken, {
-        maxAge: 60 * 60 * 24 * 7, // 7 días
-        httpOnly: false, // ❌ NECESARIO: Permitir acceso desde JavaScript
+        maxAge: 60 * 60 * 24 * 7,
+        httpOnly: false,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
         path: "/",
       });
 
-      console.log("✅ Cookie establecida correctamente");
-
-      // Devolver respuesta exitosa (sin el token por seguridad)
       return {
         success: true,
         message: "Autenticación exitosa",
