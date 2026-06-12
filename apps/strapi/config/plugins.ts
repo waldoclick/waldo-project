@@ -76,6 +76,7 @@ export default ({ env }) => ({
   upload: {
     config: {
       provider: "local",
+      sizeLimit: 5 * 1024 * 1024, // 5 MB
       actionOptions: {
         upload: {},
         uploadStream: {},
