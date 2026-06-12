@@ -34,7 +34,11 @@ describe("reCAPTCHA proxy validation", () => {
 
   // RCP-02: Valid token passes
   it("resolves when Google returns success=true and score > 0.5", async () => {
-    mockFetch.mockResolvedValueOnce({ success: true, score: 0.9 });
+    mockFetch.mockResolvedValueOnce({
+      success: true,
+      score: 0.9,
+      hostname: "waldo.click",
+    });
     await expect(
       verifyRecaptchaToken("valid-token", "fake-secret"),
     ).resolves.toBeUndefined();

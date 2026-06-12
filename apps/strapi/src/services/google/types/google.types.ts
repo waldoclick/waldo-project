@@ -14,5 +14,5 @@ export interface IGoogleSheetsService {
 }
 
 export interface IGoogleRecaptchaService {
-  verifyToken(_token: string): Promise<boolean>;
+  verifyToken(_token: string, _expectedAction?: string): Promise<boolean>;
 }

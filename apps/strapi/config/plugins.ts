@@ -16,6 +16,11 @@ export default ({ env }) => ({
   },
   "users-permissions": {
     config: {
+      ratelimit: {
+        enabled: true,
+        interval: 60000, // 1-minute window
+        max: 10, // 10 req / key / minute on built-in auth routes
+      },
       register: {
         allowedFields: [
           "is_company",
