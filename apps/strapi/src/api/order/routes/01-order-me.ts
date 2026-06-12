@@ -8,6 +8,7 @@ export default {
       method: "GET",
       path: "/orders/export-csv",
       handler: "order.exportCsv",
+      config: { policies: ["global::isManager"] },
     },
     {
       method: "GET",
