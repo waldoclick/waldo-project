@@ -4,6 +4,8 @@
 // Denies (returns false → 403) any request where the authenticated user is not
 // the owner of the target record, unless the caller has the manager role.
 
+import type { Core } from "@strapi/strapi";
+
 /**
  * Ownership policy for PUT /api/users/:id.
  *
@@ -18,6 +20,7 @@ export default (
     params: { id?: string | number };
   },
   _config: Record<string, unknown>,
+  _deps: { strapi: Core.Strapi },
 ): boolean => {
   const user = policyContext.state.user;
   if (!user) return false;
