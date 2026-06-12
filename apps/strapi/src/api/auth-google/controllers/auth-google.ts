@@ -18,10 +18,16 @@ const popupResponse = (
 ): void => {
   const json = JSON.stringify(data);
   ctx.type = "html";
-  ctx.body = `<!DOCTYPE html><html><head><script>
+  // data-cfasync="false": stops Cloudflare Rocket Loader from rewriting the
+  // inline script into a deferred type it never executes.
+  // BroadcastChannel is the reliable path: production COOP same-origin severs
+  // window.opener after the cross-origin hop through accounts.google.com.
+  ctx.body = `<!DOCTYPE html><html><head><script data-cfasync="false">
 (function(){var d=${json};
-if(window.opener){window.opener.postMessage(d,'${origin}');window.close();}
-else{window.location.href='${origin}';}
+try{var c=new BroadcastChannel('google-oauth');c.postMessage(d);c.close();}catch(e){}
+if(window.opener){window.opener.postMessage(d,'${origin}');}
+window.close();
+setTimeout(function(){window.location.href='${origin}';},200);
 })();
 </script></head><body></body></html>`;
 };
