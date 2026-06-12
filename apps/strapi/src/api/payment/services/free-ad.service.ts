@@ -15,6 +15,15 @@ class FreeAdService {
         return { success: false, message: "Ad not found" };
       }
 
+      // Ownership guard (SEC-IDOR-FREEAD): a user may only free-publish their own ad.
+      const ad = result.ad as { user?: { id?: number | string } };
+      if (String(ad.user?.id) !== String(userId)) {
+        return {
+          success: false,
+          message: "Forbidden: ad does not belong to user",
+        };
+      }
+
       // 2. Validate credit — free pack uses a free reservation (price: "0"),
       //    paid pack uses a previously purchased reservation (price != "0")
       const isFreeReservation = pack === "free";

@@ -30,8 +30,8 @@ const PROTECTED_USER_FIELDS = [
   "blocked",
 ] as const;
 
-/** Matches PUT /api/users/:id where :id is a numeric Strapi id */
-const USER_UPDATE_PATH_REGEX = /^\/api\/users\/\d+$/;
+/** Matches PUT /api/users/:id where :id is a numeric Strapi id (optional trailing slash) */
+const USER_UPDATE_PATH_REGEX = /^\/api\/users\/\d+\/?$/;
 
 export default (
   _config: Record<string, unknown>,

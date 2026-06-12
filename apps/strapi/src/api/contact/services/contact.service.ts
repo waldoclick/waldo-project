@@ -3,7 +3,7 @@ import { ContactData, ContactEntity } from "../types/contact.types";
 import { getClientIp } from "request-ip";
 import { zohoService } from "../../../services/zoho/index";
 import logger from "../../../utils/logtail/index";
-import { sendMjmlEmail } from "../../../services/mjml";
+import { sendMjmlEmail, escapeHtml } from "../../../services/mjml";
 import type { Core } from "@strapi/strapi";
 export class ContactService {
   constructor(private readonly strapi: Core.Strapi) {}
@@ -74,9 +74,9 @@ export class ContactService {
         contactData.email,
         "Confirmación de recepción",
         {
-          name: contactData.fullname,
-          phone: contactData.phone,
-          company: contactData.company,
+          name: escapeHtml(contactData.fullname),
+          phone: escapeHtml(contactData.phone),
+          company: escapeHtml(contactData.company),
         },
       );
 
@@ -91,11 +91,11 @@ export class ContactService {
         emailArray,
         "Nuevo mensaje recibido",
         {
-          name: contactData.fullname,
-          email: contactData.email,
-          phone: contactData.phone,
-          company: contactData.company,
-          message: contactData.message,
+          name: escapeHtml(contactData.fullname),
+          email: escapeHtml(contactData.email),
+          phone: escapeHtml(contactData.phone),
+          company: escapeHtml(contactData.company),
+          message: escapeHtml(contactData.message),
         },
       );
     } catch (error) {

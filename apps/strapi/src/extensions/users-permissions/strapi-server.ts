@@ -60,6 +60,26 @@ export default function (plugin) {
     return instance;
   };
 
+  // --- Ownership policy: enforce that PUT /api/users/:id can only be called by the record owner ---
+  // Locates the built-in user.update route and appends the is-users-owner policy so that
+  // cross-user account-takeover attempts receive 403. Managers bypass via role check in policy.
+  const userRoutes = plugin.routes["content-api"].routes as Array<{
+    handler?: string;
+    method?: string;
+    path?: string;
+    config?: { policies?: string[] };
+  }>;
+  const updateRoute =
+    userRoutes.find((r) => r.handler === "user.update") ??
+    userRoutes.find((r) => r.method === "PUT" && r.path === "/users/:id");
+  if (updateRoute) {
+    updateRoute.config = updateRoute.config ?? {};
+    updateRoute.config.policies = updateRoute.config.policies ?? [];
+    updateRoute.config.policies.push(
+      "plugin::users-permissions.is-users-owner",
+    );
+  }
+
   // --- NEW: verify-code and resend-code are registered as a standard Strapi API ---
   // See: apps/strapi/src/api/auth-verify/ (controller + routes)
   // Reason: plugin.routes["content-api"] is a factory function in Strapi v5.
