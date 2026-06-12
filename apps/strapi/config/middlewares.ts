@@ -1,6 +1,7 @@
 export default ({ env }) => [
   "strapi::logger",
   "strapi::errors",
+  "global::proxy-auth",
   {
     name: "strapi::security",
     config: {
