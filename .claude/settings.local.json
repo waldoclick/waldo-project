@@ -120,7 +120,14 @@
       "Bash(npx vitest:*)",
       "Bash(find /home/gab/Code/waldo-project/apps/website/app -type f \\\\\\( -name \"*.vue\" -o -name \"*.ts\" \\\\\\) -exec grep -l \"updatePack\\\\|adStore\\\\.pack =\" {} \\\\;)",
       "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(list\\(d['attributes'].keys\\(\\)\\), indent=2\\)\\)\")",
-      "Bash(python3 -c ' *)"
+      "Bash(python3 -c ' *)",
+      "Bash(APP_RUN_SEEDERS=true pnpm dev)",
+      "Bash(pdftotext docs/Politica_de_Privacidad_V1.0_0626.pdf -)",
+      "Bash(python3 -c \"import pdfplumber; print\\('pdfplumber ok'\\)\")",
+      "Bash(python3 -c \"import PyPDF2; print\\('PyPDF2 ok'\\)\")",
+      "Bash(python3 -c \"import pypdf; print\\('pypdf ok'\\)\")",
+      "Bash(python3 *)",
+      "Bash(APP_RUN_SEEDERS=true pnpm --filter strapi dev)"
     ]
   }
 }
