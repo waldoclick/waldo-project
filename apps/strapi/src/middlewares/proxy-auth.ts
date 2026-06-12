@@ -37,12 +37,8 @@ export default () => {
       | string
       | undefined;
 
-    if (!providedKey) {
-      return ctx.unauthorized("Proxy key is required");
-    }
-
-    if (!isValidProxyKey(providedKey)) {
-      return ctx.forbidden("Invalid proxy key");
+    if (!providedKey || !isValidProxyKey(providedKey)) {
+      return ctx.unauthorized();
     }
 
     await next();

@@ -38,7 +38,6 @@ function createContext(
   path: string;
   request: { headers: Record<string, string | undefined> };
   unauthorized: jest.Mock;
-  forbidden: jest.Mock;
 } {
   const headers: Record<string, string | undefined> = {};
   if (proxyKey !== undefined) {
@@ -48,7 +47,6 @@ function createContext(
     path,
     request: { headers },
     unauthorized: jest.fn(),
-    forbidden: jest.fn(),
   };
 }
 
@@ -63,33 +61,30 @@ describe("proxy-auth middleware", () => {
 
     expect(next).toHaveBeenCalledTimes(1);
     expect(ctx.unauthorized).not.toHaveBeenCalled();
-    expect(ctx.forbidden).not.toHaveBeenCalled();
   });
 
-  // Test 2: /api path with no key returns 401
-  it("returns 401 unauthorized when X-Proxy-Key header is missing on /api route", async () => {
+  // Test 2: /api path with no key returns 401 without message
+  it("returns 401 unauthorized with no message when X-Proxy-Key header is missing on /api route", async () => {
     const mw = proxyAuth();
     const ctx = createContext("/api/ads");
     const next = jest.fn().mockResolvedValue(undefined);
 
     await mw(ctx as unknown as Context, next);
 
-    expect(ctx.unauthorized).toHaveBeenCalledWith("Proxy key is required");
+    expect(ctx.unauthorized).toHaveBeenCalledWith();
     expect(next).not.toHaveBeenCalled();
-    expect(ctx.forbidden).not.toHaveBeenCalled();
   });
 
-  // Test 3: /api path with wrong key returns 403
-  it("returns 403 forbidden when X-Proxy-Key header has an invalid value on /api route", async () => {
+  // Test 3: /api path with wrong key returns 401 without message
+  it("returns 401 unauthorized with no message when X-Proxy-Key header has an invalid value on /api route", async () => {
     const mw = proxyAuth();
     const ctx = createContext("/api/ads", "wrong-key-value");
     const next = jest.fn().mockResolvedValue(undefined);
 
     await mw(ctx as unknown as Context, next);
 
-    expect(ctx.forbidden).toHaveBeenCalledWith("Invalid proxy key");
+    expect(ctx.unauthorized).toHaveBeenCalledWith();
     expect(next).not.toHaveBeenCalled();
-    expect(ctx.unauthorized).not.toHaveBeenCalled();
   });
 
   // Test 4: /api path with PROXY_SECRET_WEB calls next()
@@ -102,7 +97,6 @@ describe("proxy-auth middleware", () => {
 
     expect(next).toHaveBeenCalledTimes(1);
     expect(ctx.unauthorized).not.toHaveBeenCalled();
-    expect(ctx.forbidden).not.toHaveBeenCalled();
   });
 
   // Test 5: /api path with PROXY_SECRET_APP calls next() (mobile app path)
@@ -115,6 +109,5 @@ describe("proxy-auth middleware", () => {
 
     expect(next).toHaveBeenCalledTimes(1);
     expect(ctx.unauthorized).not.toHaveBeenCalled();
-    expect(ctx.forbidden).not.toHaveBeenCalled();
   });
 });
