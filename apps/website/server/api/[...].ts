@@ -88,6 +88,11 @@ export default defineEventHandler(async (event) => {
     headers["Cookie"] = `waldo_jwt=${jwt}`;
   }
 
+  const proxyKey = process.env.PROXY_SECRET_WEB;
+  if (proxyKey) {
+    headers["X-Proxy-Key"] = proxyKey;
+  }
+
   // Forward the request
   return proxyRequest(event, targetUrl, {
     headers,
