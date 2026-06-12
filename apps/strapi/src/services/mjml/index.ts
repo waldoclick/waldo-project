@@ -19,3 +19,4 @@ export const renderEmail = (
 
 export { testEmail } from "./test";
 export { sendMjmlEmail } from "./send-email";
+export { escapeHtml } from "./escape";

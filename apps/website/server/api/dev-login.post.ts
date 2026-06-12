@@ -1,4 +1,8 @@
 export default defineEventHandler(async (event) => {
+  if (!import.meta.dev) {
+    throw createError({ statusCode: 404, statusMessage: "Not Found" });
+  }
+
   try {
     const body = await readBody(event);
     const { username, password } = body;

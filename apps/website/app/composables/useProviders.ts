@@ -1,3 +1,5 @@
+const OAUTH_TIMEOUT_MS = 180_000;
+
 export const useProviders = () => {
   const { getProviderAuthenticationUrl } = useStrapiAuth();
 
@@ -26,30 +28,45 @@ export const useProviders = () => {
     return new Promise((resolve, reject) => {
       const ctx = {
         done: false,
-        ticker: undefined as ReturnType<typeof setInterval> | undefined,
+        timer: undefined as ReturnType<typeof setTimeout> | undefined,
       };
+      // BroadcastChannel is same-origin only and survives the COOP
+      // same-origin severing of window.opener in production
+      const channel = new BroadcastChannel("google-oauth");
 
       const finish = (fn: () => void) => {
         if (ctx.done) return;
         ctx.done = true;
-        clearInterval(ctx.ticker);
+        clearTimeout(ctx.timer);
+        channel.close();
         window.removeEventListener("message", handler);
         fn();
       };
 
-      const handler = (event: MessageEvent) => {
-        if (event.origin !== window.location.origin) return;
-        if (event.data?.type === "google-oauth-success") {
-          finish(() => resolve({ jwt: (event.data as { jwt: string }).jwt }));
-        } else if (event.data?.type === "google-oauth-error") {
+      const onPayload = (payload: unknown) => {
+        const msg = payload as { type?: string; jwt?: string };
+        if (msg?.type === "google-oauth-success") {
+          finish(() => resolve({ jwt: msg.jwt as string }));
+        } else if (msg?.type === "google-oauth-error") {
           finish(() => reject(new Error("oauth_failed")));
         }
       };
 
+      channel.addEventListener("message", (event) => onPayload(event.data));
+
+      // Fallback for environments without COOP, where window.opener survives
+      const handler = (event: MessageEvent) => {
+        if (event.origin !== window.location.origin) return;
+        onPayload(event.data);
+      };
       window.addEventListener("message", handler);
-      ctx.ticker = setInterval(() => {
-        if (popup.closed) finish(() => reject(new Error("popup_closed")));
-      }, 500);
+
+      // COOP makes popup.closed report true as soon as Google loads, so
+      // close-detection is impossible — bound the wait with a timeout instead
+      ctx.timer = setTimeout(
+        () => finish(() => reject(new Error("popup_closed"))),
+        OAUTH_TIMEOUT_MS,
+      );
     });
   };
 

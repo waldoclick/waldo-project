@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
-status: unknown
-last_updated: "2026-06-10T17:19:49.899Z"
-last_activity: 2026-06-10
+status: in_progress
+last_updated: "2026-06-12T04:25:02.512Z"
+last_activity: 2026-06-12
 progress:
-  total_phases: 19
-  completed_phases: 18
-  total_plans: 48
-  completed_plans: 48
+  total_phases: 20
+  completed_phases: 19
+  total_plans: 4
+  completed_plans: 4
   percent: 100
 ---
 
@@ -20,7 +20,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 125 — merge-dashboard-into-website
+**Current focus:** Phase 126 — security-hardening
 
 ## Position
 
@@ -102,6 +102,7 @@ Progress: [██████████] 100%
 
 ### Roadmap Evolution
 
+- Phase 126 added: Security hardening — fix authorization vulnerabilities from security review (4 plans: users IDOR account-takeover, ad mass-assignment payment/approval bypass, free-ad publish IDOR, dev-endpoint + email-escape + regex-bypass hardening)
 - Phase 107 added: en el dashboard hay que validar todas las rutas POST, PUT y DELETE igual como en el website
 - Phase 108 added: dashboard replace nuxtjs-strapi sdk with useApiClient for all reads — eliminate dual-resource pattern, all HTTP through one composable
 - Phase 109 added: Eliminate @nuxtjs/strapi dependency from dashboard only — replace useStrapiUser() with custom session composable, useStrapiToken() with direct cookie read, useStrapiClient() inside useApiClient with native $fetch
@@ -191,5 +192,5 @@ Progress: [██████████] 100%
 
 ## Session Continuity
 
-Last activity: 2026-06-11 - Completed quick task 260611-reg: Replace APP_URL with FRONTEND_URL in Transbank return URLs
+Last activity: 2026-06-12
 Resume file: None

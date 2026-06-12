@@ -21,16 +21,19 @@
 const { loginWithPopup } = useProviders();
 const { Swal } = useSweetAlert2();
 const { login } = useAdAnalytics();
+const { setToken, fetchUser } = useStrapiAuth();
 const appStore = useAppStore();
 const meStore = useMeStore();
-const token = useStrapiToken();
 const loading = ref(false);
 
 const onClick = async () => {
   loading.value = true;
   try {
     const { jwt } = await loginWithPopup("google");
-    token.value = jwt;
+    setToken(jwt);
+    // Populate useStrapiUser — the login lightbox and header only react to it,
+    // and navigateTo is a no-op when the referer is the current route
+    await fetchUser();
     login("google");
     meStore.reset();
     const isComplete = await meStore.isProfileComplete();

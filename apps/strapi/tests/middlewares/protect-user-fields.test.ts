@@ -231,4 +231,19 @@ describe("protect-user-fields middleware", () => {
     expect(ctx.request.body).toHaveProperty("firstname", "Alice");
     expect(next).toHaveBeenCalled();
   });
+
+  // Test 11: trailing-slash path — regex bypass closed
+  it("strips protected fields on PUT /api/users/123/ (trailing slash) — regex bypass closed", async () => {
+    const middleware = createMiddleware();
+    const ctx = createContext("PUT", "/api/users/123/", {
+      data: { pro_status: "active", firstname: "Alice" },
+    });
+    const next = jest.fn().mockResolvedValue(undefined);
+
+    await middleware(ctx as unknown as Context, next);
+
+    expect(ctx.request.body.data).not.toHaveProperty("pro_status");
+    expect(ctx.request.body.data).toHaveProperty("firstname", "Alice");
+    expect(next).toHaveBeenCalled();
+  });
 });

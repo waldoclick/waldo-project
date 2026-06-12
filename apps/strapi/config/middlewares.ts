@@ -67,6 +67,7 @@ export default ({ env }) => [
   // "global::recaptcha", // Movido a Nuxt Nitro proxy
   ...(env("REDIS_ENABLED", "false") === "true" ? ["global::cache"] : []),
   "global::protect-user-fields",
+  "global::protect-ad-fields",
   "global::user-registration",
   "global::hide-admin-redirect",
 ];
