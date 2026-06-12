@@ -281,3 +281,13 @@ Plans:
 - [x] 126-02-PLAN.md — SEC-MASSASSIGN-ADS (HIGH): `protect-ad-fields` global middleware stripping privileged ad fields from POST/PUT `/api/ads`
 - [x] 126-03-PLAN.md — SEC-IDOR-FREEAD (MEDIUM): ownership assertion in `free-ad.service.ts` before publish/relink/re-date
 - [x] 126-04-PLAN.md — SEC-HARDENING: gate dev endpoints behind `import.meta.dev`, escape contact email fields, fix `protect-user-fields` trailing-slash regex bypass
+
+### Phase 127: Security review round 2 — fix new vulnerabilities from the second security review
+
+**Goal:** Close the new vulnerabilities surfaced by the round-2 security review (live-site recon + white-box) that phase 126 did not cover. Five areas, server-side Strapi + Nuxt frontend, no schema migrations beyond a `buy_order` unique constraint: (1) **Payment integrity** — re-validate the Webpay return `amount` against the server-computed price, add idempotency/replay protection keyed on `buy_order`, and verify `adId` ownership on paid-checkout return; (2) **Order & reservation/pack authorization** — add ownership/user-scoping to `order.findOne`/`find` and gate `exportCsv`/`salesByMonth`, lock down `ad-pack`/`ad-reservation`/`ad-featured-reservation` CRUD to manager or owner-scoped controllers; (3) **Auth hardening** — reject Google login when `email_verified !== true` before account linking, remove the hardcoded `"strapi-jwt-secret"` fallback in `ad.ts`, rate-limit auth endpoints, bind reCAPTCHA `action`/`hostname`; (4) **Frontend XSS** — replace the regex SSR sanitizer with isomorphic DOMPurify and disable inline HTML in `marked` (the `httpOnly`+`Secure`+`SameSite` session cookie + CSRF migration is DEFERRED to its own phase 128 because it touches the recently-fixed Google OAuth/OTP login flow and needs manual login verification); (5) **Email/upload/PII/route lockdown** — enable MJML `autoescape`, add upload magic-byte + size validation, whitelist `GET /api/users` filters and strip PII, and disable content-API routes for `verification-code`/`contact`/`subscription-payment`. Each fix must ship with a Jest (Strapi) or Vitest (Nuxt) regression test.
+**Requirements**: SEC2-PAYMENT, SEC2-AUTHZ, SEC2-AUTH, SEC2-XSS, SEC2-LOCKDOWN
+**Depends on:** Phase 126
+**Plans:** 0 plans (run /gsd:plan-phase 127 to break down)
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 127 to break down)

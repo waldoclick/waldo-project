@@ -102,6 +102,7 @@ Progress: [██████████] 100%
 
 ### Roadmap Evolution
 
+- Phase 127 added: Security review round 2 — fix new vulnerabilities not covered by phase 126 (5 areas: payment integrity Webpay amount+idempotency, order/reservation/pack authorization, auth hardening Google email_verified + JWT fallback + rate-limit + reCAPTCHA binding, frontend SSR XSS + httpOnly session, email autoescape + upload validation + users PII + core-route lockdown). Findings detailed in 127-FINDINGS.md. Branch feat/127-security-review-fixes from main.
 - Phase 126 added: Security hardening — fix authorization vulnerabilities from security review (4 plans: users IDOR account-takeover, ad mass-assignment payment/approval bypass, free-ad publish IDOR, dev-endpoint + email-escape + regex-bypass hardening)
 - Phase 107 added: en el dashboard hay que validar todas las rutas POST, PUT y DELETE igual como en el website
 - Phase 108 added: dashboard replace nuxtjs-strapi sdk with useApiClient for all reads — eliminate dual-resource pattern, all HTTP through one composable
