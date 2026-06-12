@@ -2,7 +2,7 @@ import mjml2html from "mjml";
 import nunjucks from "nunjucks";
 
 const env = nunjucks.configure("src/services/mjml/templates", {
-  autoescape: false,
+  autoescape: true,
 });
 
 export const renderEmail = (

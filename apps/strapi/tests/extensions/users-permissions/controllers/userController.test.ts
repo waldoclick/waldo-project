@@ -1,5 +1,6 @@
 // Tests for getUserDataWithFilters — FILTER-01, FILTER-02, FILTER-03
 // Tests for getAuthenticatedUsers — GIFT-08
+// Tests for PII strip + filter whitelist — SEC2-LOCKDOWN (Tests 3-5 are RED until Task 2)
 // AAA pattern (Arrange-Act-Assert), all dependencies mocked.
 
 import {
@@ -46,6 +47,7 @@ describe("getUserDataWithFilters", () => {
       // Arrange
       const ctx = {
         query: { pagination: {}, filters: {} },
+        state: { user: { role: { name: "manager" } } },
         body: null,
       };
 
@@ -75,6 +77,7 @@ describe("getUserDataWithFilters", () => {
       // Arrange
       const ctx = {
         query: { pagination: { page: "2", pageSize: "10" }, filters: {} },
+        state: { user: { role: { name: "manager" } } },
         body: null,
       };
 
@@ -111,8 +114,8 @@ describe("getUserDataWithFilters", () => {
     });
   });
 
-  describe("FILTER-03: Forwards sort and client filters", () => {
-    it("calls findWithCount with orderBy from sort and merges client filters with role filter", async () => {
+  describe("FILTER-03: Forwards sort and allowed client filters", () => {
+    it("calls findWithCount with orderBy from sort and merges allowed client filters with role filter", async () => {
       // Arrange
       const ctx = {
         query: {
@@ -120,6 +123,7 @@ describe("getUserDataWithFilters", () => {
           filters: { username: { $containsi: "alice" } },
           pagination: {},
         },
+        state: { user: { role: { name: "manager" } } },
         body: null,
       };
 
@@ -135,13 +139,109 @@ describe("getUserDataWithFilters", () => {
         }),
       );
 
-      // Assert: client filter merged with role filter in where
+      // Assert: allowed client filter merged with role filter in where
       expect(mockFindWithCount).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
             username: { $containsi: "alice" },
             role: { id: 42 },
           }),
+        }),
+      );
+    });
+  });
+
+  describe("SEC2-LOCKDOWN: PII strip for non-managers (Tests 3-5 RED until Task 2)", () => {
+    // Test 3 (RED): non-manager gets PII fields stripped from response
+    it("Test 3 (PII strip non-manager): strips email/phone/rut/address from data[0] for role=user", async () => {
+      // Arrange
+      const userWithPii = {
+        id: 5,
+        username: "carol",
+        email: "carol@example.com",
+        phone: "555-1234",
+        rut: "12.345.678-9",
+        address: "123 Main St",
+        role: { id: 42 },
+      };
+      mockFindWithCount.mockResolvedValue([[userWithPii], 1]);
+      const ctx = {
+        query: { pagination: {}, filters: {} },
+        state: { user: { role: { name: "user" } } },
+        body: null,
+      };
+
+      // Act
+      await getUserDataWithFilters(
+        ctx as unknown as Parameters<typeof getUserDataWithFilters>[0],
+      );
+
+      // Assert: PII fields removed for non-manager
+      const body = ctx.body as unknown as { data: Record<string, unknown>[] };
+      expect(body.data[0]).not.toHaveProperty("email");
+      expect(body.data[0]).not.toHaveProperty("phone");
+      expect(body.data[0]).not.toHaveProperty("rut");
+      expect(body.data[0]).not.toHaveProperty("address");
+      expect(body.data[0]).toHaveProperty("username", "carol");
+    });
+
+    // Test 4 (RED): manager keeps PII fields in response
+    it("Test 4 (manager keeps PII): email is present in data[0] for role=manager", async () => {
+      // Arrange
+      const userWithPii = {
+        id: 5,
+        username: "carol",
+        email: "carol@example.com",
+        phone: "555-1234",
+        rut: "12.345.678-9",
+        address: "123 Main St",
+        role: { id: 42 },
+      };
+      mockFindWithCount.mockResolvedValue([[userWithPii], 1]);
+      const ctx = {
+        query: { pagination: {}, filters: {} },
+        state: { user: { role: { name: "manager" } } },
+        body: null,
+      };
+
+      // Act
+      await getUserDataWithFilters(
+        ctx as unknown as Parameters<typeof getUserDataWithFilters>[0],
+      );
+
+      // Assert: PII fields retained for manager
+      const body = ctx.body as unknown as { data: Record<string, unknown>[] };
+      expect(body.data[0]).toHaveProperty("email", "carol@example.com");
+      expect(body.data[0]).toHaveProperty("phone", "555-1234");
+    });
+
+    // Test 5 (RED): filter whitelist — email filter key is dropped, username key is kept
+    it("Test 5 (filter whitelist): email filter key dropped; username filter kept in where clause", async () => {
+      // Arrange
+      mockFindWithCount.mockResolvedValue([[], 0]);
+      const ctx = {
+        query: {
+          pagination: {},
+          filters: { email: { $contains: "victim" }, username: "x" },
+        },
+        state: { user: { role: { name: "manager" } } },
+        body: null,
+      };
+
+      // Act
+      await getUserDataWithFilters(
+        ctx as unknown as Parameters<typeof getUserDataWithFilters>[0],
+      );
+
+      // Assert: email filter was stripped; username filter preserved; role filter still applied
+      expect(mockFindWithCount).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.not.objectContaining({ email: expect.anything() }),
+        }),
+      );
+      expect(mockFindWithCount).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({ username: "x", role: { id: 42 } }),
         }),
       );
     });

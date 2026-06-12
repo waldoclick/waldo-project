@@ -8,7 +8,6 @@
  */
 
 import { factories } from "@strapi/strapi";
-import jwt from "jsonwebtoken";
 import { sanitizeAdForPublic } from "../services/sanitize-ad";
 
 /** Returns true if ctx.state.user has the manager role. */
@@ -748,17 +747,18 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
     const { slug } = ctx.params;
 
     // Route has auth: false so ctx.state.user is not populated by Strapi middleware.
-    // Decode JWT manually — allows owner/manager access without requiring Public role permission.
+    // Decode JWT via the users-permissions plugin service — no hardcoded fallback secret (SEC2-AUTH).
     let userId: number | null = null;
     const authHeader = ctx.request.headers?.authorization as string | undefined;
     if (authHeader?.startsWith("Bearer ")) {
       const token = authHeader.slice(7);
       try {
-        const secret = process.env.JWT_SECRET ?? "strapi-jwt-secret";
-        const decoded = jwt.verify(token, secret) as { id: number };
+        const decoded = (await strapi.plugins[
+          "users-permissions"
+        ].services.jwt.verify(token)) as { id: number };
         userId = decoded?.id ?? null;
       } catch {
-        userId = null;
+        userId = null; // invalid token → unauthenticated
       }
     }
 

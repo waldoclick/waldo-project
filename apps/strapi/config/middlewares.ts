@@ -66,6 +66,7 @@ export default ({ env }) => [
   "global::upload",
   // "global::recaptcha", // Movido a Nuxt Nitro proxy
   ...(env("REDIS_ENABLED", "false") === "true" ? ["global::cache"] : []),
+  "global::auth-ratelimit",
   "global::protect-user-fields",
   "global::protect-ad-fields",
   "global::user-registration",

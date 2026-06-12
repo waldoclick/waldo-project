@@ -574,6 +574,7 @@ export default defineNuxtConfig({
         "@vueuse/core",
         "floating-vue",
         "dompurify",
+        "isomorphic-dompurify",
         "vue-awesome-paginate",
         "marked",
         "vee-validate",

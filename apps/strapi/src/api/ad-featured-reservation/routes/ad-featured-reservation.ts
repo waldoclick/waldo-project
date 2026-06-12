@@ -16,19 +16,19 @@ export default {
       method: "POST",
       path: "/ad-featured-reservations",
       handler: "ad-featured-reservation.create",
-      config: { policies: [] },
+      config: { policies: ["global::isManager"] },
     },
     {
       method: "PUT",
       path: "/ad-featured-reservations/:id",
       handler: "ad-featured-reservation.update",
-      config: { policies: [] },
+      config: { policies: ["global::isManager"] },
     },
     {
       method: "DELETE",
       path: "/ad-featured-reservations/:id",
       handler: "ad-featured-reservation.delete",
-      config: { policies: [] },
+      config: { policies: ["global::isManager"] },
     },
     {
       method: "POST",

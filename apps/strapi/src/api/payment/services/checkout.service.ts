@@ -49,7 +49,13 @@ class CheckoutService {
 
     // pack === "free": user has a free ad credit — only charge featured
     if (payload.pack === "free") {
-      const amount = Number(process.env.AD_FEATURED_PRICE) || 10000;
+      const featuredPriceFree = Number(process.env.AD_FEATURED_PRICE);
+      if (!featuredPriceFree) {
+        throw new Error(
+          "AD_FEATURED_PRICE env var is not set — refusing to initiate payment",
+        );
+      }
+      const amount = featuredPriceFree;
       const buyOrder = `order-${userId}-0-${adId}-${featuredFlag}-${invoiceFlag}`;
       const sessionId = `session-free-${adId}`;
       const returnUrl = `${process.env.FRONTEND_URL}/api/payments/webpay`;
@@ -73,7 +79,13 @@ class CheckoutService {
 
     // pack === "paid": user has an existing paid reservation — only charge featured
     if (payload.pack === "paid") {
-      const amount = Number(process.env.AD_FEATURED_PRICE) || 10000;
+      const featuredPricePaid = Number(process.env.AD_FEATURED_PRICE);
+      if (!featuredPricePaid) {
+        throw new Error(
+          "AD_FEATURED_PRICE env var is not set — refusing to initiate payment",
+        );
+      }
+      const amount = featuredPricePaid;
       // Use packId=0 to signal "no new pack" in buy_order
       const buyOrder = `order-${userId}-0-${adId}-${featuredFlag}-${invoiceFlag}`;
       const sessionId = `session-paid-${adId}`;
@@ -120,7 +132,13 @@ class CheckoutService {
 
     // 5. Add featured price if requested
     if (payload.featured === true) {
-      amount += Number(process.env.AD_FEATURED_PRICE) || 10000;
+      const featuredPriceInit = Number(process.env.AD_FEATURED_PRICE);
+      if (!featuredPriceInit) {
+        throw new Error(
+          "AD_FEATURED_PRICE env var is not set — refusing to initiate payment",
+        );
+      }
+      amount += featuredPriceInit;
     }
 
     // 6. Encode buy_order — same style as pack.service.ts
@@ -178,13 +196,47 @@ class CheckoutService {
       const featured = parts[4] === "1";
       const is_invoice = parts[5] === "1";
 
+      // SECURITY: Idempotency — reject replay by checking for an existing processed order
+      const existingOrder = await strapi.db
+        .query("api::order.order")
+        .findOne({ where: { buy_order: buyOrder } });
+      if (existingOrder) {
+        // Already processed — idempotent short-circuit to existing documentId
+        return {
+          success: true,
+          adId,
+          message: "Already processed",
+          orderId: buyOrder,
+          orderDocumentId: (existingOrder as { documentId?: string })
+            .documentId,
+        };
+      }
+
+      // SECURITY: Fail-closed price — AD_FEATURED_PRICE must be set in production
+      const featuredPrice = Number(process.env.AD_FEATURED_PRICE);
+      if (!featuredPrice) {
+        throw new Error(
+          "AD_FEATURED_PRICE env var is not set — refusing to process payment",
+        );
+      }
+
       // 4. Handle pack === "paid" (packId === 0): use existing paid reservation, only charge featured
       if (packId === 0) {
+        // SECURITY: Amount validation for paid (featured-only) path
+        const expectedAmountPaid = featuredPrice;
+        const actualAmountPaid = Number(wepbayResponse.response.amount);
+        if (actualAmountPaid !== expectedAmountPaid) {
+          strapi.log.warn(
+            `[checkout] Amount mismatch (paid path): expected=${expectedAmountPaid}, actual=${actualAmountPaid}, buyOrder=${buyOrder}`,
+          );
+          return { success: false, message: "Payment amount mismatch" };
+        }
+
         // 4a. Create paid featured reservation and link to ad
         if (featured && adId > 0) {
           await PaymentUtils.adFeaturedReservation.createAdFeaturedReservation(
             userId,
-            (Number(process.env.AD_FEATURED_PRICE) || 10000).toString(),
+            featuredPrice.toString(),
             "Paid featured from unified checkout (paid pack)",
             adId,
           );
@@ -263,6 +315,35 @@ class CheckoutService {
         total_features?: number;
       };
 
+      // SECURITY: Amount validation — recompute expected amount server-side and reject mismatch
+      const packPrice = Number(packData.price ?? 0);
+      const expectedAmount = packPrice + (featured ? featuredPrice : 0);
+      const actualAmount = Number(wepbayResponse.response.amount);
+      if (actualAmount !== expectedAmount) {
+        strapi.log.warn(
+          `[checkout] Amount mismatch: expected=${expectedAmount}, actual=${actualAmount}, buyOrder=${buyOrder}`,
+        );
+        return { success: false, message: "Payment amount mismatch" };
+      }
+
+      // SECURITY: Ad ownership — verify the ad belongs to the paying user before granting benefit
+      if (adId > 0) {
+        const ad = await strapi.db.query("api::ad.ad").findOne({
+          where: { id: adId },
+          populate: { user: true },
+        });
+        const adUser = (ad as { user?: { id: number } } | null)?.user;
+        if (!adUser || String(adUser.id) !== String(userId)) {
+          strapi.log.error(
+            `[checkout] Ad ownership mismatch: adId=${adId}, payingUser=${userId}, adOwner=${adUser?.id}`,
+          );
+          return {
+            success: false,
+            message: "Ad ownership verification failed",
+          };
+        }
+      }
+
       // 6. Destructure pack data with defaults
       const resolvedTotalAds = packData.total_ads ?? 1;
       const resolvedTotalDays = packData.total_days ?? 30;
@@ -331,7 +412,7 @@ class CheckoutService {
       if (featured && adId > 0) {
         await PaymentUtils.adFeaturedReservation.createAdFeaturedReservation(
           userId,
-          (Number(process.env.AD_FEATURED_PRICE) || 10000).toString(),
+          featuredPrice.toString(),
           "Paid featured from unified checkout",
           adId,
         );

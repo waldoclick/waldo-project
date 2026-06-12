@@ -1,4 +1,5 @@
 import { Context } from "koa";
+import { fromFile } from "file-type";
 
 /**
  * List of allowed MIME types for file uploads
@@ -10,8 +11,23 @@ import { Context } from "koa";
 const ALLOWED_MIME_TYPES = ["image/png", "image/jpeg", "image/webp"];
 
 /**
+ * Validates file magic bytes against the declared MIME type.
+ * Uses file-type@16.5.4 (last CJS-compatible version) to read actual file bytes.
+ * Returns false if detection fails (unrecognized format → reject to be safe).
+ */
+async function validateMagicBytes(
+  filePath: string,
+  declaredMime: string,
+): Promise<boolean> {
+  const result = await fromFile(filePath);
+  if (!result) return false; // undetectable → reject
+  return result.mime === declaredMime;
+}
+
+/**
  * Middleware to validate file uploads
- * Ensures that only allowed image types (PNG, JPG, WEBP) can be uploaded through the API
+ * Ensures that only allowed image types (PNG, JPG, WEBP) can be uploaded through the API.
+ * Also validates that file magic bytes match the declared MIME type (prevents content-type spoofing).
  *
  * @returns {Function} Koa middleware function
  */
@@ -38,6 +54,13 @@ export default () => {
               `File type not allowed: ${f.mimetype}. Only PNG, JPG and WEBP images are allowed.`,
             );
           }
+          const isValid = await validateMagicBytes(f.filepath, f.mimetype);
+          if (!isValid) {
+            ctx.throw(
+              400,
+              `File content does not match declared type: ${f.mimetype}`,
+            );
+          }
         }
       } else {
         // Handle single file upload
@@ -45,6 +68,13 @@ export default () => {
           ctx.throw(
             400,
             `File type not allowed: ${file.mimetype}. Only PNG, JPG and WEBP images are allowed.`,
+          );
+        }
+        const isValid = await validateMagicBytes(file.filepath, file.mimetype);
+        if (!isValid) {
+          ctx.throw(
+            400,
+            `File content does not match declared type: ${file.mimetype}`,
           );
         }
       }

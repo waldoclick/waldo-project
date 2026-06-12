@@ -389,7 +389,8 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 
 ## Current State
 
-**Last shipped:** Phase 124 complete (2026-04-12) — InputPhone component: reusable `<InputPhone>` Vue 3 composite (country dial-code selector + phone number field) with 29-entry countries.json and 10 passing unit tests; integrated across FormProfile, FormCreateThree, and FormContact
+**Last shipped:** Phase 127 complete (2026-06-12) — Security review round 2: 5 SEC2 requirements closed (payment amount re-validation + replay prevention, order AUTHZ ownership checks + route policy lockdown, auth rate limiting + reCAPTCHA hostname binding + email_verified guard, XSS DOMPurify migration, MJML autoescape + upload magic-byte + PII strip + route lockdown)
+**Previously shipped:** Phase 124 complete (2026-04-12) — InputPhone component: reusable `<InputPhone>` Vue 3 composite (country dial-code selector + phone number field) with 29-entry countries.json and 10 passing unit tests; integrated across FormProfile, FormCreateThree, and FormContact
 **Previously shipped:** Phase 120 complete (2026-04-09) — PRO subscription model refactor: `subscription-pro` collection type created, card data migrated out of user, charge-before-activate ordering fixed, cron/cancellation read path migrated, 39 tests passing
 **Previously shipped:** v1.46 (2026-04-05) — Phase 112 complete: Ad wizard ownership validation — server-side ownership guards on saveDraft/update/delete in Strapi; client-side userId tracking with wizard reset guard in anunciar/index.vue
 **v1.46 PRO Subscriptions (2026-03-29):** Webpay Oneclick full subscription lifecycle — Oneclick Mall inscription, daily charge cron with 3-day retry, cancellation with period-end expiry, PRO checkout page with Facto tax documents, registration consent checkboxes
@@ -416,6 +417,14 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 **User Onboarding (since v1.45):** `/onboarding` page with dedicated minimal-chrome layout (logo only); `OnboardingDefault.vue` wraps `FormProfile` with `onboardingMode` prop + `@success` emit; `OnboardingThankyou.vue` with "Crear mi primer anuncio" + "Volver a Waldo" buttons (returns via `appStore.referer`); `onboarding-guard.global.ts` client-only middleware redirects incomplete profiles to `/onboarding` (escape routes: `/login`, `/registro`, `/logout`), reverse-guards complete profiles away; `meStore.reset()` after profile save prevents stale-cache redirect loop; One Tap suppressed on `/onboarding` via `startsWith` guard; referer middleware excludes `/onboarding` from persisted referer; 24+ Vitest tests.
 
 **Session persistence (since v1.42–v1.43):** Root cause: `@nuxtjs/strapi` plugin `fetchUser()` SSR catch calls `setToken(null)` on any `/users/me` error; fix: removed dead `auth.populate` joins (`ad_reservations.ad`, `ad_featured_reservations.ad`). Cookie replacement: `useStrapiAuth().logout()` in `FormLogin.vue` line 149 replaces `existingCookie.value = null` to respect `COOKIE_DOMAIN` attribute. Both apps have lean `auth.populate`: `["role", "commune", "region", "business_region", "business_commune"]` only.
+
+## Validated Requirements (Phase 127 — security-review-round-2)
+
+- ✓ Webpay return handler re-validates paid amount server-side (pack price lookup); replay prevention via `buy_order` unique index; ad ownership asserted before publish; fail-closed price guard removed — SEC2-PAYMENT
+- ✓ `order.findOne` returns 403 for cross-user non-manager; `order.find` hard-scopes to caller's user ID; `export-csv` gated with `global::isManager`; `ad-pack`, `ad-reservation`, `ad-featured-reservation` create/update/delete gated with `global::isManager` — SEC2-AUTHZ
+- ✓ `email_verified !== true` guard at top of `findOrCreateUser` (Google One Tap); `ad.ts` JWT verify uses plugin service (no hardcoded fallback); two-layer rate limiting (Strapi koa2-ratelimit + Nuxt Nitro per-IP); reCAPTCHA enforces `RECAPTCHA_ALLOWED_HOSTNAMES` + `expectedAction` — SEC2-AUTH
+- ✓ `useSanitize.ts` replaced regex sanitizer with `isomorphic-dompurify` (no isServer branch); `marked.use()` suppresses raw HTML blocks before DOMPurify — SEC2-XSS
+- ✓ MJML nunjucks `autoescape: true`; 14 templates audited, no `| safe` needed; `escapeHtml()` pre-calls removed from `contact.service.ts` (double-escape prevented); `fileTypeFromFile` magic-byte validation + `sizeLimit: 5MB` in upload middleware; `GET /api/users` filter whitelist (`ALLOWED_FILTER_KEYS`) + PII strip for non-managers (`PII_FIELDS`); `verification-code` core routes `only: []`; `contact` routes `only: ["create"]`; `subscription-payment` write actions behind `global::isManager` — SEC2-LOCKDOWN
 
 ## Known Issues / Tech Debt
 
@@ -577,4 +586,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ All 39 tests pass: cron, cancellation, middleware, bootstrap migration — Phase 120
 
 ---
-*Last updated: 2026-04-12 after Phase 124 (InputPhone component — reusable phone input with country dial-code selector integrated across website forms)*
+*Last updated: 2026-06-12 after Phase 127 (security-review-round-2 — SEC2-PAYMENT, SEC2-AUTHZ, SEC2-AUTH, SEC2-XSS, SEC2-LOCKDOWN all closed)*

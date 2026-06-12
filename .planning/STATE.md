@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
-status: in_progress
-last_updated: "2026-06-12T04:25:02.512Z"
+status: unknown
+last_updated: "2026-06-12T20:03:05.207Z"
 last_activity: 2026-06-12
 progress:
-  total_phases: 20
-  completed_phases: 19
-  total_plans: 4
-  completed_plans: 4
+  total_phases: 21
+  completed_phases: 20
+  total_plans: 57
+  completed_plans: 57
   percent: 100
 ---
 
@@ -20,7 +20,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 126 — security-hardening
+**Current focus:** Phase 127 — security-review-round-2
 
 ## Position
 
@@ -102,6 +102,7 @@ Progress: [██████████] 100%
 
 ### Roadmap Evolution
 
+- Phase 127 added: Security review round 2 — fix new vulnerabilities not covered by phase 126 (5 areas: payment integrity Webpay amount+idempotency, order/reservation/pack authorization, auth hardening Google email_verified + JWT fallback + rate-limit + reCAPTCHA binding, frontend SSR XSS + httpOnly session, email autoescape + upload validation + users PII + core-route lockdown). Findings detailed in 127-FINDINGS.md. Branch feat/127-security-review-fixes from main.
 - Phase 126 added: Security hardening — fix authorization vulnerabilities from security review (4 plans: users IDOR account-takeover, ad mass-assignment payment/approval bypass, free-ad publish IDOR, dev-endpoint + email-escape + regex-bypass hardening)
 - Phase 107 added: en el dashboard hay que validar todas las rutas POST, PUT y DELETE igual como en el website
 - Phase 108 added: dashboard replace nuxtjs-strapi sdk with useApiClient for all reads — eliminate dual-resource pattern, all HTTP through one composable

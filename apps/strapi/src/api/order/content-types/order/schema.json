@@ -16,7 +16,8 @@
       "type": "biginteger"
     },
     "buy_order": {
-      "type": "string"
+      "type": "string",
+      "unique": true
     },
     "user": {
       "type": "relation",

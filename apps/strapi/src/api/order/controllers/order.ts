@@ -32,8 +32,15 @@ export default factories.createCoreController(
         const page = parseInt(pagination?.page || "1", 10);
         const pageSize = parseInt(pagination?.pageSize || "25", 10);
 
-        // Construir filtros
-        const filters = query.filters || {};
+        // Construir filtros — non-managers are scoped to their own orders only.
+        // Client-supplied filters cannot widen the scope for non-managers.
+        const isManager =
+          (
+            (ctx.state.user as { role?: { name?: string } })?.role?.name ?? ""
+          ).toLowerCase() === "manager";
+        const filters = isManager
+          ? ((query.filters as Record<string, unknown>) ?? {})
+          : { user: { id: ctx.state.user.id } };
 
         // Transformar sort de string a objeto (formato compatible con Strapi v5)
         let sort: Record<string, unknown> = { createdAt: "desc" };
@@ -410,6 +417,22 @@ export default factories.createCoreController(
         if (!order) {
           return ctx.notFound("Order not found");
         }
+
+        // Ownership check: non-managers can only read their own orders.
+        // Pattern copied from payment.ts:744.
+        const isManager =
+          (
+            (ctx.state.user as { role?: { name?: string } })?.role?.name ?? ""
+          ).toLowerCase() === "manager";
+        const orderUser = (order as { user?: { id?: number | string } } | null)
+          ?.user;
+        if (
+          !isManager &&
+          String(orderUser?.id) !== String(ctx.state.user?.id)
+        ) {
+          return ctx.forbidden();
+        }
+
         return ctx.send({ data: order });
       } catch (error) {
         ctx.throw(500, error);

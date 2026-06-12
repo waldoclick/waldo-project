@@ -194,6 +194,28 @@ const parseSortParam = (sort?: string): Record<string, "asc" | "desc"> => {
  * Does NOT call getDetailedUserData — no N+1 query problem.
  * @param {Object} ctx - The Koa context object.
  */
+// Allowed filter keys for the users list endpoint — prevents PII filter abuse
+const ALLOWED_FILTER_KEYS = [
+  "username",
+  "commune",
+  "region",
+  "is_company",
+  "pro_status",
+] as const;
+
+// PII fields stripped from list responses for non-managers
+const PII_FIELDS = [
+  "email",
+  "phone",
+  "rut",
+  "address",
+  "address_number",
+  "postal_code",
+  "birthdate",
+  "business_rut",
+  "business_address",
+] as const;
+
 export const getUserDataWithFilters = async (ctx) => {
   const { filters: clientFilters = {}, pagination = {}, sort } = ctx.query;
 
@@ -201,6 +223,15 @@ export const getUserDataWithFilters = async (ctx) => {
   const pageSize = parseInt(
     (pagination as Record<string, string>).pageSize || "25",
     10,
+  );
+
+  // Whitelist client-supplied filter keys — drop any key not in ALLOWED_FILTER_KEYS
+  // to prevent PII filter abuse (e.g. email $contains enumeration attack)
+  const rawFilters = (clientFilters as Record<string, unknown>) ?? {};
+  const safeFilters = Object.fromEntries(
+    Object.entries(rawFilters).filter(([key]) =>
+      (ALLOWED_FILTER_KEYS as readonly string[]).includes(key),
+    ),
   );
 
   // Server-enforced: only return Authenticated users — non-forgeable from client.
@@ -211,7 +242,7 @@ export const getUserDataWithFilters = async (ctx) => {
     .findOne({ where: { type: "authenticated" } });
 
   const where = {
-    ...(clientFilters as Record<string, unknown>),
+    ...safeFilters,
     ...(authenticatedRole ? { role: { id: authenticatedRole.id } } : {}),
   };
 
@@ -230,7 +261,15 @@ export const getUserDataWithFilters = async (ctx) => {
       orderBy: parseSortParam(sort as string | undefined),
     });
 
-  // Sanitize sensitive fields without calling getDetailedUserData (avoids N+1)
+  // Determine if caller is a manager — managers retain PII fields in the response
+  const isManager =
+    (
+      (ctx.state.user as { role?: { name?: string } })?.role?.name ?? ""
+    ).toLowerCase() === "manager";
+
+  // Sanitize sensitive fields without calling getDetailedUserData (avoids N+1).
+  // Strips always: password, resetPasswordToken, confirmationToken.
+  // Strips for non-managers: PII_FIELDS (email, phone, rut, address, etc.)
   const sanitizedUsers = (users as Record<string, unknown>[]).map((user) => {
     const {
       password: _password,
@@ -243,6 +282,11 @@ export const getUserDataWithFilters = async (ctx) => {
       confirmationToken?: unknown;
       [key: string]: unknown;
     };
+    if (!isManager) {
+      for (const field of PII_FIELDS) {
+        delete (safe as Record<string, unknown>)[field];
+      }
+    }
     return safe;
   });
 

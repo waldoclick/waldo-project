@@ -128,6 +128,17 @@ class PackService {
       }
 
       const { price, total_ads, total_days, total_features } = packData.data;
+
+      // SECURITY: Amount validation — recompute expected amount server-side and reject mismatch
+      const expectedPackAmount = Number(price);
+      const actualPackAmount = Number(wepbayResponse.response.amount);
+      if (actualPackAmount !== expectedPackAmount) {
+        logger.warn(
+          `[pack] Amount mismatch: expected=${expectedPackAmount}, actual=${actualPackAmount}, buyOrder=${buyOrder}`,
+        );
+        return { success: false, message: "Payment amount mismatch" };
+      }
+
       const unitPrice = price / total_ads;
 
       logger.info("Creando reservas de anuncios y destacados", {

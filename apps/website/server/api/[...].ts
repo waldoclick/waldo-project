@@ -93,8 +93,11 @@ export default defineEventHandler(async (event) => {
     headers["X-Proxy-Key"] = proxyKey;
   }
 
-  // Forward the request
+  // Forward the request — redirect: 'manual' prevents the proxy from following
+  // Strapi's 302 redirects server-side (without user cookies). The browser
+  // receives the redirect and follows it with the full cookie jar.
   return proxyRequest(event, targetUrl, {
     headers,
+    fetchOptions: { redirect: "manual" },
   });
 });

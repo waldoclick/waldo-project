@@ -25,7 +25,7 @@ export default {
       path: "/ad-packs",
       handler: "ad-pack.create",
       config: {
-        policies: [],
+        policies: ["global::isManager"],
       },
     },
     {
@@ -33,7 +33,7 @@ export default {
       path: "/ad-packs/:id",
       handler: "ad-pack.update",
       config: {
-        policies: [],
+        policies: ["global::isManager"],
       },
     },
     {
@@ -41,7 +41,7 @@ export default {
       path: "/ad-packs/:id",
       handler: "ad-pack.delete",
       config: {
-        policies: [],
+        policies: ["global::isManager"],
       },
     },
   ],
