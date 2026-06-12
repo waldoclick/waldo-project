@@ -123,7 +123,7 @@ Plans:
 **Goal:** SKIPPED — issue resolved as side effect of Phase 109 (@nuxtjs/strapi elimination). Session cookie lifecycle now managed entirely by custom useSessionToken composable.
 **Requirements**: N/A
 **Depends on:** Phase 112
-**Plans:** 0 plans (skipped)
+**Plans:** 0/0 plans complete
 **Status:** Skipped — 2026-04-07
 
 ### Phase 114: Fix Codacy best-practice warnings — replace any with unknown, Function type, and require statements across monorepo
