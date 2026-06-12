@@ -9,12 +9,12 @@
       </template>
       <template #sidebar>
         <BoxInformation title="Detalles" :columns="1">
-          <CardInfoDashboard
+          <CardInfo
             v-if="category"
             title="Fecha de creación"
             :description="formatDate(category.createdAt)"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="category"
             title="Última modificación"
             :description="formatDate(category.updatedAt)"

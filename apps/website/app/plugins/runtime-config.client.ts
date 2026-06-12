@@ -10,11 +10,6 @@ export default defineNuxtPlugin(() => {
     config.public.baseUrl = process.env.BASE_URL || "http://localhost:3000";
   }
 
-  if (!config.public.apiUrl) {
-    console.warn("Runtime config apiUrl is not available, using fallback");
-    config.public.apiUrl = process.env.API_URL || "http://localhost:1337";
-  }
-
   // Hacer el config disponible globalmente para evitar errores
   return {
     provide: {

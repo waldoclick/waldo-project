@@ -52,7 +52,7 @@ class CheckoutService {
       const amount = Number(process.env.AD_FEATURED_PRICE) || 10000;
       const buyOrder = `order-${userId}-0-${adId}-${featuredFlag}-${invoiceFlag}`;
       const sessionId = `session-free-${adId}`;
-      const returnUrl = `${process.env.APP_URL}/api/payments/webpay`;
+      const returnUrl = `${process.env.FRONTEND_URL}/api/payments/webpay`;
 
       const result = await getPaymentGateway().createTransaction(
         amount,
@@ -77,7 +77,7 @@ class CheckoutService {
       // Use packId=0 to signal "no new pack" in buy_order
       const buyOrder = `order-${userId}-0-${adId}-${featuredFlag}-${invoiceFlag}`;
       const sessionId = `session-paid-${adId}`;
-      const returnUrl = `${process.env.APP_URL}/api/payments/webpay`;
+      const returnUrl = `${process.env.FRONTEND_URL}/api/payments/webpay`;
 
       const result = await getPaymentGateway().createTransaction(
         amount,
@@ -129,7 +129,7 @@ class CheckoutService {
     const sessionId = `session-${packData.id}`;
 
     // 7. Build return URL
-    const returnUrl = `${process.env.APP_URL}/api/payments/webpay`;
+    const returnUrl = `${process.env.FRONTEND_URL}/api/payments/webpay`;
 
     // 8. Create Webpay transaction
     const result = await getPaymentGateway().createTransaction(

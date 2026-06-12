@@ -36,7 +36,7 @@ class PackService {
 
       const packDataId = adPack.data.id;
       const amount = adPack.data.price;
-      const returnUrl = `${process.env.APP_URL}/api/payments/pack-response`;
+      const returnUrl = `${process.env.FRONTEND_URL}/api/payments/pack-response`;
 
       const meta = `${userId}-${packDataId}-${isInvoice}`;
       const buyOrder = `order-${meta}`;

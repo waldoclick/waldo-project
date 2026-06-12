@@ -420,7 +420,7 @@ class PaymentController {
     }
 
     const username = buildOneclickUsername(user.documentId);
-    const responseUrl = `${process.env.APP_URL}/api/payments/pro-response`;
+    const responseUrl = `${process.env.FRONTEND_URL}/api/payments/pro-response`;
 
     const oneclickService = new OneclickService();
     const result = await oneclickService.startInscription(

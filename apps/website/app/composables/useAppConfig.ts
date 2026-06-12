@@ -10,7 +10,6 @@ export const useAppConfiguration = () => {
 
     // URLs
     baseUrl: config.public.baseUrl,
-    apiUrl: config.public.apiUrl,
 
     // Features
     features: {

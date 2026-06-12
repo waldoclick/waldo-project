@@ -35,7 +35,6 @@ import FooterDefault from "@/components/FooterDefault.vue";
 // Inicializar stores y route
 const route = useRoute();
 const config = useRuntimeConfig();
-const apiUrl = config.public.apiUrl;
 const adStore = useAdStore();
 
 // Analytics

@@ -13,12 +13,12 @@
     <BoxContent>
       <template #content>
         <BoxInformation title="Información" :columns="1">
-          <CardInfoDashboard
+          <CardInfo
             v-if="article"
             title="Título"
             :description="article.title"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="article"
             title="Encabezado"
             :description="article.header"
@@ -31,12 +31,12 @@
               </div>
             </div>
           </article>
-          <CardInfoDashboard
+          <CardInfo
             v-if="article"
             title="Título SEO"
             :description="article.seo_title"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="article"
             title="Descripción SEO"
             :description="article.seo_description"
@@ -45,17 +45,17 @@
       </template>
       <template #sidebar>
         <BoxInformation title="Detalles" :columns="1">
-          <CardInfoDashboard
+          <CardInfo
             v-if="article"
             title="Fecha de creación"
             :description="formatDate(article.createdAt)"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="article"
             title="Última modificación"
             :description="formatDate(article.updatedAt)"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="article"
             title="Estado"
             :description="article.publishedAt ? 'Publicado' : 'Borrador'"

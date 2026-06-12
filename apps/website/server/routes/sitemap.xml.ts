@@ -56,7 +56,7 @@ export default cachedEventHandler(
       return "Sitemap blocked in this environment.";
     }
 
-    const apiUrl = config.public.apiUrl as string;
+    const apiUrl = config.apiUrl as string;
     const baseUrl = config.public.baseUrl as string;
 
     const urls: string[] = [];

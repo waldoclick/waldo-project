@@ -4,22 +4,22 @@
     <BoxContent>
       <template #content>
         <BoxInformation title="Información" :columns="2">
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Usuario"
             :description="item.user?.email || '--'"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Tipo de tarjeta"
             :description="item.card_type || '--'"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Últimos 4 dígitos"
             :description="item.card_last4 || '--'"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Factura pendiente"
             :description="item.pending_invoice ? 'Sí' : 'No'"
@@ -28,12 +28,12 @@
       </template>
       <template #sidebar>
         <BoxInformation title="Detalles" :columns="1">
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Fecha de creación"
             :description="formatDate(item.createdAt)"
           />
-          <CardInfoDashboard
+          <CardInfo
             v-if="item"
             title="Última modificación"
             :description="formatDate(item.updatedAt)"

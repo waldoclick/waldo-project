@@ -289,7 +289,7 @@ class AdService {
         adId,
       );
 
-      const returnUrl = `${process.env.APP_URL}/api/payments/ad-response`;
+      const returnUrl = `${process.env.FRONTEND_URL}/api/payments/ad-response`;
 
       const transbankResponse = await getPaymentGateway().createTransaction(
         paymentDetails.amount,

@@ -12,8 +12,6 @@
 </template>
 
 <script setup lang="ts">
-import FormPack from "@/components/FormPack.vue";
-
 definePageMeta({
   layout: "dashboard",
 });

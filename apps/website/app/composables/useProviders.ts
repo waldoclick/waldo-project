@@ -1,37 +1,57 @@
 export const useProviders = () => {
   const { getProviderAuthenticationUrl } = useStrapiAuth();
-  const config = useRuntimeConfig();
 
-  /**
-   * Obtiene la URL de autenticación de un proveedor
-   * Si el proxy está desactivado, devuelve la URL normal
-   * Si el proxy está activo, reemplaza la URL del frontend con la de la API
-   */
-  const getProviderUrl = (provider: string): string => {
-    const originalUrl = getProviderAuthenticationUrl(provider);
-
-    // Si el proxy está desactivado, devolver la URL original
-    if (config.public.apiDisableProxy) {
-      return originalUrl;
-    }
-
-    // Si el proxy está activo, hacer el replace
-    const frontendUrl = config.public.baseUrl;
-    const apiUrl = config.public.apiUrl;
-
-    return originalUrl.replace(frontendUrl, apiUrl);
-  };
-
-  /**
-   * Redirige al proveedor de autenticación especificado
-   */
   const redirectToProvider = (provider: string): void => {
-    const url = getProviderUrl(provider);
-    window.location.href = url;
+    window.location.href = getProviderAuthenticationUrl(provider);
   };
 
-  return {
-    getProviderUrl,
-    redirectToProvider,
+  const loginWithPopup = async (provider: string): Promise<{ jwt: string }> => {
+    const data = await $fetch<{ url: string }>(
+      `/api/auth/${provider}/initiate`,
+    );
+
+    const width = 500;
+    const height = 600;
+    const left = window.screenX + (window.outerWidth - width) / 2;
+    const top = window.screenY + (window.outerHeight - height) / 2;
+
+    const popup = window.open(
+      data.url,
+      `${provider}_oauth`,
+      `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`,
+    );
+
+    if (!popup) throw new Error("popup_blocked");
+
+    return new Promise((resolve, reject) => {
+      const ctx = {
+        done: false,
+        ticker: undefined as ReturnType<typeof setInterval> | undefined,
+      };
+
+      const finish = (fn: () => void) => {
+        if (ctx.done) return;
+        ctx.done = true;
+        clearInterval(ctx.ticker);
+        window.removeEventListener("message", handler);
+        fn();
+      };
+
+      const handler = (event: MessageEvent) => {
+        if (event.origin !== window.location.origin) return;
+        if (event.data?.type === "google-oauth-success") {
+          finish(() => resolve({ jwt: (event.data as { jwt: string }).jwt }));
+        } else if (event.data?.type === "google-oauth-error") {
+          finish(() => reject(new Error("oauth_failed")));
+        }
+      };
+
+      window.addEventListener("message", handler);
+      ctx.ticker = setInterval(() => {
+        if (popup.closed) finish(() => reject(new Error("popup_closed")));
+      }, 500);
+    });
   };
+
+  return { loginWithPopup, redirectToProvider };
 };

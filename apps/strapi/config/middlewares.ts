@@ -1,6 +1,7 @@
 export default ({ env }) => [
   "strapi::logger",
   "strapi::errors",
+  "global::proxy-auth",
   {
     name: "strapi::security",
     config: {
@@ -31,7 +32,6 @@ export default ({ env }) => [
           "frame-src": ["'self'", "https://accounts.google.com"],
         },
       },
-      frameguard: false, // Desactiva x-frame-options
       noSniff: true, // X-Content-Type-Options: nosniff — previene MIME sniffing
     },
   },
