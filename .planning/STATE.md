@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
-status: in_progress
-last_updated: "2026-06-12T04:25:02.512Z"
+status: unknown
+last_updated: "2026-06-12T18:38:28.908Z"
 last_activity: 2026-06-12
 progress:
-  total_phases: 20
+  total_phases: 21
   completed_phases: 19
-  total_plans: 4
-  completed_plans: 4
+  total_plans: 57
+  completed_plans: 53
   percent: 100
 ---
 
@@ -20,7 +20,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 126 — security-hardening
+**Current focus:** Phase 127 — security-review-round-2
 
 ## Position
 
