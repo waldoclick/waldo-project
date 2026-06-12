@@ -1,10 +1,9 @@
-// is-users-owner.test.ts
+// isUsersOwner.test.ts
 //
-// Jest regression tests for the is-users-owner route policy.
+// Jest regression tests for the isUsersOwner global route policy.
 // Verifies: cross-user → 403 (false), self → allowed (true), manager bypass → true, no user → false.
 
-import type { Core } from "@strapi/strapi";
-import policy from "../../../src/extensions/users-permissions/policies/is-users-owner";
+import policy from "../../src/policies/isUsersOwner";
 
 function createPolicyContext(
   paramId: string | number,
@@ -16,7 +15,7 @@ function createPolicyContext(
   };
 }
 
-describe("is-users-owner policy", () => {
+describe("isUsersOwner policy", () => {
   // Test 1: cross-user PUT must be denied
   it("denies cross-user PUT (returns false)", () => {
     // Arrange
@@ -26,7 +25,7 @@ describe("is-users-owner policy", () => {
     });
 
     // Act
-    const result = policy(ctx, {}, { strapi: {} as unknown as Core.Strapi });
+    const result = policy(ctx);
 
     // Assert
     expect(result).toBe(false);
@@ -41,7 +40,7 @@ describe("is-users-owner policy", () => {
     });
 
     // Act
-    const result = policy(ctx, {}, { strapi: {} as unknown as Core.Strapi });
+    const result = policy(ctx);
 
     // Assert
     expect(result).toBe(true);
@@ -53,7 +52,7 @@ describe("is-users-owner policy", () => {
     const ctx = createPolicyContext("123", { id: 123 });
 
     // Act
-    const result = policy(ctx, {}, { strapi: {} as unknown as Core.Strapi });
+    const result = policy(ctx);
 
     // Assert
     expect(result).toBe(true);
@@ -68,7 +67,7 @@ describe("is-users-owner policy", () => {
     });
 
     // Act
-    const result = policy(ctx, {}, { strapi: {} as unknown as Core.Strapi });
+    const result = policy(ctx);
 
     // Assert
     expect(result).toBe(true);
@@ -80,7 +79,7 @@ describe("is-users-owner policy", () => {
     const ctx = createPolicyContext("123", undefined);
 
     // Act
-    const result = policy(ctx, {}, { strapi: {} as unknown as Core.Strapi });
+    const result = policy(ctx);
 
     // Assert
     expect(result).toBe(false);

@@ -75,9 +75,7 @@ export default function (plugin) {
   if (updateRoute) {
     updateRoute.config = updateRoute.config ?? {};
     updateRoute.config.policies = updateRoute.config.policies ?? [];
-    updateRoute.config.policies.push(
-      "plugin::users-permissions.is-users-owner",
-    );
+    updateRoute.config.policies.push("global::isUsersOwner");
   }
 
   // --- NEW: verify-code and resend-code are registered as a standard Strapi API ---
