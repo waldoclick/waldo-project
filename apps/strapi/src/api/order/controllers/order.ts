@@ -424,9 +424,8 @@ export default factories.createCoreController(
           (
             (ctx.state.user as { role?: { name?: string } })?.role?.name ?? ""
           ).toLowerCase() === "manager";
-        const orderUser = (
-          order as { user?: { id?: number | string } } | null
-        )?.user;
+        const orderUser = (order as { user?: { id?: number | string } } | null)
+          ?.user;
         if (
           !isManager &&
           String(orderUser?.id) !== String(ctx.state.user?.id)

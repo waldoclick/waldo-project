@@ -102,13 +102,14 @@ import PaymentUtils from "../../../../src/api/payment/utils";
 // ─── Typed mock references ────────────────────────────────────────────────────
 
 const mockPublishAd = PaymentUtils.ad.publishAd as jest.Mock;
-const mockCreateAdReservation =
-  PaymentUtils.adReservation.createAdReservation as jest.Mock;
-const mockCreateAdFeaturedReservation =
-  PaymentUtils.adFeaturedReservation.createAdFeaturedReservation as jest.Mock;
-const mockGetAdReservationAvailable =
-  PaymentUtils.adReservation.getAdReservationAvailable as jest.Mock;
-const mockUpdateAdReservation = PaymentUtils.ad.updateAdReservation as jest.Mock;
+const mockCreateAdReservation = PaymentUtils.adReservation
+  .createAdReservation as jest.Mock;
+const mockCreateAdFeaturedReservation = PaymentUtils.adFeaturedReservation
+  .createAdFeaturedReservation as jest.Mock;
+const mockGetAdReservationAvailable = PaymentUtils.adReservation
+  .getAdReservationAvailable as jest.Mock;
+const mockUpdateAdReservation = PaymentUtils.ad
+  .updateAdReservation as jest.Mock;
 const mockUpdateAdDates = PaymentUtils.ad.updateAdDates as jest.Mock;
 
 // ─── strapi global stub ───────────────────────────────────────────────────────

@@ -76,10 +76,13 @@ describe("escapeHtml helper", () => {
   });
 });
 
-describe("ContactService.createContact — HTML escape at email boundary", () => {
+// SEC2-LOCKDOWN: With autoescape: true in nunjucks, the service passes raw values
+// to sendMjmlEmail and the template engine handles HTML escaping at render time.
+// Pre-escaping with escapeHtml() was removed from contact.service.ts to avoid
+// double-escaping (raw & → &amp; → &amp;amp; in email output).
+describe("ContactService.createContact — raw values passed, autoescape handles XSS", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    // Restore the create mock for each test
     (strapiStub.db.query as jest.Mock).mockReturnValue({
       create: jest.fn().mockResolvedValue({
         id: 1,
@@ -95,8 +98,7 @@ describe("ContactService.createContact — HTML escape at email boundary", () =>
     });
   });
 
-  it("passes escaped name and message to contact-admin sendMjmlEmail — HTML payload neutralized", async () => {
-    // Arrange
+  it("passes raw (unescaped) name and message to contact-admin sendMjmlEmail — nunjucks autoescape neutralizes HTML at render time", async () => {
     const service = new ContactService(strapiStub);
     const contactData = {
       fullname: "<script>x</script>",
@@ -107,13 +109,10 @@ describe("ContactService.createContact — HTML escape at email boundary", () =>
       ip: "1.1.1.1",
     };
 
-    // Act
     await service.createContact(contactData);
 
-    // Assert: sendMjmlEmail called twice (contact-user + contact-admin)
     expect(mockSendMjmlEmail).toHaveBeenCalledTimes(2);
 
-    // Find the contact-admin call (2nd argument = "contact-admin")
     const adminCall = mockSendMjmlEmail.mock.calls.find(
       (call: unknown[]) => call[1] === "contact-admin",
     );
@@ -121,21 +120,13 @@ describe("ContactService.createContact — HTML escape at email boundary", () =>
 
     const adminPayload = adminCall![4] as Record<string, string>;
 
-    // name must not contain raw <script> tag — must be escaped
-    expect(adminPayload.name).not.toContain("<script>");
-    expect(adminPayload.name).toContain("&lt;script&gt;");
-
-    // message must not contain raw <img tag — must be escaped
-    expect(adminPayload.message).not.toContain("<img");
-    expect(adminPayload.message).toContain("&lt;img");
-
-    // company & must be escaped
-    expect(adminPayload.company).not.toContain("&D");
-    expect(adminPayload.company).toContain("&amp;D");
+    // Raw values passed through — escaping deferred to nunjucks autoescape at render time
+    expect(adminPayload.name).toBe("<script>x</script>");
+    expect(adminPayload.message).toBe("<img src=x onerror=1>");
+    expect(adminPayload.company).toBe("C&D");
   });
 
-  it("passes escaped fields to contact-user sendMjmlEmail", async () => {
-    // Arrange
+  it("passes raw (unescaped) fields to contact-user sendMjmlEmail", async () => {
     const service = new ContactService(strapiStub);
     const contactData = {
       fullname: "<em>Bob</em>",
@@ -146,10 +137,8 @@ describe("ContactService.createContact — HTML escape at email boundary", () =>
       ip: "1.1.1.1",
     };
 
-    // Act
     await service.createContact(contactData);
 
-    // Find the contact-user call
     const userCall = mockSendMjmlEmail.mock.calls.find(
       (call: unknown[]) => call[1] === "contact-user",
     );
@@ -157,13 +146,9 @@ describe("ContactService.createContact — HTML escape at email boundary", () =>
 
     const userPayload = userCall![4] as Record<string, string>;
 
-    // name must be escaped
-    expect(userPayload.name).not.toContain("<em>");
-    expect(userPayload.name).toContain("&lt;em&gt;");
-
-    // phone must be escaped
-    expect(userPayload.phone).not.toContain("<i>");
-    expect(userPayload.phone).toContain("&lt;i&gt;");
+    // Raw values passed through — nunjucks autoescape handles rendering
+    expect(userPayload.name).toBe("<em>Bob</em>");
+    expect(userPayload.phone).toBe("<i>555</i>");
   });
 
   it("keeps the recipient email address (to) unescaped — escaping is for body fields only", async () => {
