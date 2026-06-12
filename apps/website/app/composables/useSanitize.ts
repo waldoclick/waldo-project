@@ -1,7 +1,30 @@
+import DOMPurify from "isomorphic-dompurify";
 import { marked } from "marked";
 
+// Configure marked to suppress all raw HTML block and inline tokens.
+// MUST be at module top-level (not inside the composable) — marked.use() is
+// called once at module load; calling it per-component would stack duplicates.
+// Pitfall 1 (RESEARCH.md): marked.use inside composable = duplicate extensions.
+marked.use({
+  renderer: {
+    // Block-level raw HTML (e.g. <svg onload=x>) → suppress entirely
+    html() {
+      return "";
+    },
+  },
+  walkTokens(token) {
+    // Inline raw HTML tokens inside paragraphs → clear so they render nothing
+    if (token.type === "html") {
+      token.text = "";
+      token.raw = "";
+    }
+  },
+});
+
 export const useSanitize = () => {
-  // Función para sanitizar HTML de forma segura
+  // Single isomorphic code path: DOMPurify works on server (via JSDOM) and client.
+  // Replaces the old regex SSR branch that missed unquoted event handlers
+  // such as <svg onload=alert(1)>.
   const sanitizeHTML = (
     html: string,
     allowedTags: string[] = [],
@@ -9,47 +32,11 @@ export const useSanitize = () => {
   ): string => {
     if (!html) return "";
 
-    // Detectar si estamos en el servidor
-    const isServer = typeof window === "undefined";
-
-    // En el servidor, hacer sanitización básica con regex
-    if (isServer) {
-      let sanitized = html;
-
-      // Remover todos los scripts y eventos
-      sanitized = sanitized.replace(
-        /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
-        "",
-      );
-      sanitized = sanitized.replace(/on\w+\s*=\s*["'][^"']*["']/gi, "");
-      sanitized = sanitized.replace(/javascript:/gi, "");
-
-      // Si no hay etiquetas permitidas, convertir a texto plano
-      if (allowedTags.length === 0) {
-        return sanitized.replace(/<[^>]*>/g, "");
-      }
-
-      // Permitir solo etiquetas específicas
-      const tagPattern = new RegExp(
-        `<(?!/?(?:${allowedTags.join("|")})\\b)[^>]*>`,
-        "gi",
-      );
-      sanitized = sanitized.replace(tagPattern, "");
-
-      return sanitized;
-    }
-
-    // En el cliente, usar DOMPurify si está disponible
-    if (typeof window !== "undefined" && window.DOMPurify) {
-      return window.DOMPurify.sanitize(html, {
-        ALLOWED_TAGS: allowedTags,
-        ALLOWED_ATTR: allowedAttrs,
-        KEEP_CONTENT: true,
-      });
-    }
-
-    // Fallback: sanitización básica
-    return html.replace(/<[^>]*>/g, "");
+    return DOMPurify.sanitize(html, {
+      ALLOWED_TAGS: allowedTags,
+      ALLOWED_ATTR: allowedAttrs,
+      KEEP_CONTENT: true,
+    });
   };
 
   /**
@@ -111,6 +98,8 @@ export const useSanitize = () => {
 
   /**
    * Converts Markdown (from Strapi richtext fields) to sanitized HTML.
+   * Raw HTML in markdown source is suppressed by the module-level marked.use()
+   * override before sanitizeRich runs DOMPurify over the output.
    */
   const parseMarkdown = (markdown: string): string => {
     if (!markdown) return "";
