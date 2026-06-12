@@ -267,3 +267,16 @@ Plans:
 - [x] 125-05-PLAN.md — Pages migration (68 pages → /dashboard prefix, drop auth + dev)
 - [x] 125-06-PLAN.md — SCSS merge + TypeScript remediation (build + typecheck gates)
 - [x] 125-07-PLAN.md — Types sweep + MenuUser link + Strapi DASHBOARD_URL + workspace removal + delete dashboard + final gate
+
+### Phase 126: Security hardening — fix authorization vulnerabilities from security review
+
+**Goal:** Close the authorization gaps surfaced by the branch security review so no authenticated user can take over another account, publish/mark-paid an ad without payment or moderator approval, or mutate another user's ad. All fixes are server-side in Strapi (`apps/strapi`) plus two Nuxt hardening items; no schema migrations. Each fix must be covered by a regression test (Jest for Strapi).
+**Requirements**: SEC-IDOR-USERS, SEC-MASSASSIGN-ADS, SEC-IDOR-FREEAD, SEC-HARDENING
+**Depends on:** Phase 125
+**Plans:** 0/4 plans (run /gsd:plan-phase 126 to break down)
+
+Plans:
+- [ ] 126-01 — HIGH: Account-takeover IDOR on `PUT /api/users/:id` — wire the existing `userUpdateController.ts` (uses `ctx.state.user.id`) as the `user.update` controller and/or add an ownership policy; ensure `email`/`password` cannot be changed for an arbitrary user id via the generic update path
+- [ ] 126-02 — HIGH: Mass-assignment payment/approval bypass on ad create/update — add a `protect-ad-fields` middleware stripping `active`, `is_paid`, `banned`, `rejected`, `remaining_days`, `duration_days`, `draft`, `actived_by`, `user` from POST/PUT `/api/ads` bodies (mirror `protect-user-fields`)
+- [ ] 126-03 — MEDIUM: Free-ad publish IDOR — assert `ad.user.id === userId` in `free-ad.service.ts` before `publishAd`/`updateAdReservation`/`updateAdDates`; return 403 otherwise
+- [ ] 126-04 — Hardening: gate dev endpoints (`server/api/dev-config.get.ts`, `dev-login.post.ts`) behind `import.meta.dev`; enable nunjucks `autoescape` (or escape user fields) in the MJML service; fix the `protect-user-fields` trailing-slash regex bypass
