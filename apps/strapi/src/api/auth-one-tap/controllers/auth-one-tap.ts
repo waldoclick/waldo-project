@@ -33,7 +33,16 @@ export default {
     }
 
     // 3. Find or create Waldo user
-    const { user, isNew } = await googleOneTapService.findOrCreateUser(payload);
+    let user: Record<string, unknown>;
+    let isNew: boolean;
+    try {
+      ({ user, isNew } = await googleOneTapService.findOrCreateUser(payload));
+    } catch (err) {
+      // SEC2-AUTH: email_verified guard throws — treat as unauthorized
+      return ctx.unauthorized(
+        (err as Error)?.message ?? "Google login rejected",
+      );
+    }
 
     // 4. Grant 3 free ad slots to new users — fire-and-forget (non-blocking, same as registerUserLocal)
     if (isNew) {

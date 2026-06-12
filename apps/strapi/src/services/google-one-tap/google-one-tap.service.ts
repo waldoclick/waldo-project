@@ -31,6 +31,11 @@ export class GoogleOneTapService implements IGoogleOneTapService {
   async findOrCreateUser(
     payload: TokenPayload,
   ): Promise<{ user: Record<string, unknown>; isNew: boolean }> {
+    // SECURITY (SEC2-AUTH): reject unverified Google email before any account link/create
+    if (payload.email_verified !== true) {
+      throw new Error("Google account email is not verified");
+    }
+
     const { sub, email, given_name, family_name } = payload;
     const normalizedEmail = (email ?? "").toLowerCase();
 

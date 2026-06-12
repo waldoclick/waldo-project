@@ -46,6 +46,7 @@ const mockRoleFindOne = jest.fn();
 const VALID_PAYLOAD = {
   sub: "google-sub-123",
   email: "alice@example.com",
+  email_verified: true,
   given_name: "Alice",
   family_name: "García",
   picture: "https://lh3.googleusercontent.com/a/photo",
@@ -176,6 +177,36 @@ describe("GTAP-04: findOrCreateUser() — existing user", () => {
 
     // Assert
     expect(mockUserCreate).not.toHaveBeenCalled();
+  });
+});
+
+// ─── SEC2-AUTH: email_verified guard ─────────────────────────────────────────
+
+describe("SEC2-AUTH: findOrCreateUser() — email_verified guard", () => {
+  it("rejects with 'Google account email is not verified' when email_verified is false", async () => {
+    // Arrange — payload with unverified email
+    const unverifiedPayload = { ...VALID_PAYLOAD, email_verified: false };
+
+    // Act + Assert
+    await expect(service.findOrCreateUser(unverifiedPayload)).rejects.toThrow(
+      "Google account email is not verified",
+    );
+
+    // Assert NO user create and NO link (db.query create/update NOT called)
+    expect(mockUserCreate).not.toHaveBeenCalled();
+    expect(mockUserUpdate).not.toHaveBeenCalled();
+  });
+
+  it("proceeds normally when email_verified is true", async () => {
+    // Arrange — verified payload; sub already in DB (no create/update needed)
+    const verifiedPayload = { ...VALID_PAYLOAD, email_verified: true };
+    mockUserFindOne.mockResolvedValueOnce(EXISTING_USER); // byGoogleSub hit
+
+    // Act
+    const result = await service.findOrCreateUser(verifiedPayload);
+
+    // Assert — user returned, no error
+    expect(result).toEqual({ user: EXISTING_USER, isNew: false });
   });
 });
 
