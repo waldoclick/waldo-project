@@ -399,10 +399,14 @@ class PaymentController {
     // token, or any payment gateway reference. /pagar/gracias uses this value to call
     // useOrderById(documentId). See Payment Rules in AGENTS.md.
     if (!result.orderDocumentId) {
+      // Payment was authorized and processed (ad published) but order record creation failed.
+      // Do NOT show "rejected" — the bank charge is real. Redirect to a receipt-less success page.
       logger.error("Checkout Webpay return missing orderDocumentId", {
         orderId: result.orderId,
       });
-      ctx.redirect(`${process.env.FRONTEND_URL}/pagar/error?reason=rejected`);
+      ctx.redirect(
+        `${process.env.FRONTEND_URL}/pagar/gracias?error=no-receipt`,
+      );
       return;
     }
 

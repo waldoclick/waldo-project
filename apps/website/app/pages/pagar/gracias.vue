@@ -10,6 +10,20 @@
       :show-icon="true"
       :summary="prepareSummary(orderData)"
     />
+    <!-- Fallback: pago exitoso pero comprobante no disponible por error técnico -->
+    <section v-else-if="noReceiptMode" class="gracias--fallback">
+      <div class="gracias--fallback__box">
+        <h1 class="gracias--fallback__box__title">¡Tu pago fue recibido!</h1>
+        <p class="gracias--fallback__box__message">
+          Tu pago fue procesado correctamente y tu anuncio ha sido publicado.
+          Sin embargo, tuvimos un problema técnico al generar tu comprobante.
+        </p>
+        <p class="gracias--fallback__box__support">
+          Si necesitas tu comprobante, contáctanos con el número de tu tarjeta y
+          el monto cobrado.
+        </p>
+      </div>
+    </section>
     <FooterDefault />
   </div>
 </template>
@@ -99,7 +113,11 @@ interface OrderData {
 import { useOrderById } from "@/composables/useOrderById";
 const { data, pending, error } = await useAsyncData(
   "pagar-gracias",
-  async (): Promise<OrderData | { error: string }> => {
+  async (): Promise<OrderData | { error: string } | { noReceipt: true }> => {
+    // Payment was processed but order record couldn't be created — show success without receipt
+    if (route.query.error === "no-receipt") {
+      return { noReceipt: true };
+    }
     const documentId = route.query.order as string;
     if (!documentId) {
       return { error: "INVALID_URL" };
@@ -119,9 +137,13 @@ const { data, pending, error } = await useAsyncData(
 
 // Computed para obtener los datos de la orden con el tipo correcto
 const orderData = computed((): OrderData | null => {
-  if (!data.value || "error" in data.value) return null;
+  if (!data.value || "error" in data.value || "noReceipt" in data.value)
+    return null;
   return data.value as OrderData;
 });
+
+// True when payment succeeded but order record creation failed — show success without receipt
+const noReceiptMode = computed(() => !!data.value && "noReceipt" in data.value);
 
 // Fire purchase event once when order data is available, BEFORE clearing store.
 // Using watch with { immediate: true } handles both SSR hydration (data already populated)
@@ -215,4 +237,39 @@ definePageMeta({
 });
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+@use "~/scss/abstracts/variables" as *;
+
+.gracias--fallback {
+  display: flex;
+  justify-content: center;
+  padding: 48px 24px;
+
+  &__box {
+    max-width: 560px;
+    width: 100%;
+    background: $cultured;
+    border-radius: 8px;
+    padding: 40px;
+    text-align: center;
+
+    &__title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: $charcoal;
+      margin-bottom: 16px;
+    }
+
+    &__message {
+      font-size: 1rem;
+      color: $charcoal;
+      margin-bottom: 12px;
+    }
+
+    &__support {
+      font-size: 0.875rem;
+      color: $davys_grey;
+    }
+  }
+}
+</style>
