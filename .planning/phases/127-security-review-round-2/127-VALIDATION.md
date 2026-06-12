@@ -49,9 +49,9 @@ This phase spans two apps. Strapi fixes use Jest; Nuxt fixes use Vitest. Tests l
 | 01-T2 | 01 | 1 | SEC2-PAYMENT | unit (green) | `cd apps/strapi && pnpm test -- --testPathPattern=checkout.service` | ✅ from T1 | ⬜ pending |
 | 02-T1 | 02 | 1 | SEC2-AUTHZ | unit (red) | `cd apps/strapi && pnpm test -- --testPathPattern="order.test\|ad-pack.route"` | ❌ W0 create | ⬜ pending |
 | 02-T2 | 02 | 1 | SEC2-AUTHZ | unit (green) | `cd apps/strapi && pnpm test -- --testPathPattern="order.test\|ad-pack.route"` | ✅ from T1 | ⬜ pending |
-| 03-T1 | 03 | 1 | SEC2-AUTH | unit (red) | `cd apps/strapi && pnpm test -- --testPathPattern="google-one-tap.service\|ad.jwt"` | ❌ W0 create | ⬜ pending |
+| 03-T1 | 03 | 1 | SEC2-AUTH | unit (red) | `cd apps/strapi && pnpm test -- --testPathPattern="google-one-tap.service\|ad.jwt\|google-recaptcha.service"` | ❌ W0 create | ⬜ pending |
 | 03-T2 | 03 | 1 | SEC2-AUTH | unit (green) | `cd apps/strapi && pnpm test -- --testPathPattern="google-one-tap.service\|ad.jwt"` | ✅ from T1 | ⬜ pending |
-| 03-T3 | 03 | 1 | SEC2-AUTH | unit | `cd apps/strapi && pnpm test && cd ../website && pnpm test -- recaptcha` | n/a (rate-limit + recaptcha) | ⬜ pending |
+| 03-T3 | 03 | 1 | SEC2-AUTH | unit (recaptcha red→green) + smoke (rate-limit) | `cd apps/strapi && pnpm test -- --testPathPattern=google-recaptcha.service && cd ../website && pnpm test -- recaptcha` | ✅ recaptcha from T1; rate-limit smoke (grep) | ⬜ pending |
 | 04-T1 | 04 | 1 | SEC2-XSS | unit (red) | `cd apps/website && pnpm test -- useSanitize` | ❌ W0 create | ⬜ pending |
 | 04-T2 | 04 | 1 | SEC2-XSS | unit (green) | `cd apps/website && pnpm test -- useSanitize` | ✅ from T1 | ⬜ pending |
 | 05-T1 | 05 | 2 | SEC2-LOCKDOWN | unit (red) | `cd apps/strapi && pnpm test -- --testPathPattern="upload\|userController"` | ❌ W0 create | ⬜ pending |
@@ -68,6 +68,8 @@ This phase spans two apps. Strapi fixes use Jest; Nuxt fixes use Vitest. Tests l
 - `apps/strapi/tests/api/ad-pack/ad-pack.route.test.ts` (02)
 - `apps/strapi/tests/services/google-one-tap/google-one-tap.service.test.ts` (03)
 - `apps/strapi/tests/api/ad/ad.jwt.test.ts` (03)
+- `apps/strapi/tests/services/google/google-recaptcha.service.test.ts` (03 — reCAPTCHA hostname/action binding, red→green in T3)
+- `apps/website/tests/server/utils/recaptcha.test.ts` (03 — reCAPTCHA hostname binding, red→green in T3)
 - `apps/website/tests/composables/useSanitize.test.ts` (04)
 - `apps/strapi/tests/middlewares/upload.test.ts` (05)
 - `apps/strapi/tests/extensions/users-permissions/controllers/userController.test.ts` (05)
@@ -96,6 +98,7 @@ This phase spans two apps. Strapi fixes use Jest; Nuxt fixes use Vitest. Tests l
 | Google login with unverified-email account is rejected | SEC2-AUTH | Needs a real unverified Google identity | Attempt login with an unverified Google email; expect 401 rejection before link/create |
 | MJML emails render without `&lt;`/`&amp;` artifacts and links work after autoescape | SEC2-LOCKDOWN | .mjml not covered by TS/unit checks | Render one transactional email + one cron report; confirm no double-escaping and confirmation/reset links resolve |
 | duplicate buy_order pre-deploy check | SEC2-PAYMENT | DB state, pre-migration | Run `SELECT buy_order, COUNT(*) FROM orders GROUP BY buy_order HAVING COUNT(*) > 1;` before deploying the unique constraint |
+| Two-layer rate limiting actually throttles | SEC2-AUTH | Requires the Koa (Strapi) / Nitro (Nuxt) middleware stack running; not unit-testable red-first | Smoke-verified in 03-T3 via grep (modules registered + 429 path). Manually: fire >limit requests at `/api/auth/local` and the Nitro proxy auth routes, expect HTTP 429 |
 
 ---
 
