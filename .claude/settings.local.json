@@ -127,7 +127,9 @@
       "Bash(python3 -c \"import PyPDF2; print\\('PyPDF2 ok'\\)\")",
       "Bash(python3 -c \"import pypdf; print\\('pypdf ok'\\)\")",
       "Bash(python3 *)",
-      "Bash(APP_RUN_SEEDERS=true pnpm --filter strapi dev)"
+      "Bash(APP_RUN_SEEDERS=true pnpm --filter strapi dev)",
+      "Bash(pnpm --filter strapi exec tsc --noEmit)",
+      "Bash(pnpm --filter waldo-strapi exec tsc --noEmit)"
     ]
   }
 }
