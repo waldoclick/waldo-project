@@ -31,11 +31,12 @@ import PaymentUtils from "../../../../src/api/payment/utils";
 
 // Typed access to mocks
 const mockGetAdById = PaymentUtils.ad.getAdById as jest.Mock;
-const mockUpdateAdReservation = PaymentUtils.ad.updateAdReservation as jest.Mock;
+const mockUpdateAdReservation = PaymentUtils.ad
+  .updateAdReservation as jest.Mock;
 const mockUpdateAdDates = PaymentUtils.ad.updateAdDates as jest.Mock;
 const mockPublishAd = PaymentUtils.ad.publishAd as jest.Mock;
-const mockGetAdReservationAvailable =
-  PaymentUtils.adReservation.getAdReservationAvailable as jest.Mock;
+const mockGetAdReservationAvailable = PaymentUtils.adReservation
+  .getAdReservationAvailable as jest.Mock;
 
 // Minimal strapi global stub required by service internals
 beforeEach(() => {
