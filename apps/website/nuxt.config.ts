@@ -72,6 +72,7 @@ export default defineNuxtConfig({
             "https://css.zohocdn.com",
             "https://static.zohocdn.com",
             "https://static.cloudflareinsights.com",
+            "https://vercel.live",
           ],
 
           "style-src": [
@@ -125,6 +126,7 @@ export default defineNuxtConfig({
             "https://*.zohocdn.com",
             "wss://*.zohocdn.com",
             "https://accounts.google.com/gsi/", // FedCM One Tap network requests
+            "https://vercel.live",
           ],
 
           "frame-src": [
@@ -136,6 +138,7 @@ export default defineNuxtConfig({
             "https://salesiq.zohopublic.com",
             "https://salesiq.zoho.com",
             "https://*.zohocdn.com",
+            "https://vercel.live",
           ],
 
           "script-src-attr": ["'unsafe-inline'"],
