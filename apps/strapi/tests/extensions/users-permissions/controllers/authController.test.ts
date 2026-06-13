@@ -8,6 +8,7 @@ import {
   verifyCode,
   resendCode,
   overrideForgotPassword,
+  overrideResetPassword,
   registerUserLocal,
   ensureUniqueUsername,
 } from "../../../../src/extensions/users-permissions/controllers/authController";
@@ -842,6 +843,116 @@ describe("overrideForgotPassword", () => {
 
       // Assert
       expect(ctx.body).toEqual({ ok: true });
+    });
+  });
+});
+
+describe("overrideResetPassword", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    // Restore global strapi mock (registerUserLocal's beforeEach overrides it)
+    (global as unknown as Record<string, unknown>).strapi = {
+      db: { query: strapiQueryMock },
+      plugins: {
+        "users-permissions": {
+          services: { jwt: { issue: mockJwtIssue } },
+        },
+      },
+      log: { error: jest.fn() },
+    };
+  });
+
+  describe("GOAUTH-128-03: provider flip after successful reset", () => {
+    it("flips provider to 'local' when user was Google-only", async () => {
+      // Arrange
+      const mockReset = jest.fn(async (ctx) => {
+        ctx.response.body = { jwt: "new-jwt", user: { id: 42 } };
+      });
+      mockUserFindOne.mockResolvedValueOnce({ id: 42, provider: "google" });
+      mockUserUpdate.mockResolvedValue({ id: 42 });
+
+      const ctx = {
+        request: {
+          body: {
+            password: "NewPass1234",
+            code: `${Date.now().toString(16)}:abc`,
+          },
+        },
+        response: { body: null as unknown },
+        body: null as unknown,
+        badRequest: jest.fn(),
+        send: jest.fn(),
+      };
+
+      // Act
+      const handler = overrideResetPassword(mockReset);
+      await handler(ctx);
+
+      // Assert: original reset was called
+      expect(mockReset).toHaveBeenCalled();
+      // Assert: DB update called with provider:'local'
+      expect(mockUserUpdate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: 42 },
+          data: { provider: "local" },
+        }),
+      );
+    });
+
+    it("does NOT update provider when user was already provider:'local'", async () => {
+      // Arrange
+      const mockReset = jest.fn(async (ctx) => {
+        ctx.response.body = { jwt: "new-jwt", user: { id: 99 } };
+      });
+      mockUserFindOne.mockResolvedValueOnce({ id: 99, provider: "local" });
+
+      const ctx = {
+        request: {
+          body: {
+            password: "NewPass1234",
+            code: `${Date.now().toString(16)}:abc`,
+          },
+        },
+        response: { body: null as unknown },
+        body: null as unknown,
+        badRequest: jest.fn(),
+        send: jest.fn(),
+      };
+
+      // Act
+      const handler = overrideResetPassword(mockReset);
+      await handler(ctx);
+
+      // Assert: no update call made
+      expect(mockUserUpdate).not.toHaveBeenCalled();
+    });
+
+    it("does NOT attempt provider lookup when response body has no user.id (failed reset)", async () => {
+      // Arrange — reset produces no body (failure path)
+      const mockReset = jest.fn(async (ctx) => {
+        ctx.response.body = null;
+      });
+
+      const ctx = {
+        request: {
+          body: {
+            password: "NewPass1234",
+            code: `${Date.now().toString(16)}:abc`,
+          },
+        },
+        response: { body: null as unknown },
+        body: null as unknown,
+        badRequest: jest.fn(),
+        send: jest.fn(),
+      };
+
+      // Act
+      const handler = overrideResetPassword(mockReset);
+      await handler(ctx);
+
+      // Assert: no DB lookup, no update
+      expect(mockUserFindOne).not.toHaveBeenCalled();
+      expect(mockUserUpdate).not.toHaveBeenCalled();
     });
   });
 });

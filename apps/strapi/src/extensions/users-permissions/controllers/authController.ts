@@ -739,5 +739,24 @@ export const overrideResetPassword =
       }
     }
 
-    return resetPasswordController(ctx);
+    await resetPasswordController(ctx);
+
+    // GOAUTH-128-03: Flip provider to 'local' for Google-only users after successful reset.
+    // The built-in resetPassword sets ctx.response.body = { jwt, user } on success.
+    // resetPasswordToken is cleared before the response — we use user.id from the body instead.
+    const responseBody = ctx.response.body as
+      | { user?: { id?: number } }
+      | undefined;
+    const userId = responseBody?.user?.id;
+    if (userId) {
+      const target = await strapi.db
+        .query("plugin::users-permissions.user")
+        .findOne({ where: { id: userId }, select: ["id", "provider"] });
+      if (target?.provider === "google") {
+        await strapi.db.query("plugin::users-permissions.user").update({
+          where: { id: userId },
+          data: { provider: "local" },
+        });
+      }
+    }
   };

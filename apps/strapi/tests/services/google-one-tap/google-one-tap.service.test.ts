@@ -260,3 +260,24 @@ describe("GTAP-05: findOrCreateUser() — new user", () => {
     expect(createCall.data.provider).toBe("google");
   });
 });
+
+// ─── GOAUTH-128-04: provider-flipped user still found by google_sub ──────────
+
+describe("GOAUTH-128-04: findOrCreateUser — provider-flipped user (provider:'local', google_sub set)", () => {
+  it("finds user by google_sub regardless of provider field being 'local'", async () => {
+    // Arrange: user who completed the create-password flow (provider flipped to 'local')
+    const convertedUser = {
+      ...EXISTING_USER,
+      provider: "local", // flipped by overrideResetPassword
+      google_sub: "google-sub-123",
+    };
+    mockUserFindOne.mockResolvedValueOnce(convertedUser); // byGoogleSub hit
+
+    // Act
+    const result = await service.findOrCreateUser(VALID_PAYLOAD);
+
+    // Assert: found by google_sub — provider field is irrelevant to the lookup
+    expect(result).toEqual({ user: convertedUser, isNew: false });
+    expect(mockUserCreate).not.toHaveBeenCalled();
+  });
+});
