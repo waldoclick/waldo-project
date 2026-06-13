@@ -374,6 +374,7 @@ export default defineNuxtConfig({
     },
     // Variables privadas del servidor
     apiUrl: process.env.API_URL || "http://localhost:1337", // server-only — for Nitro image proxy and sitemap
+    proxySecretWeb: process.env.PROXY_SECRET_WEB || "", // server-only — proxy auth key sent to Strapi
     recaptchaSecretKey: process.env.RECAPTCHA_SECRET_KEY, // server-only — for Nitro proxy
     recaptchaEnabled: process.env.RECAPTCHA_ENABLED !== "false", // set to false to skip verification in dev/testing
     devUsername: process.env.DEV_USERNAME,
