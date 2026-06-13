@@ -301,7 +301,7 @@ Plans:
 **Goal:** Users who registered exclusively via Google OAuth can now create a local password through the existing forgot-password flow. The Strapi `overrideForgotPassword` silently detects if the email belongs to a Google-only account (`provider: "google"`, no `password`) and sends a "create password" branded email instead of "reset password". The reset token mechanism is reused as-is. After completing the flow, the user's `provider` is set to `"local"` so they can log in with both Google and email/password. The public forgot-password endpoint never reveals whether an email is registered or what provider it uses (silent success preserved).
 **Requirements**: [GOAUTH-128-01, GOAUTH-128-02, GOAUTH-128-03, GOAUTH-128-04, GOAUTH-128-05]
 **Depends on:** Phase 127
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
-- [ ] 128-01-PLAN.md — create-password.mjml + overrideForgotPassword Google-only detection + overrideResetPassword provider flip + tests
+- [x] 128-01-PLAN.md — create-password.mjml + overrideForgotPassword Google-only detection + overrideResetPassword provider flip + tests

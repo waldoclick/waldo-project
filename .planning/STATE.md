@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-last_updated: "2026-06-12T20:03:05.207Z"
-last_activity: 2026-06-12
+last_updated: "2026-06-13T20:21:50.902Z"
+last_activity: 2026-06-13
 progress:
-  total_phases: 21
-  completed_phases: 20
-  total_plans: 57
-  completed_plans: 57
+  total_phases: 22
+  completed_phases: 21
+  total_plans: 58
+  completed_plans: 58
   percent: 100
 ---
 
@@ -20,7 +20,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 127 — security-review-round-2
+**Current focus:** Phase 128 — allow-google-only-users-to-create-a-local-password
 
 ## Position
 
@@ -193,5 +193,5 @@ Progress: [██████████] 100%
 
 ## Session Continuity
 
-Last activity: 2026-06-12
+Last activity: 2026-06-13
 Resume file: None
