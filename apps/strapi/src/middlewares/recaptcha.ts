@@ -90,7 +90,7 @@ export default () => {
     const recaptchaToken = getRecaptchaToken(ctx);
 
     if (!recaptchaToken) {
-      return ctx.badRequest("reCAPTCHA token is required");
+      return ctx.badRequest("Security verification failed. Please try again.");
     }
 
     const isValidRecaptcha =

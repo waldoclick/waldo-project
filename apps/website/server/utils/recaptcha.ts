@@ -28,7 +28,7 @@ export async function verifyRecaptchaToken(
   if (!token || !token.trim()) {
     throw createError({
       statusCode: 400,
-      statusMessage: "reCAPTCHA token is required",
+      statusMessage: "Security verification failed. Please try again.",
     });
   }
 
@@ -67,7 +67,7 @@ export async function verifyRecaptchaToken(
     );
     throw createError({
       statusCode: 400,
-      statusMessage: "reCAPTCHA hostname mismatch",
+      statusMessage: "Security verification failed. Please try again.",
     });
   }
 }
