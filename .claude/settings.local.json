@@ -129,7 +129,14 @@
       "Bash(python3 *)",
       "Bash(APP_RUN_SEEDERS=true pnpm --filter strapi dev)",
       "Bash(pnpm --filter strapi exec tsc --noEmit)",
-      "Bash(pnpm --filter waldo-strapi exec tsc --noEmit)"
+      "Bash(pnpm --filter waldo-strapi exec tsc --noEmit)",
+      "Bash(pnpm --filter website exec nuxi typecheck)",
+      "Bash(pnpm --filter waldo-website exec nuxi typecheck)",
+      "WebFetch(domain:api.waldo.click)",
+      "Bash(vercel whoami *)",
+      "Bash(vercel ls *)",
+      "Bash(vercel logs *)",
+      "Bash(pnpm --filter waldo-website install)"
     ]
   }
 }
