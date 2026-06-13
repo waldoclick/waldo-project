@@ -10,7 +10,7 @@ Google-only users (those who signed up exclusively via Google OAuth or Google On
 
 The key findings are: (1) the built-in local `callback` controller filters by `provider: 'local'` explicitly — a user with `provider: 'google'` cannot log in locally even with a valid password until their provider is flipped; (2) the built-in `providers.js` `connect()` function looks up existing users by `email` (no `provider` filter) via `findMany`, then does `_.find(users, { provider })` on the result set — if no user with `provider: 'google'` is found but `unique_email` is enabled, it throws "Email is already taken." This means flipping a user from `provider: 'google'` to `provider: 'local'` **breaks** the standard OAuth grant flow; (3) however, the project does NOT use the standard OAuth grant flow — it uses Google One Tap exclusively, and the `GoogleOneTapService.findOrCreateUser()` looks up by `google_sub` first, then by `email` with no provider filter — the `provider` field is irrelevant to One Tap login; (4) the built-in `resetPassword` controller returns the user object in its response body, which `overrideResetPassword` (the project wrapper) can inspect after calling the original to flip `provider` to `"local"`.
 
-The implementation is therefore: (A) in `overrideForgotPassword`, after finding the user, check `user.provider === 'google'` and whether the user has no local password (`!user.password`) — if so, send a `create-password.mjml` email with different copy, otherwise send the existing `reset-password.mjml` — same token mechanism in both paths; (B) in `overrideResetPassword`, after calling the original controller succeeds, look up the user by `resetPasswordToken` (the same `code` field, before the original clears it — or look up by the user returned in `ctx.response.body.user`) and if their provider was `'google'`, flip it to `'local'`. The public endpoint never reveals which path was taken (both return `{ ok: true }`).
+The implementation is therefore: (A) in `overrideForgotPassword`, after finding the user, check `user.provider === 'google'` — if so, send a `create-password.mjml` email with different copy, otherwise send the existing `reset-password.mjml` — same token mechanism in both paths; (B) in `overrideResetPassword`, after calling the original controller succeeds, use `ctx.response.body.user.id` to look up the user and if their provider was `'google'`, flip it to `'local'`. The public endpoint never reveals which path was taken (both return `{ ok: true }`).
 
 **Primary recommendation:** Two targeted changes to `authController.ts` (the provider detection in `overrideForgotPassword` + provider flip in `overrideResetPassword`) plus one new MJML template `create-password.mjml`. No frontend changes, no new pages, no Strapi schema changes.
 
@@ -49,7 +49,7 @@ apps/strapi/src/extensions/users-permissions/controllers/authController.ts
   — overrideForgotPassword: add Google-only detection + conditional template selection
   — overrideResetPassword: add provider flip after successful reset
 
-apps/strapi/src/services/mjml/templates/create-password.mjml  ← NEW
+apps/strapi/src/services/mjml/templates/create-password.mjml  <- NEW
 ```
 
 ### Pattern 1: Google-only Detection in `overrideForgotPassword`
@@ -57,9 +57,8 @@ apps/strapi/src/services/mjml/templates/create-password.mjml  ← NEW
 **When to use:** Always — the check is silent, both code paths return `{ ok: true }`.
 **Example:**
 ```typescript
-// Source: apps/strapi/node_modules/@strapi/plugin-users-permissions/server/controllers/auth.js line 60-63
-// The built-in local callback filters by provider:'local' — so provider is a real discriminator.
-
+// Source: auth.js local callback filter (line 60-65) confirms provider is the right discriminator.
+// After the existing user lookup (line ~539 in authController.ts):
 const isGoogleOnly = user.provider === 'google';
 const template = isGoogleOnly ? 'create-password' : 'reset-password';
 const subject = isGoogleOnly ? 'Crea tu contraseña' : 'Restablece tu contraseña';
@@ -75,7 +74,7 @@ const subject = isGoogleOnly ? 'Crea tu contraseña' : 'Restablece tu contraseñ
 // After: return resetPasswordController(ctx);
 // The wrapper must become async and NOT immediately return — instead:
 
-const result = await resetPasswordController(ctx);
+await resetPasswordController(ctx);
 
 // Flip provider to 'local' if the user was Google-only
 const updatedUserId = (ctx.response.body as { user?: { id?: number } })?.user?.id;
@@ -90,10 +89,9 @@ if (updatedUserId) {
     });
   }
 }
-return result;
 ```
 
-**Alternative approach (simpler):** Look up the user by the `code` (resetPasswordToken) BEFORE calling the original controller — the token is still in the DB at that point. This avoids needing to inspect `ctx.response.body`. However, the `overrideResetPassword` already has the `code` variable from `ctx.request.body`. The after-the-fact approach using the response body is cleaner because the original controller already validated the token.
+**Note on response body vs return value:** The built-in `resetPassword` controller uses `ctx.send({ jwt, user })` to set the response, NOT a return value. The controller framework reads `ctx.body` directly, not what the controller function returns. `FormResetPassword.vue` ignores the response body entirely (it shows a success alert and redirects to `/`) — so returning the built-in's `{ jwt, user }` body is harmless and correct. This is the same pattern already proven in `overrideAuthLocal`.
 
 **Recommended approach:** Use the response body `user.id` (it is always present on success — confirmed in auth.js line 287-320). Look up provider by id, flip if `'google'`.
 
@@ -172,13 +170,13 @@ if (_.isEmpty(user) && !advancedSettings.allow_register) {
   throw new Error('Register action is actually not available.');
 }
 if (!_.isEmpty(user)) {
-  return user;  // ← found the google user → login
+  return user;  // <- found the google user -> login
 }
 if (users.length && advancedSettings.unique_email) {
-  throw new Error('Email is already taken.');  // ← would fire if provider flipped to 'local'
+  throw new Error('Email is already taken.');  // <- would fire if provider flipped to 'local'
 }
 ```
-**Implication:** If the user's `provider` is flipped from `'google'` to `'local'`, the standard grant OAuth flow would fail: `findMany({ where: { email } })` returns the user, `_.find(users, { provider: 'google' })` finds nothing (user is now `provider: 'local'`), then `unique_email` check fires → "Email is already taken." — **BUT this project does not use the standard grant OAuth for Google** — it uses Google One Tap exclusively.
+**Implication:** If the user's `provider` is flipped from `'google'` to `'local'`, the standard grant OAuth flow would fail: `findMany({ where: { email } })` returns the user, `_.find(users, { provider: 'google' })` finds nothing (user is now `provider: 'local'`), then `unique_email` check fires — "Email is already taken." — **BUT this project does not use the standard grant OAuth for Google** — it uses Google One Tap exclusively.
 
 ### Finding 3: Google One Tap lookup is NOT affected by `provider` field (HIGH confidence)
 **Source:** `apps/strapi/src/services/google-one-tap/google-one-tap.service.ts` lines 43-64
@@ -228,10 +226,10 @@ export const overrideResetPassword =
   (resetPasswordController) => async (ctx) => {
     // ... password strength validation ...
     // ... token expiry validation ...
-    return resetPasswordController(ctx);  // ← currently returns immediately
+    return resetPasswordController(ctx);  // <- currently returns immediately
   };
 ```
-**Implication:** The current `return resetPasswordController(ctx)` must become `await resetPasswordController(ctx)` followed by the provider flip logic before the final return. The function signature stays the same.
+**Implication:** The current `return resetPasswordController(ctx)` must become `await resetPasswordController(ctx)` followed by the provider flip logic. The function signature stays the same.
 
 ### Finding 6: `overrideForgotPassword` findOne returns all fields including `provider` (HIGH confidence)
 **Source:** `apps/strapi/src/extensions/users-permissions/controllers/authController.ts` lines 539-541
@@ -241,6 +239,30 @@ const user = await strapi.db
   .findOne({ where: { email: email.toLowerCase() } });
 ```
 No `select` clause — `strapi.db.query` returns all columns by default. The `provider` field is accessible as `user.provider` without any query change.
+
+---
+
+## Key Questions — Closed
+
+These were the original research questions. All are resolved:
+
+**KQ1: How is the Google OAuth user stored? What fields identify a Google-only account?**
+`provider: 'google'` in the users table. Detection: `user.provider === 'google'` after the existing `findOne` (no `select` needed — all fields returned by default). Confirmed from `google-one-tap.service.ts` line 86 where new users are created with `provider: 'google'`.
+
+**KQ2: Does Strapi's built-in resetPassword handle accounts with `provider="google"`?**
+Yes. The built-in `resetPassword` looks up the user only by `resetPasswordToken` — it has no `provider` filter. It succeeds for any user whose token matches. The local `callback` (login) has the `provider: 'local'` filter, not `resetPassword`.
+
+**KQ3: Does `overrideAuthLocal` need changes?**
+No changes needed. `overrideAuthLocal` wraps the built-in `callback` which already has the `provider: 'local'` filter. Once a user's `provider` is flipped to `'local'` by `overrideResetPassword`, the built-in `callback` finds them on their next email/password login. `overrideAuthLocal` then intercepts and starts the 2-step OTP flow as normal.
+
+**KQ4: What does the existing MJML email infrastructure look like?**
+`sendMjmlEmail(strapi, templateName, to, subject, data)` in `src/services/mjml/send-email.ts`. To add a new template: create `src/services/mjml/templates/{name}.mjml` using nunjucks + the `layouts/base.mjml` layout. No config changes needed — nunjucks reads from the templates directory automatically.
+
+**KQ5: Are there issues with the two-step login flow (pendingToken) for Google users who get a local password?**
+No issues. After the provider flip, the user's first email/password login goes through `overrideAuthLocal` like any other local user. `overrideAuthLocal` intercepts valid credentials and returns `{ pendingToken, email }` for the OTP step. The OTP email uses `firstname/username/email` (all present on Google-created users). The 2-step flow works identically for converted users.
+
+**KQ6: Does the password strength validator in `overrideResetPassword` already handle this case?**
+Yes, no changes needed. `validatePasswordStrength` is called at the top of `overrideResetPassword` before the original controller — it runs for all reset-password requests regardless of the user's current `provider`. The 8-char/uppercase/lowercase/digit rules apply to the "create password" path automatically.
 
 ---
 
@@ -284,7 +306,7 @@ No `select` clause — `strapi.db.query` returns all columns by default. The `pr
 | Quick run command | `cd apps/strapi && npx jest tests/extensions/users-permissions/controllers/authController.test.ts --no-coverage` |
 | Full suite command | `cd apps/strapi && npx jest --no-coverage` |
 
-### Phase Requirements → Test Map
+### Phase Requirements -> Test Map
 | Req ID | Behavior | Test Type | Automated Command | File Exists? |
 |--------|----------|-----------|-------------------|-------------|
 | GOAUTH-128-01 | `overrideForgotPassword` with `provider:'google'` user — sends `create-password` template, not `reset-password` | unit | `npx jest tests/extensions/.../authController.test.ts -t "GOAUTH-128-01"` | ✅ (add to existing describe) |
@@ -292,12 +314,13 @@ No `select` clause — `strapi.db.query` returns all columns by default. The `pr
 | GOAUTH-128-02 | `sendMjmlEmail` called with `'create-password'` template + `'Crea tu contraseña'` subject | unit | same file | ✅ (add assertion) |
 | GOAUTH-128-03 | `overrideResetPassword` — after reset, if user.provider was `'google'`, DB update sets provider to `'local'` | unit | same file, new describe | ✅ (add to existing describe) |
 | GOAUTH-128-03 | `overrideResetPassword` — if user was already `provider:'local'`, no provider update is made | unit | same file | ✅ (add) |
-| GOAUTH-128-04 | One Tap `findOrCreateUser` with `google_sub` — finds user regardless of `provider` field | unit | `tests/services/google-one-tap/google-one-tap.service.test.ts` | check if exists |
+| GOAUTH-128-04 | One Tap `findOrCreateUser` with `google_sub` — finds user regardless of `provider` field | unit | `npx jest tests/services/google-one-tap/google-one-tap.service.test.ts` | ✅ (file exists — add case for converted user) |
 | GOAUTH-128-05 | `overrideForgotPassword` unknown email still returns `{ ok: true }` with no email sent | unit | same file, existing test | ✅ (already passing) |
 
 ### Wave 0 Gaps
-- None — `tests/extensions/users-permissions/controllers/authController.test.ts` already exists and covers `overrideForgotPassword` and `overrideResetPassword`. New tests extend the existing `describe` blocks.
-- Check if `tests/services/google-one-tap/google-one-tap.service.test.ts` exists; if not, GOAUTH-128-04 is manual verification only.
+None — all test files exist:
+- `tests/extensions/users-permissions/controllers/authController.test.ts` — covers `overrideForgotPassword` and `overrideResetPassword`; new tests extend existing `describe` blocks
+- `tests/services/google-one-tap/google-one-tap.service.test.ts` — exists; add one case asserting `findOrCreateUser` finds a user with `provider: 'local'` via `google_sub`
 
 ---
 
@@ -324,32 +347,28 @@ await sendMjmlEmail(
 
 ### Provider flip in `overrideResetPassword`
 ```typescript
-// After calling the original controller and before returning:
-export const overrideResetPassword =
-  (resetPasswordController) => async (ctx) => {
-    // ... existing password strength + expiry checks ...
+// Change: return resetPasswordController(ctx);
+// To: await + provider flip below
 
-    // Call original (do NOT return immediately — we need to act after it)
-    await resetPasswordController(ctx);
+await resetPasswordController(ctx);
 
-    // If reset succeeded, flip Google-only users to provider:'local'
-    const responseBody = ctx.response.body as { user?: { id?: number } } | undefined;
-    const userId = responseBody?.user?.id;
-    if (userId) {
-      const user = await strapi.db
-        .query("plugin::users-permissions.user")
-        .findOne({ where: { id: userId }, select: ["id", "provider"] });
-      if (user?.provider === "google") {
-        await strapi.db.query("plugin::users-permissions.user").update({
-          where: { id: userId },
-          data: { provider: "local" },
-        });
-      }
-    }
-  };
+// If reset succeeded, flip Google-only users to provider:'local'
+const responseBody = ctx.response.body as { user?: { id?: number } } | undefined;
+const userId = responseBody?.user?.id;
+if (userId) {
+  const user = await strapi.db
+    .query("plugin::users-permissions.user")
+    .findOne({ where: { id: userId }, select: ["id", "provider"] });
+  if (user?.provider === "google") {
+    await strapi.db.query("plugin::users-permissions.user").update({
+      where: { id: userId },
+      data: { provider: "local" },
+    });
+  }
+}
 ```
 
-**Note:** The existing `overrideResetPassword` wraps the original and passes through its return value. The restructured version must `await` the original and not use `return` — the original sets `ctx.body` (via `ctx.send()`), and the controller framework reads `ctx.body`, not the return value. This is the same pattern used in `overrideAuthLocal`.
+**Note:** The original `resetPassword` controller sets the response via `ctx.send({ jwt, user })`. The controller framework reads `ctx.body`, not the function return value. `FormResetPassword.vue` ignores the response body entirely (success alert + redirect to `/`), so the `{ jwt, user }` body returned by the built-in passes through unchanged. No response body manipulation needed.
 
 ---
 
@@ -362,26 +381,12 @@ export const overrideResetPassword =
 
 ---
 
-## Open Questions
-
-1. **Does `ctx.response.body` exist in the Strapi Koa context when `ctx.send()` is called?**
-   - What we know: `overrideAuthLocal` reads `ctx.response.body` after calling `originalController(ctx)` (line 336 of authController.ts) and it works.
-   - What's unclear: Whether `ctx.response.body` vs `ctx.body` naming is consistent after `ctx.send()`.
-   - Recommendation: Follow the existing `overrideAuthLocal` pattern exactly (`ctx.response.body?.user`).
-
-2. **Does google-one-tap service have existing Jest tests covering the `provider`-agnostic lookup?**
-   - What we know: The test file exists at `tests/api/auth-one-tap/controllers/auth-one-tap.test.ts`.
-   - What's unclear: Whether it covers the `findOrCreateUser` Step 1 (google_sub) lookup path for an existing user whose `provider` changed.
-   - Recommendation: Check if the Google One Tap service test file exists at `tests/services/google-one-tap/`. If not, GOAUTH-128-04 is verified by reading the service code (no test gap for the phase itself).
-
----
-
 ## Sources
 
 ### Primary (HIGH confidence)
 - `apps/strapi/node_modules/@strapi/plugin-users-permissions/server/controllers/auth.js` — confirmed `provider: 'local'` filter in local callback, confirmed resetPassword response body shape, confirmed forgotPassword built-in is replaced
 - `apps/strapi/node_modules/@strapi/plugin-users-permissions/server/services/providers.js` — confirmed Google OAuth grant flow uses `_.find(users, { provider })` which would be broken if provider is flipped (but grant flow is not active)
-- `apps/strapi/src/services/google-one-tap/google-one-tap.service.ts` — confirmed `findOrCreateUser` looks up by `google_sub` first (no `provider` filter), then by `email` (no `provider` filter) → provider flip is safe for One Tap
+- `apps/strapi/src/services/google-one-tap/google-one-tap.service.ts` — confirmed `findOrCreateUser` looks up by `google_sub` first (no `provider` filter), then by `email` (no `provider` filter) — provider flip is safe for One Tap
 - `apps/strapi/src/extensions/users-permissions/controllers/authController.ts` — confirmed current `overrideForgotPassword` and `overrideResetPassword` structure, confirmed `findOne` has no `select` (all fields returned including `provider`)
 - `apps/strapi/src/services/mjml/index.ts` + `send-email.ts` — confirmed `sendMjmlEmail(strapi, templateName, to, subject, data)` signature
 - `apps/strapi/src/services/mjml/templates/reset-password.mjml` — confirmed template structure and variable names (`{{ name }}`, `{{ resetUrl }}`)
@@ -389,6 +394,7 @@ export const overrideResetPassword =
 
 ### Secondary (MEDIUM confidence)
 - `apps/strapi/tests/extensions/users-permissions/controllers/authController.test.ts` — confirmed test structure and mock setup for `overrideForgotPassword`, confirms new tests can extend existing describe blocks
+- `apps/strapi/tests/services/google-one-tap/google-one-tap.service.test.ts` — confirmed file exists; GOAUTH-128-04 has an automated test home
 
 ---
 
