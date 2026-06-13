@@ -555,17 +555,23 @@ export const overrideForgotPassword = () => async (ctx) => {
     process.env.FRONTEND_URL || "https://waldo.click"
   }/restablecer-contrasena?token=${resetPasswordToken}`;
 
+  // GOAUTH-128-01/02: Send branded "create password" email to Google-only users.
+  // provider='google' users cannot log in with email/password yet — give them a
+  // distinct template and subject so the experience is clear.
+  const isGoogleOnly = user.provider === "google";
+  const emailTemplate = isGoogleOnly ? "create-password" : "reset-password";
+  const emailSubject = isGoogleOnly
+    ? "Crea tu contraseña"
+    : "Restablece tu contraseña";
+
   try {
-    await sendMjmlEmail(
-      strapi,
-      "reset-password",
-      user.email,
-      "Restablece tu contraseña",
-      { name: user.firstname || user.username || user.email, resetUrl },
-    );
+    await sendMjmlEmail(strapi, emailTemplate, user.email, emailSubject, {
+      name: user.firstname || user.username || user.email,
+      resetUrl,
+    });
   } catch (err) {
     strapi.log.error(
-      `[overrideForgotPassword] Failed to send reset-password email to ${
+      `[overrideForgotPassword] Failed to send ${emailTemplate} email to ${
         user.email
       }: ${err?.message ?? err}`,
     );

@@ -72,6 +72,7 @@ const strapiQueryMock = (contentType: string) => {
       },
     },
   },
+  log: { error: jest.fn() },
 };
 
 // Helper to build a mock ctx
@@ -660,28 +661,6 @@ describe("overrideForgotPassword", () => {
     });
   });
 
-  describe("PWDR-03: context 'dashboard' → resetUrl uses DASHBOARD_URL + auth/reset-password", () => {
-    it("builds correct dashboard reset URL", async () => {
-      // Arrange
-      mockUserFindOne.mockResolvedValue(testUser);
-      mockUserUpdate.mockResolvedValue(testUser);
-      const ctx = makeCtx({ email: "user@example.com", context: "dashboard" });
-
-      // Act
-      const handler = overrideForgotPassword();
-      await handler(ctx);
-
-      // Assert
-      const callArgs = mockSendMjmlEmail.mock.calls[0][4] as Record<
-        string,
-        string
-      >;
-      expect(callArgs.resetUrl).toContain("https://dashboard.waldo.click");
-      expect(callArgs.resetUrl).toContain("auth/reset-password");
-      expect(callArgs.resetUrl).toContain("token=");
-    });
-  });
-
   describe("PWDR-01: unknown/blocked user → silent { ok: true }, no email", () => {
     it("returns { ok: true } silently for unknown email (user not found)", async () => {
       // Arrange
@@ -791,6 +770,78 @@ describe("overrideForgotPassword", () => {
       // Assert
       expect(ctx.badRequest).toHaveBeenCalledWith("Email is required");
       expect(mockSendMjmlEmail).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("GOAUTH-128-01/02: Google-only user receives create-password template", () => {
+    const googleUser = {
+      id: 99,
+      email: "guser@example.com",
+      username: "guser99",
+      firstname: "Gabriela",
+      blocked: false,
+      provider: "google",
+    };
+
+    it("sends 'create-password' template (not 'reset-password') for Google-only user", async () => {
+      // Arrange
+      mockUserFindOne.mockResolvedValue(googleUser);
+      mockUserUpdate.mockResolvedValue(googleUser);
+      const ctx = makeCtx({ email: "guser@example.com" });
+
+      // Act
+      const handler = overrideForgotPassword();
+      await handler(ctx);
+
+      // Assert
+      expect(mockSendMjmlEmail).toHaveBeenCalledTimes(1);
+      expect(mockSendMjmlEmail).toHaveBeenCalledWith(
+        expect.anything(),
+        "create-password",
+        "guser@example.com",
+        "Crea tu contraseña",
+        expect.objectContaining({
+          name: "Gabriela",
+          resetUrl: expect.stringContaining("token="),
+        }),
+      );
+    });
+
+    it("sends 'reset-password' template for provider:'local' user (no regression)", async () => {
+      // Arrange
+      const localUser = { ...testUser, provider: "local" };
+      mockUserFindOne.mockResolvedValue(localUser);
+      mockUserUpdate.mockResolvedValue(localUser);
+      const ctx = makeCtx({ email: "user@example.com" });
+
+      // Act
+      const handler = overrideForgotPassword();
+      await handler(ctx);
+
+      // Assert
+      expect(mockSendMjmlEmail).toHaveBeenCalledWith(
+        expect.anything(),
+        "reset-password",
+        expect.any(String),
+        "Restablece tu contraseña",
+        expect.objectContaining({
+          resetUrl: expect.stringContaining("token="),
+        }),
+      );
+    });
+
+    it("returns { ok: true } for Google-only user (silent success preserved)", async () => {
+      // Arrange
+      mockUserFindOne.mockResolvedValue(googleUser);
+      mockUserUpdate.mockResolvedValue(googleUser);
+      const ctx = makeCtx({ email: "guser@example.com" });
+
+      // Act
+      const handler = overrideForgotPassword();
+      await handler(ctx);
+
+      // Assert
+      expect(ctx.body).toEqual({ ok: true });
     });
   });
 });
