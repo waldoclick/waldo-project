@@ -295,3 +295,13 @@ Plans:
 - [x] 127-03-PLAN.md — SEC2-AUTH: Google email_verified check, remove JWT fallback in ad.ts, two-layer auth rate limit, bind reCAPTCHA action/hostname (wave 1)
 - [x] 127-04-PLAN.md — SEC2-XSS: isomorphic-dompurify SSR sanitizer in useSanitize.ts + disable marked raw HTML (wave 1)
 - [x] 127-05-PLAN.md — SEC2-LOCKDOWN: MJML autoescape, upload magic-byte + sizeLimit, GET /api/users filter whitelist + PII strip, disable content-API routes for verification-code/contact/subscription-payment (wave 2, after 127-03 for shared plugins.ts)
+
+### Phase 128: Allow Google-only users to create a local password
+
+**Goal:** Users who registered exclusively via Google OAuth can now create a local password through the existing forgot-password flow. The Strapi `overrideForgotPassword` silently detects if the email belongs to a Google-only account (`provider: "google"`, no `password`) and sends a "create password" branded email instead of "reset password". The reset token mechanism is reused as-is. After completing the flow, the user's `provider` is set to `"local"` so they can log in with both Google and email/password. The public forgot-password endpoint never reveals whether an email is registered or what provider it uses (silent success preserved).
+**Requirements**: [GOAUTH-128-01, GOAUTH-128-02, GOAUTH-128-03, GOAUTH-128-04, GOAUTH-128-05]
+**Depends on:** Phase 127
+**Plans:** 1 plan
+
+Plans:
+- [ ] 128-01-PLAN.md — create-password.mjml + overrideForgotPassword Google-only detection + overrideResetPassword provider flip + tests
