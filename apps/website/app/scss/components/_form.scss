@@ -72,6 +72,28 @@ input:-webkit-autofill {
     &--password {
       position: relative;
 
+      &__topbar {
+        display: flex;
+        justify-content: flex-end;
+        height: 20px;
+        align-items: center;
+      }
+
+      &__generate {
+        border: none;
+        background: none;
+        color: $dodger_blue;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.25px;
+        cursor: pointer;
+        padding: 0;
+      }
+
+      &__field {
+        position: relative;
+      }
+
       &__show-password {
         border: unset;
         background: unset;
@@ -83,6 +105,13 @@ input:-webkit-autofill {
         font-size: 12px;
         font-weight: 600;
         letter-spacing: 0.25px;
+      }
+    }
+
+    &--withgen {
+      .form-label,
+      .form__label {
+        top: 14px;
       }
     }
 

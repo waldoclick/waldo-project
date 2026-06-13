@@ -79,26 +79,38 @@
         <ErrorMessage name="email" />
       </div>
 
-      <div class="form-group form-group--password">
+      <div class="form-group form-group--password form-group--withgen">
         <label class="form-label" for="password">Contraseña</label>
-        <Field
-          v-model="form.password"
-          name="password"
-          :type="passwordType"
-          class="form-control"
-          autocomplete="current-password"
-          maxlength="50"
-        />
-        <button
-          class="form-group--password__show-password"
-          type="button"
-          :title="`Mostrar/ocultar contraseña`"
-          @click="handleShowPassword"
-        >
-          <strong v-if="passwordType !== 'password'">Ocultar</strong>
-          <strong v-else>Mostrar</strong>
-        </button>
+        <div class="form-group--password__topbar">
+          <button
+            type="button"
+            class="form-group--password__generate"
+            @click="handleGeneratePassword"
+          >
+            ✦ Generar segura
+          </button>
+        </div>
+        <div class="form-group--password__field">
+          <Field
+            v-model="form.password"
+            name="password"
+            :type="passwordType"
+            class="form-control"
+            autocomplete="current-password"
+            maxlength="50"
+          />
+          <button
+            class="form-group--password__show-password"
+            type="button"
+            :title="`Mostrar/ocultar contraseña`"
+            @click="handleShowPassword"
+          >
+            <strong v-if="passwordType !== 'password'">Ocultar</strong>
+            <strong v-else>Mostrar</strong>
+          </button>
+        </div>
         <ErrorMessage name="password" />
+        <PasswordStrength :password="form.password" />
       </div>
 
       <div class="form-group">
@@ -325,6 +337,13 @@ watch(
 
 const handleShowPassword = () => {
   passwordType.value = passwordType.value === "password" ? "text" : "password";
+};
+
+const handleGeneratePassword = () => {
+  const pwd = generateSecurePassword();
+  form.value.password = pwd;
+  form.value.confirm_password = pwd;
+  passwordType.value = "text";
 };
 
 const handleSubmit = async () => {

@@ -29,25 +29,37 @@
         <ErrorMessage name="currentPassword" />
       </div>
 
-      <div class="form__group form__group--password">
+      <div class="form__group form__group--password form__group--withgen">
         <label class="form__label" for="newPassword">Nueva contraseña</label>
-        <Field
-          v-model="form.newPassword"
-          name="newPassword"
-          :type="newPasswordType"
-          class="form__control"
-          autocomplete="new-password"
-        />
-        <button
-          class="form__group--password__show-password"
-          type="button"
-          title="Mostrar/ocultar contraseña"
-          @click="toggleNew"
-        >
-          <strong v-if="newPasswordType !== 'password'">Ocultar</strong>
-          <strong v-else>Mostrar</strong>
-        </button>
+        <div class="form__group--password__topbar">
+          <button
+            type="button"
+            class="form__group--password__generate"
+            @click="handleGeneratePassword"
+          >
+            ✦ Generar segura
+          </button>
+        </div>
+        <div class="form__group--password__field">
+          <Field
+            v-model="form.newPassword"
+            name="newPassword"
+            :type="newPasswordType"
+            class="form__control"
+            autocomplete="new-password"
+          />
+          <button
+            class="form__group--password__show-password"
+            type="button"
+            title="Mostrar/ocultar contraseña"
+            @click="toggleNew"
+          >
+            <strong v-if="newPasswordType !== 'password'">Ocultar</strong>
+            <strong v-else>Mostrar</strong>
+          </button>
+        </div>
         <ErrorMessage name="newPassword" />
+        <PasswordStrength :password="form.newPassword" />
       </div>
 
       <div class="form__group form__group--password">
@@ -118,12 +130,24 @@ const toggleConfirm = () => {
     confirmPasswordType.value === "password" ? "text" : "password";
 };
 
+const handleGeneratePassword = () => {
+  const pwd = generateSecurePassword();
+  form.value.newPassword = pwd;
+  form.value.confirmPassword = pwd;
+  newPasswordType.value = "text";
+  confirmPasswordType.value = "text";
+};
+
 const schema = yup.object({
   currentPassword: yup.string().required("Contraseña actual es requerida"),
   newPassword: yup
     .string()
-    .min(6, "La contraseña debe tener al menos 6 caracteres")
-    .required("Nueva contraseña es requerida"),
+    .required("Nueva contraseña es requerida")
+    .min(8, "La contraseña debe tener al menos 8 caracteres")
+    .max(50, "La contraseña debe tener máximo 50 caracteres")
+    .matches(/[A-Z]/, "Debe incluir al menos una mayúscula")
+    .matches(/[a-z]/, "Debe incluir al menos una minúscula")
+    .matches(/\d/, "Debe incluir al menos un número"),
   confirmPassword: yup
     .string()
     .oneOf([yup.ref("newPassword")], "Las contraseñas no coinciden")

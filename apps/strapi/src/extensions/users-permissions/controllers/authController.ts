@@ -127,7 +127,7 @@ export const ensureUniqueUsername = async (base: string): Promise<string> => {
  * @param {(...args: unknown[]) => Promise<unknown>} registerController - The original register controller function.
  * @returns {(...args: unknown[]) => Promise<unknown>} A new controller function that registers the user and creates additional records.
  */
-const validatePasswordStrength = (password: string): string | null => {
+export const validatePasswordStrength = (password: string): string | null => {
   if (!password || password.length < 8)
     return "Password must be at least 8 characters";
   if (password.length > 50) return "Password must be at most 50 characters";
@@ -540,7 +540,7 @@ export const overrideForgotPassword = () => async (ctx) => {
   // Silent success for unknown/blocked users (matches built-in behavior)
   if (!user || user.blocked) return ctx.send({ ok: true });
 
-  const resetPasswordToken = crypto.randomBytes(64).toString("hex");
+  const resetPasswordToken = `${Date.now().toString(16)}:${crypto.randomBytes(64).toString("hex")}`;
 
   // Save token before sending email (matches built-in ordering)
   await strapi.db.query("plugin::users-permissions.user").update({
@@ -706,4 +706,32 @@ export const overrideChangePassword =
       return ctx.badRequest(passwordError);
     }
     return changePasswordController(ctx);
+  };
+
+const RESET_TOKEN_EXPIRY_MS = 60 * 60 * 1000; // 1 hour
+
+export const overrideResetPassword =
+  (resetPasswordController) => async (ctx) => {
+    const { password, code } = ctx.request.body as {
+      password?: string;
+      code?: string;
+    };
+
+    const passwordError = validatePasswordStrength(password ?? "");
+    if (passwordError) {
+      return ctx.badRequest(passwordError);
+    }
+
+    if (code) {
+      const colonIndex = code.indexOf(":");
+      if (colonIndex === -1) {
+        return ctx.badRequest("Incorrect code provided.");
+      }
+      const issuedAt = parseInt(code.slice(0, colonIndex), 16);
+      if (isNaN(issuedAt) || Date.now() - issuedAt > RESET_TOKEN_EXPIRY_MS) {
+        return ctx.badRequest("Token has expired");
+      }
+    }
+
+    return resetPasswordController(ctx);
   };

@@ -1,0 +1,52 @@
+@use "../abstracts/variables" as *;
+
+.strength {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+
+  &__bars {
+    display: flex;
+    gap: 4px;
+    flex: 1;
+  }
+
+  &__bar {
+    height: 4px;
+    flex: 1;
+    border-radius: 2px;
+    background-color: $gainsboro;
+
+    &--level1 {
+      background-color: $red_salsa;
+    }
+
+    &--level2 {
+      background-color: $light_peach;
+    }
+
+    &--level3,
+    &--level4 {
+      background-color: $magic_mint;
+    }
+  }
+
+  &__label {
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+    min-width: 68px;
+    text-align: right;
+
+    &--level1 {
+      color: $red_salsa;
+    }
+
+    &--level2,
+    &--level3,
+    &--level4 {
+      color: $charcoal;
+    }
+  }
+}

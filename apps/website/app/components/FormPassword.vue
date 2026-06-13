@@ -25,8 +25,17 @@
       <ErrorMessage name="current_password" />
     </div>
 
-    <div class="form-group form-group--password">
+    <div class="form-group form-group--password form-group--withgen">
       <label class="form-label" for="password">Nueva contraseña</label>
+      <div class="form-group--password__topbar">
+        <button
+          type="button"
+          class="form-group--password__generate"
+          @click="handleGeneratePassword"
+        >
+          ✦ Generar segura
+        </button>
+      </div>
       <Field
         v-model="form.password"
         name="password"
@@ -35,6 +44,7 @@
         autocomplete="new-password"
       />
       <ErrorMessage name="password" />
+      <PasswordStrength :password="form.password" />
     </div>
 
     <div class="form-group form-group--password">
@@ -127,5 +137,12 @@ const handleError = (_error: unknown) => {
 
 const handleShowPassword = () => {
   passwordType.value = passwordType.value === "password" ? "text" : "password";
+};
+
+const handleGeneratePassword = () => {
+  const pwd = generateSecurePassword();
+  form.value.password = pwd;
+  form.value.password_confirmation = pwd;
+  passwordType.value = "text";
 };
 </script>

@@ -10,6 +10,8 @@ import {
   overrideSendEmailConfirmation,
   overrideEmailConfirmation,
   overrideChangePassword,
+  overrideResetPassword,
+  validatePasswordStrength,
 } from "./controllers/authController";
 
 export default function (plugin) {
@@ -57,7 +59,25 @@ export default function (plugin) {
     instance.changePassword = overrideChangePassword(
       instance.changePassword.bind(instance),
     );
+    instance.resetPassword = overrideResetPassword(
+      instance.resetPassword.bind(instance),
+    );
     return instance;
+  };
+
+  // --- Password strength guard for PUT /api/users/:id ---
+  // Only fires when `password` is present in the body — profile-only updates are unaffected.
+  const originalUserUpdate = plugin.controllers.user.update;
+  plugin.controllers.user.update = async (ctx) => {
+    const body = ctx.request.body as Record<string, unknown> | undefined;
+    const password =
+      (body?.data as Record<string, unknown> | undefined)?.password ??
+      body?.password;
+    if (typeof password === "string") {
+      const passwordError = validatePasswordStrength(password);
+      if (passwordError) return ctx.badRequest(passwordError);
+    }
+    return originalUserUpdate(ctx);
   };
 
   // --- Ownership policy: enforce that PUT /api/users/:id can only be called by the record owner ---

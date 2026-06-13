@@ -1,44 +1,54 @@
 <template>
-  <Form
-    v-slot="{ errors, meta }"
-    :validation-schema="schema"
-    @submit="onSubmit"
-  >
-    <div class="form-group">
-      <label class="form-label" for="email">Correo electrónico</label>
-      <Field
-        v-model="form.email"
-        name="email"
-        type="text"
-        class="form-control"
-        autocomplete="email"
-        maxlength="254"
-      />
-      <ErrorMessage name="email" />
-    </div>
-
+  <Form v-slot="{ meta }" :validation-schema="schema" @submit="onSubmit">
     <Field v-model="form.code" name="code" type="hidden" />
 
-    <div class="form-group form-group--password">
+    <div class="form-group form-group--password form-group--withgen">
       <label class="form-label" for="password">Nueva Contraseña</label>
+      <div class="form-group--password__topbar">
+        <button
+          type="button"
+          class="form-group--password__generate"
+          @click="handleGeneratePassword"
+        >
+          ✦ Generar segura
+        </button>
+      </div>
+      <div class="form-group--password__field">
+        <Field
+          v-model="form.password"
+          name="password"
+          :type="passwordType"
+          class="form-control"
+          autocomplete="new-password"
+          maxlength="50"
+        />
+        <button
+          class="form-group--password__show-password"
+          type="button"
+          :title="`Mostrar/ocultar contraseña`"
+          @click="handleShowPassword"
+        >
+          <strong v-if="passwordType !== 'password'">Ocultar</strong>
+          <strong v-else>Mostrar</strong>
+        </button>
+      </div>
+      <ErrorMessage name="password" />
+      <PasswordStrength :password="form.password" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="confirm_password"
+        >Repetir contraseña</label
+      >
       <Field
-        v-model="form.password"
-        name="password"
+        v-model="form.confirm_password"
+        name="confirm_password"
         :type="passwordType"
         class="form-control"
         autocomplete="new-password"
         maxlength="50"
       />
-      <button
-        class="form-group--password__show-password"
-        type="button"
-        :title="`Mostrar/ocultar contraseña`"
-        @click="handleShowPassword"
-      >
-        <strong v-if="passwordType !== 'password'">Ocultar</strong>
-        <strong v-else>Mostrar</strong>
-      </button>
-      <ErrorMessage name="password" />
+      <ErrorMessage name="confirm_password" />
     </div>
 
     <button
@@ -59,18 +69,20 @@ import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 const { Swal } = useSweetAlert2();
 
-// Define validation schema using yup
 const schema = yup.object({
-  email: yup
-    .string()
-    .max(254, "Máximo 254 caracteres")
-    .email("Correo electrónico no válido")
-    .required("Correo electrónico es requerido"),
   code: yup.string().required("Código de restablecimiento es requerido"),
   password: yup
     .string()
+    .required("Nueva contraseña es requerida")
+    .min(8, "Mínimo 8 caracteres")
     .max(50, "Máximo 50 caracteres")
-    .required("Nueva contraseña es requerida"),
+    .matches(/[A-Z]/, "Debe incluir al menos una mayúscula")
+    .matches(/[a-z]/, "Debe incluir al menos una minúscula")
+    .matches(/\d/, "Debe incluir al menos un número"),
+  confirm_password: yup
+    .string()
+    .oneOf([yup.ref("password")], "Las contraseñas no coinciden")
+    .required("Debes repetir la nueva contraseña"),
 });
 
 const route = useRoute();
@@ -87,9 +99,9 @@ onMounted(() => {
 });
 
 const form = ref({
-  email: "",
   code: (route.query.token as string) || "",
   password: "",
+  confirm_password: "",
 });
 
 const loading = ref(false);
@@ -106,18 +118,29 @@ const onSubmit = async (values: Record<string, unknown>) => {
       body: {
         code: values.code as string,
         password: values.password as string,
-        passwordConfirmation: values.password as string,
+        passwordConfirmation: values.confirm_password as string,
       },
     });
 
     Swal.fire("Éxito", "Contraseña restablecida con éxito.", "success");
     router.push("/");
-  } catch {
-    Swal.fire(
+  } catch (err) {
+    const message =
+      (err as { data?: { error?: { message?: string } } })?.data?.error
+        ?.message ?? "";
+    const isExpired = /expir|invalid|incorrect|caducad/i.test(message);
+
+    await Swal.fire(
       "Error",
-      "Hubo un error. Por favor, inténtalo de nuevo.",
+      isExpired
+        ? "El enlace de restablecimiento ha expirado o no es válido. Solicita uno nuevo."
+        : "Hubo un error al restablecer la contraseña. Por favor, inténtalo de nuevo.",
       "error",
     );
+
+    if (isExpired) {
+      router.push("/recuperar-contrasena");
+    }
   } finally {
     loading.value = false;
   }
@@ -125,5 +148,12 @@ const onSubmit = async (values: Record<string, unknown>) => {
 
 const handleShowPassword = () => {
   passwordType.value = passwordType.value === "password" ? "text" : "password";
+};
+
+const handleGeneratePassword = () => {
+  const pwd = generateSecurePassword();
+  form.value.password = pwd;
+  form.value.confirm_password = pwd;
+  passwordType.value = "text";
 };
 </script>
