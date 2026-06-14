@@ -371,6 +371,7 @@ export default defineNuxtConfig({
       url: process.env.API_URL || "http://localhost:1337",
     },
     proxySecretWeb: process.env.PROXY_SECRET_WEB || "", // server-only — proxy auth key sent to Strapi
+    vercelBypassSecret: process.env.VERCEL_AUTOMATION_BYPASS_SECRET || "", // server-only — bypasses Vercel Deployment Protection on SSR self-calls
     recaptchaSecretKey: process.env.RECAPTCHA_SECRET_KEY, // server-only — for Nitro proxy
     recaptchaEnabled: process.env.RECAPTCHA_ENABLED !== "false", // set to false to skip verification in dev/testing
     devUsername: process.env.DEV_USERNAME,
