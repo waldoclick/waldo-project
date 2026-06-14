@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-last_updated: "2026-06-14T05:22:19.264Z"
+last_updated: "2026-06-14T05:24:31.415Z"
 last_activity: 2026-06-14
 progress:
   total_phases: 23
   completed_phases: 21
   total_plans: 64
-  completed_plans: 62
+  completed_plans: 63
   percent: 100
 ---
 
@@ -24,16 +24,19 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 
 ## Position
 
-Phase 125 complete (all 7 plans done) — dashboard merge finalized: MenuUser uses internal /dashboard NuxtLink; Strapi email/reset URLs updated to FRONTEND_URL/dashboard/ paths; apps/dashboard workspace removed and 263 files deleted.
+Phase 129 in progress — plan 05 of 6 complete: useStrapiToken fully eliminated from website app; verify-code, uploads, logout, and all middleware guards migrated to useSessionUser/useSessionAuth pattern.
 
 ```
-Progress: [██████████] 100%
+Progress: [██████████] 98%
 ```
 
 ## Accumulated Context
 
 ### Key Decisions (carry forward)
 
+- useStrapiToken fully eliminated from apps/website/app/: FormVerifyCode calls fetchUser after server sets httpOnly cookie; uploads rely on proxy Authorization injection; logout posts to /api/auth/logout server route; all four middleware guards (auth.ts, onboarding-guard, dashboard-guard, guest.ts) are token-free and user-state-based (129-05)
+- guest.ts required mechanical useStrapiUser→useSessionUser rename as part of guard migration — caught by app-wide middleware verification grep; not listed in original plan files_modified (129-05)
+- dashboard-guard SSR path: if (import.meta.server) return navigateTo('/login') — redirect immediately on SSR when no user state available, rather than calling fetchUser in SSR context (129-05)
 - vi.stubGlobal required for composables that use Nuxt bare auto-imports (useState, $fetch, useRuntimeConfig) — vi.mock('#imports') only works when the composable has explicit #imports imports (129-01)
 - useSessionClient injects NO Authorization header — Nitro proxy injects Bearer token from httpOnly waldo_jwt cookie server-side in plan 02 (129-01)
 - fetchUser regression guard: catch block sets user.value = null only, zero cookie/token side effects; session.ts plugin guarded with PLAN-06-REMOVE-THIS-LINE marker until cutover in plan 06 (129-01)
