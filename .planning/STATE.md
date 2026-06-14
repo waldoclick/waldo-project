@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
-status: milestone-complete
-last_updated: "2026-06-14T14:35:53.489Z"
+status: unknown
+last_updated: "2026-06-14T16:45:21.495Z"
 last_activity: 2026-06-14
 progress:
-  total_phases: 23
-  completed_phases: 22
-  total_plans: 64
-  completed_plans: 64
+  total_phases: 1
+  completed_phases: 0
+  total_plans: 7
+  completed_plans: 1
   percent: 98
 ---
 
@@ -20,20 +20,24 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.46 shipped (2026-06-14) — no active milestone. Start the next with `/gsd:new-milestone`.
+**Current focus:** Phase 01 — corregir-issues-codacy
 
 ## Position
 
-Phase 129 complete — all 6 plans done: @nuxtjs/strapi fully eliminated from apps/website; session.ts active; httpOnly waldo_jwt cookie is the sole JWT carrier; proxy is the single Strapi exit point; all auth flows verified end-to-end including Webpay payment return.
+Phase 01 (corregir-issues-codacy) — plan 01-00 complete (Wave 0 regression gate). 4 RED-by-design security guards committed: ad_id={$gt:0} (saveDraft, RED until 01-02), pendingToken={$ne:null} (authController, RED until 01-01), payload.pack={$ne:''} (checkout, RED until 01-02), useProviders open-redirect allowlist (RED until 01-05). saveDraft now has first-ever characterization coverage. No production code modified; Wave 1 (01-01/01-02/01-05) turns each RED test green. 6 plans remain (01-01..01-06).
+
+(Prior: Phase 129 complete — @nuxtjs/strapi eliminated from apps/website; httpOnly waldo_jwt cookie sole JWT carrier; proxy single Strapi exit point.)
 
 ```
-Progress: [██████████] 98%
+Progress: [█░░░░░░░░░] 14% (phase 01: 1/7 plans)
 ```
 
 ## Accumulated Context
 
 ### Key Decisions (carry forward)
 
+- Wave 0 RED-by-design guards must flip green under exactly the planned Wave 1 fix: saveDraft ad_id guard asserts update() NOT called (Number({$gt:0})=NaN diverts to the CREATE branch after 01-02, so a where.id-scalar assertion would error post-fix instead of pass); authController/checkout guards assert typeof where-value==='string' matching the planned String() coercion (String keeps findOne on the call path, so the test is the post-fix invariant) (01-00)
+- saveDraft Jest test harness requires strapi.contentType stub (factory init) + __esModule:true on the logtail default-export mock, else every test dies in the catch block on logger.error — mirror ad.compute-status.test.ts (01-00)
 - httpOnly proxy injects Authorization: Bearer on ALL forwarded requests including top-level GET navigations (sameSite=lax) — gateway callback routes that receive GET redirects from payment processors must be marked auth:false in Strapi route config, or the authenticated role is applied and may block the callback (129-06)
 - Webpay /payments/webpay and /payments/pro-response routes marked auth:false — these are identified by the Transbank token, not ctx.state.user; order identity is always order.documentId, never a gateway reference; Strapi must be restarted after deploy for route config to reload (129-06)
 - Original Manager-deactivate logout bug root cause: @nuxtjs/strapi module registered an auto-fetch plugin that raced with session.ts on window.location.reload(), writing null user state; removing the module eliminates the competing writer and the bug (129-06)
@@ -112,6 +116,7 @@ Progress: [██████████] 98%
 
 ### Roadmap Evolution
 
+- Phase 1 added: Corregir los 100 issues abiertos en Codacy (90 Security/Opengrep, 9 BestPractice/ESLint, 1 UnusedCode). Analizar cada patrón para descartar falsos positivos y evaluar riesgo de regresión antes de aplicar. Snapshot completo en .planning/research/codacy-issues-snapshot-2026-06-14.md. (Numeración reiniciada en 1 tras archivar milestones v1.x.)
 - Phase 129 added: Eliminate @nuxtjs/strapi from website and fully centralize session/auth + HTTP through the proxy with an httpOnly JWT cookie. Security-first, single phase, nothing deferred. Target: httpOnly cookie client can never read → proxy injects Authorization server-side; zero direct API_URL calls (SSR goes through proxy with x-vercel-protection-bypass); useApiClient as the only HTTP client; minimal session layer replaces useStrapiUser/Token/Auth across ~60 files (incl. Google OAuth + verify-code flows); audit+centralize every direct fetch/$fetch/raw-fetch (useImage.ts, UploadMedia.vue). Reuse 109-RESEARCH.md as template. Full detail in 129-CONTEXT.md.
 - Phase 127 added: Security review round 2 — fix new vulnerabilities not covered by phase 126 (5 areas: payment integrity Webpay amount+idempotency, order/reservation/pack authorization, auth hardening Google email_verified + JWT fallback + rate-limit + reCAPTCHA binding, frontend SSR XSS + httpOnly session, email autoescape + upload validation + users PII + core-route lockdown). Findings detailed in 127-FINDINGS.md. Branch feat/127-security-review-fixes from main.
 - Phase 126 added: Security hardening — fix authorization vulnerabilities from security review (4 plans: users IDOR account-takeover, ad mass-assignment payment/approval bypass, free-ad publish IDOR, dev-endpoint + email-escape + regex-bypass hardening)

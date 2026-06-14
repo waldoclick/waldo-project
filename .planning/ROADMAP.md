@@ -45,7 +45,7 @@ Start the next milestone with `/gsd:new-milestone` (questioning → research →
 **Plans:** 7 plans (3 waves)
 
 Plans:
-- [ ] 01-00-PLAN.md — Wave 0 regression gate: characterization + injection tests (RED by design) before the fixes
+- [x] 01-00-PLAN.md — Wave 0 regression gate: characterization + injection tests (RED by design) before the fixes
 - [ ] 01-01-PLAN.md — authController.ts end-to-end: pendingToken scalar coercion + crypto.randomBytes username suffix
 - [ ] 01-02-PLAN.md — NoSQL coercion: ad.ts saveDraft Number(ad_id) + checkout.service String(pack)
 - [ ] 01-03-PLAN.md — password.ts client CSPRNG: crypto.getRandomValues with rejection sampling
