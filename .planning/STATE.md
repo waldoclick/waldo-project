@@ -10,7 +10,7 @@ progress:
   completed_phases: 0
   total_plans: 7
   completed_plans: 1
-  percent: 98
+  percent: 14
 ---
 
 # Session State
