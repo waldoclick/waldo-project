@@ -5,6 +5,7 @@ type RouteConfig = {
   path: string;
   handler: string;
   config: {
+    auth?: boolean;
     policies: string[];
   };
 };
@@ -40,6 +41,13 @@ const routes: RouteConfig[] = [
     path: "/payments/webpay",
     handler: "payment.webpayResponse",
     config: {
+      // Transbank redirects the browser back via GET and carries no Authorization
+      // header. With the httpOnly-cookie proxy, an authenticated user's waldo_jwt
+      // cookie IS injected as Authorization on this top-level GET, which would make
+      // Strapi evaluate the authenticated role (lacking this permission) → 403.
+      // auth: false makes the route truly public; the gateway token is the only
+      // identity that matters here (resolved via order.documentId).
+      auth: false,
       policies: [],
     },
   },
@@ -61,11 +69,16 @@ const routes: RouteConfig[] = [
   },
   {
     // GET is required — Transbank redirects via GET after card enrollment.
-    // No auth policy: Transbank redirects carry no Authorization header.
+    // Transbank redirects carry no Authorization header. auth: false makes the
+    // route truly public so the proxy-injected waldo_jwt (present on an
+    // authenticated user's top-level GET) does not flip Strapi to the
+    // authenticated role and 403. The user is resolved from the inscription
+    // token stored on subscription-pro, never from ctx.state.user.
     method: "GET",
     path: "/payments/pro-response",
     handler: "payment.proResponse",
     config: {
+      auth: false,
       policies: [],
     },
   },
