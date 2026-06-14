@@ -1,8 +1,6 @@
 import { defineNuxtPlugin, reloadNuxtApp } from "#app";
 import { useApiClient } from "@/composables/useApiClient";
 import {
-  useStrapiAuth,
-  useStrapiUser,
   useRuntimeConfig,
   useRoute,
 } from "#imports";
@@ -17,7 +15,7 @@ export default defineNuxtPlugin(() => {
   }
 
   // Auth state guard — skip if user is already authenticated on app load
-  const user = useStrapiUser();
+  const user = useSessionUser();
   if (user.value) return;
 
   // Dev mode guard — skip entirely when site is in dev mode and user hasn't authenticated via /dev
@@ -36,7 +34,6 @@ export default defineNuxtPlugin(() => {
 
   // Instantiate composables at plugin root level (AGENTS.md: setup-level instantiation required)
   const client = useApiClient();
-  const { setToken } = useStrapiAuth();
 
   // Wait for the GIS script (loaded via nuxt.config.ts app.head async/defer) to become available
   const initializeOneTap = () => {
@@ -49,11 +46,11 @@ export default defineNuxtPlugin(() => {
       client_id: clientId,
       callback: async (response: { credential: string }) => {
         try {
-          const result = await client<{ jwt: string; user: unknown }>(
+          await client(
             "auth/google-one-tap",
             { method: "POST", body: { credential: response.credential } },
           );
-          setToken(result.jwt);
+          // The Nitro route /api/auth/google-one-tap already set the httpOnly cookie.
           reloadNuxtApp();
         } catch (error) {
           console.error("[OneTap] Authentication failed:", error);
