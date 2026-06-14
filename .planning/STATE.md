@@ -191,7 +191,9 @@ Progress: [██████████] 100%
 | 260611-rok | Implement proxy secret key authentication between Nuxt and Strapi | 2026-06-11 | 83355e30 | [260611-rok-implement-proxy-secret-key-authenticatio](./quick/260611-rok-implement-proxy-secret-key-authenticatio/) |
 | 260611-reg | Replace APP_URL with FRONTEND_URL in all 5 Transbank return/response URLs across 4 payment files so callbacks route through the Nuxt proxy | 2026-06-11 | 0549f2fa | [260611-reg-change-transbank-return-url-from-app-url](./quick/260611-reg-change-transbank-return-url-from-app-url/) |
 
+| 260613-v33 | Auditoria completa flujo usuario Manager en website Nuxt — SSR fail-open en auth.ts + onboarding bypass + deactivate isManager | 2026-06-14 | d2dad61c | [260613-v33-auditoria-completa-flujo-usuario-manager](./quick/260613-v33-auditoria-completa-flujo-usuario-manager/) |
+
 ## Session Continuity
 
-Last activity: 2026-06-13
+Last activity: 2026-06-14 - Completed quick task 260613-v33: Auditoria completa flujo usuario Manager en website Nuxt
 Resume file: None
