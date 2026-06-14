@@ -26,6 +26,11 @@ export default defineNuxtRouteMiddleware(async (to) => {
   if (!user.value) {
     const token = useStrapiToken();
     if (!token.value) return; // No JWT → not logged in
+    // SSR fail-open: fetchUser() on server calls Strapi directly without X-Proxy-Key.
+    // proxy-auth rejects with 401, and @nuxtjs/strapi clears the token in its catch block.
+    // Returning here preserves the token so that the page-level auth middleware can do
+    // its own SSR fail-open. Client hydration re-runs this guard with user populated.
+    if (import.meta.server) return;
     const { fetchUser } = useStrapiAuth();
     try {
       await fetchUser();
