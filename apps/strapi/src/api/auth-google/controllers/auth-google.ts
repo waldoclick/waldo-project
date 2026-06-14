@@ -89,6 +89,14 @@ export default {
         id: (user as { id: number }).id,
       });
 
+      // JSON mode for the Nitro popup-callback route, which reads { jwt } and sets
+      // the httpOnly cookie server-side. Default (no ?json) keeps the HTML popup
+      // response for backward compatibility.
+      if (ctx.query.json) {
+        ctx.body = { jwt };
+        return;
+      }
+
       popupResponse(ctx, { type: "google-oauth-success", jwt }, frontendUrl);
     } catch (err) {
       strapi.log.error(
