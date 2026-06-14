@@ -36,7 +36,7 @@ export default defineNuxtPlugin(() => {
 
   // Instantiate composables at plugin root level (AGENTS.md: setup-level instantiation required)
   const client = useApiClient();
-  const { setToken, fetchUser } = useStrapiAuth();
+  const { setToken } = useStrapiAuth();
 
   // Wait for the GIS script (loaded via nuxt.config.ts app.head async/defer) to become available
   const initializeOneTap = () => {
@@ -54,7 +54,6 @@ export default defineNuxtPlugin(() => {
             { method: "POST", body: { credential: response.credential } },
           );
           setToken(result.jwt);
-          await fetchUser();
           reloadNuxtApp();
         } catch (error) {
           console.error("[OneTap] Authentication failed:", error);
