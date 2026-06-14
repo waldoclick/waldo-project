@@ -1,5 +1,73 @@
 ## v1.41 Ad Preview Error Handling (Shipped: 2026-03-18)
 
+## v1.46 PRO Subscriptions + Post-Merge Hardening (Shipped: 2026-06-14)
+
+**Phases completed:** 23 phases, 64 plans, 117 tasks
+
+**Key accomplishments:**
+
+- Server guard (Task 1):
+- 7 dashboard components migrated from useStrapiClient to useApiClient, removing all manual reCAPTCHA token management from auth forms
+- 8 components/stores migrated from useStrapi SDK to useApiClient so all admin CRUD mutations (FAQ, commune, region, category, pack, condition, password, username) now inject X-Recaptcha-Token
+- reCAPTCHA coverage completed — ads/[id].vue (5 mutations) and all article files (4 mutations) migrated to useApiClient, achieving 100% dashboard mutation protection
+- One-liner:
+- All 19 dashboard detail pages migrated from strapi.find/findOne SDK calls to useApiClient GET requests, eliminating dual-SDK reads
+- One-liner:
+- Four custom session composables (useSessionUser, useSessionToken, useSessionClient, useSessionAuth) plus startup plugin replace @nuxtjs/strapi's auto-plugin behavior, with qs as direct dependency and server-side runtimeConfig.strapi explicitly declared
+- 16 consumer files migrated from useStrapiX to useSessionX, @nuxtjs/strapi removed from modules and package.json, TypeScript clean via runtimeConfig union cast pattern and $fetch parameter cast
+- SSR hydration flash eliminated — dashboard stats now load server-side via watch(immediate:true); useAdsStore moved to setup scope in [slug].vue to prevent Nuxt context errors
+- Strapi `api::policy.policy` collection type with richtext field + idempotent seeder containing all 16 policies from PoliciesDefault.vue
+- Pinia store with 1-hour cache fetching from /api/policies, replacing 280-line hardcoded array in PoliciesDefault.vue with typed prop binding and SSR-ready useAsyncData in the page
+- Server-side ownership guards added to saveDraft update path and PUT/DELETE /api/ads/:id controller overrides, blocking cross-user ad mutation
+- userId field persisted to localStorage via Pinia and ownership guard in wizard entry page resets store when a different user's draft is detected
+- Eliminated ~22 Codacy any-type violations across 23 website files using unknown, Record<string, unknown>, and Component from vue — zero runtime changes, TypeScript compiles clean
+- Eliminated ~35 any type violations across 31 dashboard files by typing vee-validate handlers, chart.js callbacks, window globals, plugin args, and all edit page refs
+- Eliminated all `any` and `Function` type annotations from Strapi source files — 30+ violations across 22 files replaced with proper typed alternatives using Event, Core.Strapi, unknown catch blocks, and typed interfaces
+- Zero any/Function violations confirmed across all three apps; four overlooked casts fixed using useStrapiUser<User>() generic and as unknown as typed interface patterns
+- Eliminated all 12 residual `any` violations — 2 `Array<any>` props and 10 `ref<any>(null)` reactive state declarations — replacing with concrete TypeScript interfaces across website and dashboard
+- All 27 Strapi test files moved to tests/ subdirectories with corrected relative imports — zero __tests__/ dirs and zero flat co-located tests remain
+- Formal verification confirming all 23 website test files reside exclusively in apps/website/tests/ with mirrored structure — Phase 116 work validated, requirement STRUCT-117-WEB closed
+- One-liner:
+- One-liner:
+- useExportCsv composable wired to /orders/export-csv endpoint with Blob download and Export button in OrdersDefault.vue header
+- Two Jest test stub files (15 todo tests) scaffolding the subscription-pro collection type and charge-before-activate payment flow for Plans 01-04 to implement
+- subscription-pro Strapi collection type with oneToOne user relation and idempotent card data migration on bootstrap
+- subscription-charge.cron.test.ts
+- period_end added to subscription-payment schema with DB migration and proResponse refactored to create the first subscription-payment record instead of writing pro_expires_at on the user
+- Commit:
+- One-liner:
+- 12 Strapi files migrated from entityService to db.query — payment flows, order pagination, ad operations, gift controllers, all TypeScript cast artifacts removed
+- One-liner:
+- subscription-charge.cron.test.ts
+- Three login flows migrated from router.push to navigateTo so the global onboarding-guard fires immediately after OTP, Google, and Facebook authentication
+- Static countries.json (29 entries) + InputPhone Vue 3 v-model component with Chile-default dial-code select, longest-match decomposition, and 10 passing Vitest unit tests
+- Three website forms (FormProfile, FormCreateThree, FormContact) now collect phone via InputPhone country-selector component instead of bare text/phone/tel inputs, with dead handlePhoneInput helpers deleted
+- Dashboard-guard middleware + onboarding exemption + FormVerifyCode manager redirect + dashboard layout + search/settings stores — authentication routing infrastructure for /dashboard/
+- 8 dashboard-exclusive npm packages installed in website workspace; vite.optimizeDeps extended with 4 chart/qs entries; 24 /dashboard/-prefixed routeRules and robots /dashboard/ disallow added to nuxt.config.ts
+- 1. [Rule 1 - Bug] `HeroDefaultDashboard` vs `HeroDashboard` plan example
+- 4 exclusive types and 3 composables moved from dashboard to website via git mv; all 9 useSessionX references across migrated components replaced with useStrapiAuth/useStrapiUser/useStrapiToken equivalents
+- One-liner:
+- 1. formatDate/formatDateShort/formatBoolean not found in template context (67 errors)
+- Dashboard merge finalized: MenuUser uses internal /dashboard NuxtLink, Strapi email/reset URLs updated to FRONTEND_URL/dashboard/ paths, apps/dashboard workspace removed and 263 files deleted
+- One-liner:
+- One-liner:
+- One-liner:
+- 1. [Rule 3 - Blocking] Added nitro-globals.ts setupFile for Vitest server handler tests
+- Commit:
+- One-liner:
+- Four-vector auth hardening: Google email_verified guard, plugin-JWT verification with no hardcoded fallback, two-layer rate limiting on auth endpoints, and reCAPTCHA hostname/action binding in both Strapi and Nuxt layers
+- One-liner:
+- Four-vector hardening: MJML autoescape, upload magic-byte + sizeLimit, user-list PII strip + filter whitelist, and content-API route lockdown
+- Google-only users now receive a branded "Crea tu contraseña" email via create-password.mjml and have their provider flipped to 'local' after completing the reset flow, enabling email+password login alongside One Tap
+- Three httpOnly-compatible session composables (useSessionUser/Auth/Client) plus an inert session.ts plugin and 11 Wave 0 regression-guard tests that lock in "fetchUser never clears a token"
+- Catch-all proxy now injects Authorization: Bearer from httpOnly cookie; 6 Nitro auth intercept routes set/clear waldo_jwt server-side with reCAPTCHA guard on every JWT-issuing POST
+- Found during:
+- Five Google/Facebook OAuth files migrated to httpOnly model: popup carries no jwt, redirect pages call exchange routes via useApiClient (sending X-Recaptcha-Token), One Tap relies on server cookie — zero setToken/authenticateProvider remain
+- useStrapiToken fully eliminated from website app: verify-code calls fetchUser after cookie is set server-side, uploads rely on proxy Authorization injection, logout posts to server route, all four middleware guards are token-free and user-state-based
+- @nuxtjs/strapi fully removed from apps/website; session.ts activated; proxy is now the single Strapi exit point; all auth flows (login, OTP, Google OAuth, One Tap, logout, Webpay) verified working in local with the original Manager-deactivate logout bug fixed.
+
+---
+
 ## v1.46 PRO Subscriptions (Shipped: 2026-03-29)
 
 **Phases completed:** 6 phases, 13 plans, 25 tasks
