@@ -7,7 +7,7 @@ declare module "koa" {
   }
 
   interface Request {
-    body: any;
+    body: unknown;
     files?: Record<string, KoaFile | KoaFile[]>;
   }
 }

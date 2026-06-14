@@ -6,25 +6,25 @@
 
 // defineEventHandler: pass-through (returns the handler fn directly)
 
-(globalThis as any).defineEventHandler = (fn: (event: unknown) => unknown) =>
+(globalThis as typeof globalThis & Record<string, unknown>).defineEventHandler = (fn: (event: unknown) => unknown) =>
   fn;
 
 // createError: wraps options into an Error with statusCode attached
 
-(globalThis as any).createError = (opts: Record<string, unknown>) =>
+(globalThis as typeof globalThis & Record<string, unknown>).createError = (opts: Record<string, unknown>) =>
   Object.assign(new Error(String(opts.statusMessage ?? "")), opts);
 
 // readBody, setCookie, getHeader: no-ops in test context
 
-(globalThis as any).readBody = () => Promise.resolve({});
+(globalThis as typeof globalThis & Record<string, unknown>).readBody = () => Promise.resolve({});
 
-(globalThis as any).setCookie = () => {};
+(globalThis as typeof globalThis & Record<string, unknown>).setCookie = () => {};
 
-(globalThis as any).getHeader = () => {};
+(globalThis as typeof globalThis & Record<string, unknown>).getHeader = () => {};
 
 // useRuntimeConfig: minimal config stub for server handlers
 
-(globalThis as any).useRuntimeConfig = () => ({
+(globalThis as typeof globalThis & Record<string, unknown>).useRuntimeConfig = () => ({
   public: { devMode: false },
   devUsername: null,
   devPassword: null,
