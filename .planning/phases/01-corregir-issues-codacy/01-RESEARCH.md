@@ -206,6 +206,8 @@ Lines to suppress (re-derive current line numbers at apply-time — several shif
 ## 3. Fix plan
 
 ### Group 1 — NoSQL operator-injection (3 reals) — scalar coercion
+
+> **Mechanism confirmed (HIGH):** Strapi v5 Query Engine `findOne({ where: {...} })` interprets a nested object value as attribute operators prefixed with `$` (e.g. `field: { $ne: null }`, `createdAt: { $gt: '...' }`) — per the official Strapi filters / Query-Engine docs (https://docs.strapi.io/cms/api/document-service/filters). Therefore an uncoerced object from `ctx.request.body` reaching a `where` value (e.g. `{ pendingToken: {$ne:null} }`) IS a genuine operator-injection vector, and the truthy guard `if (!x)` does not stop it. Scalar coercion (`String()`/`Number()`) is the closing fix.
 | File:line | Fix | Char. test exists? |
 |---|---|---|
 | authController.ts:396 | `const token = String(pendingToken); ... findOne({ where: { pendingToken: token } })` | YES — `authController.test.ts` covers `verifyCode`/`pendingToken` (VSTEP). **Add** injection test: `pendingToken: {$ne:null}` → `badRequest` |
@@ -219,6 +221,8 @@ Lines to suppress (re-derive current line numbers at apply-time — several shif
 | authController.ts:290 (**server**) | `crypto.randomBytes(3).toString("hex").slice(0,4)` (or base36 from bytes) for the username suffix. `authController.test.ts` EXISTS |
 
 > **Do NOT cross-apply:** `getRandomValues` is browser/Web Crypto (client); `randomBytes` is Node (server). `password.ts` runs in the browser → `getRandomValues`. `authController.ts` is Strapi Node → `randomBytes`.
+
+> **Test-survives-refactor caveat (authController:290):** "characterization test exists" ≠ "test survives the swap." Before replacing `Math.random` with `crypto.randomBytes`, check that `authController.test.ts` does not globally stub `Math.random` or pin the exact base36 suffix value — if it does, update the test to assert the suffix *shape* (length/charset), not a fixed string. `password.test.ts` is already shape-based, so it is safe.
 
 ### Group 3 — no-explicit-any (9)
 Per §1 table. `koa.d.ts` → `unknown`; `nitro-globals.ts` → typed `globalThis` augmentation; `better-stack`/`cloudflare` → `unknown[]`/`unknown` + cast at use. Verify with `vue-tsc --noEmit` (website) and Strapi `tsc` (STATE note: use `vue-tsc`, not `nuxi typecheck`, in worktrees).
@@ -296,6 +300,7 @@ Per §1 table. `koa.d.ts` → `unknown`; `nitro-globals.ts` → typed `globalThi
 - **Known:** Opengrep/Semgrep ignore `// nosemgrep` when output is SARIF (verified bug, opengrep#269 / semgrep#11605 / #6658); Codacy remote consumes SARIF.
 - **Unclear:** whether Codacy's pipeline post-processes nosemgrep regardless of SARIF, and whether committed `.codacy.yaml`/dashboard config is the effective ignore surface on remote (F3 says committed excludes are currently NOT honored remotely).
 - **Recommendation:** CANARY — apply one inline suppression, re-scan, observe. If it doesn't clear, use the **Codacy dashboard "Ignore" action** as the suppression mechanism (per-finding, persists, documented-reliable) and/or sync remote ignore config with `.codacy.yaml`. The plan must branch on the canary result. This corrects CONTEXT line 45 ("local CLI to confirm bucket→0") which is invalid for security buckets (F1).
+- **Auditability tension (planner must weigh):** if the canary confirms BOTH that inline `nosemgrep` is ignored under SARIF (F2) AND that committed `.codacy.yaml` excludes are not honored remotely (F3), then the only working suppression mechanism is the dashboard "Ignore" action — which lives in Codacy, not in git. That directly tensions with CONTEXT's "limpio **y auditable**" requirement: ~80 suppressions would not be auditable in-repo. Mitigations the planner should consider: (a) prefer FIX-with-comment over SUPPRESS wherever the fix is cheap; (b) accept out-of-repo Codacy ignores but record each justification in PLAN.md as the in-repo audit trail; (c) push for the repo-config path-exclude route where it works (test/config files).
 
 ### OQ-2 (MEDIUM — deviation from CONTEXT): `detected-generic-api-key` should NOT be repo-wide disabled
 - CONTEXT's hypothesis labeled it "100% noise (fixture in jest.setup.ts)". Reading jest.setup.ts:4 shows a real hardcoded-credential *pattern* (a Transbank sandbox key) — the rule is doing its job, so it has future detection value. Per CONTEXT line 33 ("never repo-wide disable a rule with a real-pattern hit"), the correct action is a **path-exclude of `jest.setup.ts`** (matching local `.codacy.yaml`), not a repo-wide disable. Flagged visibly for planner confirmation.
