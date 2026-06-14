@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import type { StrapiResponse, StrapiData } from "@nuxtjs/strapi";
+import type { StrapiResponse, StrapiData } from "@/types/strapi";
 import type {
   Indicator,
   ConvertParams,

@@ -1,12 +1,3 @@
-// Shared constants accessible from both client and server
-export const APP_CONFIG = {
-  name: "Waldo.click®",
-  version: "4.0.0",
-  description: "Plataforma para compra y venta de equipo industrial en Chile",
-  url: process.env.BASE_URL || "http://localhost:3000",
-  apiUrl: process.env.API_URL || "http://localhost:1337",
-} as const;
-
 export const CATEGORIES = [
   { id: "pesca", name: "Pesca", icon: "fish-symbol", color: "#C9E9EC" },
   {

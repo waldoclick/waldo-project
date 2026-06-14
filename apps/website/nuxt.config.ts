@@ -16,7 +16,6 @@ export default defineNuxtConfig({
     ...(process.env.NODE_ENV === "production" ? ["nuxt-security"] : []),
     "@nuxt/test-utils/module",
     "@nuxt/eslint",
-    "@nuxtjs/strapi",
     "@pinia/nuxt",
     "@pinia-plugin-persistedstate/nuxt",
     "@sentry/nuxt/module",
@@ -284,36 +283,6 @@ export default defineNuxtConfig({
   // 2. Styles Configuration
   css: ["@/scss/app.scss"],
 
-  // 3. Modules Configuration
-  // Note: Using BASE_URL instead of API_URL to route through proxy
-  // This hides the actual Strapi API URL from the client
-  strapi: {
-    url: process.env.BASE_URL || "http://localhost:3000",
-    prefix: "/api",
-    version: "v5",
-    cookie: {
-      path: "/",
-      maxAge: process.env.SESSION_MAX_AGE
-        ? Number.parseInt(process.env.SESSION_MAX_AGE)
-        : 604800, // Valor por defecto de 1 semana
-      ...(process.env.COOKIE_DOMAIN
-        ? { domain: process.env.COOKIE_DOMAIN }
-        : {}),
-    },
-    cookieName: "waldo_jwt",
-    auth: {
-      populate: [
-        "role",
-        "commune",
-        "region",
-        "business_region",
-        "business_commune",
-        // "orders",
-        // "ads",
-      ],
-    },
-  },
-
   pinia: {
     // Pinia Configuration
   },
@@ -364,12 +333,6 @@ export default defineNuxtConfig({
     // Variables privadas del servidor
     sessionMaxAge: process.env.SESSION_MAX_AGE || "604800",
     apiUrl: process.env.API_URL || "http://localhost:1337", // server-only — for Nitro image proxy and sitemap
-    // Override strapi URL on server to call API directly, bypassing the public
-    // domain proxy (which is blocked by Vercel Deployment Protection in staging).
-    // The client uses runtimeConfig.public.strapi.url (set by the strapi module).
-    strapi: {
-      url: process.env.API_URL || "http://localhost:1337",
-    },
     proxySecretWeb: process.env.PROXY_SECRET_WEB || "", // server-only — proxy auth key sent to Strapi
     vercelBypassSecret: process.env.VERCEL_AUTOMATION_BYPASS_SECRET || "", // server-only — bypasses Vercel Deployment Protection on SSR self-calls
     recaptchaSecretKey: process.env.RECAPTCHA_SECRET_KEY, // server-only — for Nitro proxy

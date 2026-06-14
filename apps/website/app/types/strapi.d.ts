@@ -1,36 +1,19 @@
-declare module "#app" {
-  interface NuxtApp {
-    $strapi: ReturnType<typeof import("@nuxtjs/strapi").useStrapi>;
-  }
+// Strapi v5 API response shape types (formerly from @nuxtjs/strapi module augmentation)
+
+export interface StrapiPagination {
+  page: number;
+  pageSize: number;
+  pageCount: number;
+  total: number;
 }
 
-declare module "@nuxtjs/strapi" {
-  interface StrapiPagination {
-    page: number;
-    pageSize: number;
-    pageCount: number;
-    total: number;
-  }
-
-  interface StrapiMeta {
-    pagination: StrapiPagination;
-  }
-
-  interface StrapiResponse<T> {
-    data: T[];
-    meta: StrapiMeta;
-  }
-
-  type StrapiData<T> = T;
-
-  interface StrapiForgotPasswordData {
-    // recaptchaToken removed — validation moved to Nitro proxy via X-Recaptcha-Token header
-    context?: "website" | "dashboard";
-  }
-
-  interface StrapiResetPasswordData {
-    // recaptchaToken removed — validation moved to Nitro proxy via X-Recaptcha-Token header
-  }
+export interface StrapiMeta {
+  pagination: StrapiPagination;
 }
 
-export {};
+export interface StrapiResponse<T> {
+  data: T[];
+  meta: StrapiMeta;
+}
+
+export type StrapiData<T> = T;

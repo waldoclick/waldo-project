@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import type { Ad, AdAccess } from "@/types/ad";
 import type { Pagination } from "@/types/pagination";
-import type { StrapiResponse } from "@nuxtjs/strapi";
+import type { StrapiResponse } from "@/types/strapi";
 import { useApiClient } from "#imports";
 
 export const useAdsStore = defineStore(
