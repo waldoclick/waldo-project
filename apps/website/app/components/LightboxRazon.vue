@@ -56,7 +56,7 @@ const DEFAULT_REASON = "Ya vendí el producto.";
 const localReason = ref(DEFAULT_REASON);
 const isSubmitting = ref(false);
 
-const textareaId = `lightbox-razon-${Math.random().toString(36).slice(2)}`;
+const textareaId = `lightbox-razon-${useId()}`;
 
 watch(isOpen, (opened) => {
   if (opened) {
