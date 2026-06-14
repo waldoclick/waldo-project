@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
       { headers: { "X-Proxy-Key": config.proxySecretWeb as string } },
     );
 
-    setCookie(event, "waldo_jwt", result.jwt, {
+    setCookie(event, "waldo_jwt", result.jwt ?? "", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",

@@ -36,9 +36,8 @@ const mockPush = vi.fn();
 
 // useSweetAlert2 is a Nuxt auto-imported global in FormLogin.vue (no explicit import)
 global.useSweetAlert2 = vi.fn(() => ({ Swal: { fire: mockSwalFire } }));
-global.useStrapiClient = vi.fn(
-  () => mockClient,
-) as unknown as typeof useStrapiClient;
+// useApiClient is a Nuxt auto-import global in FormLogin.vue
+global.useApiClient = vi.fn(() => mockClient);
 global.useState = vi.fn((_key: string, init: () => unknown) =>
   ref(init()),
 ) as unknown as typeof useState;
@@ -89,9 +88,7 @@ describe("FormLogin.vue — REGV-05 unconfirmed email resend section", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     global.useSweetAlert2 = vi.fn(() => ({ Swal: { fire: mockSwalFire } }));
-    global.useStrapiClient = vi.fn(
-      () => mockClient,
-    ) as unknown as typeof useStrapiClient;
+    global.useApiClient = vi.fn(() => mockClient);
     global.useState = vi.fn((_key: string, init: () => unknown) =>
       ref(init()),
     ) as unknown as typeof useState;

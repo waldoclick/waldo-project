@@ -10,8 +10,12 @@ const { mockClient, mockExecute, mockCookie, mockBypassSecret } = vi.hoisted(
   }),
 );
 
+// Mock the underlying session client (direct import in useApiClient.ts)
+vi.mock("@/composables/useSessionClient", () => ({
+  useSessionClient: () => mockClient,
+}));
+
 vi.mock("#imports", () => ({
-  useStrapiClient: () => mockClient,
   useNuxtApp: () => ({ $recaptcha: { execute: mockExecute } }),
   useRuntimeConfig: () => ({
     vercelBypassSecret: mockBypassSecret(),
@@ -136,7 +140,6 @@ describe("useApiClient", () => {
 
   it("proceeds without token when $recaptcha is undefined (SSR)", async () => {
     vi.doMock("#imports", () => ({
-      useStrapiClient: () => mockClient,
       useNuxtApp: () => ({}), // no $recaptcha
       useRuntimeConfig: () => ({ vercelBypassSecret: "", public: {} }),
       useRequestHeaders: () => ({}),

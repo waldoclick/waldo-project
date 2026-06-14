@@ -1,18 +1,13 @@
 import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 
 // ─── Hoisted mocks ────────────────────────────────────────────────────────
-const { mockSetToken, mockFetchUser, mockApiClient, mockRoutePath } =
-  vi.hoisted(() => ({
-    mockSetToken: vi.fn(),
-    mockFetchUser: vi.fn().mockResolvedValue(),
-    mockApiClient: vi.fn().mockResolvedValue({ jwt: "test-jwt", user: {} }),
-    mockRoutePath: { value: "/" },
-  }));
+const { mockApiClient, mockRoutePath } = vi.hoisted(() => ({
+  mockApiClient: vi.fn().mockResolvedValue({ jwt: "test-jwt", user: {} }),
+  mockRoutePath: { value: "/" },
+}));
 
 // ─── Mock #imports ────────────────────────────────────────────────────────
 vi.mock("#imports", () => ({
-  useStrapiAuth: () => ({ setToken: mockSetToken, fetchUser: mockFetchUser }),
-  useStrapiUser: () => ({ value: null }),
   useRuntimeConfig: () => ({ public: { googleClientId: "test-client-id" } }),
   useRoute: () => ({ path: mockRoutePath.value }),
 }));
@@ -48,6 +43,8 @@ describe("google-one-tap.client.ts plugin", () => {
     vi.stubGlobal("google", {
       accounts: { id: { initialize: mockInitialize, prompt: mockPrompt } },
     });
+    // useSessionUser is a Nuxt auto-import used as a global in the plugin
+    vi.stubGlobal("useSessionUser", () => ({ value: null }));
   });
 
   afterEach(() => {
@@ -79,19 +76,17 @@ describe("google-one-tap.client.ts plugin", () => {
     );
   });
 
-  it("calls setToken(jwt) with the JWT from Strapi response", async () => {
+  it("calls reloadNuxtApp() after successful authentication", async () => {
     await loadPlugin();
     await capturedCallback!({ credential: "google-credential-token" });
-    expect(mockSetToken).toHaveBeenCalledWith("test-jwt");
+    expect(mockReloadNuxtApp).toHaveBeenCalledOnce();
   });
 
-  it("calls fetchUser() after setToken()", async () => {
+  it("does NOT call reloadNuxtApp() when the API call throws", async () => {
+    mockApiClient.mockRejectedValueOnce(new Error("auth failed"));
     await loadPlugin();
     await capturedCallback!({ credential: "google-credential-token" });
-    expect(mockFetchUser).toHaveBeenCalledOnce();
-    const setOrder = mockSetToken.mock.invocationCallOrder[0]!;
-    const fetchOrder = mockFetchUser.mock.invocationCallOrder[0]!;
-    expect(fetchOrder).toBeGreaterThan(setOrder);
+    expect(mockReloadNuxtApp).not.toHaveBeenCalled();
   });
 
   it("does not prompt on /onboarding route (INTEG-01)", async () => {

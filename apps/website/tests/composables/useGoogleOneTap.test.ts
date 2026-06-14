@@ -8,7 +8,7 @@ const { mockUser, mockRoutePath } = vi.hoisted(() => ({
 
 // ─── Mock #imports ────────────────────────────────────────────────────────
 vi.mock("#imports", () => ({
-  useStrapiUser: () => mockUser,
+  useSessionUser: () => mockUser,
   useRoute: () => ({ path: mockRoutePath.value }),
 }));
 

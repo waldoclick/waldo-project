@@ -10,17 +10,10 @@ const mockPush = vi.fn();
 global.useRouter = vi.fn(() => ({ push: mockPush }));
 global.useRoute = vi.fn(() => ({}));
 
-// ─── Mock useStrapiClient ─────────────────────────────────────────────────
+// ─── Mock API client ──────────────────────────────────────────────────────
 const mockClient = vi.fn();
-global.useStrapiClient = vi.fn(() => mockClient);
-
-// ─── Mock useStrapiAuth (old path — should NOT be used in new code) ───────
+// setToken reference kept for tests that assert it is NOT called
 const mockSetToken = vi.fn();
-const mockRegister = vi.fn();
-global.useStrapiAuth = vi.fn(() => ({
-  register: mockRegister,
-  setToken: mockSetToken,
-}));
 
 // ─── Mock useState (returns persistent ref for 'registrationEmail') ───────
 global.useState = vi.fn((key: string, init?: () => string) => {
@@ -130,11 +123,7 @@ describe("FormRegister.vue — no-JWT redirect behavior (REGV-03)", () => {
     // Re-register globals after clearAllMocks
     global.useRouter = vi.fn(() => ({ push: mockPush }));
     global.useRoute = vi.fn(() => ({}));
-    global.useStrapiClient = vi.fn(() => mockClient);
-    global.useStrapiAuth = vi.fn(() => ({
-      register: mockRegister,
-      setToken: mockSetToken,
-    }));
+
     global.useState = vi.fn((key: string, init?: () => string) => {
       if (key === "registrationEmail") return registrationEmailRef;
       return ref(init ? init() : "");
@@ -245,11 +234,7 @@ describe("FormRegister.vue — consent checkboxes (REG-01, REG-02)", () => {
     registrationEmailRef.value = "";
     global.useRouter = vi.fn(() => ({ push: mockPush }));
     global.useRoute = vi.fn(() => ({}));
-    global.useStrapiClient = vi.fn(() => mockClient);
-    global.useStrapiAuth = vi.fn(() => ({
-      register: mockRegister,
-      setToken: mockSetToken,
-    }));
+
     global.useState = vi.fn((key: string, init?: () => string) => {
       if (key === "registrationEmail") return registrationEmailRef;
       return ref(init ? init() : "");

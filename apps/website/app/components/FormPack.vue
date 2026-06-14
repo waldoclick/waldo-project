@@ -45,7 +45,7 @@ import PackInvoice from "@/components/PackInvoice.vue";
 import BarCreate from "@/components/BarCreate.vue";
 import { usePackStore } from "@/stores/pack.store";
 
-const { create } = useStrapi();
+const client = useApiClient();
 const { $recaptcha } = useNuxtApp();
 
 const packStore = usePackStore();
@@ -78,7 +78,10 @@ const handleSubmit = async (values) => {
       recaptchaToken: token,
     };
 
-    const response = await create("payments/pack", allData);
+    const response = await client("payments/pack", {
+      method: "POST",
+      body: allData,
+    });
     handleRedirect(response.data.webpay);
   } catch (error) {
     console.error("Error creating payment:", error);

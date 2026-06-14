@@ -22,10 +22,10 @@ export const useSessionClient = () => {
     return $fetch<T>(url, {
       retry: 0,
       baseURL,
-      ...fetchOptions,
+      ...(fetchOptions as Record<string, unknown>),
       headers: {
         ...((fetchOptions.headers as Record<string, string> | undefined) ?? {}),
       },
-    });
+    }) as Promise<T>;
   };
 };

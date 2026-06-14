@@ -56,19 +56,21 @@ global.useApiClient = vi.fn(
   () => mockApiClient,
 ) as unknown as typeof useApiClient;
 
-// useStrapiAuth — fetchUser resolves without error
+// useSessionAuth — fetchUser resolves without error
 const mockFetchUser = vi.fn().mockResolvedValue();
 const mockSetToken = vi.fn();
-global.useStrapiAuth = vi.fn(() => ({
+global.useSessionAuth = vi.fn(() => ({
   fetchUser: mockFetchUser,
   setToken: mockSetToken,
-})) as unknown as typeof useStrapiAuth;
+})) as unknown as typeof useSessionAuth;
 
-// useStrapiUser — set to manager by default (AUTH-01); overridden per test
+// useSessionUser — set to manager by default (AUTH-01); overridden per test
 const mockUser = ref<{ role?: { name: string } } | null>({
   role: { name: "manager" },
 });
-global.useStrapiUser = vi.fn(() => mockUser) as unknown as typeof useStrapiUser;
+global.useSessionUser = vi.fn(
+  () => mockUser,
+) as unknown as typeof useSessionUser;
 
 // useSweetAlert2 — no-op for tests
 global.useSweetAlert2 = vi.fn(() => ({
@@ -102,10 +104,10 @@ describe("FormVerifyCode.vue — AUTH-01 and AUTH-02", () => {
 
     mockFetchUser.mockResolvedValue();
     mockSetToken.mockReset();
-    global.useStrapiAuth = vi.fn(() => ({
+    global.useSessionAuth = vi.fn(() => ({
       fetchUser: mockFetchUser,
       setToken: mockSetToken,
-    })) as unknown as typeof useStrapiAuth;
+    })) as unknown as typeof useSessionAuth;
 
     mockIsProfileComplete.mockResolvedValue(true);
     mockMeReset.mockReset();
@@ -124,9 +126,9 @@ describe("FormVerifyCode.vue — AUTH-01 and AUTH-02", () => {
   // AUTH-01: when role.name === "manager" after verify, navigateTo("/dashboard")
   it("navigates to /dashboard when role is manager after successful verification (AUTH-01)", async () => {
     mockUser.value = { role: { name: "manager" } };
-    global.useStrapiUser = vi.fn(
+    global.useSessionUser = vi.fn(
       () => mockUser,
-    ) as unknown as typeof useStrapiUser;
+    ) as unknown as typeof useSessionUser;
 
     const wrapper = mountFormVerifyCode();
     await nextTick();
@@ -141,9 +143,9 @@ describe("FormVerifyCode.vue — AUTH-01 and AUTH-02", () => {
   // AUTH-02: when role.name !== "manager", navigateTo is NOT called with "/dashboard"
   it("does NOT navigate to /dashboard when role is not manager (AUTH-02)", async () => {
     mockUser.value = { role: { name: "user" } };
-    global.useStrapiUser = vi.fn(
+    global.useSessionUser = vi.fn(
       () => mockUser,
-    ) as unknown as typeof useStrapiUser;
+    ) as unknown as typeof useSessionUser;
     mockAppStoreInstance.getReferer = null;
 
     const wrapper = mountFormVerifyCode();

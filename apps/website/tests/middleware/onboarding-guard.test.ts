@@ -16,13 +16,10 @@ global.defineNuxtRouteMiddleware = (fn: unknown) => fn;
 global.navigateTo = mockNavigateTo;
 
 const mockUser = vi.fn(() => ({ value: { id: 1 } }));
-global.useStrapiUser = mockUser;
-
-const mockStrapiToken = vi.fn(() => ({ value: null }));
-global.useStrapiToken = mockStrapiToken;
+global.useSessionUser = mockUser;
 
 const mockFetchUser = vi.fn();
-global.useStrapiAuth = vi.fn(() => ({ fetchUser: mockFetchUser }));
+global.useSessionAuth = vi.fn(() => ({ fetchUser: mockFetchUser }));
 
 const mockIsProfileComplete = vi.fn();
 global.useMeStore = vi.fn(() => ({ isProfileComplete: mockIsProfileComplete }));
@@ -43,7 +40,6 @@ describe("onboarding-guard.global (GUARD-01..04)", () => {
     vi.clearAllMocks();
     mockUser.mockReturnValue({ value: { id: 1 } }); // authenticated
     mockIsProfileComplete.mockResolvedValue(false); // incomplete by default
-    mockStrapiToken.mockReturnValue({ value: null });
     mockFetchUser.mockReset();
     // Re-sync global.navigateTo with the cleared mock
     global.navigateTo = mockNavigateTo;
@@ -52,7 +48,6 @@ describe("onboarding-guard.global (GUARD-01..04)", () => {
   // GUARD-01: Unauthenticated users pass through
   it("allows unauthenticated users through without calling isProfileComplete (GUARD-01)", async () => {
     mockUser.mockReturnValue({ value: null });
-    mockStrapiToken.mockReturnValue({ value: null });
     await guard(makeTo("/anuncios"), {});
     expect(mockIsProfileComplete).not.toHaveBeenCalled();
     expect(mockNavigateTo).not.toHaveBeenCalled();

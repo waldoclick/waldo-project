@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mount } from "@vue/test-utils";
 import { ref } from "vue";
 
-// ─── Mock useStrapiUser ───────────────────────────────────────────────────
+// ─── Mock useSessionUser ───────────────────────────────────────────────────
 const mockUser = ref({
   id: 1,
   firstname: "John",
@@ -25,11 +25,11 @@ const mockUser = ref({
   business_region: null,
   business_commune: null,
 });
-global.useStrapiUser = vi.fn(() => mockUser);
+global.useSessionUser = vi.fn(() => mockUser);
 
-// ─── Mock useStrapiAuth ───────────────────────────────────────────────────
+// ─── Mock useSessionAuth ───────────────────────────────────────────────────
 const mockFetchUser = vi.fn().mockResolvedValue();
-global.useStrapiAuth = vi.fn(() => ({
+global.useSessionAuth = vi.fn(() => ({
   fetchUser: mockFetchUser,
 }));
 
@@ -180,8 +180,8 @@ describe("FormProfile.vue — onboarding mode (FORM-02, FORM-03)", () => {
     mockSwalFire.mockResolvedValue({ isConfirmed: true });
 
     // Re-register globals after clearAllMocks
-    global.useStrapiUser = vi.fn(() => mockUser);
-    global.useStrapiAuth = vi.fn(() => ({ fetchUser: mockFetchUser }));
+    global.useSessionUser = vi.fn(() => mockUser);
+    global.useSessionAuth = vi.fn(() => ({ fetchUser: mockFetchUser }));
     global.useRouter = vi.fn(() => ({ push: mockPush }));
     global.useRegionsStore = vi.fn(() => ({ regions: { data: [] } }));
     global.useCommunesStore = vi.fn(() => ({ communes: { data: [] } }));
