@@ -1,7 +1,7 @@
 <template>
   <section id="comprar-packs" class="packs packs--default" :class="isSeparator">
     <div class="packs--default__container">
-      <h2 v-if="title" class="packs--default__title title" v-html="title" />
+      <h2 v-if="title" class="packs--default__title title">{{ title }}</h2>
       <div class="packs--default__list">
         <client-only>
           <template v-for="(item, index) in packs" :key="index">
@@ -21,7 +21,6 @@
 import { computed } from "vue";
 import type { Pack } from "@/types/pack";
 import CardPack from "@/components/CardPack.vue";
-import { useSanitize } from "@/composables/useSanitize";
 
 const props = defineProps<{
   separator?: boolean;
@@ -29,10 +28,10 @@ const props = defineProps<{
 }>();
 
 const separator = props.separator ?? false;
-const { sanitizeText } = useSanitize();
 const { getPacksPageTitle } = usePacks();
 
-const title = computed(() => sanitizeText(getPacksPageTitle(props.packs)));
+// Plain text (no markup) — rendered via interpolation, which Vue auto-escapes.
+const title = computed(() => getPacksPageTitle(props.packs));
 
 const isSeparator = computed(() => {
   return separator ? "is-separator" : "";

@@ -26,10 +26,9 @@
           />
         </div>
         <div v-if="packSavingsText" class="account--main__announcements__pack">
-          <div
-            class="account--main__announcements__pack__info"
-            v-html="packSavingsText"
-          />
+          <strong class="account--main__announcements__pack__info">{{
+            packSavingsText
+          }}</strong>
         </div>
       </div>
       <nuxt-link to="/packs" class="btn btn--buy" title="Comprar">
@@ -106,9 +105,7 @@ const adReservationsText = computed(() =>
 const featuredAdReservationsText = computed(() =>
   sanitizeText(getFeaturedAdReservationsText()),
 );
-const packSavingsText = computed(() =>
-  sanitizeText(
-    getPackBannerText(packs.value as import("@/types/pack").Pack[]) ?? "",
-  ),
+const packSavingsText = computed(
+  () => getPackBannerText(packs.value as import("@/types/pack").Pack[]) ?? "",
 );
 </script>

@@ -90,13 +90,14 @@ export const usePacks = () => {
   };
 
   /**
-   * Returns the banner text for AccountMain:
+   * Returns the banner text for AccountMain (plain text — the consumer wraps it
+   * in <strong> in the template, so no v-html is required):
    * "Comprando un pack ahorras hasta un X% vs el precio unitario."
    */
   const getPackBannerText = (packs: Pack[]): string | null => {
     const pct = getMaxSavingsPct(packs);
     if (pct === null) return null;
-    return `<strong>Comprando un pack ahorras hasta un ${pct}% vs el precio unitario.</strong>`;
+    return `Comprando un pack ahorras hasta un ${pct}% vs el precio unitario.`;
   };
 
   /**

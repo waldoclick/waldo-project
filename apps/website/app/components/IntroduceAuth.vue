@@ -7,9 +7,9 @@
       <h2 class="introduce--auth__title" v-html="getTitle" />
       <div class="introduce--auth__details">
         <h2
-          v-if="subtitle"
+          v-if="sanitizedSubtitle"
           class="introduce--auth__details__title"
-          v-html="subtitle"
+          v-html="sanitizedSubtitle"
         />
         <!-- <pre>{{ list }}</pre> -->
         <ul v-if="getList.length > 0" class="introduce--auth__details__list">
@@ -50,5 +50,8 @@ const stringSanitizeTitle = (title: string): string => {
 };
 
 const getTitle = computed(() => stringSanitizeTitle(props.title));
+const sanitizedSubtitle = computed(() =>
+  props.subtitle ? stringSanitizeTitle(props.subtitle) : "",
+);
 const getList = computed(() => props.list || []);
 </script>
