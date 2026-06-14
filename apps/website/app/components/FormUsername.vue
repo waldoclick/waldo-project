@@ -93,10 +93,7 @@ const schema = yup.object({
   username: yup
     .string()
     .required("El nombre de usuario es requerido")
-    .matches(
-      /^[\w.]+$/,
-      "Solo se permiten letras, números, puntos y guiones bajos",
-    )
+    .matches(/^\w+$/, "Solo se permiten letras, números y guiones bajos")
     .test(
       "reserved",
       "Este nombre de usuario no está disponible",

@@ -58,21 +58,17 @@ export const updateUsername = async (ctx) => {
     return ctx.badRequest("Username cannot contain spaces");
   }
 
-  // Solo permite letras, números, punto y guion bajo
-  const usernameRegex = /^[a-zA-Z0-9][a-zA-Z0-9._]+[a-zA-Z0-9]$/;
+  // Solo permite letras, números y guion bajo (sin puntos: rompen la URL
+  // de perfil /{username} porque el hosting los trata como extensión)
+  const usernameRegex = /^[a-zA-Z0-9][a-zA-Z0-9_]+[a-zA-Z0-9]$/;
   if (!usernameRegex.test(username)) {
     return ctx.badRequest(
-      "Username can only contain letters, numbers, dots and underscores, and must start and end with a letter or number",
+      "Username can only contain letters, numbers and underscores, and must start and end with a letter or number",
     );
   }
 
-  // No permite puntos o guiones bajos consecutivos
-  if (
-    username.includes("..") ||
-    username.includes("__") ||
-    username.includes("._") ||
-    username.includes("_.")
-  ) {
+  // No permite guiones bajos consecutivos
+  if (username.includes("__")) {
     return ctx.badRequest(
       "Username cannot contain consecutive special characters",
     );

@@ -366,8 +366,10 @@ const handleSubmit = async () => {
     loading.value = true;
     try {
       // Crear el campo username a partir del email
+      // Sanitiza a [A-Za-z0-9_]: los puntos u otros caracteres rompen la URL
+      // de perfil (/{username}) porque el hosting los trata como extensión
       const emailParts = form.value.email.split("@");
-      form.value.username = emailParts[0] ?? ""; // Asigna el nombre antes del @
+      form.value.username = (emailParts[0] ?? "").replace(/\W/g, ""); // Asigna el nombre antes del @
 
       if (
         RESERVED_USERNAMES.includes(
