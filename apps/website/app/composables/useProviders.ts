@@ -1,13 +1,13 @@
 const OAUTH_TIMEOUT_MS = 180_000;
 
 export const useProviders = () => {
-  const { getProviderAuthenticationUrl } = useStrapiAuth();
+  const { getProviderAuthenticationUrl } = useSessionAuth();
 
   const redirectToProvider = (provider: string): void => {
     window.location.href = getProviderAuthenticationUrl(provider);
   };
 
-  const loginWithPopup = async (provider: string): Promise<{ jwt: string }> => {
+  const loginWithPopup = async (provider: string): Promise<void> => {
     const data = await $fetch<{ url: string }>(
       `/api/auth/${provider}/initiate`,
     );
@@ -44,9 +44,9 @@ export const useProviders = () => {
       };
 
       const onPayload = (payload: unknown) => {
-        const msg = payload as { type?: string; jwt?: string };
+        const msg = payload as { type?: string };
         if (msg?.type === "google-oauth-success") {
-          finish(() => resolve({ jwt: msg.jwt as string }));
+          finish(() => resolve());
         } else if (msg?.type === "google-oauth-error") {
           finish(() => reject(new Error("oauth_failed")));
         }

@@ -21,7 +21,7 @@
 const { loginWithPopup } = useProviders();
 const { Swal } = useSweetAlert2();
 const { login } = useAdAnalytics();
-const { setToken, fetchUser } = useStrapiAuth();
+const { fetchUser } = useSessionAuth();
 const appStore = useAppStore();
 const meStore = useMeStore();
 const loading = ref(false);
@@ -29,10 +29,8 @@ const loading = ref(false);
 const onClick = async () => {
   loading.value = true;
   try {
-    const { jwt } = await loginWithPopup("google");
-    setToken(jwt);
-    // Populate useStrapiUser — the login lightbox and header only react to it,
-    // and navigateTo is a no-op when the referer is the current route
+    await loginWithPopup("google"); // cookie set server-side by the Nitro popup callback
+    // Populate session user — proxy injects Authorization from the httpOnly cookie
     await fetchUser();
     login("google");
     meStore.reset();
