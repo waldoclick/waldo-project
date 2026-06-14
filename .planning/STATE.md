@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-last_updated: "2026-06-14T16:54:14.042Z"
+last_updated: "2026-06-14T16:56:27.623Z"
 last_activity: 2026-06-14
 progress:
   total_phases: 1
   completed_phases: 0
   total_plans: 7
-  completed_plans: 5
+  completed_plans: 6
   percent: 14
 ---
 
@@ -114,6 +114,10 @@ Progress: [█░░░░░░░░░] 14% (phase 01: 1/7 plans)
 - Use @/data/countries.json import alias (not ~/data/) in InputPhone.vue — Vitest config maps ~ to apps/website/ root while @ maps to apps/website/app/; @ alias ensures consistent resolution in both Nuxt and Vitest (124-01)
 - parsePhone uses longest-match via sort(b.dialCode.length - a.dialCode.length) to correctly resolve +1868 (Trinidad) over +1 (US/Canada) — essential for Caribbean/Pacific dialCode disambiguation (124-01)
 - Use <Field v-slot="{ field }"><InputPhone v-bind="field" /></Field> pattern — correct vee-validate wrapping for custom v-model component, keeps name registration without double binding; FormContact.vue had no handlePhoneInput function to delete (124-02)
+- no-explicit-any bucket was 13 sites, not 9 — plan under-enumerated nitro-globals (6, not 4) and omitted cloudflare's 3 `groups: any[]`; the Task verify grep (which includes `any[]`) is authoritative over the prose count; all 13 → unknown + cast-at-use (01-04)
+- better-stack: casting `attr` to Record<string,unknown> leaves `attr.status ?? "pending"` as unknown and fails the typed return interface under strict tsc — type each map callback's attributes to concrete optional field shapes (status: MonitorStatus, etc.) instead (01-04)
+- cloudflare: graphql() → Promise<unknown>; added private extractGroups<T>(data, key) helper to navigate data?.data?.viewer?.zones?.[0]?.<key> once instead of 3 duplicated casts (01-04)
+- widening a global type from any→unknown (koa.d.ts Request.body) needs a full app tsc to confirm zero cross-file consumer fallout — grep alone is insufficient; Strapi tsc was exit 0 (01-04)
 
 ### Roadmap Evolution
 
