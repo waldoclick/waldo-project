@@ -1,8 +1,8 @@
 ---
 phase: 1
 slug: corregir-issues-codacy
-status: draft
-nyquist_compliant: false
+status: ready
+nyquist_compliant: true
 wave_0_complete: false
 created: 2026-06-14
 ---
@@ -43,15 +43,19 @@ created: 2026-06-14
 
 | Task ID | Plan | Wave | Invariant | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-----------|-----------|-------------------|-------------|--------|
-| 1-00-01 | 00 | 0 | saveDraft injection characterization | unit | `pnpm --filter strapi jest ad.service.saveDraft` | ❌ W0 | ⬜ pending |
-| 1-00-02 | 00 | 0 | pendingToken object rejected | unit | `pnpm --filter strapi jest authController` | ✅ extend | ⬜ pending |
-| 1-00-03 | 00 | 0 | payload.pack object rejected | unit | `pnpm --filter strapi jest checkout.service` | ✅ extend | ⬜ pending |
-| 1-01-01 | 01 | 1 | No operator injection (3 FIX) — scalar coercion | unit | `pnpm --filter strapi jest authController checkout ad.service` | ✅ via W0 | ⬜ pending |
-| 1-02-01 | 02 | 1 | CSPRNG password gen (client getRandomValues) | unit | `pnpm --filter website vitest run password` | ✅ existing | ⬜ pending |
-| 1-02-02 | 02 | 1 | Server randomBytes username suffix | unit | `pnpm --filter strapi jest authController` | ✅ existing | ⬜ pending |
-| 1-03-01 | 03 | 1 | no-explicit-any → unknown (9) | static | `pnpm codacy` + per-app typecheck | ✅ ESLint | ⬜ pending |
-| 1-04-01 | 04 | 1 | Open-redirect allowlist + image-uploader realpath | unit | `pnpm --filter website vitest run useProviders` | ❌ W0 | ⬜ pending |
-| 1-05-01 | 05 | 2 | ~80 FP ignored on remote (account-token API) + repo-config | manual+api | Codacy remote re-scan shows 0 open | n/a | ⬜ blocked: account token |
+| 1-00-01 | 00 | 0 | saveDraft `ad_id` object-injection characterization (RED) | unit | `pnpm --filter strapi jest ad.service.saveDraft` | ❌ W0 new | ⬜ pending |
+| 1-00-02 | 00 | 0 | pendingToken object rejected (RED) | unit | `pnpm --filter strapi jest authController` | ✅ extend | ⬜ pending |
+| 1-00-03 | 00 | 0 | payload.pack object rejected (RED) | unit | `pnpm --filter strapi jest checkout.service` | ✅ extend | ⬜ pending |
+| 1-00-04 | 00 | 0 | useProviders allowlist redirect guard (RED) | unit | `pnpm --filter website vitest run useProviders` | ❌ W0 new | ⬜ pending |
+| 1-01-01 | 01 | 1 | authController `String(pendingToken)` coercion — turns 00-02 green | unit | `pnpm --filter strapi jest authController` | ✅ via W0 | ⬜ pending |
+| 1-01-02 | 01 | 1 | authController username suffix via server `crypto.randomBytes` | unit | `pnpm --filter strapi jest authController` | ✅ existing | ⬜ pending |
+| 1-02-01 | 02 | 1 | ad.ts `Number(ad.ad_id)` — turns 00-01 green | unit | `pnpm --filter strapi jest ad.service.saveDraft` | ✅ via W0 | ⬜ pending |
+| 1-02-02 | 02 | 1 | checkout.service `String(payload.pack)` — turns 00-03 green | unit | `pnpm --filter strapi jest checkout.service` | ✅ via W0 | ⬜ pending |
+| 1-03-01 | 03 | 1 | password.ts client `crypto.getRandomValues` + rejection sampling | unit | `pnpm --filter website vitest run password` | ✅ existing | ⬜ pending |
+| 1-04-01 | 04 | 1 | no-explicit-any → unknown (9 sites) | static | `pnpm codacy` + per-app typecheck | ✅ ESLint | ⬜ pending |
+| 1-05-01 | 05 | 1 | useProviders allowlist — turns 00-04 green | unit | `pnpm --filter website vitest run useProviders` | ✅ via W0 | ⬜ pending |
+| 1-05-02 | 05 | 1 | image-uploader `realpath` under `os.tmpdir()` confinement | static | grep + per-app typecheck | ✅ grep | ⬜ pending |
+| 1-06-01 | 06 | 2 | ~80 FP ignored on remote (account-token bulk-ignore) + repo-config audit note | manual+api | Codacy remote re-scan shows 0 open (or Ignored) | n/a | ⬜ blocked: account token |
 
 ---
 
@@ -79,11 +83,12 @@ created: 2026-06-14
 
 ## Validation Sign-Off
 
-- [ ] All tasks have automated verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all MISSING references (saveDraft, useProviders allowlist)
-- [ ] No watch-mode flags
-- [ ] Feedback latency < 90s
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [x] All tasks have automated verify or Wave 0 dependencies
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify
+- [x] Wave 0 covers all MISSING references (saveDraft, useProviders allowlist)
+- [x] No watch-mode flags
+- [x] Feedback latency < 90s
+- [x] `nyquist_compliant: true` set in frontmatter
+- [x] Per-Task Map synced to final 7-plan structure (00–06)
 
-**Approval:** pending
+**Approval:** approved 2026-06-14
