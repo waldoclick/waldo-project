@@ -393,9 +393,13 @@ export const verifyCode = async (ctx) => {
     return ctx.badRequest("pendingToken and code are required");
   }
 
+  // Coerce to a scalar string so an operator object ({$ne:null}) cannot reach
+  // the Query Engine `where` filter as a `$`-operator (NoSQL operator-injection).
+  const tokenValue = String(pendingToken);
+
   const record = await strapi.db
     .query(VC_UID)
-    .findOne({ where: { pendingToken } });
+    .findOne({ where: { pendingToken: tokenValue } });
 
   if (!record) {
     return ctx.badRequest("Invalid or expired token");
