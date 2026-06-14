@@ -133,7 +133,6 @@ const handleFileChange = async (event: Event) => {
 };
 
 const uploadToStrapi = async (file: File): Promise<MediaItem | null> => {
-  const token = useStrapiToken();
   const formData = new FormData();
   formData.append("files", file);
 
@@ -142,9 +141,6 @@ const uploadToStrapi = async (file: File): Promise<MediaItem | null> => {
   const response = await fetch(uploadUrl, {
     method: "POST",
     body: formData,
-    headers: {
-      Authorization: `Bearer ${token.value}`,
-    },
   });
 
   if (!response.ok) {

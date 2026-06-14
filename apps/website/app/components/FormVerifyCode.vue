@@ -142,16 +142,15 @@ onUnmounted(() => {
 const handleVerify = async () => {
   sending.value = true;
   try {
-    const responseRaw = await apiClient("/auth/verify-code", {
+    await apiClient("/auth/verify-code", {
       method: "POST",
       body: { pendingToken: pendingToken.value, code: code.value.trim() },
     });
 
-    const { setToken, fetchUser } = useStrapiAuth();
-    setToken(responseRaw.jwt);
+    const { fetchUser } = useSessionAuth();
     await fetchUser();
 
-    const loggedUser = useStrapiUser();
+    const loggedUser = useSessionUser();
     if (loggedUser.value?.role?.name?.toLowerCase() === "manager") {
       await navigateTo("/dashboard");
       return;

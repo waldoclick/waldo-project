@@ -46,7 +46,6 @@ export function useImageProxy() {
       formats?: { thumbnail: { url: string }; medium?: { url: string } };
     }>
   > => {
-    const token = useStrapiToken();
     const { $recaptcha } = useNuxtApp();
     const formData = new FormData();
     for (const file of files) {
@@ -68,9 +67,7 @@ export function useImageProxy() {
 
     const uploadUrl = `/api/ads/upload`;
 
-    const headers: Record<string, string> = {
-      Authorization: `Bearer ${token.value}`,
-    };
+    const headers: Record<string, string> = {};
     if (recaptchaToken) {
       headers["X-Recaptcha-Token"] = recaptchaToken;
     }
