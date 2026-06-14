@@ -136,7 +136,32 @@
       "Bash(vercel whoami *)",
       "Bash(vercel ls *)",
       "Bash(vercel logs *)",
-      "Bash(pnpm --filter waldo-website install)"
+      "Bash(pnpm --filter waldo-website install)",
+      "Bash(vercel env *)",
+      "WebFetch(domain:www.waldoclick.dev)",
+      "Bash(vercel project *)",
+      "Read(//root/.local/share/com.vercel.cli/**)",
+      "Read(//root/.config/vercel/**)",
+      "Bash(vercel redeploy *)",
+      "Bash(ssh -o StrictHostKeyChecking=no forge@64.176.6.118 \"pm2 logs api --lines 5 --nostream 2>/dev/null || journalctl -u strapi --lines 5 --no-pager 2>/dev/null || echo 'checking nginx logs' && tail -5 /var/log/nginx/api.waldoclick.dev-access.log 2>/dev/null | grep -v assets\")",
+      "Bash(ssh -o StrictHostKeyChecking=no forge@64.176.6.118 \"tail -10 /home/forge/api.waldoclick.dev/storage/logs/strapi.log 2>/dev/null | head -10 || find /home/forge/api.waldoclick.dev -name '*.log' 2>/dev/null | head -5\")",
+      "Bash(ssh -o StrictHostKeyChecking=no forge@64.176.6.118 \"tail -n 20 /var/log/nginx/api.waldoclick.dev-access.log 2>/dev/null || ls /etc/nginx/sites-enabled/ && cat /etc/nginx/sites-enabled/api.waldoclick.dev 2>/dev/null | grep -A5 'proxy_pass\\\\|log_format\\\\|access_log'\")",
+      "Bash(ssh -o StrictHostKeyChecking=no forge@64.176.6.118 \"cat /etc/nginx/sites-enabled/api.waldoclick.dev | grep -E 'proxy_pass|access_log|log_format|proxy_set_header' | head -15\")",
+      "Bash(ssh -o StrictHostKeyChecking=no forge@64.176.6.118 \"grep -r 'proxy_pass\\\\|X-Proxy\\\\|proxy_set_header' /etc/nginx/sites-enabled/api.waldoclick.dev 2>/dev/null | head -10\")",
+      "Bash(ssh -o StrictHostKeyChecking=no forge@64.176.6.118 \"cat /etc/nginx/sites-enabled/api.waldoclick.dev 2>/dev/null | head -60\")",
+      "Bash(ssh -o StrictHostKeyChecking=no forge@64.176.6.118 \"cat /etc/nginx/forge-conf/2885452/site.conf | head -40\")",
+      "Bash(find ~/.config ~/.local ~/.vercel -name \"*.json\" 2>/dev/null | xargs grep -l \"token\" 2>/dev/null | head -5)",
+      "Read(//root/.config/**)",
+      "Bash(ssh -o StrictHostKeyChecking=no forge@64.176.6.118 \"grep '^PROXY_SECRET_WEB=' /home/forge/api.waldoclick.dev/current/.env | cut -d'=' -f2\")",
+      "Bash(xargs -I{} grep -n \"proxyRequest\\\\|sendProxy\\\\|getProxyRequestHeaders\\\\|fetchHeaders\" {})",
+      "Bash(xargs -I{} sed -n '1148,1175p' {})",
+      "Bash(xargs -I{} sed -n '1253,1295p' {})",
+      "Bash(xargs -I{} grep -n \"ignoredHeaders\" {})",
+      "Bash(xargs -I{} sed -n '1138,1148p' {})",
+      "Bash(pnpm --filter website dev)",
+      "Bash(pnpm --filter waldo-website dev)",
+      "Bash(nuxt dev *)",
+      "Bash(pnpm nuxt *)"
     ]
   }
 }
