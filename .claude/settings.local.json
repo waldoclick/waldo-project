@@ -161,7 +161,21 @@
       "Bash(pnpm --filter website dev)",
       "Bash(pnpm --filter waldo-website dev)",
       "Bash(nuxt dev *)",
-      "Bash(pnpm nuxt *)"
+      "Bash(pnpm nuxt *)",
+      "Bash(ssh -o StrictHostKeyChecking=no forge@64.176.6.118 \"echo connected && whoami && pwd\")",
+      "Bash(ssh -o StrictHostKeyChecking=no forge@64.176.6.118 \"ls /home/forge/\")",
+      "Bash(ssh -o StrictHostKeyChecking=no forge@64.176.6.118 \"pm2 list 2>/dev/null || echo 'no pm2'; systemctl list-units --type=service --state=running 2>/dev/null | grep -i strapi\")",
+      "Bash(ssh -o StrictHostKeyChecking=no forge@64.176.6.118 \"pm2 logs waldo-website --lines 50 --nostream 2>&1\")",
+      "Bash(ssh -o StrictHostKeyChecking=no forge@64.176.6.118 \"pm2 logs waldo-website --lines 200 --nostream 2>&1 | grep -A5 'hasOwnProperty' | head -60\")",
+      "Bash(ssh -o StrictHostKeyChecking=no forge@64.176.6.118 \"pm2 logs waldo-api --lines 80 --nostream 2>&1\")",
+      "Bash(ssh -o StrictHostKeyChecking=no forge@64.176.6.118 \"grep -i 'filter\\\\|categor' /home/forge/.pm2/logs/waldo-api-out.log | tail -30\")",
+      "Bash(ssh -o StrictHostKeyChecking=no forge@64.176.6.118 \"grep -rn 'X-Proxy-Key\\\\|proxy.key\\\\|proxyKey\\\\|proxy_key' /home/forge/api.waldoclick.dev/releases/71332799/dist/src/middlewares/ 2>/dev/null | head -20\")",
+      "Bash(ssh -o StrictHostKeyChecking=no forge@64.176.6.118 \"cat /home/forge/api.waldoclick.dev/releases/71332799/dist/src/middlewares/proxy-auth.js\")",
+      "Bash(cat .vercel/project.json)",
+      "Bash(openssl rand *)",
+      "Bash(ssh -o StrictHostKeyChecking=no forge@64.176.6.118 \"grep 'filter' /home/forge/.pm2/logs/waldo-api-out.log | tail -10\")",
+      "Bash(npx nuxt *)",
+      "Bash(pnpm --filter waldo-website exec nuxt typecheck)"
     ]
   }
 }

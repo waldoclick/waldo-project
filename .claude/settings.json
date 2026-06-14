@@ -21,7 +21,8 @@
       "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('Restored:', d['data']['name']\\)\")",
       "Bash(pnpm develop *)",
       "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); [print\\(r['name']\\) for r in d.get\\('data',[]\\)]\")",
-      "Bash(pkill -f \"strapi develop\")"
+      "Bash(pkill -f \"strapi develop\")",
+      "Bash(echo \"EXIT:$?\")"
     ]
   }
 }
