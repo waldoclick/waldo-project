@@ -700,9 +700,10 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
         );
       }
 
+      const isManager = ctx.state.user?.role?.name?.toLowerCase() === "manager";
       const result = await strapi
         .service("api::ad.ad")
-        .deactivateAd(id, userId, reasonForDeactivation);
+        .deactivateAd(id, userId, reasonForDeactivation, isManager);
       return result;
     } catch (error) {
       if (error.message === "Advertisement not found") {

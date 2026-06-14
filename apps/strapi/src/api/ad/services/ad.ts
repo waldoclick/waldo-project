@@ -945,6 +945,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
     adId: string,
     userId: string,
     reasonForDeactivation?: string,
+    isManager = false,
   ) {
     try {
       const ad = await strapi.db.query("api::ad.ad").findOne({
@@ -957,7 +958,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
       }
 
       const isOwner = ad.user?.id?.toString() === userId.toString();
-      if (!isOwner) {
+      if (!isOwner && !isManager) {
         throw new Error(
           "You don't have permission to deactivate this advertisement",
         );

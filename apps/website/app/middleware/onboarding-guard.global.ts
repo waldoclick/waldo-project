@@ -35,13 +35,17 @@ export default defineNuxtRouteMiddleware(async (to) => {
   }
   if (!user.value) return; // Still null after fetch → not logged in
 
+  const roleName = (
+    user.value as { role?: { name?: string } }
+  ).role?.name?.toLowerCase();
+  if (roleName === "manager") return; // managers bypass onboarding entirely
+
   const meStore = useMeStore();
   const profileComplete = await meStore.isProfileComplete().catch(() => false);
 
   if (!profileComplete) {
     // User is already heading to onboarding — allow through to avoid redirect loop
     if (to.path.startsWith("/onboarding")) return;
-    if (to.path.startsWith("/dashboard")) return; // managers bypass onboarding (D-02)
 
     return navigateTo("/onboarding");
   }
