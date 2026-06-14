@@ -51,6 +51,7 @@
 | 106. Registration form age and terms checkboxes | v1.46 | 2/2 | Complete | 2026-03-29 |
 
 ### Phase 107: Dashboard reCAPTCHA validation on all POST/PUT/DELETE routes
+- [x] Phase 107: completed on disk
 
 **Goal:** Protect every mutating API call in the dashboard with reCAPTCHA v3, matching the website's existing pattern. Update server-side guard from allowlist (3 auth routes) to method-based (all POST/PUT/DELETE), add useApiClient composable, and migrate all 19+ call sites.
 **Requirements**: [RCP-107-01, RCP-107-02, RCP-107-03, RCP-107-04, RCP-107-05, RCP-107-06, RCP-107-07, RCP-107-08]
@@ -64,6 +65,7 @@ Plans:
 - [x] 107-04-PLAN.md — Migrate remaining pages and components (ads, articles)
 
 ### Phase 108: dashboard replace nuxtjs-strapi sdk with useApiClient for all reads
+- [x] Phase 108: completed on disk
 
 **Goal:** Replace every remaining `strapi.find()` and `strapi.findOne()` call (66 calls across 49 files) in the dashboard with `apiClient(url, { method: "GET", params: ... })`, eliminating the dual-resource pattern so all HTTP goes through `useApiClient`.
 **Requirements**: [RDR-108-01, RDR-108-02, RDR-108-03]
@@ -76,6 +78,7 @@ Plans:
 - [x] 108-03-PLAN.md — Final verification sweep (grep + typecheck + tests)
 
 ### Phase 109: Eliminate nuxtjs-strapi dependency from dashboard
+- [x] Phase 109: completed on disk
 
 **Goal:** Replace all 4 @nuxtjs/strapi composables (useStrapiUser, useStrapiToken, useStrapiClient, useStrapiAuth) with project-owned session composables, add a custom startup plugin, and remove the @nuxtjs/strapi module from the dashboard entirely.
 **Requirements**: [REQ-109-01, REQ-109-02, REQ-109-03, REQ-109-04, REQ-109-05]
@@ -87,6 +90,7 @@ Plans:
 - [x] 109-02-PLAN.md — Swap all consumer files, update test mocks, remove @nuxtjs/strapi module
 
 ### Phase 110: Fix SSR data loading in ads detail page and dashboard home stats
+- [x] Phase 110: completed on disk
 
 **Goal:** Fix two SSR data-loading violations: replace client-only onMounted with watch(immediate:true) in dashboard stats components, and move useAdsStore to setup scope in ads detail page.
 **Requirements**: [SSR-110-01, SSR-110-02]
@@ -97,6 +101,7 @@ Plans:
 - [x] 110-01-PLAN.md — Fix onMounted in dashboard stats + useAdsStore scope in [slug].vue
 
 ### Phase 111: Make privacy policies manageable from Strapi and seed initial data
+- [x] Phase 111: completed on disk
 
 **Goal:** Create a `policy` collection type in Strapi so editors can manage privacy policy text from the admin panel, write a seeder that pre-populates all 16 policy sections from the current hardcoded data, and refactor the website frontend to fetch policies from the API instead of a static array.
 **Requirements**: [POL-01, POL-02, POL-03, POL-04, POL-05, POL-06, POL-07]
@@ -108,6 +113,7 @@ Plans:
 - [x] 111-02-PLAN.md — Website type, store, page and component refactor to use Strapi data
 
 ### Phase 112: Fix ad wizard ownership validation
+- [x] Phase 112: completed on disk
 
 **Goal:** Prevent a logged-in user from continuing another user's ad wizard flow (persisted in localStorage) by: (1) storing the owner's userId in the ad.store and resetting early at wizard entry if it doesn't match the current user, (2) adding ownership validation in Strapi's saveDraft update path, and (3) overriding the inherited CRUD update/delete handlers in the ad controller to verify ownership before allowing modifications.
 **Requirements**: [SEC-112-01, SEC-112-02, SEC-112-03]
@@ -119,6 +125,7 @@ Plans:
 - [x] 112-02-PLAN.md — Frontend ownership guard: userId field in ad store + wizard entry reset
 
 ### Phase 113: Fix stale session cookie leaking authenticated requests after logout
+- [x] Phase 113: SKIPPED — resolved as side effect of Phase 109
 
 **Goal:** SKIPPED — issue resolved as side effect of Phase 109 (@nuxtjs/strapi elimination). Session cookie lifecycle now managed entirely by custom useSessionToken composable.
 **Requirements**: N/A
@@ -127,6 +134,7 @@ Plans:
 **Status:** Skipped — 2026-04-07
 
 ### Phase 114: Fix Codacy best-practice warnings — replace any with unknown, Function type, and require statements across monorepo
+- [x] Phase 114: completed on disk
 
 **Goal:** Replace all `any` type annotations (~83 instances), `Function` type usage (6 instances), with proper TypeScript types across the monorepo (website, dashboard, strapi). Pure type-annotation refactoring with zero runtime behavior changes.
 **Requirements**: [CBP-01, CBP-02, CBP-03, CBP-04]
@@ -140,6 +148,7 @@ Plans:
 - [x] 114-04-PLAN.md — Final monorepo verification sweep (typecheck + tests + grep)
 
 ### Phase 115: Fix remaining any and Function type violations
+- [x] Phase 115: completed on disk
 
 **Goal:** Fix 12 residual `any` violations missed by Phase 114's grep patterns: 2 `Array<any>` prop annotations in IntroduceAuth.vue (website + dashboard) and 10 `ref<any>(null)` reactive state declarations in dashboard detail pages. Pure type-annotation refactoring with zero runtime behavior changes.
 **Requirements**: [TYPE-001, TYPE-002]
@@ -150,6 +159,7 @@ Plans:
 - [x] 115-01-PLAN.md — Fix all 12 `Array<any>` and `ref<any>` violations across website and dashboard
 
 ### Phase 116: Enforce centralized test directory structure
+- [x] Phase 116: completed on disk
 
 **Goal:** Move all co-located test files to centralized `tests/` directories across the monorepo. Website: move 9 test files from `app/composables/` and `app/components/` to `tests/`, delete 4 dead test-shaped files, update imports to use `@/` alias. Strapi: rename 4 `__tests__/` directories to `tests/`, move 12 flat co-located test files into `tests/` subdirectories, update relative imports. Dashboard already compliant. Zero test logic changes — pure file relocation.
 **Requirements**: [STRUCT-116-WEB, STRUCT-116-STRAPI]
@@ -161,6 +171,7 @@ Plans:
 - [x] 116-02-PLAN.md — Rename Strapi __tests__ to tests/, move flat co-located tests, update imports
 
 ### Phase 117: Enforce root-level tests directory for website — move all test files to apps/website/tests following the Mandatory Testing Directory Rule. Preserve mirrored folder structure. Zero test logic changes.
+- [x] Phase 117: completed on disk
 
 **Goal:** Formally verify that all 23 website test files reside exclusively under apps/website/tests/ with mirrored folder structure, confirming the Mandatory Testing Directory Rule is enforced. Verification-only phase — structural work completed in Phase 116.
 **Requirements**: [STRUCT-117-WEB]
@@ -171,6 +182,7 @@ Plans:
 - [x] 117-01-PLAN.md — Verify website test directory compliance and close phase
 
 ### Phase 118: Enforce root-level tests directory for Strapi — move all test files to apps/strapi/tests/ mirroring the source folder structure. Zero test logic changes.
+- [x] Phase 118: completed on disk
 
 **Goal:** Move all 27 Strapi test files from their scattered locations inside src/ (nested within each service/controller/api directory) to a single root-level apps/strapi/tests/ directory, mirroring the source folder structure. Update all relative imports. Zero test logic changes — pure file relocation.
 **Requirements**: [STRUCT-118-STRAPI]
@@ -182,6 +194,7 @@ Plans:
 - [x] 118-02-PLAN.md — Rewrite remaining 14 test imports + full test suite verification
 
 ### Phase 119: export orders to CSV from dashboard orders page
+- [x] Phase 119: completed on disk
 
 **Goal:** Add a CSV export feature to the dashboard orders page: a Strapi `GET /orders/export-csv` endpoint that returns all orders as CSV, a client-side `ordersTocsv()` utility with full test coverage, a `useExportCsv` composable for the Blob download trigger, and an "Exportar CSV" button in the orders page header.
 **Requirements**: [CSV-STRAPI-01, CSV-UTIL-01, CSV-UI-01, CSV-DOWNLOAD-01]
@@ -193,6 +206,7 @@ Plans:
 - [x] 119-02-PLAN.md — Dashboard useExportCsv composable + UI button + human verification
 
 ### Phase 120: Refactor PRO subscription model: subscription-pro collection type, move card data out of user, fix charge-before-activate order, calendar billing
+- [x] Phase 120: completed on disk
 
 **Goal:** Introduce a `subscription-pro` collection type to own card enrollment data, fix the charge-before-activate ordering bug in proResponse (charge first, activate only on success), migrate cron and cancellation service to read card data from subscription-pro, remove the orphaned `pro` boolean from the user schema, and update all affected tests.
 **Requirements**: [SUB-SCHEMA-01, SUB-SCHEMA-02, SUB-SCHEMA-03, SUB-MIGRATE-01, SUB-CHARGE-01, SUB-CHARGE-02, SUB-ERROR-01, SUB-CRON-01, SUB-CANCEL-01, SUB-PROTECT-01]
@@ -207,6 +221,7 @@ Plans:
 - [x] 120-04-PLAN.md — Update tests + full verification sweep
 
 ### Phase 121: Clean subscription data model — move pro_expires_at out of user into subscription-payment as period_end
+- [x] Phase 121: completed on disk
 
 **Goal:** Complete the subscription data model cleanup by removing `pro_expires_at` from the user schema and adding `period_end` to `subscription-payment`. The user entity retains only `pro_status`. The cron billing loop is refactored to query active subscription-payment records by `period_end` instead of filtering users by `pro_expires_at`. The initial inscription charge in `proResponse` creates the first subscription-payment record with `period_end`. All renewals are tracked exclusively in `subscription-payment` rows, one per billing period.
 **Requirements**: [SUB-MODEL-121-01, SUB-MODEL-121-02, SUB-MODEL-121-03, SUB-MODEL-121-04]
@@ -219,6 +234,7 @@ Plans:
 - [x] 121-03-PLAN.md — Test updates + proResponse test implementation + final verification sweep
 
 ### Phase 122: Migrate strapi.entityService to strapi.db.query for Strapi v5 compatibility
+- [x] Phase 122: completed on disk
 
 **Goal:** Replace every `strapi.entityService` call with `strapi.db.query()` across all Strapi source files (28 production files + 7 test files). Mechanical API substitution: filters->where, start->offset, sort->orderBy, fields->select, pagination->limit. Remove all TypeScript cast artifacts. Zero functional regressions. Zero TypeScript errors.
 **Requirements**: [MIG-01, MIG-02, MIG-03, MIG-04]
@@ -232,6 +248,7 @@ Plans:
 - [x] 122-04-PLAN.md — Update 7 test file mocks + final verification sweep
 
 ### Phase 123: Fix onboarding redirect on login — incomplete profile not navigating to /onboarding without refresh
+- [x] Phase 123: completed on disk
 
 **Goal:** Fix the bug where logging in (email+OTP or Google) with an incomplete profile does not auto-navigate to `/onboarding` — the user must refresh the page manually. Root cause: `FormVerifyCode.vue` and `login/google.vue` use raw `router.push()` which races with the Nuxt middleware pipeline after async `fetchUser()`. Fix replaces `router.push`→`navigateTo` and delegates profile completeness check to the global `onboarding-guard.global.ts` middleware. Also fix two stale test cases in `onboarding-guard.test.ts` that no longer match the current guard implementation.
 **Requirements**: [GUARD-TEST-01, NAV-FIX-01, NAV-FIX-02]
@@ -242,6 +259,7 @@ Plans:
 - [x] 123-01-PLAN.md — Fix stale guard tests + migrate FormVerifyCode and login/google to navigateTo
 
 ### Phase 124: InputPhone component — country code selector + phone number field
+- [x] Phase 124: completed on disk
 
 **Goal:** Create a reusable `InputPhone` Vue component for the dashboard and website that combines a country dial-code selector (defaulting to Chile +56, data from static JSON) with a phone number input. The component stores the combined value (`+56912345678`) in the existing `phone` field — no Strapi schema changes. Replace all standalone phone inputs in forms (FormProfile and any other form that collects a phone number) with `InputPhone`.
 **Requirements**: [PHONE-01, PHONE-02, PHONE-03, PHONE-04, PHONE-05]
@@ -253,6 +271,7 @@ Plans:
 - [x] 124-02-PLAN.md — Replace phone Field in FormProfile, FormCreateThree, FormContact
 
 ### Phase 125: Merge dashboard into website as /dashboard
+- [x] Phase 125: completed on disk
 
 **Goal:** Move the entire `apps/dashboard` Nuxt 4 app into `apps/website` so the dashboard is accessible at `/dashboard/**`. Shared login redirects managers to `/dashboard` after OTP; managers bypass onboarding. New `dashboard.vue` layout, 28 colliding components renamed with `Dashboard` suffix, SCSS merged as `&--dashboard` modifiers, custom session composables replaced by website's `@nuxtjs/strapi` system, and `apps/dashboard` deleted.
 **Requirements**: [AUTH-01, AUTH-02, GUARD-01, GUARD-02, GUARD-03, PKG-01, CFG-01, COMP-01, COMP-02, SESS-01, SESS-02, COMPOSABLE-01, PAGE-01, PAGE-02, SCSS-01, TYPE-01, TYPE-02, RUNTIME-01, CLEANUP-01]
@@ -269,6 +288,7 @@ Plans:
 - [x] 125-07-PLAN.md — Types sweep + MenuUser link + Strapi DASHBOARD_URL + workspace removal + delete dashboard + final gate
 
 ### Phase 126: Security hardening — fix authorization vulnerabilities from security review
+- [x] Phase 126: completed on disk
 
 **Goal:** Close the authorization gaps surfaced by the branch security review so no authenticated user can take over another account, publish/mark-paid an ad without payment or moderator approval, or mutate another user's ad. All fixes are server-side in Strapi (`apps/strapi`) plus two Nuxt hardening items; no schema migrations. Each fix must be covered by a regression test (Jest for Strapi).
 **Requirements**: SEC-IDOR-USERS, SEC-MASSASSIGN-ADS, SEC-IDOR-FREEAD, SEC-HARDENING
@@ -283,6 +303,7 @@ Plans:
 - [x] 126-04-PLAN.md — SEC-HARDENING: gate dev endpoints behind `import.meta.dev`, escape contact email fields, fix `protect-user-fields` trailing-slash regex bypass
 
 ### Phase 127: Security review round 2 — fix new vulnerabilities from the second security review
+- [x] Phase 127: completed on disk
 
 **Goal:** Close the new vulnerabilities surfaced by the round-2 security review (live-site recon + white-box) that phase 126 did not cover. Five areas, server-side Strapi + Nuxt frontend, no schema migrations beyond a `buy_order` unique constraint: (1) **Payment integrity** — re-validate the Webpay return `amount` against the server-computed price, add idempotency/replay protection keyed on `buy_order`, and verify `adId` ownership on paid-checkout return; (2) **Order & reservation/pack authorization** — add ownership/user-scoping to `order.findOne`/`find` and gate `exportCsv`/`salesByMonth`, lock down `ad-pack`/`ad-reservation`/`ad-featured-reservation` CRUD to manager or owner-scoped controllers; (3) **Auth hardening** — reject Google login when `email_verified !== true` before account linking, remove the hardcoded `"strapi-jwt-secret"` fallback in `ad.ts`, rate-limit auth endpoints, bind reCAPTCHA `action`/`hostname`; (4) **Frontend XSS** — replace the regex SSR sanitizer with isomorphic DOMPurify and disable inline HTML in `marked` (the `httpOnly`+`Secure`+`SameSite` session cookie + CSRF migration is DEFERRED to its own phase 128 because it touches the recently-fixed Google OAuth/OTP login flow and needs manual login verification); (5) **Email/upload/PII/route lockdown** — enable MJML `autoescape`, add upload magic-byte + size validation, whitelist `GET /api/users` filters and strip PII, and disable content-API routes for `verification-code`/`contact`/`subscription-payment`. Each fix must ship with a Jest (Strapi) or Vitest (Nuxt) regression test.
 **Requirements**: SEC2-PAYMENT, SEC2-AUTHZ, SEC2-AUTH, SEC2-XSS, SEC2-LOCKDOWN
@@ -297,6 +318,7 @@ Plans:
 - [x] 127-05-PLAN.md — SEC2-LOCKDOWN: MJML autoescape, upload magic-byte + sizeLimit, GET /api/users filter whitelist + PII strip, disable content-API routes for verification-code/contact/subscription-payment (wave 2, after 127-03 for shared plugins.ts)
 
 ### Phase 128: Allow Google-only users to create a local password
+- [x] Phase 128: completed on disk
 
 **Goal:** Users who registered exclusively via Google OAuth can now create a local password through the existing forgot-password flow. The Strapi `overrideForgotPassword` silently detects if the email belongs to a Google-only account (`provider: "google"`, no `password`) and sends a "create password" branded email instead of "reset password". The reset token mechanism is reused as-is. After completing the flow, the user's `provider` is set to `"local"` so they can log in with both Google and email/password. The public forgot-password endpoint never reveals whether an email is registered or what provider it uses (silent success preserved).
 **Requirements**: [GOAUTH-128-01, GOAUTH-128-02, GOAUTH-128-03, GOAUTH-128-04, GOAUTH-128-05]
@@ -305,3 +327,13 @@ Plans:
 
 Plans:
 - [x] 128-01-PLAN.md — create-password.mjml + overrideForgotPassword Google-only detection + overrideResetPassword provider flip + tests
+
+### Phase 129: Eliminate nuxtjs-strapi and centralize session, auth and HTTP through the proxy with httpOnly cookie
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 128
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 129 to break down)
