@@ -72,11 +72,6 @@ export default defineEventHandler(async (event) => {
   };
 
   // Forward important headers from the original request
-  const authHeader = getHeader(event, "authorization");
-  if (authHeader) {
-    headers["Authorization"] = authHeader;
-  }
-
   const contentType = getHeader(event, "content-type");
   if (contentType) {
     headers["Content-Type"] = contentType;
@@ -85,7 +80,7 @@ export default defineEventHandler(async (event) => {
   const cookies = parseCookies(event);
   const jwt = cookies["waldo_jwt"];
   if (jwt) {
-    headers["Cookie"] = `waldo_jwt=${jwt}`;
+    headers["Authorization"] = `Bearer ${jwt}`;
   }
 
   const proxyKey = config.proxySecretWeb;
