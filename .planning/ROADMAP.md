@@ -36,3 +36,19 @@ Start the next milestone with `/gsd:new-milestone` (questioning → research →
 | Milestone | Phases | Status | Shipped |
 |-----------|--------|--------|---------|
 | v1.46 PRO Subscriptions + Post-Merge Hardening | 102–129 | ✅ Complete | 2026-06-14 |
+
+### Phase 1: Corregir issues de Codacy
+
+**Goal:** Resolver los 100 issues abiertos en Codacy (90 Security/Opengrep, 9 BestPractice/ESLint, 1 UnusedCode), analizando cada patrón para descartar falsos positivos y evaluar riesgo de regresión antes de aplicar cada fix. Snapshot: `.planning/research/codacy-issues-snapshot-2026-06-14.md`
+**Requirements**: CODACY-TRIAGE, CODACY-FIX, CODACY-SUPPRESS, CODACY-VERIFY
+**Depends on:** Phase 0
+**Plans:** 7 plans (3 waves)
+
+Plans:
+- [ ] 01-00-PLAN.md — Wave 0 regression gate: characterization + injection tests (RED by design) before the fixes
+- [ ] 01-01-PLAN.md — authController.ts end-to-end: pendingToken scalar coercion + crypto.randomBytes username suffix
+- [ ] 01-02-PLAN.md — NoSQL coercion: ad.ts saveDraft Number(ad_id) + checkout.service String(pack)
+- [ ] 01-03-PLAN.md — password.ts client CSPRNG: crypto.getRandomValues with rejection sampling
+- [ ] 01-04-PLAN.md — no-explicit-any → unknown across koa.d.ts, nitro-globals, better-stack, cloudflare
+- [ ] 01-05-PLAN.md — hardening: useProviders allowlist + image-uploader os.tmpdir() confinement
+- [ ] 01-06-PLAN.md — suppression track (autonomous:false, blocked on Codacy account token): bulk-ignore ~80 FPs + remote verify
