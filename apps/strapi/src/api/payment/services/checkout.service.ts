@@ -111,7 +111,7 @@ class CheckoutService {
     // 2. Look up pack by name
     const packRecord = await strapi.db
       .query("api::ad-pack.ad-pack")
-      .findOne({ where: { name: payload.pack } });
+      .findOne({ where: { name: String(payload.pack) } });
 
     if (!packRecord) {
       return { success: false, message: "Pack not found" };
