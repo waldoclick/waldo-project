@@ -103,4 +103,17 @@ describe("generateSecurePassword", () => {
       expect(result.label).toBe("Muy fuerte");
     }
   });
+
+  it("preserves length and full charset coverage across many CSPRNG invocations", () => {
+    // Higher invocation count guards the crypto.getRandomValues refactor:
+    // every generated password must keep length 16 and one of each class.
+    for (let i = 0; i < 50; i++) {
+      const pwd = generateSecurePassword();
+      expect(pwd).toHaveLength(16);
+      expect(/[A-Z]/.test(pwd)).toBe(true);
+      expect(/[a-z]/.test(pwd)).toBe(true);
+      expect(/\d/.test(pwd)).toBe(true);
+      expect(/[^\dA-Za-z]/.test(pwd)).toBe(true);
+    }
+  });
 });
