@@ -333,7 +333,7 @@ Plans:
 **Goal:** Eliminate `@nuxtjs/strapi` from `apps/website` and centralize all session/auth/HTTP through the Nitro proxy with an httpOnly JWT cookie the client can never read. The proxy becomes the single Strapi exit point, injecting `Authorization: Bearer` server-side from the cookie; SSR self-calls route through the proxy with `x-vercel-protection-bypass`; `useApiClient` is the only HTTP client; new `useSessionUser`/`useSessionAuth`/`useSessionClient` composables + a session startup plugin replace the module across ~60 files; dedicated Nitro auth routes (verify-code, google-one-tap, OAuth popup/redirect exchange, logout) set/clear the httpOnly cookie with reCAPTCHA preserved. Kills the recurring logout bug.
 **Requirements**: [SESSION-COMPOSABLES, HTTPONLY-NO-CLIENT-TOKEN, PROXY-AUTH-INJECTION, AUTH-INTERCEPT-ROUTES, RECAPTCHA-PRESERVED, OAUTH-CALLBACK-ROUTES, APICLIENT-SSR-COOKIE, STRAPI-JSON-MODE, VERCEL-BYPASS-CONFIG, OAUTH-POPUP-NOJWT, OAUTH-EXCHANGE-ROUTES, ONETAP-NO-SETTOKEN, VERIFYCODE-NO-SETTOKEN, UPLOADS-NO-TOKEN, LOGOUT-SERVER-ROUTE, GUARDS-NO-TOKEN, MECHANICAL-RENAME-SWEEP, MODULE-REMOVAL, SESSION-PLUGIN-ACTIVATION, AUTH-FLOWS-WORK]
 **Depends on:** Phase 128
-**Plans:** 5/6 plans executed
+**Plans:** 6/6 plans complete
 
 Plans:
 - [x] 129-01-PLAN.md — Session composables (useSessionUser/Auth/Client) + inert session.ts plugin + Wave 0 tests (wave 1)
@@ -341,4 +341,4 @@ Plans:
 - [x] 129-03-PLAN.md — useApiClient SSR cookie forwarding + vercel bypass + vercelBypassSecret config + Strapi ?json=true branch (wave 1)
 - [x] 129-04-PLAN.md — OAuth client surface: popup no-jwt, exchange routes, One Tap drop setToken (wave 2)
 - [x] 129-05-PLAN.md — verify-code/uploads/logout/middleware guards drop client token (wave 2)
-- [ ] 129-06-PLAN.md — Cutover: mechanical rename sweep + module removal + session.ts activation + final grep sweep + auth-flow human-verify (wave 3)
+- [x] 129-06-PLAN.md — Cutover: mechanical rename sweep + module removal + session.ts activation + final grep sweep + auth-flow human-verify (wave 3)

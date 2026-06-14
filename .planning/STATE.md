@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-last_updated: "2026-06-14T05:24:31.415Z"
+last_updated: "2026-06-14T06:37:42.852Z"
 last_activity: 2026-06-14
 progress:
   total_phases: 23
-  completed_phases: 21
+  completed_phases: 22
   total_plans: 64
-  completed_plans: 63
-  percent: 100
+  completed_plans: 64
+  percent: 98
 ---
 
 # Session State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 
 ## Position
 
-Phase 129 in progress — plan 05 of 6 complete: useStrapiToken fully eliminated from website app; verify-code, uploads, logout, and all middleware guards migrated to useSessionUser/useSessionAuth pattern.
+Phase 129 complete — all 6 plans done: @nuxtjs/strapi fully eliminated from apps/website; session.ts active; httpOnly waldo_jwt cookie is the sole JWT carrier; proxy is the single Strapi exit point; all auth flows verified end-to-end including Webpay payment return.
 
 ```
 Progress: [██████████] 98%
@@ -34,6 +34,10 @@ Progress: [██████████] 98%
 
 ### Key Decisions (carry forward)
 
+- httpOnly proxy injects Authorization: Bearer on ALL forwarded requests including top-level GET navigations (sameSite=lax) — gateway callback routes that receive GET redirects from payment processors must be marked auth:false in Strapi route config, or the authenticated role is applied and may block the callback (129-06)
+- Webpay /payments/webpay and /payments/pro-response routes marked auth:false — these are identified by the Transbank token, not ctx.state.user; order identity is always order.documentId, never a gateway reference; Strapi must be restarted after deploy for route config to reload (129-06)
+- Original Manager-deactivate logout bug root cause: @nuxtjs/strapi module registered an auto-fetch plugin that raced with session.ts on window.location.reload(), writing null user state; removing the module eliminates the competing writer and the bug (129-06)
+- VERCEL_AUTOMATION_BYPASS_SECRET must be set in all Vercel environments (staging + prod) for SSR Nitro self-calls to pass Deployment Protection via x-vercel-protection-bypass header (129-06)
 - useStrapiToken fully eliminated from apps/website/app/: FormVerifyCode calls fetchUser after server sets httpOnly cookie; uploads rely on proxy Authorization injection; logout posts to /api/auth/logout server route; all four middleware guards (auth.ts, onboarding-guard, dashboard-guard, guest.ts) are token-free and user-state-based (129-05)
 - guest.ts required mechanical useStrapiUser→useSessionUser rename as part of guard migration — caught by app-wide middleware verification grep; not listed in original plan files_modified (129-05)
 - dashboard-guard SSR path: if (import.meta.server) return navigateTo('/login') — redirect immediately on SSR when no user state available, rather than calling fetchUser in SSR context (129-05)
