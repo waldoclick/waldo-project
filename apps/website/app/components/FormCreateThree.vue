@@ -144,7 +144,7 @@ import BarAnnouncement from "@/components/BarAnnouncement.vue";
 const emit = defineEmits(["formSubmitted", "formBack"]);
 const { paymentSummaryText } = useAdPaymentSummary();
 
-const user = useStrapiUser();
+const user = useSessionUser();
 
 // Define las reglas de validación
 const schema = yup.object({

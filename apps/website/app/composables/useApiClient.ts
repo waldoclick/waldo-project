@@ -1,19 +1,15 @@
-import {
-  useStrapiClient,
-  useNuxtApp,
-  useRuntimeConfig,
-  useRequestHeaders,
-} from "#imports";
+import { useNuxtApp, useRuntimeConfig, useRequestHeaders } from "#imports";
+import { useSessionClient } from "@/composables/useSessionClient";
 
 /**
- * useApiClient — drop-in replacement for useStrapiClient() that automatically
- * injects X-Recaptcha-Token on POST, PUT and DELETE requests.
+ * useApiClient — single HTTP entry point that automatically injects
+ * X-Recaptcha-Token on POST, PUT and DELETE requests and forwards SSR cookies.
  *
  * Falls back gracefully when $recaptcha is unavailable (SSR, adblocker).
  * Caller-supplied headers are always preserved.
  */
 export function useApiClient() {
-  const client = useStrapiClient();
+  const client = useSessionClient();
   const nuxtApp = useNuxtApp();
 
   const MUTATING_METHODS = ["POST", "PUT", "DELETE"] as const;
@@ -36,13 +32,14 @@ export function useApiClient() {
       if (cookie) serverHeaders["cookie"] = cookie;
 
       // Bypass Vercel Deployment Protection on staging/production SSR self-calls.
-      const bypass = useRuntimeConfig().vercelBypassSecret as string | undefined;
+      const bypass = useRuntimeConfig().vercelBypassSecret as
+        | string
+        | undefined;
       if (bypass) serverHeaders["x-vercel-protection-bypass"] = bypass;
 
-      // X-Proxy-Key removed: the catch-all proxy now injects it toward Strapi.
-      // NOTE: while runtimeConfig.strapi.url = API_URL remains (plan 06 removes
-      // it), SSR useStrapiClient calls still go direct to Strapi and require
-      // X-Proxy-Key. Plan 03–06 intermediary window: do not deploy 03 without 06.
+      // X-Proxy-Key removed: the catch-all proxy injects it toward Strapi.
+      // SSR useApiClient calls go through the proxy (BASE_URL/api/*) with
+      // cookie forwarding — no direct Strapi access from client or SSR.
     }
 
     if (MUTATING_METHODS.includes(method as MutatingMethod)) {

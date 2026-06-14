@@ -2,7 +2,7 @@ import * as Sentry from "@sentry/nuxt";
 
 export default defineNuxtPlugin((nuxtApp) => {
   // Configurar usuario cuando cambie
-  const user = useStrapiUser();
+  const user = useSessionUser();
 
   // Configurar usuario inicial
   if (user.value) {

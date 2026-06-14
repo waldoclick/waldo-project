@@ -79,7 +79,7 @@ import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 const { Swal } = useSweetAlert2();
 
-const user = useStrapiUser();
+const user = useSessionUser();
 const apiClient = useApiClient();
 
 // Define validation schema using yup

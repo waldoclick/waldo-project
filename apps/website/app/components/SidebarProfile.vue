@@ -80,7 +80,7 @@ const props = defineProps({
   },
 });
 
-const userAuth = useStrapiUser();
+const userAuth = useSessionUser();
 
 const getUser = computed(() => props.user || "");
 

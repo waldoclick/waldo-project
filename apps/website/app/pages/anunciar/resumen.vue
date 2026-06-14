@@ -41,7 +41,7 @@ import BarAnnouncement from "@/components/BarAnnouncement.vue";
 import HeroFake from "@/components/HeroFake.vue";
 import LoadingDefault from "@/components/LoadingDefault.vue";
 const apiClient = useApiClient();
-const { fetchUser } = useStrapiAuth();
+const { fetchUser } = useSessionAuth();
 const { uploadFiles, transformUrl } = useImageProxy();
 const { getPendingFiles, clearAll: clearPendingUploads } = usePendingUploads();
 const isCreating = ref(false);

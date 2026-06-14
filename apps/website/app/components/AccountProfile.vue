@@ -76,7 +76,7 @@
 import { computed } from "vue";
 import { Edit as IconEdit } from "lucide-vue-next";
 
-const user = useStrapiUser();
+const user = useSessionUser();
 
 const getAddress = computed(() => {
   if (!user.value.address) return "";

@@ -85,7 +85,7 @@ const props = defineProps({
 
 const { hexToRgba, bgColorWithTransparency } = useColor();
 
-const authUser = useStrapiUser();
+const authUser = useSessionUser();
 const isLoggedIn = computed(() => !!authUser.value);
 
 const getUser = computed(() => {

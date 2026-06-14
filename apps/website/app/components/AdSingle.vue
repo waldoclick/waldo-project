@@ -164,7 +164,7 @@ const props = defineProps({
 });
 
 // Usuario autenticado
-const authUser = useStrapiUser();
+const authUser = useSessionUser();
 const isLoggedIn = computed(() => !!authUser.value);
 
 // Composable para sanitización

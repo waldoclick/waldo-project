@@ -121,7 +121,7 @@ import AvatarDefault from "@/components/AvatarDefault.vue";
 const appConfig = useAppConfiguration();
 
 // Obtener el usuario desde Strapi
-const user = useStrapiUser<User>();
+const user = useSessionUser<User>();
 const { logout } = useLogout();
 
 // Computed property para la ubicación

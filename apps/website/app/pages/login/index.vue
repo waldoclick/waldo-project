@@ -73,7 +73,7 @@ const config = useRuntimeConfig();
 const { data: providers, pending: providersPending } = useLazyAsyncData(
   "providers",
   async () => {
-    const { getProviderAuthenticationUrl } = useStrapiAuth();
+    const { getProviderAuthenticationUrl } = useSessionAuth();
 
     try {
       // Intentar obtener la URL de autenticación de Google

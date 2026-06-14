@@ -28,10 +28,10 @@ const authenticate = async () => {
     // POST to the Nitro exchange route — useApiClient injects X-Recaptcha-Token automatically.
     // The route verifies reCAPTCHA, exchanges the access_token with Strapi, and sets the
     // httpOnly waldo_jwt cookie. It returns { user } — the token never reaches the client.
-    const result = await apiClient<{ user: User }>(
-      "auth/google/exchange",
-      { method: "POST", body: { access_token: String(route.query.access_token || "") } },
-    );
+    const result = await apiClient<{ user: User }>("auth/google/exchange", {
+      method: "POST",
+      body: { access_token: String(route.query.access_token || "") },
+    });
     if (result?.user) {
       // Log successful Google login
       logInfo(`User logged in successfully with Google.`);

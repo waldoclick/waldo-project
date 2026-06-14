@@ -184,7 +184,7 @@ import AvatarDefault from "@/components/AvatarDefault.vue";
 import SearchIcon from "@/components/SearchIcon.vue";
 import LogoBlack from "@/components/LogoBlack.vue";
 
-const me = useStrapiUser();
+const me = useSessionUser();
 const { logout } = useLogout();
 const appStore = import.meta.client
   ? useAppStore()

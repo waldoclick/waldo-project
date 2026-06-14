@@ -36,7 +36,10 @@ export default defineEventHandler(async (event) => {
   }
 });
 
-function renderPopupHtml(data: Record<string, unknown>, origin: string): string {
+function renderPopupHtml(
+  data: Record<string, unknown>,
+  origin: string,
+): string {
   const json = JSON.stringify(data);
   return `<!DOCTYPE html><html><head><script data-cfasync="false">
 (function(){var d=${json};

@@ -61,7 +61,7 @@ import { ref, computed, onMounted } from "vue";
 import { useAdStore } from "@/stores/ad.store";
 import { useUser } from "@/composables/useUser";
 
-const user = useStrapiUser();
+const user = useSessionUser();
 const { canRequestInvoice } = useUser(user.value);
 
 const adStore = useAdStore();

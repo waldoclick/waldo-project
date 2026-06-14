@@ -1,9 +1,9 @@
-import { useStrapiUser, useRoute } from "#imports";
+import { useSessionUser, useRoute } from "#imports";
 
 export const useGoogleOneTap = () => {
   const promptIfEligible = () => {
     // Auth guard: skip if user is already authenticated
-    const user = useStrapiUser();
+    const user = useSessionUser();
     if (user.value) return;
 
     // Route guard: skip on private routes

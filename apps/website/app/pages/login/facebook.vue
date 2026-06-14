@@ -21,10 +21,10 @@ const authenticate = async () => {
     // POST to the Nitro exchange route — useApiClient injects X-Recaptcha-Token automatically.
     // The route verifies reCAPTCHA, exchanges the access_token with Strapi, and sets the
     // httpOnly waldo_jwt cookie. It returns { user } — the token never reaches the client.
-    const result = await apiClient<{ user: User }>(
-      "auth/facebook/exchange",
-      { method: "POST", body: { access_token: route.query.access_token as string } },
-    );
+    const result = await apiClient<{ user: User }>("auth/facebook/exchange", {
+      method: "POST",
+      body: { access_token: route.query.access_token as string },
+    });
     if (result?.user) {
       // Clear stale cache so isProfileComplete() fetches fresh data from the API.
       meStore.reset();

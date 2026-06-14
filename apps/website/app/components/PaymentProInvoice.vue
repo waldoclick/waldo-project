@@ -67,7 +67,7 @@ import type { User } from "@/types/user";
 const props = defineProps<{ modelValue: boolean }>();
 const emit = defineEmits<{ (e: "update:modelValue", value: boolean): void }>();
 
-const user = useStrapiUser<User>();
+const user = useSessionUser<User>();
 const { canRequestInvoice } = useUser();
 const isInvoice = ref(props.modelValue);
 

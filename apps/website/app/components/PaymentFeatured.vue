@@ -50,7 +50,7 @@ import { ref, computed, onMounted, watch } from "vue";
 import { useAdStore } from "@/stores/ad.store";
 
 const adStore = useAdStore();
-const user = useStrapiUser();
+const user = useSessionUser();
 const { getAdFeaturedReservations } = useUser();
 const value = ref(false);
 

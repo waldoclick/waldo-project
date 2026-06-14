@@ -98,7 +98,7 @@ const props = defineProps({
 // Local state
 const router = useRouter();
 const route = useRoute();
-const currentUser = useStrapiUser();
+const currentUser = useSessionUser();
 const appConfig = useAppConfiguration();
 
 const isProfileOwner = computed(() => {

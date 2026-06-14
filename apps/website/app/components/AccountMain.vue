@@ -93,7 +93,7 @@ import { useSanitize } from "@/composables/useSanitize";
 // Usar la función del composable
 const { getAdReservationsText, getFeaturedAdReservationsText } = useUser();
 const { getPackBannerText } = usePacks();
-const user = useStrapiUser<User>();
+const user = useSessionUser<User>();
 const { sanitizeText } = useSanitize();
 const { packs, loadPacks } = usePacksList();
 const appConfig = useAppConfiguration();

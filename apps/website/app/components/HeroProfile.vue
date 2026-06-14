@@ -26,7 +26,7 @@ const props = defineProps({
   },
 });
 
-const me = useStrapiUser();
+const me = useSessionUser();
 const { transformUrl } = useImageProxy();
 
 const userStatus = computed(() => {

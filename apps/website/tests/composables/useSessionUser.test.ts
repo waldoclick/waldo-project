@@ -14,9 +14,7 @@ describe("useSessionUser", () => {
       return { value: init() };
     });
 
-    const { useSessionUser } = await import(
-      "@/composables/useSessionUser"
-    );
+    const { useSessionUser } = await import("@/composables/useSessionUser");
 
     const userRef = useSessionUser();
 
@@ -31,9 +29,7 @@ describe("useSessionUser", () => {
       return { value: init() };
     });
 
-    const { useSessionUser } = await import(
-      "@/composables/useSessionUser"
-    );
+    const { useSessionUser } = await import("@/composables/useSessionUser");
 
     useSessionUser();
 

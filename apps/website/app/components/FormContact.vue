@@ -90,14 +90,14 @@ import { useForm, Field, ErrorMessage } from "vee-validate";
 import { useRouter } from "vue-router";
 import * as yup from "yup";
 const { Swal } = useSweetAlert2();
-import { useStrapiUser } from "#imports";
+import { useSessionUser } from "#imports";
 import { useAppStore } from "@/stores/app.store";
 import type { User } from "~/types/user";
 
 // Inicializa el router y strapi
 const router = useRouter();
 const apiClient = useApiClient();
-const user = useStrapiUser<User>();
+const user = useSessionUser<User>();
 
 // Define the form schema using yup
 const schema = yup.object({

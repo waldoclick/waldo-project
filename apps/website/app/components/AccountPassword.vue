@@ -30,7 +30,7 @@ import { ShieldOff } from "lucide-vue-next";
 import FormPassword from "@/components/FormPassword.vue";
 import MemoDefault from "@/components/MemoDefault.vue";
 
-const user = useStrapiUser();
+const user = useSessionUser();
 
 const isExternalProvider = computed(() => user.value?.provider !== "local");
 </script>

@@ -122,7 +122,7 @@ const props = withDefaults(
 const adStore = useAdStore();
 const { packs, loadPacks } = usePacksList();
 const { getPackBadgeText } = usePacks();
-const user = useStrapiUser();
+const user = useSessionUser();
 const { getAdReservations } = useUser();
 const payment = ref<string | number | null>(null);
 

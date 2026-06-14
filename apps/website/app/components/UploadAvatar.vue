@@ -65,7 +65,7 @@ import addCircleSharp from "/images/add-circle-sharp.svg";
 import iconInfo from "/images/icon-info.svg";
 
 // Accede a la configuración de runtime
-const user = useStrapiUser();
+const user = useSessionUser();
 const { transformUrl, uploadFile } = useImageProxy();
 const apiClient = useApiClient();
 
@@ -161,7 +161,7 @@ const updateUserAvatar = async (image) => {
       method: "PUT",
       body: { avatar: image.id },
     });
-    const { fetchUser } = useStrapiAuth();
+    const { fetchUser } = useSessionAuth();
     await fetchUser();
   } catch {
     Swal.fire({
@@ -200,7 +200,7 @@ const removeImage = async (image) => {
     });
 
     // Actualizamos el usuario en el frontend
-    const { fetchUser } = useStrapiAuth();
+    const { fetchUser } = useSessionAuth();
     await fetchUser();
 
     // Limpiamos el avatar local

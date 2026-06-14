@@ -138,7 +138,7 @@ const handleSubmit = async (values) => {
   sending.value = true;
 
   try {
-    // Backend returns { pendingToken, email } — do NOT use useStrapiAuth().login()
+    // Backend returns { pendingToken, email } — do NOT use useSessionAuth().login()
     const response = await apiClient("/auth/local", {
       method: "POST",
       body: {

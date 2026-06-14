@@ -38,10 +38,10 @@ definePageMeta({
   middleware: ["auth", "pro"],
 });
 
-const user = useStrapiUser<User>();
+const user = useSessionUser<User>();
 
 if (import.meta.client) {
-  const { fetchUser } = useStrapiAuth();
+  const { fetchUser } = useSessionAuth();
   await fetchUser();
 }
 

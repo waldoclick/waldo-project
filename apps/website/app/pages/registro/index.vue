@@ -60,7 +60,7 @@ const config = useRuntimeConfig();
 
 // Verificar proveedores de autenticación usando el plugin de Strapi (sin apiUrl en cliente)
 const { data: providers } = await useAsyncData("providers", async () => {
-  const { getProviderAuthenticationUrl } = useStrapiAuth();
+  const { getProviderAuthenticationUrl } = useSessionAuth();
   try {
     const googleUrl = getProviderAuthenticationUrl("google");
     return {

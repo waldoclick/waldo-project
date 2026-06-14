@@ -1,9 +1,6 @@
 import { defineNuxtPlugin, reloadNuxtApp } from "#app";
 import { useApiClient } from "@/composables/useApiClient";
-import {
-  useRuntimeConfig,
-  useRoute,
-} from "#imports";
+import { useRuntimeConfig, useRoute } from "#imports";
 
 export default defineNuxtPlugin(() => {
   const config = useRuntimeConfig();
@@ -46,10 +43,10 @@ export default defineNuxtPlugin(() => {
       client_id: clientId,
       callback: async (response: { credential: string }) => {
         try {
-          await client(
-            "auth/google-one-tap",
-            { method: "POST", body: { credential: response.credential } },
-          );
+          await client("auth/google-one-tap", {
+            method: "POST",
+            body: { credential: response.credential },
+          });
           // The Nitro route /api/auth/google-one-tap already set the httpOnly cookie.
           reloadNuxtApp();
         } catch (error) {

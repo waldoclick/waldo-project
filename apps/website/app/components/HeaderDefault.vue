@@ -87,7 +87,7 @@ const route = useRoute();
 const header = ref<HTMLElement | null>(null);
 
 // Obtener el usuario de Strapi
-const user = useStrapiUser();
+const user = useSessionUser();
 
 // Define las propiedades del componente
 const props = defineProps<{

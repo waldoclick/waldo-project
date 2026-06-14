@@ -3,7 +3,7 @@ import type { User, AdReservation, AdFeaturedReservation } from "@/types/user";
 import { useUserStore } from "@/stores/user.store";
 
 export const useUser = () => {
-  const user = useStrapiUser<User>();
+  const user = useSessionUser<User>();
 
   const canRequestInvoice = computed(() => {
     if (!user.value?.is_company) return false;
@@ -124,7 +124,7 @@ export const useUser = () => {
 
   const acceptTerms = async (): Promise<void> => {
     const userStore = useUserStore();
-    const { fetchUser } = useStrapiAuth();
+    const { fetchUser } = useSessionAuth();
     await userStore.updateUserProfile(String(user.value!.id), {
       accepted_age_confirmation: true,
       accepted_terms: true,

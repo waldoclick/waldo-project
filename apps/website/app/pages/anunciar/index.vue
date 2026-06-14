@@ -24,7 +24,7 @@ import { useCategoriesStore } from "@/stores/categories.store";
 
 // Analytics
 const adAnalytics = useAdAnalytics();
-const user = useStrapiUser<User>();
+const user = useSessionUser<User>();
 const adStore = useAdStore();
 
 const meStore = useMeStore();

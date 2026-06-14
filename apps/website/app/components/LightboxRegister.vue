@@ -37,7 +37,7 @@ import { X as IconX, Gift as IconGift } from "lucide-vue-next";
 
 const isOpen = ref(false);
 const cookieName = "site-register-closed";
-const user = useStrapiUser();
+const user = useSessionUser();
 
 const { $cookies } = useNuxtApp();
 

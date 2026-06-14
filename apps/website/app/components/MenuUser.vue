@@ -111,7 +111,7 @@ import AvatarDefault from "@/components/AvatarDefault.vue";
 import type { User } from "@/types/user";
 import { Menu as IconMenu, X as IconX } from "lucide-vue-next";
 
-const user = useStrapiUser<User>();
+const user = useSessionUser<User>();
 const { logout } = useLogout();
 const route = useRoute();
 

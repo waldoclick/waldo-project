@@ -126,7 +126,7 @@ import { Image as IconImage } from "lucide-vue-next";
 
 // Accede a la configuración de runtime
 const config = useRuntimeConfig();
-const user = useStrapiUser();
+const user = useSessionUser();
 const route = useRoute();
 
 // Use the image proxy composable

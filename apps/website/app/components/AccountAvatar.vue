@@ -38,6 +38,6 @@ import UploadAvatar from "@/components/UploadAvatar.vue";
 import MemoDefault from "@/components/MemoDefault.vue";
 import type { User } from "@/types/user";
 
-const user = useStrapiUser<User>();
+const user = useSessionUser<User>();
 const isPro = computed(() => user.value?.pro_status === "active");
 </script>

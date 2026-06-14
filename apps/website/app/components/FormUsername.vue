@@ -46,15 +46,15 @@ import * as yup from "yup";
 import { RESERVED_USERNAMES } from "@/shared/constants";
 const { Swal } = useSweetAlert2();
 import { useMeStore } from "@/stores/me.store";
-import { useStrapiUser } from "#imports";
+import { useSessionUser } from "#imports";
 import { useNuxtApp } from "#app";
-import { useStrapiAuth } from "#imports";
+import { useSessionAuth } from "#imports";
 
 const sending = ref(false);
 const meStore = useMeStore();
-const user = useStrapiUser();
+const user = useSessionUser();
 const { $recaptcha } = useNuxtApp();
-const { fetchUser } = useStrapiAuth();
+const { fetchUser } = useSessionAuth();
 
 const initialUsername = user.value?.username || "";
 const form = ref({

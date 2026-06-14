@@ -39,7 +39,7 @@ if (!validSizes.includes(size)) {
 }
 
 // Obtener el usuario logueado
-const loggedUser = useStrapiUser<User>();
+const loggedUser = useSessionUser<User>();
 const { transformUrl } = useImageProxy();
 
 // Computed para obtener las iniciales

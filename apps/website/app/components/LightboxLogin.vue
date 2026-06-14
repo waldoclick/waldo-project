@@ -62,7 +62,7 @@ const appStore = import.meta.client
 const { data: providers, pending: providersPending } = useLazyAsyncData(
   "providers",
   async () => {
-    const { getProviderAuthenticationUrl } = useStrapiAuth();
+    const { getProviderAuthenticationUrl } = useSessionAuth();
     try {
       const googleUrl = getProviderAuthenticationUrl("google");
       return { google: !!googleUrl };
@@ -73,7 +73,7 @@ const { data: providers, pending: providersPending } = useLazyAsyncData(
   { default: () => ({ google: true }) },
 );
 
-const user = useStrapiUser();
+const user = useSessionUser();
 const isLoginLightboxActive = computed(
   () => appStore.isLoginLightboxActive && !user.value,
 );

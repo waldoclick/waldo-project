@@ -63,7 +63,7 @@ import { ref, computed, onMounted } from "vue";
 import { usePackStore } from "@/stores/pack.store";
 import { useUser } from "@/composables/useUser";
 
-const user = useStrapiUser();
+const user = useSessionUser();
 const { canRequestInvoice } = useUser(user.value);
 
 const packStore = usePackStore();

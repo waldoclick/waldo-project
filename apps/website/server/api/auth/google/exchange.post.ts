@@ -6,7 +6,10 @@ export default defineEventHandler(async (event) => {
   // reCAPTCHA — this JWT-issuing route bypasses the catch-all's reCAPTCHA (Pitfall 10).
   if (config.recaptchaEnabled) {
     const recaptchaToken = getHeader(event, "x-recaptcha-token");
-    await verifyRecaptchaToken(recaptchaToken, config.recaptchaSecretKey as string);
+    await verifyRecaptchaToken(
+      recaptchaToken,
+      config.recaptchaSecretKey as string,
+    );
   }
 
   const apiUrl = process.env.API_URL || "http://localhost:1337";

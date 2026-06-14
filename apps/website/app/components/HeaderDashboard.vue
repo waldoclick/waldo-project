@@ -32,7 +32,7 @@ const emit = defineEmits<{ (e: "toggle-sidebar"): void }>();
 const header = ref<HTMLElement | null>(null);
 
 // Obtener el usuario de la sesión
-const user = useStrapiUser();
+const user = useSessionUser();
 
 // Scroll handling para headroomjs behavior
 const lastScrollPosition = ref(0);
