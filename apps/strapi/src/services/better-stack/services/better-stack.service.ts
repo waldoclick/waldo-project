@@ -2,6 +2,7 @@ import {
   BetterStackMonitor,
   BetterStackIncident,
   IBetterStackService,
+  MonitorStatus,
 } from "../types/better-stack.types";
 
 export class BetterStackService implements IBetterStackService {
@@ -42,11 +43,21 @@ export class BetterStackService implements IBetterStackService {
   }
 
   async getMonitors(): Promise<BetterStackMonitor[]> {
-    const data = await this.apiFetch<{ data: any[] }>("/monitors", {
+    const data = await this.apiFetch<{ data: unknown[] }>("/monitors", {
       per_page: "50",
     });
 
-    return (data.data ?? []).map((item) => {
+    return (data.data ?? []).map((raw) => {
+      const item = raw as {
+        id?: string;
+        attributes?: {
+          pronounceable_name?: string;
+          url?: string;
+          status?: MonitorStatus;
+          last_checked_at?: string | null;
+          check_frequency?: number;
+        };
+      };
       const attr = item.attributes ?? {};
       return {
         id: item.id as string,
@@ -60,11 +71,23 @@ export class BetterStackService implements IBetterStackService {
   }
 
   async getIncidents(): Promise<BetterStackIncident[]> {
-    const data = await this.apiFetch<{ data: any[] }>("/incidents", {
+    const data = await this.apiFetch<{ data: unknown[] }>("/incidents", {
       per_page: "25",
     });
 
-    return (data.data ?? []).map((item) => {
+    return (data.data ?? []).map((raw) => {
+      const item = raw as {
+        id?: string;
+        attributes?: {
+          name?: string;
+          url?: string;
+          cause?: string;
+          status?: string;
+          started_at?: string;
+          resolved_at?: string | null;
+          acknowledged_at?: string | null;
+        };
+      };
       const attr = item.attributes ?? {};
       const startedAt: string = attr.started_at ?? "";
       const resolvedAt: string | null = attr.resolved_at ?? null;

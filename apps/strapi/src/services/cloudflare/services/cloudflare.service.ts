@@ -21,7 +21,7 @@ export class CloudflareService implements ICloudflareService {
     }
   }
 
-  private async graphql(query: string): Promise<any> {
+  private async graphql(query: string): Promise<unknown> {
     const response = await fetch(
       "https://api.cloudflare.com/client/v4/graphql",
       {
@@ -40,13 +40,30 @@ export class CloudflareService implements ICloudflareService {
       );
     }
 
-    const data = (await response.json()) as any;
+    const data = (await response.json()) as {
+      errors?: { message: string }[];
+      data?: unknown;
+    };
 
     if (data.errors?.length) {
       throw new Error(data.errors[0].message);
     }
 
     return data;
+  }
+
+  private extractGroups<T>(data: unknown, groupKey: string): T[] {
+    const viewer = (
+      data as {
+        data?: {
+          viewer?: {
+            zones?: Array<Record<string, unknown>>;
+          };
+        };
+      }
+    )?.data?.viewer;
+    const zone = viewer?.zones?.[0];
+    return (zone?.[groupKey] as T[] | undefined) ?? [];
   }
 
   private getDateRange(days: number = 30): {
@@ -87,11 +104,19 @@ export class CloudflareService implements ICloudflareService {
       }
     }`);
 
-    const groups: any[] =
-      data?.data?.viewer?.zones?.[0]?.httpRequests1dGroups ?? [];
+    const groups = this.extractGroups<{
+      dimensions: { date: string };
+      sum: {
+        requests?: number;
+        bytes?: number;
+        pageViews?: number;
+        threats?: number;
+        cachedRequests?: number;
+      };
+    }>(data, "httpRequests1dGroups");
 
     return groups.map((g) => ({
-      date: g.dimensions.date as string,
+      date: g.dimensions.date,
       requests: g.sum.requests ?? 0,
       bytes: g.sum.bytes ?? 0,
       pageViews: g.sum.pageViews ?? 0,
@@ -119,11 +144,14 @@ export class CloudflareService implements ICloudflareService {
       }
     }`);
 
-    const groups: any[] =
-      data?.data?.viewer?.zones?.[0]?.httpRequestsAdaptiveGroups ?? [];
+    const groups = this.extractGroups<{
+      dimensions: { clientRequestPath: string };
+      count?: number;
+      sum: { edgeResponseBytes?: number };
+    }>(data, "httpRequestsAdaptiveGroups");
 
     return groups.map((g) => ({
-      path: g.dimensions.clientRequestPath as string,
+      path: g.dimensions.clientRequestPath,
       requests: g.count ?? 0,
       bytes: g.sum.edgeResponseBytes ?? 0,
     }));
@@ -147,13 +175,15 @@ export class CloudflareService implements ICloudflareService {
       }
     }`);
 
-    const groups: any[] =
-      data?.data?.viewer?.zones?.[0]?.httpRequests1dGroups ?? [];
+    const groups = this.extractGroups<{
+      dimensions: { date: string };
+      sum: { threats?: number; requests?: number };
+    }>(data, "httpRequests1dGroups");
 
     return groups
       .filter((g) => (g.sum.threats ?? 0) > 0)
       .map((g) => ({
-        date: g.dimensions.date as string,
+        date: g.dimensions.date,
         threats: g.sum.threats ?? 0,
         requests: g.sum.requests ?? 0,
       }));
