@@ -1,6 +1,20 @@
 import sharp from "sharp";
 import path from "path";
 import fs from "fs";
+import os from "os";
+
+/**
+ * Resolve an upload filepath and assert it is confined to the OS temp dir,
+ * where Strapi's multipart parser writes uploads. Returns the real path for
+ * subsequent fs operations.
+ */
+const resolveUploadPath = (filepath: string): string => {
+  const resolved = fs.realpathSync(filepath);
+  if (!resolved.startsWith(fs.realpathSync(os.tmpdir()) + path.sep)) {
+    throw new Error("Upload filepath outside temp dir");
+  }
+  return resolved;
+};
 
 const MAX_WIDTH = 1024;
 const WATERMARK_MARGIN = 30;
@@ -24,13 +38,14 @@ const convertToWebP = async (file: unknown): Promise<void> => {
       f.mimetype.includes("jpg") ||
       f.mimetype.includes("png")
     ) {
-      const imageBuffer = fs.readFileSync(f.filepath);
+      const resolved = resolveUploadPath(f.filepath);
+      const imageBuffer = fs.readFileSync(resolved);
 
       const webpBuffer = await sharp(imageBuffer)
         .webp({ quality: 100 })
         .toBuffer();
 
-      fs.writeFileSync(f.filepath, webpBuffer);
+      fs.writeFileSync(resolved, webpBuffer);
       f.mimetype = "image/webp";
       f.originalFilename = f.originalFilename.replace(
         /\.(jpg|jpeg|png)$/i,
@@ -49,7 +64,8 @@ const convertToWebP = async (file: unknown): Promise<void> => {
 const processGalleryImage = async (file: unknown): Promise<void> => {
   const f = file as UploadFile;
   try {
-    const imageBuffer = fs.readFileSync(f.filepath);
+    const resolved = resolveUploadPath(f.filepath);
+    const imageBuffer = fs.readFileSync(resolved);
     const metadata = await sharp(imageBuffer).metadata();
 
     let processedImage = sharp(imageBuffer);
@@ -85,7 +101,7 @@ const processGalleryImage = async (file: unknown): Promise<void> => {
       .webp({ quality: 100, lossless: true })
       .toBuffer();
 
-    fs.writeFileSync(f.filepath, finalBuffer);
+    fs.writeFileSync(resolved, finalBuffer);
   } catch (error) {
     console.error("Error processing gallery image:", error);
   }
@@ -98,7 +114,8 @@ const processGalleryImage = async (file: unknown): Promise<void> => {
 const processAvatarImage = async (file: unknown): Promise<void> => {
   const f = file as UploadFile;
   try {
-    const imageBuffer = fs.readFileSync(f.filepath);
+    const resolved = resolveUploadPath(f.filepath);
+    const imageBuffer = fs.readFileSync(resolved);
     const processedBuffer = await sharp(imageBuffer)
       .resize(300, 300, {
         fit: "cover",
@@ -108,7 +125,7 @@ const processAvatarImage = async (file: unknown): Promise<void> => {
       .webp({ quality: 100, lossless: true })
       .toBuffer();
 
-    fs.writeFileSync(f.filepath, processedBuffer);
+    fs.writeFileSync(resolved, processedBuffer);
   } catch (error) {
     console.error("Error processing avatar image:", error);
   }
