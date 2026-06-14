@@ -320,6 +320,34 @@ describe("SEC2-PAYMENT Test 3 — Ad ownership is verified", () => {
   });
 });
 
+// ─── Object-injection on payload.pack (RED until 01-02) ──────────────────────
+
+describe("SEC2-PAYMENT pack injection — operator object on payload.pack is rejected", () => {
+  it("does NOT match a pack with an operator object — where.name handed to ad-pack findOne must be a scalar string", async () => {
+    // Arrange — attacker sends an operator object as the pack name.
+    // pack is neither "free" nor "paid" (string compares fail on an object),
+    // so flow reaches the `findOne({ where: { name: payload.pack } })` lookup.
+    mockAdPackFindOne.mockResolvedValue(null); // short-circuit after the captured findOne
+
+    // Act — payload.pack is { $ne: "" }
+    await checkoutService.initiateCheckout(
+      { pack: { $ne: "" } as unknown as string, ad_id: 42 },
+      "7",
+    );
+
+    // Assert — capture the where filter passed to the ad-pack findOne.
+    // RED by design until 01-02 applies String(payload.pack):
+    //   Today the object passes through uncoerced → typeof "object" → fails.
+    //   After 01-02 it is String()-coerced → typeof "string" → passes,
+    //   so `{$ne:""}` never reaches the query as an operator.
+    expect(mockAdPackFindOne).toHaveBeenCalled();
+    const capturedWhere = mockAdPackFindOne.mock.calls[0][0].where as {
+      name: unknown;
+    };
+    expect(typeof capturedWhere.name).toBe("string");
+  });
+});
+
 // ─── Test 4: Fail-closed price when AD_FEATURED_PRICE is unset ───────────────
 
 describe("SEC2-PAYMENT Test 4 — Fail-closed on missing AD_FEATURED_PRICE", () => {

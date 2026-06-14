@@ -416,6 +416,30 @@ describe("verifyCode", () => {
     });
   });
 
+  describe("Operator-injection on pendingToken (RED until 01-01)", () => {
+    it("rejects pendingToken operator-injection object — where value must be a scalar string", async () => {
+      // Arrange — attacker sends an operator object instead of a token string.
+      // The truthy guard `if (!pendingToken)` passes (object is truthy), so the
+      // value flows into `findOne({ where: { pendingToken } })`.
+      mockVCFindOne.mockResolvedValue(null);
+      const ctx = makeCtx({ pendingToken: { $ne: null }, code: "123456" });
+
+      // Act
+      await verifyCode(ctx);
+
+      // Assert — capture the where filter handed to the verification-code findOne.
+      // RED by design until 01-01 applies String(pendingToken):
+      //   Today the object passes through uncoerced → typeof is "object" → fails.
+      //   After 01-01 it is String()-coerced → typeof "string" → passes,
+      //   so the `{$ne:null}` operator never reaches the query as an operator.
+      expect(mockVCFindOne).toHaveBeenCalled();
+      const capturedWhere = mockVCFindOne.mock.calls[0][0].where as {
+        pendingToken: unknown;
+      };
+      expect(typeof capturedWhere.pendingToken).toBe("string");
+    });
+  });
+
   describe("Unknown pendingToken → 400", () => {
     it("returns 400 when pendingToken not found", async () => {
       // Arrange
