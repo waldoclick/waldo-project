@@ -1,4 +1,9 @@
-import { useStrapiClient, useNuxtApp, useRuntimeConfig } from "#imports";
+import {
+  useStrapiClient,
+  useNuxtApp,
+  useRuntimeConfig,
+  useRequestHeaders,
+} from "#imports";
 
 /**
  * useApiClient — drop-in replacement for useStrapiClient() that automatically
@@ -22,12 +27,22 @@ export function useApiClient() {
       (options?.method as string | undefined) ?? "GET"
     ).toUpperCase();
 
-    // On SSR, strapi calls go directly to the API (bypassing the Nuxt proxy).
-    // X-Proxy-Key must be added here so Strapi's proxy-auth middleware accepts them.
     const serverHeaders: Record<string, string> = {};
     if (import.meta.server) {
-      const proxyKey = useRuntimeConfig().proxySecretWeb as string;
-      if (proxyKey) serverHeaders["X-Proxy-Key"] = proxyKey;
+      // Forward the browser cookie jar so the catch-all proxy can read waldo_jwt
+      // and inject Authorization toward Strapi (Pitfall 3). Nitro self-calls do
+      // not inherit the incoming request's cookies automatically.
+      const { cookie } = useRequestHeaders(["cookie"]);
+      if (cookie) serverHeaders["cookie"] = cookie;
+
+      // Bypass Vercel Deployment Protection on staging/production SSR self-calls.
+      const bypass = useRuntimeConfig().vercelBypassSecret as string | undefined;
+      if (bypass) serverHeaders["x-vercel-protection-bypass"] = bypass;
+
+      // X-Proxy-Key removed: the catch-all proxy now injects it toward Strapi.
+      // NOTE: while runtimeConfig.strapi.url = API_URL remains (plan 06 removes
+      // it), SSR useStrapiClient calls still go direct to Strapi and require
+      // X-Proxy-Key. Plan 03–06 intermediary window: do not deploy 03 without 06.
     }
 
     if (MUTATING_METHODS.includes(method as MutatingMethod)) {
