@@ -15,11 +15,16 @@ build/
 .output/
 .vercel/
 
+# Claude Code local config (may contain machine-specific paths / server info)
+.claude/settings.json
+.claude/settings.local.json
+
 # Environment variables
 .env
 .env.local
 .env.*.local
 .env.dashboard
+.env.services
 
 # Logs
 *.log
