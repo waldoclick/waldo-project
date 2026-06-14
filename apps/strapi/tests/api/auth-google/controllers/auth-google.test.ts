@@ -8,7 +8,9 @@
 // Mock google-auth-library BEFORE imports
 jest.mock("google-auth-library", () => ({
   OAuth2Client: jest.fn().mockImplementation(() => ({
-    generateAuthUrl: jest.fn().mockReturnValue("https://accounts.google.com/oauth"),
+    generateAuthUrl: jest
+      .fn()
+      .mockReturnValue("https://accounts.google.com/oauth"),
     getToken: jest.fn(),
   })),
 }));
@@ -55,12 +57,16 @@ beforeEach(() => {
   process.env.GOOGLE_CLIENT_SECRET = "test-client-secret";
 
   // Wire getToken mock on the OAuth2Client instance
-  const MockOAuth2Client = OAuth2Client as jest.MockedClass<typeof OAuth2Client>;
+  const MockOAuth2Client = OAuth2Client as jest.MockedClass<
+    typeof OAuth2Client
+  >;
   mockGetToken = jest.fn();
   MockOAuth2Client.mockImplementation(
     () =>
       ({
-        generateAuthUrl: jest.fn().mockReturnValue("https://accounts.google.com/oauth"),
+        generateAuthUrl: jest
+          .fn()
+          .mockReturnValue("https://accounts.google.com/oauth"),
         getToken: mockGetToken,
       }) as unknown as OAuth2Client,
   );
