@@ -7,7 +7,7 @@ const mockMeReset = vi.fn();
 const mockUserReset = vi.fn();
 const mockAdsReset = vi.fn();
 const mockAppReset = vi.fn();
-const mockAuthLogout = vi.fn();
+const mockFetch = vi.fn().mockResolvedValue({ success: true });
 const mockNavigateTo = vi.fn();
 const mockDisableAutoSelect = vi.fn();
 
@@ -30,13 +30,16 @@ vi.mock("@/stores/app.store", () => ({
   useAppStore: () => ({ $reset: mockAppReset }),
 }));
 vi.mock("#imports", () => ({
-  useStrapiAuth: () => ({ logout: mockAuthLogout }),
   navigateTo: mockNavigateTo,
 }));
+
+vi.stubGlobal("$fetch", mockFetch);
+vi.stubGlobal("useSessionUser", () => ({ value: null }));
 
 beforeEach(() => {
   vi.resetModules();
   vi.clearAllMocks();
+  mockFetch.mockResolvedValue({ success: true });
 });
 
 describe("useLogout", () => {
@@ -54,35 +57,37 @@ describe("useLogout", () => {
     expect(mockAppReset).toHaveBeenCalledOnce();
   });
 
-  it("calls navigateTo('/') after auth logout", async () => {
+  it("calls POST /api/auth/logout then navigateTo('/')", async () => {
     const { useLogout } = await import("@/composables/useLogout");
     const { logout } = useLogout();
 
     await logout();
 
-    expect(mockAuthLogout).toHaveBeenCalled();
+    expect(mockFetch).toHaveBeenCalledWith("/api/auth/logout", {
+      method: "POST",
+    });
     expect(mockNavigateTo).toHaveBeenCalled();
 
-    const authOrder = mockAuthLogout.mock.invocationCallOrder[0]!;
+    const fetchOrder = mockFetch.mock.invocationCallOrder[0]!;
     const navOrder = mockNavigateTo.mock.invocationCallOrder[0]!;
-    expect(navOrder).toBeGreaterThan(authOrder);
+    expect(navOrder).toBeGreaterThan(fetchOrder);
   });
 
-  it("calls all store resets before auth logout", async () => {
+  it("calls all store resets before POST /api/auth/logout", async () => {
     const { useLogout } = await import("@/composables/useLogout");
     const { logout } = useLogout();
 
     await logout();
 
-    const authOrder = mockAuthLogout.mock.invocationCallOrder[0]!;
-    expect(mockAdReset.mock.invocationCallOrder[0]!).toBeLessThan(authOrder);
+    const fetchOrder = mockFetch.mock.invocationCallOrder[0]!;
+    expect(mockAdReset.mock.invocationCallOrder[0]!).toBeLessThan(fetchOrder);
     expect(mockHistoryReset.mock.invocationCallOrder[0]!).toBeLessThan(
-      authOrder,
+      fetchOrder,
     );
-    expect(mockMeReset.mock.invocationCallOrder[0]!).toBeLessThan(authOrder);
-    expect(mockUserReset.mock.invocationCallOrder[0]!).toBeLessThan(authOrder);
-    expect(mockAdsReset.mock.invocationCallOrder[0]!).toBeLessThan(authOrder);
-    expect(mockAppReset.mock.invocationCallOrder[0]!).toBeLessThan(authOrder);
+    expect(mockMeReset.mock.invocationCallOrder[0]!).toBeLessThan(fetchOrder);
+    expect(mockUserReset.mock.invocationCallOrder[0]!).toBeLessThan(fetchOrder);
+    expect(mockAdsReset.mock.invocationCallOrder[0]!).toBeLessThan(fetchOrder);
+    expect(mockAppReset.mock.invocationCallOrder[0]!).toBeLessThan(fetchOrder);
   });
 
   it("calls navigateTo with exactly '/'", async () => {
@@ -95,7 +100,7 @@ describe("useLogout", () => {
   });
 });
 
-describe("GTAP-12: disableAutoSelect() before strapiLogout()", () => {
+describe("GTAP-12: disableAutoSelect() before POST /api/auth/logout", () => {
   beforeEach(() => {
     vi.stubGlobal("google", {
       accounts: { id: { disableAutoSelect: mockDisableAutoSelect } },
@@ -104,16 +109,18 @@ describe("GTAP-12: disableAutoSelect() before strapiLogout()", () => {
 
   afterEach(() => {
     vi.unstubAllGlobals();
+    vi.stubGlobal("$fetch", mockFetch);
+    vi.stubGlobal("useSessionUser", () => ({ value: null }));
   });
 
-  it("calls disableAutoSelect() before strapiLogout()", async () => {
+  it("calls disableAutoSelect() before POST /api/auth/logout", async () => {
     const { useLogout } = await import("@/composables/useLogout");
     const { logout } = useLogout();
     await logout();
 
     expect(mockDisableAutoSelect).toHaveBeenCalledOnce();
     const disableOrder = mockDisableAutoSelect.mock.invocationCallOrder[0]!;
-    const authOrder = mockAuthLogout.mock.invocationCallOrder[0]!;
-    expect(disableOrder).toBeLessThan(authOrder);
+    const fetchOrder = mockFetch.mock.invocationCallOrder[0]!;
+    expect(disableOrder).toBeLessThan(fetchOrder);
   });
 });
