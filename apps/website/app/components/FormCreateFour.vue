@@ -1,9 +1,7 @@
 <template>
   <Form
-    v-slot="{ errors, meta }"
     :validation-schema="schema"
     :initial-values="form"
-    validate-on-mount
     class="form form--create"
     @submit="handleSubmit"
   >
@@ -194,14 +192,14 @@
       :show-steps="true"
       :summary-text="paymentSummaryText"
       primary-label="Continuar"
-      :primary-disabled="!meta.valid"
+      :primary-disabled="!isFormValid"
       @back="handleformBack"
     />
   </Form>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { Field, Form, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 import { useAdStore } from "@/stores/ad.store";
@@ -308,6 +306,17 @@ const form = ref({
 });
 
 const conditions = computed(() => conditionsStore.conditions);
+
+// Drives the "Continuar" button without forcing on-mount validation
+// (vee-validate now only shows field errors after user interaction)
+const isFormValid = ref(false);
+watch(
+  form,
+  async (value) => {
+    isFormValid.value = await schema.isValid(value);
+  },
+  { deep: true, immediate: true },
+);
 
 const handleSubmit = async (values: Record<string, unknown>) => {
   adStore.updateCondition(values.condition as number | null);

@@ -1,9 +1,7 @@
 <template>
   <Form
-    v-slot="{ errors, meta }"
     :validation-schema="schema"
     :initial-values="form"
-    validate-on-mount
     class="form form--create"
     @submit="handleSubmit"
   >
@@ -112,7 +110,7 @@
       :show-steps="true"
       :summary-text="paymentSummaryText"
       primary-label="Continuar"
-      :primary-disabled="!meta.valid"
+      :primary-disabled="!isFormValid"
       @back="handleformBack"
     />
   </Form>
@@ -180,6 +178,17 @@ const form = ref<{
 
 const maxChars = 300;
 
+// Drives the "Continuar" button without forcing on-mount validation
+// (vee-validate now only shows field errors after user interaction)
+const isFormValid = ref(false);
+watch(
+  form,
+  async (value) => {
+    isFormValid.value = await schema.isValid(value);
+  },
+  { deep: true, immediate: true },
+);
+
 // Computed property for remaining characters
 const remainingChars = computed(() => {
   return maxChars - form.value.description.length;
@@ -237,7 +246,7 @@ const categories = computed(() => categoriesStore.categories);
 onMounted(() => {
   form.value.name = adStore.ad.name || "";
   form.value.category = adStore.ad.category || "";
-  form.value.price = adStore.ad.price || 0;
+  form.value.price = adStore.ad.price || "";
   form.value.currency = adStore.ad.currency || "CLP";
   form.value.description = adStore.ad.description || "";
 });
@@ -246,7 +255,7 @@ onMounted(() => {
 watch(
   () => adStore.ad,
   (newAd) => {
-    form.value.price = newAd.price || 0;
+    form.value.price = newAd.price || "";
     form.value.currency = newAd.currency || "CLP";
     form.value.name = newAd.name || "";
     form.value.category = newAd.category || "";
