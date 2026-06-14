@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-last_updated: "2026-06-14T16:45:21.495Z"
+last_updated: "2026-06-14T16:53:26.900Z"
 last_activity: 2026-06-14
 progress:
   total_phases: 1
   completed_phases: 0
   total_plans: 7
-  completed_plans: 1
+  completed_plans: 4
   percent: 14
 ---
 
@@ -36,6 +36,7 @@ Progress: [█░░░░░░░░░] 14% (phase 01: 1/7 plans)
 
 ### Key Decisions (carry forward)
 
+- authController owns its file end-to-end in 01-01: pendingToken coerced with String() before the verifyCode findOne where filter (NoSQL operator-injection closed, Wave 0 guard now GREEN); reserved-username suffix switched from Math.random to crypto.randomBytes (server CSPRNG) reusing the existing top-of-file `import crypto from "crypto"` rather than adding a node:crypto import — no shape-assertion update needed since no test pins the registerUserAuth suffix (01-01)
 - Wave 0 RED-by-design guards must flip green under exactly the planned Wave 1 fix: saveDraft ad_id guard asserts update() NOT called (Number({$gt:0})=NaN diverts to the CREATE branch after 01-02, so a where.id-scalar assertion would error post-fix instead of pass); authController/checkout guards assert typeof where-value==='string' matching the planned String() coercion (String keeps findOne on the call path, so the test is the post-fix invariant) (01-00)
 - saveDraft Jest test harness requires strapi.contentType stub (factory init) + __esModule:true on the logtail default-export mock, else every test dies in the catch block on logger.error — mirror ad.compute-status.test.ts (01-00)
 - httpOnly proxy injects Authorization: Bearer on ALL forwarded requests including top-level GET navigations (sameSite=lax) — gateway callback routes that receive GET redirects from payment processors must be marked auth:false in Strapi route config, or the authenticated role is applied and may block the callback (129-06)
