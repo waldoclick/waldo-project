@@ -7,6 +7,7 @@
 
 <script setup lang="ts">
 import { useRoute } from "vue-router";
+import type { User } from "@/types/user.d.ts";
 const { Swal } = useSweetAlert2();
 import { useAppStore } from "@/stores/app.store";
 import { useMeStore } from "@/stores/me.store";
@@ -15,9 +16,7 @@ import { useLogger } from "@/composables/useLogger";
 
 useSeoMeta({ robots: "noindex, nofollow" });
 
-// Obtener la función authenticateProvider de useStrapiAuth
-const { authenticateProvider } = useStrapiAuth();
-// Obtener la ruta y el router
+const apiClient = useApiClient();
 const route = useRoute();
 const appStore = useAppStore();
 const meStore = useMeStore();
@@ -26,13 +25,14 @@ const { login } = useAdAnalytics();
 
 const authenticate = async () => {
   try {
-    // Autenticar al usuario con Google utilizando el token de acceso de la URL
-    const response = await authenticateProvider(
-      "google",
-      String(route.query.access_token || ""),
+    // POST to the Nitro exchange route — useApiClient injects X-Recaptcha-Token automatically.
+    // The route verifies reCAPTCHA, exchanges the access_token with Strapi, and sets the
+    // httpOnly waldo_jwt cookie. It returns { user } — the token never reaches the client.
+    const result = await apiClient<{ user: User }>(
+      "auth/google/exchange",
+      { method: "POST", body: { access_token: String(route.query.access_token || "") } },
     );
-    // Redirigir a /anuncios si la autenticación es exitosa
-    if (response) {
+    if (result?.user) {
       // Log successful Google login
       logInfo(`User logged in successfully with Google.`);
       login("google");
@@ -71,6 +71,8 @@ const authenticate = async () => {
   }
 };
 
-// Llamar a la función de autenticación cuando el componente se monta
-authenticate();
+// Guard: reCAPTCHA ($recaptcha) is client-only — must not run on SSR.
+// The exchange route rejects without X-Recaptcha-Token, which useApiClient
+// injects client-side only.
+if (import.meta.client) authenticate();
 </script>

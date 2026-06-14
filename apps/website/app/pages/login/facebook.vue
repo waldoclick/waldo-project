@@ -4,29 +4,28 @@
 
 <script setup lang="ts">
 import { useRoute } from "vue-router";
+import type { User } from "@/types/user.d.ts";
 import { useAppStore } from "@/stores/app.store";
 import { useMeStore } from "@/stores/me.store";
 const { Swal } = useSweetAlert2();
 
 useSeoMeta({ robots: "noindex, nofollow" });
 
-// Obtener la función authenticateProvider de useStrapiAuth
-const { authenticateProvider } = useStrapiAuth();
-
-// Obtener la ruta
+const apiClient = useApiClient();
 const route = useRoute();
 const meStore = useMeStore();
 const appStore = useAppStore();
 
 const authenticate = async () => {
   try {
-    // Autenticar al usuario con facebook utilizando el token de acceso de la URL
-    const response = await authenticateProvider(
-      "facebook",
-      route.query.access_token as string,
+    // POST to the Nitro exchange route — useApiClient injects X-Recaptcha-Token automatically.
+    // The route verifies reCAPTCHA, exchanges the access_token with Strapi, and sets the
+    // httpOnly waldo_jwt cookie. It returns { user } — the token never reaches the client.
+    const result = await apiClient<{ user: User }>(
+      "auth/facebook/exchange",
+      { method: "POST", body: { access_token: route.query.access_token as string } },
     );
-    // Redirigir a /anuncios si la autenticación es exitosa
-    if (response) {
+    if (result?.user) {
       // Clear stale cache so isProfileComplete() fetches fresh data from the API.
       meStore.reset();
       const isComplete = await meStore.isProfileComplete();
@@ -60,6 +59,8 @@ const authenticate = async () => {
   }
 };
 
-// Llamar a la función de autenticación cuando el componente se monta
-authenticate();
+// Guard: reCAPTCHA ($recaptcha) is client-only — must not run on SSR.
+// The exchange route rejects without X-Recaptcha-Token, which useApiClient
+// injects client-side only.
+if (import.meta.client) authenticate();
 </script>
