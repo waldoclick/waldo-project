@@ -20,6 +20,17 @@ export function computePasswordStrength(password: string): {
   return { score: 4, label: "Muy fuerte" };
 }
 
+function randomInt(max: number): number {
+  const limit = Math.floor(0xffffffff / max) * max;
+  const buf = new Uint32Array(1);
+  let value: number;
+  do {
+    crypto.getRandomValues(buf);
+    value = buf[0] ?? 0;
+  } while (value >= limit);
+  return value % max;
+}
+
 export function generateSecurePassword(): string {
   const upper = "ABCDEFGHJKLMNPQRSTUVWXYZ";
   const lower = "abcdefghjkmnpqrstuvwxyz";
@@ -27,8 +38,7 @@ export function generateSecurePassword(): string {
   const special = "!@#$%&*";
   const all = upper + lower + digits + special;
 
-  const pick = (charset: string) =>
-    charset.charAt(Math.floor(Math.random() * charset.length));
+  const pick = (charset: string) => charset.charAt(randomInt(charset.length));
 
   const chars: string[] = [
     pick(upper),
@@ -42,7 +52,7 @@ export function generateSecurePassword(): string {
   }
 
   for (let i = chars.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
+    const j = randomInt(i + 1);
     const tmp = chars[i] ?? "";
     chars[i] = chars[j] ?? "";
     chars[j] = tmp;
