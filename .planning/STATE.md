@@ -2,7 +2,7 @@
 gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
-status: unknown
+status: milestone-complete
 last_updated: "2026-06-14T14:35:53.489Z"
 last_activity: 2026-06-14
 progress:
@@ -20,7 +20,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 129 — eliminate-nuxtjs-strapi-and-centralize-session-auth-and-http-through-the-proxy-with-httponly-cookie
+**Current focus:** v1.46 shipped (2026-06-14) — no active milestone. Start the next with `/gsd:new-milestone`.
 
 ## Position
 
