@@ -217,8 +217,7 @@ const getRelationName = (
   return relation.name || "--";
 };
 const { public: publicConfig } = useRuntimeConfig();
-const websiteUrl =
-  (publicConfig.websiteUrl as string) || "http://localhost:3000";
+const websiteUrl = publicConfig.baseUrl as string;
 const apiClient = useApiClient();
 const { Swal } = useSweetAlert2();
 

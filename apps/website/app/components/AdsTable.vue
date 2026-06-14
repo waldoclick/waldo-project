@@ -147,7 +147,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const { public: publicConfig } = useRuntimeConfig();
-const websiteUrl = publicConfig.websiteUrl as string;
+const websiteUrl = publicConfig.baseUrl as string;
 
 const settingsStore = useSettingsStore();
 const apiClient = useApiClient();

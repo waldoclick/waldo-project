@@ -18,20 +18,11 @@ export function useImageProxy() {
       return url;
     }
 
-    // If it's a relative URL (starts with /), use the appropriate base URL
+    // If it's a relative URL (starts with /), use baseUrl
     if (url.startsWith("/")) {
-      // If proxy is disabled, use apiUrl directly
-      if (config.public.apiDisableProxy) {
-        return `${config.public.apiUrl}${url}`;
-      }
-
-      // If proxy is enabled, convert /uploads/ to /api/images/ and use baseUrl
       if (url.startsWith("/uploads/")) {
-        const proxyPath = url.replace("/uploads/", "/api/images/");
-        return `${config.public.baseUrl}${proxyPath}`;
+        return `${config.public.baseUrl}${url.replace("/uploads/", "/api/images/")}`;
       }
-
-      // For other paths, use baseUrl
       return `${config.public.baseUrl}${url}`;
     }
 
@@ -75,10 +66,7 @@ export function useImageProxy() {
       // reCAPTCHA bloqueado o no disponible — continuar sin token
     }
 
-    // Usar el proxy en lugar de la URL directa
-    const uploadUrl = config.public.apiDisableProxy
-      ? `${config.public.apiUrl}/api/ads/upload`
-      : `/api/ads/upload`;
+    const uploadUrl = `/api/ads/upload`;
 
     const headers: Record<string, string> = {
       Authorization: `Bearer ${token.value}`,

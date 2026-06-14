@@ -288,10 +288,7 @@ export default defineNuxtConfig({
   // Note: Using BASE_URL instead of API_URL to route through proxy
   // This hides the actual Strapi API URL from the client
   strapi: {
-    url:
-      process.env.API_DISABLE_PROXY === "true"
-        ? process.env.API_URL || "http://localhost:1337" // ← Directo a Strapi
-        : process.env.BASE_URL || "http://localhost:3000", // ← A través del proxy
+    url: process.env.BASE_URL || "http://localhost:3000",
     prefix: "/api",
     version: "v5",
     cookie: {
@@ -348,15 +345,7 @@ export default defineNuxtConfig({
   // 4. Environment Configuration
   runtimeConfig: {
     public: {
-      // apiUrl is intentionally absent in production (proxy mode) — raw Strapi URL must not ship to browser.
-      // It is present only when API_DISABLE_PROXY=true (dev-direct mode), where direct access is unavoidable.
-      ...(process.env.API_DISABLE_PROXY === "true"
-        ? { apiUrl: process.env.API_URL || "http://localhost:1337" }
-        : {}),
-      websiteUrl: process.env.WEBSITE_URL || "https://waldo.click",
-      sessionMaxAge: process.env.SESSION_MAX_AGE || "86400", // Valor por defecto de 1 día
       baseUrl: process.env.BASE_URL || "http://localhost:3000",
-      apiDisableProxy: process.env.API_DISABLE_PROXY === "true",
       blockSearchEngines: process.env.BLOCK_SEARCH_ENGINES === "true",
       recaptchaSiteKey: process.env.RECAPTCHA_SITE_KEY,
       googleClientId: process.env.GOOGLE_CLIENT_ID,
@@ -373,6 +362,7 @@ export default defineNuxtConfig({
       zohoWidgetCode: process.env.ZOHO_WIDGET_CODE || "",
     },
     // Variables privadas del servidor
+    sessionMaxAge: process.env.SESSION_MAX_AGE || "604800",
     apiUrl: process.env.API_URL || "http://localhost:1337", // server-only — for Nitro image proxy and sitemap
     proxySecretWeb: process.env.PROXY_SECRET_WEB || "", // server-only — proxy auth key sent to Strapi
     recaptchaSecretKey: process.env.RECAPTCHA_SECRET_KEY, // server-only — for Nitro proxy

@@ -27,7 +27,6 @@ export const useAppConfiguration = () => {
     // Security
     security: {
       blockSearchEngines: config.public.blockSearchEngines,
-      apiDisableProxy: config.public.apiDisableProxy,
     },
   };
 };

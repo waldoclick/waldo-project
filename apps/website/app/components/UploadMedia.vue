@@ -92,9 +92,6 @@ const resolveUrl = (url: string): string => {
   if (!url) return "";
   if (url.startsWith("http")) return url;
   if (url.startsWith("/uploads/")) {
-    if (config.public.apiDisableProxy) {
-      return `${config.public.apiUrl}${url}`;
-    }
     return `${config.public.baseUrl}${url.replace("/uploads/", "/api/images/")}`;
   }
   return `${config.public.baseUrl}${url}`;
@@ -140,9 +137,7 @@ const uploadToStrapi = async (file: File): Promise<MediaItem | null> => {
   const formData = new FormData();
   formData.append("files", file);
 
-  const uploadUrl = config.public.apiDisableProxy
-    ? `${config.public.apiUrl}/api/upload`
-    : `/api/upload`;
+  const uploadUrl = `/api/upload`;
 
   const response = await fetch(uploadUrl, {
     method: "POST",

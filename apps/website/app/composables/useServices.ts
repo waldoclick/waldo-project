@@ -18,7 +18,7 @@ export interface ServiceItem {
 
 export function useServices(): ServiceItem[] {
   const config = useRuntimeConfig().public;
-  const websiteUrl = config.websiteUrl || "https://waldo.click";
+  const websiteUrl = config.baseUrl || "http://localhost:3000";
 
   return [
     {
