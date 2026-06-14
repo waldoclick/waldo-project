@@ -287,7 +287,7 @@ export const registerUserAuth = (callbackController) => async (ctx) => {
       user?.id &&
       RESERVED_USERNAMES.has((user.username ?? "").toLowerCase())
     ) {
-      const suffix = Math.random().toString(36).slice(2, 6);
+      const suffix = crypto.randomBytes(3).toString("hex").slice(0, 4);
       const newUsername = `${user.username}_${suffix}`;
       await strapi.db.query("plugin::users-permissions.user").update({
         where: { id: user.id },
