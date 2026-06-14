@@ -95,7 +95,6 @@ const mockSubProUpdate = jest.fn();
 const mockSubProCreate = jest.fn();
 const mockSubProFindOne = jest.fn();
 const mockUserUpdate = jest.fn();
-const mockSubPayCreate = jest.fn();
 const mockDbQuery = jest.fn().mockImplementation((uid: string) => {
   if (uid === "api::subscription-pro.subscription-pro") {
     return {
