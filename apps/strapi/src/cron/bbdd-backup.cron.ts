@@ -31,6 +31,16 @@ export class BackupService {
   private readonly backupDir = path.join(process.cwd(), "backups");
   private readonly maxBackupDays = 7;
 
+  /**
+   * Resolves a file path inside backupDir. path.basename() strips any directory
+   * components from the file name, guaranteeing the result cannot escape
+   * backupDir via path traversal — even though the name is always built from a
+   * server-generated timestamp (format(new Date(), ...)), never user input.
+   */
+  private backupFilePath(fileName: string): string {
+    return path.join(this.backupDir, path.basename(fileName));
+  }
+
   async createDatabaseBackup(): Promise<ICronjobResult> {
     try {
       // Guard: ensure Strapi is available before accessing config or services.
@@ -79,7 +89,7 @@ export class BackupService {
           throw new Error(`Unsupported database client: ${client}`);
       }
 
-      const backupPath = path.join(this.backupDir, backupFileName);
+      const backupPath = this.backupFilePath(backupFileName);
 
       // Log a sanitized version of the shell command — password replaced with [REDACTED]
       // so credentials never appear in log files or monitoring dashboards.
@@ -142,10 +152,7 @@ export class BackupService {
       password,
     } = config.connection;
 
-    const backupPath = path.join(
-      this.backupDir,
-      `backup_mysql_${timestamp}.sql`,
-    );
+    const backupPath = this.backupFilePath(`backup_mysql_${timestamp}.sql`);
 
     // Build a mysqldump shell command. Password is passed via -p flag (no space).
     return `mysqldump -h ${host} -P ${port} -u ${user} -p${password} ${database} > ${backupPath}`;
@@ -164,10 +171,7 @@ export class BackupService {
       schema = "public",
     } = config.connection;
 
-    const backupPath = path.join(
-      this.backupDir,
-      `backup_postgres_${timestamp}.sql`,
-    );
+    const backupPath = this.backupFilePath(`backup_postgres_${timestamp}.sql`);
 
     // Pass the password via PGPASSWORD env var to avoid an interactive password prompt.
     return `PGPASSWORD=${password} pg_dump -h ${host} -p ${port} -U ${user} -d ${database} -n ${schema} > ${backupPath}`;
@@ -178,10 +182,7 @@ export class BackupService {
     timestamp: string,
   ): string {
     const { filename } = config.connection;
-    const backupPath = path.join(
-      this.backupDir,
-      `backup_sqlite_${timestamp}.db`,
-    );
+    const backupPath = this.backupFilePath(`backup_sqlite_${timestamp}.db`);
 
     // SQLite backup is a simple file copy — no credentials needed.
     return `cp "${filename}" "${backupPath}"`;
@@ -213,7 +214,7 @@ export class BackupService {
 
       // Walk backup directory and delete files older than the retention window.
       for (const file of files) {
-        const filePath = path.join(this.backupDir, file);
+        const filePath = this.backupFilePath(file);
         const stats = fs.statSync(filePath);
 
         if (stats.mtime < cutoffDate) {
