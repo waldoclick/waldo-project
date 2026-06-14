@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-last_updated: "2026-06-13T20:21:50.902Z"
-last_activity: 2026-06-13
+last_updated: "2026-06-14T05:05:35.710Z"
+last_activity: 2026-06-14
 progress:
-  total_phases: 22
+  total_phases: 23
   completed_phases: 21
-  total_plans: 58
-  completed_plans: 58
+  total_plans: 64
+  completed_plans: 59
   percent: 100
 ---
 
@@ -20,7 +20,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 128 — allow-google-only-users-to-create-a-local-password
+**Current focus:** Phase 129 — eliminate-nuxtjs-strapi-and-centralize-session-auth-and-http-through-the-proxy-with-httponly-cookie
 
 ## Position
 
@@ -34,6 +34,9 @@ Progress: [██████████] 100%
 
 ### Key Decisions (carry forward)
 
+- vi.stubGlobal required for composables that use Nuxt bare auto-imports (useState, $fetch, useRuntimeConfig) — vi.mock('#imports') only works when the composable has explicit #imports imports (129-01)
+- useSessionClient injects NO Authorization header — Nitro proxy injects Bearer token from httpOnly waldo_jwt cookie server-side in plan 02 (129-01)
+- fetchUser regression guard: catch block sets user.value = null only, zero cookie/token side effects; session.ts plugin guarded with PLAN-06-REMOVE-THIS-LINE marker until cutover in plan 06 (129-01)
 - overrideForgotPassword context ternary collapsed: both website and residual dashboard callers now resolve to FRONTEND_URL/restablecer-contrasena — context field removed as unused (125-07)
 - dashboardUrl removed from website runtimeConfig.public — MenuUser was the sole consumer; no TS declaration update needed (125-07)
 - nuxi typecheck and nuxi build fail in CI due to estree-walker ESM-only package at root workspace — pre-existing constraint; use vue-tsc --noEmit for TypeScript verification (exits 0) (125-07)
@@ -196,5 +199,5 @@ Progress: [██████████] 100%
 
 ## Session Continuity
 
-Last activity: 2026-06-14 - Completed quick task 260613-v33: Auditoria completa flujo usuario Manager en website Nuxt
+Last activity: 2026-06-14
 Resume file: None
