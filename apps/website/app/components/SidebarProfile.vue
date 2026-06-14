@@ -78,6 +78,10 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  publishedAdsCount: {
+    type: Number,
+    default: 0,
+  },
 });
 
 const userAuth = useSessionUser();
@@ -98,7 +102,7 @@ const getUbication = computed(() => {
 });
 
 const publishedAdsMessage = computed(() => {
-  const count = getUser.value.publishedAdsCount || 0;
+  const count = props.publishedAdsCount || 0;
   if (count === 0) {
     return "No tiene anuncios publicados";
   } else if (count === 1) {

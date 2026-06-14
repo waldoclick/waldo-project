@@ -2,7 +2,7 @@
   <section class="profile profile--default">
     <div class="profile--default__container">
       <div class="profile--default__sidebar">
-        <SidebarProfile :user="user" />
+        <SidebarProfile :user="user" :published-ads-count="pagination.total" />
       </div>
       <div class="profile--default__content">
         <MemoPro
