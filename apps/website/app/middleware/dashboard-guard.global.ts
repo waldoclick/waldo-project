@@ -2,13 +2,12 @@ import type { User } from "@/types/user";
 
 export default defineNuxtRouteMiddleware(async (to) => {
   if (!to.path.startsWith("/dashboard")) return;
-  const user = useStrapiUser<User>();
+  const user = useSessionUser<User>();
   if (!user.value) {
-    const token = useStrapiToken();
-    if (!token.value) return navigateTo("/login");
-    const { fetchUser } = useStrapiAuth();
+    if (import.meta.server) return navigateTo("/login");
+    const { fetchUser } = useSessionAuth();
     try {
-      await fetchUser();
+      await fetchUser(); // 401 = anonymous; sets user.value = null silently
     } catch {
       /* Strapi unavailable — treat as unauthenticated */
     }

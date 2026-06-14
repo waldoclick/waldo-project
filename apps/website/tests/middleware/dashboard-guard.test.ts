@@ -12,18 +12,14 @@ vi.mock("#app", () => ({
 global.defineNuxtRouteMiddleware = (fn: unknown) => fn;
 global.navigateTo = mockNavigateTo;
 
-// useStrapiToken — controls whether a JWT cookie exists
-const mockStrapiToken = vi.fn(() => ({ value: null }));
-vi.stubGlobal("useStrapiToken", mockStrapiToken);
-
-// useStrapiUser — controls current user state
+// useSessionUser — controls current user state
 const mockUser = vi.fn(() => ({ value: null }));
-vi.stubGlobal("useStrapiUser", mockUser);
+vi.stubGlobal("useSessionUser", mockUser);
 
-// useStrapiAuth — provides fetchUser
+// useSessionAuth — provides fetchUser
 const mockFetchUser = vi.fn();
 vi.stubGlobal(
-  "useStrapiAuth",
+  "useSessionAuth",
   vi.fn(() => ({ fetchUser: mockFetchUser })),
 );
 
@@ -41,9 +37,8 @@ describe("dashboard-guard.global (GUARD-01, GUARD-02)", () => {
     vi.clearAllMocks();
     // Re-sync global.navigateTo with the cleared mock
     global.navigateTo = mockNavigateTo;
-    mockStrapiToken.mockReturnValue({ value: null });
     mockUser.mockReturnValue({ value: null });
-    mockFetchUser.mockResolvedValue();
+    mockFetchUser.mockResolvedValue(undefined);
   });
 
   // Control: non-dashboard path — guard returns early, no navigation
@@ -52,9 +47,8 @@ describe("dashboard-guard.global (GUARD-01, GUARD-02)", () => {
     expect(mockNavigateTo).not.toHaveBeenCalled();
   });
 
-  // GUARD-01: no token, no user → navigateTo("/login")
+  // GUARD-01: no user → navigateTo("/login")
   it("redirects to /login when user is unauthenticated at /dashboard/ads (GUARD-01)", async () => {
-    mockStrapiToken.mockReturnValue({ value: null });
     mockUser.mockReturnValue({ value: null });
 
     await guard(makeTo("/dashboard/ads"), {});
@@ -62,11 +56,11 @@ describe("dashboard-guard.global (GUARD-01, GUARD-02)", () => {
     expect(mockNavigateTo).toHaveBeenCalledWith("/login");
   });
 
-  // GUARD-01: has token but fetchUser fails to populate user → redirects /login
-  it("redirects to /login when token exists but user cannot be fetched (GUARD-01)", async () => {
-    mockStrapiToken.mockReturnValue({ value: "some-jwt" });
+  // GUARD-01: fetchUser runs but user remains null → redirects /login
+  it("redirects to /login when user still null after fetchUser (GUARD-01)", async () => {
     // user starts null, fetchUser doesn't populate it
     mockUser.mockReturnValue({ value: null });
+    mockFetchUser.mockResolvedValue(undefined);
 
     await guard(makeTo("/dashboard/ads"), {});
 

@@ -1,22 +1,15 @@
 export default defineNuxtRouteMiddleware(async (to) => {
-  const user = useStrapiUser();
+  const user = useSessionUser();
   if (!user.value) {
-    // SSR fail-open: the @nuxtjs/strapi plugin calls fetchUser() on every SSR render
-    // before middleware runs. On SSR, fetchUser() calls Strapi directly (API_URL) without
-    // X-Proxy-Key — proxy-auth rejects with 401 and the plugin clears the JWT via
-    // setToken(null). By the time this middleware runs, the token is already null.
-    // Fail-open on SSR; client hydration re-runs this guard with the token intact via
-    // the Nitro proxy (which carries X-Proxy-Key). Pattern per D-03.
+    // SSR fail-open: skip on server; client hydration re-runs this guard after
+    // the session plugin has populated user state via fetchUser(). Pattern per D-03.
     if (import.meta.server) return;
 
-    const token = useStrapiToken();
-    if (token.value) {
-      const { fetchUser } = useStrapiAuth();
-      try {
-        await fetchUser();
-      } catch {
-        /* Strapi unavailable — treat as unauthenticated */
-      }
+    const { fetchUser } = useSessionAuth();
+    try {
+      await fetchUser(); // 401 = anonymous; sets user.value = null silently
+    } catch {
+      /* Strapi unavailable — treat as unauthenticated */
     }
   }
   if (!user.value) {
