@@ -29,7 +29,22 @@
       "Bash(ssh -o StrictHostKeyChecking=no forge@64.176.6.118 \"pm2 list\")",
       "Bash(ssh -o StrictHostKeyChecking=no forge@64.176.6.118 \"pm2 delete waldo-dashboard waldo-website && pm2 save\")",
       "Bash(ssh -o StrictHostKeyChecking=no forge@64.176.6.118 \"pm2 logs waldo-api --lines 100 --nostream 2>&1 | grep -i 'one.tap\\\\|onetap\\\\|one_tap\\\\|tap\\\\|google\\\\|credential\\\\|token\\\\|jwt\\\\|auth' | tail -40\")",
-      "Bash(ssh -o StrictHostKeyChecking=no forge@64.176.6.118 \"pm2 logs waldo-api --lines 200 --nostream 2>&1 | grep -i 'error\\\\|Error\\\\|warn\\\\|fail\\\\|500\\\\|400\\\\|403\\\\|401' | tail -40\")"
+      "Bash(ssh -o StrictHostKeyChecking=no forge@64.176.6.118 \"pm2 logs waldo-api --lines 200 --nostream 2>&1 | grep -i 'error\\\\|Error\\\\|warn\\\\|fail\\\\|500\\\\|400\\\\|403\\\\|401' | tail -40\")",
+      "Bash(vercel promote *)",
+      "Bash(chmod +x /tmp/seq_editor.sh)",
+      "Bash(chmod +x /tmp/msg_editor.sh)",
+      "Bash(GIT_SEQUENCE_EDITOR=/tmp/seq_editor.sh GIT_EDITOR=/tmp/msg_editor.sh git rebase -i HEAD~3)",
+      "Bash(ssh forge@64.176.6.118 \"pm2 logs waldo-api --lines 50 --nostream 2>&1\")",
+      "Bash(vercel deployments *)",
+      "Bash(vercel --version)",
+      "Bash(vercel list *)",
+      "Read(//root/.claude/get-shit-done/workflows/**)",
+      "Read(//root/.claude/**)",
+      "Read(//root/.claude/commands/gsd/**)",
+      "Bash(PHASE_DIR=\".planning/phases/129-eliminate-nuxtjs-strapi-and-centralize-session-auth-and-http-through-the-proxy-with-httponly-cookie\"; sed -e 's/{N}/129/g' -e 's/{phase-slug}/eliminate-nuxtjs-strapi-centralize-session/g' -e 's/{date}/2026-06-14/g' ~/.claude/get-shit-done/templates/VALIDATION.md > \"$PHASE_DIR/129-VALIDATION.md\" && test -f \"$PHASE_DIR/129-VALIDATION.md\" && echo \"VALIDATION_CREATED=true\" && wc -l \"$PHASE_DIR/129-VALIDATION.md\")"
+    ],
+    "additionalDirectories": [
+      "/root/.claude/get-shit-done/templates"
     ]
   }
 }
