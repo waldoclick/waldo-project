@@ -1139,7 +1139,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
    */
   async saveDraft(ad: Record<string, unknown>, userId: string) {
     try {
-      const adId = ad.ad_id as number | undefined;
+      const adId = ad.ad_id === undefined ? undefined : Number(ad.ad_id);
 
       // Extract only schema-known fields, normalizing gallery to ID array
       const galleryRaw = ad.gallery;
