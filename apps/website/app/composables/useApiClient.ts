@@ -1,4 +1,4 @@
-import { useStrapiClient, useNuxtApp } from "#imports";
+import { useStrapiClient, useNuxtApp, useRuntimeConfig } from "#imports";
 
 /**
  * useApiClient — drop-in replacement for useStrapiClient() that automatically
@@ -22,6 +22,14 @@ export function useApiClient() {
       (options?.method as string | undefined) ?? "GET"
     ).toUpperCase();
 
+    // On SSR, strapi calls go directly to the API (bypassing the Nuxt proxy).
+    // X-Proxy-Key must be added here so Strapi's proxy-auth middleware accepts them.
+    const serverHeaders: Record<string, string> = {};
+    if (import.meta.server) {
+      const proxyKey = useRuntimeConfig().proxySecretWeb as string;
+      if (proxyKey) serverHeaders["X-Proxy-Key"] = proxyKey;
+    }
+
     if (MUTATING_METHODS.includes(method as MutatingMethod)) {
       let recaptchaToken: string | undefined;
 
@@ -41,12 +49,19 @@ export function useApiClient() {
       return client<T>(url, {
         ...options,
         headers: {
+          ...serverHeaders,
           ...((options?.headers as Record<string, string> | undefined) ?? {}),
           ...(recaptchaToken ? { "X-Recaptcha-Token": recaptchaToken } : {}),
         },
       });
     }
 
-    return client<T>(url, options);
+    return client<T>(url, {
+      ...options,
+      headers: {
+        ...serverHeaders,
+        ...((options?.headers as Record<string, string> | undefined) ?? {}),
+      },
+    });
   };
 }

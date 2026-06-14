@@ -364,6 +364,12 @@ export default defineNuxtConfig({
     // Variables privadas del servidor
     sessionMaxAge: process.env.SESSION_MAX_AGE || "604800",
     apiUrl: process.env.API_URL || "http://localhost:1337", // server-only — for Nitro image proxy and sitemap
+    // Override strapi URL on server to call API directly, bypassing the public
+    // domain proxy (which is blocked by Vercel Deployment Protection in staging).
+    // The client uses runtimeConfig.public.strapi.url (set by the strapi module).
+    strapi: {
+      url: process.env.API_URL || "http://localhost:1337",
+    },
     proxySecretWeb: process.env.PROXY_SECRET_WEB || "", // server-only — proxy auth key sent to Strapi
     recaptchaSecretKey: process.env.RECAPTCHA_SECRET_KEY, // server-only — for Nitro proxy
     recaptchaEnabled: process.env.RECAPTCHA_ENABLED !== "false", // set to false to skip verification in dev/testing
