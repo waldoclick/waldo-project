@@ -1,9 +1,16 @@
 import { AnthropicService } from "./anthropic.service";
 
-const anthropicService = new AnthropicService();
+let anthropicService: AnthropicService | null = null;
+
+function getAnthropicService(): AnthropicService {
+  if (!anthropicService) {
+    anthropicService = new AnthropicService();
+  }
+  return anthropicService;
+}
 
 export const generateWithSearch = (prompt: string) =>
-  anthropicService.generate({ prompt });
+  getAnthropicService().generate({ prompt });
 
 export { AnthropicService };
 export type {

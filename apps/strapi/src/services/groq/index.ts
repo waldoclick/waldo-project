@@ -1,9 +1,16 @@
 import { GroqService } from "./groq.service";
 
-const groqService = new GroqService();
+let groqService: GroqService | null = null;
+
+function getGroqService(): GroqService {
+  if (!groqService) {
+    groqService = new GroqService();
+  }
+  return groqService;
+}
 
 export const generateText = (prompt: string) =>
-  groqService.generate({ prompt });
+  getGroqService().generate({ prompt });
 
 export { GroqService };
 export type { IGroqService, GroqRequest, GroqResponse } from "./groq.types";

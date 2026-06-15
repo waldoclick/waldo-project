@@ -1,9 +1,16 @@
 import { DeepSeekService } from "./deepseek.service";
 
-const deepSeekService = new DeepSeekService();
+let deepSeekService: DeepSeekService | null = null;
+
+function getDeepSeekService(): DeepSeekService {
+  if (!deepSeekService) {
+    deepSeekService = new DeepSeekService();
+  }
+  return deepSeekService;
+}
 
 export const generateText = (prompt: string) =>
-  deepSeekService.generate({ prompt });
+  getDeepSeekService().generate({ prompt });
 
 export { DeepSeekService };
 export type {

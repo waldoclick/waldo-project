@@ -1,9 +1,16 @@
 import { GeminiService } from "./gemini.service";
 
-const geminiService = new GeminiService();
+let geminiService: GeminiService | null = null;
+
+function getGeminiService(): GeminiService {
+  if (!geminiService) {
+    geminiService = new GeminiService();
+  }
+  return geminiService;
+}
 
 export const generateText = (prompt: string) =>
-  geminiService.generate({ prompt });
+  getGeminiService().generate({ prompt });
 
 export { GeminiService };
 export type {
