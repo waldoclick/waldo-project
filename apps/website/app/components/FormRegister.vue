@@ -428,6 +428,8 @@ const handleSubmit = async () => {
       if (strapiMessage === "Email or Username are already taken") {
         Swal.fire("Error", "El correo electrónico ya está en uso.", "error");
       } else {
+        // Also surfaces AI free-text validation rejections from registerUserLocal
+        // (e.g. "El nombre no parece válido" / "El apellido no parece válido")
         Swal.fire(
           "Error",
           strapiMessage || "Ocurrió un error durante el registro.",
