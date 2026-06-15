@@ -69,8 +69,8 @@ Plans:
 **Goal:** Agregar validación semántica con IA en el flujo de registro (server-side, antes de crear el usuario, en `registerUserLocal`): la IA evalúa SOLO campos de texto libre (firstname, lastname, address y, si es empresa, business_name/business_type/business_address), devuelve un boolean por campo y, si alguno es `false` explícito, rechaza el registro con un mensaje en español específico del campo. Fail-open no negociable: cualquier error/timeout/sin tokens/JSON no parseable ⇒ se asume `true` y el registro nunca se bloquea por fallas de la IA. Reusa el `ai-provider` de la fase 02; el frontend (FormRegister.vue) muestra el mensaje de rechazo.
 **Requirements**: N/A
 **Depends on:** Phase 2
-**Plans:** 2 plans (2 waves)
+**Plans:** 2/2 plans complete
 
 Plans:
 - [x] 03-01-PLAN.md — Servicio `field-validation` (TDD): types + config (TIMEOUT_MS, buildValidationPrompt) + `validateFields` con timeout/fail-open/strip-fences + matriz de tests; export aditivo `generate` en ai-provider
-- [ ] 03-02-PLAN.md — Enganche en `registerUserLocal` (gate IA + mapa de mensajes ES) + tests de controller (incl. fail-open end-to-end) + verificar surfacing en FormRegister.vue
+- [x] 03-02-PLAN.md — Enganche en `registerUserLocal` (gate IA + mapa de mensajes ES) + tests de controller (incl. fail-open end-to-end) + verificar surfacing en FormRegister.vue

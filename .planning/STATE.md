@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-last_updated: "2026-06-15T22:13:19.912Z"
+last_updated: "2026-06-15T22:44:02.292Z"
 last_activity: 2026-06-15
 progress:
   total_phases: 3
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 11
-  completed_plans: 8
-  percent: 78
+  completed_plans: 9
+  percent: 73
 ---
 
 # Session State
@@ -24,18 +24,22 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 
 ## Position
 
-Phase 03 (validacion-ia-de-campos-de-texto-libre-en-el-registro) — plan 03-01 complete. `field-validation` service created with `validateFields(fields)` — generic fail-open AI boolean-per-field validator (TIMEOUT_MS=3500, withTimeout+finally, allTrue, stripFences, parsed[k]!==false invariant); additive `generate(prompt)` export added to `ai-provider` (generateArticleDraft delegates). 9/9 Jest tests green; tsc clean; no any. 1 plan remaining (03-02: wire into registration controller/middleware).
+Phase 03 (validacion-ia-de-campos-de-texto-libre-en-el-registro) — COMPLETE (2/2 plans). Plan 03-02 complete: AI validation gate wired into `registerUserLocal` — validates `firstname` and `lastname` via `validateFields` before user creation; explicit `false` rejects with Spanish per-field message (`FIELD_REJECTION_MESSAGES`); any AI failure is fail-open (end-to-end proven by Test E sibling file). 46/46 Jest tests green in authController.test.ts; Strapi tsc clean; website vue-tsc clean.
 
-(Prior: Phase 02 plan 02-01 complete — ai-provider orchestrator service with Cerebras default + 5-provider fallback chain. Phase 01 complete — Codacy security/best-practice issues.)
+(Prior: Phase 03 plan 03-01 complete — `field-validation` service with `validateFields(fields)`. Phase 02 plan 02-01 complete — ai-provider orchestrator. Phase 01 complete — Codacy security/best-practice issues.)
 
 ```
-Progress: [███████░░░] 73% (phase 03: 1/2 plans complete)
+Progress: [████████░░] 82% (phase 03: 2/2 plans complete)
 ```
 
 ## Accumulated Context
 
 ### Key Decisions (carry forward)
 
+- Sibling test file for end-to-end real-service tests: when jest.mock hoisting in primary test file conflicts with a test that needs the real module, create a dedicated sibling file — not conditional (03-02)
+- fieldsToValidate built with presence guards (if firstname / if lastname) — blank/undefined inputs never sent to AI; gate is NO-OP for empty values (03-02)
+- FIELD_REJECTION_MESSAGES fallback message ("Algunos datos no parecen válidos") guards against future field keys not yet in the map (03-02)
+- Pre-existing mock gaps in authController.test.ts fixed as Rule 3: strapi.getModel, contentAPI.sanitize.output, ctx.state.auth — 2 pre-existing verifyCode failures resolved (03-02)
 - withTimeout(promise, ms) generic helper clears the timer in finally — no dangling handles; required for Jest not to hang when successful paths resolve before timeout (03-01)
 - validateFields iterates REQUESTED keys, not parsed-response keys — parsed[k] !== false handles missing-field-defaults-true and non-boolean-as-true in one expression (03-01)
 - generateArticleDraft delegates to generate() — shared fallback chain; only one place to change provider order; byte-identical behavior confirmed by existing 5 tests (03-01)
