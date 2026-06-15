@@ -234,16 +234,20 @@ export const getUserDataWithFilters = async (ctx) => {
     ),
   );
 
-  // Server-enforced: only return Authenticated users — non-forgeable from client.
-  // The content-API sanitizer strips `filters[role]` for regular JWTs, so this
-  // controller uses strapi.db.query directly to bypass that restriction.
-  const authenticatedRole = await strapi.db
+  // Server-enforced: only return real human users — non-forgeable from client.
+  // "authenticated" and "manager" are both regular user roles (manager only adds
+  // /dashboard access); both must appear in public seller profiles. The "public"
+  // (unauthenticated) and any system roles are excluded. The content-API
+  // sanitizer strips `filters[role]` for regular JWTs, so this controller uses
+  // strapi.db.query directly to bypass that restriction.
+  const userRoles = await strapi.db
     .query("plugin::users-permissions.role")
-    .findOne({ where: { type: "authenticated" } });
+    .findMany({ where: { type: { $in: ["authenticated", "manager"] } } });
+  const userRoleIds = userRoles.map((r: { id: number }) => r.id);
 
   const where = {
     ...safeFilters,
-    ...(authenticatedRole ? { role: { id: authenticatedRole.id } } : {}),
+    ...(userRoleIds.length ? { role: { id: { $in: userRoleIds } } } : {}),
   };
 
   const [users, total] = await strapi.db
