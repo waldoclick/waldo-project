@@ -111,22 +111,13 @@
         </div>
       </template>
 
-      <!-- Step 3: Prompt only -->
+      <!-- Step 3: Confirmation before generate -->
       <template v-else-if="currentStep === 3">
         <div class="lightbox--articles__header">
           <div class="lightbox--articles__header__title">Generar artículo</div>
           <div class="lightbox--articles__header__subtitle">
-            Edita el prompt si es necesario y genera el artículo con IA
+            Revisa la noticia seleccionada y genera el artículo con IA
           </div>
-        </div>
-
-        <div class="lightbox--articles__field">
-          <label for="lightbox-articles-prompt">Prompt</label>
-          <textarea
-            id="lightbox-articles-prompt"
-            v-model="geminiPrompt"
-            rows="14"
-          />
         </div>
 
         <div class="lightbox--articles__actions">
@@ -140,7 +131,7 @@
           <button
             class="btn btn--primary"
             type="button"
-            :disabled="loading || !geminiPrompt.trim()"
+            :disabled="loading"
             @click="handleGenerate"
           >
             {{ loading ? "Generando…" : "Crear" }}
@@ -156,45 +147,6 @@ import { ref, computed, watch } from "vue";
 import { X as IconX } from "lucide-vue-next";
 import { useSearchStore, type ITavilyResult } from "@/stores/search.store";
 import { useArticlesStore } from "@/stores/articles.store";
-
-const DEFAULT_GEMINI_PROMPT = `You are an industrial news editor writing for a blog about industrial assets and productive sectors.
-
-You will receive the title, content, source URL, and publication date of a real news article.
-
-Your task is to rewrite the news as an original article suitable for a professional audience interested in industrial sectors.
-
-Requirements:
-
-1. The article MUST be written in Spanish.
-
-2. Rewrite the information completely in your own words.
-   Do NOT copy sentences from the original text.
-
-3. Preserve the main facts and meaning of the news but improve clarity and readability.
-
-4. Structure the article as:
-
-* title
-* header (2–3 sentence introduction)
-* body (4–6 paragraphs)
-
-5. The body MUST be written using **Markdown only**.
-
-* Use paragraphs separated by line breaks.
-* Highlight important keywords using **bold**.
-* DO NOT use HTML tags.
-
-6. The response MUST be **valid JSON only**. Do not include explanations, markdown wrappers, or additional text.
-
-JSON format:
-
-{
-"title": "string",
-"header": "string",
-"body": "string",
-"seo_title": "string",
-"seo_description": "string"
-}`;
 
 const props = withDefaults(
   defineProps<{
@@ -227,7 +179,6 @@ const query = ref(
 );
 const searchResults = ref<ITavilyResult[]>([]);
 const selectedIndexes = ref<Set<number>>(new Set());
-const geminiPrompt = ref(DEFAULT_GEMINI_PROMPT);
 const loading = ref(false);
 
 const selectedItem = computed<ITavilyResult | null>(() => {
@@ -245,7 +196,6 @@ watch(
       currentStep.value = 1;
       searchResults.value = [];
       selectedIndexes.value = new Set();
-      geminiPrompt.value = DEFAULT_GEMINI_PROMPT;
     } else {
       document.body.style.overflow = "";
     }
@@ -267,16 +217,18 @@ function toggleRow(index: number) {
 }
 
 function goToPrompt() {
-  geminiPrompt.value = DEFAULT_GEMINI_PROMPT;
   currentStep.value = 3;
 }
 
 async function fetchFromApi(q: string) {
-  const result = await client<{ news: ITavilyResult[] }>("/search/tavily", {
-    method: "POST",
-    body: { query: q, num: 10 },
-  });
-  const news = result.news || [];
+  const result = await client<{ sources: ITavilyResult[] }>(
+    "/articles/sources",
+    {
+      method: "GET",
+      params: { q },
+    },
+  );
+  const news = result.sources || [];
   searchStore.setTavily(q, news);
   return news;
 }
@@ -324,7 +276,7 @@ async function handleSearch() {
 
 async function handleGenerate() {
   const item = selectedItem.value;
-  if (!item || !geminiPrompt.value.trim() || loading.value) return;
+  if (!item || loading.value) return;
   loading.value = true;
   try {
     // 1. Use Tavily's content (already fetched server-side during search) — no browser fetch needed
@@ -370,22 +322,20 @@ async function handleGenerate() {
     }
 
     if (!parsed) {
-      // 2. Build the final prompt by appending article context after the instructions
-      const fullPrompt =
-        geminiPrompt.value.trim() +
-        "\n\n---\n\n" +
-        `Title: ${item.title}\n` +
-        `Source URL: ${item.link}\n` +
-        `Date: ${item.date ?? ""}\n` +
-        `Content:\n${bodyText}`;
-
-      // 3. Send to Cerebras
-      const result = await client<{ text: string }>("/ia/cerebras", {
+      // 2. Call the domain generate endpoint — backend builds the prompt and picks the provider
+      const result = await client<{ text: string }>("/articles/generate", {
         method: "POST",
-        body: { prompt: fullPrompt },
+        body: {
+          source: {
+            title: item.title,
+            link: item.link,
+            snippet: bodyText,
+            date: item.date ?? "",
+          },
+        },
       });
 
-      // 4. Parse the JSON response — Cerebras is set to json_object mode so no markdown fences
+      // 3. Parse the JSON response — Cerebras is set to json_object mode so no markdown fences
       const rawText = result.text.trim();
       parsed = JSON.parse(rawText) as {
         title: string;
@@ -399,7 +349,7 @@ async function handleGenerate() {
       articlesStore.setAICache(item.link, parsed);
     }
 
-    // 5. Check for duplicate before creating
+    // 4. Check for duplicate before creating
     type ArticleListResponse = { data: { documentId: string }[] };
     const existing = await client<ArticleListResponse>("/articles", {
       params: {
@@ -425,7 +375,7 @@ async function handleGenerate() {
       return;
     }
 
-    // 6. Create the article draft in Strapi — source_url always from Tavily, never from AI
+    // 5. Create the article draft in Strapi — source_url always from Tavily, never from AI
     await client("/articles", {
       method: "POST",
       body: {
