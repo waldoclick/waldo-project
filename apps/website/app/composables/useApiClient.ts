@@ -12,6 +12,30 @@ export function useApiClient() {
   const client = useSessionClient();
   const nuxtApp = useNuxtApp();
 
+  // Capture SSR request headers NOW, while the composable runs in a valid Nuxt
+  // instance (composable/store setup, before any await). Reading useRequestHeaders
+  // lazily inside the async request below throws "composable called outside Nuxt
+  // instance" once the call happens after an await (e.g. in a useAsyncData handler),
+  // which silently killed every after-await SSR fetch (e.g. the blog article list).
+  const ssrHeaders: Record<string, string> = {};
+  if (import.meta.server) {
+    try {
+      // Forward the browser cookie jar so the catch-all proxy can read waldo_jwt
+      // and inject Authorization toward Strapi. Nitro self-calls do not inherit
+      // the incoming request's cookies automatically.
+      const { cookie } = useRequestHeaders(["cookie"]);
+      if (cookie) ssrHeaders["cookie"] = cookie;
+
+      // Bypass Vercel Deployment Protection on staging/production SSR self-calls.
+      const bypass = useRuntimeConfig().vercelBypassSecret as
+        | string
+        | undefined;
+      if (bypass) ssrHeaders["x-vercel-protection-bypass"] = bypass;
+    } catch {
+      // Nuxt context unavailable — proceed without these headers rather than crash.
+    }
+  }
+
   const MUTATING_METHODS = ["POST", "PUT", "DELETE"] as const;
   type MutatingMethod = (typeof MUTATING_METHODS)[number];
 
@@ -23,24 +47,10 @@ export function useApiClient() {
       (options?.method as string | undefined) ?? "GET"
     ).toUpperCase();
 
-    const serverHeaders: Record<string, string> = {};
-    if (import.meta.server) {
-      // Forward the browser cookie jar so the catch-all proxy can read waldo_jwt
-      // and inject Authorization toward Strapi (Pitfall 3). Nitro self-calls do
-      // not inherit the incoming request's cookies automatically.
-      const { cookie } = useRequestHeaders(["cookie"]);
-      if (cookie) serverHeaders["cookie"] = cookie;
-
-      // Bypass Vercel Deployment Protection on staging/production SSR self-calls.
-      const bypass = useRuntimeConfig().vercelBypassSecret as
-        | string
-        | undefined;
-      if (bypass) serverHeaders["x-vercel-protection-bypass"] = bypass;
-
-      // X-Proxy-Key removed: the catch-all proxy injects it toward Strapi.
-      // SSR useApiClient calls go through the proxy (BASE_URL/api/*) with
-      // cookie forwarding — no direct Strapi access from client or SSR.
-    }
+    // Use the headers captured at composable-creation time (see above).
+    const serverHeaders: Record<string, string> = import.meta.server
+      ? { ...ssrHeaders }
+      : {};
 
     if (MUTATING_METHODS.includes(method as MutatingMethod)) {
       let recaptchaToken: string | undefined;
