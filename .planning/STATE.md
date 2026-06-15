@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-last_updated: "2026-06-14T17:01:44.683Z"
-last_activity: 2026-06-14
+last_updated: "2026-06-15T15:28:58.324Z"
+last_activity: 2026-06-15
 progress:
-  total_phases: 1
+  total_phases: 2
   completed_phases: 0
-  total_plans: 7
-  completed_plans: 6
+  total_plans: 9
+  completed_plans: 7
   percent: 14
 ---
 
@@ -20,7 +20,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 01 — corregir-issues-codacy
+**Current focus:** Phase 02 — Mover IA a endpoints de dominio
 
 ## Position
 
@@ -29,13 +29,17 @@ Phase 01 (corregir-issues-codacy) — plan 01-00 complete (Wave 0 regression gat
 (Prior: Phase 129 complete — @nuxtjs/strapi eliminated from apps/website; httpOnly waldo_jwt cookie sole JWT carrier; proxy single Strapi exit point.)
 
 ```
-Progress: [█░░░░░░░░░] 14% (phase 01: 1/7 plans)
+Progress: [████████░░] 78% (phase 02: 1/2 plans complete)
 ```
 
 ## Accumulated Context
 
 ### Key Decisions (carry forward)
 
+- resolveProvider() reads AI_PROVIDER at call time (not constructor) so env overrides in tests and runtime take effect correctly per-call without re-instantiation (02-01)
+- PROVIDERS map (Record<AiProviderName, fn>) hides generateText vs generateWithSearch export name differences; all callers see uniform prompt-in, {text}-out signature (02-01)
+- Fallback chain JSON caveat: non-Cerebras providers may return fenced JSON which frontend JSON.parse will fail on — acceptable, Cerebras is default, will be addressed in 02-02 frontend cutover (02-01)
+- ia and search Strapi resources left untouched in 02-01 — deletion deferred to 02-02 after frontend cutover (D-10) (02-01)
 - authController owns its file end-to-end in 01-01: pendingToken coerced with String() before the verifyCode findOne where filter (NoSQL operator-injection closed, Wave 0 guard now GREEN); reserved-username suffix switched from Math.random to crypto.randomBytes (server CSPRNG) reusing the existing top-of-file `import crypto from "crypto"` rather than adding a node:crypto import — no shape-assertion update needed since no test pins the registerUserAuth suffix (01-01)
 - Wave 0 RED-by-design guards must flip green under exactly the planned Wave 1 fix: saveDraft ad_id guard asserts update() NOT called (Number({$gt:0})=NaN diverts to the CREATE branch after 01-02, so a where.id-scalar assertion would error post-fix instead of pass); authController/checkout guards assert typeof where-value==='string' matching the planned String() coercion (String keeps findOne on the call path, so the test is the post-fix invariant) (01-00)
 - saveDraft Jest test harness requires strapi.contentType stub (factory init) + __esModule:true on the logtail default-export mock, else every test dies in the catch block on logger.error — mirror ad.compute-status.test.ts (01-00)
@@ -216,5 +220,5 @@ Progress: [█░░░░░░░░░] 14% (phase 01: 1/7 plans)
 
 ## Session Continuity
 
-Last activity: 2026-06-14
+Last activity: 2026-06-15
 Resume file: None
