@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-last_updated: "2026-06-15T15:28:58.324Z"
+last_updated: "2026-06-15T22:13:19.912Z"
 last_activity: 2026-06-15
 progress:
-  total_phases: 2
+  total_phases: 3
   completed_phases: 0
-  total_plans: 9
-  completed_plans: 7
-  percent: 14
+  total_plans: 11
+  completed_plans: 8
+  percent: 78
 ---
 
 # Session State
@@ -20,22 +20,26 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 02 — Mover IA a endpoints de dominio
+**Current focus:** Phase 03 — Validacion IA registro
 
 ## Position
 
-Phase 02 (mover-ia-a-endpoints-de-dominio) — plan 02-01 complete. ai-provider orchestrator service created (Cerebras default + 5-provider fallback chain, AI_PROVIDER env selector); 4 eager AI index files (gemini/groq/deepseek/anthropic) converted to lazy getters; article controller extended with sources (GET) and generate (POST) actions under global::isManager; ARTICLE_PROMPT_TEMPLATE moved to backend. `ia` and `search` resources still present — removed in 02-02 after frontend cutover. 1 plan remaining (02-02).
+Phase 03 (validacion-ia-de-campos-de-texto-libre-en-el-registro) — plan 03-01 complete. `field-validation` service created with `validateFields(fields)` — generic fail-open AI boolean-per-field validator (TIMEOUT_MS=3500, withTimeout+finally, allTrue, stripFences, parsed[k]!==false invariant); additive `generate(prompt)` export added to `ai-provider` (generateArticleDraft delegates). 9/9 Jest tests green; tsc clean; no any. 1 plan remaining (03-02: wire into registration controller/middleware).
 
-(Prior: Phase 01 complete — Codacy security/best-practice issues addressed across 6 plans: NoSQL injection in authController, no-explicit-any cleanup, open-redirect + path-traversal defensive hardening.)
+(Prior: Phase 02 plan 02-01 complete — ai-provider orchestrator service with Cerebras default + 5-provider fallback chain. Phase 01 complete — Codacy security/best-practice issues.)
 
 ```
-Progress: [████████░░] 78% (phase 02: 1/2 plans complete)
+Progress: [███████░░░] 73% (phase 03: 1/2 plans complete)
 ```
 
 ## Accumulated Context
 
 ### Key Decisions (carry forward)
 
+- withTimeout(promise, ms) generic helper clears the timer in finally — no dangling handles; required for Jest not to hang when successful paths resolve before timeout (03-01)
+- validateFields iterates REQUESTED keys, not parsed-response keys — parsed[k] !== false handles missing-field-defaults-true and non-boolean-as-true in one expression (03-01)
+- generateArticleDraft delegates to generate() — shared fallback chain; only one place to change provider order; byte-identical behavior confirmed by existing 5 tests (03-01)
+- JSON.parse result cast to Record<string, unknown> — follows CLAUDE.md no-any rule; avoids implicit any from JSON.parse return type (03-01)
 - resolveProvider() reads AI_PROVIDER at call time (not constructor) so env overrides in tests and runtime take effect correctly per-call without re-instantiation (02-01)
 - PROVIDERS map (Record<AiProviderName, fn>) hides generateText vs generateWithSearch export name differences; all callers see uniform prompt-in, {text}-out signature (02-01)
 - Fallback chain JSON caveat: non-Cerebras providers may return fenced JSON which frontend JSON.parse will fail on — acceptable, Cerebras is default, will be addressed in 02-02 frontend cutover (02-01)
