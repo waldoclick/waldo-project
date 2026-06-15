@@ -1,6 +1,15 @@
 // /src/extensions/users-permissions/controllers/authController.ts
 import crypto from "crypto";
 import { sendMjmlEmail } from "../../../services/mjml";
+import { validateFields } from "../../../services/field-validation";
+
+// Spanish rejection messages per free-text field validated at registration (D-04, D-05).
+// For is_company registrations, firstname maps to "Razón Social" and lastname to "Giro" in
+// the UI, but the field keys are the same — these natural-person labels are acceptable per D-01.
+const FIELD_REJECTION_MESSAGES: Record<string, string> = {
+  firstname: "El nombre no parece válido",
+  lastname: "El apellido no parece válido",
+};
 
 const RESERVED_USERNAMES = new Set([
   "login",
@@ -179,6 +188,24 @@ export const registerUserLocal = (registerController) => async (ctx) => {
     const passwordError = validatePasswordStrength(password);
     if (passwordError) {
       return ctx.badRequest(passwordError);
+    }
+
+    // AI free-text validation gate (D-01, D-04, D-05, D-07).
+    // Only firstname and lastname are evaluated — no passwords, emails, or structured fields.
+    // validateFields NEVER throws; any AI failure returns all-true (fail-open, D-07).
+    const fieldsToValidate: Record<string, string> = {};
+    if (firstname) fieldsToValidate.firstname = String(firstname);
+    if (lastname) fieldsToValidate.lastname = String(lastname);
+
+    const validation = await validateFields(fieldsToValidate);
+    const failedField = Object.keys(validation).find(
+      (k) => validation[k] === false,
+    );
+    if (failedField) {
+      return ctx.badRequest(
+        FIELD_REJECTION_MESSAGES[failedField] ??
+          "Algunos datos no parecen válidos",
+      );
     }
 
     // Resolve username collisions by appending a random 5-digit suffix.

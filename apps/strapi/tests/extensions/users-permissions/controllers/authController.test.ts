@@ -1,6 +1,7 @@
 // Tests for overrideAuthLocal — VSTEP-01, VSTEP-02, VSTEP-03
 // Tests for verifyCode — VSTEP-04, VSTEP-05
 // Tests for resendCode — VSTEP-07
+// Tests for registerUserLocal AI validation gate — Tests A, B, D
 // AAA pattern (Arrange-Act-Assert), all dependencies mocked.
 
 import {
@@ -12,6 +13,17 @@ import {
   registerUserLocal,
   ensureUniqueUsername,
 } from "../../../../src/extensions/users-permissions/controllers/authController";
+
+// --- Mock field-validation (module-level: applies to entire file) ---
+// Test E (end-to-end fail-open, real service) lives in a dedicated sibling file
+// to avoid jest.mock hoisting conflicts.
+jest.mock("../../../../src/services/field-validation", () => ({
+  validateFields: jest.fn(),
+}));
+import { validateFields } from "../../../../src/services/field-validation";
+const mockValidateFields = validateFields as jest.MockedFunction<
+  typeof validateFields
+>;
 
 // --- Mock sendMjmlEmail ---
 jest.mock("../../../../src/services/mjml", () => ({
@@ -73,6 +85,17 @@ const strapiQueryMock = (contentType: string) => {
       },
     },
   },
+  // Strapi v5 contentAPI sanitizer — used by verifyCode to sanitize the user output
+  getModel: jest.fn(() => ({})),
+  contentAPI: {
+    sanitize: {
+      output: jest.fn(async (user: Record<string, unknown>) => ({
+        id: user.id,
+        email: user.email,
+        username: user.username,
+      })),
+    },
+  },
   log: { error: jest.fn() },
 };
 
@@ -81,6 +104,8 @@ const buildCtx = (body: Record<string, unknown> = {}) => ({
   request: { body },
   response: { body: null as unknown },
   body: null as unknown,
+  // ctx.state.auth is read by the Strapi v5 contentAPI sanitizer in verifyCode
+  state: { auth: null as unknown },
   send: jest.fn((data: unknown) => {
     result.body = data;
     return undefined;
@@ -988,14 +1013,17 @@ describe("registerUserLocal", () => {
     lastname: "User",
     email: "test@example.com",
     rut: "12345678-9",
-    password: "password123",
+    password: "Password123",
     username: "testuser",
     accepted_age_confirmation: true,
     accepted_terms: true,
+    accepted_usage_terms: true,
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
+    // Default: AI gate passes all fields — existing tests reach the register controller unaffected
+    mockValidateFields.mockResolvedValue({ firstname: true, lastname: true });
     // Mock strapi.db for createUserReservations
     (global as unknown as Record<string, unknown>).strapi = {
       ...((global as unknown as Record<string, unknown>).strapi as object),
@@ -1073,8 +1101,9 @@ describe("registerUserLocal", () => {
     expect(ctx.badRequest).not.toHaveBeenCalled();
   });
 
-  it("passes accepted_age_confirmation and accepted_terms in userData to original controller", async () => {
-    // Arrange
+  it("strips accepted_* consent fields from forwardBody before calling original controller", async () => {
+    // Arrange: consent fields are excluded from the forwarded body (see authController.ts comment —
+    // Strapi v5 rejects unknown params; consent booleans are persisted via db.query after registration)
     const mockRegister = jest.fn(async (ctx) => {
       ctx.response.body = { jwt: "token", user: { id: 1 } };
     });
@@ -1084,13 +1113,151 @@ describe("registerUserLocal", () => {
     // Act
     await handler(ctx);
 
-    // Assert: registerUserLocal replaces ctx.request.body with userData
+    // Assert: registerUserLocal replaces ctx.request.body with forwardBody (no consent fields)
+    expect(ctx.request.body).not.toHaveProperty("accepted_age_confirmation");
+    expect(ctx.request.body).not.toHaveProperty("accepted_terms");
+    expect(ctx.request.body).not.toHaveProperty("accepted_usage_terms");
+    // Core fields are forwarded
     expect(ctx.request.body).toEqual(
       expect.objectContaining({
-        accepted_age_confirmation: true,
-        accepted_terms: true,
+        firstname: "Test",
+        lastname: "User",
+        email: "test@example.com",
+        rut: "12345678-9",
+        username: "testuser",
       }),
     );
+  });
+});
+
+describe("registerUserLocal AI validation gate", () => {
+  // A valid body that passes all pre-gate checks (required fields + password strength + accepted_usage_terms)
+  const gateValidBody = {
+    is_company: false,
+    firstname: "Juan",
+    lastname: "Pérez",
+    email: "juan@example.com",
+    rut: "12345678-9",
+    password: "Password123",
+    username: "juanperez",
+    accepted_age_confirmation: true,
+    accepted_terms: true,
+    accepted_usage_terms: true,
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    // Mock strapi with all dependencies the gate path needs
+    (global as unknown as Record<string, unknown>).strapi = {
+      db: {
+        query: (contentType: string) => {
+          if (contentType === "api::ad-reservation.ad-reservation") {
+            return {
+              findMany: jest.fn().mockResolvedValue([]),
+              create: jest.fn().mockResolvedValue({}),
+            };
+          }
+          if (
+            contentType ===
+            "api::ad-featured-reservation.ad-featured-reservation"
+          ) {
+            return { create: jest.fn().mockResolvedValue({}) };
+          }
+          if (contentType === "plugin::users-permissions.user") {
+            return {
+              findOne: jest.fn().mockResolvedValue(null),
+              update: jest.fn().mockResolvedValue({}),
+            };
+          }
+          return {};
+        },
+      },
+      log: { error: jest.fn() },
+    };
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("Test A: explicit false on a field rejects with the correct Spanish message and does NOT call registerController", async () => {
+    // Arrange
+    mockValidateFields.mockResolvedValue({ lastname: false });
+    const mockRegister = jest.fn();
+    const handler = registerUserLocal(mockRegister);
+    const ctx = makeCtx(gateValidBody);
+
+    // Act
+    await handler(ctx);
+
+    // Assert
+    expect(ctx.badRequest).toHaveBeenCalledWith("El apellido no parece válido");
+    expect(mockRegister).not.toHaveBeenCalled();
+  });
+
+  it("Test B: all-true result allows registration to proceed (registerController called once)", async () => {
+    // Arrange
+    mockValidateFields.mockResolvedValue({ firstname: true, lastname: true });
+    const mockRegister = jest.fn(async (ctx) => {
+      ctx.response.body = {
+        jwt: "token",
+        user: { id: 42, email: "juan@example.com" },
+      };
+    });
+    const handler = registerUserLocal(mockRegister);
+    const ctx = makeCtx(gateValidBody);
+
+    // Act
+    await handler(ctx);
+
+    // Assert
+    expect(mockRegister).toHaveBeenCalledTimes(1);
+    expect(ctx.badRequest).not.toHaveBeenCalledWith(
+      expect.stringMatching(/no parece válido/),
+    );
+  });
+
+  it("Test D: validateFields is called with exactly firstname and lastname — no password, email, rut, phone, postal_code, birthdate, region, commune, or business_* keys", async () => {
+    // Arrange
+    mockValidateFields.mockResolvedValue({ firstname: true, lastname: true });
+    const mockRegister = jest.fn(async (ctx) => {
+      ctx.response.body = {
+        jwt: "token",
+        user: { id: 42, email: "juan@example.com" },
+      };
+    });
+    const handler = registerUserLocal(mockRegister);
+    const ctx = makeCtx(gateValidBody);
+
+    // Act
+    await handler(ctx);
+
+    // Assert: validateFields was called
+    expect(mockValidateFields).toHaveBeenCalledTimes(1);
+    const calledWith = mockValidateFields.mock.calls[0][0];
+
+    // Only firstname and lastname must be present
+    expect(Object.keys(calledWith).sort()).toEqual(["firstname", "lastname"]);
+
+    // Excluded fields must never appear
+    const excluded = [
+      "password",
+      "email",
+      "rut",
+      "phone",
+      "postal_code",
+      "birthdate",
+      "region",
+      "commune",
+      "business_name",
+      "business_type",
+      "business_address",
+      "business_region",
+      "business_commune",
+    ];
+    for (const field of excluded) {
+      expect(calledWith).not.toHaveProperty(field);
+    }
   });
 });
 
