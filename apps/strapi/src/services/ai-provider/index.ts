@@ -9,6 +9,9 @@ function getAiProviderService(): AiProviderService {
   return aiProviderService;
 }
 
+export const generate = (prompt: string) =>
+  getAiProviderService().generate(prompt);
+
 export const generateArticleDraft = (prompt: string) =>
   getAiProviderService().generateArticleDraft(prompt);
 

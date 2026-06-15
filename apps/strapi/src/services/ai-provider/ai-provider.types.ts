@@ -10,5 +10,6 @@ export interface IAiProviderResult {
 }
 
 export interface IAiProviderService {
+  generate(prompt: string): Promise<IAiProviderResult>;
   generateArticleDraft(prompt: string): Promise<IAiProviderResult>;
 }

@@ -59,7 +59,12 @@ function buildAttemptOrder(selected: AiProviderName): AiProviderName[] {
  * across the fixed FALLBACK_ORDER chain on call-time failure.
  */
 export class AiProviderService implements IAiProviderService {
-  async generateArticleDraft(prompt: string): Promise<IAiProviderResult> {
+  /**
+   * Generic text generation — runs the full provider chain and returns the
+   * first successful result. Both field-validation and article generation
+   * delegate here so the fallback chain is defined exactly once.
+   */
+  async generate(prompt: string): Promise<IAiProviderResult> {
     // Resolve at call time so env overrides in tests take effect per-call
     const selectedProvider = resolveProvider();
     const attemptOrder = buildAttemptOrder(selectedProvider);
@@ -75,5 +80,10 @@ export class AiProviderService implements IAiProviderService {
     }
 
     throw new Error("[ai-provider] all providers failed");
+  }
+
+  /** Article draft generation — delegates to the shared generate() method. */
+  async generateArticleDraft(prompt: string): Promise<IAiProviderResult> {
+    return this.generate(prompt);
   }
 }
