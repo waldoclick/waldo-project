@@ -6,6 +6,10 @@ import { factories } from "@strapi/strapi";
 import { errors } from "@strapi/utils";
 import { searchNews } from "../../../services/tavily";
 import { generateArticleDraft } from "../../../services/ai-provider";
+import {
+  extractFromUrl,
+  uploadImagesFromUrls,
+} from "../../../services/article-source";
 
 const { ApplicationError } = errors;
 
@@ -100,6 +104,24 @@ export default factories.createCoreController(
         return;
       }
 
+      // Fetch the source page HTML: gives the AI the full article (not just the
+      // short Tavily snippet) and yields the images for cover/gallery. Degrades
+      // to the snippet with no images if the fetch fails.
+      let articleContent = source.snippet;
+      let imageUrls: string[] = [];
+      try {
+        const extracted = await extractFromUrl(source.link);
+        if (extracted.content.length > source.snippet.length) {
+          articleContent = extracted.content;
+        }
+        imageUrls = extracted.images;
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : String(error);
+        strapi.log.warn(
+          `[article/generate] source fetch failed, using snippet (${source.link}): ${message}`,
+        );
+      }
+
       // Build the full prompt the same way the frontend did (LightBoxArticles.vue lines 374-380)
       const fullPrompt =
         ARTICLE_PROMPT_TEMPLATE +
@@ -107,11 +129,17 @@ export default factories.createCoreController(
         `Title: ${source.title ?? ""}\n` +
         `Source URL: ${source.link}\n` +
         `Date: ${source.date ?? ""}\n` +
-        `Content:\n${source.snippet}`;
+        `Content:\n${articleContent}`;
 
       try {
         const result = await generateArticleDraft(fullPrompt);
-        ctx.body = { text: result.text };
+
+        // Upload extracted images to the media library: first = cover, rest = gallery.
+        const mediaIds = await uploadImagesFromUrls(imageUrls, strapi);
+        const cover = mediaIds.length > 0 ? [mediaIds[0]] : [];
+        const gallery = mediaIds.slice(1);
+
+        ctx.body = { text: result.text, cover, gallery };
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : String(error);
         strapi.log.error(`[article/generate] ${message}`);

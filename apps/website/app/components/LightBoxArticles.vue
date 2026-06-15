@@ -301,6 +301,10 @@ async function handleGenerate() {
       seo_description: string;
     } | null = null;
 
+    // Media ids extracted from the source page by the backend (1st = cover, rest = gallery)
+    let cover: number[] = [];
+    let gallery: number[] = [];
+
     if (articlesStore.hasAICache(item.link)) {
       const { isConfirmed, isDismissed } = await Swal.fire({
         title: "Respuesta guardada",
@@ -317,13 +321,34 @@ async function handleGenerate() {
         return;
       }
       if (isConfirmed) {
-        parsed = articlesStore.getAICache(item.link)!.result as typeof parsed;
+        const cached = articlesStore.getAICache(item.link)!.result as {
+          title: string;
+          header: string;
+          body: string;
+          seo_title: string;
+          seo_description: string;
+          cover?: number[];
+          gallery?: number[];
+        };
+        parsed = {
+          title: cached.title,
+          header: cached.header,
+          body: cached.body,
+          seo_title: cached.seo_title,
+          seo_description: cached.seo_description,
+        };
+        cover = cached.cover ?? [];
+        gallery = cached.gallery ?? [];
       }
     }
 
     if (!parsed) {
       // 2. Call the domain generate endpoint — backend builds the prompt and picks the provider
-      const result = await client<{ text: string }>("/articles/generate", {
+      const result = await client<{
+        text: string;
+        cover?: number[];
+        gallery?: number[];
+      }>("/articles/generate", {
         method: "POST",
         body: {
           source: {
@@ -344,9 +369,11 @@ async function handleGenerate() {
         seo_title: string;
         seo_description: string;
       };
+      cover = result.cover ?? [];
+      gallery = result.gallery ?? [];
 
-      // Cache the parsed result for future use in this session
-      articlesStore.setAICache(item.link, parsed);
+      // Cache the parsed result (with media ids) for future use in this session
+      articlesStore.setAICache(item.link, { ...parsed, cover, gallery });
     }
 
     // 4. Check for duplicate before creating
@@ -387,6 +414,8 @@ async function handleGenerate() {
           seo_description: parsed!.seo_description,
           source_url: item.link,
           is_published: false,
+          ...(cover.length > 0 && { cover }),
+          ...(gallery.length > 0 && { gallery }),
         },
       },
     });
