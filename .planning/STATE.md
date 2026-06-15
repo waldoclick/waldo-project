@@ -24,9 +24,9 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 
 ## Position
 
-Phase 01 (corregir-issues-codacy) — plan 01-00 complete (Wave 0 regression gate). 4 RED-by-design security guards committed: ad_id={$gt:0} (saveDraft, RED until 01-02), pendingToken={$ne:null} (authController, RED until 01-01), payload.pack={$ne:''} (checkout, RED until 01-02), useProviders open-redirect allowlist (RED until 01-05). saveDraft now has first-ever characterization coverage. No production code modified; Wave 1 (01-01/01-02/01-05) turns each RED test green. 6 plans remain (01-01..01-06).
+Phase 02 (mover-ia-a-endpoints-de-dominio) — plan 02-01 complete. ai-provider orchestrator service created (Cerebras default + 5-provider fallback chain, AI_PROVIDER env selector); 4 eager AI index files (gemini/groq/deepseek/anthropic) converted to lazy getters; article controller extended with sources (GET) and generate (POST) actions under global::isManager; ARTICLE_PROMPT_TEMPLATE moved to backend. `ia` and `search` resources still present — removed in 02-02 after frontend cutover. 1 plan remaining (02-02).
 
-(Prior: Phase 129 complete — @nuxtjs/strapi eliminated from apps/website; httpOnly waldo_jwt cookie sole JWT carrier; proxy single Strapi exit point.)
+(Prior: Phase 01 complete — Codacy security/best-practice issues addressed across 6 plans: NoSQL injection in authController, no-explicit-any cleanup, open-redirect + path-traversal defensive hardening.)
 
 ```
 Progress: [████████░░] 78% (phase 02: 1/2 plans complete)
