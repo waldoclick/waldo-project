@@ -5,7 +5,7 @@
       :title="pageData.article.title"
       :category-name="pageData.article.categories[0]?.name || ''"
       :category-slug="pageData.article.categories[0]?.slug || ''"
-      :published-at="pageData.article.publishedAt"
+      :published-at="pageData.article.createdAt"
     />
     <ArticleSingle :article="pageData.article" />
     <RelatedArticles
@@ -79,7 +79,7 @@ const { data: pageData, pending } = await useAsyncData<ArticlePageData>(
         slug: { $ne: article.slug },
       } as unknown as Record<string, unknown>,
       { page: 1, pageSize: 6 },
-      ["publishedAt:desc"],
+      ["createdAt:desc"],
     );
     let related = articlesStore.articles;
 
@@ -89,7 +89,7 @@ const { data: pageData, pending } = await useAsyncData<ArticlePageData>(
       await articlesStore.loadArticles(
         { slug: { $ne: article.slug } } as Record<string, unknown>,
         { page: 1, pageSize: 6 },
-        ["publishedAt:desc"],
+        ["createdAt:desc"],
       );
       const fill = articlesStore.articles.filter((a) => !existingIds.has(a.id));
       related = [...related, ...fill].slice(0, 6);

@@ -48,13 +48,13 @@
         {{ stringTruncate(article.header, 120) }}
       </p>
 
-      <div v-if="article.publishedAt" class="card--article__info__date">
+      <div v-if="article.createdAt" class="card--article__info__date">
         {{
           new Intl.DateTimeFormat("es-CL", {
             year: "numeric",
             month: "long",
             day: "numeric",
-          }).format(new Date(article.publishedAt))
+          }).format(new Date(article.createdAt))
         }}
       </div>
 

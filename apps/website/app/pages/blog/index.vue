@@ -98,7 +98,7 @@ const { data: blogData } = await useAsyncData<BlogData>(
     const order = route.query.order?.toString() || "recent";
 
     const sortParams =
-      order === "oldest" ? ["publishedAt:asc"] : ["publishedAt:desc"];
+      order === "oldest" ? ["createdAt:asc"] : ["createdAt:desc"];
 
     const filtersParams: Record<string, unknown> = {
       ...(category && { categories: { slug: { $eq: category } } }),
@@ -120,7 +120,7 @@ const { data: blogData } = await useAsyncData<BlogData>(
       relatedLoading = true;
       try {
         await articlesStore.loadArticles({}, { page: 1, pageSize: 12 }, [
-          "publishedAt:desc",
+          "createdAt:desc",
         ]);
         relatedArticles = articlesStore.articles;
       } catch (err) {

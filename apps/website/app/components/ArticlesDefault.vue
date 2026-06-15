@@ -34,7 +34,7 @@
               <div v-else class="articles--default__title">-</div>
             </TableCell>
             <TableCell>
-              <BadgeDefault v-if="article.publishedAt" variant="default">
+              <BadgeDefault v-if="article.createdAt" variant="default">
                 Publicado
               </BadgeDefault>
               <BadgeDefault v-else variant="outline"> Borrador </BadgeDefault>
@@ -105,7 +105,7 @@ interface Article {
   id: number;
   documentId?: string;
   title: string;
-  publishedAt: string | null;
+  createdAt: string;
   updatedAt: string;
 }
 
