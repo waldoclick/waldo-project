@@ -8,31 +8,26 @@
       <div class="auth__form">
         <div class="auth__form__inner">
           <NuxtLink to="/" class="auth__form__back" title="Ir al inicio">
-            <img
-              loading="lazy"
-              decoding="async"
-              :src="mobileMenuClose"
-              alt="mobile menu close"
-              title="mobile menu close"
-            />
+            <IconChevronLeft :size="17" :stroke-width="2.2" />
             <span>Ir al inicio</span>
           </NuxtLink>
           <h1 class="auth__form__title title">Ingresa a tu cuenta</h1>
-          <div class="auth__form__fields">
-            <FormLogin />
-          </div>
-          <div
-            v-if="providers?.google /* || providers?.facebook */"
-            class="auth__form__separator"
-          >
-            o
-          </div>
+          <p class="auth__form__description">Bienvenido de vuelta a Waldo.click®</p>
           <div class="auth__form__social">
             <LoginWithGoogle v-if="providers?.google" />
             <!-- <LoginWithFacebook v-if="providers?.facebook" /> -->
             <div v-if="providersPending" class="auth__form__loading">
               <p>Cargando opciones de inicio de sesión...</p>
             </div>
+          </div>
+          <div
+            v-if="providers?.google /* || providers?.facebook */"
+            class="auth__form__separator"
+          >
+            o con tu correo
+          </div>
+          <div class="auth__form__fields">
+            <FormLogin />
           </div>
           <div class="auth__form__help">
             <p>
@@ -58,13 +53,11 @@
 
 <script setup lang="ts">
 import { useAsyncData } from "nuxt/app";
+import { ChevronLeft as IconChevronLeft } from "lucide-vue-next";
 import IntroduceAuth from "@/components/IntroduceAuth.vue";
 import FormLogin from "@/components/FormLogin.vue";
 import LoginWithGoogle from "@/components/LoginWithGoogle.vue";
 // import LoginWithFacebook from "@/components/LoginWithFacebook.vue";
-
-// Import the image
-import mobileMenuClose from "/images/mobile-menu-close.svg";
 
 // Obtener la configuración de runtime
 const config = useRuntimeConfig();
