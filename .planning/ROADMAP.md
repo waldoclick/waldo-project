@@ -40,12 +40,12 @@
 4. Cero cambios de comportamiento en los flujos de auth (login/registro/verificación/reset funcionan igual)
 5. Las variables nuevas viven junto a las existentes en `_variables.scss`; solo cambia de tono lo que ya migró a usarlas (auth). El resto del sitio sigue con las variables viejas hasta su fase. Marca intacta, sin font swap (Poppins ya existe)
 
-**Plans:** 7 plans (3 waves)
+**Plans:** 3/7 plans executed
 
 Plans:
 - [x] 04-01-PLAN.md — Add new SCSS design tokens to _variables.scss + confirm Poppins global (TOK-01, TOK-02)
-- [ ] 04-02-PLAN.md — Restyle shared form primitives scoped under .auth (inputs, buttons, separator, checkboxes, password controls, strength meter) + remove duplicate .form--verify (TOK-01, TOK-03)
-- [ ] 04-03-PLAN.md — 50/50 layout + cream brand-panel card with amber glows (IntroduceAuth) + amber Google button (TOK-03, AUTH-01..04)
+- [x] 04-02-PLAN.md — Restyle shared form primitives scoped under .auth (inputs, buttons, separator, checkboxes, password controls, strength meter) + remove duplicate .form--verify (TOK-01, TOK-03)
+- [x] 04-03-PLAN.md — 50/50 layout + cream brand-panel card with amber glows (IntroduceAuth) + amber Google button (TOK-03, AUTH-01..04)
 - [ ] 04-04-PLAN.md — Login screen restyle: Google-first order, divider, secondary submit, lucide back link (AUTH-01)
 - [ ] 04-05-PLAN.md — Register restyle: 2-step indicator, generate, amber/secondary buttons + confirmar (AUTH-02)
 - [ ] 04-06-PLAN.md — Verify 2FA restyle: 62px OTP boxes, amber focus + verificar (AUTH-03)
