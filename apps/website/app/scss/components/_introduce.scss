@@ -19,15 +19,13 @@
       padding: 52px;
       display: flex;
       flex-direction: column;
-      // Group header + content + footer as one vertically-centered stack with a
-      // fixed gap, instead of space-between (which spreads them to the card edges
-      // and leaves huge empty gaps on tall screens).
-      justify-content: center;
-      gap: 56px;
+      // Logo pinned at the top, footer pinned at the bottom, the title block sits
+      // just below the logo (a fixed gap — not vertically centered, which pushed
+      // the logo down and left a double gap above it).
+      justify-content: flex-start;
 
       @include screen-large {
         padding: 32px 28px;
-        gap: 36px;
       }
 
       &__glow {
@@ -94,6 +92,11 @@
       z-index: 2;
       display: flex;
       flex-direction: column;
+      margin-top: 56px;
+
+      @include screen-large {
+        margin-top: 36px;
+      }
     }
 
     &__title {
@@ -149,6 +152,7 @@
 
     &__footer {
       position: relative;
+      margin-top: auto;
       display: flex;
       align-items: center;
       gap: 9px;
