@@ -447,3 +447,167 @@ input:-webkit-autofill {
 .form__control[style*="--textarea-height"] {
   height: var(--textarea-height);
 }
+
+// ─── Auth-scoped overrides ────────────────────────────────────────────────────
+// All rules are nested under .auth so only auth pages are affected.
+// Global .form-control / .btn--primary / etc. rules above remain untouched.
+.auth {
+  // 1. Inputs
+  .form-control,
+  .form__control {
+    border: 1px solid $line;
+    border-radius: 7px;
+    background: #fff;
+    color: $ink;
+    font-size: 15px;
+    padding: 14px 15px;
+
+    &::placeholder {
+      color: $placeholder;
+      font-size: 15px;
+      font-weight: normal;
+    }
+
+    &:hover,
+    &:active,
+    &:focus {
+      border: 1px solid $amber_hover;
+      box-shadow: 0 0 0 3px rgba(247, 201, 126, 0.25);
+    }
+
+    &:disabled {
+      &:hover,
+      &:active,
+      &:focus {
+        border: 1px solid $line;
+        box-shadow: none;
+      }
+    }
+  }
+
+  // Keep height for inputs inside auth
+  input.form-control,
+  input.form__control {
+    height: 48px;
+  }
+
+  // 2. Labels — static (not floating) inside auth
+  .form-label,
+  .form__label {
+    position: static;
+    left: auto;
+    top: auto;
+    padding: 0;
+    background: transparent;
+    font-size: 13px;
+    font-weight: 600;
+    color: $muted;
+    margin-bottom: 8px;
+  }
+
+  // 3. Primary button (amber) — overrides global .btn--primary
+  .btn--primary {
+    background: $amber;
+    color: $ink;
+    border-radius: 9px;
+    font-weight: 700;
+    border: none;
+
+    &:hover,
+    &:focus,
+    &:active {
+      background: $amber_hover;
+      color: $ink;
+    }
+  }
+
+  // 4. Secondary button (white with $line border)
+  .btn--secondary {
+    background: #fff;
+    color: $ink;
+    border: 1px solid $line;
+    border-radius: 7px;
+    text-decoration: none;
+    font-weight: 600;
+
+    &:hover,
+    &:focus,
+    &:active {
+      background: $cream;
+      color: $ink;
+      border-color: $line;
+    }
+  }
+
+  // 5. Separator — retone lines and center text
+  .auth__form__separator {
+    color: $muted;
+    font-size: 12.5px;
+    font-weight: 500;
+
+    &::before,
+    &::after {
+      background: $line;
+    }
+  }
+
+  // 6. Password controls
+  .form-group--password__show-password,
+  .form__group--password__show-password {
+    color: $ink2;
+    font-weight: 600;
+    font-size: 13px;
+
+    &:hover {
+      color: $ink;
+    }
+  }
+
+  .form-group--password__generate,
+  .form__group--password__generate {
+    color: $ink;
+    text-decoration: underline;
+    font-weight: 700;
+    font-size: 12.5px;
+  }
+
+  // 7. Checkboxes
+  .form-check-input {
+    accent-color: $amber_hover;
+    width: 18px;
+    height: 18px;
+  }
+
+  .form-check-label {
+    color: $ink2;
+    font-weight: 500;
+
+    a {
+      color: $ink;
+      font-weight: 700;
+      text-decoration: underline;
+    }
+  }
+
+  // 8. Register step indicator (markup added by Plan 05)
+  .form--register__steps {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 30px;
+  }
+
+  .form--register__steps__pill {
+    width: 28px;
+    height: 4px;
+    border-radius: 99px;
+    background: $amber;
+  }
+
+  .form--register__steps__label {
+    font-size: 12.5px;
+    color: $muted;
+    font-weight: 500;
+    margin-left: 5px;
+  }
+}
