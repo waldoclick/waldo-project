@@ -46,7 +46,7 @@
         :disabled="!meta.valid || sending"
         :title="`Iniciar Sesión`"
         type="submit"
-        class="btn btn--block btn--primary"
+        class="btn btn--block btn--secondary"
       >
         <span v-if="!sending">Iniciar Sesión</span>
         <span v-if="sending">Iniciando sesión...</span>
