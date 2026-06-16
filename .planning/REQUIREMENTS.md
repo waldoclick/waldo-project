@@ -9,8 +9,8 @@ Milestone scope: migrar la maqueta nueva (en `/design`) a los componentes reales
 
 ### Tokens compartidos (se establecen en la fase auth)
 
-- [ ] **TOK-01**: Se crean variables SCSS NUEVAS con los valores de la maqueta (ink, amber/amberH, ink2, muted, cream, line, error, éxito) y los componentes apuntan a ellas; las variables existentes NO se modifican
-- [ ] **TOK-02**: Poppins es la fuente global de la(s) app(s)
+- [x] **TOK-01**: Se crean variables SCSS NUEVAS con los valores de la maqueta (ink, amber/amberH, ink2, muted, cream, line, error, éxito) y los componentes apuntan a ellas; las variables existentes NO se modifican
+- [x] **TOK-02**: Poppins es la fuente global de la(s) app(s)
 - [ ] **TOK-03**: La iconografía Lucide se aplica según la maqueta
 
 ### Auth
@@ -34,8 +34,8 @@ Milestone scope: migrar la maqueta nueva (en `/design`) a los componentes reales
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| TOK-01 | Phase 04 | Pending |
-| TOK-02 | Phase 04 | Pending |
+| TOK-01 | Phase 04 | Complete |
+| TOK-02 | Phase 04 | Complete |
 | TOK-03 | Phase 04 | Pending |
 | AUTH-01 | Phase 04 | Pending |
 | AUTH-02 | Phase 04 | Pending |

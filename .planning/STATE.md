@@ -1,15 +1,15 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.47
-milestone_name: Rediseño visual
-status: defining-requirements
-last_updated: "2026-06-16T00:00:00.000Z"
+milestone_name: Rediseño visual (rebrand)
+status: unknown
+last_updated: "2026-06-16T20:48:37.386Z"
 last_activity: 2026-06-16
 progress:
-  total_phases: 1
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_phases: 4
+  completed_phases: 1
+  total_plans: 18
+  completed_plans: 10
   percent: 0
 ---
 
@@ -20,7 +20,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-16)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** v1.47 Rediseño visual — defining requirements (auth first)
+**Current focus:** Phase 04 — Auth + tokens base
 
 ## Position
 

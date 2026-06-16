@@ -43,7 +43,7 @@
 **Plans:** 7 plans (3 waves)
 
 Plans:
-- [ ] 04-01-PLAN.md — Add new SCSS design tokens to _variables.scss + confirm Poppins global (TOK-01, TOK-02)
+- [x] 04-01-PLAN.md — Add new SCSS design tokens to _variables.scss + confirm Poppins global (TOK-01, TOK-02)
 - [ ] 04-02-PLAN.md — Restyle shared form primitives scoped under .auth (inputs, buttons, separator, checkboxes, password controls, strength meter) + remove duplicate .form--verify (TOK-01, TOK-03)
 - [ ] 04-03-PLAN.md — 50/50 layout + cream brand-panel card with amber glows (IntroduceAuth) + amber Google button (TOK-03, AUTH-01..04)
 - [ ] 04-04-PLAN.md — Login screen restyle: Google-first order, divider, secondary submit, lucide back link (AUTH-01)
