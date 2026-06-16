@@ -11,13 +11,7 @@
             class="auth__form__back"
             title="Volver al inicio de sesión"
           >
-            <img
-              loading="lazy"
-              decoding="async"
-              :src="mobileMenuClose"
-              alt="volver"
-              title="volver"
-            />
+            <IconChevronLeft :size="17" :stroke-width="2.2" />
             <span>Volver</span>
           </NuxtLink>
           <h1 class="auth__form__title title">Verificación en dos pasos</h1>
@@ -53,9 +47,9 @@
 
 <script setup>
 import { ref, computed } from "vue";
+import { ChevronLeft as IconChevronLeft } from "lucide-vue-next";
 import IntroduceAuth from "@/components/IntroduceAuth.vue";
 import FormVerifyCode from "@/components/FormVerifyCode.vue";
-import mobileMenuClose from "/images/mobile-menu-close.svg";
 
 definePageMeta({
   layout: "auth",
