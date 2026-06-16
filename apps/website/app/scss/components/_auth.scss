@@ -7,56 +7,92 @@
   overflow: hidden;
   min-height: 100vh;
 
-  @include screen-large {
-    flex-direction: column-reverse;
-    min-height: auto;
-  }
-
-  &__introduce,
-  &__form {
-    flex-grow: 1;
-    flex-basis: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-
-    // On mobile each panel stacks full-width and sizes to its own content —
-    // flex-basis:0 + flex-grow on a column with auto height collapses them.
-    @include screen-large {
-      flex: none;
-      width: 100%;
-      min-height: auto;
-    }
+  // ≤880px (design breakpoint): brand panel is hidden and the form becomes a
+  // full-width block — NOT stacked below the brand panel.
+  @media (max-width: 880px) {
+    display: block;
+    overflow: visible;
   }
 
   &__introduce {
-    // No padding here — the gap around the cream card is owned by
-    // .introduce--auth (22px). Having both = double padding.
+    flex: 1 1 50%;
+    min-width: 0;
+    display: flex;
+    // No padding here — the 22px gap around the cream card is owned by
+    // .introduce--auth. Having both = double padding.
     padding: 0;
-    width: 50%;
 
-    @include screen-large {
-      width: auto;
+    @media (max-width: 880px) {
+      display: none;
     }
   }
 
   &__form {
-    overflow: auto;
-    padding: 25px;
-    width: 100%;
+    flex: 1 1 50%;
+    min-width: 0;
+    overflow-y: auto;
+    display: flex;
 
-    @include screen-large {
+    @media (max-width: 880px) {
+      display: block;
       overflow: visible;
     }
 
     &__inner {
+      margin: auto;
       width: 100%;
       max-width: 486px;
-      padding: 50px 0;
+      padding: 56px 60px 84px;
 
-      @include screen-large {
-        padding: 0;
+      @media (max-width: 1080px) {
+        padding: 48px 44px 72px;
+      }
+
+      @media (max-width: 880px) {
+        max-width: 520px;
+        padding: 28px 24px 56px;
+      }
+
+      @media (max-width: 420px) {
+        padding: 24px 18px 48px;
+      }
+    }
+
+    // Mobile header (logo + chip) — only shown when the brand panel is hidden (≤880px)
+    &__mhead {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 30px;
+
+      @media (max-width: 880px) {
+        display: flex;
+      }
+
+      img {
+        height: 26px;
+        width: auto;
+        display: block;
+      }
+
+      &__chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: rgba(247, 201, 126, 0.32);
+        color: $ink;
+        font-weight: 600;
+        font-size: 11px;
+        white-space: nowrap;
+        padding: 5px 11px;
+        border-radius: 99px;
+
+        &__dot {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: $amber_hover;
+        }
       }
     }
 

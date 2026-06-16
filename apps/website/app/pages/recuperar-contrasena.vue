@@ -7,6 +7,7 @@
       </div>
       <div class="auth__form">
         <div class="auth__form__inner">
+          <AuthMobileHeader />
           <NuxtLink to="/" class="auth__form__back" title="Ir al inicio">
             <IconChevronLeft :size="17" :stroke-width="2.2" />
             <span>Ir al inicio</span>

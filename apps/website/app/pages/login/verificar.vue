@@ -6,6 +6,7 @@
       </div>
       <div class="auth__form">
         <div class="auth__form__inner">
+          <AuthMobileHeader />
           <NuxtLink
             to="/login"
             class="auth__form__back"
