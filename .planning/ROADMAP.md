@@ -38,7 +38,7 @@
 2. Las variables SCSS quedan recalibradas a la paleta nueva y Poppins es la fuente global
 3. La iconografía Lucide se aplica donde la maqueta la usa
 4. Cero cambios de comportamiento en los flujos de auth (login/registro/verificación/reset funcionan igual)
-5. Blast radius asumido: al desplegar, el resto del sitio aún sin migrar hereda Poppins + neutros nuevos sobre markup viejo — verificado que degrada aceptablemente, o se decide desplegar el token-swap junto con las 4 áreas
+5. Recalibrar los ~8 hex de marca en `_variables.scss` (mismas variables/roles) corre todo el sitio al tono nuevo de inmediato — efecto buscado, marca intacta, no hay font swap (Poppins ya existe). Cada área se ocupa de sus ajustes de markup en su propia fase
 
 ### Phase 05: Sitio público
 
