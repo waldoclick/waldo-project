@@ -8,10 +8,9 @@
   &__label {
     display: block;
     font-weight: 600;
-    font-size: 12px;
-    letter-spacing: 0.25px;
-    color: $charcoal;
-    margin-bottom: 10px;
+    font-size: 13px;
+    color: $muted;
+    margin-bottom: 12px;
   }
 
   // Row of 6 individual digit inputs
@@ -23,26 +22,27 @@
     &__input {
       flex: 1;
       min-width: 0;
-      height: 48px;
-      border: 2px solid $platinum;
-      border-radius: 4px;
-      background: white;
+      height: 62px;
+      border: 1.5px solid $line;
+      border-radius: 10px;
+      background: #fff;
       text-align: center;
-      font-size: 22px;
-      font-weight: 600;
-      color: $charcoal;
+      font-size: 24px;
+      font-weight: 700;
+      color: $ink;
       outline: none;
       transition: border-color 0.2s;
       padding: 0;
-      caret-color: $charcoal;
+      caret-color: $ink;
 
       &::placeholder {
-        color: $platinum;
+        color: $placeholder;
         font-weight: normal;
       }
 
       &:focus {
-        border-color: $charcoal;
+        border-color: $amber_hover;
+        box-shadow: 0 0 0 3px rgba(247, 201, 126, 0.25);
       }
     }
   }
