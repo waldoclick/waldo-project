@@ -2,6 +2,7 @@
 
 ## Milestones
 
+- 🚧 **v1.47 Rediseño visual (rebrand)** — Phases 04–07 (started 2026-06-16). Auth first.
 - ✅ **v1.46 PRO Subscriptions + Post-Merge Hardening** — Phases 102–129 (shipped 2026-06-14). See `.planning/milestones/v1.46-ROADMAP.md`
 - ✅ **v1.45 User Onboarding** — Phases 099–101 (shipped 2026-03-20). See `.planning/milestones/v1.45-ROADMAP.md`
 - ✅ **v1.44 Google One Tap Sign-In** — Phases 094–098 (shipped 2026-03-19). See `.planning/milestones/v1.44-ROADMAP.md`
@@ -25,11 +26,48 @@
 - ✅ **v1.39 Unified API Client** — Phases 089–090 (shipped 2026-03-15). See `.planning/milestones/v1.39-ROADMAP.md`
 - ✅ **v1.40 Shared Authentication Session** — Phases 091–092 (shipped 2026-03-16). See `.planning/milestones/v1.40-ROADMAP.md`
 
-## Phases
+## Phases — v1.47 Rediseño visual
 
-No active milestone. All shipped milestones are archived under `.planning/milestones/`.
+### Phase 04: Auth + tokens base
 
-Start the next milestone with `/gsd:new-milestone` (questioning → research → requirements → roadmap).
+**Goal:** Establecer los tokens compartidos (recalibrar variables SCSS a la paleta nueva, fuente Poppins, iconos Lucide) y restilizar auth (login, registro, verificación, reset/forgot) a la maqueta. Primera fase: deja la base que reusan las demás áreas.
+**Requirements:** TOK-01, TOK-02, TOK-03, AUTH-01, AUTH-02, AUTH-03, AUTH-04
+**Depends on:** —
+**Success criteria:**
+1. Login, registro, verificación y reset/forgot se ven según la maqueta (color, tipografía, espaciado, iconos)
+2. Las variables SCSS quedan recalibradas a la paleta nueva y Poppins es la fuente global
+3. La iconografía Lucide se aplica donde la maqueta la usa
+4. Cero cambios de comportamiento en los flujos de auth (login/registro/verificación/reset funcionan igual)
+5. Blast radius asumido: al desplegar, el resto del sitio aún sin migrar hereda Poppins + neutros nuevos sobre markup viejo — verificado que degrada aceptablemente, o se decide desplegar el token-swap junto con las 4 áreas
+
+### Phase 05: Sitio público
+
+**Goal:** Restilizar el sitio público (home, listados de avisos, detalle de aviso, blog, perfiles públicos, checkout/pago) a la maqueta, reusando los tokens de la fase auth.
+**Requirements:** PUB-01, PUB-02, PUB-03
+**Depends on:** Phase 04
+**Success criteria:**
+1. Home, listados y detalle de aviso se ven según la maqueta
+2. Blog (listado + artículo) se ve según la maqueta
+3. Perfiles públicos y checkout/pago se ven según la maqueta
+4. Cero cambios de comportamiento
+
+### Phase 06: Cuenta
+
+**Goal:** Restilizar las páginas de cuenta (perfil, mis anuncios, mis órdenes) a la maqueta.
+**Requirements:** ACC-01
+**Depends on:** Phase 04
+**Success criteria:**
+1. Perfil, mis anuncios y mis órdenes se ven según la maqueta
+2. Cero cambios de comportamiento
+
+### Phase 07: Dashboard
+
+**Goal:** Restilizar el dashboard (layout, listados, formularios) a la maqueta.
+**Requirements:** DASH-01
+**Depends on:** Phase 04
+**Success criteria:**
+1. Layout, listados y formularios del dashboard se ven según la maqueta
+2. Cero cambios de comportamiento
 
 ## Progress
 
