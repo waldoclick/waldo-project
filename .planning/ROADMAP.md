@@ -49,7 +49,7 @@ Plans:
 - [x] 04-04-PLAN.md — Login screen restyle: Google-first order, divider, secondary submit, lucide back link (AUTH-01)
 - [x] 04-05-PLAN.md — Register restyle: 2-step indicator, generate, amber/secondary buttons + confirmar (AUTH-02)
 - [x] 04-06-PLAN.md — Verify 2FA restyle: 62px OTP boxes, amber focus + verificar (AUTH-03)
-- [ ] 04-07-PLAN.md — Recover + reset restyle: amber submits, lucide generate, dead-import cleanup (AUTH-04)
+- [x] 04-07-PLAN.md — Recover + reset restyle: amber submits, lucide generate, dead-import cleanup (AUTH-04)
 
 > Las áreas público, cuenta y dashboard se agregarán como fases recién cuando el usuario apruebe cada rediseño.
 
