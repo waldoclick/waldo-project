@@ -23,24 +23,26 @@
       <!-- Password -->
       <div class="form-group form-group--password">
         <label class="form-label" for="password">Contraseña</label>
-        <Field
-          v-model="form.password"
-          name="password"
-          :type="passwordType"
-          class="form-control"
-          placeholder="Tu contraseña"
-          autocomplete="current-password"
-          maxlength="50"
-        />
-        <button
-          class="form-group--password__show-password"
-          type="button"
-          :title="`Mostrar/ocultar contraseña`"
-          @click="handleShowPassword"
-        >
-          <strong v-if="passwordType !== 'password'">Ocultar</strong>
-          <strong v-else>Mostrar</strong>
-        </button>
+        <div class="form-group--password__field">
+          <Field
+            v-model="form.password"
+            name="password"
+            :type="passwordType"
+            class="form-control"
+            placeholder="Tu contraseña"
+            autocomplete="current-password"
+            maxlength="50"
+          />
+          <button
+            class="form-group--password__show-password"
+            type="button"
+            :title="`Mostrar/ocultar contraseña`"
+            @click="handleShowPassword"
+          >
+            <strong v-if="passwordType !== 'password'">Ocultar</strong>
+            <strong v-else>Mostrar</strong>
+          </button>
+        </div>
         <ErrorMessage name="password" />
       </div>
 

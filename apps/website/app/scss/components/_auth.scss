@@ -100,34 +100,21 @@
     &__separator {
       display: flex;
       align-items: center;
-      justify-content: center;
-      position: relative;
+      gap: 14px;
+      white-space: nowrap;
 
-      font-style: normal;
-      font-weight: 600;
-      font-size: 12px;
-      line-height: 1.3;
-      color: $charcoal;
-      margin-bottom: 20px;
+      font-weight: 500;
+      font-size: 12.5px;
+      color: $muted;
+      margin: 26px 0;
 
-      &::before {
-        content: "";
-        width: 43%;
-        height: 1px;
-        background: $gainsboro;
-        position: absolute;
-        left: 0;
-        margin-top: 3px;
-      }
-
+      // Lines flank the text and stay vertically centered with it
+      &::before,
       &::after {
         content: "";
-        width: 43%;
+        flex: 1;
         height: 1px;
-        background: $gainsboro;
-        position: absolute;
-        right: 0;
-        margin-top: 3px;
+        background: $line;
       }
     }
 

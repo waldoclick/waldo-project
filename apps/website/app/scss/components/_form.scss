@@ -600,6 +600,26 @@ input:-webkit-autofill {
     }
   }
 
+  // Password input + toggle: keep the show/hide button vertically centered
+  // inside the input (not floating at the label height)
+  .form-group--password__field,
+  .form__group--password__field {
+    position: relative;
+
+    .form-control {
+      padding-right: 84px;
+    }
+
+    .form-group--password__show-password,
+    .form__group--password__show-password {
+      position: absolute;
+      top: 50%;
+      right: 12px;
+      bottom: auto;
+      transform: translateY(-50%);
+    }
+  }
+
   .form-group--password__show-password,
   .form__group--password__show-password {
     color: $ink2;
