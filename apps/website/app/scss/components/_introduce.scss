@@ -19,14 +19,15 @@
       padding: 52px;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      // Group header + content + footer as one vertically-centered stack with a
+      // fixed gap, instead of space-between (which spreads them to the card edges
+      // and leaves huge empty gaps on tall screens).
+      justify-content: center;
+      gap: 56px;
 
-      // On small screens the card flows top-down with even spacing instead of
-      // space-between (which would crush the footer against the bullets).
       @include screen-large {
         padding: 32px 28px;
-        justify-content: flex-start;
-        gap: 32px;
+        gap: 36px;
       }
 
       &__glow {
