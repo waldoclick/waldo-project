@@ -586,6 +586,20 @@ input:-webkit-autofill {
   }
 
   // 6. Password controls
+  // Topbar: label (left) + "Generar segura" (right) on one row, per mockup
+  .form-group--password__topbar,
+  .form__group--password__topbar {
+    justify-content: space-between;
+    height: auto;
+    margin-bottom: 8px;
+
+    .form-label,
+    .form__label {
+      position: static;
+      margin-bottom: 0;
+    }
+  }
+
   .form-group--password__show-password,
   .form__group--password__show-password {
     color: $ink2;

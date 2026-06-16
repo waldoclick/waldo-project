@@ -92,8 +92,8 @@
       </div>
 
       <div class="form-group form-group--password form-group--withgen">
-        <label class="form-label" for="password">Contraseña</label>
         <div class="form-group--password__topbar">
+          <label class="form-label" for="password">Contraseña</label>
           <button
             type="button"
             class="form-group--password__generate"
