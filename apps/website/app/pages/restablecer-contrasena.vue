@@ -7,16 +7,11 @@
       <div class="auth__form">
         <div class="auth__form__inner">
           <NuxtLink to="/" class="auth__form__back" title="Ir al inicio">
-            <img
-              loading="lazy"
-              decoding="async"
-              :src="mobileMenuCloseSrc"
-              alt="Cerrar menú móvil"
-              title="Cerrar menú móvil"
-            />
+            <IconChevronLeft :size="17" :stroke-width="2.2" />
             <span>Ir al inicio</span>
           </NuxtLink>
           <h2 class="auth__form__title title">Restablece tu contraseña</h2>
+          <p class="auth__form__description">Elige una contraseña nueva y segura para tu cuenta. No podrás reutilizar la anterior.</p>
           <div class="auth__form__fields">
             <FormResetPassword />
           </div>
@@ -35,14 +30,12 @@
 </template>
 
 <script lang="ts" setup>
+import { ChevronLeft as IconChevronLeft } from "lucide-vue-next";
 import { useNuxtApp } from "#app";
 
 // Components
 import IntroduceAuth from "@/components/IntroduceAuth.vue";
 import FormResetPassword from "@/components/FormResetPassword.vue";
-
-// Importar la imagen
-import mobileMenuClose from "/images/mobile-menu-close.svg";
 
 // Define SEO y structured data
 const { $setSEO, $setStructuredData } = useNuxtApp();
@@ -59,9 +52,6 @@ const page = {
     ],
   },
 };
-
-// Ruta de la imagen
-const mobileMenuCloseSrc = mobileMenuClose;
 
 // Set SEO
 $setSEO({
