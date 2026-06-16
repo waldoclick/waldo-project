@@ -11,13 +11,7 @@
             class="auth__form__back"
             title="Volver al registro"
           >
-            <img
-              loading="lazy"
-              decoding="async"
-              :src="mobileMenuClose"
-              alt="volver"
-              title="volver"
-            />
+            <IconChevronLeft :size="17" :stroke-width="2.2" />
             <span>Volver</span>
           </NuxtLink>
           <h1 class="auth__form__title title">
@@ -55,7 +49,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue";
 import IntroduceAuth from "@/components/IntroduceAuth.vue";
-import mobileMenuClose from "/images/mobile-menu-close.svg";
+import { ChevronLeft as IconChevronLeft } from "lucide-vue-next";
 
 definePageMeta({
   layout: "auth",
