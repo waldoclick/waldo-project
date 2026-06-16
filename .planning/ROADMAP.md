@@ -30,15 +30,15 @@
 
 ### Phase 04: Auth + tokens base
 
-**Goal:** Establecer los tokens compartidos (recalibrar variables SCSS a la paleta nueva, fuente Poppins, iconos Lucide) y restilizar auth (login, registro, verificación, reset/forgot) a la maqueta. Primera fase: deja la base que reusan las demás áreas.
+**Goal:** Establecer los tokens compartidos (crear variables SCSS NUEVAS con los valores de la maqueta — sin tocar las existentes —, iconos Lucide) y restilizar auth (login, registro, verificación, reset/forgot) a la maqueta. Poppins ya existe. Primera fase: deja la base que reusan las demás áreas.
 **Requirements:** TOK-01, TOK-02, TOK-03, AUTH-01, AUTH-02, AUTH-03, AUTH-04
 **Depends on:** —
 **Success criteria:**
 1. Login, registro, verificación y reset/forgot se ven según la maqueta (color, tipografía, espaciado, iconos)
-2. Las variables SCSS quedan recalibradas a la paleta nueva y Poppins es la fuente global
+2. Se crean variables SCSS nuevas con los valores de la maqueta y los componentes de auth apuntan a ellas; las variables existentes quedan intactas
 3. La iconografía Lucide se aplica donde la maqueta la usa
 4. Cero cambios de comportamiento en los flujos de auth (login/registro/verificación/reset funcionan igual)
-5. Recalibrar los ~8 hex de marca en `_variables.scss` (mismas variables/roles) corre todo el sitio al tono nuevo de inmediato — efecto buscado, marca intacta, no hay font swap (Poppins ya existe). Cada área se ocupa de sus ajustes de markup en su propia fase
+5. Las variables nuevas viven junto a las existentes en `_variables.scss`; solo cambia de tono lo que ya migró a usarlas (auth). El resto del sitio sigue con las variables viejas hasta su fase. Marca intacta, sin font swap (Poppins ya existe)
 
 ### Phase 05: Sitio público
 

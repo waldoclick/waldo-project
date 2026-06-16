@@ -18,9 +18,9 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - Cuenta restilizada
 - Dashboard restilizado
 
-**Naturaleza del trabajo:** actualización, no creación. Casi no hay componentes nuevos (en auth, ninguno). Todos los componentes y sus SCSS ya existen → se recalibran variables SCSS, se adapta markup a la jerarquía BEM existente y se actualiza el SCSS. La maqueta `.dc.html` tiene estilos inline; NO se copia literal, se traduce a Vue + BEM.
+**Naturaleza del trabajo:** actualización, no creación. Casi no hay componentes nuevos (en auth, ninguno). Todos los componentes y sus SCSS ya existen → se adapta markup a la jerarquía BEM existente y se actualiza el SCSS. La maqueta `.dc.html` tiene estilos inline; NO se copia literal, se traduce a Vue + BEM.
 
-**Tokens nuevos (mismas variables/roles, valores recalibrados):** `--ink #26252B`, `--amber #F7C97E` / hover `#EFB85C`, `--ink2 #56535F`, `--muted #8A8794`, `--cream #F6F4F1`, `--line #ECE9E4`, error `#E4534B`, éxito `#3B9E63`/`#1F8A5B`; fuente Poppins; iconos Lucide; 12 colores pastel por categoría. Los tokens compartidos se establecen en la fase auth.
+**Variables SCSS: NO se modifican las existentes.** Se crean variables NUEVAS con los valores de la maqueta y los componentes apuntan a esas; las originales (`$light_peach`, etc.) quedan intactas. Valores nuevos: ink `#26252B`, amber `#F7C97E` / hover `#EFB85C`, ink2 `#56535F`, muted `#8A8794`, cream `#F6F4F1`, line `#ECE9E4`, error `#E4534B`, éxito `#3B9E63`/`#1F8A5B`; 12 colores pastel por categoría. Poppins ya existe (no cambia). Los tokens nuevos se establecen en la fase auth.
 
 ## Requirements
 
