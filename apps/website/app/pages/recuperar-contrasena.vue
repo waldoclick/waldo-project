@@ -8,16 +8,11 @@
       <div class="auth__form">
         <div class="auth__form__inner">
           <NuxtLink to="/" class="auth__form__back" title="Ir al inicio">
-            <img
-              loading="lazy"
-              decoding="async"
-              :src="mobileMenuClose"
-              alt="mobile menu close"
-              title="mobile menu close"
-            />
+            <IconChevronLeft :size="17" :stroke-width="2.2" />
             <span>Ir al inicio</span>
           </NuxtLink>
           <h1 class="auth__form__title title">Recupera tu contraseña</h1>
+          <p class="auth__form__description">Introduce tu correo y te enviaremos un enlace para crear una nueva contraseña.</p>
           <div class="auth__form__fields">
             <FormForgotPassword />
           </div>
@@ -30,12 +25,6 @@
                 Inicia sesión
               </NuxtLink>
             </p>
-            <!-- <p>
-              ¿Olvidaste tu contraseña?
-              <NuxtLink to="/recuperar-contrasena" title="Recupérala aquí">
-                Recupérala aquí
-              </NuxtLink>
-            </p> -->
           </div>
         </div>
       </div>
@@ -44,6 +33,8 @@
 </template>
 
 <script setup lang="ts">
+import { ChevronLeft as IconChevronLeft } from "lucide-vue-next";
+
 // Define SEO
 const { $setSEO, $setStructuredData } = useNuxtApp();
 const config = useRuntimeConfig();
@@ -51,11 +42,6 @@ const config = useRuntimeConfig();
 // Components
 import IntroduceAuth from "@/components/IntroduceAuth.vue";
 import FormForgotPassword from "@/components/FormForgotPassword.vue";
-import LoginWithGoogle from "@/components/LoginWithGoogle.vue";
-import LoginWithFacebook from "@/components/LoginWithFacebook.vue";
-
-// Import the image
-import mobileMenuClose from "/images/mobile-menu-close.svg";
 
 const title = "Recupera el acceso a tu cuenta en waldo.click®";
 const subtitle =
