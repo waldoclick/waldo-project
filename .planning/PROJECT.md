@@ -8,6 +8,20 @@ Plataforma de clasificados (avisos) compuesta por tres aplicaciones en un monore
 
 Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
 
+## Current Milestone: v1.47 Rediseño visual (rebrand)
+
+**Goal:** Migrar la maqueta nueva (en `/design`: Design System + páginas `.dc.html`) a los componentes reales, área por área, sin cambiar comportamiento — solo el look.
+
+**Target features:**
+- Auth restilizado a la maqueta nueva (login, registro, verificación, reset) — primera fase; de paso establece los tokens compartidos
+- Sitio público restilizado (home, listados, ad detail, blog, perfiles, checkout)
+- Cuenta restilizada
+- Dashboard restilizado
+
+**Naturaleza del trabajo:** actualización, no creación. Casi no hay componentes nuevos (en auth, ninguno). Todos los componentes y sus SCSS ya existen → se recalibran variables SCSS, se adapta markup a la jerarquía BEM existente y se actualiza el SCSS. La maqueta `.dc.html` tiene estilos inline; NO se copia literal, se traduce a Vue + BEM.
+
+**Tokens nuevos (mismas variables/roles, valores recalibrados):** `--ink #26252B`, `--amber #F7C97E` / hover `#EFB85C`, `--ink2 #56535F`, `--muted #8A8794`, `--cream #F6F4F1`, `--line #ECE9E4`, error `#E4534B`, éxito `#3B9E63`/`#1F8A5B`; fuente Poppins; iconos Lucide; 12 colores pastel por categoría. Los tokens compartidos se establecen en la fase auth.
+
 ## Requirements
 
 ### Validated
@@ -585,5 +599,22 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ `PROTECTED_USER_FIELDS` unchanged — card fields retained on user schema during dual-write transition — Phase 120
 - ✓ All 39 tests pass: cron, cancellation, middleware, bootstrap migration — Phase 120
 
+## Evolution
+
+This document evolves at phase transitions and milestone boundaries.
+
+**After each phase transition** (via `/gsd:transition`):
+1. Requirements invalidated? → Move to Out of Scope with reason
+2. Requirements validated? → Move to Validated with phase reference
+3. New requirements emerged? → Add to Active
+4. Decisions to log? → Add to Key Decisions
+5. "What This Is" still accurate? → Update if drifted
+
+**After each milestone** (via `/gsd:complete-milestone`):
+1. Full review of all sections
+2. Core Value check — still the right priority?
+3. Audit Out of Scope — reasons still valid?
+4. Update Context with current state
+
 ---
-*Last updated: 2026-06-12 after Phase 127 (security-review-round-2 — SEC2-PAYMENT, SEC2-AUTHZ, SEC2-AUTH, SEC2-XSS, SEC2-LOCKDOWN all closed)*
+*Last updated: 2026-06-16 after starting milestone v1.47 (Rediseño visual — auth first)*

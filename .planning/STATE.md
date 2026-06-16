@@ -1,35 +1,33 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.46
-milestone_name: milestone
-status: unknown
-last_updated: "2026-06-16T00:49:45.129Z"
+milestone: v1.47
+milestone_name: Rediseño visual
+status: defining-requirements
+last_updated: "2026-06-16T00:00:00.000Z"
 last_activity: 2026-06-16
 progress:
-  total_phases: 3
-  completed_phases: 1
-  total_plans: 11
-  completed_plans: 9
-  percent: 82
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Session State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-29)
+See: .planning/PROJECT.md (updated 2026-06-16)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 03 — Validacion IA registro
+**Current focus:** v1.47 Rediseño visual — defining requirements (auth first)
 
 ## Position
 
-Phase 03 (validacion-ia-de-campos-de-texto-libre-en-el-registro) — COMPLETE (2/2 plans). Plan 03-02 complete: AI validation gate wired into `registerUserLocal` — validates `firstname` and `lastname` via `validateFields` before user creation; explicit `false` rejects with Spanish per-field message (`FIELD_REJECTION_MESSAGES`); any AI failure is fail-open (end-to-end proven by Test E sibling file). 46/46 Jest tests green in authController.test.ts; Strapi tsc clean; website vue-tsc clean.
-
-(Prior: Phase 03 plan 03-01 complete — `field-validation` service with `validateFields(fields)`. Phase 02 plan 02-01 complete — ai-provider orchestrator. Phase 01 complete — Codacy security/best-practice issues.)
+Milestone v1.47 (Rediseño visual / rebrand) started 2026-06-16 on branch `feat/redesign-auth`. Defining requirements. Migrating the new mockup in `/design` (Design System + `.dc.html`) to real components, area by area: auth (first, also establishes shared tokens) → public site → account → dashboard. Update-not-create work: components and SCSS already exist; recalibrate SCSS variables + translate mockup markup to existing BEM.
 
 ```
-Progress: [████████░░] 82% (phase 03: 2/2 plans complete)
+Progress: [░░░░░░░░░░] 0% (defining requirements)
 ```
 
 ## Accumulated Context

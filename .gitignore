@@ -51,3 +51,6 @@ Thumbs.db
 
 apps/strapi/google.json
 .vercel
+
+# Design reference (redesign mockups dropped here as zips — local only)
+design/
