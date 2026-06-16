@@ -50,3 +50,46 @@
     }
   }
 }
+
+// ─── Auth-scoped strength meter overrides ────────────────────────────────────
+// PasswordStrength is used in non-auth pages too (FormPassword, FormPasswordDashboard).
+// Override only the bar/label colors inside .auth — layout/sizing unchanged.
+.auth {
+  .strength__bar {
+    background-color: $strength_empty;
+
+    &--level1 {
+      background-color: $error;
+    }
+
+    &--level2 {
+      background-color: $warning;
+    }
+
+    &--level3 {
+      background-color: $success;
+    }
+
+    &--level4 {
+      background-color: $success_strong;
+    }
+  }
+
+  .strength__label {
+    &--level1 {
+      color: $error;
+    }
+
+    &--level2 {
+      color: $warning;
+    }
+
+    &--level3 {
+      color: $success;
+    }
+
+    &--level4 {
+      color: $success_strong;
+    }
+  }
+}
