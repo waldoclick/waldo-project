@@ -66,6 +66,12 @@
     </div>
 
     <div v-if="step === 2" class="step step--2">
+      <div class="form--register__steps">
+        <span class="form--register__steps__pill" />
+        <span class="form--register__steps__pill" />
+        <span class="form--register__steps__label">Paso 2 de 2 · acceso</span>
+      </div>
+
       <div class="form-group">
         <label class="form-label" for="email">Correo electrónico</label>
         <Field
@@ -87,7 +93,7 @@
             class="form-group--password__generate"
             @click="handleGeneratePassword"
           >
-            ✦ Generar segura
+            <IconSparkles :size="13" /> Generar segura
           </button>
         </div>
         <div class="form-group--password__field">
@@ -202,9 +208,9 @@
       <button
         :disabled="!meta.valid || loading"
         type="submit"
-        class="btn btn--block btn--primary"
+        :class="['btn', 'btn--block', step === 1 ? 'btn--secondary' : 'btn--primary']"
       >
-        <span v-if="step === 1">Siguiente</span>
+        <span v-if="step === 1">Siguiente <IconArrowRight :size="16" /></span>
         <span v-if="step === 2 && !loading">Registrate</span>
         <span v-if="step === 2 && loading">Registrando…</span>
       </button>
@@ -222,6 +228,7 @@ import type { Form as VeeForm } from "vee-validate";
 import type { FormRegister } from "@/types/form-register";
 import { useRut } from "@/composables/useRut";
 import { RESERVED_USERNAMES } from "@/shared/constants";
+import { Sparkles as IconSparkles, ArrowRight as IconArrowRight } from "lucide-vue-next";
 const { signUp } = useAdAnalytics();
 
 const apiClient = useApiClient();
