@@ -17,12 +17,12 @@ Fuera de alcance: validación de otros flujos, cambio de UX del registro más al
 ## Implementation Decisions
 
 ### Campos evaluados (Opción A — solo texto libre)
-- **D-01:** La IA evalúa SOLO campos de texto libre: `firstname`, `lastname`, `address`, y los de empresa `business_name`, `business_type`, `business_address`.
-- **D-02:** `business_*` se evalúan solo cuando `is_company === true`.
-- **D-03:** Excluidos explícitamente: `password` (obvio) y `email` (ya validado por JS). También quedan con su validación actual (NO IA): `rut`, `phone`, `postal_code`, `birthdate` (formato) y `region`/`commune`/`business_region`/`business_commune` (dropdowns/IDs).
+- **D-01:** La IA evalúa SOLO los campos de texto libre que existen en el registro: `firstname` y `lastname`. Para empresas estos mismos campos se relabelan como Razón Social / Giro en la UI, pero son las mismas claves de campo. (Scope acotado por el usuario: `address`, `business_name`, `business_type`, `business_address` se difieren a una fase futura de validación de onboarding.)
+- **D-02:** ~~`business_*` se evalúan solo cuando `is_company === true`.~~ Diferido — los campos `business_*` ya no entran en el alcance de esta fase (ver D-01).
+- **D-03:** Excluidos explícitamente: `password` (obvio) y `email` (ya validado por JS). También quedan con su validación actual (NO IA): `rut`, `phone`, `postal_code`, `birthdate` (formato) y `region`/`commune`/`business_region`/`business_commune` (dropdowns/IDs). `address` y `business_*` se difieren a una fase futura de validación de onboarding.
 
 ### Contrato de la IA
-- **D-04:** La IA responde un **boolean por campo**, ej. `{ "firstname": true, "lastname": false, "address": true }`. Solo los campos enviados a evaluar aparecen.
+- **D-04:** La IA responde un **boolean por campo**, ej. `{ "firstname": true, "lastname": false }`. Solo los campos enviados a evaluar aparecen.
 - **D-05:** Si algún campo evaluado es `false` → rechazar el registro con un mensaje específico de ese campo (ej. "El apellido no parece válido").
 - **D-06:** Usa el `ai-provider` interno (Cerebras default + cadena de fallback + `AI_PROVIDER` env) creado en la fase 02.
 
@@ -63,6 +63,7 @@ No external specs — decisiones capturadas arriba. Refs de código abajo.
 
 - Meter IA en otros flujos/lugares — fases futuras (el usuario mencionó "hay más lugares").
 - Opción B (evaluar también campos estructurados rut/phone/etc. con IA) — descartada por redundante.
+- Validación IA de `address`, `business_name`, `business_type`, `business_address` — diferida a una fase futura de validación de onboarding (no existen / no aplican al alcance de registro de esta fase).
 </deferred>
 
 ---
