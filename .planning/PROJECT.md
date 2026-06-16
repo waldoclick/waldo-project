@@ -14,9 +14,8 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 
 **Target features:**
 - Auth restilizado a la maqueta nueva (login, registro, verificación, reset) — primera fase; de paso establece los tokens compartidos
-- Sitio público restilizado (home, listados, ad detail, blog, perfiles, checkout)
-- Cuenta restilizada
-- Dashboard restilizado
+
+Las áreas público, cuenta y dashboard se agregarán cuando el usuario apruebe cada rediseño. No se planifican aún.
 
 **Naturaleza del trabajo:** actualización, no creación. Casi no hay componentes nuevos (en auth, ninguno). Todos los componentes y sus SCSS ya existen → se adapta markup a la jerarquía BEM existente y se actualiza el SCSS. La maqueta `.dc.html` tiene estilos inline; NO se copia literal, se traduce a Vue + BEM.
 

@@ -20,19 +20,7 @@ Milestone scope: migrar la maqueta nueva (en `/design`) a los componentes reales
 - [ ] **AUTH-03**: La verificación de código se ve según la maqueta nueva
 - [ ] **AUTH-04**: El reset / forgot password se ve según la maqueta nueva
 
-### Sitio público
-
-- [ ] **PUB-01**: Home, listados de avisos y detalle de aviso se ven según la maqueta nueva
-- [ ] **PUB-02**: Blog (listado + artículo) se ve según la maqueta nueva
-- [ ] **PUB-03**: Perfiles públicos y el flujo de checkout/pago se ven según la maqueta nueva
-
-### Cuenta
-
-- [ ] **ACC-01**: Las páginas de cuenta (perfil, mis anuncios, mis órdenes) se ven según la maqueta nueva
-
-### Dashboard
-
-- [ ] **DASH-01**: El dashboard (layout, listados, formularios) se ve según la maqueta nueva
+> Las áreas público, cuenta y dashboard se agregarán cuando el usuario apruebe cada rediseño. No se definen aún.
 
 ## Out of Scope
 
@@ -53,15 +41,10 @@ Milestone scope: migrar la maqueta nueva (en `/design`) a los componentes reales
 | AUTH-02 | Phase 04 | Pending |
 | AUTH-03 | Phase 04 | Pending |
 | AUTH-04 | Phase 04 | Pending |
-| PUB-01 | Phase 05 | Pending |
-| PUB-02 | Phase 05 | Pending |
-| PUB-03 | Phase 05 | Pending |
-| ACC-01 | Phase 06 | Pending |
-| DASH-01 | Phase 07 | Pending |
 
 **Coverage:**
-- v1 requirements: 12 total
-- Mapped to phases: 12
+- v1 requirements: 7 total
+- Mapped to phases: 7
 - Unmapped: 0 ✓
 
 ---

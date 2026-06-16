@@ -2,7 +2,7 @@
 
 ## Milestones
 
-- 🚧 **v1.47 Rediseño visual (rebrand)** — Phases 04–07 (started 2026-06-16). Auth first.
+- 🚧 **v1.47 Rediseño visual (rebrand)** — Phase 04 auth (started 2026-06-16). Demás áreas (público, cuenta, dashboard) se agregan cuando se aprueben.
 - ✅ **v1.46 PRO Subscriptions + Post-Merge Hardening** — Phases 102–129 (shipped 2026-06-14). See `.planning/milestones/v1.46-ROADMAP.md`
 - ✅ **v1.45 User Onboarding** — Phases 099–101 (shipped 2026-03-20). See `.planning/milestones/v1.45-ROADMAP.md`
 - ✅ **v1.44 Google One Tap Sign-In** — Phases 094–098 (shipped 2026-03-19). See `.planning/milestones/v1.44-ROADMAP.md`
@@ -40,34 +40,7 @@
 4. Cero cambios de comportamiento en los flujos de auth (login/registro/verificación/reset funcionan igual)
 5. Las variables nuevas viven junto a las existentes en `_variables.scss`; solo cambia de tono lo que ya migró a usarlas (auth). El resto del sitio sigue con las variables viejas hasta su fase. Marca intacta, sin font swap (Poppins ya existe)
 
-### Phase 05: Sitio público
-
-**Goal:** Restilizar el sitio público (home, listados de avisos, detalle de aviso, blog, perfiles públicos, checkout/pago) a la maqueta, reusando los tokens de la fase auth.
-**Requirements:** PUB-01, PUB-02, PUB-03
-**Depends on:** Phase 04
-**Success criteria:**
-1. Home, listados y detalle de aviso se ven según la maqueta
-2. Blog (listado + artículo) se ve según la maqueta
-3. Perfiles públicos y checkout/pago se ven según la maqueta
-4. Cero cambios de comportamiento
-
-### Phase 06: Cuenta
-
-**Goal:** Restilizar las páginas de cuenta (perfil, mis anuncios, mis órdenes) a la maqueta.
-**Requirements:** ACC-01
-**Depends on:** Phase 04
-**Success criteria:**
-1. Perfil, mis anuncios y mis órdenes se ven según la maqueta
-2. Cero cambios de comportamiento
-
-### Phase 07: Dashboard
-
-**Goal:** Restilizar el dashboard (layout, listados, formularios) a la maqueta.
-**Requirements:** DASH-01
-**Depends on:** Phase 04
-**Success criteria:**
-1. Layout, listados y formularios del dashboard se ven según la maqueta
-2. Cero cambios de comportamiento
+> Las áreas público, cuenta y dashboard se agregarán como fases recién cuando el usuario apruebe cada rediseño.
 
 ## Progress
 
