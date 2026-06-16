@@ -8,7 +8,7 @@
     <div v-if="step === 1" class="step step--1">
       <!-- Is Company -->
       <div class="form-group">
-        <label class="form-label" for="is_company">Tipo</label>
+        <label class="form-label" for="is_company">Tipo de cuenta</label>
         <Field
           v-model="form.is_company"
           as="select"
@@ -21,43 +21,48 @@
         <ErrorMessage name="is_company" />
       </div>
 
-      <div class="form-group">
-        <label class="form-label" for="firstname">
-          {{ form.is_company ? "Razón Social" : "Nombres" }}
-        </label>
-        <Field
-          v-model="form.firstname"
-          name="firstname"
-          type="text"
-          class="form-control"
-          autocomplete="given-name"
-          maxlength="50"
-        />
-        <ErrorMessage name="firstname" />
+      <div class="form__grid">
+        <div class="form-group">
+          <label class="form-label" for="firstname">
+            {{ form.is_company ? "Razón Social" : "Nombres" }}
+          </label>
+          <Field
+            v-model="form.firstname"
+            name="firstname"
+            type="text"
+            class="form-control"
+            :placeholder="form.is_company ? 'Empresa S.A.' : 'Gabriel'"
+            autocomplete="given-name"
+            maxlength="50"
+          />
+          <ErrorMessage name="firstname" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="lastname">
+            {{ form.is_company ? "Giro" : "Apellidos" }}
+          </label>
+          <Field
+            v-model="form.lastname"
+            name="lastname"
+            type="text"
+            class="form-control"
+            :placeholder="form.is_company ? 'Comercio' : 'Burgos'"
+            autocomplete="additional-name"
+            maxlength="50"
+          />
+          <ErrorMessage name="lastname" />
+        </div>
       </div>
 
       <div class="form-group">
-        <label class="form-label" for="lastname">
-          {{ form.is_company ? "Giro" : "Apellidos" }}
-        </label>
-        <Field
-          v-model="form.lastname"
-          name="lastname"
-          type="text"
-          class="form-control"
-          autocomplete="additional-name"
-          maxlength="50"
-        />
-        <ErrorMessage name="lastname" />
-      </div>
-
-      <div class="form-group">
-        <label class="form-label" for="rut">Rut</label>
+        <label class="form-label" for="rut">RUT</label>
         <Field
           v-model="form.rut"
           name="rut"
           type="text"
           class="form-control"
+          placeholder="12.345.678-9"
           autocomplete="id"
           maxlength="12"
         />
@@ -79,6 +84,7 @@
           name="email"
           type="text"
           class="form-control"
+          placeholder="tucorreo@empresa.cl"
           autocomplete="email"
           maxlength="254"
         />
@@ -102,6 +108,7 @@
             name="password"
             :type="passwordType"
             class="form-control"
+            placeholder="Crea una contraseña"
             autocomplete="current-password"
             maxlength="50"
           />
@@ -128,6 +135,7 @@
           name="confirm_password"
           :type="passwordType"
           class="form-control"
+          placeholder="Repite tu contraseña"
           autocomplete="new-password"
           maxlength="50"
         />

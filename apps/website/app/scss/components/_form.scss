@@ -505,6 +505,16 @@ input:-webkit-autofill {
     margin-bottom: 8px;
   }
 
+  // Field rhythm — 18px between groups, matching the mockup
+  .form-group {
+    margin-bottom: 18px;
+  }
+
+  // Paired fields (nombres/apellidos) — tighten the grid gap to the mockup's 14px
+  .form__grid {
+    grid-gap: 0 14px;
+  }
+
   // 3. Primary button (amber) — overrides global .btn--primary
   .btn--primary {
     background: $amber;
@@ -518,6 +528,18 @@ input:-webkit-autofill {
     &:active {
       background: $amber_hover;
       color: $ink;
+    }
+
+    // Disabled: dimmed amber, NOT the global gray $silver
+    &:disabled {
+      background: $amber;
+      border: none;
+      color: $ink;
+      opacity: 0.5;
+
+      &:hover {
+        background: $amber;
+      }
     }
   }
 
@@ -536,6 +558,18 @@ input:-webkit-autofill {
       background: $cream;
       color: $ink;
       border-color: $line;
+    }
+
+    // Disabled: stays white with $line border, just dimmed — NOT the global gray $silver
+    &:disabled {
+      background: #fff;
+      border: 1px solid $line;
+      color: $ink;
+      opacity: 0.5;
+
+      &:hover {
+        background: #fff;
+      }
     }
   }
 

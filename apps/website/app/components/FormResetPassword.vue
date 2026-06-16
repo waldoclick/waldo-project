@@ -19,6 +19,7 @@
           name="password"
           :type="passwordType"
           class="form-control"
+          placeholder="Crea una contraseña"
           autocomplete="new-password"
           maxlength="50"
         />
@@ -45,6 +46,7 @@
         name="confirm_password"
         :type="passwordType"
         class="form-control"
+        placeholder="Repite tu contraseña"
         autocomplete="new-password"
         maxlength="50"
       />

@@ -11,6 +11,7 @@
         name="email"
         type="text"
         class="form-control"
+        placeholder="tucorreo@empresa.cl"
         autocomplete="email"
         maxlength="254"
       />

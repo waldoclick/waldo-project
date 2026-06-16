@@ -13,6 +13,7 @@
           name="email"
           type="email"
           class="form-control"
+          placeholder="tucorreo@empresa.cl"
           autocomplete="email"
           maxlength="254"
         />
@@ -27,6 +28,7 @@
           name="password"
           :type="passwordType"
           class="form-control"
+          placeholder="Tu contraseña"
           autocomplete="current-password"
           maxlength="50"
         />
