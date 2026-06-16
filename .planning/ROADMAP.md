@@ -40,7 +40,7 @@
 4. Cero cambios de comportamiento en los flujos de auth (login/registro/verificación/reset funcionan igual)
 5. Las variables nuevas viven junto a las existentes en `_variables.scss`; solo cambia de tono lo que ya migró a usarlas (auth). El resto del sitio sigue con las variables viejas hasta su fase. Marca intacta, sin font swap (Poppins ya existe)
 
-**Plans:** 3/7 plans executed
+**Plans:** 7/7 plans complete
 
 Plans:
 - [x] 04-01-PLAN.md — Add new SCSS design tokens to _variables.scss + confirm Poppins global (TOK-01, TOK-02)

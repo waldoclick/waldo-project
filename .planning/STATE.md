@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.47
 milestone_name: Rediseño visual (rebrand)
 status: unknown
-last_updated: "2026-06-16T21:01:33.883Z"
+last_updated: "2026-06-16T21:13:30.048Z"
 last_activity: 2026-06-16
 progress:
   total_phases: 4
