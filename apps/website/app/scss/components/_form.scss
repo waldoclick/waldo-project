@@ -491,6 +491,31 @@ input:-webkit-autofill {
     height: 48px;
   }
 
+  // Select: hide the native arrow, show a Lucide chevron (mockup)
+  .form-group--select,
+  .form__group--select {
+    position: relative;
+
+    select.form-control,
+    select.form__control {
+      height: 48px;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      padding-right: 42px;
+      cursor: pointer;
+    }
+
+    &__chevron {
+      position: absolute;
+      top: 50%;
+      right: 14px;
+      transform: translateY(-50%);
+      color: $muted;
+      pointer-events: none;
+    }
+  }
+
   // 2. Labels — static (not floating) inside auth
   .form-label,
   .form__label {

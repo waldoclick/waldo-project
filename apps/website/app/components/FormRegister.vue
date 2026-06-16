@@ -9,15 +9,18 @@
       <!-- Is Company -->
       <div class="form-group">
         <label class="form-label" for="is_company">Tipo de cuenta</label>
-        <Field
-          v-model="form.is_company"
-          as="select"
-          name="is_company"
-          class="form-control"
-        >
-          <option :value="false">Persona Natural</option>
-          <option :value="true">Empresa</option>
-        </Field>
+        <div class="form-group--select">
+          <Field
+            v-model="form.is_company"
+            as="select"
+            name="is_company"
+            class="form-control"
+          >
+            <option :value="false">Persona Natural</option>
+            <option :value="true">Empresa</option>
+          </Field>
+          <IconChevronDown class="form-group--select__chevron" :size="16" />
+        </div>
         <ErrorMessage name="is_company" />
       </div>
 
@@ -236,7 +239,11 @@ import type { Form as VeeForm } from "vee-validate";
 import type { FormRegister } from "@/types/form-register";
 import { useRut } from "@/composables/useRut";
 import { RESERVED_USERNAMES } from "@/shared/constants";
-import { Sparkles as IconSparkles, ArrowRight as IconArrowRight } from "lucide-vue-next";
+import {
+  Sparkles as IconSparkles,
+  ArrowRight as IconArrowRight,
+  ChevronDown as IconChevronDown,
+} from "lucide-vue-next";
 const { signUp } = useAdAnalytics();
 
 const apiClient = useApiClient();
