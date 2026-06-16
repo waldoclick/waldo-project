@@ -10,7 +10,7 @@
           class="form-group--password__generate"
           @click="handleGeneratePassword"
         >
-          ✦ Generar segura
+          <IconSparkles :size="13" /> Generar segura
         </button>
       </div>
       <div class="form-group--password__field">
@@ -56,7 +56,7 @@
       type="submit"
       class="btn btn--block btn--primary"
     >
-      <span v-if="!loading">Restablecer Contraseña</span>
+      <span v-if="!loading">Guardar contraseña</span>
       <span v-if="loading">Restableciendo…</span>
     </button>
   </Form>
@@ -64,6 +64,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+import { Sparkles as IconSparkles } from "lucide-vue-next";
 import { useRouter, useRoute } from "vue-router";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";

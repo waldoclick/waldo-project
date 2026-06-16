@@ -22,7 +22,7 @@
       type="submit"
       class="btn btn--block btn--primary"
     >
-      <span v-if="!loading">Enviar</span>
+      <span v-if="!loading">Enviar enlace</span>
       <span v-if="loading">Enviando…</span>
     </button>
   </Form>
