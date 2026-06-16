@@ -8,28 +8,28 @@
       <div class="auth__form">
         <div class="auth__form__inner">
           <NuxtLink to="/" class="auth__form__back" title="Ir al inicio">
-            <img
-              loading="lazy"
-              decoding="async"
-              :src="mobileMenuClose"
-              alt="mobile menu close"
-              title="mobile menu close"
-            />
+            <IconChevronLeft :size="17" :stroke-width="2.2" />
             <span>Ir al inicio</span>
           </NuxtLink>
           <h1 class="auth__form__title title">Crea tu cuenta</h1>
-          <div class="auth__form__fields">
-            <FormRegister />
+          <p class="auth__form__description">
+            Empieza gratis · 3 anuncios incluidos
+          </p>
+          <div
+            v-if="providers?.google /* || providers?.facebook */"
+            class="auth__form__social"
+          >
+            <LoginWithGoogle v-if="providers?.google" />
+            <!-- <LoginWithFacebook v-if="providers?.facebook" /> -->
           </div>
           <div
             v-if="providers?.google /* || providers?.facebook */"
             class="auth__form__separator"
           >
-            o
+            o con tus datos
           </div>
-          <div class="auth__form__social">
-            <LoginWithGoogle v-if="providers?.google" />
-            <!-- <LoginWithFacebook v-if="providers?.facebook" /> -->
+          <div class="auth__form__fields">
+            <FormRegister />
           </div>
           <div class="auth__form__help">
             <p>
@@ -78,9 +78,7 @@ import IntroduceAuth from "@/components/IntroduceAuth.vue";
 import FormRegister from "@/components/FormRegister.vue";
 import LoginWithGoogle from "@/components/LoginWithGoogle.vue";
 // import LoginWithFacebook from "@/components/LoginWithFacebook.vue";
-
-// Import the image
-import mobileMenuClose from "/images/mobile-menu-close.svg";
+import { ChevronLeft as IconChevronLeft } from "lucide-vue-next";
 
 const title = "Regístrate y empieza a gestionar tus anuncios en waldo.click®";
 const subtitle = "Al crear tu cuenta en waldo.click® podrás:";
