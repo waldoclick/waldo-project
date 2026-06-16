@@ -1,7 +1,7 @@
 // /src/extensions/users-permissions/controllers/authController.ts
 import crypto from "crypto";
 import { sendMjmlEmail } from "../../../services/mjml";
-import { validateFields } from "../../../services/field-validation";
+import { validateFields } from "../../../utils/ia";
 
 // Spanish rejection messages per free-text field validated at registration (D-04, D-05).
 // English backend messages (project rule). The user-facing Spanish message is built on

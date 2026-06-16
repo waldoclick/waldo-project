@@ -1,21 +1,34 @@
 // Test E: End-to-end fail-open proof for registerUserLocal.
 //
 // This file is a DEDICATED SIBLING of authController.test.ts by design:
-//   - authController.test.ts mocks the entire field-validation module (module-level jest.mock)
-//     to drive Tests A/B/D directly.
-//   - This file uses the REAL field-validation service so the full fail-open path is exercised
-//     end-to-end: validateFields → withTimeout → ai-provider.generate → rejects → allTrue → gate
-//     passes → registerController called.
+//   - authController.test.ts mocks ia.validateFields (module-level jest.mock) to drive A/B/D.
+//   - This file uses the REAL validateFields (src/utils/ia) so the full fail-open path runs
+//     end-to-end: validateFields → withTimeout → generate → provider chain rejects → allTrue
+//     → gate passes → registerController called.
 //   - Merging both into one file is impossible because jest.mock hoisting would apply to all
-//     tests in the file, preventing the real service from running.
+//     tests in the file, preventing the real ia from running.
 //
-// AAA pattern (Arrange-Act-Assert), ai-provider mocked to simulate AI downtime.
+// AAA pattern (Arrange-Act-Assert), provider layer mocked to simulate AI downtime.
 
-// --- Mock ai-provider (real field-validation calls this internally) ---
-jest.mock("../../../../src/services/ai-provider", () => ({
-  generate: jest.fn().mockRejectedValue(new Error("AI down")),
-  generateArticleDraft: jest.fn(),
+// --- Simulate AI downtime at the provider layer ---
+// validateFields (real, in src/utils/ia) calls generate → the provider chain.
+// Rejecting every provider makes the AI call fail → fail-open path runs.
+jest.mock("../../../../src/services/cerebras", () => ({
+  generateText: jest.fn().mockRejectedValue(new Error("AI down")),
 }));
+jest.mock("../../../../src/services/groq", () => ({
+  generateText: jest.fn().mockRejectedValue(new Error("AI down")),
+}));
+jest.mock("../../../../src/services/deepseek", () => ({
+  generateText: jest.fn().mockRejectedValue(new Error("AI down")),
+}));
+jest.mock("../../../../src/services/gemini", () => ({
+  generateText: jest.fn().mockRejectedValue(new Error("AI down")),
+}));
+jest.mock("../../../../src/services/anthropic", () => ({
+  generateWithSearch: jest.fn().mockRejectedValue(new Error("AI down")),
+}));
+jest.mock("opik", () => ({ Opik: jest.fn(), OpikSpanType: { Llm: "llm" } }));
 
 // --- Mock sendMjmlEmail (non-critical, prevents real email sends) ---
 jest.mock("../../../../src/services/mjml", () => ({
@@ -59,7 +72,7 @@ const buildStrapiMock = () => ({
       return {};
     },
   },
-  log: { error: jest.fn() },
+  log: { error: jest.fn(), warn: jest.fn() },
 });
 
 // Helper to build a minimal mock ctx (same shape as authController.test.ts buildCtx)
@@ -100,7 +113,8 @@ const validBody = {
 describe("registerUserLocal fail-open (end-to-end, real field-validation, mocked ai-provider)", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    // Reset strapi mock before each test
+    // Disable Opik tracing (no key → passthrough), reset strapi mock
+    delete process.env.OPIK_API_KEY;
     (global as unknown as Record<string, unknown>).strapi = buildStrapiMock();
   });
 

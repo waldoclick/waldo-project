@@ -5,7 +5,7 @@
 import { factories } from "@strapi/strapi";
 import { errors } from "@strapi/utils";
 import { searchNews } from "../../../services/tavily";
-import { generateArticleDraft } from "../../../services/ai-provider";
+import { generateArticleDraft } from "../../../utils/ia";
 import {
   extractFromUrl,
   uploadImagesFromUrls,

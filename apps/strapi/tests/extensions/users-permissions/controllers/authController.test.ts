@@ -14,13 +14,13 @@ import {
   ensureUniqueUsername,
 } from "../../../../src/extensions/users-permissions/controllers/authController";
 
-// --- Mock field-validation (module-level: applies to entire file) ---
-// Test E (end-to-end fail-open, real service) lives in a dedicated sibling file
+// --- Mock validateFields from the ia util (module-level: applies to entire file) ---
+// Test E (end-to-end fail-open, real ia) lives in a dedicated sibling file
 // to avoid jest.mock hoisting conflicts.
-jest.mock("../../../../src/services/field-validation", () => ({
+jest.mock("../../../../src/utils/ia", () => ({
   validateFields: jest.fn(),
 }));
-import { validateFields } from "../../../../src/services/field-validation";
+import { validateFields } from "../../../../src/utils/ia";
 const mockValidateFields = validateFields as jest.MockedFunction<
   typeof validateFields
 >;
