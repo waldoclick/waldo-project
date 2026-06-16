@@ -1180,7 +1180,7 @@ describe("registerUserLocal AI validation gate", () => {
     jest.clearAllMocks();
   });
 
-  it("Test A: explicit false on a field rejects with the correct Spanish message and does NOT call registerController", async () => {
+  it("Test A: explicit false on a field rejects with the English message + field detail and does NOT call registerController", async () => {
     // Arrange
     mockValidateFields.mockResolvedValue({ lastname: false });
     const mockRegister = jest.fn();
@@ -1190,8 +1190,10 @@ describe("registerUserLocal AI validation gate", () => {
     // Act
     await handler(ctx);
 
-    // Assert
-    expect(ctx.badRequest).toHaveBeenCalledWith("El apellido no parece válido");
+    // Assert — backend message is English; the field travels in details for the client to localize
+    expect(ctx.badRequest).toHaveBeenCalledWith("Invalid lastname", {
+      field: "lastname",
+    });
     expect(mockRegister).not.toHaveBeenCalled();
   });
 
@@ -1213,7 +1215,7 @@ describe("registerUserLocal AI validation gate", () => {
     // Assert
     expect(mockRegister).toHaveBeenCalledTimes(1);
     expect(ctx.badRequest).not.toHaveBeenCalledWith(
-      expect.stringMatching(/no parece válido/),
+      expect.stringMatching(/Invalid (firstname|lastname)/),
     );
   });
 

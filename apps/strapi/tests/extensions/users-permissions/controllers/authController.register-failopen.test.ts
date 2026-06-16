@@ -127,7 +127,7 @@ describe("registerUserLocal fail-open (end-to-end, real field-validation, mocked
     expect(mockRegister).toHaveBeenCalledTimes(1);
     // No rejection message should have been sent (badRequest not called with validation message)
     expect(testCtx.badRequest).not.toHaveBeenCalledWith(
-      expect.stringMatching(/no parece válido/),
+      expect.stringMatching(/Invalid (firstname|lastname)/),
     );
   });
 });

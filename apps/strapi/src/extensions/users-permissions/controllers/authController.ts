@@ -4,11 +4,11 @@ import { sendMjmlEmail } from "../../../services/mjml";
 import { validateFields } from "../../../services/field-validation";
 
 // Spanish rejection messages per free-text field validated at registration (D-04, D-05).
-// For is_company registrations, firstname maps to "Razón Social" and lastname to "Giro" in
-// the UI, but the field keys are the same — these natural-person labels are acceptable per D-01.
+// English backend messages (project rule). The user-facing Spanish message is built on
+// the client from the `field` in the error details — see FormRegister.vue.
 const FIELD_REJECTION_MESSAGES: Record<string, string> = {
-  firstname: "El nombre no parece válido",
-  lastname: "El apellido no parece válido",
+  firstname: "Invalid firstname",
+  lastname: "Invalid lastname",
 };
 
 const RESERVED_USERNAMES = new Set([
@@ -202,9 +202,11 @@ export const registerUserLocal = (registerController) => async (ctx) => {
       (k) => validation[k] === false,
     );
     if (failedField) {
+      // English message + the field in details; the client maps `field` to a
+      // Spanish user-facing message in the Swal.
       return ctx.badRequest(
-        FIELD_REJECTION_MESSAGES[failedField] ??
-          "Algunos datos no parecen válidos",
+        FIELD_REJECTION_MESSAGES[failedField] ?? "Invalid registration field",
+        { field: failedField },
       );
     }
 

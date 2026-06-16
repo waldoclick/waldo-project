@@ -417,24 +417,34 @@ const handleSubmit = async () => {
       }
     } catch (error) {
       console.error(error);
+      // ofetch puts the response body in `error.data`; fall back to `error.error`.
       const err = error as {
+        data?: {
+          error?: { message?: string; details?: { field?: string } };
+        };
         error?: {
           message?: string;
-          details?: { error?: { message?: string } };
+          details?: { field?: string; error?: { message?: string } };
         };
       };
+      const body = err.data?.error ?? err.error;
       const strapiMessage =
-        err.error?.details?.error?.message || err.error?.message || "";
-      if (strapiMessage === "Email or Username are already taken") {
+        err.error?.details?.error?.message || body?.message || "";
+
+      // AI free-text validation rejection — backend sends the field in details;
+      // build the Spanish, field-specific message here (backend messages are English).
+      const fieldMessagesEs: Record<string, string> = {
+        firstname: "El nombre no parece válido",
+        lastname: "El apellido no parece válido",
+      };
+      const rejectedField = body?.details?.field;
+
+      if (rejectedField && fieldMessagesEs[rejectedField]) {
+        Swal.fire("Error", fieldMessagesEs[rejectedField], "error");
+      } else if (strapiMessage === "Email or Username are already taken") {
         Swal.fire("Error", "El correo electrónico ya está en uso.", "error");
       } else {
-        // Also surfaces AI free-text validation rejections from registerUserLocal
-        // (e.g. "El nombre no parece válido" / "El apellido no parece válido")
-        Swal.fire(
-          "Error",
-          strapiMessage || "Ocurrió un error durante el registro.",
-          "error",
-        );
+        Swal.fire("Error", "Ocurrió un error durante el registro.", "error");
       }
     } finally {
       loading.value = false;
