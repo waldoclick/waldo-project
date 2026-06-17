@@ -1347,12 +1347,67 @@
   }
 
   &--password {
-    &__memo {
-      max-width: 700px;
+    // ── Cambiar contraseña (v1.47 redesign — design/account.dc.html lines 421-465) ──
+
+    &__eyebrow {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: $muted;
     }
 
-    &__form {
-      max-width: 500px;
+    &__heading {
+      font-weight: 800;
+      font-size: 30px;
+      letter-spacing: -0.5px;
+      color: $ink;
+      margin: 6px 0 0;
+    }
+
+    &__intro {
+      font-size: 15px;
+      color: $ink2;
+      margin: 8px 0 0;
+      max-width: 560px;
+      line-height: 1.5;
+    }
+
+    &__memo {
+      margin-top: 24px;
+      max-width: 560px;
+    }
+
+    &__card {
+      margin-top: 24px;
+      max-width: 560px;
+      border: 1px solid $line;
+      background: $white;
+      border-radius: 14px;
+      padding: 28px 30px;
+    }
+
+    &__note {
+      margin-top: 16px;
+      max-width: 560px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: $cream;
+      border: 1px solid $line;
+      border-radius: 8px;
+      padding: 14px 16px;
+
+      &__icon {
+        flex: none;
+        color: #a9772e; // no token — mockup literal (--tag)
+        margin-top: 1px;
+      }
+
+      &__text {
+        font-size: 13px;
+        color: $ink2;
+        line-height: 1.5;
+      }
     }
   }
 }

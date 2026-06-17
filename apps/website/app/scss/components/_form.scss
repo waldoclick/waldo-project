@@ -448,10 +448,13 @@ input:-webkit-autofill {
   height: var(--textarea-height);
 }
 
-// ─── Auth-scoped overrides ────────────────────────────────────────────────────
-// All rules are nested under .auth so only auth pages are affected.
+// ─── Auth + account form overrides ───────────────────────────────────────────
+// Form primitives restyled with the v1.47 tokens. Scoped to the auth pages AND
+// the account area (.account) so account forms (FormProfile, FormPassword) get
+// the same look. Form classes live HERE (in _form.scss), never in _account.scss.
 // Global .form-control / .btn--primary / etc. rules above remain untouched.
-.auth {
+.auth,
+.account {
   // 1. Inputs
   .form-control,
   .form__control {
