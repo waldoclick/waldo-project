@@ -18,7 +18,7 @@
       <FormPassword />
     </div>
 
-    <div class="account--password__note">
+    <div v-if="!isExternalProvider" class="account--password__note">
       <Shield class="account--password__note__icon" :size="16" />
       <span class="account--password__note__text">¿Iniciaste sesión con Google? En ese caso tu contraseña se gestiona desde tu proveedor y no podrás cambiarla aquí.</span>
     </div>
