@@ -39,7 +39,7 @@ Milestone scope: migrar la maqueta nueva (en `/design`) a los componentes reales
 - [ ] **HDR-01**: El header (`HeaderDefault`) se ve según la maqueta (sticky 70px, logo, "Anunciar ahora" ámbar) sin romper otras páginas
 - [ ] **HDR-02**: El menú de usuario (`MenuUser` dropdown) se ve según `UserMenu.dc.html`; logout sigue funcionando
 - [ ] **ACT-01**: Ningún botón de cuenta es no-op — Desactivar (bug `()`), Destacar, Republicar, Marcar vendido, Dar de baja, Ver motivo, Estadísticas, todos cableados
-- [ ] **STAT-PERM**: El rol Authenticated accede a los endpoints de stats (`ad-view.stats`, `ad-view.panelViewsTotal`, `ad-contact.recordContact`) vía grant idempotente en bootstrap; responden 200
+- [x] **STAT-PERM**: El rol Authenticated accede a los endpoints de stats (`ad-view.stats`, `ad-view.panelViewsTotal`, `ad-contact.recordContact`) vía grant idempotente en bootstrap; responden 200
 - [ ] **STAT-UI**: La card de anuncio muestra "N vistas · N contactos" (datos reales) y "Contactos recibidos" del Panel usa datos reales (endpoint `contacts-total` + tracking de contacto cableado)
 
 ## Out of Scope
@@ -73,7 +73,7 @@ Milestone scope: migrar la maqueta nueva (en `/design`) a los componentes reales
 | HDR-01 | Phase 06 | Pending |
 | HDR-02 | Phase 06 | Pending |
 | ACT-01 | Phase 06 | Pending |
-| STAT-PERM | Phase 06 | Pending |
+| STAT-PERM | Phase 06 | Complete |
 | STAT-UI | Phase 06 | Pending |
 
 **Coverage:**

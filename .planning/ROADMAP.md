@@ -94,7 +94,7 @@ Plans:
 **Plans:** 5 plans (2 waves)
 
 Plans:
-- [ ] 06-01-PLAN.md — Strapi bootstrap idempotent permission grant for Authenticated role (STAT-PERM)
+- [x] 06-01-PLAN.md — Strapi bootstrap idempotent permission grant for Authenticated role (STAT-PERM)
 - [ ] 06-02-PLAN.md — HeaderDefault restyle to mockup (sticky 70px, amber CTA), slots preserved (HDR-01)
 - [ ] 06-03-PLAN.md — MenuUser dropdown restyle to UserMenu.dc.html, logout preserved (HDR-02)
 - [ ] 06-04-PLAN.md — contacts-total endpoint + AdSingle recordContact wiring (STAT-UI)
