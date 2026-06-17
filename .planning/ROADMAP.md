@@ -74,7 +74,7 @@ Plans:
 - [ ] 05-04-PLAN.md — Mis órdenes: summary cards + orders table + doc download (ACC-ORDERS)
 - [ ] 05-05-PLAN.md — Mi perfil (Ver + Editar): preview, completeness, info grid, identidad pública (ACC-PROFILE)
 - [ ] 05-06-PLAN.md — Cambiar contraseña: header + password card + Google-provider note (ACC-PASSWORD)
-- [ ] 05-07-PLAN.md — Stats backend (TDD): ad-view + ad-contact content types + server-side owner-excluded per-day view tracking (STAT-MODEL)
+- [x] 05-07-PLAN.md — Stats backend (TDD): ad-view + ad-contact content types + server-side owner-excluded per-day view tracking (STAT-MODEL)
 - [ ] 05-08-PLAN.md — Stats aggregation (TDD): GET /ads/:id/stats (14-day series + conversion) + GET /ads/me/views-total (STAT-MODEL)
 - [ ] 05-09-PLAN.md — Stats frontend: per-ad stats modal (chart.js) + real Panel KPIs wired to aggregation endpoints (STAT-VIEW)
 
