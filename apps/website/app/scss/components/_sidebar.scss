@@ -102,156 +102,161 @@
     }
   }
 
+  // ── Account sidebar (v1.47 redesign — design/account.dc.html lines 41-73) ──
   &--account {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
     width: 100%;
 
-    &__menu {
-      padding: 0;
-      margin: 0;
-      list-style: none;
-      border-top: 2px solid $gainsboro;
-      padding-top: 0px;
-      padding-bottom: 0px;
-      border-top: none;
+    &__info {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    &__name {
+      font-weight: 700;
+      font-size: 19px;
+      line-height: 1.2;
+      letter-spacing: -0.3px;
+      color: $ink;
+    }
+
+    &__location {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      color: $ink2;
+
+      svg {
+        flex: none;
+        color: $muted;
+      }
+    }
+
+    &__public {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 1px solid $line;
+      background: $white;
+      border-radius: 4px;
+      padding: 10px;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: $ink;
+
+      &:hover {
+        background: $cream;
+      }
+    }
+
+    &__divider {
+      height: 1px;
+      background: $line;
+    }
+
+    &__nav {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
 
       &__item {
+        position: relative;
         display: flex;
         align-items: center;
-        transition: all 0.2s ease-in-out;
+        gap: 12px;
+        padding: 11px 14px;
+        border-radius: 6px;
+        font-size: 14.5px;
+        font-weight: 500;
+        color: $ink2;
 
-        a {
-          cursor: pointer;
+        &:hover {
+          background: $cream;
+        }
 
-          font-size: 14px;
-          line-height: 20px;
-          letter-spacing: 0.25px;
-          color: $charcoal;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          padding: 12px 0;
+        &--active {
+          background: $cream;
+          color: $ink;
+          font-weight: 600;
 
-          svg {
-            @include screen-large {
-              display: none;
-            }
-          }
-
-          b {
-            background-color: black;
-            color: $light_peach;
-            padding: 4px 6px;
-            border-radius: 4px;
-            font-size: 10px;
-            line-height: 1;
-            letter-spacing: 0.25px;
-            font-weight: normal;
-          }
-
-          &:hover,
-          &.router-link-active {
-            span {
-              text-decoration: underline;
-            }
+          &::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 8px;
+            bottom: 8px;
+            width: 3px;
+            border-radius: 0 3px 3px 0;
+            background: $amber_hover;
           }
         }
       }
     }
 
-    &__info {
-      border-bottom: 2px solid $gainsboro;
-      margin-bottom: 20px;
-      padding-bottom: 10px;
-      display: block;
+    &__credits {
+      margin-top: auto;
+      border: 1px solid $line;
+      background: $white;
+      border-radius: 8px;
+      padding: 16px;
 
-      @include screen-large {
-        display: none;
+      &__head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+
+        svg {
+          color: $amber_hover;
+        }
       }
-    }
 
-    &__avatar {
-      margin-bottom: 20px;
-    }
-
-    &__name {
-      font-weight: bold;
-      font-size: 14px;
-      line-height: 1;
-      letter-spacing: 0.25px;
-      color: $charcoal;
-      flex: none;
-      margin-bottom: 5px;
-    }
-
-    &__email {
-      font-size: 14px;
-      line-height: 1.3;
-      letter-spacing: 0.25px;
-      color: $charcoal;
-      margin-bottom: 5px;
-    }
-
-    &__profile {
-      font-weight: 600;
-      font-size: 14px;
-      line-height: 1.3;
-      letter-spacing: 0.25px;
-      text-decoration-line: underline;
-      color: $dodger_blue;
-      display: flex;
-      transition: 0.3s;
-    }
-
-    &__location {
-      font-size: 14px;
-      line-height: 1.3;
-      letter-spacing: 0.25px;
-      color: $charcoal;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-top: 25px;
-      margin-bottom: 5px;
-
-      svg {
-        min-width: 20px;
-        // height: 16px;
-      }
-    }
-
-    &__showcase {
-      margin-bottom: 15px;
-
-      a {
+      &__label {
+        font-size: 12.5px;
+        color: $muted;
         font-weight: 500;
-        font-size: 14px;
-        line-height: 1.3;
-        letter-spacing: 0.25px;
-        text-decoration-line: underline;
-        color: $charcoal;
       }
-    }
 
-    &__link {
-      margin-bottom: 15px;
+      &__amount {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        margin-top: 6px;
+      }
 
-      a {
-        border: 1px solid $charcoal;
-        border-radius: 4px;
-        padding: 5px 15px;
+      &__number {
+        font-weight: 800;
+        font-size: 30px;
+        line-height: 1;
+        color: $ink;
+      }
+
+      &__free {
+        font-size: 12.5px;
+        color: $success;
+        font-weight: 600;
+      }
+
+      &__buy {
         display: flex;
         align-items: center;
         justify-content: center;
-        max-width: max-content;
+        gap: 7px;
+        margin-top: 14px;
         font-weight: 600;
-        font-size: 12px;
-        line-height: 24px;
-        text-align: center;
-        letter-spacing: 0.5px;
-        color: $charcoal;
+        font-size: 13.5px;
+        color: $ink;
+        background: $amber;
+        padding: 11px;
+        border-radius: 4px;
 
         &:hover {
-          background-color: $light_peach;
+          background: $amber_hover;
         }
       }
     }

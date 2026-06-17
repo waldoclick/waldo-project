@@ -1,155 +1,103 @@
 <template>
   <div class="sidebar sidebar--account">
     <div class="sidebar--account__info">
-      <div class="sidebar--account__avatar">
-        <AvatarDefault size="large" />
-      </div>
       <div v-if="user" class="sidebar--account__name">
-        {{ user.firstname }}
-        {{ user.lastname }}
+        {{ user.firstname }} {{ user.lastname }}
       </div>
-      <div v-if="user" class="sidebar--account__email">
-        {{ user.email }}
-      </div>
-      <nuxt-link
-        v-if="route.path !== '/cuenta/perfil'"
-        to="/cuenta/perfil"
-        class="sidebar--account__profile"
-        title="Ver datos personales"
-      >
-        Ver datos personales
-      </nuxt-link>
-      <!-- {{ getUbication }} -->
       <div v-show="getUbication" class="sidebar--account__location">
-        <IconMapPin :size="20" />
+        <IconMapPin :size="14" />
         {{ getUbication }}
       </div>
-      <div v-if="user" class="sidebar--account__showcase">
-        <nuxt-link :to="`/${user.username}`" :title="`@${user.username}`">
-          @{{ user.username }}
-        </nuxt-link>
-      </div>
-      <div v-if="user" class="sidebar--account__link">
-        <nuxt-link :to="`/${user.username}`" title="Ver mi perfil público">
-          Ver mi perfil público
-        </nuxt-link>
-      </div>
+      <nuxt-link
+        v-if="user"
+        :to="`/${user.username}`"
+        class="sidebar--account__public"
+        title="Ver mi perfil público"
+      >
+        <IconExternalLink :size="15" />
+        Ver mi perfil público
+      </nuxt-link>
     </div>
-    <ul class="sidebar--account__menu">
-      <li class="sidebar--account__menu__item">
-        <nuxt-link :to="`/cuenta/`" title="Mi cuenta">
-          <IconUser :size="20" />
-          <span>Mi cuenta</span>
-        </nuxt-link>
-      </li>
-      <li class="sidebar--account__menu__item">
-        <nuxt-link :to="`/cuenta/mis-anuncios/`" title="Mis anuncios">
-          <IconPackage :size="20" />
-          <span>Mis anuncios</span>
-        </nuxt-link>
-      </li>
-      <li class="sidebar--account__menu__item">
-        <nuxt-link :to="`/cuenta/mis-ordenes/`" title="Mis órdenes">
-          <IconShoppingCart :size="20" />
-          <span>Mis órdenes</span>
-        </nuxt-link>
-      </li>
-      <li class="sidebar--account__menu__item">
-        <nuxt-link to="/cuenta/perfil" title="Mi perfil">
-          <IconUserCircle :size="20" />
-          <span>Mi perfil</span>
-        </nuxt-link>
-      </li>
-      <li v-if="appConfig.features.pro" class="sidebar--account__menu__item">
-        <nuxt-link to="/cuenta/username" title="Nombre de usuario">
-          <IconAtSign :size="20" />
-          <span>Nombre de usuario</span>
-          <b>PRO</b>
-        </nuxt-link>
-      </li>
-      <li v-if="appConfig.features.pro" class="sidebar--account__menu__item">
-        <nuxt-link to="/cuenta/avatar" title="Foto de perfil">
-          <IconCamera :size="20" />
-          <span>Foto de perfil</span>
-          <b>PRO</b>
-        </nuxt-link>
-      </li>
-      <li v-if="appConfig.features.pro" class="sidebar--account__menu__item">
-        <nuxt-link to="/cuenta/cover" title="Portada">
-          <IconImage :size="20" />
-          <span>Portada</span>
-          <b>PRO</b>
-        </nuxt-link>
-      </li>
-      <li class="sidebar--account__menu__item">
-        <nuxt-link to="/cuenta/cambiar-contrasena" title="Cambiar contraseña">
-          <IconLock :size="20" />
-          <span>Cambiar contraseña</span>
-        </nuxt-link>
-      </li>
-      <li class="sidebar--account__menu__item">
-        <a title="Cerrar sesión" @click.prevent="confirmation">
-          <IconLogOut :size="20" />
-          <span>Cerrar sesión</span>
-        </a>
-      </li>
-    </ul>
+
+    <div class="sidebar--account__divider" />
+
+    <nav class="sidebar--account__nav">
+      <nuxt-link
+        v-for="item in navItems"
+        :key="item.to"
+        :to="item.to"
+        class="sidebar--account__nav__item"
+        :class="{
+          'sidebar--account__nav__item--active': isActive(item),
+        }"
+        :title="item.label"
+      >
+        <component :is="item.icon" :size="18" />
+        {{ item.label }}
+      </nuxt-link>
+    </nav>
+
+    <div class="sidebar--account__credits">
+      <div class="sidebar--account__credits__head">
+        <span class="sidebar--account__credits__label">Créditos disponibles</span>
+        <IconTicket :size="16" />
+      </div>
+      <div class="sidebar--account__credits__amount">
+        <!-- TODO 05-09: wire real credits -->
+        <span class="sidebar--account__credits__number">{{ credits }}</span>
+        <span class="sidebar--account__credits__free">+3 gratis</span>
+      </div>
+      <nuxt-link to="/packs" class="sidebar--account__credits__buy">
+        Comprar packs
+      </nuxt-link>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRoute } from "vue-router";
-const { Swal } = useSweetAlert2();
 import type { User } from "~/types/user";
 import {
   MapPin as IconMapPin,
-  User as IconUser,
+  ExternalLink as IconExternalLink,
+  LayoutDashboard as IconLayoutDashboard,
   Package as IconPackage,
-  UserCircle as IconUserCircle,
-  AtSign as IconAtSign,
-  Camera as IconCamera,
-  Image as IconImage,
+  Receipt as IconReceipt,
+  UserRound as IconUserRound,
   Lock as IconLock,
-  LogOut as IconLogOut,
-  ShoppingCart as IconShoppingCart,
+  Ticket as IconTicket,
 } from "lucide-vue-next";
 
-// components
-import AvatarDefault from "@/components/AvatarDefault.vue";
-
-const appConfig = useAppConfiguration();
-
-// Obtener el usuario desde Strapi
+const route = useRoute();
 const user = useSessionUser<User>();
-const { logout } = useLogout();
 
-// Computed property para la ubicación
 const getUbication = computed(() => {
-  if (!user.value || !user.value.commune || !user.value.commune.region)
-    return "";
+  if (!user.value || !user.value.commune || !user.value.commune.region) return "";
   return user.value.commune.name;
 });
 
-// Método para confirmar cierre de sesión
-const confirmation = async () => {
-  Swal.fire({
-    text: "¿Estás seguro de cerrar sesión?",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonText: "Sí, quiero salir",
-    cancelButtonText: "No",
-  }).then(async ({ isConfirmed }: { isConfirmed: boolean }) => {
-    if (isConfirmed) {
-      try {
-        await logout();
-      } catch (error) {
-        console.error("Error al cerrar sesión:", error);
-      }
-    }
-  });
-};
+// TODO 05-09: wire real credits count
+const credits = 0;
 
-// Acceso a la ruta actual
-const route = useRoute();
+interface NavItem {
+  label: string;
+  to: string;
+  icon: unknown;
+  exact?: boolean;
+}
+
+const navItems: NavItem[] = [
+  { label: "Panel", to: "/cuenta/", icon: IconLayoutDashboard, exact: true },
+  { label: "Mis anuncios", to: "/cuenta/mis-anuncios/", icon: IconPackage },
+  { label: "Mis órdenes", to: "/cuenta/mis-ordenes/", icon: IconReceipt },
+  { label: "Mi perfil", to: "/cuenta/perfil", icon: IconUserRound },
+  { label: "Cambiar contraseña", to: "/cuenta/cambiar-contrasena", icon: IconLock },
+];
+
+const isActive = (item: NavItem) => {
+  const path = route.path.replace(/\/$/, "");
+  const to = item.to.replace(/\/$/, "");
+  return item.exact ? path === to : path.startsWith(to);
+};
 </script>
