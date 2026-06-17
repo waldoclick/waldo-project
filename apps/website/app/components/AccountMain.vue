@@ -1,111 +1,153 @@
 <template>
   <section class="account account--main" aria-labelledby="account-title">
-    <div id="account-title" class="account--main__title">Mi cuenta</div>
-    <div class="account--main__profile">
-      <span> {{ user?.firstname }} {{ user?.lastname }} </span>
-      <nuxt-link
-        class="account--main__profile__edit"
-        to="/cuenta/perfil"
-        title="Ver perfil"
-      >
-        Ver perfil
-      </nuxt-link>
-    </div>
+    <span class="account--main__eyebrow">Panel</span>
+    <h1 id="account-title" class="account--main__greeting">
+      Hola, {{ user?.firstname }} 👋
+    </h1>
+    <p class="account--main__intro">
+      Este es el resumen de tu cuenta. Revisa lo que necesita tu atención y cómo
+      rinden tus anuncios.
+    </p>
 
-    <div v-if="appConfig.features.pro" class="account--main__become_pro">
-      <MemoPro />
-    </div>
-
-    <div class="account--main__announcements">
-      <div class="account--main__announcements__text">
-        <div class="account--main__announcements__own">
-          <span v-html="adReservationsText" />{{ " "
-          }}<span
-            v-if="featuredAdReservationsText"
-            v-html="featuredAdReservationsText"
-          />
+    <div class="account--main__kpis">
+      <!-- TODO 05-09: wire totalViews to /ads/me/views-total -->
+      <div class="account--main__kpi">
+        <div class="account--main__kpi__head">
+          <span class="account--main__kpi__label">Vistas totales</span>
+          <IconEye :size="18" />
         </div>
-        <div v-if="packSavingsText" class="account--main__announcements__pack">
-          <strong class="account--main__announcements__pack__info">{{
-            packSavingsText
-          }}</strong>
-        </div>
+        <div class="account--main__kpi__value">{{ totalViews }}</div>
+        <span class="account--main__kpi__sub">en anuncios activos</span>
       </div>
-      <nuxt-link to="/packs" class="btn btn--buy" title="Comprar">
-        Comprar
-      </nuxt-link>
+      <div class="account--main__kpi">
+        <div class="account--main__kpi__head">
+          <span class="account--main__kpi__label">Contactos recibidos</span>
+          <IconPhone :size="18" />
+        </div>
+        <div class="account--main__kpi__value">{{ totalContacts }}</div>
+        <span class="account--main__kpi__sub">llamadas y mensajes</span>
+      </div>
+      <div class="account--main__kpi">
+        <div class="account--main__kpi__head">
+          <span class="account--main__kpi__label">Anuncios activos</span>
+          <IconPackage :size="18" />
+        </div>
+        <div class="account--main__kpi__value">{{ activeCount }}</div>
+        <span class="account--main__kpi__sub">de {{ totalCount }} publicados</span>
+      </div>
     </div>
 
-    <div class="account--main__shortcuts">
-      <div id="shortcuts-title" class="account--main__shortcuts__title">
-        Accesos frecuentes
+    <div class="account--main__attention">
+      <div class="account--main__attention__head">
+        <h2 class="account--main__attention__title">Necesita tu atención</h2>
+        <span
+          v-if="rejectedCount > 0"
+          class="account--main__attention__count"
+          >{{ rejectedCount }}</span
+        >
       </div>
-      <div
-        class="account--main__shortcuts__links"
-        aria-labelledby="shortcuts-title"
-      >
-        <CardShortcut
-          to="/cuenta/mis-anuncios"
-          :icon-component="IconMegaphone"
-          title="Mis anuncios"
-          description="Mira tus anuncios y el estados de tus publicaciones creadas."
-          link-text="Ver anuncios"
-        />
-        <CardShortcut
-          to="/cuenta/mis-ordenes"
-          :icon-component="IconShoppingCart"
-          title="Mis órdenes"
-          description="Revisa el historial de tus compras y el estado de tus pedidos."
-          link-text="Ver órdenes"
-        />
-        <CardShortcut
-          to="/packs"
-          :icon-component="IconPackage"
-          title="Comprar Packs"
-          description="Mira nuestros packs de anuncios y elige el que más necesites."
-          link-text="Comprar packs"
-        />
-        <CardShortcut
-          to="/cuenta/perfil"
-          :icon-component="IconUserCog"
-          title="Mi perfil"
-          description="Revisa o actualiza los datos de tu cuenta, perfil y contacto."
-          link-text="Revisar o editar mi perfil"
-        />
+
+      <div v-if="rejectedCount > 0" class="account--main__attention__list">
+        <div class="account--main__attention__row account--main__attention__row--error">
+          <span class="account--main__attention__row__icon">
+            <IconCircleAlert :size="24" />
+          </span>
+          <div class="account--main__attention__row__body">
+            <div class="account--main__attention__row__top">
+              <span class="account--main__attention__row__title">
+                Tienes {{ rejectedCount }}
+                {{ rejectedCount === 1 ? "anuncio rechazado" : "anuncios rechazados" }}
+              </span>
+              <span class="account--main__attention__badge account--main__attention__badge--rejected">Rechazado</span>
+            </div>
+            <p class="account--main__attention__row__note">
+              Revisa el motivo del rechazo y corrige tu anuncio para volver a publicarlo.
+            </p>
+          </div>
+          <nuxt-link
+            to="/cuenta/mis-anuncios"
+            class="account--main__attention__action"
+          >
+            <IconCircleAlert :size="15" />
+            Ver motivo
+          </nuxt-link>
+        </div>
       </div>
+
+      <div v-else class="account--main__attention__ok">
+        <span class="account--main__attention__ok__icon">
+          <IconCheckCheck :size="24" />
+        </span>
+        <div>
+          <span class="account--main__attention__ok__title">Todo al día</span>
+          <p class="account--main__attention__ok__note">
+            No tienes anuncios por vencer ni rechazados. Tus publicaciones están en
+            orden.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="account--main__upsell">
+      <div class="account--main__upsell__glow" />
+      <div class="account--main__upsell__body">
+        <span class="account--main__upsell__pill">Ahorra hasta 98%</span>
+        <h3 class="account--main__upsell__title">Publica más, paga menos</h3>
+        <p class="account--main__upsell__text">
+          Compra un pack de avisos y úsalos cuando quieras. Cada anuncio se publica
+          por 45 días.
+        </p>
+      </div>
+      <nuxt-link to="/packs" class="account--main__upsell__buy">
+        Comprar packs
+        <IconArrowRight :size="16" />
+      </nuxt-link>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from "vue";
+import { computed } from "vue";
+import { useAsyncData } from "nuxt/app";
 import {
-  Megaphone as IconMegaphone,
+  Eye as IconEye,
+  Phone as IconPhone,
   Package as IconPackage,
-  UserCog as IconUserCog,
-  ShoppingCart as IconShoppingCart,
+  CheckCheck as IconCheckCheck,
+  CircleAlert as IconCircleAlert,
+  ArrowRight as IconArrowRight,
 } from "lucide-vue-next";
 import type { User } from "@/types/user";
-import CardShortcut from "@/components/CardShortcut.vue";
-import { useSanitize } from "@/composables/useSanitize";
 
-// Usar la función del composable
-const { getAdReservationsText, getFeaturedAdReservationsText } = useUser();
-const { getPackBannerText } = usePacks();
 const user = useSessionUser<User>();
-const { sanitizeText } = useSanitize();
-const { packs, loadPacks } = usePacksList();
-const appConfig = useAppConfiguration();
+const userStore = useUserStore();
 
-onMounted(() => loadPacks());
+const { data: counts } = await useAsyncData(
+  "account-panel-counts",
+  () => userStore.loadUserAdCounts(),
+  {
+    default: () => ({
+      published: 0,
+      review: 0,
+      expired: 0,
+      rejected: 0,
+      banned: 0,
+    }),
+  },
+);
 
-const adReservationsText = computed(() =>
-  sanitizeText(getAdReservationsText()),
+// TODO 05-09: wire to real /ads/me aggregation
+const totalViews = 0;
+const totalContacts = 0;
+
+const activeCount = computed(() => counts.value.published);
+const totalCount = computed(
+  () =>
+    counts.value.published +
+    counts.value.review +
+    counts.value.expired +
+    counts.value.rejected +
+    counts.value.banned,
 );
-const featuredAdReservationsText = computed(() =>
-  sanitizeText(getFeaturedAdReservationsText()),
-);
-const packSavingsText = computed(
-  () => getPackBannerText(packs.value as import("@/types/pack").Pack[]) ?? "",
-);
+const rejectedCount = computed(() => counts.value.rejected);
 </script>

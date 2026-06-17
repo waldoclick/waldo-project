@@ -3,146 +3,310 @@
 @use "../base/container";
 
 .account {
+  // ── Panel overview (v1.47 redesign — design/account.dc.html lines 78-139) ──
   &--main {
-    font-style: normal;
-    line-height: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-
-    &__title {
-      font-weight: bold;
-      font-size: 32px;
-      line-height: 1.2;
-      letter-spacing: 0.25px;
-      color: $charcoal;
-      // margin-bottom: 20px;
+    &__eyebrow {
+      font-size: 13px;
+      font-weight: 600;
+      color: $muted;
     }
 
-    &__profile {
-      font-weight: normal;
-      font-size: 16px;
-      letter-spacing: 0.25px;
-      color: $charcoal;
-      // margin-bottom: 35px;
-      display: flex;
-      flex-direction: row;
-
-      span {
-        display: block;
-        margin-right: 15px;
-
-        a {
-          color: $charcoal;
-          text-decoration: underline;
-        }
-      }
-
-      &__edit {
-        font-weight: 600;
-        font-size: 14px;
-        letter-spacing: 0.25px;
-        text-decoration-line: underline;
-        color: $dodger_blue;
-      }
+    &__greeting {
+      font-weight: 800;
+      font-size: 30px;
+      line-height: 1.1;
+      letter-spacing: -0.5px;
+      color: $ink;
+      margin: 6px 0 0;
     }
 
-    &__pro {
-      margin-bottom: 20px;
+    &__intro {
+      font-size: 15px;
+      line-height: 1.6;
+      color: $ink2;
+      margin: 10px 0 0;
+      max-width: 560px;
     }
 
-    &__announcements {
+    &__kpis {
       display: grid;
-      grid-template-columns: 1fr auto;
-      padding: 25px;
-      border: 1px solid $gainsboro;
-      border-radius: 4px;
-      align-items: center;
-      transition: 0.3s;
-      gap: 20px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 32px;
 
       @include screen-medium {
         grid-template-columns: 1fr;
-        margin-bottom: 30px;
+      }
+    }
+
+    &__kpi {
+      border: 1px solid $line;
+      background: $white;
+      border-radius: 12px;
+      padding: 20px 22px;
+
+      &__head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        color: $muted;
       }
 
-      &__text {
+      &__label {
+        font-size: 12.5px;
+        color: $muted;
+        font-weight: 500;
+      }
+
+      &__value {
+        font-weight: 800;
+        font-size: 30px;
+        line-height: 1;
+        color: $ink;
+        margin-top: 16px;
+      }
+
+      &__sub {
+        display: block;
+        font-size: 12.5px;
+        color: $muted;
+        font-weight: 500;
+        margin-top: 8px;
+      }
+    }
+
+    &__attention {
+      margin-top: 48px;
+
+      &__head {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      &__title {
+        font-weight: 700;
+        font-size: 19px;
+        letter-spacing: -0.2px;
+        color: $ink;
+        margin: 0;
+      }
+
+      &__count {
+        display: inline-grid;
+        place-items: center;
+        min-width: 22px;
+        height: 22px;
+        padding: 0 7px;
+        border-radius: 99px;
+        background: $ink;
+        color: $white;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      &__list {
+        margin-top: 16px;
         display: flex;
         flex-direction: column;
-        gap: 3px;
+        gap: 12px;
       }
 
-      &__own {
-        font-weight: normal;
-        font-size: 18px;
-        letter-spacing: 0.25px;
-        color: $charcoal;
-
-        @include screen-medium {
-          margin-bottom: 20px;
-        }
-
-        span {
-          letter-spacing: 0.25px;
-          color: $charcoal;
-          line-height: 1.3;
-        }
-      }
-
-      &__pack {
+      &__row {
         display: flex;
-        align-items: flex-start;
-        line-height: 1.5;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+        border-radius: 12px;
+        padding: 16px 18px;
 
-        @include screen-medium {
-          margin: 0;
-          padding: 0;
-          margin-bottom: 20px;
-          border: none;
+        &--error {
+          // mockup literal — no token in palette for these soft alert tints
+          border: 1px solid #f1d3d0;
+          background: #fcf4f3;
         }
 
-        &__info {
-          font-weight: normal;
-          font-size: 14px;
-          letter-spacing: 0.25px;
-          color: $charcoal;
+        &__icon {
+          flex: none;
+          width: 52px;
+          height: 52px;
+          border-radius: 8px;
+          background: rgba($error, 0.12);
+          color: $error;
+          display: grid;
+          place-items: center;
+        }
+
+        &__body {
+          flex: 1;
+          min-width: 220px;
+        }
+
+        &__top {
+          display: flex;
+          align-items: center;
+          gap: 9px;
+          flex-wrap: wrap;
+        }
+
+        &__title {
+          font-weight: 600;
+          color: $ink;
+          font-size: 15px;
+        }
+
+        &__note {
+          margin: 5px 0 0;
+          font-size: 13px;
           line-height: 1.5;
-        }
-
-        img {
-          margin-right: 10px;
+          color: $ink2;
+          max-width: 520px;
         }
       }
 
-      .btn--buy {
-        @include screen-medium {
-          margin-left: 0;
+      &__badge {
+        font-size: 12px;
+        font-weight: 700;
+        padding: 3px 9px;
+        border-radius: 99px;
+
+        &--rejected {
+          background: rgba($error, 0.12);
+          color: $error;
+        }
+      }
+
+      &__action {
+        flex: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-weight: 600;
+        font-size: 13px;
+        color: $ink;
+        background: $white;
+        border: 1px solid $line;
+        padding: 10px 16px;
+        border-radius: 4px;
+
+        &:hover {
+          background: $cream;
+        }
+      }
+
+      &__ok {
+        margin-top: 16px;
+        border: 1px solid $line;
+        background: $white;
+        border-radius: 12px;
+        padding: 24px 26px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+
+        &__icon {
+          flex: none;
+          width: 48px;
+          height: 48px;
+          border-radius: 10px;
+          background: rgba($success, 0.12);
+          color: $success;
+          display: grid;
+          place-items: center;
+        }
+
+        &__title {
+          font-weight: 700;
+          color: $ink;
+          font-size: 16px;
+        }
+
+        &__note {
+          margin: 3px 0 0;
+          font-size: 13.5px;
+          line-height: 1.5;
+          color: $muted;
         }
       }
     }
 
-    &__shortcuts {
-      &__title {
-        font-weight: bold;
-        font-size: 20px;
-        line-height: 1;
-        letter-spacing: 0.25px;
-        color: $charcoal;
-        margin-bottom: 25px;
-        display: block;
+    &__upsell {
+      margin-top: 48px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid $line;
+      background: $ink;
+      border-radius: 12px;
+      padding: 26px 28px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
 
-        @include screen-large {
-          display: none;
-        }
+      &__glow {
+        position: absolute;
+        right: -60px;
+        top: -60px;
+        width: 240px;
+        height: 240px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(247, 201, 126, 0.18),
+          transparent 65%
+        );
+        pointer-events: none;
       }
 
-      &__links {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
+      &__body {
+        flex: 1;
+        min-width: 240px;
+        position: relative;
+      }
 
-        @include screen-medium {
-          grid-template-columns: 1fr;
+      &__pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: rgba(247, 201, 126, 0.22);
+        color: $amber;
+        font-weight: 600;
+        font-size: 12px;
+        padding: 5px 11px;
+        border-radius: 99px;
+      }
+
+      &__title {
+        font-weight: 800;
+        color: $white;
+        font-size: 22px;
+        letter-spacing: -0.3px;
+        margin: 13px 0 0;
+      }
+
+      &__text {
+        margin: 7px 0 0;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.72);
+        max-width: 420px;
+      }
+
+      &__buy {
+        position: relative;
+        flex: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 700;
+        font-size: 14.5px;
+        color: $ink;
+        background: $amber;
+        padding: 14px 24px;
+        border-radius: 6px;
+
+        &:hover {
+          background: $amber_hover;
         }
       }
     }
