@@ -5,7 +5,6 @@
  */
 
 import { factories } from "@strapi/strapi";
-import crypto from "crypto";
 
 export default factories.createCoreController(
   "api::ad-contact.ad-contact",
