@@ -8,196 +8,282 @@
   display: flex;
 
   &--profileAd {
+    // ── Ad card (v1.47 redesign — design/account.dc.html lines 171-199) ──
     width: 100%;
-    border: 2px solid $gainsboro;
-    border-radius: 8px;
-    padding: 8px 12px;
+    border: 1px solid $line;
+    background: $white;
+    border-radius: 10px;
+    padding: 16px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 40px;
-    min-width: 0;
-
-    @include screen-medium {
-      gap: 20px;
-      flex-direction: column;
-      align-items: flex-start;
-    }
+    gap: 18px;
+    flex-wrap: wrap;
 
     @include screen-small {
       padding: 12px;
       gap: 12px;
-      flex-direction: column;
-      align-items: stretch;
     }
 
-    &__left {
-      display: flex;
-      align-items: center;
-      gap: 30px;
-      min-width: 0;
-      flex: 1 1 auto;
+    // Thumbnail tile — background set via :style (data-bound category color)
+    &__thumb {
+      flex: none;
+      position: relative;
+      width: 96px;
+      height: 74px;
+      border-radius: 6px;
+      display: grid;
+      place-items: center;
+      color: $ink;
 
       @include screen-small {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-        width: 100%;
-      }
-    }
-
-    &__images {
-      display: flex;
-      align-items: center;
-      flex-shrink: 0;
-
-      @include screen-small {
-        width: 100%;
-        overflow-x: auto;
-        overflow-y: hidden;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-        padding-bottom: 2px;
-
-        &::-webkit-scrollbar {
-          display: none;
-        }
-      }
-
-      &__img,
-      &__placeholder {
-        background-color: $gainsboro;
-        width: 60px;
+        width: 80px;
         height: 60px;
-        object-fit: cover;
-        border-radius: 100%;
-        border: 4px solid white;
-        position: relative;
-
-        &:not(:first-child) {
-          margin-left: -40px;
-        }
-
-        @include screen-small {
-          width: 44px;
-          height: 44px;
-          border-width: 2px;
-          margin-left: 0;
-
-          &:not(:first-child) {
-            margin-left: -16px;
-          }
-        }
       }
 
-      &__img {
-        transition: 0.3s;
-        // border-color: $light_peach;
+      &__icon {
+        // size set via :size prop
+      }
 
-        // &:hover {
-        //   z-index: 1;
-        //   transform: scale(1.1);
-        // }
+      &__count {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        background: rgba(38, 37, 43, 0.78);
+        color: $white;
+        font-size: 10px;
+        font-weight: 600;
+        padding: 2px 7px;
+        border-radius: 99px;
       }
     }
 
-    &__info {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      width: 200px;
-      min-width: 0;
+    // Body
+    &__body {
+      flex: 1;
+      min-width: 200px;
 
-      @include screen-small {
-        width: 100%;
-        max-width: none;
-      }
-
-      &__title {
-        font-size: 12px;
-      }
-
-      &__text {
-        font-weight: 600;
-        font-size: 16px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-
-        @include screen-small {
-          font-size: 14px;
-        }
-      }
-    }
-
-    &__highlight {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      min-width: 0;
-
-      &__title {
-        font-weight: 600;
-        font-size: 14px;
+      &__top {
         display: flex;
         align-items: center;
-        flex-shrink: 0;
+        gap: 9px;
+        flex-wrap: wrap;
+      }
 
-        svg {
-          margin-right: 5px;
-          color: $light_peach;
-          fill: $light_peach;
+      &__title {
+        font-weight: 600;
+        color: $ink;
+        font-size: 15.5px;
+      }
+
+      &__badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-weight: 700;
+        font-size: 11px;
+        padding: 3px 10px;
+        border-radius: 99px;
+
+        &--active {
+          background: rgba($success, 0.12);
+          color: $success;
         }
 
-        @include screen-small {
-          font-size: 13px;
+        &--expiring {
+          background: rgba($warning, 0.14);
+          color: $warning;
+        }
+
+        &--expired,
+        &--review {
+          background: $cream;
+          color: $muted;
+          border: 1px solid $line;
+        }
+
+        &--rejected {
+          background: rgba($error, 0.12);
+          color: $error;
+        }
+
+        &--banned {
+          background: rgba($error, 0.12);
+          color: $error;
         }
       }
 
-      &__text {
-        font-size: 15px;
-        word-break: break-word;
+      &__featured {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: $amber;
+        color: $ink;
+        font-weight: 700;
+        font-size: 11px;
+        padding: 3px 9px;
+        border-radius: 99px;
+      }
 
-        @include screen-small {
-          font-size: 13px;
-          line-height: 1.35;
+      &__meta {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-top: 8px;
+        font-size: 13px;
+        color: $muted;
+        flex-wrap: wrap;
+
+        &__cat {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+
+          &__dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+            border: 1px solid $line;
+            flex-shrink: 0;
+          }
+        }
+
+        &__date {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+        }
+
+        &__right {
+          // status message (Expira en N días / Expirado hace N días / etc.)
         }
       }
     }
 
-    &__link {
-      border: none;
-      background: transparent;
-      font-style: normal;
-      font-weight: 600;
-      font-size: 12px;
-      line-height: 24px;
-      text-align: center;
-      letter-spacing: 0.5px;
-      text-decoration: underline;
-      color: $dodger_blue;
-    }
-
-    &__button {
+    // Actions
+    &__actions {
       display: flex;
-      flex-direction: row;
-      gap: 8px;
       align-items: center;
+      gap: 9px;
+      position: relative;
       flex-shrink: 0;
 
       @include screen-small {
-        gap: 6px;
-      }
-    }
-
-    &__right {
-      @include screen-small {
-        display: flex;
         width: 100%;
+        padding-top: 10px;
+        border-top: 1px solid $line;
         justify-content: flex-end;
-        margin-top: 6px;
-        padding-top: 8px;
-        border-top: 1px solid rgba($gainsboro, 0.8);
+      }
+
+      &__primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-weight: 700;
+        font-size: 13px;
+        color: $ink;
+        background: $amber;
+        padding: 9px 14px;
+        border-radius: 4px;
+        cursor: pointer;
+        border: none;
+        font-family: inherit;
+        text-decoration: none;
+
+        &:hover {
+          background: $amber_hover;
+        }
+      }
+
+      &__secondary {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-weight: 600;
+        font-size: 13px;
+        color: $ink;
+        background: $white;
+        border: 1px solid $line;
+        padding: 9px 14px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-family: inherit;
+        text-decoration: none;
+
+        &:hover {
+          background: $cream;
+        }
+      }
+
+      &__overflow {
+        position: relative;
+      }
+
+      &__menu-btn {
+        flex: none;
+        width: 38px;
+        height: 38px;
+        border: 1px solid $line;
+        background: $white;
+        cursor: pointer;
+        font-family: inherit;
+        border-radius: 4px;
+        display: grid;
+        place-items: center;
+        color: $ink2;
+
+        &:hover {
+          background: $cream;
+        }
+      }
+
+      &__backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 60;
+      }
+
+      &__dropdown {
+        position: absolute;
+        top: 46px;
+        right: 0;
+        z-index: 61;
+        min-width: 214px;
+        background: $white;
+        border: 1px solid $line;
+        border-radius: 10px;
+        box-shadow: 0 18px 44px -14px rgba(20, 18, 30, 0.32);
+        padding: 6px;
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+
+        &__item {
+          display: flex;
+          align-items: center;
+          gap: 11px;
+          padding: 9px 12px;
+          border-radius: 6px;
+          text-decoration: none;
+          cursor: pointer;
+          font-size: 13.5px;
+          font-weight: 500;
+          color: $ink2;
+          white-space: nowrap;
+          background: transparent;
+          border: none;
+          font-family: inherit;
+          width: 100%;
+          text-align: left;
+
+          &:hover {
+            background: $cream;
+          }
+
+          &--danger {
+            font-weight: 600;
+            color: $error;
+          }
+        }
       }
     }
   }

@@ -1,132 +1,148 @@
 <template>
   <article class="card card--profileAd">
-    <!-- <pre>{{ ad?.status }}</pre> -->
-    <!-- <pre>{{ firstSmallImageUrl }}</pre> -->
+    <!-- Thumbnail tile: background bound from category color (data-driven, not static design) -->
+    <span
+      class="card--profileAd__thumb"
+      :style="{ background: categoryColor }"
+    >
+      <component :is="categoryIcon" :size="30" class="card--profileAd__thumb__icon" />
+      <span class="card--profileAd__thumb__count">{{ photoCount }} fotos</span>
+    </span>
 
-    <div class="card--profileAd__left">
-      <div class="card--profileAd__images">
-        <template v-for="index in 5" :key="index">
-          <div
-            v-if="!lastFiveImages[4 - (index - 1)]"
-            class="card--profileAd__images__placeholder"
-          ></div>
-          <NuxtImg
-            v-else
-            class="card--profileAd__images__img"
-            loading="lazy"
-            :src="lastFiveImages[4 - (index - 1)]"
-            :alt="ad?.title"
-            :title="ad?.title"
-            remote
-          />
-        </template>
+    <!-- Body -->
+    <div class="card--profileAd__body">
+      <!-- Title row -->
+      <div class="card--profileAd__body__top">
+        <span class="card--profileAd__body__title">{{ ad?.title ?? ad?.name }}</span>
+        <span :class="['card--profileAd__body__badge', `card--profileAd__body__badge--${badgeVariant}`]">
+          {{ badgeLabel }}
+        </span>
+        <span v-if="ad?.featured" class="card--profileAd__body__featured">
+          <Star :size="11" />
+          Destacado
+        </span>
       </div>
 
-      <div class="card--profileAd__info">
-        <div class="card--profileAd__info__title">
+      <!-- Meta row -->
+      <div class="card--profileAd__body__meta">
+        <span class="card--profileAd__body__meta__cat">
+          <span class="card--profileAd__body__meta__cat__dot" :style="{ background: categoryColor }" />
+          {{ categoryName }}
+        </span>
+        <span class="card--profileAd__body__meta__date">
+          <Calendar :size="14" />
           {{ formatDate(ad?.createdAt) }}
-        </div>
-        <div class="card--profileAd__info__text">
-          {{ ad?.name }}
-        </div>
-      </div>
-
-      <div class="card--profileAd__highlight">
-        <div
-          v-if="ad?.details?.featured"
-          class="card--profileAd__highlight__title"
-        >
-          <IconStar :size="16" />
-          Anuncio destacado
-        </div>
-
-        <div class="card--profileAd__highlight__text">
-          {{ statusMessage }}
-          <!-- <small style="color: #666; font-size: 0.8em;">(Estado: {{ ad?.status }})</small> -->
-        </div>
+        </span>
+        <span class="card--profileAd__body__meta__right">{{ statusMessage }}</span>
       </div>
     </div>
 
-    <div class="card--profileAd__right">
-      <div class="card--profileAd__button">
-        <!-- Botones para publicados -->
-        <template v-if="ad?.status === 'published' && ad?.slug">
-          <ButtonIcon
-            :icon="IconEye"
-            :to="`/anuncios/${ad?.slug}`"
-            title="Ver anuncio"
-            aria-label="Ver anuncio"
-            target="_blank"
-            rel="noopener noreferrer"
-          />
-          <ButtonIcon
-            :icon="IconPower"
-            title="Desactivar publicación"
-            aria-label="Desactivar publicación"
-            @click="handleDeactivate"
-          />
-        </template>
-
-        <!-- Botón para en revisión -->
-        <ButtonIcon
-          v-if="ad?.status === 'review' && ad?.slug"
-          :icon="IconEye"
-          :to="`/anuncios/${ad?.slug}`"
-          title="Previsualizar anuncio"
-          aria-label="Previsualizar anuncio"
+    <!-- Actions -->
+    <div class="card--profileAd__actions">
+      <!-- Published: primary = Ver anuncio (or Destacar if not featured); overflow menu -->
+      <template v-if="ad?.status === 'published' && ad?.slug">
+        <nuxt-link
+          :to="`/anuncios/${ad.slug}`"
+          class="card--profileAd__actions__primary"
           target="_blank"
           rel="noopener noreferrer"
-        />
+        >
+          <Eye :size="15" />
+          Ver anuncio
+        </nuxt-link>
+        <div class="card--profileAd__actions__overflow">
+          <button
+            type="button"
+            class="card--profileAd__actions__menu-btn"
+            :aria-expanded="menuOpen"
+            title="Más opciones"
+            @click="toggleMenu"
+          >
+            <EllipsisVertical :size="18" />
+          </button>
+          <template v-if="menuOpen">
+            <span class="card--profileAd__actions__backdrop" @click="toggleMenu" />
+            <div class="card--profileAd__actions__dropdown">
+              <button type="button" class="card--profileAd__actions__dropdown__item card--profileAd__actions__dropdown__item--danger" @click="handleDeactivate; toggleMenu()">
+                <PowerOff :size="16" />
+                Desactivar
+              </button>
+            </div>
+          </template>
+        </div>
+      </template>
 
-        <!-- Botón para rechazados -->
-        <ButtonIcon
-          v-if="ad?.status === 'rejected'"
-          :icon="IconInfo"
-          title="Ver razón"
-          aria-label="Ver razón"
-          @click="handleRejectedClick"
-        />
+      <!-- Review: preview link -->
+      <nuxt-link
+        v-else-if="ad?.status === 'review' && ad?.slug"
+        :to="`/anuncios/${ad.slug}`"
+        class="card--profileAd__actions__secondary"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <Eye :size="15" />
+        Previsualizar
+      </nuxt-link>
 
-        <!-- Botón para expirados -->
-        <ButtonIcon
-          v-if="ad?.status === 'expired'"
-          :icon="IconRefreshCw"
-          title="Publicar nuevamente"
-          aria-label="Publicar nuevamente"
-          @click="handleRepublish"
-        />
+      <!-- Expired: Republicar -->
+      <button
+        v-else-if="ad?.status === 'expired'"
+        type="button"
+        class="card--profileAd__actions__primary"
+        @click="handleRepublish"
+      >
+        <RefreshCw :size="15" />
+        Republicar
+      </button>
 
-        <!-- Botón para baneados -->
-        <ButtonIcon
-          v-if="ad?.status === 'banned'"
-          :icon="IconInfo"
-          title="Ver razón"
-          aria-label="Ver razón"
-          @click="handleBannedClick"
-        />
-      </div>
+      <!-- Rejected: Ver motivo -->
+      <button
+        v-else-if="ad?.status === 'rejected'"
+        type="button"
+        class="card--profileAd__actions__secondary"
+        @click="handleRejectedClick"
+      >
+        <CircleAlert :size="15" />
+        Ver motivo
+      </button>
+
+      <!-- Banned: Ver motivo -->
+      <button
+        v-else-if="ad?.status === 'banned'"
+        type="button"
+        class="card--profileAd__actions__secondary"
+        @click="handleBannedClick"
+      >
+        <CircleAlert :size="15" />
+        Ver motivo
+      </button>
     </div>
   </article>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
+import {
+  Star,
+  Eye,
+  RefreshCw,
+  PowerOff,
+  CircleAlert,
+  Calendar,
+  EllipsisVertical,
+} from "lucide-vue-next";
 const { Swal } = useSweetAlert2();
 import { useAdStore } from "@/stores/ad.store";
 import { useCommunesStore } from "@/stores/communes.store";
 import { useAppStore } from "@/stores/app.store";
 import type { GalleryItem } from "@/types/ad";
-import {
-  Star as IconStar,
-  Eye as IconEye,
-  Info as IconInfo,
-  RefreshCw as IconRefreshCw,
-  Power as IconPower,
-} from "lucide-vue-next";
+import type { Category } from "@/types/category";
 import { useImageProxy } from "@/composables/useImage";
-import ButtonIcon from "@/components/ButtonIcon.vue";
 
 const { transformUrl } = useImageProxy();
+const { getCategoryIcon } = useIcons();
+
+const FALLBACK_COLOR = "#ece9e4";
 
 const props = defineProps({
   ad: {
@@ -134,24 +150,54 @@ const props = defineProps({
     required: false,
     default: () => ({}),
   },
-  status: {
-    type: String,
-    default: "",
-  },
 });
 
-const lastFiveImages = computed(() => {
-  const gallery = props.ad?.gallery || [];
-  const start = Math.max(0, gallery.length - 5);
-  return gallery.slice(start).map((img: GalleryItem) => transformUrl(img.url));
+const menuOpen = ref(false);
+const toggleMenu = () => { menuOpen.value = !menuOpen.value; };
+
+const adCategory = computed<Category | null>(() =>
+  typeof props.ad?.category === "object" && props.ad?.category !== null
+    ? (props.ad.category as Category)
+    : null,
+);
+const categoryColor = computed(() => adCategory.value?.color ?? FALLBACK_COLOR);
+const categoryIcon = computed(() => getCategoryIcon(adCategory.value?.slug ?? ""));
+const categoryName = computed(() => adCategory.value?.name ?? "");
+
+const photoCount = computed(() => (props.ad?.gallery as GalleryItem[] | undefined)?.length ?? 0);
+
+// Badge
+const badgeVariant = computed(() => {
+  const s = props.ad?.status;
+  if (s === "published") {
+    if ((props.ad?.remaining_days as number) <= 7) return "expiring";
+    return "active";
+  }
+  if (s === "review") return "review";
+  if (s === "expired") return "expired";
+  if (s === "rejected") return "rejected";
+  if (s === "banned") return "banned";
+  return "expired";
+});
+
+const badgeLabel = computed(() => {
+  const s = props.ad?.status;
+  const days = props.ad?.remaining_days as number;
+  if (s === "published") {
+    if (days <= 7) return `Vence en ${days} días`;
+    return "Activo";
+  }
+  if (s === "review") return "En revisión";
+  if (s === "expired") return "Expirado";
+  if (s === "rejected") return "Rechazado";
+  if (s === "banned") return "Baneado";
+  return "";
 });
 
 const statusMessage = computed(() => {
   const status = props.ad?.status;
-  const days = props.ad?.remaining_days;
-  const createdAt = props.ad?.createdAt
-    ? new Date(props.ad.createdAt).getTime()
-    : 0;
+  const days = props.ad?.remaining_days as number;
+  const createdAt = props.ad?.createdAt ? new Date(props.ad.createdAt as string).getTime() : 0;
   const now = Date.now();
   const hoursDiff = Math.floor((now - createdAt) / (1000 * 60 * 60));
   const daysDiff = Math.floor(hoursDiff / 24);
@@ -162,7 +208,6 @@ const statusMessage = computed(() => {
     case "published":
       if (days === 1) return "Expira en 1 día";
       return `Expira en ${days} días`;
-
     case "review":
       if (hoursDiff < 24) {
         if (hoursDiff === 0) return "En revisión hace menos de 1 hora";
@@ -171,19 +216,15 @@ const statusMessage = computed(() => {
       }
       if (daysDiff === 1) return "En revisión hace 1 día";
       return `En revisión hace ${daysDiff} días`;
-
     case "expired":
       if (daysDiff === 1) return "Expirado hace 1 día";
       return `Expirado hace ${daysDiff} días`;
-
     case "rejected":
       if (daysDiff === 1) return "Rechazado hace 1 día";
       return `Rechazado hace ${daysDiff} días`;
-
     case "banned":
       if (daysDiff === 1) return "Baneado hace 1 día";
       return daysDiff > 0 ? `Baneado hace ${daysDiff} días` : "Baneado";
-
     default:
       return "";
   }
@@ -191,59 +232,32 @@ const statusMessage = computed(() => {
 
 const formatDate = (dateString?: string) => {
   if (!dateString) return "";
-
   const date = new Date(dateString);
-  const months = [
-    "enero",
-    "febrero",
-    "marzo",
-    "abril",
-    "mayo",
-    "junio",
-    "julio",
-    "agosto",
-    "septiembre",
-    "octubre",
-    "noviembre",
-    "diciembre",
-  ];
-
-  const day = date.getDate();
-  const month = months[date.getMonth()];
-  const year = date.getFullYear();
-
-  return `${day} de ${month} del ${year}`;
+  const months = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+  return `${date.getDate()} de ${months[date.getMonth()]} del ${date.getFullYear()}`;
 };
 
 const handleRepublish = async () => {
   const ad = props.ad;
-  // Lazy-init stores inside handler — safe, never runs during SSR
   const adStore = useAdStore();
   const communesStore = useCommunesStore();
 
   const fillAdStore = async () => {
     if (!ad) return;
-
     adStore.reset();
-    // Actualizamos solo con los campos necesarios y sus IDs cuando corresponda
     adStore.updatePrice(Number(ad.price));
     adStore.updateName(ad.name);
     adStore.updateCategory(ad.category.id);
     adStore.updateEmail(ad.email);
     adStore.updatePhone(ad.phone);
-
-    // Asegúrate de que los datos de communes estén cargados
     if (communesStore.getCommunes.data.length === 0) {
       await communesStore.loadCommunes();
     }
-
-    // Usamos el store de communes para obtener el region.id
     const regionId = communesStore.getCommuneById(ad.commune.id)?.region.id;
     if (regionId) {
       adStore.updateRegion(regionId);
     }
     adStore.updateCommune(ad.commune.id);
-
     adStore.updateAddress(ad.address);
     adStore.updateAddressNumber(ad.address_number);
     adStore.updateCondition(ad.condition.id);
@@ -257,24 +271,18 @@ const handleRepublish = async () => {
     adStore.updateHeight(Number(ad.height));
     adStore.updateDepth(Number(ad.depth));
     adStore.updateCurrency(ad.currency);
-
-    // Actualizamos la galería con URLs absolutas para que UploadImages las muestre bien
-    const updatedGallery: GalleryItem[] = ad.gallery.map(
-      (img: { id: number; url: string }) => ({
+    const updatedGallery: GalleryItem[] = (ad.gallery as Array<{ id: number; url: string }>).map(
+      (img) => ({
         id: String(img.id),
         url: transformUrl(img.url),
       }),
     );
     adStore.updateGallery(updatedGallery);
-
-    // Actualizamos los detalles
     if (ad.details) {
       adStore.updatePack(ad.details.pack);
       adStore.updateFeatured(ad.details.featured);
       adStore.updateIsInvoice(ad.details.is_invoice);
     }
-
-    // Actualizamos el paso
     adStore.updateStep(1);
     navigateTo("/anunciar");
   };
@@ -320,25 +328,4 @@ const handleDeactivate = () => {
   appStore.openDeactivateLightbox(props.ad.documentId as string);
 };
 
-const handlePushImage = (response: GalleryItem & { id: number | string }) => {
-  const imageUrl = response.formats?.thumbnail?.url || response.url;
-  const newImage: GalleryItem = {
-    id: String(response.id),
-    url: imageUrl,
-    formats: response.formats,
-  };
-
-  const currentGallery: GalleryItem[] = props.ad?.gallery || [];
-  // Lazy-init store inside handler — safe, never runs during SSR
-  const adStore = useAdStore();
-  adStore.updateGallery([...currentGallery, newImage]);
-};
 </script>
-
-<style scoped>
-.icon {
-  width: 14px;
-  height: 14px;
-  color: var(--light-peach);
-}
-</style>

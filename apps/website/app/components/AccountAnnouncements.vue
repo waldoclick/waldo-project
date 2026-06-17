@@ -3,116 +3,122 @@
     class="account account--announcements"
     aria-labelledby="announcements-title"
   >
-    <h2 id="announcements-title" class="account--announcements__title title">
-      Mis anuncios
-      <nuxt-link to="/#como-publicar" title="¿Cómo anunciar?">
-        ¿Cómo anunciar?
+    <!-- Header -->
+    <div class="account--announcements__header">
+      <div class="account--announcements__header__left">
+        <span class="account--announcements__header__eyebrow">Cuenta</span>
+        <h1 id="announcements-title" class="account--announcements__header__heading">
+          Mis anuncios
+        </h1>
+        <p class="account--announcements__header__intro">{{ introText }}</p>
+      </div>
+      <nuxt-link
+        to="/anunciar"
+        class="account--announcements__header__cta"
+      >
+        <Plus :size="16" />
+        Publicar anuncio
       </nuxt-link>
-    </h2>
-
-    <div class="account--announcements__subtitle">
-      {{ introText }}
     </div>
 
+    <!-- Tabs -->
+    <div
+      class="account--announcements__tabs"
+      role="tablist"
+      aria-label="Filtrar anuncios por estado"
+    >
+      <!-- SR hint -->
+      <span class="sr-only" aria-live="polite">
+        Use las flechas izquierda y derecha para navegar entre las pestañas
+      </span>
+      <button
+        v-for="(tab, index) in tabs"
+        :id="`tab-${tab.value}`"
+        :key="tab.value"
+        type="button"
+        role="tab"
+        :aria-selected="currentFilter === tab.value"
+        :aria-controls="`panel-${tab.value}`"
+        :class="[
+          'account--announcements__tab',
+          { 'account--announcements__tab--active': currentFilter === tab.value },
+        ]"
+        :title="tab.label"
+        @click="$emit('filter-change', tab.value)"
+        @keydown.right.prevent="focusNextTab(index)"
+        @keydown.left.prevent="focusPrevTab(index)"
+      >
+        <component :is="tab.icon" :size="15" />
+        {{ tab.label }}
+        <span class="account--announcements__tab__count">{{ tab.count }}</span>
+      </button>
+    </div>
+
+    <!-- Body -->
     <ClientOnly>
-      <div class="account--announcements__list">
-        <!-- Instrucciones para teclado - solo visibles para lectores de pantalla -->
-        <div
-          class="account--announcements__list__sr-only sr-only"
-          aria-live="polite"
-        >
-          Use las flechas izquierda y derecha para navegar entre las pestañas
-        </div>
+      <!-- Loading -->
+      <div
+        v-if="isLoading"
+        class="account--announcements__loading"
+        aria-live="polite"
+      >
+        <LoadingDefault />
+      </div>
 
-        <!-- menu -->
-        <div class="account--announcements__list__menu" role="tablist">
-          <button
-            v-for="(tab, index) in tabs"
-            :id="`tab-${tab.value}`"
-            :key="tab.value"
-            type="button"
-            role="tab"
-            :aria-selected="currentFilter === tab.value"
-            :aria-controls="`panel-${tab.value}`"
-            :class="{ active: currentFilter === tab.value }"
-            :title="tab.label"
-            @click="$emit('filter-change', tab.value)"
-            @keydown.right.prevent="focusNextTab(index)"
-            @keydown.left.prevent="focusPrevTab(index)"
-          >
-            <component :is="tab.icon" :size="16" class="mr-2" />
-            {{ tab.label }}
-            <span>({{ tab.count }})</span>
-          </button>
-        </div>
+      <!-- Empty state -->
+      <div
+        v-else-if="ads.length === 0"
+        :id="`panel-${currentFilter}`"
+        class="account--announcements__empty"
+        role="tabpanel"
+        :aria-labelledby="`tab-${currentFilter}`"
+      >
+        <span class="account--announcements__empty__icon">
+          <component :is="emptyEntry.icon" :size="26" />
+        </span>
+        <span class="account--announcements__empty__title">{{ emptyEntry.title }}</span>
+        <span class="account--announcements__empty__msg">{{ emptyEntry.msg }}</span>
+      </div>
 
-        <!-- announcements  -->
-        <div class="account--announcements__list__items">
-          <div
-            v-if="isLoading"
-            class="account--announcements__loading"
-            aria-live="polite"
-          >
-            <LoadingDefault />
-          </div>
+      <!-- Ad list -->
+      <div
+        v-else
+        :id="`panel-${currentFilter}`"
+        class="account--announcements__list"
+        role="tabpanel"
+        :aria-labelledby="`tab-${currentFilter}`"
+      >
+        <CardProfileAd v-for="ad in ads" :key="ad.id" :ad="ad" />
+      </div>
 
-          <div
-            v-if="!isLoading && ads.length > 0"
-            :id="`panel-${currentFilter}`"
-            class="account--announcements__list__items__wrapper"
-            role="tabpanel"
-            :aria-labelledby="`tab-${currentFilter}`"
-          >
-            <CardProfileAd v-for="ad in ads" :key="ad.id" :ad="ad" />
-
-            <div
-              v-if="pagination.total > pagination.pageSize"
-              class="account--announcements__list__items__paginate"
-            >
-              <div class="paginate" aria-label="Paginación">
-                <vue-awesome-paginate
-                  :model-value="currentPage"
-                  :total-items="pagination.total"
-                  :items-per-page="pagination.pageSize"
-                  :max-pages-shown="5"
-                  @update:model-value="$emit('page-change', $event)"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div
-            v-if="!isLoading && ads.length === 0"
-            :id="`panel-${currentFilter}`"
-            class="account--announcements__list__items__emptystate"
-            role="tabpanel"
-            :aria-labelledby="`tab-${currentFilter}`"
-          >
-            <EmptyState>
-              <template #message> No hay anuncios </template>
-            </EmptyState>
-          </div>
+      <!-- Pagination -->
+      <div
+        v-if="!isLoading && pagination.total > pagination.pageSize"
+        class="account--announcements__pager"
+        aria-label="Paginación"
+      >
+        <div class="paginate">
+          <vue-awesome-paginate
+            :model-value="currentPage"
+            :total-items="pagination.total"
+            :items-per-page="pagination.pageSize"
+            :max-pages-shown="5"
+            @update:model-value="$emit('page-change', $event)"
+          />
         </div>
       </div>
     </ClientOnly>
-
-    <div class="account--announcements__button">
-      <ButtonCreate />
-    </div>
   </section>
 </template>
 
 <script setup lang="ts">
-import CardProfileAd from "@/components/CardProfileAd.vue";
-import EmptyState from "@/components/EmptyState.vue";
-import LoadingDefault from "@/components/LoadingDefault.vue";
-import ButtonCreate from "@/components/ButtonCreate.vue";
-import { ref } from "vue";
+import { computed } from "vue";
+import { Plus, Clock, Package, CircleOff, CircleX, Ban } from "lucide-vue-next";
 import type { Component } from "vue";
+import CardProfileAd from "@/components/CardProfileAd.vue";
+import LoadingDefault from "@/components/LoadingDefault.vue";
 
-// Definir la interfaz localmente para evitar errores de importación
 type Announcement = Record<string, unknown> & { id: number };
-
 type FilterType = "published" | "review" | "expired" | "rejected" | "banned";
 
 interface Pagination {
@@ -140,16 +146,33 @@ defineEmits<{
   "page-change": [page: number];
 }>();
 
-// Funciones para la navegación entre pestañas con teclado
 const focusNextTab = (currentIndex: number) => {
-  const tabs = document.querySelectorAll('[role="tab"]');
-  const nextIndex = currentIndex < tabs.length - 1 ? currentIndex + 1 : 0;
-  (tabs[nextIndex] as HTMLElement).focus();
+  const tabEls = document.querySelectorAll('[role="tab"]');
+  const nextIndex = currentIndex < tabEls.length - 1 ? currentIndex + 1 : 0;
+  (tabEls[nextIndex] as HTMLElement).focus();
 };
 
 const focusPrevTab = (currentIndex: number) => {
-  const tabs = document.querySelectorAll('[role="tab"]');
-  const prevIndex = currentIndex > 0 ? currentIndex - 1 : tabs.length - 1;
-  (tabs[prevIndex] as HTMLElement).focus();
+  const tabEls = document.querySelectorAll('[role="tab"]');
+  const prevIndex = currentIndex > 0 ? currentIndex - 1 : tabEls.length - 1;
+  (tabEls[prevIndex] as HTMLElement).focus();
 };
+
+interface EmptyEntry {
+  icon: Component;
+  title: string;
+  msg: string;
+}
+
+const emptyMap: Record<FilterType, EmptyEntry> = {
+  published: { icon: Package, title: "Aún no tienes anuncios activos", msg: "Publica tu primer anuncio y llega a compradores de toda la industria." },
+  review:    { icon: Clock, title: "No tienes anuncios pendientes", msg: "Cuando publiques un anuncio nuevo aparecerá aquí mientras esperamos su aprobación." },
+  expired:   { icon: CircleOff, title: "No tienes anuncios expirados", msg: "Aquí verás las publicaciones cuyo período de 45 días ya terminó." },
+  rejected:  { icon: CircleX, title: "No tienes anuncios rechazados", msg: "Si un anuncio no cumple los requisitos te diremos cómo corregirlo." },
+  banned:    { icon: Ban, title: "No tienes anuncios baneados", msg: "Tus publicaciones cumplen las reglas de la comunidad. ¡Sigue así!" },
+};
+
+const emptyEntry = computed<EmptyEntry>(
+  () => emptyMap[props.currentFilter as FilterType] ?? emptyMap.published,
+);
 </script>
