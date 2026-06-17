@@ -51,8 +51,11 @@
   }
 
   // Account area shell (v1.47 redesign — design/account.dc.html lines 39-76)
+  // Background: mockup uses #FAF9F7; closest existing token is $cream (#F6F4F1)
+  // Cannot add new token to _variables.scss per project constraint
   &--account {
-    background-color: $white;
+    background-color: $cream;
+    min-height: 100vh;
 
     &__container {
       max-width: 1200px;
