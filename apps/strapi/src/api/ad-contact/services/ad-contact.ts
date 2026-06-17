@@ -57,6 +57,38 @@ export default factories.createCoreService(
     },
 
     /**
+     * Aggregate contact counts for a batch of ads in a single query.
+     *
+     * Fetches all ad-contact rows for the given ad ids in one findMany, then
+     * counts per ad in memory. Returns a map of ad.id → count.
+     * Guards against an empty array to avoid `$in: []`.
+     *
+     * @param adIds - Array of numeric ad ids
+     * @returns Record mapping each ad id to its contact count (missing = 0)
+     */
+    async getContactCountsByAdIds(
+      adIds: number[],
+    ): Promise<Record<number, number>> {
+      if (adIds.length === 0) return {};
+
+      const rows = (await strapi.db
+        .query("api::ad-contact.ad-contact")
+        .findMany({
+          where: { ad: { $in: adIds } },
+          populate: { ad: { fields: ["id"] } },
+        })) as Array<{ ad?: { id: number } | null }>;
+
+      const counts: Record<number, number> = {};
+      for (const row of rows) {
+        const adId = row.ad?.id;
+        if (adId !== undefined) {
+          counts[adId] = (counts[adId] ?? 0) + 1;
+        }
+      }
+      return counts;
+    },
+
+    /**
      * Aggregate total contact count across all active ads belonging to a user.
      *
      * Used by the account Panel KPI "Contactos recibidos".

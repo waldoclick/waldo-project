@@ -278,12 +278,33 @@ async function getAdvertisements(
           sanitizeAdForPublic(ad as Record<string, unknown>),
         );
 
+    // Batch-aggregate per-ad views and contacts in two queries (kills N+1).
+    // Attach after sanitize so the counts survive the allowlist pass.
+    const adIds = (ads as Array<{ id: number }>).map((a) => a.id);
+    const [viewCounts, contactCounts] = await Promise.all([
+      strapi.service("api::ad-view.ad-view").getViewCountsByAdIds(adIds),
+      strapi
+        .service("api::ad-contact.ad-contact")
+        .getContactCountsByAdIds(adIds),
+    ]);
+
+    const adsWithStats = (
+      processedAds as Array<Record<string, unknown>>
+    ).map((ad) => {
+      const adId = ad.id as number;
+      return {
+        ...ad,
+        views: viewCounts[adId] ?? 0,
+        contacts: contactCounts[adId] ?? 0,
+      };
+    });
+
     // Calculate pagination metadata
     const pageCount = Math.ceil(total / pageSize);
 
     // Return results in standard Strapi format
     return {
-      data: processedAds,
+      data: adsWithStats,
       meta: {
         pagination: {
           page,
