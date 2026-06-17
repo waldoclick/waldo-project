@@ -41,35 +41,41 @@
       <div class="account--main__attention__head">
         <h2 class="account--main__attention__title">Necesita tu atención</h2>
         <span
-          v-if="rejectedCount > 0"
+          v-if="attentionItems.length"
           class="account--main__attention__count"
-          >{{ rejectedCount }}</span
+          >{{ attentionItems.length }}</span
         >
       </div>
 
-      <div v-if="rejectedCount > 0" class="account--main__attention__list">
-        <div class="account--main__attention__row account--main__attention__row--error">
-          <span class="account--main__attention__row__icon">
-            <IconCircleAlert :size="24" />
+      <div v-if="attentionItems.length" class="account--main__attention__list">
+        <div
+          v-for="item in attentionItems"
+          :key="item.key"
+          class="account--main__attention__row"
+          :class="`account--main__attention__row--${item.variant}`"
+        >
+          <span
+            class="account--main__attention__row__icon"
+            :style="{ background: item.color }"
+          >
+            <component :is="item.icon" :size="24" />
           </span>
           <div class="account--main__attention__row__body">
             <div class="account--main__attention__row__top">
-              <span class="account--main__attention__row__title">
-                Tienes {{ rejectedCount }}
-                {{ rejectedCount === 1 ? "anuncio rechazado" : "anuncios rechazados" }}
-              </span>
-              <span class="account--main__attention__badge account--main__attention__badge--rejected">Rechazado</span>
+              <span class="account--main__attention__row__title">{{
+                item.title
+              }}</span>
+              <span
+                class="account--main__attention__badge"
+                :class="`account--main__attention__badge--${item.variant}`"
+                >{{ item.badge }}</span
+              >
             </div>
-            <p class="account--main__attention__row__note">
-              Revisa el motivo del rechazo y corrige tu anuncio para volver a publicarlo.
-            </p>
+            <p class="account--main__attention__row__note">{{ item.note }}</p>
           </div>
-          <nuxt-link
-            to="/cuenta/mis-anuncios"
-            class="account--main__attention__action"
-          >
-            <IconCircleAlert :size="15" />
-            Ver motivo
+          <nuxt-link :to="item.to" class="account--main__attention__action">
+            <component :is="item.actionIcon" :size="15" />
+            {{ item.actionLabel }}
           </nuxt-link>
         </div>
       </div>
@@ -115,23 +121,39 @@ import {
   Package as IconPackage,
   CheckCheck as IconCheckCheck,
   CircleAlert as IconCircleAlert,
+  ChartNoAxesColumn as IconChart,
   ArrowRight as IconArrowRight,
 } from "lucide-vue-next";
 import type { User } from "@/types/user";
+import type { Ad } from "@/types/ad";
+import type { Category } from "@/types/category";
 
 const user = useSessionUser<User>();
 const userStore = useUserStore();
+const { getCategoryIcon } = useIcons();
 
-const { data: counts } = await useAsyncData(
-  "account-panel-counts",
-  () => userStore.loadUserAdCounts(),
+const EXPIRING_THRESHOLD = 7;
+const FALLBACK_COLOR = "#ece9e4";
+
+const { data: panel } = await useAsyncData(
+  "account-panel",
+  async () => {
+    const [counts, published, rejected] = await Promise.all([
+      userStore.loadUserAdCounts(),
+      userStore.loadUserAds("published", { page: 1, pageSize: 50 }),
+      userStore.loadUserAds("rejected", { page: 1, pageSize: 25 }),
+    ]);
+    return {
+      counts,
+      published: published?.data ?? [],
+      rejected: rejected?.data ?? [],
+    };
+  },
   {
     default: () => ({
-      published: 0,
-      review: 0,
-      expired: 0,
-      rejected: 0,
-      banned: 0,
+      counts: { published: 0, review: 0, expired: 0, rejected: 0, banned: 0 },
+      published: [] as Ad[],
+      rejected: [] as Ad[],
     }),
   },
 );
@@ -140,6 +162,7 @@ const { data: counts } = await useAsyncData(
 const totalViews = 0;
 const totalContacts = 0;
 
+const counts = computed(() => panel.value.counts);
 const activeCount = computed(() => counts.value.published);
 const totalCount = computed(
   () =>
@@ -149,5 +172,59 @@ const totalCount = computed(
     counts.value.rejected +
     counts.value.banned,
 );
-const rejectedCount = computed(() => counts.value.rejected);
+
+const catOf = (ad: Ad) =>
+  (typeof ad.category === "object" ? ad.category : null) as Category | null;
+
+interface AttentionItem {
+  key: string;
+  variant: "expiring" | "rejected";
+  title: string;
+  color: string;
+  icon: unknown;
+  badge: string;
+  note: string;
+  actionLabel: string;
+  actionIcon: unknown;
+  to: string;
+}
+
+const attentionItems = computed<AttentionItem[]>(() => {
+  const expiring: AttentionItem[] = panel.value.published
+    .filter((a) => a.remaining_days > 0 && a.remaining_days <= EXPIRING_THRESHOLD)
+    .map((a) => {
+      const cat = catOf(a);
+      return {
+        key: `pv-${a.id}`,
+        variant: "expiring" as const,
+        title: a.title,
+        color: cat?.color ?? FALLBACK_COLOR,
+        icon: getCategoryIcon(cat?.slug ?? ""),
+        badge: `Vence en ${a.remaining_days} días`,
+        note: "Aún no puedes renovarlo: los anuncios solo se renuevan una vez vencidos. Cuando expire lo republicas en un clic. Mientras tanto, revisa cómo va.",
+        actionLabel: "Ver estadísticas",
+        actionIcon: IconChart,
+        // TODO 05-09: open stats modal instead of linking to the public ad
+        to: `/anuncios/${a.slug}`,
+      };
+    });
+
+  const rejected: AttentionItem[] = panel.value.rejected.map((a) => {
+    const cat = catOf(a);
+    return {
+      key: `rj-${a.id}`,
+      variant: "rejected" as const,
+      title: a.title,
+      color: cat?.color ?? FALLBACK_COLOR,
+      icon: getCategoryIcon(cat?.slug ?? ""),
+      badge: "Rechazado",
+      note: a.reason_for_rejection || "Tu anuncio fue rechazado. Revisa y corrige para volver a publicarlo.",
+      actionLabel: "Ver motivo",
+      actionIcon: IconCircleAlert,
+      to: "/cuenta/mis-anuncios",
+    };
+  });
+
+  return [...expiring, ...rejected];
+});
 </script>

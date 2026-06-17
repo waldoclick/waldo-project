@@ -121,10 +121,15 @@
         border-radius: 12px;
         padding: 16px 18px;
 
-        &--error {
-          // mockup literal — no token in palette for these soft alert tints
+        // mockup literals — no token in palette for these soft alert tints
+        &--rejected {
           border: 1px solid #f1d3d0;
           background: #fcf4f3;
+        }
+
+        &--expiring {
+          border: 1px solid #f0d9ae;
+          background: linear-gradient(180deg, #fef8ec, #fdf3e1);
         }
 
         &__icon {
@@ -132,8 +137,7 @@
           width: 52px;
           height: 52px;
           border-radius: 8px;
-          background: rgba($error, 0.12);
-          color: $error;
+          color: $ink;
           display: grid;
           place-items: center;
         }
@@ -174,6 +178,11 @@
         &--rejected {
           background: rgba($error, 0.12);
           color: $error;
+        }
+
+        &--expiring {
+          background: rgba($warning, 0.16);
+          color: $warning;
         }
       }
 
