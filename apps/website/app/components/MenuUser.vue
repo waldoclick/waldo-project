@@ -11,95 +11,103 @@
       </div>
 
       <div class="menu--user__button__greetings">
-        Hola
-        <div class="menu--user__button__greetings__name">
+        <span class="menu--user__button__greetings__label">Hola</span>
+        <span class="menu--user__button__greetings__name">
           {{ user?.firstname }}
-        </div>
+        </span>
       </div>
 
-      <div class="menu--user__button__icon" @click.stop="menuOpen">
-        <IconMenu v-if="!isOpen" :size="24" class="menu-open" />
-        <IconX v-else :size="24" class="menu-close" />
-      </div>
+      <ChevronDown
+        :size="16"
+        class="menu--user__button__chevron"
+        :class="{ 'is-open': isOpen }"
+      />
     </button>
 
     <nav class="menu--user__menu" :class="{ 'is-open': isOpen }">
-      <ul v-if="isManager" class="menu--user__menu__links">
-        <li @click="menuOpen">
-          <NuxtLink
-            :to="isDashboard ? '/' : '/dashboard'"
-            :title="isDashboard ? 'Ir al sitio' : 'Ver dashboard'"
-            >{{ isDashboard ? "Ir al sitio" : "Ver dashboard" }}</NuxtLink
-          >
-        </li>
-      </ul>
-      <ul class="menu--user__menu__links">
-        <li @click="menuOpen">
-          <NuxtLink to="/cuenta" title="Mi cuenta">Mi cuenta</NuxtLink>
-        </li>
-        <li @click="menuOpen">
-          <NuxtLink to="/cuenta/mis-anuncios/" title="Mis anuncios">
-            <span>Mis anuncios</span>
-          </NuxtLink>
-        </li>
-        <li @click="menuOpen">
-          <NuxtLink to="/cuenta/perfil" title="Mi perfil">Mi perfil</NuxtLink>
-        </li>
-        <!-- <li @click="menuOpen">
-          <NuxtLink to="/cuenta/username" title="Mi perfil">
-            <span>Nombre de usuario</span>
-            <b>PRO</b>
-          </NuxtLink>
-        </li>
-        <li @click="menuOpen">
-          <NuxtLink to="/cuenta/avatar" title="Mi perfil">
-            <span>Foto de perfil</span>
-            <b>PRO</b>
-          </NuxtLink>
-        </li>
-        <li @click="menuOpen">
-          <NuxtLink to="/cuenta/cover" title="Mi perfil">
-            <span>Portada</span>
-            <b>PRO</b>
-          </NuxtLink>
-        </li> -->
-        <li @click="menuOpen">
-          <NuxtLink to="/cuenta/cambiar-contrasena" title="Cambiar contraseña">
-            <span>Cambiar contraseña</span>
-          </NuxtLink>
-        </li>
-      </ul>
-      <ul class="menu--user__menu__links">
-        <li @click="menuOpen">
-          <NuxtLink to="/packs" title="Comprar packs">
-            <span>Comprar packs</span>
-          </NuxtLink>
-        </li>
-        <li @click="menuOpen">
-          <NuxtLink to="/preguntas-frecuentes" title="Preguntas frecuentes">
-            <span>Preguntas frecuentes</span>
-          </NuxtLink>
-        </li>
-        <li @click="menuOpen">
-          <NuxtLink
-            to="/politicas-de-privacidad"
-            title="Políticas de privacidad"
-          >
-            <span>Políticas de privacidad</span>
-          </NuxtLink>
-        </li>
-      </ul>
-      <ul class="menu--user__menu__links">
-        <li @click="menuOpen">
-          <button
-            title="Cerrar sesión"
-            type="button"
-            @click.prevent="handleLogout"
-          >
-            <span>Cerrar sesión</span>
-          </button>
-        </li>
-      </ul>
+      <div class="menu--user__menu__head">
+        <div class="menu--user__menu__head__avatar">
+          <AvatarDefault />
+        </div>
+        <div class="menu--user__menu__head__greetings">
+          <span class="menu--user__menu__head__greetings__label">Hola</span>
+          <span class="menu--user__menu__head__greetings__name">
+            {{ user?.firstname }}
+          </span>
+        </div>
+        <button
+          title="Cerrar"
+          type="button"
+          class="menu--user__menu__head__close"
+          @click="menuOpen"
+        >
+          <IconX :size="17" />
+        </button>
+      </div>
+
+      <div class="menu--user__menu__body">
+        <ul v-if="isManager" class="menu--user__menu__links">
+          <li @click="menuOpen">
+            <NuxtLink
+              :to="isDashboard ? '/' : '/dashboard'"
+              :title="isDashboard ? 'Ir al sitio' : 'Ver dashboard'"
+              >{{ isDashboard ? "Ir al sitio" : "Ver dashboard" }}</NuxtLink
+            >
+          </li>
+        </ul>
+        <ul class="menu--user__menu__links">
+          <li @click="menuOpen">
+            <NuxtLink to="/cuenta" title="Mi cuenta">Mi cuenta</NuxtLink>
+          </li>
+          <li @click="menuOpen">
+            <NuxtLink to="/cuenta/mis-anuncios/" title="Mis anuncios">
+              <span>Mis anuncios</span>
+            </NuxtLink>
+          </li>
+          <li @click="menuOpen">
+            <NuxtLink to="/cuenta/perfil" title="Mi perfil">Mi perfil</NuxtLink>
+          </li>
+          <li @click="menuOpen">
+            <NuxtLink to="/cuenta/cambiar-contrasena" title="Cambiar contraseña">
+              <span>Cambiar contraseña</span>
+            </NuxtLink>
+          </li>
+        </ul>
+        <ul class="menu--user__menu__links">
+          <li @click="menuOpen">
+            <NuxtLink to="/packs" title="Comprar packs">
+              <span>Comprar packs</span>
+            </NuxtLink>
+          </li>
+          <li @click="menuOpen">
+            <NuxtLink to="/preguntas-frecuentes" title="Preguntas frecuentes">
+              <span>Preguntas frecuentes</span>
+            </NuxtLink>
+          </li>
+          <li @click="menuOpen">
+            <NuxtLink
+              to="/politicas-de-privacidad"
+              title="Políticas de privacidad"
+            >
+              <span>Políticas de privacidad</span>
+            </NuxtLink>
+          </li>
+        </ul>
+      </div>
+
+      <div class="menu--user__menu__divider"></div>
+
+      <div class="menu--user__menu__footer">
+        <button
+          title="Cerrar sesión"
+          type="button"
+          class="menu--user__menu__logout"
+          @click.prevent="handleLogout"
+        >
+          <LogOut :size="16" class="menu--user__menu__logout__icon" />
+          <span>Cerrar sesión</span>
+        </button>
+      </div>
     </nav>
   </div>
 </template>
@@ -109,7 +117,7 @@ import { ref, computed, onMounted, onUnmounted } from "vue";
 const { Swal } = useSweetAlert2();
 import AvatarDefault from "@/components/AvatarDefault.vue";
 import type { User } from "@/types/user";
-import { Menu as IconMenu, X as IconX } from "lucide-vue-next";
+import { X as IconX, ChevronDown, LogOut } from "lucide-vue-next";
 
 const user = useSessionUser<User>();
 const { logout } = useLogout();
@@ -120,24 +128,19 @@ const isManager = computed(
 );
 const isDashboard = computed(() => route.path.startsWith("/dashboard"));
 
-// Define las propiedades del componente
 const props = defineProps<{
   black?: boolean;
 }>();
 
-// Define las propiedades con valores por defecto
 const black = props.black ?? false;
 
-// Estado del menú y referencia
 const isOpen = ref(false);
 const menuRef = ref<HTMLElement | null>(null);
 
-// Computed property para la clase isBlack
 const isBlack = computed(() => {
   return black ? "is-black" : "";
 });
 
-// Métodos del componente
 const menuOpen = () => {
   isOpen.value = !isOpen.value;
 };
