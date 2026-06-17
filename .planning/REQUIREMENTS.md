@@ -25,7 +25,7 @@ Milestone scope: migrar la maqueta nueva (en `/design`) a los componentes reales
 - [ ] **ACC-LAYOUT**: El área de cuenta tiene el layout sidebar nuevo según la maqueta, reusando componentes existentes
 - [ ] **ACC-PANEL**: El Panel (overview) se ve idéntico a la maqueta — KPIs, "Necesita tu atención", upsell
 - [x] **ACC-ADS**: Mis anuncios se ve idéntico a la maqueta
-- [ ] **ACC-ORDERS**: Mis órdenes se ve idéntico a la maqueta
+- [x] **ACC-ORDERS**: Mis órdenes se ve idéntico a la maqueta
 - [ ] **ACC-PROFILE**: Mi perfil (ver / editar) se ve idéntico a la maqueta
 - [ ] **ACC-PASSWORD**: Cambiar contraseña se ve idéntico a la maqueta
 
@@ -57,7 +57,7 @@ Milestone scope: migrar la maqueta nueva (en `/design`) a los componentes reales
 | ACC-LAYOUT | Phase 05 | Pending |
 | ACC-PANEL | Phase 05 | Pending |
 | ACC-ADS | Phase 05 | Complete |
-| ACC-ORDERS | Phase 05 | Pending |
+| ACC-ORDERS | Phase 05 | Complete |
 | ACC-PROFILE | Phase 05 | Pending |
 | ACC-PASSWORD | Phase 05 | Pending |
 | STAT-MODEL | Phase 05 | Complete |
