@@ -108,7 +108,7 @@
             <CardInfo title="Contacto" :description="getUserFullName" />
             <div
               v-if="getUserFromAll?.email"
-              @click.capture="contactSeller('email')"
+              @click.capture="handleContact('email')"
             >
               <CardInfo
                 title="Email"
@@ -118,7 +118,7 @@
             </div>
             <div
               v-if="getUserFromAll?.phone"
-              @click.capture="contactSeller('phone')"
+              @click.capture="handleContact('phone')"
             >
               <CardInfo
                 title="Teléfono"
@@ -171,6 +171,22 @@ const isLoggedIn = computed(() => !!authUser.value);
 const { sanitizeRich } = useSanitize();
 
 const { contactSeller } = useAdAnalytics();
+const apiClient = useApiClient();
+
+// Fires the GA4 analytics event (existing behavior) and records an in-app
+// ad-contact event so "Contactos recibidos" reflects real data. The contact
+// recording is non-fatal — it must never break the contact action.
+const handleContact = (type) => {
+  contactSeller(type);
+  const documentId = props.all?.documentId;
+  if (!documentId) return;
+  apiClient(`ads/${documentId}/contact`, {
+    method: "POST",
+    body: { type: type === "phone" ? "call" : "message" },
+  }).catch(() => {
+    /* swallow — contact tracking must never break the page */
+  });
+};
 
 // Computed property para obtener el nombre de la comuna
 const communeName = computed(() => {
