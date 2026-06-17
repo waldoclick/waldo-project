@@ -497,101 +497,209 @@
   }
 
   &--orders {
-    font-style: normal;
-    line-height: 1;
-    min-height: 500px;
+    // ── Mis órdenes (v1.47 redesign — design/account.dc.html lines 217-257) ──
+    // Compiled selectors: account--orders__summary, account--orders__summary__card, account--orders__table, account--orders__row
 
-    &__title {
-      font-weight: bold;
-      line-height: 1;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: flex-end;
-    }
-
-    &__subtitle {
-      font-weight: normal;
-      font-size: 16px;
-      letter-spacing: 0.25px;
-      color: $charcoal;
-      margin-bottom: 45px;
-      display: block;
-      line-height: 1.5;
-      max-width: 770px;
-
-      @include screen-large {
-        display: none;
-      }
-    }
-
-    &__list {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      margin-bottom: 45px;
-
-      &__menu {
+    &__header {
+      &__eyebrow {
+        font-size: 13px;
+        font-weight: 600;
+        color: $muted;
         display: block;
-        white-space: unset;
-        flex-wrap: unset;
-        overflow-x: unset;
-        width: 100%;
+      }
 
-        @include screen-large {
-          display: flex;
-          white-space: nowrap;
-          flex-wrap: nowrap;
-          overflow-x: scroll;
-          width: calc(100% + 15px);
+      &__heading {
+        font-weight: 800;
+        font-size: 30px;
+        letter-spacing: -0.5px;
+        color: $ink;
+        margin: 6px 0 0;
+      }
+
+      &__intro {
+        font-size: 15px;
+        color: $ink2;
+        margin: 8px 0 0;
+        max-width: 560px;
+        line-height: 1.5;
+      }
+    }
+
+    &__summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 24px;
+
+      @include screen-medium {
+        grid-template-columns: 1fr;
+      }
+
+      &__card {
+        border: 1px solid $line;
+        background: $white;
+        border-radius: 10px;
+        padding: 16px 18px;
+
+        &__label {
+          font-size: 12.5px;
+          color: $muted;
+          font-weight: 500;
+          display: block;
         }
 
-        button {
-          padding: 15px;
-          display: inline-flex;
-          gap: 8px;
-          align-items: center;
-          border: none;
-          margin: 0;
-          background: transparent;
-          font-weight: bold;
-          font-size: 15px;
-          line-height: 24px;
-          letter-spacing: 0.25px;
-          color: $davys_grey;
+        &__value {
+          font-weight: 800;
+          color: $ink;
+          font-size: 24px;
+          margin-top: 8px;
+        }
+      }
+    }
 
-          span {
-            font-weight: normal;
-          }
+    &__table {
+      margin-top: 18px;
+      border: 1px solid $line;
+      background: $white;
+      border-radius: 12px;
+      overflow: hidden;
 
-          svg {
-            color: $dodger_blue;
-          }
+      &__head {
+        display: grid;
+        grid-template-columns: 1.1fr 1.4fr 1fr 0.9fr auto;
+        gap: 16px;
+        padding: 14px 22px;
+        background: $cream;
+        border-bottom: 1px solid $line;
 
-          &.active {
-            color: black;
-            text-decoration: underline;
+        &__cell {
+          font-size: 11.5px;
+          font-weight: 700;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
+          color: $muted;
+
+          &--action {
+            width: 128px;
           }
         }
       }
+    }
 
-      &__items {
+    &__row {
+      display: grid;
+      grid-template-columns: 1.1fr 1.4fr 1fr 0.9fr auto;
+      gap: 16px;
+      padding: 16px 22px;
+      border-bottom: 1px solid $line;
+      align-items: center;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &__order {
         display: flex;
         flex-direction: column;
-        gap: 20px;
+        gap: 5px;
 
-        &__wrapper {
-          display: grid;
-          grid-template-columns: 1fr;
-          grid-gap: 20px;
+        &__id {
+          font-weight: 700;
+          color: $ink;
+          font-size: 14.5px;
         }
 
-        &__emptystate {
-          padding: 20px 0;
+        &__doc {
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+          font-weight: 700;
+          font-size: 11px;
+          padding: 3px 9px;
+          border-radius: 4px;
+          width: max-content;
+
+          &--invoice {
+            background: rgba($amber, 0.28);
+            color: #a9772e; // no token — mockup literal (--tag)
+          }
+
+          &--boleta {
+            background: $cream;
+            color: $ink2;
+            border: 1px solid $line;
+          }
         }
       }
 
-      &__paginate {
-        // margin-bot: 20px;
+      &__concept {
+        font-size: 14px;
+        color: $ink2;
+      }
+
+      &__date {
+        font-size: 14px;
+        color: $ink2;
+      }
+
+      &__amount {
+        font-weight: 700;
+        color: $ink;
+        font-size: 14.5px;
+      }
+
+      &__action {
+        width: 128px;
+
+        &__btn {
+          width: 128px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 7px;
+          text-decoration: none;
+          cursor: pointer;
+          font-weight: 600;
+          font-size: 13px;
+          color: $ink;
+          background: $white;
+          border: 1px solid $line;
+          padding: 10px;
+          border-radius: 4px;
+
+          &:hover {
+            background: $cream;
+          }
+        }
+
+        &__empty {
+          font-size: 14px;
+          color: $muted;
+          display: block;
+          text-align: center;
+        }
+      }
+    }
+
+    &__loading {
+      display: flex;
+      justify-content: center;
+      padding: 32px;
+    }
+
+    &__empty {
+      padding: 20px 0;
+    }
+
+    &__pager {
+      margin-top: 18px;
+
+      .paginate {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 6px;
+        flex-wrap: wrap;
       }
     }
   }

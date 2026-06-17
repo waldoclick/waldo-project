@@ -1,56 +1,64 @@
 <template>
   <section class="account account--orders" aria-labelledby="orders-title">
-    <h2 id="orders-title" class="account--orders__title title">Mis órdenes</h2>
+    <header class="account--orders__header">
+      <span class="account--orders__header__eyebrow">Cuenta</span>
+      <h1 id="orders-title" class="account--orders__header__heading">Mis órdenes</h1>
+      <p class="account--orders__header__intro">{{ introText }}</p>
+    </header>
 
-    <div class="account--orders__subtitle">
-      {{ introText }}
+    <div class="account--orders__summary">
+      <div class="account--orders__summary__card">
+        <span class="account--orders__summary__card__label">Total invertido</span>
+        <div class="account--orders__summary__card__value">{{ totalInvertido }}</div>
+      </div>
+      <div class="account--orders__summary__card">
+        <span class="account--orders__summary__card__label">Órdenes</span>
+        <div class="account--orders__summary__card__value">{{ pagination.total }}</div>
+      </div>
+      <div class="account--orders__summary__card">
+        <span class="account--orders__summary__card__label">Última compra</span>
+        <div class="account--orders__summary__card__value">{{ lastPurchase }}</div>
+      </div>
     </div>
 
-    <div class="account--orders__list">
-      <!-- órdenes -->
-      <div class="account--orders__list__items">
-        <div
-          v-if="isLoading"
-          class="account--orders__loading"
-          aria-live="polite"
-        >
-          <div class="account--orders__list__items__sr-only">
-            Cargando órdenes
-          </div>
-          <LoadingDefault />
-        </div>
-
-        <div
-          v-if="!isLoading && orders.length > 0"
-          class="account--orders__list__items__wrapper"
-        >
-          <CardOrder v-for="order in orders" :key="order.id" :order="order" />
-
-          <div
-            v-if="pagination.total > pagination.pageSize"
-            class="account--orders__list__items__paginate"
-          >
-            <div class="paginate" aria-label="Paginación">
-              <vue-awesome-paginate
-                :model-value="currentPage"
-                :total-items="pagination.total"
-                :items-per-page="pagination.pageSize"
-                :max-pages-shown="5"
-                @update:model-value="$emit('page-change', $event)"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div
-          v-if="!isLoading && orders.length === 0"
-          class="account--orders__list__items__emptystate"
-        >
-          <EmptyState>
-            <template #message> No hay órdenes </template>
-          </EmptyState>
-        </div>
+    <div class="account--orders__table">
+      <div class="account--orders__table__head">
+        <span class="account--orders__table__head__cell">Orden</span>
+        <span class="account--orders__table__head__cell">Concepto</span>
+        <span class="account--orders__table__head__cell">Fecha</span>
+        <span class="account--orders__table__head__cell">Monto</span>
+        <span class="account--orders__table__head__cell account--orders__table__head__cell--action"></span>
       </div>
+
+      <div v-if="isLoading" class="account--orders__loading" aria-live="polite">
+        <LoadingDefault />
+      </div>
+
+      <template v-if="!isLoading && orders.length > 0">
+        <CardOrder v-for="order in orders" :key="order.id" :order="order" />
+      </template>
+
+      <div
+        v-if="!isLoading && orders.length === 0"
+        class="account--orders__empty"
+      >
+        <EmptyState>
+          <template #message>No hay órdenes</template>
+        </EmptyState>
+      </div>
+    </div>
+
+    <div
+      v-if="!isLoading && pagination.total > pagination.pageSize"
+      class="account--orders__pager"
+    >
+      <vue-awesome-paginate
+        :model-value="currentPage"
+        :total-items="pagination.total"
+        :items-per-page="pagination.pageSize"
+        :max-pages-shown="5"
+        @update:model-value="$emit('page-change', $event)"
+      />
     </div>
   </section>
 </template>
@@ -60,7 +68,6 @@ import CardOrder from "@/components/CardOrder.vue";
 import EmptyState from "@/components/EmptyState.vue";
 import LoadingDefault from "@/components/LoadingDefault.vue";
 
-// Definir la interfaz para órdenes
 interface Order {
   id: number;
   status: string;
@@ -87,4 +94,19 @@ const props = defineProps<{
 defineEmits<{
   "page-change": [page: number];
 }>();
+
+const totalInvertido = computed(() => {
+  const sum = props.orders.reduce((acc, o) => {
+    const n = typeof o.amount === "string" ? Number.parseFloat(o.amount) : o.amount;
+    return acc + (Number.isFinite(n) ? n : 0);
+  }, 0);
+  return new Intl.NumberFormat("es-CL", { style: "currency", currency: "CLP" }).format(sum);
+});
+
+const lastPurchase = computed(() => {
+  const first = props.orders[0];
+  if (!first) return "—";
+  const date = new Date(first.createdAt);
+  return date.toLocaleDateString("es-CL", { day: "numeric", month: "short", year: "numeric" });
+});
 </script>

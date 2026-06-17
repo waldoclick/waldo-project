@@ -1,43 +1,36 @@
 <template>
-  <article class="card card--order">
-    <div class="card--order__header">
-      <!-- <pre>{{ order }}</pre> -->
-      <div class="card--order__document-type">
-        <div
-          class="card--order__document-type__badge"
-          :class="{ 'is-invoice': order.is_invoice }"
-        >
-          <IconFileText :size="16" class="card--order__document-type__icon" />
-          <span>{{ order.is_invoice ? "Factura" : "Boleta" }}</span>
-        </div>
-      </div>
-      <div class="card--order__title">Orden #{{ order.id }}</div>
-      <div class="card--order__date">
-        {{ formatDate(order.createdAt) }}
-      </div>
-      <!-- <div class="card--order__status">
-        {{ getStatusText(order.status) }}
-      </div> -->
-    </div>
-    <div class="card--order__content">
-      <div class="card--order__amount">
-        {{ formatPrice(order.amount) }}
-      </div>
+  <div class="account--orders__row">
+    <span class="account--orders__row__order">
+      <span class="account--orders__row__order__id">Orden #{{ order.id }}</span>
+      <span
+        class="account--orders__row__order__doc"
+        :class="order.is_invoice ? 'account--orders__row__order__doc--invoice' : 'account--orders__row__order__doc--boleta'"
+      >
+        <component :is="order.is_invoice ? IconFileCheck : IconFileText" :size="12" />
+        {{ order.is_invoice ? "Factura" : "Boleta" }}
+      </span>
+    </span>
+    <span class="account--orders__row__concept">Pago Waldo</span>
+    <span class="account--orders__row__date">{{ formatDate(order.createdAt) }}</span>
+    <span class="account--orders__row__amount">{{ formatPrice(order.amount) }}</span>
+    <span class="account--orders__row__action">
       <a
         v-if="order.document_response?.return?.enlaces?.dte_pdf"
         :href="order.document_response.return.enlaces.dte_pdf"
         target="_blank"
         rel="noopener noreferrer"
-        class="card--order__link btn btn--announcement"
+        class="account--orders__row__action__btn"
       >
-        Ver documento
+        <IconDownload :size="15" />
+        Documento
       </a>
-    </div>
-  </article>
+      <span v-else class="account--orders__row__action__empty">—</span>
+    </span>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { FileText as IconFileText } from "lucide-vue-next";
+import { Download as IconDownload, FileCheck as IconFileCheck, FileText as IconFileText } from "lucide-vue-next";
 
 interface Order {
   id: number;
@@ -61,15 +54,15 @@ interface Order {
   };
 }
 
-const props = defineProps<{
+defineProps<{
   order: Order;
 }>();
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
-  return date.toLocaleDateString("es-ES", {
+  return date.toLocaleDateString("es-CL", {
     year: "numeric",
-    month: "long",
+    month: "short",
     day: "numeric",
   });
 };
@@ -81,16 +74,5 @@ const formatPrice = (price: string | number) => {
     style: "currency",
     currency: "CLP",
   }).format(numericPrice);
-};
-
-const getStatusText = (status: string) => {
-  const statusMap: Record<string, string> = {
-    pending: "Pendiente",
-    processing: "Procesando",
-    paid: "Pagado",
-    completed: "Completado",
-    canceled: "Cancelado",
-  };
-  return statusMap[status] || status;
 };
 </script>
