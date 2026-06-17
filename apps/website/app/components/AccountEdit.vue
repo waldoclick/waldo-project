@@ -11,12 +11,17 @@
         </p>
       </div>
       <nav class="account--edit__toggle" aria-label="Ver o editar perfil">
-        <NuxtLink to="/cuenta/perfil" class="account--edit__toggle__btn">
+        <NuxtLink
+          to="/cuenta/perfil"
+          class="account--edit__toggle__btn"
+          exact-active-class="account--edit__toggle__btn--active"
+        >
           Ver
         </NuxtLink>
         <NuxtLink
           to="/cuenta/perfil/editar"
-          class="account--edit__toggle__btn account--edit__toggle__btn--active"
+          class="account--edit__toggle__btn"
+          exact-active-class="account--edit__toggle__btn--active"
         >
           Editar
         </NuxtLink>

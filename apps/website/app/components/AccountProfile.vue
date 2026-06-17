@@ -13,13 +13,15 @@
       <nav class="account--profile__toggle" aria-label="Ver o editar perfil">
         <NuxtLink
           to="/cuenta/perfil"
-          class="account--profile__toggle__btn account--profile__toggle__btn--active"
+          class="account--profile__toggle__btn"
+          exact-active-class="account--profile__toggle__btn--active"
         >
           Ver
         </NuxtLink>
         <NuxtLink
           to="/cuenta/perfil/editar"
           class="account--profile__toggle__btn"
+          exact-active-class="account--profile__toggle__btn--active"
         >
           Editar
         </NuxtLink>
