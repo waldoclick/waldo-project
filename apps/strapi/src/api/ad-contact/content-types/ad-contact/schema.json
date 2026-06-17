@@ -1,0 +1,32 @@
+{
+  "kind": "collectionType",
+  "collectionName": "ad_contacts",
+  "info": {
+    "singularName": "ad-contact",
+    "pluralName": "ad-contacts",
+    "displayName": "Ad Contact",
+    "description": "Event-sourced contact tracking — one row per contact event"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "ad": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::ad.ad"
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": ["call", "message"],
+      "required": true
+    },
+    "visitor_hash": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "datetime"
+    }
+  }
+}
