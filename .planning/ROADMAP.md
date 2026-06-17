@@ -65,14 +65,14 @@ Plans:
 5. Detalle de estadísticas por anuncio (vistas, contactos, conversión, promedio/día, gráfico 14 días con chart.js) + KPI "Vistas totales" en Panel, todo con datos reales agregados
 6. Cero regresión de comportamiento en las vistas existentes
 
-**Plans:** 2/9 plans executed
+**Plans:** 5/9 plans executed
 
 Plans:
 - [x] 05-01-PLAN.md — Account sidebar + layout shell redesign (SidebarAccount + _sidebar/_layout scss) (ACC-LAYOUT)
 - [x] 05-02-PLAN.md — Panel overview: greeting + 3 KPIs + "Necesita tu atención" + packs upsell (ACC-PANEL)
 - [x] 05-03-PLAN.md — Mis anuncios: tabs + counts + ad cards + empty state + pager (ACC-ADS)
 - [x] 05-04-PLAN.md — Mis órdenes: summary cards + orders table + doc download (ACC-ORDERS)
-- [ ] 05-05-PLAN.md — Mi perfil (Ver + Editar): preview, completeness, info grid, identidad pública (ACC-PROFILE)
+- [x] 05-05-PLAN.md — Mi perfil (Ver + Editar): preview, completeness, info grid, identidad pública (ACC-PROFILE)
 - [ ] 05-06-PLAN.md — Cambiar contraseña: header + password card + Google-provider note (ACC-PASSWORD)
 - [x] 05-07-PLAN.md — Stats backend (TDD): ad-view + ad-contact content types + server-side owner-excluded per-day view tracking (STAT-MODEL)
 - [ ] 05-08-PLAN.md — Stats aggregation (TDD): GET /ads/:id/stats (14-day series + conversion) + GET /ads/me/views-total (STAT-MODEL)
