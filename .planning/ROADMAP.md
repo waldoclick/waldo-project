@@ -69,8 +69,8 @@ Plans:
 
 Plans:
 - [x] 05-01-PLAN.md — Account sidebar + layout shell redesign (SidebarAccount + _sidebar/_layout scss) (ACC-LAYOUT)
-- [ ] 05-02-PLAN.md — Panel overview: greeting + 3 KPIs + "Necesita tu atención" + packs upsell (ACC-PANEL)
-- [ ] 05-03-PLAN.md — Mis anuncios: tabs + counts + ad cards + empty state + pager (ACC-ADS)
+- [x] 05-02-PLAN.md — Panel overview: greeting + 3 KPIs + "Necesita tu atención" + packs upsell (ACC-PANEL)
+- [x] 05-03-PLAN.md — Mis anuncios: tabs + counts + ad cards + empty state + pager (ACC-ADS)
 - [ ] 05-04-PLAN.md — Mis órdenes: summary cards + orders table + doc download (ACC-ORDERS)
 - [ ] 05-05-PLAN.md — Mi perfil (Ver + Editar): preview, completeness, info grid, identidad pública (ACC-PROFILE)
 - [ ] 05-06-PLAN.md — Cambiar contraseña: header + password card + Google-provider note (ACC-PASSWORD)
