@@ -76,7 +76,7 @@ Plans:
 - [x] 05-06-PLAN.md — Cambiar contraseña: header + password card + Google-provider note (ACC-PASSWORD)
 - [x] 05-07-PLAN.md — Stats backend (TDD): ad-view + ad-contact content types + server-side owner-excluded per-day view tracking (STAT-MODEL)
 - [x] 05-08-PLAN.md — Stats aggregation (TDD): GET /ads/:id/stats (14-day series + conversion) + GET /ads/me/views-total (STAT-MODEL)
-- [ ] 05-09-PLAN.md — Stats frontend: per-ad stats modal (chart.js) + real Panel KPIs wired to aggregation endpoints (STAT-VIEW)
+- [x] 05-09-PLAN.md — Stats frontend: per-ad stats modal (chart.js) + real Panel KPIs wired to aggregation endpoints (STAT-VIEW)
 
 ## Progress
 

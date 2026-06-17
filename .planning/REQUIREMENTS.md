@@ -32,7 +32,7 @@ Milestone scope: migrar la maqueta nueva (en `/design`) a los componentes reales
 ### Estadísticas (Phase 05 — backend nuevo)
 
 - [x] **STAT-MODEL**: `ad-view` guarda 1 fila por vista (ad, viewed_at, visitor_hash, source, viewer); tracking server-side en el detalle público, excluye al dueño, único por visitante/día; `ad-contact` guarda contactos como eventos
-- [ ] **STAT-VIEW**: Detalle de estadísticas por anuncio (vistas, contactos, conversión, promedio/día, gráfico 14 días con chart.js) + KPI "Vistas totales" en Panel, con datos reales agregados (no contador)
+- [x] **STAT-VIEW**: Detalle de estadísticas por anuncio (vistas, contactos, conversión, promedio/día, gráfico 14 días con chart.js) + KPI "Vistas totales" en Panel, con datos reales agregados (no contador)
 
 ## Out of Scope
 
@@ -61,7 +61,7 @@ Milestone scope: migrar la maqueta nueva (en `/design`) a los componentes reales
 | ACC-PROFILE | Phase 05 | Pending |
 | ACC-PASSWORD | Phase 05 | Pending |
 | STAT-MODEL | Phase 05 | Complete |
-| STAT-VIEW | Phase 05 | Pending |
+| STAT-VIEW | Phase 05 | Complete |
 
 **Coverage:**
 - v1 requirements: 15 total
