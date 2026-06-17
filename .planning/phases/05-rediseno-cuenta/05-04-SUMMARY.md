@@ -87,6 +87,13 @@ metrics:
 
 - **Concepto column:** Always shows "Pago Waldo" — no concept/description field exists on Order. This is accurate for the current use-case (all orders are Waldo pack purchases) but would need to change if order types diversify.
 
+**2. [Rule 1 - Bug] Spanish identifiers in JS const and BEM modifier**
+- **Found during:** Post-task review (advisor)
+- **Issue:** `totalInvertido` (const, AccountOrders.vue) and `--boleta` (BEM modifier, CardOrder.vue + _account.scss) are Spanish identifiers — violates CLAUDE.md "ENGLISH class/identifier names only"
+- **Fix:** Renamed to `totalInvested` and `--receipt` respectively; CardOrder `:class` binding updated; `&--boleta` SCSS rule renamed to `&--receipt`
+- **Files modified:** apps/website/app/components/AccountOrders.vue, apps/website/app/components/CardOrder.vue, apps/website/app/scss/components/_account.scss
+- **Commit:** 6d9df660
+
 ## Self-Check: PASSED
 
 Files exist:
