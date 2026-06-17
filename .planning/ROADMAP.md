@@ -91,7 +91,14 @@ Plans:
 4. KPI "Vistas totales" y modal de stats muestran datos reales; la card de anuncio muestra "N vistas · N contactos"
 5. "Contactos recibidos" usa datos reales (endpoint contacts-total + tracking de contacto cableado)
 
-**Plans:** TBD (se crean con plan-phase)
+**Plans:** 5 plans (2 waves)
+
+Plans:
+- [ ] 06-01-PLAN.md — Strapi bootstrap idempotent permission grant for Authenticated role (STAT-PERM)
+- [ ] 06-02-PLAN.md — HeaderDefault restyle to mockup (sticky 70px, amber CTA), slots preserved (HDR-01)
+- [ ] 06-03-PLAN.md — MenuUser dropdown restyle to UserMenu.dc.html, logout preserved (HDR-02)
+- [ ] 06-04-PLAN.md — contacts-total endpoint + AdSingle recordContact wiring (STAT-UI)
+- [ ] 06-05-PLAN.md — CardProfileAd actions (no no-ops) + real vistas·contactos meta + Panel contacts KPI (ACT-01, STAT-UI)
 
 ## Progress
 
