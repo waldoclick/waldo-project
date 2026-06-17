@@ -1,0 +1,36 @@
+{
+  "kind": "collectionType",
+  "collectionName": "ad_views",
+  "info": {
+    "singularName": "ad-view",
+    "pluralName": "ad-views",
+    "displayName": "Ad View",
+    "description": "Event-sourced ad view tracking — one row per view event"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "ad": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::ad.ad"
+    },
+    "viewed_at": {
+      "type": "datetime",
+      "required": true
+    },
+    "visitor_hash": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string"
+    },
+    "viewer": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}
