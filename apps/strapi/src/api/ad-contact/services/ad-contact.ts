@@ -55,5 +55,33 @@ export default factories.createCoreService(
         }
       }
     },
+
+    /**
+     * Aggregate total contact count across all active ads belonging to a user.
+     *
+     * Used by the account Panel KPI "Contactos recibidos".
+     * Guards against an empty active-ad list to avoid `$in: []` queries.
+     *
+     * @param userId - Strapi numeric user id
+     * @returns Integer count of all ad-contact rows for the user's active ads
+     */
+    async getUserTotalContacts(userId: number): Promise<number> {
+      // Step 1: Collect active ad ids for the user
+      const activeAds = (await strapi.db.query("api::ad.ad").findMany({
+        where: { user: userId, active: true },
+        select: ["id"],
+      })) as Array<{ id: number }>;
+
+      if (activeAds.length === 0) return 0;
+
+      const adIds = activeAds.map((a) => a.id);
+
+      // Step 2: Count all contact events for those ads
+      const total = (await strapi.db
+        .query("api::ad-contact.ad-contact")
+        .count({ where: { ad: { $in: adIds } } })) as number;
+
+      return total;
+    },
   }),
 );
