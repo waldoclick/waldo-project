@@ -394,6 +394,30 @@ export default factories.createCoreController(
       }
     },
 
+    /**
+     * GET /orders/me/summary
+     *
+     * Returns lifetime aggregate stats for the authenticated user's orders:
+     *   { total_invested: number, last_purchase: string | null }
+     *
+     * total_invested is the sum of all order amounts in CLP.
+     * last_purchase is the ISO timestamp of the most recent order.
+     *
+     * Auth: required (Authenticated role).
+     */
+    async meSummary(ctx) {
+      if (!ctx.state.user?.id) {
+        return ctx.unauthorized("Debes estar autenticado para ver tu resumen.");
+      }
+
+      const userId = ctx.state.user.id as number;
+      const summary = await strapi
+        .service("api::order.order")
+        .getUserOrdersSummary(userId);
+
+      return ctx.send({ data: summary });
+    },
+
     async findOne(ctx) {
       try {
         const documentId = ctx.params.documentId ?? ctx.params.id;

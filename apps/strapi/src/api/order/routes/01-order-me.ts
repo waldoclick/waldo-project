@@ -1,5 +1,8 @@
 /**
  * Custom order routes - se carga ANTES que order.ts
+ *
+ * IMPORTANT: /orders/me/summary (three-segment static) is declared BEFORE
+ * /orders/me (two-segment) so the router does not stop at the shorter match.
  */
 
 export default {
@@ -15,6 +18,11 @@ export default {
       path: "/orders/sales-by-month",
       handler: "order.salesByMonth",
       config: { policies: ["global::isManager"] },
+    },
+    {
+      method: "GET",
+      path: "/orders/me/summary",
+      handler: "order.meSummary",
     },
     {
       method: "GET",
