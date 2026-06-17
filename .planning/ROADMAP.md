@@ -95,7 +95,7 @@ Plans:
 
 Plans:
 - [x] 06-01-PLAN.md — Strapi bootstrap idempotent permission grant for Authenticated role (STAT-PERM)
-- [ ] 06-02-PLAN.md — HeaderDefault restyle to mockup (sticky 70px, amber CTA), slots preserved (HDR-01)
+- [x] 06-02-PLAN.md — HeaderDefault restyle to mockup (sticky 70px, amber CTA), slots preserved (HDR-01)
 - [ ] 06-03-PLAN.md — MenuUser dropdown restyle to UserMenu.dc.html, logout preserved (HDR-02)
 - [ ] 06-04-PLAN.md — contacts-total endpoint + AdSingle recordContact wiring (STAT-UI)
 - [ ] 06-05-PLAN.md — CardProfileAd actions (no no-ops) + real vistas·contactos meta + Panel contacts KPI (ACT-01, STAT-UI)
