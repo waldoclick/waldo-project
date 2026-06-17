@@ -772,6 +772,22 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
         return ctx.notFound("Ad not found or access denied");
       }
 
+      // Fire-and-forget view tracking — errors are swallowed inside recordView
+      const ip = ctx.request.ip ?? "unknown";
+      const ua =
+        (ctx.request.headers as Record<string, string>)["user-agent"] ??
+        "unknown";
+      const adRecord = result.ad as Record<string, unknown>;
+      await strapi
+        .service("api::ad-view.ad-view")
+        .recordView(
+          adRecord.documentId as string,
+          userId,
+          "detail",
+          ip,
+          ua,
+        );
+
       // Managers see the full ad; public and owners get sanitized data
       const adData =
         result.access.role === "manager"
