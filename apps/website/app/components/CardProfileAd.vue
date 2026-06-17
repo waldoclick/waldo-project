@@ -1,20 +1,30 @@
 <template>
   <article class="card card--profileAd">
     <!-- Thumbnail tile: background bound from category color (data-driven, not static design) -->
-    <span
-      class="card--profileAd__thumb"
-      :style="{ background: categoryColor }"
-    >
-      <component :is="categoryIcon" :size="30" class="card--profileAd__thumb__icon" />
-      <span class="card--profileAd__thumb__count">{{ photoCount }} {{ photoCount === 1 ? 'foto' : 'fotos' }}</span>
+    <span class="card--profileAd__thumb" :style="{ background: categoryColor }">
+      <component
+        :is="categoryIcon"
+        :size="30"
+        class="card--profileAd__thumb__icon"
+      />
+      <span class="card--profileAd__thumb__count"
+        >{{ photoCount }} {{ photoCount === 1 ? "foto" : "fotos" }}</span
+      >
     </span>
 
     <!-- Body -->
     <div class="card--profileAd__body">
       <!-- Title row -->
       <div class="card--profileAd__body__top">
-        <span class="card--profileAd__body__title">{{ ad?.title ?? ad?.name }}</span>
-        <span :class="['card--profileAd__body__badge', `card--profileAd__body__badge--${badgeVariant}`]">
+        <span class="card--profileAd__body__title">{{
+          ad?.title ?? ad?.name
+        }}</span>
+        <span
+          :class="[
+            'card--profileAd__body__badge',
+            `card--profileAd__body__badge--${badgeVariant}`,
+          ]"
+        >
           {{ badgeLabel }}
         </span>
         <span v-if="ad?.featured" class="card--profileAd__body__featured">
@@ -26,7 +36,10 @@
       <!-- Meta row -->
       <div class="card--profileAd__body__meta">
         <span class="card--profileAd__body__meta__cat">
-          <span class="card--profileAd__body__meta__cat__dot" :style="{ background: categoryColor }" />
+          <span
+            class="card--profileAd__body__meta__cat__dot"
+            :style="{ background: categoryColor }"
+          />
           {{ categoryName }}
         </span>
         <span class="card--profileAd__body__meta__date">
@@ -72,14 +85,20 @@
             <EllipsisVertical :size="18" />
           </button>
           <template v-if="menuOpen">
-            <span class="card--profileAd__actions__backdrop" @click="toggleMenu()" />
+            <span
+              class="card--profileAd__actions__backdrop"
+              @click="toggleMenu()"
+            />
             <div class="card--profileAd__actions__dropdown">
               <!-- Estadísticas only in menu when not featured (otherwise it's primary) -->
               <button
                 v-if="!ad?.featured"
                 type="button"
                 class="card--profileAd__actions__dropdown__item"
-                @click="handleOpenStats(); toggleMenu()"
+                @click="
+                  handleOpenStats();
+                  toggleMenu();
+                "
               >
                 <ChartNoAxesColumn :size="16" />
                 Estadísticas
@@ -99,7 +118,10 @@
               <button
                 type="button"
                 class="card--profileAd__actions__dropdown__item"
-                @click="handleMarkSold(); toggleMenu()"
+                @click="
+                  handleMarkSold();
+                  toggleMenu();
+                "
               >
                 <CircleCheck :size="16" />
                 Marcar como vendido
@@ -107,7 +129,10 @@
               <button
                 type="button"
                 class="card--profileAd__actions__dropdown__item card--profileAd__actions__dropdown__item--danger"
-                @click="handleDeactivate(); toggleMenu()"
+                @click="
+                  handleDeactivate();
+                  toggleMenu();
+                "
               >
                 <CircleOff :size="16" />
                 Dar de baja
@@ -207,7 +232,9 @@ const props = defineProps({
 });
 
 const menuOpen = ref(false);
-const toggleMenu = () => { menuOpen.value = !menuOpen.value; };
+const toggleMenu = () => {
+  menuOpen.value = !menuOpen.value;
+};
 
 // Stats modal
 const statsOpen = ref(false);
@@ -231,10 +258,14 @@ const adCategory = computed<Category | null>(() =>
     : null,
 );
 const categoryColor = computed(() => adCategory.value?.color ?? FALLBACK_COLOR);
-const categoryIcon = computed(() => getCategoryIcon(adCategory.value?.slug ?? ""));
+const categoryIcon = computed(() =>
+  getCategoryIcon(adCategory.value?.slug ?? ""),
+);
 const categoryName = computed(() => adCategory.value?.name ?? "");
 
-const photoCount = computed(() => (props.ad?.gallery as GalleryItem[] | undefined)?.length ?? 0);
+const photoCount = computed(
+  () => (props.ad?.gallery as GalleryItem[] | undefined)?.length ?? 0,
+);
 
 // Badge
 const badgeVariant = computed(() => {
@@ -269,7 +300,11 @@ const adViews = ref(0);
 const adContacts = ref(0);
 
 onMounted(() => {
-  if (import.meta.client && props.ad?.status === "published" && props.ad?.documentId) {
+  if (
+    import.meta.client &&
+    props.ad?.status === "published" &&
+    props.ad?.documentId
+  ) {
     const userStore = useUserStore();
     userStore.loadAdStats(props.ad.documentId as string).then((res) => {
       adViews.value = res.total;
@@ -281,7 +316,9 @@ onMounted(() => {
 const statusMessage = computed(() => {
   const status = props.ad?.status;
   const days = props.ad?.remaining_days as number;
-  const createdAt = props.ad?.createdAt ? new Date(props.ad.createdAt as string).getTime() : 0;
+  const createdAt = props.ad?.createdAt
+    ? new Date(props.ad.createdAt as string).getTime()
+    : 0;
   const now = Date.now();
   const hoursDiff = Math.floor((now - createdAt) / (1000 * 60 * 60));
   const daysDiff = Math.floor(hoursDiff / 24);
@@ -324,7 +361,20 @@ const metaRight = computed(() => {
 const formatDate = (dateString?: string) => {
   if (!dateString) return "";
   const date = new Date(dateString);
-  const months = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+  const months = [
+    "enero",
+    "febrero",
+    "marzo",
+    "abril",
+    "mayo",
+    "junio",
+    "julio",
+    "agosto",
+    "septiembre",
+    "octubre",
+    "noviembre",
+    "diciembre",
+  ];
   return `${date.getDate()} de ${months[date.getMonth()]} del ${date.getFullYear()}`;
 };
 
@@ -362,12 +412,12 @@ const handleRepublish = async () => {
     adStore.updateHeight(Number(ad.height));
     adStore.updateDepth(Number(ad.depth));
     adStore.updateCurrency(ad.currency);
-    const updatedGallery: GalleryItem[] = (ad.gallery as Array<{ id: number; url: string }>).map(
-      (img) => ({
-        id: String(img.id),
-        url: transformUrl(img.url),
-      }),
-    );
+    const updatedGallery: GalleryItem[] = (
+      ad.gallery as Array<{ id: number; url: string }>
+    ).map((img) => ({
+      id: String(img.id),
+      url: transformUrl(img.url),
+    }));
     adStore.updateGallery(updatedGallery);
     if (ad.details) {
       adStore.updatePack(ad.details.pack);
@@ -417,7 +467,7 @@ const handleBannedClick = () => {
 const handleMarkSold = () => {
   Swal.fire({
     title: "Marcar como vendido",
-    text: "Esta función aún no está disponible. Si ya vendiste este artículo, puedes usar \"Dar de baja\" para retirarlo de la plataforma.",
+    text: 'Esta función aún no está disponible. Si ya vendiste este artículo, puedes usar "Dar de baja" para retirarlo de la plataforma.',
     icon: "info",
     confirmButtonText: "Entendido",
   });
@@ -427,5 +477,4 @@ const handleDeactivate = () => {
   const appStore = useAppStore();
   appStore.openDeactivateLightbox(props.ad.documentId as string);
 };
-
 </script>

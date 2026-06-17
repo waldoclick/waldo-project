@@ -1,14 +1,12 @@
 <template>
-  <section class="page">
-    <AccountOrders
-      :intro-text="'Aquí podrás ver tus órdenes de compra, revisar su estado y dar seguimiento a tus pagos.'"
-      :orders="orders"
-      :current-page="currentPage"
-      :pagination="pagination"
-      :is-loading="isLoading"
-      @page-change="handlePageChange"
-    />
-  </section>
+  <AccountOrders
+    :intro-text="'Aquí podrás ver tus órdenes de compra, revisar su estado y dar seguimiento a tus pagos.'"
+    :orders="orders"
+    :current-page="currentPage"
+    :pagination="pagination"
+    :is-loading="isLoading"
+    @page-change="handlePageChange"
+  />
 </template>
 
 <script setup lang="ts">

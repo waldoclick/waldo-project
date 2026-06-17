@@ -267,7 +267,9 @@
             font-weight: 500;
             color: $ink2;
             cursor: pointer;
-            transition: background-color 0.15s ease, color 0.15s ease;
+            transition:
+              background-color 0.15s ease,
+              color 0.15s ease;
 
             &:hover {
               background: $cream;

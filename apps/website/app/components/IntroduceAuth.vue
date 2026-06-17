@@ -1,13 +1,18 @@
 <template>
   <div class="introduce introduce--auth">
     <div class="introduce--auth__card">
-      <div class="introduce--auth__card__glow introduce--auth__card__glow--top" />
-      <div class="introduce--auth__card__glow introduce--auth__card__glow--bottom" />
+      <div
+        class="introduce--auth__card__glow introduce--auth__card__glow--top"
+      />
+      <div
+        class="introduce--auth__card__glow introduce--auth__card__glow--bottom"
+      />
 
       <div class="introduce--auth__header">
         <div class="introduce--auth__logo"><LogoBlack /></div>
         <span class="introduce--auth__header__chip">
-          <span class="introduce--auth__header__chip__dot" />Marketplace industrial
+          <span class="introduce--auth__header__chip__dot" />Marketplace
+          industrial
         </span>
       </div>
 

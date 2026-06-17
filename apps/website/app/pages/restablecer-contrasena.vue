@@ -12,7 +12,10 @@
             <span>Ir al inicio</span>
           </NuxtLink>
           <h2 class="auth__form__title title">Restablece tu contraseña</h2>
-          <p class="auth__form__description">Elige una contraseña nueva y segura para tu cuenta. No podrás reutilizar la anterior.</p>
+          <p class="auth__form__description">
+            Elige una contraseña nueva y segura para tu cuenta. No podrás
+            reutilizar la anterior.
+          </p>
           <div class="auth__form__fields">
             <FormResetPassword />
           </div>

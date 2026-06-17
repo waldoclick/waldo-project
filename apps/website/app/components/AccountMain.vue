@@ -32,7 +32,9 @@
           <IconPackage :size="18" />
         </div>
         <div class="account--main__kpi__value">{{ activeCount }}</div>
-        <span class="account--main__kpi__sub">de {{ totalCount }} publicados</span>
+        <span class="account--main__kpi__sub"
+          >de {{ totalCount }} publicados</span
+        >
       </div>
     </div>
 
@@ -99,8 +101,8 @@
         <div>
           <span class="account--main__attention__ok__title">Todo al día</span>
           <p class="account--main__attention__ok__note">
-            No tienes anuncios por vencer ni rechazados. Tus publicaciones están en
-            orden.
+            No tienes anuncios por vencer ni rechazados. Tus publicaciones están
+            en orden.
           </p>
         </div>
       </div>
@@ -112,8 +114,8 @@
         <span class="account--main__upsell__pill">Ahorra hasta 98%</span>
         <h3 class="account--main__upsell__title">Publica más, paga menos</h3>
         <p class="account--main__upsell__text">
-          Compra un pack de avisos y úsalos cuando quieras. Cada anuncio se publica
-          por 45 días.
+          Compra un pack de avisos y úsalos cuando quieras. Cada anuncio se
+          publica por 45 días.
         </p>
       </div>
       <nuxt-link to="/packs" class="account--main__upsell__buy">
@@ -122,11 +124,7 @@
       </nuxt-link>
     </div>
 
-    <StatsAdModal
-      :open="statsOpen"
-      :ad="statsAd"
-      @close="statsOpen = false"
-    />
+    <StatsAdModal :open="statsOpen" :ad="statsAd" @close="statsOpen = false" />
   </section>
 </template>
 
@@ -157,13 +155,14 @@ const FALLBACK_COLOR = "#ece9e4";
 const { data: panel } = await useAsyncData(
   "account-panel",
   async () => {
-    const [counts, published, rejected, viewsTotal, contactsTotal] = await Promise.all([
-      userStore.loadUserAdCounts(),
-      userStore.loadUserAds("published", { page: 1, pageSize: 50 }),
-      userStore.loadUserAds("rejected", { page: 1, pageSize: 25 }),
-      userStore.loadPanelViewsTotal(),
-      userStore.loadContactsTotal(),
-    ]);
+    const [counts, published, rejected, viewsTotal, contactsTotal] =
+      await Promise.all([
+        userStore.loadUserAdCounts(),
+        userStore.loadUserAds("published", { page: 1, pageSize: 50 }),
+        userStore.loadUserAds("rejected", { page: 1, pageSize: 25 }),
+        userStore.loadPanelViewsTotal(),
+        userStore.loadContactsTotal(),
+      ]);
     return {
       counts,
       published: published?.data ?? [],
@@ -202,9 +201,19 @@ const catOf = (ad: Ad) =>
 
 // Stats modal state
 const statsOpen = ref(false);
-const statsAd = ref<{ documentId: string; name: string; category?: string; status?: string } | null>(null);
+const statsAd = ref<{
+  documentId: string;
+  name: string;
+  category?: string;
+  status?: string;
+} | null>(null);
 
-const openStatsForAd = (adRef: { documentId: string; name: string; category?: string; status?: string }) => {
+const openStatsForAd = (adRef: {
+  documentId: string;
+  name: string;
+  category?: string;
+  status?: string;
+}) => {
   statsAd.value = adRef;
   statsOpen.value = true;
 };
@@ -220,13 +229,20 @@ interface AttentionItem {
   actionLabel: string;
   actionIcon: unknown;
   actionType: "stats" | "link";
-  adRef: { documentId: string; name: string; category?: string; status?: string };
+  adRef: {
+    documentId: string;
+    name: string;
+    category?: string;
+    status?: string;
+  };
   to: string;
 }
 
 const attentionItems = computed<AttentionItem[]>(() => {
   const expiring: AttentionItem[] = panel.value.published
-    .filter((a) => a.remaining_days > 0 && a.remaining_days <= EXPIRING_THRESHOLD)
+    .filter(
+      (a) => a.remaining_days > 0 && a.remaining_days <= EXPIRING_THRESHOLD,
+    )
     .map((a) => {
       const cat = catOf(a);
       return {
@@ -243,7 +259,10 @@ const attentionItems = computed<AttentionItem[]>(() => {
         adRef: {
           documentId: a.documentId,
           name: a.title,
-          category: typeof a.category === "object" && a.category !== null ? (a.category as Category).name : undefined,
+          category:
+            typeof a.category === "object" && a.category !== null
+              ? (a.category as Category).name
+              : undefined,
           status: "published",
         },
         to: `/anuncios/${a.slug}`,
@@ -259,7 +278,9 @@ const attentionItems = computed<AttentionItem[]>(() => {
       color: cat?.color ?? FALLBACK_COLOR,
       icon: getCategoryIcon(cat?.slug ?? ""),
       badge: "Rechazado",
-      note: a.reason_for_rejection || "Tu anuncio fue rechazado. Revisa y corrige para volver a publicarlo.",
+      note:
+        a.reason_for_rejection ||
+        "Tu anuncio fue rechazado. Revisa y corrige para volver a publicarlo.",
       actionLabel: "Ver motivo",
       actionIcon: IconCircleAlert,
       actionType: "link" as const,

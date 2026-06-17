@@ -219,7 +219,11 @@
       <button
         :disabled="!meta.valid || loading"
         type="submit"
-        :class="['btn', 'btn--block', step === 1 ? 'btn--secondary' : 'btn--primary']"
+        :class="[
+          'btn',
+          'btn--block',
+          step === 1 ? 'btn--secondary' : 'btn--primary',
+        ]"
       >
         <span v-if="step === 1">Siguiente <IconArrowRight :size="16" /></span>
         <span v-if="step === 2 && !loading">Registrate</span>

@@ -68,7 +68,10 @@
             <NuxtLink to="/cuenta/perfil" title="Mi perfil">Mi perfil</NuxtLink>
           </li>
           <li @click="menuOpen">
-            <NuxtLink to="/cuenta/cambiar-contrasena" title="Cambiar contraseña">
+            <NuxtLink
+              to="/cuenta/cambiar-contrasena"
+              title="Cambiar contraseña"
+            >
               <span>Cambiar contraseña</span>
             </NuxtLink>
           </li>

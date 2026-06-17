@@ -40,7 +40,9 @@
         </div>
         <div
           v-if="
-            user && !route.path.startsWith('/anunciar') && route.path !== '/pagar'
+            user &&
+            !route.path.startsWith('/anunciar') &&
+            route.path !== '/pagar'
           "
           class="header--default__announcement"
         >
@@ -76,7 +78,11 @@ import MenuDefault from "@/components/MenuDefault.vue";
 import MenuUser from "@/components/MenuUser.vue";
 import SearchIcon from "@/components/SearchIcon.vue";
 import { useScroll } from "@vueuse/core";
-import { Pencil as IconPencil, Plus as IconPlus, Menu as IconMenu } from "lucide-vue-next";
+import {
+  Pencil as IconPencil,
+  Plus as IconPlus,
+  Menu as IconMenu,
+} from "lucide-vue-next";
 import { useAdStore } from "@/stores/ad.store";
 import { useAppStore } from "@/stores/app.store";
 

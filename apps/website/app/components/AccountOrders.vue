@@ -2,22 +2,32 @@
   <section class="account account--orders" aria-labelledby="orders-title">
     <header class="account--orders__header">
       <span class="account--orders__header__eyebrow">Cuenta</span>
-      <h1 id="orders-title" class="account--orders__header__heading">Mis órdenes</h1>
+      <h1 id="orders-title" class="account--orders__header__heading">
+        Mis órdenes
+      </h1>
       <p class="account--orders__header__intro">{{ introText }}</p>
     </header>
 
     <div class="account--orders__summary">
       <div class="account--orders__summary__card">
-        <span class="account--orders__summary__card__label">Total invertido</span>
-        <div class="account--orders__summary__card__value">{{ totalInvested }}</div>
+        <span class="account--orders__summary__card__label"
+          >Total invertido</span
+        >
+        <div class="account--orders__summary__card__value">
+          {{ totalInvested }}
+        </div>
       </div>
       <div class="account--orders__summary__card">
         <span class="account--orders__summary__card__label">Órdenes</span>
-        <div class="account--orders__summary__card__value">{{ pagination.total }}</div>
+        <div class="account--orders__summary__card__value">
+          {{ pagination.total }}
+        </div>
       </div>
       <div class="account--orders__summary__card">
         <span class="account--orders__summary__card__label">Última compra</span>
-        <div class="account--orders__summary__card__value">{{ lastPurchase }}</div>
+        <div class="account--orders__summary__card__value">
+          {{ lastPurchase }}
+        </div>
       </div>
     </div>
 
@@ -27,7 +37,9 @@
         <span class="account--orders__table__head__cell">Concepto</span>
         <span class="account--orders__table__head__cell">Fecha</span>
         <span class="account--orders__table__head__cell">Monto</span>
-        <span class="account--orders__table__head__cell account--orders__table__head__cell--action"></span>
+        <span
+          class="account--orders__table__head__cell account--orders__table__head__cell--action"
+        ></span>
       </div>
 
       <div v-if="isLoading" class="account--orders__loading" aria-live="polite">
@@ -97,16 +109,24 @@ defineEmits<{
 
 const totalInvested = computed(() => {
   const sum = props.orders.reduce((acc, o) => {
-    const n = typeof o.amount === "string" ? Number.parseFloat(o.amount) : o.amount;
+    const n =
+      typeof o.amount === "string" ? Number.parseFloat(o.amount) : o.amount;
     return acc + (Number.isFinite(n) ? n : 0);
   }, 0);
-  return new Intl.NumberFormat("es-CL", { style: "currency", currency: "CLP" }).format(sum);
+  return new Intl.NumberFormat("es-CL", {
+    style: "currency",
+    currency: "CLP",
+  }).format(sum);
 });
 
 const lastPurchase = computed(() => {
   const first = props.orders[0];
   if (!first) return "—";
   const date = new Date(first.createdAt);
-  return date.toLocaleDateString("es-CL", { day: "numeric", month: "short", year: "numeric" });
+  return date.toLocaleDateString("es-CL", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
 });
 </script>

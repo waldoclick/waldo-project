@@ -12,13 +12,21 @@
         <!-- Header -->
         <div class="stats--ad__header">
           <div class="stats--ad__header__info">
-            <span class="stats--ad__header__eyebrow">Estadísticas del anuncio</span>
+            <span class="stats--ad__header__eyebrow"
+              >Estadísticas del anuncio</span
+            >
             <h3 class="stats--ad__header__title">{{ ad.name }}</h3>
             <div class="stats--ad__header__meta">
               <span
-                :class="['stats--ad__badge', `stats--ad__badge--${ad.status ?? 'active'}`]"
-              >{{ badgeLabel }}</span>
-              <span v-if="ad.category" class="stats--ad__header__cat">{{ ad.category }}</span>
+                :class="[
+                  'stats--ad__badge',
+                  `stats--ad__badge--${ad.status ?? 'active'}`,
+                ]"
+                >{{ badgeLabel }}</span
+              >
+              <span v-if="ad.category" class="stats--ad__header__cat">{{
+                ad.category
+              }}</span>
             </div>
           </div>
           <button
@@ -35,23 +43,33 @@
         <div class="stats--ad__kpis">
           <div class="stats--ad__kpi">
             <span class="stats--ad__kpi__label">Vistas totales</span>
-            <div class="stats--ad__kpi__value">{{ loading ? "—" : stats.total }}</div>
+            <div class="stats--ad__kpi__value">
+              {{ loading ? "—" : stats.total }}
+            </div>
           </div>
           <div class="stats--ad__kpi">
             <span class="stats--ad__kpi__label">Contactos</span>
-            <div class="stats--ad__kpi__value">{{ loading ? "—" : stats.contacts }}</div>
+            <div class="stats--ad__kpi__value">
+              {{ loading ? "—" : stats.contacts }}
+            </div>
           </div>
           <div class="stats--ad__kpi">
             <span class="stats--ad__kpi__label">Conversión</span>
-            <div class="stats--ad__kpi__value">{{ loading ? "—" : `${stats.conversion}%` }}</div>
+            <div class="stats--ad__kpi__value">
+              {{ loading ? "—" : `${stats.conversion}%` }}
+            </div>
           </div>
         </div>
 
         <!-- Chart section -->
         <div class="stats--ad__chart-section">
           <div class="stats--ad__chart-section__row">
-            <span class="stats--ad__chart-section__heading">Vistas en los últimos 14 días</span>
-            <span class="stats--ad__chart-section__avg">Prom. {{ loading ? "—" : stats.avgPerDay }} / día</span>
+            <span class="stats--ad__chart-section__heading"
+              >Vistas en los últimos 14 días</span
+            >
+            <span class="stats--ad__chart-section__avg"
+              >Prom. {{ loading ? "—" : stats.avgPerDay }} / día</span
+            >
           </div>
           <div class="stats--ad__chart-section__canvas">
             <Bar
@@ -59,7 +77,9 @@
               :data="chartData"
               :options="chartOptions"
             />
-            <div v-else class="stats--ad__chart-section__loading">Cargando...</div>
+            <div v-else class="stats--ad__chart-section__loading">
+              Cargando...
+            </div>
           </div>
         </div>
 
@@ -67,7 +87,8 @@
         <div class="stats--ad__note">
           <Info :size="16" class="stats--ad__note__icon" />
           <span class="stats--ad__note__text">
-            Podrás renovar este anuncio cuando venza. Para ganar visibilidad antes, destácalo desde Mis anuncios.
+            Podrás renovar este anuncio cuando venza. Para ganar visibilidad
+            antes, destácalo desde Mis anuncios.
           </span>
         </div>
 

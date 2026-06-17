@@ -13,7 +13,10 @@
             <span>Ir al inicio</span>
           </NuxtLink>
           <h1 class="auth__form__title title">Recupera tu contraseña</h1>
-          <p class="auth__form__description">Introduce tu correo y te enviaremos un enlace para crear una nueva contraseña.</p>
+          <p class="auth__form__description">
+            Introduce tu correo y te enviaremos un enlace para crear una nueva
+            contraseña.
+          </p>
           <div class="auth__form__fields">
             <FormForgotPassword />
           </div>

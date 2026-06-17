@@ -39,7 +39,9 @@
 
     <div class="sidebar--account__credits">
       <div class="sidebar--account__credits__head">
-        <span class="sidebar--account__credits__label">Créditos disponibles</span>
+        <span class="sidebar--account__credits__label"
+          >Créditos disponibles</span
+        >
         <IconTicket :size="16" />
       </div>
       <div class="sidebar--account__credits__amount">
@@ -73,7 +75,8 @@ const route = useRoute();
 const user = useSessionUser<User>();
 
 const getUbication = computed(() => {
-  if (!user.value || !user.value.commune || !user.value.commune.region) return "";
+  if (!user.value || !user.value.commune || !user.value.commune.region)
+    return "";
   return `${user.value.commune.name} · ${user.value.commune.region.name}`;
 });
 
@@ -92,7 +95,11 @@ const navItems: NavItem[] = [
   { label: "Mis anuncios", to: "/cuenta/mis-anuncios/", icon: IconPackage },
   { label: "Mis órdenes", to: "/cuenta/mis-ordenes/", icon: IconReceipt },
   { label: "Mi perfil", to: "/cuenta/perfil", icon: IconUserRound },
-  { label: "Cambiar contraseña", to: "/cuenta/cambiar-contrasena", icon: IconLock },
+  {
+    label: "Cambiar contraseña",
+    to: "/cuenta/cambiar-contrasena",
+    icon: IconLock,
+  },
 ];
 
 const isActive = (item: NavItem) => {

@@ -3,6 +3,8 @@
 @use "../base/container";
 
 .account {
+  padding: 0;
+
   // ── Panel overview (v1.47 redesign — design/account.dc.html lines 78-139) ──
   &--main {
     &__eyebrow {
@@ -1426,8 +1428,12 @@
     animation: statsBackdropIn 0.18s ease;
 
     @keyframes statsBackdropIn {
-      from { opacity: 0; }
-      to   { opacity: 1; }
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
     }
   }
 
@@ -1441,8 +1447,14 @@
     animation: statsModalIn 0.24s cubic-bezier(0.2, 0.9, 0.3, 1.1);
 
     @keyframes statsModalIn {
-      from { opacity: 0; transform: translateY(8px) scale(0.97); }
-      to   { opacity: 1; transform: translateY(0) scale(1); }
+      from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.97);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
     }
   }
 

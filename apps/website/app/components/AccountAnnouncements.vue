@@ -7,15 +7,15 @@
     <div class="account--announcements__header">
       <div class="account--announcements__header__left">
         <span class="account--announcements__header__eyebrow">Cuenta</span>
-        <h1 id="announcements-title" class="account--announcements__header__heading">
+        <h1
+          id="announcements-title"
+          class="account--announcements__header__heading"
+        >
           Mis anuncios
         </h1>
         <p class="account--announcements__header__intro">{{ introText }}</p>
       </div>
-      <nuxt-link
-        to="/anunciar"
-        class="account--announcements__header__cta"
-      >
+      <nuxt-link to="/anunciar" class="account--announcements__header__cta">
         <Plus :size="16" />
         Publicar anuncio
       </nuxt-link>
@@ -41,7 +41,9 @@
         :aria-controls="`panel-${tab.value}`"
         :class="[
           'account--announcements__tab',
-          { 'account--announcements__tab--active': currentFilter === tab.value },
+          {
+            'account--announcements__tab--active': currentFilter === tab.value,
+          },
         ]"
         :title="tab.label"
         @click="$emit('filter-change', tab.value)"
@@ -76,8 +78,12 @@
         <span class="account--announcements__empty__icon">
           <component :is="emptyEntry.icon" :size="26" />
         </span>
-        <span class="account--announcements__empty__title">{{ emptyEntry.title }}</span>
-        <span class="account--announcements__empty__msg">{{ emptyEntry.msg }}</span>
+        <span class="account--announcements__empty__title">{{
+          emptyEntry.title
+        }}</span>
+        <span class="account--announcements__empty__msg">{{
+          emptyEntry.msg
+        }}</span>
       </div>
 
       <!-- Ad list -->
@@ -165,11 +171,31 @@ interface EmptyEntry {
 }
 
 const emptyMap: Record<FilterType, EmptyEntry> = {
-  published: { icon: Package, title: "Aún no tienes anuncios activos", msg: "Publica tu primer anuncio y llega a compradores de toda la industria." },
-  review:    { icon: Clock, title: "No tienes anuncios pendientes", msg: "Cuando publiques un anuncio nuevo aparecerá aquí mientras esperamos su aprobación." },
-  expired:   { icon: CircleOff, title: "No tienes anuncios expirados", msg: "Aquí verás las publicaciones cuyo período de 45 días ya terminó." },
-  rejected:  { icon: CircleX, title: "No tienes anuncios rechazados", msg: "Si un anuncio no cumple los requisitos te diremos cómo corregirlo." },
-  banned:    { icon: Ban, title: "No tienes anuncios baneados", msg: "Tus publicaciones cumplen las reglas de la comunidad. ¡Sigue así!" },
+  published: {
+    icon: Package,
+    title: "Aún no tienes anuncios activos",
+    msg: "Publica tu primer anuncio y llega a compradores de toda la industria.",
+  },
+  review: {
+    icon: Clock,
+    title: "No tienes anuncios pendientes",
+    msg: "Cuando publiques un anuncio nuevo aparecerá aquí mientras esperamos su aprobación.",
+  },
+  expired: {
+    icon: CircleOff,
+    title: "No tienes anuncios expirados",
+    msg: "Aquí verás las publicaciones cuyo período de 45 días ya terminó.",
+  },
+  rejected: {
+    icon: CircleX,
+    title: "No tienes anuncios rechazados",
+    msg: "Si un anuncio no cumple los requisitos te diremos cómo corregirlo.",
+  },
+  banned: {
+    icon: Ban,
+    title: "No tienes anuncios baneados",
+    msg: "Tus publicaciones cumplen las reglas de la comunidad. ¡Sigue así!",
+  },
 };
 
 const emptyEntry = computed<EmptyEntry>(

@@ -3,7 +3,8 @@
     <span class="account--password__eyebrow">Seguridad</span>
     <h1 class="account--password__heading">Cambiar contraseña</h1>
     <p class="account--password__intro">
-      Mantén tu cuenta segura. Usa una contraseña única que no utilices en otros servicios.
+      Mantén tu cuenta segura. Usa una contraseña única que no utilices en otros
+      servicios.
     </p>
 
     <div v-if="isExternalProvider" class="account--password__memo">
@@ -20,7 +21,10 @@
 
     <div v-if="!isExternalProvider" class="account--password__note">
       <Shield class="account--password__note__icon" :size="16" />
-      <span class="account--password__note__text">¿Iniciaste sesión con Google? En ese caso tu contraseña se gestiona desde tu proveedor y no podrás cambiarla aquí.</span>
+      <span class="account--password__note__text"
+        >¿Iniciaste sesión con Google? En ese caso tu contraseña se gestiona
+        desde tu proveedor y no podrás cambiarla aquí.</span
+      >
     </div>
   </section>
 </template>

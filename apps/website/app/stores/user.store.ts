@@ -192,7 +192,13 @@ export const useUserStore = defineStore("user", () => {
       const typed = response as unknown as { data: AdStatsResult };
       return typed.data;
     } catch {
-      return { total: 0, series: Array(days).fill(0) as number[], contacts: 0, conversion: 0, avgPerDay: 0 };
+      return {
+        total: 0,
+        series: Array(days).fill(0) as number[],
+        contacts: 0,
+        conversion: 0,
+        avgPerDay: 0,
+      };
     }
   };
 

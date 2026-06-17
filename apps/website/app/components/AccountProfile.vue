@@ -74,12 +74,15 @@
             </div>
             <span class="account--profile__preview__tipo">
               <component :is="user.is_company ? Building2 : User" :size="14" />
-              {{ user.is_company ? 'Empresa' : 'Persona Natural' }}
+              {{ user.is_company ? "Empresa" : "Persona Natural" }}
             </span>
           </div>
 
           <div class="account--profile__preview__meta">
-            <span v-if="user.username" class="account--profile__preview__meta__item">
+            <span
+              v-if="user.username"
+              class="account--profile__preview__meta__item"
+            >
               <AtSign :size="14" />
               {{ user.username }}
             </span>
@@ -138,19 +141,19 @@
         <div class="account--profile__info__row">
           <span class="account--profile__info__row__label">Nombres</span>
           <span class="account--profile__info__row__value">
-            {{ user.firstname || '--' }}
+            {{ user.firstname || "--" }}
           </span>
         </div>
         <div class="account--profile__info__row">
           <span class="account--profile__info__row__label">Apellidos</span>
           <span class="account--profile__info__row__value">
-            {{ user.lastname || '--' }}
+            {{ user.lastname || "--" }}
           </span>
         </div>
         <div class="account--profile__info__row">
           <span class="account--profile__info__row__label">RUT</span>
           <span class="account--profile__info__row__value">
-            {{ user.rut || '--' }}
+            {{ user.rut || "--" }}
           </span>
         </div>
         <div class="account--profile__info__row">
@@ -164,7 +167,7 @@
         <div class="account--profile__info__row">
           <span class="account--profile__info__row__label">Teléfono</span>
           <span class="account--profile__info__row__value">
-            {{ user.phone || '--' }}
+            {{ user.phone || "--" }}
           </span>
         </div>
         <div class="account--profile__info__row">
@@ -172,7 +175,7 @@
             Correo electrónico
           </span>
           <span class="account--profile__info__row__value">
-            {{ user.email || '--' }}
+            {{ user.email || "--" }}
           </span>
         </div>
         <div class="account--profile__info__row">
@@ -184,19 +187,19 @@
         <div class="account--profile__info__row">
           <span class="account--profile__info__row__label">Comuna</span>
           <span class="account--profile__info__row__value">
-            {{ user.commune?.name || '--' }}
+            {{ user.commune?.name || "--" }}
           </span>
         </div>
         <div class="account--profile__info__row">
           <span class="account--profile__info__row__label">Dirección</span>
           <span class="account--profile__info__row__value">
-            {{ getAddress || '--' }}
+            {{ getAddress || "--" }}
           </span>
         </div>
         <div class="account--profile__info__row">
           <span class="account--profile__info__row__label">Código postal</span>
           <span class="account--profile__info__row__value">
-            {{ user.postal_code || '--' }}
+            {{ user.postal_code || "--" }}
           </span>
         </div>
       </div>
@@ -221,19 +224,19 @@
           <div class="account--profile__info__row">
             <span class="account--profile__info__row__label">Razón Social</span>
             <span class="account--profile__info__row__value">
-              {{ user.business_name || '--' }}
+              {{ user.business_name || "--" }}
             </span>
           </div>
           <div class="account--profile__info__row">
             <span class="account--profile__info__row__label">Giro</span>
             <span class="account--profile__info__row__value">
-              {{ user.business_type || '--' }}
+              {{ user.business_type || "--" }}
             </span>
           </div>
           <div class="account--profile__info__row">
             <span class="account--profile__info__row__label">RUT Empresa</span>
             <span class="account--profile__info__row__value">
-              {{ user.business_rut || '--' }}
+              {{ user.business_rut || "--" }}
             </span>
           </div>
           <div class="account--profile__info__row">
@@ -249,7 +252,7 @@
               Comuna empresa
             </span>
             <span class="account--profile__info__row__value">
-              {{ user.business_commune?.name || '--' }}
+              {{ user.business_commune?.name || "--" }}
             </span>
           </div>
           <div class="account--profile__info__row">
@@ -257,7 +260,7 @@
               Dirección empresa
             </span>
             <span class="account--profile__info__row__value">
-              {{ getBusinessAddress || '--' }}
+              {{ getBusinessAddress || "--" }}
             </span>
           </div>
           <div class="account--profile__info__row">
@@ -265,7 +268,7 @@
               Código postal empresa
             </span>
             <span class="account--profile__info__row__value">
-              {{ user.business_postal_code || '--' }}
+              {{ user.business_postal_code || "--" }}
             </span>
           </div>
         </div>
@@ -292,7 +295,7 @@
           Nombre de usuario
         </span>
         <span class="account--profile__identity__card__value">
-          {{ user.username ? '@' + user.username : 'Sin usuario aún' }}
+          {{ user.username ? "@" + user.username : "Sin usuario aún" }}
         </span>
         <span class="account--profile__identity__card__cta">
           Cambiar usuario
@@ -308,10 +311,10 @@
           Foto de perfil
         </span>
         <span class="account--profile__identity__card__value">
-          {{ user.avatar ? 'Imagen actualizada' : 'Sin imagen aún' }}
+          {{ user.avatar ? "Imagen actualizada" : "Sin imagen aún" }}
         </span>
         <span class="account--profile__identity__card__cta">
-          {{ user.avatar ? 'Cambiar foto' : 'Subir foto' }}
+          {{ user.avatar ? "Cambiar foto" : "Subir foto" }}
           <ArrowRight :size="14" />
         </span>
       </NuxtLink>
@@ -322,17 +325,20 @@
         </span>
         <span class="account--profile__identity__card__label">Portada</span>
         <span class="account--profile__identity__card__value">
-          {{ user.cover ? 'Portada subida' : 'Sin portada aún' }}
+          {{ user.cover ? "Portada subida" : "Sin portada aún" }}
         </span>
         <span class="account--profile__identity__card__cta">
-          {{ user.cover ? 'Cambiar portada' : 'Subir portada' }}
+          {{ user.cover ? "Cambiar portada" : "Subir portada" }}
           <ArrowRight :size="14" />
         </span>
       </NuxtLink>
     </div>
 
     <!-- Plan PRO card -->
-    <div v-if="user.pro_status === 'active'" class="account--profile__plan account--profile__plan--active">
+    <div
+      v-if="user.pro_status === 'active'"
+      class="account--profile__plan account--profile__plan--active"
+    >
       <div class="account--profile__plan__glow" />
       <div class="account--profile__plan__body">
         <span class="account--profile__plan__pill">
@@ -347,10 +353,7 @@
           $7.990/mes.
         </p>
       </div>
-      <NuxtLink
-        to="/cuenta/mis-ordenes"
-        class="account--profile__plan__action"
-      >
+      <NuxtLink to="/cuenta/mis-ordenes" class="account--profile__plan__action">
         Gestionar suscripción
       </NuxtLink>
     </div>
@@ -360,18 +363,27 @@
       class="account--profile__plan account--profile__plan--inactive"
     >
       <div class="account--profile__plan__body">
-        <span class="account--profile__plan__pill account--profile__plan__pill--free">
+        <span
+          class="account--profile__plan__pill account--profile__plan__pill--free"
+        >
           PLAN GRATIS
         </span>
-        <h3 class="account--profile__plan__title account--profile__plan__title--dark">
+        <h3
+          class="account--profile__plan__title account--profile__plan__title--dark"
+        >
           Tu suscripción PRO está cancelada
         </h3>
-        <p class="account--profile__plan__text account--profile__plan__text--dark">
+        <p
+          class="account--profile__plan__text account--profile__plan__text--dark"
+        >
           Recupera los destacados gratis, la insignia PRO y la identidad pública
           cuando quieras.
         </p>
       </div>
-      <NuxtLink to="/cuenta/mis-ordenes" class="account--profile__plan__reactivate">
+      <NuxtLink
+        to="/cuenta/mis-ordenes"
+        class="account--profile__plan__reactivate"
+      >
         <Sparkles :size="15" />
         Volver a PRO
       </NuxtLink>

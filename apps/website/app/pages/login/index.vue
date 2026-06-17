@@ -13,7 +13,9 @@
             <span>Ir al inicio</span>
           </NuxtLink>
           <h1 class="auth__form__title title">Ingresa a tu cuenta</h1>
-          <p class="auth__form__description">Bienvenido de vuelta a Waldo.click®</p>
+          <p class="auth__form__description">
+            Bienvenido de vuelta a Waldo.click®
+          </p>
           <div class="auth__form__social">
             <LoginWithGoogle v-if="providers?.google" />
             <!-- <LoginWithFacebook v-if="providers?.facebook" /> -->
