@@ -63,6 +63,14 @@
           <template v-if="menuOpen">
             <span class="card--profileAd__actions__backdrop" @click="toggleMenu" />
             <div class="card--profileAd__actions__dropdown">
+              <button
+                type="button"
+                class="card--profileAd__actions__dropdown__item"
+                @click="handleOpenStats(); toggleMenu()"
+              >
+                <ChartNoAxesColumn :size="16" />
+                Estadísticas
+              </button>
               <button type="button" class="card--profileAd__actions__dropdown__item card--profileAd__actions__dropdown__item--danger" @click="handleDeactivate; toggleMenu()">
                 <PowerOff :size="16" />
                 Desactivar
@@ -118,6 +126,12 @@
       </button>
     </div>
   </article>
+
+  <StatsAdModal
+    :open="statsOpen"
+    :ad="statsModalAd"
+    @close="statsOpen = false"
+  />
 </template>
 
 <script setup lang="ts">
@@ -130,7 +144,9 @@ import {
   CircleAlert,
   Calendar,
   EllipsisVertical,
+  ChartNoAxesColumn,
 } from "lucide-vue-next";
+import StatsAdModal from "@/components/StatsAdModal.vue";
 const { Swal } = useSweetAlert2();
 import { useAdStore } from "@/stores/ad.store";
 import { useCommunesStore } from "@/stores/communes.store";
@@ -154,6 +170,22 @@ const props = defineProps({
 
 const menuOpen = ref(false);
 const toggleMenu = () => { menuOpen.value = !menuOpen.value; };
+
+// Stats modal
+const statsOpen = ref(false);
+const statsModalAd = computed(() => {
+  if (!props.ad?.documentId) return null;
+  return {
+    documentId: props.ad.documentId as string,
+    name: (props.ad.title ?? props.ad.name ?? "") as string,
+    category: categoryName.value || undefined,
+    status: props.ad.status as string | undefined,
+  };
+});
+
+const handleOpenStats = () => {
+  statsOpen.value = true;
+};
 
 const adCategory = computed<Category | null>(() =>
   typeof props.ad?.category === "object" && props.ad?.category !== null

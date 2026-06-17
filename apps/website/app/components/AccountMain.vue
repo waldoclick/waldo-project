@@ -10,7 +10,6 @@
     </p>
 
     <div class="account--main__kpis">
-      <!-- TODO 05-09: wire totalViews to /ads/me/views-total -->
       <div class="account--main__kpi">
         <div class="account--main__kpi__head">
           <span class="account--main__kpi__label">Vistas totales</span>
@@ -73,7 +72,20 @@
             </div>
             <p class="account--main__attention__row__note">{{ item.note }}</p>
           </div>
-          <nuxt-link :to="item.to" class="account--main__attention__action">
+          <button
+            v-if="item.actionType === 'stats'"
+            type="button"
+            class="account--main__attention__action"
+            @click="openStatsForAd(item.adRef)"
+          >
+            <component :is="item.actionIcon" :size="15" />
+            {{ item.actionLabel }}
+          </button>
+          <nuxt-link
+            v-else
+            :to="item.to"
+            class="account--main__attention__action"
+          >
             <component :is="item.actionIcon" :size="15" />
             {{ item.actionLabel }}
           </nuxt-link>
@@ -109,11 +121,17 @@
         <IconArrowRight :size="16" />
       </nuxt-link>
     </div>
+
+    <StatsAdModal
+      :open="statsOpen"
+      :ad="statsAd"
+      @close="statsOpen = false"
+    />
   </section>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useAsyncData } from "nuxt/app";
 import {
   Eye as IconEye,
@@ -127,6 +145,7 @@ import {
 import type { User } from "@/types/user";
 import type { Ad } from "@/types/ad";
 import type { Category } from "@/types/category";
+import StatsAdModal from "@/components/StatsAdModal.vue";
 
 const user = useSessionUser<User>();
 const userStore = useUserStore();
@@ -138,15 +157,17 @@ const FALLBACK_COLOR = "#ece9e4";
 const { data: panel } = await useAsyncData(
   "account-panel",
   async () => {
-    const [counts, published, rejected] = await Promise.all([
+    const [counts, published, rejected, viewsTotal] = await Promise.all([
       userStore.loadUserAdCounts(),
       userStore.loadUserAds("published", { page: 1, pageSize: 50 }),
       userStore.loadUserAds("rejected", { page: 1, pageSize: 25 }),
+      userStore.loadPanelViewsTotal(),
     ]);
     return {
       counts,
       published: published?.data ?? [],
       rejected: rejected?.data ?? [],
+      totalViews: viewsTotal.total,
     };
   },
   {
@@ -154,13 +175,20 @@ const { data: panel } = await useAsyncData(
       counts: { published: 0, review: 0, expired: 0, rejected: 0, banned: 0 },
       published: [] as Ad[],
       rejected: [] as Ad[],
+      totalViews: 0,
     }),
   },
 );
 
-// TODO 05-09: wire to real /ads/me aggregation
-const totalViews = 0;
-const totalContacts = 0;
+const totalViews = computed(() => panel.value.totalViews);
+// Contacts total: sum from published ads that have been loaded
+// (dedicated /ads/me/contacts-total endpoint not in 05-08; derive from panel data)
+const totalContacts = computed(() =>
+  (panel.value.published as Array<Ad & { contact_count?: number }>).reduce(
+    (sum, a) => sum + (a.contact_count ?? 0),
+    0,
+  ),
+);
 
 const counts = computed(() => panel.value.counts);
 const activeCount = computed(() => counts.value.published);
@@ -176,6 +204,15 @@ const totalCount = computed(
 const catOf = (ad: Ad) =>
   (typeof ad.category === "object" ? ad.category : null) as Category | null;
 
+// Stats modal state
+const statsOpen = ref(false);
+const statsAd = ref<{ documentId: string; name: string; category?: string; status?: string } | null>(null);
+
+const openStatsForAd = (adRef: { documentId: string; name: string; category?: string; status?: string }) => {
+  statsAd.value = adRef;
+  statsOpen.value = true;
+};
+
 interface AttentionItem {
   key: string;
   variant: "expiring" | "rejected";
@@ -186,6 +223,8 @@ interface AttentionItem {
   note: string;
   actionLabel: string;
   actionIcon: unknown;
+  actionType: "stats" | "link";
+  adRef: { documentId: string; name: string; category?: string; status?: string };
   to: string;
 }
 
@@ -204,7 +243,13 @@ const attentionItems = computed<AttentionItem[]>(() => {
         note: "Aún no puedes renovarlo: los anuncios solo se renuevan una vez vencidos. Cuando expire lo republicas en un clic. Mientras tanto, revisa cómo va.",
         actionLabel: "Ver estadísticas",
         actionIcon: IconChart,
-        // TODO 05-09: open stats modal instead of linking to the public ad
+        actionType: "stats" as const,
+        adRef: {
+          documentId: a.documentId,
+          name: a.title,
+          category: typeof a.category === "object" && a.category !== null ? (a.category as Category).name : undefined,
+          status: "published",
+        },
         to: `/anuncios/${a.slug}`,
       };
     });
@@ -221,6 +266,8 @@ const attentionItems = computed<AttentionItem[]>(() => {
       note: a.reason_for_rejection || "Tu anuncio fue rechazado. Revisa y corrige para volver a publicarlo.",
       actionLabel: "Ver motivo",
       actionIcon: IconCircleAlert,
+      actionType: "link" as const,
+      adRef: { documentId: a.documentId, name: a.title },
       to: "/cuenta/mis-anuncios",
     };
   });
