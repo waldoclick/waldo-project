@@ -34,6 +34,14 @@ Milestone scope: migrar la maqueta nueva (en `/design`) a los componentes reales
 - [x] **STAT-MODEL**: `ad-view` guarda 1 fila por vista (ad, viewed_at, visitor_hash, source, viewer); tracking server-side en el detalle público, excluye al dueño, único por visitante/día; `ad-contact` guarda contactos como eventos
 - [x] **STAT-VIEW**: Detalle de estadísticas por anuncio (vistas, contactos, conversión, promedio/día, gráfico 14 días con chart.js) + KPI "Vistas totales" en Panel, con datos reales agregados (no contador)
 
+### Cierre cuenta (Phase 06 — gaps)
+
+- [ ] **HDR-01**: El header (`HeaderDefault`) se ve según la maqueta (sticky 70px, logo, "Anunciar ahora" ámbar) sin romper otras páginas
+- [ ] **HDR-02**: El menú de usuario (`MenuUser` dropdown) se ve según `UserMenu.dc.html`; logout sigue funcionando
+- [ ] **ACT-01**: Ningún botón de cuenta es no-op — Desactivar (bug `()`), Destacar, Republicar, Marcar vendido, Dar de baja, Ver motivo, Estadísticas, todos cableados
+- [ ] **STAT-PERM**: El rol Authenticated accede a los endpoints de stats (`ad-view.stats`, `ad-view.panelViewsTotal`, `ad-contact.recordContact`) vía grant idempotente en bootstrap; responden 200
+- [ ] **STAT-UI**: La card de anuncio muestra "N vistas · N contactos" (datos reales) y "Contactos recibidos" del Panel usa datos reales (endpoint `contacts-total` + tracking de contacto cableado)
+
 ## Out of Scope
 
 | Feature | Reason |
@@ -62,10 +70,15 @@ Milestone scope: migrar la maqueta nueva (en `/design`) a los componentes reales
 | ACC-PASSWORD | Phase 05 | Pending |
 | STAT-MODEL | Phase 05 | Complete |
 | STAT-VIEW | Phase 05 | Complete |
+| HDR-01 | Phase 06 | Pending |
+| HDR-02 | Phase 06 | Pending |
+| ACT-01 | Phase 06 | Pending |
+| STAT-PERM | Phase 06 | Pending |
+| STAT-UI | Phase 06 | Pending |
 
 **Coverage:**
-- v1 requirements: 15 total
-- Mapped to phases: 15
+- v1 requirements: 20 total
+- Mapped to phases: 20
 - Unmapped: 0 ✓
 
 ---

@@ -78,6 +78,21 @@ Plans:
 - [x] 05-08-PLAN.md — Stats aggregation (TDD): GET /ads/:id/stats (14-day series + conversion) + GET /ads/me/views-total (STAT-MODEL)
 - [x] 05-09-PLAN.md — Stats frontend: per-ad stats modal (chart.js) + real Panel KPIs wired to aggregation endpoints (STAT-VIEW)
 
+### Phase 06: Cierre cuenta (gaps)
+
+**Goal:** Cerrar los huecos de la fase 05 para que cuenta quede funcional e idéntica end-to-end: (1) header + menú de usuario rediseñados a la maqueta, (2) botones de acción cableados (sin no-ops; bug `handleDeactivate` sin paréntesis), (3) permiso del rol Authenticated para los endpoints de stats (403), (4) stats por-anuncio en la card ("N vistas · N contactos") + "Contactos recibidos" real (endpoint contacts-total + tracking de contacto).
+**Requirements:** HDR-01, HDR-02, ACT-01, STAT-PERM, STAT-UI
+**Depends on:** Phase 05
+**Ejecución:** GSD autónomo; frentes visuales (header, menú, card meta) cerrados con loop visual.
+**Success criteria:**
+1. Header (`HeaderDefault`) y menú de usuario (`MenuUser`) se ven según la maqueta (sticky 70px, logo, "Anunciar ahora" ámbar, dropdown UserMenu) sin romper otras páginas
+2. Ningún botón de cuenta es no-op: Desactivar/Destacar/Republicar/Vendido/Baja/Ver motivo/Estadísticas cableados
+3. El rol Authenticated accede a `ad-view.stats`, `ad-view.panelViewsTotal`, `ad-contact.recordContact` (grant idempotente en bootstrap); endpoints responden 200
+4. KPI "Vistas totales" y modal de stats muestran datos reales; la card de anuncio muestra "N vistas · N contactos"
+5. "Contactos recibidos" usa datos reales (endpoint contacts-total + tracking de contacto cableado)
+
+**Plans:** TBD (se crean con plan-phase)
+
 ## Progress
 
 | Milestone | Phases | Status | Shipped |
