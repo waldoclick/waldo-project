@@ -5,6 +5,8 @@
     :current-page="currentPage"
     :pagination="pagination"
     :is-loading="isLoading"
+    :total-invested-all="totalInvestedAll"
+    :last-purchase-date="lastPurchaseDate"
     @page-change="handlePageChange"
   />
 </template>
@@ -28,6 +30,8 @@ const orders = ref<Order[]>([]);
 const currentPage = ref(1);
 const pagination = ref({ total: 0, pageSize: 10 });
 const isLoading = ref(false);
+const totalInvestedAll = ref(0);
+const lastPurchaseDate = ref<string | null>(null);
 
 const userStore = useUserStore();
 
@@ -56,8 +60,13 @@ const handlePageChange = (page: number) => {
   loadOrders();
 };
 
-useAsyncData(async () => {
-  await loadOrders();
+await useAsyncData("mis-ordenes-list", async () => {
+  const [, summary] = await Promise.all([
+    loadOrders(),
+    userStore.loadOrdersSummary(),
+  ]);
+  totalInvestedAll.value = summary.total_invested;
+  lastPurchaseDate.value = summary.last_purchase;
 });
 
 definePageMeta({

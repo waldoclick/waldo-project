@@ -226,6 +226,21 @@ export const useUserStore = defineStore("user", () => {
     }
   };
 
+  interface OrdersSummaryResult {
+    total_invested: number;
+    last_purchase: string | null;
+  }
+
+  const loadOrdersSummary = async (): Promise<OrdersSummaryResult> => {
+    try {
+      const response = await client("orders/me/summary", { method: "GET" });
+      const typed = response as unknown as { data: OrdersSummaryResult };
+      return typed.data;
+    } catch {
+      return { total_invested: 0, last_purchase: null };
+    }
+  };
+
   const reset = () => {
     users.value = [];
     user.value = null;
@@ -241,6 +256,7 @@ export const useUserStore = defineStore("user", () => {
     loadUserAds,
     loadUserAdCounts,
     loadUserOrders,
+    loadOrdersSummary,
     updateUserProfile,
     deactivateAd,
     loadAdStats,

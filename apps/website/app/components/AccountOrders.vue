@@ -101,28 +101,24 @@ const props = defineProps<{
   pagination: Pagination;
   isLoading: boolean;
   introText: string;
+  totalInvestedAll: number;
+  lastPurchaseDate: string | null;
 }>();
 
 defineEmits<{
   "page-change": [page: number];
 }>();
 
-const totalInvested = computed(() => {
-  const sum = props.orders.reduce((acc, o) => {
-    const n =
-      typeof o.amount === "string" ? Number.parseFloat(o.amount) : o.amount;
-    return acc + (Number.isFinite(n) ? n : 0);
-  }, 0);
-  return new Intl.NumberFormat("es-CL", {
+const totalInvested = computed(() =>
+  new Intl.NumberFormat("es-CL", {
     style: "currency",
     currency: "CLP",
-  }).format(sum);
-});
+  }).format(props.totalInvestedAll),
+);
 
 const lastPurchase = computed(() => {
-  const first = props.orders[0];
-  if (!first) return "—";
-  const date = new Date(first.createdAt);
+  if (!props.lastPurchaseDate) return "—";
+  const date = new Date(props.lastPurchaseDate);
   return date.toLocaleDateString("es-CL", {
     day: "numeric",
     month: "short",
