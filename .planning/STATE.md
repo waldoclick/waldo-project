@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.47
 milestone_name: Rediseño visual (rebrand)
 status: unknown
-last_updated: "2026-06-17T20:43:33.408Z"
+last_updated: "2026-06-17T21:10:00.000Z"
 last_activity: 2026-06-17
 progress:
   total_phases: 6
   completed_phases: 3
   total_plans: 32
-  completed_plans: 27
-  percent: 93
+  completed_plans: 28
+  percent: 94
 ---
 
 # Session State
@@ -20,11 +20,11 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-16)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 05 — Rediseño cuenta
+**Current focus:** Phase 06 — Cierre cuenta (gaps)
 
 ## Position
 
-Milestone v1.47 (Rediseño visual / rebrand) started 2026-06-16 on branch `feat/redesign-auth`. Phase 05 (Rediseño cuenta) in progress: 05-09 done (frontend stats modal + chart). Phase 05 complete (all 9 plans done). Migrating the new mockup in `/design` (Design System + `.dc.html`) to real components, area by area: auth (first, also establishes shared tokens) → public site → account → dashboard. Update-not-create work: components and SCSS already exist; recalibrate SCSS variables + translate mockup markup to existing BEM.
+Milestone v1.47 (Rediseño visual / rebrand) started 2026-06-16 on branch `feat/redesign-auth`. Phase 05 (Rediseño cuenta) complete (all 9 plans done). Phase 06 (Cierre cuenta gaps) in progress: 06-03 done (MenuUser restyled to UserMenu.dc.html). Migrating the new mockup in `/design` (Design System + `.dc.html`) to real components, area by area: auth (first, also establishes shared tokens) → public site → account → dashboard. Update-not-create work: components and SCSS already exist; recalibrate SCSS variables + translate mockup markup to existing BEM.
 
 ```
 Progress: [█████████░] 93% (25/27 plans complete)
@@ -34,6 +34,7 @@ Progress: [█████████░] 93% (25/27 plans complete)
 
 ### Key Decisions (carry forward)
 
+- MenuUser sibling combinator (.menu--user__menu__links + .menu--user__menu__links) for border-top group separators — avoids index-based approach that breaks when isManager group is absent; AvatarDefault wrapped and .avatar child overridden for amber circle at 34px/36px; ChevronDown/LogOut imported without alias so grep detects literals on import + template lines; chevron rotate 180deg is the sanctioned CLAUDE.md carve-out (scale banned, rotate allowed) (06-03)
 - loadPanelViewsTotal folded into AccountMain useAsyncData Promise.all (no double-fetch); totalContacts derived from published ads contact_count field (no dedicated contacts-total endpoint in 05-08); StatsAdModal self-contained per CardProfileAd (not lifted to AccountAnnouncements); buildStatsChartData uses index-based labels for deterministic Vitest output (05-09)
 - getAdStats: total=all-time count(), series=windowed findMany+group-by-UTC-day (total ≥ sum(series) in production); getUserTotalViews guards empty adIds before issuing $in query; static /ads/me/views-total route declared before wildcard /ads/:documentId/stats (05-08)
 - Sibling test file for end-to-end real-service tests: when jest.mock hoisting in primary test file conflicts with a test that needs the real module, create a dedicated sibling file — not conditional (03-02)
