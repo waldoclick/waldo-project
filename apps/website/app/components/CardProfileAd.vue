@@ -33,37 +33,50 @@
           <Calendar :size="14" />
           {{ formatDate(ad?.createdAt) }}
         </span>
-        <span class="card--profileAd__body__meta__right">{{ statusMessage }}</span>
+        <span class="card--profileAd__body__meta__right">{{ metaRight }}</span>
       </div>
     </div>
 
     <!-- Actions -->
     <div class="card--profileAd__actions">
-      <!-- Published: primary = Ver anuncio (or Destacar if not featured); overflow menu -->
-      <template v-if="ad?.status === 'published' && ad?.slug">
+      <!-- Published: primary = Destacar (amber) when not featured; Estadísticas (secondary) when featured; overflow menu -->
+      <template v-if="ad?.status === 'published'">
+        <!-- Not featured: primary CTA is Destacar → /packs -->
         <nuxt-link
-          :to="`/anuncios/${ad.slug}`"
+          v-if="!ad?.featured"
+          to="/packs"
           class="card--profileAd__actions__primary"
-          target="_blank"
-          rel="noopener noreferrer"
         >
-          <Eye :size="15" />
-          Ver anuncio
+          <Star :size="15" />
+          Destacar
         </nuxt-link>
+        <!-- Featured: primary CTA is Estadísticas (secondary style) -->
+        <button
+          v-else
+          type="button"
+          class="card--profileAd__actions__secondary"
+          @click="handleOpenStats()"
+        >
+          <ChartNoAxesColumn :size="15" />
+          Estadísticas
+        </button>
+
         <div class="card--profileAd__actions__overflow">
           <button
             type="button"
             class="card--profileAd__actions__menu-btn"
             :aria-expanded="menuOpen"
             title="Más opciones"
-            @click="toggleMenu"
+            @click="toggleMenu()"
           >
             <EllipsisVertical :size="18" />
           </button>
           <template v-if="menuOpen">
-            <span class="card--profileAd__actions__backdrop" @click="toggleMenu" />
+            <span class="card--profileAd__actions__backdrop" @click="toggleMenu()" />
             <div class="card--profileAd__actions__dropdown">
+              <!-- Estadísticas only in menu when not featured (otherwise it's primary) -->
               <button
+                v-if="!ad?.featured"
                 type="button"
                 class="card--profileAd__actions__dropdown__item"
                 @click="handleOpenStats(); toggleMenu()"
@@ -71,9 +84,33 @@
                 <ChartNoAxesColumn :size="16" />
                 Estadísticas
               </button>
-              <button type="button" class="card--profileAd__actions__dropdown__item card--profileAd__actions__dropdown__item--danger" @click="handleDeactivate; toggleMenu()">
-                <PowerOff :size="16" />
-                Desactivar
+              <!-- Ver anuncio — only when slug is available -->
+              <nuxt-link
+                v-if="ad?.slug"
+                :to="`/anuncios/${ad.slug}`"
+                class="card--profileAd__actions__dropdown__item"
+                target="_blank"
+                rel="noopener noreferrer"
+                @click="toggleMenu()"
+              >
+                <Eye :size="16" />
+                Ver anuncio
+              </nuxt-link>
+              <button
+                type="button"
+                class="card--profileAd__actions__dropdown__item"
+                @click="handleMarkSold(); toggleMenu()"
+              >
+                <CircleCheck :size="16" />
+                Marcar como vendido
+              </button>
+              <button
+                type="button"
+                class="card--profileAd__actions__dropdown__item card--profileAd__actions__dropdown__item--danger"
+                @click="handleDeactivate(); toggleMenu()"
+              >
+                <CircleOff :size="16" />
+                Dar de baja
               </button>
             </div>
           </template>
@@ -97,7 +134,7 @@
         v-else-if="ad?.status === 'expired'"
         type="button"
         class="card--profileAd__actions__primary"
-        @click="handleRepublish"
+        @click="handleRepublish()"
       >
         <RefreshCw :size="15" />
         Republicar
@@ -108,7 +145,7 @@
         v-else-if="ad?.status === 'rejected'"
         type="button"
         class="card--profileAd__actions__secondary"
-        @click="handleRejectedClick"
+        @click="handleRejectedClick()"
       >
         <CircleAlert :size="15" />
         Ver motivo
@@ -119,7 +156,7 @@
         v-else-if="ad?.status === 'banned'"
         type="button"
         class="card--profileAd__actions__secondary"
-        @click="handleBannedClick"
+        @click="handleBannedClick()"
       >
         <CircleAlert :size="15" />
         Ver motivo
@@ -135,16 +172,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, onMounted } from "vue";
 import {
   Star,
   Eye,
   RefreshCw,
-  PowerOff,
   CircleAlert,
   Calendar,
   EllipsisVertical,
   ChartNoAxesColumn,
+  CircleCheck,
+  CircleOff,
 } from "lucide-vue-next";
 import StatsAdModal from "@/components/StatsAdModal.vue";
 const { Swal } = useSweetAlert2();
@@ -226,6 +264,20 @@ const badgeLabel = computed(() => {
   return "";
 });
 
+// Per-card stats (lazy, only for published)
+const adViews = ref(0);
+const adContacts = ref(0);
+
+onMounted(() => {
+  if (import.meta.client && props.ad?.status === "published" && props.ad?.documentId) {
+    const userStore = useUserStore();
+    userStore.loadAdStats(props.ad.documentId as string).then((res) => {
+      adViews.value = res.total;
+      adContacts.value = res.contacts;
+    });
+  }
+});
+
 const statusMessage = computed(() => {
   const status = props.ad?.status;
   const days = props.ad?.remaining_days as number;
@@ -260,6 +312,13 @@ const statusMessage = computed(() => {
     default:
       return "";
   }
+});
+
+const metaRight = computed(() => {
+  if (props.ad?.status === "published") {
+    return `${adViews.value} vistas · ${adContacts.value} contactos`;
+  }
+  return statusMessage.value;
 });
 
 const formatDate = (dateString?: string) => {
@@ -350,6 +409,15 @@ const handleBannedClick = () => {
   Swal.fire({
     title: "Razón del baneo",
     text: props.ad?.reason_for_ban || "No se especificó una razón",
+    icon: "info",
+    confirmButtonText: "Entendido",
+  });
+};
+
+const handleMarkSold = () => {
+  Swal.fire({
+    title: "Marcar como vendido",
+    text: "Esta función aún no está disponible. Si ya vendiste este artículo, puedes usar \"Dar de baja\" para retirarlo de la plataforma.",
     icon: "info",
     confirmButtonText: "Entendido",
   });
