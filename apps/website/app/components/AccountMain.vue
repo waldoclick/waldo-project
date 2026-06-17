@@ -158,8 +158,11 @@ const { data: panel } = await useAsyncData(
     const [counts, published, rejected, viewsTotal, contactsTotal] =
       await Promise.all([
         userStore.loadUserAdCounts(),
-        userStore.loadUserAds("published", { page: 1, pageSize: 50 }),
-        userStore.loadUserAds("rejected", { page: 1, pageSize: 25 }),
+        // Cap at 15: covers typical active-ad counts; ads beyond this cap
+        // could miss expiring items — a server-side remaining_days filter
+        // (deferred, needs backend endpoint) would fix this completely.
+        userStore.loadUserAds("published", { page: 1, pageSize: 15 }),
+        userStore.loadUserAds("rejected", { page: 1, pageSize: 10 }),
         userStore.loadPanelViewsTotal(),
         userStore.loadContactsTotal(),
       ]);

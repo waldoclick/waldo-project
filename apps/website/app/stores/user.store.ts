@@ -87,7 +87,6 @@ export const useUserStore = defineStore("user", () => {
         params: {
           pagination,
           sort,
-          populate: "*",
         } as unknown as Record<string, unknown>,
       });
       const typed = response as unknown as {
@@ -118,7 +117,7 @@ export const useUserStore = defineStore("user", () => {
           filters,
           pagination,
           sort,
-          populate: "*",
+          populate: { document_response: true },
         } as unknown as Record<string, unknown>,
       });
       return response as unknown as {
