@@ -24,16 +24,17 @@ See: .planning/PROJECT.md (updated 2026-06-16)
 
 ## Position
 
-Milestone v1.47 (Rediseño visual / rebrand) started 2026-06-16 on branch `feat/redesign-auth`. Defining requirements. Migrating the new mockup in `/design` (Design System + `.dc.html`) to real components, area by area: auth (first, also establishes shared tokens) → public site → account → dashboard. Update-not-create work: components and SCSS already exist; recalibrate SCSS variables + translate mockup markup to existing BEM.
+Milestone v1.47 (Rediseño visual / rebrand) started 2026-06-16 on branch `feat/redesign-auth`. Phase 05 (Rediseño cuenta) in progress: 05-08 done (stats aggregation endpoints). Next: 05-09 (frontend stats modal + chart). Migrating the new mockup in `/design` (Design System + `.dc.html`) to real components, area by area: auth (first, also establishes shared tokens) → public site → account → dashboard. Update-not-create work: components and SCSS already exist; recalibrate SCSS variables + translate mockup markup to existing BEM.
 
 ```
-Progress: [░░░░░░░░░░] 0% (defining requirements)
+Progress: [█████████░] 89% (24/27 plans complete)
 ```
 
 ## Accumulated Context
 
 ### Key Decisions (carry forward)
 
+- getAdStats: total=all-time count(), series=windowed findMany+group-by-UTC-day (total ≥ sum(series) in production); getUserTotalViews guards empty adIds before issuing $in query; static /ads/me/views-total route declared before wildcard /ads/:documentId/stats (05-08)
 - Sibling test file for end-to-end real-service tests: when jest.mock hoisting in primary test file conflicts with a test that needs the real module, create a dedicated sibling file — not conditional (03-02)
 - fieldsToValidate built with presence guards (if firstname / if lastname) — blank/undefined inputs never sent to AI; gate is NO-OP for empty values (03-02)
 - FIELD_REJECTION_MESSAGES fallback message ("Algunos datos no parecen válidos") guards against future field keys not yet in the map (03-02)
