@@ -498,7 +498,7 @@
 
   &--orders {
     // ── Mis órdenes (v1.47 redesign — design/account.dc.html lines 217-257) ──
-    // Compiled selectors: account--orders__summary, account--orders__summary__card, account--orders__table, account--orders__row
+    // Compiled selectors: account--orders__summary, account--orders__summary__card, account--orders__table, account--orders__row, account--orders__row__order__doc--invoice, account--orders__row__order__doc--receipt
 
     &__header {
       &__eyebrow {
@@ -624,7 +624,7 @@
             color: #a9772e; // no token — mockup literal (--tag)
           }
 
-          &--boleta {
+          &--receipt {
             background: $cream;
             color: $ink2;
             border: 1px solid $line;

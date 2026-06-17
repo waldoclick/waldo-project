@@ -9,7 +9,7 @@
     <div class="account--orders__summary">
       <div class="account--orders__summary__card">
         <span class="account--orders__summary__card__label">Total invertido</span>
-        <div class="account--orders__summary__card__value">{{ totalInvertido }}</div>
+        <div class="account--orders__summary__card__value">{{ totalInvested }}</div>
       </div>
       <div class="account--orders__summary__card">
         <span class="account--orders__summary__card__label">Órdenes</span>
@@ -95,7 +95,7 @@ defineEmits<{
   "page-change": [page: number];
 }>();
 
-const totalInvertido = computed(() => {
+const totalInvested = computed(() => {
   const sum = props.orders.reduce((acc, o) => {
     const n = typeof o.amount === "string" ? Number.parseFloat(o.amount) : o.amount;
     return acc + (Number.isFinite(n) ? n : 0);

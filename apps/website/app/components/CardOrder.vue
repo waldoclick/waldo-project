@@ -4,7 +4,7 @@
       <span class="account--orders__row__order__id">Orden #{{ order.id }}</span>
       <span
         class="account--orders__row__order__doc"
-        :class="order.is_invoice ? 'account--orders__row__order__doc--invoice' : 'account--orders__row__order__doc--boleta'"
+        :class="order.is_invoice ? 'account--orders__row__order__doc--invoice' : 'account--orders__row__order__doc--receipt'"
       >
         <component :is="order.is_invoice ? IconFileCheck : IconFileText" :size="12" />
         {{ order.is_invoice ? "Factura" : "Boleta" }}
