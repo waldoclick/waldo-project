@@ -9,6 +9,25 @@
 import { factories } from "@strapi/strapi";
 import crypto from "crypto";
 
+/** Shape returned by getAdStats. */
+export interface AdStatsResult {
+  /** All-time count of ad-view rows for the ad. */
+  total: number;
+  /** Per-day view counts, length === days, ordered oldest→newest (last = today). */
+  series: number[];
+  /** Count of ad-contact rows for the ad. */
+  contacts: number;
+  /** Conversion percentage: round(contacts/total*100), 0 when total===0. */
+  conversion: number;
+  /** Average views per day: round(total/days), 0 when total===0. */
+  avgPerDay: number;
+}
+
+/** Returns a UTC date-only key (yyyy-mm-dd) for a Date. */
+function toUtcDay(d: Date): string {
+  return d.toISOString().slice(0, 10);
+}
+
 export default factories.createCoreService(
   "api::ad-view.ad-view",
   ({ strapi }) => ({
@@ -85,6 +104,130 @@ export default factories.createCoreService(
           // ignore logging failure
         }
       }
+    },
+
+    /**
+     * Aggregate view statistics for a single ad over a sliding window.
+     *
+     * - `total`: all-time view count (separate count query, not just the window).
+     * - `series`: per-day bucket array of length `days`, ordered oldest→newest
+     *   (index 0 = `days-1` days ago, last index = today). Aggregates from
+     *   event rows via findMany + group-by UTC day — never a stored counter.
+     * - `contacts`: all-time count of ad-contact rows for the ad.
+     * - `conversion`: round(contacts/total*100), returns 0 when total===0.
+     * - `avgPerDay`: round(total/days), returns 0 when total===0.
+     *
+     * @param adDocumentId - Strapi documentId of the ad
+     * @param days - Window length in days (default 14, clamped 1..90)
+     * @returns AdStatsResult with zero-shape if the ad is not found
+     */
+    async getAdStats(
+      adDocumentId: string,
+      days = 14,
+    ): Promise<AdStatsResult> {
+      const clampedDays = Math.max(1, Math.min(90, days));
+      const zeroShape = (): AdStatsResult => ({
+        total: 0,
+        series: Array(clampedDays).fill(0) as number[],
+        contacts: 0,
+        conversion: 0,
+        avgPerDay: 0,
+      });
+
+      // Step 1: Resolve the ad numeric id from documentId
+      const ad = (await strapi.db.query("api::ad.ad").findOne({
+        where: { documentId: adDocumentId },
+      })) as Record<string, unknown> | null;
+
+      if (!ad) return zeroShape();
+
+      const adId = ad.id as number;
+
+      // Step 2: Compute window start = today minus (clampedDays - 1) days at 00:00 UTC
+      const now = new Date();
+      const todayKey = toUtcDay(now);
+      const windowStart = new Date(
+        `${toUtcDay(new Date(now.getTime() - (clampedDays - 1) * 86400000))}T00:00:00.000Z`,
+      );
+
+      // Step 3: Build the empty bucket map keyed by yyyy-mm-dd, oldest→newest
+      const buckets = new Map<string, number>();
+      for (let i = clampedDays - 1; i >= 0; i--) {
+        const key = toUtcDay(
+          new Date(now.getTime() - i * 86400000),
+        );
+        buckets.set(key, 0);
+      }
+
+      // Step 4: Query ad-view rows within the window and bucket by UTC day
+      const viewRows = (await strapi.db
+        .query("api::ad-view.ad-view")
+        .findMany({
+          where: {
+            ad: adId,
+            viewed_at: { $gte: windowStart },
+          },
+        })) as Array<{ viewed_at: Date | string }>;
+
+      for (const row of viewRows) {
+        const key = toUtcDay(new Date(row.viewed_at));
+        if (buckets.has(key)) {
+          buckets.set(key, (buckets.get(key) ?? 0) + 1);
+        }
+      }
+
+      // Step 5: All-time total via count (separate query — total ≥ sum(series))
+      const total = (await strapi.db
+        .query("api::ad-view.ad-view")
+        .count({ where: { ad: adId } })) as number;
+
+      // Step 6: All-time contacts count
+      const contacts = (await strapi.db
+        .query("api::ad-contact.ad-contact")
+        .count({ where: { ad: adId } })) as number;
+
+      // Step 7: Derived metrics (guard zero division)
+      const conversion = total > 0 ? Math.round((contacts / total) * 100) : 0;
+      const avgPerDay = total > 0 ? Math.round(total / clampedDays) : 0;
+
+      // Today's bucket key for ordering verification
+      const series = Array.from(buckets.values());
+      // Confirm last key is today (sanity — buckets are inserted oldest→newest)
+      const keys = Array.from(buckets.keys());
+      if (keys[keys.length - 1] !== todayKey) {
+        // Off-by-one in bucket generation — return zeros rather than silently wrong data
+        return { total, series: Array(clampedDays).fill(0) as number[], contacts, conversion, avgPerDay };
+      }
+
+      return { total, series, contacts, conversion, avgPerDay };
+    },
+
+    /**
+     * Aggregate total view count across all active ads belonging to a user.
+     *
+     * Used by the account Panel KPI "Vistas totales".
+     * Guards against an empty active-ad list to avoid `$in: []` queries.
+     *
+     * @param userId - Strapi numeric user id
+     * @returns Integer count of all ad-view rows for the user's active ads
+     */
+    async getUserTotalViews(userId: number): Promise<number> {
+      // Step 1: Collect active ad ids for the user
+      const activeAds = (await strapi.db.query("api::ad.ad").findMany({
+        where: { user: userId, active: true },
+        select: ["id"],
+      })) as Array<{ id: number }>;
+
+      if (activeAds.length === 0) return 0;
+
+      const adIds = activeAds.map((a) => a.id);
+
+      // Step 2: Count all view events for those ads
+      const total = (await strapi.db
+        .query("api::ad-view.ad-view")
+        .count({ where: { ad: { $in: adIds } } })) as number;
+
+      return total;
     },
   }),
 );
