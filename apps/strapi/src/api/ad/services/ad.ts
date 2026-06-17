@@ -203,17 +203,20 @@ async function getAdvertisements(
       filters.user = { id: { $eq: userId } };
     }
 
-    // Define default relations to populate
+    // Define default relations to populate — scoped to fields used by list views.
+    // details/order/ad_featured_reservation are kept for needs_payment + featured computation.
     const defaultPopulate = {
-      user: true, // User who created the ad
-      gallery: true, // Ad images/gallery
-      commune: true, // Geographic location
-      condition: true, // Ad condition (new, used, etc.)
-      type: true, // Ad type
-      category: true, // Ad category
-      details: true, // Additional ad details
-      order: true, // Order relation
-      ad_featured_reservation: true, // Featured reservation
+      user: { fields: ["id", "documentId", "username", "firstname", "lastname", "pro_status"] },
+      gallery: { fields: ["id", "url", "formats"] },
+      commune: {
+        fields: ["id", "name"],
+        populate: { region: { fields: ["id", "name"] } },
+      },
+      condition: { fields: ["id", "name"] },
+      category: { fields: ["id", "documentId", "name", "color", "slug"] },
+      details: { fields: ["id", "pack"] }, // pack needed for needs_payment
+      order: { fields: ["id", "documentId"] }, // presence-only, no financial data
+      ad_featured_reservation: { fields: ["id"] }, // presence-only for featured flag
     };
 
     // Merge custom populates with defaults

@@ -202,9 +202,13 @@ export default factories.createCoreController(
         }
 
         // Normalize populate: db.query requires true or object, never array or "*".
-        let populate: true | Record<string, unknown>;
+        // Default to document_response only — amount/is_invoice/createdAt return as scalars.
+        const DEFAULT_ORDER_POPULATE: Record<string, unknown> = {
+          document_response: true,
+        };
+        let populate: Record<string, unknown>;
         if (!rawPopulate || rawPopulate === "*") {
-          populate = true;
+          populate = DEFAULT_ORDER_POPULATE;
         } else if (typeof rawPopulate === "string") {
           populate = { [rawPopulate]: true };
         } else if (Array.isArray(rawPopulate)) {
@@ -233,7 +237,7 @@ export default factories.createCoreController(
             populate = rawPopulate as Record<string, unknown>;
           }
         } else {
-          populate = true;
+          populate = DEFAULT_ORDER_POPULATE;
         }
 
         // Construir filtros
