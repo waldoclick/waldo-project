@@ -43,7 +43,7 @@ export default factories.createCoreService(
             ad: ad.id,
             type,
             visitor_hash,
-            created_at: new Date(),
+            contacted_at: new Date(),
           },
         });
       } catch (error) {

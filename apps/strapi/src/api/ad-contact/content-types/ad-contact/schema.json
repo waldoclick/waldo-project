@@ -25,8 +25,9 @@
     "visitor_hash": {
       "type": "string"
     },
-    "created_at": {
-      "type": "datetime"
+    "contacted_at": {
+      "type": "datetime",
+      "required": true
     }
   }
 }
