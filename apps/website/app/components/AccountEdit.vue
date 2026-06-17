@@ -1,18 +1,30 @@
 <template>
   <section class="account account--edit" aria-labelledby="profile-edit-title">
+    <!-- Header -->
+    <span class="account--edit__eyebrow">Cuenta</span>
     <div class="account--edit__header">
-      <h1 id="profile-edit-title" class="account--edit__title title">
-        Completa tu perfil
-      </h1>
-      <div class="account--edit__text paragraph">
-        <p>
-          ¡Haz que tu perfil brille! Completa tu información personal para que
-          otros usuarios puedan conocerte mejor. Cuanto más completa esté tu
-          información, más confianza generarás en la comunidad de Waldo.click®.
+      <div>
+        <h1 id="profile-edit-title" class="account--edit__title">Mi perfil</h1>
+        <p class="account--edit__intro">
+          Tu identidad en Waldo.click. Esto es lo que ven los compradores cuando
+          revisan tus anuncios.
         </p>
       </div>
+      <nav class="account--edit__toggle" aria-label="Ver o editar perfil">
+        <NuxtLink to="/cuenta/perfil" class="account--edit__toggle__btn">
+          Ver
+        </NuxtLink>
+        <NuxtLink
+          to="/cuenta/perfil/editar"
+          class="account--edit__toggle__btn account--edit__toggle__btn--active"
+        >
+          Editar
+        </NuxtLink>
+      </nav>
     </div>
-    <div class="account--edit__form" aria-describedby="profile-edit-title">
+
+    <!-- Edit card wrapping FormProfile -->
+    <div class="account--edit__card">
       <FormProfile />
     </div>
   </section>
