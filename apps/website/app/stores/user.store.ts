@@ -210,6 +210,16 @@ export const useUserStore = defineStore("user", () => {
     }
   };
 
+  const loadContactsTotal = async (): Promise<PanelViewsTotalResult> => {
+    try {
+      const response = await client("ads/me/contacts-total", { method: "GET" });
+      const typed = response as unknown as { data: PanelViewsTotalResult };
+      return typed.data;
+    } catch {
+      return { total: 0 };
+    }
+  };
+
   const reset = () => {
     users.value = [];
     user.value = null;
@@ -229,6 +239,7 @@ export const useUserStore = defineStore("user", () => {
     deactivateAd,
     loadAdStats,
     loadPanelViewsTotal,
+    loadContactsTotal,
     reset,
   };
 });

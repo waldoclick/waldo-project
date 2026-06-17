@@ -157,17 +157,19 @@ const FALLBACK_COLOR = "#ece9e4";
 const { data: panel } = await useAsyncData(
   "account-panel",
   async () => {
-    const [counts, published, rejected, viewsTotal] = await Promise.all([
+    const [counts, published, rejected, viewsTotal, contactsTotal] = await Promise.all([
       userStore.loadUserAdCounts(),
       userStore.loadUserAds("published", { page: 1, pageSize: 50 }),
       userStore.loadUserAds("rejected", { page: 1, pageSize: 25 }),
       userStore.loadPanelViewsTotal(),
+      userStore.loadContactsTotal(),
     ]);
     return {
       counts,
       published: published?.data ?? [],
       rejected: rejected?.data ?? [],
       totalViews: viewsTotal.total,
+      totalContacts: contactsTotal.total,
     };
   },
   {
@@ -176,19 +178,13 @@ const { data: panel } = await useAsyncData(
       published: [] as Ad[],
       rejected: [] as Ad[],
       totalViews: 0,
+      totalContacts: 0,
     }),
   },
 );
 
 const totalViews = computed(() => panel.value.totalViews);
-// Contacts total: sum from published ads that have been loaded
-// (dedicated /ads/me/contacts-total endpoint not in 05-08; derive from panel data)
-const totalContacts = computed(() =>
-  (panel.value.published as Array<Ad & { contact_count?: number }>).reduce(
-    (sum, a) => sum + (a.contact_count ?? 0),
-    0,
-  ),
-);
+const totalContacts = computed(() => panel.value.totalContacts);
 
 const counts = computed(() => panel.value.counts);
 const activeCount = computed(() => counts.value.published);
