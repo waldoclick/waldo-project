@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import type { Component } from "vue";
 import AccountAnnouncements from "@/components/AccountAnnouncements.vue";
 import type { Ad } from "@/types/ad";
@@ -43,27 +43,6 @@ const isLoading = ref(false);
 
 const userStore = useUserStore();
 
-const loadAds = async () => {
-  isLoading.value = true;
-  try {
-    const response = await userStore.loadUserAds(
-      currentFilter.value,
-      { page: currentPage.value, pageSize: pagination.value.pageSize },
-      ["createdAt:desc"] as unknown as never[], // pass sort as a separate parameter
-    );
-
-    if (response) {
-      ads.value = response.data as unknown as Ad[];
-      const total = response.meta.pagination.total;
-      pagination.value.total = total;
-    }
-  } catch (error) {
-    console.error("Error loading ads:", error);
-  } finally {
-    isLoading.value = false;
-  }
-};
-
 const handleFilterChange = (filter: FilterType) => {
   currentFilter.value = filter;
   currentPage.value = 1;
@@ -73,18 +52,35 @@ const handlePageChange = (page: number) => {
   currentPage.value = page;
 };
 
-// Re-fetch ads when filter or page changes
-watch([currentFilter, currentPage], () => {
-  loadAds();
-});
-
-useAsyncData(async () => {
+// Run once: load tab counts — independent of filter/page
+await useAsyncData("mis-anuncios-counts", async () => {
   const counts = await userStore.loadUserAdCounts();
   for (const tab of tabs.value) {
     tab.count = counts[tab.value] ?? 0;
   }
-  await loadAds();
 });
+
+// Reactive: reload ads whenever filter or page changes
+await useAsyncData(
+  () => `mis-anuncios-${currentFilter.value}-${currentPage.value}`,
+  async () => {
+    isLoading.value = true;
+    try {
+      const response = await userStore.loadUserAds(
+        currentFilter.value,
+        { page: currentPage.value, pageSize: pagination.value.pageSize },
+        ["createdAt:desc"] as unknown as never[],
+      );
+      if (response) {
+        ads.value = response.data as unknown as Ad[];
+        pagination.value.total = response.meta.pagination.total;
+      }
+    } finally {
+      isLoading.value = false;
+    }
+  },
+  { watch: [currentFilter, currentPage] },
+);
 
 definePageMeta({
   layout: "account",
