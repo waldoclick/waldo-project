@@ -6,7 +6,7 @@
       :style="{ background: categoryColor }"
     >
       <component :is="categoryIcon" :size="30" class="card--profileAd__thumb__icon" />
-      <span class="card--profileAd__thumb__count">{{ photoCount }} fotos</span>
+      <span class="card--profileAd__thumb__count">{{ photoCount }} {{ photoCount === 1 ? 'foto' : 'fotos' }}</span>
     </span>
 
     <!-- Body -->
