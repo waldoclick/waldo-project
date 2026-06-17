@@ -65,10 +65,10 @@ Plans:
 5. Detalle de estadísticas por anuncio (vistas, contactos, conversión, promedio/día, gráfico 14 días con chart.js) + KPI "Vistas totales" en Panel, todo con datos reales agregados
 6. Cero regresión de comportamiento en las vistas existentes
 
-**Plans:** 9 plans (7 waves)
+**Plans:** 2/9 plans executed
 
 Plans:
-- [ ] 05-01-PLAN.md — Account sidebar + layout shell redesign (SidebarAccount + _sidebar/_layout scss) (ACC-LAYOUT)
+- [x] 05-01-PLAN.md — Account sidebar + layout shell redesign (SidebarAccount + _sidebar/_layout scss) (ACC-LAYOUT)
 - [ ] 05-02-PLAN.md — Panel overview: greeting + 3 KPIs + "Necesita tu atención" + packs upsell (ACC-PANEL)
 - [ ] 05-03-PLAN.md — Mis anuncios: tabs + counts + ad cards + empty state + pager (ACC-ADS)
 - [ ] 05-04-PLAN.md — Mis órdenes: summary cards + orders table + doc download (ACC-ORDERS)
