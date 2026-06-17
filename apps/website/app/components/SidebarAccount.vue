@@ -74,7 +74,7 @@ const user = useSessionUser<User>();
 
 const getUbication = computed(() => {
   if (!user.value || !user.value.commune || !user.value.commune.region) return "";
-  return user.value.commune.name;
+  return `${user.value.commune.name} · ${user.value.commune.region.name}`;
 });
 
 // TODO 05-09: wire real credits count
