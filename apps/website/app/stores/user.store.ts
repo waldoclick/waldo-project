@@ -173,6 +173,43 @@ export const useUserStore = defineStore("user", () => {
     });
   };
 
+  interface AdStatsResult {
+    total: number;
+    series: number[];
+    contacts: number;
+    conversion: number;
+    avgPerDay: number;
+  }
+
+  const loadAdStats = async (
+    documentId: string,
+    days = 14,
+  ): Promise<AdStatsResult> => {
+    try {
+      const response = await client(`ads/${documentId}/stats?days=${days}`, {
+        method: "GET",
+      });
+      const typed = response as unknown as { data: AdStatsResult };
+      return typed.data;
+    } catch {
+      return { total: 0, series: Array(days).fill(0) as number[], contacts: 0, conversion: 0, avgPerDay: 0 };
+    }
+  };
+
+  interface PanelViewsTotalResult {
+    total: number;
+  }
+
+  const loadPanelViewsTotal = async (): Promise<PanelViewsTotalResult> => {
+    try {
+      const response = await client("ads/me/views-total", { method: "GET" });
+      const typed = response as unknown as { data: PanelViewsTotalResult };
+      return typed.data;
+    } catch {
+      return { total: 0 };
+    }
+  };
+
   const reset = () => {
     users.value = [];
     user.value = null;
@@ -190,6 +227,8 @@ export const useUserStore = defineStore("user", () => {
     loadUserOrders,
     updateUserProfile,
     deactivateAd,
+    loadAdStats,
+    loadPanelViewsTotal,
     reset,
   };
 });
