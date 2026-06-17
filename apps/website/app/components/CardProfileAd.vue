@@ -197,7 +197,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted } from "vue";
+import { computed, ref } from "vue";
 import {
   Star,
   Eye,
@@ -295,24 +295,6 @@ const badgeLabel = computed(() => {
   return "";
 });
 
-// Per-card stats (lazy, only for published)
-const adViews = ref(0);
-const adContacts = ref(0);
-
-onMounted(() => {
-  if (
-    import.meta.client &&
-    props.ad?.status === "published" &&
-    props.ad?.documentId
-  ) {
-    const userStore = useUserStore();
-    userStore.loadAdStats(props.ad.documentId as string).then((res) => {
-      adViews.value = res.total;
-      adContacts.value = res.contacts;
-    });
-  }
-});
-
 const statusMessage = computed(() => {
   const status = props.ad?.status;
   const days = props.ad?.remaining_days as number;
@@ -353,7 +335,9 @@ const statusMessage = computed(() => {
 
 const metaRight = computed(() => {
   if (props.ad?.status === "published") {
-    return `${adViews.value} vistas · ${adContacts.value} contactos`;
+    const views = (props.ad?.views as number) ?? 0;
+    const contacts = (props.ad?.contacts as number) ?? 0;
+    return `${views} vistas · ${contacts} contactos`;
   }
   return statusMessage.value;
 });
