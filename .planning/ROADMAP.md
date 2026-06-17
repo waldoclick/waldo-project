@@ -51,7 +51,21 @@ Plans:
 - [x] 04-06-PLAN.md — Verify 2FA restyle: 62px OTP boxes, amber focus + verificar (AUTH-03)
 - [x] 04-07-PLAN.md — Recover + reset restyle: amber submits, lucide generate, dead-import cleanup (AUTH-04)
 
-> Las áreas público, cuenta y dashboard se agregarán como fases recién cuando el usuario apruebe cada rediseño.
+### Phase 05: Rediseño cuenta
+
+**Goal:** Restilizar el área de cuenta a la maqueta `design/account.dc.html` (idéntico), con un **layout sidebar nuevo**, reusando los componentes/páginas existentes todo lo posible. Incluye backend nuevo: estadísticas reales por anuncio guardando **cada vista como evento** (no contador) + contactos como eventos.
+**Requirements:** ACC-LAYOUT, ACC-PANEL, ACC-ADS, ACC-ORDERS, ACC-PROFILE, ACC-PASSWORD, STAT-MODEL, STAT-VIEW
+**Depends on:** Phase 04 (tokens)
+**Ejecución:** cada vista = 1 plan, cerrado con loop visual (screenshot→medir→verificar) hasta quedar idéntico a la maqueta. Reusar componentes existentes; layout nuevo.
+**Success criteria:**
+1. Panel, Mis anuncios, Mis órdenes, Mi perfil (ver/editar) y Cambiar contraseña se ven idénticos a la maqueta, en desktop y responsive
+2. Layout sidebar de cuenta nuevo, reusando componentes existentes donde aplique
+3. `ad-view` content type guarda 1 fila por vista (ad, viewed_at, visitor_hash, source, viewer); tracking server-side en el detalle público, excluye al dueño, único por visitante/día
+4. `ad-contact` content type guarda contactos como eventos (para "Contactos recibidos")
+5. Detalle de estadísticas por anuncio (vistas, contactos, conversión, promedio/día, gráfico 14 días con chart.js) + KPI "Vistas totales" en Panel, todo con datos reales agregados
+6. Cero regresión de comportamiento en las vistas existentes
+
+**Plans:** TBD (se crean con plan-phase)
 
 ## Progress
 
