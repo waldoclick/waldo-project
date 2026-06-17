@@ -2,7 +2,7 @@
   <section class="account account--main" aria-labelledby="account-title">
     <span class="account--main__eyebrow">Panel</span>
     <h1 id="account-title" class="account--main__greeting">
-      Hola, {{ user?.firstname }} 👋
+      Hola, {{ user?.firstname }} <span aria-hidden="true">👋</span>
     </h1>
     <p class="account--main__intro">
       Este es el resumen de tu cuenta. Revisa lo que necesita tu atención y cómo
