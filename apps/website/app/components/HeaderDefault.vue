@@ -11,57 +11,57 @@
       'header--default--scrolled-light': !isTop && !isTrasparent,
     }"
   >
-    <div class="header--default__left">
-      <div class="header--default__lateral">
-        <button
-          title="Abrir/Cerrar menú mobile"
-          class="mobile--bar__trigger"
-          @click="appStore.toggleMobileMenu()"
+    <div class="header--default__inner">
+      <div class="header--default__left">
+        <div class="header--default__lateral">
+          <button
+            title="Abrir/Cerrar menú mobile"
+            class="mobile--bar__trigger"
+            @click="appStore.toggleMobileMenu()"
+          >
+            <IconMenu :size="32" class="mobile--bar_open" />
+          </button>
+          <!-- <MobileBar /> -->
+        </div>
+        <div class="header--default__logo">
+          <LogoWhite v-if="isTrasparent" />
+          <LogoBlack v-else />
+        </div>
+        <div v-if="showSearch" class="header--default__form">
+          <SearchDefault type="header" />
+        </div>
+        <div v-if="showMenu" class="header--default__menu">
+          <MenuDefault />
+        </div>
+      </div>
+      <div class="header--default__right">
+        <div class="header--default__search">
+          <SearchIcon :white="isTrasparent && isTop" />
+        </div>
+        <div
+          v-if="
+            user && !route.path.startsWith('/anunciar') && route.path !== '/pagar'
+          "
+          class="header--default__announcement"
         >
-          <IconMenu :size="32" class="mobile--bar_open" />
-        </button>
-        <!-- <MobileBar /> -->
-      </div>
-      <div class="header--default__logo">
-        <LogoWhite v-if="isTrasparent" />
-        <LogoBlack v-else />
-      </div>
-      <div v-if="showSearch" class="header--default__form">
-        <SearchDefault type="header" />
-      </div>
-      <div v-if="showMenu" class="header--default__menu">
-        <MenuDefault />
-      </div>
-    </div>
-    <div class="header--default__right">
-      <div class="header--default__search">
-        <SearchIcon :white="isTrasparent && isTop" />
-      </div>
-      <div
-        v-if="
-          user && !route.path.startsWith('/anunciar') && route.path !== '/pagar'
-        "
-        class="header--default__announcement"
-      >
-        <nuxt-link
-          title="Anunciar ahora"
-          to="/anunciar"
-          class="btn btn--announcement"
-        >
-          <ClientOnly>
-            <IconPencil v-if="adStore.hasFormInProgress" :size="16" />
-          </ClientOnly>
-          <span>Anunciar ahora</span>
-        </nuxt-link>
-      </div>
-      <div v-if="!user" class="header--default__auth">
-        <MenuAuth :white="isTrasparent && isTop" />
-      </div>
-      <div v-if="user" class="header--default__user">
-        <MenuUser />
-      </div>
-      <div v-if="user" class="header--default__avatar">
-        <AvatarDefault />
+          <nuxt-link
+            title="Anunciar ahora"
+            to="/anunciar"
+            class="btn btn--announcement"
+          >
+            <ClientOnly>
+              <IconPencil v-if="adStore.hasFormInProgress" :size="16" />
+              <IconPlus v-else :size="16" />
+            </ClientOnly>
+            <span>Anunciar ahora</span>
+          </nuxt-link>
+        </div>
+        <div v-if="!user" class="header--default__auth">
+          <MenuAuth :white="isTrasparent && isTop" />
+        </div>
+        <div v-if="user" class="header--default__user">
+          <MenuUser />
+        </div>
       </div>
     </div>
   </header>
@@ -75,13 +75,10 @@ import MenuAuth from "@/components/MenuAuth.vue";
 import MenuDefault from "@/components/MenuDefault.vue";
 import MenuUser from "@/components/MenuUser.vue";
 import SearchIcon from "@/components/SearchIcon.vue";
-import MobileBar from "@/components/MobileBar.vue";
-import AvatarDefault from "@/components/AvatarDefault.vue";
 import { useScroll } from "@vueuse/core";
-import { Pencil as IconPencil } from "lucide-vue-next";
+import { Pencil as IconPencil, Plus as IconPlus, Menu as IconMenu } from "lucide-vue-next";
 import { useAdStore } from "@/stores/ad.store";
 import { useAppStore } from "@/stores/app.store";
-import { Menu as IconMenu } from "lucide-vue-next";
 
 const route = useRoute();
 const header = ref<HTMLElement | null>(null);
