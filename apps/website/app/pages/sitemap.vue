@@ -1,74 +1,60 @@
 <template>
-  <SitemapDefault :blocks="sitemapBlocks" />
+  <NuxtLayout
+    name="about"
+    title="Mapa del sitio"
+    intro="Navega fácilmente por Waldo. Encuentra anuncios, categorías, comunas y todas las secciones del sitio."
+    active="mapa"
+  >
+    <SitemapDefault :blocks="sitemapBlocks" />
+  </NuxtLayout>
 </template>
 
 <script setup lang="ts">
-import {
-  Home as IconHome,
-  Megaphone as IconMegaphone,
-  Mail as IconMail,
-  LogIn as IconLogIn,
-  Package as IconPackage,
-  Shield as IconShield,
-  HelpCircle as IconHelpCircle,
-  KeyRound as IconKeyRound,
-  UserPlus as IconUserPlus,
-  Map as IconMap,
-  Shapes as IconShapes,
-  MapPin as IconMapPin,
-} from "lucide-vue-next";
 import { useCategoriesStore } from "@/stores/categories.store";
 import { useCommunesStore } from "@/stores/communes.store";
 
 // Componente principal
 import SitemapDefault from "@/components/SitemapDefault.vue";
 
-// Definir el layout
+// Layout aplicado explícitamente con <NuxtLayout name="about"> en el template;
+// layout: false evita que Nuxt aplique además el layout por defecto (doble wrap).
 definePageMeta({
-  layout: "about",
+  layout: false,
 });
 
-const { data: pageData } = await useAsyncData("sitemap-data", async () => {
-  const categoriesStore = useCategoriesStore();
-  const communesStore = useCommunesStore();
+const { data: pageData } = await useAsyncData(
+  "sitemap-data",
+  async () => {
+    const categoriesStore = useCategoriesStore();
+    const communesStore = useCommunesStore();
 
-  await Promise.all([
-    categoriesStore.loadCategories(),
-    communesStore.loadCommunes(),
-  ]);
+    await Promise.all([
+      categoriesStore.loadCategories(),
+      communesStore.loadCommunes(),
+    ]);
 
-  return {
-    categories: categoriesStore.categories,
-    communes: communesStore.communes.data,
-  };
-});
+    return {
+      categories: categoriesStore.categories,
+      communes: communesStore.communes.data,
+    };
+  },
+  { default: () => ({ categories: [], communes: [] }) },
+);
 
 const sitemapBlocks = [
   {
     title: "Páginas Principales",
     items: [
-      { to: "/", label: "Inicio", icon: IconHome },
-      { to: "/anuncios", label: "Anuncios", icon: IconMegaphone },
-      { to: "/contacto", label: "Contacto", icon: IconMail },
-      { to: "/login", label: "Iniciar Sesión", icon: IconLogIn },
-      { to: "/packs", label: "Packs", icon: IconPackage },
-      {
-        to: "/politicas-de-privacidad",
-        label: "Políticas de Privacidad",
-        icon: IconShield,
-      },
-      {
-        to: "/preguntas-frecuentes",
-        label: "Preguntas Frecuentes",
-        icon: IconHelpCircle,
-      },
-      {
-        to: "/recuperar-contrasena",
-        label: "Recuperar Contraseña",
-        icon: IconKeyRound,
-      },
-      { to: "/registro", label: "Registro", icon: IconUserPlus },
-      { to: "/sitemap", label: "Mapa del Sitio", icon: IconMap },
+      { to: "/", label: "Inicio" },
+      { to: "/anuncios", label: "Anuncios" },
+      { to: "/contacto", label: "Contacto" },
+      { to: "/login", label: "Iniciar Sesión" },
+      { to: "/packs", label: "Packs" },
+      { to: "/politicas-de-privacidad", label: "Políticas de Privacidad" },
+      { to: "/preguntas-frecuentes", label: "Preguntas Frecuentes" },
+      { to: "/recuperar-contrasena", label: "Recuperar Contraseña" },
+      { to: "/registro", label: "Registro" },
+      { to: "/sitemap", label: "Mapa del Sitio" },
     ],
   },
 ];
@@ -79,7 +65,6 @@ if (pageData.value?.categories && pageData.value.categories.length > 0) {
     items: pageData.value.categories.map((category) => ({
       to: `/anuncios?category=${category.slug}`,
       label: category.name,
-      icon: IconShapes,
     })),
   });
 }
@@ -90,7 +75,6 @@ if (pageData.value?.communes && pageData.value.communes.length > 0) {
     items: pageData.value.communes.map((commune) => ({
       to: `/anuncios?commune=${commune.id}`,
       label: commune.name,
-      icon: IconMapPin,
     })),
   });
 }
