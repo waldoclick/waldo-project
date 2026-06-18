@@ -1,11 +1,12 @@
 <template>
-  <FaqDefault
-    :title="`Preguntas Frecuentes`"
-    :text="`Encuentra respuestas a las preguntas más comunes sobre cómo funciona Waldo.click®, la plataforma para comprar y vender activos industriales.`"
-    :is-left="true"
-    title-tag="h1"
-    :faqs="faqs || []"
-  />
+  <NuxtLayout
+    name="about"
+    title="Preguntas frecuentes"
+    intro="Encuentra respuestas a las preguntas más comunes sobre cómo funciona Waldo, la plataforma para comprar y vender activos industriales."
+    active="faq"
+  >
+    <FaqDefault :is-left="true" :faqs="faqs || []" />
+  </NuxtLayout>
 </template>
 
 <script setup lang="ts">
@@ -16,9 +17,10 @@ const config = useRuntimeConfig();
 // Components
 import FaqDefault from "@/components/FaqDefault.vue";
 
-// Definir layout
+// Layout aplicado explícitamente con <NuxtLayout name="about"> en el template;
+// layout: false evita que Nuxt aplique además el layout por defecto (doble wrap).
 definePageMeta({
-  layout: "about",
+  layout: false,
 });
 
 // Cargar FAQs — useAsyncData integra con el ciclo SSR de Nuxt;
@@ -31,7 +33,7 @@ const { data: faqs } = await useAsyncData(
     await faqsStore.loadFaqs();
     return faqsStore.faqs || [];
   },
-  { immediate: true, server: true },
+  { immediate: true, server: true, default: () => [] },
 );
 
 // Datos para SEO
