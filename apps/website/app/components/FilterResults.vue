@@ -1,16 +1,17 @@
 <template>
   <section class="filter filter--announcement">
     <div class="filter--announcement__container">
-      <!-- <pre>{{ filterCommunes }}</pre> -->
-      <div class="filter--announcement__selectors">
+      <div class="filter--announcement__group">
         <div class="filter--announcement__selector">
+          <IconFilter :size="16" class="filter--announcement__selector__icon" />
           <select
             v-if="isClient"
             id="ubication"
             v-model="selectedCommune"
             class="filter--announcement__select"
+            aria-label="Filtrar por ubicación"
           >
-            <option value="null">Ubicación</option>
+            <option value="null">Todas las ubicaciones</option>
             <option
               v-for="commune in filterStore.filterCommunes"
               :key="commune.id"
@@ -26,25 +27,37 @@
             Cargando...
           </div>
         </div>
+
+        <span v-if="total > 0" class="filter--announcement__count">
+          <strong>{{ total }}</strong>
+          {{ total === 1 ? "anuncio" : "anuncios" }}
+        </span>
       </div>
 
-      <div class="filter--announcement__order">
-        <label>Ordenar por:</label>
-        <select
-          v-if="isClient"
-          v-model="selectedOrder"
-          class="filter--announcement__select filter--announcement__select--simple"
-        >
-          <option value="featured">Destacados</option>
-          <option value="recent">Recientes</option>
-        </select>
-        <div
-          v-else
-          class="filter--announcement__select filter--announcement__select--simple filter--announcement__select--loading"
-        >
-          Cargando...
-        </div>
-      </div>
+      <label class="filter--announcement__order">
+        <span class="filter--announcement__order__label">Ordenar por</span>
+        <span class="filter--announcement__order__field">
+          <select
+            v-if="isClient"
+            v-model="selectedOrder"
+            class="filter--announcement__select"
+            aria-label="Ordenar anuncios"
+          >
+            <option value="featured">Destacados</option>
+            <option value="recent">Recientes</option>
+          </select>
+          <div
+            v-else
+            class="filter--announcement__select filter--announcement__select--loading"
+          >
+            Cargando...
+          </div>
+          <IconChevron
+            :size="15"
+            class="filter--announcement__order__chevron"
+          />
+        </span>
+      </label>
     </div>
   </section>
 </template>
@@ -53,6 +66,14 @@
 import { ref, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useFilterStore } from "@/stores/filter.store";
+import { SlidersHorizontal as IconFilter, ChevronDown as IconChevron } from "lucide-vue-next";
+
+defineProps({
+  total: {
+    type: Number,
+    default: 0,
+  },
+});
 
 const filterStore = import.meta.client
   ? useFilterStore()

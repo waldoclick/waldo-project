@@ -3,7 +3,6 @@
 @use "../base/container";
 
 .filter {
-  &--announcement,
   &--articles {
     padding-bottom: 0;
 
@@ -64,6 +63,99 @@
         background-position: center right;
         border: none;
       }
+    }
+  }
+
+  &--announcement {
+    padding-bottom: 0;
+
+    &__container {
+      @extend .container;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    &__group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    &__selector {
+      position: relative;
+      display: flex;
+      align-items: center;
+
+      &__icon {
+        position: absolute;
+        left: 13px;
+        color: $ink;
+        pointer-events: none;
+      }
+    }
+
+    &__count {
+      font-size: 14.5px;
+      color: $ink2;
+
+      strong {
+        color: $ink;
+        font-weight: 700;
+      }
+    }
+
+    &__order {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      &__label {
+        font-size: 13.5px;
+        color: $muted;
+      }
+
+      &__field {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+
+      &__chevron {
+        position: absolute;
+        right: 12px;
+        color: $muted;
+        pointer-events: none;
+      }
+    }
+
+    &__select {
+      appearance: none;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      color: $ink;
+      background: $white;
+      border: 1px solid $line;
+      border-radius: 4px;
+      padding: 10px 34px 10px 14px;
+      cursor: pointer;
+
+      &:hover {
+        border-color: $ink;
+      }
+
+      &--loading {
+        color: $muted;
+      }
+    }
+
+    &__selector &__select {
+      padding-left: 36px;
+      background: $cream;
     }
   }
 

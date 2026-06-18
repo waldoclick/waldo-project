@@ -7,21 +7,38 @@
       :title="categoryData?.name || 'Anuncios'"
       :category-icon="categoryIconComponent"
     />
-    <FilterResults v-if="adsData && adsData.ads && adsData.ads.length > 0" />
+    <FilterResults
+      v-if="adsData && adsData.ads && adsData.ads.length > 0"
+      :total="adsData.pagination?.total || 0"
+    />
     <AdArchive
       v-if="adsData && adsData.ads && adsData.ads.length > 0"
       :ads="adsData.ads"
       :pagination="adsData.pagination"
     />
-    <MessageDefault
+    <section
       v-if="adsData && adsData.ads && adsData.ads.length === 0"
-      type="fail"
-      title="No hay anuncios con esos filtros"
-      description="Prueba ajustando tu búsqueda o mira lo que tenemos disponible"
-      button_label="Ver más anuncios"
-      button_link="/anuncios"
-      :button_show="true"
-    />
+      class="announcement announcement--archive"
+    >
+      <div class="container">
+        <div class="announcement--archive__empty">
+          <IconSearch
+            :size="34"
+            class="announcement--archive__empty__icon"
+          />
+          <p class="announcement--archive__empty__title">Sin resultados</p>
+          <p class="announcement--archive__empty__text">
+            Prueba ajustar o limpiar los filtros.
+          </p>
+          <NuxtLink
+            to="/anuncios"
+            class="announcement--archive__empty__button"
+          >
+            Limpiar filtros
+          </NuxtLink>
+        </div>
+      </div>
+    </section>
     <RelatedAds
       v-if="
         adsData &&
@@ -72,7 +89,7 @@ import FilterResults from "@/components/FilterResults.vue";
 import AdArchive from "@/components/AdArchive.vue";
 import FooterDefault from "@/components/FooterDefault.vue";
 import RelatedAds from "@/components/RelatedAds.vue";
-import MessageDefault from "@/components/MessageDefault.vue";
+import { Search as IconSearch } from "lucide-vue-next";
 
 // Importar interfaces
 import type { Category } from "@/types/category";
