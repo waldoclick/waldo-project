@@ -10,23 +10,41 @@
       />
     </client-only>
 
-    <div v-if="hasMainImage" class="gallery--default__main">
-      <div class="gallery--default__image" @click="show(0)">
-        <img
-          loading="lazy"
-          decoding="async"
-          :src="mainImageUrl"
-          alt="Imagen principal"
-          title="Imagen principal"
-        />
-      </div>
+    <div
+      v-if="hasMainImage"
+      class="gallery--default__main"
+      @click="show(0)"
+    >
+      <img
+        class="gallery--default__main__image"
+        loading="lazy"
+        decoding="async"
+        :src="mainImageUrl"
+        alt="Imagen principal"
+        title="Imagen principal"
+      />
+      <span class="gallery--default__main__veil" />
+      <span class="gallery--default__main__badge gallery--default__main__badge--zoom">
+        <Maximize2 :size="14" />
+        Ampliar
+      </span>
+      <span class="gallery--default__main__badge gallery--default__main__badge--count">
+        <ImageIcon :size="14" />
+        {{ photosLabel }}
+      </span>
+      <span
+        v-if="condition"
+        class="gallery--default__main__condition"
+      >
+        {{ condition }}
+      </span>
     </div>
 
     <div v-if="hasThumbnailImages" class="gallery--default__thumbnails">
       <div
         v-for="(image, imgIndex) in thumbnailUrls"
         :key="imgIndex"
-        class="gallery--default__image"
+        class="gallery--default__thumbnails__item"
         @click="show(imgIndex + 1)"
       >
         <img
@@ -38,9 +56,9 @@
         />
         <span
           v-if="imgIndex === 2 && remainingImages > 0"
-          class="gallery--default__image--count"
+          class="gallery--default__thumbnails__item__count"
         >
-          +{{ remainingImages }} imágenes
+          +{{ remainingImages }}
         </span>
       </div>
     </div>
@@ -50,12 +68,17 @@
 <script setup>
 import { ref, computed } from "vue";
 import VueEasyLightbox from "vue-easy-lightbox/dist/external-css/vue-easy-lightbox.esm.min.js";
+import { Maximize2, Image as ImageIcon } from "lucide-vue-next";
 import { useImageProxy } from "@/composables/useImage";
 
 const props = defineProps({
   media: {
     type: Array,
     default: () => [],
+  },
+  condition: {
+    type: String,
+    default: "",
   },
 });
 
@@ -96,13 +119,18 @@ const imgs = computed(() =>
     : [],
 );
 
+const photosCount = computed(() =>
+  Array.isArray(props.media) ? props.media.length : 0,
+);
+
+const photosLabel = computed(() => {
+  const count = photosCount.value;
+  return `${count} ${count === 1 ? "foto" : "fotos"}`;
+});
+
 const remainingImages = computed(() =>
   props.media.length > 4 ? props.media.length - 4 : 0,
 );
-
-const isLastThumbnail = (index) => {
-  return index === 2; // El índice 2 es el último thumbnail (0, 1, 2)
-};
 
 const show = (i) => {
   index.value = i;

@@ -3,13 +3,16 @@
     <div class="announcement--single__container">
       <div class="announcement--single__body">
         <div class="announcement--single__body__gallery">
-          <GalleryDefault :media="all?.gallery || null" />
+          <GalleryDefault
+            :media="all?.gallery || null"
+            :condition="getCondition?.name || ''"
+          />
         </div>
 
         <div class="announcement--single__body__description">
-          <h3 class="announcement--single__body__description__title subtitle">
+          <h2 class="announcement--single__body__description__title">
             Acerca de este producto
-          </h3>
+          </h2>
           <div
             class="announcement--single__body__description__text"
             v-html="sanitizeRich(all.description)"
@@ -17,39 +20,77 @@
         </div>
 
         <div class="announcement--single__body__specs">
-          <h3 class="announcement--single__body__specs__title subtitle">
-            Ubicación
-          </h3>
-          <div class="announcement--single__body__specs__table">
-            <CardInfo
-              :title="`Dirección`"
-              :description="fullAddress"
-              :link="googleMapsUrl"
-              :info="`Ver en Google Maps`"
-            />
-            <CardInfo :title="`Región`" :description="regionName" />
-            <CardInfo :title="`Comuna`" :description="communeName" />
+          <h2 class="announcement--single__body__specs__title">Ubicación</h2>
+          <div class="announcement--single__body__specs__grid">
+            <div class="announcement--single__body__specs__grid__item">
+              <span class="announcement--single__body__specs__grid__item__label">
+                Dirección
+              </span>
+              <a
+                v-if="fullAddress"
+                class="announcement--single__body__specs__grid__item__link"
+                :href="googleMapsUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <MapPin
+                  class="announcement--single__body__specs__grid__item__link__icon"
+                  :size="15"
+                />
+                {{ fullAddress }}
+              </a>
+              <span
+                v-else
+                class="announcement--single__body__specs__grid__item__empty"
+              >
+                No especificado
+              </span>
+            </div>
+            <div class="announcement--single__body__specs__grid__item">
+              <span class="announcement--single__body__specs__grid__item__label">
+                Región
+              </span>
+              <span class="announcement--single__body__specs__grid__item__value">
+                {{ regionName }}
+              </span>
+            </div>
+            <div class="announcement--single__body__specs__grid__item">
+              <span class="announcement--single__body__specs__grid__item__label">
+                Comuna
+              </span>
+              <span class="announcement--single__body__specs__grid__item__value">
+                {{ communeName }}
+              </span>
+            </div>
           </div>
         </div>
 
         <div class="announcement--single__body__specs">
-          <h3 class="announcement--single__body__specs__title subtitle">
+          <h2 class="announcement--single__body__specs__title">
             Especificación técnica
-          </h3>
-          <div class="announcement--single__body__specs__table">
-            <CardInfo :title="`Año`" :description="all.year" />
-            <CardInfo :title="`Manufactura`" :description="all.manufacturer" />
-            <CardInfo :title="`Modelo`" :description="all.model" />
-            <CardInfo
-              :title="`Número de serie`"
-              :description="all.serial_number"
-            />
-            <CardInfo
-              :title="`Medidas (Ancho x Alto x Profundidad)`"
-              :description="getDimensions"
-            />
-            <CardInfo :title="`Peso`" :description="getWeight" />
-            <CardInfo :title="`Condición`" :description="getCondition?.name" />
+          </h2>
+          <div class="announcement--single__body__specs__grid">
+            <div
+              v-for="spec in technicalSpecs"
+              :key="spec.label"
+              class="announcement--single__body__specs__grid__item"
+            >
+              <span class="announcement--single__body__specs__grid__item__label">
+                {{ spec.label }}
+              </span>
+              <span
+                v-if="spec.value"
+                class="announcement--single__body__specs__grid__item__value"
+              >
+                {{ spec.value }}
+              </span>
+              <span
+                v-else
+                class="announcement--single__body__specs__grid__item__empty"
+              >
+                No especificado
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -145,7 +186,7 @@ import { computed } from "vue";
 import ReminderDefault from "@/components/ReminderDefault";
 import GalleryDefault from "@/components/GalleryDefault";
 import CardInfo from "@/components/CardInfo";
-import { Info as InfoIcon, Clock } from "lucide-vue-next";
+import { Info as InfoIcon, Clock, MapPin } from "lucide-vue-next";
 import ShareDefault from "@/components/ShareDefault";
 import MemoDefault from "@/components/MemoDefault";
 import { useSanitize } from "@/composables/useSanitize";
@@ -208,12 +249,25 @@ const getCondition = computed(() => {
 // Computed property para obtener las medidas
 const getDimensions = computed(() => {
   const { width, height, depth } = props.all;
+  if (!width && !height && !depth) return "";
   return `${width}m x ${height}m x ${depth}m`;
 });
 
 const getWeight = computed(() => {
-  return props.all.weight ? `${props.all.weight}kg` : "N/A";
+  return props.all.weight ? `${props.all.weight}kg` : "";
 });
+
+// Flat label/value list rendered by the mockup's 2-col Especificación grid.
+// An empty value renders the "No especificado" italic state.
+const technicalSpecs = computed(() => [
+  { label: "Año", value: props.all?.year ? String(props.all.year) : "" },
+  { label: "Manufactura", value: props.all?.manufacturer || "" },
+  { label: "Modelo", value: props.all?.model || "" },
+  { label: "Número de serie", value: props.all?.serial_number || "" },
+  { label: "Medidas (Ancho x Alto x Profundidad)", value: getDimensions.value },
+  { label: "Peso", value: getWeight.value },
+  { label: "Condición", value: getCondition.value?.name || "" },
+]);
 
 const fullAddress = computed(() => {
   const { address, address_number } = props.all;
