@@ -206,7 +206,16 @@ async function getAdvertisements(
     // Define default relations to populate — scoped to fields used by list views.
     // details/order/ad_featured_reservation are kept for needs_payment + featured computation.
     const defaultPopulate = {
-      user: { fields: ["id", "documentId", "username", "firstname", "lastname", "pro_status"] },
+      user: {
+        fields: [
+          "id",
+          "documentId",
+          "username",
+          "firstname",
+          "lastname",
+          "pro_status",
+        ],
+      },
       gallery: { fields: ["id", "url", "formats"] },
       commune: {
         fields: ["id", "name"],
@@ -291,16 +300,16 @@ async function getAdvertisements(
         .getContactCountsByAdIds(adIds),
     ]);
 
-    const adsWithStats = (
-      processedAds as Array<Record<string, unknown>>
-    ).map((ad) => {
-      const adId = ad.id as number;
-      return {
-        ...ad,
-        views: viewCounts[adId] ?? 0,
-        contacts: contactCounts[adId] ?? 0,
-      };
-    });
+    const adsWithStats = (processedAds as Array<Record<string, unknown>>).map(
+      (ad) => {
+        const adId = ad.id as number;
+        return {
+          ...ad,
+          views: viewCounts[adId] ?? 0,
+          contacts: contactCounts[adId] ?? 0,
+        };
+      },
+    );
 
     // Calculate pagination metadata
     const pageCount = Math.ceil(total / pageSize);

@@ -137,11 +137,11 @@ describe("ad-view service — getAdStats", () => {
     const DAYS = 14;
     // 5 view rows spread across 3 different days within the window
     const viewRows = [
-      { id: 1, viewed_at: utcDayStart(0) },   // today
-      { id: 2, viewed_at: utcDayStart(0) },   // today (second view)
-      { id: 3, viewed_at: utcDayStart(3) },   // 3 days ago
-      { id: 4, viewed_at: utcDayStart(7) },   // 7 days ago
-      { id: 5, viewed_at: utcDayStart(13) },  // 13 days ago (within 14-day window)
+      { id: 1, viewed_at: utcDayStart(0) }, // today
+      { id: 2, viewed_at: utcDayStart(0) }, // today (second view)
+      { id: 3, viewed_at: utcDayStart(3) }, // 3 days ago
+      { id: 4, viewed_at: utcDayStart(7) }, // 7 days ago
+      { id: 5, viewed_at: utcDayStart(13) }, // 13 days ago (within 14-day window)
     ];
     const { mockStrapi } = buildMockStrapi({ viewRows, totalViews: 5 });
     const service = asService(serviceFactory)({ strapi: mockStrapi });

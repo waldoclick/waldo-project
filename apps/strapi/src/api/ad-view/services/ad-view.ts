@@ -121,10 +121,7 @@ export default factories.createCoreService(
      * @param days - Window length in days (default 14, clamped 1..90)
      * @returns AdStatsResult with zero-shape if the ad is not found
      */
-    async getAdStats(
-      adDocumentId: string,
-      days = 14,
-    ): Promise<AdStatsResult> {
+    async getAdStats(adDocumentId: string, days = 14): Promise<AdStatsResult> {
       const clampedDays = Math.max(1, Math.min(90, days));
       const zeroShape = (): AdStatsResult => ({
         total: 0,
@@ -153,21 +150,17 @@ export default factories.createCoreService(
       // Step 3: Build the empty bucket map keyed by yyyy-mm-dd, oldest→newest
       const buckets = new Map<string, number>();
       for (let i = clampedDays - 1; i >= 0; i--) {
-        const key = toUtcDay(
-          new Date(now.getTime() - i * 86400000),
-        );
+        const key = toUtcDay(new Date(now.getTime() - i * 86400000));
         buckets.set(key, 0);
       }
 
       // Step 4: Query ad-view rows within the window and bucket by UTC day
-      const viewRows = (await strapi.db
-        .query("api::ad-view.ad-view")
-        .findMany({
-          where: {
-            ad: adId,
-            viewed_at: { $gte: windowStart },
-          },
-        })) as Array<{ viewed_at: Date | string }>;
+      const viewRows = (await strapi.db.query("api::ad-view.ad-view").findMany({
+        where: {
+          ad: adId,
+          viewed_at: { $gte: windowStart },
+        },
+      })) as Array<{ viewed_at: Date | string }>;
 
       for (const row of viewRows) {
         const key = toUtcDay(new Date(row.viewed_at));
@@ -196,7 +189,13 @@ export default factories.createCoreService(
       const keys = Array.from(buckets.keys());
       if (keys[keys.length - 1] !== todayKey) {
         // Off-by-one in bucket generation — return zeros rather than silently wrong data
-        return { total, series: Array(clampedDays).fill(0) as number[], contacts, conversion, avgPerDay };
+        return {
+          total,
+          series: Array(clampedDays).fill(0) as number[],
+          contacts,
+          conversion,
+          avgPerDay,
+        };
       }
 
       return { total, series, contacts, conversion, avgPerDay };
@@ -217,12 +216,10 @@ export default factories.createCoreService(
     ): Promise<Record<number, number>> {
       if (adIds.length === 0) return {};
 
-      const rows = (await strapi.db
-        .query("api::ad-view.ad-view")
-        .findMany({
-          where: { ad: { $in: adIds } },
-          populate: { ad: { fields: ["id"] } },
-        })) as Array<{ ad?: { id: number } | null }>;
+      const rows = (await strapi.db.query("api::ad-view.ad-view").findMany({
+        where: { ad: { $in: adIds } },
+        populate: { ad: { fields: ["id"] } },
+      })) as Array<{ ad?: { id: number } | null }>;
 
       const counts: Record<number, number> = {};
       for (const row of rows) {

@@ -12,7 +12,10 @@
 // Mock the @strapi/strapi factory — return the inner factory function as the service object
 jest.mock("@strapi/strapi", () => ({
   factories: {
-    createCoreService: (_uid: string, fn: (opts: { strapi: unknown }) => unknown) => fn,
+    createCoreService: (
+      _uid: string,
+      fn: (opts: { strapi: unknown }) => unknown,
+    ) => fn,
   },
 }));
 
@@ -85,7 +88,10 @@ describe("ad-contact service — getUserTotalContacts", () => {
   it("returns the total contact count across the user's active ads", async () => {
     const activeAds = [{ id: 10 }, { id: 20 }, { id: 30 }];
     const contactCount = 42;
-    const { mockStrapi, mockCount } = buildMockStrapi({ activeAds, contactCount });
+    const { mockStrapi, mockCount } = buildMockStrapi({
+      activeAds,
+      contactCount,
+    });
     const service = (
       serviceFactory as (opts: { strapi: unknown }) => {
         getUserTotalContacts: (userId: number) => Promise<number>;

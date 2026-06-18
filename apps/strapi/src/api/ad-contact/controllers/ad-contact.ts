@@ -22,7 +22,9 @@ export default factories.createCoreController(
       const { type } = ctx.request.body as Record<string, unknown>;
 
       if (!type || (type !== "call" && type !== "message")) {
-        return ctx.badRequest("Invalid contact type. Must be 'call' or 'message'.");
+        return ctx.badRequest(
+          "Invalid contact type. Must be 'call' or 'message'.",
+        );
       }
 
       const ip = ctx.request.ip ?? "unknown";

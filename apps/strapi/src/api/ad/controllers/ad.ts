@@ -780,13 +780,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
       const adRecord = result.ad as Record<string, unknown>;
       await strapi
         .service("api::ad-view.ad-view")
-        .recordView(
-          adRecord.documentId as string,
-          userId,
-          "detail",
-          ip,
-          ua,
-        );
+        .recordView(adRecord.documentId as string, userId, "detail", ip, ua);
 
       // Managers see the full ad; public and owners get sanitized data
       const adData =
