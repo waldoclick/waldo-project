@@ -1,5 +1,9 @@
 <template>
-  <article class="card card--announcement" role="article">
+  <article
+    class="card card--announcement"
+    :class="{ 'card--announcement--sold': sold }"
+    role="article"
+  >
     <NuxtLink
       :to="`/anuncios/${all.slug}`"
       :title="all.name"
@@ -18,7 +22,24 @@
         remote
       />
       <span
-        v-if="galleryCount > 0"
+        v-if="sold"
+        class="card--announcement__media__veil"
+        aria-hidden="true"
+      ></span>
+      <span
+        v-if="sold"
+        class="card--announcement__media__sold"
+        role="status"
+        aria-label="Anuncio vendido"
+      >
+        <IconCheck
+          :size="12"
+          class="card--announcement__media__sold__icon"
+        />
+        Vendido
+      </span>
+      <span
+        v-if="!sold && galleryCount > 0"
         class="card--announcement__media__count"
         aria-label="Cantidad de imágenes del anuncio"
       >
@@ -26,7 +47,7 @@
         {{ photosLabel }}
       </span>
       <span
-        v-if="isFeatured"
+        v-if="!sold && isFeatured"
         class="card--announcement__media__featured"
         role="status"
         aria-label="Anuncio destacado"
@@ -63,7 +84,7 @@
       </h3>
 
       <span
-        v-if="metaLine"
+        v-if="!sold && metaLine"
         class="card--announcement__body__meta"
         aria-label="Detalles del anuncio"
       >
@@ -76,31 +97,44 @@
         aria-label="Precio del anuncio"
       >
         <strong>{{ formattedCurrency }}</strong>
-        <span aria-hidden="true">+ IVA</span>
+        <span v-if="!sold" aria-hidden="true">+ IVA</span>
       </div>
 
-      <NuxtLink
-        v-if="!user"
-        to="/login"
-        class="card--announcement__body__reminder"
-        aria-label="Iniciar sesión para ver al anunciante"
+      <template v-if="!sold">
+        <NuxtLink
+          v-if="!user"
+          to="/login"
+          class="card--announcement__body__reminder"
+          aria-label="Iniciar sesión para ver al anunciante"
+        >
+          <IconLock
+            :size="13"
+            class="card--announcement__body__reminder__icon"
+          />
+          Inicia sesión para ver al anunciante
+        </NuxtLink>
+        <NuxtLink
+          v-else-if="
+            route.params.slug !== getUser.username &&
+            getUser.pro_status === 'active'
+          "
+          :to="`/${getUser.username}`"
+          class="card--announcement__body__seller"
+          :title="'Ver perfil de ' + getUser.firstname"
+          aria-label="Información del vendedor"
+        >
+          <IconUser :size="14" class="card--announcement__body__seller__icon" />
+          {{ getUser.firstname }}
+        </NuxtLink>
+      </template>
+
+      <span
+        v-if="sold && soldWhen"
+        class="card--announcement__body__sold"
+        aria-label="Fecha de venta"
       >
-        <IconLock :size="13" class="card--announcement__body__reminder__icon" />
-        Inicia sesión para ver al anunciante
-      </NuxtLink>
-      <NuxtLink
-        v-else-if="
-          route.params.slug !== getUser.username &&
-          getUser.pro_status === 'active'
-        "
-        :to="`/${getUser.username}`"
-        class="card--announcement__body__seller"
-        :title="'Ver perfil de ' + getUser.firstname"
-        aria-label="Información del vendedor"
-      >
-        <IconUser :size="14" class="card--announcement__body__seller__icon" />
-        {{ getUser.firstname }}
-      </NuxtLink>
+        Vendido {{ soldWhen }}
+      </span>
     </div>
   </article>
 </template>
@@ -116,6 +150,7 @@ import {
   MapPin as IconPin,
   Lock as IconLock,
   User as IconUser,
+  Check as IconCheck,
 } from "lucide-vue-next";
 
 const user = useSessionUser();
@@ -129,6 +164,14 @@ const props = defineProps({
   all: {
     type: Object as () => Ad,
     default: () => ({}),
+  },
+  sold: {
+    type: Boolean,
+    default: false,
+  },
+  soldWhen: {
+    type: String,
+    default: "",
   },
 });
 

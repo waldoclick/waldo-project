@@ -597,6 +597,33 @@
         object-fit: cover;
       }
 
+      &__veil {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        background: rgba(38, 37, 43, 0.18);
+      }
+
+      &__sold {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 2;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: $ink;
+        color: $white;
+        font-weight: 700;
+        font-size: 11.5px;
+        padding: 5px 11px;
+        border-radius: 4px;
+
+        &__icon {
+          color: $white;
+        }
+      }
+
       &__count {
         position: absolute;
         top: 10px;
@@ -747,6 +774,29 @@
           color: $muted;
           flex: none;
         }
+      }
+
+      &__sold {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 6px;
+        padding-top: 12px;
+        border-top: 1px solid $line;
+        font-size: 12.5px;
+        color: $muted;
+      }
+    }
+
+    &--sold {
+      .card--announcement__body__title a {
+        color: $ink2;
+      }
+
+      .card--announcement__body__price strong {
+        color: $muted;
+        font-size: 16px;
+        text-decoration: line-through;
       }
     }
   }
