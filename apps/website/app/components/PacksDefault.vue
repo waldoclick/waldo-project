@@ -14,13 +14,12 @@
       </div>
       <div class="packs--default__list">
         <client-only>
-          <template v-for="(item, index) in packs" :key="index">
-            <CardPack
-              v-if="item.total_ads > 1"
-              :pack="item"
-              :all-packs="packs"
-            />
-          </template>
+          <CardPack
+            v-for="(item, index) in displayPacks"
+            :key="index"
+            :pack="item"
+            :all-packs="packs"
+          />
         </client-only>
       </div>
     </div>
@@ -39,6 +38,19 @@ const props = defineProps<{
 
 const showHead = computed(() => props.showHead ?? false);
 const { getMaxSavingsPct } = usePacks();
+
+// Display only the 3 intended packs: filter out single-ad pack (total_ads <= 1)
+// then deduplicate by total_ads (DB has duplicate 60-ads records), keeping first occurrence.
+// Result: 15 / 30 / 60 avisos — exactly 3 cards.
+const displayPacks = computed(() => {
+  const seen = new Set<number>();
+  return props.packs.filter((item) => {
+    if (item.total_ads <= 1) return false;
+    if (seen.has(item.total_ads)) return false;
+    seen.add(item.total_ads);
+    return true;
+  });
+});
 
 const maxSavings = computed(() => getMaxSavingsPct(props.packs) ?? 98);
 </script>
