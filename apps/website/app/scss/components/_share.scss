@@ -3,31 +3,42 @@
 .share {
   &--default {
     display: flex;
-    gap: 10px;
     align-items: center;
     justify-content: space-between;
+    gap: 12px;
 
-    span,
-    a,
-    button {
+    &__label {
+      font-size: 13px;
+      font-weight: 600;
+      color: $ink2;
+    }
+
+    &__actions {
       display: flex;
       align-items: center;
-      justify-content: center;
-      width: 32px;
-      height: 32px;
-    }
+      gap: 8px;
 
-    a,
-    button {
-      svg {
-        color: $dodger_blue;
+      &__item {
+        width: 34px;
+        height: 34px;
+        border-radius: 4px;
+        display: grid;
+        place-items: center;
+        background: $cream;
+        border: 1px solid $line;
+        cursor: pointer;
+        appearance: none;
+        font-family: inherit;
+        text-decoration: none;
+
+        &:hover {
+          background: $white;
+        }
+
+        &__check {
+          color: $success_strong;
+        }
       }
-    }
-
-    button {
-      appearance: none;
-      border: none;
-      background: transparent;
     }
   }
 }
