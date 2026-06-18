@@ -1,6 +1,6 @@
 <template>
   <Form
-    v-slot="{ errors, meta }"
+    v-slot="{ meta }"
     :validation-schema="schema"
     :initial-values="form"
     validate-on-mount
@@ -8,321 +8,451 @@
   >
     <client-only>
       <div class="form form--profile">
-        <!-- <pre>{{ user.is_company }}</pre> -->
+        <h2 class="form--profile__heading">Tipo de cuenta</h2>
+        <p class="form--profile__lead">
+          Elige cómo quieres aparecer. Cada pestaña tiene sus propios datos.
+        </p>
 
-        <div class="form__grid">
-          <!-- Is Company -->
-          <div class="form-group">
-            <label class="form-label" for="is_company">Tipo</label>
+        <div class="form--profile__segment" role="tablist">
+          <button
+            type="button"
+            class="form--profile__segment__btn"
+            :class="{
+              'form--profile__segment__btn--active': profileTab === 'natural',
+            }"
+            @click="profileTab = 'natural'"
+          >
+            <IconUser :size="15" />
+            Persona Natural
+          </button>
+          <button
+            type="button"
+            class="form--profile__segment__btn"
+            :class="{
+              'form--profile__segment__btn--active': profileTab === 'empresa',
+            }"
+            @click="profileTab = 'empresa'"
+          >
+            <IconBuilding :size="15" />
+            Empresa
+          </button>
+        </div>
+
+        <!-- Persona Natural -->
+        <div v-show="profileTab === 'natural'">
+          <h3 class="form--profile__subhead">Datos personales</h3>
+
+          <div class="form__grid">
+            <!-- Firstname -->
+            <div class="form-group">
+              <label class="form-label" for="firstname">Nombres</label>
+              <Field
+                v-model="form.firstname"
+                name="firstname"
+                type="text"
+                class="form-control"
+                maxlength="50"
+                @input="handleFirstnameInput"
+              />
+              <ErrorMessage name="firstname" />
+            </div>
+
+            <!-- Lastname -->
+            <div class="form-group">
+              <label class="form-label" for="lastname">Apellidos</label>
+              <Field
+                v-model="form.lastname"
+                name="lastname"
+                type="text"
+                class="form-control"
+                maxlength="50"
+                @input="handleLastnameInput"
+              />
+              <ErrorMessage name="lastname" />
+            </div>
+
+            <!-- Rut -->
+            <div class="form-group">
+              <label class="form-label" for="rut">RUT</label>
+              <Field
+                v-model="form.rut"
+                name="rut"
+                type="text"
+                class="form-control"
+                autocomplete="id"
+              />
+              <ErrorMessage name="rut" />
+            </div>
+
+            <!-- Birthdate -->
+            <div class="form-group">
+              <label class="form-label" for="birthdate"
+                >Fecha de nacimiento</label
+              >
+              <Field
+                v-model="form.birthdate"
+                name="birthdate"
+                type="date"
+                class="form-control"
+              />
+              <ErrorMessage name="birthdate" />
+            </div>
+
+            <!-- Phone -->
+            <div class="form-group">
+              <label class="form-label" for="phone">Teléfono</label>
+              <Field v-slot="{ field, handleChange: setPhone }" name="phone">
+                <InputPhone
+                  :value="field.value"
+                  @update:model-value="
+                    (val) => {
+                      setPhone(val);
+                      form.phone = val;
+                    }
+                  "
+                />
+              </Field>
+              <ErrorMessage name="phone" />
+            </div>
+
+            <!-- WhatsApp -->
+            <div class="form-group">
+              <label class="form-label" for="whatsapp">WhatsApp</label>
+              <Field
+                v-model="form.whatsapp"
+                name="whatsapp"
+                type="text"
+                class="form-control"
+                placeholder="+56 9 1234 5678"
+              />
+              <ErrorMessage name="whatsapp" />
+            </div>
+
+            <!-- Email (read-only) -->
+            <div class="form-group">
+              <label class="form-label" for="email">Correo electrónico</label>
+              <input
+                id="email"
+                :value="user.email"
+                type="text"
+                class="form-control"
+                disabled
+              />
+            </div>
+
+            <!-- Región -->
+            <div class="form-group">
+              <label class="form-label" for="region">Región</label>
+              <div class="form-group--select">
+                <Field
+                  v-model="selectedRegionId"
+                  as="select"
+                  name="region"
+                  class="form-control"
+                >
+                  <option value="">Seleccione una región</option>
+                  <option
+                    v-for="item in listRegions"
+                    :key="item.id"
+                    :value="item.id"
+                  >
+                    {{ item.name }}
+                  </option>
+                </Field>
+                <IconChevronDown
+                  class="form-group--select__chevron"
+                  :size="18"
+                />
+              </div>
+              <ErrorMessage name="region" />
+            </div>
+
+            <!-- Comuna -->
+            <div class="form-group">
+              <label class="form-label" for="commune">Comuna</label>
+              <div class="form-group--select">
+                <Field
+                  v-model="form.commune"
+                  as="select"
+                  name="commune"
+                  class="form-control"
+                >
+                  <option value="">Seleccione una comuna</option>
+                  <option
+                    v-for="item in filteredCommunes"
+                    :key="item.id"
+                    :value="item.id"
+                  >
+                    {{ item.name }}
+                  </option>
+                </Field>
+                <IconChevronDown
+                  class="form-group--select__chevron"
+                  :size="18"
+                />
+              </div>
+              <ErrorMessage name="commune" />
+            </div>
+
+            <!-- Address -->
+            <div class="form-group">
+              <label class="form-label" for="address">Dirección</label>
+              <Field
+                v-model="form.address"
+                name="address"
+                type="text"
+                class="form-control"
+              />
+              <ErrorMessage name="address" />
+            </div>
+
+            <!-- Address Number -->
+            <div class="form-group">
+              <label class="form-label" for="address_number">Número</label>
+              <Field
+                v-model="form.address_number"
+                name="address_number"
+                type="number"
+                class="form-control"
+                @input="handleAddressNumberInput"
+              />
+              <ErrorMessage name="address_number" />
+            </div>
+
+            <!-- Postal Code -->
+            <div class="form-group">
+              <label class="form-label" for="postal_code">Código postal</label>
+              <Field
+                v-model="form.postal_code"
+                name="postal_code"
+                type="number"
+                class="form-control"
+              />
+              <ErrorMessage name="postal_code" />
+            </div>
+          </div>
+
+          <!-- Bio -->
+          <div class="form-group form--profile__bio">
+            <label class="form-label" for="bio"
+              >Descripción pública (bio)</label
+            >
+            <Field
+              v-model="form.bio"
+              as="textarea"
+              name="bio"
+              class="form-control form--profile__bio__field"
+              maxlength="600"
+              placeholder="Cuenta a los compradores quién eres, qué vendes y cómo trabajas…"
+            />
+            <span class="form--profile__hint">
+              <IconGlobe :size="13" />
+              Aparece en tu perfil público, bajo tu nombre. Visible para
+              cualquier visitante.
+            </span>
+            <ErrorMessage name="bio" />
+          </div>
+        </div>
+
+        <!-- Empresa -->
+        <div v-show="profileTab === 'empresa'">
+          <label
+            class="form--profile__company"
+            :class="{ 'form--profile__company--on': form.is_company }"
+          >
             <Field
               v-model="form.is_company"
-              as="select"
               name="is_company"
-              class="form-control"
-            >
-              <option :value="null" disabled>Seleccione un tipo</option>
-              <option :value="false">Persona Natural</option>
-              <option :value="true">Empresa</option>
-            </Field>
-            <ErrorMessage name="is_company" />
-          </div>
-        </div>
-
-        <div class="form__subtitle">Datos Personales</div>
-
-        <div class="form__grid">
-          <!-- Fecha de Nacimiento -->
-          <div class="form-group">
-            <label class="form-label" for="birthdate"
-              >Fecha de Nacimiento *</label
-            >
-            <Field
-              v-model="form.birthdate"
-              name="birthdate"
-              type="date"
-              class="form-control"
+              type="checkbox"
+              :value="true"
+              :unchecked-value="false"
+              class="form--profile__company__check"
             />
-            <ErrorMessage name="birthdate" />
-          </div>
+            <span class="form--profile__company__body">
+              <span class="form--profile__company__title">
+                Quiero mostrarme como empresa
+              </span>
+              <span class="form--profile__company__text">
+                Marca esta casilla para habilitar y completar los datos de tu
+                empresa. Tu perfil y anuncios se mostrarán con el nombre de tu
+                empresa y tus compras se emitirán con
+                <strong>factura</strong>.
+              </span>
+            </span>
+          </label>
 
-          <!-- Firstname -->
-          <div class="form-group">
-            <label class="form-label" for="firstname">Nombres *</label>
-            <Field
-              v-model="form.firstname"
-              name="firstname"
-              type="text"
-              class="form-control"
-              maxlength="50"
-              @input="handleFirstnameInput"
-            />
-            <ErrorMessage name="firstname" />
-          </div>
+          <h3
+            class="form--profile__subhead"
+            :class="{ 'form--profile__subhead--muted': !form.is_company }"
+          >
+            Datos de la empresa
+          </h3>
 
-          <!-- Lastname -->
-          <div class="form-group">
-            <label class="form-label" for="lastname">Apellidos *</label>
-            <Field
-              v-model="form.lastname"
-              name="lastname"
-              type="text"
-              class="form-control"
-              maxlength="50"
-              @input="handleLastnameInput"
-            />
-            <ErrorMessage name="lastname" />
-          </div>
-
-          <!-- Rut -->
-          <div class="form-group">
-            <label class="form-label" for="rut">Rut *</label>
-            <Field
-              v-model="form.rut"
-              name="rut"
-              type="text"
-              class="form-control"
-              autocomplete="id"
-            />
-            <ErrorMessage name="rut" />
-          </div>
-
-          <!-- Phone -->
-          <div class="form-group">
-            <label class="form-label" for="phone">Teléfono *</label>
-            <Field v-slot="{ field, handleChange: setPhone }" name="phone">
-              <InputPhone
-                :value="field.value"
-                @update:model-value="
-                  (val) => {
-                    setPhone(val);
-                    form.phone = val;
-                  }
-                "
+          <div class="form__grid">
+            <div class="form-group">
+              <label class="form-label" for="business_name">Razón social</label>
+              <Field
+                v-model="form.business_name"
+                name="business_name"
+                type="text"
+                class="form-control"
+                maxlength="50"
+                :disabled="!form.is_company"
+                placeholder="Ej. Maestranza del Sur SpA"
+                @input="handleBusinessNameInput"
               />
-            </Field>
-            <ErrorMessage name="phone" />
-          </div>
+              <ErrorMessage name="business_name" />
+            </div>
 
-          <!-- Address -->
-          <div class="form-group">
-            <label class="form-label" for="address">Dirección *</label>
-            <Field
-              v-model="form.address"
-              name="address"
-              type="text"
-              class="form-control"
-            />
-            <ErrorMessage name="address" />
-          </div>
+            <div class="form-group">
+              <label class="form-label" for="business_type">Giro</label>
+              <Field
+                v-model="form.business_type"
+                name="business_type"
+                type="text"
+                class="form-control"
+                maxlength="80"
+                :disabled="!form.is_company"
+                placeholder="Ej. Venta de maquinaria"
+                @input="handleBusinessTypeInput"
+              />
+              <ErrorMessage name="business_type" />
+            </div>
 
-          <!-- Address Number -->
-          <div class="form-group">
-            <label class="form-label" for="address_number"
-              >Número de Dirección *</label
-            >
-            <Field
-              v-model="form.address_number"
-              name="address_number"
-              type="number"
-              class="form-control"
-              @input="handleAddressNumberInput"
-            />
-            <ErrorMessage name="address_number" />
-          </div>
+            <div class="form-group">
+              <label class="form-label" for="business_rut">RUT empresa</label>
+              <Field
+                v-model="form.business_rut"
+                name="business_rut"
+                type="text"
+                class="form-control"
+                :disabled="!form.is_company"
+                placeholder="76.123.456-7"
+              />
+              <ErrorMessage name="business_rut" />
+            </div>
 
-          <!-- Postal Code -->
-          <div class="form-group">
-            <label class="form-label" for="postal_code">Código Postal</label>
-            <Field
-              v-model="form.postal_code"
-              name="postal_code"
-              type="number"
-              class="form-control"
-            />
-            <ErrorMessage name="postal_code" />
-          </div>
-
-          <!-- Región -->
-          <div class="form-group">
-            <!-- <pre>{{ selectedRegionId }}</pre> -->
-            <label class="form-label" for="region">Región *</label>
-            <Field
-              v-model="selectedRegionId"
-              as="select"
-              name="region"
-              class="form-control"
-            >
-              <option value="">Seleccione una región</option>
-              <option
-                v-for="item in listRegions"
-                :key="item.id"
-                :value="item.id"
+            <div class="form-group">
+              <label class="form-label" for="business_address"
+                >Dirección empresa</label
               >
-                {{ item.name }}
-              </option>
-            </Field>
-            <ErrorMessage name="region" />
-          </div>
+              <Field
+                v-model="form.business_address"
+                name="business_address"
+                type="text"
+                class="form-control"
+                :disabled="!form.is_company"
+                placeholder="Calle y número"
+              />
+              <ErrorMessage name="business_address" />
+            </div>
 
-          <!-- Comuna -->
-          <div class="form-group">
-            <!-- <pre>{{ form.commune }}</pre> -->
-            <label class="form-label" for="commune">Comuna *</label>
-            <Field
-              v-model="form.commune"
-              as="select"
-              name="commune"
-              class="form-control"
-            >
-              <option value="">Seleccione una comuna</option>
-              <option
-                v-for="item in filteredCommunes"
-                :key="item.id"
-                :value="item.id"
+            <div class="form-group">
+              <label class="form-label" for="business_address_number"
+                >Número empresa</label
               >
-                {{ item.name }}
-              </option>
-            </Field>
-            <ErrorMessage name="commune" />
+              <Field
+                v-model="form.business_address_number"
+                name="business_address_number"
+                type="number"
+                class="form-control"
+                :disabled="!form.is_company"
+                @input="handleBusinessAddressNumberInput"
+              />
+              <ErrorMessage name="business_address_number" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="business_postal_code"
+                >Código postal empresa</label
+              >
+              <Field
+                v-model="form.business_postal_code"
+                name="business_postal_code"
+                type="number"
+                class="form-control"
+                :disabled="!form.is_company"
+              />
+              <ErrorMessage name="business_postal_code" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="business_region"
+                >Región empresa</label
+              >
+              <div class="form-group--select">
+                <Field
+                  v-model="selectedBusinessRegionId"
+                  as="select"
+                  name="business_region"
+                  class="form-control"
+                  :disabled="!form.is_company"
+                >
+                  <option value="">Seleccione una región</option>
+                  <option
+                    v-for="item in listRegions"
+                    :key="item.id"
+                    :value="item.id"
+                  >
+                    {{ item.name }}
+                  </option>
+                </Field>
+                <IconChevronDown
+                  class="form-group--select__chevron"
+                  :size="18"
+                />
+              </div>
+              <ErrorMessage name="business_region" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="business_commune"
+                >Comuna empresa</label
+              >
+              <div class="form-group--select">
+                <Field
+                  v-model="form.business_commune"
+                  as="select"
+                  name="business_commune"
+                  class="form-control"
+                  :disabled="!form.is_company"
+                >
+                  <option value="">Seleccione una comuna</option>
+                  <option
+                    v-for="item in filteredBusinessCommunes"
+                    :key="item.id"
+                    :value="item.id"
+                  >
+                    {{ item.name }}
+                  </option>
+                </Field>
+                <IconChevronDown
+                  class="form-group--select__chevron"
+                  :size="18"
+                />
+              </div>
+              <ErrorMessage name="business_commune" />
+            </div>
           </div>
         </div>
 
-        <div v-if="form.is_company" class="form__subtitle">
-          Datos de la Empresa
+        <!-- Actions -->
+        <div class="form--profile__actions">
+          <NuxtLink to="/cuenta/perfil" class="btn btn--secondary">
+            Cancelar
+          </NuxtLink>
+          <button
+            :disabled="
+              !meta.valid || sending || (!onboardingMode && !hasChanges)
+            "
+            :title="`Guardar cambios`"
+            type="submit"
+            class="btn btn--primary"
+          >
+            <span v-if="!sending">Guardar cambios</span>
+            <span v-if="sending">Guardando…</span>
+          </button>
         </div>
-
-        <div v-if="form.is_company" class="form__grid">
-          <div class="form-group">
-            <label class="form-label" for="business_name">Razón Social *</label>
-            <Field
-              v-model="form.business_name"
-              name="business_name"
-              type="text"
-              class="form-control"
-              maxlength="50"
-              @input="handleBusinessNameInput"
-            />
-            <ErrorMessage name="business_name" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="business_type">Giro *</label>
-            <Field
-              v-model="form.business_type"
-              name="business_type"
-              type="text"
-              class="form-control"
-              maxlength="80"
-              @input="handleBusinessTypeInput"
-            />
-            <ErrorMessage name="business_type" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="business_rut">Rut Empresa *</label>
-            <Field
-              v-model="form.business_rut"
-              name="business_rut"
-              type="text"
-              class="form-control"
-            />
-            <ErrorMessage name="business_rut" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="business_address"
-              >Dirección Empresa *</label
-            >
-            <Field
-              v-model="form.business_address"
-              name="business_address"
-              type="text"
-              class="form-control"
-            />
-            <ErrorMessage name="business_address" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="business_address_number"
-              >Número de Dirección Empresa *</label
-            >
-            <Field
-              v-model="form.business_address_number"
-              name="business_address_number"
-              type="number"
-              class="form-control"
-              @input="handleBusinessAddressNumberInput"
-            />
-            <ErrorMessage name="business_address_number" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="business_postal_code"
-              >Código Postal Empresa</label
-            >
-            <Field
-              v-model="form.business_postal_code"
-              name="business_postal_code"
-              type="number"
-              class="form-control"
-            />
-            <ErrorMessage name="business_postal_code" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="business_region"
-              >Región Empresa *</label
-            >
-            <Field
-              v-model="selectedBusinessRegionId"
-              as="select"
-              name="business_region"
-              class="form-control"
-            >
-              <option value="">Seleccione una región</option>
-              <option
-                v-for="item in listRegions"
-                :key="item.id"
-                :value="item.id"
-              >
-                {{ item.name }}
-              </option>
-            </Field>
-            <ErrorMessage name="business_region" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="business_commune"
-              >Comuna Empresa *</label
-            >
-            <Field
-              v-model="form.business_commune"
-              as="select"
-              name="business_commune"
-              class="form-control"
-            >
-              <!-- <option value="">Seleccione una comuna</option> -->
-              <option
-                v-for="item in filteredBusinessCommunes"
-                :key="item.id"
-                :value="item.id"
-              >
-                {{ item.name }}
-              </option>
-            </Field>
-            <ErrorMessage name="business_commune" />
-          </div>
-        </div>
-
-        <button
-          :disabled="!meta.valid || sending || (!onboardingMode && !hasChanges)"
-          :title="`Actualizar`"
-          type="submit"
-          class="btn btn--block btn--buy"
-        >
-          <span v-if="!sending">Actualizar</span>
-          <span v-if="sending">Actualizando...</span>
-        </button>
       </div>
     </client-only>
   </Form>
@@ -331,6 +461,12 @@
 <script setup>
 import { ref, computed, onMounted, watch } from "vue";
 import { Field, Form, ErrorMessage } from "vee-validate";
+import {
+  User as IconUser,
+  Building2 as IconBuilding,
+  ChevronDown as IconChevronDown,
+  Globe as IconGlobe,
+} from "lucide-vue-next";
 import * as yup from "yup";
 
 const emit = defineEmits(["success"]);
@@ -343,7 +479,6 @@ import { useNuxtApp } from "#app";
 import { useRut } from "@/composables/useRut";
 import { useLogger } from "@/composables/useLogger";
 import { useValidation } from "@/composables/useValidation";
-import { useRouter } from "vue-router";
 
 import { useRegionsStore } from "@/stores/regions.store";
 import { useCommunesStore } from "@/stores/communes.store";
@@ -351,7 +486,9 @@ import { useUserStore } from "@/stores/user.store";
 
 const sending = ref(false);
 
-const router = useRouter();
+// Which account-type panel is being edited. Pure UI state — independent of
+// is_company (the checkbox inside the Empresa panel drives company status).
+const profileTab = ref("natural");
 
 const regionsStore = import.meta.client
   ? useRegionsStore()
@@ -404,6 +541,8 @@ const initialFormValues = ref({
   lastname: user.value.lastname || "",
   rut: user.value.rut || "",
   phone: user.value.phone || "",
+  whatsapp: user.value.whatsapp || "",
+  bio: user.value.bio || "",
   address: user.value.address || "",
   address_number: user.value.address_number || "",
   postal_code: user.value.postal_code || "",
@@ -437,6 +576,8 @@ const form = ref({
   lastname: user.value.lastname || "",
   rut: user.value.rut || "",
   phone: user.value.phone || "",
+  whatsapp: user.value.whatsapp || "",
+  bio: user.value.bio || "",
   address: user.value.address || "",
   address_number: user.value.address_number || "",
   postal_code: user.value.postal_code || "",
@@ -459,6 +600,11 @@ const form = ref({
     normalizeId(user.value.business_commune?.region?.id),
   business_commune: user.value.business_commune?.id || null,
 });
+
+// Open the Empresa panel by default when the user is already a company.
+if (form.value.is_company) {
+  profileTab.value = "empresa";
+}
 
 // Watch para formatear el RUT al ir ingresándolo
 watch(
@@ -520,6 +666,19 @@ const schema = yup.object({
       /^[\d\s()+-]+$/,
       "El teléfono solo puede contener números, +, espacios, paréntesis y guiones",
     ),
+  whatsapp: yup
+    .string()
+    .nullable()
+    .max(20, "El WhatsApp no puede exceder los 20 caracteres")
+    .matches(/^[\d\s()+-]*$/, {
+      message:
+        "El WhatsApp solo puede contener números, +, espacios, paréntesis y guiones",
+      excludeEmptyString: true,
+    }),
+  bio: yup
+    .string()
+    .nullable()
+    .max(600, "La descripción no puede exceder los 600 caracteres"),
   address: yup
     .string()
     .required("Dirección es requerida")

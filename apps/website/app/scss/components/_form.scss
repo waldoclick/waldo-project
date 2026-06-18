@@ -706,4 +706,151 @@ input:-webkit-autofill {
     font-weight: 500;
     margin-left: 5px;
   }
+
+  // 9. Profile editor (FormProfile — design/account.dc.html lines 368-416)
+  .form--profile {
+    &__heading {
+      font-weight: 700;
+      color: $ink;
+      font-size: 18px;
+      margin: 0;
+    }
+
+    &__lead {
+      font-size: 13.5px;
+      color: $ink2;
+      margin: 6px 0 0;
+    }
+
+    // Segmented account-type toggle (Persona Natural / Empresa)
+    &__segment {
+      display: flex;
+      gap: 4px;
+      max-width: 400px;
+      margin-top: 14px;
+      padding: 4px;
+      background: $cream;
+      border: 1px solid $line;
+      border-radius: 8px;
+
+      &__btn {
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 13.5px;
+        font-weight: 600;
+        padding: 9px 14px;
+        border-radius: 5px;
+        background: transparent;
+        color: $muted;
+
+        &--active {
+          background: #fff;
+          color: $ink;
+        }
+      }
+    }
+
+    &__subhead {
+      font-weight: 700;
+      color: $ink;
+      font-size: 15px;
+      margin: 26px 0 16px;
+
+      &--muted {
+        color: $muted;
+      }
+    }
+
+    // Public bio textarea
+    &__bio {
+      margin-top: 18px;
+
+      &__field {
+        min-height: 88px;
+        line-height: 1.5;
+        resize: vertical;
+      }
+    }
+
+    &__hint {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: $muted;
+      margin-top: 6px;
+    }
+
+    // "Quiero mostrarme como empresa" checkbox card
+    &__company {
+      display: flex;
+      align-items: flex-start;
+      gap: 13px;
+      margin-top: 22px;
+      padding: 16px 18px;
+      border: 1px solid $line;
+      background: $cream;
+      border-radius: 10px;
+      cursor: pointer;
+
+      &--on {
+        border-color: $amber_hover;
+        background: $amber_tint;
+      }
+
+      &__check {
+        flex: none;
+        width: 18px;
+        height: 18px;
+        margin-top: 1px;
+        accent-color: $amber_hover;
+        cursor: pointer;
+      }
+
+      &__body {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+
+      &__title {
+        font-weight: 700;
+        color: $ink;
+        font-size: 14.5px;
+      }
+
+      &__text {
+        font-size: 13px;
+        color: $ink2;
+        margin-top: 3px;
+        line-height: 1.5;
+
+        strong {
+          color: $ink;
+          font-weight: 600;
+        }
+      }
+    }
+
+    // Footer actions (Cancelar / Guardar cambios)
+    &__actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 28px;
+      padding-top: 22px;
+      border-top: 1px solid $line;
+
+      .btn {
+        border-radius: 6px;
+      }
+    }
+  }
 }

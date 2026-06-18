@@ -103,6 +103,9 @@
     "phone": {
       "type": "string"
     },
+    "whatsapp": {
+      "type": "string"
+    },
     "is_company": {
       "type": "boolean",
       "default": false
@@ -130,6 +133,10 @@
     },
     "postal_code": {
       "type": "string"
+    },
+    "bio": {
+      "type": "text",
+      "maxLength": 600
     },
     "business_name": {
       "type": "string"
