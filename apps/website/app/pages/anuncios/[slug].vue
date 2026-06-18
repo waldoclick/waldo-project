@@ -5,6 +5,11 @@
       :name="adComputed.name"
       :category="(adComputed.category as Record<string, any>) || {}"
       :user="adComputed.user"
+      :published="
+        (adComputed as Record<string, any>).publishedAt ||
+        adComputed.createdAt ||
+        ''
+      "
     />
     <AdSingle :all="adComputed" :access="adAccess ?? undefined" />
     <RelatedAds

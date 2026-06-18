@@ -533,98 +533,133 @@
   }
 
   &--announcement {
+    padding-top: 0;
+    border-bottom: 1px solid $line;
+
     &__container {
       @extend .container;
       display: flex;
-      gap: 20px;
-      align-items: center;
+      gap: 24px;
+      align-items: flex-end;
       justify-content: space-between;
+      flex-wrap: wrap;
+      padding-top: 104px;
+      padding-bottom: 34px;
 
-      @include screen-large {
-        flex-direction: column;
+      @include screen-medium {
+        padding-top: 96px;
+      }
+
+      @include screen-small {
         align-items: flex-start;
       }
     }
 
     &__content {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
+      min-width: 0;
     }
 
     &__breadcrumbs {
-      // margin-bottom: 30px;
       display: flex;
+      align-items: center;
+      gap: 9px;
+      flex-wrap: wrap;
+      font-size: 13.5px;
+      margin-bottom: 18px;
+
+      &__link {
+        color: $muted;
+        text-decoration: none;
+
+        &:hover {
+          color: $ink;
+        }
+      }
+
+      &__sep {
+        flex: none;
+        color: $silver;
+      }
+
+      &__current {
+        color: $ink;
+        font-weight: 600;
+      }
     }
 
     &__title {
-      margin-bottom: 0;
+      font-family: "Poppins", sans-serif;
+      font-weight: 800;
+      color: $ink;
+      font-size: clamp(30px, 3.4vw, 44px);
+      letter-spacing: -0.8px;
+      line-height: 1.05;
+      margin: 0;
     }
 
-    &__tags {
-      // margin-top: 20px;
-
-      span {
-        font-size: 14px;
-        line-height: 24px;
-        letter-spacing: 0.25px;
-        color: $charcoal;
-        padding-right: 10px;
-        margin-right: 10px;
-        position: relative;
-
-        &:last-child {
-          margin-right: 0px;
-        }
-
-        a {
-          text-decoration: underline !important;
-          color: $charcoal;
-        }
-
-        &:after {
-          content: "";
-          display: block;
-          width: 1px;
-          height: 100%;
-          background-color: $charcoal;
-          position: absolute;
-          top: 0;
-          bottom: 0;
-          right: 0;
-        }
-
-        &:last-child {
-          &:after {
-            display: none;
-          }
-        }
-      }
-    }
-
-    &__qr {
+    &__meta {
       display: flex;
-      justify-content: center;
       align-items: center;
-      position: relative;
-      z-index: 2;
-      border: 2px solid $charcoal;
-      overflow: hidden;
-      transition: all 0.3s ease;
+      gap: 18px;
+      flex-wrap: wrap;
+      margin-top: 15px;
+
+      &__pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: $white;
+        color: $ink2;
+        font-weight: 600;
+        font-size: 12.5px;
+        padding: 5px 11px;
+        border-radius: 4px;
+        border: 1px solid $line;
+
+        &__dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          flex: none;
+        }
+      }
+
+      &__item {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 13.5px;
+        color: $ink2;
+        font-weight: 500;
+
+        &__icon {
+          flex: none;
+          color: $muted;
+        }
+      }
+    }
+
+    &__back {
+      flex: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      color: $ink;
+      background: $white;
+      border: 1px solid $line;
+      padding: 11px 18px;
       border-radius: 4px;
-      padding: 2px;
-      background-color: white;
-
-      @include screen-large {
-        display: none;
-      }
-
-      svg {
-        float: left;
-      }
 
       &:hover {
-        border-color: $light_peach;
+        border-color: $ink;
+      }
+
+      &__icon {
+        flex: none;
+        color: $ink;
       }
     }
   }

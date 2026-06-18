@@ -2,70 +2,75 @@
   <section ref="heroElement" class="hero hero--announcement">
     <div class="hero--announcement__container">
       <div class="hero--announcement__content">
-        <div class="hero--announcement__breadcrumbs">
-          <BreadcrumbsDefault
-            :items="[
-              { label: 'Anuncios', to: '/anuncios' },
-              {
-                label: getCategory.name,
-                to: `/anuncios?category=${getCategory.slug}`,
-              },
-              { label: getTitle },
-            ]"
+        <nav class="hero--announcement__breadcrumbs">
+          <nuxt-link class="hero--announcement__breadcrumbs__link" to="/">
+            Waldo
+          </nuxt-link>
+          <ChevronRight
+            class="hero--announcement__breadcrumbs__sep"
+            :size="14"
           />
-        </div>
-        <div class="hero--announcement__title">
-          <h1 class="title">
+          <nuxt-link
+            class="hero--announcement__breadcrumbs__link"
+            to="/anuncios"
+          >
+            Anuncios
+          </nuxt-link>
+          <ChevronRight
+            class="hero--announcement__breadcrumbs__sep"
+            :size="14"
+          />
+          <nuxt-link
+            class="hero--announcement__breadcrumbs__link"
+            :to="`/anuncios?category=${getCategory.slug}`"
+          >
+            {{ getCategory.name }}
+          </nuxt-link>
+          <ChevronRight
+            class="hero--announcement__breadcrumbs__sep"
+            :size="14"
+          />
+          <span class="hero--announcement__breadcrumbs__current">
             {{ getTitle }}
-          </h1>
-        </div>
-        <div v-if="getUser" class="hero--announcement__tags">
-          <template v-if="isLoggedIn">
-            <span>
-              Por
-              <!-- <pre>{{ getUser }}</pre> -->
-              <nuxt-link
-                :to="`/${getUser?.username}`"
-                :title="getUser?.firstname"
-              >
-                {{ getUser?.firstname }}
-              </nuxt-link>
-            </span>
-            <span>
-              <!-- prettier-ignore -->
-              <nuxt-link
-                to="/anunciar"
-                title="Publicar anuncio similar a este"
-              >Publicar anuncio similar a este</nuxt-link>
-            </span>
-          </template>
-          <template v-else>
-            <ReminderDefault />
-          </template>
+          </span>
+        </nav>
+
+        <h1 class="hero--announcement__title">
+          {{ getTitle }}
+        </h1>
+
+        <div class="hero--announcement__meta">
+          <span
+            v-if="getCategory.name"
+            class="hero--announcement__meta__pill"
+          >
+            <span
+              class="hero--announcement__meta__pill__dot"
+              :style="{ backgroundColor: getCategory.color || '#8a8794' }"
+            />
+            {{ getCategory.name }}
+          </span>
+          <span
+            v-if="publishedLabel"
+            class="hero--announcement__meta__item"
+          >
+            <Clock class="hero--announcement__meta__item__icon" :size="15" />
+            Publicado {{ publishedLabel }}
+          </span>
         </div>
       </div>
-      <div v-if="props.user" class="hero--announcement__qr">
-        <QrDefault
-          size="120"
-          :business-card="{
-            firstname: props.user.firstname,
-            lastname: props.user.lastname,
-            phone: props.user.phone,
-            email: props.user.email,
-            is_company: props.user.is_company,
-            business_name: props.user.business_name,
-          }"
-        />
-      </div>
+
+      <nuxt-link to="/anuncios" class="hero--announcement__back">
+        <ArrowLeft class="hero--announcement__back__icon" :size="16" />
+        Volver a resultados
+      </nuxt-link>
     </div>
   </section>
 </template>
 
 <script setup>
 import { computed, ref, onMounted, watch } from "vue";
-import BreadcrumbsDefault from "@/components/BreadcrumbsDefault.vue";
-import QrDefault from "@/components/QrDefault.vue";
-import ReminderDefault from "@/components/ReminderDefault.vue";
+import { ChevronRight, Clock, ArrowLeft } from "lucide-vue-next";
 import { useColor } from "../composables/useColor";
 
 const props = defineProps({
@@ -81,16 +86,13 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  published: {
+    type: String,
+    default: "",
+  },
 });
 
-const { hexToRgba, bgColorWithTransparency } = useColor();
-
-const authUser = useSessionUser();
-const isLoggedIn = computed(() => !!authUser.value);
-
-const getUser = computed(() => {
-  return props.user;
-});
+const { bgColorWithTransparency } = useColor();
 
 const getTitle = computed(() => {
   return props.name;
@@ -98,6 +100,17 @@ const getTitle = computed(() => {
 
 const getCategory = computed(() => {
   return props.category;
+});
+
+const publishedLabel = computed(() => {
+  if (!props.published) return "";
+  const date = new Date(props.published);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleDateString("es-CL", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 });
 
 // Referencia al elemento hero
