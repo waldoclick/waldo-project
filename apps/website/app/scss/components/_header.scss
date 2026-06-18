@@ -246,12 +246,12 @@
     will-change: transform;
     width: calc(100% - 350px);
     height: 64px;
-    background-color: #ffffff;
-    border-bottom: 1px solid #e5e5e5;
+    background-color: $white;
+    border-bottom: 1px solid $line;
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    padding: 0 24px;
+    padding: 0 36px;
 
     &--hidden {
       transform: translateY(-100%);
@@ -264,7 +264,15 @@
     &__right {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 6px;
+    }
+
+    &__divider {
+      flex: none;
+      width: 1px;
+      height: 26px;
+      background: $line;
+      margin: 0 4px;
     }
 
     &__hamburger {

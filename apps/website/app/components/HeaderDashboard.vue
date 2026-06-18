@@ -16,6 +16,7 @@
     </div>
     <div class="header--dashboard__right">
       <ToolbarDefault v-if="user" />
+      <span v-if="user" class="header--dashboard__divider" />
       <MenuUser v-if="user" />
     </div>
   </header>
