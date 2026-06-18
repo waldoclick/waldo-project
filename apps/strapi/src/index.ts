@@ -56,11 +56,14 @@ export default {
       console.error("Error backfilling sort_priority:", error);
     }
 
-    // Grant the Authenticated role the stats action permissions on every boot.
+    // Grant real-user roles the stats/order action permissions on every boot.
+    // Both "authenticated" and "manager" are real end-user roles (manager only
+    // adds /dashboard access) — every account-area endpoint must be granted to
+    // both, or manager users hit 403 (e.g. Total invertido $0, Contactos $0).
     // Idempotent: skips any action already present (guards against duplicate rows).
     // v5 permission content-type has only action + role (no extra flag field).
     // recordContact route is auth:false so this grant is a no-op for access;
-    // kept for D-05 fidelity. Real 403→200 flips: stats, panelViewsTotal, contactsTotal.
+    // kept for D-05 fidelity.
     try {
       const statsActionUIDs = [
         "api::ad-view.ad-view.stats",
@@ -70,36 +73,39 @@ export default {
         "api::order.order.meSummary",
       ];
 
-      const role = await strapi.db
+      const roles = await strapi.db
         .query("plugin::users-permissions.role")
-        .findOne({
-          where: { type: "authenticated" },
+        .findMany({
+          where: { type: { $in: ["authenticated", "manager"] } },
           populate: ["permissions"],
         });
 
-      if (!role) {
+      if (!roles.length) {
         console.warn(
-          "stats permissions grant: Authenticated role not found — skipping",
+          "stats permissions grant: no end-user roles found — skipping",
         );
       } else {
-        // Cast each permission row as { action: string } — v5 shape has only action + role
-        const existing = new Set(
-          (role.permissions as Array<{ action: string }>).map((p) => p.action),
-        );
-
         let created = 0;
-        for (const uid of statsActionUIDs) {
-          if (!existing.has(uid)) {
-            await strapi.db
-              .query("plugin::users-permissions.permission")
-              .create({ data: { action: uid, role: role.id } });
-            created++;
+        for (const role of roles) {
+          // Cast each permission row as { action: string } — v5 shape is action + role
+          const existing = new Set(
+            (role.permissions as Array<{ action: string }>).map(
+              (p) => p.action,
+            ),
+          );
+
+          for (const uid of statsActionUIDs) {
+            if (!existing.has(uid)) {
+              await strapi.db
+                .query("plugin::users-permissions.permission")
+                .create({ data: { action: uid, role: role.id } });
+              created++;
+            }
           }
         }
 
-        const alreadyPresent = statsActionUIDs.length - created;
         console.log(
-          `stats permissions grant: ${created} created, ${alreadyPresent} already present`,
+          `stats permissions grant: ${created} created across ${roles.length} role(s)`,
         );
       }
     } catch (error) {
