@@ -8,10 +8,16 @@
   min-height: 100vh;
   min-width: 0;
   // `clip` (not `hidden`) prevents horizontal scroll WITHOUT establishing a
-  // scroll container — otherwise it would break the sticky header's pinning
-  // (headroom animation) on every public page.
+  // scroll container (which would also break the fixed/headroom header).
   overflow-x: clip;
   // background-color: white;
+
+  // Public header is FIXED, overlaying the content (mockup index.dc.html:100) —
+  // it must NOT push the hero down. The hero's 130px top padding clears the
+  // 75px header. Account (.layout--account) keeps its own sticky header.
+  .header--default {
+    position: fixed;
+  }
 
   // @include screen-small {
   //   min-height: auto;
