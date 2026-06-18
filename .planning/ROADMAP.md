@@ -1,170 +1,46 @@
-# Roadmap: Waldo Project
-
-## Milestones
-
-- 🚧 **v1.47 Rediseño visual (rebrand)** — Phase 04 auth (started 2026-06-16). Demás áreas (público, cuenta, dashboard) se agregan cuando se aprueben.
-- ✅ **v1.46 PRO Subscriptions + Post-Merge Hardening** — Phases 102–129 (shipped 2026-06-14). See `.planning/milestones/v1.46-ROADMAP.md`
-- ✅ **v1.45 User Onboarding** — Phases 099–101 (shipped 2026-03-20). See `.planning/milestones/v1.45-ROADMAP.md`
-- ✅ **v1.44 Google One Tap Sign-In** — Phases 094–098 (shipped 2026-03-19). See `.planning/milestones/v1.44-ROADMAP.md`
-- ✅ **v1.43 Cross-App Session Replacement** — Phase 095 (shipped 2026-03-19). See `.planning/milestones/v1.43-ROADMAP.md`
-- ✅ **v1.42 Dashboard Session Persistence** — Phase 094 (shipped 2026-03-18). See `.planning/milestones/v1.42-ROADMAP.md`
-- ✅ **v1.41 Ad Preview Error Handling** — Phase 093 (shipped 2026-03-18). See `.planning/milestones/v1.41-ROADMAP.md`
-- ⛔ **v1.25 Unified Checkout** — forcibly closed 2026-03-09. See `.planning/milestones/v1.25-ROADMAP.md`
-- ✅ **v1.26 Mostrar comprobante Webpay** — Phase 060 (shipped 2026-03-11). See `.planning/milestones/v1.26-ROADMAP.md`
-- ✅ **v1.27 Reparar eventos GA4 ecommerce** — Phase 061 (shipped 2026-03-12). See `.planning/milestones/v1.27-ROADMAP.md`
-- ✅ **v1.28 Logout Store Cleanup** — Phase 062 (shipped 2026-03-12). See `.planning/milestones/v1.28-ROADMAP.md`
-- ✅ **v1.29 News Manager** — Phases 063–064 (shipped 2026-03-12). See `.planning/milestones/v1.29-ROADMAP.md`
-- ✅ **v1.30 Blog Public Views** — Phases 065–068 (shipped 2026-03-13). See `.planning/milestones/v1.30-ROADMAP.md`
-- ✅ **v1.31 Article Manager Improvements** — Phases 069–070 (shipped 2026-03-13). See `.planning/milestones/v1.31-ROADMAP.md`
-- ✅ **v1.32 Gemini AI Service** — Phase 071 (shipped 2026-03-13). See `.planning/milestones/v1.32-ROADMAP.md`
-- ✅ **v1.33 Anthropic Claude AI Service** — Phase 072 (shipped 2026-03-13). See `.planning/milestones/v1.33-ROADMAP.md`
-- ✅ **v1.34 LightBoxArticles** — Phases 073–074 (shipped 2026-03-13). See `.planning/milestones/v1.34-ROADMAP.md`
-- ✅ **v1.35 Gift Reservations to Users** — Phases 075–076 (shipped 2026-03-13). See `.planning/milestones/v1.35-ROADMAP.md`
-- ✅ **v1.36 Two-Step Login Verification** — Phases 077–078 (shipped 2026-03-14). See `.planning/milestones/v1.36-ROADMAP.md`
-- ✅ **v1.37 Email Authentication Flows** — Phases 079–082 (shipped 2026-03-14). See `.planning/milestones/v1.37-ROADMAP.md`
-- ✅ **v1.38 GA4 Analytics Audit & Implementation** — Phases 083–085 (shipped 2026-03-14). See `.planning/milestones/v1.38-ROADMAP.md`
-- ✅ **v1.39 Unified API Client** — Phases 089–090 (shipped 2026-03-15). See `.planning/milestones/v1.39-ROADMAP.md`
-- ✅ **v1.40 Shared Authentication Session** — Phases 091–092 (shipped 2026-03-16). See `.planning/milestones/v1.40-ROADMAP.md`
-
-## Phases — v1.47 Rediseño visual
-
-### Phase 04: Auth + tokens base
-
-**Goal:** Establecer los tokens compartidos (crear variables SCSS NUEVAS con los valores de la maqueta — sin tocar las existentes —, iconos Lucide) y restilizar auth (login, registro, verificación, reset/forgot) a la maqueta. Poppins ya existe. Primera fase: deja la base que reusan las demás áreas.
-**Requirements:** TOK-01, TOK-02, TOK-03, AUTH-01, AUTH-02, AUTH-03, AUTH-04
-**Depends on:** —
-**Success criteria:**
-1. Login, registro, verificación y reset/forgot se ven según la maqueta (color, tipografía, espaciado, iconos)
-2. Se crean variables SCSS nuevas con los valores de la maqueta y los componentes de auth apuntan a ellas; las variables existentes quedan intactas
-3. La iconografía Lucide se aplica donde la maqueta la usa
-4. Cero cambios de comportamiento en los flujos de auth (login/registro/verificación/reset funcionan igual)
-5. Las variables nuevas viven junto a las existentes en `_variables.scss`; solo cambia de tono lo que ya migró a usarlas (auth). El resto del sitio sigue con las variables viejas hasta su fase. Marca intacta, sin font swap (Poppins ya existe)
-
-**Plans:** 7/7 plans complete
-
-Plans:
-- [x] 04-01-PLAN.md — Add new SCSS design tokens to _variables.scss + confirm Poppins global (TOK-01, TOK-02)
-- [x] 04-02-PLAN.md — Restyle shared form primitives scoped under .auth (inputs, buttons, separator, checkboxes, password controls, strength meter) + remove duplicate .form--verify (TOK-01, TOK-03)
-- [x] 04-03-PLAN.md — 50/50 layout + cream brand-panel card with amber glows (IntroduceAuth) + amber Google button (TOK-03, AUTH-01..04)
-- [x] 04-04-PLAN.md — Login screen restyle: Google-first order, divider, secondary submit, lucide back link (AUTH-01)
-- [x] 04-05-PLAN.md — Register restyle: 2-step indicator, generate, amber/secondary buttons + confirmar (AUTH-02)
-- [x] 04-06-PLAN.md — Verify 2FA restyle: 62px OTP boxes, amber focus + verificar (AUTH-03)
-- [x] 04-07-PLAN.md — Recover + reset restyle: amber submits, lucide generate, dead-import cleanup (AUTH-04)
-
-### Phase 05: Rediseño cuenta
-
-**Goal:** Restilizar el área de cuenta a la maqueta `design/account.dc.html` (idéntico), con un **layout sidebar nuevo**, reusando los componentes/páginas existentes todo lo posible. Incluye backend nuevo: estadísticas reales por anuncio guardando **cada vista como evento** (no contador) + contactos como eventos.
-**Requirements:** ACC-LAYOUT, ACC-PANEL, ACC-ADS, ACC-ORDERS, ACC-PROFILE, ACC-PASSWORD, STAT-MODEL, STAT-VIEW
-**Depends on:** Phase 04 (tokens)
-**Ejecución:** cada vista = 1 plan, cerrado con loop visual (screenshot→medir→verificar) hasta quedar idéntico a la maqueta. Reusar componentes existentes; layout nuevo.
-**Success criteria:**
-1. Panel, Mis anuncios, Mis órdenes, Mi perfil (ver/editar) y Cambiar contraseña se ven idénticos a la maqueta, en desktop y responsive
-2. Layout sidebar de cuenta nuevo, reusando componentes existentes donde aplique
-3. `ad-view` content type guarda 1 fila por vista (ad, viewed_at, visitor_hash, source, viewer); tracking server-side en el detalle público, excluye al dueño, único por visitante/día
-4. `ad-contact` content type guarda contactos como eventos (para "Contactos recibidos")
-5. Detalle de estadísticas por anuncio (vistas, contactos, conversión, promedio/día, gráfico 14 días con chart.js) + KPI "Vistas totales" en Panel, todo con datos reales agregados
-6. Cero regresión de comportamiento en las vistas existentes
-
-**Plans:** 7/9 plans executed
-
-Plans:
-- [x] 05-01-PLAN.md — Account sidebar + layout shell redesign (SidebarAccount + _sidebar/_layout scss) (ACC-LAYOUT)
-- [x] 05-02-PLAN.md — Panel overview: greeting + 3 KPIs + "Necesita tu atención" + packs upsell (ACC-PANEL)
-- [x] 05-03-PLAN.md — Mis anuncios: tabs + counts + ad cards + empty state + pager (ACC-ADS)
-- [x] 05-04-PLAN.md — Mis órdenes: summary cards + orders table + doc download (ACC-ORDERS)
-- [x] 05-05-PLAN.md — Mi perfil (Ver + Editar): preview, completeness, info grid, identidad pública (ACC-PROFILE)
-- [x] 05-06-PLAN.md — Cambiar contraseña: header + password card + Google-provider note (ACC-PASSWORD)
-- [x] 05-07-PLAN.md — Stats backend (TDD): ad-view + ad-contact content types + server-side owner-excluded per-day view tracking (STAT-MODEL)
-- [x] 05-08-PLAN.md — Stats aggregation (TDD): GET /ads/:id/stats (14-day series + conversion) + GET /ads/me/views-total (STAT-MODEL)
-- [x] 05-09-PLAN.md — Stats frontend: per-ad stats modal (chart.js) + real Panel KPIs wired to aggregation endpoints (STAT-VIEW)
-
-### Phase 06: Cierre cuenta (gaps)
-
-**Goal:** Cerrar los huecos de la fase 05 para que cuenta quede funcional e idéntica end-to-end: (1) header + menú de usuario rediseñados a la maqueta, (2) botones de acción cableados (sin no-ops; bug `handleDeactivate` sin paréntesis), (3) permiso del rol Authenticated para los endpoints de stats (403), (4) stats por-anuncio en la card ("N vistas · N contactos") + "Contactos recibidos" real (endpoint contacts-total + tracking de contacto).
-**Requirements:** HDR-01, HDR-02, ACT-01, STAT-PERM, STAT-UI
-**Depends on:** Phase 05
-**Ejecución:** GSD autónomo; frentes visuales (header, menú, card meta) cerrados con loop visual.
-**Success criteria:**
-1. Header (`HeaderDefault`) y menú de usuario (`MenuUser`) se ven según la maqueta (sticky 70px, logo, "Anunciar ahora" ámbar, dropdown UserMenu) sin romper otras páginas
-2. Ningún botón de cuenta es no-op: Desactivar/Destacar/Republicar/Vendido/Baja/Ver motivo/Estadísticas cableados
-3. El rol Authenticated accede a `ad-view.stats`, `ad-view.panelViewsTotal`, `ad-contact.recordContact` (grant idempotente en bootstrap); endpoints responden 200
-4. KPI "Vistas totales" y modal de stats muestran datos reales; la card de anuncio muestra "N vistas · N contactos"
-5. "Contactos recibidos" usa datos reales (endpoint contacts-total + tracking de contacto cableado)
-
-**Plans:** 5 plans (2 waves)
-
-Plans:
-- [x] 06-01-PLAN.md — Strapi bootstrap idempotent permission grant for Authenticated role (STAT-PERM)
-- [x] 06-02-PLAN.md — HeaderDefault restyle to mockup (sticky 70px, amber CTA), slots preserved (HDR-01)
-- [x] 06-03-PLAN.md — MenuUser dropdown restyle to UserMenu.dc.html, logout preserved (HDR-02)
-- [x] 06-04-PLAN.md — contacts-total endpoint + AdSingle recordContact wiring (STAT-UI)
-- [x] 06-05-PLAN.md — CardProfileAd actions (no no-ops) + real vistas·contactos meta + Panel contacts KPI (ACT-01, STAT-UI)
-
-### Phase 07: Público — vistas core (Fase 1 rediseño público)
-
-**Goal:** Restilizar las 6 vistas públicas core a la maqueta `design/index.dc.html` (rebrand v1.47): Home, Por qué Waldo, Preguntas frecuentes, Políticas de privacidad, Condiciones de uso y Contacto. UPDATE de páginas/componentes/SCSS existentes (no crear salvo que no exista equivalente — leer el sibling más cercano antes). Las 4 vistas legales/ayuda comparten un layout único "centro de ayuda" (header con breadcrumb + h1 + intro sobre $cream, sidebar sticky, panel de contenido) que se construye en 07-03 y reutilizan 07-04/05/06; el Mapa del sitio es parte de ese layout. Cada vista se cierra con loop visual (screenshot → Read PNG → comparar vs maqueta + screenshots de referencia → arreglar → repetir) en desktop 1440 y mobile 390, logged-OUT. Cada vista optimiza su data-fetching (single useAsyncData por página, sin N+1, default, sin doble-fetch).
-**Requirements:** PUB-HOME, PUB-WHY, PUB-FAQ, PUB-PRIV, PUB-TERMS, PUB-CONTACT
-**Depends on:** Phase 04 (tokens) — Phases 05/06 ya consumen los tokens
-**Ejecución:** GSD; 3 olas. Ola 1: 07-01 (Home — owner SCSS secciones home + accordion + FaqDefault). Ola 2 (paralelo): 07-02 (Por qué, depende de 07-01) + 07-03 (layout centro de ayuda + FAQ + mapa, depende de 07-01). Ola 3 (paralelo): 07-04/05/06 (políticas/condiciones/contacto, dependen de 07-03). File ownership disjunto por ola.
-**Success criteria:**
-1. Home, Por qué Waldo, Preguntas frecuentes, Políticas de privacidad, Condiciones de uso y Contacto se ven según la maqueta (color, tipografía, espaciado, iconos Lucide, tokens phase-04), en desktop y mobile, logged-OUT
-2. Las 4 vistas de ayuda/legales comparten el layout "centro de ayuda" construido en 07-03 (breadcrumb header + sidebar sticky + panel), reutilizado sin duplicar markup; el título/intro se pasan desde la página al layout (un solo h1, sin duplicación)
-3. El Mapa del sitio usa el panel de 3 columnas (Explorar / Tu cuenta / Información) dentro del layout de ayuda
-4. Por qué Waldo es una ruta propia (`/por-que-waldo`) modelada sobre `index.vue`, que reutiliza los componentes de sección de Home restilizados; el link de nav se actualiza de `/#por-que-waldo` a `/por-que-waldo`
-5. Cada vista hace una sola carga de datos por página (useAsyncData con key único + default), sin N+1, sin doble-fetch; Home pasa de 3 useAsyncData a 1 con Promise.all
-6. Cero regresión de comportamiento; el header fixed/overlay + headroom (06-02) se respeta (heroes con ~130px de padding superior); sin tocar variables SCSS existentes (solo crear nuevas si la maqueta necesita un color ausente)
-
-**Plans:** 6 plans (3 waves)
-
-Plans:
-- [ ] 07-01-PLAN.md — Home restyle: hero + categorías + secciones a la maqueta + 1 solo useAsyncData (PUB-HOME)
-- [ ] 07-02-PLAN.md — Por qué Waldo: nueva ruta /por-que-waldo reusando secciones de Home + nav update (PUB-WHY)
-- [ ] 07-03-PLAN.md — Layout centro de ayuda (about): breadcrumb header + sidebar sticky + FAQ accordion + mapa del sitio (PUB-FAQ)
-- [ ] 07-04-PLAN.md — Políticas de privacidad: reusa layout de ayuda + accordion restyle (PUB-PRIV)
-- [ ] 07-05-PLAN.md — Condiciones de uso: reusa layout de ayuda + accordion restyle (PUB-TERMS)
 - [ ] 07-06-PLAN.md — Contacto: reusa layout de ayuda + formulario a la maqueta (PUB-CONTACT)
+
+### Phase 09: Público — Blog (Fase 3 rediseño público)
+
+**Goal:** Restilizar las 2 vistas públicas del blog a la maqueta `design/index.dc.html` (rebrand v1.47): el listado (`/blog`, pantalla "Blog" líneas ~1239) y el interior de artículo (`/blog/:slug`, pantalla "Artículo" líneas ~1317), más la card `BlogCard.dc.html`. UPDATE de páginas/componentes/SCSS existentes (no crear salvo que no exista equivalente — `CardArticle.vue` ES el equivalente de `BlogCard`, se restiliza, no se crea uno nuevo). Es restyle VISUAL de la funcionalidad existente: se difieren para aprobación los comportamientos nuevos que la maqueta insinúa (buscador de texto libre, dropdown multi-select de categorías con checkboxes, "Limpiar filtros"; gate de "Leer más" del cuerpo; sidebar "Destacados" con avisos+precios; copy-link de compartir). Cada vista se cierra con loop visual (screenshot → Read PNG → comparar vs maqueta + screenshots de referencia → arreglar → repetir) en desktop 1440 y mobile 390, logged-OUT. Cada vista mantiene un solo useAsyncData (ya cumplido: 1 ola, key único, default, sin N+1 — la card no llama endpoint).
+**Requirements:** PUB-BLOG, PUB-ARTICLE
+**Depends on:** Phase 04 (tokens), Phase 06 (header fixed/overlay + headroom)
+**Ejecución:** GSD; 2 olas. Ola 1: 09-01 (listado — owner de la card `CardArticle` + bloque `.card--article` en `_card.scss`). Ola 2: 09-02 (interior — reusa la card restilizada en "Sigue leyendo"; NO toca `CardArticle`/`_card.scss`). File ownership disjunto por ola.
+**Success criteria:**
+1. `/blog` (listado) y `/blog/:slug` (interior) se ven según la maqueta (color, tipografía, espaciado, iconos Lucide, tokens phase-04), en desktop 1440 y mobile 390, logged-OUT
+2. La card de blog (`CardArticle`) coincide con `BlogCard.dc.html` (media 16/9, pill de categoría con punto, título Poppins, excerpt a 2 líneas, fecha + tiempo de lectura) y no dispara endpoint por card (sin N+1); se restiliza una sola vez en 09-01 y 09-02 la reutiliza
+3. El interior usa el grid 2-columnas de la maqueta (artículo 720px + sidebar sticky 308px) colapsando a 1 columna en mobile; cuerpo completo renderizado (gate diferido); sidebar con card de contenido restilizada + promo oscuro estático "¿Vendes equipos?"
+4. Ambos heroes/breadcrumbs respetan el header fixed/overlay + headroom (06-02) con ~130px de padding superior; nada queda oculto tras la barra
+5. Cada vista hace una sola carga de datos (useAsyncData con key único + default), sin doble-fetch; comportamiento (filtros, paginación, 404, SEO, analytics) sin regresión
+6. Sin tocar variables SCSS existentes (solo crear nuevas si la maqueta necesita un color ausente); los comportamientos nuevos diferidos se reportan en el SUMMARY para aprobación del usuario
+
+**Plans:** 2 plans (2 waves)
+
+Plans:
+- [ ] 09-01-PLAN.md — Blog listado: hero breadcrumb + toolbar + card `BlogCard` (owner) + grid 3-col + pager (PUB-BLOG)
+- [ ] 09-02-PLAN.md — Interior de artículo: header + cuerpo + layout 2-col + sidebar + "Sigue leyendo" reusa card (PUB-ARTICLE)
+
+
+### Phase 08: Público — anuncios + perfil (Fase 2 rediseño público)
+
+**Goal:** Restilizar las 3 vistas públicas de anuncios/vendedor a la maqueta `design/index.dc.html` (rebrand v1.47): el listado `/anuncios`, el interior de anuncio `/anuncios/[slug]` y la vista pública del vendedor `/{username}` (Básica y Pro en una sola página, según `pro_status`). UPDATE de páginas/componentes/SCSS existentes (no crear salvo que no exista equivalente — leer el sibling más cercano antes). La `CardAnnouncement` compartida (listado + relacionados + grid de perfil) se restiliza UNA vez en 08-01 (owner del card y de `_card.scss .card--announcement`); 08-02/08-03 la reusan sin re-tocarla. Cada vista se cierra con loop visual (screenshot → Read PNG → comparar vs maqueta + screenshots de referencia → arreglar → repetir) en desktop 1440 y mobile 390; el interior y el perfil verifican logged-OUT y logged-IN (gate de contacto). Cada vista conserva su carga única de datos sin N+1 (ya está optimizada: el listado y el perfil cargan una página paginada vía `ads/catalog`/`loadAds` y las cards renderizan del array; el interior usa `ads/slug/:slug` que embebe galería/vendedor/categoría).
+**Requirements:** PUB-ADS, PUB-AD-DETAIL, PUB-PROFILE
+**Depends on:** Phase 04 (tokens), Phase 07 (Fase 1 público) — Phase 06 ya restiló header/menú
+**Ejecución:** GSD; 2 olas. Ola 1: 08-01 (listado — owner de CardAnnouncement + `.card--announcement` + `.announcement--archive`). Ola 2 (paralelo): 08-02 (interior — owner de `.announcement--single`) + 08-03 (perfil vendedor — `hero--profile`/`profile`/`sidebar`). File ownership disjunto: `_announcement.scss` se reparte (08-01 = sección `--archive`, 08-02 = sección `--single`); 08-02/08-03 dependen de 08-01 por el card compartido.
+**Success criteria:**
+1. `/anuncios` (hero de resultados + toolbar count/orden + grid de cards + empty state) se ve según la maqueta en desktop y mobile, logged-OUT, usando los tokens phase-04
+2. La `CardAnnouncement` compartida coincide con `AdCard.dc.html` (pill de categoría con punto de color, badge de cantidad de fotos, Destacado, título Poppins, precio + IVA, footer "Inicia sesión para ver al anunciante" logged-OUT) y es final para la fase (reusada por relacionados y grid de perfil)
+3. El interior de anuncio se ve según la maqueta "Detalle de producto" (hero breadcrumb + galería + Acerca/Ubicación/Especificación + sidebar sticky precio/vendedor-contacto/compartir) en desktop y mobile, en ambos estados de sesión; el gate de contacto (logged-OUT "Datos protegidos" vs logged-IN email/teléfono con copiar) conserva su comportamiento, solo restilizado
+4. La vista pública del vendedor renderiza Básica y Pro desde una sola página según `pro_status` (Pro: cover + avatar + bio; Básica: header contenido + nota "Perfil estándar"), con identidad (nombre + badge PRO + verificado), métricas, chips de categoría y grid de avisos activos, en desktop y mobile, ambos estados de sesión
+5. Cada vista conserva su carga única de datos (sin N+1, sin doble-fetch, sin estrechar `populate`); el split intencional del listado (categoría con key estable separada de los anuncios) se mantiene para no regresar a un refetch de categoría por filtro
+6. Cero regresión de comportamiento; el header fixed/overlay + headroom (06-02) se respeta (heroes/portadas con padding superior); sin tocar variables SCSS existentes (solo crear nuevas si la maqueta necesita un color ausente). Las features net-new de la maqueta (tab Vendidos + buscador por perfil, máscara de email/teléfono y botones WhatsApp/Llamar) quedan diferidas como preguntas abiertas, no se implementan en esta fase
+
+**Plans:** 3 plans (2 waves)
+
+Plans:
+- [ ] 08-01-PLAN.md — Listado /anuncios: card compartido (owner) + toolbar/grid + hero de resultados (PUB-ADS)
+- [ ] 08-02-PLAN.md — Interior de anuncio: hero breadcrumb + galería/specs + sidebar sticky con gate de contacto (PUB-AD-DETAIL)
+- [ ] 08-03-PLAN.md — Perfil vendedor (Básica + Pro): cover/identidad + métricas/chips + grid de avisos (PUB-PROFILE)
 
 
 ## Progress
-
-| Milestone | Phases | Status | Shipped |
-|-----------|--------|--------|---------|
-| v1.46 PRO Subscriptions + Post-Merge Hardening | 102–129 | ✅ Complete | 2026-06-14 |
-
-### Phase 1: Corregir issues de Codacy
-
-**Goal:** Resolver los 100 issues abiertos en Codacy (90 Security/Opengrep, 9 BestPractice/ESLint, 1 UnusedCode), analizando cada patrón para descartar falsos positivos y evaluar riesgo de regresión antes de aplicar cada fix. Snapshot: `.planning/research/codacy-issues-snapshot-2026-06-14.md`
-**Requirements**: CODACY-TRIAGE, CODACY-FIX, CODACY-SUPPRESS, CODACY-VERIFY
-**Depends on:** Phase 0
-**Plans:** 7 plans (3 waves)
-
-Plans:
-- [x] 01-00-PLAN.md — Wave 0 regression gate: characterization + injection tests (RED by design) before the fixes
-- [x] 01-01-PLAN.md — authController.ts end-to-end: pendingToken scalar coercion + crypto.randomBytes username suffix
-- [x] 01-02-PLAN.md — NoSQL coercion: ad.ts saveDraft Number(ad_id) + checkout.service String(pack)
-- [x] 01-03-PLAN.md — password.ts client CSPRNG: crypto.getRandomValues with rejection sampling
-- [x] 01-04-PLAN.md — no-explicit-any → unknown across koa.d.ts, nitro-globals, better-stack, cloudflare
-- [x] 01-05-PLAN.md — hardening: useProviders allowlist + image-uploader os.tmpdir() confinement
-- [ ] 01-06-PLAN.md — suppression track (autonomous:false, blocked on Codacy account token): bulk-ignore ~80 FPs + remote verify
-
-### Phase 2: Mover IA a endpoints de dominio (eliminar recurso ia, exponer GET /articles/sources y POST /articles/generate, servicios IA internos)
-
-**Goal:** Reubicar la IA desde el recurso `ia` a endpoints de dominio: exponer `GET /articles/sources` y `POST /articles/generate` (manager-only), dejar los servicios IA y Tavily internos (sin ruta), mover la construcción del prompt y la selección de proveedor al backend (default Cerebras + cadena de fallback configurable por env), migrar `LightBoxArticles.vue` y eliminar los recursos `ia` y `search`. Sin cambio de comportamiento del flujo de noticias del dashboard.
-**Requirements**: N/A
-**Depends on:** Phase 1
-**Plans:** 1/2 plans executed
-
-Plans:
-- [x] 02-01-PLAN.md — Backend additivo: servicio ai-provider (selección + fallback), index IA lazy, acciones article.sources/article.generate + rutas isManager
-- [ ] 02-02-PLAN.md — Cutover frontend a endpoints de dominio + borrar recursos ia y search + checkpoint de verificación humana
-
-### Phase 3: Validacion IA de campos de texto libre en el registro (boolean por campo, fail-open)
-
-**Goal:** Agregar validación semántica con IA en el flujo de registro (server-side, antes de crear el usuario, en `registerUserLocal`): la IA evalúa SOLO campos de texto libre (firstname, lastname, address y, si es empresa, business_name/business_type/business_address), devuelve un boolean por campo y, si alguno es `false` explícito, rechaza el registro con un mensaje en español específico del campo. Fail-open no negociable: cualquier error/timeout/sin tokens/JSON no parseable ⇒ se asume `true` y el registro nunca se bloquea por fallas de la IA. Reusa el `ai-provider` de la fase 02; el frontend (FormRegister.vue) muestra el mensaje de rechazo.
-**Requirements**: N/A
-**Depends on:** Phase 2
-**Plans:** 2/2 plans complete
-
-Plans:
-- [x] 03-01-PLAN.md — Servicio `field-validation` (TDD): types + config (TIMEOUT_MS, buildValidationPrompt) + `validateFields` con timeout/fail-open/strip-fences + matriz de tests; export aditivo `generate` en ai-provider
-- [x] 03-02-PLAN.md — Enganche en `registerUserLocal` (gate IA + mapa de mensajes ES) + tests de controller (incl. fail-open end-to-end) + verificar surfacing en FormRegister.vue
