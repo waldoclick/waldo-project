@@ -65,7 +65,12 @@ const shouldNotCache = (url: string): boolean => {
     url.startsWith("/api/connect") ||
     url.startsWith("/api/auth") ||
     url.startsWith("/api/orders") ||
-    url.startsWith("/api/users")
+    url.startsWith("/api/users") ||
+    // PII reveal endpoints (/ads/:doc/reveal/*, /sellers/:username/reveal/*):
+    // auth-gated, per-viewer, recorded — caching them would serve a revealed
+    // phone/whatsapp/email to ANY anonymous request (cache HIT bypasses the
+    // controller's auth check), defeating the anti-scraping obfuscation model.
+    url.includes("/reveal/")
   )
     return true;
   return false;
