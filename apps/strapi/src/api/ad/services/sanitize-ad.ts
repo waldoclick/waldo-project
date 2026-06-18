@@ -6,7 +6,14 @@
  *
  * Managers receive the raw ad object — this function is only applied
  * to public and authenticated (non-manager) responses.
+ *
+ * Seller contact channels (email/phone/whatsapp) are OBFUSCATED here (08-04):
+ * the real values never travel in this bulk payload — they are exposed one at a
+ * time only via the JWT-gated /ads|/sellers reveal endpoints. Presence flags
+ * (has_email/has_phone/has_whatsapp) tell the contact card which channels exist.
  */
+import { maskEmail, maskPhone } from "./contact-mask";
+
 export function sanitizeAdForPublic(
   ad: Record<string, unknown>,
 ): Record<string, unknown> {
@@ -31,8 +38,13 @@ export function sanitizeAdForPublic(
         username: user.username,
         firstname: user.firstname,
         lastname: user.lastname,
-        email: user.email,
-        phone: user.phone,
+        // Obfuscated contact channels (08-04) — real values only via reveal endpoints
+        email: maskEmail(user.email as string),
+        phone: maskPhone(user.phone as string),
+        whatsapp: maskPhone(user.whatsapp as string),
+        has_email: !!user.email,
+        has_phone: !!user.phone,
+        has_whatsapp: !!user.whatsapp,
         pro_status: user.pro_status,
         is_company: user.is_company,
         business_name: user.business_name,

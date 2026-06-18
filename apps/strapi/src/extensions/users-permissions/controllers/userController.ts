@@ -1,5 +1,10 @@
 // /src/extensions/users-permissions/controllers/userController.ts
 
+// Pure contact-mask helpers (08-04) — imported from the ad api service file
+// directly (NOT via an index that re-exports the ad factory default) so no
+// controller/service factory side effects leak into this plugin extension.
+import { maskEmail, maskPhone } from "../../../api/ad/services/contact-mask";
+
 const PAGE_SIZE = 500;
 
 /**
@@ -290,6 +295,18 @@ export const getUserDataWithFilters = async (ctx) => {
       for (const field of PII_FIELDS) {
         delete (safe as Record<string, unknown>)[field];
       }
+      // Obfuscate contact channels for the public profile card (08-04); real
+      // values only via the per-channel /ads|/sellers reveal endpoints. This
+      // re-adds email/phone MASKED (PII_FIELDS deleted them above) and masks
+      // whatsapp (which was NOT in PII_FIELDS and previously leaked raw).
+      const rawUser = user as Record<string, unknown>;
+      const safeRecord = safe as Record<string, unknown>;
+      safeRecord.email = maskEmail(rawUser.email as string);
+      safeRecord.phone = maskPhone(rawUser.phone as string);
+      safeRecord.whatsapp = maskPhone(rawUser.whatsapp as string);
+      safeRecord.has_email = !!rawUser.email;
+      safeRecord.has_phone = !!rawUser.phone;
+      safeRecord.has_whatsapp = !!rawUser.whatsapp;
     }
     return safe;
   });
