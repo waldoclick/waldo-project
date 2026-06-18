@@ -1,5 +1,12 @@
 <template>
-  <TermsDefault :terms="terms || []" />
+  <NuxtLayout
+    name="about"
+    title="Condiciones de uso"
+    intro="Conoce las condiciones que regulan la publicación y compra de anuncios de activos industriales en la plataforma Waldo.click®."
+    active="cond"
+  >
+    <TermsDefault :terms="terms || []" />
+  </NuxtLayout>
 </template>
 
 <script setup lang="ts">
@@ -10,9 +17,10 @@ const config = useRuntimeConfig();
 // Componente principal
 import TermsDefault from "@/components/TermsDefault.vue";
 
-// Definir el layout
+// Layout aplicado explícitamente con <NuxtLayout name="about"> en el template;
+// layout: false evita que Nuxt aplique además el layout por defecto (doble wrap).
 definePageMeta({
-  layout: "about",
+  layout: false,
 });
 
 // Cargar terms — useAsyncData integra con el ciclo SSR de Nuxt;
