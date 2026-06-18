@@ -93,22 +93,29 @@ const header = ref<HTMLElement | null>(null);
 const user = useSessionUser();
 
 // Define las propiedades del componente
-const props = defineProps<{
-  isTrasparent?: boolean | string;
-  showSearch?: boolean;
-  showMenu?: boolean;
-  searchIcon?: boolean;
-  bgColor?: string;
-}>();
+// searchIcon defaults to true via withDefaults: a bare boolean prop declared
+// type-only resolves to `false` when absent, so `?? true` would never fire.
+const props = withDefaults(
+  defineProps<{
+    isTrasparent?: boolean | string;
+    showSearch?: boolean;
+    showMenu?: boolean;
+    searchIcon?: boolean;
+  }>(),
+  {
+    isTrasparent: false,
+    showSearch: false,
+    showMenu: false,
+    searchIcon: true,
+  },
+);
 
-// Define las propiedades con valores por defecto
-const isTrasparent = props.isTrasparent ?? false;
-const showSearch = props.showSearch ?? false;
-const showMenu = props.showMenu ?? false;
 // Search-icon trigger for the lightbox — on by default site-wide, hidden only
 // where the design omits it (account area, which navigates via its sidebar).
-const searchIcon = props.searchIcon ?? true;
-const bgColor = props.bgColor ?? "#ffffff";
+const isTrasparent = props.isTrasparent;
+const showSearch = props.showSearch;
+const showMenu = props.showMenu;
+const searchIcon = props.searchIcon;
 
 // Scroll handling
 const lastScrollPosition = ref(0);

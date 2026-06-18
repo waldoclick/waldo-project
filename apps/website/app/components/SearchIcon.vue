@@ -22,7 +22,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
 import { useAppStore } from "@/stores/app.store"; // Importa el store
 import iconZoomWhite from "/images/icon-zoom.svg";
 import iconZoomBlack from "/images/icon-zoom-black.svg";
@@ -35,12 +34,9 @@ const props = defineProps({
 });
 
 const handleOpenLightbox = () => {
-  // Debug: verificar que se está ejecutando
-  console.log("SearchIcon clicked, opening lightbox");
   // Lazy-init store inside handler — safe, never runs during SSR
   const appStore = useAppStore();
   // Llama la acción del store para abrir la lightbox
   appStore.openSearchLightbox();
-  console.log("Lightbox state:", appStore.isSearchLightboxActive);
 };
 </script>

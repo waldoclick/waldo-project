@@ -1,18 +1,18 @@
 <template>
   <ul class="menu menu--default">
     <li>
-      <NuxtLink to="/#categorias" title="Categorías">
-        <span>Categorías</span>
+      <NuxtLink to="/anuncios" title="Anuncios">
+        <span>Anuncios</span>
       </NuxtLink>
     </li>
     <li>
-      <NuxtLink to="/#como-publicar" title="¿Cómo publicar?">
-        <span>¿Cómo publicar?</span>
+      <NuxtLink to="/#por-que-waldo" title="Por qué Waldo">
+        <span>Por qué Waldo</span>
       </NuxtLink>
     </li>
     <li>
-      <NuxtLink to="/#comprar-packs" title="Comprar packs">
-        <span>Comprar packs</span>
+      <NuxtLink to="/blog" title="Blog">
+        <span>Blog</span>
       </NuxtLink>
     </li>
   </ul>

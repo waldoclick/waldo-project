@@ -6,25 +6,30 @@
   &--default {
     padding: 0;
     list-style: none;
-    display: none;
-    margin: 0;
     display: flex;
+    align-items: center;
+    gap: 24px;
+    margin: 0;
 
     @include screen-large {
       display: none;
     }
 
     li {
-      margin-right: 20px;
+      margin: 0;
 
       a {
         display: block;
-
         font-style: normal;
-        font-weight: 600;
-        font-size: 14px;
-        letter-spacing: 0.5px;
-        color: $white_smoke;
+        font-weight: 500;
+        font-size: 15px;
+        letter-spacing: normal;
+        color: $ink2;
+        transition: color 0.15s ease;
+
+        &:hover {
+          color: $ink;
+        }
       }
     }
   }

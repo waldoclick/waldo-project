@@ -1,6 +1,6 @@
 <template>
   <div class="page page--home">
-    <HeaderDefault :show-menu="true" :is-trasparent="true" />
+    <HeaderDefault :show-menu="true" />
     <HeroHome />
     <HighlightsDefault :separator="true" />
     <CategoryArchive :separator="true" :categories="categories" />
