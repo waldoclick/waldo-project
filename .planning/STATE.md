@@ -1,15 +1,15 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.47
-milestone_name: Rediseño visual (rebrand)
+milestone_name: milestone
 status: unknown
-last_updated: "2026-06-17T22:00:00.000Z"
-last_activity: 2026-06-17
+last_updated: "2026-06-18T19:05:09.563Z"
+last_activity: 2026-06-18
 progress:
-  total_phases: 6
-  completed_phases: 3
-  total_plans: 32
-  completed_plans: 29
+  total_phases: 1
+  completed_phases: 0
+  total_plans: 2
+  completed_plans: 0
   percent: 97
 ---
 
@@ -34,6 +34,7 @@ Progress: [█████████░] 97% (29/32 plans complete)
 
 ### Key Decisions (carry forward)
 
+- Home (07-01) restyle: HeroHome owns the featured-card carousel state (currentIndex ref + wrap-around prev/next/goTo) fed a `featuredAds` prop; section headers (Destacados / Blog Waldo) live INSIDE AdArchive/ArticleArchive behind `featuredSection`/`blogSection` boolean props so index.vue stays composition-only; the dark "vender" CTA is a dedicated `SellCta` component with its own `.sell-cta` BEM block (NOT `.hero--home__cta` in another file — preserves BEM encapsulation); the hero inline search was built fresh (NOT SearchDefault, which always renders the category dropdown the new design dropped) and replicates the navigate to `/anuncios?s=…`; old `.hero--home` dark-charcoal SCSS was ripped-and-replaced (not layered); Home data went 3→1 useAsyncData via Promise.all (categories + featuredAds[sort_priority:asc,createdAt:desc,pageSize 8] + articles[createdAt:desc,pageSize 3]); card hover box-shadow/scale from the mockup intentionally dropped per CLAUDE.md (07-01)
 - MenuUser sibling combinator (.menu--user__menu__links + .menu--user__menu__links) for border-top group separators — avoids index-based approach that breaks when isManager group is absent; AvatarDefault wrapped and .avatar child overridden for amber circle at 34px/36px; ChevronDown/LogOut imported without alias so grep detects literals on import + template lines; chevron rotate 180deg is the sanctioned CLAUDE.md carve-out (scale banned, rotate allowed) (06-03)
 - loadPanelViewsTotal folded into AccountMain useAsyncData Promise.all (no double-fetch); totalContacts derived from published ads contact_count field (no dedicated contacts-total endpoint in 05-08); StatsAdModal self-contained per CardProfileAd (not lifted to AccountAnnouncements); buildStatsChartData uses index-based labels for deterministic Vitest output (05-09)
 - getAdStats: total=all-time count(), series=windowed findMany+group-by-UTC-day (total ≥ sum(series) in production); getUserTotalViews guards empty adIds before issuing $in query; static /ads/me/views-total route declared before wildcard /ads/:documentId/stats (05-08)
@@ -231,4 +232,5 @@ Progress: [█████████░] 97% (29/32 plans complete)
 ## Session Continuity
 
 Last activity: 2026-06-18
+Stopped at: Completed 07-01-PLAN.md (Home restyle — hero+carousel, destacados, categorías, dark vender CTA, blog; 3→1 useAsyncData). Commit 7927db5b.
 Resume file: None
