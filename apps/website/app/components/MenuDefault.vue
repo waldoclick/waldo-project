@@ -6,7 +6,7 @@
       </NuxtLink>
     </li>
     <li>
-      <NuxtLink to="/#por-que-waldo" title="Por qué Waldo">
+      <NuxtLink to="/por-que-waldo" title="Por qué Waldo">
         <span>Por qué Waldo</span>
       </NuxtLink>
     </li>
