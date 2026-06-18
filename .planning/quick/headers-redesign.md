@@ -25,6 +25,20 @@ Update existing components/SCSS, never create new. BEM block--modifier__element.
 - [x] **Account header** — d924de2d. searchIcon prop (off in account), hamburger
       hidden >1024px globally. Verified desktop + mobile (public + account).
 - [ ] **Search lightbox** — rebuild LightboxSearch.vue + _lightbox.scss to
-      index.dc.html:159-212 (620px box, Esc hint, recientes + categorías).
+      index.dc.html:159-212. Concrete plan (context gathered):
+      - Header: search icon 21px #8A8794 + input v-model query 18px
+        placeholder "Busca un aviso o categoría…" + clear (if query) + "Esc"
+        button → appStore.closeSearchLightbox().
+      - Empty state: "ÚLTIMAS BÚSQUEDAS" (localStorage recents + Borrar) +
+        "EXPLORA POR CATEGORÍA" (filterStore.loadFilterCategories → color dot
+        + name + count).
+      - Query state: category matches filtered by query + "Buscar {query}"
+        → router.push /anuncios?s=query (SearchDefault pattern); push term to
+        localStorage recents then close.
+      - NO live ad autocomplete (no API; search.store is Tavily) — future.
+      - SCSS: backdrop rgba(38,37,43,.46)+blur(4px), align flex-start,
+        padding 92px 24px 32px; box max-width 620px radius 10px
+        shadow 0 28px 64px rgba(38,37,43,.30) max-height 78vh; rows cream hover.
+      - Verify: Playwright open via SearchIcon, screenshot empty + query.
 - [ ] **Dashboard header/sidebar** — 248px sidebar, 64px topbar, dropdowns.
 - [ ] **Public header polish** — 74px height, blur 16px vs index.dc.html.
