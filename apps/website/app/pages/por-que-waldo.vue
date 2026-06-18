@@ -4,7 +4,7 @@
     <WhyHero />
     <HighlightsDefault />
     <HowtoDefault />
-    <PacksDefault :packs="packs" />
+    <PacksDefault :packs="packs" :show-head="true" />
     <WhyCta />
     <FaqDefault
       :title="`Preguntas frecuentes`"

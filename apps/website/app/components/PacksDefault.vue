@@ -1,7 +1,7 @@
 <template>
   <section id="comprar-packs" class="packs packs--default">
     <div class="packs--default__container">
-      <div class="packs--default__head">
+      <div v-if="showHead" class="packs--default__head">
         <h2 class="packs--default__head__title">Publica más, paga menos</h2>
         <p class="packs--default__head__text">
           Hasta un
@@ -34,8 +34,10 @@ import CardPack from "@/components/CardPack.vue";
 
 const props = defineProps<{
   packs: Pack[];
+  showHead?: boolean;
 }>();
 
+const showHead = computed(() => props.showHead ?? false);
 const { getMaxSavingsPct } = usePacks();
 
 const maxSavings = computed(() => getMaxSavingsPct(props.packs) ?? 98);
