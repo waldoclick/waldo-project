@@ -4,103 +4,85 @@
 
 .footer {
   &--default {
+    background: $cream;
+    border-top: 1px solid $line;
     margin-top: auto;
-    border-top: 1px solid $gainsboro;
-    background-color: white;
+  }
 
-    &__top {
-      &__container {
-        @extend .container;
+  &--default__indicators {
+    border-bottom: 1px solid $line;
+    padding-top: 13px;
+    padding-bottom: 13px;
+
+    &__container {
+      @extend .container;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 10px 26px;
+    }
+
+    &__item {
+      font-size: 13px;
+      color: $muted;
+
+      &__value {
+        color: $ink;
+        font-weight: 600;
       }
+    }
+  }
 
-      &__indicators {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 30px;
-        padding: 20px 0;
+  &--default__main {
+    padding-top: 32px;
+    padding-bottom: 32px;
 
-        @include screen-small {
-          gap: 15px 20px;
-        }
+    &__container {
+      @extend .container;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 24px 36px;
+    }
 
-        &__item {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          color: $charcoal;
-          line-height: 1;
+    &__logo {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
 
-          .icon {
-            color: $dodger_blue;
-          }
+      img {
+        height: 28px;
+        width: auto;
+        display: block;
+      }
+    }
 
-          &__info {
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-          }
+    &__nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
 
-          &__name {
-            font-size: 0.75rem;
-            opacity: 0.8;
-          }
+      &__link {
+        color: $ink2;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 14px;
+        transition: color 0.15s;
 
-          &__value {
-            font-weight: 600;
-          }
+        &:hover {
+          color: $ink;
         }
       }
     }
 
-    &__middle {
-      padding: 40px 0;
-      background: $charcoal;
+    &__copy {
+      margin-left: auto;
+      color: $muted;
+      font-size: 13.5px;
 
-      &__container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        @extend .container;
-        // flex-direction: column;
-
-        @include screen-large {
-          flex-direction: column;
-        }
-      }
-
-      &__logo {
-        img {
-          width: 152px;
-        }
-
-        @include screen-large {
-          margin-bottom: 20px;
-        }
-      }
-
-      &__menu {
-        @include screen-large {
-          margin-bottom: 20px;
-        }
-      }
-
-      &__trademark {
-        font-style: normal;
-        font-weight: normal;
-        font-size: 12px;
-        letter-spacing: 1.25px;
-        color: $platinum;
-        text-align: left;
-
-        p {
-          margin: 0;
-        }
-
-        @include screen-large {
-          text-align: center;
-        }
+      @include screen-large {
+        margin-left: 0;
       }
     }
   }
