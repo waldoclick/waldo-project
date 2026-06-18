@@ -310,6 +310,50 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
   },
 
   /**
+   * Get a seller's "sold"/down advertisements (public profile Vendidos tab).
+   *
+   * Scoped by username. Public role-bypass (isManager=true, userId=null) like
+   * catalog — the service's defaultFilters keep it to down ads only. Sanitized
+   * + paginated through getAdvertisements (no N+1).
+   *
+   * @route GET /api/ads/sold/:username
+   */
+  async soldByUsername(ctx) {
+    try {
+      const { username } = ctx.params;
+      const query = ctx.query as Record<string, unknown>;
+      const pagination = query.pagination as Record<string, string> | undefined;
+
+      const options: Record<string, unknown> = {
+        ...query,
+        page: pagination?.page
+          ? parseInt(pagination.page, 10)
+          : (query.page as number) || 1,
+        pageSize: pagination?.pageSize
+          ? parseInt(pagination.pageSize, 10)
+          : (query.pageSize as number) || 25,
+      };
+
+      if (options.pagination) {
+        delete options.pagination;
+      }
+
+      // Per-username scope — merged into any client-supplied filters
+      options.filters = {
+        ...((options.filters as Record<string, unknown>) || {}),
+        user: { username: { $eq: username } },
+      };
+
+      const soldAds = await strapi
+        .service("api::ad.ad")
+        .soldAds(options, true, null);
+      return soldAds;
+    } catch (error) {
+      ctx.throw(500, error);
+    }
+  },
+
+  /**
    * Get pending advertisements
    *
    * Retrieves a paginated list of advertisements pending approval.

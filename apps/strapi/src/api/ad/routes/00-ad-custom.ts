@@ -15,6 +15,14 @@ export default {
       handler: "ad.catalog",
     },
     {
+      // Public seller "Vendidos" tab (08-04) — static "sold" segment is never
+      // captured by the core /ads/:id wildcard; declared before it here.
+      method: "GET",
+      path: "/ads/sold/:username",
+      handler: "ad.soldByUsername",
+      config: { auth: false },
+    },
+    {
       method: "GET",
       path: "/ads/actives",
       handler: "ad.actives",

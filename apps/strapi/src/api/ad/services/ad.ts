@@ -536,6 +536,41 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
   },
 
   /**
+   * Retrieve a seller's "sold"/down advertisements (08-04).
+   *
+   * Public profile "Vendidos" surface: ads that were live and are now down
+   * (active:false, banned:false, rejected:false, draft:false, remaining_days:0).
+   * draft:false (the one addition over owner-scoped archivedAds) stops
+   * never-published drafts from leaking on a PUBLIC surface. Per-username scope
+   * comes from options.filters.user passed by the controller.
+   *
+   * @param {Object} options - Query options (filters/pagination/sort)
+   * @returns {Promise<Object>} Paginated list of the seller's sold/down ads
+   */
+  async soldAds(
+    options: AdQueryOptions = {},
+    isManager: boolean = false,
+    userId: number | null = null,
+  ) {
+    const defaultFilters = {
+      active: { $eq: false },
+      banned: { $eq: false },
+      rejected: { $eq: false },
+      draft: { $eq: false },
+      remaining_days: { $eq: 0 },
+    };
+
+    return getAdvertisements(
+      options,
+      defaultFilters,
+      "archived",
+      undefined,
+      isManager,
+      userId,
+    );
+  },
+
+  /**
    * Retrieve banned advertisements
    *
    * Fetches advertisements that have been banned by owner or administrator.
