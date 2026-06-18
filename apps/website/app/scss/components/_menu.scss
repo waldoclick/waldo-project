@@ -322,54 +322,59 @@
     }
   }
 
+  // Help/legal center sidebar (v1.47 redesign — design/index.dc.html lines 1123-1140)
+  // prop-driven active state: matching item gets amber-tint bg + $ink label + $tag icon.
   &--about {
     padding: 0;
-    list-style: none;
+    margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    position: relative;
-    z-index: 1;
+    gap: 4px;
 
-    &__item {
+    &__link {
       display: flex;
       align-items: center;
-      transition: all 0.2s ease-in-out;
+      gap: 11px;
+      padding: 11px 14px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 14.5px;
+      font-weight: 500;
+      line-height: 1.3;
+      color: $ink2;
+      background: transparent;
+      transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
 
-      a {
-        cursor: pointer;
+      &__icon {
+        flex: none;
+        width: 19px;
+        height: 19px;
+        color: $ink2;
+        transition: color 0.15s ease;
+      }
 
-        font-size: 14px;
-        line-height: 20px;
-        letter-spacing: 0.25px;
-        color: $charcoal;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 12px 0;
+      &__label {
+        flex: 1;
+      }
 
-        svg {
-          @include screen-large {
-            display: none;
-          }
+      &:hover {
+        background: $cream;
+        color: $ink;
+      }
+
+      &--active {
+        background: $amber_tint;
+        color: $ink;
+        font-weight: 600;
+
+        .menu--about__link__icon {
+          color: $tag;
         }
 
-        b {
-          background-color: black;
-          color: $light_peach;
-          padding: 4px 6px;
-          border-radius: 4px;
-          font-size: 10px;
-          line-height: 1;
-          letter-spacing: 0.25px;
-          font-weight: normal;
-        }
-
-        &:hover,
-        &.router-link-active {
-          span {
-            text-decoration: underline;
-          }
+        &:hover {
+          background: $amber_tint;
         }
       }
     }

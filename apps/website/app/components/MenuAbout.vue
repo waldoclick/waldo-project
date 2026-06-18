@@ -1,66 +1,22 @@
 <template>
   <nav class="menu menu--about" aria-label="Menú informativo">
-    <ul class="menu--about__list" role="list">
-      <li class="menu--about__item">
-        <nuxt-link
-          to="/preguntas-frecuentes"
-          class="menu--about__link"
-          aria-label="Ver preguntas frecuentes y respuestas comunes"
-          title="Ver preguntas frecuentes y respuestas comunes"
-        >
-          <IconHelpCircle class="menu--about__icon" aria-hidden="true" />
-          <span>Preguntas frecuentes</span>
-        </nuxt-link>
-      </li>
-      <li class="menu--about__item">
-        <nuxt-link
-          to="/politicas-de-privacidad"
-          class="menu--about__link"
-          aria-label="Leer políticas de privacidad y términos de uso"
-          title="Leer políticas de privacidad y términos de uso"
-        >
-          <IconShield class="menu--about__icon" aria-hidden="true" />
-          <span>Políticas de privacidad</span>
-        </nuxt-link>
-      </li>
-      <li class="menu--about__item">
-        <nuxt-link
-          to="/condiciones-de-uso"
-          class="menu--about__link"
-          aria-label="Leer condiciones de uso"
-          title="Leer condiciones de uso"
-        >
-          <IconScrollText class="menu--about__icon" aria-hidden="true" />
-          <span>Condiciones de uso</span>
-        </nuxt-link>
-      </li>
-      <li class="menu--about__item">
-        <nuxt-link
-          to="/contacto"
-          class="menu--about__link"
-          aria-label="Contactar con el equipo de soporte"
-          title="Contactar con el equipo de soporte"
-        >
-          <IconMessageSquare class="menu--about__icon" aria-hidden="true" />
-          <span>Contáctanos</span>
-        </nuxt-link>
-      </li>
-      <li class="menu--about__item">
-        <nuxt-link
-          to="/sitemap"
-          class="menu--about__link"
-          aria-label="Ver mapa del sitio con todas las páginas disponibles"
-          title="Ver mapa del sitio con todas las páginas disponibles"
-        >
-          <IconMap class="menu--about__icon" aria-hidden="true" />
-          <span>Mapa del sitio</span>
-        </nuxt-link>
-      </li>
-    </ul>
+    <nuxt-link
+      v-for="link in links"
+      :key="link.key"
+      :to="link.to"
+      class="menu--about__link"
+      :class="{ 'menu--about__link--active': active === link.key }"
+      :aria-label="link.aria"
+      :title="link.aria"
+    >
+      <component :is="link.icon" class="menu--about__link__icon" aria-hidden="true" />
+      <span class="menu--about__link__label">{{ link.label }}</span>
+    </nuxt-link>
   </nav>
 </template>
 
 <script setup lang="ts">
+import type { FunctionalComponent } from "vue";
 import {
   HelpCircle as IconHelpCircle,
   Shield as IconShield,
@@ -68,4 +24,54 @@ import {
   MessageSquare as IconMessageSquare,
   Map as IconMap,
 } from "lucide-vue-next";
+
+defineProps<{
+  active: string;
+}>();
+
+interface MenuAboutLink {
+  key: string;
+  to: string;
+  label: string;
+  aria: string;
+  icon: FunctionalComponent;
+}
+
+const links: MenuAboutLink[] = [
+  {
+    key: "faq",
+    to: "/preguntas-frecuentes",
+    label: "Preguntas frecuentes",
+    aria: "Ver preguntas frecuentes y respuestas comunes",
+    icon: IconHelpCircle,
+  },
+  {
+    key: "priv",
+    to: "/politicas-de-privacidad",
+    label: "Políticas de privacidad",
+    aria: "Leer políticas de privacidad",
+    icon: IconShield,
+  },
+  {
+    key: "cond",
+    to: "/condiciones-de-uso",
+    label: "Condiciones de uso",
+    aria: "Leer condiciones de uso",
+    icon: IconScrollText,
+  },
+  {
+    key: "cont",
+    to: "/contacto",
+    label: "Contáctanos",
+    aria: "Contactar con el equipo de soporte",
+    icon: IconMessageSquare,
+  },
+  {
+    key: "mapa",
+    to: "/sitemap",
+    label: "Mapa del sitio",
+    aria: "Ver mapa del sitio con todas las páginas disponibles",
+    icon: IconMap,
+  },
+];
 </script>
