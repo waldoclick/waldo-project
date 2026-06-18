@@ -1,41 +1,42 @@
 <template>
   <div class="address address--default">
-    <div class="address--default__wrapper">
-      <div class="address--default__email">
-        <label class="address--default__label">Correo eléctronico</label>
-        <a href="mailto:contacto@waldo.click" class="email">
-          <IconMail :size="16" class="icon-mail" />
-          contacto@waldo.click
+    <div class="address--default__group">
+      <span class="address--default__eyebrow">Correo electrónico</span>
+      <a href="mailto:contacto@waldo.click" class="address--default__email">
+        <IconMail :size="17" class="address--default__email__icon" />
+        contacto@waldo.click
+      </a>
+    </div>
+    <div class="address--default__group">
+      <span class="address--default__eyebrow">Redes sociales</span>
+      <div class="address--default__social">
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Facebook"
+          href="https://www.facebook.com/profile.php?id=100070086861335"
+          class="address--default__social__link"
+        >
+          <IconFacebook :size="17" />
         </a>
-      </div>
-      <div class="address--default__rrss">
-        <label class="address--default__label">Redes sociales</label>
-        <span class="address--default__rrss__links">
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://www.facebook.com/profile.php?id=100070086861335"
-          >
-            <IconFacebook :size="16" class="icon-facebook" />
-            Facebook
-          </a>
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://www.instagram.com/waldo.click"
-          >
-            <IconInstagram :size="16" class="icon-instagram" />
-            Instagram
-          </a>
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://www.linkedin.com/company/waldoclick"
-          >
-            <IconLinkedin :size="16" class="icon-linkedin" />
-            LinkedIn
-          </a>
-        </span>
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Instagram"
+          href="https://www.instagram.com/waldo.click"
+          class="address--default__social__link"
+        >
+          <IconInstagram :size="17" />
+        </a>
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="LinkedIn"
+          href="https://www.linkedin.com/company/waldoclick"
+          class="address--default__social__link"
+        >
+          <IconLinkedin :size="17" />
+        </a>
       </div>
     </div>
   </div>

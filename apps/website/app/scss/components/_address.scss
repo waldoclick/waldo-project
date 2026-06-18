@@ -1,92 +1,71 @@
 @use "../abstracts/mixins" as *;
 @use "../abstracts/variables" as *;
-@use "../base/container";
 
 .address {
   &--default {
-    border: 1px solid $gainsboro;
-    box-sizing: border-box;
+    background: #fff;
+    border: 1px solid $line;
     border-radius: 4px;
-    // margin-top: 40px;
-    transition: 0.3s;
+    padding: 24px 26px;
+    box-sizing: border-box;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px 56px;
 
-    &:hover {
-      box-shadow: 0 0 30px rgba($charcoal, 0.1);
+    &__group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
 
-    &__wrapper {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      padding: 30px;
-
-      @include screen-small {
-        flex-direction: column;
-        padding: 20px;
-      }
+    &__eyebrow {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: $muted;
     }
 
     &__email {
-      display: flex;
-      flex-direction: column;
-      margin-bottom: 0px;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      width: fit-content;
+      font-size: 15px;
+      font-weight: 600;
+      color: $ink;
+      text-decoration: none;
+      transition: color 0.2s ease;
 
-      a {
-        color: $dodger_blue;
-        font-size: 14px;
-        font-weight: 600;
-        text-decoration: underline;
-        display: flex;
-        align-items: center;
-        gap: 5px;
+      &:hover {
+        color: $tag;
       }
 
-      @include screen-large {
-        margin-bottom: 15px;
+      &__icon {
+        color: $tag;
+        flex: none;
       }
     }
 
-    &__rrss {
+    &__social {
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      gap: 10px;
 
-      &__links {
-        display: flex;
-        align-items: center;
-        gap: 20px;
+      &__link {
+        width: 38px;
+        height: 38px;
+        border-radius: 4px;
+        display: grid;
+        place-items: center;
+        background: $cream;
+        border: 1px solid $line;
+        color: $ink;
+        transition: background 0.2s ease;
 
-        a {
-          font-style: normal;
-          font-weight: 600;
-          text-decoration: underline;
-          font-size: 14px;
-          line-height: 1;
-          letter-spacing: 0.25px;
-          color: $dodger_blue;
-
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          gap: 2px;
-
-          svg {
-            margin-right: 3px;
-          }
+        &:hover {
+          background: #fff;
         }
-      }
-    }
-
-    &__label {
-      font-style: normal;
-      font-weight: normal;
-      font-size: 13px;
-      line-height: 1;
-      letter-spacing: 0.25px;
-      color: $charcoal;
-      margin-bottom: 7px;
-
-      &.email {
-        font-weight: bold;
       }
     }
   }

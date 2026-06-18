@@ -1,5 +1,12 @@
 <template>
-  <ContactDefault />
+  <NuxtLayout
+    name="about"
+    title="Escríbenos tus dudas"
+    intro="¿Tienes preguntas sobre cómo publicar, comprar o vender equipos industriales en Waldo.click®? Completa el formulario y nuestro equipo te responderá a la brevedad."
+    active="cont"
+  >
+    <ContactDefault />
+  </NuxtLayout>
 </template>
 
 <script setup lang="ts">
@@ -9,9 +16,9 @@ const config = useRuntimeConfig();
 // Componente principal
 import ContactDefault from "@/components/ContactDefault.vue";
 
-// Definir layout
+// Definir layout — explicit <NuxtLayout> wrapper requires layout:false to avoid double-wrap
 definePageMeta({
-  layout: "about",
+  layout: false,
 });
 
 $setSEO({

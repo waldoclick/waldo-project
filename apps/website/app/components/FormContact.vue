@@ -1,86 +1,96 @@
 <template>
-  <form @submit.prevent="onSubmit">
+  <form class="contact--default__form__fields" @submit.prevent="onSubmit">
     <!-- E-mail -->
-    <div class="form-group">
-      <label class="form-label" for="email">Correo electrónico</label>
+    <div class="contact--default__form__field">
+      <label class="contact--default__form__field__label" for="email">
+        Correo electrónico
+      </label>
       <Field
         v-model="form.email"
         name="email"
         as="input"
         type="email"
-        placeholder="Ej: contacto@Waldo.click"
-        class="form-control"
+        placeholder="tu@correo.cl"
+        class="contact--default__form__field__control"
       />
-      <ErrorMessage name="email" />
+      <ErrorMessage name="email" class="contact--default__form__field__error" />
     </div>
 
     <!-- Nombre -->
-    <div class="form-group">
-      <label class="form-label" for="name">Nombre</label>
+    <div class="contact--default__form__field">
+      <label class="contact--default__form__field__label" for="name">
+        Nombre
+      </label>
       <Field
         v-model="form.name"
         name="name"
         as="input"
         type="text"
-        placeholder="Nombre completo"
-        class="form-control"
+        placeholder="Tu nombre"
+        class="contact--default__form__field__control"
         maxlength="30"
       />
-      <ErrorMessage name="name" />
+      <ErrorMessage name="name" class="contact--default__form__field__error" />
     </div>
 
     <!-- Empresa -->
-    <div class="form-group">
-      <label class="form-label" for="company">Empresa (opcional)</label>
+    <div class="contact--default__form__field">
+      <label class="contact--default__form__field__label" for="company">
+        Empresa <span class="contact--default__form__field__label__hint">(opcional)</span>
+      </label>
       <Field
         v-model="form.company"
         name="company"
         as="input"
         type="text"
         placeholder="Nombre de la empresa"
-        class="form-control"
+        class="contact--default__form__field__control"
         maxlength="50"
       />
-      <ErrorMessage name="company" />
+      <ErrorMessage name="company" class="contact--default__form__field__error" />
     </div>
 
     <!-- Teléfono -->
-    <div class="form-group">
-      <label class="form-label" for="phone">Teléfono (opcional)</label>
+    <div class="contact--default__form__field">
+      <label class="contact--default__form__field__label" for="phone">
+        Teléfono <span class="contact--default__form__field__label__hint">(opcional)</span>
+      </label>
       <Field v-slot="{ field }" name="phone">
         <InputPhone v-bind="field" />
       </Field>
-      <ErrorMessage name="phone" />
+      <ErrorMessage name="phone" class="contact--default__form__field__error" />
     </div>
 
     <!-- Mensaje -->
-    <div class="form-group contact-textarea">
-      <label class="form-label" for="message">Mensaje</label>
+    <div class="contact--default__form__field">
+      <label class="contact--default__form__field__label" for="message">
+        Mensaje
+      </label>
       <Field
         ref="messageTextarea"
         v-model="form.message"
         name="message"
         as="textarea"
-        class="form-control"
+        class="contact--default__form__field__control contact--default__form__field__control--textarea"
         placeholder="Escribe tu mensaje"
         @input="handleTextArea"
       />
-      <ErrorMessage name="message" />
-      <p class="form-msg">{{ remainingChars }} caracteres</p>
+      <ErrorMessage name="message" class="contact--default__form__field__error" />
+      <p class="contact--default__form__field__counter">
+        {{ remainingChars }} caracteres restantes
+      </p>
     </div>
 
     <!-- send -->
-    <div class="form__send">
-      <button
-        :disabled="!form.email && !form.name && !form.message"
-        :title="'Enviar'"
-        type="submit"
-        class="btn btn--primary"
-      >
-        <span v-if="!sending">Enviar</span>
-        <span v-if="sending">Enviando…</span>
-      </button>
-    </div>
+    <button
+      :disabled="!form.email && !form.name && !form.message"
+      :title="'Enviar'"
+      type="submit"
+      class="contact--default__form__submit"
+    >
+      <span v-if="!sending">Enviar</span>
+      <span v-if="sending">Enviando…</span>
+    </button>
   </form>
 </template>
 

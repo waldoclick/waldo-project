@@ -1,29 +1,134 @@
 @use "../abstracts/mixins" as *;
 @use "../abstracts/variables" as *;
-@use "../base/container";
 
 .contact {
   &--default {
-    max-width: 750px;
-
-    &__container {
-      @extend .container;
-
-      display: flex;
-      flex-direction: column;
-      gap: 50px;
-    }
-
-    &__header {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    &__title {
-    }
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
 
     &__form {
+      max-width: 600px;
+
+      &__fields {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      &__field {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+
+        &__label {
+          font-size: 13px;
+          font-weight: 600;
+          color: $ink;
+
+          &__hint {
+            color: $muted;
+            font-weight: 500;
+          }
+        }
+
+        &__control {
+          width: 100%;
+          box-sizing: border-box;
+          border: 1px solid $line;
+          outline: none;
+          font-family: inherit;
+          font-size: 15px;
+          color: $ink;
+          background: $cream;
+          padding: 13px 15px;
+          border-radius: 4px;
+          transition: border-color 0.2s ease, background 0.2s ease;
+
+          &::placeholder {
+            color: $muted;
+          }
+
+          &:focus {
+            border-color: $amber;
+            background: #fff;
+          }
+
+          &--textarea {
+            min-height: 120px;
+            resize: vertical;
+            line-height: 1.5;
+          }
+        }
+
+        &__counter {
+          margin: 0;
+          font-size: 12.5px;
+          color: $muted;
+          align-self: flex-end;
+        }
+
+        &__error {
+          font-size: 13px;
+          color: $red_salsa;
+        }
+
+        // Contextual theming of the shared InputPhone block (do not edit _input.scss).
+        .input--phone {
+          border: 1px solid $line;
+          background: $cream;
+          transition: border-color 0.2s ease, background 0.2s ease;
+
+          &:focus-within {
+            border-color: $amber;
+            background: #fff;
+          }
+
+          .input--phone__select {
+            border-right-color: $line;
+            background-color: $cream;
+            color: $ink;
+            font-weight: 600;
+          }
+
+          .input--phone__number {
+            color: $ink;
+
+            &::placeholder {
+              color: $muted;
+            }
+          }
+
+          &:focus-within .input--phone__select,
+          &:focus-within .input--phone__number {
+            background-color: #fff;
+          }
+        }
+      }
+
+      &__submit {
+        align-self: flex-start;
+        margin-top: 4px;
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+        font-weight: 600;
+        font-size: 15px;
+        color: $ink;
+        background: $amber;
+        padding: 14px 32px;
+        border-radius: 4px;
+        transition: background 0.2s ease;
+
+        &:hover {
+          background: $amber_hover;
+        }
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+      }
     }
   }
 }
