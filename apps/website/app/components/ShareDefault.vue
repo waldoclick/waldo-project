@@ -40,7 +40,11 @@
         class="share--default__actions__item"
         @click="copyToClipboard"
       >
-        <Check v-if="copied" class="share--default__actions__item__check" :size="16" />
+        <Check
+          v-if="copied"
+          class="share--default__actions__item__check"
+          :size="16"
+        />
         <IconLink v-else :size="16" />
       </button>
     </div>
@@ -50,7 +54,11 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useClipboard } from "@vueuse/core";
-import { Facebook as IconFacebook, Link as IconLink, Check } from "lucide-vue-next";
+import {
+  Facebook as IconFacebook,
+  Link as IconLink,
+  Check,
+} from "lucide-vue-next";
 import IconX from "./icons/IconX.vue";
 import IconWhatsApp from "./icons/IconWhatsApp.vue";
 import { useToast } from "../composables/useNotifications";

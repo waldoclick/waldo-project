@@ -23,7 +23,9 @@
           <h2 class="announcement--single__body__specs__title">Ubicación</h2>
           <div class="announcement--single__body__specs__grid">
             <div class="announcement--single__body__specs__grid__item">
-              <span class="announcement--single__body__specs__grid__item__label">
+              <span
+                class="announcement--single__body__specs__grid__item__label"
+              >
                 Dirección
               </span>
               <a
@@ -47,18 +49,26 @@
               </span>
             </div>
             <div class="announcement--single__body__specs__grid__item">
-              <span class="announcement--single__body__specs__grid__item__label">
+              <span
+                class="announcement--single__body__specs__grid__item__label"
+              >
                 Región
               </span>
-              <span class="announcement--single__body__specs__grid__item__value">
+              <span
+                class="announcement--single__body__specs__grid__item__value"
+              >
                 {{ regionName }}
               </span>
             </div>
             <div class="announcement--single__body__specs__grid__item">
-              <span class="announcement--single__body__specs__grid__item__label">
+              <span
+                class="announcement--single__body__specs__grid__item__label"
+              >
                 Comuna
               </span>
-              <span class="announcement--single__body__specs__grid__item__value">
+              <span
+                class="announcement--single__body__specs__grid__item__value"
+              >
                 {{ communeName }}
               </span>
             </div>
@@ -75,7 +85,9 @@
               :key="spec.label"
               class="announcement--single__body__specs__grid__item"
             >
-              <span class="announcement--single__body__specs__grid__item__label">
+              <span
+                class="announcement--single__body__specs__grid__item__label"
+              >
                 {{ spec.label }}
               </span>
               <span
@@ -118,7 +130,9 @@
         </div>
 
         <div class="announcement--single__sidebar__price">
-          <span class="announcement--single__sidebar__price__label">Precio</span>
+          <span class="announcement--single__sidebar__price__label"
+            >Precio</span
+          >
           <div class="announcement--single__sidebar__price__amount">
             <span class="announcement--single__sidebar__price__amount__value">
               {{ all?.priceData?.formattedPrice }}
@@ -325,10 +339,7 @@
             </button>
           </template>
 
-          <div
-            v-else
-            class="announcement--single__sidebar__contact__reminder"
-          >
+          <div v-else class="announcement--single__sidebar__contact__reminder">
             <ReminderDefault />
           </div>
         </div>
@@ -425,7 +436,10 @@ const sellerInitials = computed(() => {
   if (!u) return "";
   const first = (u.firstname || "").charAt(0);
   const last = (u.lastname || "").charAt(0);
-  return `${first}${last}`.toUpperCase() || (u.username || "").charAt(0).toUpperCase();
+  return (
+    `${first}${last}`.toUpperCase() ||
+    (u.username || "").charAt(0).toUpperCase()
+  );
 });
 
 // Extract the real value from a 08-04 reveal endpoint response. Each call site

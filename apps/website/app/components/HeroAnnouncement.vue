@@ -40,20 +40,14 @@
         </h1>
 
         <div class="hero--announcement__meta">
-          <span
-            v-if="getCategory.name"
-            class="hero--announcement__meta__pill"
-          >
+          <span v-if="getCategory.name" class="hero--announcement__meta__pill">
             <span
               class="hero--announcement__meta__pill__dot"
               :style="{ backgroundColor: getCategory.color || '#8a8794' }"
             />
             {{ getCategory.name }}
           </span>
-          <span
-            v-if="publishedLabel"
-            class="hero--announcement__meta__item"
-          >
+          <span v-if="publishedLabel" class="hero--announcement__meta__item">
             <Clock class="hero--announcement__meta__item__icon" :size="15" />
             Publicado {{ publishedLabel }}
           </span>

@@ -36,7 +36,10 @@
     <!-- Empresa -->
     <div class="contact--default__form__field">
       <label class="contact--default__form__field__label" for="company">
-        Empresa <span class="contact--default__form__field__label__hint">(opcional)</span>
+        Empresa
+        <span class="contact--default__form__field__label__hint"
+          >(opcional)</span
+        >
       </label>
       <Field
         v-model="form.company"
@@ -47,13 +50,19 @@
         class="contact--default__form__field__control"
         maxlength="50"
       />
-      <ErrorMessage name="company" class="contact--default__form__field__error" />
+      <ErrorMessage
+        name="company"
+        class="contact--default__form__field__error"
+      />
     </div>
 
     <!-- Teléfono -->
     <div class="contact--default__form__field">
       <label class="contact--default__form__field__label" for="phone">
-        Teléfono <span class="contact--default__form__field__label__hint">(opcional)</span>
+        Teléfono
+        <span class="contact--default__form__field__label__hint"
+          >(opcional)</span
+        >
       </label>
       <Field v-slot="{ field }" name="phone">
         <InputPhone v-bind="field" />
@@ -75,7 +84,10 @@
         placeholder="Escribe tu mensaje"
         @input="handleTextArea"
       />
-      <ErrorMessage name="message" class="contact--default__form__field__error" />
+      <ErrorMessage
+        name="message"
+        class="contact--default__form__field__error"
+      />
       <p class="contact--default__form__field__counter">
         {{ remainingChars }} caracteres restantes
       </p>

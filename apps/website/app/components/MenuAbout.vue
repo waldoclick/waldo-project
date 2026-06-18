@@ -9,7 +9,11 @@
       :aria-label="link.aria"
       :title="link.aria"
     >
-      <component :is="link.icon" class="menu--about__link__icon" aria-hidden="true" />
+      <component
+        :is="link.icon"
+        class="menu--about__link__icon"
+        aria-hidden="true"
+      />
       <span class="menu--about__link__label">{{ link.label }}</span>
     </nuxt-link>
   </nav>

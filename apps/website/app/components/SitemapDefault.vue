@@ -6,7 +6,10 @@
       class="sitemap--default__block"
     >
       <span class="sitemap--default__block__title">
-        <span class="sitemap--default__block__title__dot" aria-hidden="true"></span>
+        <span
+          class="sitemap--default__block__title__dot"
+          aria-hidden="true"
+        ></span>
         {{ block.title }}
       </span>
       <div class="sitemap--default__block__list">
@@ -16,7 +19,9 @@
           :to="item.to"
           class="sitemap--default__block__list__row"
         >
-          <span class="sitemap--default__block__list__row__label">{{ item.label }}</span>
+          <span class="sitemap--default__block__list__row__label">{{
+            item.label
+          }}</span>
           <ChevronRight
             class="sitemap--default__block__list__row__chevron"
             aria-hidden="true"

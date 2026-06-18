@@ -10,11 +10,7 @@
       />
     </client-only>
 
-    <div
-      v-if="hasMainImage"
-      class="gallery--default__main"
-      @click="show(0)"
-    >
+    <div v-if="hasMainImage" class="gallery--default__main" @click="show(0)">
       <img
         class="gallery--default__main__image"
         loading="lazy"
@@ -24,18 +20,19 @@
         title="Imagen principal"
       />
       <span class="gallery--default__main__veil" />
-      <span class="gallery--default__main__badge gallery--default__main__badge--zoom">
+      <span
+        class="gallery--default__main__badge gallery--default__main__badge--zoom"
+      >
         <Maximize2 :size="14" />
         Ampliar
       </span>
-      <span class="gallery--default__main__badge gallery--default__main__badge--count">
+      <span
+        class="gallery--default__main__badge gallery--default__main__badge--count"
+      >
         <ImageIcon :size="14" />
         {{ photosLabel }}
       </span>
-      <span
-        v-if="condition"
-        class="gallery--default__main__condition"
-      >
+      <span v-if="condition" class="gallery--default__main__condition">
         {{ condition }}
       </span>
     </div>

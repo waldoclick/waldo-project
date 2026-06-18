@@ -6,10 +6,20 @@
     <section v-if="title" class="layout--about__header">
       <span class="layout--about__header__glow" aria-hidden="true"></span>
       <div class="layout--about__header__inner">
-        <nav class="layout--about__header__crumbs" aria-label="Ruta de navegación">
-          <nuxt-link to="/" class="layout--about__header__crumbs__home">Waldo</nuxt-link>
-          <ChevronRight class="layout--about__header__crumbs__sep" aria-hidden="true" />
-          <span class="layout--about__header__crumbs__current">{{ title }}</span>
+        <nav
+          class="layout--about__header__crumbs"
+          aria-label="Ruta de navegación"
+        >
+          <nuxt-link to="/" class="layout--about__header__crumbs__home"
+            >Waldo</nuxt-link
+          >
+          <ChevronRight
+            class="layout--about__header__crumbs__sep"
+            aria-hidden="true"
+          />
+          <span class="layout--about__header__crumbs__current">{{
+            title
+          }}</span>
         </nav>
         <h1 class="layout--about__header__title">{{ title }}</h1>
         <p v-if="intro" class="layout--about__header__intro">{{ intro }}</p>

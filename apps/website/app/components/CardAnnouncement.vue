@@ -32,10 +32,7 @@
         role="status"
         aria-label="Anuncio vendido"
       >
-        <IconCheck
-          :size="12"
-          class="card--announcement__media__sold__icon"
-        />
+        <IconCheck :size="12" class="card--announcement__media__sold__icon" />
         Vendido
       </span>
       <span

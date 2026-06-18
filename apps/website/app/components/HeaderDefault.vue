@@ -35,6 +35,7 @@
         <div v-if="searchIcon" class="header--default__search">
           <SearchIcon :white="isTrasparent && isTop" />
         </div>
+        <span class="header--default__divider" aria-hidden="true"></span>
         <div
           v-if="
             user &&

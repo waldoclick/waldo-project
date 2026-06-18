@@ -43,7 +43,9 @@
           background: $cream;
           padding: 13px 15px;
           border-radius: 4px;
-          transition: border-color 0.2s ease, background 0.2s ease;
+          transition:
+            border-color 0.2s ease,
+            background 0.2s ease;
 
           &::placeholder {
             color: $muted;
@@ -77,7 +79,9 @@
         .input--phone {
           border: 1px solid $line;
           background: $cream;
-          transition: border-color 0.2s ease, background 0.2s ease;
+          transition:
+            border-color 0.2s ease,
+            background 0.2s ease;
 
           &:focus-within {
             border-color: $amber;

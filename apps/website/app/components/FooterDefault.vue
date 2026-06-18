@@ -1,79 +1,72 @@
 <template>
   <footer class="footer footer--default">
-    <div class="footer--default__top">
-      <div class="footer--default__top__container">
-        <div class="footer--default__top__indicators">
-          <div
-            v-for="indicator in indicators"
-            :key="indicator.code"
-            class="footer--default__top__indicators__item"
-          >
-            <component
-              :is="getIndicatorIcon(indicator.code)"
-              class="icon"
-              :size="16"
-            />
-            <span class="footer--default__top__indicators__item__name">
-              {{ getShortName(indicator.code) }}
-            </span>
-            <span class="footer--default__top__indicators__item__value">
-              {{ formatValue(indicator.value, indicator.unit) }}
-            </span>
-          </div>
-        </div>
+    <!-- indicators row -->
+    <div class="footer--default__indicators">
+      <div class="footer--default__indicators__container">
+        <span
+          v-for="indicator in indicators"
+          :key="indicator.code"
+          class="footer--default__indicators__item"
+        >
+          {{ getShortName(indicator.code) }}
+          <strong class="footer--default__indicators__item__value">
+            {{ formatValue(indicator.value, indicator.unit) }}
+          </strong>
+        </span>
       </div>
     </div>
-    <div class="footer--default__middle">
-      <div class="footer--default__middle__container">
-        <div class="footer--default__middle__logo">
-          <LogoWhite />
-        </div>
-        <div class="footer--default__middle__menu">
-          <MenuFooter />
-        </div>
-        <div class="footer--default__middle__trademark">
-          <p>{{ getCopyrightText() }}</p>
-        </div>
+    <!-- main row -->
+    <div class="footer--default__main">
+      <div class="footer--default__main__container">
+        <NuxtLink to="/" class="footer--default__main__logo">
+          <img src="/images/logo-black.svg" alt="Waldo.click" />
+        </NuxtLink>
+        <nav class="footer--default__main__nav">
+          <NuxtLink
+            to="/preguntas-frecuentes"
+            class="footer--default__main__nav__link"
+            >Preguntas Frecuentes</NuxtLink
+          >
+          <NuxtLink
+            to="/politicas-de-privacidad"
+            class="footer--default__main__nav__link"
+            >Políticas de privacidad</NuxtLink
+          >
+          <NuxtLink
+            to="/condiciones-de-uso"
+            class="footer--default__main__nav__link"
+            >Condiciones de uso</NuxtLink
+          >
+        </nav>
+        <span class="footer--default__main__copy">{{
+          getCopyrightText()
+        }}</span>
       </div>
     </div>
   </footer>
 </template>
 
 <script lang="ts" setup>
-import LogoWhite from "@/components/LogoWhite.vue";
-import MenuFooter from "@/components/MenuFooter.vue";
-import { useIndicatorStore } from "@/stores/indicator.store";
-import type { Indicator } from "@/types/indicator";
-import { ref, onMounted } from "vue";
-import {
-  DollarSign,
-  Euro,
-  Building2,
-  Calculator,
-  TrendingUp,
-} from "lucide-vue-next";
+import { onMounted } from "vue";
 import { storeToRefs } from "pinia";
+import { useIndicatorStore } from "@/stores/indicator.store";
 
 const indicatorStore = useIndicatorStore();
 const { indicators } = storeToRefs(indicatorStore);
 
-// Función para obtener el icono correspondiente según el código del indicador
-const getIndicatorIcon = (code: string) => {
-  const icons = {
-    dolar: DollarSign,
-    euro: Euro,
-    uf: Building2,
-    utm: Calculator,
-    ipc: TrendingUp,
+const getShortName = (code: string) => {
+  const names: Record<string, string> = {
+    uf: "UF",
+    dolar: "USD",
+    euro: "EUR",
+    utm: "UTM",
+    ipc: "IPC",
   };
-  return icons[code as keyof typeof icons] || DollarSign;
+  return names[code] ?? code.toUpperCase();
 };
 
-// Función para formatear el valor según la unidad
 const formatValue = (value: number, unit: string) => {
-  if (unit === "Porcentaje") {
-    return `${value}%`;
-  }
+  if (unit === "Porcentaje") return `${value}%`;
   return new Intl.NumberFormat("es-CL", {
     style: "currency",
     currency: "CLP",
@@ -81,29 +74,13 @@ const formatValue = (value: number, unit: string) => {
   }).format(value);
 };
 
-// Function to generate the copyright text
 const getCopyrightText = () => {
   const currentYear = new Date().getFullYear();
-  const baseYear = 2024;
-  return currentYear > baseYear
-    ? `Waldo.click® ${baseYear} - ${currentYear}, Todos los derechos reservados`
-    : `Waldo.click® ${baseYear}, Todos los derechos reservados`;
+  return currentYear > 2024
+    ? `Waldo.click® 2024–${currentYear} · Todos los derechos reservados`
+    : "Waldo.click® 2024 · Todos los derechos reservados";
 };
 
-// Función para obtener el nombre corto del indicador
-const getShortName = (code: string) => {
-  const names = {
-    uf: "UF",
-    dolar: "USD",
-    euro: "EUR",
-    utm: "UTM",
-    ipc: "IPC",
-  };
-  return names[code as keyof typeof names] || code.toUpperCase();
-};
-
-// Cargar los indicadores al montar el componente
-// onMounted: client-only fetch — economic indicators are non-critical footer content; intentionally client-side
 onMounted(async () => {
   await indicatorStore.fetchIndicators();
 });
