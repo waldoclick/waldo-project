@@ -1,5 +1,12 @@
 <template>
-  <PoliciesDefault :policies="policies || []" />
+  <NuxtLayout
+    name="about"
+    title="Políticas de privacidad"
+    intro="Conoce cómo Waldo.click® protege tu información personal cuando publicas y exploras anuncios de activos industriales en nuestra plataforma."
+    active="priv"
+  >
+    <PoliciesDefault :policies="policies || []" />
+  </NuxtLayout>
 </template>
 
 <script setup lang="ts">
@@ -10,9 +17,10 @@ const config = useRuntimeConfig();
 // Componente principal
 import PoliciesDefault from "@/components/PoliciesDefault.vue";
 
-// Definir el layout
+// Layout aplicado explícitamente con <NuxtLayout name="about"> en el template;
+// layout: false evita que Nuxt aplique además el layout por defecto (doble wrap).
 definePageMeta({
-  layout: "about",
+  layout: false,
 });
 
 // Cargar policies — useAsyncData integra con el ciclo SSR de Nuxt;
