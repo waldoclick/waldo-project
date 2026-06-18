@@ -1,0 +1,240 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+// HERO band — extends the shared `.hero` (130px top pad clears the headroom header)
+.hero {
+  &--why {
+    position: relative;
+    overflow: hidden;
+    padding: 0;
+    background-color: $cream;
+    border-bottom: 1px solid $line;
+
+    &__glow {
+      position: absolute;
+      top: -130px;
+      right: -90px;
+      width: 480px;
+      height: 480px;
+      border-radius: 50%;
+      background: radial-gradient(
+        circle,
+        rgba(247, 201, 126, 0.16),
+        transparent 65%
+      );
+      pointer-events: none;
+    }
+
+    &__container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 128px 32px 72px;
+      position: relative;
+      z-index: 2;
+      text-align: center;
+
+      @include screen-small {
+        padding: 116px 20px 56px;
+      }
+    }
+
+    &__eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(247, 201, 126, 0.28);
+      color: $tag;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 0.2px;
+      padding: 7px 14px;
+      border-radius: 4px;
+
+      &__icon {
+        flex: none;
+        color: $tag;
+      }
+    }
+
+    &__title {
+      font-family: "Poppins", sans-serif;
+      font-weight: 800;
+      color: $ink;
+      font-size: clamp(34px, 4.4vw, 52px);
+      line-height: 1.12;
+      letter-spacing: -0.6px;
+      margin: 22px 0 0;
+      text-wrap: balance;
+
+      &__mark {
+        background-image: linear-gradient($amber, $amber);
+        background-size: 100% 0.2em;
+        background-position: 0 90%;
+        background-repeat: no-repeat;
+        -webkit-box-decoration-break: clone;
+        box-decoration-break: clone;
+      }
+    }
+
+    &__text {
+      font-size: 18px;
+      line-height: 1.55;
+      color: $ink2;
+      margin: 18px auto 0;
+      max-width: 560px;
+    }
+
+    &__actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 30px;
+
+      &__primary {
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 15px;
+        color: $ink;
+        background: $amber;
+        padding: 14px 26px;
+        border-radius: 4px;
+
+        &:hover {
+          background: $amber_hover;
+        }
+      }
+
+      &__secondary {
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 15px;
+        color: $ink;
+        border: 1px solid $line;
+        background: $white;
+        padding: 13px 24px;
+        border-radius: 4px;
+
+        &:hover {
+          background: $cream;
+        }
+      }
+    }
+  }
+}
+
+// dark "Empieza ahora" CTA band — own block (mirrors SellCta precedent)
+.why-cta {
+  background: $cream;
+  border-top: 1px solid $line;
+  padding: 64px 0 72px;
+
+  @include screen-medium {
+    padding: 48px 0 56px;
+  }
+
+  .container {
+    max-width: 1200px;
+  }
+
+  &__panel {
+    background: $ink;
+    border-radius: 6px;
+    padding: 52px 48px;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 32px;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+
+    @include screen-medium {
+      grid-template-columns: 1fr;
+      padding: 40px 28px;
+      gap: 24px;
+    }
+
+    &__glow {
+      position: absolute;
+      top: -90px;
+      right: -50px;
+      width: 360px;
+      height: 360px;
+      border-radius: 50%;
+      background: radial-gradient(
+        circle,
+        rgba(247, 201, 126, 0.2),
+        transparent 65%
+      );
+      pointer-events: none;
+    }
+
+    &__content {
+      position: relative;
+
+      &__title {
+        font-family: "Poppins", sans-serif;
+        font-weight: 800;
+        color: $white;
+        font-size: 34px;
+        letter-spacing: -0.5px;
+        margin: 0;
+        line-height: 1.12;
+        text-wrap: balance;
+
+        @include screen-medium {
+          font-size: 26px;
+        }
+      }
+
+      &__text {
+        font-size: 16.5px;
+        line-height: 1.55;
+        color: rgba(255, 255, 255, 0.72);
+        margin: 14px 0 0;
+        max-width: 460px;
+      }
+    }
+
+    &__actions {
+      position: relative;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: flex-end;
+
+      @include screen-medium {
+        justify-content: flex-start;
+      }
+
+      &__primary {
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 15px;
+        color: $ink;
+        background: $amber;
+        padding: 14px 26px;
+        border-radius: 4px;
+
+        &:hover {
+          background: $amber_hover;
+        }
+      }
+
+      &__secondary {
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 15px;
+        color: $white;
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        padding: 13px 24px;
+        border-radius: 4px;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.08);
+        }
+      }
+    }
+  }
+}

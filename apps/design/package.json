@@ -1,0 +1,9 @@
+{
+  "name": "waldo-design",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static server for the design mockups (.dc.html), served on :3002 via pnpm dev",
+  "scripts": {
+    "dev": "node server.mjs"
+  }
+}

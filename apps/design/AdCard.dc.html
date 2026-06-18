@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</helmet>
+<article onClick="{{ onOpen }}" style="background:#fff;border:1px solid #ECE9E4;border-radius:4px;overflow:hidden;cursor:pointer;transition:transform .16s ease,box-shadow .16s ease;font-family:'Poppins',system-ui,sans-serif" style-hover="transform:translateY(-4px);box-shadow:0 18px 38px -16px rgba(20,18,30,.22)">
+  <div style="position:relative;aspect-ratio:4/3;background:#F6F4F1;overflow:hidden">
+    {{ media }}
+    <sc-if value="{{ sold }}" hint-placeholder-val="{{ false }}">
+      <span style="position:absolute;inset:0;background:rgba(38,37,43,.18)"></span>
+      <span style="position:absolute;top:10px;left:10px;display:inline-flex;align-items:center;gap:5px;background:#26252B;color:#fff;font-weight:700;font-size:11.5px;padding:5px 11px;border-radius:4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Vendido</span>
+    </sc-if>
+    <sc-if value="{{ notSold }}" hint-placeholder-val="{{ true }}">
+      <span style="position:absolute;top:10px;left:10px;display:flex;align-items:center;gap:5px;background:rgba(38,37,43,.78);color:#fff;font-size:12px;font-weight:600;padding:4px 9px;border-radius:4px;backdrop-filter:blur(4px)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>{{ photosLabel }}</span>
+    </sc-if>
+    <sc-if value="{{ featured }}" hint-placeholder-val="{{ false }}">
+      <span style="position:absolute;top:10px;right:10px;display:flex;align-items:center;gap:5px;background:#F7C97E;color:#26252B;font-weight:700;font-size:11.5px;padding:5px 10px;border-radius:4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="#26252B" stroke="none"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Destacado</span>
+    </sc-if>
+  </div>
+  <div style="padding:14px 15px 16px;display:flex;flex-direction:column;gap:6px">
+    {{ catPill }}
+    <sc-if value="{{ notSold }}" hint-placeholder-val="{{ true }}"><h3 style="font-family:'Poppins',sans-serif;font-weight:600;color:#26252B;font-size:16.5px;margin:0;letter-spacing:-.2px;line-height:1.25">{{ title }}</h3></sc-if>
+    <sc-if value="{{ sold }}" hint-placeholder-val="{{ false }}"><h3 style="font-family:'Poppins',sans-serif;font-weight:600;color:#56535F;font-size:16.5px;margin:0;letter-spacing:-.2px;line-height:1.25">{{ title }}</h3></sc-if>
+    <sc-if value="{{ hasMeta }}" hint-placeholder-val="{{ true }}"><span style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:#8A8794"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9A96A0" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>{{ meta }}</span></sc-if>
+    <div style="display:flex;align-items:baseline;gap:6px;margin-top:4px">
+      <sc-if value="{{ notSold }}" hint-placeholder-val="{{ true }}"><span style="font-family:'Poppins',sans-serif;font-weight:700;color:#26252B;font-size:17px">{{ priceLabel }}</span><span style="font-size:12.5px;color:#8A8794">+ IVA</span></sc-if>
+      <sc-if value="{{ sold }}" hint-placeholder-val="{{ false }}"><span style="font-family:'Poppins',sans-serif;font-weight:700;color:#8A8794;font-size:16px;text-decoration:line-through">{{ priceLabel }}</span></sc-if>
+    </div>
+    <sc-if value="{{ loginPrompt }}" hint-placeholder-val="{{ true }}"><span style="display:flex;align-items:center;gap:6px;margin-top:6px;padding-top:12px;border-top:1px solid #ECE9E4;font-size:12.5px;color:#8A8794"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9A96A0" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Inicia sesión para ver al anunciante</span></sc-if>
+    <sc-if value="{{ showSeller }}" hint-placeholder-val="{{ false }}"><span style="display:flex;align-items:center;gap:7px;margin-top:6px;padding-top:12px;border-top:1px solid #ECE9E4;font-size:12.5px;color:#56535F;font-weight:500"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9A96A0" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>{{ sellerName }}</span></sc-if>
+    <sc-if value="{{ soldFooter }}" hint-placeholder-val="{{ false }}"><span style="display:flex;align-items:center;gap:6px;margin-top:6px;padding-top:12px;border-top:1px solid #ECE9E4;font-size:12.5px;color:#8A8794">Vendido {{ soldWhen }}</span></sc-if>
+  </div>
+</article>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:280,&quot;height&quot;:360},&quot;listing&quot;:{&quot;editor&quot;:null,&quot;default&quot;:{&quot;category&quot;:&quot;Minería&quot;,&quot;title&quot;:&quot;Excavadora CAT 320&quot;,&quot;priceLabel&quot;:&quot;US$ 145.000&quot;,&quot;photos&quot;:8,&quot;featured&quot;:true,&quot;condition&quot;:&quot;Usado&quot;,&quot;year&quot;:2019,&quot;location&quot;:&quot;Antofagasta&quot;,&quot;img&quot;:&quot;cat-320.png&quot;}},&quot;loggedIn&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false},&quot;sellerName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;},&quot;hideSeller&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false},&quot;sold&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false},&quot;soldWhen&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;},&quot;onOpen&quot;:{&quot;editor&quot;:null}}">
+class Component extends DCLogic {
+  HUE = {'Minería':62,'Comunicaciones':250,'Transporte':210,'Energía':96,'Pesca':192,'Salud':18,'Silvicultura':142,'Agricultura':166,'Alimentación':300,'Construcción':238,'Ganadería':32,'Manufactura':352,'Telecomunicaciones':266};
+  renderVals(){
+    const l = this.props.listing || {};
+    const cat = l.category || 'Minería';
+    const h = this.HUE[cat] || 60;
+    const tint = 'oklch(0.955 0.035 '+h+')';
+    const onc = 'oklch(0.52 0.13 '+h+')';
+    const basec = 'oklch(0.66 0.16 '+h+')';
+    const sold = !!this.props.sold;
+    const imgStyle = { position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover' };
+    const media = l.img
+      ? React.createElement('img', { src:l.img, alt:l.title, style:imgStyle })
+      : React.createElement('img', { src:'assets/placeholder-asset.png', alt:l.title || cat, style:imgStyle });
+    const catPill = React.createElement('span', { style:{ display:'inline-flex', alignItems:'center', gap:'6px', fontSize:'11px', fontWeight:700, letterSpacing:'.05em', textTransform:'uppercase', color:onc, background:tint, padding:'4px 10px', borderRadius:'4px', width:'fit-content' } },
+      React.createElement('span', { style:{ width:'7px', height:'7px', borderRadius:'50%', background:basec, flex:'none' } }), cat);
+    const photosN = l.photos != null ? l.photos : 1;
+    const metaParts = [l.location, l.year, l.condition].filter(Boolean);
+    const sellerName = this.props.sellerName || '';
+    const loggedIn = this.props.loggedIn !== false;
+    const hideSeller = !!this.props.hideSeller;
+    return {
+      media, catPill, sold, notSold: !sold,
+      title: l.title || '',
+      meta: metaParts.join(' · '), hasMeta: !sold && metaParts.length > 0,
+      priceLabel: l.priceLabel || '',
+      photosLabel: photosN + (photosN === 1 ? ' foto' : ' fotos'),
+      featured: !!l.featured && !sold,
+      onOpen: this.props.onOpen || (() => {}),
+      soldWhen: this.props.soldWhen || '',
+      soldFooter: sold && !!this.props.soldWhen,
+      showSeller: !sold && loggedIn && !hideSeller && !!sellerName,
+      loginPrompt: !sold && !loggedIn && !hideSeller,
+      sellerName,
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -12,6 +12,8 @@ importers:
         specifier: ^2.8.17
         version: 2.9.17
 
+  apps/design: {}
+
   apps/strapi:
     dependencies:
       '@anthropic-ai/sdk':

@@ -52,5 +52,9 @@ Thumbs.db
 apps/strapi/google.json
 .vercel
 
-# Design reference (redesign mockups dropped here as zips — local only)
-design/
+# Design mockups now live at apps/design (TRACKED, served on :3002 via pnpm dev).
+# Only the raw 32MB delivery zip is ignored — the extracted files are tracked.
+apps/design/*.zip
+apps/design/uploads
+apps/design/screenshots
+*:Zone.Identifier

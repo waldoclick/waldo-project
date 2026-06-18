@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</helmet>
+<article onClick="{{ onOpen }}" style="background:#fff;border:1px solid #ECE9E4;border-radius:4px;overflow:hidden;cursor:pointer;transition:transform .16s ease,box-shadow .16s ease;font-family:'Poppins',system-ui,sans-serif;display:flex;flex-direction:column;height:100%" style-hover="transform:translateY(-4px);box-shadow:0 18px 38px -16px rgba(20,18,30,.22)">
+  <div style="position:relative;aspect-ratio:16/9;background:{{ washBg }};overflow:hidden;display:flex;align-items:flex-end;padding:16px">
+    <sc-if value="{{ hasImg }}" hint-placeholder-val="{{ false }}"><img src="{{ img }}" alt="{{ title }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"></sc-if>
+    <span style="position:absolute;top:14px;left:14px;z-index:2;display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.88);backdrop-filter:blur(4px);color:{{ onColor }};font-weight:700;font-size:11px;letter-spacing:.05em;text-transform:uppercase;padding:5px 11px;border-radius:4px"><span style="width:7px;height:7px;border-radius:50%;background:{{ baseColor }};flex:none"></span>{{ category }}</span>
+    <sc-if value="{{ noImg }}" hint-placeholder-val="{{ true }}"><span style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:34px;font-weight:700;line-height:.9;letter-spacing:-.02em;color:{{ onColor }};opacity:.32">{{ kicker }}</span></sc-if>
+  </div>
+  <div style="padding:16px 18px 18px;display:flex;flex-direction:column;gap:9px;flex:1">
+    <h3 style="font-family:'Poppins',sans-serif;font-weight:700;color:#26252B;font-size:18px;margin:0;letter-spacing:-.3px;line-height:1.3;text-wrap:pretty">{{ title }}</h3>
+    <p style="margin:0;font-size:14px;line-height:1.55;color:#56535F;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ excerpt }}</p>
+    <span style="display:flex;align-items:center;gap:8px;margin-top:auto;padding-top:12px;font-size:12.5px;color:#8A8794;font-weight:500">
+      <span>{{ date }}</span>
+      <span style="width:3px;height:3px;border-radius:50%;background:#C9C5CC;flex:none"></span>
+      <span style="display:inline-flex;align-items:center;gap:5px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9A96A0" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>{{ readLabel }}</span>
+    </span>
+  </div>
+</article>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:340,&quot;height&quot;:320},&quot;article&quot;:{&quot;editor&quot;:null,&quot;default&quot;:{&quot;category&quot;:&quot;Guía de compra&quot;,&quot;title&quot;:&quot;Cómo inspeccionar maquinaria usada antes de comprar&quot;,&quot;excerpt&quot;:&quot;Una pauta práctica para revisar horas, fugas, tren de rodaje y papeles antes de cerrar el trato.&quot;,&quot;date&quot;:&quot;10 jun 2026&quot;,&quot;readMins&quot;:6}},&quot;onOpen&quot;:{&quot;editor&quot;:null}}">
+class Component extends DCLogic {
+  HUE = {'Guía de compra':62,'Mercado':238,'Mantención':18,'Vender mejor':166,'Financiamiento':96,'Logística':210,'Seguridad':352};
+  renderVals(){
+    const a = this.props.article || {};
+    const cat = a.category || 'Guía de compra';
+    const h = this.HUE[cat] != null ? this.HUE[cat] : 60;
+    const r = a.readMins || 5;
+    return {
+      category: cat,
+      kicker: (a.kicker || cat.split(' ')[0]).toUpperCase(),
+      washBg: 'oklch(0.955 0.035 '+h+')',
+      onColor: 'oklch(0.50 0.13 '+h+')',
+      baseColor: 'oklch(0.66 0.16 '+h+')',
+      title: a.title || '',
+      excerpt: a.excerpt || '',
+      date: a.date || '',
+      readLabel: r + ' min de lectura',
+      img: a.img || '',
+      hasImg: !!a.img,
+      noImg: !a.img,
+      onOpen: this.props.onOpen || (() => {}),
+    };
+  }
+}
+</script>
+</body>
+</html>

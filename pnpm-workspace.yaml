@@ -1,6 +1,7 @@
 packages:
   - 'apps/strapi'
   - 'apps/website'
+  - 'apps/design'
 # pnpm 10+ syntax
 allowBuilds:
   '@parcel/watcher': true

@@ -4,6 +4,8 @@
 
 .howto {
   &--default {
+    background: $cream;
+
     &__container {
       @extend .container;
       max-width: 1100px;
