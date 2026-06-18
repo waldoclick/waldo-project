@@ -4,45 +4,58 @@
     :validation-schema="schema"
     @submit="handleSubmit"
   >
-    <div class="form-group">
+    <div class="form-group form-group--password">
       <label class="form-label" for="current_password">Contraseña actual</label>
-      <Field
-        v-model="form.current_password"
-        name="current_password"
-        :type="passwordType"
-        class="form-control"
-        autocomplete="current-password"
-      />
-      <button
-        class="form-group--password__show-password"
-        type="button"
-        :title="`Mostrar/ocultar contraseña`"
-        @click="handleShowPassword"
-      >
-        <strong v-if="passwordType !== 'password'">Ocultar</strong>
-        <strong v-else>Mostrar</strong>
-      </button>
+      <div class="form-group--password__field">
+        <Field
+          v-model="form.current_password"
+          name="current_password"
+          :type="passwordType"
+          class="form-control"
+          autocomplete="current-password"
+        />
+        <button
+          class="form-group--password__show-password"
+          type="button"
+          :title="`Mostrar/ocultar contraseña`"
+          @click="handleShowPassword"
+        >
+          <strong v-if="passwordType !== 'password'">Ocultar</strong>
+          <strong v-else>Mostrar</strong>
+        </button>
+      </div>
       <ErrorMessage name="current_password" />
     </div>
 
     <div class="form-group form-group--password form-group--withgen">
-      <label class="form-label" for="password">Nueva contraseña</label>
       <div class="form-group--password__topbar">
+        <label class="form-label" for="password">Nueva contraseña</label>
         <button
           type="button"
           class="form-group--password__generate"
           @click="handleGeneratePassword"
         >
-          ✦ Generar segura
+          <IconSparkles :size="13" /> Generar segura
         </button>
       </div>
-      <Field
-        v-model="form.password"
-        name="password"
-        :type="passwordType"
-        class="form-control"
-        autocomplete="new-password"
-      />
+      <div class="form-group--password__field">
+        <Field
+          v-model="form.password"
+          name="password"
+          :type="passwordType"
+          class="form-control"
+          autocomplete="new-password"
+        />
+        <button
+          class="form-group--password__show-password"
+          type="button"
+          :title="`Mostrar/ocultar contraseña`"
+          @click="handleShowPassword"
+        >
+          <strong v-if="passwordType !== 'password'">Ocultar</strong>
+          <strong v-else>Mostrar</strong>
+        </button>
+      </div>
       <ErrorMessage name="password" />
       <PasswordStrength :password="form.password" />
     </div>
@@ -51,13 +64,24 @@
       <label class="form-label" for="password_confirmation"
         >Repetir nueva contraseña</label
       >
-      <Field
-        v-model="form.password_confirmation"
-        name="password_confirmation"
-        :type="passwordType"
-        class="form-control"
-        autocomplete="new-password"
-      />
+      <div class="form-group--password__field">
+        <Field
+          v-model="form.password_confirmation"
+          name="password_confirmation"
+          :type="passwordType"
+          class="form-control"
+          autocomplete="new-password"
+        />
+        <button
+          class="form-group--password__show-password"
+          type="button"
+          :title="`Mostrar/ocultar contraseña`"
+          @click="handleShowPassword"
+        >
+          <strong v-if="passwordType !== 'password'">Ocultar</strong>
+          <strong v-else>Mostrar</strong>
+        </button>
+      </div>
       <ErrorMessage name="password_confirmation" />
     </div>
 
@@ -76,6 +100,7 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { Form, Field, ErrorMessage } from "vee-validate";
+import { Sparkles as IconSparkles } from "lucide-vue-next";
 import * as yup from "yup";
 const { Swal } = useSweetAlert2();
 
