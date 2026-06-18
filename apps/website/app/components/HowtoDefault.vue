@@ -1,37 +1,50 @@
 <template>
-  <section id="como-publicar" class="howto howto--default" :class="isSeparator">
+  <section id="como-publicar" class="howto howto--default">
     <div class="howto--default__container">
       <div class="howto--default__head">
-        <div class="howto--default__head__title">
-          <h2 class="title">
-            {{ title }}
-          </h2>
-        </div>
-        <div class="howto--default__head__subtitle">
-          {{ description }}
-        </div>
+        <h2 class="howto--default__head__title">
+          ¿Tienes equipos para vender?
+        </h2>
+        <p class="howto--default__head__text">
+          Publica tu anuncio en pocos pasos y llega a compradores de toda la
+          industria.
+        </p>
       </div>
 
       <div class="howto--default__steps">
-        <CardHowTo
-          v-for="(item, index) in items.data"
+        <div
+          v-for="(item, index) in steps"
           :key="index"
-          :title="item.title"
-          :description="item.description"
-          :image="getImage(index)"
-          :text-button="item.text_button"
-          :revert="index % 2 === 0 ? false : true"
-          :show-line="index < 3"
-        />
+          class="howto--default__steps__item"
+        >
+          <div class="howto--default__steps__item__image">
+            <NuxtImg
+              loading="lazy"
+              decoding="async"
+              :alt="item.title"
+              :title="item.title"
+              :src="item.image"
+            />
+          </div>
+          <span class="howto--default__steps__item__badge">
+            {{ index + 1 }}
+          </span>
+          <h3 class="howto--default__steps__item__title">
+            {{ item.title }}
+          </h3>
+          <p class="howto--default__steps__item__text">
+            {{ item.description }}
+          </p>
+        </div>
       </div>
 
       <div class="howto--default__buttons">
         <nuxt-link
           title="Anunciar ahora"
           to="/anunciar"
-          class="btn btn--primary btn--announcement"
+          class="howto--default__buttons__cta"
         >
-          <span>Anunciar ahora</span>
+          Anunciar ahora
         </nuxt-link>
       </div>
     </div>
@@ -39,27 +52,28 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import CardHowTo from "@/components/CardHowTo.vue";
-import howtoData from "@/content/howto.json"; // Asegúrate de que la ruta sea correcta
-
-const items = ref(howtoData);
-
-const title = "¿Tienes equipos para vender?";
-const description = "Publica tu anuncio en pocos pasos";
-
-// Importa las imágenes directamente
 import stepImage1 from "/images/steps-01.svg";
 import stepImage2 from "/images/steps-02.svg";
 import stepImage3 from "/images/steps-03.svg";
 
-const images = [stepImage1, stepImage2, stepImage3];
-
-const getImage = (index: number) => {
-  return images[index] || "";
-};
-
-const isSeparator = computed(() => {
-  return "";
-});
+const steps = [
+  {
+    title: "Regístrate",
+    description:
+      "Crea tu cuenta en waldo.click y obtén 3 anuncios gratis. ¿Necesitas más? Compra un pack.",
+    image: stepImage1,
+  },
+  {
+    title: "Crea tu anuncio",
+    description:
+      "Ten a mano las especificaciones y fotos de tu equipo para publicar más rápido y fácil.",
+    image: stepImage2,
+  },
+  {
+    title: "Publica y vende",
+    description:
+      "Revisamos y publicamos tu anuncio. Solo espera los llamados de los compradores y ¡vende!",
+    image: stepImage3,
+  },
+];
 </script>

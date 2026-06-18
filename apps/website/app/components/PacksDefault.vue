@@ -1,7 +1,17 @@
 <template>
-  <section id="comprar-packs" class="packs packs--default" :class="isSeparator">
+  <section id="comprar-packs" class="packs packs--default">
     <div class="packs--default__container">
-      <h2 v-if="title" class="packs--default__title title">{{ title }}</h2>
+      <div class="packs--default__head">
+        <h2 class="packs--default__head__title">Publica más, paga menos</h2>
+        <p class="packs--default__head__text">
+          Hasta un
+          <span class="packs--default__head__text__highlight"
+            >{{ maxSavings }}% de ahorro</span
+          >
+          frente al precio por anuncio individual. Avisos para usar cuando
+          quieras.
+        </p>
+      </div>
       <div class="packs--default__list">
         <client-only>
           <template v-for="(item, index) in packs" :key="index">
@@ -23,17 +33,10 @@ import type { Pack } from "@/types/pack";
 import CardPack from "@/components/CardPack.vue";
 
 const props = defineProps<{
-  separator?: boolean;
   packs: Pack[];
 }>();
 
-const separator = props.separator ?? false;
-const { getPacksPageTitle } = usePacks();
+const { getMaxSavingsPct } = usePacks();
 
-// Plain text (no markup) — rendered via interpolation, which Vue auto-escapes.
-const title = computed(() => getPacksPageTitle(props.packs));
-
-const isSeparator = computed(() => {
-  return separator ? "is-separator" : "";
-});
+const maxSavings = computed(() => getMaxSavingsPct(props.packs) ?? 98);
 </script>

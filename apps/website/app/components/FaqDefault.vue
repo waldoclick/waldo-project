@@ -54,7 +54,10 @@ const props = defineProps<{
   titleTag?: "h1" | "h2";
 }>();
 
-const title = props.title ?? "Preguntas Frecuentes";
+// `title`/`text` are purely opt-in: the heading/intro render only when the
+// prop is explicitly provided (help-center pages 07-03/04/05 omit `title` and
+// let the about layout supply the single h1).
+const title = computed(() => props.title);
 const limit = props.limit ?? null;
 const titleTag = props.titleTag ?? "h2";
 

@@ -3,63 +3,72 @@
 @use "../base/container";
 
 .accordion {
-  &--item {
-    border-bottom: 1px solid $gainsboro;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 
-    &:last-child {
-      margin-bottom: 0;
-      border-bottom: none;
-    }
+  &--item {
+    border: 1px solid $line;
+    border-radius: 4px;
+    overflow: hidden;
+    background: $white;
 
     &__head {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 16px;
       cursor: pointer;
       background: none;
       border: none;
       width: 100%;
       text-align: left;
-      padding: 20px;
+      padding: 22px 24px;
 
       h2,
       h3 {
         margin: 0;
+        font-family: "Poppins", sans-serif;
         font-style: normal;
-        font-weight: bold;
-        font-size: 18px;
-        line-height: 24px;
-        letter-spacing: 0.25px;
-        color: $charcoal;
+        font-weight: 600;
+        font-size: 17px;
+        line-height: 1.35;
+        letter-spacing: -0.1px;
+        color: $ink;
       }
 
-      /* Estilos de accesibilidad para el foco - más sutiles */
       &:focus,
       &:hover {
         outline: none;
-        background-color: rgba($charcoal, 0.05);
       }
 
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      /* right-side amber-tint pill with chevron that rotates on open */
+      svg {
+        flex: none;
+        width: 30px;
+        height: 30px;
+        padding: 7px;
+        box-sizing: border-box;
+        border-radius: 4px;
+        background-color: $amber_tint;
+        color: $tag;
+        transition: transform 0.3s ease;
+      }
 
-      /* Actualizado para soportar svg de Lucide en lugar de img */
       .rotated {
         transform: rotate(180deg);
-        transition: transform 0.3s ease;
       }
     }
 
     &__body {
-      padding: 20px;
-      line-height: 1.7;
+      padding: 0 24px 24px;
+      line-height: 1.6;
       font-style: normal;
       font-weight: normal;
-      font-size: 15px;
-      letter-spacing: 0.25px;
-      color: $charcoal;
-      max-width: 800px;
+      font-size: 15.5px;
+      letter-spacing: 0;
+      color: $ink2;
+      max-width: 100%;
       overflow: hidden;
       will-change: height, opacity;
       transition:
@@ -68,7 +77,6 @@
         margin-top 0.3s ease;
 
       &.v-collapse-content-end {
-        padding-top: 20px;
         display: block;
       }
 

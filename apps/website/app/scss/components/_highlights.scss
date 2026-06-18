@@ -6,32 +6,131 @@
   &--default {
     &__container {
       @extend .container;
-      // @include screen-large {
-      //   padding: 0;
-      // }
+      max-width: 1200px;
+    }
+
+    &__head {
+      text-align: center;
+      max-width: 560px;
+      margin: 0 auto 40px;
+
+      &__eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: $tag;
+        font-weight: 700;
+        font-size: 12.5px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+
+        &__dot {
+          width: 7px;
+          height: 7px;
+          border-radius: 50%;
+          background: $amber;
+        }
+      }
+
+      &__title {
+        font-family: "Poppins", sans-serif;
+        font-weight: 800;
+        color: $ink;
+        font-size: 34px;
+        letter-spacing: -0.5px;
+        line-height: 1.1;
+        margin: 12px 0 0;
+      }
+
+      &__text {
+        font-size: 16px;
+        color: $ink2;
+        margin: 12px 0 0;
+      }
     }
 
     &__list {
-      margin-top: 50px;
-      display: flex;
-      gap: 50px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
 
       @include screen-large {
-        gap: 15px;
-        margin-top: 0;
+        gap: 18px;
       }
 
       @include screen-small {
-        flex-direction: column;
+        grid-template-columns: 1fr;
+      }
+    }
+
+    &__card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      background: $white;
+      border: 1px solid $line;
+      border-radius: 12px;
+      padding: 30px 28px 32px;
+      overflow: hidden;
+      transition: border-color 0.2s ease;
+
+      &:hover {
+        border-color: $amber;
       }
 
-      // article {
-      //   margin: 0 15px;
+      &__number {
+        position: absolute;
+        top: 18px;
+        right: 24px;
+        font-family: "Poppins", sans-serif;
+        font-weight: 800;
+        font-size: 62px;
+        line-height: 1;
+        color: rgba($ink, 0.05);
+        letter-spacing: -2px;
+      }
 
-      //   @include screen-large {
-      //     margin: 0 8px;
-      //   }
-      // }
+      &__icon {
+        position: relative;
+        display: grid;
+        place-items: center;
+        width: 54px;
+        height: 54px;
+        border-radius: 14px;
+        background: linear-gradient(140deg, $amber, rgba($amber, 0.55));
+        color: $ink;
+      }
+
+      &__body {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+
+        &__step {
+          font-weight: 700;
+          font-size: 11px;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          color: $tag;
+        }
+
+        &__title {
+          font-family: "Poppins", sans-serif;
+          font-weight: 700;
+          color: $ink;
+          font-size: 20px;
+          margin: 0;
+        }
+
+        &__text {
+          margin: 2px 0 0;
+          font-size: 15px;
+          line-height: 1.6;
+          color: $ink2;
+        }
+      }
     }
   }
 }
