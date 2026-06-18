@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-06-16)
 Milestone v1.47 (Rediseño visual / rebrand) started 2026-06-16 on branch `feat/redesign-auth`. Phase 05 (Rediseño cuenta) complete (all 9 plans done). Phase 06 (Cierre cuenta gaps) in progress: 06-05 done (CardProfileAd actions fixed + real vistas·contactos meta + Panel Contactos recibidos KPI wired). Migrating the new mockup in `/design` (Design System + `.dc.html`) to real components, area by area: auth (first, also establishes shared tokens) → public site → account → dashboard. Update-not-create work: components and SCSS already exist; recalibrate SCSS variables + translate mockup markup to existing BEM.
 
 ```
-Progress: [██████████] 98% (31/32 plans complete)
+Progress: [█████████░] 97% (31/32 plans complete)
 ```
 
 ## Accumulated Context
