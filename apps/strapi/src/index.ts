@@ -67,18 +67,24 @@ export default {
         "api::ad-view.ad-view.panelViewsTotal",
         "api::ad-contact.ad-contact.recordContact",
         "api::ad-contact.ad-contact.contactsTotal",
+        "api::order.order.meSummary",
       ];
 
       const role = await strapi.db
         .query("plugin::users-permissions.role")
-        .findOne({ where: { type: "authenticated" }, populate: ["permissions"] });
+        .findOne({
+          where: { type: "authenticated" },
+          populate: ["permissions"],
+        });
 
       if (!role) {
-        console.warn("stats permissions grant: Authenticated role not found — skipping");
+        console.warn(
+          "stats permissions grant: Authenticated role not found — skipping",
+        );
       } else {
         // Cast each permission row as { action: string } — v5 shape has only action + role
         const existing = new Set(
-          (role.permissions as Array<{ action: string }>).map((p) => p.action)
+          (role.permissions as Array<{ action: string }>).map((p) => p.action),
         );
 
         let created = 0;
@@ -93,7 +99,7 @@ export default {
 
         const alreadyPresent = statsActionUIDs.length - created;
         console.log(
-          `stats permissions grant: ${created} created, ${alreadyPresent} already present`
+          `stats permissions grant: ${created} created, ${alreadyPresent} already present`,
         );
       }
     } catch (error) {
