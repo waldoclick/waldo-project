@@ -100,6 +100,31 @@ Plans:
 - [x] 06-04-PLAN.md — contacts-total endpoint + AdSingle recordContact wiring (STAT-UI)
 - [x] 06-05-PLAN.md — CardProfileAd actions (no no-ops) + real vistas·contactos meta + Panel contacts KPI (ACT-01, STAT-UI)
 
+### Phase 07: Público — vistas core (Fase 1 rediseño público)
+
+**Goal:** Restilizar las 6 vistas públicas core a la maqueta `design/index.dc.html` (rebrand v1.47): Home, Por qué Waldo, Preguntas frecuentes, Políticas de privacidad, Condiciones de uso y Contacto. UPDATE de páginas/componentes/SCSS existentes (no crear salvo que no exista equivalente — leer el sibling más cercano antes). Las 4 vistas legales/ayuda comparten un layout único "centro de ayuda" (header con breadcrumb + h1 + intro sobre $cream, sidebar sticky, panel de contenido) que se construye en 07-03 y reutilizan 07-04/05/06; el Mapa del sitio es parte de ese layout. Cada vista se cierra con loop visual (screenshot → Read PNG → comparar vs maqueta + screenshots de referencia → arreglar → repetir) en desktop 1440 y mobile 390, logged-OUT. Cada vista optimiza su data-fetching (single useAsyncData por página, sin N+1, default, sin doble-fetch).
+**Requirements:** PUB-HOME, PUB-WHY, PUB-FAQ, PUB-PRIV, PUB-TERMS, PUB-CONTACT
+**Depends on:** Phase 04 (tokens) — Phases 05/06 ya consumen los tokens
+**Ejecución:** GSD; 3 olas. Ola 1: 07-01 (Home — owner SCSS secciones home + accordion + FaqDefault). Ola 2 (paralelo): 07-02 (Por qué, depende de 07-01) + 07-03 (layout centro de ayuda + FAQ + mapa, depende de 07-01). Ola 3 (paralelo): 07-04/05/06 (políticas/condiciones/contacto, dependen de 07-03). File ownership disjunto por ola.
+**Success criteria:**
+1. Home, Por qué Waldo, Preguntas frecuentes, Políticas de privacidad, Condiciones de uso y Contacto se ven según la maqueta (color, tipografía, espaciado, iconos Lucide, tokens phase-04), en desktop y mobile, logged-OUT
+2. Las 4 vistas de ayuda/legales comparten el layout "centro de ayuda" construido en 07-03 (breadcrumb header + sidebar sticky + panel), reutilizado sin duplicar markup; el título/intro se pasan desde la página al layout (un solo h1, sin duplicación)
+3. El Mapa del sitio usa el panel de 3 columnas (Explorar / Tu cuenta / Información) dentro del layout de ayuda
+4. Por qué Waldo es una ruta propia (`/por-que-waldo`) modelada sobre `index.vue`, que reutiliza los componentes de sección de Home restilizados; el link de nav se actualiza de `/#por-que-waldo` a `/por-que-waldo`
+5. Cada vista hace una sola carga de datos por página (useAsyncData con key único + default), sin N+1, sin doble-fetch; Home pasa de 3 useAsyncData a 1 con Promise.all
+6. Cero regresión de comportamiento; el header fixed/overlay + headroom (06-02) se respeta (heroes con ~130px de padding superior); sin tocar variables SCSS existentes (solo crear nuevas si la maqueta necesita un color ausente)
+
+**Plans:** 6 plans (3 waves)
+
+Plans:
+- [ ] 07-01-PLAN.md — Home restyle: hero + categorías + secciones a la maqueta + 1 solo useAsyncData (PUB-HOME)
+- [ ] 07-02-PLAN.md — Por qué Waldo: nueva ruta /por-que-waldo reusando secciones de Home + nav update (PUB-WHY)
+- [ ] 07-03-PLAN.md — Layout centro de ayuda (about): breadcrumb header + sidebar sticky + FAQ accordion + mapa del sitio (PUB-FAQ)
+- [ ] 07-04-PLAN.md — Políticas de privacidad: reusa layout de ayuda + accordion restyle (PUB-PRIV)
+- [ ] 07-05-PLAN.md — Condiciones de uso: reusa layout de ayuda + accordion restyle (PUB-TERMS)
+- [ ] 07-06-PLAN.md — Contacto: reusa layout de ayuda + formulario a la maqueta (PUB-CONTACT)
+
+
 ## Progress
 
 | Milestone | Phases | Status | Shipped |
