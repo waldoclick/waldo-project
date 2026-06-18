@@ -15,7 +15,7 @@ requires:
 provides:
   - "Shared CardAnnouncement restyled to AdCard.dc.html (active state) — PHASE OWNER"
   - "CardAnnouncement sold variant (sold + soldWhen props) FINAL for the phase — 08-03 only passes props"
-  - "/anuncios results toolbar (filter-icon ubicación select + '{N} anuncios' count + Ordenar por), grid repeat(auto-fill,minmax(224px,1fr)) gap 22px, and 'Sin resultados' empty state"
+  - "/anuncios results toolbar (filter-icon ubicación select + '{N} anuncios' count + Ordenar por), grid repeat(auto-fill,minmax(280px,1fr)) gap 22px (4 cols at 1440 / 1 col at 390), and 'Sin resultados' empty state (lives in AdArchive)"
   - "Restyled .hero--results (breadcrumb + Poppins 800 title + category icon tile, clears overlay header)"
 affects: [08-02, 08-03]
 
@@ -69,8 +69,8 @@ completed: 2026-06-18
 
 ## Accomplishments
 - Added the sold variant to the shared CardAnnouncement (PHASE OWNER): `sold` + `soldWhen` props drive a "Vendido" badge (`$ink` bg, check icon), darkened image veil, `$ink2` title, strikethrough `$muted` price and a "Vendido {soldWhen}" footer, hiding image-count/Destacado badges, meta line, login prompt and seller row — active cards are byte-identical in behavior.
-- Restyled the `/anuncios` toolbar to the mockup: filter-icon ubicación select + **{N} anuncios** count on the left, "Ordenar por" outline select on the right; grid switched to `repeat(auto-fill, minmax(224px,1fr))` gap 22px.
-- Built the "Sin resultados" empty state (dashed `$line` border, `$cream` bg, search icon, amber "Limpiar filtros" → `/anuncios`) as a scoped block, leaving the shared MessageDefault untouched.
+- Restyled the `/anuncios` toolbar to the mockup: funnel-icon ubicación select + **{N} anuncios** count on the left, "Ordenar por" outline select on the right; grid `repeat(auto-fill, minmax(280px,1fr))` gap 22px → 4 cols at 1440, 1 col at 390 (matches the plan's "3-4 cols desktop / 1 col mobile" criterion).
+- Built the "Sin resultados" empty state (dashed `$line` border, `$cream` bg, search icon, amber "Limpiar filtros" → `/anuncios`) inside AdArchive behind an `emptyState` prop, leaving the shared MessageDefault untouched and keeping the page composition-only.
 - Restyled `.hero--results` (breadcrumb `$muted`/no-underline with `$ink` bold last item, Poppins 800 40px title, 58px category-color icon tile with white icon) — clears the 06-02 overlay header with 104px top padding.
 
 ## Task Commits
@@ -80,20 +80,25 @@ Each task was committed atomically:
 1. **Task 1: Sold variant on CardAnnouncement (phase owner)** - `6b0108ea` (feat)
 2. **Task 2: Toolbar + grid + empty state (AdArchive/FilterResults/index)** - `b2271b67` (feat)
 3. **Task 3: Results hero (HeroResults)** - `51325c72` (feat)
+4. **Fix: grid 4/1 cols + empty state into AdArchive (composition-only) + funnel icon** - `93e869b4` (fix)
+
+**Plan metadata:** `9e14d2aa` + this update (docs: complete plan)
 
 ## Files Created/Modified
 - `apps/website/app/components/CardAnnouncement.vue` - Added sold/soldWhen props, sold badge + veil + sold footer, gated active elements behind `!sold`
-- `apps/website/app/components/FilterResults.vue` - Toolbar: filter-icon ubicación select + count + Ordenar por; added `total` prop
-- `apps/website/app/pages/anuncios/index.vue` - Pass `:total` to FilterResults; replaced shared MessageDefault with scoped empty-state block; swapped import to IconSearch
+- `apps/website/app/components/AdArchive.vue` - Renders the `__empty` "Sin resultados" block behind an `emptyState` prop (keeps the page composition-only)
+- `apps/website/app/components/FilterResults.vue` - Toolbar: funnel-icon ubicación select + count + Ordenar por; added `total` prop
+- `apps/website/app/pages/anuncios/index.vue` - Pass `:total` to FilterResults; composes `<AdArchive :empty-state>` for the no-results case (no raw section/BEM in the page)
 - `apps/website/app/scss/components/_card.scss` - `.card--announcement--sold` modifier + `__media__veil`/`__media__sold`/`__body__sold` (phase owner)
-- `apps/website/app/scss/components/_announcement.scss` - `--archive__list` grid (auto-fill minmax 224px gap 22px) + `__empty` card (only `--archive` touched, `--single` reserved for 08-02)
+- `apps/website/app/scss/components/_announcement.scss` - `--archive__list` grid (auto-fill minmax 280px gap 22px → 4/1 cols) + `__empty` card (only `--archive` touched, `--single` reserved for 08-02)
 - `apps/website/app/scss/components/_filter.scss` - Split `.filter--announcement` from shared `--articles` rule; restyled to toolbar look
 - `apps/website/app/scss/components/_hero.scss` - `.hero--results` block restyle (scoped breadcrumb + title + icon overrides)
 
 ## Decisions Made
 - The active-state card (markup + `.card--announcement` SCSS) was already migrated before this plan; Task 1's real work was the net-new sold variant. Verified the active card unregressed via screenshot.
 - No left-sidebar filter panel (mockup's checkbox aside) added — restyle-first per plan. The mockup "Filtros" button opens a sidebar that has no behavior in the current app, so the ubicación select serves as the filter control.
-- 5 columns appear at 1440px (full 1300px container, no sidebar) vs the mockup's ~4 cols (which sit in a narrower content column beside a sidebar). This is the natural consequence of auto-fill at full width; cards individually match AdCard.dc.html. Mobile collapses to 2 columns (minmax 160px).
+- Grid uses a single `repeat(auto-fill, minmax(280px,1fr))` with no breakpoint override: 4 cols at 1440 (full 1300px container, no sidebar) and 1 col at 390 — satisfies the plan's "3-4 cols desktop / 1 col mobile" done criterion with one rule (280px floor: floor((1300+22)/302)=4, floor((390+22)/302)=1). An earlier 224px-min/160px-mobile-override draft shipped 5/2 and was corrected.
+- Empty state lives in AdArchive (not the page) to honor CLAUDE.md's pages-are-composition-only rule; the page composes `<AdArchive :empty-state>` rather than holding raw section/BEM markup.
 
 ## Deviations from Plan
 
@@ -110,10 +115,10 @@ Each task was committed atomically:
 **2. [Rule 3 - Blocking] Shared MessageDefault could not be restyled globally**
 - **Found during:** Task 2 (empty state)
 - **Issue:** MessageDefault is used by 9+ pages; restyling the generic component to the "Sin resultados" card would regress every other consumer.
-- **Fix:** Replaced the MessageDefault usage on /anuncios with a scoped `.announcement--archive__empty` block matching the mockup; removed the now-unused MessageDefault import (no-unused-vars rule).
-- **Files modified:** apps/website/app/pages/anuncios/index.vue, apps/website/app/scss/components/_announcement.scss
-- **Verification:** Hit `?s=zzqxnoresultsxyz123` — empty state renders exactly per mockup.
-- **Committed in:** b2271b67 (Task 2 commit)
+- **Fix:** Replaced the MessageDefault usage on /anuncios with a `.announcement--archive__empty` block matching the mockup; removed the now-unused MessageDefault import (no-unused-vars rule). The block was first placed in the page, then moved into AdArchive behind an `emptyState` prop to keep the page composition-only (CLAUDE.md) — the page now composes `<AdArchive :empty-state>`.
+- **Files modified:** apps/website/app/components/AdArchive.vue, apps/website/app/pages/anuncios/index.vue, apps/website/app/scss/components/_announcement.scss
+- **Verification:** Hit `?s=zzqxnoresultsxyz123` — empty state renders exactly per mockup; page contains no raw section/BEM markup.
+- **Committed in:** b2271b67 (Task 2) + 93e869b4 (composition-only fix)
 
 **3. [Rule 3 - Blocking] .filter--announcement shared a selector with .filter--articles**
 - **Found during:** Task 2 (toolbar restyle)
@@ -145,6 +150,7 @@ Each task was committed atomically:
 ## Self-Check: PASSED
 
 - FOUND: apps/website/app/components/CardAnnouncement.vue
+- FOUND: apps/website/app/components/AdArchive.vue
 - FOUND: apps/website/app/components/FilterResults.vue
 - FOUND: apps/website/app/pages/anuncios/index.vue
 - FOUND: apps/website/app/scss/components/_card.scss
@@ -154,6 +160,7 @@ Each task was committed atomically:
 - FOUND commit: 6b0108ea (Task 1)
 - FOUND commit: b2271b67 (Task 2)
 - FOUND commit: 51325c72 (Task 3)
+- FOUND commit: 93e869b4 (fix: 4/1 cols + composition-only empty state)
 
 ## Next Phase Readiness
 - The shared CardAnnouncement (active + sold) is FINAL — 08-02 (ad detail relacionados) and 08-03 (seller profile + Vendidos tab) reuse it and must NOT re-touch the component or `.card--announcement` in `_card.scss`.
