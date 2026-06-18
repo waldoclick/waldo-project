@@ -364,7 +364,11 @@
         color: $ink;
       }
 
-      &--active {
+      // --active is the prop-driven contract (07-04/05/06); router-link-active
+      // is a transition fallback so pages still on definePageMeta({layout:"about"})
+      // (no :active) stay highlighted by route until they migrate.
+      &--active,
+      &.router-link-active {
         background: $amber_tint;
         color: $ink;
         font-weight: 600;

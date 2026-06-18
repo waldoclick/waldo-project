@@ -3,7 +3,7 @@
     <HeaderDefault />
     <MobileBar />
 
-    <section class="layout--about__header">
+    <section v-if="title" class="layout--about__header">
       <span class="layout--about__header__glow" aria-hidden="true"></span>
       <div class="layout--about__header__inner">
         <nav class="layout--about__header__crumbs" aria-label="Ruta de navegación">
