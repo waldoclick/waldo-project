@@ -60,6 +60,41 @@ export default {
       handler: "ad.findBySlug",
       config: { auth: false },
     },
+    // ─── Per-channel contact reveal (08-04) ──────────────────────────────────
+    // FIVE SEPARATE routes (user mandate: do NOT combine into one :channel route).
+    // auth:false at the router; each handler verifies the Bearer JWT and 401s on
+    // anonymous. The static "reveal" segment + literal channel never collide with
+    // /ads/slug/:slug, /ads/sold/:username, or the core /ads/:id wildcard.
+    {
+      method: "GET",
+      path: "/ads/:documentId/reveal/phone",
+      handler: "ad.revealAdPhone",
+      config: { auth: false },
+    },
+    {
+      method: "GET",
+      path: "/ads/:documentId/reveal/whatsapp",
+      handler: "ad.revealAdWhatsapp",
+      config: { auth: false },
+    },
+    {
+      method: "GET",
+      path: "/ads/:documentId/reveal/email",
+      handler: "ad.revealAdEmail",
+      config: { auth: false },
+    },
+    {
+      method: "GET",
+      path: "/sellers/:username/reveal/phone",
+      handler: "ad.revealSellerPhone",
+      config: { auth: false },
+    },
+    {
+      method: "GET",
+      path: "/sellers/:username/reveal/whatsapp",
+      handler: "ad.revealSellerWhatsapp",
+      config: { auth: false },
+    },
     {
       method: "PUT",
       path: "/ads/:id/approve",

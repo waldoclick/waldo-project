@@ -9,6 +9,117 @@
 
 import { factories } from "@strapi/strapi";
 import { sanitizeAdForPublic } from "../services/sanitize-ad";
+import { revealUserChannel } from "../services/contact-mask";
+
+/**
+ * Decode the Bearer JWT on an auth:false route (mirrors findBySlug, SEC2-AUTH).
+ * Returns the numeric user id, or null when the token is absent/invalid.
+ */
+async function verifyBearerUserId(ctx: {
+  request: { headers?: Record<string, unknown> };
+}): Promise<number | null> {
+  const authHeader = ctx.request.headers?.authorization as string | undefined;
+  if (!authHeader?.startsWith("Bearer ")) return null;
+  const token = authHeader.slice(7);
+  try {
+    const decoded = (await strapi.plugins[
+      "users-permissions"
+    ].services.jwt.verify(token)) as { id: number };
+    return decoded?.id ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/** Minimal Koa context shape used by the reveal helpers. */
+type RevealContext = {
+  params: Record<string, string>;
+  request: { headers?: Record<string, unknown>; ip?: string };
+  unauthorized: (_message?: string) => unknown;
+  notFound: (_message?: string) => unknown;
+  send: (_body: unknown) => unknown;
+  throw: (_status: number, _error: unknown) => unknown;
+};
+
+/**
+ * Ad-keyed reveal (shared, 08-04) — return ONE real seller channel for an ad
+ * and record an ad-contact event. Logged-in viewers only (401 otherwise).
+ * phone/whatsapp → "call", email → "message".
+ */
+async function revealForAd(
+  ctx: RevealContext,
+  channel: "phone" | "whatsapp" | "email",
+): Promise<unknown> {
+  try {
+    const userId = await verifyBearerUserId(ctx);
+    if (!userId) {
+      return ctx.unauthorized("Debes iniciar sesión para ver el contacto.");
+    }
+
+    const ad = (await strapi.db.query("api::ad.ad").findOne({
+      where: { documentId: ctx.params.documentId },
+      populate: { user: true },
+    })) as Record<string, unknown> | null;
+
+    const seller = ad?.user as Record<string, unknown> | undefined;
+    if (!ad || !seller) {
+      return ctx.notFound("Ad not found");
+    }
+
+    // Fire-and-forget ad-contact tracking (swallowed inside recordContact)
+    const ip = ctx.request.ip ?? "unknown";
+    const ua =
+      (ctx.request.headers as Record<string, string>)?.["user-agent"] ??
+      "unknown";
+    await strapi
+      .service("api::ad-contact.ad-contact")
+      .recordContact(
+        ctx.params.documentId,
+        channel === "email" ? "message" : "call",
+        ip,
+        ua,
+      );
+
+    return ctx.send({
+      data: { channel, value: revealUserChannel(seller, channel) },
+    });
+  } catch (error) {
+    return ctx.throw(500, error);
+  }
+}
+
+/**
+ * Seller-keyed reveal (shared, 08-04) — return ONE real channel for a seller by
+ * username. Logged-in viewers only (401 otherwise). Profile reveals are NOT
+ * recorded as ad-contacts — no ad to attribute (08-04 decision).
+ */
+async function revealForSeller(
+  ctx: RevealContext,
+  channel: "phone" | "whatsapp",
+): Promise<unknown> {
+  try {
+    const userId = await verifyBearerUserId(ctx);
+    if (!userId) {
+      return ctx.unauthorized("Debes iniciar sesión para ver el contacto.");
+    }
+
+    const seller = (await strapi.db
+      .query("plugin::users-permissions.user")
+      .findOne({
+        where: { username: ctx.params.username },
+      })) as Record<string, unknown> | null;
+
+    if (!seller) {
+      return ctx.notFound("Seller not found");
+    }
+
+    return ctx.send({
+      data: { channel, value: revealUserChannel(seller, channel) },
+    });
+  } catch (error) {
+    return ctx.throw(500, error);
+  }
+}
 
 /** Returns true if ctx.state.user has the manager role. */
 const ctxIsManager = (ctx: { state: { user: unknown } }): boolean => {
@@ -793,5 +904,30 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
       strapi.log.error("findBySlug error for slug %s: %o", slug, error);
       return ctx.internalServerError("Internal server error");
     }
+  },
+
+  // ─── Five SEPARATE per-channel reveal handlers (08-04) ─────────────────────
+  // Each hardcodes its channel; DRY lives in revealForAd / revealForSeller
+  // (module-level helpers above). The user mandated separate endpoints — no
+  // parameterized :channel route.
+  /** @route GET /api/ads/:documentId/reveal/phone */
+  async revealAdPhone(ctx) {
+    return revealForAd(ctx as unknown as RevealContext, "phone");
+  },
+  /** @route GET /api/ads/:documentId/reveal/whatsapp */
+  async revealAdWhatsapp(ctx) {
+    return revealForAd(ctx as unknown as RevealContext, "whatsapp");
+  },
+  /** @route GET /api/ads/:documentId/reveal/email */
+  async revealAdEmail(ctx) {
+    return revealForAd(ctx as unknown as RevealContext, "email");
+  },
+  /** @route GET /api/sellers/:username/reveal/phone */
+  async revealSellerPhone(ctx) {
+    return revealForSeller(ctx as unknown as RevealContext, "phone");
+  },
+  /** @route GET /api/sellers/:username/reveal/whatsapp */
+  async revealSellerWhatsapp(ctx) {
+    return revealForSeller(ctx as unknown as RevealContext, "whatsapp");
   },
 }));
