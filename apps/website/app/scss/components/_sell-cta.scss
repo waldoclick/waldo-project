@@ -1,0 +1,115 @@
+@use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../base/container";
+
+.sell-cta {
+  background: $white;
+  padding: 64px 0 80px;
+
+  @include screen-medium {
+    padding: 48px 0 56px;
+  }
+
+  .container {
+    max-width: 1200px;
+  }
+
+  &__panel {
+    background: $ink;
+    border-radius: 6px;
+    padding: 52px 48px;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 32px;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+
+    @include screen-medium {
+      grid-template-columns: 1fr;
+      padding: 40px 28px;
+      gap: 24px;
+    }
+
+    &__glow {
+      position: absolute;
+      top: -90px;
+      right: -50px;
+      width: 360px;
+      height: 360px;
+      border-radius: 50%;
+      background: radial-gradient(
+        circle,
+        rgba(247, 201, 126, 0.2),
+        transparent 65%
+      );
+      pointer-events: none;
+    }
+
+    &__content {
+      position: relative;
+
+      &__title {
+        font-family: "Poppins", sans-serif;
+        font-weight: 800;
+        color: $white;
+        font-size: 34px;
+        letter-spacing: -0.5px;
+        margin: 0;
+        line-height: 1.12;
+
+        @include screen-medium {
+          font-size: 26px;
+        }
+      }
+
+      &__text {
+        font-size: 16.5px;
+        line-height: 1.55;
+        color: rgba(255, 255, 255, 0.72);
+        margin: 14px 0 0;
+        max-width: 460px;
+      }
+    }
+
+    &__actions {
+      position: relative;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: flex-end;
+
+      @include screen-medium {
+        justify-content: flex-start;
+      }
+
+      &__primary {
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 15px;
+        color: $ink;
+        background: $amber;
+        padding: 14px 26px;
+        border-radius: 4px;
+
+        &:hover {
+          background: $amber_hover;
+        }
+      }
+
+      &__secondary {
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 15px;
+        color: $white;
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        padding: 13px 24px;
+        border-radius: 4px;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.08);
+        }
+      }
+    }
+  }
+}

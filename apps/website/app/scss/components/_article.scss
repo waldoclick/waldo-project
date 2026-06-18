@@ -5,6 +5,90 @@
 
 .article {
   &--archive {
+    &--blog {
+      background: $cream;
+      padding: 80px 0;
+      border-top: 1px solid $line;
+
+      @include screen-medium {
+        padding: 56px 0;
+      }
+    }
+
+    &__head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 36px;
+
+      &__intro {
+        max-width: 560px;
+      }
+
+      &__eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: $tag;
+        font-weight: 700;
+        font-size: 12.5px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+
+        &__dot {
+          width: 7px;
+          height: 7px;
+          border-radius: 50%;
+          background: $amber;
+        }
+      }
+
+      &__title {
+        font-family: "Poppins", sans-serif;
+        font-weight: 800;
+        color: $ink;
+        font-size: 38px;
+        letter-spacing: -0.5px;
+        margin: 14px 0 0;
+
+        @include screen-medium {
+          font-size: 28px;
+        }
+      }
+
+      &__text {
+        font-size: 16px;
+        line-height: 1.55;
+        color: $ink2;
+        margin: 12px 0 0;
+      }
+
+      &__link {
+        flex: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 15px;
+        color: $ink;
+        border: 1px solid $line;
+        background: $white;
+        padding: 12px 22px;
+        border-radius: 4px;
+
+        &:hover {
+          border-color: $ink;
+        }
+
+        &__icon {
+          color: $ink;
+        }
+      }
+    }
+
     &__filter {
       margin-bottom: 30px;
     }
@@ -25,6 +109,19 @@
 
       @include screen-small {
         grid-template-columns: 1fr;
+      }
+
+      &--blog {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 24px;
+
+        @include screen-medium {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        @include screen-small {
+          grid-template-columns: 1fr;
+        }
       }
     }
 

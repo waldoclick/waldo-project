@@ -1,14 +1,13 @@
 <template>
-  <section
-    id="categorias"
-    class="category category--archive"
-    :class="isSeparator"
-  >
+  <section id="categorias" class="category category--archive">
     <div class="container">
-      <h2 v-if="title" class="category--archive__title">
-        {{ title }}
-      </h2>
-      <!-- <pre>{{ filterStore.filterCategories }}</pre> -->
+      <div class="category--archive__head">
+        <h2 class="category--archive__head__title">Explora por categoría</h2>
+        <p class="category--archive__head__text">
+          Cada industria tiene su color. Encuentra equipos organizados por la
+          categoría a la que pertenecen.
+        </p>
+      </div>
       <nav v-if="categories.length > 0" class="category--archive__list">
         <CardCategory
           v-for="(item, index) in sortedCategories"
@@ -33,18 +32,10 @@ import type { FilterCategory } from "@/types/filter";
 import CardCategory from "@/components/CardCategory.vue";
 
 const props = defineProps<{
-  separator?: boolean;
   categories: FilterCategory[];
 }>();
 
-const separator = props.separator ?? false;
-const title = "O explora equipos en cada categoría:";
-
 const sortedCategories = computed(() => {
   return [...props.categories].sort((a, b) => (b.count || 0) - (a.count || 0));
-});
-
-const isSeparator = computed(() => {
-  return separator ? "is-separator" : "";
 });
 </script>

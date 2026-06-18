@@ -1,66 +1,49 @@
 <template>
   <article class="card card--article">
-    <div
-      :class="[
-        'card--article__image',
-        { 'card--article__image--empty': !hasCover },
-      ]"
-    >
-      <NuxtLink :to="`/blog/${article.slug}`">
-        <NuxtImg
-          v-if="hasCover"
-          :src="coverImage"
-          :alt="article.title"
-          width="400"
-          height="300"
-          loading="lazy"
-          format="webp"
-          remote
-        />
-        <img
-          v-else
-          src="/images/empty-article.png"
-          :alt="article.title"
-          width="400"
-          height="300"
-          loading="lazy"
-        />
-      </NuxtLink>
-    </div>
+    <NuxtLink :to="`/blog/${article.slug}`" class="card--article__media">
+      <NuxtImg
+        v-if="hasCover"
+        :src="coverImage"
+        :alt="article.title"
+        width="400"
+        height="225"
+        loading="lazy"
+        format="webp"
+        remote
+      />
+      <span v-if="categoryName" class="card--article__media__cat">
+        <span class="card--article__media__cat__dot"></span>
+        {{ categoryName }}
+      </span>
+    </NuxtLink>
 
-    <div class="card--article__info">
-      <nav
-        v-if="article.categories && article.categories.length > 0"
-        class="card--article__info__categories"
-      >
-        <NuxtLink :to="`/blog?category=${article.categories[0]!.slug}`">
-          {{ article.categories[0]!.name }}
-        </NuxtLink>
-      </nav>
-
-      <h3 class="card--article__info__name">
+    <div class="card--article__body">
+      <h3 class="card--article__body__title">
         <NuxtLink :to="`/blog/${article.slug}`">
-          {{ stringTruncate(article.title, 60) }}
+          {{ stringTruncate(article.title, 70) }}
         </NuxtLink>
       </h3>
 
-      <p class="card--article__info__excerpt">
-        {{ stringTruncate(article.header, 120) }}
+      <p class="card--article__body__excerpt">
+        {{ stringTruncate(article.header, 130) }}
       </p>
 
-      <div v-if="article.createdAt" class="card--article__info__date">
-        {{
-          new Intl.DateTimeFormat("es-CL", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          }).format(new Date(article.createdAt))
-        }}
-      </div>
-
-      <NuxtLink :to="`/blog/${article.slug}`" class="card--article__info__link">
-        Leer más
-      </NuxtLink>
+      <span class="card--article__body__footer">
+        <span
+          v-if="article.createdAt"
+          class="card--article__body__footer__date"
+        >
+          {{ formattedDate }}
+        </span>
+        <span class="card--article__body__footer__sep"></span>
+        <span class="card--article__body__footer__read">
+          <IconClock
+            :size="13"
+            class="card--article__body__footer__read__icon"
+          />
+          5 min de lectura
+        </span>
+      </span>
     </div>
   </article>
 </template>
@@ -69,6 +52,7 @@
 import { computed } from "vue";
 import type { Article } from "@/types/article";
 import { useImageProxy } from "@/composables/useImage";
+import { Clock as IconClock } from "lucide-vue-next";
 
 const props = defineProps<{ article: Article }>();
 
@@ -87,5 +71,22 @@ const coverImage = computed(() => {
   const firstImage =
     cover[0]?.formats?.medium?.url || cover[0]?.formats?.thumbnail?.url || "";
   return transformUrl(firstImage);
+});
+
+const categoryName = computed(() => {
+  const categories = props.article.categories;
+  if (categories && categories.length > 0) {
+    return categories[0]?.name || "";
+  }
+  return "";
+});
+
+const formattedDate = computed(() => {
+  if (!props.article.createdAt) return "";
+  return new Intl.DateTimeFormat("es-CL", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }).format(new Date(props.article.createdAt));
 });
 </script>

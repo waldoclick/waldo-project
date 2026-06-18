@@ -1,15 +1,14 @@
 <template>
   <div class="page page--home">
     <HeaderDefault :show-menu="true" />
-    <HeroHome />
-    <HighlightsDefault :separator="true" />
-    <CategoryArchive :separator="true" :categories="categories" />
-    <HowtoDefault :separator="true" />
-    <PacksDefault :separator="true" :packs="packs" />
-    <FaqDefault
-      :text="`Encuentra respuestas a las preguntas más comunes sobre cómo funciona Waldo.click®, la plataforma para comprar y vender activos industriales.`"
-      :limit="3"
-      :faqs="faqs"
+    <HeroHome :featured-ads="featuredAds" />
+    <AdArchive :ads="featuredAds" :featured-section="true" />
+    <CategoryArchive :categories="categories" />
+    <SellCta />
+    <ArticleArchive
+      :articles="articles"
+      :pagination="emptyPagination"
+      :blog-section="true"
     />
     <FooterDefault />
   </div>
@@ -23,59 +22,86 @@ const { $setSEO, $setStructuredData } = useNuxtApp();
 // Components
 import HeaderDefault from "@/components/HeaderDefault.vue";
 import HeroHome from "@/components/HeroHome.vue";
-import HighlightsDefault from "@/components/HighlightsDefault.vue";
+import AdArchive from "@/components/AdArchive.vue";
 import CategoryArchive from "@/components/CategoryArchive.vue";
-import HowtoDefault from "@/components/HowtoDefault.vue";
-import PacksDefault from "~/components/PacksDefault.vue";
-import FaqDefault from "~/components/FaqDefault.vue";
+import SellCta from "@/components/SellCta.vue";
+import ArticleArchive from "@/components/ArticleArchive.vue";
 import FooterDefault from "@/components/FooterDefault.vue";
-import type { Pack } from "@/types/pack";
+import type { Ad } from "@/types/ad";
+import type { Article } from "@/types/article";
+import type { FilterCategory } from "@/types/filter";
+import type { Pagination } from "@/types/pagination";
 
-// Load categories
-const { data: categoriesData } = await useAsyncData("categories", async () => {
-  const filterStore = useFilterStore();
-  try {
-    await filterStore.loadFilterCategories();
-    return filterStore.filterCategories;
-  } catch (error) {
-    console.error("Error loading categories:", error);
-    return [];
-  }
-});
-const categories = computed(() => categoriesData.value ?? []);
+interface HomeData {
+  categories: FilterCategory[];
+  featuredAds: Ad[];
+  articles: Article[];
+}
 
-// Load packs
-const client = useApiClient();
-const { data: packsData } = await useAsyncData<Pack[]>(
-  "home-packs",
+// Single home data load — categories + featured ads + latest articles in one wave
+const { data } = await useAsyncData<HomeData>(
+  "home-data",
   async () => {
-    try {
-      const response = (await client("ad-packs", {
-        method: "GET",
-        params: { populate: "*" } as unknown as Record<string, unknown>,
-      })) as { data: Pack[] };
-      return response.data;
-    } catch (error) {
-      console.error("Error loading packs:", error);
-      return [];
-    }
-  },
-  { default: () => [] as Pack[] },
-);
-const packs = computed(() => packsData.value ?? []);
+    const filterStore = useFilterStore();
+    const adsStore = useAdsStore();
+    const articlesStore = useArticlesStore();
 
-// Load featured FAQs for the home page
-const { data: faqsData } = await useAsyncData("featured-faqs", async () => {
-  const faqsStore = useFaqsStore();
-  try {
-    await faqsStore.loadFaqs();
-    return faqsStore.featuredFaqs;
-  } catch (error) {
-    console.error("Error loading featured FAQs:", error);
-    return [];
-  }
-});
-const faqs = computed(() => faqsData.value ?? []);
+    const [categories, featuredAds, articles] = await Promise.all([
+      (async () => {
+        try {
+          await filterStore.loadFilterCategories();
+          return filterStore.filterCategories;
+        } catch (error) {
+          console.error("Error loading categories:", error);
+          return [] as FilterCategory[];
+        }
+      })(),
+      (async () => {
+        try {
+          await adsStore.loadAds({}, { page: 1, pageSize: 8 }, [
+            "sort_priority:asc",
+            "createdAt:desc",
+          ]);
+          return adsStore.ads;
+        } catch (error) {
+          console.error("Error loading featured ads:", error);
+          return [] as Ad[];
+        }
+      })(),
+      (async () => {
+        try {
+          await articlesStore.loadArticles({}, { page: 1, pageSize: 3 }, [
+            "createdAt:desc",
+          ]);
+          return articlesStore.articles;
+        } catch (error) {
+          console.error("Error loading articles:", error);
+          return [] as Article[];
+        }
+      })(),
+    ]);
+
+    return { categories, featuredAds, articles };
+  },
+  {
+    default: () => ({
+      categories: [] as FilterCategory[],
+      featuredAds: [] as Ad[],
+      articles: [] as Article[],
+    }),
+  },
+);
+
+const categories = computed(() => data.value?.categories ?? []);
+const featuredAds = computed(() => data.value?.featuredAds ?? []);
+const articles = computed(() => data.value?.articles ?? []);
+
+const emptyPagination: Pagination = {
+  page: 1,
+  pageSize: 3,
+  pageCount: 0,
+  total: 0,
+};
 
 $setSEO({
   title: "Anuncios de Activos Industriales en Chile",

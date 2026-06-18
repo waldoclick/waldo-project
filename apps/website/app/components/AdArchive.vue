@@ -1,6 +1,32 @@
 <template>
-  <section class="announcement announcement--archive">
+  <section
+    class="announcement announcement--archive"
+    :class="{ 'announcement--archive--featured': featuredSection }"
+  >
     <div class="container">
+      <div v-if="featuredSection" class="announcement--archive__head">
+        <div class="announcement--archive__head__intro">
+          <span class="announcement--archive__head__eyebrow">
+            <IconStar
+              :size="15"
+              class="announcement--archive__head__eyebrow__icon"
+            />
+            Destacados
+          </span>
+          <h2 class="announcement--archive__head__title">Avisos destacados</h2>
+          <p class="announcement--archive__head__text">
+            Equipos seleccionados de toda la industria. Explora y contacta
+            directo al vendedor.
+          </p>
+        </div>
+        <NuxtLink to="/anuncios" class="announcement--archive__head__link">
+          Ver todos los anuncios
+          <IconArrow
+            :size="16"
+            class="announcement--archive__head__link__icon"
+          />
+        </NuxtLink>
+      </div>
       <!-- <pre>{{ pagination }}</pre> -->
       <div v-if="ads && ads.length > 0" class="announcement--archive__list">
         <template v-for="ad in ads">
@@ -36,11 +62,11 @@ import { useRouter, useRoute } from "vue-router";
 
 // Components
 import CardAnnouncement from "@/components/CardAnnouncement.vue";
-import EmptyState from "@/components/EmptyState.vue";
+import { Star as IconStar, ArrowRight as IconArrow } from "lucide-vue-next";
 import type { Ad } from "@/types/ad";
 
 // Props
-const props = defineProps({
+defineProps({
   ads: {
     type: Array as () => Ad[],
     default: () => [],
@@ -48,6 +74,10 @@ const props = defineProps({
   pagination: {
     type: Object,
     default: () => ({}),
+  },
+  featuredSection: {
+    type: Boolean,
+    default: false,
   },
 });
 
