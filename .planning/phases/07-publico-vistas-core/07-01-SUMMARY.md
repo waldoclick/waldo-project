@@ -103,8 +103,18 @@ A cookie-consent banner and a "Consigue 3 anuncios gratis" promo widget overlay 
 - `vue-tsc --noEmit` clean for all touched files (index.vue, HeroHome, AdArchive, CardAnnouncement, CategoryArchive, CardCategory, ArticleArchive, CardArticle, SellCta).
 - phase-04 tokens only; BEM strict (every child under its block/modifier namespace; no standalone hyphenated classes); no box-shadow/scale added (rotate(2.5deg) on the hero plate is the sanctioned carve-out).
 
+## Sibling-page regression check (post-advisor)
+
+The card rewrites are global — `CardAnnouncement` also renders on `/anuncios` and inside `RelatedAds`; `CardArticle` also renders on `/blog` and inside `RelatedArticles`; `AdArchive`/`ArticleArchive` render header-less (base grid) on those pages because they aren't passed `featuredSection`/`blogSection`. Verified:
+- Full `vue-tsc --noEmit -p tsconfig.json` = **0 errors project-wide** (not just the 9 Home files).
+- `/anuncios` (logged-out, 1440) screenshot — restyled CardAnnouncement cards sit correctly in the base 4-col listing grid; photo-count + Destacado badges, category pill, price all render. No regression. (`/tmp/waldo-shots/07-01-check-anuncios.png`)
+- `/blog` (logged-out, 1440) screenshot — restyled CardArticle cards in the base grid; category pill overlay, title, excerpt, date · read-time. No regression. (`/tmp/waldo-shots/07-01-check-blog.png`)
+- `CategoryArchive`/`CardCategory` are Home-only consumers (no other page renders them).
+
 ## Known Stubs
-None — all sections are wired to live data (categories, featured ads, articles). The SellCta "Cómo funciona" link is a placeholder target (`/preguntas-frecuentes`) until the Por qué Waldo route ships in 07-02.
+- **`CardArticle` read-time is hardcoded "5 min de lectura"** — the `Article` type has no `readMins`/reading-time field, so the mockup's per-article read time can't be data-driven yet. Also drops the mockup BlogCard's no-cover kicker (monospace category-initials placeholder) in favor of the existing empty cream wash. Cosmetic; resolve when a reading-time field is added to the Article content type.
+- All section data (categories, featured ads, articles) is wired to live stores — no data stubs.
+- The SellCta "Cómo funciona" link points to `/preguntas-frecuentes` as a placeholder target until the Por qué Waldo route ships in 07-02.
 
 ## Self-Check: PASSED
 - Files created/modified all exist on disk (verified).
