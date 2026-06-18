@@ -1,7 +1,7 @@
 <template>
   <DefaultLayout>
     <div class="page">
-      <HeaderDefault :show-search="true" />
+      <HeaderDefault />
       <HeroFake />
       <!-- {{ error }} -->
       <MessageDefault

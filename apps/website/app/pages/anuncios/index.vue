@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <HeaderDefault :show-search="true" />
+    <HeaderDefault />
     <HeroResults
       :bg-color="categoryData?.color || '#f0f0f0'"
       :color="categoryData?.color || '#f0f0f0'"

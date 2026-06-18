@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <HeaderDefault :show-search="true" />
+    <HeaderDefault />
     <HeroFake />
     <!-- Para anuncios de pago: mostrar comprobante de orden -->
     <ResumeOrder

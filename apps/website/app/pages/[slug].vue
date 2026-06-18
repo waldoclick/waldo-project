@@ -1,7 +1,7 @@
 <template>
   <div v-if="adsData && adsData.user" class="page">
     <!-- <pre>{{ adsData }}</pre> -->
-    <HeaderDefault :show-search="true" />
+    <HeaderDefault />
     <HeroProfile :user="adsData.user" />
     <ProfileDefault
       v-if="adsData.user && adsData.ads && adsData.pagination"

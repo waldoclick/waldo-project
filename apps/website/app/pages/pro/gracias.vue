@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <HeaderDefault :show-search="true" />
+    <HeaderDefault />
     <HeroFake />
     <ResumeProCard
       v-if="proData"

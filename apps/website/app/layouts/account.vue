@@ -1,6 +1,6 @@
 <template>
   <div class="layout layout--account">
-    <HeaderDefault :show-search="false" :search-icon="false" />
+    <HeaderDefault :search-icon="false" />
     <MobileBar />
     <div class="layout--account__container">
       <div class="layout--account__sidebar">

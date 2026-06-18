@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <HeaderDefault :show-search="true" />
+    <HeaderDefault />
     <HeroFake />
     <LoadingDefault
       v-if="!adStore.ad || Object.keys(adStore.ad).length === 0"

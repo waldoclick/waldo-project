@@ -27,9 +27,6 @@
           <LogoWhite v-if="isTrasparent" />
           <LogoBlack v-else />
         </div>
-        <div v-if="showSearch" class="header--default__form">
-          <SearchDefault type="header" />
-        </div>
         <div v-if="showMenu" class="header--default__menu">
           <MenuDefault />
         </div>
@@ -98,13 +95,11 @@ const user = useSessionUser();
 const props = withDefaults(
   defineProps<{
     isTrasparent?: boolean | string;
-    showSearch?: boolean;
     showMenu?: boolean;
     searchIcon?: boolean;
   }>(),
   {
     isTrasparent: false,
-    showSearch: false,
     showMenu: false,
     searchIcon: true,
   },
@@ -113,7 +108,6 @@ const props = withDefaults(
 // Search-icon trigger for the lightbox — on by default site-wide, hidden only
 // where the design omits it (account area, which navigates via its sidebar).
 const isTrasparent = props.isTrasparent;
-const showSearch = props.showSearch;
 const showMenu = props.showMenu;
 const searchIcon = props.searchIcon;
 

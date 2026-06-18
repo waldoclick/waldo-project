@@ -106,14 +106,6 @@
       }
     }
 
-    &__form {
-      min-width: 640px;
-
-      @include screen-huge {
-        display: none;
-      }
-    }
-
     &__menu {
       @include screen-large {
         display: none;

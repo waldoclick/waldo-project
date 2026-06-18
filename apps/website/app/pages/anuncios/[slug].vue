@@ -1,6 +1,6 @@
 <template>
   <div v-if="adComputed" class="page page--contact">
-    <HeaderDefault :show-search="true" />
+    <HeaderDefault />
     <HeroAnnouncement
       :name="adComputed.name"
       :category="(adComputed.category as Record<string, any>) || {}"
