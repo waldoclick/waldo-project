@@ -35,7 +35,7 @@
         </div>
       </div>
       <div class="header--default__right">
-        <div class="header--default__search">
+        <div v-if="searchIcon" class="header--default__search">
           <SearchIcon :white="isTrasparent && isTop" />
         </div>
         <div
@@ -97,6 +97,7 @@ const props = defineProps<{
   isTrasparent?: boolean | string;
   showSearch?: boolean;
   showMenu?: boolean;
+  searchIcon?: boolean;
   bgColor?: string;
 }>();
 
@@ -104,6 +105,9 @@ const props = defineProps<{
 const isTrasparent = props.isTrasparent ?? false;
 const showSearch = props.showSearch ?? false;
 const showMenu = props.showMenu ?? false;
+// Search-icon trigger for the lightbox — on by default site-wide, hidden only
+// where the design omits it (account area, which navigates via its sidebar).
+const searchIcon = props.searchIcon ?? true;
 const bgColor = props.bgColor ?? "#ffffff";
 
 // Scroll handling

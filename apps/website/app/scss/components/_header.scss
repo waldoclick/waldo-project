@@ -76,8 +76,15 @@
     // Left
 
     &__lateral {
+      // Hamburger trigger is mobile/tablet only — hidden once the inline nav
+      // (&__menu, shown above 1024px) takes over, matching the mockups.
+      display: none;
       margin-right: 30px;
       position: relative;
+
+      @include screen-large {
+        display: block;
+      }
 
       @include screen-small {
         margin-right: 10px;
