@@ -33,7 +33,7 @@
       &__inner {
         max-width: 1200px;
         margin: 0 auto;
-        padding: 64px 32px 40px;
+        padding: 108px 32px 40px;
         position: relative;
 
         @include screen-small {
@@ -110,7 +110,7 @@
 
     &__sidebar {
       position: sticky;
-      top: 90px;
+      top: 96px;
       align-self: start;
 
       @include screen-medium {

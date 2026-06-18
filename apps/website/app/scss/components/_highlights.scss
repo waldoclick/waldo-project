@@ -4,6 +4,8 @@
 
 .highlights {
   &--default {
+    padding: 72px 0 64px;
+
     &__container {
       @extend .container;
       max-width: 1200px;
