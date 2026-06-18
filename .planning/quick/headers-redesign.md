@@ -24,7 +24,10 @@ Update existing components/SCSS, never create new. BEM block--modifier__element.
 ## Progress
 - [x] **Account header** — d924de2d. searchIcon prop (off in account), hamburger
       hidden >1024px globally. Verified desktop + mobile (public + account).
-- [ ] **Search lightbox** — rebuild LightboxSearch.vue + _lightbox.scss to
+- [x] **Search lightbox** — a06f2546. Centered 620px palette: bar (icon+input+
+      clear+Esc) + empty state (recents localStorage + categories) + query state
+      (category matches + "Buscar X"). New $tag token. Verified empty + query.
+- [~] (build notes for reference) rebuild LightboxSearch.vue + _lightbox.scss to
       index.dc.html:159-212. Concrete plan (context gathered):
       - Header: search icon 21px #8A8794 + input v-model query 18px
         placeholder "Busca un aviso o categoría…" + clear (if query) + "Esc"
