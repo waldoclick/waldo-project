@@ -34,6 +34,20 @@
         </template>
       </div>
       <div
+        v-else-if="emptyState"
+        class="announcement--archive__empty"
+        role="status"
+      >
+        <IconSearch :size="34" class="announcement--archive__empty__icon" />
+        <p class="announcement--archive__empty__title">Sin resultados</p>
+        <p class="announcement--archive__empty__text">
+          Prueba ajustar o limpiar los filtros.
+        </p>
+        <NuxtLink to="/anuncios" class="announcement--archive__empty__button">
+          Limpiar filtros
+        </NuxtLink>
+      </div>
+      <div
         v-if="
           pagination &&
           pagination.pageCount > 1 &&
@@ -62,7 +76,11 @@ import { useRouter, useRoute } from "vue-router";
 
 // Components
 import CardAnnouncement from "@/components/CardAnnouncement.vue";
-import { Star as IconStar, ArrowRight as IconArrow } from "lucide-vue-next";
+import {
+  Star as IconStar,
+  ArrowRight as IconArrow,
+  Search as IconSearch,
+} from "lucide-vue-next";
 import type { Ad } from "@/types/ad";
 
 // Props
@@ -76,6 +94,10 @@ defineProps({
     default: () => ({}),
   },
   featuredSection: {
+    type: Boolean,
+    default: false,
+  },
+  emptyState: {
     type: Boolean,
     default: false,
   },

@@ -66,7 +66,7 @@
 import { ref, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useFilterStore } from "@/stores/filter.store";
-import { SlidersHorizontal as IconFilter, ChevronDown as IconChevron } from "lucide-vue-next";
+import { Filter as IconFilter, ChevronDown as IconChevron } from "lucide-vue-next";
 
 defineProps({
   total: {

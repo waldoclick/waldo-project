@@ -92,12 +92,8 @@
     &__list {
       display: grid;
       width: 100%;
-      grid-template-columns: repeat(auto-fill, minmax(224px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 22px;
-
-      @include screen-small {
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      }
     }
 
     &__empty {

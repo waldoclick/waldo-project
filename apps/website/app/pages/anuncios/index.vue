@@ -16,29 +16,11 @@
       :ads="adsData.ads"
       :pagination="adsData.pagination"
     />
-    <section
-      v-if="adsData && adsData.ads && adsData.ads.length === 0"
-      class="announcement announcement--archive"
-    >
-      <div class="container">
-        <div class="announcement--archive__empty">
-          <IconSearch
-            :size="34"
-            class="announcement--archive__empty__icon"
-          />
-          <p class="announcement--archive__empty__title">Sin resultados</p>
-          <p class="announcement--archive__empty__text">
-            Prueba ajustar o limpiar los filtros.
-          </p>
-          <NuxtLink
-            to="/anuncios"
-            class="announcement--archive__empty__button"
-          >
-            Limpiar filtros
-          </NuxtLink>
-        </div>
-      </div>
-    </section>
+    <AdArchive
+      v-else-if="adsData && adsData.ads && adsData.ads.length === 0"
+      :ads="[]"
+      :empty-state="true"
+    />
     <RelatedAds
       v-if="
         adsData &&
@@ -89,7 +71,6 @@ import FilterResults from "@/components/FilterResults.vue";
 import AdArchive from "@/components/AdArchive.vue";
 import FooterDefault from "@/components/FooterDefault.vue";
 import RelatedAds from "@/components/RelatedAds.vue";
-import { Search as IconSearch } from "lucide-vue-next";
 
 // Importar interfaces
 import type { Category } from "@/types/category";
