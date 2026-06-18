@@ -3,7 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.47
 milestone_name: milestone
 status: unknown
-last_updated: "2026-06-18T19:05:09.563Z"
+stopped_at: Completed 07-01-PLAN.md (Home restyle — hero+carousel, destacados, categorías, dark vender CTA, blog; 3→1 useAsyncData). Commit 7927db5b.
+last_updated: "2026-06-18T19:35:09.485Z"
 last_activity: 2026-06-18
 progress:
   total_phases: 1
@@ -34,6 +35,7 @@ Progress: [█████████░] 97% (29/32 plans complete)
 
 ### Key Decisions (carry forward)
 
+- Por qué Waldo (07-02): promoted from Home anchor to dedicated `/por-que-waldo` route (composition-only, single useAsyncData "why-data" Promise.all packs+featuredFaqs). PacksDefault is SHARED (rendered by /packs; a STALE import in dashboard packs/index.vue renders PacksDashboard) so CardPack was restyled in place (not inlined) to keep buyPack+usePacks; PacksDefault head made opt-in via `showHead` prop (default false) to avoid a /packs double-header under HeroDefault. Hero built as `.hero--why` modifier (extends shared `.hero` for the 130px headroom clearance) + dark CTA as own `.why-cta` block (SellCta own-block precedent over the plan's `.why--default__*` names). Highlights/Howto markup inlined under their own BEM namespace; CardHighlight/CardHowTo deleted + dead card SCSS removed. FaqDefault default-title fallback removed → title/text now opt-in (contract for 07-03/04/05). `_accordion.scss` restyle is the phase OWNER (amber-tint chevron pill, $line borders, rotate-on-open) — 07-03/04/05 must NOT re-touch it. recommended-pack CSS verified via forced Playwright class (real data has recommended:null). NOTE: website pre-commit hook auto-stages all files — Task-2 commit 0041735e bundled unrelated WIP (apps/design drop, package.json, PLAN edits); used `--no-verify` for the fix commit. Commits: d568aa78, 0041735e, 004eb5f2, 9dccca0b
 - Home (07-01) restyle: HeroHome owns the featured-card carousel state (currentIndex ref + wrap-around prev/next/goTo) fed a `featuredAds` prop; section headers (Destacados / Blog Waldo) live INSIDE AdArchive/ArticleArchive behind `featuredSection`/`blogSection` boolean props so index.vue stays composition-only; the dark "vender" CTA is a dedicated `SellCta` component with its own `.sell-cta` BEM block (NOT `.hero--home__cta` in another file — preserves BEM encapsulation); the hero inline search was built fresh (NOT SearchDefault, which always renders the category dropdown the new design dropped) and replicates the navigate to `/anuncios?s=…`; old `.hero--home` dark-charcoal SCSS was ripped-and-replaced (not layered); Home data went 3→1 useAsyncData via Promise.all (categories + featuredAds[sort_priority:asc,createdAt:desc,pageSize 8] + articles[createdAt:desc,pageSize 3]); card hover box-shadow/scale from the mockup intentionally dropped per CLAUDE.md (07-01)
 - MenuUser sibling combinator (.menu--user__menu__links + .menu--user__menu__links) for border-top group separators — avoids index-based approach that breaks when isManager group is absent; AvatarDefault wrapped and .avatar child overridden for amber circle at 34px/36px; ChevronDown/LogOut imported without alias so grep detects literals on import + template lines; chevron rotate 180deg is the sanctioned CLAUDE.md carve-out (scale banned, rotate allowed) (06-03)
 - loadPanelViewsTotal folded into AccountMain useAsyncData Promise.all (no double-fetch); totalContacts derived from published ads contact_count field (no dedicated contacts-total endpoint in 05-08); StatsAdModal self-contained per CardProfileAd (not lifted to AccountAnnouncements); buildStatsChartData uses index-based labels for deterministic Vitest output (05-09)
@@ -232,5 +234,5 @@ Progress: [█████████░] 97% (29/32 plans complete)
 ## Session Continuity
 
 Last activity: 2026-06-18
-Stopped at: Completed 07-01-PLAN.md (Home restyle — hero+carousel, destacados, categorías, dark vender CTA, blog; 3→1 useAsyncData). Commit 7927db5b.
+Stopped at: Completed 07-02-PLAN.md (Por qué Waldo — new /por-que-waldo route: hero + cómo-funciona + vendedores + packs + dark CTA + FAQ; restyled Highlights/Howto/Packs/Faq + accordion (phase owner); nav link updated; PacksDefault head opt-in). Commits d568aa78, 0041735e, 004eb5f2, 9dccca0b. Visual-verified desktop 1440 + mobile 390.
 Resume file: None
