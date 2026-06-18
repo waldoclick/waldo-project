@@ -226,8 +226,9 @@ Progress: [█████████░] 97% (29/32 plans complete)
 | 260611-reg | Replace APP_URL with FRONTEND_URL in all 5 Transbank return/response URLs across 4 payment files so callbacks route through the Nuxt proxy | 2026-06-11 | 0549f2fa | [260611-reg-change-transbank-return-url-from-app-url](./quick/260611-reg-change-transbank-return-url-from-app-url/) |
 
 | 260613-v33 | Auditoria completa flujo usuario Manager en website Nuxt — SSR fail-open en auth.ts + onboarding bypass + deactivate isManager | 2026-06-14 | d2dad61c | [260613-v33-auditoria-completa-flujo-usuario-manager](./quick/260613-v33-auditoria-completa-flujo-usuario-manager/) |
+| 260617-vuz | Rebuild public header + dashboard topbar to /design mockups (logo-black, nav, 40x40 search icon, 38x38 rounded dashboard triggers + divider); fix is-trasparent + searchIcon-defaults-false bugs; visual screenshot verification | 2026-06-18 | 54c27858, 26ba9a2e | [260617-vuz-rearmar-headers-del-sitio-publico-dashbo](./quick/260617-vuz-rearmar-headers-del-sitio-publico-dashbo/) |
 
 ## Session Continuity
 
-Last activity: 2026-06-17
+Last activity: 2026-06-18
 Resume file: None
