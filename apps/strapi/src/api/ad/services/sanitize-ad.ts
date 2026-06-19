@@ -69,6 +69,7 @@ export function sanitizeAdForPublic(
     id: adFields.id,
     documentId: adFields.documentId,
     status: adFields.status,
+    views: adFields.views,
     name: adFields.name,
     slug: adFields.slug,
     description: adFields.description,
