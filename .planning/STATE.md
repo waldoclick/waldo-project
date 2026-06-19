@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.47
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 08-02-PLAN.md (ad interior restyle + masked contact reveal)
-last_updated: "2026-06-18T21:44:20.242Z"
-last_activity: 2026-06-18
+stopped_at: "Completed 10-01-PLAN.md (header público: showMenu flip + :show-menu=false guards + position:fixed + cubic-bezier transition)"
+last_updated: "2026-06-19T17:47:23.859Z"
+last_activity: 2026-06-19
 progress:
-  total_phases: 1
+  total_phases: 2
   completed_phases: 0
-  total_plans: 2
-  completed_plans: 0
+  total_plans: 5
+  completed_plans: 1
   percent: 97
 ---
 
@@ -21,7 +21,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-16)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 06 — Cierre cuenta (gaps)
+**Current focus:** Phase 10 — Headers + Search Lightbox + Tipografía
 
 ## Position
 
@@ -35,6 +35,7 @@ Progress: [█████████░] 97% (31/32 plans complete)
 
 ### Key Decisions (carry forward)
 
+- Header público showMenu flip (10-01): showMenu default changed false→true; 19 flow pages (anunciar/*, pagar/*, packs/*, pro/*) received explicit `:show-menu="false"` BEFORE the default flip to prevent nav leaking on checkout/wizard pages. _header.scss changed sticky→fixed, z-index:10→50, transition narrowed to `transform 0.35s cubic-bezier(0.4,0,0.2,1)`, scroll-conditional bg modifiers (--scrolled, --scrolled-dark, --scrolled-light, --white) deleted entirely — backdrop-filter is always-on per design. packs/index.vue preserved `is-trasparent="true"` alongside the new guard. Commits 625b577e, 143d68b1, 75d8b727
 - CardAnnouncement sold variant + /anuncios restyle (08-01): the shared CardAnnouncement is the PHASE OWNER (active + sold FINAL) — 08-02/08-03 reuse it and must NOT re-touch the component or `.card--announcement` in `_card.scss`. Active state was already migrated before this plan; the net-new work was the sold variant: `sold` (Boolean, default false) + `soldWhen`/`sold-when` (String, default "") props drive a single `.card--announcement--sold` modifier → "Vendido" badge (`$ink` bg, check icon) + image veil, `$ink2` title, strikethrough `$muted` price, "Vendido {soldWhen}" footer; hides image-count/Destacado badges, meta line, login prompt and seller row; active path byte-identical (all active elements gated `v-if=!sold`). 08-03 Vendidos tab passes `:all` + `:sold="true"` + `:sold-when` only. Sold variant verified via Playwright forced-class (no sold ads on /anuncios). Toolbar restyle-first (no left-sidebar filter panel — the mockup "Filtros" button has no app behavior): kept existing FilterResults ubicación+orden query-param behavior, wired the must-have "{N} anuncios" count via a new `:total` prop fed from `adsData.pagination.total` in index.vue (Rule 3). Empty state replaced the shared MessageDefault (9+ consumers) with an `.announcement--archive__empty` card that lives INSIDE AdArchive behind an `emptyState` prop (page stays composition-only per CLAUDE.md — `<AdArchive :empty-state>`, no raw section/BEM in the page); verified via `?s=` no-results URL. Split `.filter--announcement` out of the shared `&--announcement, &--articles` selector so /articulos does not regress. Grid is a single `repeat(auto-fill, minmax(280px,1fr))` gap 22px with NO breakpoint override → 4 cols at 1440 (full 1300px container, no sidebar), 1 col at 390 (meets the plan's "3-4 desktop / 1 mobile" criterion; an earlier 224px/160px-mobile draft shipped 5/2 and was corrected). Toolbar filter icon is the funnel `Filter`. `.hero--results` restyled (104px top padding clears 06-02 overlay header; `$muted` no-underline breadcrumb with `$ink` bold last item; Poppins 800 40px title; 58px category-color icon tile, white icon) with breadcrumb overrides scoped under the block (shared BreadcrumbsDefault untouched). Only the `--archive` section of `_announcement.scss` touched (`--single` reserved for 08-02). Data path unchanged: 2 `useAsyncData` (category-${slug} + adsData), single `ads/catalog` call, no N+1. `--no-verify` commits (website pre-commit auto-stage hook + unrelated strapi WIP). Commits 6b0108ea, b2271b67, 51325c72
 - Ad interior restyle + masked contact reveal (08-02): `/anuncios/[slug]` migrated to the "Detalle de producto" mockup across HeroAnnouncement (breadcrumb header, Poppins title, category-pill + Publicado-date meta, "Volver a resultados" button replacing the QR; new `published` prop = publishedAt||createdAt; views omitted — none on payload), AdSingle body (16/10 framed GalleryDefault with Ampliar + photos-count badges + condition chip via new `condition` prop; flat 2-col label/value Ubicación + Especificación grids replacing CardInfo rows; container now CSS grid `minmax(0,1fr) 372px`), and the sticky sidebar (precio / vendedor-contacto / compartir). CONTACT MODEL: logged-IN email/phone render from the MASKED payload + per-channel eye-reveal — click → `GET ads/:documentId/reveal/{email|phone}` → real value + clipboard copy + green check; WhatsApp → `reveal/whatsapp` → `wa.me/{digits}`; Call → `reveal/phone` → tel: (reuses revealed value). The reveal records the ad-contact server-side so the duplicate `POST ads/:id/contact` was DROPPED; GA4 contactSeller still fires on every click (grep: reveal/ ×4, contactSeller ×6, no /contact POST). RENDER GATING is `has_X || X` (Rule 1 deviation) — the test JWT (id=2) is a MANAGER, whose findBySlug payload BYPASSES masking (controllers/ad.ts:942) and carries NO has_* flags; pure-`has_X` gating would give every manager an empty contact card (violates "no excluir managers"). ReminderDefault restyled to the "Datos de contacto protegidos" gate (login/registro CTAs; also consumed by SidebarProfile/08-03); ShareDefault restyled to the compartir card (FB/X/WhatsApp + copy, LinkedIn dropped). Only the `.announcement--single` section of `_announcement.scss` touched (08-01 owns `--archive` + `.card--announcement`); `_variables.scss` untouched. VISUAL CAVEATS: masked-bullet appearance NOT screenshot-verifiable (manager token shows real values; payload is SSR-fetched so Playwright can't rewrite — needs a non-manager JWT); WhatsApp button NOT exercised (no seller across 30 catalog ads has a whatsapp). DEFERRED (HIGH, not 08-02 scope): the Nuxt proxy CACHES reveal PII (`x-cache: HIT`, ignores upstream `no-store`) and serves the real value to ANONYMOUS callers on :3000 — Strapi :1337 correctly 401s anon; fix = exclude `**/reveal/**` from the proxy cache (relates to open `project_proxy_cache_headers`). `--no-verify` commits (website pre-commit auto-stage hook + unrelated strapi WIP). Commits 5d00aab4, e81aaa4b, 8ef7b5dd
 - Contact obfuscation backend (08-04): seller email/phone/whatsapp are MASKED in BOTH bulk payloads (sanitizeAdForPublic.safeUser + getUserDataWithFilters) with has_email/has_phone/has_whatsapp flags; real values only via reveal endpoints. `contact-mask.ts` is the single source (maskEmail/maskPhone/revealUserChannel — pure, null-safe; imported directly into userController, NOT via an index that re-exports the ad factory). whatsapp previously leaked RAW on the profile payload (not in PII_FIELDS) — now masked. Broadened masking surface: getUserDataWithFilters backs GET /users generally, so every non-manager consumer (only known caller userStore.loadUser) now gets masked+flagged where it was stripped; ad-list cards now emit empty masks + false flags (getAdvertisements populate whitelists out contact fields), while the detail path findBySlug (user:true full populate) emits real-derived masks — that's what the 08-02 contact card consumes. FIVE SEPARATE reveal routes (user mandate, no :channel param), all auth:false + manual Bearer verify (401 anon), declared before the /ads/:id wildcard: GET /ads/:documentId/reveal/{phone,whatsapp,email} record an ad-contact (call/call/message via recordContact); GET /sellers/:username/reveal/{phone,whatsapp} do NOT record (no ad to attribute). DRY in module-level revealForAd/revealForSeller (NOT controller methods — Strapi handler 2nd arg is the Next type, so a channel param collides). soldAds adds draft:false over archivedAds to stop never-published drafts leaking on a PUBLIC surface; GET /ads/sold/:username public + paginated through getAdvertisements (no N+1). Jest green (9+6+2); curl pending Strapi dev-server restart (was stuck mid-rebuild, port 1337 unbound). Commits 5a713fb9, e2cee0ed, 2f22361d
@@ -240,6 +241,6 @@ Progress: [█████████░] 97% (31/32 plans complete)
 
 ## Session Continuity
 
-Last activity: 2026-06-19 - Completed quick task 260619-dps: Implementacion completa de anuncios segun maqueta (sidebar filtros, layout grid 266px 1fr, pagination, toolbar)
-Stopped at: Completed 08-02-PLAN.md (ad interior restyle + masked contact reveal)
+Last activity: 2026-06-19
+Stopped at: Completed 10-01-PLAN.md (header público: showMenu flip + :show-menu=false guards + position:fixed + cubic-bezier transition)
 Resume file: None

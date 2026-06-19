@@ -15,10 +15,10 @@
 6. Tipografía auditada: cero regresiones de tamaño/peso detectadas en screenshot 1440px de home, /anuncios, /anuncios/[slug], /cuenta en comparación directa con las maquetas
 7. `pnpm --filter website typecheck` sin errores nuevos; BEM estricto en todas las clases nuevas; sin modificar variables SCSS existentes
 
-**Plans:** 3 plans (2 waves)
+**Plans:** 1/3 plans executed
 
 Plans:
-- [ ] 10-01-PLAN.md — Header público: showMenu default flip + :show-menu=false en 19 páginas de flujo + position:fixed + z-index:50 + transition cubic-bezier (HDR-PUBLIC)
+- [x] 10-01-PLAN.md — Header público: showMenu default flip + :show-menu=false en 19 páginas de flujo + position:fixed + z-index:50 + transition cubic-bezier (HDR-PUBLIC)
 - [ ] 10-02-PLAN.md — LightboxSearch: verificación visual + reemplazo de colores hardcodeados por tokens SCSS (SEARCH-LIGHTBOX)
 - [ ] 10-03-PLAN.md — Header cuenta: override sticky+70px+blur14px en _layout.scss; Dashboard tipografía: Poppins 700 20px $ink en _hero.scss; toolbar 38×38 verificado (HDR-ACCOUNT, HDR-DASHBOARD, TYPOGRAPHY)
 
