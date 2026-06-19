@@ -64,9 +64,11 @@ These pages currently rely on `showMenu` defaulting to `false`. After flipping t
 |-------------|-------|--------|
 | `anunciar/*` | index, datos-del-producto, datos-personales, ficha-de-producto, galeria-de-imagenes, resumen, gracias, error | Wizard flow — no nav |
 | `pagar/*` | index, gracias, error | Payment flow |
-| `packs/*` | comprar, gracias, error (not index — has isTrasparent already) | Funnel pages |
+| `packs/*` | **index**, comprar, gracias, error | `index.vue` uses `is-trasparent="true"` over a dark hero — nav links ($ink2 on dark) would be illegible. All packs pages need `:show-menu="false"`. |
 | `pro/pagar/*` | index, gracias | Pro payment flow |
 | `pro/error`, `pro/gracias` | standalone thank-you pages | Funnel pages |
+
+**Critical note on `packs/index.vue`:** `isTrasparent` and `showMenu` are independent props. The transparent header prop does NOT suppress the nav. After the default flip, `packs/index.vue` would show nav links with `color:$ink2` over a dark hero background — illegible. Must add `:show-menu="false"`.
 
 Pages that already pass `:show-menu="true"` explicitly:
 - `pages/index.vue` — already correct
@@ -79,7 +81,7 @@ Pages that get menu automatically after default flip (SAFE — these are browsab
 - `blog/[slug].vue` — ✅ wants nav
 - `[slug].vue` — ✅ wants nav (generic pages)
 
-**Risk:** Forgetting any anunciar/pagar/pro page → nav appears inside checkout wizard. Must add `:show-menu="false"` to ALL ~14 funnel pages.
+**Risk:** Forgetting any anunciar/pagar/pro/packs page → nav appears inside checkout wizard or over dark hero. Must add `:show-menu="false"` to ALL ~15 funnel pages.
 
 ---
 
@@ -110,20 +112,24 @@ Pages that get menu automatically after default flip (SAFE — these are browsab
 
 | Property | Current | Design | Action |
 |----------|---------|--------|--------|
-| `height` | `74px` (from .header--default) | `70px` | Need separate modifier or override |
+| `height` | `74px` (from .header--default) | `70px` | Override in `.layout--account` context |
 | `backdrop-filter` | `blur(16px) saturate(1.08)` | `blur(14px) saturate(1.06)` | Override in account context |
 | `logo height` | `30px` | `28px` | Override in account context |
-| `position` | `sticky` (inherits) — but HeaderDefault current is sticky | `sticky` — OK once public changes to fixed | Verify after wave 1 |
+| `position` | `sticky` (inherits from current `.header--default`) | `sticky` — **BROKEN after Wave 1** | **MUST add `position: sticky` to the account override in Wave 3** |
 | CTA text | "Anunciar ahora" with icon | "Anunciar ahora" with plus icon — same but `font-size:14.5px` not `15px`, `padding:11px 18px` not `11px 20px` | Small delta |
 | `search-icon` | already `:search-icon="false"` | No search icon | Already correct |
 | Nav links | hidden (showMenu=false default) | No nav | Already correct |
+
+**CRITICAL: position leak from Wave 1.** Wave 1 changes `.header--default { position: sticky → fixed }`. `layouts/account.vue` uses the same `<HeaderDefault>` / `.header--default` class and the account design explicitly wants `position: sticky`. After Wave 1, account layout will have a fixed header — content will slide under it and overlap. The Wave 3 account override **must** include `position: sticky` to restore the correct behavior. The account-scoped override block cannot omit this property.
+
+**Note on layout offset:** `layouts/account.vue` has no `padding-top` on `.layout--account` — it relies on sticky header occupying flow space. With `position: fixed`, that flow space is lost. The Wave 3 account override restores `position: sticky`, which is the correct fix. Do not add `padding-top` to the layout container as a workaround.
 
 **Approach options:**
 1. Add a new `layout-context="account"` prop to HeaderDefault that tweaks height/blur (adds complexity)
 2. Create a dedicated `HeaderAccount.vue` component — cleaner but more files
 3. Add CSS overrides in `_layout.scss` or `_account.scss` scoped to `.layout--account` — simplest, no prop drilling
 
-**Recommended approach:** Option 3 — scoped CSS override inside the existing `.layout--account` block. This avoids a new component and new props while keeping the changes isolated.
+**Recommended approach:** Option 3 — scoped CSS override inside the existing `.layout--account` block. This avoids a new component and new props while keeping the changes isolated. The override block must include: `height:70px`, `backdrop-filter:blur(14px) saturate(1.06)`, `position:sticky`, logo `height:28px`, CTA font-size/padding delta.
 
 ---
 
@@ -256,8 +262,10 @@ The `hero--dashboard` section uses hardcoded `#1a1a1a` and `#6b7280` — pre-red
 3. `HeroHeaderDashboard.vue` inline `<style scoped>` — `title` class needs Poppins 700 20px $ink -.3px letter-spacing
 
 **Out of scope for this phase** (belong to their own component phases):
-- `_related.scss` — old charcoal colors
+- `_related.scss` — old charcoal colors (verified as out of scope — phases 07-09 did not cover this component; flag for a dedicated component phase)
 - `_announcement.scss` — mostly OK, uses v1.47 tokens already
+
+**BEM compliance:** Header SCSS (`_header.scss`) is BEM-compliant. Note: the mobile trigger uses class `mobile--bar_open` (single underscore before `open`) in existing code — this is a pre-existing pattern, not a violation introduced in this phase.
 
 ---
 
@@ -288,16 +296,15 @@ One note: the design uses `--dark:#26252B` which is identical to `$ink`. Use `$i
 
 ### Risk 1: showMenu default flip (HIGH impact)
 **What:** Changing `showMenu` default from `false` to `true` affects ~20 pages.
-**Risk:** Funnel pages (anunciar/*, pagar/*, pro/pagar/*) get unwanted nav.
-**Mitigation:** Before the flip, grep all `<HeaderDefault />` usages and add `:show-menu="false"` to funnel pages atomically in the same commit.
-**Verification:** Visit /anunciar and /pagar after the change — nav must NOT appear.
+**Risk:** Funnel pages (anunciar/*, pagar/*, packs/*, pro/pagar/*) get unwanted nav.
+**Mitigation:** Before the flip, grep all `<HeaderDefault />` usages and add `:show-menu="false"` to funnel pages atomically in the same commit. Include `packs/index.vue` — `isTrasparent` does not suppress the nav.
+**Verification:** Visit /anunciar, /pagar, /packs after the change — nav must NOT appear.
 
-### Risk 2: position:sticky → position:fixed (MEDIUM impact)
-**What:** The public header changes from sticky to fixed.
-**Risk:** Page content loses the sticky offset (header no longer pushes content down). All page padding-top values were sized for a sticky header. Padding-top for pages below the 74px fixed header must be maintained or increased.
-**Current state:** `hero--home__container` has `padding:104px 32px 84px` — already accounts for fixed header offset. `hero--results` has `padding-top:104px`. These are likely correct.
-**Risk:** Pages with `HeroFake` or any section that doesn't have explicit top padding will collide with the header.
-**Mitigation:** Check `/anunciar` flows — they use `HeroFake`. Check padding of that component.
+### Risk 2: position:sticky → position:fixed, and account layout leak (HIGH impact)
+**What:** Wave 1 changes `.header--default { position: sticky → fixed }`. The account layout uses the same component and class — both public and account share `.header--default`.
+**Risk A:** Public pages — content loses sticky offset. Padding-top for pages below the 74px fixed header must be maintained. `hero--home__container` has `padding:104px 32px 84px` — already accounts for fixed header offset. `hero--results` has `padding-top:104px`. Check `/anunciar` flows — they use `HeroFake`. Check padding of that component.
+**Risk B (BLOCKING):** Account layout (`layouts/account.vue`) has no `padding-top` — it relies on the sticky header occupying flow space. After Wave 1, `layouts/account.vue` will use a fixed header and content will overlap. Wave 3 MUST restore `position: sticky` via the account-scoped CSS override.
+**Mitigation:** The Wave 3 account override block must explicitly include `position: sticky`. Do not omit it assuming "it's already sticky."
 
 ### Risk 3: Dashboard header architectural merge (MEDIUM-HIGH)
 **What:** Moving breadcrumb+title from `HeroHeaderDashboard.vue` into the `HeaderDashboard.vue` topbar.
@@ -318,15 +325,15 @@ One note: the design uses `--dark:#26252B` which is identical to `$ink`. Use `$i
 ## Recommended Execution Order
 
 ### Wave 1: Header público (3 tasks)
-1. **Fix showMenu default + funnel pages** — flip default to `true` in HeaderDefault.vue, add `:show-menu="false"` to all ~14 funnel pages atomically. This is the highest-risk change and should be isolated.
+1. **Fix showMenu default + funnel pages** — flip default to `true` in HeaderDefault.vue, add `:show-menu="false"` to all ~15 funnel pages (including `packs/index.vue`) atomically. This is the highest-risk change and should be isolated.
 2. **Header público SCSS** — change `position:sticky` → `fixed`, `z-index:10` → `50`, update transition easing, clean up scroll-conditional background overrides.
-3. **Verify padding-top offsets** — ensure hero sections don't collide with fixed header.
+3. **Verify padding-top offsets** — ensure hero sections don't collide with fixed header. Check HeroFake component specifically.
 
 ### Wave 2: LightboxSearch
 4. **LightboxSearch visual verification** — the component is nearly done. Run the app, open the search, check recents and categories render correctly. Fix any visual gaps (icon colors, padding tweaks).
 
 ### Wave 3: Header cuenta + Dashboard + Tipografía
-5. **Header cuenta** — add scoped CSS overrides in `.layout--account` to set `height:70px`, `backdrop-filter:blur(14px) saturate(1.06)`, logo `height:28px`.
+5. **Header cuenta** — add scoped CSS overrides in `.layout--account` to set `position:sticky` (REQUIRED — restores after Wave 1 fixed change), `height:70px`, `backdrop-filter:blur(14px) saturate(1.06)`, logo `height:28px`.
 6. **Header dashboard** — update HeaderDashboard.vue: button sizes to 38×38, border-radius:8px, avatar pill style (`border-radius:99px`). Decide on breadcrumb+title merge.
 7. **HeroHeaderDashboard / dashboard title** — fix font-size to 20px Poppins 700, color to `$ink`, letter-spacing `-.3px`. Fix `#1a1a1a` and `#6b7280` to `$ink` / `$muted`.
 8. **Tipografía audit** — spot-check remaining hardcoded colors in dashboard SCSS.
@@ -339,6 +346,7 @@ One note: the design uses `--dark:#26252B` which is identical to `$ink`. Use `$i
 - `apps/website/app/components/HeaderDefault.vue` — `showMenu` default: `false` → `true`
 - `apps/website/app/pages/anunciar/*.vue` (7 files) — add `:show-menu="false"`
 - `apps/website/app/pages/pagar/*.vue` (3 files) — add `:show-menu="false"`
+- `apps/website/app/pages/packs/index.vue` — add `:show-menu="false"` (transparent header over dark hero — nav links illegible without this)
 - `apps/website/app/pages/packs/comprar.vue`, `packs/gracias.vue`, `packs/error.vue` — add `:show-menu="false"`
 - `apps/website/app/pages/pro/error.vue`, `pro/gracias.vue`, `pro/pagar/index.vue`, `pro/pagar/gracias.vue` — add `:show-menu="false"`
 - `apps/website/app/scss/components/_header.scss` — position, z-index, transition, scroll modifiers
@@ -348,7 +356,7 @@ One note: the design uses `--dark:#26252B` which is identical to `$ink`. Use `$i
 - `apps/website/app/scss/components/_lightbox.scss` — `&--search` section tweaks
 
 ### Wave 3 — Cuenta + Dashboard + Tipografía
-- `apps/website/app/scss/components/_layout.scss` or `_account.scss` — account header overrides
+- `apps/website/app/scss/components/_layout.scss` or `_account.scss` — account header overrides (position:sticky + height + blur + logo)
 - `apps/website/app/components/HeaderDashboard.vue` — button sizes, avatar pill
 - `apps/website/app/scss/components/_header.scss` — dashboard modifier updates
 - `apps/website/app/components/HeroHeaderDashboard.vue` — if title merge decided
@@ -365,7 +373,9 @@ One note: the design uses `--dark:#26252B` which is identical to `$ink`. Use `$i
 | Behavior | Test Type | Command |
 |----------|-----------|---------|
 | showMenu default flip | manual | Visit `/anunciar` — no nav; visit `/anuncios` — nav visible |
+| packs/index nav suppressed | manual | Visit `/packs` — no nav visible over dark hero |
 | Header fixed position | manual | Scroll on `/anuncios` — header stays fixed at top |
+| Account header still sticky | manual | Visit `/cuenta` — scroll page; header must pin to top AND content must not overlap header on load |
 | LightboxSearch opens/closes | manual | Click search icon → modal appears; press Esc → closes |
 | Recents section visible | manual | Search once, close, reopen — "Últimas búsquedas" appears |
 | Dashboard header buttons | manual | Visit `/dashboard` — 38×38 buttons visible in topbar |
@@ -386,6 +396,8 @@ One note: the design uses `--dark:#26252B` which is identical to `$ink`. Use `$i
 - `apps/website/app/components/LightboxSearch.vue` — current search lightbox
 - `apps/website/app/scss/components/_lightbox.scss` — lightbox SCSS
 - `apps/website/app/scss/abstracts/_variables.scss` — all SCSS tokens
+- `apps/website/app/layouts/account.vue` — confirmed: uses `<HeaderDefault>`, no padding-top
+- `apps/website/app/pages/packs/index.vue` — confirmed: `is-trasparent="true"` only, no showMenu prop
 - `apps/website/app/pages/*/` — all pages using HeaderDefault (grepped)
 
 ### Secondary (MEDIUM confidence)
