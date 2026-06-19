@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue";
+import { ref, watch, computed } from "vue";
 import { ChevronDown as IconChevronDown } from "lucide-vue-next";
 import { useSanitize } from "@/composables/useSanitize";
 
@@ -65,14 +65,20 @@ const formattedQuestions = computed(() => {
   }));
 });
 
-// Inicializar con el primer elemento abierto
-// onMounted: UI-only — sets initial active accordion index from props
-onMounted(() => {
-  // Verificar si hay elementos antes de establecer el valor
-  if (props.questions && props.questions.length > 0) {
-    activeIndex.value = 0;
-  }
-});
+// Inicializar con el primer elemento abierto.
+// watch immediate (no onMounted): on SSR-hydrated views the questions are present
+// at mount, but on client-side navigation between legal views the data arrives
+// AFTER mount — onMounted would run too early and leave the first item closed.
+// isFirstLoad gates it so a user-toggle is never overridden by a later data change.
+watch(
+  () => props.questions,
+  (questions) => {
+    if (isFirstLoad.value && questions && questions.length > 0) {
+      activeIndex.value = 0;
+    }
+  },
+  { immediate: true },
+);
 
 // Método para alternar el índice activo
 const toggleItem = (index: number) => {

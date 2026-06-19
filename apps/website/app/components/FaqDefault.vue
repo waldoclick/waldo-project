@@ -1,5 +1,5 @@
 <template>
-  <section id="preguntas-frecuentes" class="faq faq--default">
+  <div id="preguntas-frecuentes" class="faq faq--default">
     <div
       v-if="displayedFaqItems && displayedFaqItems.length > 0"
       class="faq--default__container"
@@ -37,7 +37,7 @@
         </nuxt-link>
       </div>
     </div>
-  </section>
+  </div>
 </template>
 
 <script setup lang="ts">

@@ -1,12 +1,12 @@
 <template>
-  <section class="contact contact--default">
+  <div class="contact contact--default">
     <div class="contact--default__form">
       <FormContact />
     </div>
     <div class="contact--default__address">
       <AddressDefault />
     </div>
-  </section>
+  </div>
 </template>
 
 <script setup lang="ts">

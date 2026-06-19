@@ -1,11 +1,11 @@
 <template>
-  <section class="terms terms--default">
+  <div class="terms terms--default">
     <div class="terms--default__container">
       <div class="terms--default__accordion">
         <AccordionDefault :questions="terms" />
       </div>
     </div>
-  </section>
+  </div>
 </template>
 
 <script setup lang="ts">
