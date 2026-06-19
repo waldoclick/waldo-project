@@ -16,7 +16,7 @@
             </h1>
           </div>
         </div>
-        <SearchDefault :categories="categories" />
+        <SearchDefault :categories="categories" class="hero--results__search" />
       </div>
 
       <p v-if="sub" class="hero--results__sub">{{ sub }}</p>

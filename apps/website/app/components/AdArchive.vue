@@ -55,17 +55,13 @@
         "
         class="announcement--archive__paginate"
       >
-        <client-only>
-          <div class="paginate">
-            <vue-awesome-paginate
-              v-model="pagination.page"
-              :total-items="pagination.total"
-              :items-per-page="pagination.pageSize"
-              :max-pages-shown="5"
-              @click="onClickHandler"
-            />
-          </div>
-        </client-only>
+        <PaginationDefault
+          :current-page="pagination.page"
+          :total-pages="pagination.pageCount"
+          :total-records="pagination.total"
+          :page-size="pagination.pageSize"
+          @page-change="onClickHandler"
+        />
       </div>
     </div>
   </section>
@@ -76,6 +72,7 @@ import { useRouter, useRoute } from "vue-router";
 
 // Components
 import CardAnnouncement from "@/components/CardAnnouncement.vue";
+import PaginationDefault from "@/components/PaginationDefault.vue";
 import {
   Star as IconStar,
   ArrowRight as IconArrow,
