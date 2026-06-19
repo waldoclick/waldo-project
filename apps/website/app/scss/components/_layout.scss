@@ -173,6 +173,29 @@
         padding: 24px 0 64px;
       }
     }
+
+    // Account header overrides (account.dc.html:58-67)
+    // REQUIRED: restores position:sticky after Wave 1 changed .header--default to fixed.
+    // Without this, account content overlaps the header on load.
+    .header--default {
+      position: sticky;
+      height: 70px;
+      backdrop-filter: blur(14px) saturate(1.06);
+      -webkit-backdrop-filter: blur(14px) saturate(1.06);
+
+      .header--default__inner {
+        height: 70px;
+      }
+
+      .header--default__logo img {
+        height: 28px;
+      }
+
+      .btn--announcement {
+        font-size: 14.5px;
+        padding: 11px 18px;
+      }
+    }
   }
 
   &--dashboard {
