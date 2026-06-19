@@ -5,20 +5,21 @@
         <BreadcrumbsDefault :items="breadcrumbItems" />
       </div>
 
-      <div class="hero--results__title">
-        <div class="title title--category">
-          <div v-if="categoryIcon" class="title--category__icon">
-            <component :is="categoryIcon" :size="24" class="icon-category" />
+      <div class="hero--results__row">
+        <div class="hero--results__title">
+          <div class="title title--category">
+            <div v-if="categoryIcon" class="title--category__icon">
+              <component :is="categoryIcon" :size="24" class="icon-category" />
+            </div>
+            <h1 class="title--category__text title">
+              {{ title }}
+            </h1>
           </div>
-          <h1 class="title--category__text title">
-            {{ title }}
-          </h1>
         </div>
+        <SearchDefault :categories="categories" />
       </div>
 
-      <div v-if="queryValue" class="hero--results__query">
-        Resultados para: <b>{{ queryValue }}</b>
-      </div>
+      <p v-if="sub" class="hero--results__sub">{{ sub }}</p>
     </div>
   </section>
 </template>
@@ -26,9 +27,10 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import type { Component } from "vue";
-import { useRoute } from "vue-router";
 import BreadcrumbsDefault from "@/components/BreadcrumbsDefault.vue";
+import SearchDefault from "@/components/SearchDefault.vue";
 import { useColor } from "../composables/useColor";
+import type { FilterCategory } from "@/types/filter";
 
 const { bgColorWithTransparency } = useColor();
 
@@ -37,10 +39,9 @@ const props = defineProps<{
   title: string;
   categoryIcon?: Component;
   color?: string;
+  sub?: string;
+  categories?: FilterCategory[];
 }>();
-
-const route = useRoute();
-const queryValue = computed(() => route.query.s?.toString() || "");
 
 const heroStyle = computed(() => ({
   "--hero-bg-color": props.bgColor

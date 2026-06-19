@@ -476,13 +476,19 @@
       }
     }
 
-    &__query {
+    &__row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 28px;
+      flex-wrap: wrap;
+    }
+
+    &__sub {
+      margin: 10px 0 0;
       font-size: 15px;
       color: $ink2;
-
-      b {
-        color: $ink;
-      }
+      line-height: 1.5;
     }
   }
 

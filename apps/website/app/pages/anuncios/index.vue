@@ -6,6 +6,8 @@
       :color="categoryData?.color || ''"
       :title="categoryData?.name || 'Anuncios'"
       :category-icon="categoryIconComponent"
+      :sub="heroSub"
+      :categories="filterStore.filterCategories as FilterCategory[]"
     />
     <FilterResults
       v-if="adsData && adsData.ads && adsData.ads.length > 0"
@@ -74,6 +76,7 @@ import RelatedAds from "@/components/RelatedAds.vue";
 
 // Importar interfaces
 import type { Category } from "@/types/category";
+import type { FilterCategory } from "@/types/filter";
 import type { Ad } from "@/types/ad";
 import type { Pagination } from "@/types/pagination";
 
@@ -95,6 +98,12 @@ const { getCategoryIcon: getCategoryIconComponent } = useIcons();
 // Icono de la categoría como componente Lucide (para el hero)
 const categoryIconComponent = computed(() =>
   categorySlug.value ? getCategoryIconComponent(categorySlug.value) : undefined,
+);
+
+const heroSub = computed(() =>
+  categoryData.value
+    ? `${categoryData.value.name} publicados en Waldo.click.`
+    : "Explora equipos, vehículos, repuestos e insumos de toda la industria.",
 );
 
 // Carga de categoría separada — key estable por slug, independiente del resto de filtros
@@ -121,8 +130,9 @@ const { data: adsData } = await useAsyncData<AdsData>(
       route.query.order || "default"
     }-${route.query.commune || "all"}-${route.query.s || ""}`,
   async () => {
-    // Pre-load filter communes for FilterResults component
+    // Pre-load filter communes and categories for FilterResults + SearchDefault
     await filterStore.loadFilterCommunes();
+    await filterStore.loadFilterCategories();
 
     // Limpiar el store antes de cargar nuevos datos para evitar datos obsoletos de navegaciones anteriores
     adsStore.reset();
