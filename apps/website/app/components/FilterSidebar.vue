@@ -5,7 +5,11 @@
         <IconFilter :size="17" />
         Filtros
       </span>
-      <button class="filter--sidebar__header__clear" type="button" @click="onClear">
+      <button
+        class="filter--sidebar__header__clear"
+        type="button"
+        @click="onClear"
+      >
         Limpiar
       </button>
     </div>
@@ -23,12 +27,17 @@
             <input
               type="checkbox"
               class="filter--sidebar__section__row__check"
-              :checked="route.query.category === cat.slug"
+              :checked="activeCategories.includes(cat.slug)"
               @change="onCategory(cat.slug)"
             />
-            <span class="filter--sidebar__section__row__name">{{ cat.name }}</span>
+            <span class="filter--sidebar__section__row__name">{{
+              cat.name
+            }}</span>
           </span>
-          <span v-if="cat.count != null" class="filter--sidebar__section__row__count">
+          <span
+            v-if="cat.count != null"
+            class="filter--sidebar__section__row__count"
+          >
             {{ cat.count }}
           </span>
         </label>
@@ -52,7 +61,9 @@
             :checked="(route.query.condition || '') === opt.value"
             @change="onCondition(opt.value)"
           />
-          <span class="filter--sidebar__section__row__name">{{ opt.label }}</span>
+          <span class="filter--sidebar__section__row__name">{{
+            opt.label
+          }}</span>
         </span>
       </label>
     </div>
@@ -74,7 +85,9 @@
             :checked="(route.query.price || '') === opt.value"
             @change="onPrice(opt.value)"
           />
-          <span class="filter--sidebar__section__row__name">{{ opt.label }}</span>
+          <span class="filter--sidebar__section__row__name">{{
+            opt.label
+          }}</span>
         </span>
       </label>
     </div>
@@ -96,7 +109,9 @@
             :checked="(route.query.year || '') === opt.value"
             @change="onYear(opt.value)"
           />
-          <span class="filter--sidebar__section__row__name">{{ opt.label }}</span>
+          <span class="filter--sidebar__section__row__name">{{
+            opt.label
+          }}</span>
         </span>
       </label>
     </div>
@@ -140,7 +155,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useFilterStore } from "@/stores/filter.store";
 import { Filter as IconFilter } from "lucide-vue-next";
@@ -152,6 +167,11 @@ const filterStore = import.meta.client
 const route = useRoute();
 const router = useRouter();
 const isClient = ref(false);
+
+const activeCategories = computed(() => {
+  const raw = route.query.category?.toString() || "";
+  return raw ? raw.split(",").filter(Boolean) : [];
+});
 
 onMounted(() => {
   isClient.value = true;
@@ -180,11 +200,14 @@ const yearOptions = [
 ];
 
 function onCategory(slug: string) {
-  const isActive = route.query.category === slug;
+  const current = activeCategories.value;
+  const next = current.includes(slug)
+    ? current.filter((s) => s !== slug)
+    : [...current, slug];
   router.push({
     query: {
       ...route.query,
-      category: isActive ? undefined : slug,
+      category: next.length > 0 ? next.join(",") : undefined,
       page: 1,
     },
   });

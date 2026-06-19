@@ -112,7 +112,12 @@ const heroSub = computed(() =>
 );
 
 // Carga de categoría separada — key estable por slug, independiente del resto de filtros
-const categorySlug = computed(() => route.query.category?.toString() || "");
+// Solo muestra datos de hero (color, nombre) cuando hay exactamente una categoría seleccionada
+const categorySlug = computed(() => {
+  const raw = route.query.category?.toString() || "";
+  const slugs = raw ? raw.split(",").filter(Boolean) : [];
+  return slugs.length === 1 ? slugs[0] : "";
+});
 
 const { data: categoryData } = await useAsyncData<Category | null>(
   () => `category-${categorySlug.value}`,
@@ -155,26 +160,38 @@ const { data: adsData } = await useAsyncData<AdsData>(
         ? ["sort_priority:asc", "createdAt:desc"]
         : ["createdAt:desc"];
 
+    const categorySlugs = category ? category.split(",").filter(Boolean) : [];
     const filtersParams: Record<string, unknown> = {
       ...(name && { name: { $containsi: name } }),
-      ...(category && { category: { slug: { $eq: category } } }),
+      ...(categorySlugs.length === 1 && {
+        category: { slug: { $eq: categorySlugs[0] } },
+      }),
+      ...(categorySlugs.length > 1 && {
+        category: { slug: { $in: categorySlugs } },
+      }),
       ...(commune && { commune: { id: { $eq: commune } } }),
     };
 
     const condition = route.query.condition?.toString() || null;
-    if (condition === "nuevo") filtersParams.condition = { slug: { $eq: "nuevo" } };
-    else if (condition === "usado") filtersParams.condition = { slug: { $eq: "usado" } };
+    if (condition === "nuevo")
+      filtersParams.condition = { slug: { $eq: "nuevo" } };
+    else if (condition === "usado")
+      filtersParams.condition = { slug: { $eq: "usado" } };
 
     const price = route.query.price?.toString() || null;
     if (price === "lt5") filtersParams.price = { $lt: 5000000 };
-    else if (price === "5to20") filtersParams.price = { $gte: 5000000, $lte: 20000000 };
-    else if (price === "20to50") filtersParams.price = { $gte: 20000000, $lte: 50000000 };
+    else if (price === "5to20")
+      filtersParams.price = { $gte: 5000000, $lte: 20000000 };
+    else if (price === "20to50")
+      filtersParams.price = { $gte: 20000000, $lte: 50000000 };
     else if (price === "gt50") filtersParams.price = { $gt: 50000000 };
 
     const year = route.query.year?.toString() || null;
     if (year === "lt2010") filtersParams.year = { $lt: 2010 };
-    else if (year === "2010to2019") filtersParams.year = { $gte: 2010, $lte: 2019 };
-    else if (year === "2020to2024") filtersParams.year = { $gte: 2020, $lte: 2024 };
+    else if (year === "2010to2019")
+      filtersParams.year = { $gte: 2010, $lte: 2019 };
+    else if (year === "2020to2024")
+      filtersParams.year = { $gte: 2020, $lte: 2024 };
     else if (year === "gte2025") filtersParams.year = { $gte: 2025 };
 
     await adsStore.loadAds(filtersParams, paginationParams, sortParams);
