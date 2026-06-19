@@ -1096,11 +1096,17 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
     const adRecord = ad as Record<string, unknown>;
     const status = computeAdStatus(ad);
 
+    // Fetch view count — attached to all access levels for the hero counter
+    const viewCountMap = await strapi
+      .service("api::ad-view.ad-view")
+      .getViewCountsByAdIds([adRecord.id as number]);
+    const views = viewCountMap[adRecord.id as number] ?? 0;
+
     // Step 2: public (no token)
     if (!userId) {
       if (status === "active") {
         return {
-          ad: { ...ad, status },
+          ad: { ...ad, status, views },
           access: { role: "public", status, message: null },
         };
       }
@@ -1133,7 +1139,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
     // Manager sees everything
     if (isManager) {
       return {
-        ad: { ...ad, status },
+        ad: { ...ad, status, views },
         access: {
           role: "manager",
           status,
@@ -1145,7 +1151,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
     // Active — any authenticated user
     if (status === "active") {
       return {
-        ad: { ...ad, status },
+        ad: { ...ad, status, views },
         access: { role: "owner", status, message: null },
       };
     }
@@ -1153,7 +1159,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
     // Pending + owner
     if (status === "pending" && isOwner) {
       return {
-        ad: { ...ad, status },
+        ad: { ...ad, status, views },
         access: {
           role: "owner",
           status,

@@ -50,23 +50,31 @@
       </div>
     </div>
 
-    <div
-      v-if="lightboxVisible"
-      class="gallery--default__lightbox"
-      @click.self="lightboxVisible = false"
-    >
-      <div class="gallery--default__lightbox__inner">
+    <Transition name="lb">
+      <div
+        v-if="lightboxVisible"
+        class="gallery--default__lightbox"
+        @mousedown.self="lightboxVisible = false"
+      >
         <div class="gallery--default__lightbox__top">
           <span class="gallery--default__lightbox__top__counter">
+            <ImageIcon :size="16" />
             {{ lightboxIndex + 1 }} / {{ imgs.length }}
           </span>
-          <button class="gallery--default__lightbox__top__close" @click="lightboxVisible = false">
-            ✕ Cerrar
+          <button
+            class="gallery--default__lightbox__top__close"
+            @click="lightboxVisible = false"
+          >
+            <X :size="16" />
+            Cerrar
           </button>
         </div>
 
-        <div class="gallery--default__lightbox__stage">
-          <button class="gallery--default__lightbox__stage__arrow gallery--default__lightbox__stage__arrow--prev" @click="lightboxPrev">
+        <div class="gallery--default__lightbox__stage" @mousedown.stop>
+          <button
+            class="gallery--default__lightbox__stage__arrow gallery--default__lightbox__stage__arrow--prev"
+            @click="lightboxPrev"
+          >
             <ChevronLeft :size="22" />
           </button>
           <img
@@ -74,30 +82,42 @@
             :src="imgs[lightboxIndex]"
             alt="Imagen ampliada"
           />
-          <button class="gallery--default__lightbox__stage__arrow gallery--default__lightbox__stage__arrow--next" @click="lightboxNext">
+          <button
+            class="gallery--default__lightbox__stage__arrow gallery--default__lightbox__stage__arrow--next"
+            @click="lightboxNext"
+          >
             <ChevronRight :size="22" />
           </button>
         </div>
 
-        <div class="gallery--default__lightbox__strip">
+        <div class="gallery--default__lightbox__strip" @mousedown.stop>
           <div
             v-for="(img, i) in imgs"
             :key="i"
             class="gallery--default__lightbox__strip__item"
-            :class="{ 'gallery--default__lightbox__strip__item--active': i === lightboxIndex }"
+            :class="{
+              'gallery--default__lightbox__strip__item--active':
+                i === lightboxIndex,
+            }"
             @click="lightboxIndex = i"
           >
             <img :src="img" :alt="`Foto ${i + 1}`" />
           </div>
         </div>
       </div>
-    </div>
+    </Transition>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
-import { Maximize2, Image as ImageIcon, ChevronLeft, ChevronRight } from "lucide-vue-next";
+import {
+  Maximize2,
+  Image as ImageIcon,
+  ChevronLeft,
+  ChevronRight,
+  X,
+} from "lucide-vue-next";
 import { useImageProxy } from "@/composables/useImage";
 
 const props = defineProps({
@@ -167,7 +187,8 @@ const show = (i) => {
 };
 
 const lightboxPrev = () => {
-  lightboxIndex.value = (lightboxIndex.value - 1 + imgs.value.length) % imgs.value.length;
+  lightboxIndex.value =
+    (lightboxIndex.value - 1 + imgs.value.length) % imgs.value.length;
 };
 
 const lightboxNext = () => {
