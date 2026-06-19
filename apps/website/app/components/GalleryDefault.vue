@@ -13,7 +13,7 @@
       <span
         class="gallery--default__main__badge gallery--default__main__badge--zoom"
       >
-        <Maximize2 :size="14" />
+        <Maximize :size="14" />
         Ampliar
       </span>
       <span
@@ -112,7 +112,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import {
-  Maximize2,
+  Maximize,
   Image as ImageIcon,
   ChevronLeft,
   ChevronRight,
