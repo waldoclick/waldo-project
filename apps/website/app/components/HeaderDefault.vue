@@ -101,7 +101,7 @@ const props = withDefaults(
   }>(),
   {
     isTrasparent: false,
-    showMenu: false,
+    showMenu: true,
     searchIcon: true,
   },
 );
