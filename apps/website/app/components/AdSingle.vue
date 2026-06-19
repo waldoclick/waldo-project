@@ -191,6 +191,14 @@
                     class="announcement--single__sidebar__contact__seller__info__chips"
                   >
                     <span
+                      v-if="isVerified"
+                      class="announcement--single__sidebar__contact__seller__info__verified"
+                    >
+                      <Check :size="12" />
+                      Verificado
+                    </span>
+                    <span
+                      v-else
                       class="announcement--single__sidebar__contact__seller__info__unverified"
                     >
                       Sin verificar
@@ -340,7 +348,7 @@
           </template>
 
           <div v-else class="announcement--single__sidebar__contact__reminder">
-            <ReminderDefault />
+            <ReminderDefault :verified="isVerified" />
           </div>
         </div>
 
@@ -430,6 +438,7 @@ const hasWhatsapp = computed(() => {
 });
 
 const isPro = computed(() => getUserFromAll.value?.pro_status === "active");
+const isVerified = computed(() => getUserFromAll.value?.verified === true);
 
 const sellerInitials = computed(() => {
   const u = getUserFromAll.value;

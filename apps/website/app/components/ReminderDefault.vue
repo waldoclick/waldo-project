@@ -23,9 +23,20 @@
     >
       Crear cuenta gratis
     </nuxt-link>
+    <span v-if="props.verified" class="reminder--default__verified">
+      <Check :size="13" />
+      Anunciante verificado por Waldo
+    </span>
   </div>
 </template>
 
 <script setup>
-import { Lock, LogIn } from "lucide-vue-next";
+import { Lock, LogIn, Check } from "lucide-vue-next";
+
+const props = defineProps({
+  verified: {
+    type: Boolean,
+    default: false,
+  },
+});
 </script>

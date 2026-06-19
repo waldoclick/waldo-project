@@ -85,5 +85,15 @@
         background: $cream;
       }
     }
+
+    &__verified {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 16px;
+      font-size: 12.5px;
+      color: $success_strong;
+      font-weight: 600;
+    }
   }
 }
