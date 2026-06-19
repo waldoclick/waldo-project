@@ -1,7 +1,7 @@
 <template>
   <div class="page page--home">
     <HeaderDefault :show-menu="true" />
-    <HeroHome :featured-ads="featuredAds" />
+    <HeroHome :featured-ads="featuredAds" :categories="categories" />
     <AdArchive :ads="featuredAds" :featured-section="true" />
     <CategoryArchive :categories="categories" />
     <SellCta />

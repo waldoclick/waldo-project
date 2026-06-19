@@ -19,7 +19,7 @@
         </p>
 
         <!-- search -->
-        <form class="hero--home__search" @submit.prevent="onSearch">
+        <div ref="wrapRef" class="hero--home__search">
           <label class="hero--home__search__field">
             <IconSearch :size="19" class="hero--home__search__field__icon" />
             <input
@@ -28,12 +28,100 @@
               maxlength="40"
               placeholder="Busca un aviso o categoría…"
               class="hero--home__search__field__input"
+              autocomplete="off"
+              @focus="onFocus"
+              @blur="onBlur"
+              @keydown.enter.prevent="onSearch"
+              @keydown.esc="acOpen = false"
+              @input="onInput"
             />
+            <button
+              v-if="query"
+              type="button"
+              class="hero--home__search__field__clear"
+              @mousedown.prevent="query = ''"
+            >
+              <IconX :size="16" />
+            </button>
           </label>
-          <button type="submit" class="hero--home__search__button">
+          <button
+            type="button"
+            class="hero--home__search__button"
+            @click="onSearch"
+          >
             Buscar
           </button>
-        </form>
+        </div>
+
+        <!-- autocomplete dropdown — teleported to body to escape overflow:hidden -->
+        <Teleport to="body">
+          <div
+            v-if="acOpen && (dropdownStyle.top || dropdownStyle.bottom)"
+            class="hero--home__search__dropdown"
+            :style="dropdownStyle"
+          >
+            <template v-if="hasQuery">
+              <a
+                v-for="cat in matchedCats"
+                :key="cat.slug"
+                class="hero--home__search__dropdown__row"
+                @mousedown.prevent="pickCategory(cat)"
+              >
+                <span
+                  class="hero--home__search__dropdown__row__dot"
+                  :style="{ background: cat.color || '#a9772e' }"
+                />
+                <span class="hero--home__search__dropdown__row__main">
+                  <span
+                    class="hero--home__search__dropdown__row__main__title"
+                    >{{ cat.name }}</span
+                  >
+                  <span class="hero--home__search__dropdown__row__main__sub"
+                    >Categoría</span
+                  >
+                </span>
+                <span class="hero--home__search__dropdown__row__meta">{{
+                  cat.count ?? 0
+                }}</span>
+              </a>
+              <a
+                class="hero--home__search__dropdown__row hero--home__search__dropdown__row--search"
+                @mousedown.prevent="onSearch"
+              >
+                <IconSearch
+                  :size="17"
+                  class="hero--home__search__dropdown__row__lead"
+                />
+                <span class="hero--home__search__dropdown__row__text">
+                  Buscar <strong>"{{ query }}"</strong> en el buscador
+                </span>
+              </a>
+            </template>
+
+            <template v-else>
+              <span class="hero--home__search__dropdown__label"
+                >Explora por categoría</span
+              >
+              <a
+                v-for="cat in visibleCats"
+                :key="cat.slug"
+                class="hero--home__search__dropdown__row"
+                @mousedown.prevent="pickCategory(cat)"
+              >
+                <span
+                  class="hero--home__search__dropdown__row__dot"
+                  :style="{ background: cat.color || '#a9772e' }"
+                />
+                <span class="hero--home__search__dropdown__row__name">{{
+                  cat.name
+                }}</span>
+                <span class="hero--home__search__dropdown__row__meta">{{
+                  cat.count ?? 0
+                }}</span>
+              </a>
+            </template>
+          </div>
+        </Teleport>
 
         <!-- trust badges -->
         <div class="hero--home__badges">
@@ -160,7 +248,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import {
   Package as IconPackage,
@@ -171,25 +259,105 @@ import {
   ArrowRight as IconArrow,
   ChevronLeft as IconChevronLeft,
   ChevronRight as IconChevronRight,
+  X as IconX,
 } from "lucide-vue-next";
 import { useImageProxy } from "@/composables/useImage";
 import type { Ad } from "@/types/ad";
+import type { FilterCategory } from "@/types/filter";
 
 const props = defineProps<{
   featuredAds?: Ad[];
+  categories?: FilterCategory[];
 }>();
 
 const router = useRouter();
 const { transformUrl } = useImageProxy();
 
-// Search
+// Search + autocomplete
 const query = ref("");
+const acOpen = ref(false);
+const wrapRef = ref<HTMLElement | null>(null);
+const dropdownStyle = ref<Record<string, string>>({});
+
+const hasQuery = computed(() => query.value.trim().length > 0);
+const visibleCats = computed(() => (props.categories ?? []).slice(0, 8));
+const matchedCats = computed(() => {
+  const q = query.value.trim().toLowerCase();
+  if (!q) return [];
+  return (props.categories ?? [])
+    .filter((c) => c.name.toLowerCase().includes(q))
+    .slice(0, 5);
+});
+
+const measure = () => {
+  const el = wrapRef.value;
+  if (!el) return;
+  const r = el.getBoundingClientRect();
+  const below = window.innerHeight - r.bottom;
+  const above = r.top;
+  const need = Math.min(320, window.innerHeight * 0.6);
+  const up = below < need && above > below;
+  const maxH = Math.max(180, (up ? above : below) - 18);
+  dropdownStyle.value = {
+    position: "fixed",
+    zIndex: "1000",
+    left: r.left + "px",
+    width: r.width + "px",
+    maxHeight: maxH + "px",
+    ...(up
+      ? { bottom: window.innerHeight - r.top + 8 + "px" }
+      : { top: r.bottom + 8 + "px" }),
+  };
+};
+
+const onFocus = () => {
+  measure();
+  acOpen.value = true;
+};
+
+const onInput = () => {
+  if (!acOpen.value) {
+    measure();
+    acOpen.value = true;
+  }
+};
+
+const onBlur = () => {
+  setTimeout(() => {
+    acOpen.value = false;
+  }, 120);
+};
+
+const onReposition = () => {
+  if (acOpen.value) measure();
+};
+
+onMounted(() => {
+  if (import.meta.client) {
+    window.addEventListener("scroll", onReposition, { passive: true });
+    window.addEventListener("resize", onReposition, { passive: true });
+  }
+});
+
+onUnmounted(() => {
+  if (import.meta.client) {
+    window.removeEventListener("scroll", onReposition);
+    window.removeEventListener("resize", onReposition);
+  }
+});
+
 const onSearch = () => {
+  acOpen.value = false;
   const term = query.value.slice(0, 40).toLowerCase().trim();
   router.push({
     path: "/anuncios",
     query: term ? { s: term } : {},
   });
+};
+
+const pickCategory = (cat: FilterCategory) => {
+  acOpen.value = false;
+  router.push({ path: "/anuncios", query: { category: cat.slug, page: 1 } });
 };
 
 // Carousel
