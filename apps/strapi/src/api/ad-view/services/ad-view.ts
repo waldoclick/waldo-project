@@ -2,7 +2,7 @@
  * Ad View Service
  *
  * Event-sourced view tracking for advertisements.
- * Records one row per visitor per day (sha256 dedup: ip+ua+day).
+ * Records one row per visitor per ad per day (sha256 dedup: ip+ua+adDocumentId+day).
  * Errors are swallowed — tracking must never break the ad page.
  */
 
@@ -34,7 +34,7 @@ export default factories.createCoreService(
     /**
      * Record a view event for an ad.
      *
-     * - Per-visitor/day dedupe: visitor_hash = sha256(ip|ua|yyyy-mm-dd).
+     * - Per-visitor/ad/day dedupe: visitor_hash = sha256(ip|ua|adDocumentId|yyyy-mm-dd).
      *   If a view with the same hash already exists today, skips creation.
      * - All errors are swallowed — tracking is fire-and-forget.
      *
@@ -52,11 +52,11 @@ export default factories.createCoreService(
       ua: string,
     ): Promise<void> {
       try {
-        // Step 1: Compute visitor_hash = sha256(ip|ua|yyyy-mm-dd)
+        // Step 1: Compute visitor_hash = sha256(ip|ua|adDocumentId|yyyy-mm-dd)
         const day = new Date().toISOString().slice(0, 10);
         const visitor_hash = crypto
           .createHash("sha256")
-          .update(`${ip}|${ua}|${day}`)
+          .update(`${ip}|${ua}|${adDocumentId}|${day}`)
           .digest("hex");
 
         // Step 2: Resolve the ad numeric id
@@ -66,12 +66,13 @@ export default factories.createCoreService(
 
         if (!ad) return;
 
-        // Step 3: Per-visitor/day dedupe
+        // Step 3: Per-visitor/ad/day dedupe
         const startOfDay = new Date(`${day}T00:00:00.000Z`);
         const existingViews = await strapi.db
           .query("api::ad-view.ad-view")
           .findMany({
             where: {
+              ad: ad.id,
               visitor_hash,
               viewed_at: { $gte: startOfDay },
             },
