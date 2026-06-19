@@ -240,9 +240,10 @@ Progress: [█████████░] 97% (31/32 plans complete)
 | 260619-dps | Implementacion completa de anuncios segun maqueta: sidebar filtros, layout grid, pagination, toolbar | 2026-06-19 | 37ed31b4 | Verified | [260619-dps-implementacion-completa-de-anuncios-segu](./quick/260619-dps-implementacion-completa-de-anuncios-segu/) |
 | 260619-joz | Ad detail page audit fixes + gallery rewrite | 2026-06-19 | 94f25191 | [260619-joz-ad-detail-page-audit-fixes-gallery-rewri](./quick/260619-joz-ad-detail-page-audit-fixes-gallery-rewri/) |
 | 260619-n4i | Fix views counter and WhatsApp button on ad detail page | 2026-06-19 | 854f48d8 | [260619-n4i-fix-views-counter-and-whatsapp-button-on](./quick/260619-n4i-fix-views-counter-and-whatsapp-button-on/) |
+| 260619-p2i | Fix recordView dedup to per-visitor/ad/day (hash includes adDocumentId + where.ad guard) — counter de-freezes per ad; live e2e verified, DB restored | 2026-06-19 | 56cd357b, f6617a32 | [260619-p2i-fix-ad-view-recordview-dedup-to-be-per-a](./quick/260619-p2i-fix-ad-view-recordview-dedup-to-be-per-a/) |
 
 ## Session Continuity
 
-Last activity: 2026-06-19 - Completed quick task 260619-n4i: Fix views counter and WhatsApp button on ad detail page
+Last activity: 2026-06-19 - Completed quick task 260619-p2i: Fix recordView dedup to per-visitor/ad/day (counter de-freezes per ad; live e2e verified against running Strapi, DB restored to baseline)
 Stopped at: Completed 10-02-PLAN.md — awaiting checkpoint:human-verify for LightboxSearch visual verification
 Resume file: None
