@@ -29,6 +29,9 @@
               placeholder="Busca un aviso o categoría…"
               class="hero--home__search__field__input"
               autocomplete="off"
+              spellcheck="false"
+              autocorrect="off"
+              autocapitalize="off"
               @focus="onFocus"
               @blur="onBlur"
               @keydown.enter.prevent="onSearch"
@@ -62,26 +65,26 @@
           >
             <template v-if="hasQuery">
               <a
-                v-for="cat in matchedCats"
-                :key="cat.slug"
+                v-for="s in adSuggestions"
+                :key="s.slug"
                 class="hero--home__search__dropdown__row"
-                @mousedown.prevent="pickCategory(cat)"
+                @mousedown.prevent="pickSuggestion(s)"
               >
                 <span
                   class="hero--home__search__dropdown__row__dot"
-                  :style="{ background: cat.color || '#a9772e' }"
+                  :style="{ background: s.categoryColor }"
                 />
                 <span class="hero--home__search__dropdown__row__main">
                   <span
                     class="hero--home__search__dropdown__row__main__title"
-                    >{{ cat.name }}</span
+                    >{{ s.name }}</span
                   >
-                  <span class="hero--home__search__dropdown__row__main__sub"
-                    >Categoría</span
-                  >
+                  <span class="hero--home__search__dropdown__row__main__sub">{{
+                    s.categoryName
+                  }}</span>
                 </span>
                 <span class="hero--home__search__dropdown__row__meta">{{
-                  cat.count ?? 0
+                  s.priceLabel
                 }}</span>
               </a>
               <a
@@ -281,13 +284,60 @@ const dropdownStyle = ref<Record<string, string>>({});
 
 const hasQuery = computed(() => query.value.trim().length > 0);
 const visibleCats = computed(() => (props.categories ?? []).slice(0, 8));
-const matchedCats = computed(() => {
-  const q = query.value.trim().toLowerCase();
-  if (!q) return [];
-  return (props.categories ?? [])
-    .filter((c) => c.name.toLowerCase().includes(q))
-    .slice(0, 5);
-});
+
+interface AdSuggestion {
+  slug: string;
+  name: string;
+  categoryName: string;
+  categoryColor: string;
+  priceLabel: string;
+}
+
+const adSuggestions = ref<AdSuggestion[]>([]);
+const apiClient = useApiClient();
+let suggestTimer: ReturnType<typeof setTimeout> | null = null;
+
+const loadSuggestions = (q: string) => {
+  if (suggestTimer) clearTimeout(suggestTimer);
+  if (!q.trim()) {
+    adSuggestions.value = [];
+    return;
+  }
+  suggestTimer = setTimeout(async () => {
+    try {
+      const res = await apiClient<{ data: Ad[] }>("ads/catalog", {
+        method: "GET",
+        params: {
+          filters: { name: { $containsi: q.trim() } },
+          pagination: { pageSize: 3 },
+        } as unknown as Record<string, unknown>,
+      });
+      adSuggestions.value = (res.data ?? []).map((ad) => {
+        const cat =
+          typeof ad.category === "object" && ad.category !== null
+            ? (ad.category as { name: string; color?: string })
+            : null;
+        return {
+          slug: ad.slug,
+          name: ad.name,
+          categoryName: cat?.name ?? "",
+          categoryColor: cat?.color ?? "#a9772e",
+          priceLabel: new Intl.NumberFormat("es-CL", {
+            style: "currency",
+            currency: ad.currency || "CLP",
+          }).format(ad.price || 0),
+        };
+      });
+    } catch {
+      adSuggestions.value = [];
+    }
+  }, 250);
+};
+
+const pickSuggestion = (s: AdSuggestion) => {
+  acOpen.value = false;
+  router.push(`/anuncios/${s.slug}`);
+};
 
 const measure = () => {
   const el = wrapRef.value;
@@ -320,6 +370,7 @@ const onInput = () => {
     measure();
     acOpen.value = true;
   }
+  loadSuggestions(query.value);
 };
 
 const onBlur = () => {

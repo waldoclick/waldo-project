@@ -2,7 +2,7 @@
   <div class="lightbox lightbox--search" :class="{ 'is-open': isOpen }">
     <div class="lightbox--search__backdrop" @mousedown="close" />
     <div class="lightbox--search__box" @mousedown.stop>
-      <!-- Search bar -->
+      <!-- search bar -->
       <div class="lightbox--search__bar">
         <IconSearch :size="21" class="lightbox--search__bar__icon" />
         <input
@@ -30,27 +30,27 @@
 
       <!-- Results -->
       <div class="lightbox--search__panel">
-        <!-- Query state -->
+        <!-- Query state: ads from API -->
         <div v-if="hasQuery" class="lightbox--search__group">
           <a
-            v-for="cat in matchedCategories"
-            :key="cat.slug"
+            v-for="s in adSuggestions"
+            :key="s.slug"
             class="lightbox--search__row"
-            @mousedown.prevent="pickCategory(cat)"
+            @mousedown.prevent="pickSuggestion(s)"
           >
             <span
               class="lightbox--search__row__dot"
-              :style="dotStyle(cat.color)"
+              :style="{ background: s.categoryColor }"
             />
             <span class="lightbox--search__row__main">
               <span class="lightbox--search__row__main__title">{{
-                cat.name
+                s.name
               }}</span>
-              <span class="lightbox--search__row__main__sub">Categoría</span>
+              <span class="lightbox--search__row__main__sub">{{
+                s.categoryName
+              }}</span>
             </span>
-            <span class="lightbox--search__row__meta">{{
-              cat.count ?? 0
-            }}</span>
+            <span class="lightbox--search__row__meta">{{ s.priceLabel }}</span>
           </a>
           <a
             class="lightbox--search__row lightbox--search__row--search"
@@ -58,7 +58,7 @@
           >
             <IconSearch :size="18" class="lightbox--search__row__lead--amber" />
             <span class="lightbox--search__row__search">
-              Buscar <strong>“{{ query }}”</strong>
+              Buscar <strong>"{{ query }}"</strong>
             </span>
           </a>
         </div>
@@ -120,6 +120,7 @@ import { ref, computed, watch, onMounted, onUnmounted, nextTick } from "vue";
 import { useAppStore } from "@/stores/app.store";
 import { useFilterStore } from "@/stores/filter.store";
 import type { FilterCategory } from "@/types/filter";
+import type { Ad } from "@/types/ad";
 import {
   Search as IconSearch,
   X as IconX,
@@ -148,15 +149,61 @@ const inputRef = ref<HTMLInputElement | null>(null);
 
 const hasQuery = computed(() => query.value.trim().length > 0);
 
-const matchedCategories = computed(() => {
-  const q = query.value.trim().toLowerCase();
-  if (!q) return [];
-  return categories.value
-    .filter((c) => c.name.toLowerCase().includes(q))
-    .slice(0, 5);
-});
-
 const dotStyle = (color?: string) => ({ background: color || "#a9772e" });
+
+interface AdSuggestion {
+  slug: string;
+  name: string;
+  categoryName: string;
+  categoryColor: string;
+  priceLabel: string;
+}
+
+const adSuggestions = ref<AdSuggestion[]>([]);
+const apiClient = useApiClient();
+let suggestTimer: ReturnType<typeof setTimeout> | null = null;
+
+const loadSuggestions = (q: string) => {
+  if (suggestTimer) clearTimeout(suggestTimer);
+  if (!q.trim()) {
+    adSuggestions.value = [];
+    return;
+  }
+  suggestTimer = setTimeout(async () => {
+    try {
+      const res = await apiClient<{ data: Ad[] }>("ads/catalog", {
+        method: "GET",
+        params: {
+          filters: { name: { $containsi: q.trim() } },
+          pagination: { pageSize: 3 },
+        } as unknown as Record<string, unknown>,
+      });
+      adSuggestions.value = (res.data ?? []).map((ad) => {
+        const cat =
+          typeof ad.category === "object" && ad.category !== null
+            ? (ad.category as { name: string; color?: string })
+            : null;
+        return {
+          slug: ad.slug,
+          name: ad.name,
+          categoryName: cat?.name ?? "",
+          categoryColor: cat?.color ?? "#a9772e",
+          priceLabel: new Intl.NumberFormat("es-CL", {
+            style: "currency",
+            currency: ad.currency || "CLP",
+          }).format(ad.price || 0),
+        };
+      });
+    } catch {
+      adSuggestions.value = [];
+    }
+  }, 250);
+};
+
+const pickSuggestion = (s: AdSuggestion) => {
+  router.push(`/anuncios/${s.slug}`);
+  close();
+};
 
 const loadRecents = () => {
   try {
@@ -217,6 +264,10 @@ const pickCategory = (cat: FilterCategory) => {
   router.push({ path: "/anuncios", query: { category: cat.slug, page: 1 } });
   close();
 };
+
+watch(query, (q) => {
+  loadSuggestions(q);
+});
 
 // Lightbox open lifecycle: load reference data, focus the input, reset query.
 watch(isOpen, async (open) => {
