@@ -241,9 +241,10 @@ Progress: [█████████░] 97% (31/32 plans complete)
 | 260619-joz | Ad detail page audit fixes + gallery rewrite | 2026-06-19 | 94f25191 | [260619-joz-ad-detail-page-audit-fixes-gallery-rewri](./quick/260619-joz-ad-detail-page-audit-fixes-gallery-rewri/) |
 | 260619-n4i | Fix views counter and WhatsApp button on ad detail page | 2026-06-19 | 854f48d8 | [260619-n4i-fix-views-counter-and-whatsapp-button-on](./quick/260619-n4i-fix-views-counter-and-whatsapp-button-on/) |
 | 260619-p2i | Fix recordView dedup to per-visitor/ad/day (hash includes adDocumentId + where.ad guard) — counter de-freezes per ad; live e2e verified, DB restored | 2026-06-19 | 56cd357b, f6617a32 | [260619-p2i-fix-ad-view-recordview-dedup-to-be-per-a](./quick/260619-p2i-fix-ad-view-recordview-dedup-to-be-per-a/) |
+| 260619-pr7 | Audit+fix 5 legal/about views (faq, privacidad, condiciones, contacto, sitemap) vs maqueta + remove apps/design workspace — accordion open-state chevron box → solid amber + maqueta padding; other 4 views verified matching by screenshot; apps/design deleted (using Claude Design MCP directly) | 2026-06-19 | ae25bfaa, 5de33dee | [260619-pr7-update-legal-about-views-faq-privacidad-](./quick/260619-pr7-update-legal-about-views-faq-privacidad-/) |
 
 ## Session Continuity
 
-Last activity: 2026-06-19 - Completed quick task 260619-p2i: Fix recordView dedup to per-visitor/ad/day (counter de-freezes per ad; live e2e verified against running Strapi, DB restored to baseline)
+Last activity: 2026-06-19 - Completed quick task 260619-pr7: Audit+fix 5 legal/about views vs maqueta (accordion fixed; faq/priv/cond/contacto/sitemap verified by screenshot) and removed apps/design workspace
 Stopped at: Completed 10-02-PLAN.md — awaiting checkpoint:human-verify for LightboxSearch visual verification
 Resume file: None

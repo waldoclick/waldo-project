@@ -1,0 +1,172 @@
+  <!-- ===================== VISTAS PÚBLICAS (LEGAL) ===================== -->
+  <sc-if value="{{ isLegal }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="Vista pública">
+
+    <!-- encabezado -->
+    <section style="background:var(--cream);border-bottom:1px solid var(--line);position:relative;overflow:hidden">
+      <div style="position:absolute;top:-130px;right:-90px;width:460px;height:460px;border-radius:50%;background:radial-gradient(circle,rgba(247,201,126,.16),transparent 65%);pointer-events:none"></div>
+      <div class="hpad" style="max-width:1200px;margin:0 auto;padding:108px 32px 40px;position:relative">
+        <nav style="display:flex;align-items:center;gap:9px;font-size:13.5px;color:var(--muted);margin-bottom:14px">
+          <a onClick="{{ goHome }}" style="color:var(--muted);text-decoration:none;cursor:pointer" style-hover="color:var(--ink)">Waldo</a>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B6B2BB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+          <span style="color:var(--ink);font-weight:600">{{ legalTitle }}</span>
+        </nav>
+        <h1 style="font-family:'Poppins',sans-serif;font-weight:800;color:var(--ink);font-size:clamp(32px,3.6vw,46px);letter-spacing:-.7px;margin:0;line-height:1.08">{{ legalTitle }}</h1>
+        <p style="font-size:17px;line-height:1.55;color:var(--ink2);margin:14px 0 0;max-width:680px;text-wrap:pretty">{{ legalIntro }}</p>
+      </div>
+    </section>
+
+    <!-- cuerpo: sidebar + contenido -->
+    <section class="gsplit" style="max-width:1200px;margin:0 auto;padding:48px 32px 88px;display:grid;grid-template-columns:248px minmax(0,1fr);gap:56px;align-items:start">
+
+      <!-- sidebar -->
+      <aside style="position:sticky;top:96px;display:flex;flex-direction:column;gap:4px">
+        <a onClick="{{ goFaq }}" style="{{ nFaq }}" style-hover="background:var(--cream)">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="{{ nFaqI }}" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>Preguntas frecuentes
+        </a>
+        <a onClick="{{ goPriv }}" style="{{ nPriv }}" style-hover="background:var(--cream)">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="{{ nPrivI }}" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1Z"/></svg>Políticas de privacidad
+        </a>
+        <a onClick="{{ goCond }}" style="{{ nCond }}" style-hover="background:var(--cream)">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="{{ nCondI }}" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v5h5"/><path d="M8 13h8"/><path d="M8 17h5"/></svg>Condiciones de uso
+        </a>
+        <a onClick="{{ goCont }}" style="{{ nCont }}" style-hover="background:var(--cream)">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="{{ nContI }}" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>Contáctanos
+        </a>
+        <a onClick="{{ goMapa }}" style="{{ nMapa }}" style-hover="background:var(--cream)">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="{{ nMapaI }}" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0Z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/></svg>Mapa del sitio
+        </a>
+      </aside>
+
+      <!-- contenido -->
+      <div style="min-width:0">
+
+        <!-- ACORDEONES (faq / privacidad / condiciones) -->
+        <sc-if value="{{ isAccordion }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <sc-for list="{{ legalItems }}" as="it" hint-placeholder-count="6">
+              <div style="border:1px solid var(--line);border-radius:4px;overflow:hidden;background:#fff;transition:border-color .2s ease,box-shadow .2s ease;border-color:{{ it.bd }}">
+                <button onClick="{{ it.onToggle }}" style="width:100%;border:none;background:transparent;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 22px;text-align:left">
+                  <span style="font-family:'Poppins',sans-serif;font-weight:600;color:var(--ink);font-size:17px;line-height:1.35">{{ it.q }}</span>
+                  <span style="flex:none;width:30px;height:30px;border-radius:4px;display:grid;place-items:center;background:{{ it.iconBg }};transition:background .25s ease">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="{{ it.iconStroke }}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="transition:transform .35s ease;transform:rotate({{ it.rot }})"><path d="m6 9 6 6 6-6"/></svg>
+                  </span>
+                </button>
+                <div style="overflow:hidden;transition:max-height .45s cubic-bezier(.4,0,.2,1),opacity .3s ease;max-height:{{ it.h }};opacity:{{ it.op }}">
+                  <div style="padding:0 22px 22px;display:flex;flex-direction:column;gap:13px;max-width:640px">
+                    <sc-for list="{{ it.paras }}" as="p" hint-placeholder-count="2">
+                      <p style="margin:0;font-size:15.5px;line-height:1.68;color:var(--ink2);text-wrap:pretty">{{ p }}</p>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <!-- CONTÁCTANOS -->
+        <sc-if value="{{ isContacto }}" hint-placeholder-val="{{ false }}">
+          <div style="max-width:600px">
+            <form onSubmit="{{ onContactSubmit }}" style="display:flex;flex-direction:column;gap:18px">
+              <label style="display:flex;flex-direction:column;gap:8px">
+                <span style="font-size:13px;font-weight:600;color:var(--ink)">Correo electrónico</span>
+                <input value="{{ cEmail }}" onInput="{{ onCEmail }}" type="email" placeholder="tu@correo.cl" style="border:1px solid var(--line);outline:none;font-family:inherit;font-size:15px;color:var(--ink);background:var(--cream);padding:13px 15px;border-radius:4px" style-focus="border-color:var(--amber);background:#fff"/>
+              </label>
+              <label style="display:flex;flex-direction:column;gap:8px">
+                <span style="font-size:13px;font-weight:600;color:var(--ink)">Nombre</span>
+                <input value="{{ cName }}" onInput="{{ onCName }}" placeholder="Tu nombre" style="border:1px solid var(--line);outline:none;font-family:inherit;font-size:15px;color:var(--ink);background:var(--cream);padding:13px 15px;border-radius:4px" style-focus="border-color:var(--amber);background:#fff"/>
+              </label>
+              <label style="display:flex;flex-direction:column;gap:8px">
+                <span style="font-size:13px;font-weight:600;color:var(--ink)">Empresa <span style="color:var(--muted);font-weight:500">(opcional)</span></span>
+                <input value="{{ cCompany }}" onInput="{{ onCCompany }}" placeholder="Nombre de la empresa" style="border:1px solid var(--line);outline:none;font-family:inherit;font-size:15px;color:var(--ink);background:var(--cream);padding:13px 15px;border-radius:4px" style-focus="border-color:var(--amber);background:#fff"/>
+              </label>
+              <label style="display:flex;flex-direction:column;gap:8px">
+                <span style="font-size:13px;font-weight:600;color:var(--ink)">Teléfono <span style="color:var(--muted);font-weight:500">(opcional)</span></span>
+                <div style="display:flex;gap:10px">
+                  <div style="position:relative;display:flex;align-items:center;flex:none">
+                    <select style="border:1px solid var(--line);outline:none;font-family:inherit;font-size:14.5px;font-weight:600;color:var(--ink);background:var(--cream);padding:13px 34px 13px 14px;border-radius:4px;cursor:pointer"><option>CL +56</option><option>AR +54</option><option>PE +51</option><option>CO +57</option></select>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8A8794" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;right:12px;pointer-events:none"><path d="m6 9 6 6 6-6"/></svg>
+                  </div>
+                  <input value="{{ cPhone }}" onInput="{{ onCPhone }}" placeholder="9 XXXX XXXX" style="flex:1;border:1px solid var(--line);outline:none;font-family:inherit;font-size:15px;color:var(--ink);background:var(--cream);padding:13px 15px;border-radius:4px;min-width:0" style-focus="border-color:var(--amber);background:#fff"/>
+                </div>
+              </label>
+              <label style="display:flex;flex-direction:column;gap:8px">
+                <span style="font-size:13px;font-weight:600;color:var(--ink)">Mensaje</span>
+                <textarea value="{{ cMsg }}" onInput="{{ onCMsg }}" maxlength="300" rows="5" placeholder="Escribe tu mensaje" style="border:1px solid var(--line);outline:none;font-family:inherit;font-size:15px;color:var(--ink);background:var(--cream);padding:13px 15px;border-radius:4px;resize:vertical;line-height:1.5" style-focus="border-color:var(--amber);background:#fff"></textarea>
+                <span style="font-size:12.5px;color:var(--muted);align-self:flex-end">{{ charsLeft }} caracteres restantes</span>
+              </label>
+              <button type="submit" style="align-self:flex-start;border:none;cursor:pointer;font-family:inherit;font-weight:600;font-size:15px;color:#26252B;background:var(--amber);padding:14px 32px;border-radius:4px;margin-top:4px" style-hover="background:var(--amberH)">{{ contactBtn }}</button>
+            </form>
+
+            <!-- bloque contacto -->
+            <div style="margin-top:40px;background:#fff;border:1px solid var(--line);border-radius:4px;padding:24px 26px;display:flex;flex-wrap:wrap;gap:28px 56px">
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <span style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">Correo electrónico</span>
+                <a href="mailto:contacto@waldo.click" style="display:inline-flex;align-items:center;gap:9px;font-size:15px;font-weight:600;color:var(--ink);text-decoration:none;width:fit-content" style-hover="color:var(--tag)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#A9772E" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>contacto@waldo.click</a>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <span style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">Redes sociales</span>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <a href="#" style="width:38px;height:38px;border-radius:4px;display:grid;place-items:center;background:var(--cream);border:1px solid var(--line)" style-hover="background:#fff"><svg width="17" height="17" viewBox="0 0 24 24" fill="#26252B" stroke="none"><path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.69.24 2.69.24v2.97h-1.52c-1.49 0-1.96.93-1.96 1.89v2.25h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07Z"/></svg></a>
+                  <a href="#" style="width:38px;height:38px;border-radius:4px;display:grid;place-items:center;background:var(--cream);border:1px solid var(--line)" style-hover="background:#fff"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#26252B" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37Z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg></a>
+                  <a href="#" style="width:38px;height:38px;border-radius:4px;display:grid;place-items:center;background:var(--cream);border:1px solid var(--line)" style-hover="background:#fff"><svg width="17" height="17" viewBox="0 0 24 24" fill="#26252B" stroke="none"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13ZM7.12 20.45H3.55V9h3.57v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0Z"/></svg></a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- MAPA DEL SITIO -->
+        <sc-if value="{{ isMapa }}" hint-placeholder-val="{{ false }}">
+          <div class="g3" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:44px 40px">
+            <div style="display:flex;flex-direction:column">
+              <span style="display:flex;align-items:center;gap:8px;font-family:'Poppins',sans-serif;font-weight:700;color:var(--ink);font-size:13px;letter-spacing:.04em;text-transform:uppercase;padding-bottom:13px;border-bottom:1px solid var(--line)"><span style="width:7px;height:7px;border-radius:50%;background:var(--amber)"></span>Explorar</span>
+              <div style="display:flex;flex-direction:column;margin-top:6px">
+                <a onClick="{{ goHome }}" style="display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:15px;color:var(--ink2);text-decoration:none;cursor:pointer;padding:11px 0;border-bottom:1px solid var(--line)" style-hover="color:var(--ink)"><span>Inicio</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C9C5CC" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></a>
+                <a onClick="{{ goAnuncios }}" style="display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:15px;color:var(--ink2);text-decoration:none;cursor:pointer;padding:11px 0;border-bottom:1px solid var(--line)" style-hover="color:var(--ink)"><span>Todos los anuncios</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C9C5CC" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></a>
+                <a onClick="{{ goHome }}" style="display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:15px;color:var(--ink2);text-decoration:none;cursor:pointer;padding:11px 0;border-bottom:1px solid var(--line)" style-hover="color:var(--ink)"><span>Categorías</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C9C5CC" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></a>
+                <a onClick="{{ goHome }}" style="display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:15px;color:var(--ink2);text-decoration:none;cursor:pointer;padding:11px 0;border-bottom:1px solid var(--line)" style-hover="color:var(--ink)"><span>Comprar packs</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C9C5CC" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></a>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column">
+              <span style="display:flex;align-items:center;gap:8px;font-family:'Poppins',sans-serif;font-weight:700;color:var(--ink);font-size:13px;letter-spacing:.04em;text-transform:uppercase;padding-bottom:13px;border-bottom:1px solid var(--line)"><span style="width:7px;height:7px;border-radius:50%;background:var(--amber)"></span>Tu cuenta</span>
+              <div style="display:flex;flex-direction:column;margin-top:6px">
+                <a href="#" style="display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:15px;color:var(--ink2);text-decoration:none;padding:11px 0;border-bottom:1px solid var(--line)" style-hover="color:var(--ink)"><span>Iniciar sesión</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C9C5CC" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></a>
+                <a href="#" style="display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:15px;color:var(--ink2);text-decoration:none;padding:11px 0;border-bottom:1px solid var(--line)" style-hover="color:var(--ink)"><span>Regístrate</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C9C5CC" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></a>
+                <a href="#" style="display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:15px;color:var(--ink2);text-decoration:none;padding:11px 0;border-bottom:1px solid var(--line)" style-hover="color:var(--ink)"><span>Publicar un aviso</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C9C5CC" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></a>
+                <a href="#" style="display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:15px;color:var(--ink2);text-decoration:none;padding:11px 0;border-bottom:1px solid var(--line)" style-hover="color:var(--ink)"><span>Mis anuncios</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C9C5CC" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></a>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column">
+              <span style="display:flex;align-items:center;gap:8px;font-family:'Poppins',sans-serif;font-weight:700;color:var(--ink);font-size:13px;letter-spacing:.04em;text-transform:uppercase;padding-bottom:13px;border-bottom:1px solid var(--line)"><span style="width:7px;height:7px;border-radius:50%;background:var(--amber)"></span>Información</span>
+              <div style="display:flex;flex-direction:column;margin-top:6px">
+                <a onClick="{{ goFaq }}" style="display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:15px;color:var(--ink2);text-decoration:none;cursor:pointer;padding:11px 0;border-bottom:1px solid var(--line)" style-hover="color:var(--ink)"><span>Preguntas frecuentes</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C9C5CC" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></a>
+                <a onClick="{{ goPriv }}" style="display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:15px;color:var(--ink2);text-decoration:none;cursor:pointer;padding:11px 0;border-bottom:1px solid var(--line)" style-hover="color:var(--ink)"><span>Políticas de privacidad</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C9C5CC" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></a>
+                <a onClick="{{ goCond }}" style="display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:15px;color:var(--ink2);text-decoration:none;cursor:pointer;padding:11px 0;border-bottom:1px solid var(--line)" style-hover="color:var(--ink)"><span>Condiciones de uso</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C9C5CC" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></a>
+                <a onClick="{{ goCont }}" style="display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:15px;color:var(--ink2);text-decoration:none;cursor:pointer;padding:11px 0;border-bottom:1px solid var(--line)" style-hover="color:var(--ink)"><span>Contáctanos</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C9C5CC" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></a>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+      </div>
+    </section>
+
+    <!-- cierre vista pública (CTA) -->
+    <section class="vsec" style="background:var(--cream);border-top:1px solid var(--line);padding:64px 0 80px">
+      <div class="wrap" style="max-width:1200px;margin:0 auto;padding:0 32px">
+        <div class="gsplit pad-dark" style="background:var(--ink);border-radius:6px;padding:52px 48px;display:grid;grid-template-columns:1.5fr 1fr;gap:32px;align-items:center;position:relative;overflow:hidden">
+          <div style="position:absolute;top:-90px;right:-50px;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(247,201,126,.20),transparent 65%);pointer-events:none"></div>
+          <div style="position:relative">
+            <h2 class="dark-h2" style="font-family:'Poppins',sans-serif;font-weight:800;color:#fff;font-size:34px;letter-spacing:-.5px;margin:0;line-height:1.12;text-wrap:balance">Empieza ahora</h2>
+            <p style="font-size:16.5px;line-height:1.55;color:rgba(255,255,255,.72);margin:14px 0 0;max-width:460px">Explora los anuncios disponibles o publica tu equipo. Tus primeros 3 avisos son gratis.</p>
+          </div>
+          <div class="dark-actions" style="position:relative;display:flex;flex-wrap:wrap;gap:12px;justify-content:flex-end">
+            <a onClick="{{ goAnuncios }}" style="text-decoration:none;font-weight:600;font-size:15px;color:#26252B;background:var(--amber);padding:14px 26px;border-radius:4px;cursor:pointer" style-hover="background:var(--amberH)">Explorar anuncios</a>
+            <a href="#" style="text-decoration:none;font-weight:600;font-size:15px;color:#fff;border:1px solid rgba(255,255,255,.28);padding:13px 24px;border-radius:4px" style-hover="background:rgba(255,255,255,.08)">Anunciar ahora</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  </sc-if>
