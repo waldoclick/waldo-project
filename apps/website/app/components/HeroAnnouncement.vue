@@ -55,7 +55,7 @@
             <Clock class="hero--announcement__meta__item__icon" :size="15" />
             Publicado {{ publishedLabel }}
           </span>
-          <span v-if="views > 0" class="hero--announcement__meta__item">
+          <span class="hero--announcement__meta__item">
             <Eye class="hero--announcement__meta__item__icon" :size="15" />
             {{ views }} vistas
           </span>

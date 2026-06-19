@@ -70,7 +70,9 @@ const shouldNotCache = (url: string): boolean => {
     // auth-gated, per-viewer, recorded — caching them would serve a revealed
     // phone/whatsapp/email to ANY anonymous request (cache HIT bypasses the
     // controller's auth check), defeating the anti-scraping obfuscation model.
-    url.includes("/reveal/")
+    url.includes("/reveal/") ||
+    // find-by-slug records a view on every hit — must never be cached
+    url.includes("/find-by-slug")
   )
     return true;
   return false;
