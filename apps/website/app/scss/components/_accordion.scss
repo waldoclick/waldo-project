@@ -23,7 +23,7 @@
       border: none;
       width: 100%;
       text-align: left;
-      padding: 22px 24px;
+      padding: 20px 22px;
 
       h2,
       h3 {
@@ -52,16 +52,22 @@
         border-radius: 4px;
         background-color: $amber_tint;
         color: $tag;
-        transition: transform 0.3s ease;
+        transition:
+          transform 0.3s ease,
+          background-color 0.25s ease,
+          color 0.25s ease;
       }
 
+      /* open state: chevron rotates + box becomes solid amber with dark chevron */
       .rotated {
         transform: rotate(180deg);
+        background-color: $amber;
+        color: $ink;
       }
     }
 
     &__body {
-      padding: 0 24px 24px;
+      padding: 0 22px 22px;
       line-height: 1.6;
       font-style: normal;
       font-weight: normal;
