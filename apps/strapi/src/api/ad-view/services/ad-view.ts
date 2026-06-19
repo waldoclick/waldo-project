@@ -2,7 +2,7 @@
  * Ad View Service
  *
  * Event-sourced view tracking for advertisements.
- * Records one row per visitor per day, excluding the ad owner.
+ * Records one row per visitor per day (sha256 dedup: ip+ua+day).
  * Errors are swallowed — tracking must never break the ad page.
  */
 
@@ -34,7 +34,6 @@ export default factories.createCoreService(
     /**
      * Record a view event for an ad.
      *
-     * - Owner exclusion: if viewerId === ad.user.id, returns early (no row).
      * - Per-visitor/day dedupe: visitor_hash = sha256(ip|ua|yyyy-mm-dd).
      *   If a view with the same hash already exists today, skips creation.
      * - All errors are swallowed — tracking is fire-and-forget.
@@ -60,19 +59,14 @@ export default factories.createCoreService(
           .update(`${ip}|${ua}|${day}`)
           .digest("hex");
 
-        // Step 2: Resolve the ad with its owner
+        // Step 2: Resolve the ad numeric id
         const ad = (await strapi.db.query("api::ad.ad").findOne({
           where: { documentId: adDocumentId },
-          populate: ["user"],
         })) as Record<string, unknown> | null;
 
         if (!ad) return;
 
-        // Step 3: Owner exclusion
-        const adUser = ad.user as Record<string, unknown> | null | undefined;
-        if (viewerId && adUser?.id === viewerId) return;
-
-        // Step 4: Per-visitor/day dedupe
+        // Step 3: Per-visitor/day dedupe
         const startOfDay = new Date(`${day}T00:00:00.000Z`);
         const existingViews = await strapi.db
           .query("api::ad-view.ad-view")
@@ -85,7 +79,7 @@ export default factories.createCoreService(
 
         if (existingViews.length > 0) return;
 
-        // Step 5: Create the view event row
+        // Step 4: Create the view event row
         await strapi.db.query("api::ad-view.ad-view").create({
           data: {
             ad: ad.id,
