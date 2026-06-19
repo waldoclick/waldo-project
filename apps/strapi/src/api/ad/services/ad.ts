@@ -1083,7 +1083,6 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
       gallery: true,
       ad_reservation: true,
       ad_featured_reservation: true,
-      ad_views: { count: true },
     };
 
     // Step 1: always fetch — no active/publishedAt filters
@@ -1097,7 +1096,9 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
     const adRecord = ad as Record<string, unknown>;
     const status = computeAdStatus(ad);
 
-    const views = (adRecord.ad_views as { count?: number } | null)?.count ?? 0;
+    const views = await strapi.db
+      .query("api::ad-view.ad-view")
+      .count({ where: { ad: adRecord.id as number } });
 
     // Step 2: public (no token)
     if (!userId) {
