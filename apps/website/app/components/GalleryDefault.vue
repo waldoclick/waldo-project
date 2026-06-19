@@ -9,7 +9,6 @@
         alt="Imagen principal"
         title="Imagen principal"
       />
-      <span class="gallery--default__main__veil" />
       <span
         class="gallery--default__main__badge gallery--default__main__badge--zoom"
       >
