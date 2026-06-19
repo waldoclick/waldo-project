@@ -1,11 +1,15 @@
 /**
  * ad-view service — unit tests
  *
- * Tests for recordView: owner exclusion, per-visitor/day dedupe, row creation,
+ * Tests for recordView: per-visitor/ad/day dedupe, row creation,
  * visitor_hash determinism, and error-swallowing.
  *
  * Pattern: jest.mock the @strapi/strapi factory so the inner factory function
  * is called directly and recordView is accessible without Strapi machinery.
+ *
+ * The mock strapi.db is STATEFUL (in-memory rows[] + multi-ad lookup) so the
+ * cross-ad test (Test B) genuinely proves the fix — a fixed-return mock would
+ * pass regardless of the hash recipe and be a tautology.
  */
 
 import crypto from "crypto";
@@ -33,62 +37,92 @@ import serviceFactory from "../../../src/api/ad-view/services/ad-view";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
-function buildMockStrapi(overrides: {
-  adRecord?: Record<string, unknown> | null;
-  existingView?: Record<string, unknown> | null;
-}) {
-  const adRecord = overrides.adRecord ?? {
-    id: 10,
-    documentId: "ad-doc-1",
-    user: { id: 99 },
-  };
-  const existingView = overrides.existingView ?? null;
+type ViewRow = {
+  ad: number;
+  viewed_at: Date;
+  visitor_hash: string;
+  source: string;
+  viewer: number | null;
+};
 
-  const mockCreate = jest.fn().mockResolvedValue({ id: 1 });
+/**
+ * Build a STATEFUL mock strapi.db.query:
+ *  - "api::ad.ad".findOne({where:{documentId}}) returns the matching ad record
+ *    from a multi-ad map ("ad-A" → {id:10}, "ad-B" → {id:20}).
+ *  - "api::ad-view.ad-view".create({data}) pushes data onto an in-memory rows[].
+ *  - "api::ad-view.ad-view".findMany({where}) returns rows filtered by the where
+ *    it RECEIVES — matched on visitor_hash AND ad (the where.ad guard). This is
+ *    what makes the cross-ad test real: drop adDocumentId from the hash and the
+ *    second-ad row would collide on visitor_hash → deduped → Test B fails.
+ */
+function buildStatefulMockStrapi() {
+  const ads: Record<string, { id: number; documentId: string }> = {
+    "ad-A": { id: 10, documentId: "ad-A" },
+    "ad-B": { id: 20, documentId: "ad-B" },
+  };
+
+  const rows: ViewRow[] = [];
+
+  const mockCreate = jest
+    .fn()
+    .mockImplementation(({ data }: { data: ViewRow }) => {
+      rows.push(data);
+      return Promise.resolve({ id: rows.length });
+    });
+
   const mockFindMany = jest
     .fn()
-    .mockResolvedValue(existingView ? [existingView] : []);
+    .mockImplementation(({ where }: { where: Record<string, unknown> }) => {
+      const filtered = rows.filter((r) => {
+        const matchesHash = r.visitor_hash === where.visitor_hash;
+        const matchesAd = where.ad === undefined || r.ad === where.ad;
+        return matchesHash && matchesAd;
+      });
+      return Promise.resolve(filtered);
+    });
+
+  const mockFindOne = jest
+    .fn()
+    .mockImplementation(({ where }: { where: { documentId: string } }) => {
+      return Promise.resolve(ads[where.documentId] ?? null);
+    });
 
   const mockDbQuery = jest.fn().mockImplementation((uid: string) => {
     if (uid === "api::ad.ad") {
-      return {
-        findOne: jest.fn().mockResolvedValue(adRecord),
-      };
+      return { findOne: mockFindOne };
     }
     if (uid === "api::ad-view.ad-view") {
-      return {
-        findMany: mockFindMany,
-        create: mockCreate,
-      };
+      return { findMany: mockFindMany, create: mockCreate };
     }
     return {};
   });
 
   return {
     mockStrapi: { db: { query: mockDbQuery } },
+    rows,
     mockCreate,
     mockFindMany,
+    mockFindOne,
     mockDbQuery,
   };
+}
+
+function makeService(mockStrapi: unknown) {
+  return (
+    serviceFactory as (opts: { strapi: unknown }) => { recordView: Function }
+  )({ strapi: mockStrapi });
 }
 
 // ─── tests ──────────────────────────────────────────────────────────────────
 
 describe("ad-view service — recordView", () => {
-  // Test 1: new view → creates exactly one ad-view row
-  it("creates one row when no existing view for the visitor_hash today", async () => {
-    const { mockStrapi, mockCreate } = buildMockStrapi({ existingView: null });
-    const service = (
-      serviceFactory as (opts: { strapi: unknown }) => { recordView: Function }
-    )({ strapi: mockStrapi });
+  // Test A: dedup holds — same visitor, same ad, same day → exactly ONE row
+  it("creates only one row when the same visitor views the same ad twice in one day", async () => {
+    const { mockStrapi, mockCreate } = buildStatefulMockStrapi();
+    const service = makeService(mockStrapi);
 
-    await service.recordView(
-      "ad-doc-1",
-      null,
-      "detail",
-      "1.2.3.4",
-      "Mozilla/5.0",
-    );
+    await service.recordView("ad-A", null, "detail", "1.2.3.4", "Mozilla/5.0");
+    await service.recordView("ad-A", null, "detail", "1.2.3.4", "Mozilla/5.0");
 
     expect(mockCreate).toHaveBeenCalledTimes(1);
     const callArg = mockCreate.mock.calls[0][0];
@@ -102,76 +136,52 @@ describe("ad-view service — recordView", () => {
     expect(callArg.data.viewed_at).toBeInstanceOf(Date);
   });
 
-  // Test 2: duplicate visitor/day → does NOT create a second row
-  it("does not create a row when an ad-view already exists for the same visitor_hash today", async () => {
-    const existingView = {
-      id: 42,
-      visitor_hash: "existing",
-      viewed_at: new Date(),
-    };
-    const { mockStrapi, mockCreate } = buildMockStrapi({ existingView });
-    const service = (
-      serviceFactory as (opts: { strapi: unknown }) => { recordView: Function }
-    )({ strapi: mockStrapi });
+  // Test B: THE BUG FIX — same visitor, DIFFERENT ad, same day → TWO rows
+  it("creates a new row when the same visitor views a different ad the same day", async () => {
+    const { mockStrapi, mockCreate, rows } = buildStatefulMockStrapi();
+    const service = makeService(mockStrapi);
 
-    await service.recordView(
-      "ad-doc-1",
-      null,
-      "detail",
-      "1.2.3.4",
-      "Mozilla/5.0",
-    );
+    await service.recordView("ad-A", null, "detail", "1.2.3.4", "Mozilla/5.0");
+    await service.recordView("ad-B", null, "detail", "1.2.3.4", "Mozilla/5.0");
 
-    expect(mockCreate).not.toHaveBeenCalled();
+    expect(mockCreate).toHaveBeenCalledTimes(2);
+    expect(rows.map((r) => r.ad).sort((a, b) => a - b)).toEqual([10, 20]);
   });
 
-  // Test 3: owner views own ad → no row created, returns early
-  it("does not create a row when the viewer is the ad owner", async () => {
-    const adRecord = { id: 10, documentId: "ad-doc-1", user: { id: 55 } };
-    const { mockStrapi, mockCreate } = buildMockStrapi({
-      adRecord,
-      existingView: null,
-    });
-    const service = (
-      serviceFactory as (opts: { strapi: unknown }) => { recordView: Function }
-    )({ strapi: mockStrapi });
+  // Test C: different visitor, same ad → TWO rows
+  it("creates a new row when a different visitor views the same ad", async () => {
+    const { mockStrapi, mockCreate, rows } = buildStatefulMockStrapi();
+    const service = makeService(mockStrapi);
 
-    // viewerId === ad.user.id (55)
-    await service.recordView(
-      "ad-doc-1",
-      55,
-      "detail",
-      "1.2.3.4",
-      "Mozilla/5.0",
-    );
+    await service.recordView("ad-A", null, "detail", "1.1.1.1", "Mozilla/5.0");
+    await service.recordView("ad-A", null, "detail", "2.2.2.2", "Mozilla/5.0");
 
-    expect(mockCreate).not.toHaveBeenCalled();
+    expect(mockCreate).toHaveBeenCalledTimes(2);
+    expect(rows.every((r) => r.ad === 10)).toBe(true);
   });
 
-  // Test 4: visitor_hash recipe is deterministic (sha256(ip|ua|yyyy-mm-dd))
-  it("produces the same visitor_hash for the same ip+ua on the same day", async () => {
+  // Test D: hash recipe pinned — visitor_hash === sha256(ip|ua|adDocumentId|day)
+  it("computes visitor_hash as sha256(ip|ua|adDocumentId|yyyy-mm-dd)", async () => {
+    const { mockStrapi, mockCreate } = buildStatefulMockStrapi();
+    const service = makeService(mockStrapi);
+
     const ip = "10.0.0.1";
     const ua = "TestAgent/1.0";
-    const day = "2026-06-17";
+    const adDocumentId = "ad-A";
+    const day = new Date().toISOString().slice(0, 10);
+
+    await service.recordView(adDocumentId, null, "detail", ip, ua);
 
     const expected = crypto
       .createHash("sha256")
-      .update(`${ip}|${ua}|${day}`)
-      .digest("hex");
-    const differentDay = crypto
-      .createHash("sha256")
-      .update(`${ip}|${ua}|2026-06-18`)
+      .update(`${ip}|${ua}|${adDocumentId}|${day}`)
       .digest("hex");
 
-    // Same inputs → same hash
-    expect(expected).toBe(expected);
-    // Different day → different hash
-    expect(expected).not.toBe(differentDay);
-    // Hash is a 64-char hex string
-    expect(expected).toMatch(/^[0-9a-f]{64}$/);
+    const callArg = mockCreate.mock.calls[0][0];
+    expect(callArg.data.visitor_hash).toBe(expected);
   });
 
-  // Test 5: error from DB layer is swallowed (tracking never breaks the ad page)
+  // Test E: error from DB layer is swallowed (tracking never breaks the ad page)
   it("swallows errors thrown by the DB layer and resolves without rethrowing", async () => {
     const mockDbQuery = jest.fn().mockImplementation((uid: string) => {
       if (uid === "api::ad.ad") {
@@ -182,13 +192,10 @@ describe("ad-view service — recordView", () => {
       return {};
     });
     const errStrapi = { db: { query: mockDbQuery } };
-    const service = (
-      serviceFactory as (opts: { strapi: unknown }) => { recordView: Function }
-    )({ strapi: errStrapi });
+    const service = makeService(errStrapi);
 
-    // Must resolve without throwing
     await expect(
-      service.recordView("ad-doc-1", null, "detail", "1.2.3.4", "Mozilla/5.0"),
+      service.recordView("ad-A", null, "detail", "1.2.3.4", "Mozilla/5.0"),
     ).resolves.toBeUndefined();
   });
 });
