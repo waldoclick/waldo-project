@@ -9,20 +9,24 @@
       :sub="heroSub"
       :categories="filterStore.filterCategories as FilterCategory[]"
     />
-    <FilterResults
-      v-if="adsData && adsData.ads && adsData.ads.length > 0"
-      :total="adsData.pagination?.total || 0"
-    />
-    <AdArchive
-      v-if="adsData && adsData.ads && adsData.ads.length > 0"
-      :ads="adsData.ads"
-      :pagination="adsData.pagination"
-    />
-    <AdArchive
-      v-else-if="adsData && adsData.ads && adsData.ads.length === 0"
-      :ads="[]"
-      :empty-state="true"
-    />
+    <section class="listing listing--anuncios">
+      <div class="listing--anuncios__container">
+        <FilterSidebar />
+        <div class="listing--anuncios__content">
+          <FilterResults :total="adsData?.pagination?.total || 0" />
+          <AdArchive
+            v-if="adsData && adsData.ads && adsData.ads.length > 0"
+            :ads="adsData.ads"
+            :pagination="adsData.pagination"
+          />
+          <AdArchive
+            v-else-if="adsData && adsData.ads && adsData.ads.length === 0"
+            :ads="[]"
+            :empty-state="true"
+          />
+        </div>
+      </div>
+    </section>
     <RelatedAds
       v-if="
         adsData &&
@@ -69,6 +73,7 @@ import { useIcons } from "@/composables/useIcons";
 // components
 import HeaderDefault from "@/components/HeaderDefault.vue";
 import HeroResults from "@/components/HeroResults.vue";
+import FilterSidebar from "@/components/FilterSidebar.vue";
 import FilterResults from "@/components/FilterResults.vue";
 import AdArchive from "@/components/AdArchive.vue";
 import FooterDefault from "@/components/FooterDefault.vue";
@@ -128,7 +133,7 @@ const { data: adsData } = await useAsyncData<AdsData>(
   () =>
     `adsData-${route.query.category || "all"}-${route.query.page || "1"}-${
       route.query.order || "default"
-    }-${route.query.commune || "all"}-${route.query.s || ""}`,
+    }-${route.query.commune || "all"}-${route.query.s || ""}-${route.query.condition || ""}-${route.query.price || ""}-${route.query.year || ""}`,
   async () => {
     // Pre-load filter communes and categories for FilterResults + SearchDefault
     await filterStore.loadFilterCommunes();
@@ -150,11 +155,27 @@ const { data: adsData } = await useAsyncData<AdsData>(
         ? ["sort_priority:asc", "createdAt:desc"]
         : ["createdAt:desc"];
 
-    const filtersParams = {
+    const filtersParams: Record<string, unknown> = {
       ...(name && { name: { $containsi: name } }),
       ...(category && { category: { slug: { $eq: category } } }),
       ...(commune && { commune: { id: { $eq: commune } } }),
     };
+
+    const condition = route.query.condition?.toString() || null;
+    if (condition === "nuevo") filtersParams.condition = { slug: { $eq: "nuevo" } };
+    else if (condition === "usado") filtersParams.condition = { slug: { $eq: "usado" } };
+
+    const price = route.query.price?.toString() || null;
+    if (price === "lt5") filtersParams.price = { $lt: 5000000 };
+    else if (price === "5to20") filtersParams.price = { $gte: 5000000, $lte: 20000000 };
+    else if (price === "20to50") filtersParams.price = { $gte: 20000000, $lte: 50000000 };
+    else if (price === "gt50") filtersParams.price = { $gt: 50000000 };
+
+    const year = route.query.year?.toString() || null;
+    if (year === "lt2010") filtersParams.year = { $lt: 2010 };
+    else if (year === "2010to2019") filtersParams.year = { $gte: 2010, $lte: 2019 };
+    else if (year === "2020to2024") filtersParams.year = { $gte: 2020, $lte: 2024 };
+    else if (year === "gte2025") filtersParams.year = { $gte: 2025 };
 
     await adsStore.loadAds(filtersParams, paginationParams, sortParams);
     const mainAds = adsStore.ads;
@@ -193,6 +214,9 @@ const { data: adsData } = await useAsyncData<AdsData>(
       () => route.query.order,
       () => route.query.commune,
       () => route.query.s,
+      () => route.query.condition,
+      () => route.query.price,
+      () => route.query.year,
     ],
     server: true,
     default: () => ({

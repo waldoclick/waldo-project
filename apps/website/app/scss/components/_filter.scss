@@ -190,37 +190,13 @@
     }
   }
 
-  &--announcement {
-    padding-bottom: 0;
-
-    &__container {
-      @extend .container;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-
-    &__group {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-
-    &__selector {
-      position: relative;
-      display: flex;
-      align-items: center;
-
-      &__icon {
-        position: absolute;
-        left: 13px;
-        color: $ink;
-        pointer-events: none;
-      }
-    }
+  &--toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
 
     &__count {
       font-size: 14.5px;
@@ -275,11 +251,6 @@
       &--loading {
         color: $muted;
       }
-    }
-
-    &__selector &__select {
-      padding-left: 36px;
-      background: $cream;
     }
   }
 

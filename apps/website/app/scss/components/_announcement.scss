@@ -658,3 +658,28 @@
     transform: rotate(360deg);
   }
 }
+
+.listing {
+  &--anuncios {
+    &__container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 32px 80px;
+      display: grid;
+      grid-template-columns: 266px 1fr;
+      gap: 42px;
+      align-items: start;
+
+      @include screen-medium {
+        grid-template-columns: 1fr;
+        gap: 28px;
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+    }
+
+    &__content {
+      min-width: 0;
+    }
+  }
+}
