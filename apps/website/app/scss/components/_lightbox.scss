@@ -645,7 +645,7 @@
 
       &__lead {
         flex: none;
-        color: #9a96a0;
+        color: $muted;
 
         &--amber {
           flex: none;
@@ -655,7 +655,7 @@
 
       &__trail {
         flex: none;
-        color: #c2bec7;
+        color: $muted;
       }
 
       &__search {
