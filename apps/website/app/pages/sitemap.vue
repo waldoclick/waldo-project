@@ -10,9 +10,6 @@
 </template>
 
 <script setup lang="ts">
-import { useCategoriesStore } from "@/stores/categories.store";
-import { useCommunesStore } from "@/stores/communes.store";
-
 // Componente principal
 import SitemapDefault from "@/components/SitemapDefault.vue";
 
@@ -22,62 +19,37 @@ definePageMeta({
   layout: false,
 });
 
-const { data: pageData } = await useAsyncData(
-  "sitemap-data",
-  async () => {
-    const categoriesStore = useCategoriesStore();
-    const communesStore = useCommunesStore();
-
-    await Promise.all([
-      categoriesStore.loadCategories(),
-      communesStore.loadCommunes(),
-    ]);
-
-    return {
-      categories: categoriesStore.categories,
-      communes: communesStore.communes.data,
-    };
-  },
-  { default: () => ({ categories: [], communes: [] }) },
-);
-
+// Bloques fijos según la maqueta (MAPA DEL SITIO): tres columnas
+// Explorar / Tu cuenta / Información — sin categorías/comunas dinámicas.
 const sitemapBlocks = [
   {
-    title: "Páginas Principales",
+    title: "Explorar",
     items: [
       { to: "/", label: "Inicio" },
-      { to: "/anuncios", label: "Anuncios" },
-      { to: "/contacto", label: "Contacto" },
-      { to: "/login", label: "Iniciar Sesión" },
-      { to: "/packs", label: "Packs" },
-      { to: "/politicas-de-privacidad", label: "Políticas de Privacidad" },
-      { to: "/preguntas-frecuentes", label: "Preguntas Frecuentes" },
-      { to: "/recuperar-contrasena", label: "Recuperar Contraseña" },
-      { to: "/registro", label: "Registro" },
-      { to: "/sitemap", label: "Mapa del Sitio" },
+      { to: "/anuncios", label: "Todos los anuncios" },
+      { to: "/anuncios", label: "Categorías" },
+      { to: "/packs", label: "Comprar packs" },
+    ],
+  },
+  {
+    title: "Tu cuenta",
+    items: [
+      { to: "/login", label: "Iniciar sesión" },
+      { to: "/registro", label: "Regístrate" },
+      { to: "/anunciar", label: "Publicar un aviso" },
+      { to: "/cuenta/mis-anuncios", label: "Mis anuncios" },
+    ],
+  },
+  {
+    title: "Información",
+    items: [
+      { to: "/preguntas-frecuentes", label: "Preguntas frecuentes" },
+      { to: "/politicas-de-privacidad", label: "Políticas de privacidad" },
+      { to: "/condiciones-de-uso", label: "Condiciones de uso" },
+      { to: "/contacto", label: "Contáctanos" },
     ],
   },
 ];
-
-if (pageData.value?.categories && pageData.value.categories.length > 0) {
-  sitemapBlocks.push({
-    title: "Categorías",
-    items: pageData.value.categories.map((category) => ({
-      to: `/anuncios?category=${category.slug}`,
-      label: category.name,
-    })),
-  });
-}
-
-if (pageData.value?.communes && pageData.value.communes.length > 0) {
-  sitemapBlocks.push({
-    title: "Comunas",
-    items: pageData.value.communes.map((commune) => ({
-      to: `/anuncios?commune=${commune.id}`,
-      label: commune.name,
-    })),
-  });
-}
 
 // Define SEO
 const { $setSEO, $setStructuredData } = useNuxtApp();
