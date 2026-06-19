@@ -780,7 +780,7 @@
   &--dashboard {
     background-color: transparent;
     padding: 30px 0;
-    border-bottom: 1px solid #e5e5e5;
+    border-bottom: 1px solid $line;
 
     @include screen-small {
       padding: 20px 0;
@@ -822,18 +822,20 @@
     }
 
     &__title {
-      font-size: 32px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 20px;
       font-weight: 700;
-      color: #1a1a1a;
+      color: $ink;
+      letter-spacing: -0.3px;
       margin: 0;
       line-height: 1.2;
 
       @include screen-medium {
-        font-size: 26px;
+        font-size: 18px;
       }
 
       @include screen-small {
-        font-size: 22px;
+        font-size: 16px;
       }
     }
 
@@ -852,7 +854,7 @@
 
     &__subtitle {
       font-size: 16px;
-      color: #6b7280;
+      color: $muted;
       margin: 0;
       line-height: 1.5;
     }
