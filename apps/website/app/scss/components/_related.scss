@@ -4,17 +4,19 @@
 
 .related {
   &--ads {
-    background-color: rgba(240, 240, 240, 0.3);
+    background-color: $cream;
+    border-top: 1px solid $line;
+    padding: 56px 0;
 
     &__container {
       @extend .container;
     }
 
     &__head {
-      margin-bottom: 50px;
       display: flex;
       flex-direction: column;
       gap: 10px;
+      margin-bottom: 0;
 
       &--center {
         align-items: center;
@@ -23,14 +25,14 @@
     }
 
     &__title {
-      font-style: normal;
-      font-weight: bold;
-      font-size: 32px;
+      font-family: "Poppins", sans-serif;
+      font-weight: 800;
+      font-size: 30px;
+      letter-spacing: -0.6px;
+      margin: 0 0 28px;
       display: flex;
       color: $charcoal;
-      margin: 0;
       line-height: 1.2;
-      max-width: 770px;
     }
 
     &__text {

@@ -48,6 +48,7 @@
         font-weight: 600;
         border-radius: 4px;
         pointer-events: none;
+        backdrop-filter: blur(4px);
 
         &--zoom {
           top: 12px;
@@ -73,6 +74,7 @@
         padding: 6px 13px;
         border-radius: 4px;
         pointer-events: none;
+        backdrop-filter: blur(4px);
       }
     }
 
