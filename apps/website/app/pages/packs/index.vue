@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <HeaderDefault is-trasparent="true" />
+    <HeaderDefault is-trasparent="true" :show-menu="false" />
     <HeroDefault :title="`Packs`" />
     <PacksDefault :packs="packs" />
     <FooterDefault />

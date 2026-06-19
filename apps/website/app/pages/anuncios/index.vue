@@ -153,7 +153,7 @@ const { data: adsData } = await useAsyncData<AdsData>(
     const commune = route.query.commune?.toString() || null;
     const name = route.query.s?.toString() || "";
 
-    const paginationParams = { pageSize: 20, page };
+    const paginationParams = { pageSize: 15, page };
 
     const sortParams =
       order === "featured" || order === undefined
@@ -238,7 +238,7 @@ const { data: adsData } = await useAsyncData<AdsData>(
     server: true,
     default: () => ({
       ads: [],
-      pagination: { page: 1, pageSize: 20, pageCount: 0, total: 0 },
+      pagination: { page: 1, pageSize: 15, pageCount: 0, total: 0 },
       relatedAds: [],
       relatedLoading: false,
       relatedError: null,

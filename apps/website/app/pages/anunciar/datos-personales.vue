@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <HeaderDefault />
+    <HeaderDefault :show-menu="false" />
     <section class="create create--announcement">
       <div class="create--announcement__container">
         <ClientOnly>

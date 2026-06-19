@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <HeaderDefault />
+    <HeaderDefault :show-menu="false" />
     <HeroFake />
     <ResumeProCard
       v-if="proData"
