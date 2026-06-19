@@ -119,17 +119,17 @@
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from "vue";
 import { useAppStore } from "@/stores/app.store";
 import { useFilterStore } from "@/stores/filter.store";
+import {
+  useSearchSuggestions,
+  type AdSuggestion,
+} from "@/composables/useSearchSuggestions";
 import type { FilterCategory } from "@/types/filter";
-import type { Ad } from "@/types/ad";
 import {
   Search as IconSearch,
   X as IconX,
   Clock as IconClock,
   ArrowUpRight as IconArrow,
 } from "lucide-vue-next";
-
-const RECENTS_KEY = "waldo_recent_searches";
-const RECENTS_MAX = 5;
 
 const router = useRouter();
 
@@ -144,100 +144,24 @@ const isOpen = computed(() => appStore.isSearchLightboxActive);
 
 const query = ref("");
 const categories = ref<FilterCategory[]>([]);
-const recents = ref<string[]>([]);
 const inputRef = ref<HTMLInputElement | null>(null);
 
 const hasQuery = computed(() => query.value.trim().length > 0);
 
 const dotStyle = (color?: string) => ({ background: color || "#a9772e" });
 
-interface AdSuggestion {
-  slug: string;
-  name: string;
-  categoryName: string;
-  categoryColor: string;
-  priceLabel: string;
-}
-
-const adSuggestions = ref<AdSuggestion[]>([]);
-const apiClient = useApiClient();
-let suggestTimer: ReturnType<typeof setTimeout> | null = null;
-
-const loadSuggestions = (q: string) => {
-  if (suggestTimer) clearTimeout(suggestTimer);
-  if (!q.trim()) {
-    adSuggestions.value = [];
-    return;
-  }
-  suggestTimer = setTimeout(async () => {
-    try {
-      const res = await apiClient<{ data: Ad[] }>("ads/catalog", {
-        method: "GET",
-        params: {
-          filters: { name: { $containsi: q.trim() } },
-          pagination: { pageSize: 3 },
-        } as unknown as Record<string, unknown>,
-      });
-      adSuggestions.value = (res.data ?? []).map((ad) => {
-        const cat =
-          typeof ad.category === "object" && ad.category !== null
-            ? (ad.category as { name: string; color?: string })
-            : null;
-        return {
-          slug: ad.slug,
-          name: ad.name,
-          categoryName: cat?.name ?? "",
-          categoryColor: cat?.color ?? "#a9772e",
-          priceLabel: new Intl.NumberFormat("es-CL", {
-            style: "currency",
-            currency: ad.currency || "CLP",
-          }).format(ad.price || 0),
-        };
-      });
-    } catch {
-      adSuggestions.value = [];
-    }
-  }, 250);
-};
+const {
+  adSuggestions,
+  recents,
+  loadSuggestions,
+  loadRecents,
+  pushRecent,
+  clearRecents,
+} = useSearchSuggestions();
 
 const pickSuggestion = (s: AdSuggestion) => {
   router.push(`/anuncios/${s.slug}`);
   close();
-};
-
-const loadRecents = () => {
-  try {
-    const raw = localStorage.getItem(RECENTS_KEY);
-    recents.value = raw
-      ? (JSON.parse(raw) as string[]).slice(0, RECENTS_MAX)
-      : [];
-  } catch {
-    recents.value = [];
-  }
-};
-
-const pushRecent = (term: string) => {
-  const value = term.trim();
-  if (!value) return;
-  const next = [value, ...recents.value.filter((t) => t !== value)].slice(
-    0,
-    RECENTS_MAX,
-  );
-  recents.value = next;
-  try {
-    localStorage.setItem(RECENTS_KEY, JSON.stringify(next));
-  } catch {
-    // ignore storage failures
-  }
-};
-
-const clearRecents = () => {
-  recents.value = [];
-  try {
-    localStorage.removeItem(RECENTS_KEY);
-  } catch {
-    // ignore storage failures
-  }
 };
 
 const close = () => {

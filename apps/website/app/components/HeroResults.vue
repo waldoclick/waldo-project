@@ -43,7 +43,9 @@ const route = useRoute();
 const queryValue = computed(() => route.query.s?.toString() || "");
 
 const heroStyle = computed(() => ({
-  "--hero-bg-color": bgColorWithTransparency(props.bgColor || "#f0f0f0"),
+  "--hero-bg-color": props.bgColor
+    ? bgColorWithTransparency(props.bgColor)
+    : "#F6F4F1",
   "--category-icon-bg-color": props.color || "transparent",
 }));
 

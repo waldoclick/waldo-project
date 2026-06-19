@@ -19,112 +19,7 @@
         </p>
 
         <!-- search -->
-        <div ref="wrapRef" class="hero--home__search">
-          <label class="hero--home__search__field">
-            <IconSearch :size="19" class="hero--home__search__field__icon" />
-            <input
-              v-model="query"
-              type="text"
-              maxlength="40"
-              placeholder="Busca un aviso o categoría…"
-              class="hero--home__search__field__input"
-              autocomplete="off"
-              spellcheck="false"
-              autocorrect="off"
-              autocapitalize="off"
-              @focus="onFocus"
-              @blur="onBlur"
-              @keydown.enter.prevent="onSearch"
-              @keydown.esc="acOpen = false"
-              @input="onInput"
-            />
-            <button
-              v-if="query"
-              type="button"
-              class="hero--home__search__field__clear"
-              @mousedown.prevent="query = ''"
-            >
-              <IconX :size="16" />
-            </button>
-          </label>
-          <button
-            type="button"
-            class="hero--home__search__button"
-            @click="onSearch"
-          >
-            Buscar
-          </button>
-        </div>
-
-        <!-- autocomplete dropdown — teleported to body to escape overflow:hidden -->
-        <Teleport to="body">
-          <div
-            v-if="acOpen && (dropdownStyle.top || dropdownStyle.bottom)"
-            class="hero--home__search__dropdown"
-            :style="dropdownStyle"
-          >
-            <template v-if="hasQuery">
-              <a
-                v-for="s in adSuggestions"
-                :key="s.slug"
-                class="hero--home__search__dropdown__row"
-                @mousedown.prevent="pickSuggestion(s)"
-              >
-                <span
-                  class="hero--home__search__dropdown__row__dot"
-                  :style="{ background: s.categoryColor }"
-                />
-                <span class="hero--home__search__dropdown__row__main">
-                  <span
-                    class="hero--home__search__dropdown__row__main__title"
-                    >{{ s.name }}</span
-                  >
-                  <span class="hero--home__search__dropdown__row__main__sub">{{
-                    s.categoryName
-                  }}</span>
-                </span>
-                <span class="hero--home__search__dropdown__row__meta">{{
-                  s.priceLabel
-                }}</span>
-              </a>
-              <a
-                class="hero--home__search__dropdown__row hero--home__search__dropdown__row--search"
-                @mousedown.prevent="onSearch"
-              >
-                <IconSearch
-                  :size="17"
-                  class="hero--home__search__dropdown__row__lead"
-                />
-                <span class="hero--home__search__dropdown__row__text">
-                  Buscar <strong>"{{ query }}"</strong> en el buscador
-                </span>
-              </a>
-            </template>
-
-            <template v-else>
-              <span class="hero--home__search__dropdown__label"
-                >Explora por categoría</span
-              >
-              <a
-                v-for="cat in visibleCats"
-                :key="cat.slug"
-                class="hero--home__search__dropdown__row"
-                @mousedown.prevent="pickCategory(cat)"
-              >
-                <span
-                  class="hero--home__search__dropdown__row__dot"
-                  :style="{ background: cat.color || '#a9772e' }"
-                />
-                <span class="hero--home__search__dropdown__row__name">{{
-                  cat.name
-                }}</span>
-                <span class="hero--home__search__dropdown__row__meta">{{
-                  cat.count ?? 0
-                }}</span>
-              </a>
-            </template>
-          </div>
-        </Teleport>
+        <SearchDefault :categories="visibleCats" class="hero--home__search" />
 
         <!-- trust badges -->
         <div class="hero--home__badges">
@@ -251,18 +146,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from "vue";
-import { useRouter } from "vue-router";
+import { ref, computed } from "vue";
 import {
   Package as IconPackage,
-  Search as IconSearch,
   Check as IconCheck,
   Star as IconStar,
   MapPin as IconPin,
   ArrowRight as IconArrow,
   ChevronLeft as IconChevronLeft,
   ChevronRight as IconChevronRight,
-  X as IconX,
 } from "lucide-vue-next";
 import { useImageProxy } from "@/composables/useImage";
 import type { Ad } from "@/types/ad";
@@ -273,143 +165,9 @@ const props = defineProps<{
   categories?: FilterCategory[];
 }>();
 
-const router = useRouter();
 const { transformUrl } = useImageProxy();
 
-// Search + autocomplete
-const query = ref("");
-const acOpen = ref(false);
-const wrapRef = ref<HTMLElement | null>(null);
-const dropdownStyle = ref<Record<string, string>>({});
-
-const hasQuery = computed(() => query.value.trim().length > 0);
 const visibleCats = computed(() => (props.categories ?? []).slice(0, 8));
-
-interface AdSuggestion {
-  slug: string;
-  name: string;
-  categoryName: string;
-  categoryColor: string;
-  priceLabel: string;
-}
-
-const adSuggestions = ref<AdSuggestion[]>([]);
-const apiClient = useApiClient();
-let suggestTimer: ReturnType<typeof setTimeout> | null = null;
-
-const loadSuggestions = (q: string) => {
-  if (suggestTimer) clearTimeout(suggestTimer);
-  if (!q.trim()) {
-    adSuggestions.value = [];
-    return;
-  }
-  suggestTimer = setTimeout(async () => {
-    try {
-      const res = await apiClient<{ data: Ad[] }>("ads/catalog", {
-        method: "GET",
-        params: {
-          filters: { name: { $containsi: q.trim() } },
-          pagination: { pageSize: 3 },
-        } as unknown as Record<string, unknown>,
-      });
-      adSuggestions.value = (res.data ?? []).map((ad) => {
-        const cat =
-          typeof ad.category === "object" && ad.category !== null
-            ? (ad.category as { name: string; color?: string })
-            : null;
-        return {
-          slug: ad.slug,
-          name: ad.name,
-          categoryName: cat?.name ?? "",
-          categoryColor: cat?.color ?? "#a9772e",
-          priceLabel: new Intl.NumberFormat("es-CL", {
-            style: "currency",
-            currency: ad.currency || "CLP",
-          }).format(ad.price || 0),
-        };
-      });
-    } catch {
-      adSuggestions.value = [];
-    }
-  }, 250);
-};
-
-const pickSuggestion = (s: AdSuggestion) => {
-  acOpen.value = false;
-  router.push(`/anuncios/${s.slug}`);
-};
-
-const measure = () => {
-  const el = wrapRef.value;
-  if (!el) return;
-  const r = el.getBoundingClientRect();
-  const below = window.innerHeight - r.bottom;
-  const above = r.top;
-  const need = Math.min(320, window.innerHeight * 0.6);
-  const up = below < need && above > below;
-  const maxH = Math.max(180, (up ? above : below) - 18);
-  dropdownStyle.value = {
-    position: "fixed",
-    zIndex: "1000",
-    left: r.left + "px",
-    width: r.width + "px",
-    maxHeight: maxH + "px",
-    ...(up
-      ? { bottom: window.innerHeight - r.top + 8 + "px" }
-      : { top: r.bottom + 8 + "px" }),
-  };
-};
-
-const onFocus = () => {
-  measure();
-  acOpen.value = true;
-};
-
-const onInput = () => {
-  if (!acOpen.value) {
-    measure();
-    acOpen.value = true;
-  }
-  loadSuggestions(query.value);
-};
-
-const onBlur = () => {
-  setTimeout(() => {
-    acOpen.value = false;
-  }, 120);
-};
-
-const onReposition = () => {
-  if (acOpen.value) measure();
-};
-
-onMounted(() => {
-  if (import.meta.client) {
-    window.addEventListener("scroll", onReposition, { passive: true });
-    window.addEventListener("resize", onReposition, { passive: true });
-  }
-});
-
-onUnmounted(() => {
-  if (import.meta.client) {
-    window.removeEventListener("scroll", onReposition);
-    window.removeEventListener("resize", onReposition);
-  }
-});
-
-const onSearch = () => {
-  acOpen.value = false;
-  const term = query.value.slice(0, 40).toLowerCase().trim();
-  router.push({
-    path: "/anuncios",
-    query: term ? { s: term } : {},
-  });
-};
-
-const pickCategory = (cat: FilterCategory) => {
-  acOpen.value = false;
-  router.push({ path: "/anuncios", query: { category: cat.slug, page: 1 } });
-};
 
 // Carousel
 const featuredAds = computed(() => props.featuredAds ?? []);

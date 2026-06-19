@@ -2,8 +2,8 @@
   <div class="page">
     <HeaderDefault />
     <HeroResults
-      :bg-color="categoryData?.color || '#f0f0f0'"
-      :color="categoryData?.color || '#f0f0f0'"
+      :bg-color="categoryData?.color || ''"
+      :color="categoryData?.color || ''"
       :title="categoryData?.name || 'Anuncios'"
       :category-icon="categoryIconComponent"
     />
