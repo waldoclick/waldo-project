@@ -40,10 +40,14 @@
         </h1>
 
         <div class="hero--announcement__meta">
-          <span v-if="getCategory.name" class="hero--announcement__meta__pill">
+          <span
+            v-if="getCategory.name"
+            class="hero--announcement__meta__pill"
+            :style="{ backgroundColor: pillBg, color: pillTextColor }"
+          >
             <span
               class="hero--announcement__meta__pill__dot"
-              :style="{ backgroundColor: getCategory.color || '#8a8794' }"
+              :style="{ backgroundColor: dotBg }"
             />
             {{ getCategory.name }}
           </span>
@@ -69,8 +73,6 @@
 <script setup>
 import { computed, ref, onMounted, watch } from "vue";
 import { ChevronRight, Clock, ArrowLeft, Eye } from "lucide-vue-next";
-import { useColor } from "../composables/useColor";
-
 const props = defineProps({
   name: {
     type: String,
@@ -94,15 +96,22 @@ const props = defineProps({
   },
 });
 
-const { bgColorWithTransparency } = useColor();
+const getTitle = computed(() => props.name);
+const getCategory = computed(() => props.category);
 
-const getTitle = computed(() => {
-  return props.name;
-});
-
-const getCategory = computed(() => {
-  return props.category;
-});
+const categoryColor = computed(() => getCategory.value?.color || "#8a8794");
+const heroBg = computed(
+  () => `color-mix(in srgb, ${categoryColor.value} 10%, white)`,
+);
+const pillBg = computed(
+  () => `color-mix(in srgb, ${categoryColor.value} 14%, white)`,
+);
+const pillTextColor = computed(
+  () => `color-mix(in srgb, ${categoryColor.value} 65%, #26252B)`,
+);
+const dotBg = computed(
+  () => `color-mix(in srgb, ${categoryColor.value} 65%, #26252B)`,
+);
 
 const publishedLabel = computed(() => {
   if (!props.published) return "";
@@ -121,10 +130,7 @@ const heroElement = ref(null);
 // Función para actualizar el color de fondo
 const updateBackgroundColor = () => {
   if (heroElement.value) {
-    const color = bgColorWithTransparency(
-      getCategory.value?.color || "#f0f0f0",
-    );
-    heroElement.value.style.setProperty("background-color", color);
+    heroElement.value.style.setProperty("background-color", heroBg.value);
   }
 };
 

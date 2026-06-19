@@ -62,10 +62,11 @@
         :to="`/anuncios?category=${getCategory.slug}`"
         :title="'Ver anuncios en categoría ' + getCategory.name"
         class="card--announcement__body__cat"
+        :style="{ backgroundColor: catPillBg, color: catPillText }"
       >
         <span
           class="card--announcement__body__cat__dot"
-          :style="{ backgroundColor: getCategory.color }"
+          :style="{ backgroundColor: catPillText }"
         ></span>
         {{ getCategory.name }}
       </NuxtLink>
@@ -153,7 +154,6 @@ import {
 const user = useSessionUser();
 const route = useRoute();
 
-// Use the image proxy composable
 const { transformUrl } = useImageProxy();
 
 // Props
@@ -222,6 +222,13 @@ const getCategory = computed(() => {
 
   return { name, slug, color };
 });
+
+const catPillBg = computed(
+  () => `color-mix(in srgb, ${getCategory.value.color} 14%, white)`,
+);
+const catPillText = computed(
+  () => `color-mix(in srgb, ${getCategory.value.color} 65%, #26252B)`,
+);
 
 const getCondition = computed(() => {
   const condition = props.all.condition;
