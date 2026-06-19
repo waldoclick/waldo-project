@@ -10,6 +10,7 @@
         adComputed.createdAt ||
         ''
       "
+      :views="(adComputed as Record<string, any>)?.views ?? 0"
     />
     <AdSingle :all="adComputed" :access="adAccess ?? undefined" />
     <RelatedAds

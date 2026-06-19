@@ -51,6 +51,10 @@
             <Clock class="hero--announcement__meta__item__icon" :size="15" />
             Publicado {{ publishedLabel }}
           </span>
+          <span v-if="views > 0" class="hero--announcement__meta__item">
+            <Eye class="hero--announcement__meta__item__icon" :size="15" />
+            {{ views }} vistas
+          </span>
         </div>
       </div>
 
@@ -64,7 +68,7 @@
 
 <script setup>
 import { computed, ref, onMounted, watch } from "vue";
-import { ChevronRight, Clock, ArrowLeft } from "lucide-vue-next";
+import { ChevronRight, Clock, ArrowLeft, Eye } from "lucide-vue-next";
 import { useColor } from "../composables/useColor";
 
 const props = defineProps({
@@ -83,6 +87,10 @@ const props = defineProps({
   published: {
     type: String,
     default: "",
+  },
+  views: {
+    type: Number,
+    default: 0,
   },
 });
 
