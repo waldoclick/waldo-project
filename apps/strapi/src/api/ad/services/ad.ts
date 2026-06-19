@@ -1083,6 +1083,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
       gallery: true,
       ad_reservation: true,
       ad_featured_reservation: true,
+      ad_views: { count: true },
     };
 
     // Step 1: always fetch — no active/publishedAt filters
@@ -1096,11 +1097,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
     const adRecord = ad as Record<string, unknown>;
     const status = computeAdStatus(ad);
 
-    // Fetch view count — attached to all access levels for the hero counter
-    const viewCountMap = await strapi
-      .service("api::ad-view.ad-view")
-      .getViewCountsByAdIds([adRecord.id as number]);
-    const views = viewCountMap[adRecord.id as number] ?? 0;
+    const views = (adRecord.ad_views as { count?: number } | null)?.count ?? 0;
 
     // Step 2: public (no token)
     if (!userId) {
