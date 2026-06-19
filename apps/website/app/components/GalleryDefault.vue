@@ -1,15 +1,5 @@
 <template>
   <div class="gallery gallery--default">
-    <client-only>
-      <VueEasyLightbox
-        :visible="visible"
-        :imgs="imgs"
-        :index="index"
-        :move-disabled="true"
-        @hide="visible = false"
-      />
-    </client-only>
-
     <div v-if="hasMainImage" class="gallery--default__main" @click="show(0)">
       <img
         class="gallery--default__main__image"
@@ -52,20 +42,62 @@
           title="Imagen secundaria"
         />
         <span
-          v-if="imgIndex === 2 && remainingImages > 0"
+          v-if="imgIndex === 4 && remainingImages > 0"
           class="gallery--default__thumbnails__item__count"
         >
           +{{ remainingImages }}
         </span>
       </div>
     </div>
+
+    <div
+      v-if="lightboxVisible"
+      class="gallery--default__lightbox"
+      @click.self="lightboxVisible = false"
+    >
+      <div class="gallery--default__lightbox__inner">
+        <div class="gallery--default__lightbox__top">
+          <span class="gallery--default__lightbox__top__counter">
+            {{ lightboxIndex + 1 }} / {{ imgs.length }}
+          </span>
+          <button class="gallery--default__lightbox__top__close" @click="lightboxVisible = false">
+            ✕ Cerrar
+          </button>
+        </div>
+
+        <div class="gallery--default__lightbox__stage">
+          <button class="gallery--default__lightbox__stage__arrow gallery--default__lightbox__stage__arrow--prev" @click="lightboxPrev">
+            <ChevronLeft :size="22" />
+          </button>
+          <img
+            class="gallery--default__lightbox__stage__image"
+            :src="imgs[lightboxIndex]"
+            alt="Imagen ampliada"
+          />
+          <button class="gallery--default__lightbox__stage__arrow gallery--default__lightbox__stage__arrow--next" @click="lightboxNext">
+            <ChevronRight :size="22" />
+          </button>
+        </div>
+
+        <div class="gallery--default__lightbox__strip">
+          <div
+            v-for="(img, i) in imgs"
+            :key="i"
+            class="gallery--default__lightbox__strip__item"
+            :class="{ 'gallery--default__lightbox__strip__item--active': i === lightboxIndex }"
+            @click="lightboxIndex = i"
+          >
+            <img :src="img" :alt="`Foto ${i + 1}`" />
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
-import VueEasyLightbox from "vue-easy-lightbox/dist/external-css/vue-easy-lightbox.esm.min.js";
-import { Maximize2, Image as ImageIcon } from "lucide-vue-next";
+import { ref, computed, onMounted, onUnmounted } from "vue";
+import { Maximize2, Image as ImageIcon, ChevronLeft, ChevronRight } from "lucide-vue-next";
 import { useImageProxy } from "@/composables/useImage";
 
 const props = defineProps({
@@ -82,12 +114,12 @@ const props = defineProps({
 // Use the new useImageProxy composable to transform URLs
 const { transformUrl } = useImageProxy();
 
-const index = ref(0);
-const visible = ref(false);
+const lightboxIndex = ref(0);
+const lightboxVisible = ref(false);
 
 const mainImage = computed(() => props.media[0] || null);
 const thumbnailImages = computed(() =>
-  Array.isArray(props.media) ? props.media.slice(1, 4) : [],
+  Array.isArray(props.media) ? props.media.slice(1, 6) : [],
 );
 const hasMainImage = computed(
   () => Array.isArray(props.media) && props.media.length > 0,
@@ -126,11 +158,29 @@ const photosLabel = computed(() => {
 });
 
 const remainingImages = computed(() =>
-  props.media.length > 4 ? props.media.length - 4 : 0,
+  props.media.length > 6 ? props.media.length - 6 : 0,
 );
 
 const show = (i) => {
-  index.value = i;
-  visible.value = true;
+  lightboxIndex.value = i;
+  lightboxVisible.value = true;
 };
+
+const lightboxPrev = () => {
+  lightboxIndex.value = (lightboxIndex.value - 1 + imgs.value.length) % imgs.value.length;
+};
+
+const lightboxNext = () => {
+  lightboxIndex.value = (lightboxIndex.value + 1) % imgs.value.length;
+};
+
+const handleKey = (e) => {
+  if (!lightboxVisible.value) return;
+  if (e.key === "ArrowLeft") lightboxPrev();
+  if (e.key === "ArrowRight") lightboxNext();
+  if (e.key === "Escape") lightboxVisible.value = false;
+};
+
+onMounted(() => window.addEventListener("keydown", handleKey));
+onUnmounted(() => window.removeEventListener("keydown", handleKey));
 </script>
