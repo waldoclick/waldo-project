@@ -66,6 +66,130 @@
     }
   }
 
+  &--sidebar {
+    position: sticky;
+    top: 96px;
+    background: $white;
+    border: 1px solid $line;
+    border-radius: 4px;
+    padding: 22px 20px;
+    display: flex;
+    flex-direction: column;
+
+    @include screen-medium {
+      display: none;
+    }
+
+    &__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+
+      &__title {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        font-family: "Poppins", sans-serif;
+        font-weight: 700;
+        font-size: 16px;
+        color: $ink;
+
+        svg {
+          color: $ink;
+        }
+      }
+
+      &__clear {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+        color: $tag;
+        font-family: inherit;
+        padding: 0;
+      }
+    }
+
+    &__section {
+      border-top: 1px solid $line;
+      margin-top: 16px;
+      padding-top: 16px;
+
+      &__label {
+        font-size: 11.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: $muted;
+        margin-bottom: 8px;
+        display: block;
+      }
+
+      &__row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        cursor: pointer;
+        padding: 5px 0;
+
+        &__inner {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        &__check {
+          width: 16px;
+          height: 16px;
+          flex: none;
+          accent-color: $amber;
+          cursor: pointer;
+        }
+
+        &__name {
+          font-size: 14px;
+          color: $ink2;
+        }
+
+        &__count {
+          font-size: 12px;
+          color: $muted;
+        }
+      }
+    }
+
+    &__location {
+      position: relative;
+
+      select {
+        width: 100%;
+        appearance: none;
+        border: 1px solid $line;
+        outline: none;
+        font-size: 14px;
+        font-weight: 500;
+        color: $ink;
+        background: $cream;
+        padding: 11px 34px 11px 13px;
+        border-radius: 4px;
+        font-family: inherit;
+        cursor: pointer;
+      }
+
+      &__chevron {
+        position: absolute;
+        right: 13px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: $muted;
+        pointer-events: none;
+      }
+    }
+  }
+
   &--announcement {
     padding-bottom: 0;
 
