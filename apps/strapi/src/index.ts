@@ -1,4 +1,6 @@
 import populateCategories from "../seeders/categories";
+import populateBlogCategories from "../seeders/blog-categories";
+import populateArticles from "../seeders/articles";
 import populateConditions from "../seeders/conditions";
 import populateFaqs from "../seeders/faqs";
 import populatePacks from "../seeders/packs";
@@ -35,6 +37,8 @@ export default {
 
       try {
         await populateCategories(strapi);
+        await populateBlogCategories(strapi);
+        await populateArticles(strapi);
         await populateConditions(strapi);
         await populateFaqs(strapi);
         await populatePacks(strapi);
