@@ -4,9 +4,9 @@
 
 .terms {
   &--default {
+    // No inner .container — the about content column already owns the width,
+    // so the accordion fills it identically to /preguntas-frecuentes.
     &__container {
-      @extend .container;
-      max-width: 820px;
       display: flex;
       flex-direction: column;
     }
