@@ -45,6 +45,11 @@
       "relation": "manyToMany",
       "target": "api::category.category"
     },
+    "blog_categories": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::blog-category.blog-category"
+    },
     "seo_title": {
       "type": "string",
       "required": false
