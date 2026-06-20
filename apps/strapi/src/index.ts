@@ -116,6 +116,46 @@ export default {
       console.error("Error granting stats permissions:", error);
     }
 
+    // Grant authenticated + manager roles read access to articles.
+    // The public role has this permission set via the admin panel, but authenticated
+    // users (JWT present) have their own role checked separately — without this grant
+    // they receive 403 on every blog article page while logged in.
+    try {
+      const articleActions = [
+        "api::article.article.find",
+        "api::article.article.findOne",
+      ];
+      const articleRoles = await strapi.db
+        .query("plugin::users-permissions.role")
+        .findMany({
+          where: { type: { $in: ["authenticated", "manager"] } },
+          populate: ["permissions"],
+        });
+      if (articleRoles.length) {
+        let created = 0;
+        for (const role of articleRoles) {
+          const existing = new Set(
+            (role.permissions as Array<{ action: string }>).map(
+              (p) => p.action,
+            ),
+          );
+          for (const uid of articleActions) {
+            if (!existing.has(uid)) {
+              await strapi.db
+                .query("plugin::users-permissions.permission")
+                .create({ data: { action: uid, role: role.id } });
+              created++;
+            }
+          }
+        }
+        console.log(
+          `article permissions grant: ${created} created across ${articleRoles.length} role(s)`,
+        );
+      }
+    } catch (error) {
+      console.error("Error granting article permissions:", error);
+    }
+
     // Grant the PUBLIC role read access to blog-category. The route is auth:false,
     // but Strapi v5 sanitizes POPULATED relations by the related type's role
     // permissions — without this, article.blog_categories is stripped from the
