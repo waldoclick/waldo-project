@@ -5,7 +5,7 @@
     intro="Encuentra respuestas a las preguntas más comunes sobre cómo funciona Waldo, la plataforma para comprar y vender activos industriales."
     active="faq"
   >
-    <FaqDefault :is-left="true" :faqs="faqs || []" />
+    <FaqComplete :faqs="faqs || []" />
   </NuxtLayout>
 </template>
 
@@ -15,7 +15,7 @@ const { $setSEO, $setStructuredData } = useNuxtApp();
 const config = useRuntimeConfig();
 
 // Components
-import FaqDefault from "@/components/FaqDefault.vue";
+import FaqComplete from "@/components/FaqComplete.vue";
 
 // Layout aplicado explícitamente con <NuxtLayout name="about"> en el template;
 // layout: false evita que Nuxt aplique además el layout por defecto (doble wrap).
