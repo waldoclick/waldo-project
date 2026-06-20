@@ -591,6 +591,24 @@
       }
     }
 
+    &__eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(247, 201, 126, 0.28);
+      color: $tag;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 0.2px;
+      padding: 7px 14px;
+      border-radius: 4px;
+      margin-bottom: 12px;
+
+      svg {
+        color: $tag;
+      }
+    }
+
     &__row {
       display: flex;
       align-items: flex-end;

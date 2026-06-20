@@ -11,8 +11,28 @@
         format="webp"
         remote
       />
-      <span v-if="categoryName" class="card--article__media__cat">
-        <span class="card--article__media__cat__dot"></span>
+      <span
+        v-else
+        class="card--article__media__wash"
+        :style="{ background: hue.washBg }"
+      >
+        <span
+          v-if="categoryName"
+          class="card--article__media__kicker"
+          :style="{ color: hue.onColor }"
+        >
+          {{ categoryName }}
+        </span>
+      </span>
+      <span
+        v-if="categoryName"
+        class="card--article__media__cat"
+        :style="{ color: hue.onColor }"
+      >
+        <span
+          class="card--article__media__cat__dot"
+          :style="{ background: hue.baseColor }"
+        ></span>
         {{ categoryName }}
       </span>
     </NuxtLink>
@@ -41,7 +61,7 @@
             :size="13"
             class="card--article__body__footer__read__icon"
           />
-          5 min de lectura
+          {{ getReadTime(article.body) }} min de lectura
         </span>
       </span>
     </div>
@@ -52,6 +72,8 @@
 import { computed } from "vue";
 import type { Article } from "@/types/article";
 import { useImageProxy } from "@/composables/useImage";
+import { getReadTime } from "@/utils/readTime";
+import { getCategoryHue } from "@/utils/categoryHue";
 import { Clock as IconClock } from "lucide-vue-next";
 
 const props = defineProps<{ article: Article }>();
@@ -80,6 +102,8 @@ const categoryName = computed(() => {
   }
   return "";
 });
+
+const hue = computed(() => getCategoryHue(categoryName.value));
 
 const formattedDate = computed(() => {
   if (!props.article.createdAt) return "";

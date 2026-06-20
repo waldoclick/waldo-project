@@ -8,60 +8,129 @@
 
     &__container {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      gap: 12px;
       font-size: 14px;
       @extend .container;
-    }
 
-    &__selectors {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-    }
-
-    &__selector {
-      display: flex;
-      flex-direction: column;
-      margin-right: 20px;
-
-      label {
-        font-size: 13px;
-        display: block;
-        margin-bottom: 1px;
+      @include screen-small {
+        flex-wrap: wrap;
       }
     }
 
-    &__order {
-      display: flex;
-      align-items: center;
+    &__drop {
+      position: relative;
+      flex: none;
 
-      label {
-        font-size: 13px;
-        display: block;
-        margin-right: 10px;
+      &__button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: $white;
+        border: 1px solid $line;
+        border-radius: 4px;
+        padding: 12px 14px;
+        font-family: inherit;
+        font-weight: 600;
+        font-size: 14px;
+        color: $ink;
+        cursor: pointer;
+        white-space: nowrap;
+
+        &:hover {
+          border-color: $ink;
+        }
+
+        &__arrow {
+          color: $ink;
+        }
+      }
+
+      &__panel {
+        position: absolute;
+        top: calc(100% + 6px);
+        left: 0;
+        background: $white;
+        border: 1px solid $line;
+        border-radius: 8px;
+        padding: 6px;
+        min-width: 210px;
+        z-index: 200;
+
+        &__item {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          width: 100%;
+          padding: 9px 12px;
+          border: none;
+          background: transparent;
+          border-radius: 4px;
+          cursor: pointer;
+          font-family: inherit;
+          font-size: 14px;
+          font-weight: 500;
+          color: $ink;
+          text-align: left;
+
+          &:hover {
+            background: $cream;
+          }
+
+          &--active {
+            font-weight: 600;
+          }
+        }
       }
     }
 
-    &__select {
-      appearance: none;
-      padding: 10px;
-      border: 1px solid $platinum;
+    &__search {
+      flex: 0 1 380px;
+      max-width: 380px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      background: $white;
+      border: 1px solid $line;
       border-radius: 4px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
+      padding: 12px 15px;
 
-      padding-right: 40px;
-      background-image: url("/images/chevron-down.svg");
-      background-position: center right 15px;
-      background-repeat: no-repeat;
+      &:focus-within {
+        border-color: $amber;
+      }
 
-      &--simple {
-        padding: 8px;
-        padding-right: 15px;
-        background-position: center right;
+      &__icon {
+        flex: none;
+        color: $muted;
+      }
+
+      &__input {
         border: none;
+        outline: none;
+        background: transparent;
+        font-family: inherit;
+        font-size: 15px;
+        color: $ink;
+        width: 100%;
+      }
+    }
+
+    &__clear {
+      flex: none;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 500;
+      font-size: 13.5px;
+      color: $muted;
+      padding: 0;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      white-space: nowrap;
+
+      &:hover {
+        color: $ink;
       }
     }
   }

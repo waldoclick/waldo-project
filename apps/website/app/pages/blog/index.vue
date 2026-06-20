@@ -1,7 +1,18 @@
 <template>
   <div class="page">
     <HeaderDefault />
-    <HeroDefault :breadcrumbs="[{ label: 'Blog' }]" title="Blog" />
+    <HeroDefault
+      :breadcrumbs="[{ label: 'Blog' }]"
+      subtitle="Guías de compra y venta, lectura de mercado, mantención y logística. Todo lo que necesitas saber para mover maquinaria con confianza."
+    >
+      <template #eyebrow>
+        <span class="hero--default__eyebrow">
+          <IconBook :size="15" />
+          Blog Waldo
+        </span>
+      </template>
+      <template #title>Activos industriales, explicados</template>
+    </HeroDefault>
     <FilterArticles
       v-if="blogData && blogData.articles && blogData.articles.length > 0"
       :categories="blogData.categories"
@@ -58,6 +69,8 @@ import { useRoute } from "nuxt/app";
 import { useCategoriesStore } from "@/stores/categories.store";
 import { useArticlesStore } from "@/stores/articles.store";
 
+import { BookOpen as IconBook } from "lucide-vue-next";
+
 // Components
 import HeaderDefault from "@/components/HeaderDefault.vue";
 import HeroDefault from "@/components/HeroDefault.vue";
@@ -85,7 +98,7 @@ const route = useRoute();
 
 const { data: blogData } = await useAsyncData<BlogData>(
   () =>
-    `blog-${route.query.category || "all"}-${route.query.page || "1"}-${route.query.order || "recent"}`,
+    `blog-${route.query.category || "all"}-${route.query.page || "1"}-${route.query.q || ""}`,
   async () => {
     const categoriesStore = useCategoriesStore();
     const articlesStore = useArticlesStore();
@@ -95,13 +108,18 @@ const { data: blogData } = await useAsyncData<BlogData>(
 
     const category = route.query.category?.toString() || null;
     const page = Number.parseInt(route.query.page?.toString() || "1", 10);
-    const order = route.query.order?.toString() || "recent";
+    const query = route.query.q?.toString().trim() || null;
 
-    const sortParams =
-      order === "oldest" ? ["createdAt:asc"] : ["createdAt:desc"];
+    const sortParams = ["createdAt:desc"];
 
     const filtersParams: Record<string, unknown> = {
       ...(category && { categories: { slug: { $eq: category } } }),
+      ...(query && {
+        $or: [
+          { title: { $containsi: query } },
+          { header: { $containsi: query } },
+        ],
+      }),
     };
 
     await articlesStore.loadArticles(
@@ -142,7 +160,7 @@ const { data: blogData } = await useAsyncData<BlogData>(
     watch: [
       () => route.query.category,
       () => route.query.page,
-      () => route.query.order,
+      () => route.query.q,
     ],
     server: true,
     default: () => ({

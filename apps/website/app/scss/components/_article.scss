@@ -126,7 +126,21 @@
     }
 
     &__paginate {
-      margin-top: 40px;
+      margin-top: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+
+      &__range {
+        font-size: 13.5px;
+        color: $muted;
+      }
+
+      &__pages {
+        margin-left: auto;
+      }
     }
   }
 

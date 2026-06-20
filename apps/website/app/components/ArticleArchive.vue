@@ -35,15 +35,19 @@
         />
       </div>
       <div
-        v-if="
-          pagination &&
-          pagination.pageCount > 1 &&
-          pagination.total > pagination.pageSize
-        "
+        v-if="articles && articles.length > 0"
         class="article--archive__paginate"
       >
+        <span class="article--archive__paginate__range">{{ rangeText }}</span>
         <client-only>
-          <div class="paginate">
+          <div
+            v-if="
+              pagination &&
+              pagination.pageCount > 1 &&
+              pagination.total > pagination.pageSize
+            "
+            class="paginate article--archive__paginate__pages"
+          >
             <vue-awesome-paginate
               v-model="pagination.page"
               :total-items="pagination.total"
@@ -59,17 +63,26 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import type { Article } from "@/types/article";
 import type { Pagination } from "@/types/pagination";
 import CardArticle from "@/components/CardArticle.vue";
 import { ArrowRight as IconArrow } from "lucide-vue-next";
 
-defineProps<{
+const props = defineProps<{
   articles: Article[];
   pagination: Pagination;
   blogSection?: boolean;
 }>();
+
+const rangeText = computed(() => {
+  const { page, pageSize, total } = props.pagination;
+  if (!total) return "";
+  const start = (page - 1) * pageSize + 1;
+  const end = Math.min(page * pageSize, total);
+  return `Mostrando ${start}–${end} de ${total} artículos`;
+});
 
 const router = useRouter();
 const route = useRoute();
