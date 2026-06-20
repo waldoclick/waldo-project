@@ -1,15 +1,10 @@
 <template>
   <div v-if="pageData?.article" class="page">
     <HeaderDefault />
-    <ArticleSingle :article="pageData.article" />
-    <RelatedArticles
-      v-if="pageData.relatedArticles.length > 0"
-      :articles="pageData.relatedArticles"
-      :loading="false"
-      :error="null"
-      title="Artículos relacionados"
-      text="Más contenido que puede interesarte"
-      :center-head="true"
+    <ArticleSingle
+      :article="pageData.article"
+      :featured-ads="pageData.featuredAds"
+      :related-articles="pageData.relatedArticles"
     />
     <FooterDefault />
   </div>
@@ -33,18 +28,62 @@ import { ref, watch, watchEffect } from "vue";
 import { useRoute } from "nuxt/app";
 import { useArticlesStore } from "@/stores/articles.store";
 import type { Article } from "@/types/article";
+import type { FeaturedAd } from "@/types/featured-ad";
 
 import HeaderDefault from "@/components/HeaderDefault.vue";
 import FooterDefault from "@/components/FooterDefault.vue";
 import ArticleSingle from "@/components/ArticleSingle.vue";
-import RelatedArticles from "@/components/RelatedArticles.vue";
 
 interface ArticlePageData {
   article: Article | null;
   relatedArticles: Article[];
+  featuredAds: FeaturedAd[];
 }
 
 const route = useRoute();
+
+// useApiClient MUST be created at setup top-level (before any await). Calling it
+// after the awaits inside the useAsyncData handler reads the Nuxt request context
+// outside a valid instance and breaks the SSR fetch.
+const apiClient = useApiClient();
+
+// Featured ads for the sticky aside — fetched directly and reduced to a flat,
+// plain shape. Returning full ad records (populate:*) into this page's payload
+// trips devalue ("obj.hasOwnProperty is not a function"); primitives are safe.
+const fetchFeaturedAds = async (): Promise<FeaturedAd[]> => {
+  try {
+    const res = (await apiClient("ads/catalog", {
+      method: "GET",
+      params: {
+        filters: {},
+        pagination: { page: 1, pageSize: 4 },
+        sort: ["sort_priority:asc", "createdAt:desc"],
+        populate: "*",
+      } as unknown as Record<string, unknown>,
+    })) as { data: RawFeaturedAd[] };
+    return (res.data ?? []).map((ad) => ({
+      slug: ad.slug,
+      name: ad.name,
+      price: ad.price ?? null,
+      categoryName:
+        typeof ad.category === "object" && ad.category !== null
+          ? ad.category.name || ""
+          : "",
+      image:
+        ad.gallery?.[0]?.formats?.medium?.url || ad.gallery?.[0]?.url || "",
+    }));
+  } catch {
+    return [];
+  }
+};
+
+interface RawFeaturedAd {
+  slug: string;
+  name: string;
+  price?: number | null;
+  category?: { name?: string } | number | null;
+  gallery?: { url?: string; formats?: { medium?: { url?: string } } }[];
+}
 
 const { data: pageData, pending } = await useAsyncData<ArticlePageData>(
   () => `article-${route.params.slug}`,
@@ -62,7 +101,7 @@ const { data: pageData, pending } = await useAsyncData<ArticlePageData>(
     const article = articlesStore.articles[0] || null;
 
     if (!article) {
-      return { article: null, relatedArticles: [] };
+      return { article: null, relatedArticles: [], featuredAds: [] };
     }
 
     // Load related articles: same-category first, fallback to most recent
@@ -88,11 +127,13 @@ const { data: pageData, pending } = await useAsyncData<ArticlePageData>(
       related = [...related, ...fill].slice(0, 6);
     }
 
-    return { article, relatedArticles: related };
+    const featuredAds = await fetchFeaturedAds();
+
+    return { article, relatedArticles: related, featuredAds };
   },
   {
     server: true,
-    default: () => ({ article: null, relatedArticles: [] }),
+    default: () => ({ article: null, relatedArticles: [], featuredAds: [] }),
   },
 );
 

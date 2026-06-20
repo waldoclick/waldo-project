@@ -45,10 +45,7 @@
       </div>
 
       <label class="filter--articles__search">
-        <IconSearch
-          :size="17"
-          class="filter--articles__search__icon"
-        />
+        <IconSearch :size="17" class="filter--articles__search__icon" />
         <input
           v-model="searchQuery"
           type="text"

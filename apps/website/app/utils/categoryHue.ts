@@ -25,7 +25,9 @@ export interface CategoryHue {
   baseColor: string;
 }
 
-export const getCategoryHue = (name: string | null | undefined): CategoryHue => {
+export const getCategoryHue = (
+  name: string | null | undefined,
+): CategoryHue => {
   const hue = name ? (HUE_MAP[name] ?? DEFAULT_HUE) : DEFAULT_HUE;
 
   return {
