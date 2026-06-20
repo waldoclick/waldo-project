@@ -1,12 +1,19 @@
 <template>
   <div v-if="pageData?.article" class="page">
     <HeaderDefault />
-    <HeroArticle
+    <HeroDefault
+      :breadcrumbs="[
+        { label: 'Blog', to: '/blog' },
+        { label: pageData.article.title },
+      ]"
       :title="pageData.article.title"
-      :category-name="pageData.article.categories[0]?.name || ''"
-      :category-slug="pageData.article.categories[0]?.slug || ''"
-      :published-at="pageData.article.createdAt"
-    />
+    >
+      <p v-if="formattedDate" class="hero--default__date">
+        <time :datetime="pageData.article.createdAt || ''">{{
+          formattedDate
+        }}</time>
+      </p>
+    </HeroDefault>
     <ArticleSingle :article="pageData.article" />
     <RelatedArticles
       v-if="pageData.relatedArticles.length > 0"
@@ -35,14 +42,14 @@ const { $setSEO, $setStructuredData } = useNuxtApp() as unknown as {
 };
 const config = useRuntimeConfig();
 
-import { ref, watch, watchEffect } from "vue";
+import { ref, computed, watch, watchEffect } from "vue";
 import { useRoute } from "nuxt/app";
 import { useArticlesStore } from "@/stores/articles.store";
 import type { Article } from "@/types/article";
 
 import HeaderDefault from "@/components/HeaderDefault.vue";
 import FooterDefault from "@/components/FooterDefault.vue";
-import HeroArticle from "@/components/HeroArticle.vue";
+import HeroDefault from "@/components/HeroDefault.vue";
 import ArticleSingle from "@/components/ArticleSingle.vue";
 import RelatedArticles from "@/components/RelatedArticles.vue";
 
@@ -102,6 +109,17 @@ const { data: pageData, pending } = await useAsyncData<ArticlePageData>(
     default: () => ({ article: null, relatedArticles: [] }),
   },
 );
+
+// Published date for the hero, formatted in Spanish (es-CL)
+const formattedDate = computed(() => {
+  const date = pageData.value?.article?.createdAt;
+  if (!date) return null;
+  return new Intl.DateTimeFormat("es-CL", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }).format(new Date(date));
+});
 
 // Show 404 when data is done loading but no article was found
 watchEffect(() => {

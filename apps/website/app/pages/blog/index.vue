@@ -1,7 +1,7 @@
 <template>
   <div class="page">
     <HeaderDefault />
-    <HeroArticles />
+    <HeroDefault :breadcrumbs="[{ label: 'Blog' }]" title="Blog" />
     <FilterArticles
       v-if="blogData && blogData.articles && blogData.articles.length > 0"
       :categories="blogData.categories"
@@ -60,7 +60,7 @@ import { useArticlesStore } from "@/stores/articles.store";
 
 // Components
 import HeaderDefault from "@/components/HeaderDefault.vue";
-import HeroArticles from "@/components/HeroArticles.vue";
+import HeroDefault from "@/components/HeroDefault.vue";
 import FilterArticles from "@/components/FilterArticles.vue";
 import ArticleArchive from "@/components/ArticleArchive.vue";
 import FooterDefault from "@/components/FooterDefault.vue";

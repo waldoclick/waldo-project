@@ -1,7 +1,11 @@
 <template>
   <div class="page">
-    <HeaderDefault is-trasparent="true" :show-menu="false" />
-    <HeroDefault :title="`Packs`" />
+    <HeaderDefault />
+    <HeroDefault
+      :breadcrumbs="[{ label: 'Packs' }]"
+      title="Packs"
+      subtitle="Elige el pack de avisos que mejor se adapte a ti. Publica más anuncios y llega a más compradores en Waldo.click®."
+    />
     <PacksDefault :packs="packs" />
     <FooterDefault />
   </div>
