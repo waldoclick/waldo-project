@@ -242,9 +242,10 @@ Progress: [█████████░] 97% (31/32 plans complete)
 | 260619-n4i | Fix views counter and WhatsApp button on ad detail page | 2026-06-19 | 854f48d8 | [260619-n4i-fix-views-counter-and-whatsapp-button-on](./quick/260619-n4i-fix-views-counter-and-whatsapp-button-on/) |
 | 260619-p2i | Fix recordView dedup to per-visitor/ad/day (hash includes adDocumentId + where.ad guard) — counter de-freezes per ad; live e2e verified, DB restored | 2026-06-19 | 56cd357b, f6617a32 | [260619-p2i-fix-ad-view-recordview-dedup-to-be-per-a](./quick/260619-p2i-fix-ad-view-recordview-dedup-to-be-per-a/) |
 | 260619-pr7 | Audit+fix 5 legal/about views (faq, privacidad, condiciones, contacto, sitemap) vs maqueta + remove apps/design workspace — accordion open-state chevron box → solid amber + maqueta padding; other 4 views verified matching by screenshot; apps/design deleted (using Claude Design MCP directly) | 2026-06-19 | ae25bfaa, 5de33dee | [260619-pr7-update-legal-about-views-faq-privacidad-](./quick/260619-pr7-update-legal-about-views-faq-privacidad-/) |
+| 260619-t66 | Deep-align blog list + article to maqueta — readtime/hue utils, BlogCard, toolbar+pager (list); rebuilt article (breadcrumb, 2-col, featured-ads aside + sell CTA, read-more collapse, footer, "Sigue leyendo"); fixed useApiClient-after-await SSR 500; visually verified both views | 2026-06-20 | ad3f21df, 6d0b8393, e21a86ea | [260619-t66-align-blog-list-and-article-views-to-maq](./quick/260619-t66-align-blog-list-and-article-views-to-maq/) |
 
 ## Session Continuity
 
-Last activity: 2026-06-19 - Completed quick task 260619-pr7: Audit+fix 5 legal/about views vs maqueta (accordion fixed; faq/priv/cond/contacto/sitemap verified by screenshot) and removed apps/design workspace
+Last activity: 2026-06-20 - Completed quick task 260619-t66: deep-aligned blog list + article views to the maqueta (article rebuilt to 2-col with featured-ads aside, read-more, sigue leyendo); both views screenshot-verified. Also (this session, outside quick tracking): unified HeroDefault page-header across legal/blog/anuncios/packs, split FaqDefault/FaqComplete, equalized about content widths.
 Stopped at: Completed 10-02-PLAN.md — awaiting checkpoint:human-verify for LightboxSearch visual verification
 Resume file: None

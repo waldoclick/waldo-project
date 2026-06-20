@@ -1,0 +1,101 @@
+  <!-- ===================== BLOG: ARTÍCULO ===================== -->
+  <sc-if value="{{ isArticle }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="Artículo">
+    <div class="hpad" style="max-width:1200px;margin:0 auto;padding:94px 32px 6px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+      <nav style="display:flex;align-items:center;gap:9px;font-size:13.5px;color:var(--muted)">
+        <a onClick="{{ goHome }}" style="color:var(--muted);text-decoration:none;cursor:pointer" style-hover="color:var(--ink)">Waldo</a>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B6B2BB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        <a onClick="{{ goBlog }}" style="color:var(--muted);text-decoration:none;cursor:pointer" style-hover="color:var(--ink)">Blog</a>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B6B2BB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        <span style="color:var(--ink);font-weight:600">{{ aCategory }}</span>
+      </nav>
+      <a onClick="{{ goBlog }}" style="display:inline-flex;align-items:center;gap:7px;text-decoration:none;cursor:pointer;font-weight:600;font-size:13.5px;color:var(--ink2)" style-hover="color:var(--ink)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>Volver al blog</a>
+    </div>
+    <div class="gsplit" style="max-width:1200px;margin:0 auto;padding:20px 32px 76px;display:grid;grid-template-columns:minmax(0,1fr) 308px;gap:56px;align-items:start">
+      <article style="min-width:0;max-width:720px">
+        <span style="display:inline-flex;align-items:center;gap:7px;background:var(--cream);border:1px solid var(--line);color:{{ aOnColor }};font-weight:700;font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;padding:5px 12px;border-radius:4px"><span style="width:7px;height:7px;border-radius:50%;background:{{ aBaseColor }}"></span>{{ aCategory }}</span>
+        <h1 style="font-family:'Poppins',sans-serif;font-weight:800;color:var(--ink);font-size:clamp(30px,3.2vw,40px);letter-spacing:-.6px;line-height:1.14;margin:16px 0 0;text-wrap:balance">{{ aTitle }}</h1>
+        <p style="font-size:18.5px;line-height:1.55;color:var(--ink2);margin:16px 0 0;text-wrap:pretty">{{ aExcerpt }}</p>
+        <div style="display:flex;align-items:center;gap:13px;margin-top:22px;padding-bottom:26px;border-bottom:1px solid var(--line);font-size:13.5px;color:var(--muted);font-weight:500;flex-wrap:wrap">
+          <span style="display:inline-flex;align-items:center;gap:8px"><span style="width:30px;height:30px;border-radius:50%;background:var(--amber);color:#26252B;display:grid;place-items:center;font-weight:700;font-size:12px;font-family:'Poppins',sans-serif">W</span><span style="color:var(--ink2);font-weight:600">{{ aAuthor }}</span></span>
+          <span style="width:3px;height:3px;border-radius:50%;background:#C9C5CC"></span>
+          <span>{{ aDate }}</span>
+          <span style="width:3px;height:3px;border-radius:50%;background:#C9C5CC"></span>
+          <span style="display:inline-flex;align-items:center;gap:6px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9A96A0" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>{{ aReadLabel }}</span>
+        </div>
+        <sc-if value="{{ aHasImg }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:28px;border-radius:10px;overflow:hidden;aspect-ratio:16/9;background:var(--cream);border:1px solid var(--line)">
+          {{ aImgEl }}
+        </div>
+        </sc-if>
+        <div style="display:flex;flex-direction:column;gap:4px;margin-top:30px">
+        <sc-for list="{{ aPreview }}" as="blk" hint-placeholder-count="3">
+          <sc-if value="{{ blk.isH }}" hint-placeholder-val="{{ false }}"><h2 style="font-family:'Poppins',sans-serif;font-weight:700;color:var(--ink);font-size:22px;letter-spacing:-.3px;line-height:1.3;margin:24px 0 4px">{{ blk.text }}</h2></sc-if>
+          <sc-if value="{{ blk.isP }}" hint-placeholder-val="{{ true }}"><p style="margin:0;font-size:17px;line-height:1.72;color:var(--ink2);text-wrap:pretty">{{ blk.text }}</p></sc-if>
+        </sc-for>
+        <sc-if value="{{ aExpanded }}" hint-placeholder-val="{{ false }}">
+          <sc-for list="{{ aRest }}" as="blk2" hint-placeholder-count="0">
+            <sc-if value="{{ blk2.isH }}" hint-placeholder-val="{{ false }}"><h2 style="font-family:'Poppins',sans-serif;font-weight:700;color:var(--ink);font-size:22px;letter-spacing:-.3px;line-height:1.3;margin:24px 0 4px">{{ blk2.text }}</h2></sc-if>
+            <sc-if value="{{ blk2.isP }}" hint-placeholder-val="{{ true }}"><p style="margin:0;font-size:17px;line-height:1.72;color:var(--ink2);text-wrap:pretty">{{ blk2.text }}</p></sc-if>
+          </sc-for>
+        </sc-if>
+      </div>
+      <sc-if value="{{ aCollapsed }}" hint-placeholder-val="{{ false }}">
+      <div style="position:relative">
+        <div style="height:96px;margin-top:-96px;background:linear-gradient(rgba(255,255,255,0),#fff);pointer-events:none"></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:4px">
+          <a onClick="{{ aReadMore }}" style="display:inline-flex;align-items:center;gap:9px;text-decoration:none;cursor:pointer;font-weight:700;font-size:15px;color:#26252B;background:var(--amber);padding:13px 28px;border-radius:4px" style-hover="background:var(--amberH)">Leer más en el artículo<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#26252B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg></a>
+          <span style="font-size:12.5px;color:var(--muted)">{{ aReadLabel }}</span>
+        </div>
+      </div>
+      </sc-if>
+
+      <div style="margin-top:40px;padding-top:26px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+          <span style="font-size:14px;color:var(--muted)">¿Te sirvió este artículo?</span>
+          <a onClick="{{ aShare }}" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;cursor:pointer;font-weight:600;font-size:14px;color:#26252B;background:var(--cream);border:1px solid var(--line);padding:10px 16px;border-radius:4px" style-hover="border-color:#26252B">
+            <sc-if value="{{ aShared }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:8px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1F8A5B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Enlace copiado</span></sc-if>
+            <sc-if value="{{ aNotShared }}" hint-placeholder-val="{{ true }}"><span style="display:inline-flex;align-items:center;gap:8px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#26252B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98M15.41 6.51 8.59 10.49"/></svg>Compartir</span></sc-if>
+          </a>
+        </div>
+        <a onClick="{{ goBlog }}" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;cursor:pointer;font-weight:600;font-size:14.5px;color:var(--ink);border:1px solid var(--line);padding:11px 20px;border-radius:4px" style-hover="border-color:#26252B">Ver más artículos<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#26252B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+      </article>
+
+      <aside style="position:sticky;top:86px;display:flex;flex-direction:column;gap:16px;min-width:0">
+        <div style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px 16px 14px">
+          <span style="display:inline-flex;align-items:center;gap:8px;color:var(--tag);font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:0 2px"><span style="width:7px;height:7px;border-radius:50%;background:var(--amber)"></span>Destacados en Waldo</span>
+          <div style="display:flex;flex-direction:column;margin-top:10px">
+            <sc-for list="{{ aSideItems }}" as="it" hint-placeholder-count="4">
+              <a onClick="{{ it.onOpen }}" style="display:flex;gap:12px;align-items:center;padding:11px 6px;border-radius:8px;cursor:pointer;text-decoration:none;border-top:1px solid var(--line);transition:background .14s" style-hover="background:var(--cream)">
+                <span style="flex:none;width:62px;height:62px;border-radius:7px;overflow:hidden;background:#F6F4F1;display:block">{{ it.media }}</span>
+                <span style="display:flex;flex-direction:column;gap:4px;min-width:0">
+                  <span style="display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:{{ it.catColor }}"><span style="width:6px;height:6px;border-radius:50%;background:{{ it.dotColor }};flex:none"></span>{{ it.cat }}</span>
+                  <span style="font-family:'Poppins',sans-serif;font-weight:600;color:var(--ink);font-size:13.5px;line-height:1.25;letter-spacing:-.1px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ it.title }}</span>
+                  <span style="font-family:'Poppins',sans-serif;font-weight:700;color:var(--ink);font-size:14px">{{ it.priceLabel }}</span>
+                </span>
+              </a>
+            </sc-for>
+          </div>
+          <a onClick="{{ goAnuncios }}" style="display:flex;align-items:center;justify-content:center;gap:7px;margin-top:12px;text-decoration:none;cursor:pointer;font-weight:600;font-size:13.5px;color:var(--ink);border:1px solid var(--line);padding:10px;border-radius:6px" style-hover="border-color:#26252B">Ver todos los avisos<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#26252B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </div>
+
+        <div style="background:#26252B;border-radius:10px;padding:20px 18px">
+          <h4 style="font-family:'Poppins',sans-serif;font-weight:800;color:#fff;font-size:17px;letter-spacing:-.2px;margin:0">¿Vendes equipos?</h4>
+          <p style="margin:7px 0 14px;font-size:13.5px;line-height:1.5;color:#C9C5CC">Publica tu aviso y llega a compradores de todo Chile. Los primeros 3 son gratis.</p>
+          <a onClick="{{ goPublicar }}" style="display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;cursor:pointer;font-weight:700;font-size:14px;color:#26252B;background:var(--amber);padding:11px;border-radius:6px" style-hover="background:var(--amberH)">Publicar aviso<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#26252B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </div>
+      </aside>
+    </div>
+
+    <section class="vsec" style="background:var(--cream);border-top:1px solid var(--line);padding:56px 0 72px;margin-top:48px">
+      <div class="wrap" style="max-width:1200px;margin:0 auto;padding:0 32px">
+        <h2 style="font-family:'Poppins',sans-serif;font-weight:800;color:var(--ink);font-size:26px;letter-spacing:-.4px;margin:0 0 26px">Sigue leyendo</h2>
+        <div class="g3" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px">
+          <sc-for list="{{ aRelated }}" as="b" hint-placeholder-count="3">
+            <dc-import name="BlogCard" article="{{ b.article }}" on-open="{{ b.onOpen }}" hint-size="100%,320px" style="display:block"></dc-import>
+          </sc-for>
+        </div>
+      </div>
+    </section>
+  </div>
