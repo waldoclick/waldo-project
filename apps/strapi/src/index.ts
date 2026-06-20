@@ -115,5 +115,44 @@ export default {
     } catch (error) {
       console.error("Error granting stats permissions:", error);
     }
+
+    // Grant the PUBLIC role read access to blog-category. The route is auth:false,
+    // but Strapi v5 sanitizes POPULATED relations by the related type's role
+    // permissions — without this, article.blog_categories is stripped from the
+    // (public, proxy) article responses. Idempotent.
+    try {
+      const blogCatActions = [
+        "api::blog-category.blog-category.find",
+        "api::blog-category.blog-category.findOne",
+      ];
+      const publicRole = await strapi.db
+        .query("plugin::users-permissions.role")
+        .findOne({
+          where: { type: "public" },
+          populate: ["permissions"],
+        });
+
+      if (publicRole) {
+        const existing = new Set(
+          (publicRole.permissions as Array<{ action: string }>).map(
+            (p) => p.action,
+          ),
+        );
+        let created = 0;
+        for (const uid of blogCatActions) {
+          if (!existing.has(uid)) {
+            await strapi.db
+              .query("plugin::users-permissions.permission")
+              .create({ data: { action: uid, role: publicRole.id } });
+            created++;
+          }
+        }
+        console.log(
+          `blog-category public permissions grant: ${created} created`,
+        );
+      }
+    } catch (error) {
+      console.error("Error granting blog-category permissions:", error);
+    }
   },
 };
