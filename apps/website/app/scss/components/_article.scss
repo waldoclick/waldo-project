@@ -1,4 +1,3 @@
-@use "sass:color";
 @use "../abstracts/mixins" as *;
 @use "../abstracts/variables" as *;
 @use "../base/container";
@@ -145,91 +144,275 @@
   }
 
   &--single {
-    &__container {
-      @extend .container;
-      display: flex;
-      gap: 30px;
+    // ── Breadcrumb bar ──
+    &__breadcrumb {
+      padding: 94px 0 6px;
 
-      @include screen-large {
-        flex-direction: column-reverse;
+      @include screen-small {
+        padding: 80px 0 6px;
       }
-    }
 
-    &__body {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 30px;
-
-      &__description {
+      &__inner {
+        @extend .container;
         display: flex;
-        flex-direction: column;
-        gap: 10px;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
 
-        &__text {
-          font-size: 16px;
-          line-height: 26px;
-          letter-spacing: 0.25px;
-          color: $charcoal;
+      &__nav {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        font-size: 13.5px;
+        color: $muted;
+        flex-wrap: wrap;
 
-          p {
-            margin-bottom: 1em;
+        &__link {
+          color: $muted;
+          text-decoration: none;
+          transition: color 0.15s ease;
 
-            &:last-child {
-              margin-bottom: 0;
-            }
+          &:hover {
+            color: $ink;
           }
+        }
 
-          h2,
-          h3,
-          h4 {
-            margin-top: 1.5em;
-            margin-bottom: 0.5em;
-            font-weight: 700;
-          }
+        &__sep {
+          color: $placeholder;
+          flex: none;
+        }
 
-          ul,
-          ol {
-            margin-bottom: 1em;
-            padding-left: 1.5em;
-          }
+        &__current {
+          color: $ink;
+          font-weight: 600;
+        }
+      }
 
-          li {
-            margin-bottom: 0.25em;
-          }
+      &__back {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 13.5px;
+        color: $ink2;
+        transition: color 0.15s ease;
 
-          blockquote {
-            margin: 1em 0;
-            padding-left: 1em;
-            border-left: 3px solid $gainsboro;
-            color: color.adjust($charcoal, $lightness: 20%);
-          }
+        &:hover {
+          color: $ink;
         }
       }
     }
 
-    &__sidebar {
-      width: 350px;
-      flex-shrink: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 30px;
+    // ── Grid layout ──
+    &__layout {
+      padding: 20px 0 76px;
+    }
+
+    &__grid {
+      @extend .container;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 308px;
+      gap: 56px;
+      align-items: start;
 
       @include screen-large {
-        flex-direction: column;
-        width: auto;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 40px;
+      }
+    }
+
+    // ── Article column ──
+    &__main {
+      min-width: 0;
+      max-width: 720px;
+
+      &__badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: $cream;
+        border: 1px solid $line;
+        font-weight: 700;
+        font-size: 11.5px;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        padding: 5px 12px;
+        border-radius: 4px;
+
+        &__dot {
+          width: 7px;
+          height: 7px;
+          border-radius: 50%;
+          flex: none;
+        }
       }
 
-      &__categories {
-        padding: 20px;
-        border-radius: 4px;
-        border: 1px solid $gainsboro;
+      &__title {
+        font-family: "Poppins", sans-serif;
+        font-weight: 800;
+        color: $ink;
+        font-size: clamp(30px, 3.2vw, 40px);
+        letter-spacing: -0.6px;
+        line-height: 1.14;
+        margin: 16px 0 0;
+        text-wrap: balance;
       }
 
-      &__share {
-        padding: 20px;
-        border-radius: 4px;
-        border: 1px solid $gainsboro;
+      &__excerpt {
+        font-size: 18.5px;
+        line-height: 1.55;
+        color: $ink2;
+        margin: 16px 0 0;
+        text-wrap: pretty;
+      }
+
+      &__meta {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        margin-top: 22px;
+        padding-bottom: 26px;
+        border-bottom: 1px solid $line;
+        font-size: 13.5px;
+        color: $muted;
+        font-weight: 500;
+        flex-wrap: wrap;
+
+        &__author {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+
+          &__avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: $amber;
+            color: $ink;
+            display: grid;
+            place-items: center;
+            font-family: "Poppins", sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+          }
+
+          &__name {
+            color: $ink2;
+            font-weight: 600;
+          }
+        }
+
+        &__sep {
+          width: 3px;
+          height: 3px;
+          border-radius: 50%;
+          background: $silver;
+          flex: none;
+        }
+
+        &__read {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+
+          &__icon {
+            color: $muted;
+            flex: none;
+          }
+        }
+      }
+
+      &__cover {
+        margin-top: 28px;
+        border-radius: 10px;
+        overflow: hidden;
+        aspect-ratio: 16 / 9;
+        background: $cream;
+        border: 1px solid $line;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+        }
+      }
+    }
+
+    // ── Article body (markdown prose) ──
+    &__body {
+      margin-top: 30px;
+
+      &__text {
+        font-size: 17px;
+        line-height: 1.72;
+        color: $ink2;
+
+        p {
+          margin: 0 0 1em;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+
+        h2 {
+          font-family: "Poppins", sans-serif;
+          font-weight: 700;
+          color: $ink;
+          font-size: 22px;
+          letter-spacing: -0.3px;
+          line-height: 1.3;
+          margin: 24px 0 4px;
+        }
+
+        h3,
+        h4 {
+          font-family: "Poppins", sans-serif;
+          font-weight: 700;
+          color: $ink;
+          margin: 20px 0 4px;
+        }
+
+        ul,
+        ol {
+          margin-bottom: 1em;
+          padding-left: 1.5em;
+        }
+
+        li {
+          margin-bottom: 0.35em;
+        }
+
+        blockquote {
+          margin: 1em 0;
+          padding-left: 1em;
+          border-left: 3px solid $line;
+          color: $muted;
+        }
+
+        a {
+          color: $tag;
+          text-decoration: underline;
+          text-underline-offset: 2px;
+        }
+      }
+    }
+
+    // ── Sticky aside (filled in Task 4) ──
+    &__aside {
+      position: sticky;
+      top: 86px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      min-width: 0;
+
+      @include screen-large {
+        position: static;
       }
     }
   }
