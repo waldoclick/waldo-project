@@ -3,28 +3,12 @@
     <HeaderDefault />
     <MobileBar />
 
-    <section v-if="title" class="layout--about__header">
-      <span class="layout--about__header__glow" aria-hidden="true"></span>
-      <div class="layout--about__header__inner">
-        <nav
-          class="layout--about__header__crumbs"
-          aria-label="Ruta de navegación"
-        >
-          <nuxt-link to="/" class="layout--about__header__crumbs__home"
-            >Waldo</nuxt-link
-          >
-          <ChevronRight
-            class="layout--about__header__crumbs__sep"
-            aria-hidden="true"
-          />
-          <span class="layout--about__header__crumbs__current">{{
-            title
-          }}</span>
-        </nav>
-        <h1 class="layout--about__header__title">{{ title }}</h1>
-        <p v-if="intro" class="layout--about__header__intro">{{ intro }}</p>
-      </div>
-    </section>
+    <HeroDefault
+      v-if="title"
+      :breadcrumbs="[{ label: title }]"
+      :title="title"
+      :subtitle="intro"
+    />
 
     <section class="layout--about__container">
       <aside class="layout--about__sidebar">
@@ -48,10 +32,9 @@
 </template>
 
 <script setup lang="ts">
-import { ChevronRight } from "lucide-vue-next";
-
 import HeaderDefault from "@/components/HeaderDefault.vue";
 import MobileBar from "@/components/MobileBar.vue";
+import HeroDefault from "@/components/HeroDefault.vue";
 import MenuAbout from "@/components/MenuAbout.vue";
 import WhyCta from "@/components/WhyCta.vue";
 import FooterDefault from "@/components/FooterDefault.vue";
