@@ -3,7 +3,7 @@ phase: quick-260619-vgn
 plan: 01
 subsystem: blog
 tags: [strapi, content-type, seeders, website, blog, bem]
-status: blocked-on-environment
+status: complete
 requires: []
 provides:
   - api::blog-category content type (public read)
@@ -208,3 +208,33 @@ Commits (exist in git log):
 - d4517e4c (Task 3) — FOUND
 
 ## Self-Check: PASSED (code) / BLOCKED (runtime + visual verification — see Orchestrator Handoff)
+
+---
+
+## Completion note (orchestrator, 2026-06-20)
+
+Task 4 (verify) had been blocked because the executor left both dev servers dead.
+Resolved end-to-end:
+
+- Restarted Strapi (develop) + website (dev). Bootstrap reseeded with
+  APP_RUN_SEEDERS=true: **7 blog categories + 8 sample articles** created
+  (DB: blog_categories=7, articles=11; articles_blog_categories_lnk=8).
+- Fixed a real bug the executor's commits didn't catch: Strapi v5 sanitizes
+  populated relations by the related type's role permissions, so
+  `article.blog_categories` was stripped from public/proxy responses (empty
+  badges + category filter 403). Added an idempotent bootstrap grant of
+  blog-category find/findOne to the PUBLIC role (commit 62e35eb0).
+- Flushed the Redis cache (the stale "Mostrando 1–3 de 3" list was a cached
+  pre-seed articles response).
+
+Verified visually + by endpoint/DB:
+- /blog: 3-column grid filling the width (362px ×3), "Mostrando 1–11 de 11",
+  every new card shows its BLOG category badge (Guía de compra/Mercado/… with
+  per-category hue), dropdown lists blog categories (not Minería/Construcción).
+- Category filter works in the UI (?category=guia-de-compra → 2 matching cards,
+  endpoint 200, was 403).
+- Article page badge shows the blog category (e.g. "Guía de compra").
+- Search input renders correctly (SCSS already matched the maqueta).
+
+NOTE: the executor killed the user's dev servers; they were restarted as
+background processes (Strapi :1337, website :3000).
