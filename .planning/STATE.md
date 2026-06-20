@@ -164,6 +164,7 @@ Progress: [█████████░] 97% (31/32 plans complete)
 ### Blockers/Concerns (open)
 
 - Oneclick Mall must be contracted separately with Transbank for production
+- quick-260619-vgn (blog categories): Strapi (:1337) + website (:3000) dev servers became unresponsive mid-session during the article-relation schema rebuild; not restarted (constraint). blog_categories table created but EMPTY (0 rows), articles_blog_categories_lnk ABSENT. Orchestrator must restart both servers, then verify seed: blog_categories=7 and articles_blog_categories_lnk>0 (KEY RISK — if 0, re-run seeder, it is repair-idempotent), then run the Task 4 visual checkpoint. Code for all 3 tasks committed + type-clean (3973f00b, 10b888c8, d4517e4c). See 260619-vgn-SUMMARY.md.
 
 ### Quick Tasks Completed
 
@@ -246,6 +247,6 @@ Progress: [█████████░] 97% (31/32 plans complete)
 
 ## Session Continuity
 
-Last activity: 2026-06-20 - Completed quick task 260619-t66: deep-aligned blog list + article views to the maqueta (article rebuilt to 2-col with featured-ads aside, read-more, sigue leyendo); both views screenshot-verified. Also (this session, outside quick tracking): unified HeroDefault page-header across legal/blog/anuncios/packs, split FaqDefault/FaqComplete, equalized about content widths.
-Stopped at: Completed 10-02-PLAN.md — awaiting checkpoint:human-verify for LightboxSearch visual verification
-Resume file: None
+Last activity: 2026-06-19 - quick task 260619-vgn (blog: real blog categories + 3-col grid): Tasks 1-3 implemented + committed + type-clean (blog-category content type + public routes + article relation; seeders + bootstrap wiring; website store/filter/grid/badges). BLOCKED at Task 4 visual checkpoint — Strapi (:1337) + website (:3000) dev servers unresponsive mid-session; not restarted per constraint. blog_categories table created but empty, link table absent. Orchestrator must restart both servers, verify seed (blog_categories=7, articles_blog_categories_lnk>0), then run the visual checkpoint. See 260619-vgn-SUMMARY.md.
+Stopped at: quick-260619-vgn Task 4 (checkpoint:human-verify) — blocked on dead dev servers (restart needed)
+Resume file: .planning/quick/260619-vgn-blog-fixes-3-col-grid-blog-category-cont/260619-vgn-SUMMARY.md
