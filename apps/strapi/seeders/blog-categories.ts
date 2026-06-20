@@ -17,9 +17,7 @@ const blogCategoriesData = [
 const populateBlogCategories = async (strapi: Core.Strapi): Promise<void> => {
   console.log("Poblando categorías de blog...");
 
-  console.log(
-    `Procesando ${blogCategoriesData.length} categorías de blog...`,
-  );
+  console.log(`Procesando ${blogCategoriesData.length} categorías de blog...`);
 
   for (const category of blogCategoriesData) {
     try {
