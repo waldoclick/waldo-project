@@ -1,14 +1,20 @@
 <template>
   <div class="page">
     <HeaderDefault />
-    <HeroResults
-      :bg-color="categoryData?.color || ''"
-      :color="categoryData?.color || ''"
+    <HeroDefault
+      :breadcrumbs="heroBreadcrumbs"
       :title="categoryData?.name || 'Anuncios'"
-      :category-icon="categoryIconComponent"
-      :sub="heroSub"
-      :categories="filterStore.filterCategories as FilterCategory[]"
-    />
+      :title-icon="categoryIconComponent"
+      :title-icon-bg="categoryData?.color || undefined"
+      :bg-color="heroBg"
+      :subtitle="heroSub"
+    >
+      <template #actions>
+        <SearchDefault
+          :categories="filterStore.filterCategories as FilterCategory[]"
+        />
+      </template>
+    </HeroDefault>
     <section class="listing listing--anuncios">
       <div class="listing--anuncios__container">
         <FilterSidebar />
@@ -69,10 +75,12 @@ import { useCategoriesStore } from "@/stores/categories.store";
 import { useAdsStore } from "@/stores/ads.store";
 import { useFilterStore } from "@/stores/filter.store";
 import { useIcons } from "@/composables/useIcons";
+import { useColor } from "@/composables/useColor";
 
 // components
 import HeaderDefault from "@/components/HeaderDefault.vue";
-import HeroResults from "@/components/HeroResults.vue";
+import HeroDefault from "@/components/HeroDefault.vue";
+import SearchDefault from "@/components/SearchDefault.vue";
 import FilterSidebar from "@/components/FilterSidebar.vue";
 import FilterResults from "@/components/FilterResults.vue";
 import AdArchive from "@/components/AdArchive.vue";
@@ -110,6 +118,22 @@ const heroSub = computed(() =>
     ? `${categoryData.value.name} publicados en Waldo.click.`
     : "Explora equipos, vehículos, repuestos e insumos de toda la industria.",
 );
+
+// Hero background tinted with the selected category color (cream when none)
+const { bgColorWithTransparency } = useColor();
+const heroBg = computed(() =>
+  categoryData.value?.color
+    ? bgColorWithTransparency(categoryData.value.color)
+    : undefined,
+);
+
+// Breadcrumb trail: Anuncios › [category] (the Hero prepends "Waldo")
+const heroBreadcrumbs = computed(() => {
+  const name = categoryData.value?.name;
+  return name
+    ? [{ label: "Anuncios", to: "/anuncios" }, { label: name }]
+    : [{ label: "Anuncios" }];
+});
 
 // Carga de categoría separada — key estable por slug, independiente del resto de filtros
 // Solo muestra datos de hero (color, nombre) cuando hay exactamente una categoría seleccionada

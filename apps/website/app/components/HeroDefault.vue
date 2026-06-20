@@ -26,7 +26,11 @@
 
       <div class="hero--default__row">
         <div class="hero--default__head">
-          <span v-if="titleIcon" class="hero--default__head__icon">
+          <span
+            v-if="titleIcon"
+            class="hero--default__head__icon"
+            :style="titleIconBg ? { backgroundColor: titleIconBg } : {}"
+          >
             <component :is="titleIcon" :size="26" />
           </span>
           <h1 class="hero--default__title">
@@ -59,6 +63,8 @@ const props = defineProps<{
   subtitle?: string;
   /** Optional Lucide icon component rendered before the title. */
   titleIcon?: Component;
+  /** Background color for the title icon box (e.g. category color). */
+  titleIconBg?: string;
   /** Override the cream background (e.g. category color on /anuncios). */
   bgColor?: string;
 }>();

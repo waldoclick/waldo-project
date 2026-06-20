@@ -389,114 +389,6 @@
     }
   }
 
-  &--results {
-    background-color: var(--hero-bg-color, #ffffff);
-    border-bottom: 1px solid $line;
-    padding-top: 104px;
-    padding-bottom: 34px;
-
-    @include screen-medium {
-      padding-top: 96px;
-    }
-
-    &__container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding-left: 32px;
-      padding-right: 32px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-
-      @include screen-small {
-        padding-left: 18px;
-        padding-right: 18px;
-      }
-    }
-
-    &__breadcrumbs {
-      .breadcrumbs__link {
-        color: $muted;
-        text-decoration: none;
-        font-size: 13.5px;
-
-        &:hover {
-          color: $ink;
-        }
-      }
-
-      .breadcrumbs__text {
-        color: $ink;
-        font-weight: 600;
-        font-size: 13.5px;
-      }
-
-      .breadcrumbs__separator,
-      .breadcrumbs__home-icon {
-        color: $muted;
-      }
-
-      .breadcrumbs__home-text {
-        color: $muted;
-      }
-    }
-
-    &__title {
-      .title--category {
-        gap: 16px;
-        align-items: center;
-      }
-
-      .title--category__icon {
-        flex: none;
-        width: 58px;
-        height: 58px;
-        margin-right: 0;
-        border: none;
-        box-shadow: none;
-        border-radius: 4px;
-        background: var(--category-icon-bg-color, $ink);
-
-        .icon-category {
-          color: $white;
-        }
-      }
-
-      .title--category__text {
-        font-family: "Poppins", sans-serif;
-        font-weight: 800;
-        font-size: 40px;
-        letter-spacing: -0.8px;
-        line-height: 1;
-        color: $ink;
-
-        @include screen-medium {
-          font-size: 30px;
-        }
-      }
-    }
-
-    &__row {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 28px;
-      flex-wrap: wrap;
-    }
-
-    &__search {
-      min-width: min(540px, 100%);
-      flex-shrink: 0;
-    }
-
-    &__sub {
-      margin: 10px 0 0;
-      font-size: 15px;
-      color: $ink2;
-      line-height: 1.5;
-    }
-  }
-
   &--announcement {
     padding-top: 0;
     padding-bottom: 0;
@@ -736,10 +628,12 @@
     }
 
     &__actions {
-      flex: 1 1 auto;
       min-width: min(540px, 100%);
-      display: flex;
-      justify-content: flex-end;
+      flex-shrink: 0;
+
+      > * {
+        width: 100%;
+      }
     }
 
     &__subtitle {
