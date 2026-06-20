@@ -26,7 +26,7 @@
       <div
         v-if="articles && articles.length > 0"
         class="article--archive__list"
-        :class="{ 'article--archive__list--blog': blogSection }"
+        :class="{ 'article--archive__list--blog': blogSection || gridBlog }"
       >
         <CardArticle
           v-for="article in articles"
@@ -74,6 +74,7 @@ const props = defineProps<{
   articles: Article[];
   pagination: Pagination;
   blogSection?: boolean;
+  gridBlog?: boolean;
 }>();
 
 const rangeText = computed(() => {

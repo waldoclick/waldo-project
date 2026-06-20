@@ -264,7 +264,12 @@ const { transformUrl } = useImageProxy();
 // Collapsed by default so SSR and hydration both render the same (no mismatch).
 const expanded = ref(false);
 
-const categoryName = computed(() => props.article.categories?.[0]?.name || "");
+const categoryName = computed(
+  () =>
+    props.article.blog_categories?.[0]?.name ||
+    props.article.categories?.[0]?.name ||
+    "",
+);
 const hue = computed(() => getCategoryHue(categoryName.value));
 
 const hasCover = computed(() => {

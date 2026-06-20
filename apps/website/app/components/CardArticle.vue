@@ -96,11 +96,11 @@ const coverImage = computed(() => {
 });
 
 const categoryName = computed(() => {
-  const categories = props.article.categories;
-  if (categories && categories.length > 0) {
-    return categories[0]?.name || "";
-  }
-  return "";
+  return (
+    props.article.blog_categories?.[0]?.name ||
+    props.article.categories?.[0]?.name ||
+    ""
+  );
 });
 
 const hue = computed(() => getCategoryHue(categoryName.value));

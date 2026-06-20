@@ -71,7 +71,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import type { Category } from "@/types/category";
+import type { BlogCategory } from "@/types/blog-category";
 import {
   AlignLeft as IconList,
   ChevronDown as IconChevron,
@@ -80,7 +80,7 @@ import {
 } from "lucide-vue-next";
 
 const props = defineProps<{
-  categories: Category[];
+  categories: BlogCategory[];
 }>();
 
 const route = useRoute();

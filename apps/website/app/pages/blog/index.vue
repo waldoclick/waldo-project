@@ -21,6 +21,7 @@
       v-if="blogData && blogData.articles && blogData.articles.length > 0"
       :articles="blogData.articles"
       :pagination="blogData.pagination"
+      :grid-blog="true"
     />
     <MessageDefault
       v-if="blogData && blogData.articles && blogData.articles.length === 0"
@@ -66,7 +67,7 @@ const config = useRuntimeConfig();
 
 import { watch } from "vue";
 import { useRoute } from "nuxt/app";
-import { useCategoriesStore } from "@/stores/categories.store";
+import { useBlogCategoriesStore } from "@/stores/blog-categories.store";
 import { useArticlesStore } from "@/stores/articles.store";
 
 import { BookOpen as IconBook } from "lucide-vue-next";
@@ -82,13 +83,13 @@ import MessageDefault from "@/components/MessageDefault.vue";
 
 // Types
 import type { Article } from "@/types/article";
-import type { Category } from "@/types/category";
+import type { BlogCategory } from "@/types/blog-category";
 import type { Pagination } from "@/types/pagination";
 
 interface BlogData {
   articles: Article[];
   pagination: Pagination;
-  categories: Category[];
+  categories: BlogCategory[];
   relatedArticles: Article[];
   relatedLoading: boolean;
   relatedError: string | null;
@@ -100,10 +101,10 @@ const { data: blogData } = await useAsyncData<BlogData>(
   () =>
     `blog-${route.query.category || "all"}-${route.query.page || "1"}-${route.query.q || ""}`,
   async () => {
-    const categoriesStore = useCategoriesStore();
+    const blogCategoriesStore = useBlogCategoriesStore();
     const articlesStore = useArticlesStore();
 
-    await categoriesStore.loadCategories();
+    await blogCategoriesStore.loadBlogCategories();
     articlesStore.reset();
 
     const category = route.query.category?.toString() || null;
@@ -113,7 +114,7 @@ const { data: blogData } = await useAsyncData<BlogData>(
     const sortParams = ["createdAt:desc"];
 
     const filtersParams: Record<string, unknown> = {
-      ...(category && { categories: { slug: { $eq: category } } }),
+      ...(category && { blog_categories: { slug: { $eq: category } } }),
       ...(query && {
         $or: [
           { title: { $containsi: query } },
@@ -150,7 +151,7 @@ const { data: blogData } = await useAsyncData<BlogData>(
     return {
       articles: mainArticles,
       pagination: mainPagination,
-      categories: categoriesStore.categories,
+      categories: blogCategoriesStore.categories,
       relatedArticles,
       relatedLoading,
       relatedError,

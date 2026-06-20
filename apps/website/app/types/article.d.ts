@@ -1,4 +1,5 @@
 import type { Category } from "@/types/category";
+import type { BlogCategory } from "@/types/blog-category";
 import type { Media, GalleryItem } from "@/types/ad";
 
 export interface Article {
@@ -11,6 +12,7 @@ export interface Article {
   cover: Media[];
   gallery: GalleryItem[];
   categories: Category[];
+  blog_categories: BlogCategory[];
   seo_title: string | null;
   seo_description: string | null;
   source_url: string | null;
