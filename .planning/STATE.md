@@ -24,18 +24,21 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 
 ## Position
 
-Phase 03 (validacion-ia-de-campos-de-texto-libre-en-el-registro) — COMPLETE (2/2 plans). Plan 03-02 complete: AI validation gate wired into `registerUserLocal` — validates `firstname` and `lastname` via `validateFields` before user creation; explicit `false` rejects with Spanish per-field message (`FIELD_REJECTION_MESSAGES`); any AI failure is fail-open (end-to-end proven by Test E sibling file). 46/46 Jest tests green in authController.test.ts; Strapi tsc clean; website vue-tsc clean.
+Phase 04 (split-legal-pages-into-4-documents-with-dashboard-management) — IN PROGRESS (1/9 plans). Plan 04-08 complete (parallel wave 1, independent of 04-01–04-07/04-09): renamed `/condiciones-de-uso` → `/terminos-y-condiciones-de-uso` via `git mv`; 301 redirect added in `nuxt.config.ts` routeRules; `RESERVED_USERNAMES` synced in both `apps/website` and `apps/strapi` (kept old slug, added 3 new); all 8 reference-point files updated (FormRegister, FormTerms, LightboxCookies, MenuAbout, MenuFooter, TermsDefault, sitemap, page's own SEO block); `LightboxCookies.vue` now points to `/politicas-de-cookies`. `vue-tsc` could not be run in this worktree (no `node_modules` present) — flagged, not fabricated as passing. See `04-08-SUMMARY.md`.
 
-(Prior: Phase 03 plan 03-01 complete — `field-validation` service with `validateFields(fields)`. Phase 02 plan 02-01 complete — ai-provider orchestrator. Phase 01 complete — Codacy security/best-practice issues.)
+(Prior: Phase 03 COMPLETE (2/2 plans) — AI validation gate wired into `registerUserLocal`. Phase 02 plan 02-01 complete — ai-provider orchestrator. Phase 01 complete — Codacy security/best-practice issues.)
 
 ```
-Progress: [████████░░] 82% (phase 03: 2/2 plans complete)
+Progress: [████████░░] 82% (phase 03: 2/2 plans complete; phase 04: 1/9 plans in progress)
 ```
 
 ## Accumulated Context
 
 ### Key Decisions (carry forward)
 
+- Kept `condiciones-de-uso` in `RESERVED_USERNAMES` (both apps) after the rename — protects the old redirect-source slug from being claimed as a username; added `terminos-y-condiciones-de-uso`, `politicas-de-cookies`, `politicas-de-seguridad` alongside it (04-08)
+- `LightboxCookies.vue` link target changed from `/politicas-de-privacidad` to `/politicas-de-cookies`, and its body prose updated in the same edit to reference "Política de Cookies" — avoids a link/prose mismatch (04-08)
+- No new nav entries added to `MenuAbout.vue`/`MenuFooter.vue` for the not-yet-existing Cookies/Seguridad pages — 04-08's scope was rename-only per plan; those additions belong to sibling plans 04-01–04-07 (04-08)
 - Sibling test file for end-to-end real-service tests: when jest.mock hoisting in primary test file conflicts with a test that needs the real module, create a dedicated sibling file — not conditional (03-02)
 - fieldsToValidate built with presence guards (if firstname / if lastname) — blank/undefined inputs never sent to AI; gate is NO-OP for empty values (03-02)
 - FIELD_REJECTION_MESSAGES fallback message ("Algunos datos no parecen válidos") guards against future field keys not yet in the map (03-02)
