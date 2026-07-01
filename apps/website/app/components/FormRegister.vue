@@ -179,9 +179,9 @@
             :unchecked-value="false"
           />
           <label class="form-check-label" for="accepted_usage_terms">
-            Acepto las
-            <NuxtLink to="/condiciones-de-uso" target="_blank"
-              >condiciones de uso</NuxtLink
+            Acepto los
+            <NuxtLink to="/terminos-y-condiciones-de-uso" target="_blank"
+              >Términos y Condiciones de Uso</NuxtLink
             >
           </label>
         </div>
@@ -316,8 +316,8 @@ const getSchema = () => {
           .required("Debes aceptar las políticas de privacidad"),
         accepted_usage_terms: yup
           .boolean()
-          .oneOf([true], "Debes aceptar las condiciones de uso")
-          .required("Debes aceptar las condiciones de uso"),
+          .oneOf([true], "Debes aceptar los términos y condiciones de uso")
+          .required("Debes aceptar los términos y condiciones de uso"),
       });
 };
 
