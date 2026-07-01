@@ -6,6 +6,8 @@ import populateRegions from "../seeders/regions";
 import populateAdDraftMigration from "../seeders/ad-draft-migration";
 import populatePolicies from "../seeders/policies";
 import populateTerms from "../seeders/terms";
+import populateCookiePolicies from "../seeders/cookie-policies";
+import populateSecurityPolicies from "../seeders/security-policies";
 import { recalculateSortPriorities } from "./api/ad/services/ad";
 
 export default {
@@ -42,6 +44,8 @@ export default {
         await populateAdDraftMigration(strapi);
         await populatePolicies(strapi);
         await populateTerms(strapi);
+        await populateCookiePolicies(strapi);
+        await populateSecurityPolicies(strapi);
         console.log("✅ Seeders completados exitosamente");
       } catch (error) {
         console.error("❌ Error ejecutando seeders:", error);
