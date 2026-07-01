@@ -9,8 +9,8 @@ progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 20
-  completed_plans: 10
-  percent: 50
+  completed_plans: 11
+  percent: 55
 ---
 
 # Session State
@@ -24,12 +24,12 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 
 ## Position
 
-Phase 04 (split-legal-pages-into-4-documents-with-dashboard-management) — IN PROGRESS (1/9 plans). Plan 04-01 complete: two new Strapi v5 content-type quadruplets (`api::cookie-policy.cookie-policy`, `api::security-policy.security-policy`) replicated byte-for-byte from the `term`/`policy` pattern — schema (title/text/order), hand-rolled controller (find/findOne/create/update/delete/reorder), core router, custom `POST /{plural}/reorder` route, pass-through service. Zero new tsc errors introduced (pre-existing unrelated errors in upload.ts/ia.ts confirmed untouched). Remaining plans in phase 04: 04-02 (seeder split + new seeders), 04-08 (URL rename), 04-03 (frontend types/stores), 04-04 (public pages), 04-05/04-06 (dashboard CRUD), 04-07 (nav), 04-09 (manual permission grant + verification).
+Phase 04 (split-legal-pages-into-4-documents-with-dashboard-management) — IN PROGRESS (2/9 plans). Plan 04-01 complete: two new Strapi v5 content-type quadruplets (`api::cookie-policy.cookie-policy`, `api::security-policy.security-policy`) replicated byte-for-byte from the `term`/`policy` pattern — schema (title/text/order), hand-rolled controller (find/findOne/create/update/delete/reorder), core router, custom `POST /{plural}/reorder` route, pass-through service. Plan 04-02 complete: split `apps/strapi/seeders/policies.ts` (was 53 mislabeled rows spanning 3 documents) into 4 correct, non-overlapping seeders — `terms.ts` (27 rows, reworded), `policies.ts` (20 Privacidad-only rows, reworded), new `cookie-policies.ts` (13 rows), new `security-policies.ts` (19 rows) — all sourced 1:1 from their humanized `docs/*.md` files and wired into `src/index.ts` bootstrap. Zero new tsc errors from either plan (pre-existing unrelated errors in upload.ts/ia.ts confirmed untouched/predating). Remaining plans in phase 04: 04-08 (URL rename), 04-03 (frontend types/stores), 04-04 (public pages), 04-05/04-06 (dashboard CRUD), 04-07 (nav), 04-09 (manual permission grant + verification).
 
 (Prior: Phase 03 COMPLETE (2/2 plans) — AI validation gate wired into `registerUserLocal`. Phase 02 plan 02-01 complete — ai-provider orchestrator. Phase 01 complete — Codacy security/best-practice issues.)
 
 ```
-Progress: [█████░░░░░] 50% (phase 04: 1/9 plans complete)
+Progress: [█████░░░░░] 50% (phase 04: 2/9 plans complete)
 ```
 
 ## Accumulated Context
@@ -38,6 +38,9 @@ Progress: [█████░░░░░] 50% (phase 04: 1/9 plans complete)
 
 - API ids `cookie-policy`/`security-policy` (not bare `cookie`/`security`) for the 2 new legal content-types — avoids collision with existing cookie-consent code (`LightboxCookies.vue`, `$cookies` plugin) and the unrelated `condition` (ad item-condition) content-type (04-01)
 - New content-type controllers replicate `term.ts` byte-for-byte apart from UID string substitution and local variable renames (`term`→`cookiePolicy`/`securityPolicy`) — no logic deviation (04-01)
+- cookie-policies.ts uses 13 rows (1:1 with docs/politica-de-cookies.md's 13 `##` headings), not 14 — old mixed policiesData array's intro/definition split has no MD equivalent, per RESEARCH.md's explicit resolution (04-02)
+- Cross-document markdown links converted to live site routes when rewording seeders: terms.ts -> /politicas-de-privacidad, policies.ts -> /politicas-de-cookies (04-02)
+- strapi.db.query() UID argument is not a compile-time-checked union in this codebase — new content-type seeders (cookie-policy/security-policy) type-check cleanly even before Plan 01's schemas exist locally (04-02)
 - Sibling test file for end-to-end real-service tests: when jest.mock hoisting in primary test file conflicts with a test that needs the real module, create a dedicated sibling file — not conditional (03-02)
 - fieldsToValidate built with presence guards (if firstname / if lastname) — blank/undefined inputs never sent to AI; gate is NO-OP for empty values (03-02)
 - FIELD_REJECTION_MESSAGES fallback message ("Algunos datos no parecen válidos") guards against future field keys not yet in the map (03-02)

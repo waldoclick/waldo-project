@@ -80,11 +80,11 @@ Plans:
 **Goal:** Split the single legal-docs surface into 4 fully independent, publicly-accessible legal documents (Términos y Condiciones de Uso, Política de Privacidad, Política de Cookies, Política de Seguridad), each with its own Strapi content-type, public page, and dashboard CRUD section with drag-and-drop reorder — replacing the current structural mislabeling where Cookies and Seguridad content is mixed into the `policy` content-type under Privacidad, and renaming `/condiciones-de-uso` to `/terminos-y-condiciones-de-uso` with a 301 redirect and updated labels everywhere.
 **Requirements**: [LEGAL-SPLIT-01, LEGAL-SPLIT-02, LEGAL-SPLIT-03, LEGAL-SPLIT-04, LEGAL-SPLIT-05, LEGAL-SPLIT-06, LEGAL-SPLIT-07, LEGAL-SPLIT-08, LEGAL-SPLIT-09, LEGAL-SPLIT-10]
 **Depends on:** Phase 3
-**Plans:** 9 plans (5 waves)
+**Plans:** 2/9 plans complete
 
 Plans:
 - [x] 04-01-PLAN.md — Wave 1: Strapi content-type quadruplets for cookie-policy and security-policy (schema/controller/routes×2/service each)
-- [ ] 04-02-PLAN.md — Wave 1: Seeder split (remove Cookies/Seguridad rows from policies.ts) + reword terms.ts/policies.ts from humanized docs + create cookie-policies.ts/security-policies.ts seeders + wire into index.ts bootstrap
+- [x] 04-02-PLAN.md — Wave 1: Seeder split (remove Cookies/Seguridad rows from policies.ts) + reword terms.ts/policies.ts from humanized docs + create cookie-policies.ts/security-policies.ts seeders + wire into index.ts bootstrap
 - [ ] 04-08-PLAN.md — Wave 1: URL rename condiciones-de-uso → terminos-y-condiciones-de-uso (git mv, 301 redirect, label updates across 8 reference-point files, RESERVED_USERNAMES sync, sitemap additions)
 - [ ] 04-03-PLAN.md — Wave 2: Frontend types (cookie-policy.d.ts, security-policy.d.ts, documentId fix on term.d.ts/policy.d.ts) + 2 new Pinia stores + mandatory 5-part settings.store.ts extension
 - [ ] 04-04-PLAN.md — Wave 3: Public pages (politicas-de-cookies.vue, politicas-de-seguridad.vue) + display components + SCSS partials
