@@ -21,8 +21,8 @@
       </NuxtLink>
     </li> -->
     <li>
-      <NuxtLink to="/condiciones-de-uso">
-        <span>Condiciones de uso</span>
+      <NuxtLink to="/terminos-y-condiciones-de-uso">
+        <span>Términos y Condiciones de Uso</span>
       </NuxtLink>
     </li>
   </ul>

@@ -25,13 +25,13 @@
       </li>
       <li class="menu--about__item">
         <nuxt-link
-          to="/condiciones-de-uso"
+          to="/terminos-y-condiciones-de-uso"
           class="menu--about__link"
-          aria-label="Leer condiciones de uso"
-          title="Leer condiciones de uso"
+          aria-label="Leer términos y condiciones de uso"
+          title="Leer términos y condiciones de uso"
         >
           <IconScrollText class="menu--about__icon" aria-hidden="true" />
-          <span>Condiciones de uso</span>
+          <span>Términos y Condiciones de Uso</span>
         </nuxt-link>
       </li>
       <li class="menu--about__item">

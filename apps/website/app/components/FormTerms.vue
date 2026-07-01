@@ -38,9 +38,9 @@
           class="form-check-input"
         />
         <label class="form-check-label" for="terms-usage-accepted">
-          Acepto las
-          <NuxtLink to="/condiciones-de-uso" target="_blank"
-            >condiciones de uso</NuxtLink
+          Acepto los
+          <NuxtLink to="/terminos-y-condiciones-de-uso" target="_blank"
+            >Términos y Condiciones de Uso</NuxtLink
           >
         </label>
       </div>

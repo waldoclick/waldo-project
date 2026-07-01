@@ -29,19 +29,19 @@ const { data: terms } = await useAsyncData(
 );
 
 $setSEO({
-  title: "Condiciones de Uso",
+  title: "Términos y Condiciones de Uso",
   description:
-    "Revisa las condiciones de uso de Waldo.click® para la publicación y compra de anuncios de activos industriales en nuestra plataforma.",
+    "Revisa los términos y condiciones de uso de Waldo.click® para la publicación y compra de anuncios de activos industriales en nuestra plataforma.",
   imageUrl: `${config.public.baseUrl}/share.jpg`,
-  url: `${config.public.baseUrl}/condiciones-de-uso`,
+  url: `${config.public.baseUrl}/terminos-y-condiciones-de-uso`,
 });
 
 $setStructuredData({
   "@context": "https://schema.org",
   "@type": "WebPage",
-  name: "Condiciones de Uso",
+  name: "Términos y Condiciones de Uso",
   description:
-    "Revisa las condiciones de uso de Waldo.click® para la publicación y compra de anuncios de activos industriales en nuestra plataforma.",
-  url: `${config.public.baseUrl}/condiciones-de-uso`,
+    "Revisa los términos y condiciones de uso de Waldo.click® para la publicación y compra de anuncios de activos industriales en nuestra plataforma.",
+  url: `${config.public.baseUrl}/terminos-y-condiciones-de-uso`,
 });
 </script>

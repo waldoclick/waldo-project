@@ -457,6 +457,10 @@ export default defineNuxtConfig({
     "/dashboard/comunas": {
       redirect: { to: "/dashboard/communes", statusCode: 301 },
     },
+    // Legal pages (condiciones-de-uso renamed to terminos-y-condiciones-de-uso)
+    "/condiciones-de-uso": {
+      redirect: { to: "/terminos-y-condiciones-de-uso", statusCode: 301 },
+    },
   },
 
   // Robots Configuration
