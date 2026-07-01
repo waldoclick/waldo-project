@@ -59,6 +59,9 @@ export const RESERVED_USERNAMES = [
   "restablecer-contrasena",
   "preguntas-frecuentes",
   "condiciones-de-uso",
+  "terminos-y-condiciones-de-uso",
   "politicas-de-privacidad",
+  "politicas-de-cookies",
+  "politicas-de-seguridad",
   "dev",
 ] as const;
