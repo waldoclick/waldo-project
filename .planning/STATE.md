@@ -3,10 +3,10 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-last_updated: "2026-06-16T00:49:45.129Z"
+last_updated: "2026-07-01T22:45:01.142Z"
 last_activity: 2026-06-16
 progress:
-  total_phases: 3
+  total_phases: 4
   completed_phases: 1
   total_plans: 11
   completed_plans: 9
@@ -133,6 +133,7 @@ Progress: [████████░░] 82% (phase 03: 2/2 plans complete)
 
 ### Roadmap Evolution
 
+- Phase 4 added: Split the single public page /condiciones-de-uso into 4 separate legal documents (Términos y Condiciones de Uso, Política de Cookies, Política de Privacidad, Política de Seguridad) on apps/website, with matching apps/dashboard admin management views (drag-and-drop ordering; only Términos y Condiciones de Uso gets a "featured/show on home" checkbox), update the registration form checkbox + lightbox to reference the new pages, and add a Strapi seeder populated from the humanized content in docs/terminos-y-condiciones.md, docs/politica-de-cookies.md, docs/politica-de-privacidad.md, docs/politica-de-seguridad.md. Needs investigation of the current /condiciones-de-uso implementation (content type, website page, dashboard, registration form) before deciding the data model.
 - Phase 1 added: Corregir los 100 issues abiertos en Codacy (90 Security/Opengrep, 9 BestPractice/ESLint, 1 UnusedCode). Analizar cada patrón para descartar falsos positivos y evaluar riesgo de regresión antes de aplicar. Snapshot completo en .planning/research/codacy-issues-snapshot-2026-06-14.md. (Numeración reiniciada en 1 tras archivar milestones v1.x.)
 - Phase 129 added: Eliminate @nuxtjs/strapi from website and fully centralize session/auth + HTTP through the proxy with an httpOnly JWT cookie. Security-first, single phase, nothing deferred. Target: httpOnly cookie client can never read → proxy injects Authorization server-side; zero direct API_URL calls (SSR goes through proxy with x-vercel-protection-bypass); useApiClient as the only HTTP client; minimal session layer replaces useStrapiUser/Token/Auth across ~60 files (incl. Google OAuth + verify-code flows); audit+centralize every direct fetch/$fetch/raw-fetch (useImage.ts, UploadMedia.vue). Reuse 109-RESEARCH.md as template. Full detail in 129-CONTEXT.md.
 - Phase 127 added: Security review round 2 — fix new vulnerabilities not covered by phase 126 (5 areas: payment integrity Webpay amount+idempotency, order/reservation/pack authorization, auth hardening Google email_verified + JWT fallback + rate-limit + reCAPTCHA binding, frontend SSR XSS + httpOnly session, email autoescape + upload validation + users PII + core-route lockdown). Findings detailed in 127-FINDINGS.md. Branch feat/127-security-review-fixes from main.
@@ -229,4 +230,4 @@ Progress: [████████░░] 82% (phase 03: 2/2 plans complete)
 ## Session Continuity
 
 Last activity: 2026-06-16
-Resume file: None
+Resume file: .planning/phases/04-split-legal-pages-into-4-documents-with-dashboard-management/04-CONTEXT.md
