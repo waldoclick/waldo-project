@@ -1,4 +1,4 @@
-export interface Term {
+export interface SecurityPolicy {
   id: number;
   documentId: string;
   title: string;
@@ -9,8 +9,8 @@ export interface Term {
   publishedAt: string | null;
 }
 
-export interface TermResponse {
-  data: Term[];
+export interface SecurityPolicyResponse {
+  data: SecurityPolicy[];
   meta: {
     pagination: {
       page: number;

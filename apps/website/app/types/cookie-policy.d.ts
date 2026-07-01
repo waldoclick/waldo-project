@@ -1,4 +1,4 @@
-export interface Term {
+export interface CookiePolicy {
   id: number;
   documentId: string;
   title: string;
@@ -9,8 +9,8 @@ export interface Term {
   publishedAt: string | null;
 }
 
-export interface TermResponse {
-  data: Term[];
+export interface CookiePolicyResponse {
+  data: CookiePolicy[];
   meta: {
     pagination: {
       page: number;
