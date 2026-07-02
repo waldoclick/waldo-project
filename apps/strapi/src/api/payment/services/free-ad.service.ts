@@ -1,6 +1,6 @@
 import PaymentUtils from "../utils";
 import { sendMjmlEmail } from "../../../services/mjml";
-import logger from "../../../utils/logtail";
+import { logAuditError } from "../../../utils/audit-log";
 
 class FreeAdService {
   async processFreeAd(
@@ -90,7 +90,11 @@ class FreeAdService {
           },
         );
       } catch (error) {
-        logger.error("Error sending free ad creation emails:", { error });
+        logAuditError("Error sending free ad creation emails:", {
+          actor: "system",
+          actor_type: "system",
+          data: { error },
+        });
       }
 
       // 6. Return success

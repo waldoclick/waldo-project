@@ -2,7 +2,7 @@ import PaymentUtils from "../utils";
 import OrderUtils from "../utils/order.utils";
 import { getPaymentGateway } from "../../../services/payment-gateway";
 import { zohoService } from "../../../services/zoho";
-import logger from "../../../utils/logtail";
+import { logAuditInfo, logAuditError } from "../../../utils/audit-log";
 import { documentDetails } from "../utils/user.utils";
 import generalUtils from "../utils/general.utils";
 import { PackType, FeaturedType } from "../types/payment.type";
@@ -282,10 +282,12 @@ class CheckoutService {
             ).documentId;
           }
         } catch (orderError) {
-          logger.error(
+          logAuditError(
             "Failed to create order record for checkout (paid pack)",
             {
-              error: (orderError as { message?: string }).message,
+              actor: "system",
+              actor_type: "system",
+              data: { error: (orderError as { message?: string }).message },
             },
           );
         }
@@ -450,16 +452,18 @@ class CheckoutService {
           items: paymentItems,
         });
 
-        logger.info("Documento Facto generado exitosamente (checkout)", {
-          adId,
-          isInvoice: is_invoice,
+        logAuditInfo("Documento Facto generado exitosamente (checkout)", {
+          actor: Number(userId),
+          actor_type: "plugin::users-permissions.user",
+          data: { adId, isInvoice: is_invoice },
         });
       } catch (factoError) {
-        logger.error(
+        logAuditError(
           "Error generando documento Facto (checkout) — pago no afectado",
           {
-            adId,
-            error: (factoError as { message?: string }).message,
+            actor: Number(userId),
+            actor_type: "plugin::users-permissions.user",
+            data: { adId, error: (factoError as { message?: string }).message },
           },
         );
       }
@@ -484,8 +488,10 @@ class CheckoutService {
             .documentId;
         }
       } catch (orderError) {
-        logger.error("Failed to create order record for checkout", {
-          error: (orderError as { message?: string }).message,
+        logAuditError("Failed to create order record for checkout", {
+          actor: "system",
+          actor_type: "system",
+          data: { error: (orderError as { message?: string }).message },
         });
       }
 
@@ -516,9 +522,14 @@ class CheckoutService {
           }
         })
         .catch((err: { message?: string }) => {
-          logger.error("Zoho sync failed for checkout — payment unaffected", {
-            error: err.message,
-          });
+          logAuditError(
+            "Zoho sync failed for checkout — payment unaffected",
+            {
+              actor: Number(userId),
+              actor_type: "plugin::users-permissions.user",
+              data: { error: err.message },
+            },
+          );
         });
 
       // 13. Return success
