@@ -20,7 +20,7 @@
           title="Leer términos y condiciones de uso"
         >
           <IconFileText class="menu--about__icon" aria-hidden="true" />
-          <span>Términos y Condiciones de Uso</span>
+          <span>Condiciones de Uso</span>
         </nuxt-link>
       </li>
       <li class="menu--about__item">

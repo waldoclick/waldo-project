@@ -84,7 +84,7 @@ const formatValue = (value: number, unit: string) => {
 // Function to generate the copyright text
 const getCopyrightText = () => {
   const currentYear = new Date().getFullYear();
-  const baseYear = 2024;
+  const baseYear = 2026;
   return currentYear > baseYear
     ? `Waldo.click® ${baseYear} - ${currentYear}, Todos los derechos reservados`
     : `Waldo.click® ${baseYear}, Todos los derechos reservados`;
