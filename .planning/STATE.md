@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-last_updated: "2026-07-01T20:35:00.000Z"
-last_activity: 2026-07-01
+last_updated: "2026-07-02T00:35:00.000Z"
+last_activity: 2026-07-02
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 20
-  completed_plans: 15
-  percent: 75
+  completed_plans: 16
+  percent: 80
 ---
 
 # Session State
@@ -24,20 +24,23 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 
 ## Position
 
-Phase 04 (split-legal-pages-into-4-documents-with-dashboard-management) — IN PROGRESS (6/9 plans). Plan 04-01 complete: two new Strapi v5 content-type quadruplets (`api::cookie-policy.cookie-policy`, `api::security-policy.security-policy`) replicated byte-for-byte from the `term`/`policy` pattern. Plan 04-02 complete: split `apps/strapi/seeders/policies.ts` (was 53 mislabeled rows spanning 3 documents) into 4 correct, non-overlapping seeders — `terms.ts` (27 rows), `policies.ts` (20 rows), new `cookie-policies.ts` (13 rows), new `security-policies.ts` (19 rows), all sourced from humanized `docs/*.md` and wired into `src/index.ts` bootstrap. Plan 04-08 complete: renamed `/condiciones-de-uso` → `/terminos-y-condiciones-de-uso` via `git mv`, 301 redirect, `RESERVED_USERNAMES` synced in both apps, all 8 reference-point files updated, `LightboxCookies.vue` now points to `/politicas-de-cookies`. Plan 04-03 complete: `cookie-policy.d.ts`/`security-policy.d.ts` types (documentId from day one, also backfilled onto `term.d.ts`/`policy.d.ts`), 2 new Pinia stores, mandatory 5-part `settings.store.ts` extension. Plan 04-04 complete: 2 new public pages (`politicas-de-cookies.vue`/`politicas-de-seguridad.vue`) + display components + `_cookies.scss`/`_security.scss` SCSS partials, unhyphenated BEM blocks `.cookies`/`.security` throughout, registered in `app.scss`. Plan 04-06 complete: full admin CRUD vertical slice for Política de Seguridad — `SecurityPoliciesDashboard.vue`/`FormSecurityPolicy.vue` mirror `TermsDashboard.vue`/`FormTerm.vue` exactly, 4 route files under `pages/dashboard/maintenance/security/` with `[id]` pages fixed forward to filter by `documentId` (string) instead of replicating the pre-existing `Number(id)` bug in terms/policies pages, dead `TermsDefault` import not copied. BEM verified unhyphenated (`security--dashboard`, `form--security`) across 04-04/04-06. `vue-tsc --noEmit` exits 0 in every worktree that had `node_modules` (04-01/02/03/04); 04-08's and 04-06's worktrees lacked `node_modules` and could not run it — both flagged honestly rather than faked, deferred to a fresh post-merge typecheck across the full combined tree. Remaining plans in phase 04: 04-05 (cookies dashboard CRUD — completing wave 3), 04-07 (nav), 04-09 (manual permission grant + verification).
+Phase 04 (split-legal-pages-into-4-documents-with-dashboard-management) — IN PROGRESS (7/9 plans). Wave 1-2 complete: 04-01 (Strapi content-type quadruplets for cookie-policy/security-policy), 04-02 (seeder split — policies.ts was 53 mislabeled rows spanning 3 documents, now correctly 4 seeders: terms.ts 27 rows, policies.ts 20 rows, cookie-policies.ts 13 rows, security-policies.ts 19 rows, all from humanized docs/*.md), 04-08 (URL rename condiciones-de-uso → terminos-y-condiciones-de-uso + all 8 reference-point files + RESERVED_USERNAMES sync), 04-03 (frontend types with documentId + 2 Pinia stores + mandatory 5-part settings.store.ts extension). Wave 3 complete: 04-04 (2 new public pages + display components + `_cookies.scss`/`_security.scss`, unhyphenated BEM blocks `.cookies`/`.security`), 04-05 (Cookies dashboard CRUD — `CookiePoliciesDashboard.vue`/`FormCookiePolicy.vue` + 4 route files, documentId-filtered `[id]` pages, BEM `cookies--dashboard`/`form--cookie`), 04-06 (Security dashboard CRUD — same pattern, `security--dashboard`/`form--security`). `vue-tsc --noEmit` exits 0 wherever `node_modules` was present; two worktrees (04-08, 04-06) lacked it and honestly flagged rather than faking a pass — needs one fresh combined typecheck now that everything is merged. Remaining plans in phase 04: 04-07 (nav wiring), 04-09 (manual permission grant + human verification checkpoint).
 
 (Prior: Phase 03 COMPLETE (2/2 plans) — AI validation gate wired into `registerUserLocal`. Phase 02 plan 02-01 complete — ai-provider orchestrator. Phase 01 complete — Codacy security/best-practice issues.)
 
 ```
-Progress: [███████░░░] 70% (phase 04: 6/9 plans complete)
+Progress: [████████░░] 80% (phase 04: 7/9 plans complete)
 ```
 
 ## Accumulated Context
 
 ### Key Decisions (carry forward)
 
-- `[id]` pages for the new security-policy content-type filter by `documentId` (string), fixing forward the pre-existing `Number(id)` bug in `terms/[id]` and `policies/[id]` instead of replicating it — new content-type has no legacy consumers, so it starts correct; existing terms/policies bug is out of scope for this phase (04-06)
-- `SecurityPoliciesDashboard.vue`/`FormSecurityPolicy.vue` and their 4 route files mirror `TermsDashboard.vue`/`FormTerm.vue` exactly (mechanical substitution term→securityPolicy); `index.vue` intentionally omits the dead `TermsDefault` import present in `terms/index.vue` (04-06)
+- `[id]` pages for both new content-types (cookie-policy, security-policy) filter by `documentId` (string), fixing forward the pre-existing `Number(id)` bug in `terms/[id]` and `policies/[id]` instead of replicating it — new content-types have no legacy consumers, so they start correct; existing terms/policies bug stays out of scope for this phase (04-05, 04-06)
+- `CookiePoliciesDashboard.vue`/`FormCookiePolicy.vue` and `SecurityPoliciesDashboard.vue`/`FormSecurityPolicy.vue` (+ their 4 route files each) mirror `TermsDashboard.vue`/`FormTerm.vue` exactly (mechanical substitution); both `index.vue` files intentionally omit the dead `TermsDefault` import present in `terms/index.vue` (04-05, 04-06)
+- Tooling gotcha: this project's STATE.md/ROADMAP.md predate the current gsd-tools schema (no `Current Plan`/`Total Plans in Phase` fields, no `Performance Metrics` section) — `state advance-plan`, `state update-progress`, `state record-metric`, and `roadmap update-plan-progress` report `{"updated": true, ...}` but do NOT persist changes to disk in this repo. Verify with `git diff` after calling them; update STATE.md/ROADMAP.md prose and frontmatter manually if the diff is empty (04-05)
+- FormCookiePolicy.vue's post-save redirect had to be corrected from `id || documentId` (copied verbatim from FormTerm.vue) to `documentId || id` — the copied version would render a blank page after every create/edit against the new documentId-filtered detail pages; caught during self-review, not by a test (04-05)
+- Correction to 04-05's own SUMMARY.md: it reported "no SCSS added, dashboard renders unstyled" — verified false. `_cookies.scss`/`_security.scss` (created in 04-04) already include full `--dashboard` modifier blocks (`__header`, `__search`, `__table-wrapper`, etc.), not just `--default` — the 04-05/04-06 dashboard components are already styled, no gap here
 - API ids `cookie-policy`/`security-policy` (not bare `cookie`/`security`) for the 2 new legal content-types — avoids collision with existing cookie-consent code (`LightboxCookies.vue`, `$cookies` plugin) and the unrelated `condition` (ad item-condition) content-type (04-01)
 - New content-type controllers replicate `term.ts` byte-for-byte apart from UID string substitution and local variable renames (`term`→`cookiePolicy`/`securityPolicy`) — no logic deviation (04-01)
 - documentId: string added to CookiePolicy/SecurityPolicy interfaces from creation, and additively backfilled onto pre-existing Term/Policy interfaces in the same plan — purely widening, zero consumer breakage since nothing destructures .documentId off the typed interface today (04-03)
@@ -244,4 +247,4 @@ Progress: [███████░░░] 70% (phase 04: 6/9 plans complete)
 ## Session Continuity
 
 Last activity: 2026-07-02
-Resume file: .planning/phases/04-split-legal-pages-into-4-documents-with-dashboard-management/04-04-PLAN.md
+Resume file: None
