@@ -25,6 +25,7 @@ build/
 .env.*.local
 .env.dashboard
 .env.services
+.env.global
 
 # Logs
 *.log
@@ -45,6 +46,8 @@ Thumbs.db
 *.swp
 *.swo
 
+ENV
+*.env
 
 #Ignore vscode AI rules
 .github/instructions/codacy.instructions.md
