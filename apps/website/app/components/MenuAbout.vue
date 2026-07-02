@@ -41,7 +41,7 @@
           aria-label="Leer política de cookies"
           title="Leer política de cookies"
         >
-          <IconShield class="menu--about__icon" aria-hidden="true" />
+          <IconCookie class="menu--about__icon" aria-hidden="true" />
           <span>Política de Cookies</span>
         </nuxt-link>
       </li>
@@ -52,7 +52,7 @@
           aria-label="Leer política de seguridad"
           title="Leer política de seguridad"
         >
-          <IconShield class="menu--about__icon" aria-hidden="true" />
+          <IconShieldCheck class="menu--about__icon" aria-hidden="true" />
           <span>Política de Seguridad</span>
         </nuxt-link>
       </li>
@@ -86,6 +86,8 @@
 import {
   HelpCircle as IconHelpCircle,
   Shield as IconShield,
+  Cookie as IconCookie,
+  ShieldCheck as IconShieldCheck,
   FileText as IconFileText,
   MessageSquare as IconMessageSquare,
   Map as IconMap,
