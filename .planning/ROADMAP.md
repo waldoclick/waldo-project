@@ -98,12 +98,12 @@ Plans:
 **Goal:** Track who creates, updates, and deletes records across every Strapi content-type (admin panel + public API + system writes) via a single global `strapi.db.lifecycles.subscribe()` handler registered in `bootstrap()` — recording actor id + actor-type discriminator (admin::user / plugin::users-permissions.user / system), action, content-type UID, and record id/documentId per write. **Storage PIVOT (2026-07-02):** audit entries are written as structured LOG LINES via the existing Winston logger (Better Stack + local 90-day rotating file), NOT a Strapi `audit-log` DB table (the table built in 05-01 was removed in 05-03); read path is Better Stack / `apps/strapi/logs/app-*.log`. Also homologates the ~62 existing payment/ad-creation `logger.*` calls to the same `{ actor, actor_type, data }` envelope (reshape-only). No dashboard UI, no field-level diffing; retention handled by the logger's 90-day rotation.
 **Requirements**: N/A
 **Depends on:** Phase 4
-**Plans:** 2/6 plans executed
+**Plans:** 5/6 plans executed
 
 Plans:
 - [x] 05-01-PLAN.md — Wave 1 (TDD): audit-log content-type schema + subscriber tests + `db.lifecycles.subscribe()` handler wired at top of bootstrap() (SUPERSEDED by 05-03's logger pivot — DB table removed)
 - [x] 05-03-PLAN.md — Wave 1 (TDD): PIVOT rework — delete the audit-log DB table, add shared `logAudit` helper (info/warn/error) wrapping the Winston logger, reroute the subscriber through it, update tests to mock the helper
-- [ ] 05-04-PLAN.md — Wave 2: homologate payment.ts (23 logger call sites) to the `logAudit` envelope (reshape-only, level+message preserved, actor from local userId/system)
-- [ ] 05-05-PLAN.md — Wave 2: homologate ad.service.ts (12) + pack.service.ts (16) logger calls to `logAudit` (reshape-only)
-- [ ] 05-06-PLAN.md — Wave 2: homologate ad.ts (5) + checkout.service.ts (5) + free-ad.service.ts (1) logger calls to `logAudit` (reshape-only)
+- [x] 05-04-PLAN.md — Wave 2: homologate payment.ts (23 logger call sites) to the `logAudit` envelope (reshape-only, level+message preserved, actor from local userId/system)
+- [x] 05-05-PLAN.md — Wave 2: homologate ad.service.ts (12) + pack.service.ts (16) logger calls to `logAudit` (reshape-only)
+- [x] 05-06-PLAN.md — Wave 2: homologate ad.ts (5) + checkout.service.ts (5) + free-ad.service.ts (1) logger calls to `logAudit` (reshape-only)
 - [ ] 05-02-PLAN.md — Wave 3 (non-autonomous): end-to-end human verification against the LOG (local rotating file / Better Stack, not Content Manager) — admin/public-API/system actor tagging + at least one homologated payment log renders the new envelope; business + payment writes unaffected
