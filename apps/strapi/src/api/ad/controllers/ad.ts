@@ -772,7 +772,8 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
         return ctx.notFound("Ad not found or access denied");
       }
 
-      // Managers see the full ad; public and owners get sanitized data
+      // Service already sanitizes the manager branch; sanitize here for
+      // public/owner roles (owners get sanitized like everyone else).
       const adData =
         result.access.role === "manager"
           ? result.ad
