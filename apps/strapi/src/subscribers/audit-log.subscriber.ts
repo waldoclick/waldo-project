@@ -1,6 +1,5 @@
 import type { Core } from "@strapi/strapi";
-
-const AUDIT_LOG_UID = "api::audit-log.audit-log";
+import { logAuditInfo } from "../utils/audit-log";
 
 type AuditAction = "create" | "update" | "delete";
 
@@ -9,14 +8,11 @@ interface AuditEvent {
   result?: { id?: number; documentId?: string };
 }
 
-async function recordAuditEntry(
+function recordAuditEntry(
   strapi: Core.Strapi,
   event: AuditEvent,
   action: AuditAction,
-): Promise<void> {
-  // Recursion guard: never audit writes to the audit-log table itself.
-  if (event.model.uid === AUDIT_LOG_UID) return;
-
+): void {
   try {
     const reqCtx = strapi.requestContext.get();
     const user = reqCtx?.state?.user as { id?: number } | undefined;
@@ -32,14 +28,13 @@ async function recordAuditEntry(
           ? "plugin::users-permissions.user"
           : "system";
 
-    await strapi.db.query(AUDIT_LOG_UID).create({
+    logAuditInfo(`Audit ${action}: ${event.model.uid}`, {
+      actor: actorType === "system" ? "system" : (user?.id ?? "system"),
+      actor_type: actorType,
       data: {
-        action,
         content_type_uid: event.model.uid,
         record_id: event.result?.id ?? null,
         record_document_id: event.result?.documentId ?? null,
-        actor_id: actorType === "system" ? null : (user?.id ?? null),
-        actor_type: actorType,
       },
     });
   } catch (error) {
@@ -51,9 +46,7 @@ async function recordAuditEntry(
 // SCOPE BOUNDARY: this subscriber intentionally handles only the SINGULAR lifecycle
 // actions. Bulk *Many operations (createMany/updateMany/deleteMany) are NOT audited.
 // The only bulk call in this codebase is verification-code-cleanup.cron.ts's
-// deleteMany() on ephemeral verification codes (a system-context cron). If bulk
-// coverage is ever needed, add afterDeleteMany logging a single summary row
-// (its result is only { count } — no per-record ids).
+// deleteMany() on ephemeral verification codes (a system-context cron).
 export default (strapi: Core.Strapi): void => {
   strapi.db.lifecycles.subscribe({
     afterCreate: (event) =>
