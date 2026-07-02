@@ -22,7 +22,6 @@ export default defineEventHandler(async (event) => {
 
   // Set headers
   const headers: Record<string, string> = {
-    "Cache-Control": "no-cache", // Sin cache en servidor, solo Cloudflare
     "Access-Control-Allow-Origin": process.env.BASE_URL || "*",
     "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS",
   };
@@ -30,5 +29,14 @@ export default defineEventHandler(async (event) => {
   // Forward the request to Strapi
   return proxyRequest(event, finalUrl, {
     headers,
+    onResponse(e) {
+      // Overrides Strapi's origin Cache-Control (max-age=14400, no s-maxage)
+      // so Vercel's edge can actually cache this response.
+      setResponseHeader(
+        e,
+        "cache-control",
+        "public, max-age=14400, s-maxage=14400, stale-while-revalidate=86400",
+      );
+    },
   });
 });
