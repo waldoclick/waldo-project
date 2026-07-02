@@ -107,3 +107,18 @@ Plans:
 - [x] 05-05-PLAN.md — Wave 2: homologate ad.service.ts (12) + pack.service.ts (16) logger calls to `logAudit` (reshape-only)
 - [x] 05-06-PLAN.md — Wave 2: homologate ad.ts (5) + checkout.service.ts (5) + free-ad.service.ts (1) logger calls to `logAudit` (reshape-only)
 - [ ] 05-02-PLAN.md — Wave 3 (non-autonomous): end-to-end human verification against the LOG (local rotating file / Better Stack, not Content Manager) — admin/public-API/system actor tagging + at least one homologated payment log renders the new envelope; business + payment writes unaffected
+
+### Phase 6: Generate comprehensive as-built product documentation (PRD, TRD, UX/UI, App Flows, Backend Schema, Implementation Plan) in /docs, verified against current code — not copied from potentially stale existing docs
+
+**Goal:** Produce six professional-grade, self-contained Markdown documents in `/docs` (`PRD.md`, `TRD.md`, `UXD.md`, `FLOWS.md`, `BSD.md`, `IPD.md`) describing the Waldo Project as it exists today, each fact re-derived from live source (not copied from stale `.planning/codebase/*` or `/docs/*.md`). Flows are the highest-scrutiny deliverable: 6 core flows (auth, ad lifecycle, payment, reservations, CRUD+audit-log, cron) each with a Mermaid diagram. Known stale claims are corrected inline and surfaced in explicit "Inconsistencias detectadas" / "Preguntas abiertas" sections — notably the `apps/dashboard`-is-merged-into-`apps/website` fact and the corrected count of 6 active cron jobs (not 4).
+**Requirements**: D-01, D-02, D-03, D-04, D-05, D-06, D-07, D-08, D-09, D-10, D-11, D-12 (from 06-CONTEXT.md — no formal REQUIREMENTS.md)
+**Depends on:** Phase 5
+**Plans:** 6 plans (2 waves)
+
+Plans:
+- [ ] 06-01-PLAN.md — Wave 1: BSD.md (21-entity ER diagram + field tables + endpoint reference, verified against live schema.json)
+- [ ] 06-02-PLAN.md — Wave 1: FLOWS.md (6 core flows, each a Mermaid diagram + prose; corrects 6-cron count and reservation path)
+- [ ] 06-03-PLAN.md — Wave 2: TRD.md (stack/architecture/integrations/NFRs + "Inconsistencias detectadas" dashboard-merge & cron corrections)
+- [ ] 06-04-PLAN.md — Wave 2: PRD.md (as-built problem/personas/MVP+backlog/acceptance criteria cross-referenced to flows)
+- [ ] 06-05-PLAN.md — Wave 2: IPD.md (retrospective phase/milestone history reframed as reusable delivery patterns)
+- [ ] 06-06-PLAN.md — Wave 2: UXD.md (page inventory public/dashboard, component taxonomy, BEM/SCSS, brand palette)
