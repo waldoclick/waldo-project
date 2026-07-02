@@ -14,6 +14,17 @@
       </li>
       <li class="menu--about__item">
         <nuxt-link
+          to="/terminos-y-condiciones-de-uso"
+          class="menu--about__link"
+          aria-label="Leer términos y condiciones de uso"
+          title="Leer términos y condiciones de uso"
+        >
+          <IconFileText class="menu--about__icon" aria-hidden="true" />
+          <span>Términos y Condiciones de Uso</span>
+        </nuxt-link>
+      </li>
+      <li class="menu--about__item">
+        <nuxt-link
           to="/politicas-de-privacidad"
           class="menu--about__link"
           aria-label="Leer políticas de privacidad y términos de uso"
@@ -21,17 +32,6 @@
         >
           <IconShield class="menu--about__icon" aria-hidden="true" />
           <span>Políticas de privacidad</span>
-        </nuxt-link>
-      </li>
-      <li class="menu--about__item">
-        <nuxt-link
-          to="/terminos-y-condiciones-de-uso"
-          class="menu--about__link"
-          aria-label="Leer términos y condiciones de uso"
-          title="Leer términos y condiciones de uso"
-        >
-          <IconScrollText class="menu--about__icon" aria-hidden="true" />
-          <span>Términos y Condiciones de Uso</span>
         </nuxt-link>
       </li>
       <li class="menu--about__item">
@@ -86,7 +86,7 @@
 import {
   HelpCircle as IconHelpCircle,
   Shield as IconShield,
-  ScrollText as IconScrollText,
+  FileText as IconFileText,
   MessageSquare as IconMessageSquare,
   Map as IconMap,
 } from "lucide-vue-next";

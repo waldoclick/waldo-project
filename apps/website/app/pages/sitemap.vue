@@ -16,7 +16,7 @@ import {
   Map as IconMap,
   Shapes as IconShapes,
   MapPin as IconMapPin,
-  ScrollText as IconScrollText,
+  FileText as IconFileText,
 } from "lucide-vue-next";
 import { useCategoriesStore } from "@/stores/categories.store";
 import { useCommunesStore } from "@/stores/communes.store";
@@ -56,7 +56,7 @@ const sitemapBlocks = [
       {
         to: "/terminos-y-condiciones-de-uso",
         label: "Términos y Condiciones de Uso",
-        icon: IconScrollText,
+        icon: IconFileText,
       },
       {
         to: "/politicas-de-privacidad",

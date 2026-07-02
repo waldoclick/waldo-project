@@ -153,7 +153,7 @@
           to="/dashboard/maintenance/terms"
           class="menu--maintenance__link"
         >
-          <ScrollText class="menu--maintenance__icon" />
+          <FileText class="menu--maintenance__icon" />
           <span>Términos y Condiciones de Uso</span>
         </NuxtLink>
       </li>
@@ -209,7 +209,7 @@ import {
   Building,
   HelpCircle,
   Shield,
-  ScrollText,
+  FileText,
   Cookie,
   ShieldCheck,
 } from "lucide-vue-next";
