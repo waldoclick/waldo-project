@@ -271,12 +271,14 @@ async function getAdvertisements(
       ? postProcessFilter(adsWithPaymentStatusAndState)
       : adsWithPaymentStatusAndState;
 
-    // Sanitize for non-manager users — strip sensitive user/order/payment fields
-    const processedAds = isManager
-      ? filteredAds
-      : filteredAds.map((ad) =>
-          sanitizeAdForPublic(ad as Record<string, unknown>),
-        );
+    // Always sanitize — strip sensitive user/order/payment fields regardless
+    // of role. `isManager` only bypasses the ownership filter above; managers
+    // never need raw password hashes/tokens, and the dashboard's ad-listing
+    // views only ever read the fields sanitizeAdForPublic already keeps
+    // (username, email, business_name, etc.).
+    const processedAds = filteredAds.map((ad) =>
+      sanitizeAdForPublic(ad as Record<string, unknown>),
+    );
 
     // Calculate pagination metadata
     const pageCount = Math.ceil(total / pageSize);
@@ -1062,10 +1064,12 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
     };
     const statusLabel = statusLabels[status] ?? status;
 
-    // Manager sees everything
+    // Manager sees the ad regardless of status, but never the raw user
+    // record (password hash/tokens) — the frontend only reads access.message
+    // for the manager banner, nothing from the raw ad beyond public fields.
     if (isManager) {
       return {
-        ad: { ...ad, status },
+        ad: sanitizeAdForPublic({ ...ad, status } as Record<string, unknown>),
         access: {
           role: "manager",
           status,
