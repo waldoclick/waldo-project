@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-last_updated: "2026-07-02T00:35:00.000Z"
+last_updated: "2026-07-02T00:28:54.000Z"
 last_activity: 2026-07-02
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 20
-  completed_plans: 16
-  percent: 80
+  completed_plans: 17
+  percent: 85
 ---
 
 # Session State
@@ -24,12 +24,12 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 
 ## Position
 
-Phase 04 (split-legal-pages-into-4-documents-with-dashboard-management) — IN PROGRESS (7/9 plans). Wave 1-2 complete: 04-01 (Strapi content-type quadruplets for cookie-policy/security-policy), 04-02 (seeder split — policies.ts was 53 mislabeled rows spanning 3 documents, now correctly 4 seeders: terms.ts 27 rows, policies.ts 20 rows, cookie-policies.ts 13 rows, security-policies.ts 19 rows, all from humanized docs/*.md), 04-08 (URL rename condiciones-de-uso → terminos-y-condiciones-de-uso + all 8 reference-point files + RESERVED_USERNAMES sync), 04-03 (frontend types with documentId + 2 Pinia stores + mandatory 5-part settings.store.ts extension). Wave 3 complete: 04-04 (2 new public pages + display components + `_cookies.scss`/`_security.scss`, unhyphenated BEM blocks `.cookies`/`.security`), 04-05 (Cookies dashboard CRUD — `CookiePoliciesDashboard.vue`/`FormCookiePolicy.vue` + 4 route files, documentId-filtered `[id]` pages, BEM `cookies--dashboard`/`form--cookie`), 04-06 (Security dashboard CRUD — same pattern, `security--dashboard`/`form--security`). `vue-tsc --noEmit` exits 0 wherever `node_modules` was present; two worktrees (04-08, 04-06) lacked it and honestly flagged rather than faking a pass — needs one fresh combined typecheck now that everything is merged. Remaining plans in phase 04: 04-07 (nav wiring), 04-09 (manual permission grant + human verification checkpoint).
+Phase 04 (split-legal-pages-into-4-documents-with-dashboard-management) — IN PROGRESS (8/9 plans). Wave 1-2 complete: 04-01 (Strapi content-type quadruplets for cookie-policy/security-policy), 04-02 (seeder split — policies.ts was 53 mislabeled rows spanning 3 documents, now correctly 4 seeders: terms.ts 27 rows, policies.ts 20 rows, cookie-policies.ts 13 rows, security-policies.ts 19 rows, all from humanized docs/*.md), 04-08 (URL rename condiciones-de-uso → terminos-y-condiciones-de-uso + all 8 reference-point files + RESERVED_USERNAMES sync), 04-03 (frontend types with documentId + 2 Pinia stores + mandatory 5-part settings.store.ts extension). Wave 3 complete: 04-04 (2 new public pages + display components + `_cookies.scss`/`_security.scss`, unhyphenated BEM blocks `.cookies`/`.security`), 04-05 (Cookies dashboard CRUD — `CookiePoliciesDashboard.vue`/`FormCookiePolicy.vue` + 4 route files, documentId-filtered `[id]` pages, BEM `cookies--dashboard`/`form--cookie`), 04-06 (Security dashboard CRUD — same pattern, `security--dashboard`/`form--security`). Wave 4 complete: 04-07 (MenuMaintenance.vue nav entries for Cookies/Seguridad using `Cookie`/`ShieldCheck` icons, Términos label renamed to "Términos y Condiciones de Uso", knownSubRoutes extended to 10 entries; `vue-tsc --noEmit` exits 0). Remaining plan in phase 04: 04-09 (manual permission grant + human verification checkpoint).
 
 (Prior: Phase 03 COMPLETE (2/2 plans) — AI validation gate wired into `registerUserLocal`. Phase 02 plan 02-01 complete — ai-provider orchestrator. Phase 01 complete — Codacy security/best-practice issues.)
 
 ```
-Progress: [████████░░] 80% (phase 04: 7/9 plans complete)
+Progress: [████████▓░] 85% (phase 04: 8/9 plans complete)
 ```
 
 ## Accumulated Context
@@ -51,6 +51,7 @@ Progress: [████████░░] 80% (phase 04: 7/9 plans complete)
 - Cross-document markdown links converted to live site routes when rewording seeders: terms.ts -> /politicas-de-privacidad, policies.ts -> /politicas-de-cookies (04-02)
 - strapi.db.query() UID argument is not a compile-time-checked union in this codebase — new content-type seeders (cookie-policy/security-policy) type-check cleanly even before Plan 01's schemas exist locally (04-02)
 - Kept `condiciones-de-uso` in `RESERVED_USERNAMES` (both apps) after the rename — protects the old redirect-source slug from being claimed as a username; added `terminos-y-condiciones-de-uso`, `politicas-de-cookies`, `politicas-de-seguridad` alongside it (04-08)
+- `MenuMaintenance.vue` nav entries use `Cookie`/`ShieldCheck` lucide-vue-next icons (distinct from the `Shield` icon already used for Políticas de privacidad); Términos label renamed to "Términos y Condiciones de Uso" as this file's own dashboard-internal copy, separate from the 8 public-facing reference points already handled in 04-08 (04-07)
 - `LightboxCookies.vue` link target changed from `/politicas-de-privacidad` to `/politicas-de-cookies`, and its body prose updated in the same edit to reference "Política de Cookies" — avoids a link/prose mismatch (04-08)
 - No new nav entries added to `MenuAbout.vue`/`MenuFooter.vue` for the not-yet-existing Cookies/Seguridad pages — 04-08's scope was rename-only per plan; those additions belong to sibling plans 04-01–04-07 (04-08)
 - Sibling test file for end-to-end real-service tests: when jest.mock hoisting in primary test file conflicts with a test that needs the real module, create a dedicated sibling file — not conditional (03-02)
@@ -247,4 +248,5 @@ Progress: [████████░░] 80% (phase 04: 7/9 plans complete)
 ## Session Continuity
 
 Last activity: 2026-07-02
+Stopped at: Completed 04-07-PLAN.md
 Resume file: None
