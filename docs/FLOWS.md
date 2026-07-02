@@ -203,7 +203,7 @@ sequenceDiagram
 
 **Source files:** `apps/strapi/src/api/ad-reservation/`, `apps/strapi/src/api/ad-featured-reservation/`, `apps/strapi/src/cron/ad-free-reservation-restore.cron.ts`, `apps/strapi/src/api/ad/services/ad.ts` (`publishAd()` slot consumption via `apps/strapi/src/api/payment/utils/ad.utils.ts`).
 
-**Correction (per D-10 — current code wins):** `docs/reservation-system.md` cites the restore-cron's source path as `apps/strapi/src/crons/user-*.cron.ts` (plural `crons/`, `user-*` glob). The actual file is `apps/strapi/src/cron/ad-free-reservation-restore.cron.ts` (singular `cron/` directory, class `UserCronService`, default export), and it handles both ad and featured-reservation restoration in one file via its `restoreFreeAds()` method — there is no separate featured-restore cron.
+**Correction (per D-10 — current code wins):** `docs/reservation-system.md` cites the restore-cron's source path as `apps/strapi/src/crons/user-*.cron.ts` (plural `crons/`, `user-*` glob). The actual file is `apps/strapi/src/cron/ad-free-reservation-restore.cron.ts` (singular `cron/` directory, default-exported class `UserCronService`). Its `restoreFreeAds()` method restores **`AdReservation` (free ad-listing) slots only** — it does not touch `AdFeaturedReservation` records; there is no separate scheduled featured-reservation restore job (an earlier `featuredCron` was implemented and then reverted, per `.planning/STATE.md`'s decision log — the free-slot guarantee for featured reservations is not currently cron-enforced).
 
 Every user gets 3 free `AdReservation` records (`price: 0`, `total_days: 15`) and 3 free `AdFeaturedReservation` records (`price: 0`) automatically on registration or first Google login (`createUserReservations()` in `authController.ts`, called from local registration, Google OAuth, and Google One Tap — see Flow 1). These are the "3 free ad slots" a user can spend on new ad listings and featured placement without paying.
 
@@ -211,7 +211,7 @@ Every user gets 3 free `AdReservation` records (`price: 0`, `total_days: 15`) an
 
 1. **Reserve/consume:** when an ad is published (via `publishAd()`, either free or paid path — see Flows 2 and 3), the service links an available `AdReservation` (and, if featured, an `AdFeaturedReservation`) to the ad by setting the reservation's `ad` foreign key. A reservation with `price: "0"` is a free-tier slot; anything else is a purchased one.
 2. **Restore on reject/ban:** `rejectAd()` and `bannedAd()` in `ad.ts` both explicitly free the `ad_reservation` and `ad_featured_reservation` FKs back to `null` (`{ data: { ad: null } }`) at the moment of rejection/ban — this is synchronous, in the same request, not deferred to a cron. The associated credit becomes immediately reusable for a new ad.
-3. **Nightly safety-net restore:** `ad-free-reservation-restore.cron.ts` (`userCron`, see Flow 6) runs daily to guarantee every user still holds 3 *free* (`price: "0"`) reservation slots whose linked ad is either `null` or `active: false` — an occupied slot only counts against the guarantee if its ad is currently active; an inactive ad's slot is reclaimable. This exists as a backstop independent of the explicit reject/ban restoration, batched in groups of 50 users with `Promise.all` per batch to avoid DB connection-pool exhaustion.
+3. **Nightly safety-net restore (`AdReservation` only):** `ad-free-reservation-restore.cron.ts` (`userCron`, see Flow 6) runs daily, per user, to guarantee 3 free (`price: "0"`) `AdReservation` slots are always either available (`ad = null`) or in genuine use (linked to an ad with `remaining_days > 0` and not `banned`/`rejected`). A reservation linked to an ad that has run out of `remaining_days`, been banned, or been rejected no longer counts toward the 3 — it is treated as spent history, and a fresh free reservation is created to top the user back up. This is a backstop independent of the explicit reject/ban restoration in step 2, batched in groups of 50 users with `Promise.all` per batch to avoid DB connection-pool exhaustion. **`AdFeaturedReservation` slots have no equivalent scheduled restore** (see Correction above) — their only restore path is the synchronous reject/ban release in step 2.
 4. **Gifting:** `POST /api/ad-reservations/gift` and `POST /api/ad-featured-reservations/gift` (both gated `global::isManager`) let a manager create N reservation records directly assigned to a selected Authenticated user, notifying them via the `gift-reservation` MJML template (non-fatal on email failure).
 
 ### Error states
@@ -230,9 +230,9 @@ flowchart LR
     C -->|consumes credit| D[Reservation.ad = adId]
     D --> E{Manager review}
     E -->|approve| F[Slot stays consumed —\nad goes active]
-    E -->|reject / ban| G[Reservation.ad = null\nimmediately reusable]
-    H[userCron — nightly] -.->|restoreFreeAds:\nsafety-net for price=0 slots\nwith ad=null or ad.active=false| B
-    I[Manager: POST .../gift] -.->|global::isManager| B
+    E -->|reject / ban| G[Reservation.ad = null\nimmediately reusable\nboth AdReservation +\nAdFeaturedReservation]
+    H[userCron — nightly] -.->|restoreFreeAds:\nAdReservation ONLY —\ntops up to 3 free slots| B
+    I[Manager: POST .../gift] -.->|global::isManager\nboth reservation types| B
 ```
 
 ---
@@ -262,7 +262,7 @@ export interface AuditMeta {
 ### Happy path
 
 1. Any `strapi.db.query(...).create/update/delete(...)` call (or an entityService/content-API mutation that routes through the same query engine) fires the corresponding lifecycle event.
-2. `audit-log.subscriber.ts`'s handler resolves the acting user from `strapi.requestContext.get()?.state?.user` (falling back to `"system"` when no request context exists), and calls `logAuditInfo` with the envelope above.
+2. `audit-log.subscriber.ts`'s `recordAuditEntry()` handler reads `strapi.requestContext.get()` and inspects `reqCtx.state.auth.strategy.name` to determine `actor_type`: `"admin"` strategy → `admin::user`, `"users-permissions"` strategy → `plugin::users-permissions.user`, no request context at all (or an unrecognized strategy) → `"system"`. `actor` is `reqCtx.state.user?.id` when `actor_type` resolved to a user type, and the literal string `"system"` otherwise — so `actor` is a number if and only if `actor_type` is a real user type, never a mismatched pair. It then calls `logAuditInfo` with the envelope above.
 3. Winston writes the structured log line to Better Stack (if configured) and to a local rotating file (`apps/strapi/logs/app-*.log`, 90-day retention) — there is no database table to query; the read path is `tail -f apps/strapi/logs/app-*.log` or the Better Stack dashboard.
 4. Direct call sites across the payment and ad domains (`payment.ts`, `ad.service.ts`, `pack.service.ts`, `checkout.service.ts`, `free-ad.service.ts`, `ad.ts` controller) were homologated to call `logAuditInfo`/`logAuditWarn`/`logAuditError` directly at meaningful business events (not just relying on the generic lifecycle hook), so that log messages carry human-readable context (e.g. "Orden creada exitosamente") rather than generic CRUD noise.
 
