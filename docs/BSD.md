@@ -38,7 +38,7 @@ All business logic and data live in Strapi v5. `apps/website` (public site + `/d
 
 ## Entity-Relationship Diagram
 
-All 21 entities and their live relations, derived from each entity's `attributes` where `type: "relation"`. Cardinality is read from the schema's `relation` field (`oneToOne`, `oneToMany`, `manyToOne`, `manyToMany`) and mapped to Mermaid `erDiagram` notation.
+All 21 entities are represented as diagram nodes. 14 participate in live relations, derived from each entity's `attributes` where `type: "relation"` (cardinality read from the schema's `relation` field — `oneToOne`, `oneToMany`, `manyToOne`, `manyToMany` — mapped to Mermaid `erDiagram` relation notation). The remaining 7 (`Contact`, `CookiePolicy`, `Faq`, `Policy`, `SecurityPolicy`, `Term`, `VerificationCode`) have zero relation attributes in their schema and are declared as standalone entity blocks with their key fields, per Mermaid's entity-without-relation syntax.
 
 ```mermaid
 erDiagram
@@ -69,11 +69,56 @@ erDiagram
     ARTICLE }o--o{ CATEGORY : "tagged with"
 
     ORDER }o--|| AD_PACK : "references pack (untyped JSON, no FK)"
+
+    CONTACT {
+        email email
+        string fullname
+        text message
+    }
+
+    COOKIE_POLICY {
+        string title
+        text text
+        integer order
+    }
+
+    FAQ {
+        string title
+        boolean featured
+        text text
+        integer order
+    }
+
+    POLICY {
+        string title
+        text text
+        integer order
+    }
+
+    SECURITY_POLICY {
+        string title
+        text text
+        integer order
+    }
+
+    TERM {
+        string title
+        text text
+        integer order
+    }
+
+    VERIFICATION_CODE {
+        integer userId
+        string code
+        datetime expiresAt
+        integer attempts
+        string pendingToken
+    }
 ```
 
 **Notes on the diagram:**
 - `AdPack` (`Pack`) has no formal relation attribute pointing to it from `Order` or `Ad` in any schema.json — the pack reference lives inside `Order.items` (untyped `json` field), not as a Strapi relation. Shown above as a soft/logical link, not an enforced FK.
-- `Category`, `Condition`, `Region`, `Faq`, `Term`, `Policy`, `CookiePolicy`, `SecurityPolicy`, `Contact`, `Remaining`, `VerificationCode` have no inbound relations beyond what is shown; several (`Faq`, `Term`, `Policy`, `CookiePolicy`, `SecurityPolicy`, `Contact`) are standalone content-managed lists with zero relation attributes at all.
+- `Category`, `Condition` have no inbound relations beyond what is shown. `Contact`, `CookiePolicy`, `Faq`, `Policy`, `SecurityPolicy`, `Term`, `VerificationCode` have zero relation attributes at all — declared above as standalone entity blocks (no connecting edges) rather than participants in a relation line.
 - `AdReservation`/`AdFeaturedReservation` model both directions of the ad-slot lifecycle: a `manyToOne` to `User` (a user can hold many reservation slots) and a `oneToOne` to `Ad` (a slot is consumed by at most one ad at a time; freed back to `ad: null` on reject/ban per the cron in `apps/strapi/src/cron/ad-free-reservation-restore.cron.ts`).
 
 ---
