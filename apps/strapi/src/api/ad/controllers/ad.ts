@@ -164,7 +164,9 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    * Get all active advertisements (public catalog)
    *
    * Retrieves a paginated list of all active advertisements without authentication.
-   * Bypasses user filtering by passing isManager=true and userId=null.
+   * Passes userId=null so no ownership filter is applied (isManager only controls
+   * sanitization here — it must stay false so sanitizeAdForPublic runs and strips
+   * sensitive user fields like password/tokens from this unauthenticated route).
    *
    * @route GET /api/ads/catalog
    */
@@ -191,7 +193,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
 
       const activeAds = await strapi
         .service("api::ad.ad")
-        .activeAds(options, true, null);
+        .activeAds(options, false, null);
       return activeAds;
     } catch (error) {
       ctx.throw(500, error);
