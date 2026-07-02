@@ -10,7 +10,11 @@ import {
   buildOneclickUsername,
 } from "../../../services/oneclick";
 import generalUtils from "../utils/general.utils";
-import logger from "../../../utils/logtail";
+import {
+  logAuditInfo,
+  logAuditWarn,
+  logAuditError,
+} from "../../../utils/audit-log";
 import { IWebpayCommitData } from "../../../services/transbank/types";
 import { PackType, FeaturedType } from "../types/payment.type";
 import { computeSortPriority } from "../../ad/services/ad";
@@ -47,12 +51,15 @@ class PaymentController {
     const userId = ctx.state.user.id;
     const { pack, featured, is_invoice, ad } = data;
 
-    logger.info("Iniciando creación de anuncio", {
-      userId,
-      pack,
-      featured,
-      is_invoice,
-      adId: ad?.id,
+    logAuditInfo("Iniciando creación de anuncio", {
+      actor: userId,
+      actor_type: "plugin::users-permissions.user",
+      data: {
+        pack,
+        featured,
+        is_invoice,
+        adId: ad?.id,
+      },
     });
 
     const validatePayment = await adService.validatePayment(
@@ -62,11 +69,14 @@ class PaymentController {
     );
 
     if (!validatePayment.success) {
-      logger.warn("Validación de pago fallida", {
-        userId,
-        pack,
-        featured,
-        error: validatePayment.message,
+      logAuditWarn("Validación de pago fallida", {
+        actor: userId,
+        actor_type: "plugin::users-permissions.user",
+        data: {
+          pack,
+          featured,
+          error: validatePayment.message,
+        },
       });
       ctx.status = 400;
       ctx.body = validatePayment;
@@ -75,10 +85,13 @@ class PaymentController {
 
     ad.is_paid = validatePayment.isPaymentRequired;
 
-    logger.info("Creando anuncio", {
-      userId,
-      adId: ad?.id,
-      isPaymentRequired: validatePayment.isPaymentRequired,
+    logAuditInfo("Creando anuncio", {
+      actor: userId,
+      actor_type: "plugin::users-permissions.user",
+      data: {
+        adId: ad?.id,
+        isPaymentRequired: validatePayment.isPaymentRequired,
+      },
     });
 
     const create = await adService.create(ad, userId, {
@@ -88,11 +101,14 @@ class PaymentController {
     });
 
     if (!create) {
-      logger.error("Error al crear anuncio", {
-        userId,
-        pack,
-        featured,
-        is_invoice,
+      logAuditError("Error al crear anuncio", {
+        actor: userId,
+        actor_type: "plugin::users-permissions.user",
+        data: {
+          pack,
+          featured,
+          is_invoice,
+        },
       });
       ctx.status = 400;
       ctx.body = { success: false, message: "Failed to create ad" };
@@ -101,10 +117,13 @@ class PaymentController {
 
     const adId = Number(create.ad.id);
 
-    logger.info("Anuncio creado exitosamente", {
-      userId,
-      adId,
-      isPaymentRequired: validatePayment.isPaymentRequired,
+    logAuditInfo("Anuncio creado exitosamente", {
+      actor: userId,
+      actor_type: "plugin::users-permissions.user",
+      data: {
+        adId,
+        isPaymentRequired: validatePayment.isPaymentRequired,
+      },
     });
 
     const payment = !validatePayment.isPaymentRequired
@@ -112,11 +131,14 @@ class PaymentController {
       : await adService.processPaidPayment(adId);
 
     if (!payment.success) {
-      logger.error("Error al procesar pago", {
-        userId,
-        adId,
-        paymentType: validatePayment.isPaymentRequired ? "paid" : "free",
-        payment: payment,
+      logAuditError("Error al procesar pago", {
+        actor: userId,
+        actor_type: "plugin::users-permissions.user",
+        data: {
+          adId,
+          paymentType: validatePayment.isPaymentRequired ? "paid" : "free",
+          payment: payment,
+        },
       });
 
       // Send error to frontend
@@ -128,11 +150,14 @@ class PaymentController {
       return;
     }
 
-    logger.info("Pago procesado exitosamente", {
-      userId,
-      adId,
-      paymentType: validatePayment.isPaymentRequired ? "paid" : "free",
-      payment: payment,
+    logAuditInfo("Pago procesado exitosamente", {
+      actor: userId,
+      actor_type: "plugin::users-permissions.user",
+      data: {
+        adId,
+        paymentType: validatePayment.isPaymentRequired ? "paid" : "free",
+        payment: payment,
+      },
     });
 
     ctx.body = { data: payment };
@@ -175,9 +200,12 @@ class PaymentController {
     const token = ctx.query.token_ws;
     const userId = ctx.state.user?.id || null;
 
-    logger.info("Procesando respuesta de pago de anuncio", {
-      userId,
-      token: token ? "present" : "missing",
+    logAuditInfo("Procesando respuesta de pago de anuncio", {
+      actor: userId ?? "system",
+      actor_type: userId ? "plugin::users-permissions.user" : "system",
+      data: {
+        token: token ? "present" : "missing",
+      },
     });
 
     if (typeof token !== "string") {
@@ -186,12 +214,15 @@ class PaymentController {
       const orderNumber = ctx.query.TBK_ORDEN_COMRA;
       const redirectUrl = `${process.env.FRONTEND_URL}/anunciar/resumen`;
 
-      logger.warn("Token de Webpay no válido, redirigiendo", {
-        userId,
-        cancelToken,
-        sessionId,
-        orderNumber,
-        redirectUrl,
+      logAuditWarn("Token de Webpay no válido, redirigiendo", {
+        actor: userId ?? "system",
+        actor_type: userId ? "plugin::users-permissions.user" : "system",
+        data: {
+          cancelToken,
+          sessionId,
+          orderNumber,
+          redirectUrl,
+        },
       });
 
       ctx.redirect(redirectUrl);
@@ -203,18 +234,24 @@ class PaymentController {
       token,
     )) as unknown as WebpayAdResult;
 
-    logger.info("Respuesta de Webpay procesada", {
-      userId,
-      token,
-      result,
+    logAuditInfo("Respuesta de Webpay procesada", {
+      actor: userId ?? "system",
+      actor_type: userId ? "plugin::users-permissions.user" : "system",
+      data: {
+        token,
+        result,
+      },
     });
 
     // Crear orden aquí
     if (!result.webpay) {
-      logger.error("Respuesta de Webpay inválida", {
-        userId,
-        token,
-        result,
+      logAuditError("Respuesta de Webpay inválida", {
+        actor: userId ?? "system",
+        actor_type: userId ? "plugin::users-permissions.user" : "system",
+        data: {
+          token,
+          result,
+        },
       });
       ctx.redirect(`${process.env.FRONTEND_URL}/pagar/error`);
       return;
@@ -226,9 +263,12 @@ class PaymentController {
       result.ad.details.is_invoice,
     );
 
-    logger.info("Detalles de facturación obtenidos", {
-      userId: result.ad.user.id,
-      isInvoice: result.ad.details.is_invoice,
+    logAuditInfo("Detalles de facturación obtenidos", {
+      actor: Number(result.ad.user.id),
+      actor_type: "plugin::users-permissions.user",
+      data: {
+        isInvoice: result.ad.details.is_invoice,
+      },
     });
 
     // Obtener detalle de compra
@@ -247,16 +287,24 @@ class PaymentController {
         userDetails: userDocumentDetails,
         items: paymentDetails.items,
       });
-      logger.info("Documento Facto generado exitosamente", {
-        adId: result.ad.id,
-        isInvoice: result.ad.details.is_invoice,
-        documentId: documentResponse?.id,
+      logAuditInfo("Documento Facto generado exitosamente", {
+        actor: Number(result.ad.user.id),
+        actor_type: "plugin::users-permissions.user",
+        data: {
+          adId: result.ad.id,
+          isInvoice: result.ad.details.is_invoice,
+          documentId: documentResponse?.id,
+        },
       });
     } catch (error) {
-      logger.error("Error generando documento Facto", {
-        adId: result.ad.id,
-        error: error.message,
-        stack: error.stack,
+      logAuditError("Error generando documento Facto", {
+        actor: Number(result.ad.user.id),
+        actor_type: "plugin::users-permissions.user",
+        data: {
+          adId: result.ad.id,
+          error: error.message,
+          stack: error.stack,
+        },
       });
     }
 
@@ -274,28 +322,41 @@ class PaymentController {
       document_response: documentResponse,
     });
 
-    logger.info("Orden creada exitosamente", {
-      orderId: (order?.order as { id?: unknown })?.id,
-      adId: result.ad.id,
-      userId: result.ad.user.id,
-      amount: result.webpay.amount,
+    logAuditInfo("Orden creada exitosamente", {
+      actor: Number(result.ad.user.id),
+      actor_type: "plugin::users-permissions.user",
+      data: {
+        orderId: (order?.order as { id?: unknown })?.id,
+        adId: result.ad.id,
+        amount: result.webpay.amount,
+      },
     });
 
     if (!result.success) {
-      logger.error("Proceso de pago falló", {
-        token,
-        adId: result?.ad?.id,
-        userId: result?.ad?.user?.id,
+      logAuditError("Proceso de pago falló", {
+        actor: result?.ad?.user?.id ? Number(result.ad.user.id) : "system",
+        actor_type: result?.ad?.user?.id
+          ? "plugin::users-permissions.user"
+          : "system",
+        data: {
+          token,
+          adId: result?.ad?.id,
+        },
       });
       ctx.redirect(`${process.env.FRONTEND_URL}/pagar/error`);
     } else {
-      logger.info("Proceso de pago completado exitosamente", {
-        adId: result?.ad?.id,
-        userId: result?.ad?.user?.id,
-        orderId: (order?.order as { documentId?: string })?.documentId,
-        redirectUrl: `${process.env.FRONTEND_URL}/pagar/gracias?order=${
-          (order?.order as { documentId?: string })?.documentId
-        }`,
+      logAuditInfo("Proceso de pago completado exitosamente", {
+        actor: result?.ad?.user?.id ? Number(result.ad.user.id) : "system",
+        actor_type: result?.ad?.user?.id
+          ? "plugin::users-permissions.user"
+          : "system",
+        data: {
+          adId: result?.ad?.id,
+          orderId: (order?.order as { documentId?: string })?.documentId,
+          redirectUrl: `${process.env.FRONTEND_URL}/pagar/gracias?order=${
+            (order?.order as { documentId?: string })?.documentId
+          }`,
+        },
       });
       ctx.redirect(
         `${process.env.FRONTEND_URL}/pagar/gracias?order=${
@@ -377,9 +438,13 @@ class PaymentController {
 
     if (typeof token !== "string") {
       // User cancelled (Webpay sends TBK_TOKEN instead of token_ws on cancellation)
-      logger.warn("Webpay checkout cancelled or invalid token", {
-        tbkToken: ctx.query.TBK_TOKEN,
-        sessionId: ctx.query.TBK_ID_SESION,
+      logAuditWarn("Webpay checkout cancelled or invalid token", {
+        actor: "system",
+        actor_type: "system",
+        data: {
+          tbkToken: ctx.query.TBK_TOKEN,
+          sessionId: ctx.query.TBK_ID_SESION,
+        },
       });
       ctx.redirect(`${process.env.FRONTEND_URL}/pagar/error?reason=cancelled`);
       return;
@@ -388,8 +453,12 @@ class PaymentController {
     const result = await checkoutService.processWebpayReturn(token);
 
     if (!result.success) {
-      logger.error("Checkout Webpay return failed", {
-        message: result.message,
+      logAuditError("Checkout Webpay return failed", {
+        actor: "system",
+        actor_type: "system",
+        data: {
+          message: result.message,
+        },
       });
       ctx.redirect(`${process.env.FRONTEND_URL}/pagar/error?reason=rejected`);
       return;
@@ -401,8 +470,12 @@ class PaymentController {
     if (!result.orderDocumentId) {
       // Payment was authorized and processed (ad published) but order record creation failed.
       // Do NOT show "rejected" — the bank charge is real. Redirect to a receipt-less success page.
-      logger.error("Checkout Webpay return missing orderDocumentId", {
-        orderId: result.orderId,
+      logAuditError("Checkout Webpay return missing orderDocumentId", {
+        actor: "system",
+        actor_type: "system",
+        data: {
+          orderId: result.orderId,
+        },
       });
       ctx.redirect(
         `${process.env.FRONTEND_URL}/pagar/gracias?error=no-receipt`,
@@ -538,9 +611,12 @@ class PaymentController {
     );
 
     if (!chargeResult.success) {
-      logger.error("proResponse: first-month charge failed", {
-        userId: user.id,
-        responseCode: chargeResult.responseCode,
+      logAuditError("proResponse: first-month charge failed", {
+        actor: user.id,
+        actor_type: "plugin::users-permissions.user",
+        data: {
+          responseCode: chargeResult.responseCode,
+        },
       });
       ctx.redirect(
         `${process.env.FRONTEND_URL}/pro/error?reason=charge-failed`,
@@ -649,9 +725,12 @@ class PaymentController {
         proOrder = orderResult.order as { documentId?: string };
       }
     } catch (orderError) {
-      logger.error("proResponse: order/Facto creation failed", {
-        userId: user.id,
-        error: orderError,
+      logAuditError("proResponse: order/Facto creation failed", {
+        actor: user.id,
+        actor_type: "plugin::users-permissions.user",
+        data: {
+          error: orderError,
+        },
       });
     }
 
@@ -677,9 +756,13 @@ class PaymentController {
         }
       }
     } catch (sortError) {
-      logger.error(
+      logAuditError(
         "proResponse: sort_priority recalculation failed on pro activation",
-        { userId: user.id, error: sortError },
+        {
+          actor: user.id,
+          actor_type: "plugin::users-permissions.user",
+          data: { error: sortError },
+        },
       );
     }
 
