@@ -26,6 +26,7 @@ import { useAdsStore } from "@/stores/ads.store";
 import { useRelatedStore } from "@/stores/related.store";
 import { useHistoryStore } from "@/stores/history.store";
 import { useIndicatorStore } from "@/stores/indicator.store";
+import { convertCurrency } from "@/utils/price";
 import type { Ad, AdAccess } from "@/types/ad";
 
 import HeaderDefault from "@/components/HeaderDefault.vue";
@@ -104,7 +105,9 @@ const { data: adData, refresh } = await useAsyncData<AdPageData | null>(
 
       // For now, always show the ad information
 
-      // Format original price and convert to alternate currency
+      // Format original price. Currency conversion is populated client-side
+      // (see the watcher below) — it must never block SSR on an external
+      // indicators API.
       if (ad.price) {
         ad.priceData = {
           formattedPrice: new Intl.NumberFormat("es-CL", {
@@ -116,32 +119,6 @@ const { data: adData, refresh } = await useAsyncData<AdPageData | null>(
           originalPrice: ad.price,
           originalCurrency: ad.currency || "CLP",
         };
-
-        const result = await indicatorStore.convertCurrency({
-          amount: ad.priceData.originalPrice,
-          from: ad.priceData.originalCurrency as "CLP" | "USD" | "EUR",
-          to: (ad.currency === "CLP" ? "USD" : "CLP") as "CLP" | "USD" | "EUR",
-        });
-
-        if (result?.data) {
-          const resultData = result.data as unknown as { result: number };
-          const resultMeta = (
-            result as unknown as { meta?: { timestamp: string } }
-          ).meta;
-          ad.priceData.convertedPrice = resultData.result;
-          ad.priceData.convertedTimestamp = resultMeta?.timestamp;
-          ad.priceData.convertedCurrency =
-            ad.currency === "CLP" ? "USD" : "CLP";
-          ad.priceData.formattedConvertedPrice = new Intl.NumberFormat(
-            "es-CL",
-            {
-              style: "currency",
-              currency: ad.priceData.convertedCurrency,
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 0,
-            },
-          ).format(ad.priceData.convertedPrice ?? 0);
-        }
       }
 
       // Only load related ads for active ads — Strapi related endpoint requires a published ad
@@ -195,6 +172,42 @@ onMounted(() => {
     showError({ statusCode: 404, message: "Página no encontrada" });
   }
 });
+
+// Populate the converted-price line entirely client-side (like the footer's
+// indicator display) so an unresponsive upstream indicators API can never
+// block SSR — only import.meta.client runs this, and it re-fires whenever
+// the ad changes (client-side slug navigation reuses this component).
+watch(
+  () => adComputed.value?.documentId,
+  async () => {
+    if (!import.meta.client) return;
+    const priceData = adComputed.value?.priceData;
+    if (!priceData) return;
+
+    const indicatorsResult = await indicatorStore.fetchIndicators();
+    if (!indicatorsResult?.data) return;
+
+    const targetCurrency = adComputed.value?.currency === "CLP" ? "USD" : "CLP";
+    const convertedPrice = convertCurrency(
+      priceData.originalPrice,
+      priceData.originalCurrency as "CLP" | "USD" | "EUR",
+      targetCurrency as "CLP" | "USD" | "EUR",
+      indicatorsResult.data,
+    );
+    if (convertedPrice === null) return;
+
+    priceData.convertedPrice = convertedPrice;
+    priceData.convertedTimestamp = new Date().toISOString();
+    priceData.convertedCurrency = targetCurrency;
+    priceData.formattedConvertedPrice = new Intl.NumberFormat("es-CL", {
+      style: "currency",
+      currency: targetCurrency,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(convertedPrice);
+  },
+  { immediate: true },
+);
 
 // Set SEO and structured data when ad data is available
 watch(
