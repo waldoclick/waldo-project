@@ -89,6 +89,6 @@ Plans:
 - [x] 04-03-PLAN.md — Wave 2: Frontend types (cookie-policy.d.ts, security-policy.d.ts, documentId fix on term.d.ts/policy.d.ts) + 2 new Pinia stores + mandatory 5-part settings.store.ts extension
 - [x] 04-04-PLAN.md — Wave 3: Public pages (politicas-de-cookies.vue, politicas-de-seguridad.vue) + display components + SCSS partials
 - [ ] 04-05-PLAN.md — Wave 3: Dashboard CRUD for Cookies (CookiePoliciesDashboard.vue, FormCookiePolicy.vue, 4 route files, documentId-based fix-forward filtering)
-- [ ] 04-06-PLAN.md — Wave 3: Dashboard CRUD for Seguridad (SecurityPoliciesDashboard.vue, FormSecurityPolicy.vue, 4 route files, documentId-based fix-forward filtering)
+- [x] 04-06-PLAN.md — Wave 3: Dashboard CRUD for Seguridad (SecurityPoliciesDashboard.vue, FormSecurityPolicy.vue, 4 route files, documentId-based fix-forward filtering)
 - [ ] 04-07-PLAN.md — Wave 4: MenuMaintenance.vue nav entries for both new dashboard sections + Términos label update + knownSubRoutes
 - [ ] 04-09-PLAN.md — Wave 5 (non-autonomous): Manual Strapi admin permission grant (Public find/findOne for both content-types) + 12-point human visual/functional verification checklist
