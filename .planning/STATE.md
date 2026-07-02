@@ -36,6 +36,7 @@ Progress: [███████░░░] 65% (phase 04: 5/9 plans complete)
 
 ### Key Decisions (carry forward)
 
+- This project's STATE.md/ROADMAP.md predate the current gsd-tools schema (no `Current Plan`/`Total Plans in Phase` fields, no `Performance Metrics` section) — `state advance-plan`, `state update-progress`, `state record-metric`, and `roadmap update-plan-progress` report `{"updated": true, ...}` but do NOT persist changes to disk in this repo. Verify with `git diff` after calling them; update STATE.md/ROADMAP.md prose and frontmatter manually if the diff is empty (04-05)
 - New [id] dashboard route pages (cookies/[id]/index.vue, cookies/[id]/edit.vue) filter by documentId (string) instead of Number(id) — fix-forward on new content-types without touching the pre-existing terms/policies Number(id) bug, which stays out of scope (04-05)
 - BEM block for the Cookies dashboard is the single unhyphenated noun `cookies` (cookies--dashboard), never `cookie-policies--`; form modifier is `form--cookie`, never `form--cookie-policy` (04-05)
 - index.vue for the cookies dashboard list omits any dead unused import (e.g. a CookiePoliciesDefault-style import mirroring the pre-existing TermsDefault dead-import bug in terms/index.vue) (04-05)

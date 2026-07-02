@@ -68,7 +68,9 @@ Each task was committed atomically:
 1. **Task 1: Create CookiePoliciesDashboard.vue and FormCookiePolicy.vue** - `257a27f0` (feat)
 2. **Task 2: Create cookies dashboard route files with documentId filtering** - `18fac604` (feat)
 
-**Plan metadata:** pending (docs: complete plan — recorded after this summary commit)
+**Deviation fix:** `794cb1c9` (fix: redirect to documentId after create/edit)
+
+**Plan metadata:** recorded in this SUMMARY commit
 
 ## Files Created/Modified
 - `apps/website/app/components/CookiePoliciesDashboard.vue` - Dashboard list/search/filter/drag-reorder table for cookie-policy rows
@@ -79,12 +81,25 @@ Each task was committed atomically:
 - `apps/website/app/pages/dashboard/maintenance/cookies/[id]/edit.vue` - Edit page, documentId filter
 
 ## Decisions Made
-- Followed the plan's pre-written verbatim templates exactly (transcription, not design) — no deviation from the interfaces block.
+- Followed the plan's pre-written verbatim templates exactly (transcription, not design) — one bug fix applied post-transcription (see Deviations).
 - Confirmed via diff against the real `TermsDashboard.vue`/`FormTerm.vue`/`terms/**` files before transcribing, to guard against plan/reality drift; found zero drift.
 
 ## Deviations from Plan
 
-None - plan executed exactly as written.
+### Auto-fixed Issues
+
+**1. [Rule 1 - Bug] Form redirect used numeric id, inconsistent with documentId-filtered detail pages**
+- **Found during:** Task 1 (post-execution review, before declaring done)
+- **Issue:** `FormCookiePolicy.vue` was transcribed verbatim from `FormTerm.vue`, which redirects with `responseData?.id || responseData?.documentId` (numeric-id-first). This plan's Task 2 fix-forwarded the `[id]` route pages to filter by `documentId` (per explicit plan instruction), so a numeric-id redirect after create/edit would land on `/dashboard/maintenance/cookies/{numericId}`, which the detail/edit pages query via `documentId: { $eq: "{numericId}" }` — no match, blank page after every save. Confirmed by inspecting `FormPolicy.vue` + `policies/[id]/index.vue`: that sibling pair is internally consistent on the OLD numeric-id pattern end-to-end, whereas this plan intentionally moved only the read side to `documentId` — leaving the write-side redirect stale broke the pairing.
+- **Fix:** Flipped both `updatedId`/`createdId` local variables to `responseData?.documentId || responseData?.id` and `createdData?.documentId || createdData?.id` (documentId-first), aligning the redirect with the documentId-based detail/edit pages and the list view's existing documentId-based navigation (`handleViewCookiePolicy`/`handleEditCookiePolicy` already used documentId).
+- **Files modified:** `apps/website/app/components/FormCookiePolicy.vue`
+- **Verification:** `vue-tsc --noEmit` exits 0 after the change; manual trace of create/edit → redirect → detail-page filter confirms the id now matches.
+- **Committed in:** `794cb1c9` (separate fix commit after the task commits)
+
+---
+
+**Total deviations:** 1 auto-fixed (1 bug).
+**Impact on plan:** Necessary correctness fix completing the plan's own fix-forward intent (documentId end-to-end for the new content-type) — not scope creep, no new files, no new endpoints.
 
 ## Issues Encountered
 
