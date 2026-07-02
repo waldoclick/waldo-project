@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-last_updated: "2026-07-02T00:00:00.000Z"
-last_activity: 2026-07-02
+last_updated: "2026-07-01T20:35:00.000Z"
+last_activity: 2026-07-01
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 20
-  completed_plans: 12
-  percent: 60
+  completed_plans: 13
+  percent: 65
 ---
 
 # Session State
@@ -24,12 +24,12 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 
 ## Position
 
-Phase 04 (split-legal-pages-into-4-documents-with-dashboard-management) — IN PROGRESS (4/9 plans). Plan 04-01 complete: two new Strapi v5 content-type quadruplets (`api::cookie-policy.cookie-policy`, `api::security-policy.security-policy`) replicated byte-for-byte from the `term`/`policy` pattern — schema (title/text/order), hand-rolled controller (find/findOne/create/update/delete/reorder), core router, custom `POST /{plural}/reorder` route, pass-through service. Plan 04-02 complete: split `apps/strapi/seeders/policies.ts` (was 53 mislabeled rows spanning 3 documents) into 4 correct, non-overlapping seeders — `terms.ts` (27 rows, reworded), `policies.ts` (20 Privacidad-only rows, reworded), new `cookie-policies.ts` (13 rows), new `security-policies.ts` (19 rows) — all sourced 1:1 from their humanized `docs/*.md` files and wired into `src/index.ts` bootstrap. Plan 04-08 complete: renamed `/condiciones-de-uso` → `/terminos-y-condiciones-de-uso` via `git mv`; 301 redirect added in `nuxt.config.ts` routeRules; `RESERVED_USERNAMES` synced in both `apps/website` and `apps/strapi` (kept old slug, added 3 new); all 8 reference-point files updated (FormRegister, FormTerms, LightboxCookies, MenuAbout, MenuFooter, TermsDefault, sitemap, page's own SEO block); `LightboxCookies.vue` now points to `/politicas-de-cookies`. Plan 04-03 complete: `cookie-policy.d.ts`/`security-policy.d.ts` TS interfaces created (documentId from day one); `term.d.ts`/`policy.d.ts` additively gained `documentId: string`; `useCookiePoliciesStore`/`useSecurityPoliciesStore` Pinia stores created mirroring `terms.store.ts`/`policies.store.ts` exactly; `settings.store.ts` mandatory 5-part extension complete (interface fields, refs with `sortBy: "order:asc"`, computed getters, switch-case branches, both return-block lists) — verified via grep (each location present exactly once) and `vue-tsc --noEmit` exits 0. Zero new tsc errors from 04-01/04-02/04-03 (pre-existing unrelated errors in upload.ts/ia.ts confirmed untouched/predating); `vue-tsc` for 04-08 could not be run in its worktree (no `node_modules` present) — flagged, not fabricated as passing, needs a fresh typecheck once the main tree has all wave-1 changes merged (04-03's `vue-tsc` run in the main tree confirms zero errors post-merge for all types/stores changes at least). Remaining plans in phase 04: 04-04 (public pages), 04-05/04-06 (dashboard CRUD), 04-07 (nav), 04-09 (manual permission grant + verification).
+Phase 04 (split-legal-pages-into-4-documents-with-dashboard-management) — IN PROGRESS (5/9 plans). Plan 04-01 complete: two new Strapi v5 content-type quadruplets (`api::cookie-policy.cookie-policy`, `api::security-policy.security-policy`) replicated byte-for-byte from the `term`/`policy` pattern — schema (title/text/order), hand-rolled controller (find/findOne/create/update/delete/reorder), core router, custom `POST /{plural}/reorder` route, pass-through service. Plan 04-02 complete: split `apps/strapi/seeders/policies.ts` (was 53 mislabeled rows spanning 3 documents) into 4 correct, non-overlapping seeders — `terms.ts` (27 rows, reworded), `policies.ts` (20 Privacidad-only rows, reworded), new `cookie-policies.ts` (13 rows), new `security-policies.ts` (19 rows) — all sourced 1:1 from their humanized `docs/*.md` files and wired into `src/index.ts` bootstrap. Plan 04-08 complete: renamed `/condiciones-de-uso` → `/terminos-y-condiciones-de-uso` via `git mv`; 301 redirect added in `nuxt.config.ts` routeRules; `RESERVED_USERNAMES` synced in both `apps/website` and `apps/strapi` (kept old slug, added 3 new); all 8 reference-point files updated (FormRegister, FormTerms, LightboxCookies, MenuAbout, MenuFooter, TermsDefault, sitemap, page's own SEO block); `LightboxCookies.vue` now points to `/politicas-de-cookies`. Plan 04-03 complete: `cookie-policy.d.ts`/`security-policy.d.ts` TS interfaces created (documentId from day one); `term.d.ts`/`policy.d.ts` additively gained `documentId: string`; `useCookiePoliciesStore`/`useSecurityPoliciesStore` Pinia stores created mirroring `terms.store.ts`/`policies.store.ts` exactly; `settings.store.ts` mandatory 5-part extension complete (interface fields, refs with `sortBy: "order:asc"`, computed getters, switch-case branches, both return-block lists) — verified via grep (each location present exactly once) and `vue-tsc --noEmit` exits 0. Plan 04-04 complete: 2 new public pages `politicas-de-cookies.vue`/`politicas-de-seguridad.vue` replicating `politicas-de-privacidad.vue` exactly (useAsyncData + $setSEO + $setStructuredData); `CookiePoliciesDefault.vue`/`SecurityPoliciesDefault.vue` display components wrap `AccordionDefault` mirroring `TermsDefault.vue`; `_cookies.scss`/`_security.scss` SCSS partials mirror `_terms.scss` (both `--default` + `--dashboard` modifiers) using unhyphenated BEM blocks `.cookies`/`.security` (never `.cookie-policies`/`.security-policies`); registered in `app.scss` via pure insertion after the `components/terms` line; `vue-tsc --noEmit` exits 0 and full `app.scss` compiles cleanly via `sass`. Zero new tsc errors from 04-01/04-02/04-03/04-04 (pre-existing unrelated errors in upload.ts/ia.ts confirmed untouched/predating); `vue-tsc` for 04-08 could not be run in its worktree (no `node_modules` present) — flagged, not fabricated as passing, needs a fresh typecheck once the main tree has all wave-1 changes merged (04-03's/04-04's `vue-tsc` runs confirm zero errors post-merge for all types/stores/pages changes at least). Remaining plans in phase 04: 04-05/04-06 (dashboard CRUD), 04-07 (nav), 04-09 (manual permission grant + verification).
 
 (Prior: Phase 03 COMPLETE (2/2 plans) — AI validation gate wired into `registerUserLocal`. Phase 02 plan 02-01 complete — ai-provider orchestrator. Phase 01 complete — Codacy security/best-practice issues.)
 
 ```
-Progress: [██████░░░░] 60% (phase 04: 4/9 plans complete)
+Progress: [██████░░░░] 65% (phase 04: 5/9 plans complete)
 ```
 
 ## Accumulated Context
@@ -40,6 +40,8 @@ Progress: [██████░░░░] 60% (phase 04: 4/9 plans complete)
 - New content-type controllers replicate `term.ts` byte-for-byte apart from UID string substitution and local variable renames (`term`→`cookiePolicy`/`securityPolicy`) — no logic deviation (04-01)
 - documentId: string added to CookiePolicy/SecurityPolicy interfaces from creation, and additively backfilled onto pre-existing Term/Policy interfaces in the same plan — purely widening, zero consumer breakage since nothing destructures .documentId off the typed interface today (04-03)
 - cookiePolicies/securityPolicies settings.store.ts refs use sortBy: "order:asc" override, matching the faqs/policies/terms precedent for orderable dashboard sections (04-03)
+- BEM block names for the 2 new public legal pages are unhyphenated single nouns `.cookies`/`.security` (never `.cookie-policies`/`.security-policies`), even though the underlying content-types/stores/types keep the `cookie-policy`/`security-policy` naming — CLAUDE.md requires the block to be a single semantic noun (04-04)
+- Both `_cookies.scss`/`_security.scss` created with full `--default` + `--dashboard` modifiers up front (copied verbatim from `_terms.scss`), even though only `--default` is consumed by this plan's pages, since the upcoming dashboard plans (04-05/04-06) reuse the same partials (04-04)
 - cookie-policies.ts uses 13 rows (1:1 with docs/politica-de-cookies.md's 13 `##` headings), not 14 — old mixed policiesData array's intro/definition split has no MD equivalent, per RESEARCH.md's explicit resolution (04-02)
 - Cross-document markdown links converted to live site routes when rewording seeders: terms.ts -> /politicas-de-privacidad, policies.ts -> /politicas-de-cookies (04-02)
 - strapi.db.query() UID argument is not a compile-time-checked union in this codebase — new content-type seeders (cookie-policy/security-policy) type-check cleanly even before Plan 01's schemas exist locally (04-02)
