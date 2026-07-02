@@ -389,7 +389,8 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 
 ## Current State
 
-**Last shipped:** Phase 127 complete (2026-06-12) — Security review round 2: 5 SEC2 requirements closed (payment amount re-validation + replay prevention, order AUTHZ ownership checks + route policy lockdown, auth rate limiting + reCAPTCHA hostname binding + email_verified guard, XSS DOMPurify migration, MJML autoescape + upload magic-byte + PII strip + route lockdown)
+**Last shipped:** Phase 06 complete (2026-07-02) — Comprehensive as-built product documentation: `docs/PRD.md`, `docs/TRD.md`, `docs/UXD.md`, `docs/FLOWS.md`, `docs/BSD.md`, `docs/IPD.md` generated and verified against live source (not copied from stale `.planning/codebase/*` or existing `/docs/*.md`). Corrected several stale facts along the way: `apps/dashboard` does not exist as a separate app (merged into `apps/website/app/pages/dashboard/**`); 6 active cron jobs, not 4; BSD.md's ER diagram covers all 21 Strapi content-types including the `User` entity under `extensions/users-permissions/`.
+**Previously shipped:** Phase 127 complete (2026-06-12) — Security review round 2: 5 SEC2 requirements closed (payment amount re-validation + replay prevention, order AUTHZ ownership checks + route policy lockdown, auth rate limiting + reCAPTCHA hostname binding + email_verified guard, XSS DOMPurify migration, MJML autoescape + upload magic-byte + PII strip + route lockdown)
 **Previously shipped:** Phase 124 complete (2026-04-12) — InputPhone component: reusable `<InputPhone>` Vue 3 composite (country dial-code selector + phone number field) with 29-entry countries.json and 10 passing unit tests; integrated across FormProfile, FormCreateThree, and FormContact
 **Previously shipped:** Phase 120 complete (2026-04-09) — PRO subscription model refactor: `subscription-pro` collection type created, card data migrated out of user, charge-before-activate ordering fixed, cron/cancellation read path migrated, 39 tests passing
 **Previously shipped:** v1.46 (2026-04-05) — Phase 112 complete: Ad wizard ownership validation — server-side ownership guards on saveDraft/update/delete in Strapi; client-side userId tracking with wizard reset guard in anunciar/index.vue
@@ -586,4 +587,4 @@ Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos qu
 - ✓ All 39 tests pass: cron, cancellation, middleware, bootstrap migration — Phase 120
 
 ---
-*Last updated: 2026-06-12 after Phase 127 (security-review-round-2 — SEC2-PAYMENT, SEC2-AUTHZ, SEC2-AUTH, SEC2-XSS, SEC2-LOCKDOWN all closed)*
+*Last updated: 2026-07-02 after Phase 06 (as-built product documentation — PRD/TRD/UXD/FLOWS/BSD/IPD generated in /docs, verified against live source)*
