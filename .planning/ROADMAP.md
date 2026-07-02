@@ -118,7 +118,7 @@ Plans:
 Plans:
 - [x] 06-01-PLAN.md — Wave 1: BSD.md (21-entity ER diagram + field tables + endpoint reference, verified against live schema.json)
 - [x] 06-02-PLAN.md — Wave 1: FLOWS.md (6 core flows, each a Mermaid diagram + prose; corrects 6-cron count and reservation path)
-- [ ] 06-03-PLAN.md — Wave 2: TRD.md (stack/architecture/integrations/NFRs + "Inconsistencias detectadas" dashboard-merge & cron corrections)
+- [x] 06-03-PLAN.md — Wave 2: TRD.md (stack/architecture/integrations/NFRs + "Inconsistencias detectadas" dashboard-merge & cron corrections)
 - [ ] 06-04-PLAN.md — Wave 2: PRD.md (as-built problem/personas/MVP+backlog/acceptance criteria cross-referenced to flows)
 - [ ] 06-05-PLAN.md — Wave 2: IPD.md (retrospective phase/milestone history reframed as reusable delivery patterns)
-- [ ] 06-06-PLAN.md — Wave 2: UXD.md (page inventory public/dashboard, component taxonomy, BEM/SCSS, brand palette)
+- [x] 06-06-PLAN.md — Wave 2: UXD.md (page inventory public/dashboard, component taxonomy, BEM/SCSS, brand palette)
