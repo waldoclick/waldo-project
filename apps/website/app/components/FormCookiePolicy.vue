@@ -109,7 +109,7 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       form.value = { title: payload.title, text: payload.text, order: payload.order };
       emit("saved", updatedCookiePolicy as CookiePolicyData);
       await Swal.fire("Éxito", "Política de Cookies actualizada correctamente.", "success");
-      const updatedId = responseData?.id || responseData?.documentId;
+      const updatedId = responseData?.documentId || responseData?.id;
       if (updatedId) {
         router.push(`/dashboard/maintenance/cookies/${updatedId}`);
       }
@@ -134,7 +134,7 @@ const handleSubmit = async (values: Record<string, unknown>) => {
       const createdData = response.data;
       emit("saved", (createdData as CookiePolicyData) || ({} as CookiePolicyData));
       await Swal.fire("Éxito", "Política de Cookies creada correctamente.", "success");
-      const createdId = createdData?.id || createdData?.documentId;
+      const createdId = createdData?.documentId || createdData?.id;
       if (createdId) {
         router.push(`/dashboard/maintenance/cookies/${createdId}`);
       } else {
