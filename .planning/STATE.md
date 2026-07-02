@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 05-06-PLAN.md
-last_updated: "2026-07-02T17:49:38.420Z"
+stopped_at: Phase 06 context gathered
+last_updated: "2026-07-02T18:37:25.167Z"
 last_activity: 2026-07-02
 progress:
-  total_phases: 5
+  total_phases: 6
   completed_phases: 1
   total_plans: 26
-  completed_plans: 24
+  completed_plans: 22
   percent: 92
 ---
 
@@ -158,6 +158,7 @@ Progress: [█████████░] 92% (phase 05: 5/6 plans complete)
 
 ### Roadmap Evolution
 
+- Phase 6 added: Generate comprehensive as-built product documentation (PRD, TRD, UX/UI Design, App Flow, Backend Schema, Implementation Plan) in /docs, filed under acronym filenames. Must reflect current-state (as-built) behavior verified against live code — not copied from `.planning/codebase/*` or existing `/docs/*.md`, which are leads only and may be stale (e.g. CLAUDE.md still describes `apps/dashboard` as a separate app; it was merged into `apps/website` under `/dashboard/**`). Flows rendered as Mermaid diagrams; any inconsistency or unanswered question goes into an explicit "Preguntas abiertas" section instead of being assumed.
 - Phase 5 added: Audit log for every CRUD operation in Strapi. Single global `strapi.db.lifecycles.subscribe()` hook in bootstrap() (apps/strapi/src/index.ts) tracking create/update/delete across all 21 content-types (chosen over `documents.use()`, which misses the db.query()-based creates used by 12 hand-rolled controllers). New `audit-log` content-type stores actor id + actor type discriminator (admin-panel vs users-permissions users), action, content-type uid, record id/documentId, timestamp — actor+action+record+timestamp only, no field-level before/after diff. Actor read from `strapi.requestContext.get()?.state?.user`; writes with no request context (seeders, the 4 existing cron jobs) tagged `system`. audit-log itself excluded from the subscriber to avoid recursion. No retention/pruning cron. No new dashboard UI — read via Strapi admin Content Manager.
 - Phase 4 added: Split the single public page /condiciones-de-uso into 4 separate legal documents (Términos y Condiciones de Uso, Política de Cookies, Política de Privacidad, Política de Seguridad) on apps/website, with matching apps/dashboard admin management views (drag-and-drop ordering; only Términos y Condiciones de Uso gets a "featured/show on home" checkbox), update the registration form checkbox + lightbox to reference the new pages, and add a Strapi seeder populated from the humanized content in docs/terminos-y-condiciones.md, docs/politica-de-cookies.md, docs/politica-de-privacidad.md, docs/politica-de-seguridad.md. Needs investigation of the current /condiciones-de-uso implementation (content type, website page, dashboard, registration form) before deciding the data model.
 - Phase 1 added: Corregir los 100 issues abiertos en Codacy (90 Security/Opengrep, 9 BestPractice/ESLint, 1 UnusedCode). Analizar cada patrón para descartar falsos positivos y evaluar riesgo de regresión antes de aplicar. Snapshot completo en .planning/research/codacy-issues-snapshot-2026-06-14.md. (Numeración reiniciada en 1 tras archivar milestones v1.x.)
@@ -256,5 +257,5 @@ Progress: [█████████░] 92% (phase 05: 5/6 plans complete)
 ## Session Continuity
 
 Last activity: 2026-07-02
-Stopped at: Completed 05-06-PLAN.md
-Resume file: None
+Stopped at: Phase 06 context gathered
+Resume file: .planning/phases/06-generate-comprehensive-as-built-product-documentation-prd-trd-ux-ui-app-flows-backend-schema-implementation-plan-in-docs-verified-against-current-code-not-copied-from-potentially-stale-existing-docs/06-CONTEXT.md
