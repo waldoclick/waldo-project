@@ -1,11 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import type { StrapiResponse, StrapiData } from "@/types/strapi";
-import type {
-  Indicator,
-  ConvertParams,
-  ConvertResponse,
-} from "@/types/indicator";
+import type { StrapiData } from "@/types/strapi";
+import type { Indicator } from "@/types/indicator";
 
 export const useIndicatorStore = defineStore(
   "indicator",
@@ -63,28 +59,6 @@ export const useIndicatorStore = defineStore(
       }
     }
 
-    async function convertCurrency({
-      amount,
-      from = "CLP",
-      to = "USD",
-    }: ConvertParams) {
-      loading.value = true;
-      error.value = null;
-      try {
-        const response = await client("indicators/convert", {
-          method: "GET",
-          params: { amount, from, to } as unknown as Record<string, unknown>,
-        });
-        return response as unknown as StrapiResponse<ConvertResponse>;
-      } catch (err) {
-        error.value = "Error al convertir la moneda";
-        console.error(err);
-        return null;
-      } finally {
-        loading.value = false;
-      }
-    }
-
     return {
       loading,
       error,
@@ -92,7 +66,6 @@ export const useIndicatorStore = defineStore(
       lastFetchDate,
       fetchIndicators,
       fetchIndicator,
-      convertCurrency,
     };
   },
   {
