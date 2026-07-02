@@ -140,7 +140,7 @@
         </NuxtLink>
       </li>
 
-      <!-- Condiciones de Uso -->
+      <!-- Términos y Condiciones de Uso -->
       <li
         class="menu--maintenance__item"
         :class="{
@@ -154,7 +154,43 @@
           class="menu--maintenance__link"
         >
           <ScrollText class="menu--maintenance__icon" />
-          <span>Condiciones de Uso</span>
+          <span>Términos y Condiciones de Uso</span>
+        </NuxtLink>
+      </li>
+
+      <!-- Política de Cookies -->
+      <li
+        class="menu--maintenance__item"
+        :class="{
+          'menu--maintenance__item--active': isRouteActive(
+            '/dashboard/maintenance/cookies',
+          ),
+        }"
+      >
+        <NuxtLink
+          to="/dashboard/maintenance/cookies"
+          class="menu--maintenance__link"
+        >
+          <Cookie class="menu--maintenance__icon" />
+          <span>Política de Cookies</span>
+        </NuxtLink>
+      </li>
+
+      <!-- Política de Seguridad -->
+      <li
+        class="menu--maintenance__item"
+        :class="{
+          'menu--maintenance__item--active': isRouteActive(
+            '/dashboard/maintenance/security',
+          ),
+        }"
+      >
+        <NuxtLink
+          to="/dashboard/maintenance/security"
+          class="menu--maintenance__link"
+        >
+          <ShieldCheck class="menu--maintenance__icon" />
+          <span>Política de Seguridad</span>
         </NuxtLink>
       </li>
     </ul>
@@ -174,6 +210,8 @@ import {
   HelpCircle,
   Shield,
   ScrollText,
+  Cookie,
+  ShieldCheck,
 } from "lucide-vue-next";
 
 const emit = defineEmits<{ (e: "close"): void }>();
@@ -195,6 +233,8 @@ const knownSubRoutes = [
   "/dashboard/maintenance/faqs",
   "/dashboard/maintenance/policies",
   "/dashboard/maintenance/terms",
+  "/dashboard/maintenance/cookies",
+  "/dashboard/maintenance/security",
 ];
 
 const isMaintenanceRootActive = computed(
