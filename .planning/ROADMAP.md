@@ -98,8 +98,8 @@ Plans:
 **Goal:** Track who creates, updates, and deletes records across every Strapi content-type (admin panel + public API + system writes) via a single global `strapi.db.lifecycles.subscribe()` handler registered in `bootstrap()` — recording actor id + actor-type discriminator (admin::user / plugin::users-permissions.user / system), action, content-type UID, and record id/documentId per write, into a new `audit-log` content-type read via the Strapi admin Content Manager. No dashboard UI, no field-level diffing, no retention cron.
 **Requirements**: N/A
 **Depends on:** Phase 4
-**Plans:** 2 plans (2 waves)
+**Plans:** 1/2 plans executed
 
 Plans:
-- [ ] 05-01-PLAN.md — Wave 1 (TDD): audit-log content-type schema + failing subscriber tests (5 behaviors) + `db.lifecycles.subscribe()` handler with recursion guard, actor discrimination, log-and-swallow, and documented bulk-*Many scope boundary, wired at top of bootstrap()
+- [x] 05-01-PLAN.md — Wave 1 (TDD): audit-log content-type schema + failing subscriber tests (5 behaviors) + `db.lifecycles.subscribe()` handler with recursion guard, actor discrimination, log-and-swallow, and documented bulk-*Many scope boundary, wired at top of bootstrap()
 - [ ] 05-02-PLAN.md — Wave 2 (non-autonomous): end-to-end human verification (Content Manager visibility, admin/public-API/system actor tagging, no recursion, business writes unaffected)

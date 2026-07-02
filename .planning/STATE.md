@@ -3,14 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-last_updated: "2026-07-02T00:28:54.000Z"
+stopped_at: Completed 05-01-PLAN.md
+last_updated: "2026-07-02T03:51:21.654Z"
 last_activity: 2026-07-02
 progress:
-  total_phases: 4
+  total_phases: 5
   completed_phases: 1
-  total_plans: 20
-  completed_plans: 17
-  percent: 85
+  total_plans: 22
+  completed_plans: 18
+  percent: 82
 ---
 
 # Session State
@@ -20,22 +21,24 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Los usuarios pueden publicar y gestionar avisos de forma confiable, con pagos que funcionan sin fricción — independientemente de la pasarela utilizada.
-**Current focus:** Phase 04 — Split legal pages into 4 documents with dashboard management
+**Current focus:** Phase 5 — audit-log-for-every-crud-operation-in-strapi
 
 ## Position
 
-Phase 04 (split-legal-pages-into-4-documents-with-dashboard-management) — IN PROGRESS (8/9 plans). Wave 1-2 complete: 04-01 (Strapi content-type quadruplets for cookie-policy/security-policy), 04-02 (seeder split — policies.ts was 53 mislabeled rows spanning 3 documents, now correctly 4 seeders: terms.ts 27 rows, policies.ts 20 rows, cookie-policies.ts 13 rows, security-policies.ts 19 rows, all from humanized docs/*.md), 04-08 (URL rename condiciones-de-uso → terminos-y-condiciones-de-uso + all 8 reference-point files + RESERVED_USERNAMES sync), 04-03 (frontend types with documentId + 2 Pinia stores + mandatory 5-part settings.store.ts extension). Wave 3 complete: 04-04 (2 new public pages + display components + `_cookies.scss`/`_security.scss`, unhyphenated BEM blocks `.cookies`/`.security`), 04-05 (Cookies dashboard CRUD — `CookiePoliciesDashboard.vue`/`FormCookiePolicy.vue` + 4 route files, documentId-filtered `[id]` pages, BEM `cookies--dashboard`/`form--cookie`), 04-06 (Security dashboard CRUD — same pattern, `security--dashboard`/`form--security`). Wave 4 complete: 04-07 (MenuMaintenance.vue nav entries for Cookies/Seguridad using `Cookie`/`ShieldCheck` icons, Términos label renamed to "Términos y Condiciones de Uso", knownSubRoutes extended to 10 entries; `vue-tsc --noEmit` exits 0). Remaining plan in phase 04: 04-09 (manual permission grant + human verification checkpoint).
+Phase 05 (audit-log-for-every-crud-operation-in-strapi) — IN PROGRESS (1/2 plans). Plan 05-01 complete: `audit-log` content-type (schema-only, no controller/route/service) + `registerAuditLogSubscriber(strapi)` global `db.lifecycles.subscribe()` hook wired as the first statement in `bootstrap()` — records create/update/delete across every content-type, discriminating actor as `admin::user`/`plugin::users-permissions.user`/`system`, with a recursion guard (audit-log writes never audit themselves) and log-and-swallow error handling. 6 Jest tests covering all 5 required behaviors, GREEN. Remaining plan in phase 05: 05-02.
 
-(Prior: Phase 03 COMPLETE (2/2 plans) — AI validation gate wired into `registerUserLocal`. Phase 02 plan 02-01 complete — ai-provider orchestrator. Phase 01 complete — Codacy security/best-practice issues.)
+(Prior: Phase 04 (split-legal-pages-into-4-documents-with-dashboard-management) — IN PROGRESS (8/9 plans). Wave 1-2 complete: 04-01 (Strapi content-type quadruplets for cookie-policy/security-policy), 04-02 (seeder split — policies.ts was 53 mislabeled rows spanning 3 documents, now correctly 4 seeders: terms.ts 27 rows, policies.ts 20 rows, cookie-policies.ts 13 rows, security-policies.ts 19 rows, all from humanized docs/*.md), 04-08 (URL rename condiciones-de-uso → terminos-y-condiciones-de-uso + all 8 reference-point files + RESERVED_USERNAMES sync), 04-03 (frontend types with documentId + 2 Pinia stores + mandatory 5-part settings.store.ts extension). Wave 3 complete: 04-04 (2 new public pages + display components + `_cookies.scss`/`_security.scss`, unhyphenated BEM blocks `.cookies`/`.security`), 04-05 (Cookies dashboard CRUD — `CookiePoliciesDashboard.vue`/`FormCookiePolicy.vue` + 4 route files, documentId-filtered `[id]` pages, BEM `cookies--dashboard`/`form--cookie`), 04-06 (Security dashboard CRUD — same pattern, `security--dashboard`/`form--security`). Wave 4 complete: 04-07 (MenuMaintenance.vue nav entries for Cookies/Seguridad using `Cookie`/`ShieldCheck` icons, Términos label renamed to "Términos y Condiciones de Uso", knownSubRoutes extended to 10 entries; `vue-tsc --noEmit` exits 0). Remaining plan in phase 04: 04-09 (manual permission grant + human verification checkpoint). Phase 03 COMPLETE (2/2 plans) — AI validation gate wired into `registerUserLocal`. Phase 02 plan 02-01 complete — ai-provider orchestrator. Phase 01 complete — Codacy security/best-practice issues.)
 
 ```
-Progress: [████████▓░] 85% (phase 04: 8/9 plans complete)
+Progress: [████████▓░] 82% (phase 05: 1/2 plans complete)
 ```
 
 ## Accumulated Context
 
 ### Key Decisions (carry forward)
 
+- `audit-log` content-type is schema-only (no controller/route/service) — read exclusively via admin Content Manager; recursion guard is an early-return on `event.model.uid` inside the handler (not a SubscriberMap models allowlist); `record_id`/`record_document_id` always pulled from `event.result`, never `event.params.where`; subscriber registered as the FIRST statement in `bootstrap()` so seeder/backfill writes are captured and tagged `system`; bulk `*Many` operations intentionally out of scope (documented inline) (05-01)
+- Full `npx jest` run in this sandboxed dev environment SIGKILLs many worker processes (OOM) with default concurrency — use `npx jest --maxWorkers=2` for a reliable full-suite signal; 3 pre-existing unrelated failures (`ad.approve.zoho.test.ts`, `indicador.test.ts`, `general.utils.test.ts`) confirmed failing before this plan's changes via `git stash`, logged to phase 05 `deferred-items.md`, not fixed (05-01)
 - `[id]` pages for both new content-types (cookie-policy, security-policy) filter by `documentId` (string), fixing forward the pre-existing `Number(id)` bug in `terms/[id]` and `policies/[id]` instead of replicating it — new content-types have no legacy consumers, so they start correct; existing terms/policies bug stays out of scope for this phase (04-05, 04-06)
 - `CookiePoliciesDashboard.vue`/`FormCookiePolicy.vue` and `SecurityPoliciesDashboard.vue`/`FormSecurityPolicy.vue` (+ their 4 route files each) mirror `TermsDashboard.vue`/`FormTerm.vue` exactly (mechanical substitution); both `index.vue` files intentionally omit the dead `TermsDefault` import present in `terms/index.vue` (04-05, 04-06)
 - Tooling gotcha: this project's STATE.md/ROADMAP.md predate the current gsd-tools schema (no `Current Plan`/`Total Plans in Phase` fields, no `Performance Metrics` section) — `state advance-plan`, `state update-progress`, `state record-metric`, and `roadmap update-plan-progress` report `{"updated": true, ...}` but do NOT persist changes to disk in this repo. Verify with `git diff` after calling them; update STATE.md/ROADMAP.md prose and frontmatter manually if the diff is empty (04-05)
@@ -151,6 +154,7 @@ Progress: [████████▓░] 85% (phase 04: 8/9 plans complete)
 
 ### Roadmap Evolution
 
+- Phase 5 added: Audit log for every CRUD operation in Strapi. Single global `strapi.db.lifecycles.subscribe()` hook in bootstrap() (apps/strapi/src/index.ts) tracking create/update/delete across all 21 content-types (chosen over `documents.use()`, which misses the db.query()-based creates used by 12 hand-rolled controllers). New `audit-log` content-type stores actor id + actor type discriminator (admin-panel vs users-permissions users), action, content-type uid, record id/documentId, timestamp — actor+action+record+timestamp only, no field-level before/after diff. Actor read from `strapi.requestContext.get()?.state?.user`; writes with no request context (seeders, the 4 existing cron jobs) tagged `system`. audit-log itself excluded from the subscriber to avoid recursion. No retention/pruning cron. No new dashboard UI — read via Strapi admin Content Manager.
 - Phase 4 added: Split the single public page /condiciones-de-uso into 4 separate legal documents (Términos y Condiciones de Uso, Política de Cookies, Política de Privacidad, Política de Seguridad) on apps/website, with matching apps/dashboard admin management views (drag-and-drop ordering; only Términos y Condiciones de Uso gets a "featured/show on home" checkbox), update the registration form checkbox + lightbox to reference the new pages, and add a Strapi seeder populated from the humanized content in docs/terminos-y-condiciones.md, docs/politica-de-cookies.md, docs/politica-de-privacidad.md, docs/politica-de-seguridad.md. Needs investigation of the current /condiciones-de-uso implementation (content type, website page, dashboard, registration form) before deciding the data model.
 - Phase 1 added: Corregir los 100 issues abiertos en Codacy (90 Security/Opengrep, 9 BestPractice/ESLint, 1 UnusedCode). Analizar cada patrón para descartar falsos positivos y evaluar riesgo de regresión antes de aplicar. Snapshot completo en .planning/research/codacy-issues-snapshot-2026-06-14.md. (Numeración reiniciada en 1 tras archivar milestones v1.x.)
 - Phase 129 added: Eliminate @nuxtjs/strapi from website and fully centralize session/auth + HTTP through the proxy with an httpOnly JWT cookie. Security-first, single phase, nothing deferred. Target: httpOnly cookie client can never read → proxy injects Authorization server-side; zero direct API_URL calls (SSR goes through proxy with x-vercel-protection-bypass); useApiClient as the only HTTP client; minimal session layer replaces useStrapiUser/Token/Auth across ~60 files (incl. Google OAuth + verify-code flows); audit+centralize every direct fetch/$fetch/raw-fetch (useImage.ts, UploadMedia.vue). Reuse 109-RESEARCH.md as template. Full detail in 129-CONTEXT.md.
@@ -248,5 +252,5 @@ Progress: [████████▓░] 85% (phase 04: 8/9 plans complete)
 ## Session Continuity
 
 Last activity: 2026-07-02
-Stopped at: Completed 04-07-PLAN.md
+Stopped at: Completed 05-01-PLAN.md
 Resume file: None
