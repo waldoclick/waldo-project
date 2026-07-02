@@ -11,7 +11,7 @@
 
 import { factories } from "@strapi/strapi";
 import { sendMjmlEmail } from "../../../services/mjml";
-import logger from "../../../utils/logtail";
+import { logAuditInfo, logAuditError } from "../../../utils/audit-log";
 import { zohoService } from "../../../services/zoho";
 import { sanitizeAdForPublic } from "./sanitize-ad";
 
@@ -679,9 +679,13 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
             if (!zohoEmail) return;
             const contact = await zohoService.findContact(zohoEmail);
             if (!contact) {
-              logger.info(
+              logAuditInfo(
                 "Zoho contact not found for ad approval — skipping CRM sync",
-                { adId },
+                {
+                  actor: Number(userId),
+                  actor_type: "plugin::users-permissions.user",
+                  data: { adId },
+                },
               );
               return;
             }
@@ -692,9 +696,13 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
             });
           })
           .catch((zohoError) => {
-            logger.error(
+            logAuditError(
               "Zoho sync failed for ad approval — approval flow unaffected",
-              { adId, error: zohoError.message },
+              {
+                actor: Number(userId),
+                actor_type: "plugin::users-permissions.user",
+                data: { adId, error: zohoError.message },
+              },
             );
           });
       }
@@ -1199,9 +1207,10 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
           },
         });
 
-        logger.info("Borrador de anuncio creado", {
-          userId,
-          adId: newAd.id,
+        logAuditInfo("Borrador de anuncio creado", {
+          actor: Number(userId),
+          actor_type: "plugin::users-permissions.user",
+          data: { adId: newAd.id },
         });
 
         return { success: true, id: newAd.id };
@@ -1233,17 +1242,19 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
         },
       });
 
-      logger.info("Borrador de anuncio actualizado", {
-        userId,
-        adId,
+      logAuditInfo("Borrador de anuncio actualizado", {
+        actor: Number(userId),
+        actor_type: "plugin::users-permissions.user",
+        data: { adId },
       });
 
       return { success: true, id: adId };
     } catch (error) {
       console.error("Error al guardar borrador de anuncio:", error);
-      logger.error("Error al guardar borrador de anuncio", {
-        userId,
-        error: (error as Error).message,
+      logAuditError("Error al guardar borrador de anuncio", {
+        actor: Number(userId),
+        actor_type: "plugin::users-permissions.user",
+        data: { error: (error as Error).message },
       });
       return { success: false, message: (error as Error).message };
     }
