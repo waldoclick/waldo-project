@@ -157,6 +157,7 @@ const { data: adData, refresh } = await useAsyncData<AdPageData | null>(
   {
     server: true,
     lazy: false,
+    deep: true,
     default: () => null,
   },
 );
