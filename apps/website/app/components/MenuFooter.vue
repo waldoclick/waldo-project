@@ -25,6 +25,16 @@
         <span>Términos y Condiciones de Uso</span>
       </NuxtLink>
     </li>
+    <li>
+      <NuxtLink to="/politicas-de-cookies">
+        <span>Política de Cookies</span>
+      </NuxtLink>
+    </li>
+    <li>
+      <NuxtLink to="/politicas-de-seguridad">
+        <span>Política de Seguridad</span>
+      </NuxtLink>
+    </li>
   </ul>
 </template>
 

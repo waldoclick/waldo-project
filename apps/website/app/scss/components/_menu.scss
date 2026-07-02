@@ -226,11 +226,14 @@
         letter-spacing: 0.25px;
         color: $charcoal;
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         gap: 10px;
         padding: 12px 0;
 
         svg {
+          flex-shrink: 0;
+          margin-top: 2px;
+
           @include screen-large {
             display: none;
           }

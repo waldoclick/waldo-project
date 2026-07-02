@@ -36,6 +36,28 @@
       </li>
       <li class="menu--about__item">
         <nuxt-link
+          to="/politicas-de-cookies"
+          class="menu--about__link"
+          aria-label="Leer política de cookies"
+          title="Leer política de cookies"
+        >
+          <IconShield class="menu--about__icon" aria-hidden="true" />
+          <span>Política de Cookies</span>
+        </nuxt-link>
+      </li>
+      <li class="menu--about__item">
+        <nuxt-link
+          to="/politicas-de-seguridad"
+          class="menu--about__link"
+          aria-label="Leer política de seguridad"
+          title="Leer política de seguridad"
+        >
+          <IconShield class="menu--about__icon" aria-hidden="true" />
+          <span>Política de Seguridad</span>
+        </nuxt-link>
+      </li>
+      <li class="menu--about__item">
+        <nuxt-link
           to="/contacto"
           class="menu--about__link"
           aria-label="Contactar con el equipo de soporte"
