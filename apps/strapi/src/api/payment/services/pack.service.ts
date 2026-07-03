@@ -151,7 +151,10 @@ class PackService {
       if (actualPackAmount !== expectedPackAmount) {
         logAuditWarn(
           `[pack] Amount mismatch: expected=${expectedPackAmount}, actual=${actualPackAmount}, buyOrder=${buyOrder}`,
-          { actor: Number(userId), actor_type: "plugin::users-permissions.user" },
+          {
+            actor: Number(userId),
+            actor_type: "plugin::users-permissions.user",
+          },
         );
         return { success: false, message: "Payment amount mismatch" };
       }

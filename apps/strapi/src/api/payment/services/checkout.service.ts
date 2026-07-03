@@ -522,14 +522,11 @@ class CheckoutService {
           }
         })
         .catch((err: { message?: string }) => {
-          logAuditError(
-            "Zoho sync failed for checkout — payment unaffected",
-            {
-              actor: Number(userId),
-              actor_type: "plugin::users-permissions.user",
-              data: { error: err.message },
-            },
-          );
+          logAuditError("Zoho sync failed for checkout — payment unaffected", {
+            actor: Number(userId),
+            actor_type: "plugin::users-permissions.user",
+            data: { error: err.message },
+          });
         });
 
       // 13. Return success
