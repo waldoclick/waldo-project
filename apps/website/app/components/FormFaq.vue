@@ -32,6 +32,8 @@
             name="featured"
             type="checkbox"
             class="form__checkbox"
+            :value="true"
+            :unchecked-value="false"
           />
           <label class="form__check__label" for="featured">Destacado</label>
         </div>
