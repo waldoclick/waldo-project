@@ -93,3 +93,75 @@ describe("cache middleware — Content Manager write invalidation", () => {
     expect(mockRedisInstance.del).not.toHaveBeenCalled();
   });
 });
+
+describe("cache middleware — personalized routes are never cached (cross-user leak fix)", () => {
+  let cacheMiddlewareFactory: typeof import("../../src/middlewares/cache").default;
+
+  const buildCtx = (overrides: Partial<Context>): Context =>
+    ({
+      method: "GET",
+      url: "/api/ads/catalog",
+      query: {},
+      response: { set: jest.fn() },
+      status: 200,
+      body: { data: [] },
+      ...overrides,
+    }) as unknown as Context;
+
+  beforeEach(() => {
+    jest.resetModules();
+    jest.clearAllMocks();
+    mockRedisInstance.get.mockResolvedValue(null);
+
+    Object.assign(global, { strapi: { contentTypes: {} } });
+
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    cacheMiddlewareFactory = require("../../src/middlewares/cache").default;
+  });
+
+  const personalizedUrls = [
+    "/api/ads/count",
+    "/api/ads/actives?page=1",
+    "/api/ads/pendings",
+    "/api/ads/archiveds",
+    "/api/ads/banneds",
+    "/api/ads/rejecteds",
+    "/api/ads/drafts",
+    "/api/ads/thankyou/doc-abc123",
+    "/api/ads/slug/some-ad-slug",
+    "/api/ads/42",
+    "/api/payments/thankyou/doc-abc123",
+    "/api/payments/webpay?token_ws=xyz",
+  ];
+
+  it.each(personalizedUrls)(
+    "never reads or writes the Redis cache for %s (per-user/auth-conditional data)",
+    async (url) => {
+      const ctx = buildCtx({ url });
+      const next = jest.fn().mockResolvedValue(undefined);
+
+      const middleware = cacheMiddlewareFactory();
+      await middleware(ctx, next);
+
+      expect(next).toHaveBeenCalledTimes(1);
+      expect(mockRedisInstance.get).not.toHaveBeenCalled();
+      expect(mockRedisInstance.set).not.toHaveBeenCalled();
+    },
+  );
+
+  const publicUrls = ["/api/ads/catalog", "/api/ads?filters[active]=true"];
+
+  it.each(publicUrls)(
+    "still caches genuinely public, non-personalized route %s",
+    async (url) => {
+      const ctx = buildCtx({ url });
+      const next = jest.fn().mockResolvedValue(undefined);
+
+      const middleware = cacheMiddlewareFactory();
+      await middleware(ctx, next);
+
+      expect(next).toHaveBeenCalledTimes(1);
+      expect(mockRedisInstance.get).toHaveBeenCalledTimes(1);
+    },
+  );
+});
