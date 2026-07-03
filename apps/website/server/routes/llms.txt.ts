@@ -21,8 +21,6 @@ export default cachedEventHandler(
 
 > Marketplace de avisos clasificados en Chile para comprar y vender maquinaria y activos industriales.
 
-Solo se listan páginas permanentes. Los avisos individuales (\`/anuncios/{slug}\`) y los perfiles de usuario (\`/{username}\`) quedan fuera intencionalmente: son contenido rotativo que expira o cambia, y no sirven como referencia estable.
-
 ## Páginas principales
 
 - [Inicio](${baseUrl}/): búsqueda de avisos, categorías destacadas y cómo funciona la plataforma.
