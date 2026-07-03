@@ -100,6 +100,26 @@ const invalidateCollectionCache = async (url: string) => {
   });
 };
 
+// Admin (Content Manager) writes hit /content-manager/collection-types/<uid>/...,
+// never /api/<pluralName>/... — shouldNotCache() skips those requests entirely,
+// so without this they never invalidate the public REST API cache.
+const invalidateForContentManagerWrite = async (url: string) => {
+  const match = url.match(/^\/content-manager\/collection-types\/([^/]+)/);
+  const uid = match?.[1];
+  if (!uid) return;
+
+  const contentType = strapi.contentTypes[uid];
+  const pluralName = contentType?.info?.pluralName;
+  if (!pluralName) return;
+
+  await handleRedisOperation(async () => {
+    const keys = await redis?.keys(`cache:*:/api/${pluralName}*`);
+    if (keys?.length) {
+      await redis?.del(...keys);
+    }
+  });
+};
+
 export default () => {
   return async (ctx: Context, next: () => Promise<void>) => {
     // Header de prueba para confirmar que el middleware se ejecuta
@@ -108,6 +128,17 @@ export default () => {
     // Si no hay Redis, inicializar
     if (!redis) {
       await initRedis();
+    }
+
+    // Escrituras desde el panel de administración (Content Manager) — nunca se
+    // cachean, pero SÍ deben invalidar el cache público de esa colección.
+    if (
+      ctx.url.startsWith("/content-manager/collection-types/") &&
+      ["POST", "PUT", "DELETE", "PATCH"].includes(ctx.method)
+    ) {
+      await next();
+      await invalidateForContentManagerWrite(ctx.url);
+      return;
     }
 
     // Rutas que no deben cachearse (admin, content-manager, auth, etc.)
