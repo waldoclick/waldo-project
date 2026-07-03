@@ -97,6 +97,16 @@
             <span>Mi perfil</span>
           </nuxt-link>
 
+          <nuxt-link
+            v-if="isManager"
+            to="/dashboard"
+            title="Ver dashboard"
+            @click.native="appStore.closeMobileMenu()"
+          >
+            <IconLayoutDashboard :size="20" />
+            <span>Ver dashboard</span>
+          </nuxt-link>
+
           <!-- <nuxt-link
             to="/cuenta/username"
             title="Nombre de usuario"
@@ -162,7 +172,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 const { Swal } = useSweetAlert2();
 import { useRoute } from "vue-router";
 import {
@@ -176,6 +186,7 @@ import {
   Image as IconImage,
   Lock as IconLock,
   LogOut as IconLogOut,
+  LayoutDashboard as IconLayoutDashboard,
 } from "lucide-vue-next";
 import { useAppStore } from "@/stores/app.store";
 import { storeToRefs } from "pinia";
@@ -185,6 +196,9 @@ import SearchIcon from "@/components/SearchIcon.vue";
 import LogoBlack from "@/components/LogoBlack.vue";
 
 const me = useSessionUser();
+const isManager = computed(
+  () => me.value?.role?.type?.toLowerCase() === "manager",
+);
 const { logout } = useLogout();
 const appStore = import.meta.client
   ? useAppStore()
