@@ -18,6 +18,60 @@ const ctxIsManager = (ctx: { state: { user: unknown } }): boolean => {
 };
 
 /**
+ * Extracts page/pageSize from ctx.query.pagination (or top-level query params
+ * as a fallback) into a flat options object ready for the ad service.
+ */
+const extractPaginationOptions = (ctx: {
+  query: Record<string, unknown>;
+}): Record<string, unknown> => {
+  const query = ctx.query;
+  const pagination = query.pagination as Record<string, string> | undefined;
+
+  const options: Record<string, unknown> = {
+    ...query,
+    page: pagination?.page
+      ? parseInt(pagination.page, 10)
+      : (query.page as number) || 1,
+    pageSize: pagination?.pageSize
+      ? parseInt(pagination.pageSize, 10)
+      : (query.pageSize as number) || 25,
+  };
+
+  delete options.pagination;
+
+  return options;
+};
+
+/**
+ * Maps a service-layer Error to the matching HTTP response.
+ * `badRequestMessages` lists the error messages that should map to 400
+ * (e.g. "Advertisement is not pending approval"); anything else falls
+ * through to 404 ("Advertisement not found"), 403 ("...permission..."),
+ * or 500.
+ */
+const handleAdServiceError = (
+  ctx: {
+    notFound: (msg: string) => unknown;
+    badRequest: (msg: string) => unknown;
+    forbidden: (msg: string) => unknown;
+    throw: (status: number, error: unknown) => never;
+  },
+  error: Error,
+  badRequestMessages: string[] = [],
+) => {
+  if (error.message === "Advertisement not found") {
+    return ctx.notFound(error.message);
+  }
+  if (badRequestMessages.includes(error.message)) {
+    return ctx.badRequest(error.message);
+  }
+  if (error.message.includes("permission")) {
+    return ctx.forbidden(error.message);
+  }
+  return ctx.throw(500, error);
+};
+
+/**
  * Advertisement Controller Factory
  *
  * Creates a core controller for the advertisement API that delegates business logic
@@ -131,25 +185,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    */
   async actives(ctx) {
     try {
-      const query = ctx.query as Record<string, unknown>;
-      const pagination = query.pagination as Record<string, string> | undefined;
-
-      // Extract pagination parameters from query.pagination
-      const options: Record<string, unknown> = {
-        ...query,
-        page: pagination?.page
-          ? parseInt(pagination.page, 10)
-          : (query.page as number) || 1,
-        pageSize: pagination?.pageSize
-          ? parseInt(pagination.pageSize, 10)
-          : (query.pageSize as number) || 25,
-      };
-
-      // Remove pagination object if it exists to avoid conflicts
-      if (options.pagination) {
-        delete options.pagination;
-      }
-
+      const options = extractPaginationOptions(ctx);
       const userId = ctx.state.user?.id ?? null;
       const activeAds = await strapi
         .service("api::ad.ad")
@@ -172,25 +208,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    */
   async catalog(ctx) {
     try {
-      const query = ctx.query as Record<string, unknown>;
-      const pagination = query.pagination as Record<string, string> | undefined;
-
-      // Extract pagination parameters from query.pagination
-      const options: Record<string, unknown> = {
-        ...query,
-        page: pagination?.page
-          ? parseInt(pagination.page, 10)
-          : (query.page as number) || 1,
-        pageSize: pagination?.pageSize
-          ? parseInt(pagination.pageSize, 10)
-          : (query.pageSize as number) || 25,
-      };
-
-      // Remove pagination object if it exists to avoid conflicts
-      if (options.pagination) {
-        delete options.pagination;
-      }
-
+      const options = extractPaginationOptions(ctx);
       const activeAds = await strapi
         .service("api::ad.ad")
         .activeAds(options, false, null);
@@ -210,25 +228,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    */
   async pendings(ctx) {
     try {
-      const query = ctx.query as Record<string, unknown>;
-      const pagination = query.pagination as Record<string, string> | undefined;
-
-      // Extract pagination parameters from query.pagination
-      const options: Record<string, unknown> = {
-        ...query,
-        page: pagination?.page
-          ? parseInt(pagination.page, 10)
-          : (query.page as number) || 1,
-        pageSize: pagination?.pageSize
-          ? parseInt(pagination.pageSize, 10)
-          : (query.pageSize as number) || 25,
-      };
-
-      // Remove pagination object if it exists to avoid conflicts
-      if (options.pagination) {
-        delete options.pagination;
-      }
-
+      const options = extractPaginationOptions(ctx);
       const userId = ctx.state.user?.id ?? null;
       const pendingAds = await strapi
         .service("api::ad.ad")
@@ -249,25 +249,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    */
   async archiveds(ctx) {
     try {
-      const query = ctx.query as Record<string, unknown>;
-      const pagination = query.pagination as Record<string, string> | undefined;
-
-      // Extract pagination parameters from query.pagination
-      const options: Record<string, unknown> = {
-        ...query,
-        page: pagination?.page
-          ? parseInt(pagination.page, 10)
-          : (query.page as number) || 1,
-        pageSize: pagination?.pageSize
-          ? parseInt(pagination.pageSize, 10)
-          : (query.pageSize as number) || 25,
-      };
-
-      // Remove pagination object if it exists to avoid conflicts
-      if (options.pagination) {
-        delete options.pagination;
-      }
-
+      const options = extractPaginationOptions(ctx);
       const userId = ctx.state.user?.id ?? null;
       const archivedAds = await strapi
         .service("api::ad.ad")
@@ -287,23 +269,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    */
   async banneds(ctx) {
     try {
-      const query = ctx.query as Record<string, unknown>;
-      const pagination = query.pagination as Record<string, string> | undefined;
-
-      const options: Record<string, unknown> = {
-        ...query,
-        page: pagination?.page
-          ? parseInt(pagination.page, 10)
-          : (query.page as number) || 1,
-        pageSize: pagination?.pageSize
-          ? parseInt(pagination.pageSize, 10)
-          : (query.pageSize as number) || 25,
-      };
-
-      if (options.pagination) {
-        delete options.pagination;
-      }
-
+      const options = extractPaginationOptions(ctx);
       const userId = ctx.state.user?.id ?? null;
       const bannedAds = await strapi
         .service("api::ad.ad")
@@ -324,25 +290,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    */
   async rejecteds(ctx) {
     try {
-      const query = ctx.query as Record<string, unknown>;
-      const pagination = query.pagination as Record<string, string> | undefined;
-
-      // Extract pagination parameters from query.pagination
-      const options: Record<string, unknown> = {
-        ...query,
-        page: pagination?.page
-          ? parseInt(pagination.page, 10)
-          : (query.page as number) || 1,
-        pageSize: pagination?.pageSize
-          ? parseInt(pagination.pageSize, 10)
-          : (query.pageSize as number) || 25,
-      };
-
-      // Remove pagination object if it exists to avoid conflicts
-      if (options.pagination) {
-        delete options.pagination;
-      }
-
+      const options = extractPaginationOptions(ctx);
       const userId = ctx.state.user?.id ?? null;
       const rejectedAds = await strapi
         .service("api::ad.ad")
@@ -363,23 +311,7 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
    */
   async drafts(ctx) {
     try {
-      const query = ctx.query as Record<string, unknown>;
-      const pagination = query.pagination as Record<string, string> | undefined;
-
-      const options: Record<string, unknown> = {
-        ...query,
-        page: pagination?.page
-          ? parseInt(pagination.page, 10)
-          : (query.page as number) || 1,
-        pageSize: pagination?.pageSize
-          ? parseInt(pagination.pageSize, 10)
-          : (query.pageSize as number) || 25,
-      };
-
-      if (options.pagination) {
-        delete options.pagination;
-      }
-
+      const options = extractPaginationOptions(ctx);
       const userId = ctx.state.user?.id ?? null;
       const draftAds = await strapi
         .service("api::ad.ad")
@@ -406,14 +338,9 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
       const result = await strapi.service("api::ad.ad").approveAd(id, userId);
       return result;
     } catch (error) {
-      // Handle specific error cases with appropriate HTTP status codes
-      if (error.message === "Advertisement not found") {
-        return ctx.notFound(error.message);
-      }
-      if (error.message === "Advertisement is not pending approval") {
-        return ctx.badRequest(error.message);
-      }
-      ctx.throw(500, error);
+      return handleAdServiceError(ctx, error, [
+        "Advertisement is not pending approval",
+      ]);
     }
   },
 
@@ -436,14 +363,9 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
         .rejectAd(id, userId, reason_rejected);
       return result;
     } catch (error) {
-      // Handle specific error cases with appropriate HTTP status codes
-      if (error.message === "Advertisement not found") {
-        return ctx.notFound(error.message);
-      }
-      if (error.message === "Advertisement is not pending approval") {
-        return ctx.badRequest(error.message);
-      }
-      ctx.throw(500, error);
+      return handleAdServiceError(ctx, error, [
+        "Advertisement is not pending approval",
+      ]);
     }
   },
 
@@ -630,17 +552,9 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
         .bannedAd(id, userId, reasonForBan);
       return result;
     } catch (error) {
-      // Handle specific error cases with appropriate HTTP status codes
-      if (error.message === "Advertisement not found") {
-        return ctx.notFound(error.message);
-      }
-      if (error.message === "Advertisement is already banned") {
-        return ctx.badRequest(error.message);
-      }
-      if (error.message.includes("permission")) {
-        return ctx.forbidden(error.message);
-      }
-      ctx.throw(500, error);
+      return handleAdServiceError(ctx, error, [
+        "Advertisement is already banned",
+      ]);
     }
   },
 
@@ -708,16 +622,9 @@ export default factories.createCoreController("api::ad.ad", ({ strapi }) => ({
         .deactivateAd(id, userId, reasonForDeactivation, isManager);
       return result;
     } catch (error) {
-      if (error.message === "Advertisement not found") {
-        return ctx.notFound(error.message);
-      }
-      if (error.message === "Advertisement is already deactivated") {
-        return ctx.badRequest(error.message);
-      }
-      if (error.message.includes("permission")) {
-        return ctx.forbidden(error.message);
-      }
-      ctx.throw(500, error);
+      return handleAdServiceError(ctx, error, [
+        "Advertisement is already deactivated",
+      ]);
     }
   },
 

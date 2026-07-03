@@ -6,6 +6,7 @@ export class FilterService {
     const ads = await strapi.db.query("api::ad.ad").findMany({
       where: {
         active: true,
+        banned: false,
         rejected: false,
         remaining_days: { $gt: 0 },
       },
@@ -43,6 +44,7 @@ export class FilterService {
     const ads = await strapi.db.query("api::ad.ad").findMany({
       where: {
         active: true,
+        banned: false,
         rejected: false,
         remaining_days: { $gt: 0 },
       },

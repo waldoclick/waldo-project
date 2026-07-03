@@ -2,110 +2,14 @@
  * term controller
  */
 
+import {
+  createListController,
+  createReorderController,
+} from "../../../utils/list-controller";
+
+const UID = "api::term.term";
+
 export default {
-  async find(ctx) {
-    const { query } = ctx;
-
-    const page = parseInt(query.pagination?.page || "1", 10);
-    const pageSize = parseInt(query.pagination?.pageSize || "25", 10);
-
-    const filters = query.filters || {};
-
-    const populate =
-      !query.populate || query.populate === "*" ? true : query.populate;
-
-    let orderBy: Record<string, string> = { createdAt: "desc" };
-    if (query.sort) {
-      const s = Array.isArray(query.sort) ? query.sort[0] : query.sort;
-      if (typeof s === "string" && s.includes(":")) {
-        const [f, d] = s.split(":");
-        orderBy = { [f]: d.toLowerCase() };
-      } else if (s && typeof s === "object") {
-        orderBy = s as Record<string, string>;
-      }
-    }
-
-    const terms = await strapi.db.query("api::term.term").findMany({
-      where: filters,
-      populate: populate as unknown as Record<string, unknown>,
-      offset: (page - 1) * pageSize,
-      limit: pageSize,
-      orderBy,
-    });
-
-    const total = await strapi.db.query("api::term.term").count({
-      where: filters,
-    });
-
-    const pageCount = Math.ceil(total / pageSize);
-
-    return {
-      data: terms,
-      meta: {
-        pagination: {
-          page,
-          pageSize,
-          pageCount,
-          total,
-        },
-      },
-    };
-  },
-
-  async findOne(ctx) {
-    const { id: documentId } = ctx.params;
-    const term = await strapi
-      .documents("api::term.term")
-      .findOne({ documentId });
-    return { data: term };
-  },
-
-  async create(ctx) {
-    const { data } = ctx.request.body;
-    const term = await strapi.db.query("api::term.term").create({ data });
-    return { data: term };
-  },
-
-  async update(ctx) {
-    const { id: documentId } = ctx.params;
-    const { data } = ctx.request.body;
-    const term = await strapi
-      .documents("api::term.term")
-      .update({ documentId, data });
-    return { data: term };
-  },
-
-  async delete(ctx) {
-    const { id: documentId } = ctx.params;
-    const term = await strapi
-      .documents("api::term.term")
-      .delete({ documentId });
-    return { data: term };
-  },
-
-  async reorder(ctx) {
-    const { data } = ctx.request.body as {
-      data?: Array<{ documentId?: string; order?: number }>;
-    };
-    if (!Array.isArray(data) || data.length === 0) {
-      return ctx.badRequest("data must be a non-empty array");
-    }
-    for (const entry of data) {
-      if (!entry.documentId || typeof entry.documentId !== "string") {
-        return ctx.badRequest("Every entry must have a string documentId");
-      }
-      if (typeof entry.order !== "number" || !Number.isFinite(entry.order)) {
-        return ctx.badRequest("Every entry must have a numeric order");
-      }
-    }
-    await Promise.all(
-      data.map((entry) =>
-        strapi.documents("api::term.term").update({
-          documentId: entry.documentId as string,
-          data: { order: entry.order } as unknown as Record<string, unknown>,
-        }),
-      ),
-    );
-    return { data: { count: data.length } };
-  },
+  ...createListController({ uid: UID }),
+  reorder: createReorderController(UID),
 };

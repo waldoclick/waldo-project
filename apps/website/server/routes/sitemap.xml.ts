@@ -66,10 +66,16 @@ export default cachedEventHandler(
       { loc: "/", changefreq: "daily", priority: 1 },
       { loc: "/anuncios", changefreq: "hourly", priority: 0.9 },
       { loc: "/blog", changefreq: "daily", priority: 0.8 },
-      { loc: "/packs", changefreq: "monthly", priority: 0.6 },
       { loc: "/preguntas-frecuentes", changefreq: "monthly", priority: 0.5 },
       { loc: "/contacto", changefreq: "yearly", priority: 0.4 },
       { loc: "/politicas-de-privacidad", changefreq: "yearly", priority: 0.3 },
+      { loc: "/politicas-de-cookies", changefreq: "yearly", priority: 0.3 },
+      { loc: "/politicas-de-seguridad", changefreq: "yearly", priority: 0.3 },
+      {
+        loc: "/terminos-y-condiciones-de-uso",
+        changefreq: "yearly",
+        priority: 0.3,
+      },
     ];
 
     for (const page of staticPages) {

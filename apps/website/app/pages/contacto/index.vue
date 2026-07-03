@@ -18,7 +18,7 @@ $setSEO({
   title: "Contacto y Soporte",
   description:
     "¿Tienes dudas sobre anuncios de activos industriales o necesitas ayuda? Escríbenos en Waldo.click® y nuestro equipo te responderá pronto.",
-  imageUrl: `${config.public.baseUrl}/contact-share.jpg`,
+  imageUrl: `${config.public.baseUrl}/images/share.jpg`,
   url: `${config.public.baseUrl}/contacto`,
 });
 

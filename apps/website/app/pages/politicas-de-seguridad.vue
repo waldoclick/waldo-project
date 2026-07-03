@@ -27,7 +27,7 @@ $setSEO({
   title: "Política de Seguridad",
   description:
     "Conoce cómo Waldo.click® protege la información y qué hacemos frente a incidentes de ciberseguridad en nuestra plataforma de anuncios de activos industriales.",
-  imageUrl: `${config.public.baseUrl}/share.jpg`,
+  imageUrl: `${config.public.baseUrl}/images/share.jpg`,
   url: `${config.public.baseUrl}/politicas-de-seguridad`,
 });
 

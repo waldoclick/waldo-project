@@ -199,4 +199,25 @@ describe("upload middleware — magic-byte validation (SEC2-LOCKDOWN)", () => {
     expect(next).toHaveBeenCalled();
     expect(ctx.throw).not.toHaveBeenCalled();
   });
+
+  // Test 8: passes AVIF file when magic bytes match declared MIME
+  it("Test 8: passes file when magic bytes match declared MIME (avif declared, avif detected)", async () => {
+    // Arrange
+    mockFromFile.mockResolvedValue({ mime: "image/avif", ext: "avif" });
+    const ctx = createContext({
+      file: {
+        mimetype: "image/avif",
+        filepath: "/tmp/fake-upload-008",
+        size: 1024,
+      },
+    });
+    const next = jest.fn().mockResolvedValue(undefined);
+
+    // Act
+    await middleware(ctx as unknown as Context, next);
+
+    // Assert
+    expect(next).toHaveBeenCalled();
+    expect(ctx.throw).not.toHaveBeenCalled();
+  });
 });

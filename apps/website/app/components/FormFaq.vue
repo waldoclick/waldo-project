@@ -25,15 +25,17 @@
       </div>
 
       <div class="form__group form__group--checkboxes">
-        <div class="form__check">
+        <div class="form-check">
           <Field
             id="featured"
             v-model="form.featured"
             name="featured"
             type="checkbox"
-            class="form__checkbox"
+            class="form-check-input"
+            :value="true"
+            :unchecked-value="false"
           />
-          <label class="form__check__label" for="featured">Destacado</label>
+          <label class="form-check-label" for="featured">Destacado</label>
         </div>
       </div>
 
