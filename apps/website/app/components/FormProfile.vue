@@ -692,6 +692,10 @@ const handleSubmit = async (values) => {
       business_address_number: values.business_address_number
         ? Number.parseInt(values.business_address_number, 10)
         : null,
+      postal_code: values.postal_code ? String(values.postal_code) : "",
+      business_postal_code: values.business_postal_code
+        ? String(values.business_postal_code)
+        : "",
     };
 
     // Usar la función del store para actualizar el perfil
