@@ -4,7 +4,10 @@
       <!-- Body column -->
       <div class="article--single__body">
         <div class="article--single__body__gallery">
-          <GalleryDefault :media="props.article.gallery ?? []" />
+          <GalleryDefault
+            :media="props.article.gallery ?? []"
+            :name="props.article.title"
+          />
         </div>
         <div class="article--single__body__description">
           <div

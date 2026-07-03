@@ -32,7 +32,7 @@ $setSEO({
   title: "Términos y Condiciones de Uso",
   description:
     "Revisa los términos y condiciones de uso de Waldo.click® para la publicación y compra de anuncios de activos industriales en nuestra plataforma.",
-  imageUrl: `${config.public.baseUrl}/share.jpg`,
+  imageUrl: `${config.public.baseUrl}/images/share.jpg`,
   url: `${config.public.baseUrl}/terminos-y-condiciones-de-uso`,
 });
 

@@ -3,7 +3,7 @@
     <div class="announcement--single__container">
       <div class="announcement--single__body">
         <div class="announcement--single__body__gallery">
-          <GalleryDefault :media="all?.gallery || null" />
+          <GalleryDefault :media="all?.gallery || null" :name="all?.name" />
         </div>
 
         <div class="announcement--single__body__description">

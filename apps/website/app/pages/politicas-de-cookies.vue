@@ -27,7 +27,7 @@ $setSEO({
   title: "Política de Cookies",
   description:
     "Conoce qué cookies usa Waldo.click®, para qué sirven y cómo puedes gestionarlas al usar nuestra plataforma de anuncios de activos industriales.",
-  imageUrl: `${config.public.baseUrl}/share.jpg`,
+  imageUrl: `${config.public.baseUrl}/images/share.jpg`,
   url: `${config.public.baseUrl}/politicas-de-cookies`,
 });
 

@@ -13,11 +13,12 @@
     <div v-if="hasMainImage" class="gallery--default__main">
       <div class="gallery--default__image" @click="show(0)">
         <img
-          loading="lazy"
+          loading="eager"
+          fetchpriority="high"
           decoding="async"
           :src="mainImageUrl"
-          alt="Imagen principal"
-          title="Imagen principal"
+          :alt="mainImageAlt"
+          :title="mainImageAlt"
         />
       </div>
     </div>
@@ -33,8 +34,8 @@
           loading="lazy"
           decoding="async"
           :src="image"
-          alt="Imagen secundaria"
-          title="Imagen secundaria"
+          :alt="thumbnailAlt"
+          :title="thumbnailAlt"
         />
         <span
           v-if="imgIndex === 2 && remainingImages > 0"
@@ -57,6 +58,10 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  name: {
+    type: String,
+    default: "",
+  },
 });
 
 // Use the new useImageProxy composable to transform URLs
@@ -73,6 +78,13 @@ const hasMainImage = computed(
   () => Array.isArray(props.media) && props.media.length > 0,
 );
 const hasThumbnailImages = computed(() => thumbnailImages.value.length > 0);
+
+const mainImageAlt = computed(() =>
+  props.name ? `Imagen principal: ${props.name}` : "Imagen principal",
+);
+const thumbnailAlt = computed(() =>
+  props.name ? `Imagen secundaria: ${props.name}` : "Imagen secundaria",
+);
 
 const mainImageUrl = computed(() => {
   if (!mainImage.value) return "";

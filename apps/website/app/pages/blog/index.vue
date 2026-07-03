@@ -175,7 +175,7 @@ if (blogData.value) {
   $setSEO({
     title: generateSEOTitle(),
     description: generateSEODescription(),
-    imageUrl: `${config.public.baseUrl}/share.jpg`,
+    imageUrl: `${config.public.baseUrl}/images/share.jpg`,
     url: `${config.public.baseUrl}${route.fullPath}`,
   });
 
@@ -195,7 +195,7 @@ watch(
       $setSEO({
         title: generateSEOTitle(),
         description: generateSEODescription(),
-        imageUrl: `${config.public.baseUrl}/share.jpg`,
+        imageUrl: `${config.public.baseUrl}/images/share.jpg`,
         url: `${config.public.baseUrl}${route.fullPath}`,
       });
 
