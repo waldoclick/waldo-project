@@ -58,6 +58,33 @@ const generateCacheKey = (ctx: Context): string => {
   return `cache:${ctx.method}:${ctx.url}:${JSON.stringify(ctx.query)}`;
 };
 
+// These /api/ads/* routes return per-user or per-auth-state data (ownership
+// filters via ctx.state.user, or auth-conditional contact-info visibility) —
+// caching them by URL+query alone serves one requester's response to every
+// other requester who hits the same path (e.g. /api/ads/count takes no
+// query params at all, so every user collided on the exact same cache key).
+const PERSONALIZED_AD_PREFIXES = [
+  "/api/ads/count",
+  "/api/ads/actives",
+  "/api/ads/pendings",
+  "/api/ads/archiveds",
+  "/api/ads/banneds",
+  "/api/ads/rejecteds",
+  "/api/ads/drafts",
+  "/api/ads/thankyou",
+  "/api/ads/slug",
+];
+
+// GET /api/ads/:id (core findOne) hides phone/email for unauthenticated
+// requests — same cross-requester leak if a cached authenticated response
+// is later served to an anonymous visitor.
+const AD_NUMERIC_ID_PATTERN = /^\/api\/ads\/\d+(\?.*)?$/;
+
+const matchesPathPrefix = (url: string, prefix: string): boolean =>
+  url === prefix ||
+  url.startsWith(`${prefix}/`) ||
+  url.startsWith(`${prefix}?`);
+
 const shouldNotCache = (url: string): boolean => {
   if (!url.startsWith("/api/")) return true;
   if (
@@ -65,9 +92,13 @@ const shouldNotCache = (url: string): boolean => {
     url.startsWith("/api/connect") ||
     url.startsWith("/api/auth") ||
     url.startsWith("/api/orders") ||
-    url.startsWith("/api/users")
+    url.startsWith("/api/users") ||
+    url.startsWith("/api/payments")
   )
     return true;
+  if (PERSONALIZED_AD_PREFIXES.some((prefix) => matchesPathPrefix(url, prefix)))
+    return true;
+  if (AD_NUMERIC_ID_PATTERN.test(url)) return true;
   return false;
 };
 
