@@ -448,6 +448,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
       active: { $eq: false },
       banned: { $eq: false },
       rejected: { $eq: false },
+      draft: { $eq: false },
       remaining_days: { $gt: 0 },
       ad_reservation: { $ne: null },
     };
