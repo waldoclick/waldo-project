@@ -121,6 +121,7 @@
             maxlength="7"
             inputmode="decimal"
             @keydown="handleDecimalKeydown"
+            @input="handleDecimalInput"
           />
           <ErrorMessage name="weight" />
         </div>
@@ -139,6 +140,7 @@
             maxlength="4"
             inputmode="decimal"
             @keydown="handleDecimalKeydown"
+            @input="handleDecimalInput"
           />
           <ErrorMessage name="width" />
         </div>
@@ -157,6 +159,7 @@
             maxlength="4"
             inputmode="decimal"
             @keydown="handleDecimalKeydown"
+            @input="handleDecimalInput"
           />
           <ErrorMessage name="height" />
         </div>
@@ -175,6 +178,7 @@
             maxlength="4"
             inputmode="decimal"
             @keydown="handleDecimalKeydown"
+            @input="handleDecimalInput"
           />
           <ErrorMessage name="depth" />
         </div>
@@ -195,7 +199,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, onMounted, watch, nextTick } from "vue";
 import { Field, Form, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 import { useAdStore } from "@/stores/ad.store";
@@ -310,7 +314,23 @@ const schema = yup.object({
 const adStore = useAdStore();
 const conditionsStore = useConditionsStore();
 
-const form = ref({
+// weight/width/height/depth accept `string` too: handleDecimalInput sanitizes
+// as the user types, and mid-edit values like "10." (trailing separator, more
+// digits still to come) must survive without being forced into a Number
+// early. The yup schema casts the final string to a number at validation time.
+interface FormFour {
+  condition: number | null;
+  manufacturer: string;
+  model: string;
+  serial_number: string;
+  year: number;
+  weight: number | string;
+  width: number | string;
+  height: number | string;
+  depth: number | string;
+}
+
+const form = ref<FormFour>({
   condition: adStore.ad.condition || null,
   manufacturer: adStore.ad.manufacturer || "",
   model: adStore.ad.model || "",
@@ -397,6 +417,40 @@ const handleDecimalKeydown = (event: KeyboardEvent) => {
     if (!input.value.includes(".") && !input.value.includes(",")) return;
   }
   event.preventDefault();
+};
+
+// Strips anything that isn't a digit or a decimal separator, and normalizes
+// "," to ".". Catches what keydown can't: paste and autofill/QA-tool fills,
+// which set the value programmatically without dispatching per-key keydown
+// events. Trailing separators (e.g. "10.") are preserved as-is so the user
+// can keep typing digits after them — only the yup schema casts to a final
+// number, at validation time.
+const sanitizeDecimalString = (raw: string): string => {
+  const normalized = raw.replace(/,/g, ".");
+  const stripped = normalized.replace(/[^\d.]/g, "");
+  const parts = stripped.split(".");
+  return parts.length > 1
+    ? `${parts[0]}.${parts.slice(1).join("")}`
+    : (parts[0] ?? "");
+};
+
+// IMPORTANT: only ever assign to the reactive form ref here — never mutate
+// event.target.value directly, and never assign synchronously.
+// vee-validate's <Field> tracks the native input's value internally and
+// writes it back on the SAME "input" event dispatch, AFTER this handler
+// starts running — so a synchronous v-model reassignment (with or without
+// also touching the DOM directly) gets immediately overwritten by that
+// internal write, and the sanitized value never reaches the screen (verified
+// empirically: both approaches left "10,5"/"Pariatu" on screen unchanged,
+// including via vee-validate's own setFieldValue API). Deferring the
+// assignment past a tick lets Field's own write happen first, so the
+// sanitized value applies last and actually sticks.
+const handleDecimalInput = async (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  const fieldName = input.name as "weight" | "width" | "height" | "depth";
+  const sanitized = sanitizeDecimalString(input.value);
+  await nextTick();
+  form.value[fieldName] = sanitized;
 };
 
 // onMounted: UI-only — loads conditions for select (fire-and-forget; non-critical for SSR)
