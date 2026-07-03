@@ -209,11 +209,19 @@ const handleResend = async () => {
     });
     startCountdown();
   } catch (error) {
-    const msg =
-      error?.data?.error?.message ??
-      error?.error?.message ??
-      "No se pudo reenviar el código. Inténtalo de nuevo.";
+    // Backend messages are English (project convention) — map to Spanish here,
+    // same as handleVerify above. Raw backend strings must never reach the Swal.
+    const raw = error?.data?.error?.message ?? error?.error?.message ?? "";
+    const expired = raw.includes("Invalid or expired");
+    const msg = expired
+      ? "Tu sesión de verificación expiró. Por favor inicia sesión nuevamente."
+      : raw.includes("wait")
+        ? "Debes esperar unos segundos antes de solicitar un nuevo código."
+        : "No se pudo reenviar el código. Inténtalo de nuevo.";
     Swal.fire("Error", msg, "error");
+    if (expired) {
+      await navigateTo("/login");
+    }
   } finally {
     resending.value = false;
   }
