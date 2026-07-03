@@ -74,7 +74,11 @@ const relatedStore = useRelatedStore();
 const indicatorStore = useIndicatorStore();
 const adsStore = useAdsStore();
 
-const { data: adData, refresh } = await useAsyncData<AdPageData | null>(
+const {
+  data: adData,
+  pending,
+  refresh,
+} = await useAsyncData<AdPageData | null>(
   `ad-${route.params.slug}`,
   async () => {
     let result: { ad: AdWithPriceData; access: AdAccess } | null = null;
@@ -166,11 +170,16 @@ const { data: adData, refresh } = await useAsyncData<AdPageData | null>(
 const adComputed = computed(() => adData.value?.ad ?? null);
 const adAccess = computed(() => adData.value?.access ?? null);
 
-// Client-side guard: if adData is null after hydration, show 404 error page.
-// Cannot use watchEffect (fires in SSR → 500). onMounted is client-only.
-onMounted(() => {
-  if (!adData.value) {
-    showError({ statusCode: 404, message: "Página no encontrada" });
+// Show 404 reactively (runs during SSR, not just onMounted) when data is
+// done loading but no ad was found — mirrors blog/[slug].vue's pattern.
+watchEffect(() => {
+  if (!pending.value && !adComputed.value) {
+    showError({
+      statusCode: 404,
+      message: "Página no encontrada",
+      statusMessage:
+        "Lo sentimos, el anuncio que buscas no existe o no está disponible.",
+    });
   }
 });
 

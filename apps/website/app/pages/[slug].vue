@@ -56,11 +56,7 @@ const currentPage = ref(
   Number.parseInt(route.query.page?.toString() || "1", 10),
 );
 
-const {
-  data: adsData,
-  pending,
-  error,
-} = await useAsyncData<ProfileData | null>(
+const { data: adsData, pending } = await useAsyncData<ProfileData | null>(
   `adsData-${slug}`,
   async () => {
     const userStore = useUserStore();
@@ -104,21 +100,17 @@ const {
   },
 );
 
-// Cannot re-throw error.value in setup (fires in SSR → 500).
-// onMounted is client-only.
-onMounted(() => {
-  if (!adsData.value) {
-    showError({ statusCode: 404, message: "Página no encontrada" });
+// Show 404 reactively (runs during SSR, not just onMounted) when data is
+// done loading but no user profile was found — mirrors blog/[slug].vue's pattern.
+watchEffect(() => {
+  if (!pending.value && (!adsData.value || !adsData.value.user)) {
+    showError({
+      statusCode: 404,
+      message: "Página no encontrada",
+      statusMessage: "Lo sentimos, la página que buscas no existe.",
+    });
   }
 });
-
-// Observar los datos para cambios dinámicos (solo en cliente)
-if (import.meta.client) {
-  watchEffect(() => {
-    if (pending.value) return;
-    if (adsData.value && adsData.value.user) return;
-  });
-}
 
 // Set SEO and structured data when profile data is available
 watch(
