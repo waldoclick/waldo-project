@@ -89,7 +89,10 @@ class AdService {
         });
         logAuditInfo(
           `Nuevo aviso creado con ID ${adData.id} por el usuario ${userId}`,
-          { actor: Number(userId), actor_type: "plugin::users-permissions.user" },
+          {
+            actor: Number(userId),
+            actor_type: "plugin::users-permissions.user",
+          },
         );
         return { success: true, ad: adData };
       }
