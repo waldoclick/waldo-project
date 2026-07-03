@@ -54,3 +54,6 @@ ENV
 
 apps/strapi/google.json
 .vercel
+
+# GSD planning artifacts (local-only, not shared via the repo)
+.planning/
