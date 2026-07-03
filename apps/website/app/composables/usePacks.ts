@@ -1,13 +1,16 @@
 import type { Pack } from "@/types/pack";
 
 /**
- * Calculates the savings percentage for a pack vs the single-ad unit price.
+ * Calculates the savings percentage for a pack vs buying its ads and featured
+ * credits separately at the single-unit price (both avisos and destacados are
+ * valued at the same single-unit price for this comparison).
  * Returns null if there is no single-ad pack to use as baseline.
  */
 const calcSavingsPct = (pack: Pack, singleUnitPrice: number): number | null => {
   if (singleUnitPrice <= 0) return null;
-  const unitPrice = Number(pack.price) / Number(pack.total_ads);
-  const pct = Math.round((1 - unitPrice / singleUnitPrice) * 100);
+  const totalUnits = Number(pack.total_ads) + Number(pack.total_features ?? 0);
+  const referencePrice = totalUnits * singleUnitPrice;
+  const pct = Math.round((1 - Number(pack.price) / referencePrice) * 100);
   return pct > 0 ? pct : null;
 };
 
