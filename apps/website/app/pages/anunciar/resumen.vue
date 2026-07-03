@@ -166,6 +166,23 @@ const uploadPendingImages = async (): Promise<boolean> => {
   }
 };
 
+// ads/save-draft returns { success: false, message } directly on ctx.body
+// (not Strapi's usual { error: {...} } envelope) — ofetch puts that in
+// error.data. Show the real reason instead of a generic "try again" message.
+const showSaveDraftError = (error: unknown) => {
+  const data = (error as { data?: { message?: string } })?.data;
+  const detail = data?.message;
+  console.error("Error al guardar borrador de anuncio:", error);
+  Swal.fire({
+    title: "Error",
+    text: detail
+      ? `Hubo un problema al guardar el anuncio: ${detail}`
+      : "Hubo un problema al guardar el anuncio. Por favor, inténtalo de nuevo.",
+    icon: "error",
+    confirmButtonText: "Aceptar",
+  });
+};
+
 const confirmPay = async () => {
   toast.info("Publicando tu anuncio...");
   isCreating.value = true;
@@ -186,13 +203,8 @@ const confirmPay = async () => {
         );
         adStore.updateAdId(draftResponse.data.id);
         router.push("/pagar");
-      } catch {
-        Swal.fire({
-          title: "Error",
-          text: "Hubo un problema al guardar el anuncio. Por favor, inténtalo de nuevo.",
-          icon: "error",
-          confirmButtonText: "Aceptar",
-        });
+      } catch (error) {
+        showSaveDraftError(error);
       }
       return;
     }
@@ -218,13 +230,8 @@ const confirmPay = async () => {
         );
         adStore.updateAdId(draftResponse.data.id);
         await handleFreeCreation();
-      } catch {
-        Swal.fire({
-          title: "Error",
-          text: "Hubo un problema al guardar el anuncio. Por favor, inténtalo de nuevo.",
-          icon: "error",
-          confirmButtonText: "Aceptar",
-        });
+      } catch (error) {
+        showSaveDraftError(error);
       }
     }
   } finally {

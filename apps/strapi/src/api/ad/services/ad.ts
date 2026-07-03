@@ -1256,12 +1256,25 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
       return { success: true, id: adId };
     } catch (error) {
       console.error("Error al guardar borrador de anuncio:", error);
+      // Strapi's YupValidationError summarizes multi-field failures as
+      // "N errors occurred" — the actual per-field messages live in
+      // error.details.errors, not error.message. Surface them so the
+      // frontend (and these logs) show what actually failed.
+      const details = (
+        error as {
+          details?: { errors?: Array<{ path: string[]; message: string }> };
+        }
+      ).details;
+      const fieldErrors = details?.errors
+        ?.map((e) => `${e.path.join(".")}: ${e.message}`)
+        .join("; ");
+      const message = fieldErrors || (error as Error).message;
       logAuditError("Error al guardar borrador de anuncio", {
         actor: Number(userId),
         actor_type: "plugin::users-permissions.user",
-        data: { error: (error as Error).message },
+        data: { error: message },
       });
-      return { success: false, message: (error as Error).message };
+      return { success: false, message };
     }
   },
 }));
