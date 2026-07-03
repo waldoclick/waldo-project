@@ -125,7 +125,7 @@ watch(
       title: `Perfil de ${newData.user.username}`,
       description: `Vendedor verificado en Waldo.click®. Explora los anuncios de activos industriales de ${newData.user.username} ${location} y compra directo al vendedor.`,
       imageUrl:
-        newData.user.avatar?.url || `${config.public.baseUrl}/share.jpg`,
+        newData.user.avatar?.url || `${config.public.baseUrl}/images/share.jpg`,
       url: `${config.public.baseUrl}/${route.params.slug}`,
     });
 
@@ -141,7 +141,9 @@ watch(
           ? newData.user.business_name || newData.user.username
           : `${newData.user.firstname || ""} ${newData.user.lastname || ""}`.trim() ||
             newData.user.username,
-        image: newData.user.avatar?.url || `${config.public.baseUrl}/share.jpg`,
+        image:
+          newData.user.avatar?.url ||
+          `${config.public.baseUrl}/images/share.jpg`,
         url: `${config.public.baseUrl}/${route.params.slug}`,
       },
     });

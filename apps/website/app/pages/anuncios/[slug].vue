@@ -239,7 +239,8 @@ watch(
         title: `${newData.name} en ${commune}`,
         description,
         imageUrl:
-          newData.gallery?.[0]?.url || `${config.public.baseUrl}/share.jpg`,
+          newData.gallery?.[0]?.url ||
+          `${config.public.baseUrl}/images/share.jpg`,
         url: `${config.public.baseUrl}/anuncios/${route.params.slug}`,
       });
 
@@ -258,7 +259,8 @@ watch(
           description: newData.description,
           url: `${config.public.baseUrl}/anuncios/${route.params.slug}`,
           image:
-            newData.gallery?.[0]?.url || `${config.public.baseUrl}/share.jpg`,
+            newData.gallery?.[0]?.url ||
+            `${config.public.baseUrl}/images/share.jpg`,
           brand: {
             "@type": "Brand",
             name: newData.manufacturer,

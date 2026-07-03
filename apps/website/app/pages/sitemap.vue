@@ -119,7 +119,7 @@ $setSEO({
   title: "Mapa del Sitio",
   description:
     "Navega fácilmente por Waldo.click®. Encuentra anuncios de activos industriales, categorías, comunas y todas las secciones del sitio.",
-  imageUrl: `${config.public.baseUrl}/share.jpg`,
+  imageUrl: `${config.public.baseUrl}/images/share.jpg`,
 });
 
 $setStructuredData({
