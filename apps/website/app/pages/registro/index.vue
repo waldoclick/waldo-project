@@ -110,6 +110,7 @@ $setStructuredData({
 });
 
 definePageMeta({
+  layout: "auth",
   middleware: ["guest"],
 });
 </script>
