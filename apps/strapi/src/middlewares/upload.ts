@@ -7,8 +7,14 @@ import { fromFile } from "file-type";
  * - PNG images (image/png)
  * - JPEG images (image/jpeg)
  * - WebP images (image/webp)
+ * - AVIF images (image/avif)
  */
-const ALLOWED_MIME_TYPES = ["image/png", "image/jpeg", "image/webp"];
+const ALLOWED_MIME_TYPES = [
+  "image/png",
+  "image/jpeg",
+  "image/webp",
+  "image/avif",
+];
 
 /**
  * Validates file magic bytes against the declared MIME type.
@@ -51,7 +57,7 @@ export default () => {
           if (!ALLOWED_MIME_TYPES.includes(f.mimetype)) {
             ctx.throw(
               400,
-              `File type not allowed: ${f.mimetype}. Only PNG, JPG and WEBP images are allowed.`,
+              `File type not allowed: ${f.mimetype}. Only PNG, JPG, WEBP and AVIF images are allowed.`,
             );
           }
           const isValid = await validateMagicBytes(f.filepath, f.mimetype);
@@ -67,7 +73,7 @@ export default () => {
         if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
           ctx.throw(
             400,
-            `File type not allowed: ${file.mimetype}. Only PNG, JPG and WEBP images are allowed.`,
+            `File type not allowed: ${file.mimetype}. Only PNG, JPG, WEBP and AVIF images are allowed.`,
           );
         }
         const isValid = await validateMagicBytes(file.filepath, file.mimetype);
