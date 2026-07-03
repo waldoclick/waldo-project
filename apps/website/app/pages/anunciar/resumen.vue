@@ -166,18 +166,15 @@ const uploadPendingImages = async (): Promise<boolean> => {
   }
 };
 
-// ads/save-draft returns { success: false, message } directly on ctx.body
-// (not Strapi's usual { error: {...} } envelope) — ofetch puts that in
-// error.data. Show the real reason instead of a generic "try again" message.
+// The detailed field-level message from save-draft (error.data.message) is
+// for debugging via the Network tab / server logs — it's raw, technical, and
+// in English, so it must never reach the user-facing Swal. Log it, show a
+// generic Spanish message to the user.
 const showSaveDraftError = (error: unknown) => {
-  const data = (error as { data?: { message?: string } })?.data;
-  const detail = data?.message;
   console.error("Error al guardar borrador de anuncio:", error);
   Swal.fire({
     title: "Error",
-    text: detail
-      ? `Hubo un problema al guardar el anuncio: ${detail}`
-      : "Hubo un problema al guardar el anuncio. Por favor, inténtalo de nuevo.",
+    text: "Hubo un problema al guardar el anuncio. Por favor, inténtalo de nuevo.",
     icon: "error",
     confirmButtonText: "Aceptar",
   });

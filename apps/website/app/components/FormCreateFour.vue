@@ -361,10 +361,16 @@ const handleSubmit = async (values: Record<string, unknown>) => {
   adStore.updateModel(values.model as string);
   adStore.updateYear(values.year as number);
   adStore.updateSerialNumber(values.serial_number as string);
-  adStore.updateWeight(values.weight as number);
-  adStore.updateWidth(values.width as number);
-  adStore.updateHeight(values.height as number);
-  adStore.updateDepth(values.depth as number);
+  // vee-validate's <Form @submit> passes the RAW form values, not the
+  // yup-cast ones (verified: submitting "10,2" gives values.weight === "10,2",
+  // a string, unaffected by the schema's number-with-comma transform). The
+  // schema only governs pass/fail validation and error messages — casting
+  // for these four fields must happen here, explicitly, with the same
+  // comma-aware parser the schema uses.
+  adStore.updateWeight(parseDecimalInput(values.weight) ?? 0);
+  adStore.updateWidth(parseDecimalInput(values.width) ?? 0);
+  adStore.updateHeight(parseDecimalInput(values.height) ?? 0);
+  adStore.updateDepth(parseDecimalInput(values.depth) ?? 0);
 
   emit("formSubmitted", values);
 };
