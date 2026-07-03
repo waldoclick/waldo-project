@@ -115,7 +115,7 @@
           <Field
             v-model="form.weight"
             name="weight"
-            type="number"
+            type="text"
             class="form-control"
             min="0"
             maxlength="7"
@@ -134,7 +134,7 @@
           <Field
             v-model="form.width"
             name="width"
-            type="number"
+            type="text"
             class="form-control"
             min="0"
             maxlength="4"
@@ -153,7 +153,7 @@
           <Field
             v-model="form.height"
             name="height"
-            type="number"
+            type="text"
             class="form-control"
             min="0"
             maxlength="4"
@@ -172,7 +172,7 @@
           <Field
             v-model="form.depth"
             name="depth"
-            type="number"
+            type="text"
             class="form-control"
             min="0"
             maxlength="4"
@@ -360,11 +360,15 @@ const handleDecimalKeydown = (event: KeyboardEvent) => {
   }
 };
 
-// Sanitize paste/autofill for decimal fields — allow digits and at most one dot
+// Sanitize paste/autofill for decimal fields — allow digits and at most one dot.
+// Chilean/Spanish keyboards type decimals with a comma (e.g. "3,4"), so it's
+// normalized to a dot before stripping — otherwise it gets silently dropped
+// and "3,4" becomes "34" instead of 3.4.
 const handleDecimalInput = (event: Event) => {
   const input = event.target as HTMLInputElement;
+  const normalized = input.value.replace(/,/g, ".");
   // Strip non-numeric non-dot chars
-  const stripped = input.value.replace(/[^\d.]/g, "");
+  const stripped = normalized.replace(/[^\d.]/g, "");
   // Keep only the first dot: split into [integer, decimals...] and rejoin with one dot
   const parts = stripped.split(".");
   const sanitized =
