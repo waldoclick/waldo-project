@@ -11,10 +11,10 @@ export interface Ad {
   manufacturer: string;
   model: string;
   serial_number: string;
-  weight: string;
-  width: string;
-  height: string;
-  depth: string;
+  weight: number;
+  width: number;
+  height: number;
+  depth: number;
   price: string;
   active: boolean;
   rejected: boolean;

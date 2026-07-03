@@ -160,4 +160,62 @@ describe("FormVerifyCode.vue — AUTH-01 and AUTH-02", () => {
     // Should navigate to /anuncios (fallback when no referer)
     expect(mockNavigateTo).toHaveBeenCalledWith("/anuncios");
   });
+
+  // Issue #72: raw English backend messages must never reach the resend Swal
+  describe("handleResend — backend error translation", () => {
+    it('shows a Spanish "please wait" message for the resend rate limit (429), no redirect', async () => {
+      const mockSwalFire = vi.fn();
+      global.useSweetAlert2 = vi.fn(() => ({
+        Swal: { fire: mockSwalFire },
+      })) as unknown as typeof useSweetAlert2;
+
+      mockApiClient.mockRejectedValueOnce({
+        data: {
+          error: { message: "Please wait before requesting a new code" },
+        },
+      });
+
+      const wrapper = mountFormVerifyCode();
+      await nextTick();
+
+      await (
+        wrapper.vm as unknown as { handleResend: () => Promise<void> }
+      ).handleResend();
+
+      expect(mockSwalFire).toHaveBeenCalledWith(
+        "Error",
+        expect.stringMatching(/espera/i),
+        "error",
+      );
+      const [, message] = mockSwalFire.mock.calls[0];
+      expect(message).not.toMatch(/please wait/i);
+      const navigateCalls = mockNavigateTo.mock.calls.map((c) => c[0]);
+      expect(navigateCalls).not.toContain("/login");
+    });
+
+    it("shows a Spanish expiry message and redirects to /login for an invalid/expired token", async () => {
+      const mockSwalFire = vi.fn();
+      global.useSweetAlert2 = vi.fn(() => ({
+        Swal: { fire: mockSwalFire },
+      })) as unknown as typeof useSweetAlert2;
+
+      mockApiClient.mockRejectedValueOnce({
+        data: { error: { message: "Invalid or expired token" } },
+      });
+
+      const wrapper = mountFormVerifyCode();
+      await nextTick();
+
+      await (
+        wrapper.vm as unknown as { handleResend: () => Promise<void> }
+      ).handleResend();
+
+      expect(mockSwalFire).toHaveBeenCalledWith(
+        "Error",
+        expect.stringMatching(/expiró/i),
+        "error",
+      );
+      expect(mockNavigateTo).toHaveBeenCalledWith("/login");
+    });
+  });
 });

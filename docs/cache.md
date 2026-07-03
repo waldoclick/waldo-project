@@ -59,10 +59,16 @@ Only `GET` and `HEAD` requests are eligible for Redis caching. The following pat
 | `/api/connect`, `/api/auth`, `**/callback` | Authentication routes |
 | `/api/orders` | Order data (transactional) |
 | `/api/users` | User-specific data |
+| `/api/payments/*` | Payment gateway flows (per-user, and some carry one-time tokens) |
+| `/api/ads/count`, `/actives`, `/pendings`, `/archiveds`, `/banneds`, `/rejecteds`, `/drafts`, `/thankyou` | Per-user ad lists/counts (ownership-filtered by `ctx.state.user`) |
+| `/api/ads/slug/:slug` | Ad detail visibility depends on ownership/manager role for non-active ads |
+| `/api/ads/:id` (numeric) | Core `findOne` conditionally hides phone/email for unauthenticated requests |
 | `**/uploads` | Static file uploads |
 | Files with extensions `.jpg`, `.png`, `.pdf`, etc. | Binary assets |
 
-Everything else (public API routes such as `/api/ads`, `/api/categories`, etc.) is eligible for caching.
+Everything else — genuinely public, requester-independent routes such as `/api/ads/catalog` and the generic `/api/ads` listing/search — is eligible for caching.
+
+> **Incident note (2026-07-03):** the cache key (`generateCacheKey`) is built from method + URL + query string only — it does not include the requester's identity. Before the exclusions above were added, personalized `/api/ads/*` routes were treated as "public API routes" and cached, so whichever user's request populated the cache first had their private response (ad ownership lists, counts, contact info) served verbatim to every other user hitting the same URL. If new per-user or auth-conditional routes are added under `/api/ads` or elsewhere, add them to `PERSONALIZED_AD_PREFIXES` (or the equivalent exclusion) in `apps/strapi/src/middlewares/cache.ts` — do not assume a route is safe to cache just because it lives under a "public" prefix.
 
 ---
 

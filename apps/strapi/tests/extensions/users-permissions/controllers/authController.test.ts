@@ -1261,6 +1261,53 @@ describe("registerUserLocal AI validation gate", () => {
       expect(calledWith).not.toHaveProperty(field);
     }
   });
+
+  it("Test F: validateFields is called with isCompany:false for a Persona Natural registration", async () => {
+    // Arrange
+    mockValidateFields.mockResolvedValue({ firstname: true, lastname: true });
+    const mockRegister = jest.fn(async (ctx) => {
+      ctx.response.body = {
+        jwt: "token",
+        user: { id: 42, email: "juan@example.com" },
+      };
+    });
+    const handler = registerUserLocal(mockRegister);
+    const ctx = makeCtx({ ...gateValidBody, is_company: false });
+
+    // Act
+    await handler(ctx);
+
+    // Assert
+    expect(mockValidateFields).toHaveBeenCalledWith(expect.any(Object), {
+      isCompany: false,
+    });
+  });
+
+  it("Test G: validateFields is called with isCompany:true for an Empresa registration (Razón Social / Giro, not a person's name)", async () => {
+    // Arrange
+    mockValidateFields.mockResolvedValue({ firstname: true, lastname: true });
+    const mockRegister = jest.fn(async (ctx) => {
+      ctx.response.body = {
+        jwt: "token",
+        user: { id: 42, email: "empresa@example.com" },
+      };
+    });
+    const handler = registerUserLocal(mockRegister);
+    const ctx = makeCtx({
+      ...gateValidBody,
+      is_company: true,
+      firstname: "Comercial Rios Ltda",
+      lastname: "Venta de repuestos",
+    });
+
+    // Act
+    await handler(ctx);
+
+    // Assert
+    expect(mockValidateFields).toHaveBeenCalledWith(expect.any(Object), {
+      isCompany: true,
+    });
+  });
 });
 
 describe("ensureUniqueUsername", () => {

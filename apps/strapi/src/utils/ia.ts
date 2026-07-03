@@ -172,15 +172,29 @@ export const generateArticleDraft = (prompt: string): Promise<AiResult> =>
 /** Timeout in ms for the validation AI call (D-07: 3-4s range). */
 export const VALIDATION_TIMEOUT_MS = 3500;
 
-function buildValidationPrompt(fields: FieldMap): string {
+export interface ValidationContext {
+  /** true → fields describe a business (Razón Social / Giro), not a person's name. */
+  isCompany?: boolean;
+}
+
+function buildValidationPrompt(
+  fields: FieldMap,
+  context: ValidationContext = {},
+): string {
   const fieldEntries = Object.entries(fields)
     .map(([key, value]) => `  "${key}": "${value}"`)
     .join(",\n");
 
+  const guidance = context.isCompany
+    ? `Your task: evaluate whether each of the following field values is a plausibly REAL business value.
+These fields describe a company, not a person: "firstname" holds the company's legal/trade name (e.g. "Comercial Rios Ltda", "Distribuidora Andina SpA"), and "lastname" holds its line of business/activity (e.g. "Venta de repuestos", "Restaurante", "Servicios de contabilidad").
+A REAL value is something a genuine business would enter — not "akhsdgKAJHSDGH", "asdf", "123456789" or random characters.`
+    : `Your task: evaluate whether each of the following field values is a plausibly REAL human value.
+A REAL value is something a genuine person would enter (e.g. a real name is "John", "María", "Smith" — not "akhsdgKAJHSDGH", "asdf", "123456789" or random characters).`;
+
   return `You are a data quality validator for a classified ads platform.
 
-Your task: evaluate whether each of the following field values is a plausibly REAL human or business value.
-A REAL value is something a genuine person would enter (e.g. a real name is "John", "María", "Smith" — not "akhsdgKAJHSDGH", "asdf", "123456789" or random characters).
+${guidance}
 
 Fields to validate:
 {
@@ -228,12 +242,16 @@ async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
  */
 export async function validateFields(
   fields: FieldMap,
+  context: ValidationContext = {},
 ): Promise<ValidationResult> {
   if (Object.keys(fields).length === 0) return {};
 
   try {
     const aiResult = await withTimeout(
-      generate(buildValidationPrompt(fields), "register.field-validation"),
+      generate(
+        buildValidationPrompt(fields, context),
+        "register.field-validation",
+      ),
       VALIDATION_TIMEOUT_MS,
     );
 

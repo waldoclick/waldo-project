@@ -200,7 +200,9 @@ export const registerUserLocal = (registerController) => async (ctx) => {
     if (firstname) fieldsToValidate.firstname = String(firstname);
     if (lastname) fieldsToValidate.lastname = String(lastname);
 
-    const validation = await validateFields(fieldsToValidate);
+    const validation = await validateFields(fieldsToValidate, {
+      isCompany: is_company === true,
+    });
     const failedField = Object.keys(validation).find(
       (k) => validation[k] === false,
     );

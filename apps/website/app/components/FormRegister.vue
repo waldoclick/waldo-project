@@ -433,10 +433,16 @@ const handleSubmit = async () => {
 
       // AI free-text validation rejection — backend sends the field in details;
       // build the Spanish, field-specific message here (backend messages are English).
-      const fieldMessagesEs: Record<string, string> = {
-        firstname: "El nombre no parece válido",
-        lastname: "El apellido no parece válido",
-      };
+      // Labels differ for company registrations (Razón Social / Giro vs Nombres / Apellidos).
+      const fieldMessagesEs: Record<string, string> = form.value.is_company
+        ? {
+            firstname: "La Razón Social no parece válida",
+            lastname: "El Giro no parece válido",
+          }
+        : {
+            firstname: "El nombre no parece válido",
+            lastname: "El apellido no parece válido",
+          };
       const rejectedField = body?.details?.field;
 
       if (rejectedField && fieldMessagesEs[rejectedField]) {
