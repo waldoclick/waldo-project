@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.46
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 06-04-PLAN.md (Phase 06 complete — all 6 plans done)
-last_updated: "2026-07-02T19:38:41.892Z"
+stopped_at: Completed quick task 260702-ujv (fix critical SEO audit findings on public pages)
+last_updated: "2026-07-03T02:23:47.379Z"
 last_activity: 2026-07-02
 progress:
   total_phases: 6
@@ -263,9 +263,10 @@ Progress: [████████░░] 78% (phase 06: 3/6 plans complete; ph
 | 260611-reg | Replace APP_URL with FRONTEND_URL in all 5 Transbank return/response URLs across 4 payment files so callbacks route through the Nuxt proxy | 2026-06-11 | 0549f2fa | [260611-reg-change-transbank-return-url-from-app-url](./quick/260611-reg-change-transbank-return-url-from-app-url/) |
 
 | 260613-v33 | Auditoria completa flujo usuario Manager en website Nuxt — SSR fail-open en auth.ts + onboarding bypass + deactivate isManager | 2026-06-14 | d2dad61c | [260613-v33-auditoria-completa-flujo-usuario-manager](./quick/260613-v33-auditoria-completa-flujo-usuario-manager/) |
+| 260702-ujv | Fix critical SEO audit findings on public pages: SSR soft-404 on ad/profile pages, broken /share.jpg OG image refs, noindexed /packs in sitemap.xml, ad gallery LCP loading + dynamic alt text | 2026-07-03 | 5b5bfa48 | [260702-ujv-fix-critical-seo-audit-findings-on-publi](./quick/260702-ujv-fix-critical-seo-audit-findings-on-publi/) |
 
 ## Session Continuity
 
 Last activity: 2026-07-02
-Stopped at: Completed 06-04-PLAN.md (Phase 06 complete — all 6 plans done)
+Stopped at: Completed quick task 260702-ujv (fix critical SEO audit findings on public pages)
 Resume file: None
