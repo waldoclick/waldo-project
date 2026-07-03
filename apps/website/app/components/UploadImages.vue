@@ -124,7 +124,12 @@ const handleFileChange = async (event) => {
   const files = [...event.target.files];
   fileInput.value.value = "";
 
-  const validTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
+  const validTypes = new Set([
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "image/avif",
+  ]);
   const remaining = maxImages.value - allImages.value.length;
 
   if (remaining <= 0) {
@@ -148,7 +153,7 @@ const handleFileChange = async (event) => {
   for (const file of filesToProcess) {
     if (!validTypes.has(file.type)) {
       toast.error(
-        `"${file.name}" no es un formato válido. Solo aceptamos JPG, PNG o WebP.`,
+        `"${file.name}" no es un formato válido. Solo aceptamos JPG, PNG, WebP o AVIF.`,
       );
       continue;
     }
