@@ -227,7 +227,7 @@ const parseDecimalInput = (originalValue: unknown): number | null => {
   ) {
     return null;
   }
-  return Number(String(originalValue).replace(",", "."));
+  return Number(String(originalValue).replace(/,/g, "."));
 };
 
 // Define las reglas de validación
@@ -426,12 +426,18 @@ const handleDecimalKeydown = (event: KeyboardEvent) => {
 // can keep typing digits after them — only the yup schema casts to a final
 // number, at validation time.
 const sanitizeDecimalString = (raw: string): string => {
-  const normalized = raw.replace(/,/g, ".");
-  const stripped = normalized.replace(/[^\d.]/g, "");
-  const parts = stripped.split(".");
-  return parts.length > 1
-    ? `${parts[0]}.${parts.slice(1).join("")}`
-    : (parts[0] ?? "");
+  // Keep digits and BOTH possible decimal separators — Chile uses "," and
+  // that's what the field should keep showing the user typed it; only the
+  // yup schema (parseDecimalInput) normalizes to a dot, for the underlying
+  // JS number, which is never shown back to the user.
+  const stripped = raw.replace(/[^\d,.]/g, "");
+  const firstSeparator = stripped.match(/[,.]/);
+  if (!firstSeparator || firstSeparator.index === undefined) return stripped;
+  const sepIndex = firstSeparator.index;
+  const sep = stripped[sepIndex];
+  const integerPart = stripped.slice(0, sepIndex);
+  const decimalPart = stripped.slice(sepIndex + 1).replace(/[,.]/g, "");
+  return `${integerPart}${sep}${decimalPart}`;
 };
 
 // IMPORTANT: only ever assign to the reactive form ref here — never mutate
