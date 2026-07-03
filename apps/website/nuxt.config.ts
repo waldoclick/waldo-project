@@ -25,6 +25,7 @@ export default defineNuxtConfig({
     // "@nuxtjs/i18n",
     "@saslavik/nuxt-gtm",
     "@vercel/speed-insights",
+    "@vercel/analytics",
   ],
 
   // Security configuration - using nuxt-security defaults with customizations
