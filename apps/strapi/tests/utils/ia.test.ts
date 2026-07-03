@@ -167,6 +167,28 @@ describe("validateFields — per-field boolean, fail-open", () => {
     expect(mockCerebras).not.toHaveBeenCalled();
   });
 
+  it("uses person-oriented wording by default (no context)", async () => {
+    mockCerebras.mockResolvedValue({ text: '{"firstname":true}' });
+    await validateFields({ firstname: "John" });
+    const prompt = mockCerebras.mock.calls[0][0] as string;
+    expect(prompt).toMatch(/REAL human value/);
+    expect(prompt).not.toMatch(/Razón Social/);
+  });
+
+  it("uses business-oriented wording when isCompany is true", async () => {
+    mockCerebras.mockResolvedValue({
+      text: '{"firstname":true,"lastname":true}',
+    });
+    await validateFields(
+      { firstname: "Comercial Rios Ltda", lastname: "Venta de repuestos" },
+      { isCompany: true },
+    );
+    const prompt = mockCerebras.mock.calls[0][0] as string;
+    expect(prompt).toMatch(/REAL business value/);
+    expect(prompt).toMatch(/legal\/trade name/);
+    expect(prompt).not.toMatch(/REAL human value/);
+  });
+
   it("treats a non-boolean value as true (only literal false blocks)", async () => {
     mockCerebras.mockResolvedValue({ text: '{"firstname":"maybe"}' });
     const result = await validateFields({ firstname: "John" });
