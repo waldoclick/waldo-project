@@ -58,7 +58,7 @@ Plans:
 **Goal:** Reubicar la IA desde el recurso `ia` a endpoints de dominio: exponer `GET /articles/sources` y `POST /articles/generate` (manager-only), dejar los servicios IA y Tavily internos (sin ruta), mover la construcción del prompt y la selección de proveedor al backend (default Cerebras + cadena de fallback configurable por env), migrar `LightBoxArticles.vue` y eliminar los recursos `ia` y `search`. Sin cambio de comportamiento del flujo de noticias del dashboard.
 **Requirements**: N/A
 **Depends on:** Phase 1
-**Plans:** 1/2 plans executed
+**Plans:** 6 plans (3 waves) — 1/6 executed
 
 Plans:
 - [x] 02-01-PLAN.md — Backend additivo: servicio ai-provider (selección + fallback), index IA lazy, acciones article.sources/article.generate + rutas isManager
@@ -92,3 +92,33 @@ Plans:
 - [x] 04-06-PLAN.md — Wave 3: Dashboard CRUD for Seguridad (SecurityPoliciesDashboard.vue, FormSecurityPolicy.vue, 4 route files, documentId-based fix-forward filtering)
 - [x] 04-07-PLAN.md — Wave 4: MenuMaintenance.vue nav entries for both new dashboard sections + Términos label update + knownSubRoutes
 - [ ] 04-09-PLAN.md — Wave 5 (non-autonomous): Manual Strapi admin permission grant (Public find/findOne for both content-types) + 12-point human visual/functional verification checklist
+
+### Phase 5: Audit log for every CRUD operation in Strapi
+
+**Goal:** Track who creates, updates, and deletes records across every Strapi content-type (admin panel + public API + system writes) via a single global `strapi.db.lifecycles.subscribe()` handler registered in `bootstrap()` — recording actor id + actor-type discriminator (admin::user / plugin::users-permissions.user / system), action, content-type UID, and record id/documentId per write. **Storage PIVOT (2026-07-02):** audit entries are written as structured LOG LINES via the existing Winston logger (Better Stack + local 90-day rotating file), NOT a Strapi `audit-log` DB table (the table built in 05-01 was removed in 05-03); read path is Better Stack / `apps/strapi/logs/app-*.log`. Also homologates the ~62 existing payment/ad-creation `logger.*` calls to the same `{ actor, actor_type, data }` envelope (reshape-only). No dashboard UI, no field-level diffing; retention handled by the logger's 90-day rotation.
+**Requirements**: N/A
+**Depends on:** Phase 4
+**Plans:** 5/6 plans executed
+
+Plans:
+- [x] 05-01-PLAN.md — Wave 1 (TDD): audit-log content-type schema + subscriber tests + `db.lifecycles.subscribe()` handler wired at top of bootstrap() (SUPERSEDED by 05-03's logger pivot — DB table removed)
+- [x] 05-03-PLAN.md — Wave 1 (TDD): PIVOT rework — delete the audit-log DB table, add shared `logAudit` helper (info/warn/error) wrapping the Winston logger, reroute the subscriber through it, update tests to mock the helper
+- [x] 05-04-PLAN.md — Wave 2: homologate payment.ts (23 logger call sites) to the `logAudit` envelope (reshape-only, level+message preserved, actor from local userId/system)
+- [x] 05-05-PLAN.md — Wave 2: homologate ad.service.ts (12) + pack.service.ts (16) logger calls to `logAudit` (reshape-only)
+- [x] 05-06-PLAN.md — Wave 2: homologate ad.ts (5) + checkout.service.ts (5) + free-ad.service.ts (1) logger calls to `logAudit` (reshape-only)
+- [ ] 05-02-PLAN.md — Wave 3 (non-autonomous): end-to-end human verification against the LOG (local rotating file / Better Stack, not Content Manager) — admin/public-API/system actor tagging + at least one homologated payment log renders the new envelope; business + payment writes unaffected
+
+### Phase 6: Generate comprehensive as-built product documentation (PRD, TRD, UX/UI, App Flows, Backend Schema, Implementation Plan) in /docs, verified against current code — not copied from potentially stale existing docs
+
+**Goal:** Produce six professional-grade, self-contained Markdown documents in `/docs` (`PRD.md`, `TRD.md`, `UXD.md`, `FLOWS.md`, `BSD.md`, `IPD.md`) describing the Waldo Project as it exists today, each fact re-derived from live source (not copied from stale `.planning/codebase/*` or `/docs/*.md`). Flows are the highest-scrutiny deliverable: 6 core flows (auth, ad lifecycle, payment, reservations, CRUD+audit-log, cron) each with a Mermaid diagram. Known stale claims are corrected inline and surfaced in explicit "Inconsistencias detectadas" / "Preguntas abiertas" sections — notably the `apps/dashboard`-is-merged-into-`apps/website` fact and the corrected count of 6 active cron jobs (not 4).
+**Requirements**: D-01, D-02, D-03, D-04, D-05, D-06, D-07, D-08, D-09, D-10, D-11, D-12 (from 06-CONTEXT.md — no formal REQUIREMENTS.md)
+**Depends on:** Phase 5
+**Plans:** 1/6 plans executed
+
+Plans:
+- [x] 06-01-PLAN.md — Wave 1: BSD.md (21-entity ER diagram + field tables + endpoint reference, verified against live schema.json)
+- [x] 06-02-PLAN.md — Wave 1: FLOWS.md (6 core flows, each a Mermaid diagram + prose; corrects 6-cron count and reservation path)
+- [x] 06-03-PLAN.md — Wave 2: TRD.md (stack/architecture/integrations/NFRs + "Inconsistencias detectadas" dashboard-merge & cron corrections)
+- [x] 06-04-PLAN.md — Wave 2: PRD.md (as-built problem/personas/MVP+backlog/acceptance criteria cross-referenced to flows)
+- [x] 06-05-PLAN.md — Wave 2: IPD.md (retrospective phase/milestone history reframed as reusable delivery patterns)
+- [x] 06-06-PLAN.md — Wave 2: UXD.md (page inventory public/dashboard, component taxonomy, BEM/SCSS, brand palette)

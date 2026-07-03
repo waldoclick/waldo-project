@@ -1,3 +1,4 @@
+import registerAuditLogSubscriber from "./subscribers/audit-log.subscriber";
 import populateCategories from "../seeders/categories";
 import populateConditions from "../seeders/conditions";
 import populateFaqs from "../seeders/faqs";
@@ -27,6 +28,9 @@ export default {
    * run jobs, or perform some special logic.
    */
   async bootstrap({ strapi }) {
+    // Register audit-log subscriber first so seeder + backfill writes are captured (tagged system).
+    registerAuditLogSubscriber(strapi);
+
     // Verificar si los seeders están habilitados
     const runSeeders = process.env.APP_RUN_SEEDERS === "true";
 
