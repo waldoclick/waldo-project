@@ -121,7 +121,6 @@
             maxlength="7"
             inputmode="decimal"
             @keydown="handleDecimalKeydown"
-            @input="handleDecimalInput"
           />
           <ErrorMessage name="weight" />
         </div>
@@ -140,7 +139,6 @@
             maxlength="4"
             inputmode="decimal"
             @keydown="handleDecimalKeydown"
-            @input="handleDecimalInput"
           />
           <ErrorMessage name="width" />
         </div>
@@ -159,7 +157,6 @@
             maxlength="4"
             inputmode="decimal"
             @keydown="handleDecimalKeydown"
-            @input="handleDecimalInput"
           />
           <ErrorMessage name="height" />
         </div>
@@ -178,7 +175,6 @@
             maxlength="4"
             inputmode="decimal"
             @keydown="handleDecimalKeydown"
-            @input="handleDecimalInput"
           />
           <ErrorMessage name="depth" />
         </div>
@@ -212,6 +208,23 @@ const emit = defineEmits(["formSubmitted", "formBack"]);
 const { paymentSummaryText } = useAdPaymentSummary();
 
 const { isValidText } = useValidation();
+
+// Chilean/Spanish keyboards type decimals with a comma (e.g. "3,4"). The
+// weight/width/height/depth fields are type="text" so that character can be
+// typed at all, so normalization happens here — at validation/cast time —
+// rather than by fighting vee-validate's own value tracking in an input
+// handler. Empty values become null (fields are optional); non-numeric input
+// becomes NaN, which yup's own number-type validation reports via typeError.
+const parseDecimalInput = (originalValue: unknown): number | null => {
+  if (
+    originalValue === "" ||
+    originalValue === null ||
+    originalValue === undefined
+  ) {
+    return null;
+  }
+  return Number(String(originalValue).replace(",", "."));
+};
 
 // Define las reglas de validación
 const schema = yup.object({
@@ -251,8 +264,9 @@ const schema = yup.object({
   weight: yup
     .number()
     .nullable()
+    .typeError("El peso debe ser un número válido")
+    .transform((_value, originalValue) => parseDecimalInput(originalValue))
     .min(0, "El peso no puede ser negativo")
-    .transform((value, originalValue) => (originalValue === "" ? null : value))
     .test("len", "El peso no puede exceder los 7 caracteres", (value) => {
       if (value === null || value === undefined) return true;
       return String(value).length <= 7;
@@ -260,8 +274,9 @@ const schema = yup.object({
   width: yup
     .number()
     .nullable()
+    .typeError("El ancho debe ser un número válido")
+    .transform((_value, originalValue) => parseDecimalInput(originalValue))
     .min(0, "El ancho no puede ser negativo")
-    .transform((value, originalValue) => (originalValue === "" ? null : value))
     .test("len", "El ancho no puede exceder los 4 caracteres", (value) => {
       if (value === null || value === undefined) return true;
       return String(value).length <= 4;
@@ -269,8 +284,9 @@ const schema = yup.object({
   height: yup
     .number()
     .nullable()
+    .typeError("La altura debe ser un número válido")
+    .transform((_value, originalValue) => parseDecimalInput(originalValue))
     .min(0, "La altura no puede ser negativa")
-    .transform((value, originalValue) => (originalValue === "" ? null : value))
     .test("len", "La altura no puede exceder los 4 caracteres", (value) => {
       if (value === null || value === undefined) return true;
       return String(value).length <= 4;
@@ -278,8 +294,9 @@ const schema = yup.object({
   depth: yup
     .number()
     .nullable()
+    .typeError("La profundidad debe ser un número válido")
+    .transform((_value, originalValue) => parseDecimalInput(originalValue))
     .min(0, "La profundidad no puede ser negativa")
-    .transform((value, originalValue) => (originalValue === "" ? null : value))
     .test(
       "len",
       "La profundidad no puede exceder los 4 caracteres",
@@ -352,36 +369,34 @@ const handleYearInput = (event: Event) => {
   form.value.year = sanitized === "" ? 0 : Number(sanitized);
 };
 
-// Block non-numeric keys for decimal fields (weight, width, height, depth — decimal allowed)
+// These fields are type="text" (not type="number") so a comma can be typed at
+// all — Chilean/Spanish keyboards produce "," for decimals, and native number
+// inputs reject that character outright. Being type="text" means the browser
+// no longer blocks letters/symbols on its own, so this keydown handler is an
+// ALLOWLIST (digits, navigation/editing keys, and a single decimal separator),
+// not just a blocklist — the previous version only blocked "e/E/+/-" and
+// relied on the browser to reject everything else, which stopped being true
+// once the input type changed.
+const DECIMAL_NAV_KEYS = new Set([
+  "Backspace",
+  "Delete",
+  "ArrowLeft",
+  "ArrowRight",
+  "ArrowUp",
+  "ArrowDown",
+  "Tab",
+  "Home",
+  "End",
+]);
 const handleDecimalKeydown = (event: KeyboardEvent) => {
-  const blocked = ["e", "E", "+", "-"];
-  if (blocked.includes(event.key)) {
-    event.preventDefault();
+  if (event.ctrlKey || event.metaKey || event.altKey) return;
+  if (DECIMAL_NAV_KEYS.has(event.key)) return;
+  if (/^\d$/.test(event.key)) return;
+  if (event.key === "." || event.key === ",") {
+    const input = event.target as HTMLInputElement;
+    if (!input.value.includes(".") && !input.value.includes(",")) return;
   }
-};
-
-// Sanitize paste/autofill for decimal fields — allow digits and at most one dot.
-// Chilean/Spanish keyboards type decimals with a comma (e.g. "3,4"), so it's
-// normalized to a dot before stripping — otherwise it gets silently dropped
-// and "3,4" becomes "34" instead of 3.4.
-const handleDecimalInput = (event: Event) => {
-  const input = event.target as HTMLInputElement;
-  const normalized = input.value.replace(/,/g, ".");
-  // Strip non-numeric non-dot chars
-  const stripped = normalized.replace(/[^\d.]/g, "");
-  // Keep only the first dot: split into [integer, decimals...] and rejoin with one dot
-  const parts = stripped.split(".");
-  const sanitized =
-    parts.length > 1
-      ? parts[0] + "." + parts.slice(1).join("")
-      : (parts[0] ?? "");
-  input.value = sanitized;
-  // Sync v-model so vee-validate sees the sanitized value
-  const fieldName = input.name as keyof typeof form.value;
-  if (fieldName in form.value) {
-    (form.value as Record<string, unknown>)[fieldName] =
-      sanitized === "" ? 0 : Number(sanitized);
-  }
+  event.preventDefault();
 };
 
 // onMounted: UI-only — loads conditions for select (fire-and-forget; non-critical for SSR)
