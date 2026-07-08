@@ -22,18 +22,18 @@ Recurring payment for PRO subscriptions. Provided by Transbank. **Must be contra
 
 1. User selects a pack or featured option on the website (`/anunciar` flow).
 2. Website calls `POST /api/payments/checkout` with `{ pack, featured, adId }`.
-3. Strapi creates an `Order` record with status `draft` and stores `buy_order`, `amount`, and related `Ad`/`Pack` references.
+3. Strapi creates an `Order` record and stores `buy_order`, `amount`, and related `Ad`/`Pack` references. `Order` has no stored `status` field — the payment outcome is derived from `payment_response`/`document_response`.
 4. Strapi calls Transbank `init` — receives a `token` and redirect URL.
 5. Strapi returns the redirect URL to the website.
 6. Website redirects the browser to the Transbank payment page.
 7. User completes payment at Transbank.
 8. Transbank calls `GET /api/payments/webpay` (no auth header — `auth: false` route) with `token_ws` or `TBK_TOKEN`.
 9. Strapi calls Transbank `commit` to confirm the transaction.
-10. On success: Strapi finalizes the order (sets status `paid`), publishes the ad via `publishAd()`, links the reservation slot.
+10. On success: Strapi finalizes the order (recording the successful `payment_response`), publishes the ad via `publishAd()`, links the reservation slot.
 11. Strapi redirects the browser to `/pagar/gracias?order={order.documentId}`.
 12. Website page calls `useOrderById(documentId)` to fetch and display the order confirmation.
 
-On failure or user cancellation, Strapi redirects to `/pagar/gracias?order={order.documentId}` regardless — the page reads the order status from Strapi and shows the appropriate message.
+On failure or user cancellation, Strapi redirects to `/pagar/gracias?order={order.documentId}` regardless — the page reads the payment outcome from the order's `payment_response`/`document_response` data and shows the appropriate message.
 
 ---
 
@@ -82,7 +82,7 @@ When the user has free reservation credits and no featured is requested, no Webp
 
 ## Monthly Billing (PRO Subscriptions)
 
-The `subscriptionCron` runs monthly and charges active PRO subscribers via Oneclick Mall:
+`apps/strapi/src/cron/subscription-charge.cron.ts` runs monthly and charges active PRO subscribers via Oneclick Mall:
 
 1. Queries all `SubscriptionPayment` records where `period_end` is in the past and subscription is active.
 2. Calls `chargeUser(userId, periodEnd)` for each — `periodEnd` is the old `period_end` value; the new `period_end` is computed as the first of the next calendar month.
@@ -95,15 +95,7 @@ Calendar billing is the source of truth — renewal always aligns to the first o
 
 ## Audit Trail
 
-Every order record stores the raw payment gateway data for audit and support purposes:
-
-| Field | Source | Purpose |
-| --- | --- | --- |
-| `buy_order` | Webpay | Internal Transbank reference |
-| `token_ws` | Webpay | Transaction token |
-| `authorization_code` | Webpay | Bank authorization code |
-| `card_number` | Webpay | Last 4 digits of the card |
-| `transaction_date` | Webpay | Timestamp from Transbank |
+Every order record stores the raw payment gateway data for audit and support purposes. `buy_order` is a top-level `Order` field; the rest of the gateway data (token, authorization code, card last-4, transaction timestamp) is **not** stored as individual top-level fields — it lives inside the `payment_response` / `document_response` JSON blobs on the order.
 
 These fields are **never** used to identify or look up an order. `order.documentId` is always the primary key.
 

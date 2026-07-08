@@ -1,6 +1,6 @@
 # Environment Variables
 
-Complete reference for all environment variables across the three apps. Copy `.env.example` from each app as a starting point. Never commit `.env` files to the repository.
+Complete reference for all environment variables across the two apps. Copy `.env.example` from each app as a starting point. Never commit `.env` files to the repository.
 
 Rotate secrets immediately if they are accidentally exposed. `APP_KEYS`, `JWT_SECRET`, and Transbank keys must each be treated as production credentials.
 
@@ -24,25 +24,6 @@ Rotate secrets immediately if they are accidentally exposed. `APP_KEYS`, `JWT_SE
 | `DEV_MODE` | server | no | Set to `"true"` to enable development access restriction (all routes require `/dev` login) |
 | `DEV_USERNAME` | server | no | Username for `DEV_MODE` login |
 | `DEV_PASSWORD` | server | no | Password for `DEV_MODE` login |
-
----
-
-## apps/dashboard
-
-| Variable | Scope | Required | Purpose |
-| --- | --- | --- | --- |
-| `API_URL` | server | yes | Strapi base URL for SSR requests (e.g. `http://localhost:1337`) |
-| `BASE_URL` | public | yes | Public dashboard base URL (e.g. `http://localhost:3001`). Used for SEO and the Nitro proxy target. |
-| `RECAPTCHA_SITE_KEY` | public | yes | Google reCAPTCHA v3 site key (client-side) |
-| `RECAPTCHA_SECRET_KEY` | server | yes | Google reCAPTCHA v3 secret key (server-side Nitro proxy only) |
-| `COOKIE_DOMAIN` | server | no | Cookie domain for `waldo_jwt` session cookie (e.g. `.waldo.click` for cross-subdomain sharing) |
-| `GTM_ID` | public | no | Google Tag Manager container ID (defaults to `GTM-TC8LS8NQ`) |
-| `SENTRY_DSN` | public | no | Sentry DSN for frontend error tracking |
-| `SENTRY_ORG` | server | no | Sentry organization slug (build-time source map upload) |
-| `SENTRY_PROJECT` | server | no | Sentry project slug (build-time source map upload) |
-| `SENTRY_AUTH_TOKEN` | server | no | Sentry auth token (build-time source map upload) |
-| `SENTRY_FEEDBACK` | server | no | Set to `"true"` to enable Sentry user feedback widget |
-| `SENTRY_DEBUG` | server | no | Set to `"true"` to enable verbose Sentry logging |
 
 ---
 

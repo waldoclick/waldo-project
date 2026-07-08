@@ -80,5 +80,5 @@ Both endpoints are protected by the `global::isManager` policy. The gifted slot 
 | --- | --- |
 | AdReservation API | `apps/strapi/src/api/ad-reservation/` |
 | AdFeaturedReservation API | `apps/strapi/src/api/ad-featured-reservation/` |
-| User cron (slot restoration) | `apps/strapi/src/crons/user-*.cron.ts` |
+| User cron (slot restoration) | `apps/strapi/src/cron/ad-free-reservation-restore.cron.ts` |
 | Ad publish logic | `apps/strapi/src/api/ad/services/ad.ts` |
