@@ -1,0 +1,59 @@
+name: CI
+
+# Gate every change before it can reach `main` (which is deployed manually to production).
+# Runs on PRs targeting main/develop and on pushes to those branches.
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main, develop]
+
+# Cancel superseded runs on the same ref to save CI minutes.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Matrix over the two Node versions production actually runs:
+  # 22 = Strapi's Forge runtime, 24 = Vercel's default for the website build.
+  # Produces two status-check contexts for branch protection: `ci (22)` and `ci (24)`.
+  ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [22, 24]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      # Reads the pnpm version from the root package.json "packageManager" field.
+      # Third-party action pinned to a full commit SHA (supply-chain hardening); comment tracks the tag.
+      - name: Setup pnpm
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Blocking gate: lint + build must pass. Turbo respects the strapi -> website
+      # build order from turbo.json. GitHub sets CI=true automatically, which disables
+      # Sentry source-map upload in the website build. Packages without a given script
+      # (e.g. strapi has no "lint") are simply skipped by Turbo.
+      - name: Lint and build
+        run: pnpm turbo run lint build
+
+      # Non-blocking for now: the test suite has pre-existing failures on `main`
+      # (14 website tests across 7 files + strapi). Tests run and stay visible in the
+      # log, but do not fail the `ci` check yet. Once the suite is green, delete
+      # `continue-on-error` so tests become part of the blocking gate.
+      # TODO(deployment-hardening): green the test suite, then make this blocking.
+      - name: Test (non-blocking until suite is green)
+        continue-on-error: true
+        run: pnpm turbo run test

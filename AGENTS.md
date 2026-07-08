@@ -6,13 +6,12 @@ AI coding rules for this monorepo. Applies to all tools (OpenCode, Claude, Curso
 
 ## Project Context
 
-Classified ads platform (avisos) composed of three apps in a monorepo:
+Classified ads platform (avisos) composed of two apps in a monorepo:
 
-- **`apps/website`** — Public-facing Nuxt 4 website
-- **`apps/dashboard`** — Admin dashboard (Nuxt 4)
+- **`apps/website`** — Public-facing Nuxt 4 website; also serves the admin dashboard as `/dashboard/*` routes (the former `apps/dashboard` was merged in and deleted)
 - **`apps/strapi`** — Backend API and CMS (Strapi v5)
 
-All business logic lives in Strapi. Website and dashboard are stateless HTTP clients.
+All business logic lives in Strapi. The website is a stateless HTTP client.
 Monorepo orchestrated with Turbo. Package manager: **pnpm** (never npm or yarn).
 
 **Core value:** Users can publish and manage ads reliably, with frictionless payments — regardless of payment gateway.
@@ -21,10 +20,10 @@ Monorepo orchestrated with Turbo. Package manager: **pnpm** (never npm or yarn).
 
 ## Stack
 
-### Website & Dashboard (`apps/website`, `apps/dashboard`)
+### Website + Dashboard (`apps/website`, dashboard lives at `/dashboard/*`)
 - Nuxt 4.1.3 with `future.compatibilityVersion: 4`
 - Vue 3 Composition API with `<script setup>`
-- TypeScript (strict mode — `typeCheck: true` in both apps)
+- TypeScript (strict mode — `typeCheck: true`)
 - Pinia + `@pinia-plugin-persistedstate/nuxt` for state management
 - `@nuxtjs/strapi` v2 for Strapi integration
 - `@nuxt/image` for optimized images
@@ -72,7 +71,7 @@ Monorepo orchestrated with Turbo. Package manager: **pnpm** (never npm or yarn).
 
 ## Project Structure
 
-### Nuxt apps (`apps/website`, `apps/dashboard`)
+### Nuxt app (`apps/website`, includes the `/dashboard/*` pages)
 - `pages/` — file-based routing (Nuxt convention). Pages are **composition only**: they import and arrange components, never contain HTML sections or BEM classes directly
 - `components/` — auto-imported Vue components (PascalCase filenames)
 - `composables/` — reusable logic (auto-imported)
@@ -228,7 +227,6 @@ Never use colors outside this palette. Do not invent or approximate colors — u
 | App | Test root | Mirror pattern |
 |-----|-----------|----------------|
 | `apps/website` | `apps/website/tests/` | mirrors `app/` structure |
-| `apps/dashboard` | `apps/dashboard/tests/` | mirrors `app/` structure |
 | `apps/strapi` | `apps/strapi/tests/` | mirrors `src/` structure |
 
 - Never create test files inside `app/`, `src/`, or any subdirectory alongside production code

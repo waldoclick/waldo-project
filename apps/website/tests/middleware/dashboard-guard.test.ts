@@ -38,7 +38,7 @@ describe("dashboard-guard.global (GUARD-01, GUARD-02)", () => {
     // Re-sync global.navigateTo with the cleared mock
     global.navigateTo = mockNavigateTo;
     mockUser.mockReturnValue({ value: null });
-    mockFetchUser.mockResolvedValue(undefined);
+    mockFetchUser.mockResolvedValue();
   });
 
   // Control: non-dashboard path — guard returns early, no navigation
@@ -60,7 +60,7 @@ describe("dashboard-guard.global (GUARD-01, GUARD-02)", () => {
   it("redirects to /login when user still null after fetchUser (GUARD-01)", async () => {
     // user starts null, fetchUser doesn't populate it
     mockUser.mockReturnValue({ value: null });
-    mockFetchUser.mockResolvedValue(undefined);
+    mockFetchUser.mockResolvedValue();
 
     await guard(makeTo("/dashboard/ads"), {});
 
