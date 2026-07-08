@@ -21,6 +21,7 @@ All business logic lives in Strapi. The website is a stateless HTTP client.
 - [docs/data-model.md](./docs/data-model.md) — Core entity relationships
 - [docs/env-vars.md](./docs/env-vars.md) — Environment variable reference
 - [docs/deployment.md](./docs/deployment.md) — Deployment runbook (website on Vercel, Strapi on Forge)
+- [docs/deploy-checklist.md](./docs/deploy-checklist.md) — Manual deploy checklist, DB backup, and rollback
 - [docs/cache.md](./docs/cache.md) — Redis cache in Strapi (TTL, invalidation on writes)
 - [docs/branch-protection.md](./docs/branch-protection.md) — Branch protection setup for `main`
 
