@@ -77,8 +77,7 @@ Rotate secrets immediately if they are accidentally exposed. `APP_KEYS`, `JWT_SE
 
 | Variable | Required | Purpose |
 | --- | --- | --- |
-| `FRONTEND_URL` | yes | Website base URL — used in email links and payment redirects |
-| `DASHBOARD_URL` | yes | Dashboard base URL — used in password reset email links |
+| `FRONTEND_URL` | yes | Website base URL — used in email links (incl. password reset) and payment redirects. The dashboard is served at `FRONTEND_URL/dashboard`. |
 
 ### Payment (Transbank)
 

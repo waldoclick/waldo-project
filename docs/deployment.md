@@ -1,78 +1,59 @@
 # Deployment
 
-Each app deploys independently to Laravel Forge. There is no coordinated monorepo deploy — website, dashboard, and Strapi each have their own Forge site, their own deploy script, and their own PM2 process.
+Two deployables, deployed independently and **manually**:
+
+| App | Platform | Notes |
+| --- | --- | --- |
+| Website (`apps/website`) | **Vercel** | Public Nuxt site; also serves the admin dashboard as `/dashboard/*` routes (the former `apps/dashboard` was merged in). Built from the repo root via `vercel.json`. |
+| Strapi (`apps/strapi`) | **Laravel Forge** | API + CMS. PM2 process `waldo-api` on port 1337. |
+
+There is no coordinated monorepo deploy and no automated CD — each app is shipped on its own.
 
 ---
 
-## Architecture
+## Website — Vercel
 
-Three Forge sites, one per app:
+- One Vercel project. `vercel.json` (repo root) sets:
+  - `installCommand`: `corepack enable pnpm && pnpm install`
+  - `buildCommand`: `pnpm --filter waldo-website run build`
+- **Environment mapping:** the `develop` branch preview acts as **staging**; `main` is the **production** branch.
+- **Deploys are manual** (Vercel dashboard / CLI). Merging does not auto-promote to production.
+- **Rollback:** promote the previous deployment in the Vercel dashboard (or `vercel promote <url>`).
 
-| App | Port | PM2 process name | Ecosystem file |
-| --- | --- | --- | --- |
-| Website | 3000 | `waldo-website` | `apps/website/ecosystem.config.cjs` |
-| Dashboard | 3001 | `waldo-dashboard` | `apps/dashboard/ecosystem.config.cjs` |
-| Strapi | 1337 | `waldo-strapi` | `apps/strapi/ecosystem.config.js` |
+## Strapi — Forge
 
-Forge provisions the server, configures Nginx as a reverse proxy, and triggers deploys via webhook. PM2 manages the Node.js processes and handles restarts on failure.
-
----
-
-## Sparse-Checkout Pattern
-
-Each Forge site pulls only its own subdirectory from the monorepo using `git sparse-checkout`. This avoids downloading all three apps on every deploy.
-
-Deploy script pattern (per app, e.g. website):
-
-```bash
-git fetch origin
-git sparse-checkout set apps/website
-git checkout main
-cp -r apps/website/. ./
-yarn install --frozen-lockfile
-yarn build
-pm2 reload ecosystem.config.cjs --update-env
-```
-
-The `cp -r apps/website/.` step moves the app's files to the release root so Forge's standard working directory conventions are preserved.
+- Single Forge site `api.waldo.click` on the production server; PM2 process **`waldo-api`**, port `1337`.
+- **Deploy layout is `releases/` + `current`** (atomic releases), not a plain git checkout. A deploy installs with **pnpm**, runs `strapi build`, activates the new release (swaps the `current` symlink), and reloads PM2. Strapi syncs its content-type schema on boot — there is no separate migration step in the deploy.
+- **Database:** MySQL (`waldo_production`). **Redis** cache is enabled (`REDIS_ENABLED=true`).
+- **Rollback:** activate the previous release in Forge (swaps `current` back) and reload PM2. For schema-changing releases, restore the pre-deploy `mysqldump` first (see the deploy checklist in Phase 3 work).
+- A separate staging Strapi currently runs on its own Forge server (`api.waldoclick.dev`, MySQL `waldo_staging`, Webpay `integration`); consolidation onto the prod server is planned — see `docs/deployment-improvement-roadmap.md` §4.
 
 ---
 
-## Build Order
+## Package manager
 
-Strapi must be built before website and dashboard. This dependency is declared in `turbo.json`. In a full monorepo build (`yarn build` from root), Turbo respects this order automatically. In production deploys, Strapi is typically deployed first manually if schema changes are involved.
-
----
-
-## Environment Differences
-
-Both staging and production sites are configured in Forge. Deploy status badges are visible in each app's README.
-
-| Environment | Purpose |
-| --- | --- |
-| Staging | Pre-production validation, QA testing |
-| Production | Live traffic |
-
-Environment variables are managed in Forge's site environment editor — never in committed files.
+The whole monorepo uses **pnpm** (`packageManager` pinned in root `package.json`). Vercel and the Forge deploy both install with pnpm. Do not use Yarn or npm.
 
 ---
 
-## Post-Deploy Checks
+## Post-deploy checks
 
 After each deploy:
 
-1. Visit the health check URL for the app (website: `/`, dashboard: `/login`, Strapi: `/api/health`).
-2. Check PM2 process status: `pm2 status`.
-3. Verify no error spikes in Sentry for the app's project.
+1. Health check: website `/`, dashboard `/dashboard` (authenticated), Strapi `/api/health`.
+2. Strapi: `pm2 status` shows `waldo-api` online.
+3. No error spikes in Sentry for the app.
+4. Purge Cloudflare cache on the correct zone (staging vs prod zones are distinct — the purge uses `CLOUDFLARE_ZONE_ID` from the env).
 
 ---
 
-## Rollback
+## Environment variables
 
-Forge supports release rollback from the site dashboard. Select the previous release and click "Activate". PM2 will be reloaded with the previous build's ecosystem file automatically.
+Managed in each platform's dashboard (Vercel project settings; Forge site environment editor) — never in committed files. See `docs/env-vars.md`.
 
 ---
 
-## Open Concerns
+## Open concerns
 
-- Oneclick Mall production contracting with Transbank is pending. Until contracted, the PRO subscription feature must remain disabled (`PRO_ENABLE=false`) in production. See [docs/payment-flow.md](./payment-flow.md) for details.
+- Oneclick Mall production contracting with Transbank is pending. Until contracted, the PRO subscription feature must remain disabled (`PRO_ENABLE=false`) in production. See `docs/payment-flow.md`.
+- No CI gate historically fronted `main`; a GitHub Actions `ci` check + branch protection is being added (see `docs/branch-protection.md`).
