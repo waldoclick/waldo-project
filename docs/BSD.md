@@ -1,6 +1,6 @@
 # Backend Schema Document (BSD)
 
-This document is the as-built source of truth for the Waldo backend data model. It is derived directly from the live `schema.json` files under `apps/strapi/src/api/*/content-types/*/schema.json` (20 content-types) and `apps/strapi/src/extensions/users-permissions/content-types/user/schema.json` (the 21st — `User`), verified 2026-07-02. It supersedes `docs/data-model.md` as the schema reference; `docs/data-model.md` predates Phase 4 and lists only 16 entities (see corrections noted inline below).
+This document is the as-built source of truth for the Waldo backend data model. It is derived directly from the live `schema.json` files under `apps/strapi/src/api/*/content-types/*/schema.json` (20 content-types) and `apps/strapi/src/extensions/users-permissions/content-types/user/schema.json` (the 21st — `User`), verified 2026-07-02.
 
 All business logic and data live in Strapi v5. `apps/website` (public site + `/dashboard/**` admin routes) is a stateless HTTP client.
 
@@ -168,7 +168,7 @@ Source: `apps/strapi/src/api/ad/content-types/ad/schema.json`
 | `actived_by` / `rejected_by` / `banned_by` | relation, `oneToOne` | → User (which manager acted) |
 | `sort_priority` | integer, required, default `2` | |
 
-`Ad.status` is a **virtual, computed field** — not stored in the database. Computed by `computeAdStatus()` in `apps/strapi/src/api/ad/services/ad.ts`. See `docs/ad-statuses.md` for the full computation logic (correction over `docs/data-model.md`, which lists `title` as a field name — the real field is `name`).
+`Ad.status` is a **virtual, computed field** — not stored in the database. Computed by `computeAdStatus()` in `apps/strapi/src/api/ad/services/ad.ts`. See `docs/ad-statuses.md` for the full computation logic. The field name is `name` (not `title`).
 
 ### AdFeaturedReservation
 
@@ -182,7 +182,7 @@ Source: `apps/strapi/src/api/ad-featured-reservation/content-types/ad-featured-r
 | `description` | text | |
 | `ad` | relation, `oneToOne`, inverse `ad_featured_reservation` | → Ad (nullable — freed on reject/ban) |
 
-Correction over `docs/data-model.md`: that doc lists `used`/`gifted` boolean fields on this entity — no such fields exist in the live schema. Slot occupancy is derived from whether `ad` is null, not a boolean flag.
+No `used`/`gifted` boolean fields exist on this entity in the live schema. Slot occupancy is derived from whether `ad` is null, not a boolean flag.
 
 ### AdPack
 
@@ -196,7 +196,7 @@ Source: `apps/strapi/src/api/ad-pack/content-types/ad-pack/schema.json`
 | `total_features` | biginteger | |
 | `price` | biginteger | |
 
-No relation attributes. Referenced from checkout flow logic and `Order.items` (untyped JSON), not via a Strapi FK. Correction over `docs/data-model.md`: that doc calls this entity "Pack" with fields `days`/`pack_type`/`ads_quantity`/`featured_quantity` — the real field names are `total_days`/`total_ads`/`total_features` and there is no `pack_type` field on this content-type.
+No relation attributes. Referenced from checkout flow logic and `Order.items` (untyped JSON), not via a Strapi FK. The field names are `total_days`/`total_ads`/`total_features`; there is no `pack_type` field on this content-type.
 
 ### AdReservation
 
@@ -229,7 +229,7 @@ Source: `apps/strapi/src/api/article/content-types/article/schema.json`
 | `source_url` | string | Added v1.31 — optional external source attribution link |
 | `is_published` | boolean, default `false` | |
 
-Not present in `docs/data-model.md`'s table under the correct field names (it lists `content`/`published_at`, which do not exist — real fields are `body`/`is_published`).
+The fields are `body`/`is_published` (not `content`/`published_at`).
 
 ### Category
 
@@ -261,7 +261,7 @@ Source: `apps/strapi/src/api/condition/content-types/condition/schema.json`
 | `name` | string, required | |
 | `slug` | uid (target: `name`) | |
 
-No relations. Correction over `docs/data-model.md`, which lists `title`/`content` — real fields are `name`/`slug`.
+No relations. The fields are `name`/`slug`.
 
 ### Contact
 
@@ -276,7 +276,7 @@ Source: `apps/strapi/src/api/contact/content-types/contact/schema.json`
 | `phone` | string | |
 | `company` | string | |
 
-No relations. Not present in `docs/data-model.md` at all (Pitfall confirmed — see intro).
+No relations.
 
 ### CookiePolicy
 
@@ -288,7 +288,7 @@ Source: `apps/strapi/src/api/cookie-policy/content-types/cookie-policy/schema.js
 | `text` | text | |
 | `order` | integer | Drag-and-drop ordering in dashboard (Phase 4) |
 
-No relations. Added Phase 4 (2026-07-01) — absent from `docs/data-model.md`.
+No relations. Added Phase 4 (2026-07-01).
 
 ### Faq
 
@@ -301,7 +301,7 @@ Source: `apps/strapi/src/api/faq/content-types/faq/schema.json`
 | `text` | text | |
 | `order` | integer | |
 
-No relations. Correction over `docs/data-model.md`, which names the fields `question`/`answer` — real fields are `title`/`text`.
+No relations. The fields are `title`/`text`.
 
 ### Order
 
@@ -320,7 +320,7 @@ Source: `apps/strapi/src/api/order/content-types/order/schema.json`
 | `document_response` | json | |
 | `items` | json | Cart/pack line items — this is where pack selection lives, not a Strapi relation |
 
-**Order identity is always `order.documentId`, never a gateway reference** (`buy_order`, `token_ws`, `TBK_*`) — see CLAUDE.md Payment Rules. Correction over `docs/data-model.md`, which lists `status`/`token_ws`/`card_number`/`transaction_date` as fields — none of these exist on the live schema; that data lives inside `payment_response`/`document_response` JSON blobs instead.
+**Order identity is always `order.documentId`, never a gateway reference** (`buy_order`, `token_ws`, `TBK_*`) — see CLAUDE.md Payment Rules. There is no `status`/`token_ws`/`card_number`/`transaction_date` field on the live schema; that data lives inside `payment_response`/`document_response` JSON blobs instead.
 
 ### Policy
 
@@ -332,7 +332,7 @@ Source: `apps/strapi/src/api/policy/content-types/policy/schema.json`
 | `text` | text | |
 | `order` | integer | |
 
-No relations. Correction over `docs/data-model.md`: field is `text`, not `content`.
+No relations. The field is `text`.
 
 ### Region
 
@@ -352,7 +352,7 @@ Source: `apps/strapi/src/api/remaining/content-types/remaining/schema.json`
 | --- | --- | --- |
 | `ad` | relation, `oneToOne` | → Ad |
 
-No other fields. Used by the ad-expiry cron for decrement-once-per-day tracking. Entirely absent from `docs/data-model.md`.
+No other fields. Used by the ad-expiry cron for decrement-once-per-day tracking.
 
 ### SecurityPolicy
 
@@ -364,7 +364,7 @@ Source: `apps/strapi/src/api/security-policy/content-types/security-policy/schem
 | `text` | text | |
 | `order` | integer | |
 
-No relations. Added Phase 4 (2026-07-01) — absent from `docs/data-model.md`.
+No relations. Added Phase 4 (2026-07-01).
 
 ### SubscriptionPayment
 
@@ -384,7 +384,7 @@ Source: `apps/strapi/src/api/subscription-payment/content-types/subscription-pay
 | `charge_attempts` | integer, default `1` | |
 | `next_charge_attempt` | date | Retry scheduling for `subscription-charge.cron.ts` |
 
-Correction over `docs/data-model.md`: no direct relation attribute to `SubscriptionPro` on this entity — the linkage is by `user`, not a `SubscriptionPro` FK.
+There is no direct relation attribute to `SubscriptionPro` on this entity — the linkage is by `user`, not a `SubscriptionPro` FK.
 
 ### SubscriptionPRO
 
@@ -399,7 +399,7 @@ Source: `apps/strapi/src/api/subscription-pro/content-types/subscription-pro/sch
 | `inscription_token` | string, private | |
 | `pending_invoice` | boolean, default `false` | |
 
-`User.pro_status` (`"active" \| "inactive" \| "cancelled"`, on the User entity, not here) is the single source of truth for PRO membership status — this entity holds Oneclick card/inscription data only, not status. Correction over `docs/data-model.md`: that doc lists `status`/`card_number`/`period_end` fields on "SubscriptionPro" — none of these exist here; `status` lives on `User.pro_status`, `period_end` lives on `SubscriptionPayment`, and the card field is `card_last4` not `card_number`.
+`User.pro_status` (`"active" \| "inactive" \| "cancelled"`, on the User entity, not here) is the single source of truth for PRO membership status — this entity holds Oneclick card/inscription data only, not status. There is no `status`/`card_number`/`period_end` field on `SubscriptionPro`; `status` lives on `User.pro_status`, `period_end` lives on `SubscriptionPayment`, and the card field is `card_last4` (not `card_number`).
 
 ### Term
 
@@ -411,7 +411,7 @@ Source: `apps/strapi/src/api/term/content-types/term/schema.json`
 | `text` | text | |
 | `order` | integer | |
 
-No relations. Correction over `docs/data-model.md`: field is `text`, not `content`.
+No relations. The field is `text`.
 
 ### VerificationCode
 
@@ -425,7 +425,7 @@ Source: `apps/strapi/src/api/verification-code/content-types/verification-code/s
 | `attempts` | integer, default `0` | Max 3 attempts enforced in `POST /api/auth/verify-code` |
 | `pendingToken` | string, unique, required | Handoff token between step 1 (`POST /auth/local`) and step 2 |
 
-No relations. Added v1.36 (2-step login verification). Entirely absent from `docs/data-model.md`.
+No relations. Added v1.36 (2-step login verification).
 
 ### User
 
@@ -461,7 +461,7 @@ Source: `apps/strapi/src/extensions/users-permissions/content-types/user/schema.
 | `ads` | relation, `oneToMany`, mappedBy `user` | ← Ad |
 | `accepted_age_confirmation` / `accepted_terms` / `accepted_usage_terms` | boolean, default `false` | Registration consent checkboxes, server-validated in `registerUserLocal` |
 
-Correction over `docs/data-model.md`: that doc lists a `username_updated_at` field — the real field is `last_username_change`.
+The field is `last_username_change`.
 
 ---
 

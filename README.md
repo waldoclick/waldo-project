@@ -18,7 +18,7 @@ All business logic lives in Strapi. The website is a stateless HTTP client.
 - [docs/analytics-events.md](./docs/analytics-events.md) — Analytics event tracking reference
 - [docs/payment-flow.md](./docs/payment-flow.md) — Payment gateway flow (Webpay + Oneclick)
 - [docs/reservation-system.md](./docs/reservation-system.md) — Ad reservation and free slot lifecycle
-- [docs/data-model.md](./docs/data-model.md) — Core entity relationships
+- [docs/BSD.md](./docs/BSD.md) — Backend schema (entity/field reference)
 - [docs/env-vars.md](./docs/env-vars.md) — Environment variable reference
 - [docs/deployment.md](./docs/deployment.md) — Deployment runbook (website on Vercel, Strapi on Forge)
 - [docs/deploy-checklist.md](./docs/deploy-checklist.md) — Manual deploy checklist, DB backup, and rollback

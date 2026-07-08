@@ -58,5 +58,5 @@ See [CLAUDE.md](../../CLAUDE.md) for service file conventions. Key directories:
 - [Ad statuses and lifecycle](../../docs/ad-statuses.md)
 - [Payment flow (Webpay + Oneclick)](../../docs/payment-flow.md)
 - [Reservation system](../../docs/reservation-system.md)
-- [Data model](../../docs/data-model.md)
+- [Backend schema (data model)](../../docs/BSD.md)
 - [API permissions](../../docs/permissions.md)
