@@ -1,0 +1,42 @@
+name: CI
+
+# Gate every change before it can reach `main` (which is deployed manually to production).
+# Runs on PRs targeting main/develop and on pushes to those branches.
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main, develop]
+
+# Cancel superseded runs on the same ref to save CI minutes.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Job id `ci` is the status-check context used by branch protection on `main`.
+  ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Reads the pnpm version from the root package.json "packageManager" field.
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Turbo respects the strapi -> website build order declared in turbo.json.
+      # GitHub sets CI=true automatically, which disables Sentry source-map upload in the website build.
+      # Packages without a given script (e.g. strapi has no "lint") are simply skipped by Turbo.
+      - name: Lint, build and test
+        run: pnpm turbo run lint build test
