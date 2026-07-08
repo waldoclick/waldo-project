@@ -236,10 +236,15 @@ export default factories.createCoreController(
           populate = true;
         }
 
-        // Construir filtros
+        // Construir filtros — el `user` del caller SIEMPRE gana. Los filtros del
+        // cliente se aplican primero pero NO pueden sobrescribir `user`, para evitar
+        // IDOR (GET /api/orders/me?filters[user]=<otro> leería órdenes ajenas).
+        const clientFilters: Record<string, unknown> =
+          typeof filters === "object" && filters !== null ? { ...filters } : {};
+        delete clientFilters.user;
         const filterClause = {
+          ...clientFilters,
           user: userId,
-          ...(typeof filters === "object" ? filters : {}),
         };
 
         // Obtener órdenes del usuario con paginación
