@@ -188,4 +188,46 @@ export class CloudflareService implements ICloudflareService {
         requests: g.sum.requests ?? 0,
       }));
   }
+
+  /**
+   * Purge specific URLs from the Cloudflare edge cache (on-demand revalidation).
+   *
+   * Uses a DEDICATED CLOUDFLARE_PURGE_ZONE_ID env — intentionally separate from
+   * the analytics `this.zoneId` — so a staging server whose CLOUDFLARE_ZONE_ID
+   * points at the production zone (to read prod analytics) can never purge the
+   * production cache by accident. If the purge zone is unset, this throws and
+   * callers are expected to treat purge failures as non-fatal.
+   */
+  async purgeCache(files: string[]): Promise<void> {
+    if (!files.length) return;
+
+    const purgeZoneId = process.env.CLOUDFLARE_PURGE_ZONE_ID;
+    if (!purgeZoneId) {
+      throw new Error("CLOUDFLARE_PURGE_ZONE_ID is required to purge cache");
+    }
+
+    const response = await fetch(
+      `https://api.cloudflare.com/client/v4/zones/${purgeZoneId}/purge_cache`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${this.apiToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ files }),
+      },
+    );
+
+    const data = (await response.json()) as {
+      success?: boolean;
+      errors?: { message: string }[];
+    };
+
+    if (!data.success) {
+      throw new Error(
+        data.errors?.[0]?.message ??
+          `Cloudflare purge failed (${response.status})`,
+      );
+    }
+  }
 }
