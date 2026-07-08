@@ -130,4 +130,4 @@ No code changes are required — the middleware is already registered and gated 
 | --- | --- |
 | Cache middleware implementation | `apps/strapi/src/middlewares/cache.ts` |
 | Middleware registration | `apps/strapi/config/middlewares.ts` |
-| Redis env vars reference | `docs/env-vars.md` (Redis section) |
+| Redis env vars reference | `docs/deploy/env-vars.md` (Redis section) |

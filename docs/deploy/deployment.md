@@ -26,7 +26,7 @@ There is no coordinated monorepo deploy and no automated CD — each app is ship
 - **Deploy layout is `releases/` + `current`** (atomic releases), not a plain git checkout. A deploy installs with **pnpm**, runs `strapi build`, activates the new release (swaps the `current` symlink), and reloads PM2. Strapi syncs its content-type schema on boot — there is no separate migration step in the deploy.
 - **Database:** MySQL (`waldo_production`). **Redis** cache is enabled (`REDIS_ENABLED=true`).
 - **Rollback:** activate the previous release in Forge (swaps `current` back) and reload PM2. For schema-changing releases, restore the pre-deploy `mysqldump` first (see the deploy checklist in Phase 3 work).
-- A separate staging Strapi currently runs on its own Forge server (`api.waldoclick.dev`, MySQL `waldo_staging`, Webpay `integration`); consolidation onto the prod server is planned — see `docs/deployment-improvement-roadmap.md` §4.
+- A separate staging Strapi currently runs on its own Forge server (`api.waldoclick.dev`, MySQL `waldo_staging`, Webpay `integration`); consolidation onto the prod server is planned — see `docs/deploy/deployment-improvement-roadmap.md` §4.
 
 ---
 
@@ -49,11 +49,11 @@ After each deploy:
 
 ## Environment variables
 
-Managed in each platform's dashboard (Vercel project settings; Forge site environment editor) — never in committed files. See `docs/env-vars.md`.
+Managed in each platform's dashboard (Vercel project settings; Forge site environment editor) — never in committed files. See `docs/deploy/env-vars.md`.
 
 ---
 
 ## Open concerns
 
-- Oneclick Mall production contracting with Transbank is pending. Until contracted, the PRO subscription feature must remain disabled (`PRO_ENABLE=false`) in production. See `docs/payment-flow.md`.
-- No CI gate historically fronted `main`; a GitHub Actions `ci` check + branch protection is being added (see `docs/branch-protection.md`).
+- Oneclick Mall production contracting with Transbank is pending. Until contracted, the PRO subscription feature must remain disabled (`PRO_ENABLE=false`) in production. See `docs/domain/payment-flow.md`.
+- No CI gate historically fronted `main`; a GitHub Actions `ci` check + branch protection is being added (see `docs/deploy/branch-protection.md`).

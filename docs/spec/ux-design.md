@@ -2,7 +2,7 @@
 
 **Status:** As-built, verified against live source in `apps/website/app/` on 2026-07-02. Not copied from `.planning/codebase/*` or prior `/docs/*.md` drafts — those are leads only and may be stale.
 
-This document is the design-system reference for the Waldo Project: the page inventory (public vs. dashboard), the component naming taxonomy, the BEM/SCSS conventions, and the brand color palette. It complements [docs/TRD.md](./TRD.md), which owns the architecture-level explanation of why dashboard routes live inside the website app instead of a separate package (see TRD's "Inconsistencias detectadas" note).
+This document is the design-system reference for the Waldo Project: the page inventory (public vs. dashboard), the component naming taxonomy, the BEM/SCSS conventions, and the brand color palette. It complements [docs/spec/technical-requirements.md](./technical-requirements.md), which owns the architecture-level explanation of why dashboard routes live inside the website app instead of a separate package (see TRD's "Inconsistencias detectadas" note).
 
 ## Table of Contents
 
@@ -16,7 +16,7 @@ This document is the design-system reference for the Waldo Project: the page inv
 
 ## Inventario de páginas
 
-All pages live under a single Nuxt 4 app, `apps/website/app/pages/`. There is no separate `apps/dashboard` package — dashboard views are a route subtree (`/dashboard/**`) inside the same app, gated by `apps/website/app/middleware/dashboard-guard.global.ts` (manager-role check). See [docs/TRD.md](./TRD.md) for the full architectural note on this merge.
+All pages live under a single Nuxt 4 app, `apps/website/app/pages/`. There is no separate `apps/dashboard` package — dashboard views are a route subtree (`/dashboard/**`) inside the same app, gated by `apps/website/app/middleware/dashboard-guard.global.ts` (manager-role check). See [docs/spec/technical-requirements.md](./technical-requirements.md) for the full architectural note on this merge.
 
 ### Públicas
 

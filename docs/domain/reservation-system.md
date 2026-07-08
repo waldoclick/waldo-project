@@ -1,6 +1,6 @@
 # Reservation System
 
-Every ad that transitions out of `draft` status requires a reservation slot. Reservations are the mechanism that links a user's entitlement (free credit, paid pack, or manager gift) to a specific ad. See [docs/ad-statuses.md](./ad-statuses.md) for the ad lifecycle — this document covers the reservation side.
+Every ad that transitions out of `draft` status requires a reservation slot. Reservations are the mechanism that links a user's entitlement (free credit, paid pack, or manager gift) to a specific ad. See [docs/domain/ad-statuses.md](./ad-statuses.md) for the ad lifecycle — this document covers the reservation side.
 
 ---
 

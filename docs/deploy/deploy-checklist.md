@@ -1,11 +1,11 @@
 # Deploy Checklist & Recovery
 
 Manual deploys, one app at a time. **Always deploy to staging first, validate, then production.**
-Environment facts and rationale: `docs/deployment.md` and `docs/deployment-improvement-roadmap.md`.
+Environment facts and rationale: `docs/deploy/deployment.md` and `docs/deploy/deployment-improvement-roadmap.md`.
 
 Golden rules:
 - Deploy production **only from `main`**, and only when the `ci` check is green.
-- Never edit `main` directly — changes land via reviewed PR (see `docs/branch-protection.md`).
+- Never edit `main` directly — changes land via reviewed PR (see `docs/deploy/branch-protection.md`).
 - Production DB is **MySQL** (`waldo_production`); Redis cache is **on**; Cloudflare zones are **per-environment**.
 
 ---

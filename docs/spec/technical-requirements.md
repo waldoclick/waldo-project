@@ -29,7 +29,7 @@ packages:
   - 'apps/website'
 ```
 
-`ls apps/` confirms only `strapi` and `website` exist on disk. `CLAUDE.md`/`AGENTS.md` (repo root) both describe "three apps in a monorepo" (`apps/website`, `apps/dashboard`, `apps/strapi`) — this is stale. The admin dashboard is **not** a separate deployed application; it is a set of routes under `apps/website/app/pages/dashboard/**` (`account`, `ads`, `articles`, `featured`, `integrations`, `maintenance`, `orders`, `reservations`, `users`, plus `index.vue`), gated globally by `apps/website/app/middleware/dashboard-guard.global.ts` (requires a resolved session user with `role.name.toLowerCase() === "manager"`). This same stale 3-app claim also appears in `docs/deployment.md` (which describes a separate `waldo-dashboard` PM2 process / Forge site on port 3001) and `docs/env-vars.md` (which has a standalone `## apps/dashboard` env-var section) — both predate the dashboard-into-website merge and should be read with that correction in mind. See [docs/BSD.md](../docs/BSD.md) and [docs/FLOWS.md](../docs/FLOWS.md), which state this same fact for consistency across all Wave 1/2 documents in this phase.
+`ls apps/` confirms only `strapi` and `website` exist on disk. `CLAUDE.md`/`AGENTS.md` (repo root) both describe "three apps in a monorepo" (`apps/website`, `apps/dashboard`, `apps/strapi`) — this is stale. The admin dashboard is **not** a separate deployed application; it is a set of routes under `apps/website/app/pages/dashboard/**` (`account`, `ads`, `articles`, `featured`, `integrations`, `maintenance`, `orders`, `reservations`, `users`, plus `index.vue`), gated globally by `apps/website/app/middleware/dashboard-guard.global.ts` (requires a resolved session user with `role.name.toLowerCase() === "manager"`). This same stale 3-app claim also appears in `docs/deployment.md` (which describes a separate `waldo-dashboard` PM2 process / Forge site on port 3001) and `docs/env-vars.md` (which has a standalone `## apps/dashboard` env-var section) — both predate the dashboard-into-website merge and should be read with that correction in mind. See [docs/spec/backend-schema.md](./backend-schema.md) and [docs/spec/application-flows.md](./application-flows.md), which state this same fact for consistency across all Wave 1/2 documents in this phase.
 
 **2. There are 6 active cron jobs plus 1 manual-only task, not 4.**
 
@@ -45,7 +45,7 @@ packages:
 | `subscriptionChargeCron` | 5 AM daily, **only when `PRO_ENABLE=true`** | Monthly PRO billing |
 | `userConfirmedMigration` | never auto-fires (far-future placeholder) | Manual-only, one-time data migration |
 
-That is **6 active scheduled jobs plus 1 manual-trigger-only task**. See [docs/FLOWS.md](../docs/FLOWS.md) Flow 6 for the full per-job trace, source-file mapping, and error-state notes — this note exists here only to flag the correction, not to duplicate the flow.
+That is **6 active scheduled jobs plus 1 manual-trigger-only task**. See [docs/spec/application-flows.md](./application-flows.md) Flow 6 for the full per-job trace, source-file mapping, and error-state notes — this note exists here only to flag the correction, not to duplicate the flow.
 
 ---
 
@@ -84,7 +84,7 @@ That is **6 active scheduled jobs plus 1 manual-trigger-only task**. See [docs/F
 
 - **Orchestration:** Turbo (`turbo.json` declares Strapi-before-website build ordering)
 - **Package manager:** pnpm (never npm/yarn — see `pnpm-workspace.yaml`)
-- **Deploy:** independent per-app deploy via Laravel Forge with `git sparse-checkout` (see [docs/deployment.md](../docs/deployment.md) — note its 3-app framing is stale per Inconsistencias detectadas above; the underlying sparse-checkout/PM2/Forge mechanism it describes for `apps/strapi` and `apps/website` is otherwise accurate)
+- **Deploy:** independent per-app deploy via Laravel Forge with `git sparse-checkout` (see [docs/deploy/deployment.md](../deploy/deployment.md) — note its 3-app framing is stale per Inconsistencias detectadas above; the underlying sparse-checkout/PM2/Forge mechanism it describes for `apps/strapi` and `apps/website` is otherwise accurate)
 
 ### Notable version-history detail: the httpOnly-proxy migration (v1.46 era)
 
@@ -104,11 +104,11 @@ waldo-project/ (pnpm workspace)
     └── /dashboard/**   — admin routes, gated by dashboard-guard.global.ts (role: manager)
 ```
 
-All business logic — validation, payment orchestration, moderation rules, audit logging, cron jobs — lives in Strapi. `apps/website` is a stateless HTTP client for both its public and dashboard surfaces; it holds no independent business rules beyond client-side form validation and route guards. See [docs/BSD.md](../docs/BSD.md) for the full 21-entity data model this backend layer exposes.
+All business logic — validation, payment orchestration, moderation rules, audit logging, cron jobs — lives in Strapi. `apps/website` is a stateless HTTP client for both its public and dashboard surfaces; it holds no independent business rules beyond client-side form validation and route guards. See [docs/spec/backend-schema.md](./backend-schema.md) for the full 21-entity data model this backend layer exposes.
 
 ### Session / auth architecture: httpOnly proxy cookie
 
-The client never holds a JWT in any client-readable storage. The flow (fully traced in [docs/FLOWS.md](../docs/FLOWS.md) Flow 1):
+The client never holds a JWT in any client-readable storage. The flow (fully traced in [docs/spec/application-flows.md](./application-flows.md) Flow 1):
 
 1. Strapi issues a JWT on successful authentication (local 2-step verify, Google OAuth, or Google One Tap).
 2. A **Nitro server route** (`apps/website/server/api/auth/*`) receives the JWT server-side and sets it as an **httpOnly, `sameSite: lax`, 7-day cookie** named `waldo_jwt`. The JWT is discarded from that route's own JSON response — the browser only ever receives `{ user }`.
@@ -124,32 +124,32 @@ Both surfaces are served by the same Nuxt application and the same build. The on
 - **Middleware gate:** `dashboard-guard.global.ts` runs on every navigation, engages only for `/dashboard` paths, and requires `role.name.toLowerCase() === "manager"`.
 - **Data-loading convention:** public pages use `useAsyncData()` as the sole data-loading trigger (CLAUDE.md rule — never paired with a bare `await storeAction()`); dashboard components use `watch({ immediate: true })` as the sole trigger (never paired with `onMounted`).
 
-See [docs/UXD.md](../docs/UXD.md) for the full page inventory and component taxonomy behind this split.
+See [docs/spec/ux-design.md](./ux-design.md) for the full page inventory and component taxonomy behind this split.
 
 ### Data layer
 
-The full 21-entity schema (20 content-types under `apps/strapi/src/api/*/content-types/*/schema.json` plus `User`, which lives under the `users-permissions` plugin extension path and is easy to miss with a naive glob) is documented in [docs/BSD.md](../docs/BSD.md), including the Mermaid ER diagram and the non-CRUD API endpoint reference. This document does not duplicate that content.
+The full 21-entity schema (20 content-types under `apps/strapi/src/api/*/content-types/*/schema.json` plus `User`, which lives under the `users-permissions` plugin extension path and is easy to miss with a naive glob) is documented in [docs/spec/backend-schema.md](./backend-schema.md), including the Mermaid ER diagram and the non-CRUD API endpoint reference. This document does not duplicate that content.
 
 ### Runtime flows
 
-All 6 mandated application flows (authentication, ad lifecycle, payment/checkout, reservations, CRUD + audit-log, cron jobs) — each with a Mermaid diagram and happy-path/error-state/role-gated prose — are documented in [docs/FLOWS.md](../docs/FLOWS.md). This document references them by name rather than re-deriving them.
+All 6 mandated application flows (authentication, ad lifecycle, payment/checkout, reservations, CRUD + audit-log, cron jobs) — each with a Mermaid diagram and happy-path/error-state/role-gated prose — are documented in [docs/spec/application-flows.md](./application-flows.md). This document references them by name rather than re-deriving them.
 
 ---
 
 ## Integrations
 
-Verified against `docs/env-vars.md`, `.planning/codebase/INTEGRATIONS.md` (lead, cross-checked), and live middleware/service source.
+Verified against `docs/deploy/env-vars.md`, `.planning/codebase/INTEGRATIONS.md` (lead, cross-checked), and live middleware/service source.
 
 | Integration | Purpose | Auth / config | Notes |
 |---|---|---|---|
-| **Transbank Webpay Plus** | Card payments (one-off ad/pack purchases) | `WEBPAY_COMMERCE_CODE`, `WEBPAY_API_KEY`, `WEBPAY_ENVIRONMENT` | `transbank-sdk`; abstracted behind `apps/strapi/src/services/payment-gateway/` registry pattern for multi-gateway extension (currently only `transbank` adapter registered). Order identity is always `order.documentId` — see CLAUDE.md Payment Rules and [docs/FLOWS.md](../docs/FLOWS.md) Flow 3. |
-| **Transbank Oneclick Mall** | Recurring PRO subscription billing | `ONECLICK_COMMERCE_CODE`, `ONECLICK_API_KEY`, `ONECLICK_CHILD_COMMERCE_CODE` | Gated behind `PRO_ENABLE=true`; production contracting with Transbank is a pending open concern (see [docs/deployment.md](../docs/deployment.md) Open Concerns). |
+| **Transbank Webpay Plus** | Card payments (one-off ad/pack purchases) | `WEBPAY_COMMERCE_CODE`, `WEBPAY_API_KEY`, `WEBPAY_ENVIRONMENT` | `transbank-sdk`; abstracted behind `apps/strapi/src/services/payment-gateway/` registry pattern for multi-gateway extension (currently only `transbank` adapter registered). Order identity is always `order.documentId` — see CLAUDE.md Payment Rules and [docs/spec/application-flows.md](./application-flows.md) Flow 3. |
+| **Transbank Oneclick Mall** | Recurring PRO subscription billing | `ONECLICK_COMMERCE_CODE`, `ONECLICK_API_KEY`, `ONECLICK_CHILD_COMMERCE_CODE` | Gated behind `PRO_ENABLE=true`; production contracting with Transbank is a pending open concern (see [docs/deploy/deployment.md](../deploy/deployment.md) Open Concerns). |
 | **Mailgun** | Transactional email (auth, moderation, receipts, gifts) | `MAILGUN_API_KEY`, `MAILGUN_DOMAIN`, `MAILGUN_EMAIL` | `@strapi/provider-email-mailgun`; templates are MJML + Nunjucks. Nearly all email sends in the codebase are wrapped in non-fatal try/catch — a failed send never blocks the underlying business operation. |
 | **Cloudinary** | Media storage/optimization for ad galleries, avatars, article covers | (asset-pipeline env, see `.env.example` in `apps/strapi`) | Referenced by `media-cleanup.cron.ts` (Flow 6) for orphan-image auditing (audit-only, never auto-deletes). |
 | **Better Stack (via Winston)** | Structured log aggregation | Winston transport config | The audit-log storage backend (Phase 5 pivot) — see Non-Functional Requirements below. |
 | **Sentry** (`@sentry/nuxt`, Strapi Sentry plugin) | Error tracking | `SENTRY_DSN` (+ org/project/auth-token for source maps) | Restricted to production only in all runtime entry points (`NODE_ENV === "production"` guard) — dev/staging generate zero Sentry traffic. |
 | **Google OAuth2** | Social login | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_CALLBACK_URL` | Strapi users-permissions provider; full code-exchange flow via `google-auth-library`. |
-| **Google One Tap** | Passwordless login | `GOOGLE_CLIENT_ID` (shared with OAuth) | RS256/JWKS credential verification; bypasses the 2-step verification flow (Google has already asserted identity) — see [docs/FLOWS.md](../docs/FLOWS.md) Flow 1. |
+| **Google One Tap** | Passwordless login | `GOOGLE_CLIENT_ID` (shared with OAuth) | RS256/JWKS credential verification; bypasses the 2-step verification flow (Google has already asserted identity) — see [docs/spec/application-flows.md](./application-flows.md) Flow 1. |
 | **Google Analytics 4 / Search Console** | Analytics reporting surfaced in the dashboard Integrations panel | `GA4_PROPERTY_ID`, `GOOGLE_SC_SITE_URL`, service-account credentials (`GOOGLE_CLIENT_EMAIL`, `GOOGLE_PRIVATE_KEY`) | `Auth.GoogleAuth` instantiated per method call (not cached as an instance field) to avoid stale-credential reuse. |
 | **GTM** (`@saslavik/nuxt-gtm`) | Tag management / GA4 event routing | `GTM_ID` | `enableRouterSync: true` fires `page_view` on SPA route changes; replaces an earlier hand-rolled `gtm.client.ts` plugin. Consent Mode v2 implemented (default-deny pushed before GTM script load). |
 | **Cloudflare** | CDN + Analytics API (dashboard Integrations panel) | `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ZONE_ID` | Analytics response typed via a local `any`-cast helper (`extractGroups<T>()`) since Cloudflare's GraphQL Analytics API has no published TS types. |
@@ -167,29 +167,29 @@ Verified against `docs/env-vars.md`, `.planning/codebase/INTEGRATIONS.md` (lead,
 - **Proxy secret:** all Nitro→Strapi requests carry an `X-Proxy-Key` header validated against `PROXY_SECRET_WEB`/`PROXY_SECRET_APP` in `apps/strapi/src/middlewares/proxy-auth.ts`, so Strapi only accepts traffic from the trusted proxy layer.
 - **reCAPTCHA v3 on mutations:** method-based guard (POST/PUT/DELETE) applied broadly rather than route-by-route, closing the gap where a new mutating route could otherwise ship unprotected by omission.
 - **Role-gated moderation and admin actions:** `global::isManager` policy on ad approve/reject/ban, gift-reservation endpoints, cron-runner manual trigger, and AI provider endpoints.
-- **Payment identity invariant:** order identity is always `order.documentId`; gateway references (`buy_order`, `token_ws`, `TBK_*`, `authorization_code`) are stored for audit only and never used as a lookup/redirect key — enforced project-wide per CLAUDE.md Payment Rules and verified against every payment code path in [docs/FLOWS.md](../docs/FLOWS.md) Flow 3.
+- **Payment identity invariant:** order identity is always `order.documentId`; gateway references (`buy_order`, `token_ws`, `TBK_*`, `authorization_code`) are stored for audit only and never used as a lookup/redirect key — enforced project-wide per CLAUDE.md Payment Rules and verified against every payment code path in [docs/spec/application-flows.md](./application-flows.md) Flow 3.
 - **Fail-closed amount validation:** the Webpay return handler throws if `AD_FEATURED_PRICE` is unset rather than trusting the gateway-reported charge amount unconditionally.
 - **TypeScript strict mode, `typeCheck: true`:** enabled across the website build; zero `any` in Strapi's ad/payment/integration service layer (established incrementally, tracked in `.planning/PROJECT.md`'s validated-requirements history).
 
 ### Caching
 
-- **Optional Redis HTTP cache** (`global::cache` Strapi middleware, `apps/strapi/src/middlewares/cache.ts`), disabled by default, gated on `REDIS_ENABLED=true`. Caches `GET`/`HEAD` responses for public collection routes (e.g. `/api/ads`, `/api/categories`); excludes admin, auth, orders, users, uploads, and binary-asset paths. Invalidates on write via a `KEYS cache:*:/api/{collection}*` scan + bulk `DEL`. Fails open (falls through to the normal handler) if Redis is unreachable. Full detail in [docs/cache.md](../docs/cache.md).
+- **Optional Redis HTTP cache** (`global::cache` Strapi middleware, `apps/strapi/src/middlewares/cache.ts`), disabled by default, gated on `REDIS_ENABLED=true`. Caches `GET`/`HEAD` responses for public collection routes (e.g. `/api/ads`, `/api/categories`); excludes admin, auth, orders, users, uploads, and binary-asset paths. Invalidates on write via a `KEYS cache:*:/api/{collection}*` scan + bulk `DEL`. Fails open (falls through to the normal handler) if Redis is unreachable. Full detail in [docs/domain/cache.md](../domain/cache.md).
 - **Known limitation:** the Nuxt proxy layer does not forward `X-Cache`/`Cache-Control` headers to the browser — visible only on direct Strapi requests, not through website/dashboard clients (tracked, unresolved).
 
 ### Backups
 
-- `backupCron` (3 AM daily) runs a `pg_dump` database backup with 7-file rotation (`apps/strapi/src/cron/bbdd-backup.cron.ts`) — see [docs/FLOWS.md](../docs/FLOWS.md) Flow 6 for the full cron registry, including the corrected 6-active-plus-1-manual count (Inconsistencias detectadas above).
+- `backupCron` (3 AM daily) runs a `pg_dump` database backup with 7-file rotation (`apps/strapi/src/cron/bbdd-backup.cron.ts`) — see [docs/spec/application-flows.md](./application-flows.md) Flow 6 for the full cron registry, including the corrected 6-active-plus-1-manual count (Inconsistencias detectadas above).
 
 ### Observability
 
-- **Audit logging:** every Strapi content mutation (`create`/`update`/`delete`) is captured by a single global `strapi.db.lifecycles.subscribe()` hook, registered as the first statement in `bootstrap()`. Rather than a database table, every audit event is written through a shared `logAuditInfo`/`logAuditWarn`/`logAuditError` helper into the project's existing Winston logger (Better Stack + 90-day local file rotation) — a deliberate architectural pivot away from an earlier dedicated `audit-log` content-type. The envelope is `{ actor: number | "system", actor_type: "admin::user" | "plugin::users-permissions.user" | "system", data?: Record<string, unknown> }`. Full trace, including direct call-site homologation across the payment/ad domains, in [docs/FLOWS.md](../docs/FLOWS.md) Flow 5 — this NFR section references it rather than re-describing it.
+- **Audit logging:** every Strapi content mutation (`create`/`update`/`delete`) is captured by a single global `strapi.db.lifecycles.subscribe()` hook, registered as the first statement in `bootstrap()`. Rather than a database table, every audit event is written through a shared `logAuditInfo`/`logAuditWarn`/`logAuditError` helper into the project's existing Winston logger (Better Stack + 90-day local file rotation) — a deliberate architectural pivot away from an earlier dedicated `audit-log` content-type. The envelope is `{ actor: number | "system", actor_type: "admin::user" | "plugin::users-permissions.user" | "system", data?: Record<string, unknown> }`. Full trace, including direct call-site homologation across the payment/ad domains, in [docs/spec/application-flows.md](./application-flows.md) Flow 5 — this NFR section references it rather than re-describing it.
 - **Error tracking:** Sentry, production-only (see Integrations table above).
-- **Deploy health checks:** per-app health-check URL + PM2 status check + Sentry error-spike check after every deploy (see [docs/deployment.md](../docs/deployment.md); note its "3-app" framing predates the dashboard merge, per Inconsistencias detectadas — the website/Strapi deploy mechanics it documents remain accurate).
+- **Deploy health checks:** per-app health-check URL + PM2 status check + Sentry error-spike check after every deploy (see [docs/deploy/deployment.md](../deploy/deployment.md); note its "3-app" framing predates the dashboard merge, per Inconsistencias detectadas — the website/Strapi deploy mechanics it documents remain accurate).
 
 ---
 
 ## Preguntas abiertas
 
-- **`cron-runner` manual-trigger endpoint (`POST /api/cron-runner/:name`) production access control:** confirmed to exist and to be gated `global::isManager` at the route-policy layer (per [docs/BSD.md](../docs/BSD.md)'s API Endpoint Reference), but its real-world operational exposure (e.g. whether it is reachable from the public internet vs. an internal-only path) was not independently re-verified against production Forge/Nginx configuration in this pass.
+- **`cron-runner` manual-trigger endpoint (`POST /api/cron-runner/:name`) production access control:** confirmed to exist and to be gated `global::isManager` at the route-policy layer (per [docs/spec/backend-schema.md](./backend-schema.md)'s API Endpoint Reference), but its real-world operational exposure (e.g. whether it is reachable from the public internet vs. an internal-only path) was not independently re-verified against production Forge/Nginx configuration in this pass.
 - **`docs/env-vars.md` and `docs/deployment.md` need a follow-up edit pass to remove their stale `apps/dashboard` sections** — flagged here as a correction *note* per this document's own Inconsistencias detectadas section, but actually editing those two pre-existing docs is out of scope for this phase (D-10 requires noting the correction, not rewriting every existing `/docs/*.md` file that references it).
-- **Whether other plugin-extension content-types besides `User` exist under `apps/strapi/src/extensions/`:** resolved as "no" per [docs/BSD.md](../docs/BSD.md)'s verification (`extensions/` contains only `users-permissions/`), included here only for cross-reference completeness.
+- **Whether other plugin-extension content-types besides `User` exist under `apps/strapi/src/extensions/`:** resolved as "no" per [docs/spec/backend-schema.md](./backend-schema.md)'s verification (`extensions/` contains only `users-permissions/`), included here only for cross-reference completeness.

@@ -2,7 +2,7 @@
 
 This document describes the Waldo Project's core application flows **as they exist in the current codebase** (as-built), not as originally speculated or as described in any prior documentation. Each flow below was re-derived directly from live source files — controllers, services, routes, middleware, and cron configuration — not paraphrased from `.planning/codebase/*`, `.planning/milestones/*`, or the pre-existing `docs/*.md` set. Where those existing documents were used as a starting lead, their content was cross-checked against the current code and corrected inline where stale (see each flow's "Correction" notes).
 
-The platform is two packages, not three: `apps/strapi` (backend/business logic) and `apps/website` (public site + `/dashboard/**` admin routes, gated by `dashboard-guard.global.ts`). There is no separate `apps/dashboard` package — this is documented in full in `docs/TRD.md`'s "Inconsistencias detectadas" note; it is referenced here only where it affects a flow's frontend routing.
+The platform is two packages, not three: `apps/strapi` (backend/business logic) and `apps/website` (public site + `/dashboard/**` admin routes, gated by `dashboard-guard.global.ts`). There is no separate `apps/dashboard` package — this is documented in full in `docs/spec/technical-requirements.md`'s "Inconsistencias detectadas" note; it is referenced here only where it affects a flow's frontend routing.
 
 ## Table of Contents
 
@@ -347,6 +347,6 @@ flowchart TD
 
 ## Preguntas abiertas
 
-1. **`docs/analytics-events.md` staleness (dated 2026-03-14, oldest of the pre-existing `/docs/*.md` set):** not independently re-verified against the current GA4/GTM implementation in this pass. Analytics events are not one of the six mandated flows for this document, so this was deliberately deprioritized rather than blocking FLOWS.md — flagged here per D-09 rather than silently assumed accurate.
+1. **`docs/domain/analytics-events.md` staleness (dated 2026-03-14, oldest of the pre-existing `/docs/*.md` set):** not independently re-verified against the current GA4/GTM implementation in this pass. Analytics events are not one of the six mandated flows for this document, so this was deliberately deprioritized rather than blocking `application-flows.md` — flagged here per D-09 rather than silently assumed accurate.
 2. **`cron-runner` manual-trigger endpoint access control:** `POST /api/cron-runner/:name` (Flow 6) was traced to confirm it exists and can re-run any registered job, but its route-level policy/permission configuration was not re-verified in this pass — worth a follow-up check to confirm it is not publicly callable.
 3. **PRO subscription payment flow (`/payments/pro`, `/payments/pro-response`, `/payments/pro-cancel`) full trace:** confirmed to exist and to follow the same `order.documentId`-identity and `auth:false`-callback patterns as the core checkout flow (Flow 3), but was not diagrammed in full per this document's six-flow mandate — a dedicated deep-dive would be needed if PRO billing specifics become load-bearing for future documentation.

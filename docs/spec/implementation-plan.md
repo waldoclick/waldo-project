@@ -13,7 +13,7 @@ This is a retrospective account of how Waldo was actually built (milestones v1.1
 
 ## Roadmap por fases (retrospectiva)
 
-Waldo shipped as a sequence of versioned milestones (v1.1 → v1.46), each milestone composed of one or more numbered phases, each phase composed of vertical-slice plans. The table below groups the shipped history by milestone, states what each cluster delivered, and ties it to the flow(s) it built in [`docs/FLOWS.md`](./FLOWS.md) where applicable. Source: `.planning/ROADMAP.md` (milestone index) and `.planning/STATE.md` § Roadmap Evolution (phase-by-phase narrative).
+Waldo shipped as a sequence of versioned milestones (v1.1 → v1.46), each milestone composed of one or more numbered phases, each phase composed of vertical-slice plans. The table below groups the shipped history by milestone, states what each cluster delivered, and ties it to the flow(s) it built in [`docs/spec/application-flows.md`](./application-flows.md) where applicable. Source: `.planning/ROADMAP.md` (milestone index) and `.planning/STATE.md` § Roadmap Evolution (phase-by-phase narrative).
 
 ### Foundational and internal-quality milestones (v1.1–v1.20)
 
@@ -72,7 +72,7 @@ Waldo shipped as a sequence of versioned milestones (v1.1 → v1.46), each miles
 |---|---|---|---|
 | v1.46 PRO Subscriptions + Post-Merge Hardening | 102–129 | Full Webpay Oneclick Mall subscription lifecycle (`OneclickService`, `subscription-payment` content type, `SubscriptionChargeService` daily cron with 3-day retry, `ProCancellationService`); `apps/dashboard` merged into `apps/website` under `/dashboard/**` with route-by-route migration off `@nuxtjs/strapi` to a custom `useSessionX` composable family; httpOnly `waldo_jwt` proxy cookie centralizing all authenticated HTTP through a Nitro proxy (`server/api/[...].ts`); security review rounds fixing payment-integrity, authorization (IDOR), and auth-hardening findings; `strapi.entityService` → `strapi.db.query` migration for Strapi v5 compatibility | Flow 1, Flow 3, Flow 4, Flow 6 |
 
-This is the single largest and highest-risk milestone in Waldo's history — it is also where the `apps/dashboard`-as-separate-app claim (still present in `CLAUDE.md`, corrected in `docs/TRD.md`'s "Inconsistencias detectadas") became stale, since the merge happened here.
+This is the single largest and highest-risk milestone in Waldo's history — it is also where the `apps/dashboard`-as-separate-app claim (still present in `CLAUDE.md`, corrected in `docs/spec/technical-requirements.md`'s "Inconsistencias detectadas") became stale, since the merge happened here.
 
 ### Current phase series (post-v1.46, counter reset to 1 — not yet a versioned milestone)
 
@@ -85,11 +85,11 @@ Per `.planning/STATE.md`, the phase counter reset to 1 after v1.46 shipped and a
 | Phase 3 — Validación IA de campos de texto libre en el registro | Added a fail-open AI semantic-validation gate to `registerUserLocal` for free-text registration fields, reusing the Phase 2 `ai-provider` service | Flow 1 |
 | Phase 4 — Split legal pages into 4 documents | Split the single legal-docs surface (Términos, Privacidad, Cookies, Seguridad) into 4 independent content-types, public pages, and dashboard CRUD sections with drag-and-drop ordering; `/condiciones-de-uso` renamed to `/terminos-y-condiciones-de-uso` with a 301 redirect | — |
 | Phase 5 — Audit log for every CRUD operation | Global `strapi.db.lifecycles.subscribe()` hook in `bootstrap()`; storage mechanism pivoted mid-phase from a dedicated DB table to the existing Winston logger, with a shared `{ actor, actor_type, data }` envelope homologated across ~62 pre-existing payment/ad `logger.*` call sites | Flow 5 (CRUD + Audit Log) |
-| Phase 6 — This documentation phase | Produced `BSD.md`, `FLOWS.md`, `TRD.md`, `PRD.md`, `IPD.md` (this document), `UXD.md` — all re-derived from live source, not copied from stale leads | All flows |
+| Phase 6 — This documentation phase | Produced `backend-schema.md`, `application-flows.md`, `technical-requirements.md`, `product-requirements.md`, `implementation-plan.md` (this document), `ux-design.md` — all re-derived from live source, not copied from stale leads | All flows |
 
 ## Épicas e historias de usuario (retrospectivas)
 
-The epics below describe **capabilities Waldo has already shipped**, framed as user stories for traceability — not a backlog of future work. Each maps to the milestone(s) that delivered it and the flow(s) in `docs/FLOWS.md` that document its current behavior.
+The epics below describe **capabilities Waldo has already shipped**, framed as user stories for traceability — not a backlog of future work. Each maps to the milestone(s) that delivered it and the flow(s) in `docs/spec/application-flows.md` that document its current behavior.
 
 ### Epic: Secure, low-friction authentication
 
@@ -98,7 +98,7 @@ The epics below describe **capabilities Waldo has already shipped**, framed as u
 - As a user, once logged into either the public site or the dashboard, my session is recognized on the other without logging in again, because both apps share the same `waldo_jwt` cookie scoped to `.waldo.click` (v1.40).
 - As a user, my JWT is never exposed to client-side JavaScript — it lives in an httpOnly cookie, and all authenticated API calls are proxied server-side with the token injected for me (v1.46, phase 129).
 
-See Flow 1 in `FLOWS.md`.
+See Flow 1 in `application-flows.md`.
 
 ### Epic: Publish an ad through a guided, resumable flow
 
@@ -107,7 +107,7 @@ See Flow 1 in `FLOWS.md`.
 - As a seller, once my payment (or free-tier submission) is confirmed, my ad is automatically published — no separate manual step (v1.21, v1.24).
 - As a moderator, I can approve, reject, or ban a submitted ad, and rejecting/banning automatically frees up the seller's reservation credit for reuse (v1.5).
 
-See Flow 2 in `FLOWS.md`.
+See Flow 2 in `application-flows.md`.
 
 ### Epic: Pay for ads and packs regardless of gateway
 
@@ -116,7 +116,7 @@ See Flow 2 in `FLOWS.md`.
 - As the business, payment gateway identifiers (`buy_order`, `token_ws`) are never used to look anything up externally — the Strapi `order.documentId` is always the canonical reference, so swapping payment gateways in the future doesn't break order lookups (codified across v1.21–v1.26, enforced in `CLAUDE.md`).
 - As a PRO subscriber, my card is registered once via Webpay Oneclick Mall, then charged automatically every billing period with a 3-day retry window on failure (v1.46).
 
-See Flow 3 in `FLOWS.md`.
+See Flow 3 in `application-flows.md`.
 
 ### Epic: Reservation credits that don't get wasted
 
@@ -124,20 +124,20 @@ See Flow 3 in `FLOWS.md`.
 - As a seller, I always have a guaranteed minimum of free ad-reservation slots, restored daily by a cron job if I've used any (v1.8).
 - As a user, another user can gift me reservation credits directly from the dashboard (v1.35).
 
-See Flow 4 in `FLOWS.md`.
+See Flow 4 in `application-flows.md`.
 
 ### Epic: Every write to the system is traceable
 
 - As an operator, every create/update/delete across all 21 content-types is logged with who did it (or `system` if unattended), what type of actor they were, and what record was touched — without needing to inspect application code or guess (Phase 5).
 - As an operator, this traceability lives in the same log infrastructure (Winston/Better Stack) already used for error monitoring, not a separate audit database that needs its own retention policy (Phase 5, storage pivot).
 
-See Flow 5 in `FLOWS.md`.
+See Flow 5 in `application-flows.md`.
 
 ### Epic: Background maintenance runs itself
 
 - As an operator, expired ads decrement their remaining days and deactivate automatically overnight, orphaned reservation slots are restored, expired verification codes are purged, and the database is backed up on a rotation — all without manual intervention, and all individually re-triggerable on demand via `POST /api/cron-runner/:name` if something needs to run early (v1.7, v1.8, v1.36, v1.46).
 
-See Flow 6 in `FLOWS.md`.
+See Flow 6 in `application-flows.md`.
 
 ## Patrones de entrega reutilizables
 
@@ -173,11 +173,11 @@ This phase (6) produces zero executable code, so its acceptance criteria are she
 
 ### 8. Corrections belong inline, not in a separate changelog
 
-When current code contradicts an existing doc or convention file (e.g., the actual cron count vs. `CLAUDE.md`'s stale "four cron jobs" claim, or the dashboard-merge fact), the correction is written as a short inline note at the point of contradiction — in an explicit "Inconsistencias detectadas" section for TRD.md, or as a corrected fact plus citation elsewhere — rather than accumulated into a separate errata document that readers have to cross-reference.
+When current code contradicts an existing doc or convention file (e.g., the actual cron count vs. `CLAUDE.md`'s stale "four cron jobs" claim, or the dashboard-merge fact), the correction is written as a short inline note at the point of contradiction — in an explicit "Inconsistencias detectadas" section for technical-requirements.md, or as a corrected fact plus citation elsewhere — rather than accumulated into a separate errata document that readers have to cross-reference.
 
 ### 9. Parallel documentation plans against a shared dependency graph
 
-When multiple output documents share upstream inputs (BSD's schema, FLOWS' flow list), the phase plan makes the dependency graph explicit (`BSD.md`/`FLOWS.md` → `TRD.md`/`PRD.md`/`IPD.md`/`UXD.md`) so Wave 2 plans can run in parallel against each other without racing on their own shared inputs, only against the filesystem lock on `.planning/STATE.md`.
+When multiple output documents share upstream inputs (BSD's schema, FLOWS' flow list), the phase plan makes the dependency graph explicit (`backend-schema.md`/`application-flows.md` → `technical-requirements.md`/`product-requirements.md`/`implementation-plan.md`/`ux-design.md`) so Wave 2 plans can run in parallel against each other without racing on their own shared inputs, only against the filesystem lock on `.planning/STATE.md`.
 
 ## Preguntas abiertas
 

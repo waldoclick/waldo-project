@@ -24,7 +24,7 @@
 - But the following still describe **three separate apps**, each with its own Forge site / port:
   - `README.md` ("website (port 3000), dashboard (port 3001), strapi (port 1337)")
   - `CLAUDE.md` / `AGENTS.md` ("`apps/dashboard` — Admin dashboard (Nuxt 4)")
-  - `docs/deployment.md` (three Forge sites table, `waldo-dashboard` PM2 process, `ecosystem.config.cjs`)
+  - `docs/deploy/deployment.md` (three Forge sites table, `waldo-dashboard` PM2 process, `ecosystem.config.cjs`)
 
 **Impact:** the deployment runbook does not match reality. An operator following it would look for a
 dashboard site/process that no longer exists.
@@ -35,7 +35,7 @@ dashboard site/process that no longer exists.
   `pnpm-lock.yaml`, `pnpm-workspace.yaml`, and `vercel.json` (`corepack enable pnpm && pnpm install`).
 - Stale references to **Yarn**:
   - `README.md` ("Turbo + Yarn workspaces", `yarn install`, `yarn dev`).
-  - `docs/deployment.md` deploy script (`yarn install --frozen-lockfile`, `yarn build`).
+  - `docs/deploy/deployment.md` deploy script (`yarn install --frozen-lockfile`, `yarn build`).
   - `apps/strapi/ecosystem.config.js` → `script: "yarn", args: "start"` (PM2 launches Strapi via yarn).
 
 **Impact:** if the Forge deploy script or the Strapi PM2 ecosystem file is used verbatim, it invokes
@@ -60,7 +60,7 @@ production deploy — with no automated barrier.
   ran on Forge. The website is now on Vercel (`vercel.json` builds `waldo-website`). This file is dead.
 - `.env.dashboard` at the repo root still targets `https://dashboard.waldo.click` for a workspace that
   no longer exists in the monorepo (gitignored, local-only).
-- `docs/deployment.md` PM2 process names (`waldo-strapi`) don't match the actual ecosystem file
+- `docs/deploy/deployment.md` PM2 process names (`waldo-strapi`) don't match the actual ecosystem file
   (`apps/strapi/ecosystem.config.js` names the app `waldo-api`).
 
 ### 1.5 Vercel build wiring (what the repo does show)
@@ -90,7 +90,7 @@ Nothing was changed on the server.
   truth. **Backups use `mysqldump`/`mysql`, not `pg_dump`.**
 - **Redis IS enabled in prod:** `REDIS_ENABLED=true`, `REDIS_HOST=127.0.0.1`, `REDIS_TTL=14400`; the
   Redis service is active and password-protected (`NOAUTH` on anon ping). So the Strapi HTTP cache
-  (`docs/cache.md`) is live and cache-invalidation-on-write behavior applies to every deploy.
+  (`docs/domain/cache.md`) is live and cache-invalidation-on-write behavior applies to every deploy.
 - **`dashboard.waldo.click` DNS no longer resolves** (`Could not resolve host`). The dashboard is now
   only `waldo.click/dashboard`. The reset-password flow already uses `FRONTEND_URL`, not `DASHBOARD_URL`
   (explicit comment at `apps/strapi/src/extensions/users-permissions/controllers/authController.ts:589`),
@@ -100,11 +100,11 @@ Nothing was changed on the server.
   `WEBPAY_ENVIRONMENT=production`, `PRO_ENABLE=false` (matches the pending-Transbank open concern),
   `FRONTEND_URL=https://www.waldo.click`, `CLOUDFLARE_ZONE_ID=306874b6…` (prod zone).
 
-### 1.9 Actual Strapi deploy layout on the server (diverges from `docs/deployment.md`)
+### 1.9 Actual Strapi deploy layout on the server (diverges from `docs/deploy/deployment.md`)
 
 - The deploy directory `/home/forge/api.waldo.click` is **not a git repo**. It uses a
   `releases/` + `current` layout (atomic release directories) plus a persistent `.env` and `storage/`.
-  This contradicts the `docs/deployment.md` description of a `git sparse-checkout` + `git checkout main`
+  This contradicts the `docs/deploy/deployment.md` description of a `git sparse-checkout` + `git checkout main`
   deploy. The rollback story ("activate previous release") maps to swapping `current` between `releases/`.
 - A `package-lock.json` (npm) is present in the deploy dir, while the repo standard is **pnpm**. Both
   `pnpm@11.5.3` and `yarn@1.22.22` are installed on the box (Node v22.20.0). The exact
@@ -123,8 +123,8 @@ server is ambiguous — both are error sources during a manual deploy or rollbac
 - Cloudflare cache purge is implemented in Strapi (`apps/strapi/src/services/cloudflare/`), invoked
   from `apps/strapi/src/api/ad/services/ad.ts`. Purge targets the zone from `CLOUDFLARE_ZONE_ID`, so it
   is **environment-scoped by env var** (staging must carry the staging zone, prod the prod zone).
-- Redis HTTP cache is optional and gated on `REDIS_ENABLED` (`docs/cache.md`). A documented past
-  incident (2026-07-03) shows per-user routes were once cached globally — see `docs/cache.md`.
+- Redis HTTP cache is optional and gated on `REDIS_ENABLED` (`docs/domain/cache.md`). A documented past
+  incident (2026-07-03) shows per-user routes were once cached globally — see `docs/domain/cache.md`.
 
 ### 1.7 Secret hygiene (not a leak, worth noting)
 
@@ -162,7 +162,7 @@ so a manual `vercel --prod` / Forge deploy is always shipping validated code.
 
 **Why:** the current runbook describes a 3-app, all-Forge, Yarn world that no longer exists (§1.1, §1.2, §1.4).
 
-- Rewrite `docs/deployment.md` to the true topology:
+- Rewrite `docs/deploy/deployment.md` to the true topology:
   - **website (+ dashboard routes)** → Vercel, built from `vercel.json`.
   - **strapi** → Forge + PM2 (`apps/strapi/ecosystem.config.js`, app `waldo-api`, port 1337).
 - Fix `apps/strapi/ecosystem.config.js` to launch via pnpm, not `yarn` (§1.2).
@@ -208,7 +208,7 @@ for each app, and prod is never built from an unvalidated commit.
 
 ### P2 — Post-deploy smoke checks (lightweight automation)
 
-**Why:** `docs/deployment.md` post-deploy checks are all manual (health URL, `pm2 status`, Sentry eyeball).
+**Why:** `docs/deploy/deployment.md` post-deploy checks are all manual (health URL, `pm2 status`, Sentry eyeball).
 
 - Add a small smoke script hitting the health endpoints already named in the runbook
   (`/`, Strapi `/api/health`) plus one authenticated dashboard route, run automatically after deploy.
@@ -218,7 +218,7 @@ for each app, and prod is never built from an unvalidated commit.
 
 ### P3 — Rollback runbooks for both platforms
 
-**Why:** `docs/deployment.md` documents Forge rollback but not Vercel (§1 / Rollback section).
+**Why:** `docs/deploy/deployment.md` documents Forge rollback but not Vercel (§1 / Rollback section).
 
 - Add the Vercel instant-rollback / promote-previous-deployment steps.
 - Keep the Forge "Activate previous release" steps; add the DB-restore step for schema-changing releases.
@@ -234,7 +234,7 @@ for each app, and prod is never built from an unvalidated commit.
 
 - Keep secrets out of git (already the case). Add a documented **rotation** procedure for the tokens in
   `.env.global` and the Strapi production credentials (`APP_KEYS`, `JWT_SECRET`, Transbank keys — already
-  flagged in `docs/env-vars.md`). Consider a secret-scanning check in the P1 CI workflow.
+  flagged in `docs/deploy/env-vars.md`). Consider a secret-scanning check in the P1 CI workflow.
 
 ---
 
