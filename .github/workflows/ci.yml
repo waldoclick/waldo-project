@@ -14,22 +14,28 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Job id `ci` is the status-check context used by branch protection on `main`.
+  # Matrix over the two Node versions production actually runs:
+  # 22 = Strapi's Forge runtime, 24 = Vercel's default for the website build.
+  # Produces two status-check contexts for branch protection: `ci (22)` and `ci (24)`.
   ci:
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [22, 24]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       # Reads the pnpm version from the root package.json "packageManager" field.
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: ${{ matrix.node }}
           cache: pnpm
 
       - name: Install dependencies
