@@ -29,6 +29,9 @@ export default ({ env }) => [
       noSniff: true, // X-Content-Type-Options: nosniff — previene MIME sniffing
     },
   },
+  // Strips market-assets.strapi.io (hardcoded Strapi CSP default) from the
+  // Content-Security-Policy header — see strip-csp-fingerprint.ts.
+  "global::strip-csp-fingerprint",
   {
     name: "strapi::cors",
     config: {
