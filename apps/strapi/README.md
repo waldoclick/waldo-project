@@ -10,7 +10,7 @@ Backend API and CMS for the Waldo classified ads platform (Strapi v5).
 
 ## Environment Variables
 
-See [../../docs/deploy/env-vars.md](../../docs/deploy/env-vars.md) for the full reference. Minimum required to boot:
+See [../../docs/deploy/env-vars.md](https://github.com/waldoclick/waldo-project/wiki/env-vars) for the full reference. Minimum required to boot:
 
 | Variable              | Purpose                                        |
 | --------------------- | ---------------------------------------------- |
@@ -55,8 +55,8 @@ See [CLAUDE.md](../../CLAUDE.md) for service file conventions. Key directories:
 
 ## Domain Documentation
 
-- [Ad statuses and lifecycle](../../docs/domain/ad-statuses.md)
-- [Payment flow (Webpay + Oneclick)](../../docs/domain/payment-flow.md)
-- [Reservation system](../../docs/domain/reservation-system.md)
-- [Backend schema (data model)](../../docs/spec/backend-schema.md)
-- [API permissions](../../docs/domain/permissions.md)
+- [Ad statuses and lifecycle](https://github.com/waldoclick/waldo-project/wiki/ad-statuses)
+- [Payment flow (Webpay + Oneclick)](https://github.com/waldoclick/waldo-project/wiki/payment-flow)
+- [Reservation system](https://github.com/waldoclick/waldo-project/wiki/reservation-system)
+- [Backend schema (data model)](https://github.com/waldoclick/waldo-project/wiki/backend-schema)
+- [API permissions](https://github.com/waldoclick/waldo-project/wiki/permissions)

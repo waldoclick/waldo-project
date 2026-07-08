@@ -13,7 +13,7 @@ Public-facing Nuxt 4 website for the Waldo classified ads platform.
 
 ## Environment Variables
 
-See [../../docs/deploy/env-vars.md](../../docs/deploy/env-vars.md) for the full reference. Minimum required to boot:
+See [../../docs/deploy/env-vars.md](https://github.com/waldoclick/waldo-project/wiki/env-vars) for the full reference. Minimum required to boot:
 
 | Variable               | Purpose                                                                                  |
 | ---------------------- | ---------------------------------------------------------------------------------------- |

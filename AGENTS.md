@@ -18,6 +18,16 @@ Monorepo orchestrated with Turbo. Package manager: **pnpm** (never npm or yarn).
 
 ---
 
+## Documentation
+
+Project documentation lives in the **GitHub wiki**, NOT in the repo — there is no `docs/` folder.
+
+- Browse: https://github.com/waldoclick/waldo-project/wiki
+- Read/edit locally (or when an agent needs it): clone `git@github.com:waldoclick/waldo-project.wiki.git` (it is a separate git repo, so it is not in this working tree — clone it to read the docs).
+- The wiki is the single source of truth. Deploy runbooks, domain docs (ad statuses, payments, reservations, permissions, cache), and the as-built specs (PRD/TRD/BSD/etc.) all live there.
+
+---
+
 ## Stack
 
 ### Website + Dashboard (`apps/website`, dashboard lives at `/dashboard/*`)
