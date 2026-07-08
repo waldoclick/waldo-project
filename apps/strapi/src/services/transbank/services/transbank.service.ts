@@ -59,11 +59,30 @@ export class TransbankService {
     try {
       const response = await webpay.commit(token);
 
+      // Log de confirmación exitosa de Transbank
+      logger.info("✅ CONFIRMACIÓN EXITOSA TRANSBANK:", {
+        token,
+        buyOrder: response.buy_order,
+        status: response.status,
+        responseCode: response.response_code,
+        amount: response.amount,
+        timestamp: new Date().toISOString(),
+      });
+
       return {
         success: true,
         response,
       };
     } catch (error) {
+      // Log de error al confirmar transacción con Transbank
+      logger.error("❌ ERROR AL CONFIRMAR TRANSACCIÓN TRANSBANK:", {
+        error: error.message,
+        status: error.response?.status,
+        data: error.response?.data,
+        token,
+        timestamp: new Date().toISOString(),
+      });
+
       return {
         success: false,
         error,

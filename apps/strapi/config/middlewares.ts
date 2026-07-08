@@ -8,12 +8,7 @@ export default ({ env }) => [
       contentSecurityPolicy: {
         useDefaults: true,
         directives: {
-          "img-src": [
-            "'self'",
-            "data:",
-            "blob:",
-            "https://market-assets.strapi.io",
-          ],
+          "img-src": ["'self'", "data:", "blob:"],
           "script-src": [
             "'self'",
             "'unsafe-inline'",
@@ -26,7 +21,6 @@ export default ({ env }) => [
             "https://accounts.google.com",
             "https://oauth2.googleapis.com",
             "https://www.googleapis.com",
-            "https://analytics.strapi.io",
             "https://cloudflareinsights.com",
           ],
           "frame-src": ["'self'", "https://accounts.google.com"],
@@ -35,6 +29,9 @@ export default ({ env }) => [
       noSniff: true, // X-Content-Type-Options: nosniff — previene MIME sniffing
     },
   },
+  // Strips market-assets.strapi.io (hardcoded Strapi CSP default) from the
+  // Content-Security-Policy header — see strip-csp-fingerprint.ts.
+  "global::strip-csp-fingerprint",
   {
     name: "strapi::cors",
     config: {

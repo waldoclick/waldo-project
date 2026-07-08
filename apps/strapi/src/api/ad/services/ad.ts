@@ -13,6 +13,7 @@ import { factories } from "@strapi/strapi";
 import { sendMjmlEmail } from "../../../services/mjml";
 import { logAuditInfo, logAuditError } from "../../../utils/audit-log";
 import { zohoService } from "../../../services/zoho";
+import { CloudflareService } from "../../../services/cloudflare";
 import { sanitizeAdForPublic } from "./sanitize-ad";
 
 type AdStatus =
@@ -650,6 +651,24 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
           actived_by: userId,
         },
       });
+
+      // Purge the frontend edge cache so the newly-approved ad appears
+      // immediately for anonymous visitors (Cloudflare caches /anuncios and the
+      // ad detail page). Non-blocking — a purge failure must never break the
+      // approval flow.
+      Promise.resolve()
+        .then(() =>
+          new CloudflareService().purgeCache([
+            `${process.env.FRONTEND_URL}/anuncios/${ad.slug}`,
+            `${process.env.FRONTEND_URL}/anuncios`,
+          ]),
+        )
+        .catch((purgeError) =>
+          strapi.log.error(
+            "[cache-purge] approveAd cache purge failed:",
+            purgeError,
+          ),
+        );
 
       // Enviar email de aprobación al usuario
       try {

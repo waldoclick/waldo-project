@@ -23,4 +23,5 @@ export interface ICloudflareService {
   getTraffic(): Promise<CloudflareTrafficRow[]>;
   getRequests(): Promise<CloudflareRequestRow[]>;
   getThreats(days: number): Promise<CloudflareThreatRow[]>;
+  purgeCache(files: string[]): Promise<void>;
 }
