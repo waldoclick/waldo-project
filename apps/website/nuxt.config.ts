@@ -558,8 +558,12 @@ export default defineNuxtConfig({
   },
 
   image: {
-    // Vercel's native provider accesses static files from CDN; IPX for local dev
-    provider: process.env.VERCEL ? "vercel" : "ipx",
+    // Strapi already serves pre-sized WebP (thumbnail/medium/large) through the
+    // /api/images proxy, so routing those through Vercel's optimizer just re-processes
+    // already-optimized bytes and bills a transformation per unique image. "none" serves
+    // the Strapi/static asset as-is (no /_vercel/image). Local static assets (logos, hero)
+    // are already sized WebP/SVG, so they need no runtime optimization either.
+    provider: "none",
     domains: [
       "api.waldo.click",
       "www.waldo.click",
