@@ -202,3 +202,71 @@ describe("order.find — user scoping", () => {
     expect(whereStr).not.toContain('"user":{"id":1}');
   });
 });
+
+// ─── me tests ────────────────────────────────────────────────────────────────
+describe("order.me — user scoping (client filters cannot override user)", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockCount.mockResolvedValue(0);
+    mockFindMany.mockResolvedValue([]);
+  });
+
+  it("Test 6 (me IDOR): client-supplied filters.user cannot override the caller's own id", async () => {
+    // Arrange: caller is user 7, attacker tries filters[user]=99 to read user 99's orders
+    const ctx = makeCtx({
+      query: {
+        filters: { user: 99 }, // attacker override attempt
+        pagination: { page: "1", pageSize: "10" },
+      },
+      state: { user: { id: 7, role: { name: "user" } } },
+    });
+
+    // Act
+    await capturedExtension.me(ctx);
+
+    // Assert: findMany/count must be scoped to user 7, never 99
+    expect(mockFindMany).toHaveBeenCalled();
+    const where = (
+      mockFindMany.mock.calls[0][0] as { where: Record<string, unknown> }
+    ).where;
+    expect(where.user).toBe(7);
+    expect(JSON.stringify(where)).not.toContain("99");
+  });
+
+  it("Test 7 (me IDOR nested): filters[user][id]=99 also cannot override", async () => {
+    const ctx = makeCtx({
+      query: {
+        filters: { user: { id: 99 } },
+        pagination: { page: "1", pageSize: "10" },
+      },
+      state: { user: { id: 7, role: { name: "user" } } },
+    });
+
+    await capturedExtension.me(ctx);
+
+    expect(mockFindMany).toHaveBeenCalled();
+    const where = (
+      mockFindMany.mock.calls[0][0] as { where: Record<string, unknown> }
+    ).where;
+    expect(where.user).toBe(7);
+    expect(JSON.stringify(where)).not.toContain("99");
+  });
+
+  it("Test 8 (me legit filters preserved): non-user filters still apply, scoped to caller", async () => {
+    const ctx = makeCtx({
+      query: {
+        filters: { payment_method: "webpay" },
+        pagination: { page: "1", pageSize: "10" },
+      },
+      state: { user: { id: 7, role: { name: "user" } } },
+    });
+
+    await capturedExtension.me(ctx);
+
+    const where = (
+      mockFindMany.mock.calls[0][0] as { where: Record<string, unknown> }
+    ).where;
+    expect(where.user).toBe(7);
+    expect(where.payment_method).toBe("webpay");
+  });
+});

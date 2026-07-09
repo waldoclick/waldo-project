@@ -77,8 +77,14 @@ const PERSONALIZED_AD_PREFIXES = [
 
 // GET /api/ads/:id (core findOne) hides phone/email for unauthenticated
 // requests — same cross-requester leak if a cached authenticated response
-// is later served to an anonymous visitor.
-const AD_NUMERIC_ID_PATTERN = /^\/api\/ads\/\d+(\?.*)?$/;
+// is later served to an anonymous visitor. In Strapi v5 `:id` is the
+// alphanumeric documentId, not just a numeric id, so this must match ANY
+// single-segment id — matching only `\d+` left `/api/ads/<documentId>`
+// cacheable and leaking contact info. The only single-segment GET under
+// /api/ads that IS safe to cache is the public catalog; everything else with
+// one trailing segment is treated as the personalized findOne and excluded.
+const AD_DETAIL_PATTERN = /^\/api\/ads\/([^/?]+)(\?.*)?$/;
+const CACHEABLE_AD_SINGLE_SEGMENTS = new Set(["catalog"]);
 
 const matchesPathPrefix = (url: string, prefix: string): boolean =>
   url === prefix ||
@@ -98,7 +104,8 @@ const shouldNotCache = (url: string): boolean => {
     return true;
   if (PERSONALIZED_AD_PREFIXES.some((prefix) => matchesPathPrefix(url, prefix)))
     return true;
-  if (AD_NUMERIC_ID_PATTERN.test(url)) return true;
+  const adDetail = url.match(AD_DETAIL_PATTERN);
+  if (adDetail && !CACHEABLE_AD_SINGLE_SEGMENTS.has(adDetail[1])) return true;
   return false;
 };
 
