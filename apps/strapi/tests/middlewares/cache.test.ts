@@ -130,6 +130,8 @@ describe("cache middleware — personalized routes are never cached (cross-user 
     "/api/ads/thankyou/doc-abc123",
     "/api/ads/slug/some-ad-slug",
     "/api/ads/42",
+    "/api/ads/lqx8k2m4n6p8r0t2v4x6z8b0", // v5 findOne by documentId (alphanumeric) — auth-conditional phone/email
+    "/api/ads/lqx8k2m4n6p8r0t2v4x6z8b0?populate=*",
     "/api/payments/thankyou/doc-abc123",
     "/api/payments/webpay?token_ws=xyz",
   ];
