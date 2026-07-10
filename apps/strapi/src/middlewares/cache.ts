@@ -15,6 +15,11 @@ const initRedis = async () => {
       host: process.env.REDIS_HOST || "localhost",
       port: Number(process.env.REDIS_PORT) || 6379,
       password: process.env.REDIS_PASSWORD || undefined,
+      // Isolates environments that share one Redis server. Cache keys are built
+      // from method+url+query only, so prod and staging would otherwise collide
+      // on the same `cache:GET:/api/ads:...` entries. A separate DB index also
+      // keeps the KEYS/DEL invalidation scans scoped to this environment.
+      db: Number(process.env.REDIS_DB) || 0,
       lazyConnect: true,
       retryStrategy: (times: number) => {
         if (times > 3) {
