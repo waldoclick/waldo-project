@@ -15,6 +15,11 @@ const initRedis = async () => {
       host: process.env.REDIS_HOST || "localhost",
       port: Number(process.env.REDIS_PORT) || 6379,
       password: process.env.REDIS_PASSWORD || undefined,
+      // Isolates environments that share one Redis server. Cache keys are built
+      // from method+url+query only, so prod and staging would otherwise collide
+      // on the same `cache:GET:/api/ads:...` entries. A separate DB index also
+      // keeps the KEYS/DEL invalidation scans scoped to this environment.
+      db: Number(process.env.REDIS_DB) || 0,
       lazyConnect: true,
       retryStrategy: (times: number) => {
         if (times > 3) {
@@ -58,6 +63,33 @@ const generateCacheKey = (ctx: Context): string => {
   return `cache:${ctx.method}:${ctx.url}:${JSON.stringify(ctx.query)}`;
 };
 
+// These /api/ads/* routes return per-user or per-auth-state data (ownership
+// filters via ctx.state.user, or auth-conditional contact-info visibility) —
+// caching them by URL+query alone serves one requester's response to every
+// other requester who hits the same path (e.g. /api/ads/count takes no
+// query params at all, so every user collided on the exact same cache key).
+const PERSONALIZED_AD_PREFIXES = [
+  "/api/ads/count",
+  "/api/ads/actives",
+  "/api/ads/pendings",
+  "/api/ads/archiveds",
+  "/api/ads/banneds",
+  "/api/ads/rejecteds",
+  "/api/ads/drafts",
+  "/api/ads/thankyou",
+  "/api/ads/slug",
+];
+
+// GET /api/ads/:id (core findOne) hides phone/email for unauthenticated
+// requests — same cross-requester leak if a cached authenticated response
+// is later served to an anonymous visitor.
+const AD_NUMERIC_ID_PATTERN = /^\/api\/ads\/\d+(\?.*)?$/;
+
+const matchesPathPrefix = (url: string, prefix: string): boolean =>
+  url === prefix ||
+  url.startsWith(`${prefix}/`) ||
+  url.startsWith(`${prefix}?`);
+
 const shouldNotCache = (url: string): boolean => {
   if (!url.startsWith("/api/")) return true;
   if (
@@ -66,6 +98,7 @@ const shouldNotCache = (url: string): boolean => {
     url.startsWith("/api/auth") ||
     url.startsWith("/api/orders") ||
     url.startsWith("/api/users") ||
+    url.startsWith("/api/payments") ||
     // PII reveal endpoints (/ads/:doc/reveal/*, /sellers/:username/reveal/*):
     // auth-gated, per-viewer, recorded — caching them would serve a revealed
     // phone/whatsapp/email to ANY anonymous request (cache HIT bypasses the
@@ -75,6 +108,9 @@ const shouldNotCache = (url: string): boolean => {
     url.includes("/ads/slug/")
   )
     return true;
+  if (PERSONALIZED_AD_PREFIXES.some((prefix) => matchesPathPrefix(url, prefix)))
+    return true;
+  if (AD_NUMERIC_ID_PATTERN.test(url)) return true;
   return false;
 };
 
@@ -107,6 +143,26 @@ const invalidateCollectionCache = async (url: string) => {
   });
 };
 
+// Admin (Content Manager) writes hit /content-manager/collection-types/<uid>/...,
+// never /api/<pluralName>/... — shouldNotCache() skips those requests entirely,
+// so without this they never invalidate the public REST API cache.
+const invalidateForContentManagerWrite = async (url: string) => {
+  const match = url.match(/^\/content-manager\/collection-types\/([^/]+)/);
+  const uid = match?.[1];
+  if (!uid) return;
+
+  const contentType = strapi.contentTypes[uid];
+  const pluralName = contentType?.info?.pluralName;
+  if (!pluralName) return;
+
+  await handleRedisOperation(async () => {
+    const keys = await redis?.keys(`cache:*:/api/${pluralName}*`);
+    if (keys?.length) {
+      await redis?.del(...keys);
+    }
+  });
+};
+
 export default () => {
   return async (ctx: Context, next: () => Promise<void>) => {
     // Header de prueba para confirmar que el middleware se ejecuta
@@ -115,6 +171,17 @@ export default () => {
     // Si no hay Redis, inicializar
     if (!redis) {
       await initRedis();
+    }
+
+    // Escrituras desde el panel de administración (Content Manager) — nunca se
+    // cachean, pero SÍ deben invalidar el cache público de esa colección.
+    if (
+      ctx.url.startsWith("/content-manager/collection-types/") &&
+      ["POST", "PUT", "DELETE", "PATCH"].includes(ctx.method)
+    ) {
+      await next();
+      await invalidateForContentManagerWrite(ctx.url);
+      return;
     }
 
     // Rutas que no deben cachearse (admin, content-manager, auth, etc.)

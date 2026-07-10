@@ -73,6 +73,6 @@ const displayedFaqItems = computed(() => {
 });
 
 const shouldShowButton = computed(() => {
-  return limit && props.faqs && props.faqs.length >= limit;
+  return !!limit && !!props.faqs && props.faqs.length > 0;
 });
 </script>

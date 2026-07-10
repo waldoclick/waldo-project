@@ -1,28 +1,18 @@
 <template>
   <ul class="menu menu--footer">
-    <!-- <li>
-      <NuxtLink to="/blog">
-        <span>Blog</span>
-      </NuxtLink>
-    </li> -->
     <li>
       <NuxtLink to="/preguntas-frecuentes">
-        <span>Preguntas Frecuentes</span>
+        <span>Preguntas</span>
       </NuxtLink>
     </li>
     <li>
-      <NuxtLink to="/politicas-de-privacidad">
-        <span>Políticas de privacidad</span>
+      <NuxtLink to="/terminos-y-condiciones-de-uso">
+        <span>Condiciones de Uso</span>
       </NuxtLink>
     </li>
-    <!-- <li>
+    <li>
       <NuxtLink to="/contacto">
-        <span>Contáctanos</span>
-      </NuxtLink>
-    </li> -->
-    <li>
-      <NuxtLink to="/condiciones-de-uso">
-        <span>Condiciones de uso</span>
+        <span>Contacto</span>
       </NuxtLink>
     </li>
   </ul>

@@ -196,9 +196,9 @@
             :unchecked-value="false"
           />
           <label class="form-check-label" for="accepted_usage_terms">
-            Acepto las
-            <NuxtLink to="/condiciones-de-uso" target="_blank"
-              >condiciones de uso</NuxtLink
+            Acepto los
+            <NuxtLink to="/terminos-y-condiciones-de-uso" target="_blank"
+              >Términos y Condiciones de Uso</NuxtLink
             >
           </label>
         </div>
@@ -342,8 +342,8 @@ const getSchema = () => {
           .required("Debes aceptar las políticas de privacidad"),
         accepted_usage_terms: yup
           .boolean()
-          .oneOf([true], "Debes aceptar las condiciones de uso")
-          .required("Debes aceptar las condiciones de uso"),
+          .oneOf([true], "Debes aceptar los términos y condiciones de uso")
+          .required("Debes aceptar los términos y condiciones de uso"),
       });
 };
 
@@ -459,10 +459,16 @@ const handleSubmit = async () => {
 
       // AI free-text validation rejection — backend sends the field in details;
       // build the Spanish, field-specific message here (backend messages are English).
-      const fieldMessagesEs: Record<string, string> = {
-        firstname: "El nombre no parece válido",
-        lastname: "El apellido no parece válido",
-      };
+      // Labels differ for company registrations (Razón Social / Giro vs Nombres / Apellidos).
+      const fieldMessagesEs: Record<string, string> = form.value.is_company
+        ? {
+            firstname: "La Razón Social no parece válida",
+            lastname: "El Giro no parece válido",
+          }
+        : {
+            firstname: "El nombre no parece válido",
+            lastname: "El apellido no parece válido",
+          };
       const rejectedField = body?.details?.field;
 
       if (rejectedField && fieldMessagesEs[rejectedField]) {

@@ -97,11 +97,11 @@ const handleFileOpen = () => {
 
 const handleFileChange = (event) => {
   const file = event.target.files[0];
-  const validTypes = ["image/jpeg", "image/png", "image/webp"];
+  const validTypes = ["image/jpeg", "image/png", "image/webp", "image/avif"];
 
   if (!validTypes.includes(file.type)) {
     Swal.fire({
-      text: "Solo se permiten imágenes en formato JPG, PNG o WebP.",
+      text: "Solo se permiten imágenes en formato JPG, PNG, WebP o AVIF.",
       icon: "error",
       confirmButtonText: "Aceptar",
     });

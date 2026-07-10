@@ -2,10 +2,7 @@
 
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
-import type {
-  BlogCategory,
-  BlogCategoryResponse,
-} from "@/types/blog-category";
+import type { BlogCategory, BlogCategoryResponse } from "@/types/blog-category";
 import { useApiClient } from "#imports";
 
 export const useBlogCategoriesStore = defineStore("blogCategories", () => {

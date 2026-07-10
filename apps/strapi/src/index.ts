@@ -1,3 +1,4 @@
+import registerAuditLogSubscriber from "./subscribers/audit-log.subscriber";
 import populateCategories from "../seeders/categories";
 import populateBlogCategories from "../seeders/blog-categories";
 import populateArticles from "../seeders/articles";
@@ -8,6 +9,8 @@ import populateRegions from "../seeders/regions";
 import populateAdDraftMigration from "../seeders/ad-draft-migration";
 import populatePolicies from "../seeders/policies";
 import populateTerms from "../seeders/terms";
+import populateCookiePolicies from "../seeders/cookie-policies";
+import populateSecurityPolicies from "../seeders/security-policies";
 import { recalculateSortPriorities } from "./api/ad/services/ad";
 
 export default {
@@ -27,6 +30,9 @@ export default {
    * run jobs, or perform some special logic.
    */
   async bootstrap({ strapi }) {
+    // Register audit-log subscriber first so seeder + backfill writes are captured (tagged system).
+    registerAuditLogSubscriber(strapi);
+
     // Verificar si los seeders están habilitados
     const runSeeders = process.env.APP_RUN_SEEDERS === "true";
 
@@ -46,6 +52,8 @@ export default {
         await populateAdDraftMigration(strapi);
         await populatePolicies(strapi);
         await populateTerms(strapi);
+        await populateCookiePolicies(strapi);
+        await populateSecurityPolicies(strapi);
         console.log("✅ Seeders completados exitosamente");
       } catch (error) {
         console.error("❌ Error ejecutando seeders:", error);

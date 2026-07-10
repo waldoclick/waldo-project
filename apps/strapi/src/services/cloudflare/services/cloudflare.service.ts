@@ -188,4 +188,39 @@ export class CloudflareService implements ICloudflareService {
         requests: g.sum.requests ?? 0,
       }));
   }
+
+  /**
+   * Purge specific URLs from the Cloudflare edge cache (on-demand revalidation).
+   * Uses the environment's own zone and token (this.zoneId / this.apiToken) —
+   * each environment is self-contained (staging -> waldoclick.dev,
+   * prod -> waldo.click). The token needs the "Cache Purge" permission. Callers
+   * should treat purge failures as non-fatal.
+   */
+  async purgeCache(files: string[]): Promise<void> {
+    if (!files.length) return;
+
+    const response = await fetch(
+      `https://api.cloudflare.com/client/v4/zones/${this.zoneId}/purge_cache`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${this.apiToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ files }),
+      },
+    );
+
+    const data = (await response.json()) as {
+      success?: boolean;
+      errors?: { message: string }[];
+    };
+
+    if (!data.success) {
+      throw new Error(
+        data.errors?.[0]?.message ??
+          `Cloudflare purge failed (${response.status})`,
+      );
+    }
+  }
 }

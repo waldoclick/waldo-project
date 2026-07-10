@@ -11,8 +11,9 @@
 
 import { factories } from "@strapi/strapi";
 import { sendMjmlEmail } from "../../../services/mjml";
-import logger from "../../../utils/logtail";
+import { logAuditInfo, logAuditError } from "../../../utils/audit-log";
 import { zohoService } from "../../../services/zoho";
+import { CloudflareService } from "../../../services/cloudflare";
 import { sanitizeAdForPublic } from "./sanitize-ad";
 
 type AdStatus =
@@ -283,12 +284,14 @@ async function getAdvertisements(
       ? postProcessFilter(adsWithPaymentStatusAndState)
       : adsWithPaymentStatusAndState;
 
-    // Sanitize for non-manager users — strip sensitive user/order/payment fields
-    const processedAds = isManager
-      ? filteredAds
-      : filteredAds.map((ad) =>
-          sanitizeAdForPublic(ad as Record<string, unknown>),
-        );
+    // Always sanitize — strip sensitive user/order/payment fields regardless
+    // of role. `isManager` only bypasses the ownership filter above; managers
+    // never need raw password hashes/tokens, and the dashboard's ad-listing
+    // views only ever read the fields sanitizeAdForPublic already keeps
+    // (username, email, business_name, etc.).
+    const processedAds = filteredAds.map((ad) =>
+      sanitizeAdForPublic(ad as Record<string, unknown>),
+    );
 
     // Batch-aggregate per-ad views and contacts in two queries (kills N+1).
     // Attach after sanitize so the counts survive the allowlist pass.
@@ -479,6 +482,7 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
       active: { $eq: false },
       banned: { $eq: false },
       rejected: { $eq: false },
+      draft: { $eq: false },
       remaining_days: { $gt: 0 },
       ad_reservation: { $ne: null },
     };
@@ -716,6 +720,24 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
         },
       });
 
+      // Purge the frontend edge cache so the newly-approved ad appears
+      // immediately for anonymous visitors (Cloudflare caches /anuncios and the
+      // ad detail page). Non-blocking — a purge failure must never break the
+      // approval flow.
+      Promise.resolve()
+        .then(() =>
+          new CloudflareService().purgeCache([
+            `${process.env.FRONTEND_URL}/anuncios/${ad.slug}`,
+            `${process.env.FRONTEND_URL}/anuncios`,
+          ]),
+        )
+        .catch((purgeError) =>
+          strapi.log.error(
+            "[cache-purge] approveAd cache purge failed:",
+            purgeError,
+          ),
+        );
+
       // Enviar email de aprobación al usuario
       try {
         if (ad.user && ad.user.email) {
@@ -747,9 +769,13 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
             if (!zohoEmail) return;
             const contact = await zohoService.findContact(zohoEmail);
             if (!contact) {
-              logger.info(
+              logAuditInfo(
                 "Zoho contact not found for ad approval — skipping CRM sync",
-                { adId },
+                {
+                  actor: Number(userId),
+                  actor_type: "plugin::users-permissions.user",
+                  data: { adId },
+                },
               );
               return;
             }
@@ -760,9 +786,13 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
             });
           })
           .catch((zohoError) => {
-            logger.error(
+            logAuditError(
               "Zoho sync failed for ad approval — approval flow unaffected",
-              { adId, error: zohoError.message },
+              {
+                actor: Number(userId),
+                actor_type: "plugin::users-permissions.user",
+                data: { adId, error: zohoError.message },
+              },
             );
           });
       }
@@ -1134,10 +1164,17 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
     };
     const statusLabel = statusLabels[status] ?? status;
 
-    // Manager sees everything
+    // Manager sees the ad regardless of status, but never the raw user
+    // record (password hash/tokens) — the frontend only reads access.message
+    // for the manager banner, nothing from the raw ad beyond public fields.
     if (isManager) {
       return {
-        ad: { ...ad, status, views },
+        // Sanitize to strip raw user data (password hash/tokens), then
+        // re-attach the view count on top so it survives the allowlist pass.
+        ad: {
+          ...sanitizeAdForPublic({ ...ad, status } as Record<string, unknown>),
+          views,
+        },
         access: {
           role: "manager",
           status,
@@ -1271,9 +1308,10 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
           },
         });
 
-        logger.info("Borrador de anuncio creado", {
-          userId,
-          adId: newAd.id,
+        logAuditInfo("Borrador de anuncio creado", {
+          actor: Number(userId),
+          actor_type: "plugin::users-permissions.user",
+          data: { adId: newAd.id },
         });
 
         return { success: true, id: newAd.id };
@@ -1305,19 +1343,34 @@ export default factories.createCoreService("api::ad.ad", ({ strapi }) => ({
         },
       });
 
-      logger.info("Borrador de anuncio actualizado", {
-        userId,
-        adId,
+      logAuditInfo("Borrador de anuncio actualizado", {
+        actor: Number(userId),
+        actor_type: "plugin::users-permissions.user",
+        data: { adId },
       });
 
       return { success: true, id: adId };
     } catch (error) {
       console.error("Error al guardar borrador de anuncio:", error);
-      logger.error("Error al guardar borrador de anuncio", {
-        userId,
-        error: (error as Error).message,
+      // Strapi's YupValidationError summarizes multi-field failures as
+      // "N errors occurred" — the actual per-field messages live in
+      // error.details.errors, not error.message. Surface them so the
+      // frontend (and these logs) show what actually failed.
+      const details = (
+        error as {
+          details?: { errors?: Array<{ path: string[]; message: string }> };
+        }
+      ).details;
+      const fieldErrors = details?.errors
+        ?.map((e) => `${e.path.join(".")}: ${e.message}`)
+        .join("; ");
+      const message = fieldErrors || (error as Error).message;
+      logAuditError("Error al guardar borrador de anuncio", {
+        actor: Number(userId),
+        actor_type: "plugin::users-permissions.user",
+        data: { error: message },
       });
-      return { success: false, message: (error as Error).message };
+      return { success: false, message };
     }
   },
 }));

@@ -49,16 +49,16 @@
       "type": "string"
     },
     "weight": {
-      "type": "biginteger"
+      "type": "decimal"
     },
     "width": {
-      "type": "biginteger"
+      "type": "decimal"
     },
     "height": {
-      "type": "biginteger"
+      "type": "decimal"
     },
     "depth": {
-      "type": "biginteger"
+      "type": "decimal"
     },
     "commune": {
       "type": "relation",

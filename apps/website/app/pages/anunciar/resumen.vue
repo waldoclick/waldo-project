@@ -166,6 +166,20 @@ const uploadPendingImages = async (): Promise<boolean> => {
   }
 };
 
+// The detailed field-level message from save-draft (error.data.message) is
+// for debugging via the Network tab / server logs — it's raw, technical, and
+// in English, so it must never reach the user-facing Swal. Log it, show a
+// generic Spanish message to the user.
+const showSaveDraftError = (error: unknown) => {
+  console.error("Error al guardar borrador de anuncio:", error);
+  Swal.fire({
+    title: "Error",
+    text: "Hubo un problema al guardar el anuncio. Por favor, inténtalo de nuevo.",
+    icon: "error",
+    confirmButtonText: "Aceptar",
+  });
+};
+
 const confirmPay = async () => {
   toast.info("Publicando tu anuncio...");
   isCreating.value = true;
@@ -186,13 +200,8 @@ const confirmPay = async () => {
         );
         adStore.updateAdId(draftResponse.data.id);
         router.push("/pagar");
-      } catch {
-        Swal.fire({
-          title: "Error",
-          text: "Hubo un problema al guardar el anuncio. Por favor, inténtalo de nuevo.",
-          icon: "error",
-          confirmButtonText: "Aceptar",
-        });
+      } catch (error) {
+        showSaveDraftError(error);
       }
       return;
     }
@@ -218,13 +227,8 @@ const confirmPay = async () => {
         );
         adStore.updateAdId(draftResponse.data.id);
         await handleFreeCreation();
-      } catch {
-        Swal.fire({
-          title: "Error",
-          text: "Hubo un problema al guardar el anuncio. Por favor, inténtalo de nuevo.",
-          icon: "error",
-          confirmButtonText: "Aceptar",
-        });
+      } catch (error) {
+        showSaveDraftError(error);
       }
     }
   } finally {

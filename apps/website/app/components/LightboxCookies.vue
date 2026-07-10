@@ -15,7 +15,7 @@
         y ofrecer una mejor experiencia en nuestro sitio. Al hacer clic en
         'Aceptar', otorgas tu consentimiento para el uso de cookies relacionadas
         con almacenamiento publicitario y analítico. Para más detalles, consulta
-        nuestra Política de Privacidad.
+        nuestra Política de Cookies.
       </div>
       <div class="lightbox--cookies__buttons">
         <button
@@ -26,7 +26,7 @@
           Aceptar
         </button>
         <nuxt-link
-          to="/politicas-de-privacidad"
+          to="/politicas-de-cookies"
           class="btn btn--secondary btn--block"
           title="Más información"
         >

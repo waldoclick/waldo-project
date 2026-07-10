@@ -25,6 +25,7 @@ build/
 .env.*.local
 .env.dashboard
 .env.services
+.env.global
 
 # Logs
 *.log
@@ -45,6 +46,8 @@ Thumbs.db
 *.swp
 *.swo
 
+ENV
+*.env
 
 #Ignore vscode AI rules
 .github/instructions/codacy.instructions.md
@@ -52,9 +55,8 @@ Thumbs.db
 apps/strapi/google.json
 .vercel
 
-# Design mockups now live at apps/design (TRACKED, served on :3002 via pnpm dev).
-# Only the raw 32MB delivery zip is ignored — the extracted files are tracked.
-apps/design/*.zip
-apps/design/uploads
-apps/design/screenshots
+# WSL zone identifier files
 *:Zone.Identifier
+
+# GSD planning artifacts (local-only, not shared via the repo)
+.planning/

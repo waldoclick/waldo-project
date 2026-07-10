@@ -1,7 +1,7 @@
 import PaymentUtils from "../utils";
 import { getPaymentGateway } from "../../../services/payment-gateway";
 import { AdData, PackType, FeaturedType, Details } from "../types/payment.type";
-import logger from "../../../utils/logtail";
+import { logAuditInfo, logAuditError } from "../../../utils/audit-log";
 import { sendMjmlEmail } from "../../../services/mjml";
 import { zohoService } from "../../../services/zoho";
 
@@ -87,8 +87,12 @@ class AdService {
           ...ad,
           details,
         });
-        logger.info(
+        logAuditInfo(
           `Nuevo aviso creado con ID ${adData.id} por el usuario ${userId}`,
+          {
+            actor: Number(userId),
+            actor_type: "plugin::users-permissions.user",
+          },
         );
         return { success: true, ad: adData };
       }
@@ -98,12 +102,18 @@ class AdService {
         ...ad,
         details,
       });
-      logger.info(`Aviso ${ad.ad_id} modificado por el usuario ${userId}`);
+      logAuditInfo(`Aviso ${ad.ad_id} modificado por el usuario ${userId}`, {
+        actor: Number(userId),
+        actor_type: "plugin::users-permissions.user",
+      });
       return { success: true, ad: updatedAd };
     } catch (error) {
-      logger.error(`Error al procesar aviso: ${error.message}`, {
-        userId,
-        adId: ad.ad_id,
+      logAuditError(`Error al procesar aviso: ${error.message}`, {
+        actor: Number(userId),
+        actor_type: "plugin::users-permissions.user",
+        data: {
+          adId: ad.ad_id,
+        },
       });
       return { success: false, message: error.message };
     }
@@ -249,8 +259,12 @@ class AdService {
           },
         );
       } catch (error) {
-        logger.error("Error sending ad creation emails:", {
-          error,
+        logAuditError("Error sending ad creation emails:", {
+          actor: "system",
+          actor_type: "system",
+          data: {
+            error,
+          },
         });
       }
 
@@ -367,12 +381,15 @@ class AdService {
         // Create ad reservations and immediately use the first one for current ad
         let firstReservationId = null;
 
-        logger.info("Creando reservas de anuncios del pack", {
-          userId,
-          adId,
-          total_ads,
-          total_days,
-          unitPrice,
+        logAuditInfo("Creando reservas de anuncios del pack", {
+          actor: Number(userId),
+          actor_type: "plugin::users-permissions.user",
+          data: {
+            adId,
+            total_ads,
+            total_days,
+            unitPrice,
+          },
         });
 
         for (let i = 0; i < total_ads; i++) {
@@ -385,20 +402,26 @@ class AdService {
               i === 0 ? Number(adId) : undefined,
             );
 
-          logger.info(`Reserva ${i + 1}/${total_ads} creada`, {
-            userId,
-            adId,
-            reservationId: reservationResponse.adReservation?.id,
-            success: reservationResponse.success,
+          logAuditInfo(`Reserva ${i + 1}/${total_ads} creada`, {
+            actor: Number(userId),
+            actor_type: "plugin::users-permissions.user",
+            data: {
+              adId,
+              reservationId: reservationResponse.adReservation?.id,
+              success: reservationResponse.success,
+            },
           });
 
           // Store the first reservation ID to use immediately
           if (i === 0 && reservationResponse.success) {
             firstReservationId = reservationResponse.adReservation.id;
-            logger.info("Primera reserva almacenada para uso inmediato", {
-              userId,
-              adId,
-              firstReservationId,
+            logAuditInfo("Primera reserva almacenada para uso inmediato", {
+              actor: Number(userId),
+              actor_type: "plugin::users-permissions.user",
+              data: {
+                adId,
+                firstReservationId,
+              },
             });
           }
         }
@@ -414,10 +437,13 @@ class AdService {
 
         // Use the first reservation immediately for the current ad
         if (firstReservationId) {
-          logger.info("Asignando primera reserva al anuncio actual", {
-            userId,
-            adId,
-            firstReservationId,
+          logAuditInfo("Asignando primera reserva al anuncio actual", {
+            actor: Number(userId),
+            actor_type: "plugin::users-permissions.user",
+            data: {
+              adId,
+              firstReservationId,
+            },
           });
 
           await PaymentUtils.ad.updateAdReservation(
@@ -425,16 +451,22 @@ class AdService {
             firstReservationId,
           );
 
-          logger.info("Primera reserva asignada exitosamente", {
-            userId,
-            adId,
-            firstReservationId,
+          logAuditInfo("Primera reserva asignada exitosamente", {
+            actor: Number(userId),
+            actor_type: "plugin::users-permissions.user",
+            data: {
+              adId,
+              firstReservationId,
+            },
           });
         } else {
-          logger.error("No se pudo obtener la primera reserva para asignar", {
-            userId,
-            adId,
-            total_ads,
+          logAuditError("No se pudo obtener la primera reserva para asignar", {
+            actor: Number(userId),
+            actor_type: "plugin::users-permissions.user",
+            data: {
+              adId,
+              total_ads,
+            },
           });
         }
 
@@ -480,10 +512,11 @@ class AdService {
           if (!zohoEmail) return;
           const contact = await zohoService.findContact(zohoEmail);
           if (!contact) {
-            logger.info(
+            logAuditInfo(
               "Zoho contact not found for ad payment — skipping CRM sync",
               {
-                userId,
+                actor: Number(userId),
+                actor_type: "plugin::users-permissions.user",
               },
             );
             return;
@@ -502,11 +535,14 @@ class AdService {
           });
         })
         .catch((zohoError) => {
-          logger.error(
+          logAuditError(
             "Zoho sync failed for ad payment — payment flow unaffected",
             {
-              userId,
-              error: zohoError.message,
+              actor: Number(userId),
+              actor_type: "plugin::users-permissions.user",
+              data: {
+                error: zohoError.message,
+              },
             },
           );
         });

@@ -21,7 +21,9 @@ export function computePasswordStrength(password: string): {
 }
 
 function randomInt(max: number): number {
-  const limit = Math.floor(0xffffffff / max) * max;
+  // 2 ** 32 - 1 is the max Uint32 value; written without a hex literal so
+  // Prettier (lowercase hex) and eslint unicorn/number-literal-case don't conflict.
+  const limit = Math.floor((2 ** 32 - 1) / max) * max;
   const buf = new Uint32Array(1);
   let value: number;
   do {

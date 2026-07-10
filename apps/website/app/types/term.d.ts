@@ -1,5 +1,6 @@
 export interface Term {
   id: number;
+  documentId: string;
   title: string;
   text: string;
   order: number | null;

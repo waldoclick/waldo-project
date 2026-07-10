@@ -25,6 +25,8 @@ interface SettingsState {
   faqs: SectionSettings;
   policies: SectionSettings;
   terms: SectionSettings;
+  cookiePolicies: SectionSettings;
+  securityPolicies: SectionSettings;
   packs: SectionSettings;
   regions: SectionSettings;
   subscriptionPayments: SectionSettings;
@@ -66,6 +68,14 @@ export const useSettingsStore = defineStore(
       sortBy: "order:asc",
     });
     const terms = ref<SectionSettings>({
+      ...defaultSectionSettings,
+      sortBy: "order:asc",
+    });
+    const cookiePolicies = ref<SectionSettings>({
+      ...defaultSectionSettings,
+      sortBy: "order:asc",
+    });
+    const securityPolicies = ref<SectionSettings>({
       ...defaultSectionSettings,
       sortBy: "order:asc",
     });
@@ -159,6 +169,16 @@ export const useSettingsStore = defineStore(
     const getTermsFilters = computed(() => ({
       sortBy: terms.value.sortBy,
       pageSize: terms.value.pageSize,
+    }));
+
+    const getCookiePoliciesFilters = computed(() => ({
+      sortBy: cookiePolicies.value.sortBy,
+      pageSize: cookiePolicies.value.pageSize,
+    }));
+
+    const getSecurityPoliciesFilters = computed(() => ({
+      sortBy: securityPolicies.value.sortBy,
+      pageSize: securityPolicies.value.pageSize,
     }));
 
     const getPacksFilters = computed(() => ({
@@ -265,6 +285,10 @@ export const useSettingsStore = defineStore(
           return policies;
         case "terms":
           return terms;
+        case "cookiePolicies":
+          return cookiePolicies;
+        case "securityPolicies":
+          return securityPolicies;
         case "packs":
           return packs;
         case "regions":
@@ -300,6 +324,8 @@ export const useSettingsStore = defineStore(
       faqs,
       policies,
       terms,
+      cookiePolicies,
+      securityPolicies,
       packs,
       regions,
       communes,
@@ -323,6 +349,8 @@ export const useSettingsStore = defineStore(
       getFaqsFilters,
       getPoliciesFilters,
       getTermsFilters,
+      getCookiePoliciesFilters,
+      getSecurityPoliciesFilters,
       getPacksFilters,
       getSubscriptionPaymentsFilters,
       getSubscriptionProsFilters,

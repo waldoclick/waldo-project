@@ -1,6 +1,10 @@
 import PaymentUtils from "../utils";
 import { getPaymentGateway } from "../../../services/payment-gateway";
-import logger from "../../../utils/logtail";
+import {
+  logAuditInfo,
+  logAuditWarn,
+  logAuditError,
+} from "../../../utils/audit-log";
 import { zohoService } from "../../../services/zoho";
 
 class PackService {
@@ -16,9 +20,10 @@ class PackService {
     isInvoice: boolean,
   ) {
     try {
-      logger.info("Iniciando proceso de compra de pack", {
-        userId,
-        response: {
+      logAuditInfo("Iniciando proceso de compra de pack", {
+        actor: Number(userId),
+        actor_type: "plugin::users-permissions.user",
+        data: {
           packId,
           isInvoice,
         },
@@ -27,9 +32,10 @@ class PackService {
       const adPack = await PaymentUtils.adPack.getAdPack(packId);
 
       if (!adPack.success) {
-        logger.warn("Pack no encontrado", {
-          userId,
-          response: { packId },
+        logAuditWarn("Pack no encontrado", {
+          actor: Number(userId),
+          actor_type: "plugin::users-permissions.user",
+          data: { packId },
         });
         return { success: false, message: "Pack does not exist" };
       }
@@ -42,9 +48,10 @@ class PackService {
       const buyOrder = `order-${meta}`;
       const sessionId = `session-${packDataId}`;
 
-      logger.info("Creando transacción en Webpay", {
-        userId,
-        response: {
+      logAuditInfo("Creando transacción en Webpay", {
+        actor: Number(userId),
+        actor_type: "plugin::users-permissions.user",
+        data: {
           packId,
           amount,
           sessionId,
@@ -58,9 +65,10 @@ class PackService {
         returnUrl,
       );
 
-      logger.info("Transacción Webpay creada exitosamente", {
-        userId,
-        response: transbankResponse,
+      logAuditInfo("Transacción Webpay creada exitosamente", {
+        actor: Number(userId),
+        actor_type: "plugin::users-permissions.user",
+        data: { response: transbankResponse },
       });
 
       return {
@@ -69,9 +77,10 @@ class PackService {
         webpay: transbankResponse,
       };
     } catch (error) {
-      logger.error("Error en proceso de compra de pack", {
-        userId,
-        response: {
+      logAuditError("Error en proceso de compra de pack", {
+        actor: Number(userId),
+        actor_type: "plugin::users-permissions.user",
+        data: {
           error: error.message,
           packId,
         },
@@ -90,15 +99,19 @@ class PackService {
       const wepbayResponse = await getPaymentGateway().commitTransaction(token);
 
       if (!wepbayResponse.success) {
-        logger.error("Error en respuesta de Webpay", {
-          response: wepbayResponse,
+        logAuditError("Error en respuesta de Webpay", {
+          actor: "system",
+          actor_type: "system",
+          data: { response: wepbayResponse },
         });
         return { success: false, error: wepbayResponse.error };
       }
 
       if (wepbayResponse.response?.status !== "AUTHORIZED") {
-        logger.warn("Transacción no autorizada", {
-          response: wepbayResponse,
+        logAuditWarn("Transacción no autorizada", {
+          actor: "system",
+          actor_type: "system",
+          data: { response: wepbayResponse },
         });
         return { success: false, error: wepbayResponse.response };
       }
@@ -107,22 +120,25 @@ class PackService {
       const { userId, adId, isInvoice } =
         PaymentUtils.general.extractIdsFromMeta(buyOrder);
 
-      logger.info("Procesando respuesta de Webpay", {
-        userId,
-        response: wepbayResponse,
+      logAuditInfo("Procesando respuesta de Webpay", {
+        actor: Number(userId),
+        actor_type: "plugin::users-permissions.user",
+        data: { response: wepbayResponse },
       });
 
-      logger.info("Extrayendo información de la orden", {
-        userId,
-        response: { token },
+      logAuditInfo("Extrayendo información de la orden", {
+        actor: Number(userId),
+        actor_type: "plugin::users-permissions.user",
+        data: { token },
       });
 
       const packData = await PaymentUtils.adPack.getAdPack(Number(adId));
 
       if (!packData.success) {
-        logger.error("Pack no encontrado al procesar pago", {
-          userId,
-          response: { adId },
+        logAuditError("Pack no encontrado al procesar pago", {
+          actor: Number(userId),
+          actor_type: "plugin::users-permissions.user",
+          data: { adId },
         });
         return { success: false, message: "Pack does not exist" };
       }
@@ -133,17 +149,22 @@ class PackService {
       const expectedPackAmount = Number(price);
       const actualPackAmount = Number(wepbayResponse.response.amount);
       if (actualPackAmount !== expectedPackAmount) {
-        logger.warn(
+        logAuditWarn(
           `[pack] Amount mismatch: expected=${expectedPackAmount}, actual=${actualPackAmount}, buyOrder=${buyOrder}`,
+          {
+            actor: Number(userId),
+            actor_type: "plugin::users-permissions.user",
+          },
         );
         return { success: false, message: "Payment amount mismatch" };
       }
 
       const unitPrice = price / total_ads;
 
-      logger.info("Creando reservas de anuncios y destacados", {
-        userId,
-        response: {
+      logAuditInfo("Creando reservas de anuncios y destacados", {
+        actor: Number(userId),
+        actor_type: "plugin::users-permissions.user",
+        data: {
           packId: adId,
         },
       });
@@ -167,9 +188,10 @@ class PackService {
         );
       }
 
-      logger.info("Proceso de pago completado exitosamente", {
-        userId,
-        response: {
+      logAuditInfo("Proceso de pago completado exitosamente", {
+        actor: Number(userId),
+        actor_type: "plugin::users-permissions.user",
+        data: {
           packId: adId,
         },
       });
@@ -197,17 +219,23 @@ class PackService {
             Packs_Purchased__c: 1,
           });
         } else {
-          logger.info(
+          logAuditInfo(
             "Zoho contact not found for pack purchase — skipping CRM sync",
-            { userId },
+            {
+              actor: Number(userId),
+              actor_type: "plugin::users-permissions.user",
+            },
           );
         }
       } catch (zohoError) {
-        logger.error(
+        logAuditError(
           "Zoho sync failed for pack purchase — payment flow unaffected",
           {
-            userId,
-            error: zohoError.message,
+            actor: Number(userId),
+            actor_type: "plugin::users-permissions.user",
+            data: {
+              error: zohoError.message,
+            },
           },
         );
       }
@@ -221,8 +249,10 @@ class PackService {
         isInvoice,
       };
     } catch (error) {
-      logger.error("Error en procesamiento de pago Webpay", {
-        response: {
+      logAuditError("Error en procesamiento de pago Webpay", {
+        actor: "system",
+        actor_type: "system",
+        data: {
           error: error.message,
           token,
         },

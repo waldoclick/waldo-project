@@ -1,11 +1,11 @@
 const OAUTH_TIMEOUT_MS = 180_000;
-const ALLOWED_PROVIDERS: readonly string[] = ["google", "facebook"];
+const ALLOWED_PROVIDERS: ReadonlySet<string> = new Set(["google", "facebook"]);
 
 export const useProviders = () => {
   const { getProviderAuthenticationUrl } = useSessionAuth();
 
   const redirectToProvider = (provider: string): void => {
-    if (!ALLOWED_PROVIDERS.includes(provider)) return;
+    if (!ALLOWED_PROVIDERS.has(provider)) return;
     window.location.href = getProviderAuthenticationUrl(provider);
   };
 
