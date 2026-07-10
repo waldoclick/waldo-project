@@ -95,7 +95,7 @@
             >Explora por categoría</span
           >
           <a
-            v-for="cat in categories"
+            v-for="cat in visibleCategories"
             :key="cat.slug"
             class="lightbox--search__row"
             @mousedown.prevent="pickCategory(cat)"
@@ -145,6 +145,14 @@ const isOpen = computed(() => appStore.isSearchLightboxActive);
 const query = ref("");
 const categories = ref<FilterCategory[]>([]);
 const inputRef = ref<HTMLInputElement | null>(null);
+
+// Explora por categoría: mayor a menor por cantidad, ocultando las que no
+// tienen avisos (count 0).
+const visibleCategories = computed(() =>
+  [...categories.value]
+    .filter((cat) => cat.count !== 0)
+    .sort((a, b) => (b.count ?? 0) - (a.count ?? 0)),
+);
 
 const hasQuery = computed(() => query.value.trim().length > 0);
 
