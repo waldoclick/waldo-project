@@ -58,7 +58,7 @@ const links: MenuAboutLink[] = [
   },
   {
     key: "cond",
-    to: "/condiciones-de-uso",
+    to: "/terminos-y-condiciones-de-uso",
     label: "Condiciones de uso",
     aria: "Leer condiciones de uso",
     icon: IconScrollText,

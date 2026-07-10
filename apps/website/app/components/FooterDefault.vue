@@ -33,7 +33,7 @@
             >Políticas de privacidad</NuxtLink
           >
           <NuxtLink
-            to="/condiciones-de-uso"
+            to="/terminos-y-condiciones-de-uso"
             class="footer--default__main__nav__link"
             >Condiciones de uso</NuxtLink
           >

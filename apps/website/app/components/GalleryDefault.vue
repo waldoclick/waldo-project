@@ -3,11 +3,12 @@
     <div v-if="hasMainImage" class="gallery--default__main" @click="show(0)">
       <img
         class="gallery--default__main__image"
-        loading="lazy"
+        loading="eager"
+        fetchpriority="high"
         decoding="async"
         :src="mainImageUrl"
-        alt="Imagen principal"
-        title="Imagen principal"
+        :alt="mainImageAlt"
+        :title="mainImageAlt"
       />
       <span
         class="gallery--default__main__badge gallery--default__main__badge--zoom"
@@ -37,8 +38,8 @@
           loading="lazy"
           decoding="async"
           :src="image"
-          alt="Imagen secundaria"
-          title="Imagen secundaria"
+          :alt="thumbnailAlt"
+          :title="thumbnailAlt"
         />
         <span
           v-if="imgIndex === 4 && remainingImages > 0"
@@ -128,10 +129,22 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  name: {
+    type: String,
+    default: "",
+  },
 });
 
 // Use the new useImageProxy composable to transform URLs
 const { transformUrl } = useImageProxy();
+
+// Dynamic alt/title text derived from the ad name for SEO/a11y
+const mainImageAlt = computed(() =>
+  props.name ? `Imagen principal: ${props.name}` : "Imagen principal",
+);
+const thumbnailAlt = computed(() =>
+  props.name ? `Imagen secundaria: ${props.name}` : "Imagen secundaria",
+);
 
 const lightboxIndex = ref(0);
 const lightboxVisible = ref(false);

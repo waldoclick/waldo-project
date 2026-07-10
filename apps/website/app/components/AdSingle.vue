@@ -6,6 +6,7 @@
           <GalleryDefault
             :media="all?.gallery || null"
             :condition="getCondition?.name || ''"
+            :name="all?.name"
           />
         </div>
 
