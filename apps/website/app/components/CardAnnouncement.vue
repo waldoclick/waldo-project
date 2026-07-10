@@ -66,7 +66,7 @@
       >
         <span
           class="card--announcement__body__cat__dot"
-          :style="{ backgroundColor: catPillText }"
+          :style="{ backgroundColor: catPillDot }"
         ></span>
         {{ getCategory.name }}
       </NuxtLink>
@@ -142,6 +142,7 @@ import { computed } from "vue";
 import { useRoute } from "vue-router";
 import type { Ad } from "~/types/ad";
 import { useImageProxy } from "@/composables/useImage";
+import { getCategoryHue } from "@/utils/categoryHue";
 import {
   Image as IconImage,
   Star as IconStar,
@@ -214,21 +215,20 @@ const getCategory = computed(() => {
       ? props.all.category
       : {};
 
-  const {
-    name = "Unknown",
-    slug = "unknown",
-    color = "#8a8794",
-  } = category as { name?: string; slug?: string; color?: string };
+  const { name = "Unknown", slug = "unknown" } = category as {
+    name?: string;
+    slug?: string;
+  };
 
-  return { name, slug, color };
+  return { name, slug };
 });
 
-const catPillBg = computed(
-  () => `color-mix(in srgb, ${getCategory.value.color} 14%, white)`,
-);
-const catPillText = computed(
-  () => `color-mix(in srgb, ${getCategory.value.color} 65%, #26252B)`,
-);
+// Category accent colours come from the design's per-category hue system
+// (name -> hue -> oklch), NOT the raw Strapi color hex — see utils/categoryHue.
+const catHue = computed(() => getCategoryHue(getCategory.value.name));
+const catPillBg = computed(() => catHue.value.washBg);
+const catPillText = computed(() => catHue.value.onColor);
+const catPillDot = computed(() => catHue.value.baseColor);
 
 const getCondition = computed(() => {
   const condition = props.all.condition;

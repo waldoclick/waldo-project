@@ -46,6 +46,8 @@ const sitemapBlocks = [
       { to: "/preguntas-frecuentes", label: "Preguntas frecuentes" },
       { to: "/politicas-de-privacidad", label: "Políticas de privacidad" },
       { to: "/terminos-y-condiciones-de-uso", label: "Condiciones de uso" },
+      { to: "/politicas-de-cookies", label: "Políticas de cookies" },
+      { to: "/politicas-de-seguridad", label: "Políticas de seguridad" },
       { to: "/contacto", label: "Contáctanos" },
     ],
   },

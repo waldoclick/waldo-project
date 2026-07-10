@@ -33,21 +33,6 @@
         </div>
       </div>
     </section>
-    <RelatedAds
-      v-if="
-        adsData &&
-        adsData.ads &&
-        adsData.ads.length === 0 &&
-        adsData.relatedAds &&
-        adsData.relatedAds.length > 0
-      "
-      :ads="adsData.relatedAds"
-      :loading="adsData.relatedLoading"
-      :error="adsData.relatedError || null"
-      title="Equipos destacados"
-      text="Los mejores activos industriales del momento"
-      :center-head="true"
-    />
     <FooterDefault />
   </div>
 </template>
@@ -85,7 +70,6 @@ import FilterSidebar from "@/components/FilterSidebar.vue";
 import FilterResults from "@/components/FilterResults.vue";
 import AdArchive from "@/components/AdArchive.vue";
 import FooterDefault from "@/components/FooterDefault.vue";
-import RelatedAds from "@/components/RelatedAds.vue";
 
 // Importar interfaces
 import type { Category } from "@/types/category";
@@ -96,9 +80,6 @@ import type { Pagination } from "@/types/pagination";
 interface AdsData {
   ads: Ad[];
   pagination: Pagination;
-  relatedAds: Ad[];
-  relatedLoading: boolean;
-  relatedError: string | null;
 }
 
 // Obtener la categoría por category
@@ -219,33 +200,10 @@ const { data: adsData } = await useAsyncData<AdsData>(
     else if (year === "gte2025") filtersParams.year = { $gte: 2025 };
 
     await adsStore.loadAds(filtersParams, paginationParams, sortParams);
-    const mainAds = adsStore.ads;
-    const mainPagination = adsStore.pagination;
-
-    let relatedAds: Ad[] = [];
-    let relatedLoading = false;
-    let relatedError = null;
-
-    if (mainAds.length === 0 && mainPagination.total === 0) {
-      relatedLoading = true;
-      try {
-        await adsStore.loadAds({}, { page: 1, pageSize: 12 }, [
-          "sort_priority:asc",
-          "createdAt:desc",
-        ]);
-        relatedAds = adsStore.ads;
-      } catch (error) {
-        relatedError = error instanceof Error ? error.message : String(error);
-      }
-      relatedLoading = false;
-    }
 
     return {
-      ads: mainAds,
-      pagination: mainPagination,
-      relatedAds,
-      relatedLoading,
-      relatedError,
+      ads: adsStore.ads,
+      pagination: adsStore.pagination,
     };
   },
   {
@@ -263,9 +221,6 @@ const { data: adsData } = await useAsyncData<AdsData>(
     default: () => ({
       ads: [],
       pagination: { page: 1, pageSize: 15, pageCount: 0, total: 0 },
-      relatedAds: [],
-      relatedLoading: false,
-      relatedError: null,
     }),
   },
 );

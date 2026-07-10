@@ -228,33 +228,32 @@
           color: $muted;
         }
       }
-    }
 
-    &__location {
-      position: relative;
-
-      select {
-        width: 100%;
-        appearance: none;
-        border: 1px solid $line;
-        outline: none;
-        font-size: 14px;
-        font-weight: 500;
-        color: $ink;
-        background: $cream;
-        padding: 11px 34px 11px 13px;
-        border-radius: 4px;
+      &__more {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        margin-top: 8px;
+        padding: 4px 0;
         font-family: inherit;
+        font-size: 13px;
+        font-weight: 600;
+        color: $ink2;
+        background: none;
+        border: none;
         cursor: pointer;
-      }
 
-      &__chevron {
-        position: absolute;
-        right: 13px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: $muted;
-        pointer-events: none;
+        &:hover {
+          color: $ink;
+        }
+
+        &__chevron {
+          transition: transform 0.15s ease;
+
+          &--open {
+            transform: rotate(180deg);
+          }
+        }
       }
     }
   }
@@ -274,6 +273,39 @@
       strong {
         color: $ink;
         font-weight: 700;
+      }
+    }
+
+    // Agrupa Ubicación + Ordenar a la derecha (el count queda a la izquierda
+    // por el space-between del contenedor).
+    &__controls {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    &__location {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      &__label {
+        font-size: 13.5px;
+        color: $muted;
+      }
+
+      &__field {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+
+      &__chevron {
+        position: absolute;
+        right: 12px;
+        color: $muted;
+        pointer-events: none;
       }
     }
 

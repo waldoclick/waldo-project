@@ -19,7 +19,7 @@
       <span class="filter--sidebar__section__label">Categoría</span>
       <template v-if="isClient">
         <label
-          v-for="cat in filterStore.filterCategories"
+          v-for="cat in displayedCategories"
           :key="cat.id"
           class="filter--sidebar__section__row"
         >
@@ -41,6 +41,26 @@
             {{ cat.count }}
           </span>
         </label>
+        <button
+          v-if="emptyCategories.length > 0"
+          type="button"
+          class="filter--sidebar__section__more"
+          @click="showAllCategories = !showAllCategories"
+        >
+          {{
+            showAllCategories
+              ? "Ver menos"
+              : `Ver más (${emptyCategories.length})`
+          }}
+          <IconChevron
+            :size="15"
+            class="filter--sidebar__section__more__chevron"
+            :class="{
+              'filter--sidebar__section__more__chevron--open':
+                showAllCategories,
+            }"
+          />
+        </button>
       </template>
     </div>
 
@@ -115,42 +135,6 @@
         </span>
       </label>
     </div>
-
-    <!-- Ubicación -->
-    <div class="filter--sidebar__section">
-      <span class="filter--sidebar__section__label">Ubicación</span>
-      <div class="filter--sidebar__location">
-        <select
-          v-if="isClient"
-          :value="route.query.commune || ''"
-          @change="onCommune(($event.target as HTMLSelectElement).value)"
-        >
-          <option value="">Todas las ubicaciones</option>
-          <option
-            v-for="commune in filterStore.filterCommunes"
-            :key="commune.id"
-            :value="commune.id"
-          >
-            {{ commune.name }}
-          </option>
-        </select>
-        <svg
-          class="filter--sidebar__location__chevron"
-          xmlns="http://www.w3.org/2000/svg"
-          width="14"
-          height="14"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
-        >
-          <polyline points="6 9 12 15 18 9" />
-        </svg>
-      </div>
-    </div>
   </aside>
 </template>
 
@@ -158,7 +142,10 @@
 import { ref, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useFilterStore } from "@/stores/filter.store";
-import { Filter as IconFilter } from "lucide-vue-next";
+import {
+  Filter as IconFilter,
+  ChevronDown as IconChevron,
+} from "lucide-vue-next";
 
 const filterStore = import.meta.client
   ? useFilterStore()
@@ -172,6 +159,24 @@ const activeCategories = computed(() => {
   const raw = route.query.category?.toString() || "";
   return raw ? raw.split(",").filter(Boolean) : [];
 });
+
+// Categorías ordenadas por cantidad (mayor a menor). Las que tienen 0 avisos
+// se ocultan tras "Ver más" para no ensuciar el filtro.
+const showAllCategories = ref(false);
+
+const sortedCategories = computed(() =>
+  [...(filterStore.filterCategories ?? [])].sort(
+    (a, b) => (b.count ?? 0) - (a.count ?? 0),
+  ),
+);
+const emptyCategories = computed(() =>
+  sortedCategories.value.filter((cat) => cat.count === 0),
+);
+const displayedCategories = computed(() =>
+  showAllCategories.value
+    ? sortedCategories.value
+    : sortedCategories.value.filter((cat) => cat.count !== 0),
+);
 
 onMounted(() => {
   isClient.value = true;
@@ -238,16 +243,6 @@ function onYear(value: string) {
     query: {
       ...route.query,
       year: value || undefined,
-      page: 1,
-    },
-  });
-}
-
-function onCommune(value: string) {
-  router.push({
-    query: {
-      ...route.query,
-      commune: value || undefined,
       page: 1,
     },
   });

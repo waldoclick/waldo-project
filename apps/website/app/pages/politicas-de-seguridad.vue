@@ -1,5 +1,12 @@
 <template>
-  <SecurityPoliciesDefault :security-policies="securityPolicies || []" />
+  <NuxtLayout
+    name="about"
+    title="Políticas de seguridad"
+    intro="Así protegemos la información en Waldo.click® y esto es lo que hacemos frente a incidentes de seguridad."
+    active="seg"
+  >
+    <SecurityPoliciesDefault :security-policies="securityPolicies || []" />
+  </NuxtLayout>
 </template>
 
 <script setup lang="ts">
@@ -8,8 +15,10 @@ const config = useRuntimeConfig();
 
 import SecurityPoliciesDefault from "@/components/SecurityPoliciesDefault.vue";
 
+// Layout aplicado explícitamente con <NuxtLayout name="about"> en el template
+// (con title/intro para el hero); layout: false evita el doble wrap.
 definePageMeta({
-  layout: "about",
+  layout: false,
 });
 
 const securityPoliciesStore = useSecurityPoliciesStore();

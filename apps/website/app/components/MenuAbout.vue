@@ -25,6 +25,8 @@ import {
   HelpCircle as IconHelpCircle,
   Shield as IconShield,
   ScrollText as IconScrollText,
+  Cookie as IconCookie,
+  Lock as IconLock,
   MessageSquare as IconMessageSquare,
   Map as IconMap,
 } from "lucide-vue-next";
@@ -62,6 +64,20 @@ const links: MenuAboutLink[] = [
     label: "Condiciones de uso",
     aria: "Leer condiciones de uso",
     icon: IconScrollText,
+  },
+  {
+    key: "cookies",
+    to: "/politicas-de-cookies",
+    label: "Políticas de cookies",
+    aria: "Leer políticas de cookies",
+    icon: IconCookie,
+  },
+  {
+    key: "seg",
+    to: "/politicas-de-seguridad",
+    label: "Políticas de seguridad",
+    aria: "Leer políticas de seguridad",
+    icon: IconLock,
   },
   {
     key: "cont",

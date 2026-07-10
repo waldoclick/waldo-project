@@ -1,5 +1,12 @@
 <template>
-  <CookiePoliciesDefault :cookie-policies="cookiePolicies || []" />
+  <NuxtLayout
+    name="about"
+    title="Políticas de cookies"
+    intro="Aquí te explicamos qué cookies usa Waldo.click®, para qué sirven y qué control tienes sobre ellas."
+    active="cookies"
+  >
+    <CookiePoliciesDefault :cookie-policies="cookiePolicies || []" />
+  </NuxtLayout>
 </template>
 
 <script setup lang="ts">
@@ -8,8 +15,10 @@ const config = useRuntimeConfig();
 
 import CookiePoliciesDefault from "@/components/CookiePoliciesDefault.vue";
 
+// Layout aplicado explícitamente con <NuxtLayout name="about"> en el template
+// (con title/intro para el hero); layout: false evita el doble wrap.
 definePageMeta({
-  layout: "about",
+  layout: false,
 });
 
 const cookiePoliciesStore = useCookiePoliciesStore();
