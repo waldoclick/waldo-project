@@ -5,7 +5,8 @@
 .profile {
   &--default {
     width: 100%;
-    // padding-top: -130px;
+    background: $cream;
+    padding: 34px 0 90px;
 
     &__container {
       @extend .container;
@@ -15,17 +16,6 @@
       @include screen-large {
         max-width: unset;
         flex-direction: column;
-      }
-    }
-
-    &__sidebar {
-      max-width: 350px;
-      margin-top: -130px;
-
-      @include screen-large {
-        max-width: unset;
-        margin: 0;
-        margin-bottom: 30px;
       }
     }
 

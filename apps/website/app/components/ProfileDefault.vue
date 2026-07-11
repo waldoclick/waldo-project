@@ -1,9 +1,6 @@
 <template>
   <section class="profile profile--default">
     <div class="profile--default__container">
-      <div class="profile--default__sidebar">
-        <SidebarProfile :user="user" :published-ads-count="pagination.total" />
-      </div>
       <div class="profile--default__content">
         <MemoPro
           v-if="
@@ -73,7 +70,6 @@ import { Lock as IconLock, Image as IconImage } from "lucide-vue-next";
 import { computed } from "vue";
 
 // components
-import SidebarProfile from "./SidebarProfile.vue";
 import CardAnnouncement from "./CardAnnouncement.vue";
 import EmptyState from "./EmptyState.vue";
 import MemoDefault from "./MemoDefault.vue";

@@ -2,7 +2,11 @@
   <div v-if="adsData && adsData.user" class="page">
     <!-- <pre>{{ adsData }}</pre> -->
     <HeaderDefault />
-    <HeroProfile :user="adsData.user" />
+    <HeroProfile
+      :user="adsData.user"
+      :ads="adsData.ads"
+      :total="adsData.pagination.total"
+    />
     <ProfileDefault
       v-if="adsData.user && adsData.ads && adsData.pagination"
       :user="adsData.user"
