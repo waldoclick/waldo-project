@@ -13,17 +13,11 @@ All business logic lives in Strapi. The website is a stateless HTTP client.
 
 ## Documentation
 
-- [docs/ad-statuses.md](./docs/ad-statuses.md) — Ad status lifecycle and transitions
-- [docs/permissions.md](./docs/permissions.md) — API endpoint permissions by role
-- [docs/analytics-events.md](./docs/analytics-events.md) — Analytics event tracking reference
-- [docs/payment-flow.md](./docs/payment-flow.md) — Payment gateway flow (Webpay + Oneclick)
-- [docs/reservation-system.md](./docs/reservation-system.md) — Ad reservation and free slot lifecycle
-- [docs/data-model.md](./docs/data-model.md) — Core entity relationships
-- [docs/env-vars.md](./docs/env-vars.md) — Environment variable reference
-- [docs/deployment.md](./docs/deployment.md) — Deployment runbook (website on Vercel, Strapi on Forge)
-- [docs/deploy-checklist.md](./docs/deploy-checklist.md) — Manual deploy checklist, DB backup, and rollback
-- [docs/cache.md](./docs/cache.md) — Redis cache in Strapi (TTL, invalidation on writes)
-- [docs/branch-protection.md](./docs/branch-protection.md) — Branch protection setup for `main`
+All developer documentation lives in the **[GitHub Wiki](https://github.com/waldoclick/waldo-project/wiki)** — it is the single source of truth (there is no `docs/` folder in the repo). To edit, use the wiki's Edit button or clone `git@github.com:waldoclick/waldo-project.wiki.git`.
+
+- **Deploy & Ops** — [deployment](https://github.com/waldoclick/waldo-project/wiki/deployment), [deploy checklist](https://github.com/waldoclick/waldo-project/wiki/deploy-checklist), [branch protection](https://github.com/waldoclick/waldo-project/wiki/branch-protection), [env vars](https://github.com/waldoclick/waldo-project/wiki/env-vars), [hardening roadmap](https://github.com/waldoclick/waldo-project/wiki/deployment-improvement-roadmap)
+- **Domain** — [ad statuses](https://github.com/waldoclick/waldo-project/wiki/ad-statuses), [reservations](https://github.com/waldoclick/waldo-project/wiki/reservation-system), [payment flow](https://github.com/waldoclick/waldo-project/wiki/payment-flow), [permissions](https://github.com/waldoclick/waldo-project/wiki/permissions), [cache](https://github.com/waldoclick/waldo-project/wiki/cache), [analytics](https://github.com/waldoclick/waldo-project/wiki/analytics-events)
+- **Spec (as-built)** — [product requirements](https://github.com/waldoclick/waldo-project/wiki/product-requirements), [technical requirements](https://github.com/waldoclick/waldo-project/wiki/technical-requirements), [implementation plan](https://github.com/waldoclick/waldo-project/wiki/implementation-plan), [application flows](https://github.com/waldoclick/waldo-project/wiki/application-flows), [UX design](https://github.com/waldoclick/waldo-project/wiki/ux-design), [backend schema](https://github.com/waldoclick/waldo-project/wiki/backend-schema)
 
 ## Quick Start
 
