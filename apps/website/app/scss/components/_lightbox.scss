@@ -3,7 +3,8 @@
 @use "../base/container";
 
 .lightbox {
-  z-index: 10;
+  // Los lightbox son modales: deben quedar por encima del header (z-index 50).
+  z-index: 1000;
 
   &__button {
     position: absolute;

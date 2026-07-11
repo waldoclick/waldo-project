@@ -274,13 +274,18 @@ const catChips = computed(() => {
   const seen = new Map();
   for (const ad of props.ads) {
     const category = ad?.category;
-    if (category && typeof category === "object" && category.name && !seen.has(category.slug || category.name)) {
-        seen.set(category.slug || category.name, {
-          name: category.name,
-          slug: category.slug || category.name,
-          dotBg: getCategoryHue(category.name).baseColor,
-        });
-      }
+    if (
+      category &&
+      typeof category === "object" &&
+      category.name &&
+      !seen.has(category.slug || category.name)
+    ) {
+      seen.set(category.slug || category.name, {
+        name: category.name,
+        slug: category.slug || category.name,
+        dotBg: getCategoryHue(category.name).baseColor,
+      });
+    }
   }
   return [...seen.values()];
 });
